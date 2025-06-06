@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim;
 
+import de.mkalb.etpetssim.wator.WaTorController;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public final class ExtraterrestrialPetsSimulation extends Application {
@@ -11,9 +11,13 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         launch();
     }
 
+    private Scene createWaTorScene() {
+        return new Scene(new WaTorController().buildViewRegion());
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(new Label("Hello"));
+        Scene scene = createWaTorScene();
 
         primaryStage.setTitle("extraterrestrial pets simulation");
         primaryStage.setScene(scene);

@@ -1,0 +1,106 @@
+/* General Scene Styling */
+.root {
+    -fx-font-family: 'Verdana';
+    -fx-font-size: 14px;
+    -fx-background-color: #f0f0f0;
+}
+
+/* ScrollPane Styling */
+.scroll-pane {
+    -fx-padding: 10;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+/* Label Styling */
+.label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Slider Styling */
+.slider {
+    -fx-padding: 10;
+}
+
+.slider .track {
+    -fx-background-color: #cccccc;
+}
+
+.slider .thumb {
+    -fx-background-color: #0078d7;
+}
+
+/* ChoiceBox Styling */
+.choice-box {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 3;
+    -fx-padding: 5;
+}
+
+/* Button Styling */
+.button {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #005fa3;
+}
+
+/* Individual Styling */
+.config-grid-pane {
+    -fx-padding: 10;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-min-width: 1200px;
+}
+
+.config-slider {
+    -fx-min-width: 700px;
+}
+
+.control-button {
+    -fx-min-width: 150px;
+}
+
+.control-slider {
+    -fx-min-width: 500px;
+}
+
+.control-hbox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-min-width: 1200px;
+}
+
+.simulation-scroll-pane {
+}
+
+.observation-vbox {
+    -fx-spacing: 10;
+    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-min-width: 300px;
+}
