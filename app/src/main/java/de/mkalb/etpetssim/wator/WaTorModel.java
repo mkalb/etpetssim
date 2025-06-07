@@ -10,7 +10,7 @@ public final class WaTorModel {
 
     public static final int MIN_SIZE = 64;
 
-    private static final int INITIAL_SPEED = 10; // Tenth of a second
+    private static final int INITIAL_SPEED = 5; // Tenth of a second
     private static final int INITIAL_TIME_COUNTER = 0;
     private static final int INITIAL_X_SIZE = 256;
     private static final int INITIAL_Y_SIZE = 128;
