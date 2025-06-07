@@ -2,11 +2,12 @@ package de.mkalb.etpetssim.wator;
 
 import java.util.*;
 
-public final class WaTorFish implements WaTorSeaCreature {
+public final class WaTorFish implements WaTorCreature {
 
     private final long sequenceId;
     private final long timeOfBirth;
     private final WaTorCoordinate placeOfBirth;
+
     private WaTorCoordinate currentPlace;
     private final List<Long> timeOfReproduction;
 
@@ -44,6 +45,21 @@ public final class WaTorFish implements WaTorSeaCreature {
     }
 
     @Override
+    public int numberOfReproductions() {
+        return timeOfReproduction.size();
+    }
+
+    @Override
+    public OptionalLong timeOfLastReproduction() {
+        return timeOfReproduction.isEmpty() ? OptionalLong.empty() : OptionalLong.of(timeOfReproduction.getLast());
+    }
+
+    @Override
+    public void reproduce(WaTorCreature child) {
+        timeOfReproduction.add(child.timeOfBirth());
+    }
+
+    @Override
     public String toString() {
         return "WaTorFish{" +
                 "sequenceId=" + sequenceId +
@@ -52,18 +68,6 @@ public final class WaTorFish implements WaTorSeaCreature {
                 ", currentPlace=" + currentPlace +
                 ", timeOfReproduction=" + timeOfReproduction +
                 '}';
-    }
-
-    public int numberOfReproductions() {
-        return timeOfReproduction.size();
-    }
-
-    public OptionalLong timeOfLastReproduction() {
-        return timeOfReproduction.isEmpty() ? OptionalLong.empty() : OptionalLong.of(timeOfReproduction.getLast());
-    }
-
-    public void reproduce(WaTorFish childFish) {
-        timeOfReproduction.add(childFish.timeOfBirth());
     }
 
 }

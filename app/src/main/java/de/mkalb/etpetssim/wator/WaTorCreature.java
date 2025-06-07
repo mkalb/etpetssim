@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.wator;
 
-public sealed interface WaTorSeaCreature extends Comparable<WaTorSeaCreature>
+import java.util.*;
+
+public sealed interface WaTorCreature extends Comparable<WaTorCreature>
         permits WaTorFish, WaTorShark {
 
     long sequenceId();
@@ -18,8 +20,14 @@ public sealed interface WaTorSeaCreature extends Comparable<WaTorSeaCreature>
     }
 
     @Override
-    default int compareTo(WaTorSeaCreature o) {
+    default int compareTo(WaTorCreature o) {
         return Long.compare(sequenceId(), o.sequenceId());
     }
+
+    int numberOfReproductions();
+
+    OptionalLong timeOfLastReproduction();
+
+    void reproduce(WaTorCreature child);
 
 }

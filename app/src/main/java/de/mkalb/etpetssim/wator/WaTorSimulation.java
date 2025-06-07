@@ -14,7 +14,7 @@ public final class WaTorSimulation {
     private SimulationStatus simulationStatus;
     private int currentFishNumber;
     private int currentSharkNumber;
-    private final SortedMap<Long, WaTorSeaCreature> creatures;
+    private final SortedMap<Long, WaTorCreature> creatures;
 
     public WaTorSimulation(WaTorModel waTorModel) {
         this.waTorModel = waTorModel;
@@ -44,14 +44,14 @@ public final class WaTorSimulation {
         return new WaTorCoordinate(random.nextInt(waTorModel.xSize()), random.nextInt(waTorModel.ySize()));
     }
 
-    void fillContainerWithCreatures(Function<WaTorCoordinate, WaTorSeaCreature> creatureSupplier,
+    void fillContainerWithCreatures(Function<WaTorCoordinate, WaTorCreature> creatureSupplier,
                                     IntSupplier numberSupplier) {
         int currentNumber = 0;
         int totalNumber = numberSupplier.getAsInt();
         while (currentNumber < totalNumber) {
             WaTorCoordinate coordinate = randomCoordinate();
             if (territory.isEmpty(coordinate)) {
-                WaTorSeaCreature creature = creatureSupplier.apply(coordinate);
+                WaTorCreature creature = creatureSupplier.apply(coordinate);
                 creatures.put(creature.sequenceId(), creature);
                 territory.placeIdAt(creature.sequenceId(), coordinate);
                 currentNumber++;
@@ -59,7 +59,7 @@ public final class WaTorSimulation {
         }
     }
 
-    public Optional<WaTorSeaCreature> creatureAt(WaTorCoordinate coordinate) {
+    public Optional<WaTorCreature> creatureAt(WaTorCoordinate coordinate) {
         return territory.findIdAt(coordinate).map(creatures::get);
     }
 
@@ -90,7 +90,7 @@ public final class WaTorSimulation {
         return fishs.get(random.nextInt(fishs.size()));
     }
 
-    private void simulateCreature(WaTorSeaCreature creature) {
+    private void simulateCreature(WaTorCreature creature) {
         WaTorCoordinate coordinate = creature.currentPlace();
         List<WaTorCoordinate> neighbors = coordinate.neighbors(waTorModel.xSize(), waTorModel.ySize());
         List<WaTorCoordinate> emptyNeighbors = neighbors.stream().filter(territory::isEmpty).toList();
@@ -124,7 +124,7 @@ public final class WaTorSimulation {
             }
             case WaTorShark shark -> {
                 // Reduce energy
-                shark.reduceEnergy();
+                shark.reduceEnergy(1);
 
                 List<WaTorFish> fishNeighbors = neighbors.stream()
                                                          .map(territory::findIdAt)
@@ -145,7 +145,7 @@ public final class WaTorSimulation {
                     territory.removeIdAt(fish.currentPlace());
 
                     // System.out.println("shark.gainEnergy: " + fish);
-                    shark.gainEnergy(fish);
+                    shark.gainEnergy(2);
 
                     //  System.out.println("creatures.remove: " + fish.sequenceId());
                     creatures.remove(fish.sequenceId());
@@ -196,7 +196,7 @@ public final class WaTorSimulation {
 
         List<Long> currentCreatureIds = new ArrayList<>(creatures.keySet());
         currentCreatureIds.forEach(id -> {
-            WaTorSeaCreature creature = creatures.get(id);
+            WaTorCreature creature = creatures.get(id);
             if (creature != null) { // A fish can be eaten by a shark
                 try {
                     simulateCreature(creature);

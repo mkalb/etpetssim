@@ -11,9 +11,9 @@ public final class WaTorCanvasRenderer {
 
     private final WaTorModel waTorModel;
     private final Canvas simulationCanvas;
-    private final Function<WaTorCoordinate, Optional<WaTorSeaCreature>> creatureFunction;
+    private final Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction;
 
-    public WaTorCanvasRenderer(WaTorModel waTorModel, Function<WaTorCoordinate, Optional<WaTorSeaCreature>> creatureFunction) {
+    public WaTorCanvasRenderer(WaTorModel waTorModel, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
         this.waTorModel = waTorModel;
         this.creatureFunction = creatureFunction;
         simulationCanvas = new Canvas(calculateCanvasWidth(), calculateCanvasHeight());
@@ -55,7 +55,7 @@ public final class WaTorCanvasRenderer {
         simulationGraphicsContext.fillRect(0, 0, width, height);
         for (int x = 0; x < waTorModel.xSize(); x++) {
             for (int y = 0; y < waTorModel.ySize(); y++) {
-                Optional<WaTorSeaCreature> creature = creatureFunction.apply(new WaTorCoordinate(x, y));
+                Optional<WaTorCreature> creature = creatureFunction.apply(new WaTorCoordinate(x, y));
                 if (creature.isPresent()) {
                     simulationGraphicsContext.setFill(
                             switch (creature.orElseThrow()) {

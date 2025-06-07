@@ -21,10 +21,10 @@ public final class WaTorViewBuilder implements Builder<Region> {
     private final WaTorModel waTorModel;
     private final BooleanSupplier startSimulationSupplier;
     private final BooleanSupplier updateSimulationSupplier;
-    private final Function<WaTorCoordinate, Optional<WaTorSeaCreature>> creatureFunction;
+    private final Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction;
     private @Nullable Timeline timeline;
 
-    public WaTorViewBuilder(WaTorModel waTorModel, BooleanSupplier startSimulationSupplier, BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorSeaCreature>> creatureFunction) {
+    public WaTorViewBuilder(WaTorModel waTorModel, BooleanSupplier startSimulationSupplier, BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
         this.waTorModel = waTorModel;
         this.startSimulationSupplier = startSimulationSupplier;
         this.updateSimulationSupplier = updateSimulationSupplier;

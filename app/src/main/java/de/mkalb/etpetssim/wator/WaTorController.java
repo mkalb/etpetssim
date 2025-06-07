@@ -23,7 +23,7 @@ public final class WaTorController {
         return waTorViewBuilder.build();
     }
 
-    public Optional<WaTorSeaCreature> creatureAt(WaTorCoordinate coordinate) {
+    public Optional<WaTorCreature> creatureAt(WaTorCoordinate coordinate) {
         Objects.requireNonNull(waTorSimulation);
 
         return waTorSimulation.creatureAt(coordinate);
