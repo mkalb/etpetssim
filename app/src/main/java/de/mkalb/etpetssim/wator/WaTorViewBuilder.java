@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.wator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.scene.canvas.Canvas;
@@ -62,7 +63,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     private Region createConfigRegion() {
         ChoiceBox<Integer> choiceBox = new ChoiceBox<>(waTorModel.cellLengthChoices());
-        choiceBox.valueProperty().bindBidirectional(waTorModel.cellLengthProperty().asObject());
+        choiceBox.valueProperty().bindBidirectional(waTorModel.cellLengthProperty());
 
         Slider xSizeSlider = new Slider(WaTorModel.MIN_SIZE, Math.round(2048 / waTorModel.cellLength()), waTorModel.xSize());
         initConfigSlider(xSizeSlider, 128 / waTorModel.cellLength(), waTorModel.xSizeProperty());
@@ -274,7 +275,9 @@ public final class WaTorViewBuilder implements Builder<Region> {
         List<Label> labels = new ArrayList<>();
         labels.add(buildObservationPropertyLabel(waTorModel.speedProperty().asString("Speed: %d")));
         labels.add(buildObservationPropertyLabel(waTorModel.timeCounterProperty().asString("Time: %d")));
-        labels.add(buildObservationPropertyLabel(waTorModel.cellLengthProperty().asString("Cell length: %d")));
+        labels.add(buildObservationPropertyLabel(Bindings.createStringBinding(
+                () -> String.format("Cell length: %d", waTorModel.cellLengthProperty().getValue()),
+                waTorModel.cellLengthProperty())));
         labels.add(buildObservationPropertyLabel(waTorModel.xSizeProperty().asString("X size: %d")));
         labels.add(buildObservationPropertyLabel(waTorModel.ySizeProperty().asString("Y size: %d")));
         labels.add(buildObservationPropertyLabel(waTorModel.fishNumberProperty().asString("Fish number: %d")));

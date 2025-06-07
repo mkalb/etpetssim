@@ -24,7 +24,7 @@ public final class WaTorModel {
     private final LongProperty timeCounterProperty = new SimpleLongProperty(INITIAL_TIME_COUNTER);
     private final IntegerProperty xSizeProperty = new SimpleIntegerProperty(INITIAL_X_SIZE);
     private final IntegerProperty ySizeProperty = new SimpleIntegerProperty(INITIAL_Y_SIZE);
-    private final IntegerProperty cellLengthProperty = new SimpleIntegerProperty(INITIAL_CELL_LENGTH);
+    private final Property<Integer> cellLengthProperty = new SimpleObjectProperty<>(INITIAL_CELL_LENGTH);
     private final IntegerProperty fishNumberProperty = new SimpleIntegerProperty(INITIAL_FISH_NUMBER);
     private final IntegerProperty sharkNumberProperty = new SimpleIntegerProperty(INITIAL_SHARK_NUMBER);
 
@@ -75,16 +75,12 @@ public final class WaTorModel {
         return ySizeProperty.get();
     }
 
-    public IntegerProperty cellLengthProperty() {
+    public Property<Integer> cellLengthProperty() {
         return cellLengthProperty;
     }
 
-    public Property<Integer> cellLengthPropertyAsObject() {
-        return cellLengthProperty.asObject();
-    }
-
     public int cellLength() {
-        return cellLengthProperty.get();
+        return cellLengthProperty.getValue();
     }
 
     public ObservableList<Integer> cellLengthChoices() {
