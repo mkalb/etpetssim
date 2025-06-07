@@ -144,10 +144,10 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     private Region createControlRegion(WaTorCanvasRenderer canvasRenderer,
                                        Runnable enableConfigRegionRunnable, Runnable disableConfigRegionRunnable) {
-        Button startButton = buildControlButton("Start");
-        Button resumeButton = buildControlButton("Resume");
-        Button pauseButton = buildControlButton("Pause");
-        Button cancelButton = buildControlButton("Cancel");
+        Button startButton = buildControlButton("Start", false);
+        Button resumeButton = buildControlButton("Resume", true);
+        Button pauseButton = buildControlButton("Pause", true);
+        Button cancelButton = buildControlButton("Cancel", true);
 
         Slider speedSlider = new Slider(1.0d, 25.0d, waTorModel.speedAsTenthOfASecond());
         speedSlider.setShowTickLabels(true);
@@ -244,9 +244,10 @@ public final class WaTorViewBuilder implements Builder<Region> {
         return hbox;
     }
 
-    private Button buildControlButton(String text) {
+    private Button buildControlButton(String text, boolean disabled) {
         Button controlButton = new Button(text);
         controlButton.getStyleClass().add("control-button");
+        controlButton.setDisable(disabled);
         return controlButton;
     }
 
