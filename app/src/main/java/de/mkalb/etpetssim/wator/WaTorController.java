@@ -1,30 +1,42 @@
 package de.mkalb.etpetssim.wator;
 
 import javafx.scene.layout.Region;
+import org.jspecify.annotations.Nullable;
+
+import java.util.*;
 
 public final class WaTorController {
 
+    private final WaTorModel waTorModel;
     private final WaTorViewBuilder waTorViewBuilder;
-    private final WaTorInteractor waTorInteractor;
+    private @Nullable WaTorSimulation waTorSimulation;
 
     public WaTorController() {
-        WaTorModel waTorModel = new WaTorModel();
-        waTorInteractor = new WaTorInteractor(waTorModel);
+        waTorModel = new WaTorModel();
         waTorViewBuilder = new WaTorViewBuilder(waTorModel,
                 this::startSimulation,
-                this::updateSimulation);
+                this::updateSimulation,
+                this::creatureAt);
     }
 
     public Region buildViewRegion() {
         return waTorViewBuilder.build();
     }
 
+    public Optional<WaTorSeaCreature> creatureAt(WaTorCoordinate coordinate) {
+        Objects.requireNonNull(waTorSimulation);
+
+        return waTorSimulation.creatureAt(coordinate);
+    }
+
     public boolean startSimulation() {
-        return waTorInteractor.startSimulation();
+        waTorSimulation = new WaTorSimulation(waTorModel);
+        return waTorSimulation.startSimulation() != WaTorSimulation.SimulationStatus.STARTED;
     }
 
     public boolean updateSimulation() {
-        return waTorInteractor.updateSimulation();
+        Objects.requireNonNull(waTorSimulation);
+        return waTorSimulation.updateSimulation() != WaTorSimulation.SimulationStatus.STARTED;
     }
 
 }

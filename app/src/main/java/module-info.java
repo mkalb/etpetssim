@@ -3,4 +3,5 @@ module de.mkalb.etpetssim {
     requires org.jspecify;
     requires javafx.controls;
     exports de.mkalb.etpetssim;
+    exports de.mkalb.etpetssim.wator;
 }

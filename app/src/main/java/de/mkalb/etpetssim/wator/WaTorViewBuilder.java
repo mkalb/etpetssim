@@ -20,17 +20,19 @@ public final class WaTorViewBuilder implements Builder<Region> {
     private final WaTorModel waTorModel;
     private final BooleanSupplier startSimulationSupplier;
     private final BooleanSupplier updateSimulationSupplier;
+    private final Function<WaTorCoordinate, Optional<WaTorSeaCreature>> creatureFunction;
     private @Nullable Timeline timeline;
 
-    public WaTorViewBuilder(WaTorModel waTorModel, BooleanSupplier startSimulationSupplier, BooleanSupplier updateSimulationSupplier) {
+    public WaTorViewBuilder(WaTorModel waTorModel, BooleanSupplier startSimulationSupplier, BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorSeaCreature>> creatureFunction) {
         this.waTorModel = waTorModel;
         this.startSimulationSupplier = startSimulationSupplier;
         this.updateSimulationSupplier = updateSimulationSupplier;
+        this.creatureFunction = creatureFunction;
     }
 
     @Override
     public Region build() {
-        WaTorCanvasRenderer canvasRenderer = new WaTorCanvasRenderer(waTorModel);
+        WaTorCanvasRenderer canvasRenderer = new WaTorCanvasRenderer(waTorModel, creatureFunction);
 
         Region configRegion = createConfigRegion();
         Region simulationRegion = createSimulationRegion(canvasRenderer.simulationCanvas());
@@ -184,6 +186,8 @@ public final class WaTorViewBuilder implements Builder<Region> {
             canvasRenderer.prepareStart();
 
             boolean finished = startSimulationSupplier.getAsBoolean();
+            canvasRenderer.draw();
+
             if (finished) {
                 startButton.setDisable(false);
                 speedSlider.setDisable(false);
@@ -192,7 +196,6 @@ public final class WaTorViewBuilder implements Builder<Region> {
                 disableConfigRegionRunnable.run();
                 hbox.getChildren().set(0, pauseButton); // Replace runButton with pauseButton
 
-                canvasRenderer.draw();
                 pauseButton.setDisable(false);
                 cancelButton.setDisable(false);
                 createAndPlayTimeline(canvasRenderer, actionAfterSimulationStopped);
