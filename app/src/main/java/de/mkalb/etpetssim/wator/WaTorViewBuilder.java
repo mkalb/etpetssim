@@ -19,13 +19,18 @@ import java.util.function.*;
 public final class WaTorViewBuilder implements Builder<Region> {
 
     private final WaTorConfigModel waTorConfigModel;
+    private final WaTorSimulationModel waTorSimulationModel;
     private final BooleanSupplier startSimulationSupplier;
     private final BooleanSupplier updateSimulationSupplier;
     private final Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction;
     private @Nullable Timeline timeline;
 
-    public WaTorViewBuilder(WaTorConfigModel waTorConfigModel, BooleanSupplier startSimulationSupplier, BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
+    public WaTorViewBuilder(WaTorConfigModel waTorConfigModel, WaTorSimulationModel waTorSimulationModel,
+
+                            BooleanSupplier startSimulationSupplier,
+                            BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
         this.waTorConfigModel = waTorConfigModel;
+        this.waTorSimulationModel = waTorSimulationModel;
         this.startSimulationSupplier = startSimulationSupplier;
         this.updateSimulationSupplier = updateSimulationSupplier;
         this.creatureFunction = creatureFunction;
@@ -33,7 +38,8 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     @Override
     public Region build() {
-        WaTorCanvasRenderer canvasRenderer = new WaTorCanvasRenderer(waTorConfigModel, creatureFunction);
+        WaTorCanvasRenderer canvasRenderer = new WaTorCanvasRenderer(waTorConfigModel, waTorSimulationModel,
+                creatureFunction);
 
         Region configRegion = createConfigRegion();
         Region simulationRegion = createSimulationRegion(canvasRenderer.simulationCanvas());
@@ -103,6 +109,14 @@ public final class WaTorViewBuilder implements Builder<Region> {
         sharkNumberSlider.valueProperty().addListener((obs, oldval, newVal) ->
                 sharkNumberSlider.setValue(newVal.intValue()));
 
+        Label cellLengthLabel = buildPropertyLabel(Bindings.createStringBinding(
+                () -> String.format("%d", waTorConfigModel.cellLengthProperty().getValue()),
+                waTorConfigModel.cellLengthProperty()));
+        Label xSizeLabel = buildPropertyLabel(waTorConfigModel.xSizeProperty().asString("%d"));
+        Label ySizeLabel = buildPropertyLabel(waTorConfigModel.ySizeProperty().asString("%d"));
+        Label fishNumberLabel = buildPropertyLabel(waTorConfigModel.fishNumberProperty().asString("%d"));
+        Label sharkNumberLabel = buildPropertyLabel(waTorConfigModel.sharkNumberProperty().asString("%d"));
+
         GridPane gridPane = new GridPane();
         gridPane.getStyleClass().add("config-grid-pane");
 
@@ -117,6 +131,12 @@ public final class WaTorViewBuilder implements Builder<Region> {
         gridPane.add(ySizeSlider, 1, 2);
         gridPane.add(fishNumberSlider, 1, 3);
         gridPane.add(sharkNumberSlider, 1, 4);
+
+        gridPane.add(cellLengthLabel, 2, 0);
+        gridPane.add(xSizeLabel, 2, 1);
+        gridPane.add(ySizeLabel, 2, 2);
+        gridPane.add(fishNumberLabel, 2, 3);
+        gridPane.add(sharkNumberLabel, 2, 4);
 
         return gridPane;
     }
@@ -274,15 +294,9 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     private Region createObservationRegion() {
         List<Label> labels = new ArrayList<>();
-        labels.add(buildObservationPropertyLabel(waTorConfigModel.speedProperty().asString("Speed: %d")));
-        labels.add(buildObservationPropertyLabel(waTorConfigModel.timeCounterProperty().asString("Time: %d")));
-        labels.add(buildObservationPropertyLabel(Bindings.createStringBinding(
-                () -> String.format("Cell length: %d", waTorConfigModel.cellLengthProperty().getValue()),
-                waTorConfigModel.cellLengthProperty())));
-        labels.add(buildObservationPropertyLabel(waTorConfigModel.xSizeProperty().asString("X size: %d")));
-        labels.add(buildObservationPropertyLabel(waTorConfigModel.ySizeProperty().asString("Y size: %d")));
-        labels.add(buildObservationPropertyLabel(waTorConfigModel.fishNumberProperty().asString("Fish number: %d")));
-        labels.add(buildObservationPropertyLabel(waTorConfigModel.sharkNumberProperty().asString("Shark number: %d")));
+        labels.add(buildPropertyLabel(waTorSimulationModel.timeCounterProperty().asString("Time: %d")));
+        labels.add(buildPropertyLabel(waTorSimulationModel.fishNumberProperty().asString("Fish: %d")));
+        labels.add(buildPropertyLabel(waTorSimulationModel.sharkNumberProperty().asString("Shark: %d")));
 
         VBox vbox = new VBox();
         vbox.getChildren().addAll(labels);
@@ -291,7 +305,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
         return vbox;
     }
 
-    private Label buildObservationPropertyLabel(StringBinding stringBinding) {
+    private Label buildPropertyLabel(StringBinding stringBinding) {
         Label label = new Label();
         label.textProperty().bind(stringBinding);
         return label;
