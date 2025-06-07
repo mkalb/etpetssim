@@ -38,19 +38,20 @@ public final class WaTorCanvasRenderer {
 
     Color adjustColor(Color color, WaTorShark shark) {
         double energyFactor = Math.min(shark.currentEnergy() / 10.0, 1.0);
-        return color.interpolate(Color.YELLOW, energyFactor);
+        double ageFactor = Math.min((shark.age(waTorModel.timeCounter())) / 100.0, 1.0);
+        return color.interpolate(Color.RED, energyFactor).interpolate(Color.BLACK, ageFactor);
     }
 
     Color adjustColor(Color color, WaTorFish fish) {
-        double ageFactor = Math.min((waTorModel.timeCounter() - fish.timeOfBirth()) / 100.0, 1.0);
-        return color.interpolate(Color.ORANGE, ageFactor);
+        double ageFactor = Math.min((fish.age(waTorModel.timeCounter())) / 100.0, 1.0);
+        return color.interpolate(Color.BLACK, ageFactor);
     }
 
     void draw() {
         GraphicsContext simulationGraphicsContext = simulationCanvas.getGraphicsContext2D();
         double width = simulationCanvas.getWidth();
         double height = simulationCanvas.getHeight();
-        simulationGraphicsContext.setFill(Color.BLUE);
+        simulationGraphicsContext.setFill(Color.DARKBLUE.darker());
         simulationGraphicsContext.fillRect(0, 0, width, height);
         for (int x = 0; x < waTorModel.xSize(); x++) {
             for (int y = 0; y < waTorModel.ySize(); y++) {
@@ -59,7 +60,7 @@ public final class WaTorCanvasRenderer {
                     simulationGraphicsContext.setFill(
                             switch (creature.orElseThrow()) {
                                 case WaTorFish fish -> adjustColor(Color.GREEN, fish);
-                                case WaTorShark shark -> adjustColor(Color.RED, shark);
+                                case WaTorShark shark -> adjustColor(Color.ORANGE, shark);
                             });
                     simulationGraphicsContext.fillRect(x * waTorModel.cellLength(), y * waTorModel.cellLength(), waTorModel.cellLength(), waTorModel.cellLength());
                 }
