@@ -9,72 +9,72 @@ import static org.junit.jupiter.api.Assertions.*;
 class WaTorCoordinateTest {
 
     @Test
-    void gridIndex() {
-        assertEquals(0, new WaTorCoordinate(0, 0).gridIndex(3));
-        assertEquals(1, new WaTorCoordinate(1, 0).gridIndex(3));
-        assertEquals(2, new WaTorCoordinate(2, 0).gridIndex(3));
-        assertEquals(3, new WaTorCoordinate(0, 1).gridIndex(3));
-        assertEquals(4, new WaTorCoordinate(1, 1).gridIndex(3));
-        assertEquals(5, new WaTorCoordinate(2, 1).gridIndex(3));
-        assertEquals(6, new WaTorCoordinate(0, 2).gridIndex(3));
-        assertEquals(7, new WaTorCoordinate(1, 2).gridIndex(3));
-        assertEquals(8, new WaTorCoordinate(2, 2).gridIndex(3));
+    void territoryIndex() {
+        assertEquals(0, new WaTorCoordinate(0, 0).territoryIndex(3));
+        assertEquals(1, new WaTorCoordinate(1, 0).territoryIndex(3));
+        assertEquals(2, new WaTorCoordinate(2, 0).territoryIndex(3));
+        assertEquals(3, new WaTorCoordinate(0, 1).territoryIndex(3));
+        assertEquals(4, new WaTorCoordinate(1, 1).territoryIndex(3));
+        assertEquals(5, new WaTorCoordinate(2, 1).territoryIndex(3));
+        assertEquals(6, new WaTorCoordinate(0, 2).territoryIndex(3));
+        assertEquals(7, new WaTorCoordinate(1, 2).territoryIndex(3));
+        assertEquals(8, new WaTorCoordinate(2, 2).territoryIndex(3));
     }
 
     @Test
-    void topCoordinate() {
-        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(0, 0).topCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(0, 1).topCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 1), new WaTorCoordinate(0, 2).topCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 2), new WaTorCoordinate(0, 3).topCoordinate(5, 4));
+    void top() {
+        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(0, 0).top(5, 4));
+        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(0, 1).top(5, 4));
+        assertEquals(new WaTorCoordinate(0, 1), new WaTorCoordinate(0, 2).top(5, 4));
+        assertEquals(new WaTorCoordinate(0, 2), new WaTorCoordinate(0, 3).top(5, 4));
 
-        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(4, 0).topCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(4, 1).topCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 1), new WaTorCoordinate(4, 2).topCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 2), new WaTorCoordinate(4, 3).topCoordinate(5, 4));
+        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(4, 0).top(5, 4));
+        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(4, 1).top(5, 4));
+        assertEquals(new WaTorCoordinate(4, 1), new WaTorCoordinate(4, 2).top(5, 4));
+        assertEquals(new WaTorCoordinate(4, 2), new WaTorCoordinate(4, 3).top(5, 4));
     }
 
     @Test
-    void bottomCoordinate() {
-        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(0, 3).bottomCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 1), new WaTorCoordinate(0, 0).bottomCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 2), new WaTorCoordinate(0, 1).bottomCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(0, 2).bottomCoordinate(5, 4));
+    void bottom() {
+        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(0, 3).bottom(5, 4));
+        assertEquals(new WaTorCoordinate(0, 1), new WaTorCoordinate(0, 0).bottom(5, 4));
+        assertEquals(new WaTorCoordinate(0, 2), new WaTorCoordinate(0, 1).bottom(5, 4));
+        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(0, 2).bottom(5, 4));
 
-        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(4, 3).bottomCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 1), new WaTorCoordinate(4, 0).bottomCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 2), new WaTorCoordinate(4, 1).bottomCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(4, 2).bottomCoordinate(5, 4));
+        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(4, 3).bottom(5, 4));
+        assertEquals(new WaTorCoordinate(4, 1), new WaTorCoordinate(4, 0).bottom(5, 4));
+        assertEquals(new WaTorCoordinate(4, 2), new WaTorCoordinate(4, 1).bottom(5, 4));
+        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(4, 2).bottom(5, 4));
     }
 
     @Test
-    void leftCoordinate() {
-        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(0, 0).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(1, 0).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(1, 0), new WaTorCoordinate(2, 0).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(2, 0), new WaTorCoordinate(3, 0).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(3, 0), new WaTorCoordinate(4, 0).leftCoordinate(5, 4));
+    void left() {
+        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(0, 0).left(5, 4));
+        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(1, 0).left(5, 4));
+        assertEquals(new WaTorCoordinate(1, 0), new WaTorCoordinate(2, 0).left(5, 4));
+        assertEquals(new WaTorCoordinate(2, 0), new WaTorCoordinate(3, 0).left(5, 4));
+        assertEquals(new WaTorCoordinate(3, 0), new WaTorCoordinate(4, 0).left(5, 4));
 
-        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(0, 3).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(1, 3).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(1, 3), new WaTorCoordinate(2, 3).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(2, 3), new WaTorCoordinate(3, 3).leftCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(3, 3), new WaTorCoordinate(4, 3).leftCoordinate(5, 4));
+        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(0, 3).left(5, 4));
+        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(1, 3).left(5, 4));
+        assertEquals(new WaTorCoordinate(1, 3), new WaTorCoordinate(2, 3).left(5, 4));
+        assertEquals(new WaTorCoordinate(2, 3), new WaTorCoordinate(3, 3).left(5, 4));
+        assertEquals(new WaTorCoordinate(3, 3), new WaTorCoordinate(4, 3).left(5, 4));
     }
 
     @Test
-    void rightCoordinate() {
-        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(4, 0).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(1, 0), new WaTorCoordinate(0, 0).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(2, 0), new WaTorCoordinate(1, 0).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(3, 0), new WaTorCoordinate(2, 0).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(3, 0).rightCoordinate(5, 4));
+    void right() {
+        assertEquals(new WaTorCoordinate(0, 0), new WaTorCoordinate(4, 0).right(5, 4));
+        assertEquals(new WaTorCoordinate(1, 0), new WaTorCoordinate(0, 0).right(5, 4));
+        assertEquals(new WaTorCoordinate(2, 0), new WaTorCoordinate(1, 0).right(5, 4));
+        assertEquals(new WaTorCoordinate(3, 0), new WaTorCoordinate(2, 0).right(5, 4));
+        assertEquals(new WaTorCoordinate(4, 0), new WaTorCoordinate(3, 0).right(5, 4));
 
-        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(4, 3).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(1, 3), new WaTorCoordinate(0, 3).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(2, 3), new WaTorCoordinate(1, 3).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(3, 3), new WaTorCoordinate(2, 3).rightCoordinate(5, 4));
-        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(3, 3).rightCoordinate(5, 4));
+        assertEquals(new WaTorCoordinate(0, 3), new WaTorCoordinate(4, 3).right(5, 4));
+        assertEquals(new WaTorCoordinate(1, 3), new WaTorCoordinate(0, 3).right(5, 4));
+        assertEquals(new WaTorCoordinate(2, 3), new WaTorCoordinate(1, 3).right(5, 4));
+        assertEquals(new WaTorCoordinate(3, 3), new WaTorCoordinate(2, 3).right(5, 4));
+        assertEquals(new WaTorCoordinate(4, 3), new WaTorCoordinate(3, 3).right(5, 4));
     }
 
     @Test

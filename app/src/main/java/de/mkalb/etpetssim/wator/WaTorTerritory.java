@@ -17,22 +17,22 @@ final class WaTorTerritory {
     }
 
     boolean isEmpty(WaTorCoordinate coordinate) {
-        return grid[coordinate.gridIndex(xSize)] == null;
+        return grid[coordinate.territoryIndex(xSize)] == null;
     }
 
     boolean isNotEmpty(WaTorCoordinate coordinate) {
-        return grid[coordinate.gridIndex(xSize)] != null;
+        return grid[coordinate.territoryIndex(xSize)] != null;
     }
 
     Optional<Long> findIdAt(WaTorCoordinate coordinate) {
-        return Optional.ofNullable(grid[coordinate.gridIndex(xSize)]);
+        return Optional.ofNullable(grid[coordinate.territoryIndex(xSize)]);
     }
 
     void placeIdAt(long id, WaTorCoordinate coordinate) {
         if (!isEmpty(coordinate)) {
             throw new IllegalStateException("placeIdAt called for non-empty coordinate '" + coordinate + "' with id " + "'" + id);
         }
-        grid[coordinate.gridIndex(xSize)] = id;
+        grid[coordinate.territoryIndex(xSize)] = id;
     }
 
     void moveId(long id, WaTorCoordinate oldCoordinate, WaTorCoordinate newCoordinate) {
@@ -50,7 +50,7 @@ final class WaTorTerritory {
         if (isEmpty(coordinate)) {
             throw new IllegalStateException("removeIdAt called for empty coordinate '" + coordinate + "'");
         }
-        grid[coordinate.gridIndex(xSize)] = null;
+        grid[coordinate.territoryIndex(xSize)] = null;
     }
 
 }
