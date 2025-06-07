@@ -6,7 +6,7 @@ import javafx.util.Duration;
 
 import java.util.*;
 
-public final class WaTorModel {
+public final class WaTorConfigModel {
 
     public static final int MIN_SIZE = 64;
 
@@ -28,7 +28,7 @@ public final class WaTorModel {
     private final IntegerProperty fishNumberProperty = new SimpleIntegerProperty(INITIAL_FISH_NUMBER);
     private final IntegerProperty sharkNumberProperty = new SimpleIntegerProperty(INITIAL_SHARK_NUMBER);
 
-    public WaTorModel() {
+    public WaTorConfigModel() {
     }
 
     public IntegerProperty speedProperty() {

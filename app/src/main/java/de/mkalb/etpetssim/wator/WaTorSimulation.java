@@ -7,7 +7,7 @@ public final class WaTorSimulation {
 
     public enum SimulationStatus {NEW, STARTED, FINISHED}
 
-    private final WaTorModel waTorModel;
+    private final WaTorConfigModel waTorConfigModel;
     private final WaTorTerritory territory;
     private final Random random;
     private long sequence;
@@ -16,9 +16,9 @@ public final class WaTorSimulation {
     private int currentSharkNumber;
     private final SortedMap<Long, WaTorCreature> creatures;
 
-    public WaTorSimulation(WaTorModel waTorModel) {
-        this.waTorModel = waTorModel;
-        territory = new WaTorTerritory(waTorModel.xSize(), waTorModel.ySize());
+    public WaTorSimulation(WaTorConfigModel waTorConfigModel) {
+        this.waTorConfigModel = waTorConfigModel;
+        territory = new WaTorTerritory(waTorConfigModel.xSize(), waTorConfigModel.ySize());
         simulationStatus = SimulationStatus.NEW;
         random = new Random();
         currentFishNumber = 0;
@@ -27,21 +27,21 @@ public final class WaTorSimulation {
     }
 
     WaTorFish newFish(WaTorCoordinate coordinate) {
-        WaTorFish waTorFish = new WaTorFish(sequence, waTorModel.timeCounter(), coordinate);
+        WaTorFish waTorFish = new WaTorFish(sequence, waTorConfigModel.timeCounter(), coordinate);
         currentFishNumber++;
         sequence++;
         return waTorFish;
     }
 
     WaTorShark newShark(WaTorCoordinate coordinate) {
-        WaTorShark waTorShark = new WaTorShark(sequence, waTorModel.timeCounter(), coordinate, 10);
+        WaTorShark waTorShark = new WaTorShark(sequence, waTorConfigModel.timeCounter(), coordinate, 10);
         currentSharkNumber++;
         sequence++;
         return waTorShark;
     }
 
     WaTorCoordinate randomCoordinate() {
-        return new WaTorCoordinate(random.nextInt(waTorModel.xSize()), random.nextInt(waTorModel.ySize()));
+        return new WaTorCoordinate(random.nextInt(waTorConfigModel.xSize()), random.nextInt(waTorConfigModel.ySize()));
     }
 
     void fillContainerWithCreatures(Function<WaTorCoordinate, WaTorCreature> creatureSupplier,
@@ -67,11 +67,11 @@ public final class WaTorSimulation {
         if (simulationStatus != SimulationStatus.NEW) {
             throw new IllegalStateException();
         }
-        waTorModel.resetTimeCounter();
-        System.out.println("Start simulation: " + waTorModel.timeCounter());
+        waTorConfigModel.resetTimeCounter();
+        System.out.println("Start simulation: " + waTorConfigModel.timeCounter());
 
-        fillContainerWithCreatures(this::newFish, waTorModel::fishNumber);
-        fillContainerWithCreatures(this::newShark, waTorModel::sharkNumber);
+        fillContainerWithCreatures(this::newFish, waTorConfigModel::fishNumber);
+        fillContainerWithCreatures(this::newShark, waTorConfigModel::sharkNumber);
 
         simulationStatus = SimulationStatus.STARTED;
 
@@ -92,7 +92,7 @@ public final class WaTorSimulation {
 
     private void simulateCreature(WaTorCreature creature) {
         WaTorCoordinate coordinate = creature.currentPlace();
-        List<WaTorCoordinate> neighbors = coordinate.neighbors(waTorModel.xSize(), waTorModel.ySize());
+        List<WaTorCoordinate> neighbors = coordinate.neighbors(waTorConfigModel.xSize(), waTorConfigModel.ySize());
         List<WaTorCoordinate> emptyNeighbors = neighbors.stream().filter(territory::isEmpty).toList();
 
         switch (creature) {
@@ -103,10 +103,10 @@ public final class WaTorSimulation {
                     territory.moveId(fish.sequenceId(), coordinate, newCoordinate);
                     fish.moveTo(newCoordinate);
                     // Reproduce
-                    if (fish.age(waTorModel.timeCounter()) >= 5) {
+                    if (fish.age(waTorConfigModel.timeCounter()) >= 5) {
                         if (fish.numberOfReproductions() < 20) {
                             if (fish.timeOfLastReproduction().isEmpty() ||
-                                    ((waTorModel.timeCounter() - fish.timeOfLastReproduction().getAsLong()) >= 3)) {
+                                    ((waTorConfigModel.timeCounter() - fish.timeOfLastReproduction().getAsLong()) >= 3)) {
                                 WaTorFish childFish = newFish(coordinate);
                                 creatures.put(childFish.sequenceId(), childFish);
                                 territory.placeIdAt(childFish.sequenceId(), coordinate);
@@ -115,7 +115,7 @@ public final class WaTorSimulation {
                         }
                     }
                 }
-                if (fish.age(waTorModel.timeCounter()) >= 20) {
+                if (fish.age(waTorConfigModel.timeCounter()) >= 20) {
                     // Fish dies
                     territory.removeIdAt(fish.currentPlace());
                     creatures.remove(fish.sequenceId());
@@ -163,10 +163,10 @@ public final class WaTorSimulation {
                     shark.moveTo(newCoordinate);
 
                     // Reproduce shark if possible
-                    if ((shark.age(waTorModel.timeCounter()) >= 15) && (shark.currentEnergy() > 5)) {
+                    if ((shark.age(waTorConfigModel.timeCounter()) >= 15) && (shark.currentEnergy() > 5)) {
                         if (shark.numberOfReproductions() < 20) {
                             if (shark.timeOfLastReproduction().isEmpty() ||
-                                    ((waTorModel.timeCounter() - shark.timeOfLastReproduction().getAsLong()) >= 3)) {
+                                    ((waTorConfigModel.timeCounter() - shark.timeOfLastReproduction().getAsLong()) >= 3)) {
                                 WaTorShark childShark = newShark(coordinate);
                                 creatures.put(childShark.sequenceId(), childShark);
                                 territory.placeIdAt(childShark.sequenceId(), coordinate);
@@ -176,7 +176,7 @@ public final class WaTorSimulation {
                     }
                 }
 
-                if ((shark.currentEnergy() <= 0) || (shark.age(waTorModel.timeCounter()) >= 50)) {
+                if ((shark.currentEnergy() <= 0) || (shark.age(waTorConfigModel.timeCounter()) >= 50)) {
                     // Shark dies
                     territory.removeIdAt(shark.currentPlace());
                     creatures.remove(shark.sequenceId());
@@ -191,8 +191,8 @@ public final class WaTorSimulation {
         if (simulationStatus != SimulationStatus.STARTED) {
             throw new IllegalStateException();
         }
-        waTorModel.incrementTimeCounter();
-        // System.out.println("Update simulation: " + waTorModel.timeCounter());
+        waTorConfigModel.incrementTimeCounter();
+        // System.out.println("Update simulation: " + waTorConfigModel.timeCounter());
 
         List<Long> currentCreatureIds = new ArrayList<>(creatures.keySet());
         currentCreatureIds.forEach(id -> {

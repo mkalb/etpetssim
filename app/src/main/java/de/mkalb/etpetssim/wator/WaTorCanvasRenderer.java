@@ -9,12 +9,12 @@ import java.util.function.*;
 
 public final class WaTorCanvasRenderer {
 
-    private final WaTorModel waTorModel;
+    private final WaTorConfigModel waTorConfigModel;
     private final Canvas simulationCanvas;
     private final Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction;
 
-    public WaTorCanvasRenderer(WaTorModel waTorModel, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
-        this.waTorModel = waTorModel;
+    public WaTorCanvasRenderer(WaTorConfigModel waTorConfigModel, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
+        this.waTorConfigModel = waTorConfigModel;
         this.creatureFunction = creatureFunction;
         simulationCanvas = new Canvas(calculateCanvasWidth(), calculateCanvasHeight());
     }
@@ -24,11 +24,11 @@ public final class WaTorCanvasRenderer {
     }
 
     private int calculateCanvasWidth() {
-        return waTorModel.xSize() * waTorModel.cellLength();
+        return waTorConfigModel.xSize() * waTorConfigModel.cellLength();
     }
 
     private int calculateCanvasHeight() {
-        return waTorModel.ySize() * waTorModel.cellLength();
+        return waTorConfigModel.ySize() * waTorConfigModel.cellLength();
     }
 
     void prepareStart() {
@@ -38,12 +38,12 @@ public final class WaTorCanvasRenderer {
 
     Color adjustColor(Color color, WaTorShark shark) {
         double energyFactor = Math.min(shark.currentEnergy() / 10.0, 1.0);
-        double ageFactor = Math.min((shark.age(waTorModel.timeCounter())) / 100.0, 1.0);
+        double ageFactor = Math.min((shark.age(waTorConfigModel.timeCounter())) / 100.0, 1.0);
         return color.interpolate(Color.RED, energyFactor).interpolate(Color.BLACK, ageFactor);
     }
 
     Color adjustColor(Color color, WaTorFish fish) {
-        double ageFactor = Math.min((fish.age(waTorModel.timeCounter())) / 100.0, 1.0);
+        double ageFactor = Math.min((fish.age(waTorConfigModel.timeCounter())) / 100.0, 1.0);
         return color.interpolate(Color.BLACK, ageFactor);
     }
 
@@ -53,8 +53,8 @@ public final class WaTorCanvasRenderer {
         double height = simulationCanvas.getHeight();
         simulationGraphicsContext.setFill(Color.DARKBLUE.darker());
         simulationGraphicsContext.fillRect(0, 0, width, height);
-        for (int x = 0; x < waTorModel.xSize(); x++) {
-            for (int y = 0; y < waTorModel.ySize(); y++) {
+        for (int x = 0; x < waTorConfigModel.xSize(); x++) {
+            for (int y = 0; y < waTorConfigModel.ySize(); y++) {
                 Optional<WaTorCreature> creature = creatureFunction.apply(new WaTorCoordinate(x, y));
                 if (creature.isPresent()) {
                     simulationGraphicsContext.setFill(
@@ -62,7 +62,7 @@ public final class WaTorCanvasRenderer {
                                 case WaTorFish fish -> adjustColor(Color.GREEN, fish);
                                 case WaTorShark shark -> adjustColor(Color.ORANGE, shark);
                             });
-                    simulationGraphicsContext.fillRect(x * waTorModel.cellLength(), y * waTorModel.cellLength(), waTorModel.cellLength(), waTorModel.cellLength());
+                    simulationGraphicsContext.fillRect(x * waTorConfigModel.cellLength(), y * waTorConfigModel.cellLength(), waTorConfigModel.cellLength(), waTorConfigModel.cellLength());
                 }
             }
         }

@@ -7,13 +7,13 @@ import java.util.*;
 
 public final class WaTorController {
 
-    private final WaTorModel waTorModel;
+    private final WaTorConfigModel waTorConfigModel;
     private final WaTorViewBuilder waTorViewBuilder;
     private @Nullable WaTorSimulation waTorSimulation;
 
     public WaTorController() {
-        waTorModel = new WaTorModel();
-        waTorViewBuilder = new WaTorViewBuilder(waTorModel,
+        waTorConfigModel = new WaTorConfigModel();
+        waTorViewBuilder = new WaTorViewBuilder(waTorConfigModel,
                 this::startSimulation,
                 this::updateSimulation,
                 this::creatureAt);
@@ -30,7 +30,7 @@ public final class WaTorController {
     }
 
     public boolean startSimulation() {
-        waTorSimulation = new WaTorSimulation(waTorModel);
+        waTorSimulation = new WaTorSimulation(waTorConfigModel);
         return waTorSimulation.startSimulation() != WaTorSimulation.SimulationStatus.STARTED;
     }
 

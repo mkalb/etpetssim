@@ -18,14 +18,14 @@ import java.util.function.*;
 
 public final class WaTorViewBuilder implements Builder<Region> {
 
-    private final WaTorModel waTorModel;
+    private final WaTorConfigModel waTorConfigModel;
     private final BooleanSupplier startSimulationSupplier;
     private final BooleanSupplier updateSimulationSupplier;
     private final Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction;
     private @Nullable Timeline timeline;
 
-    public WaTorViewBuilder(WaTorModel waTorModel, BooleanSupplier startSimulationSupplier, BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
-        this.waTorModel = waTorModel;
+    public WaTorViewBuilder(WaTorConfigModel waTorConfigModel, BooleanSupplier startSimulationSupplier, BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
+        this.waTorConfigModel = waTorConfigModel;
         this.startSimulationSupplier = startSimulationSupplier;
         this.updateSimulationSupplier = updateSimulationSupplier;
         this.creatureFunction = creatureFunction;
@@ -33,7 +33,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     @Override
     public Region build() {
-        WaTorCanvasRenderer canvasRenderer = new WaTorCanvasRenderer(waTorModel, creatureFunction);
+        WaTorCanvasRenderer canvasRenderer = new WaTorCanvasRenderer(waTorConfigModel, creatureFunction);
 
         Region configRegion = createConfigRegion();
         Region simulationRegion = createSimulationRegion(canvasRenderer.simulationCanvas());
@@ -62,20 +62,20 @@ public final class WaTorViewBuilder implements Builder<Region> {
     }
 
     private Region createConfigRegion() {
-        ChoiceBox<Integer> choiceBox = new ChoiceBox<>(waTorModel.cellLengthChoices());
-        choiceBox.valueProperty().bindBidirectional(waTorModel.cellLengthProperty());
+        ChoiceBox<Integer> choiceBox = new ChoiceBox<>(waTorConfigModel.cellLengthChoices());
+        choiceBox.valueProperty().bindBidirectional(waTorConfigModel.cellLengthProperty());
 
-        Slider xSizeSlider = new Slider(WaTorModel.MIN_SIZE, Math.round(2048 / waTorModel.cellLength()), waTorModel.xSize());
-        initConfigSlider(xSizeSlider, 128 / waTorModel.cellLength(), waTorModel.xSizeProperty());
+        Slider xSizeSlider = new Slider(WaTorConfigModel.MIN_SIZE, Math.round(2048 / waTorConfigModel.cellLength()), waTorConfigModel.xSize());
+        initConfigSlider(xSizeSlider, 128 / waTorConfigModel.cellLength(), waTorConfigModel.xSizeProperty());
 
-        Slider ySizeSlider = new Slider(WaTorModel.MIN_SIZE, Math.round(2048 / waTorModel.cellLength()), waTorModel.ySize());
-        initConfigSlider(ySizeSlider, 128 / waTorModel.cellLength(), waTorModel.ySizeProperty());
+        Slider ySizeSlider = new Slider(WaTorConfigModel.MIN_SIZE, Math.round(2048 / waTorConfigModel.cellLength()), waTorConfigModel.ySize());
+        initConfigSlider(ySizeSlider, 128 / waTorConfigModel.cellLength(), waTorConfigModel.ySizeProperty());
 
-        Slider fishNumberSlider = new Slider(0.0d, Math.round(waTorModel.xSize() * waTorModel.ySize()) / 4, waTorModel.fishNumber());
-        initConfigSlider(fishNumberSlider, Math.round(waTorModel.xSize() * waTorModel.ySize()) / 32, waTorModel.fishNumberProperty());
+        Slider fishNumberSlider = new Slider(0.0d, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 4, waTorConfigModel.fishNumber());
+        initConfigSlider(fishNumberSlider, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 32, waTorConfigModel.fishNumberProperty());
 
-        Slider sharkNumberSlider = new Slider(0.0d, Math.round(waTorModel.xSize() * waTorModel.ySize()) / 8, waTorModel.sharkNumber());
-        initConfigSlider(sharkNumberSlider, Math.round(waTorModel.xSize() * waTorModel.ySize()) / 64, waTorModel.sharkNumberProperty());
+        Slider sharkNumberSlider = new Slider(0.0d, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 8, waTorConfigModel.sharkNumber());
+        initConfigSlider(sharkNumberSlider, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 64, waTorConfigModel.sharkNumberProperty());
 
         // Listener
         choiceBox.valueProperty().addListener((obs, oldval, newVal) -> {
@@ -86,17 +86,17 @@ public final class WaTorViewBuilder implements Builder<Region> {
         });
         xSizeSlider.valueProperty().addListener((obs, oldval, newVal) -> {
             xSizeSlider.setValue(newVal.intValue());
-            fishNumberSlider.setMax(Math.round(newVal.intValue() * waTorModel.ySize()) / 4);
-            sharkNumberSlider.setMax(Math.round(newVal.intValue() * waTorModel.ySize()) / 8);
-            fishNumberSlider.setMajorTickUnit(Math.round(newVal.intValue() * waTorModel.ySize()) / 32);
-            sharkNumberSlider.setMajorTickUnit(Math.round(newVal.intValue() * waTorModel.ySize()) / 64);
+            fishNumberSlider.setMax(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 4);
+            sharkNumberSlider.setMax(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 8);
+            fishNumberSlider.setMajorTickUnit(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 32);
+            sharkNumberSlider.setMajorTickUnit(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 64);
         });
         ySizeSlider.valueProperty().addListener((obs, oldval, newVal) -> {
             ySizeSlider.setValue(newVal.intValue());
-            fishNumberSlider.setMax(Math.round(waTorModel.xSize() * newVal.intValue()) / 4);
-            sharkNumberSlider.setMax(Math.round(waTorModel.xSize() * newVal.intValue()) / 8);
-            fishNumberSlider.setMajorTickUnit(Math.round(waTorModel.xSize() * newVal.intValue()) / 32);
-            sharkNumberSlider.setMajorTickUnit(Math.round(waTorModel.xSize() * newVal.intValue()) / 64);
+            fishNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 4);
+            sharkNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 8);
+            fishNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 32);
+            sharkNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 64);
         });
         fishNumberSlider.valueProperty().addListener((obs, oldval, newVal) ->
                 fishNumberSlider.setValue(newVal.intValue()));
@@ -149,13 +149,13 @@ public final class WaTorViewBuilder implements Builder<Region> {
         Button pauseButton = buildControlButton("Pause", true);
         Button cancelButton = buildControlButton("Cancel", true);
 
-        Slider speedSlider = new Slider(1.0d, 25.0d, waTorModel.speedAsTenthOfASecond());
+        Slider speedSlider = new Slider(1.0d, 25.0d, waTorConfigModel.speedAsTenthOfASecond());
         speedSlider.setShowTickLabels(true);
         speedSlider.setShowTickMarks(true);
         speedSlider.setMajorTickUnit(3.0d);
         speedSlider.setMinorTickCount(0);
         speedSlider.setBlockIncrement(1.0d);
-        speedSlider.valueProperty().bindBidirectional(waTorModel.speedProperty());
+        speedSlider.valueProperty().bindBidirectional(waTorConfigModel.speedProperty());
         speedSlider.valueProperty().addListener((obs, oldval, newVal) ->
                 speedSlider.setValue(newVal.intValue()));
         speedSlider.getStyleClass().add("control-slider");
@@ -252,7 +252,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
     }
 
     private void createAndPlayTimeline(WaTorCanvasRenderer canvasRenderer, Runnable actionAfterSimulationStopped) {
-        timeline = new Timeline(new KeyFrame(waTorModel.speedAsDuration(), event -> {
+        timeline = new Timeline(new KeyFrame(waTorConfigModel.speedAsDuration(), event -> {
             boolean finished = updateSimulationSupplier.getAsBoolean();
             canvasRenderer.draw();
             if (finished) {
@@ -274,15 +274,15 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     private Region createObservationRegion() {
         List<Label> labels = new ArrayList<>();
-        labels.add(buildObservationPropertyLabel(waTorModel.speedProperty().asString("Speed: %d")));
-        labels.add(buildObservationPropertyLabel(waTorModel.timeCounterProperty().asString("Time: %d")));
+        labels.add(buildObservationPropertyLabel(waTorConfigModel.speedProperty().asString("Speed: %d")));
+        labels.add(buildObservationPropertyLabel(waTorConfigModel.timeCounterProperty().asString("Time: %d")));
         labels.add(buildObservationPropertyLabel(Bindings.createStringBinding(
-                () -> String.format("Cell length: %d", waTorModel.cellLengthProperty().getValue()),
-                waTorModel.cellLengthProperty())));
-        labels.add(buildObservationPropertyLabel(waTorModel.xSizeProperty().asString("X size: %d")));
-        labels.add(buildObservationPropertyLabel(waTorModel.ySizeProperty().asString("Y size: %d")));
-        labels.add(buildObservationPropertyLabel(waTorModel.fishNumberProperty().asString("Fish number: %d")));
-        labels.add(buildObservationPropertyLabel(waTorModel.sharkNumberProperty().asString("Shark number: %d")));
+                () -> String.format("Cell length: %d", waTorConfigModel.cellLengthProperty().getValue()),
+                waTorConfigModel.cellLengthProperty())));
+        labels.add(buildObservationPropertyLabel(waTorConfigModel.xSizeProperty().asString("X size: %d")));
+        labels.add(buildObservationPropertyLabel(waTorConfigModel.ySizeProperty().asString("Y size: %d")));
+        labels.add(buildObservationPropertyLabel(waTorConfigModel.fishNumberProperty().asString("Fish number: %d")));
+        labels.add(buildObservationPropertyLabel(waTorConfigModel.sharkNumberProperty().asString("Shark number: %d")));
 
         VBox vbox = new VBox();
         vbox.getChildren().addAll(labels);
