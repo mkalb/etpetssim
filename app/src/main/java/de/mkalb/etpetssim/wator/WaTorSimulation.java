@@ -65,8 +65,6 @@ public final class WaTorSimulation {
         if (simulationStatus != SimulationStatus.NEW) {
             throw new IllegalStateException();
         }
-        waTorSimulationModel.resetTimeCounter();
-        System.out.println("Start simulation: " + waTorSimulationModel.timeCounter());
 
         fillContainerWithCreatures(this::newFish, waTorConfigModel::fishNumber);
         fillContainerWithCreatures(this::newShark, waTorConfigModel::sharkNumber);
