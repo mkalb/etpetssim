@@ -22,25 +22,23 @@ public final class WaTorViewBuilder implements Builder<Region> {
     private final WaTorSimulationModel waTorSimulationModel;
     private final BooleanSupplier startSimulationSupplier;
     private final BooleanSupplier updateSimulationSupplier;
-    private final Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction;
+    private final WaTorCanvasRenderer canvasRenderer;
     private @Nullable Timeline timeline;
 
-    public WaTorViewBuilder(WaTorConfigModel waTorConfigModel, WaTorSimulationModel waTorSimulationModel,
-
+    public WaTorViewBuilder(WaTorConfigModel waTorConfigModel,
+                            WaTorSimulationModel waTorSimulationModel,
                             BooleanSupplier startSimulationSupplier,
-                            BooleanSupplier updateSimulationSupplier, Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
+                            BooleanSupplier updateSimulationSupplier,
+                            Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
         this.waTorConfigModel = waTorConfigModel;
         this.waTorSimulationModel = waTorSimulationModel;
         this.startSimulationSupplier = startSimulationSupplier;
         this.updateSimulationSupplier = updateSimulationSupplier;
-        this.creatureFunction = creatureFunction;
+        canvasRenderer = new WaTorCanvasRenderer(waTorConfigModel, waTorSimulationModel, creatureFunction);
     }
 
     @Override
     public Region build() {
-        WaTorCanvasRenderer canvasRenderer = new WaTorCanvasRenderer(waTorConfigModel, waTorSimulationModel,
-                creatureFunction);
-
         Region configRegion = createConfigRegion();
         Region simulationRegion = createSimulationRegion(canvasRenderer.simulationCanvas());
         Region controlRegion = createControlRegion(
