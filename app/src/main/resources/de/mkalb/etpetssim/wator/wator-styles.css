@@ -90,6 +90,7 @@
     -fx-border-width: 1;
     -fx-border-radius: 5;
     -fx-min-width: 1200px;
+    -fx-alignment: center-left;
 }
 
 .simulation-scroll-pane {

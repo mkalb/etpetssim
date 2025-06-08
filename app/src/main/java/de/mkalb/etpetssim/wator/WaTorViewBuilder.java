@@ -169,10 +169,12 @@ public final class WaTorViewBuilder implements Builder<Region> {
         Button pauseButton = buildControlButton("Pause", true);
         Button cancelButton = buildControlButton("Cancel", true);
 
-        Slider speedSlider = new Slider(1.0d, 25.0d, waTorConfigModel.speedAsTenthOfASecond());
+        Label speedLabel = new Label("Speed");
+
+        Slider speedSlider = new Slider(5.0d, 100.0d, waTorConfigModel.speedAsHundredthOfASecond());
         speedSlider.setShowTickLabels(true);
         speedSlider.setShowTickMarks(true);
-        speedSlider.setMajorTickUnit(3.0d);
+        speedSlider.setMajorTickUnit(5.0d);
         speedSlider.setMinorTickCount(0);
         speedSlider.setBlockIncrement(1.0d);
         speedSlider.valueProperty().bindBidirectional(waTorConfigModel.speedProperty());
@@ -181,7 +183,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
         speedSlider.getStyleClass().add("control-slider");
 
         HBox hbox = new HBox();
-        hbox.getChildren().addAll(startButton, cancelButton, speedSlider);
+        hbox.getChildren().addAll(startButton, cancelButton, speedLabel, speedSlider);
         hbox.getStyleClass().add("control-hbox");
 
         Runnable actionAfterSimulationStopped = () -> {
