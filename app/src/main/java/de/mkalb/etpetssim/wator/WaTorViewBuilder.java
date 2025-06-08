@@ -13,6 +13,8 @@ import javafx.util.Builder;
 import org.jspecify.annotations.Nullable;
 
 import java.net.URL;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.*;
 
@@ -41,12 +43,15 @@ public final class WaTorViewBuilder implements Builder<Region> {
     public Region build() {
         Region configRegion = createConfigRegion();
         Region simulationRegion = createSimulationRegion(canvasRenderer.simulationCanvas());
+        Region observationRegion = createObservationRegion();
+        observationRegion.setVisible(false);
+
         Region controlRegion = createControlRegion(
                 canvasRenderer,
                 () -> configRegion.setDisable(false),
-                () -> configRegion.setDisable(true)
+                () -> configRegion.setDisable(true),
+                () -> observationRegion.setVisible(true)
         );
-        Region observationRegion = createObservationRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
@@ -155,7 +160,9 @@ public final class WaTorViewBuilder implements Builder<Region> {
     }
 
     private Region createControlRegion(WaTorCanvasRenderer canvasRenderer,
-                                       Runnable enableConfigRegionRunnable, Runnable disableConfigRegionRunnable) {
+                                       Runnable enableConfigRegionRunnable,
+                                       Runnable disableConfigRegionRunnable,
+                                       Runnable observationRegionVisibleRunnable) {
         Button startButton = buildControlButton("Start", false);
         Button resumeButton = buildControlButton("Resume", true);
         Button pauseButton = buildControlButton("Pause", true);
@@ -199,6 +206,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
             speedSlider.setDisable(true);
 
             canvasRenderer.prepareStart();
+            observationRegionVisibleRunnable.run();
 
             boolean finished = startSimulationSupplier.getAsBoolean();
             canvasRenderer.draw();
@@ -288,6 +296,12 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     private Region createObservationRegion() {
         List<Label> labels = new ArrayList<>();
+        labels.add(buildPropertyLabel(Bindings.createStringBinding(
+                () -> "Start time: " +
+                        DateTimeFormatter.ofPattern("HH:mm:ss")
+                                         .withZone(ZoneId.systemDefault())
+                                         .format(waTorSimulationModel.startTimeProperty().get()),
+                waTorSimulationModel.startTimeProperty())));
         labels.add(buildPropertyLabel(waTorSimulationModel.timeCounterProperty().asString("Time: %d")));
         labels.add(buildPropertyLabel(waTorSimulationModel.fishNumberProperty().asString("Fish: %d")));
         labels.add(buildPropertyLabel(waTorSimulationModel.sharkNumberProperty().asString("Shark: %d")));
