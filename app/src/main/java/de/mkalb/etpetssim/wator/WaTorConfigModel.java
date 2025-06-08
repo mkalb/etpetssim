@@ -8,16 +8,17 @@ import java.util.*;
 
 public final class WaTorConfigModel {
 
-    public static final int MIN_SIZE = 64;
+    public static final int MIN_SIZE = 32;
+    public static final int MAX_SIZE = 256;
 
     private static final int INITIAL_SPEED = 25; // hundredth of a second
     private static final int INITIAL_X_SIZE = 256;
     private static final int INITIAL_Y_SIZE = 128;
-    private static final int INITIAL_CELL_LENGTH = 2;
-    private static final int INITIAL_FISH_NUMBER = 512;
-    private static final int INITIAL_SHARK_NUMBER = 256;
+    private static final int INITIAL_CELL_LENGTH = 4;
+    private static final int INITIAL_FISH_NUMBER = 128;
+    private static final int INITIAL_SHARK_NUMBER = 32;
 
-    private static final List<Integer> CELL_LENGTH_CHOICES = List.of(1, 2, 4, 8);
+    private static final List<Integer> CELL_LENGTH_CHOICES = List.of(1, 2, 4, 8, 16);
 
     private final IntegerProperty speedProperty = new SimpleIntegerProperty(INITIAL_SPEED); // hundredth of a second
     private final IntegerProperty xSizeProperty = new SimpleIntegerProperty(INITIAL_X_SIZE);

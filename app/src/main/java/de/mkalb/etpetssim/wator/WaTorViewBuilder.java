@@ -71,11 +71,11 @@ public final class WaTorViewBuilder implements Builder<Region> {
         ChoiceBox<Integer> choiceBox = new ChoiceBox<>(waTorConfigModel.cellLengthChoices());
         choiceBox.valueProperty().bindBidirectional(waTorConfigModel.cellLengthProperty());
 
-        Slider xSizeSlider = new Slider(WaTorConfigModel.MIN_SIZE, Math.round(2048 / waTorConfigModel.cellLength()), waTorConfigModel.xSize());
-        initConfigSlider(xSizeSlider, 128 / waTorConfigModel.cellLength(), waTorConfigModel.xSizeProperty());
+        Slider xSizeSlider = new Slider(WaTorConfigModel.MIN_SIZE, WaTorConfigModel.MAX_SIZE, waTorConfigModel.xSize());
+        initConfigSlider(xSizeSlider, 16, waTorConfigModel.xSizeProperty());
 
-        Slider ySizeSlider = new Slider(WaTorConfigModel.MIN_SIZE, Math.round(2048 / waTorConfigModel.cellLength()), waTorConfigModel.ySize());
-        initConfigSlider(ySizeSlider, 128 / waTorConfigModel.cellLength(), waTorConfigModel.ySizeProperty());
+        Slider ySizeSlider = new Slider(WaTorConfigModel.MIN_SIZE, WaTorConfigModel.MAX_SIZE, waTorConfigModel.ySize());
+        initConfigSlider(ySizeSlider, 32, waTorConfigModel.ySizeProperty());
 
         Slider fishNumberSlider = new Slider(0.0d, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 4, waTorConfigModel.fishNumber());
         initConfigSlider(fishNumberSlider, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 32, waTorConfigModel.fishNumberProperty());
@@ -84,12 +84,6 @@ public final class WaTorViewBuilder implements Builder<Region> {
         initConfigSlider(sharkNumberSlider, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 64, waTorConfigModel.sharkNumberProperty());
 
         // Listener
-        choiceBox.valueProperty().addListener((obs, oldval, newVal) -> {
-            xSizeSlider.setMax(Math.round(2048 / newVal.intValue()));
-            ySizeSlider.setMax(Math.round(2048 / newVal.intValue()));
-            xSizeSlider.setMajorTickUnit(128 / newVal.intValue());
-            ySizeSlider.setMajorTickUnit(128 / newVal.intValue());
-        });
         xSizeSlider.valueProperty().addListener((obs, oldval, newVal) -> {
             xSizeSlider.setValue(newVal.intValue());
             fishNumberSlider.setMax(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 4);
