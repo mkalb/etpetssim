@@ -7,6 +7,9 @@ import java.util.*;
 
 public final class WaTorController {
 
+    private static final int MAX_SIMULATION_TIME = 200;
+    private static final double MAX_PROPORTION_OF_SIM_TIME_TO_SPEED = 0.75d;
+
     private final WaTorConfigModel waTorConfigModel;
     private final WaTorSimulationModel waTorSimulationModel;
     private final WaTorViewBuilder waTorViewBuilder;
@@ -38,17 +41,21 @@ public final class WaTorController {
     }
 
     public boolean updateSimulation() {
-        long start = System.currentTimeMillis();
-        Objects.requireNonNull(waTorSimulation);
+        // Update simulation and measure the time taken
+        long startMillis = System.currentTimeMillis();
         WaTorSimulation.SimulationStatus status = waTorSimulation.updateSimulation();
-        long end = System.currentTimeMillis();
+        long simulationTime = System.currentTimeMillis() - startMillis;
 
-        // Print elapsed time
-        System.out.println("Simulation update took " + (end - start) + " ms");
-
-        // Print Memory usage
-        long memoryUsed = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        System.out.println("Memory used: " + memoryUsed / (1024 * 1024) + " MB");
+        // Check if the simulation update took too long
+        if (status == WaTorSimulation.SimulationStatus.STARTED) {
+            if ((simulationTime > MAX_SIMULATION_TIME)
+                    || (simulationTime > (waTorConfigModel.speed() * MAX_PROPORTION_OF_SIM_TIME_TO_SPEED))) {
+                System.err.println("Error: Simulation update took too long: " + simulationTime + " ms");
+                return true;
+            } else {
+                System.out.println("Simulation update took: " + simulationTime + " ms");
+            }
+        }
 
         return status != WaTorSimulation.SimulationStatus.STARTED;
     }
