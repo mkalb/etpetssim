@@ -13,8 +13,9 @@ public final class WaTorCanvasRenderer {
         DRAWN, SKIPPED, ERROR
     }
 
-    private static final int MAX_ALLOWED_DRAW_TIME = 400;
-    private static final int MAX_ALLOWED_AVG_DRAW_TIME = 200;
+    private static final int MAX_ALLOWED_DRAW_TIME = 200;
+    private static final int MAX_ALLOWED_AVG_DRAW_TIME = 150;
+    private static final double MAX_PROPORTION_OF_DRAW_TIME_TO_SPEED = 0.5d;
     private static final int FORCE_EVAL_DRAW_TIME = 100;
     private static final int FREQ_MIN = 2;
     private static final int FREQ_MAX = 30;
@@ -142,7 +143,8 @@ public final class WaTorCanvasRenderer {
         // System.out.println("Draw!                frameCounter=" + frameCounter + ", drawEveryNFrames=" + drawEveryNFrames + ", drawCount=" + drawCount + ", totalDrawTime=" + totalDrawTime + ", drawTime=" + drawTime);
 
         // Check if draw time exceeds the allowed limit
-        if (drawTime > MAX_ALLOWED_DRAW_TIME) {
+        if ((drawTime > MAX_ALLOWED_DRAW_TIME)
+                || (drawTime > (waTorConfigModel.speed() * MAX_PROPORTION_OF_DRAW_TIME_TO_SPEED))) {
             System.err.println("Error: Draw time too high! frameCounter=" + frameCounter + ", drawEveryNFrames=" + drawEveryNFrames + ", drawCount=" + drawCount + ", totalDrawTime=" + totalDrawTime + ", drawTime=" + drawTime);
             return DrawingStatus.ERROR;
         } else if (drawTime > FORCE_EVAL_DRAW_TIME) {
