@@ -170,7 +170,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
         Label speedLabel = new Label("Speed");
 
-        Slider speedSlider = new Slider(5.0d, 100.0d, waTorConfigModel.speedAsHundredthOfASecond());
+        Slider speedSlider = new Slider(10.0d, 2000.0d, waTorConfigModel.speed());
         speedSlider.setShowTickLabels(true);
         speedSlider.setShowTickMarks(true);
         speedSlider.setMajorTickUnit(5.0d);
@@ -204,21 +204,19 @@ public final class WaTorViewBuilder implements Builder<Region> {
             pauseButton.setDisable(true);
             cancelButton.setDisable(true);
             speedSlider.setDisable(true);
+            disableConfigRegionRunnable.run();
 
-            canvasRenderer.prepareStart();
+            boolean stoppedSimulation = startSimulationSupplier.getAsBoolean();
+            canvasRenderer.prepareInitialStart();
             observationRegionVisibleRunnable.run();
 
-            boolean finished = startSimulationSupplier.getAsBoolean();
-            canvasRenderer.draw();
-
-            if (finished) {
+            if (stoppedSimulation) {
+                enableConfigRegionRunnable.run();
                 startButton.setDisable(false);
                 speedSlider.setDisable(false);
                 // TODO Show Message ???
             } else {
-                disableConfigRegionRunnable.run();
                 hbox.getChildren().set(0, pauseButton); // Replace runButton with pauseButton
-
                 pauseButton.setDisable(false);
                 cancelButton.setDisable(false);
                 createAndPlayTimeline(canvasRenderer, actionAfterSimulationStopped);
@@ -232,6 +230,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
             cancelButton.setDisable(true);
             speedSlider.setDisable(true);
             disableConfigRegionRunnable.run();
+            canvasRenderer.prepareTimelineStart();
             hbox.getChildren().set(0, pauseButton); // Replace resumeButton with pauseButton
             pauseButton.setDisable(false);
             cancelButton.setDisable(false);
@@ -275,9 +274,9 @@ public final class WaTorViewBuilder implements Builder<Region> {
 
     private void createAndPlayTimeline(WaTorCanvasRenderer canvasRenderer, Runnable actionAfterSimulationStopped) {
         timeline = new Timeline(new KeyFrame(waTorConfigModel.speedAsDuration(), event -> {
-            boolean finished = updateSimulationSupplier.getAsBoolean();
-            canvasRenderer.draw();
-            if (finished) {
+            boolean stoppedSimulation = updateSimulationSupplier.getAsBoolean();
+            WaTorCanvasRenderer.DrawingStatus drawingStatus = canvasRenderer.draw(stoppedSimulation);
+            if (stoppedSimulation || (drawingStatus == WaTorCanvasRenderer.DrawingStatus.ERROR)) {
                 stopTimeline();
 
                 actionAfterSimulationStopped.run();

@@ -11,7 +11,7 @@ public final class WaTorConfigModel {
     public static final int MIN_SIZE = 32;
     public static final int MAX_SIZE = 256;
 
-    private static final int INITIAL_SPEED = 25; // hundredth of a second
+    private static final int INITIAL_SPEED = 500;
     private static final int INITIAL_X_SIZE = 256;
     private static final int INITIAL_Y_SIZE = 128;
     private static final int INITIAL_CELL_LENGTH = 4;
@@ -20,7 +20,7 @@ public final class WaTorConfigModel {
 
     private static final List<Integer> CELL_LENGTH_CHOICES = List.of(1, 2, 4, 8, 16);
 
-    private final IntegerProperty speedProperty = new SimpleIntegerProperty(INITIAL_SPEED); // hundredth of a second
+    private final IntegerProperty speedProperty = new SimpleIntegerProperty(INITIAL_SPEED);
     private final IntegerProperty xSizeProperty = new SimpleIntegerProperty(INITIAL_X_SIZE);
     private final IntegerProperty ySizeProperty = new SimpleIntegerProperty(INITIAL_Y_SIZE);
     private final Property<Integer> cellLengthProperty = new SimpleObjectProperty<>(INITIAL_CELL_LENGTH);
@@ -34,12 +34,12 @@ public final class WaTorConfigModel {
         return speedProperty;
     }
 
-    public double speedAsHundredthOfASecond() {
+    public int speed() {
         return speedProperty.get();
     }
 
     public Duration speedAsDuration() {
-        return Duration.millis(speedProperty.get() * 10);
+        return Duration.millis(speed());
     }
 
     public IntegerProperty xSizeProperty() {
