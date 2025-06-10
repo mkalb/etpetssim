@@ -7,8 +7,8 @@ import java.util.*;
 
 public final class WaTorController {
 
-    private static final int MAX_SIMULATION_TIME = 200;
-    private static final double MAX_PROPORTION_OF_SIM_TIME_TO_SPEED = 0.75d;
+    private static final int MAX_SIMULATION_TIME = 100;
+    private static final double MAX_PROPORTION_OF_SIM_TIME_TO_SPEED = 0.5d;
 
     private final WaTorConfigModel waTorConfigModel;
     private final WaTorSimulationModel waTorSimulationModel;
@@ -41,6 +41,8 @@ public final class WaTorController {
     }
 
     public boolean updateSimulation() {
+        Objects.requireNonNull(waTorSimulation);
+
         // Update simulation and measure the time taken
         long startMillis = System.currentTimeMillis();
         WaTorSimulation.SimulationStatus status = waTorSimulation.updateSimulation();
