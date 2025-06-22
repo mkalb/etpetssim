@@ -87,32 +87,30 @@ public final class WaTorViewBuilder implements Builder<Region> {
         initConfigSlider(sharkNumberSlider, Math.round(waTorConfigModel.xSize() * waTorConfigModel.ySize()) / 64, waTorConfigModel.sharkNumberProperty());
 
         // Listener
-        xSizeSlider.valueProperty().addListener((obs, oldval, newVal) -> {
-            xSizeSlider.setValue(newVal.intValue());
-            fishNumberSlider.setMax(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 4);
-            sharkNumberSlider.setMax(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 8);
-            fishNumberSlider.setMajorTickUnit(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 32);
-            sharkNumberSlider.setMajorTickUnit(Math.round(newVal.intValue() * waTorConfigModel.ySize()) / 64);
+        xSizeSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+            if (!isChanging) {
+                fishNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * xSizeSlider.getValue()) / 4);
+                sharkNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * xSizeSlider.getValue()) / 8);
+                fishNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * xSizeSlider.getValue()) / 32);
+                sharkNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * xSizeSlider.getValue()) / 64);
+            }
         });
-        ySizeSlider.valueProperty().addListener((obs, oldval, newVal) -> {
-            ySizeSlider.setValue(newVal.intValue());
-            fishNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 4);
-            sharkNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 8);
-            fishNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 32);
-            sharkNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * newVal.intValue()) / 64);
+        ySizeSlider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+            if (!isChanging) {
+                fishNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * ySizeSlider.getValue()) / 4);
+                sharkNumberSlider.setMax(Math.round(waTorConfigModel.xSize() * ySizeSlider.getValue()) / 8);
+                fishNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * ySizeSlider.getValue()) / 32);
+                sharkNumberSlider.setMajorTickUnit(Math.round(waTorConfigModel.xSize() * ySizeSlider.getValue()) / 64);
+            }
         });
-        fishNumberSlider.valueProperty().addListener((obs, oldval, newVal) ->
-                fishNumberSlider.setValue(newVal.intValue()));
-        sharkNumberSlider.valueProperty().addListener((obs, oldval, newVal) ->
-                sharkNumberSlider.setValue(newVal.intValue()));
 
         Label cellLengthLabel = buildPropertyLabel(Bindings.createStringBinding(
                 () -> String.format("%d", waTorConfigModel.cellLengthProperty().getValue()),
                 waTorConfigModel.cellLengthProperty()));
-        Label xSizeLabel = buildPropertyLabel(waTorConfigModel.xSizeProperty().asString("%d"));
-        Label ySizeLabel = buildPropertyLabel(waTorConfigModel.ySizeProperty().asString("%d"));
-        Label fishNumberLabel = buildPropertyLabel(waTorConfigModel.fishNumberProperty().asString("%d"));
-        Label sharkNumberLabel = buildPropertyLabel(waTorConfigModel.sharkNumberProperty().asString("%d"));
+        Label xSizeLabel = buildSliderLabelRounded(xSizeSlider);
+        Label ySizeLabel = buildSliderLabelRounded(ySizeSlider);
+        Label fishNumberLabel = buildSliderLabelRounded(fishNumberSlider);
+        Label sharkNumberLabel = buildSliderLabelRounded(sharkNumberSlider);
 
         GridPane gridPane = new GridPane();
         gridPane.getStyleClass().add("config-grid-pane");
@@ -138,14 +136,32 @@ public final class WaTorViewBuilder implements Builder<Region> {
         return gridPane;
     }
 
+    public Label buildSliderLabelRounded(Slider slider) {
+        DoubleFunction<String> formatter = value -> String.valueOf(Math.round(value));
+        Label label = new Label(formatter.apply(slider.getValue()));
+        slider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            label.setText(formatter.apply(newVal.doubleValue()));
+        });
+        return label;
+    }
+
     private void initConfigSlider(Slider slider, int majorTickUnit, IntegerProperty integerProperty) {
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
         slider.setMajorTickUnit(majorTickUnit);
         slider.setMinorTickCount(0);
         slider.setBlockIncrement(1.0d);
-        slider.valueProperty().bindBidirectional(integerProperty);
         slider.getStyleClass().add("config-slider");
+
+        slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+            if (!isChanging) {
+                integerProperty.set((int) Math.round(slider.getValue()));
+            }
+        });
+
+        integerProperty.addListener((obs, oldVal, newVal) -> {
+            slider.setValue(newVal.doubleValue());
+        });
     }
 
     private Region createSimulationRegion(Canvas simulationCanvas) {
