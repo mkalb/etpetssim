@@ -10,9 +10,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
     @SuppressWarnings("CallToSystemExit")
     public static void main(String[] args) {
-        CommandLineArguments commandLineArguments = new CommandLineArguments(args);
-        if (commandLineArguments.getBoolean(CommandLineArguments.Key.HELP, false)) {
-            commandLineArguments.printHelp();
+        CommandLineArguments arguments = new CommandLineArguments(args);
+        if (arguments.isFlagActive(CommandLineArguments.Key.HELP)) {
+            CommandLineArguments.Key.printHelp(System.out);
+            // Exit the JavaFX application after printing help
             System.exit(0);
         }
 

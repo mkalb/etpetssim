@@ -12,10 +12,6 @@ public final class CommandLineArguments {
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
      */
     private static final String ARGUMENTS_PATTERN = "--([a-zA-Z0-9\\-]+)(=(\\S+))?";
-    /**
-     * Default value for boolean flags when no value is provided.
-     */
-    private static final String FLAG_VALUE = Boolean.TRUE.toString();
 
     /**
      * Map to store parsed command-line arguments.
@@ -63,6 +59,27 @@ public final class CommandLineArguments {
                          .findFirst();
         }
 
+        /**
+         * Prints a help message listing all available command-line arguments and their descriptions.
+         *
+         * @param appendable the Appendable to which the help message will be written
+         */
+        @SuppressWarnings("HardcodedLineSeparator")
+        public static void printHelp(Appendable appendable) {
+            Objects.requireNonNull(appendable, "Appendable must not be null");
+            try {
+                appendable.append("List of available command-line arguments:\n");
+                for (Key key : values()) {
+                    appendable.append(String.format("--%s: %s%s%n",
+                            key.key(),
+                            key.description(),
+                            key.isFlag() ? " (flag)" : ""));
+                }
+            } catch (Exception e) {
+                System.err.println("Error printing help: " + e.getMessage());
+            }
+        }
+
     }
 
     /**
@@ -80,19 +97,34 @@ public final class CommandLineArguments {
         for (String arg : args) {
             Matcher matcher = pattern.matcher(arg);
             if (matcher.matches()) {
-                String keyStr = matcher.group(1);
-                String value = (matcher.group(3) != null) ? matcher.group(3) : FLAG_VALUE;
-
-                Key.fromString(keyStr).ifPresentOrElse(
-                        key -> arguments.put(key, value),
-                        () -> System.err.printf("Warning: Unknown argument '%s'. Ignored.%n", arg)
-                );
+                Optional<Key> key = Key.fromString(matcher.group(1));
+                if (key.isPresent()) {
+                    Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
+                    if (key.get().isFlag()) {
+                        // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
+                        arguments.put(key.get(),
+                                value.map(v -> parseBooleanValue(v, Boolean.TRUE))
+                                     .orElse(Boolean.TRUE)
+                                     .toString());
+                    } else {
+                        // For non-flag keys, we put the value only if it is present.
+                        value.ifPresent(v -> arguments.put(key.get(), v));
+                    }
+                } else {
+                    System.err.printf("Warning: Unknown argument '%s'. Ignored.%n", arg);
+                }
             } else {
                 System.err.printf("Warning: Argument has invalid format: '%s'. Expected format is --key=value or --flag.%n", arg);
             }
         }
     }
 
+    /**
+     * Returns the value associated with the given key.
+     *
+     * @param key the key to look up
+     * @return an Optional containing the value if present, or an empty Optional if the key is not found
+     */
     public Optional<String> getValue(Key key) {
         Objects.requireNonNull(key);
         return Optional.ofNullable(arguments.get(key));
@@ -112,9 +144,21 @@ public final class CommandLineArguments {
         if (value == null) {
             return defaultValue;
         }
+        return parseBooleanValue(value, defaultValue);
+    }
+
+    /**
+     * Parses a boolean value from the given string.
+     * Boolean values can be represented as "true", "false", "1", "0", "yes", "no", "on", or "off".
+     *
+     * @param value        the string to parse
+     * @param defaultValue the default value to return if the string is not a valid boolean
+     * @return the parsed boolean value or the defaultValue
+     */
+    private static boolean parseBooleanValue(String value, boolean defaultValue) {
         return switch (value.toLowerCase()) {
-            case "true", "1", "yes", "on" -> true;
-            case "false", "0", "no", "off" -> false;
+            case "true", "1", "yes", "on" -> Boolean.TRUE;
+            case "false", "0", "no", "off" -> Boolean.FALSE;
             default -> defaultValue;
         };
     }
@@ -144,23 +188,39 @@ public final class CommandLineArguments {
         }
     }
 
+    /**
+     * Checks if the given key is a flag and returns its active state.
+     *
+     * @param key the key to check
+     * @return true if the flag is active, false otherwise
+     * @throws IllegalArgumentException if the key is not a flag
+     */
+    public boolean isFlagActive(Key key) {
+        Objects.requireNonNull(key);
+        if (!key.isFlag()) {
+            throw new IllegalArgumentException("Key is not a flag: " + key);
+        }
+        return getBoolean(key, false);
+    }
+
+    /**
+     * Checks if the given key exists in the command-line arguments.
+     *
+     * @param key the key to check
+     * @return true if the key exists, false otherwise
+     */
     public boolean hasKey(Key key) {
         Objects.requireNonNull(key);
         return arguments.containsKey(key);
     }
 
+    /**
+     * Returns an unmodifiable set of all keys present in the command-line arguments.
+     *
+     * @return an unmodifiable set of keys
+     */
     public Set<Key> keys() {
         return Collections.unmodifiableSet(arguments.keySet());
-    }
-
-    public void printHelp() {
-        System.out.println("List of available command-line arguments:");
-        for (Key key : Key.values()) {
-            System.out.printf("--%s: %s%s%n",
-                    key.key(),
-                    key.description(),
-                    key.isFlag() ? " (flag)" : "");
-        }
     }
 
 }
