@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.CommandLineArguments;
+import de.mkalb.etpetssim.core.LanguageManager;
 import de.mkalb.etpetssim.wator.WaTorController;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -10,6 +11,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
     @SuppressWarnings("CallToSystemExit")
     public static void main(String[] args) {
+        // Parse command-line arguments
         CommandLineArguments arguments = new CommandLineArguments(args);
         if (arguments.isFlagActive(CommandLineArguments.Key.HELP)) {
             CommandLineArguments.Key.printHelp(System.out);
@@ -17,6 +19,11 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             System.exit(0);
         }
 
+        // Initialize the LanguageManager
+        String localeArgument = arguments.getValue(CommandLineArguments.Key.LOCALE).orElse(null);
+        LanguageManager.initialize(localeArgument);
+
+        // Start the JavaFX application
         launch();
     }
 
@@ -28,7 +35,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     public void start(Stage primaryStage) {
         Scene scene = createWaTorScene();
 
-        primaryStage.setTitle("extraterrestrial pets simulation");
+        primaryStage.setTitle(LanguageManager.getText("window.title"));
         primaryStage.setScene(scene);
         primaryStage.show();
     }

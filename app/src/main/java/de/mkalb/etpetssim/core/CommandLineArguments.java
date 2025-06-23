@@ -23,6 +23,7 @@ public final class CommandLineArguments {
      */
     public enum Key {
         HELP("help", "Shows this help message", true),
+        LOCALE("locale", "Sets the locale for the simulation. Format: --locale=<language>_<country> or --locale=<language>", false),
         SIMULATION("simulation", "Starts the specified simulation. Format: --simulation=<name>", false);
 
         private final String key;
