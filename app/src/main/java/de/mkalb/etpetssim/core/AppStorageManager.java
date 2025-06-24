@@ -20,6 +20,9 @@ public final class AppStorageManager {
      */
     public static final String APP_NAME = "ExtraterrestrialPetsSimulation";
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private AppStorageManager() {
     }
 
