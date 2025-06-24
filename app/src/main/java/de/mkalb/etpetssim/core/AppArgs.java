@@ -6,7 +6,7 @@ import java.util.regex.*;
 /**
  * Parses and stores command-line arguments in the format --key=value or --flag.
  */
-public final class CommandLineArguments {
+public final class AppArgs {
 
     /**
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
@@ -36,14 +36,29 @@ public final class CommandLineArguments {
             this.flag = flag;
         }
 
+        /**
+         * Returns the key as a string.
+         *
+         * @return the key string
+         */
         public String key() {
             return key;
         }
 
+        /**
+         * Returns the description of the key.
+         *
+         * @return the description string
+         */
         public String description() {
             return description;
         }
 
+        /**
+         * Returns whether this key is a flag (i.e., does not require a value).
+         *
+         * @return true if this key is a flag, false otherwise
+         */
         public boolean isFlag() {
             return flag;
         }
@@ -55,6 +70,7 @@ public final class CommandLineArguments {
          * @return an Optional containing the Key if found, or an empty Optional if not found
          */
         public static Optional<Key> fromString(String key) {
+            Objects.requireNonNull(key, "Key must not be null");
             return Arrays.stream(values())
                          .filter(argument -> argument.key.equalsIgnoreCase(key))
                          .findFirst();
@@ -77,6 +93,7 @@ public final class CommandLineArguments {
                             key.isFlag() ? " (flag)" : ""));
                 }
             } catch (Exception e) {
+                // AppLogger is not initialized yet, so we print to System.err
                 System.err.println("Error printing help: " + e.getMessage());
             }
         }
@@ -84,38 +101,38 @@ public final class CommandLineArguments {
     }
 
     /**
-     * Constructs a new CommandLineArguments instance and parses the given arguments.
+     * Constructs a new AppArgs instance and parses the given arguments.
      *
      * @param args the command-line arguments to parse. Must not be null. Can be empty.
      */
-    public CommandLineArguments(String[] args) {
+    public AppArgs(String[] args) {
         Objects.requireNonNull(args, "Arguments must not be null");
-        if (args.length == 0) {
-            return; // No arguments to parse.
-        }
-
-        Pattern pattern = Pattern.compile(ARGUMENTS_PATTERN);
-        for (String arg : args) {
-            Matcher matcher = pattern.matcher(arg);
-            if (matcher.matches()) {
-                Optional<Key> key = Key.fromString(matcher.group(1));
-                if (key.isPresent()) {
-                    Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
-                    if (key.get().isFlag()) {
-                        // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
-                        arguments.put(key.get(),
-                                value.map(v -> parseBooleanValue(v, Boolean.TRUE))
-                                     .orElse(Boolean.TRUE)
-                                     .toString());
+        if (args.length > 0) {
+            Pattern pattern = Pattern.compile(ARGUMENTS_PATTERN);
+            for (String arg : args) {
+                Matcher matcher = pattern.matcher(arg);
+                if (matcher.matches()) {
+                    Optional<Key> key = Key.fromString(matcher.group(1));
+                    if (key.isPresent()) {
+                        Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
+                        if (key.get().isFlag()) {
+                            // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
+                            arguments.put(key.get(),
+                                    value.map(v -> parseBooleanValue(v, Boolean.TRUE))
+                                         .orElse(Boolean.TRUE)
+                                         .toString());
+                        } else {
+                            // For non-flag keys, we put the value only if it is present.
+                            value.ifPresent(v -> arguments.put(key.get(), v));
+                        }
                     } else {
-                        // For non-flag keys, we put the value only if it is present.
-                        value.ifPresent(v -> arguments.put(key.get(), v));
+                        // AppLogger is not initialized yet, so we print to System.err
+                        System.err.printf("Warning: Unknown argument '%s'. Ignored.%n", arg);
                     }
                 } else {
-                    System.err.printf("Warning: Unknown argument '%s'. Ignored.%n", arg);
+                    // AppLogger is not initialized yet, so we print to System.err
+                    System.err.printf("Warning: Argument has invalid format: '%s'. Expected format is --key=value or --flag.%n", arg);
                 }
-            } else {
-                System.err.printf("Warning: Argument has invalid format: '%s'. Expected format is --key=value or --flag.%n", arg);
             }
         }
     }
@@ -127,7 +144,7 @@ public final class CommandLineArguments {
      * @return an Optional containing the value if present, or an empty Optional if the key is not found
      */
     public Optional<String> getValue(Key key) {
-        Objects.requireNonNull(key);
+        Objects.requireNonNull(key, "Key must not be null");
         return Optional.ofNullable(arguments.get(key));
     }
 
@@ -140,7 +157,7 @@ public final class CommandLineArguments {
      * @return the parsed boolean value or the default
      */
     public boolean getBoolean(Key key, boolean defaultValue) {
-        Objects.requireNonNull(key);
+        Objects.requireNonNull(key, "Key must not be null");
         String value = arguments.get(key);
         if (value == null) {
             return defaultValue;
@@ -156,7 +173,8 @@ public final class CommandLineArguments {
      * @param defaultValue the default value to return if the string is not a valid boolean
      * @return the parsed boolean value or the defaultValue
      */
-    private static boolean parseBooleanValue(String value, boolean defaultValue) {
+    static boolean parseBooleanValue(String value, boolean defaultValue) {
+        Objects.requireNonNull(value, "Value must not be null");
         return switch (value.toLowerCase()) {
             case "true", "1", "yes", "on" -> Boolean.TRUE;
             case "false", "0", "no", "off" -> Boolean.FALSE;
@@ -173,7 +191,7 @@ public final class CommandLineArguments {
      * @return the parsed integer value or the default
      */
     public int getInt(Key key, int defaultValue) {
-        Objects.requireNonNull(key);
+        Objects.requireNonNull(key, "Key must not be null");
         String value = arguments.get(key);
         if ((value == null) || value.isBlank()) {
             return defaultValue;
@@ -181,10 +199,9 @@ public final class CommandLineArguments {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
+            // AppLogger is not initialized yet, so we print to System.err
             System.err.printf("Warning: Invalid integer value for key '%s': '%s'. Using default value %d.%n",
-                    key.key(),
-                    value,
-                    defaultValue);
+                    key.key(), value, defaultValue);
             return defaultValue;
         }
     }
@@ -197,7 +214,7 @@ public final class CommandLineArguments {
      * @throws IllegalArgumentException if the key is not a flag
      */
     public boolean isFlagActive(Key key) {
-        Objects.requireNonNull(key);
+        Objects.requireNonNull(key, "Key must not be null");
         if (!key.isFlag()) {
             throw new IllegalArgumentException("Key is not a flag: " + key);
         }
@@ -211,7 +228,7 @@ public final class CommandLineArguments {
      * @return true if the key exists, false otherwise
      */
     public boolean hasKey(Key key) {
-        Objects.requireNonNull(key);
+        Objects.requireNonNull(key, "Key must not be null");
         return arguments.containsKey(key);
     }
 

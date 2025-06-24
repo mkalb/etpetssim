@@ -9,11 +9,35 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * AppStorageManager is a utility class for managing application-specific directories and files.
+ * AppStorage is a utility class for managing application-specific directories and files.
  * It provides methods to create, access, and delete files in the application data, log, and cache directories.
  * The directories are created based on the operating system and the application name.
  */
-public final class AppStorageManager {
+public final class AppStorage {
+
+    /**
+     * Enum representing the operating systems supported by the application.
+     */
+    public enum OperatingSystem {
+        WINDOWS, MAC, LINUX;
+
+        /**
+         * Detects the operating system based on the system property ("os.name").
+         *
+         * @return the detected operating system
+         */
+        public static OperatingSystem detect() {
+            String osName = System.getProperty("os.name").toLowerCase();
+            if (osName.contains("win")) {
+                return OperatingSystem.WINDOWS;
+            } else if (osName.contains("mac")) {
+                return OperatingSystem.MAC;
+            } else {
+                return OperatingSystem.LINUX;
+            }
+        }
+
+    }
 
     /**
      * The name of the application, used to create directories for app data, logs, and cache.
@@ -23,7 +47,7 @@ public final class AppStorageManager {
     /**
      * Private constructor to prevent instantiation.
      */
-    private AppStorageManager() {
+    private AppStorage() {
     }
 
     /**
@@ -34,6 +58,7 @@ public final class AppStorageManager {
      * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
      */
     private static Path createAndCheckDirectory(Path path) throws IOException {
+        Objects.requireNonNull(path, "Path must not be null");
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
@@ -54,12 +79,13 @@ public final class AppStorageManager {
      * @return the path to the application data directory
      */
     private static Path getOrCreateAppDataDir(OperatingSystem os) throws IOException {
-        Path appDataPath = switch (os) {
+        Objects.requireNonNull(os, "Operating system must not be null");
+        Path path = switch (os) {
             case WINDOWS -> Paths.get(System.getProperty("user.home"), "AppData", "Local", APP_NAME);
             case MAC -> Paths.get(System.getProperty("user.home"), "Library", "Application Support", APP_NAME);
             case LINUX -> Paths.get(System.getProperty("user.home"), ".config", APP_NAME);
         };
-        return createAndCheckDirectory(appDataPath);
+        return createAndCheckDirectory(path);
     }
 
     /**
@@ -70,12 +96,12 @@ public final class AppStorageManager {
      * @return the path to the log directory
      */
     private static Path getOrCreateLogDir(OperatingSystem os) throws IOException {
-        Path logPath = switch (os) {
+        Objects.requireNonNull(os, "Operating system must not be null");
+        Path path = switch (os) {
             case WINDOWS, LINUX -> getOrCreateAppDataDir(os).resolve("logs");
             case MAC -> Paths.get(System.getProperty("user.home"), "Library", "Logs", APP_NAME);
         };
-
-        return createAndCheckDirectory(logPath);
+        return createAndCheckDirectory(path);
     }
 
     /**
@@ -86,13 +112,13 @@ public final class AppStorageManager {
      * @return the path to the cache directory
      */
     private static Path getOrCreateCacheDir(OperatingSystem os) throws IOException {
-        Path cachePath = switch (os) {
+        Objects.requireNonNull(os, "Operating system must not be null");
+        Path path = switch (os) {
             case WINDOWS -> Paths.get(System.getProperty("user.home"), "AppData", "Local", APP_NAME, "cache");
             case MAC -> Paths.get(System.getProperty("user.home"), "Library", "Caches", APP_NAME);
             case LINUX -> Paths.get(System.getProperty("user.home"), ".cache", APP_NAME);
         };
-
-        return createAndCheckDirectory(cachePath);
+        return createAndCheckDirectory(path);
     }
 
     /**
@@ -104,8 +130,8 @@ public final class AppStorageManager {
      * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
      */
     public static Path getAppDataFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName);
-        Objects.requireNonNull(os);
+        Objects.requireNonNull(fileName, "File name must not be null");
+        Objects.requireNonNull(os, "Operating system must not be null");
         return getOrCreateAppDataDir(os).resolve(fileName);
     }
 
@@ -118,8 +144,8 @@ public final class AppStorageManager {
      * @throws IOException if an I/O error occurs or if the path is not a directory or not writable or if the file already exists
      */
     public static Path createAppDataFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName);
-        Objects.requireNonNull(os);
+        Objects.requireNonNull(fileName, "File name must not be null");
+        Objects.requireNonNull(os, "Operating system must not be null");
         return Files.createFile(getAppDataFile(fileName, os));
     }
 
@@ -132,11 +158,11 @@ public final class AppStorageManager {
      * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
      */
     public static boolean deleteAppDataFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName);
-        Objects.requireNonNull(os);
-        Path filePath = getAppDataFile(fileName, os);
-        if (Files.exists(filePath) && Files.isRegularFile(filePath)) {
-            return Files.deleteIfExists(filePath);
+        Objects.requireNonNull(fileName, "File name must not be null");
+        Objects.requireNonNull(os, "Operating system must not be null");
+        Path path = getAppDataFile(fileName, os);
+        if (Files.exists(path) && Files.isRegularFile(path)) {
+            return Files.deleteIfExists(path);
         }
         return false;
     }
@@ -150,8 +176,8 @@ public final class AppStorageManager {
      * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
      */
     public static Path getLogFile(String fileName, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(fileName);
-        Objects.requireNonNull(os);
+        Objects.requireNonNull(fileName, "File name must not be null");
+        Objects.requireNonNull(os, "Operating system must not be null");
         return getOrCreateLogDir(os).resolve(fileName);
     }
 
@@ -165,33 +191,9 @@ public final class AppStorageManager {
      * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
      */
     public static Path createTempCacheFile(String prefix, @Nullable String suffix, OperatingSystem os) throws IOException {
-        Objects.requireNonNull(prefix);
-        Objects.requireNonNull(os);
+        Objects.requireNonNull(prefix, "Prefix must not be null");
+        Objects.requireNonNull(os, "Operating system must not be null");
         return Files.createTempFile(getOrCreateCacheDir(os), prefix, suffix);
-    }
-
-    /**
-     * Enum representing the operating systems supported by the application.
-     */
-    public enum OperatingSystem {
-        WINDOWS, MAC, LINUX;
-
-        /**
-         * Detects the operating system based on the system property.
-         *
-         * @return the detected operating system
-         */
-        public static OperatingSystem detect() {
-            String osName = System.getProperty("os.name").toLowerCase();
-            if (osName.contains("win")) {
-                return OperatingSystem.WINDOWS;
-            } else if (osName.contains("mac")) {
-                return OperatingSystem.MAC;
-            } else {
-                return OperatingSystem.LINUX;
-            }
-        }
-
     }
 
 }

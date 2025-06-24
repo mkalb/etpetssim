@@ -6,19 +6,17 @@ import java.util.*;
 
 /**
  * Manages localization and internationalization for the application.
- * Provides methods to initialize the language settings, retrieve localized messages,
- * and format messages with arguments.
  * <p>
  * It must be initialized exactly once at the beginning of the application.
  *
  * @see java.util.Locale
  * @see java.util.ResourceBundle
  */
-public final class LanguageManager {
+public final class AppLocalization {
 
     /**
      * Default locale used by the application if no specific locale is provided.
-     * This is set to US English.
+     * This is set to "English (US)".
      */
     public static final Locale DEFAULT_LOCALE = Locale.US;
     /**
@@ -34,14 +32,14 @@ public final class LanguageManager {
      * The order of the enum constants is important as it determines the precedence when matching locales.
      * EN_US has the highest precedence.
      */
-    public enum SupportedCountryLocales {
+    public enum CountryLocale {
         EN_US(Locale.US, "English (US)"),
         DE_DE(Locale.GERMANY, "Deutsch (Deutschland)");
 
         private final Locale countryLocale;
         private final String displayName;
 
-        SupportedCountryLocales(Locale countryLocale, String displayName) {
+        CountryLocale(Locale countryLocale, String displayName) {
             Objects.requireNonNull(countryLocale, "Country locale must not be null");
             Objects.requireNonNull(displayName, "Display name must not be null");
             if (countryLocale.getLanguage().isEmpty()) {
@@ -58,14 +56,14 @@ public final class LanguageManager {
          * Returns the Locale object representing the country locale.
          * Example: "Locale.US" for "EN_US" or "Locale.GERMANY" for "DE_DE".
          *
-         * @return the Locale object
+         * @return the Locale object with language and country codes
          */
         public Locale countryLocale() {
             return countryLocale;
         }
 
         /**
-         * Returns the display name of the locale.
+         * Returns the display name of the country locale.
          * Example: "English (US)" for "EN_US" or "Deutsch (Deutschland)" for "DE_DE".
          *
          * @return the display name as a string
@@ -75,7 +73,7 @@ public final class LanguageManager {
         }
 
         /**
-         * Returns the language code of the locale.
+         * Returns the language code of the country locale.
          * Example: "en" for "EN_US" or "de" for "DE_DE".
          *
          * @return the language code as a string
@@ -85,7 +83,7 @@ public final class LanguageManager {
         }
 
         /**
-         * Returns the country code of the locale.
+         * Returns the country code of the country locale.
          * Example: "US" for "EN_US" or "DE" for "DE_DE".
          *
          * @return the country code as a string
@@ -95,7 +93,7 @@ public final class LanguageManager {
         }
 
         /**
-         * Returns the locale code  of the locale in the format "language_country".
+         * Returns the locale code of the country locale in the format "language_COUNTRY".
          * Example: "en_US" for "EN_US" or "de_DE" for "DE_DE".
          *
          * @return the locale code as a string
@@ -109,9 +107,13 @@ public final class LanguageManager {
     /**
      * Private constructor to prevent instantiation.
      */
-    private LanguageManager() {
+    private AppLocalization() {
     }
 
+    /**
+     * Resets the AppLocalization for testing purposes.
+     * This method clears the locale and bundle, allowing for re-initialization in tests.
+     */
     static void resetForTesting() {
         locale = null;
         bundle = null;
@@ -120,24 +122,24 @@ public final class LanguageManager {
     /**
      * Returns a list of all supported country locales.
      *
-     * @return a list of SupportedCountryLocales
+     * @return a list of CountryLocale enums representing all supported locales
      */
-    public static List<SupportedCountryLocales> supportedLocales() {
-        return List.of(SupportedCountryLocales.values());
+    public static List<CountryLocale> supportedLocales() {
+        return List.of(CountryLocale.values());
     }
 
     /**
-     * Checks if the LanguageManager has been initialized.
+     * Checks if the AppLocalization has been initialized.
      *
-     * @return true if the LanguageManager is initialized, false otherwise
+     * @return true if the AppLocalization is initialized, false otherwise
      */
     public static synchronized boolean isInitialized() {
         return (locale != null) && (bundle != null);
     }
 
     /**
-     * Initializes the LanguageManager with the specified locale argument and a default locale.
-     * The LanguageManager must be initialized exactly once at the beginning.
+     * Initializes the AppLocalization with the specified locale argument and a default locale.
+     * The AppLocalization must be initialized exactly once at the beginning.
      *
      * @param localeArgument the locale argument provided by the user, can be null or empty
      *                       if null or empty, the default locale will be used to determine the locale
@@ -146,11 +148,12 @@ public final class LanguageManager {
      *                       if the default locale is null, an IllegalArgumentException will be thrown
      *                       if the default locale does not match any of the supported locales,
      *                       the default locale will be set to DEFAULT_LOCALE (US English)
-     * @throws IllegalStateException if the LanguageManager is already initialized or if the resource bundle for the locale cannot be loaded
+     * @throws IllegalStateException if the AppLocalization is already initialized or
+     *                               if the resource bundle for the locale cannot be loaded
      */
     public static synchronized void initialize(@Nullable String localeArgument, Locale defaultLocale) {
         if (isInitialized()) {
-            throw new IllegalStateException("LanguageManager is already initialized.");
+            throw new IllegalStateException("AppLocalization is already initialized.");
         }
         Objects.requireNonNull(defaultLocale, "Default locale must not be null");
 
@@ -158,8 +161,23 @@ public final class LanguageManager {
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
 
-        bundle = ResourceLoader.getBundle(locale).orElseThrow(() ->
-                new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded."));
+        bundle = AppResources.getBundle(locale).orElseThrow(() ->
+                new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded.")); // This should never happen
+    }
+
+    /**
+     * Initializes the AppLocalization with the specified language argument and the JVM default locale.
+     * The AppLocalization must be initialized exactly once at the beginning.
+     *
+     * @param localeArgument the locale argument provided by the user, can be null or empty
+     * @see #initialize(String, Locale)
+     * @see java.util.Locale#getDefault()
+     */
+    public static synchronized void initialize(@Nullable String localeArgument) {
+        if (isInitialized()) {
+            throw new IllegalStateException("AppLocalization is already initialized.");
+        }
+        initialize(localeArgument, Locale.getDefault());
     }
 
     /**
@@ -171,14 +189,17 @@ public final class LanguageManager {
     static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
         Locale resolvedLocale = null;
         if ((localeArgument != null) && !localeArgument.isBlank()) {
-            for (SupportedCountryLocales supportedLocale : SupportedCountryLocales.values()) {
+            for (CountryLocale supportedLocale : CountryLocale.values()) {
+                // It must match exactly the locale code (e.g., "en_US" or "de_DE")
                 if (supportedLocale.localeCode().equals(localeArgument)) {
                     resolvedLocale = supportedLocale.countryLocale();
                     break;
                 }
             }
             if (resolvedLocale == null) {
-                for (SupportedCountryLocales supportedLocale : SupportedCountryLocales.values()) {
+                for (CountryLocale supportedLocale : CountryLocale.values()) {
+                    // It must match exactly the language code (e.g., "en" or "de").
+                    // Locale argument must not contain country code.
                     if (supportedLocale.languageCode().equals(localeArgument)) {
                         resolvedLocale = supportedLocale.countryLocale();
                         break;
@@ -196,15 +217,18 @@ public final class LanguageManager {
      * @return an Optional containing the resolved Locale if found, or an empty Optional if not found
      */
     static Optional<Locale> resolveLocaleFromDefault(Locale defaultLocale) {
-        Objects.requireNonNull(defaultLocale);
+        Objects.requireNonNull(defaultLocale, "Default locale must not be null");
         Locale resolvedLocale = null;
-        for (SupportedCountryLocales supportedLocale : SupportedCountryLocales.values()) {
+        for (CountryLocale supportedLocale : CountryLocale.values()) {
+            // It must match exactly the country locale (e.g., Locale.US or Locale.GERMANY)
             if (supportedLocale.countryLocale().equals(defaultLocale)) {
                 resolvedLocale = supportedLocale.countryLocale();
                 break;
             }
         }
-        for (SupportedCountryLocales supportedLocale : SupportedCountryLocales.values()) {
+        for (CountryLocale supportedLocale : CountryLocale.values()) {
+            // It must match the language code (e.g., "en" or "de").
+            // Default locale can contain country code, but we only check the language code.
             if (supportedLocale.languageCode().equals(defaultLocale.getLanguage())) {
                 resolvedLocale = supportedLocale.countryLocale();
                 break;
@@ -214,28 +238,15 @@ public final class LanguageManager {
     }
 
     /**
-     * Initializes the LanguageManager with the specified language argument and the JVM default locale.
-     * The LanguageManager must be initialized exactly once at the beginning.
-     *
-     * @param localeArgument the locale argument provided by the user, can be null or empty
-     * @see #initialize(String, Locale)
-     * @see java.util.Locale#getDefault()
-     */
-    public static synchronized void initialize(@Nullable String localeArgument) {
-        if (isInitialized()) {
-            throw new IllegalStateException("LanguageManager is already initialized.");
-        }
-        initialize(localeArgument, Locale.getDefault());
-    }
-
-    /**
      * Returns the locale currently used by the application.
      *
      * @return the current locale
-     * @throws NullPointerException if the LanguageManager has not been initialized
+     * @throws IllegalStateException if the AppLocalization has not been initialized
      */
     public static Locale locale() {
-        Objects.requireNonNull(locale, "Locale is not initialized.");
+        if (locale == null) {
+            throw new IllegalStateException("AppLocalization is not initialized.");
+        }
         return locale;
     }
 
@@ -243,10 +254,12 @@ public final class LanguageManager {
      * Returns the ResourceBundle currently used by the application.
      *
      * @return the current ResourceBundle
-     * @throws NullPointerException if the LanguageManager has not been initialized
+     * @throws IllegalStateException if the AppLocalization has not been initialized
      */
     public static ResourceBundle bundle() {
-        Objects.requireNonNull(bundle, "ResourceBundle is not initialized.");
+        if (bundle == null) {
+            throw new IllegalStateException("AppLocalization is not initialized.");
+        }
         return bundle;
     }
 
@@ -255,15 +268,17 @@ public final class LanguageManager {
      *
      * @param key the key for the desired text
      * @return the text associated with the key, or a placeholder if the key is not found
-     * @throws NullPointerException if the LanguageManager has not been initialized
+     * @throws IllegalStateException if the AppLocalization has not been initialized
      */
     public static String getText(String key) {
         Objects.requireNonNull(key, "Key must not be null");
-        Objects.requireNonNull(bundle, "ResourceBundle is not initialized.");
+        if (bundle == null) {
+            throw new IllegalStateException("AppLocalization is not initialized.");
+        }
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
-            // TODO Add logging later
+            AppLogger.error("Key not found in ResourceBundle: " + key, e);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
     }
@@ -273,17 +288,24 @@ public final class LanguageManager {
      *
      * @param key  the key for the desired text
      * @param args the arguments to format the text with
-     * @return the formatted text associated with the key, or a placeholder if the key is not found
-     * @throws NullPointerException if the LanguageManager has not been initialized
+     * @return the formatted text associated with the key, or a placeholder if the key is not found or if formatting fails
+     * @throws IllegalStateException if the AppLocalization has not been initialized
      */
     public static String getFormattedText(String key, Object... args) {
         Objects.requireNonNull(key, "Key must not be null");
-        Objects.requireNonNull(locale, "Locale is not initialized.");
-        Objects.requireNonNull(bundle, "ResourceBundle is not initialized.");
+        if (locale == null) {
+            throw new IllegalStateException("AppLocalization is not initialized.");
+        }
+        if (bundle == null) {
+            throw new IllegalStateException("AppLocalization is not initialized.");
+        }
         try {
             return String.format(locale, bundle.getString(key), args);
-        } catch (MissingResourceException | IllegalFormatException e) {
-            // TODO Add logging later
+        } catch (MissingResourceException e) {
+            AppLogger.error("Key not found in ResourceBundle: " + key, e);
+            return PLACEHOLDER_FOR_EXCEPTIONS;
+        } catch (IllegalFormatException e) {
+            AppLogger.error("Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args), e);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
     }

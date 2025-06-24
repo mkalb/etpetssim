@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.wator;
 
-import de.mkalb.etpetssim.core.ResourceLoader;
+import de.mkalb.etpetssim.core.AppResources;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -64,7 +64,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
         scrollPane.setFitToWidth(true);
 
         // load and add CSS styles
-        scrollPane.getStylesheets().add(ResourceLoader.getCss("wator-styles.css").orElseThrow());
+        scrollPane.getStylesheets().add(AppResources.getCss("wator-styles.css").orElseThrow());
 
         return scrollPane;
     }

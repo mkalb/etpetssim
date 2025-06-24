@@ -13,14 +13,25 @@ import java.util.*;
  * Resources are expected to be located under the standard Maven/Gradle directory:
  * {@code src/main/resources/}, organized by type (e.g., {@code /css/}, {@code /images/}, {@code /i18n/}).
  */
-public final class ResourceLoader {
+public final class AppResources {
 
-    private static final String DEFAULT_BUNDLE_PATH = "i18n.messages";
+    /**
+     * The base name of the resource bundle used for internationalization.
+     */
+    public static final String BUNDLE_BASE_NAME = "i18n.messages";
+    /**
+     * The folder path for CSS resources.
+     */
+    public static final String FOLDER_CSS = "/css/";
+    /**
+     * The folder path for image resources.
+     */
+    public static final String FOLDER_IMAGES = "/images/";
 
     /**
      * Private constructor to prevent instantiation.
      */
-    private ResourceLoader() {
+    private AppResources() {
     }
 
     /**
@@ -31,7 +42,7 @@ public final class ResourceLoader {
      */
     public static Optional<ResourceBundle> getBundle(Locale locale) {
         Objects.requireNonNull(locale, "locale must not be null");
-        return getBundle(DEFAULT_BUNDLE_PATH, locale);
+        return getBundle(BUNDLE_BASE_NAME, locale);
     }
 
     /**
@@ -47,8 +58,7 @@ public final class ResourceLoader {
         try {
             return Optional.of(ResourceBundle.getBundle(baseName, locale));
         } catch (MissingResourceException e) {
-            // TODO: Replace with LoggingManager
-            System.err.println("Failed to load resource bundle: " + baseName + " for locale " + locale + " - " + e.getMessage());
+            AppLogger.error("Resource bundle not found: " + baseName + " for locale " + locale, e);
             return Optional.empty();
         }
     }
@@ -58,13 +68,13 @@ public final class ResourceLoader {
      *
      * @param relativePath the relative path to the CSS file under /css/
      * @return an Optional containing the external form of the URL
+     * @see #FOLDER_CSS
      */
     public static Optional<String> getCss(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
-        URL url = ResourceLoader.class.getResource("/css/" + relativePath);
+        URL url = AppResources.class.getResource(FOLDER_CSS + relativePath);
         if (url == null) {
-            // TODO: Replace with LoggingManager
-            System.err.println("CSS resource not found: /css/" + relativePath);
+            AppLogger.error("CSS resource not found: " + FOLDER_CSS + relativePath);
             return Optional.empty();
         }
         return Optional.of(url.toExternalForm());
@@ -75,24 +85,30 @@ public final class ResourceLoader {
      *
      * @param relativePath the relative path to the image file
      * @return an Optional containing the loaded Image
+     * @see #FOLDER_IMAGES
      */
     public static Optional<Image> getImage(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
-        InputStream stream = ResourceLoader.class.getResourceAsStream("/images/" + relativePath);
+        InputStream stream = AppResources.class.getResourceAsStream(FOLDER_IMAGES + relativePath);
         if (stream == null) {
-            // TODO: Replace with LoggingManager
-            System.err.println("Image resource not found: /images/" + relativePath);
+            AppLogger.error("Image resource not found: " + FOLDER_IMAGES + relativePath);
             return Optional.empty();
         }
         return Optional.of(new Image(stream));
     }
 
+    /**
+     * Loads multiple images from the /images/ directory.
+     *
+     * @param relativePaths the relative paths to the image files
+     * @return a List of loaded Images
+     * @see #FOLDER_IMAGES
+     */
     public static List<Image> getImages(String... relativePaths) {
         Objects.requireNonNull(relativePaths, "relativePaths must not be null");
-        List<Image> images = new ArrayList<>();
+        List<Image> images = new ArrayList<>(relativePaths.length);
         for (String relativePath : relativePaths) {
-            Optional<Image> image = getImage(relativePath);
-            image.ifPresent(images::add);
+            getImage(relativePath).ifPresent(images::add);
         }
         return images;
     }
@@ -105,41 +121,28 @@ public final class ResourceLoader {
      */
     public static Optional<InputStream> getResourceAsStream(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
-        InputStream stream = ResourceLoader.class.getResourceAsStream("/" + relativePath);
+        InputStream stream = AppResources.class.getResourceAsStream("/" + relativePath);
         if (stream == null) {
-            // TODO: Replace with LoggingManager
-            System.err.println("Resource stream not found: /" + relativePath);
+            AppLogger.error("Resource not found: /" + relativePath);
             return Optional.empty();
         }
         return Optional.of(stream);
     }
 
     /**
-     * Returns a URL to any resource.
+     * Loads any resource as a URL.
      *
      * @param relativePath the relative path to the resource
      * @return an Optional containing the URL
      */
-    public static Optional<URL> getResource(String relativePath) {
+    public static Optional<URL> getResourceAsURL(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
-        URL url = ResourceLoader.class.getResource("/" + relativePath);
+        URL url = AppResources.class.getResource("/" + relativePath);
         if (url == null) {
-            // TODO: Replace with LoggingManager
-            System.err.println("Resource URL not found: /" + relativePath);
+            AppLogger.error("Resource not found: /" + relativePath);
             return Optional.empty();
         }
         return Optional.of(url);
-    }
-
-    /**
-     * Checks whether a resource exists.
-     *
-     * @param relativePath the relative path to the resource
-     * @return {@code true} if the resource exists, {@code false} otherwise
-     */
-    public static boolean resourceExists(String relativePath) {
-        Objects.requireNonNull(relativePath, "relativePath must not be null");
-        return getResource(relativePath).isPresent();
     }
 
 }

@@ -14,20 +14,20 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     @SuppressWarnings("CallToSystemExit")
     public static void main(String[] args) {
         // Parse command-line arguments
-        CommandLineArguments arguments = new CommandLineArguments(args);
-        if (arguments.isFlagActive(CommandLineArguments.Key.HELP)) {
-            CommandLineArguments.Key.printHelp(System.out);
+        AppArgs arguments = new AppArgs(args);
+        if (arguments.isFlagActive(AppArgs.Key.HELP)) {
+            AppArgs.Key.printHelp(System.out);
             // Exit the JavaFX application after printing help
             System.exit(0);
         }
 
-        // Initialize the LoggingManager
+        // Initialize the AppLogger
         // TODO Add arguments for log level and log handler (console or file)
-        LoggingManager.initialize(LoggingManager.LogLevel.INFO, true, null);
+        AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
 
-        // Initialize the LanguageManager
-        LanguageManager.initialize(arguments.getValue(CommandLineArguments.Key.LOCALE).orElse(null));
-        LoggingManager.info("Starting Extraterrestrial Pets Simulation with locale: " + LanguageManager.locale());
+        // Initialize the AppLocalization
+        AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
+        AppLogger.info("Starting Extraterrestrial Pets Simulation with locale: " + AppLocalization.locale());
 
         // Start the JavaFX application
         launch();
@@ -41,10 +41,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     public void start(Stage primaryStage) {
         Scene scene = createWaTorScene();
 
-        primaryStage.setTitle(LanguageManager.getText("window.title"));
-        List<Image> images = ResourceLoader.getImages("etpetssim16.png", "etpetssim32.png", "etpetssim64.png");
+        primaryStage.setTitle(AppLocalization.getText("window.title"));
+        List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim32.png", "etpetssim64.png");
         if (images.isEmpty()) {
-            LoggingManager.error("Failed to load application icons. Icons will not be set.");
+            AppLogger.error("Failed to load application icons. Icons will not be set.");
         } else {
             primaryStage.getIcons().addAll(images);
         }
