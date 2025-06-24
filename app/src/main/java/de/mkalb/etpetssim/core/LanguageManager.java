@@ -22,11 +22,6 @@ public final class LanguageManager {
      */
     public static final Locale DEFAULT_LOCALE = Locale.US;
     /**
-     * Base name for the ResourceBundle containing localized messages.
-     */
-    @SuppressWarnings("SpellCheckingInspection")
-    public static final String BASE_NAME = "de.mkalb.etpetssim.i18n.messages";
-    /**
      * Placeholder for exceptions when a key is not found in the ResourceBundle or when formatting fails.
      */
     public static final String PLACEHOLDER_FOR_EXCEPTIONS = "########";
@@ -112,7 +107,7 @@ public final class LanguageManager {
     }
 
     /**
-     * Private constructor to prevent instantiation of the LanguageManager.
+     * Private constructor to prevent instantiation.
      */
     private LanguageManager() {
     }
@@ -151,6 +146,7 @@ public final class LanguageManager {
      *                       if the default locale is null, an IllegalArgumentException will be thrown
      *                       if the default locale does not match any of the supported locales,
      *                       the default locale will be set to DEFAULT_LOCALE (US English)
+     * @throws IllegalStateException if the LanguageManager is already initialized or if the resource bundle for the locale cannot be loaded
      */
     public static synchronized void initialize(@Nullable String localeArgument, Locale defaultLocale) {
         if (isInitialized()) {
@@ -162,7 +158,8 @@ public final class LanguageManager {
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
 
-        bundle = ResourceBundle.getBundle(BASE_NAME, locale);
+        bundle = ResourceLoader.getBundle(locale).orElseThrow(() ->
+                new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded."));
     }
 
     /**

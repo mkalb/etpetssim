@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.wator;
 
+import de.mkalb.etpetssim.core.ResourceLoader;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -12,7 +13,6 @@ import javafx.scene.layout.*;
 import javafx.util.Builder;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URL;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -64,8 +64,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
         scrollPane.setFitToWidth(true);
 
         // load and add CSS styles
-        URL cssURL = Objects.requireNonNull(getClass().getResource("wator-styles.css"), "CSS not found: wator-styles.css");
-        scrollPane.getStylesheets().add(cssURL.toExternalForm());
+        scrollPane.getStylesheets().add(ResourceLoader.getCss("wator-styles.css").orElseThrow());
 
         return scrollPane;
     }
