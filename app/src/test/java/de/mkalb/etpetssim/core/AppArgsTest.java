@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.core;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -8,6 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
 class AppArgsTest {
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        AppLogger.initializeForTesting();
+    }
 
     @SuppressWarnings("DataFlowIssue")
     @Test

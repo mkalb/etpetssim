@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.core;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +23,11 @@ class AppStorageTest {
 
     private Path createdFile;
     private Path tempFile;
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        AppLogger.initializeForTesting();
+    }
 
     /**
      * Sets up the test environment before each test.
