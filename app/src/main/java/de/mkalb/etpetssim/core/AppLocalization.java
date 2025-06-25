@@ -162,7 +162,7 @@ public final class AppLocalization {
                 .orElse(DEFAULT_LOCALE);
         bundle = AppResources.getBundle(locale).orElseThrow(() ->
                 new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded.")); // This should never happen
-        AppLogger.info("AppLocalization initialized with locale: " + locale);
+        AppLogger.info("AppLocalization: Initialized with locale: " + locale + " and loaded ResourceBundle");
     }
 
     /**
@@ -278,7 +278,7 @@ public final class AppLocalization {
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
-            AppLogger.error("Key not found in ResourceBundle: " + key, e);
+            AppLogger.error("AppLocalization: Key not found in ResourceBundle: " + key, e);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
     }
@@ -302,10 +302,10 @@ public final class AppLocalization {
         try {
             return String.format(locale, bundle.getString(key), args);
         } catch (MissingResourceException e) {
-            AppLogger.error("Key not found in ResourceBundle: " + key, e);
+            AppLogger.error("AppLocalization: Key not found in ResourceBundle: " + key, e);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         } catch (IllegalFormatException e) {
-            AppLogger.error("Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args), e);
+            AppLogger.error("AppLocalization: Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args), e);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
     }
