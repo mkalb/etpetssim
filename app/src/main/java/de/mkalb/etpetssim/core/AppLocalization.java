@@ -160,9 +160,9 @@ public final class AppLocalization {
         locale = resolveLocaleFromArgument(localeArgument)
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
-
         bundle = AppResources.getBundle(locale).orElseThrow(() ->
                 new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded.")); // This should never happen
+        AppLogger.info("AppLocalization initialized with locale: " + locale);
     }
 
     /**

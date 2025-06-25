@@ -22,11 +22,11 @@ public final class AppResources {
     /**
      * The folder path for CSS resources.
      */
-    public static final String FOLDER_CSS = "/css/";
+    public static final String FOLDER_CSS = "css/";
     /**
      * The folder path for image resources.
      */
-    public static final String FOLDER_IMAGES = "/images/";
+    public static final String FOLDER_IMAGES = "images/";
 
     /**
      * Private constructor to prevent instantiation.
@@ -72,9 +72,10 @@ public final class AppResources {
      */
     public static Optional<String> getCss(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
-        URL url = AppResources.class.getResource(FOLDER_CSS + relativePath);
+        String name = "/" + FOLDER_CSS + relativePath;
+        URL url = AppResources.class.getResource(name);
         if (url == null) {
-            AppLogger.error("CSS resource not found: " + FOLDER_CSS + relativePath);
+            AppLogger.error("CSS resource not found: " + name);
             return Optional.empty();
         }
         return Optional.of(url.toExternalForm());
@@ -89,9 +90,10 @@ public final class AppResources {
      */
     public static Optional<Image> getImage(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
-        InputStream stream = AppResources.class.getResourceAsStream(FOLDER_IMAGES + relativePath);
+        String name = "/" + FOLDER_IMAGES + relativePath;
+        InputStream stream = AppResources.class.getResourceAsStream(name);
         if (stream == null) {
-            AppLogger.error("Image resource not found: " + FOLDER_IMAGES + relativePath);
+            AppLogger.error("Image resource not found: " + name);
             return Optional.empty();
         }
         return Optional.of(new Image(stream));

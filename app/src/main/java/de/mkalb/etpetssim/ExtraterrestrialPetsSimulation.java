@@ -11,6 +11,16 @@ import java.util.*;
 
 public final class ExtraterrestrialPetsSimulation extends Application {
 
+    /**
+     * The application icon images used in the JavaFX application.
+     */
+    private static final String[] APP_IMAGES = {
+            "etpetssim16.png",
+            "etpetssim32.png",
+            "etpetssim64.png",
+            "etpetssim128.png"
+    };
+
     @SuppressWarnings("CallToSystemExit")
     public static void main(String[] args) {
         // Parse command-line arguments
@@ -18,6 +28,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         if (arguments.isFlagActive(AppArgs.Key.HELP)) {
             AppArgs.Key.printHelp(System.out);
             // Exit the JavaFX application after printing help
+            AppLogger.info("Exiting application after printing help.");
             System.exit(0);
         }
 
@@ -27,9 +38,9 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         // Initialize the AppLocalization
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
-        AppLogger.info("Starting Extraterrestrial Pets Simulation with locale: " + AppLocalization.locale());
 
-        // Start the JavaFX application
+        // Launch the JavaFX application
+        AppLogger.info("Launching application");
         launch();
     }
 
@@ -42,7 +53,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         Scene scene = createWaTorScene();
 
         primaryStage.setTitle(AppLocalization.getText("window.title"));
-        List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim32.png", "etpetssim64.png");
+        List<Image> images = AppResources.getImages(APP_IMAGES);
         if (images.isEmpty()) {
             AppLogger.error("Failed to load application icons. Icons will not be set.");
         } else {

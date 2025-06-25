@@ -93,8 +93,7 @@ public final class AppArgs {
                             key.isFlag() ? " (flag)" : ""));
                 }
             } catch (Exception e) {
-                // AppLogger is not initialized yet, so we print to System.err
-                System.err.println("Error printing help: " + e.getMessage());
+                AppLogger.warn("Failed to print help message: " + e.getMessage());
             }
         }
 
@@ -114,6 +113,9 @@ public final class AppArgs {
                 if (matcher.matches()) {
                     Optional<Key> key = Key.fromString(matcher.group(1));
                     if (key.isPresent()) {
+                        if (arguments.containsKey(key.get())) {
+                            AppLogger.warn("Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
+                        }
                         Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
                         if (key.get().isFlag()) {
                             // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
@@ -126,12 +128,10 @@ public final class AppArgs {
                             value.ifPresent(v -> arguments.put(key.get(), v));
                         }
                     } else {
-                        // AppLogger is not initialized yet, so we print to System.err
-                        System.err.printf("Warning: Unknown argument '%s'. Ignored.%n", arg);
+                        AppLogger.warn("Unknown argument: '" + matcher.group(1) + "'. Please check the command-line arguments.");
                     }
                 } else {
-                    // AppLogger is not initialized yet, so we print to System.err
-                    System.err.printf("Warning: Argument has invalid format: '%s'. Expected format is --key=value or --flag.%n", arg);
+                    AppLogger.warn("Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
                 }
             }
         }
@@ -199,9 +199,7 @@ public final class AppArgs {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            // AppLogger is not initialized yet, so we print to System.err
-            System.err.printf("Warning: Invalid integer value for key '%s': '%s'. Using default value %d.%n",
-                    key.key(), value, defaultValue);
+            AppLogger.warn("Invalid integer value for key '" + key.key() + "': '" + value + "'. Using default value " + defaultValue);
             return defaultValue;
         }
     }

@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.core;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,8 +10,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AppLocalizationTest {
 
+    @BeforeAll
+    static void setUpBeforeAll() {
+        AppLogger.initializeForTesting();
+    }
+
     @BeforeEach
-    void setUp() {
+    void setUpBeforeEach() {
         // Reset AppLocalization before each test
         AppLocalization.resetForTesting();
     }
@@ -28,10 +34,10 @@ class AppLocalizationTest {
     @Test
     void testBeforeInitialization() {
         assertFalse(AppLocalization.isInitialized());
-        assertThrows(NullPointerException.class, AppLocalization::locale);
-        assertThrows(NullPointerException.class, AppLocalization::bundle);
-        assertThrows(NullPointerException.class, () -> AppLocalization.getText("greeting"));
-        assertThrows(NullPointerException.class, () -> AppLocalization.getFormattedText("welcome", "John"));
+        assertThrows(IllegalStateException.class, AppLocalization::locale);
+        assertThrows(IllegalStateException.class, AppLocalization::bundle);
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getText("greeting"));
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText("welcome", "John"));
     }
 
     @Test
@@ -67,6 +73,15 @@ class AppLocalizationTest {
     }
 
     @Test
+    void testInitializeTwice() {
+        AppLocalization.initialize("en_US");
+        assertTrue(AppLocalization.isInitialized());
+        assertThrows(IllegalStateException.class, () -> AppLocalization.initialize("de_DE"));
+        assertTrue(AppLocalization.isInitialized());
+        assertEquals(Locale.US, AppLocalization.locale());
+    }
+
+    @Test
     void testResolveLocaleFromArgument() {
         assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromArgument("en_US"));
         assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromArgument("de_DE"));
@@ -96,6 +111,18 @@ class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.resolveLocaleFromDefault(null));
     }
 
+    /**
+     * Tests the retrieval of localized text for the key "greeting".
+     *
+     * <p><b>Test data prerequisites:</b></p>
+     * <ul>
+     *   <li>The ResourceBundle for "en_US" must contain the key "greeting" with the value "Hello".</li>
+     *   <li>The ResourceBundle for "de_DE" must contain the key "greeting" with the value "Hallo".</li>
+     *   <li>The key "non_existent_key" must not exist in either bundle.</li>
+     * </ul>
+     *
+     * <p>If these keys are missing or incorrect, the test will fail or return the placeholder string.</p>
+     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetText() {
@@ -110,6 +137,18 @@ class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getText(null));
     }
 
+    /**
+     * Tests the retrieval and formatting of localized text for the key "welcome" with a parameter.
+     *
+     * <p><b>Test data prerequisites:</b></p>
+     * <ul>
+     *     <li>The ResourceBundle for "en_US" must contain the key "welcome" with the value "Welcome, %s!".</li>
+     *     <li>The ResourceBundle for "de_DE" must contain the key "welcome" with the value "Willkommen, %s!".</li>
+     *     <li>The key "non_existent_key" must not exist in either bundle.</li>
+     * </ul>
+     *
+     * <p>If these keys are missing or incorrect, the test will fail or return the placeholder string.</p>
+     */
     @SuppressWarnings({"SpellCheckingInspection", "DataFlowIssue"})
     @Test
     void testGetFormattedText() {
