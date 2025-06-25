@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 public final class ExtraterrestrialPetsSimulation extends Application {
@@ -21,9 +23,17 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             "etpetssim128.png"
     };
 
-    @SuppressWarnings("CallToSystemExit")
     public static void main(String[] args) {
-        // Parse command-line arguments
+        var arguments = parseArgumentsAndHandleHelp(args);
+        initAppLogger(arguments);
+        initializeAppLocalization(arguments);
+
+        AppLogger.info("Launching application");
+        launch();
+    }
+
+    @SuppressWarnings("CallToSystemExit")
+    private static AppArgs parseArgumentsAndHandleHelp(String[] args) {
         AppArgs arguments = new AppArgs(args);
         if (arguments.isFlagActive(AppArgs.Key.HELP)) {
             AppArgs.Key.printHelp(System.out);
@@ -31,17 +41,29 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             AppLogger.info("Exiting application after printing help.");
             System.exit(0);
         }
+        return arguments;
+    }
 
-        // Initialize the AppLogger
-        // TODO Add arguments for log level and log handler (console or file)
-        AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
+    private static void initAppLogger(AppArgs arguments) {
+        var logLevel = arguments.getValue(AppArgs.Key.LOG_LEVEL)
+                                .flatMap(AppLogger.LogLevel::fromString)
+                                .orElse(AppLogger.DEFAULT_LOG_LEVEL);
+        boolean useConsole = arguments.getBoolean(AppArgs.Key.LOG_CONSOLE, false);
+        try {
+            boolean useFile = arguments.getBoolean(AppArgs.Key.LOG_FILE, false);
+            Path logPath = useFile ? AppStorage.getLogFile(AppLogger.LOG_FILE_NAME, AppStorage.OperatingSystem.detect()) : null;
 
-        // Initialize the AppLocalization
+            // Initialize the AppLogger with the specified log level, console usage, and log file path
+            AppLogger.initialize(logLevel, useConsole, logPath);
+        } catch (IOException e) {
+            // Initialize the AppLogger with the specified log level, console usage and null log file path
+            AppLogger.initialize(logLevel, useConsole, null);
+            AppLogger.error("Failed to initialize log file.", e);
+        }
+    }
+
+    private static void initializeAppLocalization(AppArgs arguments) {
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
-
-        // Launch the JavaFX application
-        AppLogger.info("Launching application");
-        launch();
     }
 
     private Scene createWaTorScene() {
