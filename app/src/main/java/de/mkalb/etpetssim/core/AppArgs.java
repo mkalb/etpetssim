@@ -24,6 +24,9 @@ public final class AppArgs {
     public enum Key {
         HELP("help", "Shows this help message", true),
         LOCALE("locale", "Sets the locale for the simulation. Format: --locale=<language>_<country> or --locale=<language>", false),
+        LOG_CONSOLE("log-console", "Enables logging to the console. Format: --log-console", true),
+        LOG_FILE("log-file", "Enables logging to a file. Format: --log-file", true),
+        LOG_LEVEL("log-level", "Sets the log level. Format: --log-level=<level>", false),
         SIMULATION("simulation", "Starts the specified simulation. Format: --simulation=<name>", false);
 
         private final String key;
@@ -93,7 +96,7 @@ public final class AppArgs {
                             key.isFlag() ? " (flag)" : ""));
                 }
             } catch (Exception e) {
-                AppLogger.warn("Failed to print help message: " + e.getMessage());
+                AppLogger.warn("AppArgs: Failed to print help message: " + e.getMessage());
             }
         }
 
@@ -114,7 +117,7 @@ public final class AppArgs {
                     Optional<Key> key = Key.fromString(matcher.group(1));
                     if (key.isPresent()) {
                         if (arguments.containsKey(key.get())) {
-                            AppLogger.warn("Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
+                            AppLogger.warn("AppArgs: Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
                         }
                         Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
                         if (key.get().isFlag()) {
@@ -128,10 +131,10 @@ public final class AppArgs {
                             value.ifPresent(v -> arguments.put(key.get(), v));
                         }
                     } else {
-                        AppLogger.warn("Unknown argument: '" + matcher.group(1) + "'. Please check the command-line arguments.");
+                        AppLogger.warn("AppArgs: Unknown argument: '" + matcher.group(1) + "'. Please check the command-line arguments.");
                     }
                 } else {
-                    AppLogger.warn("Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
+                    AppLogger.warn("AppArgs: Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
                 }
             }
         }
@@ -199,7 +202,7 @@ public final class AppArgs {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            AppLogger.warn("Invalid integer value for key '" + key.key() + "': '" + value + "'. Using default value " + defaultValue);
+            AppLogger.warn("AppArgs: Invalid integer value for key '" + key.key() + "': '" + value + "'. Using default value " + defaultValue);
             return defaultValue;
         }
     }
