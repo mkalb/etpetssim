@@ -212,6 +212,19 @@ public final class AppLogger {
     }
 
     /**
+     * Shuts down the AppLogger singleton instance.
+     * This method closes all handlers and removes them from the logger.
+     */
+    public static synchronized void shutdown() {
+        debug("AppLogger: Shutting down logger.");
+        APP_LOGGER.initialized = false;
+        for (Handler handler : APP_LOGGER.logger.getHandlers()) {
+            handler.close();
+            APP_LOGGER.logger.removeHandler(handler);
+        }
+    }
+
+    /**
      * Returns the number of handlers currently attached to the AppLogger for testing purposes.
      * @return the number of handlers attached to the logger
      */
