@@ -242,5 +242,12 @@ public final class AppArgs {
         return Collections.unmodifiableSet(arguments.keySet());
     }
 
+    @Override
+    public String toString() {
+        return "AppArgs{" +
+                "arguments=" + arguments +
+                '}';
+    }
+
 }
 
