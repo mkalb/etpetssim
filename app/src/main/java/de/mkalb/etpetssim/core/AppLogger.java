@@ -23,54 +23,17 @@ import java.util.logging.Formatter;
 public final class AppLogger {
 
     /**
-     * Enum representing the log levels supported by the AppLogger.
-     */
-    public enum LogLevel {
-        DEBUG, INFO, WARN, ERROR;
-
-        /**
-         * Converts a string representation of a log level to the corresponding LogLevel enum.
-         * @param level the string representation of the log level, case-insensitive
-         * @return an Optional containing the LogLevel if the string is valid, or an empty Optional if not
-         */
-        public static Optional<LogLevel> fromString(String level) {
-            try {
-                return Optional.of(LogLevel.valueOf(level.toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                return Optional.empty();
-            }
-        }
-
-        /**
-         * Converts this LogLevel to the corresponding java.util.logging.Level.
-         * @return the java.util.logging.Level corresponding to this LogLevel
-         */
-        Level toJavaLogLevel() {
-            return switch (this) {
-                case DEBUG -> Level.FINE;
-                case INFO -> Level.INFO;
-                case WARN -> Level.WARNING;
-                case ERROR -> Level.SEVERE;
-            };
-        }
-
-    }
-
-    /**
      * The name of the log file used by the AppLogger.
      */
     public static final String LOG_FILE_NAME = "ExtraterrestrialPetsSimulation.log";
-
     /**
      * The default log level for the AppLogger.
      */
     public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
-
     /**
      * Singleton instance of the AppLogger.
      */
     private static final AppLogger APP_LOGGER = new AppLogger();
-
     /**
      * The root logger for the application.
      */
@@ -83,79 +46,6 @@ public final class AppLogger {
         logger = Logger.getLogger("");
         // Set default log level
         logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
-    }
-
-    /**
-     * Initializes the AppLogger with the specified log level, console output, and log file path.
-     * This method must be called exactly once before any logging methods are used.
-     *
-     * @param logLevel   the log level to set for the logger
-     * @param useConsole if true, logs will also be printed to the console
-     * @param logPath    the path to the log file; if null, no file logging will be done
-     * @throws IllegalStateException if the logger is already initialized.
-     */
-    private synchronized void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
-        if (initialized) {
-            throw new IllegalStateException("AppLogger is already initialized.");
-        }
-        Objects.requireNonNull(logLevel, "Log level must not be null");
-
-        APP_LOGGER.logger.setUseParentHandlers(false);
-
-        Level level = logLevel.toJavaLogLevel();
-
-        // Set the log level for the logger
-        APP_LOGGER.logger.setLevel(level);
-
-        List<StreamHandler> logHandlers = new ArrayList<>();
-
-        // ConsoleHandler for console output
-        if (useConsole) {
-            ConsoleHandler consoleHandler = new ConsoleHandler();
-            consoleHandler.setFormatter(new AppLogFormatter());
-            try {
-                consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
-            } catch (UnsupportedEncodingException e) {
-                APP_LOGGER.logger.log(Level.SEVERE, "AppLogger: Failed to set encoding for console handler", e);
-            }
-            consoleHandler.setLevel(level);
-            logHandlers.add(consoleHandler);
-        }
-
-        // FileHandler for file output
-        if (logPath != null) {
-            try {
-                Path parent = logPath.getParent();
-                if ((parent != null) && Files.exists(parent) && Files.isDirectory(parent) && Files.isWritable(parent)) {
-                    FileHandler fileHandler = new FileHandler(logPath.toString(), false);
-                    fileHandler.setFormatter(new AppLogFormatter());
-                    fileHandler.setEncoding(StandardCharsets.UTF_8.name());
-                    fileHandler.setLevel(level);
-                    logHandlers.add(fileHandler);
-                } else {
-                    APP_LOGGER.logger.severe("AppLogger: Parent directory for log file does not exist or is not writable: " + logPath);
-                }
-            } catch (IOException e) {
-                APP_LOGGER.logger.log(Level.SEVERE, "AppLogger: Failed to create log file handler: " + logPath, e);
-            }
-        }
-
-        if (logHandlers.isEmpty()) {
-            APP_LOGGER.logger.warning("AppLogger: No logging handlers were created.");
-        } else {
-            // Remove all existing handlers from the logger before adding new ones
-            for (Handler handler : APP_LOGGER.logger.getHandlers()) {
-                APP_LOGGER.logger.removeHandler(handler);
-            }
-
-            // Add all new handlers to the logger
-            logHandlers.forEach(APP_LOGGER.logger::addHandler);
-            if (logLevel == LogLevel.DEBUG) {
-                logHandlers.forEach(handler -> debug("AppLogger: Added handler: " + handler.getClass().getSimpleName()));
-            }
-
-        }
-        initialized = true;
     }
 
     /**
@@ -326,6 +216,113 @@ public final class AppLogger {
     public static void error(@Nullable String message, Throwable throwable) {
         Objects.requireNonNull(throwable, "Throwable must not be null");
         APP_LOGGER.logger.log(Level.SEVERE, message, throwable);
+    }
+
+    /**
+     * Initializes the AppLogger with the specified log level, console output, and log file path.
+     * This method must be called exactly once before any logging methods are used.
+     *
+     * @param logLevel   the log level to set for the logger
+     * @param useConsole if true, logs will also be printed to the console
+     * @param logPath    the path to the log file; if null, no file logging will be done
+     * @throws IllegalStateException if the logger is already initialized.
+     */
+    private synchronized void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
+        if (initialized) {
+            throw new IllegalStateException("AppLogger is already initialized.");
+        }
+        Objects.requireNonNull(logLevel, "Log level must not be null");
+
+        APP_LOGGER.logger.setUseParentHandlers(false);
+
+        Level level = logLevel.toJavaLogLevel();
+
+        // Set the log level for the logger
+        APP_LOGGER.logger.setLevel(level);
+
+        List<StreamHandler> logHandlers = new ArrayList<>();
+
+        // ConsoleHandler for console output
+        if (useConsole) {
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setFormatter(new AppLogFormatter());
+            try {
+                consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
+            } catch (UnsupportedEncodingException e) {
+                APP_LOGGER.logger.log(Level.SEVERE, "AppLogger: Failed to set encoding for console handler", e);
+            }
+            consoleHandler.setLevel(level);
+            logHandlers.add(consoleHandler);
+        }
+
+        // FileHandler for file output
+        if (logPath != null) {
+            try {
+                Path parent = logPath.getParent();
+                if ((parent != null) && Files.exists(parent) && Files.isDirectory(parent) && Files.isWritable(parent)) {
+                    FileHandler fileHandler = new FileHandler(logPath.toString(), false);
+                    fileHandler.setFormatter(new AppLogFormatter());
+                    fileHandler.setEncoding(StandardCharsets.UTF_8.name());
+                    fileHandler.setLevel(level);
+                    logHandlers.add(fileHandler);
+                } else {
+                    APP_LOGGER.logger.severe("AppLogger: Parent directory for log file does not exist or is not writable: " + logPath);
+                }
+            } catch (IOException e) {
+                APP_LOGGER.logger.log(Level.SEVERE, "AppLogger: Failed to create log file handler: " + logPath, e);
+            }
+        }
+
+        if (logHandlers.isEmpty()) {
+            APP_LOGGER.logger.warning("AppLogger: No logging handlers were created.");
+        } else {
+            // Remove all existing handlers from the logger before adding new ones
+            for (Handler handler : APP_LOGGER.logger.getHandlers()) {
+                APP_LOGGER.logger.removeHandler(handler);
+            }
+
+            // Add all new handlers to the logger
+            logHandlers.forEach(APP_LOGGER.logger::addHandler);
+            if (logLevel == LogLevel.DEBUG) {
+                logHandlers.forEach(handler -> debug("AppLogger: Added handler: " + handler.getClass().getSimpleName()));
+            }
+
+        }
+        initialized = true;
+    }
+
+    /**
+     * Enum representing the log levels supported by the AppLogger.
+     */
+    public enum LogLevel {
+        DEBUG, INFO, WARN, ERROR;
+
+        /**
+         * Converts a string representation of a log level to the corresponding LogLevel enum.
+         * @param level the string representation of the log level, case-insensitive
+         * @return an Optional containing the LogLevel if the string is valid, or an empty Optional if not
+         */
+        public static Optional<LogLevel> fromString(String level) {
+            try {
+                return Optional.of(LogLevel.valueOf(level.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                return Optional.empty();
+            }
+        }
+
+        /**
+         * Converts this LogLevel to the corresponding java.util.logging.Level.
+         * @return the java.util.logging.Level corresponding to this LogLevel
+         */
+        Level toJavaLogLevel() {
+            return switch (this) {
+                case DEBUG -> Level.FINE;
+                case INFO -> Level.INFO;
+                case WARN -> Level.WARNING;
+                case ERROR -> Level.SEVERE;
+            };
+        }
+
     }
 
     /**

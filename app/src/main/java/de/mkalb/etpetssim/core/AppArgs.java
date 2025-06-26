@@ -19,90 +19,6 @@ public final class AppArgs {
     private final EnumMap<Key, String> arguments = new EnumMap<>(Key.class);
 
     /**
-     * Supported command-line keys.
-     */
-    public enum Key {
-        HELP("help", "Shows this help message", true),
-        LOCALE("locale", "Sets the locale for the simulation. Format: --locale=<language>_<country> or --locale=<language>", false),
-        LOG_CONSOLE("log-console", "Enables logging to the console. Format: --log-console", true),
-        LOG_FILE("log-file", "Enables logging to a file. Format: --log-file", true),
-        LOG_LEVEL("log-level", "Sets the log level. Format: --log-level=<level>", false),
-        SIMULATION("simulation", "Starts the specified simulation. Format: --simulation=<name>", false);
-
-        private final String key;
-        private final String description;
-        private final boolean flag;
-
-        Key(String key, String description, boolean flag) {
-            this.key = key;
-            this.description = description;
-            this.flag = flag;
-        }
-
-        /**
-         * Returns the key as a string.
-         *
-         * @return the key string
-         */
-        public String key() {
-            return key;
-        }
-
-        /**
-         * Returns the description of the key.
-         *
-         * @return the description string
-         */
-        public String description() {
-            return description;
-        }
-
-        /**
-         * Returns whether this key is a flag (i.e., does not require a value).
-         *
-         * @return true if this key is a flag, false otherwise
-         */
-        public boolean isFlag() {
-            return flag;
-        }
-
-        /**
-         * Returns the Key enum constant corresponding to the given string, ignoring case.
-         *
-         * @param key the string representation of the key
-         * @return an Optional containing the Key if found, or an empty Optional if not found
-         */
-        public static Optional<Key> fromString(String key) {
-            Objects.requireNonNull(key, "Key must not be null");
-            return Arrays.stream(values())
-                         .filter(argument -> argument.key.equalsIgnoreCase(key))
-                         .findFirst();
-        }
-
-        /**
-         * Prints a help message listing all available command-line arguments and their descriptions.
-         *
-         * @param appendable the Appendable to which the help message will be written
-         */
-        @SuppressWarnings("HardcodedLineSeparator")
-        public static void printHelp(Appendable appendable) {
-            Objects.requireNonNull(appendable, "Appendable must not be null");
-            try {
-                appendable.append("List of available command-line arguments:\n");
-                for (Key key : values()) {
-                    appendable.append(String.format("--%s: %s%s%n",
-                            key.key(),
-                            key.description(),
-                            key.isFlag() ? " (flag)" : ""));
-                }
-            } catch (Exception e) {
-                AppLogger.warn("AppArgs: Failed to print help message: " + e.getMessage());
-            }
-        }
-
-    }
-
-    /**
      * Constructs a new AppArgs instance and parses the given arguments.
      *
      * @param args the command-line arguments to parse. Must not be null. Can be empty.
@@ -141,6 +57,23 @@ public final class AppArgs {
     }
 
     /**
+     * Parses a boolean value from the given string.
+     * Boolean values can be represented as "true", "false", "1", "0", "yes", "no", "on", or "off".
+     *
+     * @param value        the string to parse
+     * @param defaultValue the default value to return if the string is not a valid boolean
+     * @return the parsed boolean value or the defaultValue
+     */
+    static boolean parseBooleanValue(String value, boolean defaultValue) {
+        Objects.requireNonNull(value, "Value must not be null");
+        return switch (value.toLowerCase()) {
+            case "true", "1", "yes", "on" -> Boolean.TRUE;
+            case "false", "0", "no", "off" -> Boolean.FALSE;
+            default -> defaultValue;
+        };
+    }
+
+    /**
      * Returns the value associated with the given key.
      *
      * @param key the key to look up
@@ -166,23 +99,6 @@ public final class AppArgs {
             return defaultValue;
         }
         return parseBooleanValue(value, defaultValue);
-    }
-
-    /**
-     * Parses a boolean value from the given string.
-     * Boolean values can be represented as "true", "false", "1", "0", "yes", "no", "on", or "off".
-     *
-     * @param value        the string to parse
-     * @param defaultValue the default value to return if the string is not a valid boolean
-     * @return the parsed boolean value or the defaultValue
-     */
-    static boolean parseBooleanValue(String value, boolean defaultValue) {
-        Objects.requireNonNull(value, "Value must not be null");
-        return switch (value.toLowerCase()) {
-            case "true", "1", "yes", "on" -> Boolean.TRUE;
-            case "false", "0", "no", "off" -> Boolean.FALSE;
-            default -> defaultValue;
-        };
     }
 
     /**
@@ -247,6 +163,90 @@ public final class AppArgs {
         return "AppArgs{" +
                 "arguments=" + arguments +
                 '}';
+    }
+
+    /**
+     * Supported command-line keys.
+     */
+    public enum Key {
+        HELP("help", "Shows this help message", true),
+        LOCALE("locale", "Sets the locale for the simulation. Format: --locale=<language>_<country> or --locale=<language>", false),
+        LOG_CONSOLE("log-console", "Enables logging to the console. Format: --log-console", true),
+        LOG_FILE("log-file", "Enables logging to a file. Format: --log-file", true),
+        LOG_LEVEL("log-level", "Sets the log level. Format: --log-level=<level>", false),
+        SIMULATION("simulation", "Starts the specified simulation. Format: --simulation=<name>", false);
+
+        private final String key;
+        private final String description;
+        private final boolean flag;
+
+        Key(String key, String description, boolean flag) {
+            this.key = key;
+            this.description = description;
+            this.flag = flag;
+        }
+
+        /**
+         * Returns the Key enum constant corresponding to the given string, ignoring case.
+         *
+         * @param key the string representation of the key
+         * @return an Optional containing the Key if found, or an empty Optional if not found
+         */
+        public static Optional<Key> fromString(String key) {
+            Objects.requireNonNull(key, "Key must not be null");
+            return Arrays.stream(values())
+                         .filter(argument -> argument.key.equalsIgnoreCase(key))
+                         .findFirst();
+        }
+
+        /**
+         * Prints a help message listing all available command-line arguments and their descriptions.
+         *
+         * @param appendable the Appendable to which the help message will be written
+         */
+        @SuppressWarnings("HardcodedLineSeparator")
+        public static void printHelp(Appendable appendable) {
+            Objects.requireNonNull(appendable, "Appendable must not be null");
+            try {
+                appendable.append("List of available command-line arguments:\n");
+                for (Key key : values()) {
+                    appendable.append(String.format("--%s: %s%s%n",
+                            key.key(),
+                            key.description(),
+                            key.isFlag() ? " (flag)" : ""));
+                }
+            } catch (Exception e) {
+                AppLogger.warn("AppArgs: Failed to print help message: " + e.getMessage());
+            }
+        }
+
+        /**
+         * Returns the key as a string.
+         *
+         * @return the key string
+         */
+        public String key() {
+            return key;
+        }
+
+        /**
+         * Returns the description of the key.
+         *
+         * @return the description string
+         */
+        public String description() {
+            return description;
+        }
+
+        /**
+         * Returns whether this key is a flag (i.e., does not require a value).
+         *
+         * @return true if this key is a flag, false otherwise
+         */
+        public boolean isFlag() {
+            return flag;
+        }
+
     }
 
 }

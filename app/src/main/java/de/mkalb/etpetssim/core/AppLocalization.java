@@ -28,83 +28,6 @@ public final class AppLocalization {
     private static @Nullable ResourceBundle bundle;
 
     /**
-     * Enum representing supported country locales with their display names.
-     * The order of the enum constants is important as it determines the precedence when matching locales.
-     * EN_US has the highest precedence.
-     */
-    public enum CountryLocale {
-        EN_US(Locale.US, "English (US)"),
-        DE_DE(Locale.GERMANY, "Deutsch (Deutschland)");
-
-        private final Locale countryLocale;
-        private final String displayName;
-
-        CountryLocale(Locale countryLocale, String displayName) {
-            Objects.requireNonNull(countryLocale, "Country locale must not be null");
-            Objects.requireNonNull(displayName, "Display name must not be null");
-            if (countryLocale.getLanguage().isEmpty()) {
-                throw new IllegalArgumentException("Country locale must have a valid language code.");
-            }
-            if (countryLocale.getCountry().isEmpty()) {
-                throw new IllegalArgumentException("Country locale must have a valid country code.");
-            }
-            this.countryLocale = countryLocale;
-            this.displayName = displayName;
-        }
-
-        /**
-         * Returns the Locale object representing the country locale.
-         * Example: "Locale.US" for "EN_US" or "Locale.GERMANY" for "DE_DE".
-         *
-         * @return the Locale object with language and country codes
-         */
-        public Locale countryLocale() {
-            return countryLocale;
-        }
-
-        /**
-         * Returns the display name of the country locale.
-         * Example: "English (US)" for "EN_US" or "Deutsch (Deutschland)" for "DE_DE".
-         *
-         * @return the display name as a string
-         */
-        public String displayName() {
-            return displayName;
-        }
-
-        /**
-         * Returns the language code of the country locale.
-         * Example: "en" for "EN_US" or "de" for "DE_DE".
-         *
-         * @return the language code as a string
-         */
-        public String languageCode() {
-            return countryLocale.getLanguage();
-        }
-
-        /**
-         * Returns the country code of the country locale.
-         * Example: "US" for "EN_US" or "DE" for "DE_DE".
-         *
-         * @return the country code as a string
-         */
-        public String countryCode() {
-            return countryLocale.getCountry();
-        }
-
-        /**
-         * Returns the locale code of the country locale in the format "language_COUNTRY".
-         * Example: "en_US" for "EN_US" or "de_DE" for "DE_DE".
-         *
-         * @return the locale code as a string
-         */
-        public String localeCode() {
-            return countryLocale.getLanguage() + "_" + countryLocale.getCountry();
-        }
-
-    }
-
-    /**
      * Private constructor to prevent instantiation.
      */
     private AppLocalization() {
@@ -308,6 +231,83 @@ public final class AppLocalization {
             AppLogger.error("AppLocalization: Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args), e);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
+    }
+
+    /**
+     * Enum representing supported country locales with their display names.
+     * The order of the enum constants is important as it determines the precedence when matching locales.
+     * EN_US has the highest precedence.
+     */
+    public enum CountryLocale {
+        EN_US(Locale.US, "English (US)"),
+        DE_DE(Locale.GERMANY, "Deutsch (Deutschland)");
+
+        private final Locale countryLocale;
+        private final String displayName;
+
+        CountryLocale(Locale countryLocale, String displayName) {
+            Objects.requireNonNull(countryLocale, "Country locale must not be null");
+            Objects.requireNonNull(displayName, "Display name must not be null");
+            if (countryLocale.getLanguage().isEmpty()) {
+                throw new IllegalArgumentException("Country locale must have a valid language code.");
+            }
+            if (countryLocale.getCountry().isEmpty()) {
+                throw new IllegalArgumentException("Country locale must have a valid country code.");
+            }
+            this.countryLocale = countryLocale;
+            this.displayName = displayName;
+        }
+
+        /**
+         * Returns the Locale object representing the country locale.
+         * Example: "Locale.US" for "EN_US" or "Locale.GERMANY" for "DE_DE".
+         *
+         * @return the Locale object with language and country codes
+         */
+        public Locale countryLocale() {
+            return countryLocale;
+        }
+
+        /**
+         * Returns the display name of the country locale.
+         * Example: "English (US)" for "EN_US" or "Deutsch (Deutschland)" for "DE_DE".
+         *
+         * @return the display name as a string
+         */
+        public String displayName() {
+            return displayName;
+        }
+
+        /**
+         * Returns the language code of the country locale.
+         * Example: "en" for "EN_US" or "de" for "DE_DE".
+         *
+         * @return the language code as a string
+         */
+        public String languageCode() {
+            return countryLocale.getLanguage();
+        }
+
+        /**
+         * Returns the country code of the country locale.
+         * Example: "US" for "EN_US" or "DE" for "DE_DE".
+         *
+         * @return the country code as a string
+         */
+        public String countryCode() {
+            return countryLocale.getCountry();
+        }
+
+        /**
+         * Returns the locale code of the country locale in the format "language_COUNTRY".
+         * Example: "en_US" for "EN_US" or "de_DE" for "DE_DE".
+         *
+         * @return the locale code as a string
+         */
+        public String localeCode() {
+            return countryLocale.getLanguage() + "_" + countryLocale.getCountry();
+        }
+
     }
 
 }

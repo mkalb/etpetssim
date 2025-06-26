@@ -16,30 +16,6 @@ import java.util.*;
 public final class AppStorage {
 
     /**
-     * Enum representing the operating systems supported by the application.
-     */
-    public enum OperatingSystem {
-        WINDOWS, MAC, LINUX;
-
-        /**
-         * Detects the operating system based on the system property ("os.name").
-         *
-         * @return the detected operating system
-         */
-        public static OperatingSystem detect() {
-            String osName = System.getProperty("os.name").toLowerCase();
-            if (osName.contains("win")) {
-                return OperatingSystem.WINDOWS;
-            } else if (osName.contains("mac")) {
-                return OperatingSystem.MAC;
-            } else {
-                return OperatingSystem.LINUX;
-            }
-        }
-
-    }
-
-    /**
      * The name of the application, used to create directories for app data, logs, and cache.
      */
     public static final String APP_NAME = "ExtraterrestrialPetsSimulation";
@@ -194,6 +170,30 @@ public final class AppStorage {
         Objects.requireNonNull(prefix, "Prefix must not be null");
         Objects.requireNonNull(os, "Operating system must not be null");
         return Files.createTempFile(getOrCreateCacheDir(os), prefix, suffix);
+    }
+
+    /**
+     * Enum representing the operating systems supported by the application.
+     */
+    public enum OperatingSystem {
+        WINDOWS, MAC, LINUX;
+
+        /**
+         * Detects the operating system based on the system property ("os.name").
+         *
+         * @return the detected operating system
+         */
+        public static OperatingSystem detect() {
+            String osName = System.getProperty("os.name").toLowerCase();
+            if (osName.contains("win")) {
+                return OperatingSystem.WINDOWS;
+            } else if (osName.contains("mac")) {
+                return OperatingSystem.MAC;
+            } else {
+                return OperatingSystem.LINUX;
+            }
+        }
+
     }
 
 }
