@@ -207,6 +207,31 @@ public final class AppLocalization {
     }
 
     /**
+     * Returns an Optional containing the text for the given key from the ResourceBundle.
+     *
+     * @param key the key for the desired text
+     * @return an Optional containing the text associated with the key if found,
+     * or an empty Optional if the key is not found or if the text is empty or blank
+     */
+    public static Optional<String> getOptionalText(String key) {
+        Objects.requireNonNull(key, "Key must not be null");
+        if (bundle == null) {
+            throw new IllegalStateException("AppLocalization is not initialized.");
+        }
+        try {
+            String text = bundle.getString(key);
+            if (text.isBlank()) {
+                AppLogger.info("AppLocalization: Key found in ResourceBundle but text is empty or blank: " + key);
+                return Optional.empty();
+            }
+            return Optional.of(text);
+        } catch (MissingResourceException e) {
+            AppLogger.info("AppLocalization: Key not found in ResourceBundle: " + key);
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Returns the formatted text for the given key from the ResourceBundle.
      *
      * @param key  the key for the desired text

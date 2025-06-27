@@ -137,6 +137,23 @@ class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getText(null));
     }
 
+
+    @Test
+    void testGetOptionalText() {
+        AppLocalization.initialize("en_US");
+        assertEquals(Optional.of("Hello"), AppLocalization.getOptionalText("greeting"));
+        assertEquals(Optional.empty(), AppLocalization.getOptionalText("empty"));
+        assertEquals(Optional.of("OnlyUS"), AppLocalization.getOptionalText("onlyUS"));
+
+        AppLocalization.resetForTesting();
+        AppLocalization.initialize("de_DE");
+        assertEquals(Optional.of("Hallo"), AppLocalization.getOptionalText("greeting"));
+        assertEquals(Optional.empty(), AppLocalization.getOptionalText("empty"));
+        assertEquals(Optional.empty(), AppLocalization.getOptionalText("onlyUS"));
+
+        assertEquals(Optional.empty(), AppLocalization.getOptionalText("non_existent_key"));
+        assertThrows(NullPointerException.class, () -> AppLocalization.getOptionalText(null));
+    }
     /**
      * Tests the retrieval and formatting of localized text for the key "welcome" with a parameter.
      *
