@@ -9,30 +9,22 @@ import java.util.function.*;
 
 public final class WaTorCanvasRenderer {
 
-    public enum DrawingStatus {
-        DRAWN, SKIPPED, ERROR
-    }
-
     private static final int MAX_ALLOWED_DRAW_TIME = 200;
     private static final int MAX_ALLOWED_AVG_DRAW_TIME = 150;
     private static final double MAX_PROPORTION_OF_DRAW_TIME_TO_SPEED = 0.5d;
     private static final int FORCE_EVAL_DRAW_TIME = 100;
     private static final int FREQ_MIN = 2;
     private static final int FREQ_MAX = 30;
-
     private static final Color COLOR_WATER = Color.DARKBLUE.darker();
-
     private final WaTorConfigModel waTorConfigModel;
     private final WaTorSimulationModel waTorSimulationModel;
     private final Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction;
     private final Canvas simulationCanvas;
-
     private int drawEveryNFrames;
     private long totalDrawTime;
     private int drawCount;
     private int frameCounter;
     private boolean forceEvaluation;
-
     public WaTorCanvasRenderer(WaTorConfigModel waTorConfigModel,
                                WaTorSimulationModel waTorSimulationModel,
                                Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
@@ -186,6 +178,10 @@ public final class WaTorCanvasRenderer {
         forceEvaluation = false;
 
         return DrawingStatus.DRAWN;
+    }
+
+    public enum DrawingStatus {
+        DRAWN, SKIPPED, ERROR
     }
 
 }
