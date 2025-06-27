@@ -3,11 +3,11 @@ package de.mkalb.etpetssim;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.SimulationFactory;
 import de.mkalb.etpetssim.simulations.SimulationType;
+import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -165,17 +165,11 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @return a Node representing the header of the simulation
      */
     private Node buildSimulationHeaderNode(SimulationType simulationType) {
-        Label titleLabel = new Label(simulationType.title());
-        titleLabel.getStyleClass().add("simulationHeader-title-label");
-
-        VBox simulationHeaderBox = new VBox(titleLabel);
+        VBox simulationHeaderBox = new VBox(FXComponentBuilder.createLabel(simulationType.title(), "simulationHeader-title-label"));
         simulationHeaderBox.getStyleClass().add("simulationHeader-vbox");
 
-        simulationType.subtitle().ifPresent(subtitle -> {
-            Label subtitleLabel = new Label(subtitle);
-            subtitleLabel.getStyleClass().add("simulationHeader-subtitle-label");
-            simulationHeaderBox.getChildren().add(subtitleLabel);
-        });
+        simulationType.subtitle()
+                      .ifPresent(subtitle -> simulationHeaderBox.getChildren().add(FXComponentBuilder.createLabel(subtitle, "simulationHeader-subtitle-label")));
 
         simulationType.urlAsURI().ifPresent(url -> {
             Hyperlink urlLink = new Hyperlink(url.toString());
