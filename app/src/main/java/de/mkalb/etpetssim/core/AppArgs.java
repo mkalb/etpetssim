@@ -12,6 +12,7 @@ public final class AppArgs {
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
      */
     private static final String ARGUMENTS_PATTERN = "--([a-zA-Z0-9\\-]+)(=(\\S+))?";
+    private static final int BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used to build the arguments string
 
     /**
      * Map to store parsed command-line arguments.
@@ -156,6 +157,26 @@ public final class AppArgs {
      */
     public Set<Key> keys() {
         return Collections.unmodifiableSet(arguments.keySet());
+    }
+
+    /**
+     * Returns a string representation of all command-line arguments.
+     *
+     * @return a string containing all arguments in the format --key=value or --flag
+     */
+    public String argumentsAsString() {
+        StringBuilder sb = new StringBuilder(BUILDER_CAPACITY);
+        for (Map.Entry<Key, String> entry : arguments.entrySet()) {
+            if (!sb.isEmpty()) {
+                sb.append(" ");
+            }
+            sb.append("--").append(entry.getKey().key());
+            if (!entry.getKey().isFlag() // is not a flag
+                    || !parseBooleanValue(entry.getValue(), true)) { // or flag is false
+                sb.append("=").append(entry.getValue());
+            }
+        }
+        return sb.toString();
     }
 
     @Override

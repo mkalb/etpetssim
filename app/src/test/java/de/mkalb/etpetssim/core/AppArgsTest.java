@@ -282,4 +282,34 @@ class AppArgsTest {
         assertThrows(NullPointerException.class, () -> AppArgs.parseBooleanValue(null, false));
     }
 
+    @Test
+    void testArgumentsAsString() {
+        // Test different variations of "--help"
+        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help", "--simulation=testSim"}).argumentsAsString());
+        assertEquals("--simulation=testSim", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).argumentsAsString());
+        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).argumentsAsString());
+        assertEquals("--help=false --simulation=testSim", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).argumentsAsString());
+
+        // Test different variations of "--simulation"
+        assertEquals("", new AppArgs(new String[]{"--simulation"}).argumentsAsString());
+        assertEquals("", new AppArgs(new String[]{"--simulation="}).argumentsAsString());
+        assertEquals("--simulation=1", new AppArgs(new String[]{"--simulation=1"}).argumentsAsString());
+        assertEquals("--simulation=false", new AppArgs(new String[]{"--simulation=false"}).argumentsAsString());
+    }
+
+    @Test
+    void testToString() {
+        // Test different variations of "--help"
+        assertEquals("AppArgs{arguments={HELP=true, SIMULATION=testSim}}", new AppArgs(new String[]{"--help", "--simulation=testSim"}).toString());
+        assertEquals("AppArgs{arguments={SIMULATION=testSim}}", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).toString());
+        assertEquals("AppArgs{arguments={HELP=true, SIMULATION=testSim}}", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).toString());
+        assertEquals("AppArgs{arguments={HELP=false, SIMULATION=testSim}}", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).toString());
+
+        // Test different variations of "--simulation"
+        assertEquals("AppArgs{arguments={}}", new AppArgs(new String[]{"--simulation"}).toString());
+        assertEquals("AppArgs{arguments={}}", new AppArgs(new String[]{"--simulation="}).toString());
+        assertEquals("AppArgs{arguments={SIMULATION=1}}", new AppArgs(new String[]{"--simulation=1"}).toString());
+        assertEquals("AppArgs{arguments={SIMULATION=false}}", new AppArgs(new String[]{"--simulation=false"}).toString());
+    }
+
 }
