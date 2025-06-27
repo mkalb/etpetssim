@@ -7,9 +7,8 @@ public final class WaTorFish implements WaTorCreature {
     private final long sequenceId;
     private final long timeOfBirth;
     private final WaTorCoordinate placeOfBirth;
-
-    private WaTorCoordinate currentPlace;
     private final List<Long> timeOfReproduction;
+    private WaTorCoordinate currentPlace;
 
     public WaTorFish(long sequenceId, long timeOfBirth, WaTorCoordinate placeOfBirth) {
         this.sequenceId = sequenceId;

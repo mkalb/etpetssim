@@ -5,16 +5,13 @@ import java.util.function.*;
 
 public final class WaTorSimulation {
 
-    public enum SimulationStatus {NEW, STARTED, FINISHED}
-
     private final WaTorConfigModel waTorConfigModel;
     private final WaTorSimulationModel waTorSimulationModel;
     private final WaTorTerritory territory;
     private final Random random;
+    private final SortedMap<Long, WaTorCreature> creatures;
     private long sequence;
     private SimulationStatus simulationStatus;
-    private final SortedMap<Long, WaTorCreature> creatures;
-
     public WaTorSimulation(WaTorConfigModel waTorConfigModel, WaTorSimulationModel waTorSimulationModel) {
         this.waTorConfigModel = waTorConfigModel;
         this.waTorSimulationModel = waTorSimulationModel;
@@ -209,5 +206,7 @@ public final class WaTorSimulation {
 
         return simulationStatus;
     }
+
+    public enum SimulationStatus {NEW, STARTED, FINISHED}
 
 }

@@ -7,9 +7,8 @@ public final class WaTorShark implements WaTorCreature {
     private final long sequenceId;
     private final long timeOfBirth;
     private final WaTorCoordinate placeOfBirth;
-
-    private WaTorCoordinate currentPlace;
     private final List<Long> timeOfReproduction;
+    private WaTorCoordinate currentPlace;
     private int currentEnergy;
 
     public WaTorShark(long sequenceId, long timeOfBirth, WaTorCoordinate placeOfBirth, int initialEnergy) {
