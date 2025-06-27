@@ -1,0 +1,54 @@
+package de.mkalb.etpetssim.simulations.startscreen;
+
+import de.mkalb.etpetssim.simulations.SimulationController;
+import de.mkalb.etpetssim.simulations.SimulationType;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.util.*;
+import java.util.function.*;
+
+/**
+ * Controller for the start screen of the Extraterrestrial Pets Simulation application.
+ * It builds the view region containing buttons for each available simulation type.
+ */
+public final class StartScreenController implements SimulationController {
+
+    private final Stage stage;
+    private final BiConsumer<Stage, SimulationType> stageUpdater;
+
+    public StartScreenController(Stage stage,
+                                 BiConsumer<Stage, SimulationType> stageUpdater) {
+        Objects.requireNonNull(stage);
+        Objects.requireNonNull(stageUpdater);
+        this.stage = stage;
+        this.stageUpdater = stageUpdater;
+    }
+
+    @Override
+    public Region buildViewRegion() {
+        VBox root = new VBox();
+
+        for (SimulationType type : SimulationType.values()) {
+            if (!type.isShownOnStartScreen()) {
+                continue;
+            }
+
+            Button button = new Button(type.title());
+            type.subtitle().ifPresent(subtitle -> button.setTooltip(new Tooltip(subtitle)));
+            button.setDisable(!type.isImplemented());
+
+            if (type.isImplemented()) {
+                button.setOnAction(event -> stageUpdater.accept(stage, type));
+            }
+
+            root.getChildren().add(button);
+        }
+
+        return root;
+    }
+
+}
