@@ -1,0 +1,90 @@
+/* General Scene Styling */
+.root {
+    -fx-font-family: 'Verdana';
+    -fx-font-size: 14px;
+    -fx-background-color: #f0f0f0;
+}
+
+/* ScrollPane Styling */
+.scroll-pane {
+    -fx-padding: 10;
+}
+.scroll-pane .viewport {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0.2, 0, 2);
+}
+
+/* Label Styling */
+.label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Slider Styling */
+.slider {
+    -fx-padding: 10;
+}
+.slider .track {
+    -fx-background-color: #cccccc;
+}
+.slider .thumb {
+    -fx-background-color: #0078d7;
+}
+
+/* ChoiceBox Styling */
+.choice-box {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4;
+    -fx-padding: 6;
+}
+.choice-box:hover {
+    -fx-border-color: #0078d7;
+}
+
+/* Button Styling */
+.button {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 6;
+}
+.button:hover {
+    -fx-background-color: #005fa3;
+}
+
+/* Header Styling */
+.simulationHeader-vbox {
+    -fx-background-color: linear-gradient(to bottom, #eaf3fb, #d6e0eb);
+    -fx-padding: 14px;
+    -fx-spacing: 6px;
+    -fx-border-width: 0 0 1px 0;
+    -fx-border-color: #cccccc;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0.3, 0, 2);
+}
+
+.simulationHeader-title-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c2c2c;
+}
+
+.simulationHeader-subtitle-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #555555;
+}
+
+.simulationHeader-url-hyperlink {
+    -fx-font-size: 13px;
+    -fx-text-fill: #0066cc;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+.simulationHeader-url-hyperlink:hover {
+    -fx-text-fill: #004a99;
+}

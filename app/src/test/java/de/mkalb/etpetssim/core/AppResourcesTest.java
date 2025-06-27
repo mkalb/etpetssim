@@ -73,7 +73,7 @@ class AppResourcesTest {
      *
      * <p><b>Test data prerequisites:</b></p>
      * <ul>
-     *     <li>The CSS file "etpetssim.css" must exist in the /css/ directory.</li>
+     *     <li>The CSS file "scene.css" must exist in the /css/ directory.</li>
      * </ul>
      *
      * <p>If this CSS file is not present, the test will fail.</p>
@@ -81,9 +81,9 @@ class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetCss() {
-        Optional<String> cssUrlOpt = AppResources.getCss("etpetssim.css");
+        Optional<String> cssUrlOpt = AppResources.getCss("scene.css");
         assertTrue(cssUrlOpt.isPresent(), "CSS URL should be present");
-        assertTrue(cssUrlOpt.get().endsWith("etpetssim.css"), "CSS URL should end with 'etpetssim.css'");
+        assertTrue(cssUrlOpt.get().endsWith("scene.css"), "CSS URL should end with 'scene.css'");
 
         assertThrows(NullPointerException.class, () -> AppResources.getCss(null));
     }
@@ -146,7 +146,7 @@ class AppResourcesTest {
      *
      * <p><b>Test data prerequisites:</b></p>
      * <ul>
-     *     <li>The resource "css/etpetssim.css" must exist in the classpath.</li>
+     *     <li>The resource "css/scene.css" must exist in the classpath.</li>
      * </ul>
      *
      * <p>If this resource is not present, the test will fail.</p>
@@ -171,7 +171,7 @@ class AppResourcesTest {
      *
      * <p><b>Test data prerequisites:</b></p>
      * <ul>
-     *     <li>The resource "css/etpetssim.css" must exist in the classpath.</li>
+     *     <li>The resource "css/scene.css" must exist in the classpath.</li>
      * </ul>
      *
      * <p>If this resource is not present, the test will fail.</p>
