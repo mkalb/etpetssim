@@ -1,10 +1,18 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.wator.WaTorController;
+import de.mkalb.etpetssim.simulations.SimulationFactory;
+import de.mkalb.etpetssim.simulations.SimulationType;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -26,13 +34,22 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             "etpetssim64.png",
             "etpetssim128.png"
     };
+    private static final int STAGE_MIN_WIDTH = 800;
+    private static final int STAGE_MIN_HEIGHT = 600;
 
+    /**
+     * The main entry point for the Extraterrestrial Pets Simulation application.
+     * The command-line arguments are parsed with AppArgs.
+     * Use "--help" to display the help message and exit the application.
+     *
+     * @param args the command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         var arguments = parseArgumentsAndHandleHelp(args);
         initAppLogger(arguments);
         initializeAppLocalization(arguments);
 
-        AppLogger.info("Launching application");
+        AppLogger.info("Application is launching with arguments: " + arguments.argumentsAsString());
         launch(args);
     }
 
@@ -85,38 +102,120 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
     }
 
-    private Scene createWaTorScene() {
-        return new Scene(new WaTorController().buildViewRegion());
+    /**
+     * Determines the simulation type based on the command-line arguments.
+     *
+     * @param arguments the parsed application arguments
+     * @param onlyImplemented if true, only implemented simulations are considered
+     * @return an Optional containing the matching SimulationType, or empty if none found
+     */
+    @SuppressWarnings("SameParameterValue")
+    private Optional<SimulationType> determineSimulationType(AppArgs arguments, boolean onlyImplemented) {
+        return arguments.getValue(AppArgs.Key.SIMULATION)
+                        .flatMap(arg -> SimulationType.fromCliArgument(arg, onlyImplemented));
+    }
+
+    /**
+     * Updates the JavaFX stage with the application icons.
+     *
+     * @param stage the JavaFX stage to update with icons
+     */
+    private void updateStageIcons(Stage stage) {
+        List<Image> icons = AppResources.getImages(APP_IMAGES);
+        if (icons.isEmpty()) {
+            AppLogger.error("Failed to load application icons. Icons will not be set.");
+        } else {
+            stage.getIcons().addAll(icons);
+        }
+    }
+
+    /**
+     * Updates the JavaFX stage with a new scene based on the specified simulation type.
+     * It is passed as a method reference to the SimulationFactory and the StartScreenController.
+     *
+     * @param stage the JavaFX stage to update
+     * @param simulationType the type of simulation to display in the new scene
+     * @see de.mkalb.etpetssim.simulations.SimulationFactory
+     * @see de.mkalb.etpetssim.simulations.startscreen.StartScreenController
+     */
+    void updateStageScene(Stage stage, SimulationType simulationType) {
+        Objects.requireNonNull(stage, "Stage must not be null");
+        Objects.requireNonNull(simulationType, "SimulationType must not be null");
+
+        // Scene with a BorderPane
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(buildSimulationHeaderNode(simulationType));
+        borderPane.setCenter(buildSimulationMainNode(stage, simulationType));
+        Scene scene = new Scene(borderPane);
+
+        // Add common stylesheets first and then the specific simulation type stylesheet
+        AppResources.getCss("scene.css").ifPresent(scene.getStylesheets()::add);
+        simulationType.cssResource().ifPresent(scene.getStylesheets()::add);
+
+        // Stage
+        stage.setTitle(AppLocalization.getText("window.title") + " - " + simulationType.title());
+        stage.setScene(scene);
+        stage.centerOnScreen();
+    }
+
+    /**
+     * Builds the header node for the simulation, which includes the title, subtitle, and URL link if available.
+     *
+     * @param simulationType the type of simulation to create the header for
+     * @return a Node representing the header of the simulation
+     */
+    private Node buildSimulationHeaderNode(SimulationType simulationType) {
+        Label titleLabel = new Label(simulationType.title());
+        titleLabel.getStyleClass().add("simulationHeader-title-label");
+
+        VBox simulationHeaderBox = new VBox(titleLabel);
+        simulationHeaderBox.getStyleClass().add("simulationHeader-vbox");
+
+        simulationType.subtitle().ifPresent(subtitle -> {
+            Label subtitleLabel = new Label(subtitle);
+            subtitleLabel.getStyleClass().add("simulationHeader-subtitle-label");
+            simulationHeaderBox.getChildren().add(subtitleLabel);
+        });
+
+        simulationType.urlAsURI().ifPresent(url -> {
+            Hyperlink urlLink = new Hyperlink(url.toString());
+            urlLink.getStyleClass().add("simulationHeader-url-hyperlink");
+            urlLink.setOnAction(e -> getHostServices().showDocument(url.toString()));
+            simulationHeaderBox.getChildren().add(urlLink);
+        });
+
+        return simulationHeaderBox;
+    }
+
+    /**
+     * Builds the main content node for the simulation based on the specified simulation type.
+     *
+     * @param stage the JavaFX stage to use for the simulation
+     * @param simulationType the type of simulation to create
+     * @return a Node representing the main content of the simulation
+     */
+    private Node buildSimulationMainNode(Stage stage, SimulationType simulationType) {
+        Region simulationRegion = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene).region();
+
+        ScrollPane scrollPane = new ScrollPane(simulationRegion);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        return scrollPane;
     }
 
     @Override
     public void start(Stage primaryStage) {
-        AppLogger.info("Starting Extraterrestrial Pets Simulation application");
+        // Determine the simulation type from command-line arguments
+        AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
+        SimulationType type = determineSimulationType(arguments, true)
+                .orElse(SimulationType.STARTSCREEN); // Default to STARTSCREEN if no valid simulation type is found
+        AppLogger.info("Application is starting with simulation type: " + type.name());
 
-        // Parse command-line arguments
-        var arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
-
-        // Choose the scene based on the command-line arguments
-        Scene scene = null;
-        Optional<String> simArg = arguments.getValue(AppArgs.Key.SIMULATION);
-        if (simArg.isPresent()) {
-            String simulationName = simArg.get().toLowerCase();
-            // TODO Choose the simulation based on the argument
-            scene = createWaTorScene();
-        } else {
-            AppLogger.warn("No simulation specified. Defaulting to WaTor simulation.");
-            scene = createWaTorScene();
-        }
-
-        // Initialize the primary stage
-        primaryStage.setTitle(AppLocalization.getText("window.title"));
-        List<Image> images = AppResources.getImages(APP_IMAGES);
-        if (images.isEmpty()) {
-            AppLogger.error("Failed to load application icons. Icons will not be set.");
-        } else {
-            primaryStage.getIcons().addAll(images);
-        }
-        primaryStage.setScene(scene);
+        // Initialize and show the primary stage with the appropriate scene
+        primaryStage.setMinWidth(STAGE_MIN_WIDTH);
+        primaryStage.setMinHeight(STAGE_MIN_HEIGHT);
+        updateStageIcons(primaryStage);
+        updateStageScene(primaryStage, type);
         primaryStage.show();
     }
 
