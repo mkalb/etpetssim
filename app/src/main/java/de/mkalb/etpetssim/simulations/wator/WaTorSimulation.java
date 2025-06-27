@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.wator;
+package de.mkalb.etpetssim.simulations.wator;
 
 import java.util.*;
 import java.util.function.*;
@@ -12,6 +12,7 @@ public final class WaTorSimulation {
     private final SortedMap<Long, WaTorCreature> creatures;
     private long sequence;
     private SimulationStatus simulationStatus;
+
     public WaTorSimulation(WaTorConfigModel waTorConfigModel, WaTorSimulationModel waTorSimulationModel) {
         this.waTorConfigModel = waTorConfigModel;
         this.waTorSimulationModel = waTorSimulationModel;

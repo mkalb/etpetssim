@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.wator;
+package de.mkalb.etpetssim.simulations.wator;
 
 import de.mkalb.etpetssim.simulations.SimulationController;
 import javafx.scene.layout.Region;

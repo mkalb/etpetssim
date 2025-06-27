@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.startscreen.StartScreenController;
-import de.mkalb.etpetssim.wator.WaTorController;
+import de.mkalb.etpetssim.simulations.wator.WaTorController;
 import javafx.stage.Stage;
 
 import java.util.*;

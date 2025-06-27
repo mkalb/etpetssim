@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.wator;
+package de.mkalb.etpetssim.simulations.wator;
 
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;

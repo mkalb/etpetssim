@@ -5,7 +5,7 @@ module de.mkalb.etpetssim {
     requires java.logging;
     exports de.mkalb.etpetssim;
     exports de.mkalb.etpetssim.core;
-    exports de.mkalb.etpetssim.wator;
+    exports de.mkalb.etpetssim.simulations.wator;
     exports de.mkalb.etpetssim.simulations;
     exports de.mkalb.etpetssim.simulations.startscreen;
 }

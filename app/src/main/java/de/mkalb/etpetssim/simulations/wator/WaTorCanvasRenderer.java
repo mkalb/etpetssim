@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.wator;
+package de.mkalb.etpetssim.simulations.wator;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -25,6 +25,7 @@ public final class WaTorCanvasRenderer {
     private int drawCount;
     private int frameCounter;
     private boolean forceEvaluation;
+
     public WaTorCanvasRenderer(WaTorConfigModel waTorConfigModel,
                                WaTorSimulationModel waTorSimulationModel,
                                Function<WaTorCoordinate, Optional<WaTorCreature>> creatureFunction) {
