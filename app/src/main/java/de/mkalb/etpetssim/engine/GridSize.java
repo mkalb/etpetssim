@@ -64,7 +64,7 @@ public record GridSize(int width, int height) {
      *
      * @return the perimeter of the grid
      */
-    public int getPerimeter() {
+    public int perimeter() {
         return 2 * (width + height);
     }
 
@@ -73,7 +73,7 @@ public record GridSize(int width, int height) {
      *
      * @return the area of the grid
      */
-    public int getArea() {
+    public int area() {
         return width * height;
     }
 

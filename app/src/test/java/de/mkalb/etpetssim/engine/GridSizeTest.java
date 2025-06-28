@@ -41,15 +41,15 @@ class GridSizeTest {
     }
 
     @Test
-    void testGetArea() {
+    void testArea() {
         GridSize size = new GridSize(20, 30);
-        assertEquals(20 * 30, size.getArea());
+        assertEquals(20 * 30, size.area());
     }
 
     @Test
-    void testGetPerimeter() {
+    void testPerimeter() {
         GridSize size = new GridSize(20, 30);
-        assertEquals(2 * (20 + 30), size.getPerimeter());
+        assertEquals(2 * (20 + 30), size.perimeter());
     }
 
     @Test
