@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.simulationlab;
 
-import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -18,10 +17,12 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
     public SimulationLabViewBuilder(GridStructure structure, double cellSideLength) {
         this.structure = structure;
-        Canvas canvas = new Canvas(
-                (structure.size().width() * cellSideLength) + (2 * cellSideLength),
-                (structure.size().height() * cellSideLength) + (2 * cellSideLength));
+
+        Canvas canvas = new Canvas(cellSideLength, cellSideLength);
         painter = new FXGridCanvasPainter(canvas, structure, cellSideLength);
+        double border = 10.0d; // only for testing
+        canvas.setWidth(painter.gridDimension().getWidth() + border);
+        canvas.setHeight(painter.gridDimension().getHeight() + border);
     }
 
     @Override
@@ -46,49 +47,35 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         painter.fillCanvasBackground(Color.PINK);
         painter.fillGridBackground(Color.ORANGE);
 
-        if (structure.cellShape() == CellShape.SQUARE) {
-            structure.allCoordinates().forEachOrdered(this::drawSquareCell);
-        } else if (structure.cellShape() == CellShape.TRIANGLE) {
-            structure.allCoordinates().forEachOrdered(this::drawTriangleCell);
-        } else {
-            structure.allCoordinates().forEachOrdered(this::drawHexagonCell);
-        }
+        structure.allCoordinates().forEachOrdered(coordinate -> {
+            switch (structure.cellShape()) {
+                case SQUARE -> drawSquareCell(coordinate);
+                case TRIANGLE -> drawTriangleCell(coordinate);
+                case HEXAGON -> drawHexagonCell(coordinate);
+            }
+        });
+    }
+
+    private Color calculateTestColor(GridCoordinate coordinate) {
+        return switch (((coordinate.x() % 2) << 1) | (coordinate.y() % 2)) {
+            case 0 -> Color.DARKBLUE;
+            case 1 -> Color.DARKGREEN;
+            case 2 -> Color.LIGHTBLUE;
+            case 3 -> Color.LIGHTGREEN;
+            default -> throw new IllegalStateException("Unexpected value");
+        };
     }
 
     private void drawSquareCell(GridCoordinate coordinate) {
-        if (((coordinate.x() % 2) == 0) && ((coordinate.y() % 2) == 0)) {
-            painter.fillSquare(coordinate, Color.DARKBLUE);
-        } else if (((coordinate.x() % 2) != 0) && ((coordinate.y() % 2) == 0)) {
-            painter.fillSquare(coordinate, Color.LIGHTBLUE);
-        } else if (((coordinate.x() % 2) == 0) && ((coordinate.y() % 2) != 0)) {
-            painter.fillSquare(coordinate, Color.DARKGREEN);
-        } else if (((coordinate.x() % 2) != 0) && ((coordinate.y() % 2) != 0)) {
-            painter.fillSquare(coordinate, Color.LIGHTGREEN);
-        }
+        painter.fillSquare(coordinate, calculateTestColor(coordinate));
     }
 
     private void drawTriangleCell(GridCoordinate coordinate) {
-        if (((coordinate.x() % 2) == 0) && ((coordinate.y() % 2) == 0)) {
-            painter.fillTriangle(coordinate, Color.DARKBLUE);
-        } else if (((coordinate.x() % 2) != 0) && ((coordinate.y() % 2) == 0)) {
-            painter.fillTriangle(coordinate, Color.LIGHTBLUE);
-        } else if (((coordinate.x() % 2) == 0) && ((coordinate.y() % 2) != 0)) {
-            painter.fillTriangle(coordinate, Color.DARKGREEN);
-        } else if (((coordinate.x() % 2) != 0) && ((coordinate.y() % 2) != 0)) {
-            painter.fillTriangle(coordinate, Color.LIGHTGREEN);
-        }
+        painter.fillTriangle(coordinate, calculateTestColor(coordinate));
     }
 
     private void drawHexagonCell(GridCoordinate coordinate) {
-        if (((coordinate.x() % 2) == 0) && ((coordinate.y() % 2) == 0)) {
-            painter.fillHexagon(coordinate, Color.DARKBLUE);
-        } else if (((coordinate.x() % 2) != 0) && ((coordinate.y() % 2) == 0)) {
-            painter.fillHexagon(coordinate, Color.LIGHTBLUE);
-        } else if (((coordinate.x() % 2) == 0) && ((coordinate.y() % 2) != 0)) {
-            painter.fillHexagon(coordinate, Color.DARKGREEN);
-        } else if (((coordinate.x() % 2) != 0) && ((coordinate.y() % 2) != 0)) {
-            painter.fillHexagon(coordinate, Color.LIGHTGREEN);
-        }
+        painter.fillHexagon(coordinate, calculateTestColor(coordinate));
     }
 
 }
