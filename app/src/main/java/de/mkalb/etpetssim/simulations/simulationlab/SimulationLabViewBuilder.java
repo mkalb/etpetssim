@@ -87,15 +87,27 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     }
 
     private void drawSquareCell(GridCoordinate coordinate) {
-        painter.fillSquare(coordinate, calculateTestColor(coordinate));
+        if ((coordinate.x() % 3) == 1) {
+            painter.fillAndStrokeSquareInset(coordinate, calculateTestColor(coordinate), Color.DARKMAGENTA, 15.0d);
+        } else {
+            painter.fillSquare(coordinate, calculateTestColor(coordinate));
+        }
     }
 
     private void drawTriangleCell(GridCoordinate coordinate) {
-        painter.fillTriangle(coordinate, calculateTestColor(coordinate));
+        if ((coordinate.x() % 3) == 1) {
+            painter.fillAndStrokeTriangle(coordinate, calculateTestColor(coordinate), Color.DARKMAGENTA, 7.0d);
+        } else {
+            painter.fillTriangle(coordinate, calculateTestColor(coordinate));
+        }
     }
 
     private void drawHexagonCell(GridCoordinate coordinate) {
-        painter.fillHexagon(coordinate, calculateTestColor(coordinate));
+        if ((coordinate.x() % 3) == 1) {
+            painter.fillAndStrokeHexagon(coordinate, calculateTestColor(coordinate), Color.DARKMAGENTA, 7.0d);
+        } else {
+            painter.fillHexagon(coordinate, calculateTestColor(coordinate));
+        }
     }
 
 }

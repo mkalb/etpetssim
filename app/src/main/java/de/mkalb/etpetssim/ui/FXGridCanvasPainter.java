@@ -193,6 +193,60 @@ public final class FXGridCanvasPainter {
         gc.fillPolygon(xPoints, yPoints, vertexCount);
     }
 
+    /**
+     * Fills a triangle cell at the specified grid coordinate and optionally draws a border.
+     * The border is drawn centered on the triangle edges and may extend slightly outside the cell.
+     * If the line width is too large to fit visually, the triangle is filled entirely with the stroke color.
+     * If the line width is zero or negative, only the fill color is used.
+     *
+     * @param coordinate the grid coordinate of the triangle cell
+     * @param fillColor the color used to fill the triangle
+     * @param strokeColor the color used for the triangle border
+     * @param lineWidth the width of the border in pixels
+     */
+    public void fillAndStrokeTriangle(GridCoordinate coordinate, Color fillColor, Color strokeColor, double lineWidth) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(fillColor);
+        Objects.requireNonNull(strokeColor);
+
+        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+        boolean pointingDown = ((coordinate.y() % 2) == 0);
+        int vertexCount = 3;
+        double[] xPoints = new double[vertexCount];
+        double[] yPoints = new double[vertexCount];
+
+        if (pointingDown) {
+            xPoints[0] = x;
+            yPoints[0] = y;
+            xPoints[1] = x + cellDimension.halfSideLength();
+            yPoints[1] = y + cellDimension.height();
+            xPoints[2] = x + cellDimension.sideLength();
+            yPoints[2] = y;
+        } else {
+            xPoints[0] = x;
+            yPoints[0] = y + cellDimension.height();
+            xPoints[1] = x + cellDimension.halfSideLength();
+            yPoints[1] = y;
+            xPoints[2] = x + cellDimension.sideLength();
+            yPoints[2] = y + cellDimension.height();
+        }
+
+        if (lineWidth < cellDimension.halfSideLength()) {
+            gc.setFill(fillColor);
+            gc.fillPolygon(xPoints, yPoints, vertexCount);
+            if (lineWidth > 0.0d) {
+                gc.setStroke(strokeColor);
+                gc.setLineWidth(lineWidth);
+                gc.strokePolygon(xPoints, yPoints, vertexCount);
+            }
+        } else {
+            gc.setFill(strokeColor);
+            gc.fillPolygon(xPoints, yPoints, vertexCount);
+        }
+    }
+
     // --- SQUARE ---
 
     /**
@@ -215,6 +269,41 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Fills a square cell at the specified grid coordinate and optionally draws a border.
+     * The border is drawn centered on the square edges and may extend slightly outside the cell.
+     * If the line width is too large to fit visually, the square is filled entirely with the stroke color.
+     * If the line width is zero or negative, only the fill color is used.
+     *
+     * @param coordinate the grid coordinate of the square cell
+     * @param fillColor the color used to fill the square
+     * @param strokeColor the color used for the square border
+     * @param lineWidth the width of the border in pixels
+     */
+    public void fillAndStrokeSquare(GridCoordinate coordinate, Color fillColor, Color strokeColor, double lineWidth) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(fillColor);
+        Objects.requireNonNull(strokeColor);
+
+        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+        double size = cellDimension.sideLength();
+
+        if (lineWidth < cellDimension.halfSideLength()) {
+            gc.setFill(fillColor);
+            gc.fillRect(x, y, size, size);
+            if (lineWidth > 0.0d) {
+                gc.setStroke(strokeColor);
+                gc.setLineWidth(lineWidth);
+                gc.strokeRect(x, y, size, size); // centered stroke
+            }
+        } else {
+            gc.setFill(strokeColor);
+            gc.fillRect(x, y, size, size);
+        }
+    }
+
+    /**
      * Fills a square cell at the specified grid coordinate and optionally draws a border inside the cell.
      * If the line width is too large to fit inside the cell, the cell is filled entirely with the stroke color.
      * If the line width is zero or negative, only the fill color is used.
@@ -224,7 +313,7 @@ public final class FXGridCanvasPainter {
      * @param strokeColor the color used for the border
      * @param lineWidth the width of the border in pixels
      */
-    public void fillAndStrokeSquare(GridCoordinate coordinate, Color fillColor, Color strokeColor, double lineWidth) {
+    public void fillAndStrokeSquareInset(GridCoordinate coordinate, Color fillColor, Color strokeColor, double lineWidth) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(fillColor);
         Objects.requireNonNull(strokeColor);
@@ -296,6 +385,56 @@ public final class FXGridCanvasPainter {
         gc.fillPolygon(xPoints, yPoints, vertexCount);
     }
 
+    /**
+     * Fills a hexagon cell at the specified grid coordinate and optionally draws a border.
+     * The border is drawn centered on the hexagon edges and may extend slightly outside the cell.
+     * If the line width is too large to fit visually, the hexagon is filled entirely with the stroke color.
+     * If the line width is zero or negative, only the fill color is used.
+     *
+     * @param coordinate the grid coordinate of the hexagon cell
+     * @param fillColor the color used to fill the hexagon
+     * @param strokeColor the color used for the hexagon border
+     * @param lineWidth the width of the border in pixels
+     */
+    public void fillAndStrokeHexagon(GridCoordinate coordinate, Color fillColor, Color strokeColor, double lineWidth) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(fillColor);
+        Objects.requireNonNull(strokeColor);
+
+        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+        int vertexCount = 6;
+        double[] xPoints = new double[vertexCount];
+        double[] yPoints = new double[vertexCount];
+
+        xPoints[0] = x + cellDimension.halfSideLength();
+        yPoints[0] = y;
+        xPoints[1] = x + cellDimension.sideLength() + cellDimension.halfSideLength();
+        yPoints[1] = y;
+        xPoints[2] = x + cellDimension.width();
+        yPoints[2] = y + cellDimension.halfHeight();
+        xPoints[3] = xPoints[1];
+        yPoints[3] = y + cellDimension.height();
+        xPoints[4] = x + cellDimension.halfSideLength();
+        yPoints[4] = y + cellDimension.height();
+        xPoints[5] = x;
+        yPoints[5] = y + cellDimension.halfHeight();
+
+        if (lineWidth < cellDimension.halfSideLength()) {
+            gc.setFill(fillColor);
+            gc.fillPolygon(xPoints, yPoints, vertexCount);
+            if (lineWidth > 0.0d) {
+                gc.setStroke(strokeColor);
+                gc.setLineWidth(lineWidth);
+                gc.strokePolygon(xPoints, yPoints, vertexCount);
+            }
+        } else {
+            gc.setFill(strokeColor);
+            gc.fillPolygon(xPoints, yPoints, vertexCount);
+        }
+    }
+
     // --- CIRCLE ---
 
     /**
@@ -330,8 +469,8 @@ public final class FXGridCanvasPainter {
                 boolean pointingDown = (coordinate.y() % 2) == 0;
                 centerX = topLeft.getX() + cellDimension.halfSideLength();
                 centerY = pointingDown
-                        ? topLeft.getY() + (1.0 / 3.0) * cellDimension.height()
-                        : topLeft.getY() + (2.0 / 3.0) * cellDimension.height();
+                        ? (topLeft.getY() + ((1.0 / 3.0) * cellDimension.height()))
+                        : (topLeft.getY() + ((2.0 / 3.0) * cellDimension.height()));
                 radius = Math.min(cellDimension.halfSideLength(), cellDimension.height() / 3.0);
             }
             default -> throw new IllegalStateException("Unexpected cell shape: " + gridStructure.cellShape());
@@ -374,8 +513,8 @@ public final class FXGridCanvasPainter {
                 boolean pointingDown = (coordinate.y() % 2) == 0;
                 centerX = topLeft.getX() + cellDimension.halfSideLength();
                 centerY = pointingDown
-                        ? topLeft.getY() + (1.0 / 3.0) * cellDimension.height()
-                        : topLeft.getY() + (2.0 / 3.0) * cellDimension.height();
+                        ? (topLeft.getY() + ((1.0 / 3.0) * cellDimension.height()))
+                        : (topLeft.getY() + ((2.0 / 3.0) * cellDimension.height()));
                 radius = Math.sqrt(Math.pow(cellDimension.halfSideLength(), 2) + Math.pow(cellDimension.height() / 3.0, 2));
             }
             default -> throw new IllegalStateException("Unexpected cell shape: " + gridStructure.cellShape());
