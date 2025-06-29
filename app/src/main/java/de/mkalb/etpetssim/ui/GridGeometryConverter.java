@@ -17,6 +17,13 @@ public final class GridGeometryConverter {
     private GridGeometryConverter() {
     }
 
+    /**
+     * Calculates the dimensions of a cell based on its side length and shape.
+     *
+     * @param cellSideLength the length of each side of the cell in pixels
+     * @param shape the shape of the cell
+     * @return a CellDimension object representing the dimensions of the cell
+     */
     public static CellDimension calculateCellDimension(double cellSideLength, CellShape shape) {
         Objects.requireNonNull(shape);
 
@@ -32,6 +39,13 @@ public final class GridGeometryConverter {
         return CellDimension.of(cellSideLength, width, height);
     }
 
+    /**
+     * Calculates the total pixel dimensions of the grid area based on size, cell dimension and shape.
+     *
+     * @param gridSize the size of the grid in terms of columns and rows
+     * @param cellDimension the dimensions of a single cell in the grid
+     * @param  shape the shape of the cells in the grid
+     */
     public static Dimension2D calculateGridDimension(GridSize gridSize, CellDimension cellDimension, CellShape shape) {
         Objects.requireNonNull(gridSize);
         Objects.requireNonNull(shape);
