@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * A utility class for creating JavaFX UI components with specific styles.
  * This class provides methods to create commonly used UI components with predefined styles.
- *
+ * <p>
  * It will grow during the development of the Extraterrestrial Pets Simulation application.
  */
 public final class FXComponentBuilder {
