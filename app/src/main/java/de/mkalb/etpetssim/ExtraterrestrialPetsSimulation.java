@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.simulations.SimulationFactory;
 import de.mkalb.etpetssim.simulations.SimulationType;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
@@ -13,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -116,6 +118,19 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
+     * Updates the JavaFX stage with size restrictions.
+     *
+     * @param stage the JavaFX stage to update with size restrictions
+     */
+    private void updateStageSizeRestrictions(Stage stage) {
+        stage.setMinWidth(STAGE_MIN_WIDTH);
+        stage.setMinHeight(STAGE_MIN_HEIGHT);
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setMaxWidth(screenBounds.getWidth());
+        stage.setMaxHeight(screenBounds.getHeight());
+    }
+
+    /**
      * Updates the JavaFX stage with the application icons.
      *
      * @param stage the JavaFX stage to update with icons
@@ -206,8 +221,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         AppLogger.info("Application is starting with simulation type: " + type.name());
 
         // Initialize and show the primary stage with the appropriate scene
-        primaryStage.setMinWidth(STAGE_MIN_WIDTH);
-        primaryStage.setMinHeight(STAGE_MIN_HEIGHT);
+        updateStageSizeRestrictions(primaryStage);
         updateStageIcons(primaryStage);
         updateStageScene(primaryStage, type);
         primaryStage.show();
