@@ -10,6 +10,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Builder;
 
+import java.util.function.*;
+
 @SuppressWarnings("MagicNumber")
 public class SimulationLabViewBuilder implements Builder<Region> {
 
@@ -48,13 +50,15 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         painter.fillCanvasBackground(Color.PINK);
         painter.fillGridBackground(Color.ORANGE);
 
-        structure.allCoordinates().forEachOrdered(coordinate -> {
+        Consumer<GridCoordinate> consumerSpecialDrawMethods = coordinate -> {
             switch (structure.cellShape()) {
                 case SQUARE -> drawSquareCell(coordinate);
                 case TRIANGLE -> drawTriangleCell(coordinate);
                 case HEXAGON -> drawHexagonCell(coordinate);
             }
-        });
+        };
+        Consumer<GridCoordinate> consumerDrawCell = this::drawCell;
+        structure.allCoordinates().forEachOrdered(consumerDrawCell);
 
         painter.drawBoundingBox(new GridCoordinate(10, 1), Color.BLACK, 2.0d);
         painter.drawBoundingBox(new GridCoordinate(10, 2), Color.BLACK, 2.0d);
@@ -84,6 +88,10 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             case 3 -> Color.LIGHTGREEN;
             default -> throw new IllegalStateException("Unexpected value");
         };
+    }
+
+    private void drawCell(GridCoordinate coordinate) {
+        painter.fillCell(coordinate, calculateTestColor(coordinate));
     }
 
     private void drawSquareCell(GridCoordinate coordinate) {

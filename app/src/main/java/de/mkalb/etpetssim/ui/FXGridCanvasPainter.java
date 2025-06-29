@@ -138,6 +138,24 @@ public final class FXGridCanvasPainter {
         gc.fillRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
     }
 
+    /**
+     * Fills a cell at the specified grid coordinate using the given fill color.
+     * The appropriate fill method is selected based on the cell shape.
+     *
+     * @param coordinate the grid coordinate of the cell to fill
+     * @param fillColor the color used to fill the cell
+     */
+    public void fillCell(GridCoordinate coordinate, Color fillColor) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(fillColor);
+
+        switch (gridStructure.cellShape()) {
+            case TRIANGLE -> fillTriangle(coordinate, fillColor);
+            case SQUARE -> fillSquare(coordinate, fillColor);
+            case HEXAGON -> fillHexagon(coordinate, fillColor);
+        }
+    }
+
     // --- TRIANGLE ---
 
     /**
