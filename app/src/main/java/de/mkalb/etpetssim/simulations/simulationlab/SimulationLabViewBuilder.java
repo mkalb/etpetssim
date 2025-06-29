@@ -10,6 +10,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Builder;
 
+@SuppressWarnings("MagicNumber")
 public class SimulationLabViewBuilder implements Builder<Region> {
 
     private final GridStructure structure;
@@ -54,6 +55,25 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                 case HEXAGON -> drawHexagonCell(coordinate);
             }
         });
+
+        painter.drawBoundingBox(new GridCoordinate(10, 1), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(10, 2), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(10, 3), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(10, 4), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(15, 1), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(15, 2), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(15, 3), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(15, 4), Color.BLACK, 2.0d);
+
+        painter.drawInnerCircle(new GridCoordinate(2, 2), Color.BLACK, 2.0d);
+        painter.drawInnerCircle(new GridCoordinate(2, 3), Color.BLACK, 2.0d);
+        painter.drawInnerCircle(new GridCoordinate(3, 2), Color.BLACK, 2.0d);
+        painter.drawInnerCircle(new GridCoordinate(3, 3), Color.BLACK, 2.0d);
+
+        painter.drawOuterCircle(new GridCoordinate(4, 4), Color.WHITE, 2.0d);
+        painter.drawOuterCircle(new GridCoordinate(4, 5), Color.WHITE, 2.0d);
+        painter.drawOuterCircle(new GridCoordinate(5, 4), Color.WHITE, 2.0d);
+        painter.drawOuterCircle(new GridCoordinate(5, 5), Color.WHITE, 2.0d);
     }
 
     private Color calculateTestColor(GridCoordinate coordinate) {

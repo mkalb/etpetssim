@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 import java.util.*;
 
 /**
- * A utility class for drawing grids on a JavaFX Canvas.
+ * A utility class for drawing grids and cells on a JavaFX Canvas.
  * The parameter {@code cellSideLength} defines the length of each side of the cell (TRIANGLE, SQUARE, HEXAGON) in pixels.
  *
  * @see de.mkalb.etpetssim.engine.CellShape
@@ -294,6 +294,137 @@ public final class FXGridCanvasPainter {
 
         gc.setFill(fillColor);
         gc.fillPolygon(xPoints, yPoints, vertexCount);
+    }
+
+    // --- CIRCLE ---
+
+    /**
+     * Draws a circle centered inside the specified cell.
+     * The circle fits entirely within the cell's shape.
+     *
+     * @param coordinate the grid coordinate of the cell
+     * @param strokeColor the color used to draw the circle
+     * @param lineWidth the width of the circle's stroke
+     */
+    public void drawInnerCircle(GridCoordinate coordinate, Color strokeColor, double lineWidth) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(strokeColor);
+
+        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        double centerX;
+        double centerY;
+        double radius;
+
+        switch (gridStructure.cellShape()) {
+            case SQUARE -> {
+                centerX = topLeft.getX() + cellDimension.halfSideLength();
+                centerY = topLeft.getY() + cellDimension.halfSideLength();
+                radius = cellDimension.halfSideLength();
+            }
+            case HEXAGON -> {
+                centerX = topLeft.getX() + cellDimension.halfWidth();
+                centerY = topLeft.getY() + cellDimension.halfHeight();
+                radius = Math.min(cellDimension.halfWidth(), cellDimension.halfHeight());
+            }
+            case TRIANGLE -> {
+                boolean pointingDown = (coordinate.y() % 2) == 0;
+                centerX = topLeft.getX() + cellDimension.halfSideLength();
+                centerY = pointingDown
+                        ? topLeft.getY() + (1.0 / 3.0) * cellDimension.height()
+                        : topLeft.getY() + (2.0 / 3.0) * cellDimension.height();
+                radius = Math.min(cellDimension.halfSideLength(), cellDimension.height() / 3.0);
+            }
+            default -> throw new IllegalStateException("Unexpected cell shape: " + gridStructure.cellShape());
+        }
+
+        gc.setStroke(strokeColor);
+        gc.setLineWidth(lineWidth);
+        gc.strokeOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+    }
+
+    /**
+     * Draws a circle that fully encloses the specified cell.
+     * The circle's radius is large enough to surround the cell's shape.
+     *
+     * @param coordinate the grid coordinate of the cell
+     * @param strokeColor the color used to draw the circle
+     * @param lineWidth the width of the circle's stroke
+     */
+    public void drawOuterCircle(GridCoordinate coordinate, Color strokeColor, double lineWidth) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(strokeColor);
+
+        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        double centerX;
+        double centerY;
+        double radius;
+
+        switch (gridStructure.cellShape()) {
+            case SQUARE -> {
+                centerX = topLeft.getX() + cellDimension.halfSideLength();
+                centerY = topLeft.getY() + cellDimension.halfSideLength();
+                radius = cellDimension.halfSideLength() * Math.sqrt(2); // diagonal radius
+            }
+            case HEXAGON -> {
+                centerX = topLeft.getX() + cellDimension.halfWidth();
+                centerY = topLeft.getY() + cellDimension.halfHeight();
+                radius = Math.max(cellDimension.halfWidth(), cellDimension.halfHeight());
+            }
+            case TRIANGLE -> {
+                boolean pointingDown = (coordinate.y() % 2) == 0;
+                centerX = topLeft.getX() + cellDimension.halfSideLength();
+                centerY = pointingDown
+                        ? topLeft.getY() + (1.0 / 3.0) * cellDimension.height()
+                        : topLeft.getY() + (2.0 / 3.0) * cellDimension.height();
+                radius = Math.sqrt(Math.pow(cellDimension.halfSideLength(), 2) + Math.pow(cellDimension.height() / 3.0, 2));
+            }
+            default -> throw new IllegalStateException("Unexpected cell shape: " + gridStructure.cellShape());
+        }
+
+        gc.setStroke(strokeColor);
+        gc.setLineWidth(lineWidth);
+        gc.strokeOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+    }
+
+    // --- RECTANGLE ---
+
+    /**
+     * Draws a bounding rectangle that fully encloses the specified cell.
+     * The rectangle adapts to the cell shape and its bounding box.
+     *
+     * @param coordinate the grid coordinate of the cell
+     * @param strokeColor the color used to draw the rectangle
+     * @param lineWidth the width of the rectangle's stroke
+     */
+    public void drawBoundingBox(GridCoordinate coordinate, Color strokeColor, double lineWidth) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(strokeColor);
+
+        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+        double width;
+        double height;
+
+        switch (gridStructure.cellShape()) {
+            case SQUARE -> {
+                width = cellDimension.sideLength();
+                height = cellDimension.sideLength();
+            }
+            case HEXAGON -> {
+                width = cellDimension.width();
+                height = cellDimension.height();
+            }
+            case TRIANGLE -> {
+                width = cellDimension.sideLength();
+                height = cellDimension.height();
+            }
+            default -> throw new IllegalStateException("Unexpected cell shape: " + gridStructure.cellShape());
+        }
+
+        gc.setStroke(strokeColor);
+        gc.setLineWidth(lineWidth);
+        gc.strokeRect(x, y, width, height);
     }
 
 }

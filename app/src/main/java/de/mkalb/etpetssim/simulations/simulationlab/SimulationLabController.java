@@ -13,9 +13,9 @@ public final class SimulationLabController implements SimulationController {
 
     public SimulationLabController(Stage stage) {
         this.stage = stage;
-        structure = new GridStructure(new GridTopology(CellShape.SQUARE, BoundaryType.BLOCK_X_BLOCK_Y),
-                new GridSize(32, 16));
-        viewBuilder = new SimulationLabViewBuilder(structure, 64.0d);
+        structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, BoundaryType.BLOCK_X_BLOCK_Y),
+                new GridSize(20, 16));
+        viewBuilder = new SimulationLabViewBuilder(structure, 100.0d);
     }
 
     @Override
