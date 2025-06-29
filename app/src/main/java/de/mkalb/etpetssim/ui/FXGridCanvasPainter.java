@@ -15,13 +15,15 @@ import java.util.*;
  *
  * @see de.mkalb.etpetssim.engine.CellShape
  * @see de.mkalb.etpetssim.engine.GridSize
- * @see de.mkalb.etpetssim.engine.GridTopology
+ * @see de.mkalb.etpetssim.engine.GridCoordinate
  */
 public final class FXGridCanvasPainter {
 
     // commonly used double constants for calculations
     private static final double ZERO = 0.0d;
+    private static final double HALF = 0.5d;
     private static final double ONE = 1.0d;
+    private static final double ONE_AND_HALF = 1.5d;
     private static final double TWO = 2.0d;
 
     // constructor parameters
@@ -33,6 +35,8 @@ public final class FXGridCanvasPainter {
     private final GraphicsContext gc;
     private final double gridPixelWidth;
     private final double gridPixelHeight;
+    private final double cellPixelWidth;
+    private final double cellPixelHeight;
 
     /**
      * Creates a new FXGridCanvasPainter instance.
@@ -44,7 +48,7 @@ public final class FXGridCanvasPainter {
     public FXGridCanvasPainter(Canvas canvas, GridStructure gridStructure, double cellSideLength) {
         Objects.requireNonNull(canvas);
         Objects.requireNonNull(gridStructure);
-        if (cellSideLength < 1) {
+        if (cellSideLength < ONE) {
             throw new IllegalArgumentException("Cell side length must be at least 1 pixel.");
         }
 
@@ -52,9 +56,23 @@ public final class FXGridCanvasPainter {
         this.gridStructure = gridStructure;
         this.cellSideLength = cellSideLength;
 
+        // Store the graphics context of the canvas
         gc = canvas.getGraphicsContext2D();
+
+        // Calculate grid pixel width and height based on the cell shape
         gridPixelWidth = gridStructure.size().width() * cellSideLength;
         gridPixelHeight = gridStructure.size().height() * cellSideLength;
+
+        // Calculate cell width and height based on the cell shape
+        cellPixelWidth = switch (gridStructure.cellShape()) {
+            case TRIANGLE, SQUARE -> cellSideLength;
+            case HEXAGON -> cellSideLength * 2; // Hexagon width is twice the side length
+        };
+        cellPixelHeight = switch (gridStructure.cellShape()) {
+            case TRIANGLE -> (Math.sqrt(3) / 2) * cellSideLength;
+            case SQUARE -> cellSideLength;
+            case HEXAGON -> Math.sqrt(3) * cellSideLength;
+        };
     }
 
     /**
@@ -113,6 +131,24 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Returns the width if a single cell in pixels.
+     *
+     * @return the width of a single cell in pixels
+     */
+    public double cellPixelWidth() {
+        return cellPixelWidth;
+    }
+
+    /**
+     * Returns the height of a single cell in pixels.
+     *
+     * @return the height of a single cell in pixels
+     */
+    public double cellPixelHeight() {
+        return cellPixelHeight;
+    }
+
+    /**
      * Checks whether the given grid coordinate lies outside the drawable grid area.
      * If a drawing method is called with a coordinate outside the grid, the result may be invisible,
      * clipped, or cause unexpected rendering behavior depending on the canvas size and context.
@@ -125,21 +161,6 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(coordinate);
 
         return !gridStructure.isCoordinateValid(coordinate);
-    }
-
-    /**
-     * Converts a grid coordinate to the top-left canvas position for a square cell in pixels.
-     * This method is only valid for square cell shapes.
-     *
-     * @param coordinate the grid coordinate to convert
-     * @return a Point2D representing the top-left canvas position
-     */
-    public Point2D toSquareCanvasPosition(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
-
-        double x = coordinate.x() * cellSideLength;
-        double y = coordinate.y() * cellSideLength;
-        return new Point2D(x, y);
     }
 
     /**
@@ -167,20 +188,82 @@ public final class FXGridCanvasPainter {
         gc.fillRect(ZERO, ZERO, gridPixelWidth, gridPixelHeight);
     }
 
+    // --- TRIANGLE ---
+
+    /**
+     * Fills a triangle cell at the specified grid coordinate using the given fill color.
+     *
+     * @param coordinate the grid coordinate of the cell to draw
+     * @param fillColor the color used to fill the cell
+     */
+    public void fillTriangle(GridCoordinate coordinate, Color fillColor) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(fillColor);
+
+        Point2D topLeft = GridCoordinateConverter.toCanvasPosition(
+                coordinate,
+                cellSideLength,
+                cellPixelHeight,
+                gridStructure.cellShape());
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+
+        boolean pointingDown = ((coordinate.y() % 2) == 0);
+
+        int vertexCount = gridStructure.cellShape().vertexCount();
+        double[] xPoints = new double[vertexCount];
+        double[] yPoints = new double[vertexCount];
+
+        if (pointingDown) {
+            // top left vertex
+            xPoints[0] = x;
+            yPoints[0] = y;
+
+            // bottom middle vertex
+            xPoints[1] = x + (cellSideLength / 2);
+            yPoints[1] = y + cellPixelHeight;
+
+            // top right vertex
+            xPoints[2] = x + cellSideLength;
+            yPoints[2] = y;
+        } else {
+            // bottom left vertex
+            xPoints[0] = x;
+            yPoints[0] = y + cellPixelHeight;
+
+            // top middle vertex
+            xPoints[1] = x + (cellSideLength / 2);
+            yPoints[1] = y;
+
+            // bottom right vertex
+            xPoints[2] = x + cellSideLength;
+            yPoints[2] = y + cellPixelHeight;
+        }
+
+        gc.setFill(fillColor);
+        gc.fillPolygon(xPoints, yPoints, vertexCount);
+    }
+
+    // --- SQUARE ---
+
     /**
      * Fills a square cell at the specified grid coordinate using the given fill color.
-     * The cell is drawn as a square with side length defined by {@code cellSideLength}.
      *
      * @param coordinate the grid coordinate of the cell to fill
-     * @param fillColor the color used to fill the square
+     * @param fillColor the color used to fill the cell
      */
     public void fillSquare(GridCoordinate coordinate, Color fillColor) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(fillColor);
 
-        Point2D pos = toSquareCanvasPosition(coordinate);
+        Point2D topLeft = GridCoordinateConverter.toCanvasPosition(
+                coordinate,
+                cellSideLength,
+                cellPixelHeight,
+                gridStructure.cellShape());
+
         gc.setFill(fillColor);
-        gc.fillRect(pos.getX(), pos.getY(), cellSideLength, cellSideLength);
+        gc.fillRect(topLeft.getX(), topLeft.getY(), cellSideLength, cellSideLength);
     }
 
     /**
@@ -198,22 +281,73 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(fillColor);
         Objects.requireNonNull(strokeColor);
 
-        Point2D pos = toSquareCanvasPosition(coordinate);
+        Point2D topLeft = GridCoordinateConverter.toCanvasPosition(
+                coordinate,
+                cellSideLength,
+                cellPixelHeight,
+                gridStructure.cellShape());
 
         if (lineWidth < (cellSideLength / TWO)) {
             gc.setFill(fillColor);
-            gc.fillRect(pos.getX(), pos.getY(), cellSideLength, cellSideLength);
+            gc.fillRect(topLeft.getX(), topLeft.getY(), cellSideLength, cellSideLength);
 
             if (lineWidth > ZERO) {
                 gc.setStroke(strokeColor);
                 gc.setLineWidth(lineWidth);
                 double half = lineWidth / TWO;
-                gc.strokeRect(pos.getX() + half, pos.getY() + half, cellSideLength - lineWidth, cellSideLength - lineWidth);
+                gc.strokeRect(topLeft.getX() + half, topLeft.getY() + half, cellSideLength - lineWidth, cellSideLength - lineWidth);
             }
         } else {
             gc.setFill(strokeColor);
-            gc.fillRect(pos.getX(), pos.getY(), cellSideLength, cellSideLength);
+            gc.fillRect(topLeft.getX(), topLeft.getY(), cellSideLength, cellSideLength);
         }
+    }
+
+    // --- HEXAGON ---
+
+    /**
+     * Fills a hexagon cell at the specified grid coordinate using the given fill color.
+     *
+     * @param coordinate the grid coordinate of the cell to draw
+     * @param fillColor the color used to fill the cell
+     */
+    public void fillHexagon(GridCoordinate coordinate, Color fillColor) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(fillColor);
+
+        Point2D topLeft = GridCoordinateConverter.toCanvasPosition(
+                coordinate,
+                cellSideLength,
+                cellPixelHeight,
+                gridStructure.cellShape());
+
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+
+        int vertexCount = gridStructure.cellShape().vertexCount();
+        double[] xPoints = new double[vertexCount];
+        double[] yPoints = new double[vertexCount];
+
+        xPoints[0] = x + (cellSideLength * HALF);
+        yPoints[0] = y;
+
+        xPoints[1] = x + (cellSideLength * ONE_AND_HALF);
+        yPoints[1] = y;
+
+        xPoints[2] = x + cellPixelWidth;
+        yPoints[2] = y + (cellPixelHeight * HALF);
+
+        xPoints[3] = x + (cellSideLength * ONE_AND_HALF);
+        yPoints[3] = y + cellPixelHeight;
+
+        xPoints[4] = x + (cellSideLength * HALF);
+        yPoints[4] = y + cellPixelHeight;
+
+        xPoints[5] = x;
+        yPoints[5] = y + (cellPixelHeight * HALF);
+
+        gc.setFill(fillColor);
+        gc.fillPolygon(xPoints, yPoints, vertexCount);
     }
 
 }
