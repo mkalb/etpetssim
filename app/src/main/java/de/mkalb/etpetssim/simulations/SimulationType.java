@@ -33,13 +33,13 @@ public enum SimulationType {
      * The simulation lab is not a specific simulation but a collection of various tests during development.
      */
     SIMULATION_LAB(
-            false,
+            true,
             true,
             "simulation.simulationlab.title",
             "simulation.simulationlab.subtitle",
             "simulation.simulationlab.url",
             "simulation.simulationlab.emoji",
-            "",
+            "simulationlab.css",
             List.of("simulationlab", "lab")
     ),
     /**
