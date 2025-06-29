@@ -21,8 +21,8 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         Canvas canvas = new Canvas(cellSideLength, cellSideLength);
         painter = new FXGridCanvasPainter(canvas, structure, cellSideLength);
         double border = 10.0d; // only for testing
-        canvas.setWidth(painter.gridDimension().getWidth() + border);
-        canvas.setHeight(painter.gridDimension().getHeight() + border);
+        canvas.setWidth(painter.gridDimension2D().getWidth() + border);
+        canvas.setHeight(painter.gridDimension2D().getHeight() + border);
     }
 
     @Override

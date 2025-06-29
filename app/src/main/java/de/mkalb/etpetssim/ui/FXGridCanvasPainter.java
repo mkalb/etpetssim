@@ -18,15 +18,15 @@ import java.util.*;
  * @see de.mkalb.etpetssim.engine.GridSize
  * @see de.mkalb.etpetssim.engine.GridCoordinate
  */
+@SuppressWarnings("MagicNumber")
 public final class FXGridCanvasPainter {
 
     private final Canvas canvas;
     private final GridStructure gridStructure;
-    private final double cellSideLength;
 
     private final GraphicsContext gc;
-    private final Dimension2D cellDimension;
-    private final Dimension2D gridDimension;
+    private final CellDimension cellDimension;
+    private final Dimension2D gridDimension2D;
 
     /**
      * Creates a new FXGridCanvasPainter instance.
@@ -44,14 +44,13 @@ public final class FXGridCanvasPainter {
 
         this.canvas = canvas;
         this.gridStructure = gridStructure;
-        this.cellSideLength = cellSideLength;
 
         // Store the graphics context of the canvas
         gc = canvas.getGraphicsContext2D();
 
         // Calculate cell and grid dimension based on the cell shape
         cellDimension = GridGeometryConverter.calculateCellDimension(cellSideLength, gridStructure.cellShape());
-        gridDimension = GridGeometryConverter.calculateGridDimension(gridStructure.size(), cellDimension, gridStructure.cellShape());
+        gridDimension2D = GridGeometryConverter.calculateGridDimension(gridStructure.size(), cellDimension, gridStructure.cellShape());
     }
 
     /**
@@ -73,16 +72,6 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Returns the length of each side of the cell in pixels.
-     * The value is at least 1 pixel.
-     *
-     * @return the length of each side of the cell in pixels
-     */
-    public double cellSideLength() {
-        return cellSideLength;
-    }
-
-    /**
      * Returns the GraphicsContext used for drawing on the canvas.
      *
      * @return the GraphicsContext for the canvas
@@ -92,11 +81,11 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Returns the pixel width and height of a single cell in the grid.
+     * Returns the cell dimensions in pixels.
      *
-     * @return the pixel dimensions of a single cell in the grid
+     * @return the cell dimensions in pixels, including width, height, and side length
      */
-    public Dimension2D cellDimension() {
+    public CellDimension cellDimension() {
         return cellDimension;
     }
 
@@ -105,8 +94,8 @@ public final class FXGridCanvasPainter {
      *
      * @return the pixel dimensions of the grid area
      */
-    public Dimension2D gridDimension() {
-        return gridDimension;
+    public Dimension2D gridDimension2D() {
+        return gridDimension2D;
     }
 
     /**
@@ -146,7 +135,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(fillColor);
 
         gc.setFill(fillColor);
-        gc.fillRect(0.0d, 0.0d, gridDimension.getWidth(), gridDimension.getHeight());
+        gc.fillRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
     }
 
     // --- TRIANGLE ---
@@ -163,8 +152,7 @@ public final class FXGridCanvasPainter {
 
         Point2D topLeft = GridGeometryConverter.toCanvasPosition(
                 coordinate,
-                cellSideLength,
-                cellDimension.getHeight(),
+                cellDimension,
                 gridStructure.cellShape());
         double x = topLeft.getX();
         double y = topLeft.getY();
@@ -181,24 +169,24 @@ public final class FXGridCanvasPainter {
             yPoints[0] = y;
 
             // bottom middle vertex
-            xPoints[1] = x + (cellSideLength / 2);
-            yPoints[1] = y + cellDimension.getHeight();
+            xPoints[1] = x + cellDimension.halfSideLength();
+            yPoints[1] = y + cellDimension.height();
 
             // top right vertex
-            xPoints[2] = x + cellSideLength;
+            xPoints[2] = x + cellDimension.sideLength();
             yPoints[2] = y;
         } else {
             // bottom left vertex
             xPoints[0] = x;
-            yPoints[0] = y + cellDimension.getHeight();
+            yPoints[0] = y + cellDimension.height();
 
             // top middle vertex
-            xPoints[1] = x + (cellSideLength / 2);
+            xPoints[1] = x + cellDimension.halfSideLength();
             yPoints[1] = y;
 
             // bottom right vertex
-            xPoints[2] = x + cellSideLength;
-            yPoints[2] = y + cellDimension.getHeight();
+            xPoints[2] = x + cellDimension.sideLength();
+            yPoints[2] = y + cellDimension.height();
         }
 
         gc.setFill(fillColor);
@@ -219,12 +207,11 @@ public final class FXGridCanvasPainter {
 
         Point2D topLeft = GridGeometryConverter.toCanvasPosition(
                 coordinate,
-                cellSideLength,
-                cellDimension.getHeight(),
+                cellDimension,
                 gridStructure.cellShape());
 
         gc.setFill(fillColor);
-        gc.fillRect(topLeft.getX(), topLeft.getY(), cellSideLength, cellSideLength);
+        gc.fillRect(topLeft.getX(), topLeft.getY(), cellDimension.sideLength(), cellDimension.sideLength());
     }
 
     /**
@@ -244,23 +231,22 @@ public final class FXGridCanvasPainter {
 
         Point2D topLeft = GridGeometryConverter.toCanvasPosition(
                 coordinate,
-                cellSideLength,
-                cellDimension.getHeight(),
+                cellDimension,
                 gridStructure.cellShape());
 
-        if (lineWidth < (cellSideLength / 2.0d)) {
+        if (lineWidth < cellDimension.halfSideLength()) {
             gc.setFill(fillColor);
-            gc.fillRect(topLeft.getX(), topLeft.getY(), cellSideLength, cellSideLength);
+            gc.fillRect(topLeft.getX(), topLeft.getY(), cellDimension.sideLength(), cellDimension.sideLength());
 
             if (lineWidth > 0.0d) {
                 gc.setStroke(strokeColor);
                 gc.setLineWidth(lineWidth);
                 double half = lineWidth / 2.0d;
-                gc.strokeRect(topLeft.getX() + half, topLeft.getY() + half, cellSideLength - lineWidth, cellSideLength - lineWidth);
+                gc.strokeRect(topLeft.getX() + half, topLeft.getY() + half, cellDimension.sideLength() - lineWidth, cellDimension.sideLength() - lineWidth);
             }
         } else {
             gc.setFill(strokeColor);
-            gc.fillRect(topLeft.getX(), topLeft.getY(), cellSideLength, cellSideLength);
+            gc.fillRect(topLeft.getX(), topLeft.getY(), cellDimension.sideLength(), cellDimension.sideLength());
         }
     }
 
@@ -278,8 +264,7 @@ public final class FXGridCanvasPainter {
 
         Point2D topLeft = GridGeometryConverter.toCanvasPosition(
                 coordinate,
-                cellSideLength,
-                cellDimension.getHeight(),
+                cellDimension,
                 gridStructure.cellShape());
 
         double x = topLeft.getX();
@@ -289,23 +274,23 @@ public final class FXGridCanvasPainter {
         double[] xPoints = new double[vertexCount];
         double[] yPoints = new double[vertexCount];
 
-        xPoints[0] = x + (cellSideLength * 0.5d);
+        xPoints[0] = x + cellDimension.halfSideLength();
         yPoints[0] = y;
 
-        xPoints[1] = x + (cellSideLength * 1.5d);
+        xPoints[1] = x + cellDimension.sideLength() + cellDimension.halfSideLength();
         yPoints[1] = y;
 
-        xPoints[2] = x + cellDimension.getWidth();
-        yPoints[2] = y + (cellDimension.getHeight() * 0.5d);
+        xPoints[2] = x + cellDimension.width();
+        yPoints[2] = y + cellDimension.halfHeight();
 
-        xPoints[3] = x + (cellSideLength * 1.5d);
-        yPoints[3] = y + cellDimension.getHeight();
+        xPoints[3] = xPoints[1];
+        yPoints[3] = y + cellDimension.height();
 
-        xPoints[4] = x + (cellSideLength * 0.5d);
-        yPoints[4] = y + cellDimension.getHeight();
+        xPoints[4] = x + cellDimension.halfSideLength();
+        yPoints[4] = y + cellDimension.height();
 
         xPoints[5] = x;
-        yPoints[5] = y + (cellDimension.getHeight() * 0.5d);
+        yPoints[5] = y + cellDimension.halfHeight();
 
         gc.setFill(fillColor);
         gc.fillPolygon(xPoints, yPoints, vertexCount);
