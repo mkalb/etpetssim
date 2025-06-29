@@ -4,7 +4,7 @@ package de.mkalb.etpetssim.ui;
  * Represents the dimensions of a cell in a grid.
  * This record encapsulates the side length, width, height,
  * half side length, half width, and half height of the cell.
- * The values width and height represent the surrounding rectangle.
+ * The values width and height represent the surrounding rectangle (bounding box).
  *
  * @param sideLength side length of the cell in pixels
  * @param width width of the cell in pixels
@@ -26,12 +26,12 @@ public record CellDimension(
 
     public CellDimension {
         if ((sideLength <= 0) || (width <= 0) || (height <= 0)) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Dimensions must be positive.");
         }
         if ((Math.abs(sideLength - (2 * halfSideLength)) > DOUBLE_COMPARE_EPSILON)
                 || (Math.abs(width - (2 * halfWidth)) > DOUBLE_COMPARE_EPSILON)
                 || (Math.abs(height - (2 * halfHeight)) > DOUBLE_COMPARE_EPSILON)) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Half dimensions must be half of the full dimensions.");
         }
     }
 
