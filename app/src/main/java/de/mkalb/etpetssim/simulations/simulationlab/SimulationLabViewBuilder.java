@@ -65,18 +65,18 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         Color transparentRed = new Color(1, 0, 0, 0.5);
         overlayCanvas.setOnMouseClicked(event -> {
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure.cellShape());
+            overlayPainter.clearCanvasBackground();
             if (overlayPainter.isOutsideGrid(coordinate)) {
                 System.out.println("Clicked on coordinate OUTSIDE!!!: " + coordinate);
+                lastClickedCoordinate = null;
             } else {
                 System.out.println("Clicked on coordinate: " + coordinate);
 
                 if (!coordinate.equals(lastClickedCoordinate)) {
                     lastClickedCoordinate = coordinate;
-                    overlayPainter.clearCanvasBackground();
                     overlayPainter.drawOuterCircle(coordinate, transparentRed, 4.0d);
                 } else {
                     lastClickedCoordinate = null;
-                    overlayPainter.clearCanvasBackground();
                 }
                 overlayPainter.drawInnerCircle(coordinate, Color.GRAY, 2.0d);
                 overlayPainter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
@@ -85,16 +85,16 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         overlayCanvas.setOnMouseMoved(event -> {
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure.cellShape());
+            overlayPainter.clearCanvasBackground();
+            if (lastClickedCoordinate != null) {
+                overlayPainter.drawOuterCircle(lastClickedCoordinate, transparentRed, 4.0d);
+            }
             if (overlayPainter.isOutsideGrid(coordinate)) {
                 System.out.println("Moved over coordinate OUTSIDE!!!: " + coordinate);
             } else {
                 System.out.println("Moved over coordinate: " + coordinate);
-                overlayPainter.clearCanvasBackground();
                 overlayPainter.drawInnerCircle(coordinate, Color.GRAY, 2.0d);
                 overlayPainter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
-                if (lastClickedCoordinate != null) {
-                    overlayPainter.drawOuterCircle(lastClickedCoordinate, transparentRed, 4.0d);
-                }
             }
         });
         return borderPane;
