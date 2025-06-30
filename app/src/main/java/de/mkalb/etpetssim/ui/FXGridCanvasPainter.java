@@ -8,6 +8,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.util.*;
 
@@ -28,6 +30,7 @@ public final class FXGridCanvasPainter {
     private final GraphicsContext gc;
     private final CellDimension cellDimension;
     private final Dimension2D gridDimension2D;
+    private final Text textHelper;
 
     /**
      * Creates a new FXGridCanvasPainter instance.
@@ -52,6 +55,9 @@ public final class FXGridCanvasPainter {
         // Compute cell and grid dimension based on the cell shape
         cellDimension = GridGeometry.computeCellDimension(cellSideLength, gridStructure.cellShape());
         gridDimension2D = GridGeometry.computeGridDimension(gridStructure.size(), cellDimension, gridStructure.cellShape());
+
+        // Instance for reusable text measurement
+        textHelper = new Text();
     }
 
     /**
@@ -273,6 +279,72 @@ public final class FXGridCanvasPainter {
         gc.setStroke(strokeColor);
         gc.setLineWidth(lineWidth);
         gc.strokeRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
+    }
+
+    /**
+     * Draws text centered within the specified cell.
+     *
+     * @param coordinate the grid coordinate of the cell
+     * @param text the text to draw
+     * @param textColor the color of the text
+     * @param font the font used for rendering the text
+     */
+    public void drawCenteredTextInCell(GridCoordinate coordinate, String text, Color textColor, Font font) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(text);
+        Objects.requireNonNull(textColor);
+        Objects.requireNonNull(font);
+
+        Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, gridStructure.cellShape());
+        Point2D textOffset = computeCenteredTextOffset(text, font);
+
+        gc.setFill(textColor);
+        gc.setFont(font);
+        gc.fillText(text,
+                center.getX() + textOffset.getX(),
+                center.getY() + textOffset.getY()
+        );
+    }
+
+    /**
+     * Computes the width and height of the given text when rendered with the specified font.
+     * It is not thread-safe and should not be called from multiple threads simultaneously.
+     *
+     * @param text the text to measure
+     * @param font the font used for rendering the text
+     * @return the width and height of the text as a Dimension2D object
+     */
+    Dimension2D computeTextDimension(String text, Font font) {
+        Objects.requireNonNull(text);
+        Objects.requireNonNull(font);
+
+        textHelper.setText(text);
+        textHelper.setFont(font);
+        double textWidth = textHelper.getLayoutBounds().getWidth();
+        double textHeight = textHelper.getLayoutBounds().getHeight();
+        return new Dimension2D(textWidth, textHeight);
+    }
+
+    /**
+     * Computes the offset needed to center the given text.
+     * It is not thread-safe and should not be called from multiple threads simultaneously.
+     *
+     * @param text the text to center
+     * @param font the font used for rendering the text
+     * @return the offset as a Point2D object, where x is the horizontal offset and y is the vertical offset
+     */
+    Point2D computeCenteredTextOffset(String text, Font font) {
+        Objects.requireNonNull(text);
+        Objects.requireNonNull(font);
+
+        textHelper.setText(text);
+        textHelper.setFont(font);
+        double textWidth = textHelper.getLayoutBounds().getWidth();
+        double textHeight = textHelper.getLayoutBounds().getHeight();
+        double baselineOffset = textHelper.getBaselineOffset();
+        double xOffset = -(textWidth / 2.0d);
+        double yOffset = -(textHeight / 2.0d) + baselineOffset;
+        return new Point2D(xOffset, yOffset);
     }
 
 }

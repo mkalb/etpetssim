@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.Builder;
 import org.jspecify.annotations.Nullable;
 
@@ -60,6 +61,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         drawCanvas();
 
+        Font font = Font.font("SansSerif", 18.0d);
         Color transparentRed = new Color(1, 0, 0, 0.5);
         overlayCanvas.setOnMouseClicked(event -> {
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure.cellShape());
@@ -77,6 +79,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                     overlayPainter.clearCanvasBackground();
                 }
                 overlayPainter.drawInnerCircle(coordinate, Color.GRAY, 2.0d);
+                overlayPainter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
             }
         });
 
@@ -88,7 +91,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                 System.out.println("Moved over coordinate: " + coordinate);
                 overlayPainter.clearCanvasBackground();
                 overlayPainter.drawInnerCircle(coordinate, Color.GRAY, 2.0d);
-
+                overlayPainter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
                 if (lastClickedCoordinate != null) {
                     overlayPainter.drawOuterCircle(lastClickedCoordinate, transparentRed, 4.0d);
                 }
