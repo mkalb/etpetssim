@@ -49,8 +49,8 @@ public final class FXGridCanvasPainter {
         gc = canvas.getGraphicsContext2D();
 
         // Calculate cell and grid dimension based on the cell shape
-        cellDimension = GridGeometryConverter.calculateCellDimension(cellSideLength, gridStructure.cellShape());
-        gridDimension2D = GridGeometryConverter.calculateGridDimension(gridStructure.size(), cellDimension, gridStructure.cellShape());
+        cellDimension = GridGeometryConverter.computeCellDimension(cellSideLength, gridStructure.cellShape());
+        gridDimension2D = GridGeometryConverter.computeGridDimension(gridStructure.size(), cellDimension, gridStructure.cellShape());
     }
 
     /**
