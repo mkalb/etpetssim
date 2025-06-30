@@ -9,6 +9,9 @@ import javafx.geometry.Rectangle2D;
 
 import java.util.*;
 
+/**
+ * Utility class for grid geometry calculations.
+ */
 @SuppressWarnings("MagicNumber")
 public final class GridGeometry {
 
@@ -19,7 +22,7 @@ public final class GridGeometry {
     }
 
     /**
-     * Calculates the side length of a cell from its bounding box width.
+     * Computes the side length of a cell from its bounding box width.
      *
      * @param width the width of the cell's bounding box
      * @param shape the shape of the cell
@@ -35,7 +38,7 @@ public final class GridGeometry {
     }
 
     /**
-     * Calculates the dimensions of a cell based on its side length and shape.
+     * Computes the dimensions of a cell based on its side length and shape.
      *
      * @param sideLength the length of each side of the cell in pixels
      * @param shape the shape of the cell
@@ -57,11 +60,12 @@ public final class GridGeometry {
     }
 
     /**
-     * Calculates the total pixel dimensions of the grid area based on size, cell dimension and shape.
+     * Computes the total pixel dimensions of the grid area based on size, cell dimension and shape.
      *
      * @param gridSize the size of the grid in terms of columns and rows
      * @param cellDimension the dimensions of a single cell in the grid
-     * @param  shape the shape of the cells in the grid
+     * @param shape the shape of the cells in the grid
+     * @return a Dimension2D object representing the total width and height of the grid area
      */
     public static Dimension2D computeGridDimension(GridSize gridSize, CellDimension cellDimension, CellShape shape) {
         Objects.requireNonNull(gridSize);
@@ -94,117 +98,102 @@ public final class GridGeometry {
         return new Dimension2D(width, height);
     }
 
+    /**
+     * Converts a grid coordinate to its corresponding canvas position in pixel coordinates.
+     *
+     * @param coordinate the grid coordinate of the cell
+     * @param cellDimension the dimensions of the cell
+     * @param shape the shape of the cell
+     * @return the canvas position of the cell in pixel coordinates
+     */
     public static Point2D toCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
         return switch (shape) {
-            case TRIANGLE -> toTriangleCanvasPosition(coordinate, cellDimension);
-            case SQUARE -> toSquareCanvasPosition(coordinate, cellDimension);
-            case HEXAGON -> toHexagonCanvasPosition(coordinate, cellDimension);
+            case TRIANGLE -> {
+                // In a flat-top triangle grid, every two rows form a repeating vertical pattern.
+                // Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell.
+                // This ensures that upward- and downward-pointing triangles interlock correctly.
+                int triangleOrientationCycle = coordinate.y() % 4;
+                boolean isOffsetTriangleRow = ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
+                double xOffset = isOffsetTriangleRow ? cellDimension.halfSideLength() : 0.0d;
+                double x = (coordinate.x() * cellDimension.sideLength()) + xOffset;
+
+                // Each logical row consists of two triangle rows stacked vertically.
+                // The vertical position is based on the row index multiplied by the triangle height.
+                int row = coordinate.y() / 2; // Round down
+                double y = row * cellDimension.height();
+
+                // The resulting point represents the top-left corner of the bounding box for the triangle.
+                yield new Point2D(x, y);
+            }
+            case SQUARE -> {
+                double x = coordinate.x() * cellDimension.width();
+                double y = coordinate.y() * cellDimension.height();
+
+                yield new Point2D(x, y);
+            }
+            case HEXAGON -> {
+                // In a flat-top hexagon grid, each column is spaced 1.5 times the side length apart.
+                // This accounts for the horizontal overlap between adjacent hexagons.
+                double x = coordinate.x() * cellDimension.sideLength() * 1.5d;
+
+                // Hexagon rows are vertically offset in every second column to create a staggered layout.
+                // Even columns start at the base Y position, odd columns are shifted down by half a hexagon height.
+                double y;
+                if ((coordinate.x() % 2) == 0) {
+                    y = coordinate.y() * cellDimension.height();
+                } else {
+                    y = (coordinate.y() * cellDimension.height()) + cellDimension.halfHeight();
+                }
+
+                yield new Point2D(x, y);
+            }
         };
     }
 
+    /**
+     * Converts a canvas position in pixel coordinates to the corresponding grid coordinate.
+     *
+     * @param point the canvas position in pixel coordinates
+     * @param cellDimension the dimensions of the cell
+     * @param shape the shape of the cell
+     * @return the grid coordinate corresponding to the canvas position
+     */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension, CellShape shape) {
         Objects.requireNonNull(point);
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
         return switch (shape) {
-            case TRIANGLE -> fromTriangleCanvasPosition(point, cellDimension);
-            case SQUARE -> fromSquareCanvasPosition(point, cellDimension);
-            case HEXAGON -> fromHexagonCanvasPosition(point, cellDimension);
+            case TRIANGLE -> {
+                int y = (int) (point.getY() / cellDimension.height()) * 2; // Logical row
+                double xOffset = (((y % 4) == 1) || ((y % 4) == 2)) ? cellDimension.halfSideLength() : 0.0d;
+                int x = (int) ((point.getX() - xOffset) / cellDimension.sideLength());
+
+                yield new GridCoordinate(x, y);
+            }
+            case SQUARE -> {
+                int x = (int) (point.getX() / cellDimension.width());
+                int y = (int) (point.getY() / cellDimension.height());
+
+                yield new GridCoordinate(x, y);
+            }
+            case HEXAGON -> {
+                int x = (int) (point.getX() / (cellDimension.sideLength() * 1.5d));
+                double yOffset = ((x % 2) == 0) ? 0.0d : cellDimension.halfHeight();
+                int y = (int) ((point.getY() - yOffset) / cellDimension.height());
+
+                yield new GridCoordinate(x, y);
+            }
         };
     }
 
-    public static Point2D toTriangleCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-
-        // In a flat-top triangle grid, every two rows form a repeating vertical pattern.
-        // Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell.
-        // This ensures that upward- and downward-pointing triangles interlock correctly.
-        int triangleOrientationCycle = coordinate.y() % 4;
-        boolean isOffsetTriangleRow = ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
-        double xOffset = isOffsetTriangleRow ? cellDimension.halfSideLength() : 0.0d;
-        double x = (coordinate.x() * cellDimension.sideLength()) + xOffset;
-
-        // Each logical row consists of two triangle rows stacked vertically.
-        // The vertical position is based on the row index multiplied by the triangle height.
-        int row = coordinate.y() / 2; // Round down
-        double y = row * cellDimension.height();
-
-        // The resulting point represents the top-left corner of the bounding box for the triangle.
-        return new Point2D(x, y);
-    }
-
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    public static GridCoordinate fromTriangleCanvasPosition(Point2D point, CellDimension cellDimension) {
-        Objects.requireNonNull(point);
-        Objects.requireNonNull(cellDimension);
-
-        int row = (int) (point.getY() / cellDimension.height()) * 2; // Logical row
-        double xOffset = (((row % 4) == 1) || ((row % 4) == 2)) ? cellDimension.halfSideLength() : 0.0d;
-        int column = (int) ((point.getX() - xOffset) / cellDimension.sideLength());
-
-        return new GridCoordinate(column, row);
-    }
-
-    public static Point2D toSquareCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-
-        double x = coordinate.x() * cellDimension.width();
-        double y = coordinate.y() * cellDimension.height();
-        return new Point2D(x, y);
-    }
-
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    public static GridCoordinate fromSquareCanvasPosition(Point2D point, CellDimension cellDimension) {
-        Objects.requireNonNull(point);
-        Objects.requireNonNull(cellDimension);
-
-        int x = (int) (point.getX() / cellDimension.width());
-        int y = (int) (point.getY() / cellDimension.height());
-        return new GridCoordinate(x, y);
-    }
-
-    public static Point2D toHexagonCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-
-        // In a flat-top hexagon grid, each column is spaced 1.5 times the side length apart.
-        // This accounts for the horizontal overlap between adjacent hexagons.
-        double x = coordinate.x() * cellDimension.sideLength() * 1.5d;
-
-        // Hexagon rows are vertically offset in every second column to create a staggered layout.
-        // Even columns start at the base Y position, odd columns are shifted down by half a hexagon height.
-        double y;
-        if ((coordinate.x() % 2) == 0) {
-            y = coordinate.y() * cellDimension.height();
-        } else {
-            y = (coordinate.y() * cellDimension.height()) + cellDimension.halfHeight();
-        }
-
-        // The resulting point represents the top-left corner of the bounding box for the hexagon.
-        return new Point2D(x, y);
-    }
-
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    public static GridCoordinate fromHexagonCanvasPosition(Point2D point, CellDimension cellDimension) {
-        Objects.requireNonNull(point);
-        Objects.requireNonNull(cellDimension);
-
-        int column = (int) (point.getX() / (cellDimension.sideLength() * 1.5d));
-        double yOffset = ((column % 2) == 0) ? 0.0d : cellDimension.halfHeight();
-        int row = (int) ((point.getY() - yOffset) / cellDimension.height());
-
-        return new GridCoordinate(column, row);
-    }
-
     /**
-     * Calculates the center point of a cell on the canvas based on its coordinate, shape, and dimensions.
+     * Computes the center point of a cell on the canvas based on its coordinate, shape, and dimensions.
      *
      * @param coordinate the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
@@ -223,17 +212,19 @@ public final class GridGeometry {
                 double centerY = pointingDown
                         ? (topLeft.getY() + ((1.0 / 3.0) * cellDimension.height()))
                         : (topLeft.getY() + ((2.0 / 3.0) * cellDimension.height()));
-                yield new Point2D(topLeft.getX() + cellDimension.halfSideLength(), centerY);
+                yield new Point2D(topLeft.getX() + cellDimension.halfSideLength(),
+                        centerY);
             }
-            case SQUARE ->
-                    new Point2D(topLeft.getX() + cellDimension.halfSideLength(), topLeft.getY() + cellDimension.halfSideLength());
-            case HEXAGON ->
-                    new Point2D(topLeft.getX() + cellDimension.halfWidth(), topLeft.getY() + cellDimension.halfHeight());
+            case SQUARE -> new Point2D(topLeft.getX() + cellDimension.halfSideLength(),
+                    topLeft.getY() + cellDimension.halfSideLength());
+            case HEXAGON -> new Point2D(topLeft.getX() + cellDimension.halfWidth(),
+                    topLeft.getY() + cellDimension.halfHeight());
         };
     }
 
     /**
-     * Calculates the radius of a circle that fits entirely inside the cell shape.
+     * Computes the radius of a circle that fits entirely inside the cell shape.
+     * The circle touches the cell's edges but does not extend beyond them.
      *
      * @param cellDimension the dimensions of the cell
      * @param shape the shape of the cell
@@ -251,7 +242,8 @@ public final class GridGeometry {
     }
 
     /**
-     * Calculates the radius of a circle that fully encloses the cell.
+     * Computes the radius of a circle that fully encloses the cell.
+     * All vertices of the cell shape must be within this circle.
      *
      * @param cellDimension the dimensions of the cell
      * @param shape the shape of the cell
@@ -270,7 +262,7 @@ public final class GridGeometry {
     }
 
     /**
-     * Returns the bounding box dimensions of a cell based on its shape and dimensions.
+     * Computes the bounding box dimensions of a cell based on its shape and dimensions.
      *
      * @param cellDimension the dimensions of the cell
      * @param shape the shape of the cell
@@ -288,7 +280,7 @@ public final class GridGeometry {
     }
 
     /**
-     * Returns the bounding rectangle of a cell in canvas coordinates.
+     * Computes the bounding rectangle of a cell in canvas coordinates.
      *
      * @param coordinate the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
@@ -306,7 +298,7 @@ public final class GridGeometry {
     }
 
     /**
-     * Returns the x and y coordinates of the cell's polygon vertices in canvas space.
+     * Computes the x and y coordinates of the cell's polygon vertices in canvas space.
      *
      * @param coordinate the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
@@ -318,15 +310,29 @@ public final class GridGeometry {
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
-        return switch (shape) {
+        double[] xPoints = new double[shape.vertexCount()];
+        double[] yPoints = new double[shape.vertexCount()];
+
+        switch (shape) {
             case TRIANGLE -> {
-                Point2D topLeft = toTriangleCanvasPosition(coordinate, cellDimension);
+                // In a flat-top triangle grid, every two rows form a repeating vertical pattern.
+                // Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell.
+                // This ensures that upward- and downward-pointing triangles interlock correctly.
+                int triangleOrientationCycle = coordinate.y() % 4;
+                boolean isOffsetTriangleRow = ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
+                double xOffset = isOffsetTriangleRow ? cellDimension.halfSideLength() : 0.0d;
+                double x1 = (coordinate.x() * cellDimension.sideLength()) + xOffset;
+
+                // Each logical row consists of two triangle rows stacked vertically.
+                // The vertical position is based on the row index multiplied by the triangle height.
+                int row = coordinate.y() / 2; // Round down
+                double y1 = row * cellDimension.height();
+
+                // The resulting point represents the top-left corner of the bounding box for the triangle.
+                Point2D topLeft = new Point2D(x1, y1);
                 double x = topLeft.getX();
                 double y = topLeft.getY();
                 boolean pointingDown = (coordinate.y() % 2) == 0;
-
-                double[] xPoints = new double[3];
-                double[] yPoints = new double[3];
 
                 if (pointingDown) {
                     xPoints[0] = x;
@@ -343,24 +349,39 @@ public final class GridGeometry {
                     xPoints[2] = x + cellDimension.sideLength();
                     yPoints[2] = y + cellDimension.height();
                 }
-
-                yield new double[][]{xPoints, yPoints};
             }
             case SQUARE -> {
                 Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
                 double x = topLeft.getX();
                 double y = topLeft.getY();
-                double[] xPoints = {x, x + cellDimension.sideLength(), x + cellDimension.sideLength(), x};
-                double[] yPoints = {y, y, y + cellDimension.sideLength(), y + cellDimension.sideLength()};
-                yield new double[][]{xPoints, yPoints};
+
+                xPoints[0] = x;
+                yPoints[0] = y;
+                xPoints[1] = x + cellDimension.sideLength();
+                yPoints[1] = y;
+                xPoints[2] = x + cellDimension.sideLength();
+                yPoints[2] = y + cellDimension.sideLength();
+                xPoints[3] = x;
+                yPoints[3] = y + cellDimension.sideLength();
             }
             case HEXAGON -> {
-                Point2D topLeft = toHexagonCanvasPosition(coordinate, cellDimension);
+                // In a flat-top hexagon grid, each column is spaced 1.5 times the side length apart.
+                // This accounts for the horizontal overlap between adjacent hexagons.
+                double x1 = coordinate.x() * cellDimension.sideLength() * 1.5d;
+
+                // Hexagon rows are vertically offset in every second column to create a staggered layout.
+                // Even columns start at the base Y position, odd columns are shifted down by half a hexagon height.
+                double y1;
+                if ((coordinate.x() % 2) == 0) {
+                    y1 = coordinate.y() * cellDimension.height();
+                } else {
+                    y1 = (coordinate.y() * cellDimension.height()) + cellDimension.halfHeight();
+                }
+
+                // The resulting point represents the top-left corner of the bounding box for the hexagon.
+                Point2D topLeft = new Point2D(x1, y1);
                 double x = topLeft.getX();
                 double y = topLeft.getY();
-
-                double[] xPoints = new double[6];
-                double[] yPoints = new double[6];
 
                 xPoints[0] = x + cellDimension.halfSideLength();
                 yPoints[0] = y;
@@ -374,10 +395,9 @@ public final class GridGeometry {
                 yPoints[4] = y + cellDimension.height();
                 xPoints[5] = x;
                 yPoints[5] = y + cellDimension.halfHeight();
-
-                yield new double[][]{xPoints, yPoints};
             }
-        };
+        }
+        return new double[][]{xPoints, yPoints};
     }
 
     /**
