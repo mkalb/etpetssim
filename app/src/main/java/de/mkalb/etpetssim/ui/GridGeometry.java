@@ -10,12 +10,12 @@ import javafx.geometry.Rectangle2D;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class GridGeometryConverter {
+public final class GridGeometry {
 
     /**
      * Private constructor to prevent instantiation.
      */
-    private GridGeometryConverter() {
+    private GridGeometry() {
     }
 
     /**

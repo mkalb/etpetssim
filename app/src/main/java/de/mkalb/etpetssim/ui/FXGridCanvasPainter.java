@@ -49,8 +49,8 @@ public final class FXGridCanvasPainter {
         gc = canvas.getGraphicsContext2D();
 
         // Calculate cell and grid dimension based on the cell shape
-        cellDimension = GridGeometryConverter.computeCellDimension(cellSideLength, gridStructure.cellShape());
-        gridDimension2D = GridGeometryConverter.computeGridDimension(gridStructure.size(), cellDimension, gridStructure.cellShape());
+        cellDimension = GridGeometry.computeCellDimension(cellSideLength, gridStructure.cellShape());
+        gridDimension2D = GridGeometry.computeGridDimension(gridStructure.size(), cellDimension, gridStructure.cellShape());
     }
 
     /**
@@ -168,7 +168,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(fillColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(
+        Point2D topLeft = GridGeometry.toCanvasPosition(
                 coordinate,
                 cellDimension,
                 gridStructure.cellShape());
@@ -227,7 +227,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(fillColor);
         Objects.requireNonNull(strokeColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        Point2D topLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
         double x = topLeft.getX();
         double y = topLeft.getY();
         boolean pointingDown = ((coordinate.y() % 2) == 0);
@@ -277,7 +277,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(fillColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(
+        Point2D topLeft = GridGeometry.toCanvasPosition(
                 coordinate,
                 cellDimension,
                 gridStructure.cellShape());
@@ -302,7 +302,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(fillColor);
         Objects.requireNonNull(strokeColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        Point2D topLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
         double x = topLeft.getX();
         double y = topLeft.getY();
         double size = cellDimension.sideLength();
@@ -336,7 +336,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(fillColor);
         Objects.requireNonNull(strokeColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(
+        Point2D topLeft = GridGeometry.toCanvasPosition(
                 coordinate,
                 cellDimension,
                 gridStructure.cellShape());
@@ -369,7 +369,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(fillColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(
+        Point2D topLeft = GridGeometry.toCanvasPosition(
                 coordinate,
                 cellDimension,
                 gridStructure.cellShape());
@@ -419,7 +419,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(fillColor);
         Objects.requireNonNull(strokeColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        Point2D topLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
         double x = topLeft.getX();
         double y = topLeft.getY();
         int vertexCount = 6;
@@ -467,7 +467,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(strokeColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        Point2D topLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
         double centerX;
         double centerY;
         double radius;
@@ -511,7 +511,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(strokeColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        Point2D topLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
         double centerX;
         double centerY;
         double radius;
@@ -557,7 +557,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(strokeColor);
 
-        Point2D topLeft = GridGeometryConverter.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        Point2D topLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
         double x = topLeft.getX();
         double y = topLeft.getY();
         double width;
