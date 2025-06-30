@@ -7,11 +7,11 @@ package de.mkalb.etpetssim.ui;
  * The values width and height represent the surrounding rectangle (bounding box).
  *
  * @param sideLength side length of the cell in pixels
- * @param width width of the cell in pixels
- * @param height height of the cell in pixels
+ * @param width width of the cell in pixels (bounding box)
+ * @param height height of the cell in pixels (bounding box)
  * @param halfSideLength half side length of the cell in pixels
- * @param halfWidth half width of the cell in pixels
- * @param halfHeight half height of the cell in pixels
+ * @param halfWidth half width of the cell in pixels (bounding box)
+ * @param halfHeight half height of the cell in pixels (bounding box)
  */
 public record CellDimension(
         double sideLength,
