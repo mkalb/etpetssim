@@ -10,10 +10,66 @@ import javafx.geometry.Rectangle2D;
 import java.util.*;
 
 /**
- * Utility class for grid geometry calculations.
+ * Utility class for grid geometry computations and conversions.
  */
-@SuppressWarnings("MagicNumber")
 public final class GridGeometry {
+
+    /**
+     * Square root of 2, used for various geometric calculations.
+     * This constant is approximately 1.4142135623730951.
+     */
+    public static final double SQRT_TWO = Math.sqrt(2);
+    /**
+     * Square root of 3, used for various geometric calculations.
+     * This constant is approximately 1.7320508075688772.
+     */
+    public static final double SQRT_THREE = Math.sqrt(3);
+
+    /**
+     * Number zero, as primitive double.
+     */
+    public static final double ZERO = 0.0d;
+    /**
+     * Number one, as primitive double.
+     */
+    public static final double ONE = 1.0d;
+    /**
+     * Number two, as primitive double.
+     */
+    public static final double TWO = 2.0d;
+    /**
+     * One third, used for fractional calculations.
+     * This constant is approximately 0.3333333333333333.
+     */
+    public static final double ONE_THIRD = 1.0d / 3.0d;
+    /**
+     * Two thirds, used for fractional calculations.
+     * This constant is approximately 0.6666666666666666.
+     */
+    public static final double TWO_THIRDS = 2.0d / 3.0d;
+    /**
+     * One half, used for fractional calculations.
+     * This constant is approximately 0.5.
+     */
+    public static final double ONE_HALF = 1.0d / 2.0d;
+    /**
+     * Three halves, used for fractional calculations.
+     * This constant is approximately 1.5.
+     */
+    public static final double THREE_HALVES = 3.0d / 2.0d;
+    /**
+     * One quarter, used for fractional calculations.
+     * This constant is approximately 0.25.
+     */
+    public static final double ONE_QUARTER = 1.0d / 4.0d;
+    /**
+     * Three quarters, used for fractional calculations.
+     * This constant is approximately 0.75.
+     */
+    public static final double THREE_QUARTERS = 3.0d / 4.0d;
+
+    public static final double MIN_SIDE_LENGTH = 1.0d;
+    public static final double MAX_SIDE_LENGTH = 4_096.0d;
 
     /**
      * Private constructor to prevent instantiation.
@@ -22,41 +78,51 @@ public final class GridGeometry {
     }
 
     /**
-     * Computes the side length of a cell from its bounding box width.
-     *
-     * @param width the width of the cell's bounding box
-     * @param shape the shape of the cell
-     * @return the side length of the cell
-     */
-    public static double computeCellSideLengthFromWidth(double width, CellShape shape) {
-        Objects.requireNonNull(shape);
-
-        return switch (shape) {
-            case SQUARE, TRIANGLE -> width;
-            case HEXAGON -> width / 2.0;
-        };
-    }
-
-    /**
      * Computes the dimensions of a cell based on its side length and shape.
      *
-     * @param sideLength the length of each side of the cell in pixels
+     * @param sideLength the length of each side of the cell in pixels, must be between MIN_SIDE_LENGTH and MAX_SIDE_LENGTH
      * @param shape the shape of the cell
      * @return a CellDimension object representing the dimensions of the cell
+     * @see GridGeometry#MIN_SIDE_LENGTH
+     * @see GridGeometry#MAX_SIDE_LENGTH
      */
     public static CellDimension computeCellDimension(double sideLength, CellShape shape) {
         Objects.requireNonNull(shape);
+        if ((sideLength < MIN_SIDE_LENGTH) || (sideLength > MAX_SIDE_LENGTH)) {
+            throw new IllegalArgumentException("Side length must be between " + MIN_SIDE_LENGTH + " and " + MAX_SIDE_LENGTH + ".");
+        }
 
+        double halfSideLength = sideLength * ONE_HALF;
         double width = switch (shape) {
             case TRIANGLE, SQUARE -> sideLength;
-            case HEXAGON -> sideLength * 2; // Hexagon width is twice the side length
+            case HEXAGON -> sideLength * TWO;
+        };
+        double halfWidth = switch (shape) {
+            case TRIANGLE, SQUARE -> halfSideLength;
+            case HEXAGON -> sideLength;
         };
         double height = switch (shape) {
-            case TRIANGLE -> (Math.sqrt(3) / 2) * sideLength;
+            case TRIANGLE -> SQRT_THREE * halfSideLength;
             case SQUARE -> sideLength;
-            case HEXAGON -> Math.sqrt(3) * sideLength;
+            case HEXAGON -> SQRT_THREE * sideLength;
         };
-        return CellDimension.of(sideLength, width, height);
+        double halfHeight = switch (shape) {
+            case TRIANGLE, HEXAGON -> height * ONE_HALF;
+            case SQUARE -> halfSideLength;
+        };
+        double innerRadius = switch (shape) {
+            case TRIANGLE -> height * ONE_THIRD;
+            case SQUARE -> halfSideLength;
+            case HEXAGON -> halfHeight;
+        };
+        double outerRadius = switch (shape) {
+            case TRIANGLE -> Math.sqrt(Math.pow(halfSideLength, TWO) + Math.pow(innerRadius, TWO));
+            case SQUARE -> SQRT_TWO * halfSideLength;
+            case HEXAGON -> sideLength;
+        };
+        return new CellDimension(sideLength, width, height,
+                halfSideLength, halfWidth, halfHeight,
+                innerRadius, outerRadius);
     }
 
     /**
@@ -86,16 +152,27 @@ public final class GridGeometry {
                 height = gridSize.height() * cellDimension.height();
             }
             case HEXAGON -> {
-                double columnWidth = cellDimension.width() * 0.75d;
+                double columnWidth = cellDimension.width() * THREE_QUARTERS;
+                width = (gridSize.width() * columnWidth) + (cellDimension.width() * ONE_QUARTER);
                 double rowHeightOffset = cellDimension.halfHeight();
-
-                width = (gridSize.width() * columnWidth) + (cellDimension.width() * 0.25d);
-                height = (gridSize.height() * cellDimension.height()) + ((gridSize.width() > 1) ? rowHeightOffset : 0.0d);
+                height = (gridSize.height() * cellDimension.height()) + ((gridSize.width() > 1) ? rowHeightOffset : ZERO);
             }
             default -> throw new IllegalArgumentException("Unsupported CellShape: " + shape);
         }
 
         return new Dimension2D(width, height);
+    }
+
+    /**
+     * Determines whether a triangle cell is pointing down.
+     *
+     * @param coordinate the grid coordinate of the triangle
+     * @return true if the triangle points down, false if it points up
+     */
+    public static boolean isTrianglePointingDown(GridCoordinate coordinate) {
+        Objects.requireNonNull(coordinate);
+
+        return (coordinate.y() % 2) == 0;
     }
 
     /**
@@ -111,47 +188,44 @@ public final class GridGeometry {
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
-        return switch (shape) {
+        double x;
+        double y;
+
+        switch (shape) {
             case TRIANGLE -> {
                 // In a flat-top triangle grid, every two rows form a repeating vertical pattern.
                 // Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell.
                 // This ensures that upward- and downward-pointing triangles interlock correctly.
                 int triangleOrientationCycle = coordinate.y() % 4;
                 boolean isOffsetTriangleRow = ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
-                double xOffset = isOffsetTriangleRow ? cellDimension.halfSideLength() : 0.0d;
-                double x = (coordinate.x() * cellDimension.sideLength()) + xOffset;
+                double xOffset = isOffsetTriangleRow ? cellDimension.halfSideLength() : ZERO;
+                x = (coordinate.x() * cellDimension.sideLength()) + xOffset;
 
                 // Each logical row consists of two triangle rows stacked vertically.
                 // The vertical position is based on the row index multiplied by the triangle height.
                 int row = coordinate.y() / 2; // Round down
-                double y = row * cellDimension.height();
-
-                // The resulting point represents the top-left corner of the bounding box for the triangle.
-                yield new Point2D(x, y);
+                y = row * cellDimension.height();
             }
             case SQUARE -> {
-                double x = coordinate.x() * cellDimension.width();
-                double y = coordinate.y() * cellDimension.height();
-
-                yield new Point2D(x, y);
+                x = coordinate.x() * cellDimension.width();
+                y = coordinate.y() * cellDimension.height();
             }
             case HEXAGON -> {
                 // In a flat-top hexagon grid, each column is spaced 1.5 times the side length apart.
                 // This accounts for the horizontal overlap between adjacent hexagons.
-                double x = coordinate.x() * cellDimension.sideLength() * 1.5d;
+                x = coordinate.x() * cellDimension.sideLength() * THREE_HALVES;
 
                 // Hexagon rows are vertically offset in every second column to create a staggered layout.
                 // Even columns start at the base Y position, odd columns are shifted down by half a hexagon height.
-                double y;
                 if ((coordinate.x() % 2) == 0) {
                     y = coordinate.y() * cellDimension.height();
                 } else {
                     y = (coordinate.y() * cellDimension.height()) + cellDimension.halfHeight();
                 }
-
-                yield new Point2D(x, y);
             }
-        };
+            default -> throw new IllegalArgumentException("Unsupported CellShape: " + shape);
+        }
+        return new Point2D(x, y);
     }
 
     /**
@@ -168,28 +242,28 @@ public final class GridGeometry {
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
-        return switch (shape) {
-            case TRIANGLE -> {
-                int y = (int) (point.getY() / cellDimension.height()) * 2; // Logical row
-                double xOffset = (((y % 4) == 1) || ((y % 4) == 2)) ? cellDimension.halfSideLength() : 0.0d;
-                int x = (int) ((point.getX() - xOffset) / cellDimension.sideLength());
+        int x;
+        int y;
 
-                yield new GridCoordinate(x, y);
+        // TODO fix some bugs
+        switch (shape) {
+            case TRIANGLE -> {
+                y = (int) (point.getY() / cellDimension.height()) * 2; // Logical row
+                double xOffset = (((y % 4) == 1) || ((y % 4) == 2)) ? cellDimension.halfSideLength() : ZERO;
+                x = (int) ((point.getX() - xOffset) / cellDimension.sideLength());
             }
             case SQUARE -> {
-                int x = (int) (point.getX() / cellDimension.width());
-                int y = (int) (point.getY() / cellDimension.height());
-
-                yield new GridCoordinate(x, y);
+                x = (int) (point.getX() / cellDimension.width());
+                y = (int) (point.getY() / cellDimension.height());
             }
             case HEXAGON -> {
-                int x = (int) (point.getX() / (cellDimension.sideLength() * 1.5d));
-                double yOffset = ((x % 2) == 0) ? 0.0d : cellDimension.halfHeight();
-                int y = (int) ((point.getY() - yOffset) / cellDimension.height());
-
-                yield new GridCoordinate(x, y);
+                x = (int) (point.getX() / (cellDimension.sideLength() * THREE_HALVES));
+                double yOffset = ((x % 2) == 0) ? ZERO : cellDimension.halfHeight();
+                y = (int) ((point.getY() - yOffset) / cellDimension.height());
             }
-        };
+            default -> throw new IllegalArgumentException("Unsupported CellShape: " + shape);
+        }
+        return new GridCoordinate(x, y);
     }
 
     /**
@@ -206,77 +280,27 @@ public final class GridGeometry {
         Objects.requireNonNull(shape);
 
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
-        return switch (shape) {
+        double xOffset;
+        double yOffset;
+
+        switch (shape) {
             case TRIANGLE -> {
-                boolean pointingDown = (coordinate.y() % 2) == 0;
-                double centerY = pointingDown
-                        ? (topLeft.getY() + ((1.0 / 3.0) * cellDimension.height()))
-                        : (topLeft.getY() + ((2.0 / 3.0) * cellDimension.height()));
-                yield new Point2D(topLeft.getX() + cellDimension.halfSideLength(),
-                        centerY);
+                xOffset = cellDimension.halfSideLength();
+                yOffset = isTrianglePointingDown(coordinate)
+                        ? (cellDimension.height() * ONE_THIRD)
+                        : (cellDimension.height() * TWO_THIRDS);
             }
-            case SQUARE -> new Point2D(topLeft.getX() + cellDimension.halfSideLength(),
-                    topLeft.getY() + cellDimension.halfSideLength());
-            case HEXAGON -> new Point2D(topLeft.getX() + cellDimension.halfWidth(),
-                    topLeft.getY() + cellDimension.halfHeight());
-        };
-    }
-
-    /**
-     * Computes the radius of a circle that fits entirely inside the cell shape.
-     * The circle touches the cell's edges but does not extend beyond them.
-     *
-     * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
-     * @return the radius of the largest circle that fits inside the cell
-     */
-    public static double computeCellInnerRadius(CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
-        return switch (shape) {
-            case TRIANGLE -> Math.min(cellDimension.halfSideLength(), cellDimension.height() / 3.0);
-            case SQUARE -> cellDimension.halfSideLength();
-            case HEXAGON -> Math.min(cellDimension.halfWidth(), cellDimension.halfHeight());
-        };
-    }
-
-    /**
-     * Computes the radius of a circle that fully encloses the cell.
-     * All vertices of the cell shape must be within this circle.
-     *
-     * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
-     * @return the radius of the enclosing circle
-     */
-    public static double computeCellOuterRadius(CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
-        return switch (shape) {
-            case TRIANGLE ->
-                    Math.sqrt(Math.pow(cellDimension.halfSideLength(), 2) + Math.pow(cellDimension.height() / 3.0, 2));
-            case SQUARE -> cellDimension.halfSideLength() * Math.sqrt(2);
-            case HEXAGON -> Math.max(cellDimension.halfWidth(), cellDimension.halfHeight());
-        };
-    }
-
-    /**
-     * Computes the bounding box dimensions of a cell based on its shape and dimensions.
-     *
-     * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
-     * @return the width and height of the cell's bounding box
-     */
-    public static Dimension2D computeCellBoundingBox(CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
-        return switch (shape) {
-            case TRIANGLE -> new Dimension2D(cellDimension.sideLength(), cellDimension.height());
-            case SQUARE -> new Dimension2D(cellDimension.sideLength(), cellDimension.sideLength());
-            case HEXAGON -> new Dimension2D(cellDimension.width(), cellDimension.height());
-        };
+            case SQUARE -> {
+                xOffset = cellDimension.halfSideLength();
+                yOffset = cellDimension.halfSideLength();
+            }
+            case HEXAGON -> {
+                xOffset = cellDimension.halfWidth();
+                yOffset = cellDimension.halfHeight();
+            }
+            default -> throw new IllegalArgumentException("Unsupported CellShape: " + shape);
+        }
+        return new Point2D(topLeft.getX() + xOffset, topLeft.getY() + yOffset);
     }
 
     /**
@@ -292,9 +316,7 @@ public final class GridGeometry {
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
-        Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
-        Dimension2D size = computeCellBoundingBox(cellDimension, shape);
-        return new Rectangle2D(topLeft.getX(), topLeft.getY(), size.getWidth(), size.getHeight());
+        return cellDimension.boundingBoxAt(toCanvasPosition(coordinate, cellDimension, shape));
     }
 
     /**
@@ -305,36 +327,20 @@ public final class GridGeometry {
      * @param shape the shape of the cell
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
-    public static double[][] computePolygon(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
+    public static double[][] computeCellPolygon(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
+        Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
+        double x = topLeft.getX();
+        double y = topLeft.getY();
         double[] xPoints = new double[shape.vertexCount()];
         double[] yPoints = new double[shape.vertexCount()];
 
         switch (shape) {
             case TRIANGLE -> {
-                // In a flat-top triangle grid, every two rows form a repeating vertical pattern.
-                // Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell.
-                // This ensures that upward- and downward-pointing triangles interlock correctly.
-                int triangleOrientationCycle = coordinate.y() % 4;
-                boolean isOffsetTriangleRow = ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
-                double xOffset = isOffsetTriangleRow ? cellDimension.halfSideLength() : 0.0d;
-                double x1 = (coordinate.x() * cellDimension.sideLength()) + xOffset;
-
-                // Each logical row consists of two triangle rows stacked vertically.
-                // The vertical position is based on the row index multiplied by the triangle height.
-                int row = coordinate.y() / 2; // Round down
-                double y1 = row * cellDimension.height();
-
-                // The resulting point represents the top-left corner of the bounding box for the triangle.
-                Point2D topLeft = new Point2D(x1, y1);
-                double x = topLeft.getX();
-                double y = topLeft.getY();
-                boolean pointingDown = (coordinate.y() % 2) == 0;
-
-                if (pointingDown) {
+                if (isTrianglePointingDown(coordinate)) {
                     xPoints[0] = x;
                     yPoints[0] = y;
                     xPoints[1] = x + cellDimension.halfSideLength();
@@ -351,10 +357,6 @@ public final class GridGeometry {
                 }
             }
             case SQUARE -> {
-                Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
-                double x = topLeft.getX();
-                double y = topLeft.getY();
-
                 xPoints[0] = x;
                 yPoints[0] = y;
                 xPoints[1] = x + cellDimension.sideLength();
@@ -365,24 +367,6 @@ public final class GridGeometry {
                 yPoints[3] = y + cellDimension.sideLength();
             }
             case HEXAGON -> {
-                // In a flat-top hexagon grid, each column is spaced 1.5 times the side length apart.
-                // This accounts for the horizontal overlap between adjacent hexagons.
-                double x1 = coordinate.x() * cellDimension.sideLength() * 1.5d;
-
-                // Hexagon rows are vertically offset in every second column to create a staggered layout.
-                // Even columns start at the base Y position, odd columns are shifted down by half a hexagon height.
-                double y1;
-                if ((coordinate.x() % 2) == 0) {
-                    y1 = coordinate.y() * cellDimension.height();
-                } else {
-                    y1 = (coordinate.y() * cellDimension.height()) + cellDimension.halfHeight();
-                }
-
-                // The resulting point represents the top-left corner of the bounding box for the hexagon.
-                Point2D topLeft = new Point2D(x1, y1);
-                double x = topLeft.getX();
-                double y = topLeft.getY();
-
                 xPoints[0] = x + cellDimension.halfSideLength();
                 yPoints[0] = y;
                 xPoints[1] = x + cellDimension.sideLength() + cellDimension.halfSideLength();
@@ -398,18 +382,6 @@ public final class GridGeometry {
             }
         }
         return new double[][]{xPoints, yPoints};
-    }
-
-    /**
-     * Determines whether a triangle cell is pointing down.
-     *
-     * @param coordinate the grid coordinate of the triangle
-     * @return true if the triangle points down, false if it points up
-     */
-    public static boolean isTrianglePointingDown(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
-
-        return (coordinate.y() % 2) == 0;
     }
 
 }

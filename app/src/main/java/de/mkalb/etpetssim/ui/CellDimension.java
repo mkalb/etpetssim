@@ -1,5 +1,9 @@
 package de.mkalb.etpetssim.ui;
 
+import javafx.geometry.Dimension2D;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
+
 /**
  * Represents the dimensions of a cell in a grid.
  * This record encapsulates the side length, width, height,
@@ -12,6 +16,8 @@ package de.mkalb.etpetssim.ui;
  * @param halfSideLength half side length of the cell in pixels
  * @param halfWidth half width of the cell in pixels (bounding box)
  * @param halfHeight half height of the cell in pixels (bounding box)
+ * @param innerRadius inner radius of the cell in pixels
+ * @param outerRadius outer radius of the cell in pixels
  */
 public record CellDimension(
         double sideLength,
@@ -19,7 +25,9 @@ public record CellDimension(
         double height,
         double halfSideLength,
         double halfWidth,
-        double halfHeight
+        double halfHeight,
+        double innerRadius,
+        double outerRadius
 ) {
 
     private static final double DOUBLE_COMPARE_EPSILON = 1.0e-9;
@@ -33,11 +41,43 @@ public record CellDimension(
                 || (Math.abs(height - (2 * halfHeight)) > DOUBLE_COMPARE_EPSILON)) {
             throw new IllegalArgumentException("Half dimensions must be half of the full dimensions.");
         }
+        if ((innerRadius <= 0) || (outerRadius <= 0)) {
+            throw new IllegalArgumentException("Inner and outer radius must be positive.");
+        }
+        if (outerRadius <= innerRadius) {
+            throw new IllegalArgumentException("Outer radius must be greater than inner radius.");
+        }
     }
 
-    @SuppressWarnings("MagicNumber")
-    public static CellDimension of(double sideLength, double width, double height) {
-        return new CellDimension(sideLength, width, height, sideLength / 2.0d, width / 2.0d, height / 2.0d);
+    /**
+     * Returns the bounding box dimension of the cell.
+     * This is equivalent to the width and height of the cell.
+     *
+     * @return the bounding box dimension of the cell
+     */
+    public Dimension2D boundingBoxDimension() {
+        return new Dimension2D(width, height);
+    }
+
+    /**
+     * Returns the bounding box of the cell at the specified top-left corner.
+     *
+     * @param topLeftX the x-coordinate of the top-left corner of the cell
+     * @param topLeftY the y-coordinate of the top-left corner of the cell
+     * @return a Rectangle2D representing the bounding box of the cell at the specified top-left corner.
+     */
+    public Rectangle2D boundingBoxAt(double topLeftX, double topLeftY) {
+        return new Rectangle2D(topLeftX, topLeftY, width, height);
+    }
+
+    /**
+     * Returns the bounding box of the cell at the specified top-left point.
+     *
+     * @param topLeftPoint the top-left point of the cell
+     * @return a Rectangle2D representing the bounding box of the cell at the specified top-left point.
+     */
+    public Rectangle2D boundingBoxAt(Point2D topLeftPoint) {
+        return new Rectangle2D(topLeftPoint.getX(), topLeftPoint.getY(), width, height);
     }
 
 }
