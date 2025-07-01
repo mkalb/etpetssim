@@ -31,13 +31,13 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         Canvas canvas = new Canvas(cellSideLength, cellSideLength);
         painter = new FXGridCanvasPainter(canvas, structure, cellSideLength);
         double border = 30.0d; // only for testing grid dimension
-        canvas.setWidth(painter.gridDimension2D().getWidth() + border);
-        canvas.setHeight(painter.gridDimension2D().getHeight() + border);
+        canvas.setWidth(Math.min(4_000.0d, painter.gridDimension2D().getWidth() + border));
+        canvas.setHeight(Math.min(2_000.0d, painter.gridDimension2D().getHeight() + border));
 
         Canvas overlayCanvas = new Canvas(cellSideLength, cellSideLength);
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellSideLength);
-        overlayCanvas.setWidth(overlayPainter.gridDimension2D().getWidth());
-        overlayCanvas.setHeight(overlayPainter.gridDimension2D().getHeight());
+        overlayCanvas.setWidth(Math.min(4_000.0d, overlayPainter.gridDimension2D().getWidth()));
+        overlayCanvas.setHeight(Math.min(2_000.0d, overlayPainter.gridDimension2D().getHeight()));
         font = Font.font("SansSerif", 18.0d);
     }
 
