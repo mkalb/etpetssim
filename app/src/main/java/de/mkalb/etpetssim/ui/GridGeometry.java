@@ -265,10 +265,17 @@ public final class GridGeometry {
     /**
      * Converts a canvas position in pixel coordinates to the corresponding grid coordinate.
      *
+     * <p>For {@code SQUARE} cells, this method performs a direct mathematical conversion.
+     * For {@code TRIANGLE} and {@code HEXAGON} cells, the conversion is not analytically invertible
+     * due to the staggered or interlocking layout. Instead, the method estimates a base coordinate
+     * and evaluates a set of nearby candidate cells to determine which one contains the given point.
+     * For triangles, barycentric coordinate checks are used; for hexagons, the closest valid cell
+     * center within a bounding box is selected.</p>
+     *
      * @param point the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell
      * @param structure the grid structure defining the cell shape and size
-     * @return the grid coordinate corresponding to the canvas position
+     * @return the grid coordinate corresponding to the canvas position, or {@code GridCoordinate.ILLEGAL} if no match is found
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension, GridStructure structure) {
@@ -278,14 +285,14 @@ public final class GridGeometry {
 
         return switch (structure.cellShape()) {
             case TRIANGLE -> {
-                int approxX = (int) (point.getX() / cellDimension.width());
-                int approxY = (int) (point.getY() / cellDimension.height()) * 2;
+                int estimatedGridX = (int) (point.getX() / cellDimension.width());
+                int estimatedGridY = (int) (point.getY() / cellDimension.height()) * 2;
 
                 // Test four candidate coordinates for the triangle cell.
-                yield Stream.of(new GridCoordinate(approxX, approxY),
-                                    new GridCoordinate(approxX - 1, approxY + 1),
-                                    new GridCoordinate(approxX, approxY + 1),
-                                    new GridCoordinate(approxX - 1, approxY))
+                yield Stream.of(new GridCoordinate(estimatedGridX, estimatedGridY),
+                                    new GridCoordinate(estimatedGridX - 1, estimatedGridY + 1),
+                                    new GridCoordinate(estimatedGridX, estimatedGridY + 1),
+                                    new GridCoordinate(estimatedGridX - 1, estimatedGridY))
                             .filter(structure::isCoordinateValid)
                             .filter(c -> isPointInTriangleAt(point, c, cellDimension, structure.cellShape()))
                             .findFirst()
@@ -297,29 +304,34 @@ public final class GridGeometry {
                 yield new GridCoordinate(x, y);
             }
             case HEXAGON -> {
-                double approxX = point.getX() / (cellDimension.sideLength() * THREE_HALVES);
-                double approxY = point.getY() / cellDimension.height();
-
-                int baseX = (int) Math.floor(approxX);
-                int baseY = (int) Math.floor(approxY - (((baseX % 2) == 0) ? 0 : ONE_HALF));
+                double estimatedGridX = point.getX() / (cellDimension.sideLength() * THREE_HALVES);
+                double estimatedGridY = point.getY() / cellDimension.height();
+                int baseX = (int) Math.floor(estimatedGridX);
+                int baseY = (int) Math.floor(estimatedGridY - (((baseX % 2) == 0) ? 0 : ONE_HALF));
 
                 // Test nine candidate coordinates for the hexagon cell.
-                GridCoordinate bestMatch = GridCoordinate.ILLEGAL;
-                double minDist = Double.MAX_VALUE;
+                GridCoordinate closestValidHexCell = GridCoordinate.ILLEGAL;
+                double minDistance = Double.MAX_VALUE;
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         GridCoordinate candidate = new GridCoordinate(baseX + dx, baseY + dy);
-                        if (structure.isCoordinateValid(candidate)) {
-                            Point2D center = computeCellCenter(candidate, cellDimension, structure.cellShape());
-                            double dist = center.distance(point);
-                            if (dist < minDist) {
-                                minDist = dist;
-                                bestMatch = candidate;
-                            }
+                        if (!structure.isCoordinateValid(candidate)) {
+                            continue;
+                        }
+                        Point2D topLeft = toCanvasPosition(candidate, cellDimension, structure.cellShape());
+                        Rectangle2D bounds = cellDimension.boundingBoxAt(topLeft);
+                        if (!bounds.contains(point)) {
+                            continue;
+                        }
+                        Point2D center = new Point2D(topLeft.getX() + cellDimension.halfWidth(), topLeft.getY() + cellDimension.halfHeight());
+                        double distance = center.distance(point);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestValidHexCell = candidate;
                         }
                     }
                 }
-                yield bestMatch;
+                yield closestValidHexCell;
             }
         };
     }
