@@ -21,8 +21,12 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
     private static final Color MOUSE_CLICK_COLOR = Color.CRIMSON;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
+    private static final Color TEXT_COLOR = Color.DARKSLATEGRAY;
+    private static final Color CANVAS_COLOR = Color.BLACK;
+    private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
     private static final double MOUSE_CLICK_LINE_WIDTH = 4.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
+
     private final GridStructure structure;
     private final FXGridCanvasPainter painter;
     private final FXGridCanvasPainter overlayPainter;
@@ -103,34 +107,36 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     }
 
     private void drawCanvas() {
-        painter.fillCanvasBackground(Color.BLACK);
-        painter.fillGridBackground(Color.DIMGRAY);
+        // Background
+        painter.fillCanvasBackground(CANVAS_COLOR);
+        painter.fillGridBackground(GRID_BACKGROUND_COLOR);
 
+        // Cells at all coordinates
         structure.allCoordinates().forEachOrdered(coordinate -> {
             painter.fillCell(coordinate, calculateColumnSimilarityColor(coordinate));
-            painter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
+            painter.drawCenteredTextInCell(coordinate, coordinate.asString(), TEXT_COLOR, font);
         });
 
-        painter.drawBoundingBox(new GridCoordinate(10, 1), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawBoundingBox(new GridCoordinate(10, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawBoundingBox(new GridCoordinate(10, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawBoundingBox(new GridCoordinate(10, 4), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawBoundingBox(new GridCoordinate(15, 1), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawBoundingBox(new GridCoordinate(15, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawBoundingBox(new GridCoordinate(15, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawBoundingBox(new GridCoordinate(15, 4), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-
-        painter.drawInnerCircle(new GridCoordinate(2, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawInnerCircle(new GridCoordinate(2, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawInnerCircle(new GridCoordinate(3, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawInnerCircle(new GridCoordinate(3, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
-
-        painter.drawOuterCircle(new GridCoordinate(4, 4), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawOuterCircle(new GridCoordinate(4, 5), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawOuterCircle(new GridCoordinate(5, 4), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
-        painter.drawOuterCircle(new GridCoordinate(5, 5), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
-
-        painter.fillAndStrokeSquareInset(new GridCoordinate(2, 8), Color.WHITE, Color.BLACK, 10.0d);
+        // painter.drawBoundingBox(new GridCoordinate(10, 1), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawBoundingBox(new GridCoordinate(10, 2), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawBoundingBox(new GridCoordinate(10, 3), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawBoundingBox(new GridCoordinate(10, 4), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawBoundingBox(new GridCoordinate(15, 1), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawBoundingBox(new GridCoordinate(15, 2), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawBoundingBox(new GridCoordinate(15, 3), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawBoundingBox(new GridCoordinate(15, 4), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        //
+        // painter.drawInnerCircle(new GridCoordinate(2, 2), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawInnerCircle(new GridCoordinate(2, 3), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawInnerCircle(new GridCoordinate(3, 2), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawInnerCircle(new GridCoordinate(3, 3), CANVAS_COLOR, MOUSE_HOVER_LINE_WIDTH);
+        //
+        // painter.drawOuterCircle(new GridCoordinate(4, 4), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawOuterCircle(new GridCoordinate(4, 5), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawOuterCircle(new GridCoordinate(5, 4), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
+        // painter.drawOuterCircle(new GridCoordinate(5, 5), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
+        //
+        // painter.fillAndStrokeSquareInset(new GridCoordinate(2, 8), Color.WHITE, CANVAS_COLOR, 10.0d);
     }
 
     private Color calculateColumnSimilarityColor(GridCoordinate coordinate) {
