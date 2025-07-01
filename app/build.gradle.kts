@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     implementation("org.jspecify:jspecify:1.0.0")
+    testImplementation("org.mockito:mockito-core:5.18.0")
 }
 
 java {
