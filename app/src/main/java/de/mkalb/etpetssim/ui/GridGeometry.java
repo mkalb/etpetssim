@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.*;
 import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -176,6 +174,27 @@ public final class GridGeometry {
     }
 
     /**
+     * Determines whether a given point lies inside the triangle defined by three vertices.
+     *
+     * <p>This method uses barycentric coordinates to check if the point {@code p} is inside
+     * the triangle formed by the points {@code a}, {@code b}, and {@code c}. The calculation
+     * is robust for all triangle orientations and works for points on the edge as well.</p>
+     *
+     * @param p the point to test
+     * @param a the first vertex of the triangle
+     * @param b the second vertex of the triangle
+     * @param c the third vertex of the triangle
+     * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle; {@code false} otherwise
+     */
+    public static boolean isPointInTriangle(Point2D p, Point2D a, Point2D b, Point2D c) {
+        double area = ONE_HALF * ((-b.getY() * c.getX()) + (a.getY() * (-b.getX() + c.getX())) + (a.getX() * (b.getY() - c.getY())) + (b.getX() * c.getY()));
+        double s = (1 / (2 * area)) * (((a.getY() * c.getX()) - (a.getX() * c.getY())) + ((c.getY() - a.getY()) * p.getX()) + ((a.getX() - c.getX()) * p.getY()));
+        double t = (1 / (2 * area)) * (((a.getX() * b.getY()) - (a.getY() * b.getX())) + ((a.getY() - b.getY()) * p.getX()) + ((b.getX() - a.getX()) * p.getY()));
+        double u = 1 - s - t;
+        return (s >= 0) && (t >= 0) && (u >= 0);
+    }
+
+    /**
      * Converts a grid coordinate to its corresponding canvas position in pixel coordinates.
      *
      * @param coordinate the grid coordinate of the cell
@@ -233,35 +252,68 @@ public final class GridGeometry {
      *
      * @param point the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
+     * @param structure the grid structure defining the cell shape and size
      * @return the grid coordinate corresponding to the canvas position
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension, CellShape shape) {
+    public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension, GridStructure structure) {
         Objects.requireNonNull(point);
         Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
+        Objects.requireNonNull(structure);
 
         int x;
         int y;
 
-        // TODO fix some bugs
-        switch (shape) {
+        switch (structure.cellShape()) {
             case TRIANGLE -> {
-                y = (int) (point.getY() / cellDimension.height()) * 2; // Logical row
-                double xOffset = (((y % 4) == 1) || ((y % 4) == 2)) ? cellDimension.halfSideLength() : ZERO;
-                x = (int) ((point.getX() - xOffset) / cellDimension.sideLength());
+                int row = (int) (point.getY() / cellDimension.height());
+                int coordinateX = (int) (point.getX() / cellDimension.width());
+                int coordinateY = row * 2;
+
+                List<GridCoordinate> coordinates = List.of(
+                        new GridCoordinate(coordinateX, coordinateY),
+                        new GridCoordinate(coordinateX - 1, coordinateY + 1),
+                        new GridCoordinate(coordinateX, coordinateY + 1),
+                        new GridCoordinate(coordinateX - 1, coordinateY));
+
+                return coordinates.stream()
+                                  .filter(structure::isCoordinateValid)
+                                  .filter(c -> {
+                                      double[][] polygon = computeCellPolygon(c, cellDimension, structure.cellShape());
+                                      return isPointInTriangle(point, new Point2D(polygon[0][0], polygon[1][0]), new Point2D(polygon[0][1], polygon[1][1]), new Point2D(polygon[0][2], polygon[1][2]));
+                                  })
+                                  .findFirst()
+                                  .orElse(GridCoordinate.ILLEGAL);
             }
             case SQUARE -> {
                 x = (int) (point.getX() / cellDimension.width());
                 y = (int) (point.getY() / cellDimension.height());
             }
             case HEXAGON -> {
-                x = (int) (point.getX() / (cellDimension.sideLength() * THREE_HALVES));
-                double yOffset = ((x % 2) == 0) ? ZERO : cellDimension.halfHeight();
-                y = (int) ((point.getY() - yOffset) / cellDimension.height());
+                double approxX = point.getX() / (cellDimension.sideLength() * THREE_HALVES);
+                double approxY = point.getY() / cellDimension.height();
+
+                int baseX = (int) Math.floor(approxX);
+                int baseY = (int) Math.floor(approxY - (((baseX % 2) == 0) ? 0 : ONE_HALF));
+
+                GridCoordinate bestMatch = null;
+                double minDist = Double.MAX_VALUE;
+
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        GridCoordinate candidate = new GridCoordinate(baseX + dx, baseY + dy);
+                        Point2D center = computeCellCenter(candidate, cellDimension, structure.cellShape());
+                        double dist = center.distance(point);
+                        if (dist < minDist) {
+                            minDist = dist;
+                            bestMatch = candidate;
+                        }
+                    }
+                }
+
+                return bestMatch;
             }
-            default -> throw new IllegalArgumentException("Unsupported CellShape: " + shape);
+            default -> throw new IllegalArgumentException("Unsupported CellShape: " + structure.cellShape());
         }
         return new GridCoordinate(x, y);
     }

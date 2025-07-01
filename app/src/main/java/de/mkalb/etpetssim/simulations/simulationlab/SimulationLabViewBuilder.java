@@ -22,6 +22,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private final GridStructure structure;
     private final FXGridCanvasPainter painter;
     private final FXGridCanvasPainter overlayPainter;
+    private final Font font;
     private @Nullable GridCoordinate lastClickedCoordinate = null;
 
     public SimulationLabViewBuilder(GridStructure structure, double cellSideLength) {
@@ -37,6 +38,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellSideLength);
         overlayCanvas.setWidth(overlayPainter.gridDimension2D().getWidth());
         overlayCanvas.setHeight(overlayPainter.gridDimension2D().getHeight());
+        font = Font.font("SansSerif", 18.0d);
     }
 
     @Override
@@ -61,17 +63,13 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         drawCanvas();
 
-        Font font = Font.font("SansSerif", 18.0d);
         Color transparentRed = new Color(1, 0, 0, 0.5);
         overlayCanvas.setOnMouseClicked(event -> {
-            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure.cellShape());
+            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure);
             overlayPainter.clearCanvasBackground();
             if (overlayPainter.isOutsideGrid(coordinate)) {
-                System.out.println("Clicked on coordinate OUTSIDE!!!: " + coordinate);
                 lastClickedCoordinate = null;
             } else {
-                System.out.println("Clicked on coordinate: " + coordinate);
-
                 if (!coordinate.equals(lastClickedCoordinate)) {
                     lastClickedCoordinate = coordinate;
                     overlayPainter.drawOuterCircle(coordinate, transparentRed, 4.0d);
@@ -79,22 +77,17 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                     lastClickedCoordinate = null;
                 }
                 overlayPainter.drawInnerCircle(coordinate, Color.GRAY, 2.0d);
-                overlayPainter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
             }
         });
 
         overlayCanvas.setOnMouseMoved(event -> {
-            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure.cellShape());
+            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure);
             overlayPainter.clearCanvasBackground();
             if (lastClickedCoordinate != null) {
                 overlayPainter.drawOuterCircle(lastClickedCoordinate, transparentRed, 4.0d);
             }
-            if (overlayPainter.isOutsideGrid(coordinate)) {
-                System.out.println("Moved over coordinate OUTSIDE!!!: " + coordinate);
-            } else {
-                System.out.println("Moved over coordinate: " + coordinate);
-                overlayPainter.drawInnerCircle(coordinate, Color.GRAY, 2.0d);
-                overlayPainter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
+            if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
+                overlayPainter.drawInnerCircle(coordinate, Color.WHITE, 3.0d);
             }
         });
         return borderPane;
@@ -104,7 +97,10 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         painter.fillCanvasBackground(Color.PINK);
         painter.fillGridBackground(Color.ORANGE);
 
-        structure.allCoordinates().forEachOrdered(coordinate -> painter.fillCell(coordinate, calculateTestColor(coordinate)));
+        structure.allCoordinates().forEachOrdered(coordinate -> {
+            painter.fillCell(coordinate, calculateTestColor(coordinate));
+            painter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
+        });
 
         painter.drawBoundingBox(new GridCoordinate(10, 1), Color.BLACK, 2.0d);
         painter.drawBoundingBox(new GridCoordinate(10, 2), Color.BLACK, 2.0d);
