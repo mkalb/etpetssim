@@ -11,15 +11,19 @@ import javafx.geometry.Rectangle2D;
  * The values width and height represent the surrounding rectangle (bounding box).
  *
  * @param sideLength side length of the cell in pixels
- * @param width width of the cell in pixels (bounding box)
- * @param height height of the cell in pixels (bounding box)
+ * @param width the full width of the cell's bounding box in pixels;
+ *              this is the maximum horizontal extent of the cell shape
+ * @param height the full height of the cell's bounding box in pixels;
+ *               this is the maximum vertical extent of the cell shape
  * @param halfSideLength half side length of the cell in pixels
  * @param halfWidth half width of the cell in pixels (bounding box)
  * @param halfHeight half height of the cell in pixels (bounding box)
  * @param innerRadius inner radius of the cell in pixels
  * @param outerRadius outer radius of the cell in pixels
- * @param columnWidth width of the column in pixels
- * @param rowHeight height of the row in pixels
+ * @param columnWidth the horizontal spacing between adjacent cell centers in the grid;
+ *                    used for layout calculations, especially in staggered or interlocking grids
+ * @param rowHeight the vertical spacing between adjacent cell centers in the grid;
+ *                  used for layout calculations, especially in staggered or interlocking grids
  */
 public record CellDimension(
         double sideLength,
