@@ -18,6 +18,8 @@ import javafx.geometry.Rectangle2D;
  * @param halfHeight half height of the cell in pixels (bounding box)
  * @param innerRadius inner radius of the cell in pixels
  * @param outerRadius outer radius of the cell in pixels
+ * @param columnWidth width of the column in pixels
+ * @param rowHeight height of the row in pixels
  */
 public record CellDimension(
         double sideLength,
@@ -27,7 +29,9 @@ public record CellDimension(
         double halfWidth,
         double halfHeight,
         double innerRadius,
-        double outerRadius
+        double outerRadius,
+        double columnWidth,
+        double rowHeight
 ) {
 
     private static final double DOUBLE_COMPARE_EPSILON = 1.0e-9;
@@ -46,6 +50,9 @@ public record CellDimension(
         }
         if (outerRadius <= innerRadius) {
             throw new IllegalArgumentException("Outer radius must be greater than inner radius.");
+        }
+        if ((columnWidth <= 0) || (rowHeight <= 0)) {
+            throw new IllegalArgumentException("Column width and row height must be positive.");
         }
     }
 
