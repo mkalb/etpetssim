@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.simulations.SimulationController;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
+@SuppressWarnings("MagicNumber")
 public final class SimulationLabController implements SimulationController {
 
     private final Stage stage;
@@ -13,9 +14,11 @@ public final class SimulationLabController implements SimulationController {
 
     public SimulationLabController(Stage stage) {
         this.stage = stage;
-        structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, BoundaryType.BLOCK_X_BLOCK_Y),
+        CellShape cellShape = CellShape.TRIANGLE;
+        double cellSideLength = 100.0d;
+        structure = new GridStructure(new GridTopology(cellShape, BoundaryType.BLOCK_X_BLOCK_Y),
                 new GridSize(20, 16));
-        viewBuilder = new SimulationLabViewBuilder(structure, 100.0d);
+        viewBuilder = new SimulationLabViewBuilder(structure, cellSideLength);
     }
 
     @Override

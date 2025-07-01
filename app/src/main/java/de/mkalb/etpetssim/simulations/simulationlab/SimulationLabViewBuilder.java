@@ -19,6 +19,10 @@ import org.jspecify.annotations.Nullable;
 @SuppressWarnings("MagicNumber")
 public class SimulationLabViewBuilder implements Builder<Region> {
 
+    private static final Color MOUSE_CLICK_COLOR = Color.CRIMSON;
+    private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
+    private static final double MOUSE_CLICK_LINE_WIDTH = 4.0d;
+    private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private final GridStructure structure;
     private final FXGridCanvasPainter painter;
     private final FXGridCanvasPainter overlayPainter;
@@ -31,14 +35,14 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         Canvas canvas = new Canvas(cellSideLength, cellSideLength);
         painter = new FXGridCanvasPainter(canvas, structure, cellSideLength);
         double border = 30.0d; // only for testing grid dimension
-        canvas.setWidth(Math.min(4_000.0d, painter.gridDimension2D().getWidth() + border));
-        canvas.setHeight(Math.min(2_000.0d, painter.gridDimension2D().getHeight() + border));
+        canvas.setWidth(Math.min(5_000.0d, painter.gridDimension2D().getWidth() + border));
+        canvas.setHeight(Math.min(3_000.0d, painter.gridDimension2D().getHeight() + border));
 
         Canvas overlayCanvas = new Canvas(cellSideLength, cellSideLength);
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellSideLength);
-        overlayCanvas.setWidth(Math.min(4_000.0d, overlayPainter.gridDimension2D().getWidth()));
-        overlayCanvas.setHeight(Math.min(2_000.0d, overlayPainter.gridDimension2D().getHeight()));
-        font = Font.font("SansSerif", 18.0d);
+        overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
+        overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+        font = Font.font("SansSerif", 14.0d);
     }
 
     @Override
@@ -61,9 +65,15 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(scrollPane);
 
+        registerEvents();
+
         drawCanvas();
 
-        Color transparentRed = new Color(1, 0, 0, 0.5);
+        return borderPane;
+    }
+
+    private void registerEvents() {
+        Canvas overlayCanvas = overlayPainter.canvas();
         overlayCanvas.setOnMouseClicked(event -> {
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure);
             overlayPainter.clearCanvasBackground();
@@ -72,11 +82,11 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             } else {
                 if (!coordinate.equals(lastClickedCoordinate)) {
                     lastClickedCoordinate = coordinate;
-                    overlayPainter.drawOuterCircle(coordinate, transparentRed, 4.0d);
+                    overlayPainter.drawOuterCircle(coordinate, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH);
                 } else {
                     lastClickedCoordinate = null;
                 }
-                overlayPainter.drawInnerCircle(coordinate, Color.GRAY, 2.0d);
+                overlayPainter.drawInnerCircle(coordinate, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
             }
         });
 
@@ -84,52 +94,54 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure);
             overlayPainter.clearCanvasBackground();
             if (lastClickedCoordinate != null) {
-                overlayPainter.drawOuterCircle(lastClickedCoordinate, transparentRed, 4.0d);
+                overlayPainter.drawOuterCircle(lastClickedCoordinate, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH);
             }
             if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
-                overlayPainter.drawInnerCircle(coordinate, Color.WHITE, 3.0d);
+                overlayPainter.drawInnerCircle(coordinate, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
             }
         });
-        return borderPane;
     }
 
     private void drawCanvas() {
-        painter.fillCanvasBackground(Color.PINK);
-        painter.fillGridBackground(Color.ORANGE);
+        painter.fillCanvasBackground(Color.BLACK);
+        painter.fillGridBackground(Color.DIMGRAY);
 
         structure.allCoordinates().forEachOrdered(coordinate -> {
-            painter.fillCell(coordinate, calculateTestColor(coordinate));
+            painter.fillCell(coordinate, calculateColumnSimilarityColor(coordinate));
             painter.drawCenteredTextInCell(coordinate, coordinate.asString(), Color.BLACK, font);
         });
 
-        painter.drawBoundingBox(new GridCoordinate(10, 1), Color.BLACK, 2.0d);
-        painter.drawBoundingBox(new GridCoordinate(10, 2), Color.BLACK, 2.0d);
-        painter.drawBoundingBox(new GridCoordinate(10, 3), Color.BLACK, 2.0d);
-        painter.drawBoundingBox(new GridCoordinate(10, 4), Color.BLACK, 2.0d);
-        painter.drawBoundingBox(new GridCoordinate(15, 1), Color.BLACK, 2.0d);
-        painter.drawBoundingBox(new GridCoordinate(15, 2), Color.BLACK, 2.0d);
-        painter.drawBoundingBox(new GridCoordinate(15, 3), Color.BLACK, 2.0d);
-        painter.drawBoundingBox(new GridCoordinate(15, 4), Color.BLACK, 2.0d);
+        painter.drawBoundingBox(new GridCoordinate(10, 1), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawBoundingBox(new GridCoordinate(10, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawBoundingBox(new GridCoordinate(10, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawBoundingBox(new GridCoordinate(10, 4), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawBoundingBox(new GridCoordinate(15, 1), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawBoundingBox(new GridCoordinate(15, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawBoundingBox(new GridCoordinate(15, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawBoundingBox(new GridCoordinate(15, 4), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
 
-        painter.drawInnerCircle(new GridCoordinate(2, 2), Color.BLACK, 2.0d);
-        painter.drawInnerCircle(new GridCoordinate(2, 3), Color.BLACK, 2.0d);
-        painter.drawInnerCircle(new GridCoordinate(3, 2), Color.BLACK, 2.0d);
-        painter.drawInnerCircle(new GridCoordinate(3, 3), Color.BLACK, 2.0d);
+        painter.drawInnerCircle(new GridCoordinate(2, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawInnerCircle(new GridCoordinate(2, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawInnerCircle(new GridCoordinate(3, 2), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawInnerCircle(new GridCoordinate(3, 3), Color.BLACK, MOUSE_HOVER_LINE_WIDTH);
 
-        painter.drawOuterCircle(new GridCoordinate(4, 4), Color.WHITE, 2.0d);
-        painter.drawOuterCircle(new GridCoordinate(4, 5), Color.WHITE, 2.0d);
-        painter.drawOuterCircle(new GridCoordinate(5, 4), Color.WHITE, 2.0d);
-        painter.drawOuterCircle(new GridCoordinate(5, 5), Color.WHITE, 2.0d);
+        painter.drawOuterCircle(new GridCoordinate(4, 4), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawOuterCircle(new GridCoordinate(4, 5), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawOuterCircle(new GridCoordinate(5, 4), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
+        painter.drawOuterCircle(new GridCoordinate(5, 5), Color.WHITE, MOUSE_HOVER_LINE_WIDTH);
 
         painter.fillAndStrokeSquareInset(new GridCoordinate(2, 8), Color.WHITE, Color.BLACK, 10.0d);
     }
 
-    private Color calculateTestColor(GridCoordinate coordinate) {
-        return switch (((coordinate.x() % 2) << 1) | (coordinate.y() % 2)) {
-            case 0 -> Color.DARKBLUE;
-            case 1 -> Color.DARKGREEN;
-            case 2 -> Color.LIGHTBLUE;
-            case 3 -> Color.LIGHTGREEN;
+    private Color calculateColumnSimilarityColor(GridCoordinate coordinate) {
+        int columnGroup = coordinate.x() % 2;
+        int rowGroup = coordinate.y() % 2;
+
+        return switch ((columnGroup << 1) | rowGroup) {
+            case 0 -> Color.LIGHTSKYBLUE;       // Column 0, Row 0
+            case 1 -> Color.LIGHTSTEELBLUE;     // Column 0, Row 1 (cooler blue)
+            case 2 -> Color.PALEGREEN;          // Column 1, Row 0
+            case 3 -> Color.MEDIUMAQUAMARINE;   // Column 1, Row 1 (stronger green)
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
