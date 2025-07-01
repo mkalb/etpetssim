@@ -6,7 +6,6 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 import java.util.*;
-import java.util.stream.*;
 
 /**
  * Utility class for grid geometry computations and conversions.
@@ -64,6 +63,15 @@ public final class GridGeometry {
      */
     public static final double MAX_SIDE_LENGTH = 4_096.0d;
 
+    /**
+     * Offset candidates for TRIANGLE cells, starting with the most likely center (0,0).
+     */
+    private static final List<int[]> TRIANGLE_NEIGHBOR_OFFSETS = List.of(
+            new int[]{0, 0},
+            new int[]{-1, 1},
+            new int[]{0, 1},
+            new int[]{-1, 0}
+    );
     /**
      * Offset candidates for HEXAGON cells, starting with the most likely center (0,0).
      */
@@ -304,15 +312,12 @@ public final class GridGeometry {
                 int estimatedGridX = (int) (point.getX() / cellDimension.columnWidth());
                 int estimatedGridY = (int) (point.getY() / cellDimension.rowHeight()) * 2;
 
-                // Test four candidate coordinates for the triangle cell.
-                yield Stream.of(new GridCoordinate(estimatedGridX, estimatedGridY),
-                                    new GridCoordinate(estimatedGridX - 1, estimatedGridY + 1),
-                                    new GridCoordinate(estimatedGridX, estimatedGridY + 1),
-                                    new GridCoordinate(estimatedGridX - 1, estimatedGridY))
-                            .filter(structure::isCoordinateValid)
-                            .filter(c -> isPointInTriangleAt(point, c, cellDimension, structure.cellShape()))
-                            .findFirst()
-                            .orElse(GridCoordinate.ILLEGAL);
+                yield TRIANGLE_NEIGHBOR_OFFSETS.stream()
+                                               .map(offset -> new GridCoordinate(estimatedGridX + offset[0], estimatedGridY + offset[1]))
+                                               .filter(structure::isCoordinateValid)
+                                               .filter(c -> isPointInTriangleAt(point, c, cellDimension, structure.cellShape()))
+                                               .findFirst()
+                                               .orElse(GridCoordinate.ILLEGAL);
             }
             case SQUARE -> {
                 int x = (int) (point.getX() / cellDimension.columnWidth());
