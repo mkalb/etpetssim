@@ -6,6 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Utility class for grid geometry computations and conversions.
@@ -195,6 +196,20 @@ public final class GridGeometry {
     }
 
     /**
+     * Determines whether a given point lies inside the triangle defined by the cell at the specified grid coordinate.
+     *
+     * @param point the point to test
+     * @param coordinate the grid coordinate of the cell
+     * @param cellDimension the dimensions of the cell
+     * @param shape the shape of the cell
+     * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
+     */
+    public static boolean isPointInTriangleAt(Point2D point, GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
+        double[][] polygon = computeCellPolygon(coordinate, cellDimension, shape);
+        return isPointInTriangle(point, new Point2D(polygon[0][0], polygon[1][0]), new Point2D(polygon[0][1], polygon[1][1]), new Point2D(polygon[0][2], polygon[1][2]));
+    }
+
+    /**
      * Converts a grid coordinate to its corresponding canvas position in pixel coordinates.
      *
      * @param coordinate the grid coordinate of the cell
@@ -261,33 +276,25 @@ public final class GridGeometry {
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(structure);
 
-        int x;
-        int y;
-
-        switch (structure.cellShape()) {
+        return switch (structure.cellShape()) {
             case TRIANGLE -> {
-                int row = (int) (point.getY() / cellDimension.height());
-                int coordinateX = (int) (point.getX() / cellDimension.width());
-                int coordinateY = row * 2;
+                int approxX = (int) (point.getX() / cellDimension.width());
+                int approxY = (int) (point.getY() / cellDimension.height()) * 2;
 
-                List<GridCoordinate> coordinates = List.of(
-                        new GridCoordinate(coordinateX, coordinateY),
-                        new GridCoordinate(coordinateX - 1, coordinateY + 1),
-                        new GridCoordinate(coordinateX, coordinateY + 1),
-                        new GridCoordinate(coordinateX - 1, coordinateY));
-
-                return coordinates.stream()
-                                  .filter(structure::isCoordinateValid)
-                                  .filter(c -> {
-                                      double[][] polygon = computeCellPolygon(c, cellDimension, structure.cellShape());
-                                      return isPointInTriangle(point, new Point2D(polygon[0][0], polygon[1][0]), new Point2D(polygon[0][1], polygon[1][1]), new Point2D(polygon[0][2], polygon[1][2]));
-                                  })
-                                  .findFirst()
-                                  .orElse(GridCoordinate.ILLEGAL);
+                // Test four candidate coordinates for the triangle cell.
+                yield Stream.of(new GridCoordinate(approxX, approxY),
+                                    new GridCoordinate(approxX - 1, approxY + 1),
+                                    new GridCoordinate(approxX, approxY + 1),
+                                    new GridCoordinate(approxX - 1, approxY))
+                            .filter(structure::isCoordinateValid)
+                            .filter(c -> isPointInTriangleAt(point, c, cellDimension, structure.cellShape()))
+                            .findFirst()
+                            .orElse(GridCoordinate.ILLEGAL);
             }
             case SQUARE -> {
-                x = (int) (point.getX() / cellDimension.width());
-                y = (int) (point.getY() / cellDimension.height());
+                int x = (int) (point.getX() / cellDimension.width());
+                int y = (int) (point.getY() / cellDimension.height());
+                yield new GridCoordinate(x, y);
             }
             case HEXAGON -> {
                 double approxX = point.getX() / (cellDimension.sideLength() * THREE_HALVES);
@@ -296,26 +303,25 @@ public final class GridGeometry {
                 int baseX = (int) Math.floor(approxX);
                 int baseY = (int) Math.floor(approxY - (((baseX % 2) == 0) ? 0 : ONE_HALF));
 
-                GridCoordinate bestMatch = null;
+                // Test nine candidate coordinates for the hexagon cell.
+                GridCoordinate bestMatch = GridCoordinate.ILLEGAL;
                 double minDist = Double.MAX_VALUE;
-
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         GridCoordinate candidate = new GridCoordinate(baseX + dx, baseY + dy);
-                        Point2D center = computeCellCenter(candidate, cellDimension, structure.cellShape());
-                        double dist = center.distance(point);
-                        if (dist < minDist) {
-                            minDist = dist;
-                            bestMatch = candidate;
+                        if (structure.isCoordinateValid(candidate)) {
+                            Point2D center = computeCellCenter(candidate, cellDimension, structure.cellShape());
+                            double dist = center.distance(point);
+                            if (dist < minDist) {
+                                minDist = dist;
+                                bestMatch = candidate;
+                            }
                         }
                     }
                 }
-
-                return bestMatch;
+                yield bestMatch;
             }
-            default -> throw new IllegalArgumentException("Unsupported CellShape: " + structure.cellShape());
-        }
-        return new GridCoordinate(x, y);
+        };
     }
 
     /**
