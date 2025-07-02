@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.jspecify.annotations.Nullable;
@@ -127,7 +128,7 @@ public final class FXGridCanvasPainter {
      *
      * @param fillColor the color used to fill the canvas background
      */
-    public void fillCanvasBackground(Color fillColor) {
+    public void fillCanvasBackground(Paint fillColor) {
         Objects.requireNonNull(fillColor);
 
         gc.setFill(fillColor);
@@ -147,7 +148,7 @@ public final class FXGridCanvasPainter {
      *
      * @param fillColor the color used to fill the grid background
      */
-    public void fillGridBackground(Color fillColor) {
+    public void fillGridBackground(Paint fillColor) {
         Objects.requireNonNull(fillColor);
 
         gc.setFill(fillColor);
@@ -169,7 +170,7 @@ public final class FXGridCanvasPainter {
      * @param coordinate the grid coordinate of the cell to fill
      * @param fillColor the color used to fill the cell
      */
-    public void fillCell(GridCoordinate coordinate, Color fillColor) {
+    public void fillCell(GridCoordinate coordinate, Paint fillColor) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(fillColor);
 
@@ -194,7 +195,7 @@ public final class FXGridCanvasPainter {
      * @param strokeAdjustment specifies how the stroke is rendered relative to the bounding box outline
      */
     public void drawCellBoundingBox(GridCoordinate coordinate,
-                                    @Nullable Color fillColor, @Nullable Color strokeColor,
+                                    @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(strokeAdjustment);
@@ -214,7 +215,7 @@ public final class FXGridCanvasPainter {
      * @param strokeAdjustment specifies how the stroke is rendered relative to the circle outline
      */
     public void drawCellInnerCircle(GridCoordinate coordinate,
-                                    @Nullable Color fillColor, @Nullable Color strokeColor,
+                                    @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(strokeAdjustment);
@@ -234,7 +235,7 @@ public final class FXGridCanvasPainter {
      * @param strokeAdjustment specifies how the stroke is rendered relative to the circle outline
      */
     public void drawCellOuterCircle(GridCoordinate coordinate,
-                                    @Nullable Color fillColor, @Nullable Color strokeColor,
+                                    @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(strokeAdjustment);
@@ -254,7 +255,7 @@ public final class FXGridCanvasPainter {
      * @param strokeAdjustment specifies how the stroke is rendered relative to the rectangle's outline
      */
     public void drawRectangle(Rectangle2D rectangle,
-                              @Nullable Color fillColor, @Nullable Color strokeColor,
+                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                               double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         Objects.requireNonNull(rectangle);
         Objects.requireNonNull(strokeAdjustment);
@@ -295,7 +296,7 @@ public final class FXGridCanvasPainter {
      * @param strokeAdjustment specifies how the stroke is rendered relative to the circle's outline
      */
     public void drawCircle(Point2D center, double radius,
-                           @Nullable Color fillColor, @Nullable Color strokeColor,
+                           @Nullable Paint fillColor, @Nullable Paint strokeColor,
                            double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         Objects.requireNonNull(center);
         Objects.requireNonNull(strokeAdjustment);
@@ -338,7 +339,7 @@ public final class FXGridCanvasPainter {
      * @param strokeAdjustment specifies how the stroke is rendered relative to the polygon's outline
      */
     public void drawPolygon(double[] xPoints, double[] yPoints,
-                            @Nullable Color fillColor, @Nullable Color strokeColor,
+                            @Nullable Paint fillColor, @Nullable Paint strokeColor,
                             double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         Objects.requireNonNull(strokeAdjustment);
 
@@ -384,7 +385,7 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color of the pixel, or null if nothing should be drawn
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    public void drawPixelRect(int x, int y, @Nullable Color fillColor) {
+    public void drawPixelRect(int x, int y, @Nullable Paint fillColor) {
         if ((fillColor != null)
                 && (x >= 0) && (x < (int) canvas.getWidth())
                 && (y >= 0) && (y < (int) canvas.getHeight())) {
@@ -401,7 +402,7 @@ public final class FXGridCanvasPainter {
      * @param textColor the color of the text
      * @param font the font used for rendering the text
      */
-    public void drawCenteredTextInCell(GridCoordinate coordinate, String text, Color textColor, Font font) {
+    public void drawCenteredTextInCell(GridCoordinate coordinate, String text, Paint textColor, Font font) {
         Objects.requireNonNull(coordinate);
         Objects.requireNonNull(text);
         Objects.requireNonNull(textColor);
