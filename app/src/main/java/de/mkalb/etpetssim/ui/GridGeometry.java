@@ -185,15 +185,21 @@ public final class GridGeometry {
     }
 
     /**
-     * Determines whether a triangle cell is pointing down.
+     * Computes the total pixel dimensions of the grid area based on the grid size,
+     * cell side length, and cell shape.
      *
-     * @param coordinate the grid coordinate of the triangle
-     * @return true if the triangle points down, false if it points up
+     * <p>This method is a convenience wrapper that combines the computation of
+     * cell dimensions and grid dimensions into a single call.</p>
+     *
+     * @param gridSize the size of the grid in terms of columns and rows
+     * @param sideLength the length of each side of the cell in pixels, must be between MIN_SIDE_LENGTH and MAX_SIDE_LENGTH
+     * @param shape the shape of the cells in the grid
+     * @return a Dimension2D object representing the total width and height of the grid area
+     * @see GridGeometry#computeCellDimension(double, CellShape)
+     * @see GridGeometry#computeGridDimension(GridSize, CellDimension, CellShape)
      */
-    public static boolean isTrianglePointingDown(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
-
-        return (coordinate.y() % 2) == 0;
+    public static Dimension2D computeGridDimension(GridSize gridSize, double sideLength, CellShape shape) {
+        return computeGridDimension(gridSize, computeCellDimension(sideLength, shape), shape);
     }
 
     /**
@@ -221,13 +227,12 @@ public final class GridGeometry {
      * Determines whether a given point lies inside the triangle defined by the cell at the specified grid coordinate.
      *
      * @param point the point to test
-     * @param coordinate the grid coordinate of the cell
-     * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
+     * @param coordinate the grid coordinate of the triangle cell
+     * @param cellDimension the dimensions of the triangle cell
      * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
      */
-    public static boolean isPointInTriangleAt(Point2D point, GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
-        double[][] polygon = computeCellPolygon(coordinate, cellDimension, shape);
+    public static boolean isPointInTriangleCell(Point2D point, GridCoordinate coordinate, CellDimension cellDimension) {
+        double[][] polygon = computeCellPolygon(coordinate, cellDimension, CellShape.TRIANGLE);
         return isPointInTriangle(point, new Point2D(polygon[0][0], polygon[1][0]), new Point2D(polygon[0][1], polygon[1][1]), new Point2D(polygon[0][2], polygon[1][2]));
     }
 
@@ -244,42 +249,25 @@ public final class GridGeometry {
         Objects.requireNonNull(cellDimension);
         Objects.requireNonNull(shape);
 
-        double x;
-        double y;
-
-        switch (shape) {
+        return switch (shape) {
             case TRIANGLE -> {
-                // In a flat-top triangle grid, every two rows form a repeating vertical pattern.
-                // Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell.
-                // This ensures that upward- and downward-pointing triangles interlock correctly.
-                int triangleOrientationCycle = coordinate.y() % 4;
-                boolean isOffsetTriangleRow = ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
-                double xOffset = isOffsetTriangleRow ? cellDimension.halfSideLength() : ZERO;
-                x = (coordinate.x() * cellDimension.columnWidth()) + xOffset;
-
-                // Each logical row consists of two triangle rows stacked vertically.
-                // The vertical position is based on the row index multiplied by the triangle row height.
-                int row = coordinate.y() / 2; // Round down
-                y = row * cellDimension.rowHeight();
+                double x = (coordinate.x() * cellDimension.columnWidth())
+                        + (coordinate.hasTriangleCellXOffset() ? cellDimension.halfSideLength() : ZERO); // Add x offset if necessary for triangle cells.
+                double y = coordinate.triangleRow() * cellDimension.rowHeight();
+                yield new Point2D(x, y);
             }
             case SQUARE -> {
-                x = coordinate.x() * cellDimension.columnWidth();
-                y = coordinate.y() * cellDimension.rowHeight();
+                double x = coordinate.x() * cellDimension.columnWidth();
+                double y = coordinate.y() * cellDimension.rowHeight();
+                yield new Point2D(x, y);
             }
             case HEXAGON -> {
-                x = coordinate.x() * cellDimension.columnWidth();
-
-                // Hexagon rows are vertically offset in every second column to create a staggered layout.
-                // Even columns start at the base Y position, odd columns are shifted down by half a hexagon height.
-                if ((coordinate.x() % 2) == 0) {
-                    y = coordinate.y() * cellDimension.rowHeight();
-                } else {
-                    y = (coordinate.y() * cellDimension.rowHeight()) + cellDimension.halfHeight();
-                }
+                double x = coordinate.x() * cellDimension.columnWidth();
+                double y = (coordinate.y() * cellDimension.rowHeight())
+                        + (coordinate.hasHexagonCellYOffset() ? cellDimension.halfHeight() : ZERO); // Add y offset if necessary for hexagon cells.
+                yield new Point2D(x, y);
             }
-            default -> throw new IllegalArgumentException("Unsupported CellShape: " + shape);
-        }
-        return new Point2D(x, y);
+        };
     }
 
     /**
@@ -305,17 +293,17 @@ public final class GridGeometry {
 
         if ((point.getX() < 0) || (point.getY() < 0)) {
             return GridCoordinate.ILLEGAL;
-
         }
+
         return switch (structure.cellShape()) {
             case TRIANGLE -> {
                 int estimatedGridX = (int) (point.getX() / cellDimension.columnWidth());
-                int estimatedGridY = (int) (point.getY() / cellDimension.rowHeight()) * 2;
+                int estimatedGridY = (int) (point.getY() / cellDimension.rowHeight()) * 2; // see GridCoordinate.isTriangleRow()
 
                 yield TRIANGLE_NEIGHBOR_OFFSETS.stream()
                                                .map(offset -> new GridCoordinate(estimatedGridX + offset[0], estimatedGridY + offset[1]))
                                                .filter(structure::isCoordinateValid)
-                                               .filter(c -> isPointInTriangleAt(point, c, cellDimension, structure.cellShape()))
+                                               .filter(c -> isPointInTriangleCell(point, c, cellDimension))
                                                .findFirst()
                                                .orElse(GridCoordinate.ILLEGAL);
             }
@@ -326,8 +314,8 @@ public final class GridGeometry {
             }
             case HEXAGON -> {
                 int estimatedGridX = (int) (point.getX() / cellDimension.columnWidth());
-                boolean isOddColumn = (estimatedGridX % 2) != 0;
-                double yOffset = isOddColumn ? ONE_HALF : ZERO;
+                boolean hasHexagonCellYOffset = (estimatedGridX % 2) != 0; // see GridCoordinate.hasHexagonCellYOffset()
+                double yOffset = hasHexagonCellYOffset ? ONE_HALF : ZERO;
                 int estimatedGridY = (int) ((point.getY() / cellDimension.rowHeight()) - yOffset);
 
                 // Test nine candidate coordinates for the hexagon cell.
@@ -384,7 +372,7 @@ public final class GridGeometry {
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
         double xOffset = cellDimension.halfWidth();
         double yOffset = switch (shape) {
-            case TRIANGLE -> isTrianglePointingDown(coordinate)
+            case TRIANGLE -> coordinate.isTriangleCellPointingDown()
                     ? (cellDimension.height() * ONE_THIRD)
                     : (cellDimension.height() * TWO_THIRDS);
             case SQUARE, HEXAGON -> cellDimension.halfHeight();
@@ -422,54 +410,107 @@ public final class GridGeometry {
         Objects.requireNonNull(shape);
 
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
+
+        return switch (shape) {
+            case TRIANGLE -> computeTrianglePolygon(topLeft, cellDimension, coordinate.isTriangleCellPointingDown());
+            case SQUARE -> computeSquarePolygon(topLeft, cellDimension);
+            case HEXAGON -> computeHexagonPolygon(topLeft, cellDimension);
+        };
+    }
+
+    /**
+     * Computes the x and y coordinates of the triangle cell's polygon vertices in canvas space.
+     *
+     * @param topLeft the top-left position of the cell in canvas coordinates
+     * @param cellDimension the dimensions of the triangle cell
+     * @param isPointingDown whether the triangle is pointing downwards
+     * @return a 2D array: [0] = xPoints, [1] = yPoints
+     */
+    public static double[][] computeTrianglePolygon(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown) {
+        Objects.requireNonNull(topLeft);
+        Objects.requireNonNull(cellDimension);
+
+        double[] xPoints = new double[CellShape.TRIANGLE.vertexCount()];
+        double[] yPoints = new double[CellShape.TRIANGLE.vertexCount()];
         double x = topLeft.getX();
         double y = topLeft.getY();
-        double[] xPoints = new double[shape.vertexCount()];
-        double[] yPoints = new double[shape.vertexCount()];
 
-        switch (shape) {
-            case TRIANGLE -> {
-                if (isTrianglePointingDown(coordinate)) {
-                    xPoints[0] = x;
-                    yPoints[0] = y;
-                    xPoints[1] = x + cellDimension.halfSideLength();
-                    yPoints[1] = y + cellDimension.height();
-                    xPoints[2] = x + cellDimension.sideLength();
-                    yPoints[2] = y;
-                } else {
-                    xPoints[0] = x;
-                    yPoints[0] = y + cellDimension.height();
-                    xPoints[1] = x + cellDimension.halfSideLength();
-                    yPoints[1] = y;
-                    xPoints[2] = x + cellDimension.sideLength();
-                    yPoints[2] = y + cellDimension.height();
-                }
-            }
-            case SQUARE -> {
-                xPoints[0] = x;
-                yPoints[0] = y;
-                xPoints[1] = x + cellDimension.sideLength();
-                yPoints[1] = y;
-                xPoints[2] = x + cellDimension.sideLength();
-                yPoints[2] = y + cellDimension.sideLength();
-                xPoints[3] = x;
-                yPoints[3] = y + cellDimension.sideLength();
-            }
-            case HEXAGON -> {
-                xPoints[0] = x + cellDimension.halfSideLength();
-                yPoints[0] = y;
-                xPoints[1] = x + cellDimension.sideLength() + cellDimension.halfSideLength();
-                yPoints[1] = y;
-                xPoints[2] = x + cellDimension.width();
-                yPoints[2] = y + cellDimension.halfHeight();
-                xPoints[3] = xPoints[1];
-                yPoints[3] = y + cellDimension.height();
-                xPoints[4] = x + cellDimension.halfSideLength();
-                yPoints[4] = y + cellDimension.height();
-                xPoints[5] = x;
-                yPoints[5] = y + cellDimension.halfHeight();
-            }
+        if (isPointingDown) {
+            xPoints[0] = x;
+            yPoints[0] = y;
+            xPoints[1] = x + cellDimension.halfSideLength();
+            yPoints[1] = y + cellDimension.height();
+            xPoints[2] = x + cellDimension.sideLength();
+            yPoints[2] = y;
+        } else {
+            xPoints[0] = x;
+            yPoints[0] = y + cellDimension.height();
+            xPoints[1] = x + cellDimension.halfSideLength();
+            yPoints[1] = y;
+            xPoints[2] = x + cellDimension.sideLength();
+            yPoints[2] = y + cellDimension.height();
         }
+
+        return new double[][]{xPoints, yPoints};
+    }
+
+    /**
+     * Computes the x and y coordinates of the square cell's polygon vertices in canvas space.
+     *
+     * @param topLeft the top-left position of the cell in canvas coordinates
+     * @param cellDimension the dimensions of the square cell
+     * @return a 2D array: [0] = xPoints, [1] = yPoints
+     */
+    public static double[][] computeSquarePolygon(Point2D topLeft, CellDimension cellDimension) {
+        Objects.requireNonNull(topLeft);
+        Objects.requireNonNull(cellDimension);
+
+        double[] xPoints = new double[CellShape.SQUARE.vertexCount()];
+        double[] yPoints = new double[CellShape.SQUARE.vertexCount()];
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+
+        xPoints[0] = x;
+        yPoints[0] = y;
+        xPoints[1] = x + cellDimension.sideLength();
+        yPoints[1] = y;
+        xPoints[2] = x + cellDimension.sideLength();
+        yPoints[2] = y + cellDimension.sideLength();
+        xPoints[3] = x;
+        yPoints[3] = y + cellDimension.sideLength();
+
+        return new double[][]{xPoints, yPoints};
+    }
+
+    /**
+     * Computes the x and y coordinates of the hexagon cell's polygon vertices in canvas space.
+     *
+     * @param topLeft the top-left position of the cell in canvas coordinates
+     * @param cellDimension the dimensions of the hexagon cell
+     * @return a 2D array: [0] = xPoints, [1] = yPoints
+     */
+    public static double[][] computeHexagonPolygon(Point2D topLeft, CellDimension cellDimension) {
+        Objects.requireNonNull(topLeft);
+        Objects.requireNonNull(cellDimension);
+
+        double[] xPoints = new double[CellShape.HEXAGON.vertexCount()];
+        double[] yPoints = new double[CellShape.HEXAGON.vertexCount()];
+        double x = topLeft.getX();
+        double y = topLeft.getY();
+
+        xPoints[0] = x + cellDimension.halfSideLength();
+        yPoints[0] = y;
+        xPoints[1] = x + cellDimension.sideLength() + cellDimension.halfSideLength();
+        yPoints[1] = y;
+        xPoints[2] = x + cellDimension.width();
+        yPoints[2] = y + cellDimension.halfHeight();
+        xPoints[3] = xPoints[1];
+        yPoints[3] = y + cellDimension.height();
+        xPoints[4] = x + cellDimension.halfSideLength();
+        yPoints[4] = y + cellDimension.height();
+        xPoints[5] = x;
+        yPoints[5] = y + cellDimension.halfHeight();
+
         return new double[][]{xPoints, yPoints};
     }
 

@@ -7,9 +7,11 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -172,12 +174,7 @@ public final class FXGridCanvasPainter {
         Objects.requireNonNull(fillColor);
 
         /*
-         * Possible optimization for small square. Evaluate later.
-         * PixelWriter pw = gc.getPixelWriter();
-         * pw.setColor(x, y, color);
-         * pw.setColor(x + 1, y, color);
-         * pw.setColor(x, y + 1, color);
-         * pw.setColor(x + 1, y + 1, color);
+         * Possible optimization for SQUARE: filRect or PixelWriter. pw.setColor()
          */
 
         double[][] polygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, gridStructure.cellShape());
@@ -187,98 +184,213 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Fills a square cell at the specified grid coordinate and optionally draws a border inside the cell.
-     * If the line width is too large to fit inside the cell, the cell is filled entirely with the stroke color.
-     * If the line width is zero or negative, only the fill color is used.
+     * Draws the bounding box of a cell at the specified grid coordinate.
+     * The bounding box is defined by the cell's shape and dimensions.
      *
-     * @param coordinate the grid coordinate of the cell to draw
-     * @param fillColor the color used to fill the square
-     * @param strokeColor the color used for the border
-     * @param lineWidth the width of the border in pixels
+     * @param coordinate the grid coordinate of the cell whose bounding box is to be drawn
+     * @param fillColor the color used to fill the bounding box, or null if no fill is desired
+     * @param strokeColor the color used to draw the bounding box's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param strokeAdjustment specifies how the stroke is rendered relative to the bounding box outline
      */
-    public void fillAndStrokeSquareInset(GridCoordinate coordinate, Color fillColor, Color strokeColor, double lineWidth) {
+    public void drawCellBoundingBox(GridCoordinate coordinate,
+                                    @Nullable Color fillColor, @Nullable Color strokeColor,
+                                    double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(fillColor);
-        Objects.requireNonNull(strokeColor);
+        Objects.requireNonNull(strokeAdjustment);
 
-        Point2D topLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+        Rectangle2D cellBounds = GridGeometry.computeCellBounds(coordinate, cellDimension, gridStructure.cellShape());
+        drawRectangle(cellBounds, fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
+    }
 
-        if (lineWidth < cellDimension.halfSideLength()) {
-            gc.setFill(fillColor);
-            gc.fillRect(topLeft.getX(), topLeft.getY(), cellDimension.sideLength(), cellDimension.sideLength());
+    /**
+     * Draws the inner circle of a cell at the specified grid coordinate.
+     * The inner circle is defined by the cell's inner radius and center point.
+     *
+     * @param coordinate the grid coordinate of the cell whose inner circle is to be drawn
+     * @param fillColor the color used to fill the inner circle, or null if no fill is desired
+     * @param strokeColor the color used to draw the inner circle's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param strokeAdjustment specifies how the stroke is rendered relative to the circle outline
+     */
+    public void drawCellInnerCircle(GridCoordinate coordinate,
+                                    @Nullable Color fillColor, @Nullable Color strokeColor,
+                                    double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(strokeAdjustment);
 
-            if (lineWidth > 0.0d) {
-                gc.setStroke(strokeColor);
-                gc.setLineWidth(lineWidth);
-                double halfLineWidth = lineWidth / 2.0d;
-                gc.strokeRect(topLeft.getX() + halfLineWidth, topLeft.getY() + halfLineWidth,
-                        cellDimension.sideLength() - lineWidth, cellDimension.sideLength() - lineWidth);
+        Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, gridStructure.cellShape());
+        drawCircle(cellCenter, cellDimension.innerRadius(), fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
+    }
+
+    /**
+     * Draws the outer circle of a cell at the specified grid coordinate.
+     * The outer circle is defined by the cell's outer radius and center point.
+     *
+     * @param coordinate the grid coordinate of the cell whose outer circle is to be drawn
+     * @param fillColor the color used to fill the outer circle, or null if no fill is desired
+     * @param strokeColor the color used to draw the outer circle's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param strokeAdjustment specifies how the stroke is rendered relative to the circle outline
+     */
+    public void drawCellOuterCircle(GridCoordinate coordinate,
+                                    @Nullable Color fillColor, @Nullable Color strokeColor,
+                                    double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(strokeAdjustment);
+
+        Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, gridStructure.cellShape());
+        drawCircle(cellCenter, cellDimension.outerRadius(), fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
+    }
+
+    /**
+     * Draws a rectangle on the canvas with optional fill and stroke properties.
+     * The stroke can be adjusted to be inside, outside, or centered relative to the rectangle's outline.
+     *
+     * @param rectangle the rectangle to be drawn
+     * @param fillColor the color used to fill the rectangle, or null if no fill is desired
+     * @param strokeColor the color used to draw the rectangle's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param strokeAdjustment specifies how the stroke is rendered relative to the rectangle's outline
+     */
+    public void drawRectangle(Rectangle2D rectangle,
+                              @Nullable Color fillColor, @Nullable Color strokeColor,
+                              double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+        Objects.requireNonNull(rectangle);
+        Objects.requireNonNull(strokeAdjustment);
+
+        if ((rectangle.getWidth() > 0.0d) && (rectangle.getHeight() > 0.0d)) {
+            if (fillColor != null) {
+                gc.setFill(fillColor);
+                gc.fillRect(rectangle.getMinX(), rectangle.getMinY(), rectangle.getWidth(), rectangle.getHeight());
             }
-        } else {
-            gc.setFill(strokeColor);
-            gc.fillRect(topLeft.getX(), topLeft.getY(), cellDimension.sideLength(), cellDimension.sideLength());
+
+            if ((strokeColor != null) && (strokeLineWidth > 0.0d)) {
+                gc.setStroke(strokeColor);
+                gc.setLineWidth(strokeLineWidth);
+                double adjustment = switch (strokeAdjustment) {
+                    case INSIDE -> strokeLineWidth / 2.0d;
+                    case OUTSIDE -> -strokeLineWidth / 2.0d;
+                    case CENTERED -> 0.0d;
+                };
+                gc.strokeRect(
+                        rectangle.getMinX() + adjustment,
+                        rectangle.getMinY() + adjustment,
+                        rectangle.getWidth() - (adjustment * 2),
+                        rectangle.getHeight() - (adjustment * 2)
+                );
+            }
         }
     }
 
     /**
-     * Draws a circle centered inside the specified cell.
-     * The circle fits entirely within the cell's shape.
+     * Draws a circle on the canvas with optional fill and stroke properties.
+     * The stroke can be adjusted to be inside, outside, or centered relative to the circle's outline.
      *
-     * @param coordinate the grid coordinate of the cell
-     * @param strokeColor the color used to draw the circle
-     * @param lineWidth the width of the circle's stroke
+     * @param center the center point of the circle
+     * @param radius the radius of the circle in pixels
+     * @param fillColor the color used to fill the circle, or null if no fill is desired
+     * @param strokeColor the color used to draw the circle's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param strokeAdjustment specifies how the stroke is rendered relative to the circle's outline
      */
-    public void drawInnerCircle(GridCoordinate coordinate, Color strokeColor, double lineWidth) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(strokeColor);
+    public void drawCircle(Point2D center, double radius,
+                           @Nullable Color fillColor, @Nullable Color strokeColor,
+                           double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+        Objects.requireNonNull(center);
+        Objects.requireNonNull(strokeAdjustment);
 
-        Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, gridStructure.cellShape());
-        double radius = cellDimension.innerRadius();
-        double diameter = radius * 2;
+        if (radius > 0.0d) {
+            if (fillColor != null) {
+                double diameter = radius * 2;
+                double x = center.getX() - radius;
+                double y = center.getY() - radius;
+                gc.setFill(fillColor);
+                gc.fillOval(x, y, diameter, diameter);
+            }
 
-        gc.setStroke(strokeColor);
-        gc.setLineWidth(lineWidth);
-        gc.strokeOval(center.getX() - radius, center.getY() - radius, diameter, diameter);
+            if ((strokeColor != null) && (strokeLineWidth > 0.0d)) {
+                double adjustedRadius = switch (strokeAdjustment) {
+                    case INSIDE -> radius - (strokeLineWidth / 2.0d);
+                    case OUTSIDE -> radius + (strokeLineWidth / 2.0d);
+                    case CENTERED -> radius;
+                };
+
+                double diameter = adjustedRadius * 2;
+                double x = center.getX() - adjustedRadius;
+                double y = center.getY() - adjustedRadius;
+                gc.setStroke(strokeColor);
+                gc.setLineWidth(strokeLineWidth);
+                gc.strokeOval(x, y, diameter, diameter);
+            }
+        }
     }
 
     /**
-     * Draws a circle that fully encloses the specified cell.
-     * The circle's radius is large enough to surround the cell's shape.
+     * Draws a polygon on the canvas with optional fill and stroke properties.
+     * The stroke can be adjusted to be inside, outside, or centered relative to the polygon's outline.
      *
-     * @param coordinate the grid coordinate of the cell
-     * @param strokeColor the color used to draw the circle
-     * @param lineWidth the width of the circle's stroke
+     * @param xPoints an array of x-coordinates for the vertices of the polygon
+     * @param yPoints an array of y-coordinates for the vertices of the polygon
+     * @param fillColor the color used to fill the polygon, or null if no fill is desired
+     * @param strokeColor the color used to draw the polygon's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param strokeAdjustment specifies how the stroke is rendered relative to the polygon's outline
      */
-    public void drawOuterCircle(GridCoordinate coordinate, Color strokeColor, double lineWidth) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(strokeColor);
+    public void drawPolygon(double[] xPoints, double[] yPoints,
+                            @Nullable Color fillColor, @Nullable Color strokeColor,
+                            double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+        Objects.requireNonNull(strokeAdjustment);
 
-        Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, gridStructure.cellShape());
-        double radius = cellDimension.outerRadius();
-        double diameter = radius * 2;
-
-        gc.setStroke(strokeColor);
-        gc.setLineWidth(lineWidth);
-        gc.strokeOval(center.getX() - radius, center.getY() - radius, diameter, diameter);
+        if ((xPoints.length > 0) || (xPoints.length == yPoints.length)) {
+            if (fillColor != null) {
+                gc.setFill(fillColor);
+                gc.fillPolygon(xPoints, yPoints, xPoints.length);
+            }
+            if ((strokeColor != null) && (strokeLineWidth > 0)) {
+                gc.setStroke(strokeColor);
+                gc.setLineWidth(strokeLineWidth);
+                gc.strokePolygon(xPoints, yPoints, xPoints.length);
+            }
+        }
     }
 
     /**
-     * Draws a bounding rectangle that fully encloses the specified cell.
-     * The rectangle adapts to the cell shape and its bounding box.
+     * Draws a single pixel directly on the canvas using the PixelWriter.
+     * This method checks if the given coordinates are within the canvas bounds
+     * and if a valid color is provided before drawing the pixel.
      *
-     * @param coordinate the grid coordinate of the cell
-     * @param strokeColor the color used to draw the rectangle
-     * @param lineWidth the width of the rectangle's stroke
+     * @param x the x-coordinate of the pixel
+     * @param y the y-coordinate of the pixel
+     * @param fillColor the color of the pixel, or null if nothing should be drawn
      */
-    public void drawBoundingBox(GridCoordinate coordinate, Color strokeColor, double lineWidth) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(strokeColor);
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public void drawPixelDirect(int x, int y, @Nullable Color fillColor) {
+        if ((fillColor != null)
+                && (x >= 0) && (x < (int) canvas.getWidth())
+                && (y >= 0) && (y < (int) canvas.getHeight())) {
+            PixelWriter pw = gc.getPixelWriter();
+            pw.setColor(x, y, fillColor);
+        }
+    }
 
-        Rectangle2D bounds = GridGeometry.computeCellBounds(coordinate, cellDimension, gridStructure.cellShape());
-
-        gc.setStroke(strokeColor);
-        gc.setLineWidth(lineWidth);
-        gc.strokeRect(bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight());
+    /**
+     * Draws a single pixel on the canvas by filling a 1x1 rectangle at the specified position.
+     * This method checks if the given coordinates are within the canvas bounds
+     * and if a valid color is provided before drawing the pixel.
+     *
+     * @param x the x-coordinate of the pixel
+     * @param y the y-coordinate of the pixel
+     * @param fillColor the color of the pixel, or null if nothing should be drawn
+     */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public void drawPixelRect(int x, int y, @Nullable Color fillColor) {
+        if ((fillColor != null)
+                && (x >= 0) && (x < (int) canvas.getWidth())
+                && (y >= 0) && (y < (int) canvas.getHeight())) {
+            gc.setFill(fillColor);
+            gc.fillRect(x, y, 1, 1);
+        }
     }
 
     /**
