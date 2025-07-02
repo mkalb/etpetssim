@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.simulationlab;
 
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -29,7 +30,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private static final Color TRANSLUCENT_BLACK = new Color(0.0, 0.0, 0.0, 0.2); // for darkening effect
 
     private static final double MOUSE_CLICK_LINE_WIDTH = 8.0d;
-    private static final double MOUSE_HOVER_LINE_WIDTH = 3.0d;
+    private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
 
     private final GridStructure structure;
     private final FXGridCanvasPainter painter;
@@ -78,7 +79,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         drawCanvas(false);
         // drawCanvas(true);
-        // drawTest();
+        drawTest();
 
         return borderPane;
     }
@@ -106,7 +107,11 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                 overlayPainter.clearCanvasBackground();
                 if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
                     lastHoverCoordinate = coordinate;
-                    overlayPainter.drawCellInnerCircle(coordinate, TRANSLUCENT_BLACK, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
+                    overlayPainter.drawCellInnerCircle(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
+                    overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+
+                    overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                    overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
                 }
                 if (lastClickedCoordinate != null) {
                     overlayPainter.drawCellOuterCircle(lastClickedCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
@@ -160,6 +165,13 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             painter.drawPixelDirect(x * 4, 100, Color.MAGENTA);
             painter.drawPixelRect(x * 4, 120, Color.RED);
         }
+
+        painter.drawTriangle(new GridCoordinate(11, 4),
+                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().sideLength(), painter.gridStructure().cellShape(), CellShape.TRIANGLE),
+                Color.WHITE, Color.BLACK, 4.0d);
+        painter.drawHexagon(new GridCoordinate(9, 3),
+                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().sideLength(), painter.gridStructure().cellShape(), CellShape.HEXAGON),
+                Color.WHITE, Color.BLACK, 4.0d);
     }
 
     private Color calculateColumnSimilarityColor(GridCoordinate coordinate) {

@@ -94,6 +94,34 @@ public final class GridGeometry {
     }
 
     /**
+     * Converts the side length of a cell to match the width of another cell shape.
+     * This method ensures that the resulting cell shape has the same width as the original cell shape.
+     *
+     * @param fromSideLength the side length of the original cell shape
+     * @param fromCellShape the shape of the original cell
+     * @param toCellShape the shape of the target cell
+     * @return the side length required for the target cell shape to match the width of the original cell shape
+     */
+    public static double convertSideLengthToMatchWidth(double fromSideLength, CellShape fromCellShape, CellShape toCellShape) {
+        Objects.requireNonNull(fromCellShape);
+        Objects.requireNonNull(toCellShape);
+
+        if (fromCellShape == toCellShape) {
+            return fromSideLength;
+        }
+
+        if (fromCellShape == CellShape.HEXAGON) {
+            return fromSideLength * 2;
+        }
+
+        if (toCellShape == CellShape.HEXAGON) {
+            return fromSideLength / 2;
+        }
+
+        return fromSideLength;
+    }
+
+    /**
      * Computes the dimensions of a cell based on its side length and shape.
      *
      * @param sideLength the length of each side of the cell in pixels, must be between MIN_SIDE_LENGTH and MAX_SIDE_LENGTH

@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import javafx.geometry.Dimension2D;
@@ -245,6 +246,88 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Draws a triangle on the canvas at the specified grid coordinate.
+     * The triangle is defined by its side length and is drawn with optional fill and stroke properties.
+     *
+     * @param coordinate the grid coordinate where the triangle will be drawn
+     * @param triangleSideLength the length of each side of the triangle in pixels
+     * @param fillColor the color used to fill the triangle, or null if no fill is desired
+     * @param strokeColor the color used to draw the triangle's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     */
+    public void drawTriangle(GridCoordinate coordinate, double triangleSideLength,
+                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
+                             double strokeLineWidth) {
+        Objects.requireNonNull(coordinate);
+
+        // Compute the position from the current dimension and shape
+        Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+
+        // Compute a new dimension for the triangle based on the triangle side length
+        CellDimension triangleCellDimension = GridGeometry.computeCellDimension(triangleSideLength, CellShape.TRIANGLE);
+        double[][] trianglePoints = GridGeometry.computeTrianglePolygon(cellTopLeft, triangleCellDimension, coordinate.isTriangleCellPointingDown());
+        drawPolygon(trianglePoints[0], trianglePoints[1], fillColor, strokeColor, strokeLineWidth);
+    }
+
+    /**
+     * Draws a triangle at the specified grid coordinate with its side length converted
+     * so that the triangle matches the width of the current cell shape.
+     * The triangle is drawn with optional fill and stroke properties.
+     *
+     * @param coordinate the grid coordinate where the triangle will be drawn
+     * @param fillColor the color used to fill the triangle, or null if no fill is desired
+     * @param strokeColor the color used to draw the triangle's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     */
+    public void drawTriangleMatchingCellWidth(GridCoordinate coordinate,
+                                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
+                                              double strokeLineWidth) {
+        double convertedSideLength = GridGeometry.convertSideLengthToMatchWidth(cellDimension.sideLength(), gridStructure.cellShape(), CellShape.TRIANGLE);
+        drawTriangle(coordinate, convertedSideLength, fillColor, strokeColor, strokeLineWidth);
+    }
+
+    /**
+     * Draws a hexagon on the canvas at the specified grid coordinate.
+     * The hexagon is defined by its side length and is drawn with optional fill and stroke properties.
+     *
+     * @param coordinate the grid coordinate where the hexagon will be drawn
+     * @param hexagonSideLength the length of each side of the hexagon in pixels
+     * @param fillColor the color used to fill the hexagon, or null if no fill is desired
+     * @param strokeColor the color used to draw the hexagon's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     */
+    public void drawHexagon(GridCoordinate coordinate, double hexagonSideLength,
+                            @Nullable Paint fillColor, @Nullable Paint strokeColor,
+                            double strokeLineWidth) {
+        Objects.requireNonNull(coordinate);
+
+        // Compute the position from the current dimension and shape
+        Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, gridStructure.cellShape());
+
+        // Compute a new dimension for the hexagon based on the hexagon side length
+        CellDimension hexagonCellDimension = GridGeometry.computeCellDimension(hexagonSideLength, CellShape.HEXAGON);
+        double[][] hexagonPoints = GridGeometry.computeHexagonPolygon(cellTopLeft, hexagonCellDimension);
+        drawPolygon(hexagonPoints[0], hexagonPoints[1], fillColor, strokeColor, strokeLineWidth);
+    }
+
+    /**
+     * Draws a hexagon at the specified grid coordinate with its side length converted
+     * so that the hexagon matches the width of the current cell shape.
+     * The hexagon is drawn with optional fill and stroke properties.
+     *
+     * @param coordinate the grid coordinate where the hexagon will be drawn
+     * @param fillColor the color used to fill the hexagon, or null if no fill is desired
+     * @param strokeColor the color used to draw the hexagon's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     */
+    public void drawHexagonMatchingCellWidth(GridCoordinate coordinate,
+                                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
+                                             double strokeLineWidth) {
+        double convertedSideLength = GridGeometry.convertSideLengthToMatchWidth(cellDimension.sideLength(), gridStructure.cellShape(), CellShape.HEXAGON);
+        drawHexagon(coordinate, convertedSideLength, fillColor, strokeColor, strokeLineWidth);
+    }
+
+    /**
      * Draws a rectangle on the canvas with optional fill and stroke properties.
      * The stroke can be adjusted to be inside, outside, or centered relative to the rectangle's outline.
      *
@@ -336,13 +419,10 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the polygon, or null if no fill is desired
      * @param strokeColor the color used to draw the polygon's border, or null if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @param strokeAdjustment specifies how the stroke is rendered relative to the polygon's outline
      */
     public void drawPolygon(double[] xPoints, double[] yPoints,
                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
-                            double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
-        Objects.requireNonNull(strokeAdjustment);
-
+                            double strokeLineWidth) {
         if ((xPoints.length > 0) || (xPoints.length == yPoints.length)) {
             if (fillColor != null) {
                 gc.setFill(fillColor);
