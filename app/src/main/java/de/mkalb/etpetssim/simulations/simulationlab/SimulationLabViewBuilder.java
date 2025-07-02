@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.simulationlab;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
@@ -35,7 +36,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private final GridStructure structure;
     private final FXGridCanvasPainter painter;
     private final FXGridCanvasPainter overlayPainter;
-    private final Font font;
+    private final @Nullable Font font;
     private @Nullable GridCoordinate lastClickedCoordinate = null;
     private @Nullable GridCoordinate lastHoverCoordinate = null;
 
@@ -52,7 +53,21 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellSideLength);
         overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
         overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
-        font = Font.font("SansSerif", 14.0d);
+
+        // Font
+        double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
+        double fontSize = Math.round(painter.cellDimension().height() * fontHeightFactor);
+        if (fontSize > 6) {
+            if (Font.getFamilies().contains("Verdana")) {
+                font = Font.font("Verdana", fontSize);
+            } else {
+                font = Font.font("System", fontSize);
+            }
+            AppLogger.info("Font for canvas: " + font);
+        } else {
+            font = null;
+            AppLogger.info("Font size too small: " + fontSize);
+        }
     }
 
     @Override
@@ -132,8 +147,9 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             } else {
                 painter.fillCell(coordinate, calculateColumnSimilarityColor(coordinate));
             }
-
-            painter.drawCenteredTextInCell(coordinate, coordinate.asString(), TEXT_COLOR, font);
+            if (font != null) {
+                painter.drawCenteredTextInCell(coordinate, coordinate.asString(), TEXT_COLOR, font);
+            }
         });
     }
 
