@@ -82,6 +82,88 @@ public record GridCoordinate(int x, int y) {
     }
 
     /**
+     * Checks if this coordinate is in an even-numbered column.
+     *
+     * @return {@code true} if the x-coordinate is even, {@code false} otherwise
+     */
+    public boolean isEvenColumn() {
+        return (x % 2) == 0;
+    }
+
+    /**
+     * Checks if this coordinate is in an odd-numbered column.
+     *
+     * @return {@code true} if the x-coordinate is odd, {@code false} otherwise
+     */
+    public boolean isOddColumn() {
+        return (x % 2) != 0;
+    }
+
+    /**
+     * Checks if this coordinate is in an even-numbered row.
+     *
+     * @return {@code true} if the y-coordinate is even, {@code false} otherwise
+     */
+    public boolean isEvenRow() {
+        return (y % 2) == 0;
+    }
+
+    /**
+     * Checks if this coordinate is in an odd-numbered row.
+     *
+     * @return {@code true} if the y-coordinate is odd, {@code false} otherwise
+     */
+    public boolean isOddRow() {
+        return (y % 2) != 0;
+    }
+
+    /**
+     * Returns whether a triangle cell at this coordinate would be oriented with its tip downwards.
+     * Only meaningful if the cell shape is {@code TRIANGLE}.
+     *
+     * @return {@code true} if the triangle would point down, {@code false} if up
+     * @see de.mkalb.etpetssim.engine.CellShape#TRIANGLE
+     */
+    public boolean isTriangleCellPointingDown() {
+        return (y % 2) == 0;
+    }
+
+    /**
+     * Returns the logical triangle row index for this coordinate.
+     * In a triangle grid, each logical row consists of two stacked triangle rows.
+     * This method divides the y-coordinate by 2 to determine the triangle row.
+     *
+     * @return the logical triangle row index
+     */
+    public int triangleRow() {
+        return y / 2;
+    }
+
+    /**
+     * Determines whether a triangle cell at this coordinate should be horizontally offset.
+     * In a flat-topped triangle grid, every two rows form a repeating vertical pattern.
+     * Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell
+     * to ensure that upward- and downward-pointing triangles interlock correctly.
+     *
+     * @return {@code true} if the triangle cell at this coordinate is horizontally offset, {@code false} otherwise
+     */
+    public boolean hasTriangleCellXOffset() {
+        int triangleOrientationCycle = y % 4;
+        return ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
+    }
+
+    /**
+     * Determines whether a hexagon cell at this coordinate should be vertically offset.
+     * In a staggered hexagon grid, rows are vertically offset in every second column to create the staggered layout.
+     * Even columns start at the base Y position, odd columns are shifted down by half a hexagon height.
+     *
+     * @return {@code true} if the hexagon cell at this coordinate is vertically offset, {@code false} otherwise
+     */
+    public boolean hasHexagonCellYOffset() {
+        return (x % 2) != 0;
+    }
+
+    /**
      * Clamps this coordinate to the rectangular bounds defined by the given minimum (inclusive)
      * and maximum (exclusive) values. If the coordinate lies outside the bounds, it is adjusted
      * to the nearest valid value within the bounds.
