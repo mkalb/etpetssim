@@ -1,26 +1,34 @@
 package de.mkalb.etpetssim.engine;
 
 /**
- * Enum representing the behavior of entities when they reach the edge of a grid.
- * This is used in grid-based simulations to define how entities interact with the boundaries.
+ * Defines the possible behaviors for entities interacting with the edge of a simulation grid.
+ * Used to specify how entities are handled when reaching a grid boundary in grid-based simulations.
+ *
+ * @see GridEdgeBehavior
  */
 public enum EdgeBehavior {
 
     /**
-     * Blocks movement at the edge of the grid.
+     * Prevents entities from moving beyond the grid edge.
+     * Entities are stopped at the boundary and cannot proceed further.
      */
     BLOCK,
+
     /**
-     * Wraps around to the opposite edge of the grid.
+     * Causes entities reaching one edge of the grid to reappear at the opposite edge.
+     * This creates a continuous, toroidal topology.
      */
     WRAP,
+
     /**
-     * Absorbs entities that reach the edge of the grid, removing them from the simulation.
+     * Removes entities from the simulation when they reach the grid edge.
+     * Entities are absorbed and do not continue to exist beyond the boundary.
      */
     ABSORB,
+
     /**
-     * Reflects entities that reach the edge of the grid, reversing their direction.
+     * Reverses the direction of entities upon reaching the grid edge.
+     * Entities are reflected back into the grid, simulating a bounce effect.
      */
     REFLECT
-
 }

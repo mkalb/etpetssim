@@ -11,7 +11,7 @@ class GridStructureTest {
 
     @Test
     void testCellShapeAndEdgeBehaviors() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, BoundaryType.WRAP_X_BLOCK_Y),
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
                 new GridSize(20, 30));
 
         assertEquals(CellShape.SQUARE, structure.cellShape());
@@ -21,7 +21,7 @@ class GridStructureTest {
 
     @Test
     void testCellCount() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.HEXAGON, BoundaryType.REFLECT_XY),
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.REFLECT_XY),
                 new GridSize(20, 30));
 
         assertEquals(20 * 30, structure.cellCount());
@@ -29,7 +29,7 @@ class GridStructureTest {
 
     @Test
     void testCoordinateBounds() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, BoundaryType.ABSORB_XY),
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY),
                 new GridSize(20, 30));
 
         assertEquals(new GridCoordinate(0, 0), structure.minCoordinateInclusive());
@@ -39,7 +39,7 @@ class GridStructureTest {
 
     @Test
     void testIsCoordinateValid() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, BoundaryType.BLOCK_X_BLOCK_Y),
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
                 new GridSize(20, 30));
 
         assertTrue(structure.isCoordinateValid(new GridCoordinate(0, 0)));
@@ -59,7 +59,7 @@ class GridStructureTest {
 
     @Test
     void testAllCoordinates() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, BoundaryType.BLOCK_X_BLOCK_Y),
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
                 new GridSize(20, 30));
 
         List<GridCoordinate> coordinates = structure.allCoordinates().toList();

@@ -3,12 +3,21 @@ package de.mkalb.etpetssim.engine;
 import java.util.*;
 
 /**
- * Represents a coordinate in a grid for the simulation.
- * The coordinate is defined by its x and y values.
- * Negative coordinates are considered illegal.
+ * Represents an immutable coordinate in a two-dimensional simulation grid.
+ * <p>
+ * Each coordinate is defined by its non-negative {@code x} (horizontal) and {@code y} (vertical) values.
+ * Negative values are considered illegal and indicate an invalid or uninitialized state.
+ * <p>
+ * This record provides utility methods for bounds checking, coordinate arithmetic, and
+ * grid-specific queries (such as cell orientation and offset for different cell shapes).
  *
- * @param x the x-coordinate of the grid
- * @param y the y-coordinate of the grid
+ * @param x the x-coordinate (horizontal position, must be non-negative for valid coordinates)
+ * @param y the y-coordinate (vertical position, must be non-negative for valid coordinates)
+ *
+ * @see #isIllegal()
+ * @see #isWithinBounds(int, int, int, int)
+ * @see #clampToBounds(int, int, int, int)
+ * @see CellShape
  */
 public record GridCoordinate(int x, int y) {
 

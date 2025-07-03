@@ -4,13 +4,25 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * Represents the structure of a grid in a simulation.
- * A grid is defined by its topology, which includes the shape of each cell (TRIANGLE, SQUARE, HEXAGON)
- * and the edge behavior (how the grid behaves at its edges, such as BLOCK, WRAP, ABSORB, REFLECT).
- * The grid also has a size, which defines its width and height in terms of cells.
+ * Represents the logical structure of a two-dimensional simulation grid.
+ * <p>
+ * The grid is defined by its {@link GridTopology}, which specifies the cell shape
+ * and edge behavior for both axes.
+ * <p>
+ * The {@link GridSize} determines the grid's logical dimensions, i.e., the number of columns (width)
+ * and rows (height). These values represent cell counts, not pixel sizes.
+ * <p>
+ * This record provides utility methods for accessing cell shape, edge behavior, coordinate bounds,
+ * and for iterating over all valid cell positions within the grid.
  *
- * @param topology the topology of the grid, defining its cell shape and edge behavior
- * @param size the size of the grid, defining its width and height
+ * @param topology the grid topology (cell shape and edge behavior)
+ * @param size     the grid size (number of columns and rows)
+ *
+ * @see GridTopology
+ * @see GridSize
+ * @see CellShape
+ * @see EdgeBehavior
+ * @see GridCoordinate
  */
 public record GridStructure(GridTopology topology, GridSize size) {
 
@@ -97,10 +109,13 @@ public record GridStructure(GridTopology topology, GridSize size) {
 
     /**
      * Returns a stream of all valid coordinates in the grid.
-     * The coordinates are ordered row-wise from top-left to bottom-right.
+     * <p>
+     * The coordinates are traversed row by row: for each row from top to bottom,
+     * all columns from left to right are included, starting at (0, 0) and ending at the bottom-right corner.
      *
      * @return a stream of all valid grid coordinates
      */
+    @SuppressWarnings("GrazieInspection")
     public Stream<GridCoordinate> allCoordinates() {
         return IntStream.range(0, size.width())
                         .boxed()

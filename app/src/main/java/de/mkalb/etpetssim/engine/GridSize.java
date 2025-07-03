@@ -1,17 +1,38 @@
 package de.mkalb.etpetssim.engine;
 
 /**
- * Represents the size of a grid in the simulation.
- * The grid size is defined by its width and height, both of which must be even numbers.
- * The minimum size is 16x16 and the maximum size is 16384x16384.
+ * Represents the logical size of a two-dimensional simulation grid.
+ * <p>
+ * The grid size is defined by its {@code width} (number of columns) and {@code height} (number of rows).
+ * Both values must be even numbers within the valid range from {@value #MIN_SIZE} to {@value #MAX_SIZE}.
+ * <p>
+ * This record provides utility methods for size validation, area and perimeter calculation,
+ * aspect ratio, orientation checks, and standard grid sizes.
  *
- * @param width the width of the grid
- * @param height the height of the grid
+ * @param width  the number of columns (horizontal cells), must be even and within valid range
+ * @param height the number of rows (vertical cells), must be even and within valid range
+ *
+ * @see #isInvalidSize(int)
+ * @see #square(int)
+ * @see #area()
+ * @see #perimeter()
+ * @see #aspectRatio()
+ * @see #isSquare()
+ * @see #isLandscape()
+ * @see #isPortrait()
  */
 public record GridSize(int width, int height) {
 
-    public static final int MIN_SIZE = 16;
-    public static final int MAX_SIZE = MIN_SIZE * 1_024; // 16 * 1024 = 16384
+    /**
+     * The minimum valid size for grid dimensions.
+     * This is set to 8 (2^3), which is the smallest even number allowed.
+     */
+    public static final int MIN_SIZE = 8;
+    /**
+     * The maximum valid size for grid dimensions.
+     * This is set to 16384 (2^14), which is the largest even number allowed.
+     */
+    public static final int MAX_SIZE = 16_384; // 2^14
 
     public static final GridSize SMALL_SQUARE = square(MIN_SIZE * 2);
     public static final GridSize MEDIUM_SQUARE = square(MIN_SIZE * 4);
@@ -22,38 +43,40 @@ public record GridSize(int width, int height) {
     public static final GridSize LARGE_RECTANGLE = new GridSize(MIN_SIZE * 16, MIN_SIZE * 8);
 
     /**
-     * Creates a new GridSize instance with the specified width and height.
-     * Both width and height must be even numbers within the range of MIN_SIZE to MAX_SIZE.
+     * Constructs a new {@code GridSize} with the specified width and height.
+     * <p>
+     * Both values must be even numbers within the valid range defined by {@link #MIN_SIZE} and {@link #MAX_SIZE}.
      *
-     * @param width the width of the grid
-     * @param height the height of the grid
-     * @throws java.lang.IllegalArgumentException if width or height is not even, or if they are outside the range of MIN_SIZE to MAX_SIZE
+     * @param width  the number of columns (horizontal cells)
+     * @param height the number of rows (vertical cells)
+     * @throws IllegalArgumentException if width or height is not even or out of bounds
      */
     public GridSize {
-        if (isIllegalSize(width)) {
+        if (isInvalidSize(width)) {
             throw new IllegalArgumentException(String.format("Width must be an even number between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
         }
-        if (isIllegalSize(height)) {
+        if (isInvalidSize(height)) {
             throw new IllegalArgumentException(String.format("Height must be an even number between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
         }
     }
 
     /**
-     * Checks if the given size is an illegal grid size.
-     * The size must be even and within the range of MIN_SIZE to MAX_SIZE.
+     * Checks whether a given size value is invalid.
+     * A valid size must be even and within the allowed range.
      *
-     * @param size the size to check
-     * @return true if the size is illegal, false otherwise
+     * @param size the size value to validate
+     * @return {@code true} if the size is invalid, {@code false} otherwise
      */
-    public static boolean isIllegalSize(int size) {
+    public static boolean isInvalidSize(int size) {
         return (size < MIN_SIZE) || (size > MAX_SIZE) || ((size % 2) != 0);
     }
 
     /**
-     * Creates a square grid size with the given size for both width and height.
-     * @param size the size of the square grid
-     * @return a new GridSize instance representing a square grid
-     * @throws java.lang.IllegalArgumentException if size is not even or is outside the range of MIN_SIZE to MAX_SIZE
+     * Creates a square grid where width and height are equal to the given size.
+     *
+     * @param size the dimension of both width and height
+     * @return a new {@code GridSize} representing a square grid
+     * @throws IllegalArgumentException if the size is not even or out of bounds
      */
     public static GridSize square(int size) {
         return new GridSize(size, size);
@@ -105,10 +128,22 @@ public record GridSize(int width, int height) {
     }
 
     /**
-     * Returns a string representation of the grid size in the format "[width x height]".
-     * Example: [32x16]
+     * Computes the aspect ratio of the grid.
+     * <p>
+     * The aspect ratio is defined as {@code width / height}.
+     * A square grid has an aspect ratio of 1.0.
      *
-     * @return a string representation of the grid size
+     * @return the aspect ratio of the grid as a double
+     */
+    public double aspectRatio() {
+        return (double) width / height;
+    }
+
+    /**
+     * Returns a string representation of the grid size in the format {@code [width x height]}.
+     * Useful for debugging or display purposes.
+     *
+     * @return a formatted string representing the grid size
      */
     public String asString() {
         return String.format("[%dx%d]", width, height);

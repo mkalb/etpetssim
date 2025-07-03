@@ -28,9 +28,9 @@ class GridSizeTest {
 
     @Test
     void testTooSmallSizeThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(14, 16));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(16, 14));
-        assertThrows(IllegalArgumentException.class, () -> new GridSize(14, 14));
+        assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 8));
+        assertThrows(IllegalArgumentException.class, () -> new GridSize(8, 7));
+        assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 7));
     }
 
     @Test
@@ -85,10 +85,10 @@ class GridSizeTest {
     }
 
     @Test
-    void testIsIllegalSize() {
-        assertTrue(GridSize.isIllegalSize(15));
-        assertTrue(GridSize.isIllegalSize(20_000));
-        assertFalse(GridSize.isIllegalSize(32));
+    void testIsInvalidSize() {
+        assertTrue(GridSize.isInvalidSize(15));
+        assertTrue(GridSize.isInvalidSize(20_000));
+        assertFalse(GridSize.isInvalidSize(32));
     }
 
 }
