@@ -99,7 +99,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         registerEvents();
 
-        drawCanvas(true, false, true);
+        drawCanvas(false, false, false);
 
         return borderPane;
     }
@@ -130,9 +130,9 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                     overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
                     if (overlayPainter.cellDimension().edgeLength() >= 8.0d) {
-                        overlayPainter.drawCellInnerCircle(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
-                        overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
-                        overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                        overlayPainter.drawCellInnerCircle(coordinate, TRANSLUCENT_BLACK, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
+                        // overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                        // overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
                     }
                 }
                 if (lastClickedCoordinate != null) {
@@ -146,7 +146,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         // Background
         painter.fillCanvasBackground(CANVAS_COLOR);
         if (useColorBlackWhite) {
-            painter.fillGridBackground(CANVAS_COLOR);
+            painter.fillGridBackground(Color.WHITE);
         } else {
             painter.fillGridBackground(GRID_BACKGROUND_COLOR);
         }
@@ -154,13 +154,14 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         // Cells at all coordinates
         structure.allCoordinates().forEachOrdered(coordinate -> {
             Color color = useColorBlackWhite ? calculateColumnBlackWhiteColor(coordinate) : calculateColumnSimilarityColor(coordinate);
+            Color textColor = useColorBlackWhite ? Color.BLACK : TEXT_COLOR;
             if (drawCellAsInnerCircle) {
                 painter.drawCellInnerCircle(coordinate, color, null, 0.0d, StrokeAdjustment.CENTERED);
             } else {
-                painter.fillCell(coordinate, color);
+                painter.drawCell(coordinate, color, Color.BLACK, 0.5d);
             }
             if (font != null) {
-                painter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), TEXT_COLOR, font);
+                painter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, font);
             }
         });
 

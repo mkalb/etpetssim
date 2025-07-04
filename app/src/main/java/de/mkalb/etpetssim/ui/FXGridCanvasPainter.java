@@ -165,24 +165,21 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Fills a cell at the specified grid coordinate using the given fill color.
-     * The appropriate fill method is selected based on the cell shape.
+     * Draws a cell at the specified grid coordinate using the given fill and stroke colors.
      *
-     * @param coordinate the grid coordinate of the cell to fill
-     * @param fillColor the color used to fill the cell
+     * @param coordinate the grid coordinate of the cell to draw
+     * @param fillColor the color used to fill the cell, or null if no fill is desired
+     * @param strokeColor the color used to draw the cell's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
      */
-    public void fillCell(GridCoordinate coordinate, Paint fillColor) {
+    public void drawCell(GridCoordinate coordinate,
+                         @Nullable Paint fillColor, @Nullable Paint strokeColor,
+                         double strokeLineWidth) {
         Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(fillColor);
 
-        /*
-         * Possible optimization for SQUARE: filRect or PixelWriter. pw.setColor()
-         */
-
+        // Optimization hint: Consider using `fillRect` or `PixelWriter.setColor()` for SQUARE cells.
         double[][] polygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, gridStructure.cellShape());
-
-        gc.setFill(fillColor);
-        gc.fillPolygon(polygon[0], polygon[1], gridStructure.cellShape().vertexCount());
+        drawPolygon(polygon[0], polygon[1], fillColor, strokeColor, strokeLineWidth);
     }
 
     /**
