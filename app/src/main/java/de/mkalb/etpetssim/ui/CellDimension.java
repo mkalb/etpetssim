@@ -5,31 +5,32 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
 /**
- * Represents the dimensions of a cell in a grid.
- * This record encapsulates the side length, width, height,
- * half side length, half width, and half height of the cell.
- * The values width and height represent the surrounding rectangle (bounding box).
+ * Describes the geometric pixel dimensions of a single cell shape
+ * (e.g. triangle, square, hexagon) used in a 2D grid layout.
+ * <p>
+ * This record provides precomputed values derived from the cell's edge length,
+ * including full and half dimensions, inner and outer radius,
+ * and spacing between adjacent cell centers in both directions.
+ * <p>
+ * The {@code width} and {@code height} refer to the bounding box
+ * that fully encloses the polygonal cell shape, aligned with the axes.
  *
- * @param sideLength side length of the cell in pixels
- * @param width the full width of the cell's bounding box in pixels;
- *              this is the maximum horizontal extent of the cell shape
- * @param height the full height of the cell's bounding box in pixels;
- *               this is the maximum vertical extent of the cell shape
- * @param halfSideLength half side length of the cell in pixels
- * @param halfWidth half width of the cell in pixels (bounding box)
- * @param halfHeight half height of the cell in pixels (bounding box)
- * @param innerRadius inner radius of the cell in pixels
- * @param outerRadius outer radius of the cell in pixels
- * @param columnWidth the horizontal spacing between adjacent cell centers in the grid;
- *                    used for layout calculations, especially in staggered or interlocking grids
- * @param rowHeight the vertical spacing between adjacent cell centers in the grid;
- *                  used for layout calculations, especially in staggered or interlocking grids
+ * @param edgeLength the length of one edge of the cell in pixels
+ * @param width the full width of the cell's bounding box in pixels
+ * @param height the full height of the cell's bounding box in pixels
+ * @param halfEdgeLength half the edge length of the cell in pixels
+ * @param halfWidth half the width of the cell's bounding box in pixels
+ * @param halfHeight half the height of the cell's bounding box in pixels
+ * @param innerRadius the distance from the center to the midpoint of an edge
+ * @param outerRadius the distance from the center to a vertex
+ * @param columnWidth horizontal spacing between adjacent cell centers
+ * @param rowHeight vertical spacing between adjacent cell centers
  */
 public record CellDimension(
-        double sideLength,
+        double edgeLength,
         double width,
         double height,
-        double halfSideLength,
+        double halfEdgeLength,
         double halfWidth,
         double halfHeight,
         double innerRadius,
@@ -41,51 +42,56 @@ public record CellDimension(
     private static final double DOUBLE_COMPARE_EPSILON = 1.0e-9;
 
     public CellDimension {
-        if ((sideLength <= 0) || (width <= 0) || (height <= 0)) {
-            throw new IllegalArgumentException("Dimensions must be positive.");
+        if ((edgeLength <= 0) || (width <= 0) || (height <= 0)
+                || (innerRadius <= 0) || (outerRadius <= 0)
+                || (columnWidth <= 0) || (rowHeight <= 0)) {
+            throw new IllegalArgumentException("All dimensions must be positive.");
         }
-        if ((Math.abs(sideLength - (2 * halfSideLength)) > DOUBLE_COMPARE_EPSILON)
+        if ((Math.abs(edgeLength - (2 * halfEdgeLength)) > DOUBLE_COMPARE_EPSILON)
                 || (Math.abs(width - (2 * halfWidth)) > DOUBLE_COMPARE_EPSILON)
                 || (Math.abs(height - (2 * halfHeight)) > DOUBLE_COMPARE_EPSILON)) {
             throw new IllegalArgumentException("Half dimensions must be half of the full dimensions.");
         }
-        if ((innerRadius <= 0) || (outerRadius <= 0)) {
-            throw new IllegalArgumentException("Inner and outer radius must be positive.");
-        }
         if (outerRadius <= innerRadius) {
             throw new IllegalArgumentException("Outer radius must be greater than inner radius.");
-        }
-        if ((columnWidth <= 0) || (rowHeight <= 0)) {
-            throw new IllegalArgumentException("Column width and row height must be positive.");
         }
     }
 
     /**
-     * Returns the bounding box dimension of the cell.
-     * This is equivalent to the width and height of the cell.
+     * Returns the dimensions of the bounding box that fully contains the cell shape.
+     * <p>
+     * The bounding box is a rectangle aligned with the axes, defined by the full
+     * {@code width} and {@code height} of the cell. It does not necessarily match
+     * the actual polygonal shape but encloses it completely.
      *
-     * @return the bounding box dimension of the cell
+     * @return a {@code Dimension2D} representing the width and height of the cell's bounding box
      */
     public Dimension2D boundingBoxDimension() {
         return new Dimension2D(width, height);
     }
 
     /**
-     * Returns the bounding box of the cell at the specified top-left corner.
+     * Returns the bounding box of the cell positioned at the specified top-left coordinates.
+     * <p>
+     * The bounding box is a rectangle that fully contains the cell shape.
+     * The given coordinates specify the top-left corner of this bounding box.
      *
-     * @param topLeftX the x-coordinate of the top-left corner of the cell
-     * @param topLeftY the y-coordinate of the top-left corner of the cell
-     * @return a Rectangle2D representing the bounding box of the cell at the specified top-left corner.
+     * @param topLeftX the x-coordinate of the top-left corner of the bounding box
+     * @param topLeftY the y-coordinate of the top-left corner of the bounding box
+     * @return a {@code Rectangle2D} representing the bounding box of the cell at the specified position
      */
     public Rectangle2D boundingBoxAt(double topLeftX, double topLeftY) {
         return new Rectangle2D(topLeftX, topLeftY, width, height);
     }
 
     /**
-     * Returns the bounding box of the cell at the specified top-left point.
+     * Returns the bounding box of the cell positioned at the specified top-left point.
+     * <p>
+     * The bounding box is a rectangle that fully contains the cell shape.
+     * The given point specifies the top-left corner of this bounding box.
      *
-     * @param topLeftPoint the top-left point of the cell
-     * @return a Rectangle2D representing the bounding box of the cell at the specified top-left point.
+     * @param topLeftPoint the top-left point of the bounding box
+     * @return a {@code Rectangle2D} representing the bounding box of the cell at the specified position
      */
     public Rectangle2D boundingBoxAt(Point2D topLeftPoint) {
         return new Rectangle2D(topLeftPoint.getX(), topLeftPoint.getY(), width, height);
