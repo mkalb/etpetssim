@@ -201,7 +201,7 @@ public final class GridGeometry {
                 height = gridSize.height() * cellDimension.rowHeight();
             }
             case HEXAGON -> {
-                double columnWidthOffset = cellDimension.halfSideLength();
+                double columnWidthOffset = cellDimension.halfEdgeLength();
                 width = (gridSize.width() * cellDimension.columnWidth()) + columnWidthOffset;
                 double rowHeightOffset = ((gridSize.width() > 1) ? cellDimension.halfHeight() : ZERO);
                 height = (gridSize.height() * cellDimension.rowHeight()) + rowHeightOffset;
@@ -280,7 +280,7 @@ public final class GridGeometry {
         return switch (shape) {
             case TRIANGLE -> {
                 double x = (coordinate.x() * cellDimension.columnWidth())
-                        + (coordinate.hasTriangleCellXOffset() ? cellDimension.halfSideLength() : ZERO); // Add x offset if necessary for triangle cells.
+                        + (coordinate.hasTriangleCellXOffset() ? cellDimension.halfEdgeLength() : ZERO); // Add x offset if necessary for triangle cells.
                 double y = coordinate.triangleRow() * cellDimension.rowHeight();
                 yield new Point2D(x, y);
             }
@@ -349,7 +349,7 @@ public final class GridGeometry {
                 // Test nine candidate coordinates for the hexagon cell.
                 GridCoordinate closestValidHexCell = GridCoordinate.ILLEGAL;
                 double minDistance = Double.MAX_VALUE;
-                double earlyAcceptThreshold = cellDimension.halfSideLength();
+                double earlyAcceptThreshold = cellDimension.halfEdgeLength();
                 for (int[] offset : HEXAGON_NEIGHBOR_OFFSETS) {
                     GridCoordinate candidate = new GridCoordinate(estimatedGridX + offset[0], estimatedGridY + offset[1]);
 
@@ -466,16 +466,16 @@ public final class GridGeometry {
         if (isPointingDown) {
             xPoints[0] = x;
             yPoints[0] = y;
-            xPoints[1] = x + cellDimension.halfSideLength();
+            xPoints[1] = x + cellDimension.halfEdgeLength();
             yPoints[1] = y + cellDimension.height();
-            xPoints[2] = x + cellDimension.sideLength();
+            xPoints[2] = x + cellDimension.edgeLength();
             yPoints[2] = y;
         } else {
             xPoints[0] = x;
             yPoints[0] = y + cellDimension.height();
-            xPoints[1] = x + cellDimension.halfSideLength();
+            xPoints[1] = x + cellDimension.halfEdgeLength();
             yPoints[1] = y;
-            xPoints[2] = x + cellDimension.sideLength();
+            xPoints[2] = x + cellDimension.edgeLength();
             yPoints[2] = y + cellDimension.height();
         }
 
@@ -500,12 +500,12 @@ public final class GridGeometry {
 
         xPoints[0] = x;
         yPoints[0] = y;
-        xPoints[1] = x + cellDimension.sideLength();
+        xPoints[1] = x + cellDimension.edgeLength();
         yPoints[1] = y;
-        xPoints[2] = x + cellDimension.sideLength();
-        yPoints[2] = y + cellDimension.sideLength();
+        xPoints[2] = x + cellDimension.edgeLength();
+        yPoints[2] = y + cellDimension.edgeLength();
         xPoints[3] = x;
-        yPoints[3] = y + cellDimension.sideLength();
+        yPoints[3] = y + cellDimension.edgeLength();
 
         return new double[][]{xPoints, yPoints};
     }
@@ -526,15 +526,15 @@ public final class GridGeometry {
         double x = topLeft.getX();
         double y = topLeft.getY();
 
-        xPoints[0] = x + cellDimension.halfSideLength();
+        xPoints[0] = x + cellDimension.halfEdgeLength();
         yPoints[0] = y;
-        xPoints[1] = x + cellDimension.sideLength() + cellDimension.halfSideLength();
+        xPoints[1] = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
         yPoints[1] = y;
         xPoints[2] = x + cellDimension.width();
         yPoints[2] = y + cellDimension.halfHeight();
         xPoints[3] = xPoints[1];
         yPoints[3] = y + cellDimension.height();
-        xPoints[4] = x + cellDimension.halfSideLength();
+        xPoints[4] = x + cellDimension.halfEdgeLength();
         yPoints[4] = y + cellDimension.height();
         xPoints[5] = x;
         yPoints[5] = y + cellDimension.halfHeight();
