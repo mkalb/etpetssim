@@ -1,9 +1,7 @@
 package de.mkalb.etpetssim.simulations.simulationlab;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.GridGeometry;
 import de.mkalb.etpetssim.ui.StrokeAdjustment;
@@ -11,13 +9,13 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Builder;
 import org.jspecify.annotations.Nullable;
+
+import java.util.*;
 
 @SuppressWarnings("MagicNumber")
 public class SimulationLabViewBuilder implements Builder<Region> {
@@ -86,7 +84,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
         StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
 
-        ScrollPane scrollPane = new ScrollPane(stackPane);
+        ScrollPane scrollPane = new ScrollPane(addVisibleCanvasBorder(stackPane));
         scrollPane.setFitToHeight(false);
         scrollPane.setFitToWidth(false);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
@@ -94,12 +92,46 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add("simulation-scroll-pane");
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.setCenter(scrollPane);
+        BorderPane simulationBorderPane = new BorderPane();
+        simulationBorderPane.setCenter(scrollPane);
+        simulationBorderPane.getStyleClass().add("simulation-border-pane");
 
         registerEvents();
 
         drawCanvas(false, false, false);
+
+        return simulationBorderPane;
+    }
+
+    private Pane addVisibleCanvasBorder(Pane pane) {
+        Objects.requireNonNull(pane);
+
+        if ((structure.edgeBehaviorX() == EdgeBehavior.WRAP) && (structure.edgeBehaviorY() == EdgeBehavior.WRAP)) {
+            return pane;
+        }
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(pane);
+
+        if (structure.edgeBehaviorX() != EdgeBehavior.WRAP) {
+            Region leftBorder = new Region();
+            leftBorder.getStyleClass().add("canvas-left-border-pane");
+            borderPane.setLeft(leftBorder);
+
+            Region rightBorder = new Region();
+            rightBorder.getStyleClass().add("canvas-right-border-pane");
+            borderPane.setRight(rightBorder);
+        }
+
+        if (structure.edgeBehaviorY() != EdgeBehavior.WRAP) {
+            Region topBorder = new Region();
+            topBorder.getStyleClass().add("canvas-top-border-pane");
+            borderPane.setTop(topBorder);
+
+            Region bottomBorder = new Region();
+            bottomBorder.getStyleClass().add("canvas-bottom-border-pane");
+            borderPane.setBottom(bottomBorder);
+        }
 
         return borderPane;
     }

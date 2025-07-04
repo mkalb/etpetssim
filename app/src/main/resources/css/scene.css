@@ -16,6 +16,11 @@
     -fx-border-radius: 6;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0.2, 0, 2);
 }
+.scroll-pane .scroll-bar:vertical,
+.scroll-pane .scroll-bar:horizontal {
+}
+.scroll-pane .thumb {
+}
 
 /* Label Styling */
 .label {

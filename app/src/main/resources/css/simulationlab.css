@@ -1,3 +1,26 @@
 /* SimulationLab Styling */
 .simulation-scroll-pane {
 }
+
+.simulation-border-pane {
+}
+
+.canvas-left-border-pane {
+    -fx-background-color: linear-gradient(to bottom, #ff0000, #0000ff);
+    -fx-pref-width: 10px;
+}
+
+.canvas-right-border-pane {
+    -fx-background-color: linear-gradient(to bottom, #ffff00, #00ff00);
+    -fx-pref-width: 10px;
+}
+
+.canvas-top-border-pane {
+    -fx-background-color: linear-gradient(to right, #ff0000, #ffff00);
+    -fx-pref-height: 10px;
+}
+
+.canvas-bottom-border-pane {
+    -fx-background-color: linear-gradient(to right, #0000ff, #00ff00);
+    -fx-pref-height: 10px;
+}
