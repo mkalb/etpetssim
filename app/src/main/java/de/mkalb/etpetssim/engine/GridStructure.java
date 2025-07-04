@@ -123,4 +123,15 @@ public record GridStructure(GridTopology topology, GridSize size) {
                                                .mapToObj(y -> new GridCoordinate(x, y)));
     }
 
+    /**
+     * Returns a short, human-readable string representation of this grid structure.
+     * <p>
+     * Format: {@code [TOPOLOGY SIZE]}. Example: [[SQUARE ABSORB] 10 × 20].
+     *
+     * @return a concise display string for this grid structure
+     */
+    public String toDisplayString() {
+        return String.format("[%s %s]", topology.toDisplayString(), size.toDisplayString());
+    }
+
 }

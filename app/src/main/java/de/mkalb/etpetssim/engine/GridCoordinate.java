@@ -248,12 +248,18 @@ public record GridCoordinate(int x, int y) {
     }
 
     /**
-     * Returns a string representation of the coordinate in the format "(x, y)".
-     * Example: (15, 20)
+     * Returns a short, human-readable string representation of this coordinate.
+     * <p>
+     * Format: {@code (x, y)}. Example: (15, 20).
+     * Returns {@code (illegal)} if this coordinate is the constant {@link #ILLEGAL}.
      *
-     * @return a string representation of the coordinate
+     * @return a concise display string for this coordinate
      */
-    public String asString() {
+    @SuppressWarnings("ObjectEquality")
+    public String toDisplayString() {
+        if (this == ILLEGAL) {
+            return "(illegal)";
+        }
         return String.format("(%d, %d)", x, y);
     }
 

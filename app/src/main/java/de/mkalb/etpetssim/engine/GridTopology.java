@@ -62,12 +62,20 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
     }
 
     /**
-     * Returns a string representation of the grid topology.
-     * Example: [SQUARE BLOCK/BLOCK]
+     * Returns a short, human-readable string representation of this grid topology.
+     * <p>
+     * Format: {@code [SHAPE EDGE_BEHAVIOR]} if both edge behaviors are identical,
+     * or {@code [SHAPE EDGE_BEHAVIOR_X/EDGE_BEHAVIOR_Y]} if they differ.
+     * Example: [SQUARE ABSORB] or [HEXAGON BLOCK/WRAP].
      *
-     * @return a string representation of the grid topology
+     * @return a concise display string for this grid topology
      */
-    public String asString() {
+    public String toDisplayString() {
+        if (gridEdgeBehavior.isEqualEdgeBehavior()) {
+            return String.format("[%s %s]",
+                    cellShape.name(),
+                    gridEdgeBehavior.edgeBehaviorX().name());
+        }
         return String.format("[%s %s/%s]",
                 cellShape.name(),
                 gridEdgeBehavior.edgeBehaviorX().name(),

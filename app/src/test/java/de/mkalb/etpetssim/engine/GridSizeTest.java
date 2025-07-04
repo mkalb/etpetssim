@@ -71,9 +71,17 @@ class GridSizeTest {
     }
 
     @Test
-    void testAsString() {
-        assertEquals("[32x64]", new GridSize(32, 64).asString());
-        assertEquals("[1024x2048]", new GridSize(1_024, 2_048).asString());
+    void testAspectRatio() {
+        assertEquals(1.0d, new GridSize(32, 32).aspectRatio(), 0.00001d);
+        assertEquals(1.0d, new GridSize(64, 64).aspectRatio(), 0.00001d);
+        assertEquals(2.0d, new GridSize(64, 32).aspectRatio(), 0.00001d);
+        assertEquals(0.5d, new GridSize(32, 64).aspectRatio(), 0.00001d);
+    }
+
+    @Test
+    void testToDisplayString() {
+        assertEquals("32 × 64", new GridSize(32, 64).toDisplayString());
+        assertEquals("1024 × 2048", new GridSize(1_024, 2_048).toDisplayString());
     }
 
     @Test

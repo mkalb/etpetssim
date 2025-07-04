@@ -34,13 +34,17 @@ public record GridSize(int width, int height) {
      */
     public static final int MAX_SIZE = 16_384; // 2^14
 
+    public static final GridSize EXTRA_SMALL_SQUARE = square(MIN_SIZE);
     public static final GridSize SMALL_SQUARE = square(MIN_SIZE * 2);
     public static final GridSize MEDIUM_SQUARE = square(MIN_SIZE * 4);
     public static final GridSize LARGE_SQUARE = square(MIN_SIZE * 8);
+    public static final GridSize EXTRA_LARGE_SQUARE = square(MIN_SIZE * 16);
 
+    public static final GridSize EXTRA_SMALL_RECTANGLE = new GridSize(MIN_SIZE * 2, MIN_SIZE);
     public static final GridSize SMALL_RECTANGLE = new GridSize(MIN_SIZE * 4, MIN_SIZE * 2);
     public static final GridSize MEDIUM_RECTANGLE = new GridSize(MIN_SIZE * 8, MIN_SIZE * 4);
     public static final GridSize LARGE_RECTANGLE = new GridSize(MIN_SIZE * 16, MIN_SIZE * 8);
+    public static final GridSize EXTRA_LARGE_RECTANGLE = new GridSize(MIN_SIZE * 32, MIN_SIZE * 16);
 
     /**
      * Constructs a new {@code GridSize} with the specified width and height.
@@ -140,13 +144,14 @@ public record GridSize(int width, int height) {
     }
 
     /**
-     * Returns a string representation of the grid size in the format {@code [width x height]}.
-     * Useful for debugging or display purposes.
+     * Returns a short, human-readable string representation of this grid size.
+     * <p>
+     * Format: {@code width × height}. Example: 10 × 20.
      *
-     * @return a formatted string representing the grid size
+     * @return a concise display string for this grid size
      */
-    public String asString() {
-        return String.format("[%dx%d]", width, height);
+    public String toDisplayString() {
+        return String.format("%d × %d", width, height);
     }
 
 }
