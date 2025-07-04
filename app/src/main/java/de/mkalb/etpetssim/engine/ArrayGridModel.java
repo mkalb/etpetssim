@@ -1,18 +1,19 @@
+// ArrayGridModel.java
 package de.mkalb.etpetssim.engine;
-
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public class ArrayGridModel<T> implements GridModel<T> {
 
     private final GridStructure structure;
-    private final @Nullable T defaultValue;
-    private final @Nullable Object[][] data;
+    private final T defaultValue;
+    private final Object[][] data;
 
-    public ArrayGridModel(GridStructure structure, @Nullable T defaultValue) {
-        this.structure = structure;
-        this.defaultValue = defaultValue;
+    public ArrayGridModel(GridStructure structure, T defaultValue) {
+        Objects.requireNonNull(structure);
+        Objects.requireNonNull(defaultValue);
+        this.structure = Objects.requireNonNull(structure);
+        this.defaultValue = Objects.requireNonNull(defaultValue);
         data = new Object[structure.size().height()][structure.size().width()];
         clear();
     }
@@ -23,7 +24,7 @@ public class ArrayGridModel<T> implements GridModel<T> {
     }
 
     @Override
-    public @Nullable T defaultValue() {
+    public T defaultValue() {
         return defaultValue;
     }
 
@@ -36,7 +37,8 @@ public class ArrayGridModel<T> implements GridModel<T> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public @Nullable T getValue(GridCoordinate coordinate) {
+    public T getValue(GridCoordinate coordinate) {
+        Objects.requireNonNull(coordinate);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
@@ -44,11 +46,13 @@ public class ArrayGridModel<T> implements GridModel<T> {
     }
 
     @Override
-    public void setValue(GridCoordinate coordinate, @Nullable T value) {
+    public void setValue(GridCoordinate coordinate, T value) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(value);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
-        data[coordinate.y()][coordinate.x()] = value;
+        data[coordinate.y()][coordinate.x()] = Objects.requireNonNull(value, "value must not be null");
     }
 
     @Override
