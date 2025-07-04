@@ -14,10 +14,13 @@ public final class SimulationLabController implements SimulationController {
 
     public SimulationLabController(Stage stage) {
         this.stage = stage;
-        CellShape cellShape = CellShape.TRIANGLE;
-        double cellSideLength = 100.0d;
-        structure = new GridStructure(new GridTopology(cellShape, BoundaryType.BLOCK_X_BLOCK_Y),
-                new GridSize(20, 16));
+
+        CellShape cellShape = CellShape.SQUARE;
+        int hexagonLength = 32;
+
+        double cellSideLength = (cellShape == CellShape.HEXAGON) ? hexagonLength : (2 * hexagonLength);
+        structure = new GridStructure(new GridTopology(cellShape, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
+                GridSize.SMALL_RECTANGLE);
         viewBuilder = new SimulationLabViewBuilder(structure, cellSideLength);
     }
 

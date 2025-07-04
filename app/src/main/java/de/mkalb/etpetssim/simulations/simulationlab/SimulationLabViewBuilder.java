@@ -43,6 +43,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     public SimulationLabViewBuilder(GridStructure structure, double cellSideLength) {
         this.structure = structure;
 
+        // Canvas and FXGridCanvasPainter
         Canvas canvas = new Canvas(cellSideLength, cellSideLength);
         painter = new FXGridCanvasPainter(canvas, structure, cellSideLength);
         double border = 30.0d; // only for testing grid dimension
@@ -53,6 +54,12 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellSideLength);
         overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
         overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+
+        // Log information
+        AppLogger.info("Structure: " + structure.toDisplayString());
+        AppLogger.info("GridDimension2D: " + overlayPainter.gridDimension2D());
+        AppLogger.info("Cell count: " + structure.cellCount());
+        AppLogger.info("CellDimension: " + overlayPainter.cellDimension());
 
         // Font
         double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
@@ -92,9 +99,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         registerEvents();
 
-        drawCanvas(false);
-        // drawCanvas(true);
-        drawTest();
+        drawCanvas(true, false, true);
 
         return borderPane;
     }
@@ -122,11 +127,13 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                 overlayPainter.clearCanvasBackground();
                 if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
                     lastHoverCoordinate = coordinate;
-                    overlayPainter.drawCellInnerCircle(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
                     overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
-                    overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
-                    overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                    if (overlayPainter.cellDimension().edgeLength() >= 8.0d) {
+                        overlayPainter.drawCellInnerCircle(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
+                        overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                        overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                    }
                 }
                 if (lastClickedCoordinate != null) {
                     overlayPainter.drawCellOuterCircle(lastClickedCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
@@ -135,25 +142,39 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         });
     }
 
-    private void drawCanvas(boolean drawCellAsInnerCircle) {
+    private void drawCanvas(boolean useColorBlackWhite, boolean drawCellAsInnerCircle, boolean drawTest) {
         // Background
         painter.fillCanvasBackground(CANVAS_COLOR);
-        painter.fillGridBackground(GRID_BACKGROUND_COLOR);
+        if (useColorBlackWhite) {
+            painter.fillGridBackground(CANVAS_COLOR);
+        } else {
+            painter.fillGridBackground(GRID_BACKGROUND_COLOR);
+        }
 
         // Cells at all coordinates
         structure.allCoordinates().forEachOrdered(coordinate -> {
+            Color color = useColorBlackWhite ? calculateColumnBlackWhiteColor(coordinate) : calculateColumnSimilarityColor(coordinate);
             if (drawCellAsInnerCircle) {
-                painter.drawCellInnerCircle(coordinate, calculateColumnSimilarityColor(coordinate), null, 0.0d, StrokeAdjustment.CENTERED);
+                painter.drawCellInnerCircle(coordinate, color, null, 0.0d, StrokeAdjustment.CENTERED);
             } else {
-                painter.fillCell(coordinate, calculateColumnSimilarityColor(coordinate));
+                painter.fillCell(coordinate, color);
             }
             if (font != null) {
-                painter.drawCenteredTextInCell(coordinate, coordinate.asString(), TEXT_COLOR, font);
+                painter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), TEXT_COLOR, font);
             }
         });
+
+        if (drawTest) {
+            drawTest();
+        }
     }
 
     private void drawTest() {
+        if (overlayPainter.cellDimension().edgeLength() < 16.0d) {
+            AppLogger.warn("edge length is too small for drawing test elements, skipping test drawing.");
+            return;
+        }
+
         Color t1 = new Color(1.0, 0.0, 1.0, 0.5);
         Color t2 = new Color(1.0, 1.0, 0.0, 0.5);
 
@@ -183,11 +204,24 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         }
 
         painter.drawTriangle(new GridCoordinate(11, 4),
-                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().sideLength(), painter.gridStructure().cellShape(), CellShape.TRIANGLE),
+                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.TRIANGLE),
                 Color.WHITE, Color.BLACK, 4.0d);
         painter.drawHexagon(new GridCoordinate(9, 3),
-                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().sideLength(), painter.gridStructure().cellShape(), CellShape.HEXAGON),
+                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.HEXAGON),
                 Color.WHITE, Color.BLACK, 4.0d);
+
+      /*
+        boolean leftEdge = true;
+        painter.drawColumnEdgeLine(0, 0, 3, leftEdge, Color.RED, 2.0d);
+        painter.drawColumnEdgeLine(2, 1, 3, leftEdge, Color.RED, 2.0d);
+        painter.drawColumnEdgeLine(4, 1, 4, leftEdge, Color.RED, 2.0d);
+        painter.drawColumnEdgeLine(6, 0, 15, leftEdge, Color.RED, 2.0d);
+
+        painter.drawColumnEdgeLine(7, 0, 3, leftEdge, Color.RED, 2.0d);
+        painter.drawColumnEdgeLine(9, 1, 3, leftEdge, Color.RED, 2.0d);
+        painter.drawColumnEdgeLine(11, 1, 4, leftEdge, Color.RED, 2.0d);
+        painter.drawColumnEdgeLine(13, 0, 15, leftEdge, Color.RED, 2.0d);
+*/
     }
 
     private Color calculateColumnSimilarityColor(GridCoordinate coordinate) {
@@ -196,9 +230,22 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         return switch ((columnGroup << 1) | rowGroup) {
             case 0 -> Color.LIGHTSKYBLUE;       // Column 0, Row 0
-            case 1 -> Color.LIGHTSTEELBLUE;     // Column 0, Row 1 (cooler blue)
+            case 1 -> Color.LIGHTSTEELBLUE;     // Column 0, Row 1
             case 2 -> Color.PALEGREEN;          // Column 1, Row 0
-            case 3 -> Color.MEDIUMAQUAMARINE;   // Column 1, Row 1 (stronger green)
+            case 3 -> Color.MEDIUMAQUAMARINE;   // Column 1, Row 1
+            default -> throw new IllegalStateException("Unexpected value");
+        };
+    }
+
+    private Color calculateColumnBlackWhiteColor(GridCoordinate coordinate) {
+        int columnGroup = coordinate.x() % 2;
+        int rowGroup = coordinate.y() % 2;
+
+        return switch ((columnGroup << 1) | rowGroup) {
+            case 0 -> Color.WHITE;       // Column 0, Row 0
+            case 1 -> Color.LIGHTGRAY;     // Column 0, Row 1
+            case 2 -> Color.DARKGRAY;          // Column 1, Row 0
+            case 3 -> Color.GRAY;   // Column 1, Row 1
             default -> throw new IllegalStateException("Unexpected value");
         };
     }
