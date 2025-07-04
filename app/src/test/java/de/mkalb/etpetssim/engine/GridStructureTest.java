@@ -58,15 +58,42 @@ class GridStructureTest {
     }
 
     @Test
-    void testAllCoordinates() {
+    void testCoordinatesStream() {
         GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
                 new GridSize(20, 30));
 
-        List<GridCoordinate> coordinates = structure.allCoordinates().toList();
+        List<GridCoordinate> coordinates = structure.coordinatesStream().toList();
         assertEquals(20 * 30, coordinates.size());
         assertTrue(coordinates.contains(new GridCoordinate(10, 15)));
         assertEquals(new GridCoordinate(0, 0), coordinates.getFirst());
         assertEquals(new GridCoordinate(19, 29), coordinates.getLast());
+
+        // Check that all coordinates are valid and unique
+        Set<GridCoordinate> unique = new HashSet<>(coordinates);
+        assertEquals(coordinates.size(), unique.size());
+        for (GridCoordinate c : coordinates) {
+            assertTrue(structure.isCoordinateValid(c));
+        }
+    }
+
+    @Test
+    void testCoordinatesList() {
+        GridStructure structure = new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
+                new GridSize(20, 30));
+
+        List<GridCoordinate> coordinates = structure.coordinatesList();
+        assertEquals(20 * 30, coordinates.size());
+        assertTrue(coordinates.contains(new GridCoordinate(10, 15)));
+        assertEquals(new GridCoordinate(0, 0), coordinates.getFirst());
+        assertEquals(new GridCoordinate(19, 29), coordinates.getLast());
+
+        // Check that all coordinates are valid and unique
+        Set<GridCoordinate> unique = new HashSet<>(coordinates);
+        assertEquals(coordinates.size(), unique.size());
+        for (GridCoordinate c : coordinates) {
+            assertTrue(structure.isCoordinateValid(c));
+        }
     }
 
     @Test

@@ -110,17 +110,35 @@ public record GridStructure(GridTopology topology, GridSize size) {
     /**
      * Returns a stream of all valid coordinates in the grid.
      * <p>
-     * The coordinates are traversed row by row: for each row from top to bottom,
+     * The coordinates are produced in row-major order: for each row from top to bottom,
      * all columns from left to right are included, starting at (0, 0) and ending at the bottom-right corner.
      *
-     * @return a stream of all valid grid coordinates
+     * @return a stream of all valid grid coordinates in row-major order
      */
     @SuppressWarnings("GrazieInspection")
-    public Stream<GridCoordinate> allCoordinates() {
+    public Stream<GridCoordinate> coordinatesStream() {
         return IntStream.range(0, size.width())
                         .boxed()
                         .flatMap(x -> IntStream.range(0, size.height())
                                                .mapToObj(y -> new GridCoordinate(x, y)));
+    }
+
+    /**
+     * Returns a list of all valid coordinates in the grid.
+     * <p>
+     * The coordinates are ordered row by row: for each row from top to bottom,
+     * all columns from left to right are included, starting at (0, 0) and ending at the bottom-right corner.
+     *
+     * @return a list of all valid grid coordinates in row-major order
+     */
+    public List<GridCoordinate> coordinatesList() {
+        List<GridCoordinate> coordinates = new ArrayList<>(size().area());
+        for (int y = 0; y < size().height(); y++) {
+            for (int x = 0; x < size().width(); x++) {
+                coordinates.add(new GridCoordinate(x, y));
+            }
+        }
+        return coordinates;
     }
 
     /**

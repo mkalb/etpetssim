@@ -184,7 +184,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         }
 
         // Cells at all coordinates
-        structure.allCoordinates().forEachOrdered(coordinate -> {
+        structure.coordinatesStream().forEachOrdered(coordinate -> {
             Color color = useColorBlackWhite ? calculateColumnBlackWhiteColor(coordinate) : calculateColumnSimilarityColor(coordinate);
             Color textColor = useColorBlackWhite ? Color.BLACK : TEXT_COLOR;
             if (drawCellAsInnerCircle) {
