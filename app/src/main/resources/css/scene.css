@@ -88,3 +88,8 @@
 .simulationHeader-url-hyperlink:hover {
     -fx-text-fill: #004a99;
 }
+
+/* Start screen styling */
+.startscreen-title-label {
+    -fx-font-size: 36px;
+}
