@@ -66,6 +66,7 @@ public enum GridEdgeBehavior {
      *
      * @return the resource key for the label of the enum GridEdgeBehavior
      */
+    @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
         return "gridedgebehavior.label";
     }

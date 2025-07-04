@@ -8,6 +8,7 @@ import java.util.*;
  *
  * @see GridEdgeBehavior
  */
+@SuppressWarnings("SpellCheckingInspection")
 public enum EdgeBehavior {
 
     /**
@@ -51,6 +52,7 @@ public enum EdgeBehavior {
      *
      * @return the resource key for the label of the enum EdgeBehavior
      */
+    @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
         return "edgebehavior.label";
     }

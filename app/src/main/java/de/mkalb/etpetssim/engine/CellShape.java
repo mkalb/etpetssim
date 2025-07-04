@@ -13,6 +13,7 @@ import java.util.*;
  * - {@code edge} (plural: {@code edges}): a straight line connecting two vertices.<br>
  * These terms are used consistently throughout the framework for clarity and precision.
  */
+@SuppressWarnings("SpellCheckingInspection")
 public enum CellShape {
 
     /**
@@ -50,6 +51,7 @@ public enum CellShape {
      *
      * @return the resource key for the label of the enum CellShape
      */
+    @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
         return "cellshape.label";
     }
