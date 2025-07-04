@@ -285,4 +285,13 @@ public enum SimulationType {
         return AppResources.getCss(cssPath);
     }
 
+    /**
+     * Returns the resource key for the label (title) of the enum SimulationType.
+     *
+     * @return the resource key for the label of the enum SimulationType
+     */
+    public static String labelResourceKey() {
+        return "simulationtype.label";
+    }
+
 }

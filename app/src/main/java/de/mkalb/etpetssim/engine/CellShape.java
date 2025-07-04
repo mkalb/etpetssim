@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine;
 
+import java.util.*;
+
 /**
  * Defines the possible shapes for a cell in a regular two-dimensional grid.
  * <p>
@@ -16,27 +18,40 @@ public enum CellShape {
     /**
      * Regular triangle: 3 vertices and 3 edges.
      */
-    TRIANGLE(3),
+    TRIANGLE(3, "cellshape.triangle"),
 
     /**
      * Regular quadrilateral (square): 4 vertices and 4 edges.
      */
-    SQUARE(4),
+    SQUARE(4, "cellshape.square"),
 
     /**
      * Regular hexagon: 6 vertices and 6 edges.
      */
-    HEXAGON(6);
+    HEXAGON(6, "cellshape.hexagon");
 
     private final int vertexCount;
+    private final String resourceKey;
 
     /**
-     * Constructs a cell shape with the specified number of vertices (and edges).
+     * Constructs a cell shape with the specified number of vertices (and edges) and a resource key.
      *
      * @param vertexCount the number of vertices (and edges) for this shape
+     * @param resourceKey the resource key for this shape
      */
-    CellShape(int vertexCount) {
+    CellShape(int vertexCount, String resourceKey) {
+        Objects.requireNonNull(resourceKey);
         this.vertexCount = vertexCount;
+        this.resourceKey = resourceKey;
+    }
+
+    /**
+     * Returns the resource key for the label (title) of the enum CellShape
+     *
+     * @return the resource key for the label of the enum CellShape
+     */
+    public static String labelResourceKey() {
+        return "cellshape.label";
     }
 
     /**
@@ -49,6 +64,17 @@ public enum CellShape {
      */
     public int vertexCount() {
         return vertexCount;
+    }
+
+    /**
+     * Returns the resource key associated with this cell shape.
+     * <p>
+     * The resource key can be used for resource lookup purposes.
+     *
+     * @return the resource key for this cell shape
+     */
+    public String resourceKey() {
+        return resourceKey;
     }
 
 }
