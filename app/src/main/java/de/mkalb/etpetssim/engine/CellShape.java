@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Defines the possible shapes for a cell in a regular two-dimensional grid.
  * <p>
- * Each shape is a regular polygon, meaning it is convex, symmetrical, and all sides and angles are equal.
+ * Each shape is a regular polygon, meaning it is convex, symmetrical, and all edges (sides) and angles are equal.
  * The number of {@code vertices} (corner points) is always equal to the number of {@code edges} (sides).
  * <p>
  * <strong>Terminology:</strong><br>

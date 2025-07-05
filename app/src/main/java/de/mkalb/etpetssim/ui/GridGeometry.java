@@ -53,15 +53,15 @@ public final class GridGeometry {
     public static final double THREE_HALVES = 3.0d / 2.0d;
 
     /**
-     * Minimum side length of a cell in pixels.
+     * Minimum edge length of a cell in pixels.
      * This constant is 1.0.
      */
-    public static final double MIN_SIDE_LENGTH = 1.0d;
+    public static final double MIN_EDGE_LENGTH = 1.0d;
     /**
-     * Maximum side length of a cell in pixels.
-     * This constant is 4,096.0.
+     * Maximum edge length of a cell in pixels.
+     * This constant is 1,024.0.
      */
-    public static final double MAX_SIDE_LENGTH = 4_096.0d;
+    public static final double MAX_EDGE_LENGTH = 1_024.0d;
 
     /**
      * Offset candidates for TRIANGLE cells, starting with the most likely center (0,0).
@@ -94,82 +94,83 @@ public final class GridGeometry {
     }
 
     /**
-     * Converts the side length of a cell to match the width of another cell shape.
+     * Converts the edge length of a cell to match the width of another cell shape.
      * This method ensures that the resulting cell shape has the same width as the original cell shape.
      *
-     * @param fromSideLength the side length of the original cell shape
+     * @param fromEdgeLength the edge length of the original cell shape
      * @param fromCellShape the shape of the original cell
      * @param toCellShape the shape of the target cell
-     * @return the side length required for the target cell shape to match the width of the original cell shape
+     * @return the edge length required for the target cell shape to match the width of the original cell shape
      */
-    public static double convertSideLengthToMatchWidth(double fromSideLength, CellShape fromCellShape, CellShape toCellShape) {
+    public static double convertEdgeLengthToMatchWidth(double fromEdgeLength, CellShape fromCellShape, CellShape toCellShape) {
         Objects.requireNonNull(fromCellShape);
         Objects.requireNonNull(toCellShape);
 
         if (fromCellShape == toCellShape) {
-            return fromSideLength;
+            return fromEdgeLength;
         }
 
         if (fromCellShape == CellShape.HEXAGON) {
-            return fromSideLength * 2;
+            return fromEdgeLength * 2;
         }
 
         if (toCellShape == CellShape.HEXAGON) {
-            return fromSideLength / 2;
+            return fromEdgeLength / 2;
         }
 
-        return fromSideLength;
+        return fromEdgeLength;
     }
 
     /**
-     * Computes the dimensions of a cell based on its side length and shape.
+     * Computes the dimensions of a cell based on its edge length and shape.
      *
-     * @param sideLength the length of each side of the cell in pixels, must be between MIN_SIDE_LENGTH and MAX_SIDE_LENGTH
+     * @param edgeLength the length of each edge of the cell in pixels, must be between {@link #MIN_EDGE_LENGTH}
+     *                   and  {@link #MAX_EDGE_LENGTH}
      * @param shape the shape of the cell
      * @return a CellDimension object representing the dimensions of the cell
-     * @see GridGeometry#MIN_SIDE_LENGTH
-     * @see GridGeometry#MAX_SIDE_LENGTH
+     * @see GridGeometry#MIN_EDGE_LENGTH
+     * @see GridGeometry#MAX_EDGE_LENGTH
      */
-    public static CellDimension computeCellDimension(double sideLength, CellShape shape) {
+    public static CellDimension computeCellDimension(double edgeLength, CellShape shape) {
         Objects.requireNonNull(shape);
-        if ((sideLength < MIN_SIDE_LENGTH) || (sideLength > MAX_SIDE_LENGTH)) {
-            throw new IllegalArgumentException("Side length must be between " + MIN_SIDE_LENGTH + " and " + MAX_SIDE_LENGTH + ".");
+        if ((edgeLength < MIN_EDGE_LENGTH) || (edgeLength > MAX_EDGE_LENGTH)) {
+            throw new IllegalArgumentException("Edge length must be between " + MIN_EDGE_LENGTH + " and " + MAX_EDGE_LENGTH + ".");
         }
 
-        double halfSideLength = sideLength * ONE_HALF;
+        double halfEdgeLength = edgeLength * ONE_HALF;
         double width = switch (shape) {
-            case TRIANGLE, SQUARE -> sideLength;
-            case HEXAGON -> sideLength + sideLength;
+            case TRIANGLE, SQUARE -> edgeLength;
+            case HEXAGON -> edgeLength + edgeLength;
         };
         double halfWidth = switch (shape) {
-            case TRIANGLE, SQUARE -> halfSideLength;
-            case HEXAGON -> sideLength;
+            case TRIANGLE, SQUARE -> halfEdgeLength;
+            case HEXAGON -> edgeLength;
         };
         double height = switch (shape) {
-            case TRIANGLE -> SQRT_THREE * halfSideLength;
-            case SQUARE -> sideLength;
-            case HEXAGON -> SQRT_THREE * sideLength;
+            case TRIANGLE -> SQRT_THREE * halfEdgeLength;
+            case SQUARE -> edgeLength;
+            case HEXAGON -> SQRT_THREE * edgeLength;
         };
         double halfHeight = switch (shape) {
             case TRIANGLE, HEXAGON -> height * ONE_HALF;
-            case SQUARE -> halfSideLength;
+            case SQUARE -> halfEdgeLength;
         };
         double innerRadius = switch (shape) {
             case TRIANGLE -> height * ONE_THIRD;
-            case SQUARE -> halfSideLength;
+            case SQUARE -> halfEdgeLength;
             case HEXAGON -> halfHeight;
         };
         double outerRadius = switch (shape) {
-            case TRIANGLE -> Math.sqrt(Math.pow(halfSideLength, TWO) + Math.pow(innerRadius, TWO));
-            case SQUARE -> SQRT_TWO * halfSideLength;
-            case HEXAGON -> sideLength;
+            case TRIANGLE -> Math.sqrt(Math.pow(halfEdgeLength, TWO) + Math.pow(innerRadius, TWO));
+            case SQUARE -> SQRT_TWO * halfEdgeLength;
+            case HEXAGON -> edgeLength;
         };
         double columnWidth = switch (shape) {
-            case TRIANGLE, SQUARE -> sideLength;
-            case HEXAGON -> sideLength * THREE_HALVES;
+            case TRIANGLE, SQUARE -> edgeLength;
+            case HEXAGON -> edgeLength * THREE_HALVES;
         };
-        return new CellDimension(sideLength, width, height,
-                halfSideLength, halfWidth, halfHeight,
+        return new CellDimension(edgeLength, width, height,
+                halfEdgeLength, halfWidth, halfHeight,
                 innerRadius, outerRadius,
                 columnWidth, height);
     }
@@ -214,20 +215,21 @@ public final class GridGeometry {
 
     /**
      * Computes the total pixel dimensions of the grid area based on the grid size,
-     * cell side length, and cell shape.
+     * cell edge length, and cell shape.
      *
      * <p>This method is a convenience wrapper that combines the computation of
      * cell dimensions and grid dimensions into a single call.</p>
      *
      * @param gridSize the size of the grid in terms of columns and rows
-     * @param sideLength the length of each side of the cell in pixels, must be between MIN_SIDE_LENGTH and MAX_SIDE_LENGTH
+     * @param edgeLength the length of each edge of the cell in pixels, must be between {@link #MIN_EDGE_LENGTH}
+     *                        and  {@link #MAX_EDGE_LENGTH}
      * @param shape the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
      * @see GridGeometry#computeCellDimension(double, CellShape)
      * @see GridGeometry#computeGridDimension(GridSize, CellDimension, CellShape)
      */
-    public static Dimension2D computeGridDimension(GridSize gridSize, double sideLength, CellShape shape) {
-        return computeGridDimension(gridSize, computeCellDimension(sideLength, shape), shape);
+    public static Dimension2D computeGridDimension(GridSize gridSize, double edgeLength, CellShape shape) {
+        return computeGridDimension(gridSize, computeCellDimension(edgeLength, shape), shape);
     }
 
     /**

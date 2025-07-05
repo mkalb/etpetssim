@@ -38,26 +38,26 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private @Nullable GridCoordinate lastClickedCoordinate = null;
     private @Nullable GridCoordinate lastHoverCoordinate = null;
 
-    public SimulationLabViewBuilder(GridStructure structure, double cellSideLength) {
+    public SimulationLabViewBuilder(GridStructure structure, double cellEdgeLength) {
         this.structure = structure;
 
         // Canvas and FXGridCanvasPainter
-        Canvas canvas = new Canvas(cellSideLength, cellSideLength);
-        painter = new FXGridCanvasPainter(canvas, structure, cellSideLength);
-        double border = 30.0d; // only for testing grid dimension
-        canvas.setWidth(Math.min(5_000.0d, painter.gridDimension2D().getWidth() + border));
-        canvas.setHeight(Math.min(3_000.0d, painter.gridDimension2D().getHeight() + border));
+        Canvas canvas = new Canvas(cellEdgeLength, cellEdgeLength);
+        painter = new FXGridCanvasPainter(canvas, structure, cellEdgeLength);
+        double additionalBorder = 20.0d; // only for testing grid dimension
+        canvas.setWidth(Math.min(6_000.0d, painter.gridDimension2D().getWidth() + additionalBorder));
+        canvas.setHeight(Math.min(4_000.0d, painter.gridDimension2D().getHeight() + additionalBorder));
 
-        Canvas overlayCanvas = new Canvas(cellSideLength, cellSideLength);
-        overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellSideLength);
+        Canvas overlayCanvas = new Canvas(cellEdgeLength, cellEdgeLength);
+        overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
         overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
         overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
 
         // Log information
-        AppLogger.info("Structure: " + structure.toDisplayString());
+        AppLogger.info("Structure:       " + structure.toDisplayString());
         AppLogger.info("GridDimension2D: " + overlayPainter.gridDimension2D());
-        AppLogger.info("Cell count: " + structure.cellCount());
-        AppLogger.info("CellDimension: " + overlayPainter.cellDimension());
+        AppLogger.info("Cell count:      " + structure.cellCount());
+        AppLogger.info("CellDimension:   " + overlayPainter.cellDimension());
 
         // Font
         double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
@@ -237,10 +237,10 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         }
 
         painter.drawTriangle(new GridCoordinate(11, 4),
-                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.TRIANGLE),
+                GridGeometry.convertEdgeLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.TRIANGLE),
                 Color.WHITE, Color.BLACK, 4.0d);
         painter.drawHexagon(new GridCoordinate(9, 3),
-                GridGeometry.convertSideLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.HEXAGON),
+                GridGeometry.convertEdgeLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.HEXAGON),
                 Color.WHITE, Color.BLACK, 4.0d);
 
       /*
