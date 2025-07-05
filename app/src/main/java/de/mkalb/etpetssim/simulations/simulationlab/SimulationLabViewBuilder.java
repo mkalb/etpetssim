@@ -95,7 +95,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         registerEvents();
 
-        drawCanvas(true, false, false);
+        drawCanvas(true, false, true);
 
         return simulationBorderPane;
     }
@@ -244,6 +244,8 @@ public class SimulationLabViewBuilder implements Builder<Region> {
                 GridGeometry.convertEdgeLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.HEXAGON),
                 Color.WHITE, Color.BLACK, 4.0d);
 
+        painter.drawCellFrameSegment(new GridCoordinate(0, 1), Color.DARKGREEN, 5.0, PolygonViewDirection.LEFT);
+        painter.drawCellFrameSegment(new GridCoordinate(1, 2), Color.DARKBLUE, 5.0, PolygonViewDirection.LEFT);
       /*
         boolean leftEdge = true;
         painter.drawColumnEdgeLine(0, 0, 3, leftEdge, Color.RED, 2.0d);
