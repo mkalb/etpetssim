@@ -2,19 +2,18 @@ package de.mkalb.etpetssim.engine;
 
 import java.util.*;
 
-public final class ArrayGridModel<T> implements GridModel<T> {
+public final class SparseGridModel<T> implements GridModel<T> {
 
     private final GridStructure structure;
     private final T defaultValue;
-    private final Object[][] data;
+    private final Map<GridCoordinate, T> data;
 
-    public ArrayGridModel(GridStructure structure, T defaultValue) {
+    public SparseGridModel(GridStructure structure, T defaultValue) {
         Objects.requireNonNull(structure);
         Objects.requireNonNull(defaultValue);
         this.structure = Objects.requireNonNull(structure);
         this.defaultValue = Objects.requireNonNull(defaultValue);
-        data = new Object[structure.size().height()][structure.size().width()];
-        clear();
+        data = new HashMap<>(); // Optimize initial size
     }
 
     @Override
@@ -28,27 +27,24 @@ public final class ArrayGridModel<T> implements GridModel<T> {
     }
 
     @Override
-    public ArrayGridModel<T> copy() {
-        ArrayGridModel<T> clone = new ArrayGridModel<>(structure, defaultValue);
-        for (int y = 0; y < structure.size().height(); y++) {
-            System.arraycopy(data[y], 0, clone.data[y], 0, structure.size().width());
-        }
+    public GridModel<T> copy() {
+        SparseGridModel<T> clone = new SparseGridModel<>(structure, defaultValue);
+        clone.data.putAll(data);
         return clone;
     }
 
     @Override
-    public ArrayGridModel<T> copyWithDefaultValues() {
-        return new ArrayGridModel<>(structure, defaultValue);
+    public GridModel<T> copyWithDefaultValues() {
+        return new SparseGridModel<>(structure, defaultValue);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public T getValue(GridCoordinate coordinate) {
         Objects.requireNonNull(coordinate);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
-        return (T) data[coordinate.y()][coordinate.x()];
+        return data.getOrDefault(coordinate, defaultValue);
     }
 
     @Override
@@ -58,24 +54,31 @@ public final class ArrayGridModel<T> implements GridModel<T> {
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
-        data[coordinate.y()][coordinate.x()] = Objects.requireNonNull(value, "value must not be null");
-    }
-
-    @Override
-    public void clear() {
-        for (int y = 0; y < structure.size().height(); y++) {
-            Arrays.fill(data[y], defaultValue);
+        if (defaultValue.equals(value)) {
+            data.remove(coordinate);
+        } else {
+            data.put(coordinate, value);
         }
     }
 
     @Override
+    public void clear() {
+        data.clear();
+    }
+
+    @Override
     public boolean isSparse() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return data.isEmpty();
     }
 
     @Override
     public String toString() {
-        return "ArrayGridModel{" +
+        return "SparseGridModel{" +
                 "structure=" + structure +
                 ", defaultValue=" + defaultValue +
                 '}';

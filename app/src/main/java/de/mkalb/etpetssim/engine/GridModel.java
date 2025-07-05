@@ -10,24 +10,30 @@ public interface GridModel<T> {
 
     T defaultValue();
 
+    GridModel<T> copy();
+
+    GridModel<T> copyWithDefaultValues();
+
     T getValue(GridCoordinate coordinate);
 
     void setValue(GridCoordinate coordinate, T value);
 
-    GridModel<T> copy();
+    default void clear() {
+        fill(defaultValue());
+    }
 
-    GridModel<T> copyBlank();
+    boolean isSparse();
 
-    default void setDefaultValue(GridCoordinate coordinate) {
+    default void setValueToDefault(GridCoordinate coordinate) {
         setValue(coordinate, defaultValue());
     }
 
-    default boolean contains(GridCoordinate coordinate) {
+    default boolean isCoordinateValid(GridCoordinate coordinate) {
         return structure().isCoordinateValid(coordinate);
     }
 
     default Optional<T> getValueAsOptional(GridCoordinate coordinate) {
-        if (contains(coordinate)) {
+        if (isCoordinateValid(coordinate)) {
             return Optional.of(getValue(coordinate));
         } else {
             return Optional.empty();
@@ -40,14 +46,6 @@ public interface GridModel<T> {
 
     default void fill(Function<GridCoordinate, T> mapper) {
         structure().coordinatesStream().forEachOrdered(coordinate -> setValue(coordinate, mapper.apply(coordinate)));
-    }
-
-    default void clear() {
-        fill(defaultValue());
-    }
-
-    default boolean isSparse() {
-        return false;
     }
 
     default Map<GridCoordinate, T> toMap(Predicate<T> isValid) {
