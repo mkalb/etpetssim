@@ -78,13 +78,9 @@ public final class GridGeometry {
     private static final List<int[]> HEXAGON_NEIGHBOR_OFFSETS = List.of(
             new int[]{0, 0},
             new int[]{-1, 0},
-            new int[]{1, 0},
             new int[]{0, -1},
-            new int[]{0, 1},
             new int[]{-1, -1},
-            new int[]{1, -1},
-            new int[]{-1, 1},
-            new int[]{1, 1}
+            new int[]{-1, 1}
     );
 
     /**
@@ -381,24 +377,19 @@ public final class GridGeometry {
 
         return switch (structure.cellShape()) {
             case TRIANGLE -> TRIANGLE_NEIGHBOR_OFFSETS.stream()
-                                                  .map(offset -> new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]))
-                                                  .filter(structure::isCoordinateValid)
-                                                  .filter(c -> isPointInTriangleCell(point, c, cellDimension))
-                                                  .findFirst()
-                                                  .orElse(GridCoordinate.ILLEGAL);
+                                                      .map(offset -> new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]))
+                                                      .filter(structure::isCoordinateValid)
+                                                      .filter(c -> isPointInTriangleCell(point, c, cellDimension))
+                                                      .findFirst()
+                                                      .orElse(GridCoordinate.ILLEGAL);
             case SQUARE -> estimatedCoordinate;
             case HEXAGON -> {
-                // Test nine candidate coordinates for the hexagon cell.
+                // Test candidate coordinates for the hexagon cell.
                 GridCoordinate closestValidHexCell = GridCoordinate.ILLEGAL;
                 double minDistance = Double.MAX_VALUE;
                 double earlyAcceptThreshold = cellDimension.halfEdgeLength();
                 for (int[] offset : HEXAGON_NEIGHBOR_OFFSETS) {
                     GridCoordinate candidate = new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]);
-
-                    // Skip invalid coordinates.
-                    if (!structure.isCoordinateValid(candidate)) {
-                        continue;
-                    }
 
                     Point2D topLeft = toCanvasPosition(candidate, cellDimension, structure.cellShape());
 
