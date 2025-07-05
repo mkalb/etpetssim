@@ -187,6 +187,27 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Draws a partial frame (one or more connected edges) of a cell at the specified grid coordinate.
+     * The frame segment is defined by the cell's shape and the given view direction.
+     *
+     * @param coordinate the grid coordinate of the cell whose frame segment is to be drawn
+     * @param strokeColor the color used to draw the frame segment (must not be null)
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param direction the direction specifying which part of the cell frame to draw
+     */
+    public void drawCellFrameSegment(GridCoordinate coordinate,
+                                     Paint strokeColor,
+                                     double strokeLineWidth,
+                                     PolygonViewDirection direction) {
+        Objects.requireNonNull(coordinate);
+        Objects.requireNonNull(strokeColor);
+        Objects.requireNonNull(direction);
+
+        double[][] cellPolygon = GridGeometry.computeCellFrameSegmentPolyline(coordinate, cellDimension, structure.cellShape(), direction);
+        drawPolyline(cellPolygon[0], cellPolygon[1], strokeColor, strokeLineWidth);
+    }
+
+    /**
      * Draws the bounding box of a cell at the specified grid coordinate.
      * The bounding box is defined by the cell's shape and dimensions.
      *
@@ -433,6 +454,29 @@ public final class FXGridCanvasPainter {
                 gc.setStroke(strokeColor);
                 gc.setLineWidth(strokeLineWidth);
                 gc.strokePolygon(xPoints, yPoints, xPoints.length);
+            }
+        }
+    }
+
+    /**
+     * Draws a polyline (an open series of connected line segments) on the canvas.
+     * The polyline is defined by arrays of x- and y-coordinates for its vertices.
+     *
+     * @param xPoints an array of x-coordinates for the vertices of the polyline
+     * @param yPoints an array of y-coordinates for the vertices of the polyline
+     * @param strokeColor the color used to draw the polyline's border
+     * @param strokeLineWidth the width of the stroke line in pixels
+     */
+    public void drawPolyline(double[] xPoints, double[] yPoints,
+                             Paint strokeColor,
+                             double strokeLineWidth) {
+        Objects.requireNonNull(strokeColor);
+
+        if ((xPoints.length > 0) && (xPoints.length == yPoints.length)) {
+            if (strokeLineWidth > 0) {
+                gc.setStroke(strokeColor);
+                gc.setLineWidth(strokeLineWidth);
+                gc.strokePolyline(xPoints, yPoints, xPoints.length);
             }
         }
     }
