@@ -2,9 +2,7 @@ package de.mkalb.etpetssim.simulations.simulationlab;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
-import de.mkalb.etpetssim.ui.GridGeometry;
-import de.mkalb.etpetssim.ui.StrokeAdjustment;
+import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -25,8 +23,8 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private static final Color TEXT_COLOR = Color.DARKSLATEGRAY;
     private static final Color CANVAS_COLOR = Color.BLACK;
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
-    private static final Color TRANSLUCENT_WHITE = new Color(1.0, 1.0, 1.0, 0.2); // for lightening effect
-    private static final Color TRANSLUCENT_BLACK = new Color(0.0, 0.0, 0.0, 0.2); // for darkening effect
+    private static final Color TRANSLUCENT_WHITE = FXPaintBuilder.createColorWithAlpha(Color.WHITE, 0.2); // for lightening effect
+    private static final Color TRANSLUCENT_BLACK = FXPaintBuilder.createColorWithAlpha(Color.BLACK,  0.2); // for darkening effect
 
     private static final double MOUSE_CLICK_LINE_WIDTH = 8.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
@@ -98,7 +96,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         registerEvents();
 
-        drawCanvas(false, false, false);
+        drawCanvas(true, false, true);
 
         return simulationBorderPane;
     }
@@ -180,7 +178,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
         if (useColorBlackWhite) {
             painter.fillGridBackground(Color.WHITE);
         } else {
-            painter.fillGridBackground(GRID_BACKGROUND_COLOR);
+            painter.fillGridBackground(FXPaintBuilder.createHorizontalGradient(GRID_BACKGROUND_COLOR.darker(), GRID_BACKGROUND_COLOR.brighter()));
         }
 
         // Cells at all coordinates
@@ -208,8 +206,8 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             return;
         }
 
-        Color t1 = new Color(1.0, 0.0, 1.0, 0.5);
-        Color t2 = new Color(1.0, 1.0, 0.0, 0.5);
+        Color t1 = FXPaintBuilder.createColorWithAlpha(Color.RED,  0.5);
+        Color t2 = FXPaintBuilder.createColorWithAlpha(Color.YELLOW,  0.8);
 
         painter.drawCellBoundingBox(new GridCoordinate(2, 4), t1, t2, 8.0d, StrokeAdjustment.INSIDE);
         painter.drawCellBoundingBox(new GridCoordinate(2, 6), t2, t1, 8.0d, StrokeAdjustment.INSIDE);
