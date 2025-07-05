@@ -301,27 +301,32 @@ public final class GridGeometry {
     }
 
     /**
-     * Converts a canvas position in pixel coordinates to the corresponding grid coordinate.
+     * Estimates the grid coordinate corresponding to a given canvas position in pixel coordinates.
      *
-     * <p>For {@code SQUARE} cells, this method performs a direct mathematical conversion.
-     * For {@code TRIANGLE} and {@code HEXAGON} cells, the conversion is not analytically invertible
-     * due to the staggered or interlocking layout. Instead, the method estimates a base coordinate
-     * and evaluates a set of nearby candidate cells to determine which one contains the given point.
-     * For triangles, barycentric coordinate checks are used; for hexagons, the closest valid cell
-     * center within a bounding box is selected.</p>
+     * <p>This method performs a fast, direct mathematical estimation of the grid coordinate for the specified
+     * canvas position, based on the cell dimensions and grid structure. For {@code SQUARE} cells, the conversion
+     * is exact. For {@code TRIANGLE} and {@code HEXAGON} cells, the result is an initial estimate that may not
+     * always match the actual cell containing the point, due to staggered or interlocking layouts. For precise
+     * mapping, use {@link #fromCanvasPosition(Point2D, CellDimension, Dimension2D, GridStructure)}.</p>
      *
      * @param point the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell
+     * @param gridDimension the total dimensions of the grid area in pixels; used to check if the point is within bounds
      * @param structure the grid structure defining the cell shape and size
-     * @return the grid coordinate corresponding to the canvas position, or {@code GridCoordinate.ILLEGAL} if no match is found
+     * @return the estimated grid coordinate, or {@code GridCoordinate.ILLEGAL} if the point is outside the grid area
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension, GridStructure structure) {
+    public static GridCoordinate estimateGridCoordinate(Point2D point, CellDimension cellDimension,
+                                                        Dimension2D gridDimension, GridStructure structure) {
         Objects.requireNonNull(point);
         Objects.requireNonNull(cellDimension);
+        Objects.requireNonNull(gridDimension);
         Objects.requireNonNull(structure);
 
-        if ((point.getX() < 0) || (point.getY() < 0)) {
+        if ((point.getX() < 0)
+                || (point.getY() < 0)
+                || (point.getX() >= gridDimension.getWidth())
+                || (point.getY() >= gridDimension.getHeight())) {
             return GridCoordinate.ILLEGAL;
         }
 
@@ -329,13 +334,7 @@ public final class GridGeometry {
             case TRIANGLE -> {
                 int estimatedGridX = (int) (point.getX() / cellDimension.columnWidth());
                 int estimatedGridY = (int) (point.getY() / cellDimension.rowHeight()) * 2; // see GridCoordinate.isTriangleRow()
-
-                yield TRIANGLE_NEIGHBOR_OFFSETS.stream()
-                                               .map(offset -> new GridCoordinate(estimatedGridX + offset[0], estimatedGridY + offset[1]))
-                                               .filter(structure::isCoordinateValid)
-                                               .filter(c -> isPointInTriangleCell(point, c, cellDimension))
-                                               .findFirst()
-                                               .orElse(GridCoordinate.ILLEGAL);
+                yield new GridCoordinate(estimatedGridX, estimatedGridY);
             }
             case SQUARE -> {
                 int x = (int) (point.getX() / cellDimension.columnWidth());
@@ -347,13 +346,54 @@ public final class GridGeometry {
                 boolean hasHexagonCellYOffset = (estimatedGridX % 2) != 0; // see GridCoordinate.hasHexagonCellYOffset()
                 double yOffset = hasHexagonCellYOffset ? ONE_HALF : ZERO;
                 int estimatedGridY = (int) ((point.getY() / cellDimension.rowHeight()) - yOffset);
+                yield new GridCoordinate(estimatedGridX, estimatedGridY);
+            }
+        };
+    }
 
+    /**
+     * Converts a canvas position in pixel coordinates to the corresponding grid coordinate.
+     *
+     * <p>For {@code SQUARE} cells, this method performs a direct mathematical conversion.
+     * For {@code TRIANGLE} and {@code HEXAGON} cells, the conversion is not analytically invertible
+     * due to the staggered or interlocking layout. Instead, the method estimates a base coordinate
+     * and evaluates a set of nearby candidate cells to determine which one contains the given point.
+     * For triangles, barycentric coordinate checks are used; for hexagons, the closest valid cell
+     * center within a bounding box is selected.</p>
+     *
+     * @param point the canvas position in pixel coordinates
+     * @param cellDimension the dimensions of the cell
+     * @param gridDimension the total dimensions of the grid area in pixels; used to check if the point is within bounds
+     * @param structure the grid structure defining the cell shape and size
+     * @return the grid coordinate corresponding to the canvas position, or {@code GridCoordinate.ILLEGAL} if no match is found
+     */
+    public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension,
+                                                    Dimension2D gridDimension, GridStructure structure) {
+        Objects.requireNonNull(point);
+        Objects.requireNonNull(cellDimension);
+        Objects.requireNonNull(gridDimension);
+        Objects.requireNonNull(structure);
+
+        GridCoordinate estimatedCoordinate = estimateGridCoordinate(point, cellDimension, gridDimension, structure);
+        if (estimatedCoordinate.isIllegal()) {
+            return estimatedCoordinate;
+        }
+
+        return switch (structure.cellShape()) {
+            case TRIANGLE -> TRIANGLE_NEIGHBOR_OFFSETS.stream()
+                                                  .map(offset -> new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]))
+                                                  .filter(structure::isCoordinateValid)
+                                                  .filter(c -> isPointInTriangleCell(point, c, cellDimension))
+                                                  .findFirst()
+                                                  .orElse(GridCoordinate.ILLEGAL);
+            case SQUARE -> estimatedCoordinate;
+            case HEXAGON -> {
                 // Test nine candidate coordinates for the hexagon cell.
                 GridCoordinate closestValidHexCell = GridCoordinate.ILLEGAL;
                 double minDistance = Double.MAX_VALUE;
                 double earlyAcceptThreshold = cellDimension.halfEdgeLength();
                 for (int[] offset : HEXAGON_NEIGHBOR_OFFSETS) {
-                    GridCoordinate candidate = new GridCoordinate(estimatedGridX + offset[0], estimatedGridY + offset[1]);
+                    GridCoordinate candidate = new GridCoordinate(estimatedCoordinate.x() + offset[0], estimatedCoordinate.y() + offset[1]);
 
                     // Skip invalid coordinates.
                     if (!structure.isCoordinateValid(candidate)) {

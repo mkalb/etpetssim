@@ -24,7 +24,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private static final Color CANVAS_COLOR = Color.BLACK;
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
     private static final Color TRANSLUCENT_WHITE = FXPaintBuilder.createColorWithAlpha(Color.WHITE, 0.2); // for lightening effect
-    private static final Color TRANSLUCENT_BLACK = FXPaintBuilder.createColorWithAlpha(Color.BLACK,  0.2); // for darkening effect
+    private static final Color TRANSLUCENT_BLACK = FXPaintBuilder.createColorWithAlpha(Color.BLACK, 0.2); // for darkening effect
 
     private static final double MOUSE_CLICK_LINE_WIDTH = 8.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
@@ -34,7 +34,6 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private final FXGridCanvasPainter overlayPainter;
     private final @Nullable Font font;
     private @Nullable GridCoordinate lastClickedCoordinate = null;
-    private @Nullable GridCoordinate lastHoverCoordinate = null;
 
     public SimulationLabViewBuilder(GridStructure structure, double cellEdgeLength) {
         this.structure = structure;
@@ -96,7 +95,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
 
         registerEvents();
 
-        drawCanvas(true, false, true);
+        drawCanvas(true, false, false);
 
         return simulationBorderPane;
     }
@@ -137,7 +136,7 @@ public class SimulationLabViewBuilder implements Builder<Region> {
     private void registerEvents() {
         Canvas overlayCanvas = overlayPainter.canvas();
         overlayCanvas.setOnMouseClicked(event -> {
-            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure);
+            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), overlayPainter.gridDimension2D(), structure);
             overlayPainter.clearCanvasBackground();
             if (overlayPainter.isOutsideGrid(coordinate)) {
                 lastClickedCoordinate = null;
@@ -151,23 +150,27 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             }
         });
 
+        overlayCanvas.setOnMouseExited(event -> overlayPainter.clearCanvasBackground());
         overlayCanvas.setOnMouseMoved(event -> {
-            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), structure);
-            if (!coordinate.equals(lastHoverCoordinate)) {
-                overlayPainter.clearCanvasBackground();
-                if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
-                    lastHoverCoordinate = coordinate;
-                    overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+            overlayPainter.clearCanvasBackground();
+            Point2D mousePoint = new Point2D(event.getX(), event.getY());
+            GridCoordinate estimatedCoordinate = GridGeometry.estimateGridCoordinate(mousePoint, painter.cellDimension(), overlayPainter.gridDimension2D(), structure);
+            if (!estimatedCoordinate.isIllegal()) {
+                overlayPainter.drawCell(estimatedCoordinate, null, Color.RED, 1.0d);
+            }
+            overlayPainter.drawCircle(mousePoint, 2.0d, Color.GREEN, null, 1.0d, StrokeAdjustment.CENTERED);
+            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(mousePoint, painter.cellDimension(), overlayPainter.gridDimension2D(), structure);
+            if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
+                overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
-                    if (overlayPainter.cellDimension().edgeLength() >= 8.0d) {
-                        overlayPainter.drawCellInnerCircle(coordinate, TRANSLUCENT_BLACK, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
-                        // overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
-                        // overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
-                    }
+                if (overlayPainter.cellDimension().edgeLength() >= 8.0d) {
+                    overlayPainter.drawCellInnerCircle(coordinate, TRANSLUCENT_BLACK, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
+                    // overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                    // overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
                 }
-                if (lastClickedCoordinate != null) {
-                    overlayPainter.drawCellOuterCircle(lastClickedCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-                }
+            }
+            if (lastClickedCoordinate != null) {
+                overlayPainter.drawCellOuterCircle(lastClickedCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
             }
         });
     }
@@ -206,8 +209,8 @@ public class SimulationLabViewBuilder implements Builder<Region> {
             return;
         }
 
-        Color t1 = FXPaintBuilder.createColorWithAlpha(Color.RED,  0.5);
-        Color t2 = FXPaintBuilder.createColorWithAlpha(Color.YELLOW,  0.8);
+        Color t1 = FXPaintBuilder.createColorWithAlpha(Color.RED, 0.5);
+        Color t2 = FXPaintBuilder.createColorWithAlpha(Color.YELLOW, 0.8);
 
         painter.drawCellBoundingBox(new GridCoordinate(2, 4), t1, t2, 8.0d, StrokeAdjustment.INSIDE);
         painter.drawCellBoundingBox(new GridCoordinate(2, 6), t2, t1, 8.0d, StrokeAdjustment.INSIDE);
