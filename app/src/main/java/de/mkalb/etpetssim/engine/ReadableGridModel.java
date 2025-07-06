@@ -8,6 +8,8 @@ import java.util.stream.*;
  * Read-only view of a grid model.
  *
  * @param <T> the type of values stored in the grid
+ *
+ * @see de.mkalb.etpetssim.engine.GridModel
  */
 public interface ReadableGridModel<T> {
 
@@ -71,6 +73,7 @@ public interface ReadableGridModel<T> {
      * @param isValid predicate to filter values
      * @return a map of coordinates to values
      */
+    // TODO Optimize and rename the method as soon as it is used later.
     default Map<GridCoordinate, T> toMap(Predicate<T> isValid) {
         Map<GridCoordinate, T> result = new LinkedHashMap<>();
         for (GridCoordinate coordinate : structure().coordinatesList()) {
@@ -87,6 +90,7 @@ public interface ReadableGridModel<T> {
      *
      * @return a map of coordinates to non-default values
      */
+    // TODO Optimize and rename the method as soon as it is used later.
     default Map<GridCoordinate, T> toMap() {
         return toMap(value -> !Objects.equals(value, defaultValue()));
     }
@@ -96,7 +100,8 @@ public interface ReadableGridModel<T> {
      *
      * @return a stream of grid values
      */
-    default Stream<T> stream() {
+    // TODO Optimize and rename the method as soon as it is used later.
+    default Stream<T> valuesAsStream() {
         return structure().coordinatesStream().map(this::getValue);
     }
 
@@ -105,8 +110,41 @@ public interface ReadableGridModel<T> {
      *
      * @return true if the grid is empty, false otherwise
      */
+    // TODO Optimize and rename the method as soon as it is used later.
     default boolean isEmpty() {
-        return stream().allMatch(value -> Objects.equals(value, defaultValue()));
+        return valuesAsStream().allMatch(value -> Objects.equals(value, defaultValue()));
+    }
+
+    /**
+     * Returns a stream of all grid cells (coordinate and value).
+     *
+     * @return a stream of GridCell<T>
+     */
+    // TODO Optimize and rename the method as soon as it is used later.
+    default Stream<GridCell<T>> cellsAsStream() {
+        return structure().coordinatesStream()
+                          .map(coordinate -> new GridCell<>(coordinate, getValue(coordinate)));
+    }
+
+    /**
+     * Returns a collection of all grid cells (coordinate and value).
+     *
+     * @return a collection of GridCell<T>
+     */
+    // TODO Optimize and rename the method as soon as it is used later.
+    default Collection<GridCell<T>> cellsAsCollection() {
+        return cellsAsStream().toList();
+    }
+
+    /**
+     * Returns a stream of grid cells whose value is not the default value.
+     *
+     * @return a stream of non-default GridCell<T>
+     */
+    // TODO Optimize and rename the method as soon as it is used later.
+    default Stream<GridCell<T>> nonDefaultCells() {
+        T def = defaultValue();
+        return cellsAsStream().filter(cell -> !Objects.equals(cell.value(), def));
     }
 
 }

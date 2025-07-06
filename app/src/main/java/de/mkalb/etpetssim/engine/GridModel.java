@@ -34,6 +34,7 @@ public interface GridModel<T> extends ReadableGridModel<T> {
 
     /**
      * Sets all grid cells to the default value.
+     * Should be overwritten by subclasses to optimize performance.
      */
     default void clear() {
         fill(defaultValue());
@@ -50,6 +51,7 @@ public interface GridModel<T> extends ReadableGridModel<T> {
 
     /**
      * Sets all grid cells to the specified value.
+     * Should be overwritten by subclasses to optimize performance.
      *
      * @param value the value to set
      */
@@ -62,6 +64,7 @@ public interface GridModel<T> extends ReadableGridModel<T> {
      *
      * @param mapper the function to compute values for each coordinate
      */
+    // TODO Optimize and rename the method as soon as it is used later.
     default void fill(Function<GridCoordinate, T> mapper) {
         structure().coordinatesStream().forEachOrdered(coordinate -> setValue(coordinate, mapper.apply(coordinate)));
     }

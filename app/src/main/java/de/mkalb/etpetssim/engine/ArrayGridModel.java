@@ -118,6 +118,19 @@ public final class ArrayGridModel<T> implements GridModel<T> {
     }
 
     /**
+     * Sets all grid cells to the specified value.
+     *
+     * @param value the value to set
+     */
+    @Override
+    public void fill(T value) {
+        Objects.requireNonNull(value);
+        for (Object[] row : data) {
+            Arrays.fill(row, value);
+        }
+    }
+
+    /**
      * Indicates that this grid model is not sparse.
      *
      * @return {@code false}, as this implementation is for dense grids

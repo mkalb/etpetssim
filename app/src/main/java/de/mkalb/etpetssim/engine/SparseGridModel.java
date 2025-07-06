@@ -102,7 +102,7 @@ public final class SparseGridModel<T> implements GridModel<T> {
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
-        if (Objects.equals(value, defaultValue)) {
+        if (value.equals(defaultValue)) {
             data.remove(coordinate);
         } else {
             data.put(coordinate, value);
@@ -115,6 +115,20 @@ public final class SparseGridModel<T> implements GridModel<T> {
     @Override
     public void clear() {
         data.clear();
+    }
+
+    /**
+     * Sets all grid cells to the specified value.
+     *
+     * @param value the value to set
+     */
+    @Override
+    public void fill(T value) {
+        Objects.requireNonNull(value);
+        data.clear(); // Clear existing entries
+        if (!value.equals(defaultValue)) { // Set new values only if different from default
+            structure.coordinatesStream().parallel().forEach(coordinate -> data.put(coordinate, value));
+        }
     }
 
     /**
