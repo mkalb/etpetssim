@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.engine.model;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
@@ -10,79 +9,51 @@ import java.util.*;
 /**
  * Describes the properties and visual appearance of an entity in the grid.
  * <p>
- * This record is used to define metadata, localization keys, and styling options
- * for entities rendered in the grid-based UI.
+ * This record holds metadata and styling options for entities rendered in the grid-based UI.
+ * All texts are already localized/resolved.
  * </p>
  *
- * @param visible         whether the entity should be visible in the UI
- * @param shortNameKey    localization key for the short name of the entity
- * @param longNameKey     localization key for the long name of the entity
- * @param descriptionKey  localization key for the description of the entity
- * @param emojiKey        optional localization key for an emoji representing the entity, or {@code null} if not set
- * @param color           optional fill color or paint for the entity, or {@code null} if not set
- * @param borderColor     optional border color for the entity, or {@code null} if not set
- * @param renderPriority  integer value indicating the rendering order (higher values are rendered above lower ones)
+ * @param id             unique identifier for the entity descriptor (for lookup)
+ * @param visible        whether the entity should be visible in the UI
+ * @param shortName      localized short name of the entity
+ * @param longName       localized long name of the entity
+ * @param description    localized description of the entity
+ * @param emoji          optional emoji representing the entity, or {@code null} if not set
+ * @param color          optional fill color or paint for the entity, or {@code null} if not set
+ * @param borderColor    optional border color for the entity, or {@code null} if not set
+ * @param renderPriority integer value indicating the rendering order (higher values are rendered above lower ones)
  */
 public record GridEntityDescriptor(
+        String id,
         boolean visible,
-        String shortNameKey,
-        String longNameKey,
-        String descriptionKey,
-        @Nullable String emojiKey,
+        String shortName,
+        String longName,
+        String description,
+        @Nullable String emoji,
         @Nullable Paint color,
         @Nullable Color borderColor,
         int renderPriority
 ) {
 
     /**
-     * Validates that required localization keys are not null.
+     * Validates that required fields are not null.
      *
-     * @throws NullPointerException if any required key is null
+     * @throws NullPointerException if any required field is null
      */
     public GridEntityDescriptor {
-        Objects.requireNonNull(shortNameKey);
-        Objects.requireNonNull(longNameKey);
-        Objects.requireNonNull(descriptionKey);
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(shortName);
+        Objects.requireNonNull(longName);
+        Objects.requireNonNull(description);
     }
 
     /**
-     * Returns the localized short name for this entity, if available.
+     * Returns the emoji for this entity as an {@link Optional}.
      *
-     * @return an {@link Optional} containing the localized short name, or empty if not found
+     * @return an {@link Optional} containing the emoji, or empty if not set
      */
-    public Optional<String> shortName() {
-        return AppLocalization.getOptionalText(shortNameKey);
-    }
-
-    /**
-     * Returns the localized long name for this entity, if available.
-     *
-     * @return an {@link Optional} containing the localized long name, or empty if not found
-     */
-    public Optional<String> longName() {
-        return AppLocalization.getOptionalText(longNameKey);
-    }
-
-    /**
-     * Returns the localized description for this entity, if available.
-     *
-     * @return an {@link Optional} containing the localized description, or empty if not found
-     */
-    public Optional<String> description() {
-        return AppLocalization.getOptionalText(descriptionKey);
-    }
-
-    /**
-     * Returns the localized emoji for this entity, if an emoji key is set and found.
-     *
-     * @return an {@link Optional} containing the localized emoji, or empty if not set or not found
-     */
-    public Optional<String> emoji() {
-        if (emojiKey == null) {
-            return Optional.empty();
-        } else {
-            return AppLocalization.getOptionalText(emojiKey);
-        }
+    public Optional<String> emojiAsOptional() {
+        return Optional.ofNullable(emoji);
     }
 
     /**
