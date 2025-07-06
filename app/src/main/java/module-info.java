@@ -6,6 +6,7 @@ module de.mkalb.etpetssim {
     exports de.mkalb.etpetssim;
     exports de.mkalb.etpetssim.core;
     exports de.mkalb.etpetssim.engine;
+    exports de.mkalb.etpetssim.engine.model;
     exports de.mkalb.etpetssim.simulations;
     exports de.mkalb.etpetssim.simulations.simulationlab;
     exports de.mkalb.etpetssim.simulations.startscreen;
