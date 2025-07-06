@@ -147,4 +147,33 @@ public interface ReadableGridModel<T> {
         return cellsAsStream().filter(cell -> !Objects.equals(cell.value(), def));
     }
 
+    /**
+     * Finds the first grid cell that matches the given predicate.
+     * <p>
+     * This method filters the stream of all grid cells using the provided predicate
+     * and returns the first matching cell wrapped in an {@link Optional}. If no cell
+     * matches the predicate, {@code Optional.empty()} is returned.
+     *
+     * @param predicate the condition to test each grid cell against
+     * @return an {@link Optional} containing the first matching {@link GridCell}, or empty if none match
+     */
+    // TODO Optimize and rename the method as soon as it is used later.
+    default Optional<GridCell<T>> findCell(Predicate<? super GridCell<T>> predicate) {
+        return cellsAsStream().filter(predicate).findFirst();
+    }
+
+    /**
+     * Counts the number of grid cells that match the given predicate.
+     * <p>
+     * This method filters the stream of all grid cells using the provided predicate
+     * and returns the count of matching cells.
+     *
+     * @param predicate the condition to test each grid cell against
+     * @return the count of grid cells that match the predicate
+     */
+    // TODO Optimize and rename the method as soon as it is used later.
+    default long count(Predicate<? super GridCell<T>> predicate) {
+        return cellsAsStream().filter(predicate).count();
+    }
+
 }
