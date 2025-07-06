@@ -1,37 +1,39 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.model;
+
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 
 import java.util.*;
 
 /**
- * An implementation of {@link GridModel} that stores grid values in a two-dimensional array.
- * Efficient for dense grids with mostly non-default values.
+ * An implementation of {@link GridModel} that stores grid entities in a two-dimensional array.
+ * Efficient for dense grids with mostly non-default entities.
  *
- * @param <T> the type of values stored in the grid
+ * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  */
-public final class ArrayGridModel<T> implements GridModel<T> {
+public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> {
 
     /** The structure describing the grid's dimensions and valid coordinates. */
     private final GridStructure structure;
 
-    /** The default value for all grid cells. */
-    private final T defaultValue;
+    /** The default entity for all grid cells. */
+    private final T defaultEntity;
 
-    /** The two-dimensional array holding the grid values. */
+    /** The two-dimensional array holding the grid entities. */
     private final Object[][] data;
 
     /**
-     * Constructs a new {@code ArrayGridModel} with the given structure and default value.
-     * All cells are initialized to the default value.
+     * Constructs a new {@code ArrayGridModel} with the given structure and default entity.
+     * All cells are initialized to the default entity.
      *
      * @param structure the grid structure (must not be null)
-     * @param defaultValue the default value for all cells (must not be null)
-     * @throws NullPointerException if structure or defaultValue is null
+     * @param defaultEntity the default entity for all cells (must not be null)
      */
-    public ArrayGridModel(GridStructure structure, T defaultValue) {
+    public ArrayGridModel(GridStructure structure, T defaultEntity) {
         Objects.requireNonNull(structure);
-        Objects.requireNonNull(defaultValue);
+        Objects.requireNonNull(defaultEntity);
         this.structure = Objects.requireNonNull(structure);
-        this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.defaultEntity = Objects.requireNonNull(defaultEntity);
         data = new Object[structure.size().height()][structure.size().width()];
         clear();
     }
@@ -42,18 +44,18 @@ public final class ArrayGridModel<T> implements GridModel<T> {
     }
 
     @Override
-    public T defaultValue() {
-        return defaultValue;
+    public T defaultEntity() {
+        return defaultEntity;
     }
 
     /**
-     * Creates a deep copy of this grid model, including all values.
+     * Creates a deep copy of this grid model, including all entities.
      *
-     * @return a new {@code ArrayGridModel} with the same structure, default value, and data
+     * @return a new {@code ArrayGridModel} with the same structure, default entity, and data
      */
     @Override
     public ArrayGridModel<T> copy() {
-        ArrayGridModel<T> clone = new ArrayGridModel<>(structure, defaultValue);
+        ArrayGridModel<T> clone = new ArrayGridModel<>(structure, defaultEntity);
         for (int y = 0; y < structure.size().height(); y++) {
             System.arraycopy(data[y], 0, clone.data[y], 0, structure.size().width());
         }
@@ -61,27 +63,26 @@ public final class ArrayGridModel<T> implements GridModel<T> {
     }
 
     /**
-     * Creates a new {@code ArrayGridModel} with the same structure and default value,
-     * but with all cells set to the default value.
+     * Creates a new {@code ArrayGridModel} with the same structure and default entity,
+     * but with all cells set to the default entity.
      *
      * @return a blank copy of this grid model
      */
     @Override
-    public ArrayGridModel<T> copyWithDefaultValues() {
-        return new ArrayGridModel<>(structure, defaultValue);
+    public ArrayGridModel<T> copyWithDefaultEntity() {
+        return new ArrayGridModel<>(structure, defaultEntity);
     }
 
     /**
-     * Returns the value at the specified coordinate.
+     * Returns the entity at the specified coordinate.
      *
      * @param coordinate the grid coordinate (must not be null)
-     * @return the value at the given coordinate
-     * @throws NullPointerException if coordinate is null
+     * @return the entity at the given coordinate
      * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     @Override
     @SuppressWarnings("unchecked")
-    public T getValue(GridCoordinate coordinate) {
+    public T getEntity(GridCoordinate coordinate) {
         Objects.requireNonNull(coordinate);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
@@ -90,43 +91,42 @@ public final class ArrayGridModel<T> implements GridModel<T> {
     }
 
     /**
-     * Sets the value at the specified coordinate.
+     * Sets the entity at the specified coordinate.
      *
      * @param coordinate the grid coordinate (must not be null)
-     * @param value the value to set (must not be null)
-     * @throws NullPointerException if coordinate or value is null
+     * @param entity the entity to set (must not be null)
      * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     @Override
-    public void setValue(GridCoordinate coordinate, T value) {
+    public void setEntity(GridCoordinate coordinate, T entity) {
         Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(value);
+        Objects.requireNonNull(entity);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
-        data[coordinate.y()][coordinate.x()] = Objects.requireNonNull(value, "value must not be null");
+        data[coordinate.y()][coordinate.x()] = entity;
     }
 
     /**
-     * Sets all grid cells to the default value.
+     * Sets all grid cells to the default entity.
      */
     @Override
     public void clear() {
         for (int y = 0; y < structure.size().height(); y++) {
-            Arrays.fill(data[y], defaultValue);
+            Arrays.fill(data[y], defaultEntity);
         }
     }
 
     /**
-     * Sets all grid cells to the specified value.
+     * Sets all grid cells to the specified entity.
      *
-     * @param value the value to set
+     * @param entity the entity to set
      */
     @Override
-    public void fill(T value) {
-        Objects.requireNonNull(value);
+    public void fill(T entity) {
+        Objects.requireNonNull(entity);
         for (Object[] row : data) {
-            Arrays.fill(row, value);
+            Arrays.fill(row, entity);
         }
     }
 
@@ -136,12 +136,12 @@ public final class ArrayGridModel<T> implements GridModel<T> {
      * @return {@code false}, as this implementation is for dense grids
      */
     @Override
-    public boolean isSparse() {
+    public boolean isModelSparse() {
         return false;
     }
 
     /**
-     * Returns a string representation of this grid model, including its structure and default value.
+     * Returns a string representation of this grid model, including its structure and default entity.
      *
      * @return a string representation of this grid model
      */
@@ -149,7 +149,7 @@ public final class ArrayGridModel<T> implements GridModel<T> {
     public String toString() {
         return "ArrayGridModel{" +
                 "structure=" + structure +
-                ", defaultValue=" + defaultValue +
+                ", defaultEntity=" + defaultEntity +
                 ", data.length=" + data.length +
                 '}';
     }

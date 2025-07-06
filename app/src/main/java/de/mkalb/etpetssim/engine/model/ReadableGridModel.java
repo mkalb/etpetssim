@@ -1,4 +1,7 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.model;
+
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 
 import java.util.*;
 import java.util.function.*;
@@ -7,11 +10,11 @@ import java.util.stream.*;
 /**
  * Read-only view of a grid model.
  *
- * @param <T> the type of values stored in the grid
+ * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  *
- * @see de.mkalb.etpetssim.engine.GridModel
+ * @see GridModel
  */
-public interface ReadableGridModel<T> {
+public interface ReadableGridModel<T extends GridEntity> {
 
     /**
      * Returns the structure of the grid, including its dimensions and valid coordinates.
@@ -21,26 +24,26 @@ public interface ReadableGridModel<T> {
     GridStructure structure();
 
     /**
-     * Returns the default value for grid cells.
+     * Returns the default entity for grid cells.
      *
-     * @return the default value
+     * @return the default entity
      */
-    T defaultValue();
+    T defaultEntity();
 
     /**
-     * Returns the value at the specified coordinate.
+     * Returns the entity at the specified coordinate.
      *
      * @param coordinate the grid coordinate
-     * @return the value at the coordinate
+     * @return the entity at the coordinate
      */
-    T getValue(GridCoordinate coordinate);
+    T getEntity(GridCoordinate coordinate);
 
     /**
-     * Indicates whether this grid model is sparse (optimized for mostly default values).
+     * Indicates whether this grid model is sparse (optimized for mostly default entities).
      *
      * @return true if the grid is sparse, false otherwise
      */
-    boolean isSparse();
+    boolean isModelSparse();
 
     /**
      * Checks if the given coordinate is valid within the grid structure.
@@ -53,81 +56,81 @@ public interface ReadableGridModel<T> {
     }
 
     /**
-     * Returns the value at the specified coordinate as an {@link Optional}.
+     * Returns the entity at the specified coordinate as an {@link Optional}.
      * Returns {@code Optional.empty()} if the coordinate is invalid.
      *
      * @param coordinate the grid coordinate
-     * @return an Optional containing the value, or empty if invalid
+     * @return an Optional containing the entity, or empty if invalid
      */
-    default Optional<T> getValueAsOptional(GridCoordinate coordinate) {
+    default Optional<T> getEntityAsOptional(GridCoordinate coordinate) {
         if (isCoordinateValid(coordinate)) {
-            return Optional.of(getValue(coordinate));
+            return Optional.of(getEntity(coordinate));
         } else {
             return Optional.empty();
         }
     }
 
     /**
-     * Returns a map of coordinates to values for which the predicate returns true.
+     * Returns a map of coordinates to entities for which the predicate returns true.
      *
-     * @param isValid predicate to filter values
-     * @return a map of coordinates to values
+     * @param isValid predicate to filter entities
+     * @return a map of coordinates to entities
      */
     // TODO Optimize and rename the method as soon as it is used later.
     default Map<GridCoordinate, T> toMap(Predicate<T> isValid) {
         Map<GridCoordinate, T> result = new LinkedHashMap<>();
         for (GridCoordinate coordinate : structure().coordinatesList()) {
-            T value = getValue(coordinate);
-            if (isValid.test(value)) {
-                result.put(coordinate, value);
+            T entity = getEntity(coordinate);
+            if (isValid.test(entity)) {
+                result.put(coordinate, entity);
             }
         }
         return result;
     }
 
     /**
-     * Returns a map of coordinates to values that are not equal to the default value.
+     * Returns a map of coordinates to entities that are not equal to the default entity.
      *
-     * @return a map of coordinates to non-default values
+     * @return a map of coordinates to non-default entities
      */
     // TODO Optimize and rename the method as soon as it is used later.
     default Map<GridCoordinate, T> toMap() {
-        return toMap(value -> !Objects.equals(value, defaultValue()));
+        return toMap(entity -> !Objects.equals(entity, defaultEntity()));
     }
 
     /**
-     * Returns a stream of all values in the grid.
+     * Returns a stream of all entities in the grid.
      *
-     * @return a stream of grid values
+     * @return a stream of grid entities
      */
     // TODO Optimize and rename the method as soon as it is used later.
-    default Stream<T> valuesAsStream() {
-        return structure().coordinatesStream().map(this::getValue);
+    default Stream<T> entitiesAsStream() {
+        return structure().coordinatesStream().map(this::getEntity);
     }
 
     /**
-     * Checks if all grid cells contain the default value.
+     * Checks if all grid cells contain the default entity.
      *
      * @return true if the grid is empty, false otherwise
      */
     // TODO Optimize and rename the method as soon as it is used later.
     default boolean isEmpty() {
-        return valuesAsStream().allMatch(value -> Objects.equals(value, defaultValue()));
+        return entitiesAsStream().allMatch(entity -> Objects.equals(entity, defaultEntity()));
     }
 
     /**
-     * Returns a stream of all grid cells (coordinate and value).
+     * Returns a stream of all grid cells (coordinate and entity).
      *
      * @return a stream of GridCell<T>
      */
     // TODO Optimize and rename the method as soon as it is used later.
     default Stream<GridCell<T>> cellsAsStream() {
         return structure().coordinatesStream()
-                          .map(coordinate -> new GridCell<>(coordinate, getValue(coordinate)));
+                          .map(coordinate -> new GridCell<>(coordinate, getEntity(coordinate)));
     }
 
     /**
-     * Returns a collection of all grid cells (coordinate and value).
+     * Returns a collection of all grid cells (coordinate and entity).
      *
      * @return a collection of GridCell<T>
      */
@@ -137,14 +140,14 @@ public interface ReadableGridModel<T> {
     }
 
     /**
-     * Returns a stream of grid cells whose value is not the default value.
+     * Returns a stream of grid cells whose entity is not the default entity.
      *
      * @return a stream of non-default GridCell<T>
      */
     // TODO Optimize and rename the method as soon as it is used later.
     default Stream<GridCell<T>> nonDefaultCells() {
-        T def = defaultValue();
-        return cellsAsStream().filter(cell -> !Objects.equals(cell.value(), def));
+        T def = defaultEntity();
+        return cellsAsStream().filter(cell -> !Objects.equals(cell.entity(), def));
     }
 
     /**
