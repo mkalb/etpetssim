@@ -741,6 +741,7 @@ public final class GridGeometry {
      * @param direction the direction or segment of the hexagon cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
      */
+    @SuppressWarnings("DuplicateExpressions")
     public static double[][] computeHexagonFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
                                                                 PolygonViewDirection direction) {
         double x = topLeft.getX();
