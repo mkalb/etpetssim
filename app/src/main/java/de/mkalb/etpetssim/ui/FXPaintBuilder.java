@@ -2,8 +2,6 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.scene.paint.*;
 
-import java.util.*;
-
 /**
  * Utility class for creating various JavaFX {@link Paint} objects such as gradients and solid colors.
  * <p>
@@ -27,8 +25,6 @@ public final class FXPaintBuilder {
      * @return a horizontal LinearGradient
      */
     public static Paint createHorizontalGradient(Color leftColor, Color rightColor) {
-        Objects.requireNonNull(leftColor);
-        Objects.requireNonNull(rightColor);
         return new LinearGradient(
                 0, 0, 1, 0, // horizontal
                 true,
@@ -46,8 +42,6 @@ public final class FXPaintBuilder {
      * @return a vertical LinearGradient
      */
     public static Paint createVerticalGradient(Color topColor, Color bottomColor) {
-        Objects.requireNonNull(topColor);
-        Objects.requireNonNull(bottomColor);
         return new LinearGradient(
                 0, 0, 0, 1, // vertical
                 true,
@@ -65,8 +59,6 @@ public final class FXPaintBuilder {
      * @return a RadialGradient from centerColor to edgeColor
      */
     public static Paint createRadialGradient(Color centerColor, Color edgeColor) {
-        Objects.requireNonNull(centerColor);
-        Objects.requireNonNull(edgeColor);
         return new RadialGradient(
                 0, 0, // focusAngle, focusDistance
                 0.5, 0.5, // centerX, centerY (relative)
@@ -88,7 +80,6 @@ public final class FXPaintBuilder {
      * @throws IllegalArgumentException if alpha is not in the range [0.0, 1.0]
      */
     public static Color createColorWithAlpha(Color baseColor, double alpha) {
-        Objects.requireNonNull(baseColor);
         if ((alpha < 0.0) || (alpha > 1.0)) {
             throw new IllegalArgumentException("Alpha must be in the range [0.0, 1.0]");
         }

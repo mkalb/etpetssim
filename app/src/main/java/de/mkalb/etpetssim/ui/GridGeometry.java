@@ -99,9 +99,6 @@ public final class GridGeometry {
      * @return the edge length required for the target cell shape to match the width of the original cell shape
      */
     public static double convertEdgeLengthToMatchWidth(double fromEdgeLength, CellShape fromCellShape, CellShape toCellShape) {
-        Objects.requireNonNull(fromCellShape);
-        Objects.requireNonNull(toCellShape);
-
         if (fromCellShape == toCellShape) {
             return fromEdgeLength;
         }
@@ -128,7 +125,6 @@ public final class GridGeometry {
      * @see de.mkalb.etpetssim.ui.GridGeometry#MAX_EDGE_LENGTH
      */
     public static CellDimension computeCellDimension(double edgeLength, CellShape shape) {
-        Objects.requireNonNull(shape);
         if ((edgeLength < MIN_EDGE_LENGTH) || (edgeLength > MAX_EDGE_LENGTH)) {
             throw new IllegalArgumentException("Edge length must be between " + MIN_EDGE_LENGTH + " and " + MAX_EDGE_LENGTH + ".");
         }
@@ -180,10 +176,6 @@ public final class GridGeometry {
      * @return a Dimension2D object representing the total width and height of the grid area
      */
     public static Dimension2D computeGridDimension(GridSize gridSize, CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(gridSize);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
         double width;
         double height;
 
@@ -271,10 +263,6 @@ public final class GridGeometry {
      * @return the canvas position of the cell in pixel coordinates
      */
     public static Point2D toCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
         return switch (shape) {
             case TRIANGLE -> {
                 double x = (coordinate.x() * cellDimension.columnWidth())
@@ -314,11 +302,6 @@ public final class GridGeometry {
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static GridCoordinate estimateGridCoordinate(Point2D point, CellDimension cellDimension,
                                                         Dimension2D gridDimension, GridStructure structure) {
-        Objects.requireNonNull(point);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(gridDimension);
-        Objects.requireNonNull(structure);
-
         if ((point.getX() < 0)
                 || (point.getY() < 0)
                 || (point.getX() >= gridDimension.getWidth())
@@ -365,11 +348,6 @@ public final class GridGeometry {
      */
     public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension,
                                                     Dimension2D gridDimension, GridStructure structure) {
-        Objects.requireNonNull(point);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(gridDimension);
-        Objects.requireNonNull(structure);
-
         GridCoordinate estimatedCoordinate = estimateGridCoordinate(point, cellDimension, gridDimension, structure);
         if (estimatedCoordinate.isIllegal()) {
             return estimatedCoordinate;
@@ -426,10 +404,6 @@ public final class GridGeometry {
      * @return the center point of the cell in canvas coordinates
      */
     public static Point2D computeCellCenter(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
         double xOffset = cellDimension.halfWidth();
         double yOffset = switch (shape) {
@@ -450,10 +424,6 @@ public final class GridGeometry {
      * @return the bounding rectangle of the cell
      */
     public static Rectangle2D computeCellBounds(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
         return cellDimension.boundingBoxAt(toCanvasPosition(coordinate, cellDimension, shape));
     }
 
@@ -466,10 +436,6 @@ public final class GridGeometry {
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
     public static double[][] computeCellPolygon(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
 
         return switch (shape) {
@@ -497,10 +463,6 @@ public final class GridGeometry {
      */
     public static double[][] computeCellFrameSegmentPolyline(GridCoordinate coordinate, CellDimension cellDimension,
                                                              CellShape shape, PolygonViewDirection direction) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(shape);
-
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
 
         return switch (shape) {
@@ -520,9 +482,6 @@ public final class GridGeometry {
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
     public static double[][] computeTrianglePolygon(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown) {
-        Objects.requireNonNull(topLeft);
-        Objects.requireNonNull(cellDimension);
-
         double[] xPoints = new double[CellShape.TRIANGLE.vertexCount()];
         double[] yPoints = new double[CellShape.TRIANGLE.vertexCount()];
         double x = topLeft.getX();
@@ -565,10 +524,6 @@ public final class GridGeometry {
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
      */
     public static double[][] computeTriangleFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown, PolygonViewDirection direction) {
-        Objects.requireNonNull(topLeft);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(direction);
-
         double[] xPoints;
         double[] yPoints;
         double x = topLeft.getX();
@@ -663,9 +618,6 @@ public final class GridGeometry {
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
     public static double[][] computeSquarePolygon(Point2D topLeft, CellDimension cellDimension) {
-        Objects.requireNonNull(topLeft);
-        Objects.requireNonNull(cellDimension);
-
         double[] xPoints = new double[CellShape.SQUARE.vertexCount()];
         double[] yPoints = new double[CellShape.SQUARE.vertexCount()];
         double x = topLeft.getX();
@@ -700,10 +652,6 @@ public final class GridGeometry {
      */
     public static double[][] computeSquareFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
                                                                PolygonViewDirection direction) {
-        Objects.requireNonNull(topLeft);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(direction);
-
         double[] xPoints;
         double[] yPoints;
         double x = topLeft.getX();
@@ -756,9 +704,6 @@ public final class GridGeometry {
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
     public static double[][] computeHexagonPolygon(Point2D topLeft, CellDimension cellDimension) {
-        Objects.requireNonNull(topLeft);
-        Objects.requireNonNull(cellDimension);
-
         double[] xPoints = new double[CellShape.HEXAGON.vertexCount()];
         double[] yPoints = new double[CellShape.HEXAGON.vertexCount()];
         double x = topLeft.getX();
@@ -798,10 +743,6 @@ public final class GridGeometry {
      */
     public static double[][] computeHexagonFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
                                                                 PolygonViewDirection direction) {
-        Objects.requireNonNull(topLeft);
-        Objects.requireNonNull(cellDimension);
-        Objects.requireNonNull(direction);
-
         double x = topLeft.getX();
         double y = topLeft.getY();
         double[] xPoints;

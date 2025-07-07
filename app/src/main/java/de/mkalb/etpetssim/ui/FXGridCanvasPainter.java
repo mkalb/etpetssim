@@ -15,8 +15,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-
 /**
  * A utility class for drawing grids, cells, polygons and text on a JavaFX Canvas.
  * The parameter {@code cellEdgeLength} defines the length of each edge of the cell (TRIANGLE, SQUARE, HEXAGON)
@@ -45,8 +43,6 @@ public final class FXGridCanvasPainter {
      * @param cellEdgeLength the length of each edge of the cell in pixels
      */
     public FXGridCanvasPainter(Canvas canvas, GridStructure structure, double cellEdgeLength) {
-        Objects.requireNonNull(canvas);
-        Objects.requireNonNull(structure);
         if (cellEdgeLength < 1.0d) {
             throw new IllegalArgumentException("Cell edge length must be at least 1 pixel.");
         }
@@ -120,8 +116,6 @@ public final class FXGridCanvasPainter {
      * @see de.mkalb.etpetssim.engine.GridStructure#isCoordinateValid(de.mkalb.etpetssim.engine.GridCoordinate)
      */
     public boolean isOutsideGrid(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
-
         return !structure.isCoordinateValid(coordinate);
     }
 
@@ -131,8 +125,6 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the canvas background
      */
     public void fillCanvasBackground(Paint fillColor) {
-        Objects.requireNonNull(fillColor);
-
         gc.setFill(fillColor);
         gc.fillRect(0.0d, 0.0d, canvas.getWidth(), canvas.getHeight());
     }
@@ -152,8 +144,6 @@ public final class FXGridCanvasPainter {
      * @see #gridDimension2D
      */
     public void fillGridBackground(Paint fillColor) {
-        Objects.requireNonNull(fillColor);
-
         gc.setFill(fillColor);
         gc.fillRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
     }
@@ -179,8 +169,6 @@ public final class FXGridCanvasPainter {
     public void drawCell(GridCoordinate coordinate,
                          @Nullable Paint fillColor, @Nullable Paint strokeColor,
                          double strokeLineWidth) {
-        Objects.requireNonNull(coordinate);
-
         // Optimization hint: Consider using `fillRect` or `PixelWriter.setColor()` for SQUARE cells.
         double[][] cellPolygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, structure.cellShape());
         drawPolygon(cellPolygon[0], cellPolygon[1], fillColor, strokeColor, strokeLineWidth);
@@ -191,7 +179,7 @@ public final class FXGridCanvasPainter {
      * The frame segment is defined by the cell's shape and the given view direction.
      *
      * @param coordinate the grid coordinate of the cell whose frame segment is to be drawn
-     * @param strokeColor the color used to draw the frame segment (must not be null)
+     * @param strokeColor the color used to draw the frame segment
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param direction the direction specifying which part of the cell frame to draw
      */
@@ -199,10 +187,6 @@ public final class FXGridCanvasPainter {
                                      Paint strokeColor,
                                      double strokeLineWidth,
                                      PolygonViewDirection direction) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(strokeColor);
-        Objects.requireNonNull(direction);
-
         double[][] cellPolygon = GridGeometry.computeCellFrameSegmentPolyline(coordinate, cellDimension, structure.cellShape(), direction);
         drawPolyline(cellPolygon[0], cellPolygon[1], strokeColor, strokeLineWidth);
     }
@@ -220,9 +204,6 @@ public final class FXGridCanvasPainter {
     public void drawCellBoundingBox(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(strokeAdjustment);
-
         Rectangle2D cellBounds = GridGeometry.computeCellBounds(coordinate, cellDimension, structure.cellShape());
         drawRectangle(cellBounds, fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
     }
@@ -240,9 +221,6 @@ public final class FXGridCanvasPainter {
     public void drawCellInnerCircle(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(strokeAdjustment);
-
         Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
         drawCircle(cellCenter, cellDimension.innerRadius(), fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
     }
@@ -260,9 +238,6 @@ public final class FXGridCanvasPainter {
     public void drawCellOuterCircle(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                     double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(strokeAdjustment);
-
         Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
         drawCircle(cellCenter, cellDimension.outerRadius(), fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
     }
@@ -280,8 +255,6 @@ public final class FXGridCanvasPainter {
     public void drawTriangle(GridCoordinate coordinate, double triangleEdgeLength,
                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                              double strokeLineWidth) {
-        Objects.requireNonNull(coordinate);
-
         // Compute the position from the current dimension and shape
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
 
@@ -321,8 +294,6 @@ public final class FXGridCanvasPainter {
     public void drawHexagon(GridCoordinate coordinate, double hexagonEdgeLength,
                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
                             double strokeLineWidth) {
-        Objects.requireNonNull(coordinate);
-
         // Compute the position from the current dimension and shape
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
 
@@ -362,9 +333,6 @@ public final class FXGridCanvasPainter {
     public void drawRectangle(Rectangle2D rectangle,
                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
                               double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
-        Objects.requireNonNull(rectangle);
-        Objects.requireNonNull(strokeAdjustment);
-
         if ((rectangle.getWidth() > 0.0d) && (rectangle.getHeight() > 0.0d)) {
             if (fillColor != null) {
                 gc.setFill(fillColor);
@@ -403,9 +371,6 @@ public final class FXGridCanvasPainter {
     public void drawCircle(Point2D center, double radius,
                            @Nullable Paint fillColor, @Nullable Paint strokeColor,
                            double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
-        Objects.requireNonNull(center);
-        Objects.requireNonNull(strokeAdjustment);
-
         if (radius > 0.0d) {
             if (fillColor != null) {
                 double diameter = radius * 2;
@@ -470,8 +435,6 @@ public final class FXGridCanvasPainter {
     public void drawPolyline(double[] xPoints, double[] yPoints,
                              Paint strokeColor,
                              double strokeLineWidth) {
-        Objects.requireNonNull(strokeColor);
-
         if ((xPoints.length > 0) && (xPoints.length == yPoints.length)) {
             if (strokeLineWidth > 0) {
                 gc.setStroke(strokeColor);
@@ -528,11 +491,6 @@ public final class FXGridCanvasPainter {
      * @param font the font used for rendering the text
      */
     public void drawCenteredTextInCell(GridCoordinate coordinate, String text, Paint textColor, Font font) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(text);
-        Objects.requireNonNull(textColor);
-        Objects.requireNonNull(font);
-
         Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
         Point2D textOffset = computeCenteredTextOffset(text, font);
 
@@ -553,9 +511,6 @@ public final class FXGridCanvasPainter {
      * @return the width and height of the text as a Dimension2D object
      */
     Dimension2D computeTextDimension(String text, Font font) {
-        Objects.requireNonNull(text);
-        Objects.requireNonNull(font);
-
         textHelper.setText(text);
         textHelper.setFont(font);
         double textWidth = textHelper.getLayoutBounds().getWidth();
@@ -572,9 +527,6 @@ public final class FXGridCanvasPainter {
      * @return the offset as a Point2D object, where x is the horizontal offset and y is the vertical offset
      */
     Point2D computeCenteredTextOffset(String text, Font font) {
-        Objects.requireNonNull(text);
-        Objects.requireNonNull(font);
-
         Dimension2D textDimension = computeTextDimension(text, font);
 
         double baselineOffset = textHelper.getBaselineOffset();

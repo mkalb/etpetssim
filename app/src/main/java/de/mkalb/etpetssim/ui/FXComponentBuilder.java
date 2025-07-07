@@ -2,8 +2,6 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.scene.control.Label;
 
-import java.util.*;
-
 /**
  * A utility class for creating JavaFX UI components with specific styles.
  * This class provides methods to create commonly used UI components with predefined styles.
@@ -25,8 +23,6 @@ public final class FXComponentBuilder {
      * @return a Label with the specified text and CSS class
      */
     public static Label createLabel(String text, String cssClass) {
-        Objects.requireNonNull(text);
-        Objects.requireNonNull(cssClass);
         Label label = new Label(text);
         label.getStyleClass().add(cssClass);
         return label;
