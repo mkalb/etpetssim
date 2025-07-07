@@ -88,6 +88,28 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
     }
 
     /**
+     * Determines if the entity at the specified coordinate is the default entity.
+     * <p>
+     * This method checks whether the given coordinate is valid within the grid structure
+     * and whether the entity at that coordinate is the default entity. If the coordinate
+     * is not present in the internal data map, it is considered to hold the default entity.
+     * </p>
+     *
+     * @param coordinate the grid coordinate to check (must not be null)
+     * @return {@code true} if the entity at the coordinate is the default entity, {@code false} otherwise
+     * @throws NullPointerException if the coordinate is {@code null}
+     * @throws IndexOutOfBoundsException if the coordinate is not valid within the grid structure
+     */
+    @Override
+    public boolean isDefaultEntity(GridCoordinate coordinate) {
+        Objects.requireNonNull(coordinate);
+        if (!structure.isCoordinateValid(coordinate)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+        }
+        return !data.containsKey(coordinate);
+    }
+
+    /**
      * Sets the entity at the specified coordinate.
      * If the entity equals the default entity, the entry is removed from the map.
      *

@@ -39,6 +39,16 @@ public interface ReadableGridModel<T extends GridEntity> {
     T getEntity(GridCoordinate coordinate);
 
     /**
+     * Checks whether the entity at the specified coordinate is equal to the default entity.
+     *
+     * @param coordinate the grid coordinate to check
+     * @return {@code true} if the entity at the coordinate is the default entity, {@code false} otherwise
+     */
+    default boolean isDefaultEntity(GridCoordinate coordinate) {
+        return getEntity(coordinate).equals(defaultEntity());
+    }
+
+    /**
      * Indicates whether this grid model is sparse (optimized for mostly default entities).
      *
      * @return true if the grid is sparse, false otherwise
