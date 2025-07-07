@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.simulations.startscreen.StartScreenController;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
 import javafx.stage.Stage;
 
-import java.util.*;
 import java.util.function.*;
 
 /**
@@ -32,9 +31,6 @@ public final class SimulationFactory {
     public static SimulationInstance createInstance(SimulationType type,
                                                     Stage stage,
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
-        Objects.requireNonNull(type);
-        Objects.requireNonNull(stage);
-        Objects.requireNonNull(stageUpdater);
         return switch (type) {
             case STARTSCREEN -> SimulationInstance.of(type, new StartScreenController(stage, stageUpdater));
             case SIMULATION_LAB -> SimulationInstance.of(type, new SimulationLabController(stage));

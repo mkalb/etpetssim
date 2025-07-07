@@ -160,12 +160,6 @@ public enum SimulationType {
                    String titleKey, String subtitleKey, String urlKey, String emojiKey,
                    String cssPath,
                    List<String> cliArguments) {
-        Objects.requireNonNull(titleKey);
-        Objects.requireNonNull(subtitleKey);
-        Objects.requireNonNull(urlKey);
-        Objects.requireNonNull(emojiKey);
-        Objects.requireNonNull(cssPath);
-        Objects.requireNonNull(cliArguments);
         this.implemented = implemented;
         this.showOnStartScreen = showOnStartScreen;
         this.titleKey = titleKey;
@@ -183,7 +177,6 @@ public enum SimulationType {
      * @return an Optional containing the matching SimulationType, or empty if none found
      */
     public static Optional<SimulationType> fromCliArgument(String arg, boolean onlyImplemented) {
-        Objects.requireNonNull(arg, "Argument must not be null");
         return Arrays.stream(values())
                      .filter(sim -> !onlyImplemented || sim.implemented)
                      .filter(sim -> sim.cliArguments.stream().anyMatch(a -> a.equalsIgnoreCase(arg)))

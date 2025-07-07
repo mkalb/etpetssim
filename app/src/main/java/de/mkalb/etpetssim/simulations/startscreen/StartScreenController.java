@@ -11,7 +11,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.*;
 import java.util.function.*;
 
 /**
@@ -25,8 +24,6 @@ public final class StartScreenController implements SimulationController {
 
     public StartScreenController(Stage stage,
                                  BiConsumer<Stage, SimulationType> stageUpdater) {
-        Objects.requireNonNull(stage);
-        Objects.requireNonNull(stageUpdater);
         this.stage = stage;
         this.stageUpdater = stageUpdater;
     }

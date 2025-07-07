@@ -13,8 +13,6 @@ import javafx.scene.text.Font;
 import javafx.util.Builder;
 import org.jspecify.annotations.Nullable;
 
-import java.util.*;
-
 @SuppressWarnings("MagicNumber")
 public final class SimulationLabViewBuilder implements Builder<Region> {
 
@@ -101,8 +99,6 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     }
 
     private Pane addVisibleCanvasBorder(Pane pane) {
-        Objects.requireNonNull(pane);
-
         if ((structure.edgeBehaviorX() == EdgeBehavior.WRAP) && (structure.edgeBehaviorY() == EdgeBehavior.WRAP)) {
             return pane;
         }

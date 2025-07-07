@@ -31,7 +31,6 @@ public final class WaTorController implements SimulationController {
     }
 
     public Optional<WaTorCreature> creatureAt(WaTorCoordinate coordinate) {
-        Objects.requireNonNull(waTorSimulation);
         return waTorSimulation.creatureAt(coordinate);
     }
 
@@ -43,8 +42,6 @@ public final class WaTorController implements SimulationController {
     }
 
     public boolean updateSimulation() {
-        Objects.requireNonNull(waTorSimulation);
-
         // Update simulation and measure the time taken
         long startMillis = System.currentTimeMillis();
         WaTorSimulation.SimulationStatus status = waTorSimulation.updateSimulation();
