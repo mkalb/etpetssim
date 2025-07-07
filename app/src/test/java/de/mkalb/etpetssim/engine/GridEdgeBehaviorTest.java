@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GridEdgeBehaviorTest {
+public final class GridEdgeBehaviorTest {
 
     @Test
     public void testEnumValues() {

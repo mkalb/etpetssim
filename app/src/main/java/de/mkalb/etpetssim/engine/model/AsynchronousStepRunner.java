@@ -11,7 +11,7 @@ import java.util.function.*;
  *
  * @param <T> the type of {@link GridEntity} contained in the grid model
  */
-public class AsynchronousStepRunner<T extends GridEntity> implements SimulationStep<T> {
+public final class AsynchronousStepRunner<T extends GridEntity> implements SimulationStep<T> {
 
     private final Predicate<T> isAgent;
     private final BiConsumer<GridCell<T>, GridModel<T>> agentLogic;

@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public class SimulationLabViewBuilder implements Builder<Region> {
+public final class SimulationLabViewBuilder implements Builder<Region> {
 
     private static final Color MOUSE_CLICK_COLOR = Color.ROSYBROWN;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
