@@ -114,9 +114,7 @@ public final class GridInitializers {
      * @return a grid initializer using the given mapper
      */
     public static <T extends GridEntity> GridInitializer<T> mapFromCoordinate(Function<GridCoordinate, GridCell<T>> mapper) {
-        return model -> {
-            model.structure().coordinatesStream().map(mapper).forEach(model::setEntity);
-        };
+        return model -> model.structure().coordinatesStream().map(mapper).forEach(model::setEntity);
     }
 
     /**
@@ -171,9 +169,7 @@ public final class GridInitializers {
      * @return a grid initializer that fills the grid randomly
      */
     public static <T extends GridEntity> GridInitializer<T> fillRandomly(Function<Random, T> generator, Random random) {
-        return model -> {
-            model.fill(_ -> generator.apply(random));
-        };
+        return model -> model.fill(_ -> generator.apply(random));
     }
 
     /**
@@ -214,6 +210,7 @@ public final class GridInitializers {
      * @param <T>            the type of grid entity
      * @return a grid initializer that places entities at a random percentage of positions
      */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     public static <T extends GridEntity> GridInitializer<T> placeRandomPercent(Supplier<T> entitySupplier, double percent, Random random) {
         return model -> placeRandomCounted((int) Math.round(percent * model.structure().size().area()), entitySupplier, random);
     }
