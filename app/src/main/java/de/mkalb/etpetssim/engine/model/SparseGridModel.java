@@ -26,14 +26,12 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
      * Constructs a new {@code SparseGridModel} with the given structure and default entity.
      * Initially, all cells are set to the default entity (i.e., the map is empty).
      *
-     * @param structure the grid structure (must not be null)
-     * @param defaultEntity the default entity for all cells (must not be null)
+     * @param structure the grid structure
+     * @param defaultEntity the default entity for all cells
      */
     public SparseGridModel(GridStructure structure, T defaultEntity) {
-        Objects.requireNonNull(structure);
-        Objects.requireNonNull(defaultEntity);
-        this.structure = Objects.requireNonNull(structure);
-        this.defaultEntity = Objects.requireNonNull(defaultEntity);
+        this.structure = structure;
+        this.defaultEntity = defaultEntity;
         data = new HashMap<>();
     }
 
@@ -74,13 +72,12 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
      * Returns the entity at the specified coordinate.
      * If the coordinate is not present in the map, returns the default entity.
      *
-     * @param coordinate the grid coordinate (must not be null)
+     * @param coordinate the grid coordinate
      * @return the entity at the given coordinate, or the default entity if not set
      * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     @Override
     public T getEntity(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
@@ -95,14 +92,12 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
      * is not present in the internal data map, it is considered to hold the default entity.
      * </p>
      *
-     * @param coordinate the grid coordinate to check (must not be null)
+     * @param coordinate the grid coordinate to check
      * @return {@code true} if the entity at the coordinate is the default entity, {@code false} otherwise
-     * @throws NullPointerException if the coordinate is {@code null}
      * @throws IndexOutOfBoundsException if the coordinate is not valid within the grid structure
      */
     @Override
     public boolean isDefaultEntity(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
@@ -113,14 +108,12 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
      * Sets the entity at the specified coordinate.
      * If the entity equals the default entity, the entry is removed from the map.
      *
-     * @param coordinate the grid coordinate (must not be null)
-     * @param entity the entity to set (must not be null)
+     * @param coordinate the grid coordinate
+     * @param entity the entity to set
      * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     @Override
     public void setEntity(GridCoordinate coordinate, T entity) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(entity);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
@@ -146,7 +139,6 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
      */
     @Override
     public void fill(T entity) {
-        Objects.requireNonNull(entity);
         data.clear(); // Clear existing entries
         if (!entity.equals(defaultEntity)) { // Set new entities only if different from default
             structure.coordinatesStream().parallel().forEach(coordinate -> data.put(coordinate, entity));

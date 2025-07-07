@@ -26,14 +26,12 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
      * Constructs a new {@code ArrayGridModel} with the given structure and default entity.
      * All cells are initialized to the default entity.
      *
-     * @param structure the grid structure (must not be null)
-     * @param defaultEntity the default entity for all cells (must not be null)
+     * @param structure the grid structure
+     * @param defaultEntity the default entity for all cells
      */
     public ArrayGridModel(GridStructure structure, T defaultEntity) {
-        Objects.requireNonNull(structure);
-        Objects.requireNonNull(defaultEntity);
-        this.structure = Objects.requireNonNull(structure);
-        this.defaultEntity = Objects.requireNonNull(defaultEntity);
+        this.structure = structure;
+        this.defaultEntity = defaultEntity;
         data = new Object[structure.size().height()][structure.size().width()];
         clear();
     }
@@ -76,14 +74,13 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
     /**
      * Returns the entity at the specified coordinate.
      *
-     * @param coordinate the grid coordinate (must not be null)
+     * @param coordinate the grid coordinate
      * @return the entity at the given coordinate
      * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     @Override
     @SuppressWarnings("unchecked")
     public T getEntity(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
@@ -93,14 +90,12 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
     /**
      * Sets the entity at the specified coordinate.
      *
-     * @param coordinate the grid coordinate (must not be null)
-     * @param entity the entity to set (must not be null)
+     * @param coordinate the grid coordinate
+     * @param entity the entity to set
      * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     @Override
     public void setEntity(GridCoordinate coordinate, T entity) {
-        Objects.requireNonNull(coordinate);
-        Objects.requireNonNull(entity);
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
@@ -124,7 +119,6 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
      */
     @Override
     public void fill(T entity) {
-        Objects.requireNonNull(entity);
         for (Object[] row : data) {
             Arrays.fill(row, entity);
         }

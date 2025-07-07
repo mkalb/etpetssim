@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
-
 /**
  * Defines the possible shapes for a cell in a regular two-dimensional grid.
  * <p>
@@ -41,7 +39,6 @@ public enum CellShape {
      * @param resourceKey the resource key for this shape
      */
     CellShape(int vertexCount, String resourceKey) {
-        Objects.requireNonNull(resourceKey);
         this.vertexCount = vertexCount;
         this.resourceKey = resourceKey;
     }

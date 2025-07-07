@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine.model;
 
-import java.util.*;
-
 /**
  * Functional interface for initializing a {@link GridModel} with entities before starting a simulation.
  * <p>
@@ -27,10 +25,8 @@ public interface GridInitializer<T extends GridEntity> {
      *
      * @param after the initializer to apply after this initializer
      * @return a composed {@code GridInitializer} that performs in sequence this initializer followed by the {@code after} initializer
-     * @throws NullPointerException if {@code after} is {@code null}
      */
     default GridInitializer<T> andThen(GridInitializer<T> after) {
-        Objects.requireNonNull(after);
         return (GridModel<T> model) -> {
             initialize(model);
             after.initialize(model);

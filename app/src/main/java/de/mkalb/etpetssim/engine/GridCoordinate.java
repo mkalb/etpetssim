@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
-
 /**
  * Represents an immutable coordinate in a two-dimensional simulation grid.
  * <p>
@@ -72,8 +70,6 @@ public record GridCoordinate(int x, int y) {
      * @return true if this coordinate lies within the bounds, false otherwise
      */
     public boolean isWithinBounds(GridCoordinate minCorner, GridCoordinate maxCorner) {
-        Objects.requireNonNull(minCorner);
-        Objects.requireNonNull(maxCorner);
         return isWithinBounds(minCorner.x, minCorner.y, maxCorner.x, maxCorner.y);
     }
 
@@ -86,7 +82,6 @@ public record GridCoordinate(int x, int y) {
      * @see #ORIGIN
      */
     public boolean isWithinOriginBounds(GridCoordinate exclusiveCorner) {
-        Objects.requireNonNull(exclusiveCorner);
         return isWithinBounds(ORIGIN, exclusiveCorner);
     }
 
@@ -198,8 +193,6 @@ public record GridCoordinate(int x, int y) {
      * @return a new GridCoordinate clamped to the specified bounds
      */
     public GridCoordinate clampToBounds(GridCoordinate minCorner, GridCoordinate maxCorner) {
-        Objects.requireNonNull(minCorner);
-        Objects.requireNonNull(maxCorner);
         return clampToBounds(minCorner.x, minCorner.y, maxCorner.x, maxCorner.y);
     }
 

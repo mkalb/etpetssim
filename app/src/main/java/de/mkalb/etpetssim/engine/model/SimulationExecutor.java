@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.engine.model;
 
-import java.util.*;
 import java.util.function.*;
 
 /**
@@ -26,15 +25,11 @@ public final class SimulationExecutor<T extends GridEntity> {
      * @param step the simulation step logic to perform
      * @param modelSupplier supplies the current simulation model
      * @param terminationCondition the condition that determines when the simulation should stop
-     * @throws NullPointerException if any argument is null
      */
     public SimulationExecutor(
             SimulationStep<T> step,
             Supplier<GridModel<T>> modelSupplier,
             SimulationTerminationCondition<T> terminationCondition) {
-        Objects.requireNonNull(step);
-        Objects.requireNonNull(modelSupplier);
-        Objects.requireNonNull(terminationCondition);
         this.step = step;
         this.modelSupplier = modelSupplier;
         this.terminationCondition = terminationCondition;

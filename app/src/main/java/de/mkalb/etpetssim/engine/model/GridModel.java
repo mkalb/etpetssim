@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 
-import java.util.*;
 import java.util.function.*;
 
 /**
@@ -42,10 +41,8 @@ public interface GridModel<T extends GridEntity> extends ReadableGridModel<T> {
      * and sets the entity at the corresponding coordinate in the grid.
      *
      * @param cell the {@link GridCell} containing the coordinate and entity to set
-     * @throws NullPointerException if {@code cell} is {@code null}
      */
     default void setEntity(GridCell<T> cell) {
-        Objects.requireNonNull(cell);
         setEntity(cell.coordinate(), cell.entity());
     }
 

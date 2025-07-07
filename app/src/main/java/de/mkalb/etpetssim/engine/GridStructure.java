@@ -103,7 +103,6 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * @see GridCoordinate#isWithinBounds(GridCoordinate, GridCoordinate)
      */
     public boolean isCoordinateValid(GridCoordinate coordinate) {
-        Objects.requireNonNull(coordinate);
         return coordinate.isWithinBounds(minCoordinateInclusive(), maxCoordinateExclusive());
     }
 

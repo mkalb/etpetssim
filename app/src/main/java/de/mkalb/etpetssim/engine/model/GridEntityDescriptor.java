@@ -36,18 +36,6 @@ public record GridEntityDescriptor(
 ) {
 
     /**
-     * Validates that required fields are not null.
-     *
-     * @throws NullPointerException if any required field is null
-     */
-    public GridEntityDescriptor {
-        Objects.requireNonNull(id);
-        Objects.requireNonNull(shortName);
-        Objects.requireNonNull(longName);
-        Objects.requireNonNull(description);
-    }
-
-    /**
      * Returns the emoji for this entity as an {@link Optional}.
      *
      * @return an {@link Optional} containing the emoji, or empty if not set

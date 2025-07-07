@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
-
 /**
  * Defines a combination of edge behaviors for the X and Y boundaries of a simulation grid.
  * Each constant specifies how entities interact with both the horizontal (X) and vertical (Y) edges,
@@ -53,9 +51,6 @@ public enum GridEdgeBehavior {
      * @param resourceKey the resource key for this grid edge behavior
      */
     GridEdgeBehavior(EdgeBehavior edgeBehaviorX, EdgeBehavior edgeBehaviorY, String resourceKey) {
-        Objects.requireNonNull(edgeBehaviorX);
-        Objects.requireNonNull(edgeBehaviorY);
-        Objects.requireNonNull(resourceKey);
         this.edgeBehaviorX = edgeBehaviorX;
         this.edgeBehaviorY = edgeBehaviorY;
         this.resourceKey = resourceKey;

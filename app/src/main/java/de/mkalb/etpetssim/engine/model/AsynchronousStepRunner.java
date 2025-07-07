@@ -20,15 +20,11 @@ public final class AsynchronousStepRunner<T extends GridEntity> implements Simul
     /**
      * Constructs a new {@code AsynchronousStepRunner} with the given model, agent predicate, and agent logic.
      *
-     * @param model      the grid model to operate on (must not be {@code null})
-     * @param isAgent    a predicate to identify agents in the grid (must not be {@code null})
-     * @param agentLogic the logic to apply to each agent (must not be {@code null})
-     * @throws NullPointerException if any parameter is {@code null}
+     * @param model      the grid model to operate on
+     * @param isAgent    a predicate to identify agents in the grid
+     * @param agentLogic the logic to apply to each agent
      */
     public AsynchronousStepRunner(GridModel<T> model, Predicate<T> isAgent, BiConsumer<GridCell<T>, GridModel<T>> agentLogic) {
-        Objects.requireNonNull(model, "Model must not be null.");
-        Objects.requireNonNull(isAgent, "Agent predicate must not be null.");
-        Objects.requireNonNull(agentLogic, "Agent logic must not be null.");
         this.model = model;
         this.isAgent = isAgent;
         this.agentLogic = agentLogic;

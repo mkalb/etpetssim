@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
-
 /**
  * Represents the topological configuration of a grid, including its cell shape and boundary behavior.
  * <p>
@@ -23,11 +21,6 @@ import java.util.*;
  * @param gridEdgeBehavior the type of boundary behavior for the grid edges
  */
 public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavior) {
-
-    public GridTopology {
-        Objects.requireNonNull(cellShape);
-        Objects.requireNonNull(gridEdgeBehavior);
-    }
 
     /**
      * Returns the edge behavior for the X-axis of the grid.

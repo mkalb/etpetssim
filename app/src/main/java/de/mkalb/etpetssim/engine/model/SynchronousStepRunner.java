@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.engine.model;
 
-import java.util.*;
 import java.util.function.*;
 
 /**
@@ -21,14 +20,11 @@ public final class SynchronousStepRunner<T extends GridEntity> implements Simula
      * Constructs a new {@code SynchronousStepRunner} with the given initial model and update strategy.
      * The update strategy must not modify the {@code ReadableGridModel} parameter.
      *
-     * @param initialModel   the initial grid model (must not be {@code null})
-     * @param updateStrategy the update strategy, which reads from the current model and writes to the next model (must not be {@code null})
-     * @throws NullPointerException if {@code initialModel} or {@code updateStrategy} is {@code null}
+     * @param initialModel   the initial grid model
+     * @param updateStrategy the update strategy, which reads from the current model and writes to the next model
      */
     public SynchronousStepRunner(GridModel<T> initialModel,
                                  BiConsumer<ReadableGridModel<T>, GridModel<T>> updateStrategy) {
-        Objects.requireNonNull(initialModel);
-        Objects.requireNonNull(updateStrategy);
         currentModel = initialModel;
         nextModel = currentModel.copyWithDefaultEntity();
         this.updateStrategy = updateStrategy;

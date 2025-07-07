@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine;
 
-import java.util.*;
-
 /**
  * Defines the possible behaviors for entities interacting with the edge of a simulation grid.
  * Used to specify how entities are handled when reaching a grid boundary in grid-based simulations.
@@ -43,7 +41,6 @@ public enum EdgeBehavior {
      * @param resourceKey the resource key for this edge behavior
      */
     EdgeBehavior(String resourceKey) {
-        Objects.requireNonNull(resourceKey);
         this.resourceKey = resourceKey;
     }
 

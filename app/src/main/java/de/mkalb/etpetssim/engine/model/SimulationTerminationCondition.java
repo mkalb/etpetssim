@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.engine.model;
 
-import java.util.*;
-
 /**
  * Functional interface for determining whether a simulation has finished.
  * <p>
@@ -30,7 +28,6 @@ public interface SimulationTerminationCondition<T extends GridEntity> {
      * @return a new termination condition representing the logical AND of both conditions
      */
     default SimulationTerminationCondition<T> and(SimulationTerminationCondition<T> other) {
-        Objects.requireNonNull(other);
         return (model, step) -> isFinished(model, step) && other.isFinished(model, step);
     }
 
@@ -42,7 +39,6 @@ public interface SimulationTerminationCondition<T extends GridEntity> {
      * @return a new termination condition representing the logical OR of both conditions
      */
     default SimulationTerminationCondition<T> or(SimulationTerminationCondition<T> other) {
-        Objects.requireNonNull(other);
         return (model, step) -> isFinished(model, step) || other.isFinished(model, step);
     }
 
