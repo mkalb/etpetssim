@@ -146,7 +146,9 @@ public record GridSize(int width, int height) {
     /**
      * Returns a short, human-readable string representation of this grid size.
      * <p>
-     * Format: {@code width × height}. Example: 10 × 20.
+     * Format: {@code width × height}
+     * <p>
+     * Example: {@code 10 × 20}
      *
      * @return a concise display string for this grid size
      */

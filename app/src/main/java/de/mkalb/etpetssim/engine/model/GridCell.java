@@ -27,4 +27,19 @@ public record GridCell<T extends GridEntity>(GridCoordinate coordinate, T entity
         Objects.requireNonNull(entity);
     }
 
+    /**
+     * Returns a short, human-readable string representation of this grid cell.
+     * <p>
+     * Format: {@code (x, y) [Entity]}
+     * <p>
+     * Example: {@code (10, 20) [WALL]}
+     *
+     * @return a concise display string for this grid cell
+     */
+    public String toDisplayString() {
+        return String.format("%s %s",
+                coordinate.toDisplayString(),
+                entity.toDisplayString());
+    }
+
 }

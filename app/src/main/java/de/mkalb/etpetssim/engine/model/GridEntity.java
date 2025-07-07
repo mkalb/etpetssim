@@ -33,4 +33,20 @@ public interface GridEntity {
      */
     String descriptorId();
 
+    /**
+     * Returns a short, human-readable string representation of this grid entity.
+     * <p>
+     * Implementations should override this method to provide a concise and meaningful
+     * display string for the entity.
+     * <p>
+     * Format: {@code [short readable content]}
+     * <p>
+     * Example: {@code [WALL]}
+     *
+     * @return a concise display string for this grid entity
+     */
+    default String toDisplayString() {
+        return String.format("[%s]", this);
+    }
+
 }

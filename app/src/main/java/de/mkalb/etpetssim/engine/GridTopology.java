@@ -66,7 +66,8 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
      * <p>
      * Format: {@code [SHAPE EDGE_BEHAVIOR]} if both edge behaviors are identical,
      * or {@code [SHAPE EDGE_BEHAVIOR_X/EDGE_BEHAVIOR_Y]} if they differ.
-     * Example: [SQUARE ABSORB] or [HEXAGON BLOCK/WRAP].
+     * <p>
+     * Example: {@code [SQUARE ABSORB]} or {@code [HEXAGON BLOCK/WRAP]}
      *
      * @return a concise display string for this grid topology
      */
