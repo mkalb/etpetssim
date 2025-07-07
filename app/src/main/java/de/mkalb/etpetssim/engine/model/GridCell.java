@@ -31,7 +31,7 @@ public record GridCell<T extends GridEntity>(GridCoordinate coordinate, T entity
      * Returns a short, human-readable string representation of this grid cell.
      * <p>
      * Format: {@code (x, y) [Entity]}
-     * <p>
+     * <br>
      * Example: {@code (10, 20) [WALL]}
      *
      * @return a concise display string for this grid cell

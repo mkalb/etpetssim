@@ -145,7 +145,7 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * Returns a short, human-readable string representation of this grid structure.
      * <p>
      * Format: {@code TOPOLOGY SIZE}
-     * <p>
+     * <br>
      * Example: {@code [SQUARE ABSORB] 10 × 20}
      *
      * @return a concise display string for this grid structure

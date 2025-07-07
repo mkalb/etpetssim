@@ -29,4 +29,17 @@ public record SimulationInstance(
         return new SimulationInstance(type, controller, controller.buildViewRegion());
     }
 
+    /**
+     * Returns a concise string representation of this simulation instance.
+     * <p>
+     * Format: {@code [SIMULATION_TYPE, CONTROLLER_CLASS]}
+     * <br>
+     * Example: {@code [SIMULATION_LAB, SimulationLabController]}
+     *
+     * @return a concise display string for this simulation instance
+     */
+    public String toDisplayString() {
+        return String.format("[%s, %s]", simulationType, simulationController.getClass().getSimpleName());
+    }
+
 }

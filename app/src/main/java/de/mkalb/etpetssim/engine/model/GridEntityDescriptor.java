@@ -78,7 +78,7 @@ public record GridEntityDescriptor(
      * Returns a short, human-readable string representation of this grid entity descriptor.
      * <p>
      * Format: {@code [short readable content]}
-     * <p>
+     * <br>
      * Example: {@code [WALL]}
      *
      * @return a concise display string for this grid entity descriptor

@@ -97,4 +97,17 @@ public record CellDimension(
         return new Rectangle2D(topLeftPoint.getX(), topLeftPoint.getY(), width, height);
     }
 
+    /**
+     * Returns a concise string representation of this cell dimension.
+     * <p>
+     * Format: {@code [edgeLength, width × height]}
+     * <br>
+     * Example: {@code [10.0, 20.0 × 30.0]}
+     *
+     * @return a concise display string for this cell dimension
+     */
+    public String toDisplayString() {
+        return String.format("[%.1f, %.1f × %.1f]", edgeLength, width, height);
+    }
+
 }

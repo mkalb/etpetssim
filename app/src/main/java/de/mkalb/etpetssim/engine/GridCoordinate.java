@@ -251,9 +251,9 @@ public record GridCoordinate(int x, int y) {
      * Returns a short, human-readable string representation of this coordinate.
      * <p>
      * Format: {@code (x, y)}
-     * <p>
+     * <br>
      * Example: {@code (15, 20)}
-     * <p>
+     * <br>
      * Returns {@code (illegal)} if this coordinate is the constant {@link #ILLEGAL}.
      *
      * @return a concise display string for this coordinate

@@ -40,7 +40,7 @@ public interface GridEntity {
      * display string for the entity.
      * <p>
      * Format: {@code [short readable content]}
-     * <p>
+     * <br>
      * Example: {@code [WALL]}
      *
      * @return a concise display string for this grid entity
