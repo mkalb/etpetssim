@@ -210,7 +210,7 @@ public final class GridInitializers {
      * @param <T>            the type of grid entity
      * @return a grid initializer that places entities at a random percentage of positions
      */
-    @SuppressWarnings("NumericCastThatLosesPrecision")
+    @SuppressWarnings({"NumericCastThatLosesPrecision", "ResultOfMethodCallIgnored"})
     public static <T extends GridEntity> GridInitializer<T> placeRandomPercent(Supplier<T> entitySupplier, double percent, Random random) {
         return model -> placeRandomCounted((int) Math.round(percent * model.structure().size().area()), entitySupplier, random);
     }
