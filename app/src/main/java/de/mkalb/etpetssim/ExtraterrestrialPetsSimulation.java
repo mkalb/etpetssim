@@ -98,10 +98,13 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
     /**
      * Initializes the application localization based on command-line arguments.
+     * Set the default locale for the application.
+     *
      * @param arguments the parsed command-line arguments
      */
     private static void initializeAppLocalization(AppArgs arguments) {
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
+        Locale.setDefault(AppLocalization.locale());
     }
 
     /**
