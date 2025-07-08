@@ -241,6 +241,16 @@ public record GridCoordinate(int x, int y) {
     }
 
     /**
+     * Returns a new GridCoordinate offset by the given grid direction.
+     *
+     * @param direction the direction specifying the delta for x and y
+     * @return a new GridCoordinate with x + direction.dx() and y + direction.dy()
+     */
+    public GridCoordinate offset(GridDirection direction) {
+        return new GridCoordinate(x + direction.dx(), y + direction.dy());
+    }
+
+    /**
      * Returns a short, human-readable string representation of this coordinate.
      * <p>
      * Format: {@code (x, y)}
