@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.engine.model;
 
 /**
- * Represents a constant grid entity in the simulation engine.
+ * Marker interface for grid entities that are considered constant in the simulation engine.
  * <p>
- * This interface extends the GridEntity interface and provides a default implementation
- * for the isConstant method, indicating that all instances of ConstantGridEntity are constant.
+ * All implementations of this interface represent entities whose state does not change during the simulation.
+ * </p>
  */
 @SuppressWarnings("MarkerInterface")
 public interface ConstantGridEntity extends GridEntity {

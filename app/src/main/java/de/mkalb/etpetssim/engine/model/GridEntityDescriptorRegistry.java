@@ -11,7 +11,7 @@ import java.util.*;
  * Registry for managing and looking up {@link GridEntityDescriptor} instances.
  * <p>
  * This class provides centralized registration and retrieval of entity descriptors,
- * supporting lookup by unique identifier or by the associated {@link GridEntity} class.
+ * supporting lookup by unique identifier.
  * It also handles the resolution of localized strings using {@link AppLocalization}
  * during descriptor creation.
  * </p>
@@ -22,36 +22,101 @@ import java.util.*;
  */
 public final class GridEntityDescriptorRegistry {
 
-    private final Map<String, GridEntityDescriptor> byId = new HashMap<>();
-    private final Map<Class<? extends GridEntity>, GridEntityDescriptor> byEntityClass = new HashMap<>();
+    private final Map<String, GridEntityDescriptor> descriptorsById;
 
     /**
-     * Private constructor to prevent instantiation.
+     * Creates a new, empty {@link GridEntityDescriptorRegistry} with an initial capacity
+     * for the expected number of entity descriptors.
+     *
+     * @param expectedEntities the anticipated number of descriptors to be registered,
+     *                        used to set the initial capacity of the internal map
      */
-    private GridEntityDescriptorRegistry() {
+    public GridEntityDescriptorRegistry(int expectedEntities) {
+        descriptorsById = HashMap.newHashMap(expectedEntities);
+    }
+
+    /**
+     * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
+     * {@link GridEntityDescribable} entities provided as varargs.
+     *
+     * @param entities one or more describable entities to register
+     * @return a populated registry instance
+     */
+    public static GridEntityDescriptorRegistry of(GridEntityDescribable... entities) {
+        return ofArray(entities);
+    }
+
+    /**
+     * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
+     * array of {@link GridEntityDescribable} entities.
+     *
+     * @param entities an array of describable entities to register
+     * @return a populated registry instance
+     */
+    public static GridEntityDescriptorRegistry ofArray(GridEntityDescribable[] entities) {
+        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(entities.length);
+        for (GridEntityDescribable entity : entities) {
+            registry.register(
+                    entity.descriptorId(),
+                    entity.visible(),
+                    entity.shortKey(),
+                    entity.longKey(),
+                    entity.descriptionKey(),
+                    entity.emojiKey(),
+                    entity.color(),
+                    entity.borderColor(),
+                    entity.renderPriority()
+            );
+        }
+        return registry;
+    }
+
+    /**
+     * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
+     * {@link Collection} of {@link GridEntityDescribable} entities.
+     *
+     * @param entities a collection of describable entities to register
+     * @return a populated registry instance
+     */
+    public static GridEntityDescriptorRegistry fromCollection(Collection<? extends GridEntityDescribable> entities) {
+        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(entities.size());
+        for (GridEntityDescribable entity : entities) {
+            registry.register(
+                    entity.descriptorId(),
+                    entity.visible(),
+                    entity.shortKey(),
+                    entity.longKey(),
+                    entity.descriptionKey(),
+                    entity.emojiKey(),
+                    entity.color(),
+                    entity.borderColor(),
+                    entity.renderPriority()
+            );
+        }
+        return registry;
     }
 
     /**
      * Registers a new {@link GridEntityDescriptor} in the registry.
      * <p>
      * Localized strings are resolved using {@link AppLocalization#getText(String)}.
-     * The descriptor is stored for lookup by its unique ID and, if provided, by its entity class.
+     * The descriptor is stored for lookup by its unique descriptor ID.
      * </p>
      *
-     * @param id             unique identifier for the descriptor
-     * @param visible        whether the entity should be visible in the UI
-     * @param shortNameKey   localization key for the short name
-     * @param longNameKey    localization key for the long name
-     * @param descriptionKey localization key for the description
-     * @param emojiKey       optional localization key for the emoji, or {@code null}
-     * @param color          optional fill color or paint, or {@code null}
-     * @param borderColor    optional border color, or {@code null}
-     * @param renderPriority rendering order priority
-     * @param entityClass    optional class of the associated {@link GridEntity}, or {@code null}
+     * @param descriptorId    unique identifier for the descriptor
+     * @param visible         whether the entity should be visible in the UI
+     * @param shortNameKey    localization key for the short name
+     * @param longNameKey     localization key for the long name
+     * @param descriptionKey  localization key for the description
+     * @param emojiKey        optional localization key for the emoji, or {@code null}
+     * @param color           optional fill color or paint, or {@code null}
+     * @param borderColor     optional border color, or {@code null}
+     * @param renderPriority  rendering order priority
      * @return the registered {@link GridEntityDescriptor}
      */
+    @SuppressWarnings("UnusedReturnValue")
     public GridEntityDescriptor register(
-            String id,
+            String descriptorId,
             boolean visible,
             String shortNameKey,
             String longNameKey,
@@ -59,11 +124,10 @@ public final class GridEntityDescriptorRegistry {
             @Nullable String emojiKey,
             @Nullable Paint color,
             @Nullable Color borderColor,
-            int renderPriority,
-            @Nullable Class<? extends GridEntity> entityClass
+            int renderPriority
     ) {
         GridEntityDescriptor descriptor = new GridEntityDescriptor(
-                id,
+                descriptorId,
                 visible,
                 AppLocalization.getText(shortNameKey),
                 AppLocalization.getText(longNameKey),
@@ -73,31 +137,44 @@ public final class GridEntityDescriptorRegistry {
                 borderColor,
                 renderPriority
         );
-        byId.put(id, descriptor);
-        if (entityClass != null) {
-            byEntityClass.put(entityClass, descriptor);
-        }
+        descriptorsById.put(descriptorId, descriptor);
         return descriptor;
     }
 
     /**
-     * Retrieves a {@link GridEntityDescriptor} by its unique identifier.
+     * Retrieves a {@link GridEntityDescriptor} by its unique descriptor ID.
      *
-     * @param id the unique identifier of the descriptor
+     * @param descriptorId the unique identifier of the descriptor
      * @return an {@link Optional} containing the descriptor if found, or empty if not present
      */
-    public Optional<GridEntityDescriptor> getById(String id) {
-        return Optional.ofNullable(byId.get(id));
+    public Optional<GridEntityDescriptor> getByDescriptorId(String descriptorId) {
+        return Optional.ofNullable(descriptorsById.get(descriptorId));
     }
 
     /**
-     * Retrieves a {@link GridEntityDescriptor} by the class of its associated {@link GridEntity}.
+     * Retrieves the {@link GridEntityDescriptor} for the given descriptor ID.
+     * <p>
+     * If no descriptor is registered for the specified ID, a {@link NoSuchElementException} is thrown.
+     * This method is intended for use cases where the presence of the descriptor is guaranteed.
+     * </p>
      *
-     * @param clazz the class of the entity
-     * @return an {@link Optional} containing the descriptor if found, or empty if not present
+     * @param descriptorId the unique identifier of the descriptor
+     * @return the {@link GridEntityDescriptor} associated with the given ID
+     * @throws NoSuchElementException if no descriptor is found for the specified ID
      */
-    public Optional<GridEntityDescriptor> getByEntityClass(Class<? extends GridEntity> clazz) {
-        return Optional.ofNullable(byEntityClass.get(clazz));
+    public GridEntityDescriptor getRequiredByDescriptorId(String descriptorId) {
+        GridEntityDescriptor descriptor = descriptorsById.get(descriptorId);
+        if (descriptor == null) {
+            throw new NoSuchElementException("No GridEntityDescriptor found for id: " + descriptorId);
+        }
+        return descriptor;
+    }
+
+    @Override
+    public String toString() {
+        return "GridEntityDescriptorRegistry{" +
+                "descriptorsById=" + descriptorsById +
+                '}';
     }
 
 }

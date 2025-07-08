@@ -7,24 +7,27 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
- * Describes the properties and visual appearance of an entity in the grid.
+ * Represents a fully resolved descriptor for a grid entity, containing all display-ready values.
  * <p>
- * This record holds metadata and styling options for entities rendered in the grid-based UI.
- * All texts are already localized/resolved.
+ * Instances are typically created by resolving the resource bundle keys from a {@link GridEntityDescribable}
+ * using a {@link java.util.ResourceBundle} in the context of a {@link GridEntityDescriptorRegistry}.
  * </p>
  *
- * @param id             unique identifier for the entity descriptor (for lookup)
- * @param visible        whether the entity should be visible in the UI
- * @param shortName      localized short name of the entity
- * @param longName       localized long name of the entity
- * @param description    localized description of the entity
- * @param emoji          optional emoji representing the entity, or {@code null} if not set
- * @param color          optional fill color or paint for the entity, or {@code null} if not set
- * @param borderColor    optional border color for the entity, or {@code null} if not set
- * @param renderPriority integer value indicating the rendering order (higher values are rendered above lower ones)
+ * @param descriptorId   Unique identifier for the entity descriptor.
+ * @param visible        Whether the entity should be visible in the UI.
+ * @param shortName      Resolved short display name.
+ * @param longName       Resolved long display name.
+ * @param description    Resolved description text.
+ * @param emoji          Optional resolved emoji representation, or {@code null} if not set.
+ * @param color          Optional fill color for rendering, or {@code null} if not set.
+ * @param borderColor    Optional border color for rendering, or {@code null} if not set.
+ * @param renderPriority Priority for rendering order (higher values are rendered above lower ones).
+ *
+ * @see GridEntityDescribable
+ * @see GridEntityDescriptorRegistry
  */
 public record GridEntityDescriptor(
-        String id,
+        String descriptorId,
         boolean visible,
         String shortName,
         String longName,

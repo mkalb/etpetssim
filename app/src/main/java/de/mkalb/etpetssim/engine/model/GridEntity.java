@@ -23,13 +23,14 @@ public interface GridEntity {
     }
 
     /**
-     * Retrieves the unique identifier of the descriptor associated with this grid entity.
+     * Returns the unique descriptor ID of this entity.
      * <p>
-     * The descriptor ID is used to look up the {@link GridEntityDescriptor} in the registry,
-     * providing metadata and localization information for the entity.
+     * This ID is used to look up the corresponding {@link GridEntityDescriptor}
+     * in the {@link GridEntityDescriptorRegistry}.
      * </p>
      *
-     * @return the unique descriptor ID as a {@link String}
+     * @return the descriptor ID
+     * @see GridEntityDescriptorRegistry
      */
     String descriptorId();
 
