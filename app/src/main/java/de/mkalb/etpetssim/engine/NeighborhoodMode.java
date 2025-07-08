@@ -31,6 +31,16 @@ public enum NeighborhoodMode {
     }
 
     /**
+     * Returns the resource key for the label (title) of the enum NeighborhoodMode.
+     *
+     * @return the resource key for the label of the enum NeighborhoodMode
+     */
+    @SuppressWarnings("SameReturnValue")
+    public static String labelResourceKey() {
+        return "neighborhoodmode.label";
+    }
+
+    /**
      * Returns whether this neighborhood mode includes neighbors that share only a vertex (not just an edge).
      *
      * @return true if neighbors sharing a vertex are included, false otherwise
@@ -46,6 +56,7 @@ public enum NeighborhoodMode {
      * @param radius the neighborhood radius (must be &gt; 0)
      * @return the estimated maximum number of neighbors
      */
+    @SuppressWarnings("MagicNumber")
     public int maxNeighborCount(CellShape cellShape, int radius) {
         if (radius <= 0) {
             return 0;
@@ -69,16 +80,6 @@ public enum NeighborhoodMode {
                 // Formula: 1 + (3 * radius * (radius + 1))
                     1 + (3 * radius * (radius + 1));
         };
-    }
-
-    /**
-     * Returns the resource key for the label (title) of the enum NeighborhoodMode.
-     *
-     * @return the resource key for the label of the enum NeighborhoodMode
-     */
-    @SuppressWarnings("SameReturnValue")
-    public static String labelResourceKey() {
-        return "neighborhoodmode.label";
     }
 
     /**
