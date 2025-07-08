@@ -4,6 +4,8 @@ import javafx.geometry.Dimension2D;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
+import java.util.*;
+
 /**
  * Describes the geometric pixel dimensions of a single cell shape
  * (e.g. triangle, square, hexagon) used in a 2D grid layout.
@@ -103,11 +105,13 @@ public record CellDimension(
      * Format: {@code [edgeLength, width × height]}
      * <br>
      * Example: {@code [10.0, 20.0 × 30.0]}
+     * <p>
+     * Uses {@link java.util.Locale#US} to ensure a dot as decimal separator and no thousands' separator.
      *
      * @return a concise display string for this cell dimension
      */
     public String toDisplayString() {
-        return String.format("[%.1f, %.1f × %.1f]", edgeLength, width, height);
+        return String.format(Locale.US, "[%.1f, %.1f × %.1f]", edgeLength, width, height);
     }
 
 }
