@@ -264,6 +264,13 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
                 if (!coordinate.equals(lastClickedCoordinate.get())) {
                     lastClickedCoordinate.set(coordinate);
                     overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+
+                    GridArrangement.directionsFor(structure.cellShape(), NeighborhoodMode.EDGES_AND_VERTICES, coordinate)
+                                   .stream().map(coordinate::offset)
+                                   .filter(structure::isCoordinateValid)
+                                   .forEach(neighbor -> {
+                                           overlayPainter.drawCell(neighbor, Color.YELLOW, null, 0.0d);
+                                       });
                 } else {
                     lastClickedCoordinate.set(null);
                 }
