@@ -2,11 +2,17 @@ package de.mkalb.etpetssim.simulations.simulationlab;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.StringBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -23,23 +29,32 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
     private static final Color TRANSLUCENT_WHITE = FXPaintBuilder.createColorWithAlpha(Color.WHITE, 0.2); // for lightening effect
     private static final Color TRANSLUCENT_BLACK = FXPaintBuilder.createColorWithAlpha(Color.BLACK, 0.2); // for darkening effect
-
     private static final double MOUSE_CLICK_LINE_WIDTH = 8.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
 
+    private final ReadableGridModel<SimulationLabEntity> model;
+    private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final GridStructure structure;
     private final FXGridCanvasPainter painter;
     private final FXGridCanvasPainter overlayPainter;
     private final @Nullable Font font;
-    private @Nullable GridCoordinate lastClickedCoordinate = null;
 
-    public SimulationLabViewBuilder(GridStructure structure, double cellEdgeLength) {
-        this.structure = structure;
+    private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
+    private final ObjectProperty<RenderingMode> renderingMode = new SimpleObjectProperty<>(RenderingMode.SHAPE);
+    private final ObjectProperty<ColorMode> colorMode = new SimpleObjectProperty<>(ColorMode.COLOR);
+    private final ObjectProperty<StrokeMode> strokeMode = new SimpleObjectProperty<>(StrokeMode.CENTERED);
+
+    public SimulationLabViewBuilder(ReadableGridModel<SimulationLabEntity> model,
+                                    GridEntityDescriptorRegistry entityDescriptorRegistry,
+                                    double cellEdgeLength) {
+        this.model = model;
+        this.entityDescriptorRegistry = entityDescriptorRegistry;
+        structure = model.structure();
 
         // Canvas and FXGridCanvasPainter
         Canvas canvas = new Canvas(cellEdgeLength, cellEdgeLength);
         painter = new FXGridCanvasPainter(canvas, structure, cellEdgeLength);
-        double additionalBorder = 20.0d; // only for testing grid dimension
+        double additionalBorder = 0.0d; // only for testing grid dimension
         canvas.setWidth(Math.min(6_000.0d, painter.gridDimension2D().getWidth() + additionalBorder));
         canvas.setHeight(Math.min(4_000.0d, painter.gridDimension2D().getHeight() + additionalBorder));
 
@@ -53,6 +68,7 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         AppLogger.info("GridDimension2D: " + overlayPainter.gridDimension2D());
         AppLogger.info("Cell count:      " + structure.cellCount());
         AppLogger.info("CellDimension:   " + overlayPainter.cellDimension());
+        AppLogger.info("NonDefaultCells: " + model.nonDefaultCells().count());
 
         // Font
         double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
@@ -87,15 +103,123 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add("simulation-scroll-pane");
 
+        Node topNode = builConfigAndControlAndStatNode();
+
         BorderPane simulationBorderPane = new BorderPane();
+        simulationBorderPane.setTop(topNode);
         simulationBorderPane.setCenter(scrollPane);
         simulationBorderPane.getStyleClass().add("simulation-border-pane");
 
         registerEvents();
 
-        drawCanvas(true, false, true);
+        drawCanvas();
 
         return simulationBorderPane;
+    }
+
+    private void resetCanvas() {
+        lastClickedCoordinate.set(null);
+        overlayPainter.clearCanvasBackground();
+        painter.clearGridBackground();
+    }
+
+    private Node builConfigAndControlAndStatNode() {
+        VBox configBox = new VBox();
+        configBox.setMinWidth(200);
+        configBox.setMinHeight(50);
+
+        {
+            RadioButton colorButton = new RadioButton("Color");
+            RadioButton bwButton = new RadioButton("Black & White");
+            ToggleGroup colorToggle = new ToggleGroup();
+            colorButton.setToggleGroup(colorToggle);
+            bwButton.setToggleGroup(colorToggle);
+            colorButton.setSelected(true);
+
+            colorToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+                if (newToggle == colorButton) {
+                    colorMode.set(ColorMode.COLOR);
+                } else if (newToggle == bwButton) {
+                    colorMode.set(ColorMode.BLACK_WHITE);
+                }
+            });
+
+            configBox.getChildren().addAll(new Label("Color Mode:"), colorButton, bwButton);
+        }
+        {
+            RadioButton shapeButton = new RadioButton("Shape");
+            RadioButton circleButton = new RadioButton("Circle");
+            ToggleGroup renderToggle = new ToggleGroup();
+            shapeButton.setToggleGroup(renderToggle);
+            circleButton.setToggleGroup(renderToggle);
+            shapeButton.setSelected(true);
+            renderToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+                if (newToggle == shapeButton) {
+                    renderingMode.set(RenderingMode.SHAPE);
+                } else if (newToggle == circleButton) {
+                    renderingMode.set(RenderingMode.CIRCLE);
+                }
+            });
+            configBox.getChildren().addAll(new Label("Rendering Mode:"), shapeButton, circleButton);
+        }
+        {
+            RadioButton strokeButtonNone = new RadioButton("None");
+            RadioButton strokeButtonCentered = new RadioButton("Centered");
+            ToggleGroup strokeToogle = new ToggleGroup();
+            strokeButtonNone.setToggleGroup(strokeToogle);
+            strokeButtonCentered.setToggleGroup(strokeToogle);
+            strokeButtonCentered.setSelected(true);
+            strokeToogle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+                if (newToggle == strokeButtonNone) {
+                    strokeMode.set(StrokeMode.NONE);
+                } else if (newToggle == strokeButtonCentered) {
+                    strokeMode.set(StrokeMode.CENTERED);
+                }
+            });
+            configBox.getChildren().addAll(new Label("Stroke:"), strokeButtonNone, strokeButtonCentered);
+        }
+
+        VBox controlBox = new VBox();
+        controlBox.setMinWidth(200);
+        controlBox.setMinHeight(50);
+
+        Button drawButton = new Button("draw");
+        drawButton.setOnAction(event -> {
+            resetCanvas();
+            drawCanvas();
+        });
+        controlBox.getChildren().add(drawButton);
+
+        Button drawButtonModel = new Button("draw model");
+        drawButtonModel.setOnAction(event -> drawModel());
+        controlBox.getChildren().add(drawButtonModel);
+
+        Button drawButtonTest = new Button("draw test");
+        drawButtonTest.setOnAction(event -> drawTest());
+        controlBox.getChildren().add(drawButtonTest);
+
+        VBox statBox = new VBox();
+        statBox.setMinWidth(200);
+        statBox.setMinHeight(50);
+
+        statBox.getChildren().add(new Label("Structure: " + structure.toDisplayString()));
+        statBox.getChildren().add(new Label("Edge length: " + painter.cellDimension().edgeLength()));
+        statBox.getChildren().add(new Label("Cell dimension: " + painter.cellDimension().toDisplayString()));
+        statBox.getChildren().add(new Label("Grid dimension: " + painter.gridDimension2D()));
+        statBox.getChildren().add(new Label("Font: " + font));
+        Label coordinateLabel = new Label();
+        StringBinding coordinateDisplayBinding = Bindings.createStringBinding(
+                () -> {
+                    GridCoordinate coord = lastClickedCoordinate.get();
+                    return "Coordinate: " + (coord != null ? coord.toDisplayString() : "");
+                },
+                lastClickedCoordinate
+        );
+        coordinateLabel.textProperty().bind(coordinateDisplayBinding);
+        statBox.getChildren().add(coordinateLabel);
+
+        HBox hBox = new HBox(configBox, controlBox, statBox);
+        return hBox;
     }
 
     private Pane addVisibleCanvasBorder(Pane pane) {
@@ -135,13 +259,13 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), overlayPainter.gridDimension2D(), structure);
             overlayPainter.clearCanvasBackground();
             if (overlayPainter.isOutsideGrid(coordinate)) {
-                lastClickedCoordinate = null;
+                lastClickedCoordinate.set(null);
             } else {
-                if (!coordinate.equals(lastClickedCoordinate)) {
-                    lastClickedCoordinate = coordinate;
+                if (!coordinate.equals(lastClickedCoordinate.get())) {
+                    lastClickedCoordinate.set(coordinate);
                     overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
                 } else {
-                    lastClickedCoordinate = null;
+                    lastClickedCoordinate.set(null);
                 }
             }
         });
@@ -160,18 +284,24 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
                 overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
                 if (overlayPainter.cellDimension().edgeLength() >= 8.0d) {
-                    overlayPainter.drawCellInnerCircle(coordinate, TRANSLUCENT_BLACK, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
+                    overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
                     // overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
                     // overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
+                    if ((font != null) && !coordinate.equals(lastClickedCoordinate.get())) {
+                        GridEntityUtils.consumeDescriptorAt(coordinate, model, entityDescriptorRegistry,
+                                descriptor -> overlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, font));
+                    }
                 }
             }
-            if (lastClickedCoordinate != null) {
-                overlayPainter.drawCellOuterCircle(lastClickedCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+            if (lastClickedCoordinate.get() != null) {
+                overlayPainter.drawCellOuterCircle(lastClickedCoordinate.get(), TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
             }
         });
     }
 
-    private void drawCanvas(boolean useColorBlackWhite, boolean drawCellAsInnerCircle, boolean drawTest) {
+    private void drawCanvas() {
+        boolean useColorBlackWhite = colorMode.get() == ColorMode.BLACK_WHITE;
+        boolean drawCellAsInnerCircle = renderingMode.get() == RenderingMode.CIRCLE;
         // Background
         painter.fillCanvasBackground(CANVAS_COLOR);
         if (useColorBlackWhite) {
@@ -185,18 +315,23 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
             Color color = useColorBlackWhite ? calculateColumnBlackWhiteColor(coordinate) : calculateColumnSimilarityColor(coordinate);
             Color textColor = useColorBlackWhite ? Color.BLACK : TEXT_COLOR;
             if (drawCellAsInnerCircle) {
-                painter.drawCellInnerCircle(coordinate, color, null, 0.0d, StrokeAdjustment.CENTERED);
+                switch (strokeMode.get()) {
+                    case StrokeMode.NONE ->
+                            painter.drawCellInnerCircle(coordinate, color, null, 0.0d, StrokeAdjustment.CENTERED);
+                    case StrokeMode.CENTERED ->
+                            painter.drawCellInnerCircle(coordinate, color, Color.BLACK, 0.5d, StrokeAdjustment.CENTERED);
+                }
             } else {
-                painter.drawCell(coordinate, color, Color.BLACK, 0.5d);
+                if (strokeMode.get() == StrokeMode.NONE) {
+                    painter.drawCell(coordinate, color, null, 0.0d);
+                } else {
+                    painter.drawCell(coordinate, color, Color.BLACK, 0.5d);
+                }
             }
             if (font != null) {
                 painter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, font);
             }
         });
-
-        if (drawTest) {
-            drawTest();
-        }
     }
 
     private void drawTest() {
@@ -256,6 +391,12 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
 */
     }
 
+    private void drawModel() {
+        Color fillColor = FXPaintBuilder.createColorWithAlpha(Color.RED, 0.5d);
+        model.nonDefaultCells()
+             .forEach((GridCell<SimulationLabEntity> cell) -> painter.drawCell(cell.coordinate(), fillColor, null, 0.0d));
+    }
+
     private Color calculateColumnSimilarityColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % 2;
         int rowGroup = coordinate.y() % 2;
@@ -280,6 +421,20 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
             case 3 -> Color.GRAY;   // Column 1, Row 1
             default -> throw new IllegalStateException("Unexpected value");
         };
+    }
+
+    // Enum für die Render-Modi
+    public enum RenderingMode {
+        SHAPE, CIRCLE
+    }
+
+    // 1. Enum for color mode
+    public enum ColorMode {
+        COLOR, BLACK_WHITE
+    }
+
+    public enum StrokeMode {
+        NONE, CENTERED
     }
 
 }
