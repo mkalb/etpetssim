@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.engine;
 
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Provides logic for determining the arrangement and neighbor relationships of cells
@@ -8,20 +9,20 @@ import java.util.*;
  * <p>
  * This class centralizes the calculation of neighbor directions for different grid types
  * (triangular, square, hexagonal) and supports both edge-only and edge-and-vertex neighborhood modes.
- * <p>
- * Results are cached for efficiency. All returned direction lists are immutable.
  *
  * @see CellShape
  * @see NeighborhoodMode
- * @see GridDirection
+ * @see CellNeighbor
+ * @see GridOffset
  * @see GridCoordinate
  */
+@SuppressWarnings("MagicNumber")
 public final class GridArrangement {
 
     /**
-     * Internal cache for computed direction sets, keyed by a string representing the arrangement parameters.
+     * Internal cache for computed cell neighbor connections.
      */
-    private static final Map<String, List<GridDirection>> CACHE = HashMap.newHashMap(16);
+    private static final Map<String, List<CellNeighborConnection>> CACHE = HashMap.newHashMap(16);
 
     /**
      * Private constructor to prevent instantiation.
@@ -30,62 +31,183 @@ public final class GridArrangement {
     }
 
     /**
-     * Returns the list of neighbor directions for a cell, based on its shape, neighborhood mode, and coordinate.
+     * Returns the maximum possible number of direct neighbors for a cell
+     * with the given shape and neighborhood mode, ignoring grid boundaries.
      * <p>
-     * The returned list is immutable and may be shared between calls with identical parameters.
+     * This value represents the theoretical upper bound for a cell in an infinite grid.
+     * For example, a square cell with {@link NeighborhoodMode#EDGES_ONLY} has 4 possible neighbors,
+     * while with {@link NeighborhoodMode#EDGES_AND_VERTICES} it has 8.
      *
-     * @param cellShape        the shape of the cell (TRIANGLE, SQUARE, HEXAGON)
+     * @param cellShape        the shape of the cell (triangle, square, hexagon)
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
-     * @param coordinate       the grid coordinate of the cell (may affect direction set for some shapes)
-     * @return an immutable list of {@link GridDirection} objects representing neighbor offsets
+     * @return the maximum possible number of direct neighbors for the specified configuration
      */
-    public static List<GridDirection> directionsFor(CellShape cellShape, NeighborhoodMode neighborhoodMode, GridCoordinate coordinate) {
-        return CACHE.computeIfAbsent(buildCacheKey(cellShape, neighborhoodMode, coordinate), _ -> computeDirections(cellShape, neighborhoodMode, coordinate));
+    public static int maxNeighborCount(CellShape cellShape, NeighborhoodMode neighborhoodMode) {
+        return switch (cellShape) {
+            case SQUARE -> (neighborhoodMode == NeighborhoodMode.EDGES_ONLY) ? 4 : 8;
+            case HEXAGON -> 6; // Only edge neighbors for hexagons
+            case TRIANGLE -> (neighborhoodMode == NeighborhoodMode.EDGES_ONLY) ? 3 : 12;
+        };
     }
 
     /**
-     * Builds a unique cache key for the given arrangement parameters.
+     * Returns the maximum possible number of neighbors for a cell with the given shape,
+     * neighborhood mode, and radius, ignoring grid boundaries.
+     * <p>
+     * The result is a theoretical upper bound for the number of cells within the given radius,
+     * not the actual count for edge or corner cells in a finite grid.
      *
-     * @param cellShape        the shape of the cell
-     * @param neighborhoodMode the neighborhood mode
-     * @param coordinate       the grid coordinate of the cell
-     * @return a string key representing the arrangement parameters
+     * @param cellShape        the geometric shape of the cell (TRIANGLE, SQUARE, HEXAGON)
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param radius           the neighborhood radius (&gt; 0)
+     * @return the maximum possible number of neighbors within the given radius
      */
-    static String buildCacheKey(CellShape cellShape, NeighborhoodMode neighborhoodMode, GridCoordinate coordinate) {
+    public static int maxNeighborCount(CellShape cellShape, NeighborhoodMode neighborhoodMode, int radius) {
+        if (radius <= 0) {
+            return 0;
+        }
+
+        if (radius == 1) {
+            return maxNeighborCount(cellShape, neighborhoodMode);
+        }
+
+        return switch (cellShape) {
+            case TRIANGLE -> {
+                // For triangles: degree = 3 (edges only) or 12 (edges and vertices)
+                // Formula: 1 + ((degree * radius * (radius + 1)) / 2)
+                int degree = (neighborhoodMode == NeighborhoodMode.EDGES_ONLY) ? 3 : 12;
+                yield 1 + ((degree * radius * (radius + 1)) / 2);
+            }
+            case SQUARE -> {
+                // For squares: degree = 4 (edges only) or 8 (edges and vertices)
+                // Formula: 1 + ((degree * radius * (radius + 1)) / 2)
+                int degree = (neighborhoodMode == NeighborhoodMode.EDGES_ONLY) ? 4 : 8;
+                yield 1 + ((degree * radius * (radius + 1)) / 2);
+            }
+            case HEXAGON ->
+                // For hexagons: always 6 neighbors per ring, so degree = 6
+                // Formula: 1 + (3 * radius * (radius + 1))
+                    1 + (3 * radius * (radius + 1));
+        };
+    }
+
+    /**
+     * Checks if two coordinates are valid neighbors in the grid for the given cell shape and neighborhood mode,
+     * ignoring grid boundaries.
+     * <p>
+     * This method does not check whether the provided {@code from} and {@code to} coordinates are within the valid grid area.
+     * It only determines if {@code to} is a direct neighbor of {@code from} according to the specified configuration.
+     *
+     * @param from             the coordinate of the source cell (not checked for grid validity)
+     * @param to               the coordinate of the potential neighbor cell (not checked for grid validity)
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape        the shape of the cell (triangle, square, hexagon)
+     * @return {@code true} if {@code to} is a neighbor of {@code from} (ignoring grid boundaries), {@code false} otherwise
+     */
+    public static boolean isCellNeighbor(GridCoordinate from,
+                                         GridCoordinate to,
+                                         NeighborhoodMode neighborhoodMode,
+                                         CellShape cellShape) {
+        if (from.equals(to)) {
+            return false;
+        }
+        List<CellNeighbor> neighbors = cellNeighbors(from, neighborhoodMode, cellShape);
+        for (CellNeighbor neighbor : neighbors) {
+            if (neighbor.neighborCoordinate().equals(to)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a stream of all valid neighbors for a given cell in the grid, considering grid boundaries.
+     * <p>
+     * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
+     * {@link GridStructure}. If not, an empty stream is returned. Otherwise, it computes all theoretical neighbors
+     * (ignoring boundaries) and filters them to include only those whose coordinates are valid within the grid.
+     * <p>
+     * The resulting stream contains {@link CellNeighbor} objects describing the direction, connection type,
+     * and coordinate of each valid neighbor.
+     *
+     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param structure        the grid structure defining size and topology
+     * @return a stream of {@link CellNeighbor} objects representing all valid neighbors of the cell (respecting grid boundaries)
+     */
+    public static Stream<CellNeighbor> validCellNeighborsStream(GridCoordinate startCoordinate,
+                                                                NeighborhoodMode neighborhoodMode,
+                                                                GridStructure structure) {
+        if (!structure.isCoordinateValid(startCoordinate)) {
+            return Stream.empty();
+        }
+        return cellNeighbors(startCoordinate, neighborhoodMode, structure.cellShape())
+                .stream()
+                .filter(neighbor -> structure.isCoordinateValid(neighbor.neighborCoordinate()));
+    }
+
+    /**
+     * Returns a list of all neighbors for a given cell in the grid, based on the specified
+     * neighborhood mode and cell shape, ignoring grid boundaries.
+     * <p>
+     * The returned list contains {@link CellNeighbor} objects, each describing the direction,
+     * connection type (edge or vertex), and coordinate of a neighboring cell relative to the
+     * given start coordinate. The order and number of neighbors depend on the cell shape and
+     * neighborhood mode.
+     * <p>
+     * <strong>Note:</strong> This method does not check whether the provided {@code startCoordinate}
+     * or the resulting neighbor coordinates are within the valid grid area. It only determines
+     * the theoretical neighbors as if the grid were infinite.
+     * <p>
+     * The returned list is unmodifiable.
+     *
+     * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined (not checked for grid validity)
+     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape         the shape of the cell (triangle, square, hexagon)
+     * @return an immutable list of {@link CellNeighbor} objects representing all neighbors of the cell (ignoring grid boundaries)
+     */
+    public static List<CellNeighbor> cellNeighbors(GridCoordinate startCoordinate,
+                                                   NeighborhoodMode neighborhoodMode,
+                                                   CellShape cellShape) {
+        List<CellNeighborConnection> cellNeighborConnections = CACHE.computeIfAbsent(
+                buildCacheKey(startCoordinate, neighborhoodMode, cellShape),
+                _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));
+
+        return cellNeighborConnections.stream()
+                                      .map(neighborConnection -> new CellNeighbor(
+                                              startCoordinate,
+                                              neighborConnection.direction(),
+                                              neighborConnection.connectionType(),
+                                              startCoordinate.offset(neighborConnection.offset())
+                                      ))
+                                      .toList();
+    }
+
+    static String buildCacheKey(GridCoordinate startCoordinate,
+                                NeighborhoodMode neighborhoodMode,
+                                CellShape cellShape) {
         return switch (cellShape) {
             case TRIANGLE ->
-                    cellShape + "::" + neighborhoodMode + "::" + coordinate.isTriangleCellPointingDown() + "::" + coordinate.hasTriangleCellXOffset();
+                    cellShape + "::" + neighborhoodMode + "::" + startCoordinate.isTriangleCellPointingDown() + "::" + startCoordinate.hasTriangleCellXOffset();
             case SQUARE -> cellShape + "::" + neighborhoodMode;
-            case HEXAGON -> cellShape + "::" + coordinate.hasHexagonCellYOffset();
+            case HEXAGON -> cellShape + "::" + startCoordinate.hasHexagonCellYOffset();
         };
     }
 
-    /**
-     * Computes the list of neighbor directions for the given arrangement parameters.
-     *
-     * @param cellShape        the shape of the cell
-     * @param neighborhoodMode the neighborhood mode
-     * @param coordinate       the grid coordinate of the cell
-     * @return an immutable list of {@link GridDirection} objects representing neighbor offsets
-     */
-    static List<GridDirection> computeDirections(CellShape cellShape, NeighborhoodMode neighborhoodMode, GridCoordinate coordinate) {
+    static List<CellNeighborConnection> computeCellNeighborConnections(GridCoordinate startCoordinate,
+                                                                       NeighborhoodMode neighborhoodMode,
+                                                                       CellShape cellShape) {
         return switch (cellShape) {
-            case TRIANGLE ->
-                    computeTriangleDirections(neighborhoodMode, coordinate.isTriangleCellPointingDown(), coordinate.hasTriangleCellXOffset());
-            case SQUARE -> computeSquareDirections(neighborhoodMode);
-            case HEXAGON -> computeHexagonDirections(coordinate.hasHexagonCellYOffset());
+            case TRIANGLE -> computeTriangleCellNeighborConnections(
+                    neighborhoodMode,
+                    startCoordinate.isTriangleCellPointingDown(),
+                    startCoordinate.hasTriangleCellXOffset());
+            case SQUARE -> computeSquareCellNeighborConnections(neighborhoodMode);
+            case HEXAGON -> computeHexagonCellNeighborConnections(startCoordinate.hasHexagonCellYOffset());
         };
     }
 
-    /**
-     * Computes the neighbor directions for a triangle cell, based on neighborhood mode and orientation.
-     *
-     * @param neighborhoodMode         the neighborhood mode (edges only or edges and vertices)
-     * @param isTriangleCellPointingDown whether the triangle cell is pointing downwards
-     * @param hasTriangleCellXOffset   whether the triangle cell has an x-offset (affects arrangement)
-     * @return an immutable list of {@link GridDirection} objects for the triangle cell
-     */
-    static List<GridDirection> computeTriangleDirections(
+    static List<CellNeighborConnection> computeTriangleCellNeighborConnections(
             NeighborhoodMode neighborhoodMode,
             boolean isTriangleCellPointingDown,
             boolean hasTriangleCellXOffset) {
@@ -95,155 +217,157 @@ public final class GridArrangement {
             if (isTriangleCellPointingDown) {
                 if (hasTriangleCellXOffset) { // (2, 2)
                     return List.of(
-                            new GridDirection(0, 1), // (2, 3) edge
-                            new GridDirection(0, -1), // (2, 1) edge
-                            new GridDirection(1, 1) // (3, 3) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SW, CellConnectionType.EDGE), // (2, 3) edge
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE), // (2, 1) edge
+                            new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.EDGE) // (3, 3) edge
                     );
                 } else { // (2, 4)
                     return List.of(
-                            new GridDirection(-1, 1), // (1, 5) edge
-                            new GridDirection(0, -1), // (2, 3) edge
-                            new GridDirection(0, 1) // (2, 5) edge
+                            new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.EDGE), // (1, 5) edge
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE), // (2, 3) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SE, CellConnectionType.EDGE) // (2, 5) edge
                     );
                 }
             } else { // pointing up
                 if (hasTriangleCellXOffset) { // (2, 5)
                     return List.of(
-                            new GridDirection(0, -1), // (2, 4) edge
-                            new GridDirection(1, -1), // (3, 4) edge
-                            new GridDirection(0, 1) // (2, 6) edge
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.NW, CellConnectionType.EDGE), // (2, 4) edge
+                            new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.NE, CellConnectionType.EDGE), // (3, 4) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE) // (2, 6) edge
                     );
                 } else { // (2, 3)
                     return List.of(
-                            new GridDirection(-1, -1), // (1, 2) edge
-                            new GridDirection(0, -1), // (2, 2) edge
-                            new GridDirection(0, 1) // (2, 4) edge
+                            new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.EDGE), // (1, 2) edge
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.NE, CellConnectionType.EDGE), // (2, 2) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE) // (2, 4) edge
                     );
                 }
             }
         }
 
+        // TODO Fix CompassDirection for TRIANGLE and NeighborhoodMode.EDGES_AND_VERTICES
+
         // Directions for edge + vertex neighbors (12 per triangle)
         if (isTriangleCellPointingDown) {
             if (hasTriangleCellXOffset) { // (2, 2)
                 return List.of(
-                        new GridDirection(0, 1), // (2, 3) edge
-                        new GridDirection(-1, 0), // (1, 2) vertex
-                        new GridDirection(-1, -1), // (1, 1) vertex
-                        new GridDirection(0, -2), // (2, 0) vertex
-                        new GridDirection(0, -1), // (2, 1) edge
-                        new GridDirection(1, -2), // (3, 0) vertex
-                        new GridDirection(1, -1), // (3, 1) vertex
-                        new GridDirection(1, 0), // (3, 2) vertex
-                        new GridDirection(1, 1), // (3, 3) edge
-                        new GridDirection(1, 2), // (3, 4) vertex
-                        new GridDirection(0, 3), // (2, 5) vertex
-                        new GridDirection(0, 2) // (2, 4) vertex
+                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 3) edge
+                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (1, 2) vertex
+                        new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 1) vertex
+                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 0) vertex
+                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 1) edge
+                        new CellNeighborConnection(new GridOffset(1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 0) vertex
+                        new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 1) vertex
+                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 2) vertex
+                        new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) edge
+                        new CellNeighborConnection(new GridOffset(1, 2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) vertex
+                        new CellNeighborConnection(new GridOffset(0, 3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 5) vertex
+                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX) // (2, 4) vertex
                 );
             } else { // (2, 4)
                 return List.of(
-                        new GridDirection(-1, 1), // (1, 5) edge
-                        new GridDirection(-1, 0), // (1, 4) vertex
-                        new GridDirection(-1, -1), // (1, 3) vertex
-                        new GridDirection(-1, -2), // (1, 2) vertex
-                        new GridDirection(0, -1), // (2, 3) edge
-                        new GridDirection(0, -2), // (2, 2) vertex
-                        new GridDirection(1, -1), // (3, 3) vertex
-                        new GridDirection(1, 0), // (3, 4) vertex
-                        new GridDirection(0, 1), // (2, 5) edge
-                        new GridDirection(0, 2), // (2, 6) vertex
-                        new GridDirection(0, 3), // (2, 7) vertex
-                        new GridDirection(-1, 2) // (1, 6) vertex
+                        new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 5) edge
+                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (1, 4) vertex
+                        new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 3) vertex
+                        new CellNeighborConnection(new GridOffset(-1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (1, 2) vertex
+                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 3) edge
+                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 2) vertex
+                        new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) vertex
+                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) vertex
+                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 5) edge
+                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 6) vertex
+                        new CellNeighborConnection(new GridOffset(0, 3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 7) vertex
+                        new CellNeighborConnection(new GridOffset(-1, 2), CompassDirection.N, CellConnectionType.VERTEX) // (1, 6) vertex
                 );
             }
         } else { // pointing up
             if (hasTriangleCellXOffset) { // (2, 5)
                 return List.of(
-                        new GridDirection(0, -1), // (2, 4) edge
-                        new GridDirection(0, -2), // (2, 3) vertex
-                        new GridDirection(0, -3), // (2, 2) vertex
-                        new GridDirection(1, -2), // (3, 3) vertex
-                        new GridDirection(1, -1), // (3, 4) edge
-                        new GridDirection(1, 0), // (3, 5) vertex
-                        new GridDirection(1, 1), // (3, 6) vertex
-                        new GridDirection(1, 2), // (3, 7) vertex
-                        new GridDirection(0, 1), // (2, 6) edge
-                        new GridDirection(0, 2), // (2, 7) vertex
-                        new GridDirection(-1, 1), // (1, 6) vertex
-                        new GridDirection(-1, 0) // (1, 5) vertex
+                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 4) edge
+                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 3) vertex
+                        new CellNeighborConnection(new GridOffset(0, -3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 2) vertex
+                        new CellNeighborConnection(new GridOffset(1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) vertex
+                        new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) edge
+                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 5) vertex
+                        new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 6) vertex
+                        new CellNeighborConnection(new GridOffset(1, 2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 7) vertex
+                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 6) edge
+                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 7) vertex
+                        new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 6) vertex
+                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX) // (1, 5) vertex
                 );
             } else { // (2, 3)
                 return List.of(
-                        new GridDirection(-1, -1), // (1, 2) edge
-                        new GridDirection(-1, -2), // (1, 1) vertex
-                        new GridDirection(0, -3), // (2, 0) vertex
-                        new GridDirection(0, -2), // (2, 1) vertex
-                        new GridDirection(0, -1), // (2, 2) edge
-                        new GridDirection(1, 0), // (3, 3) vertex
-                        new GridDirection(1, 1), // (3, 4) vertex
-                        new GridDirection(0, 2), // (2, 5) vertex
-                        new GridDirection(0, 1), // (2, 4) edge
-                        new GridDirection(-1, 2), // (1, 5) vertex
-                        new GridDirection(-1, 1), // (1, 4) vertex
-                        new GridDirection(-1, 0) // (1, 3) vertex
+                        new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 2) edge
+                        new CellNeighborConnection(new GridOffset(-1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (1, 1) vertex
+                        new CellNeighborConnection(new GridOffset(0, -3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 0) vertex
+                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 1) vertex
+                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 2) edge
+                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) vertex
+                        new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) vertex
+                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 5) vertex
+                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 4) edge
+                        new CellNeighborConnection(new GridOffset(-1, 2), CompassDirection.N, CellConnectionType.VERTEX), // (1, 5) vertex
+                        new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 4) vertex
+                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX) // (1, 3) vertex
                 );
             }
         }
     }
 
-    /**
-     * Computes the neighbor directions for a square cell, based on neighborhood mode.
-     *
-     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
-     * @return an immutable list of {@link GridDirection} objects for the square cell
-     */
-    static List<GridDirection> computeSquareDirections(NeighborhoodMode neighborhoodMode) {
+    static List<CellNeighborConnection> computeSquareCellNeighborConnections(NeighborhoodMode neighborhoodMode) {
         return switch (neighborhoodMode) {
             case EDGES_ONLY -> List.of(
-                    new GridDirection(-1, 0),
-                    new GridDirection(1, 0),
-                    new GridDirection(0, -1),
-                    new GridDirection(0, 1)
+                    new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.E, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.W, CellConnectionType.EDGE)
             );
             case EDGES_AND_VERTICES -> List.of(
-                    new GridDirection(-1, 0),
-                    new GridDirection(1, 0),
-                    new GridDirection(0, -1),
-                    new GridDirection(0, 1),
-                    new GridDirection(-1, -1),
-                    new GridDirection(-1, 1),
-                    new GridDirection(1, -1),
-                    new GridDirection(1, 1)
+                    new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.NE, CellConnectionType.VERTEX),
+                    new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.E, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.VERTEX),
+                    new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.VERTEX),
+                    new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.W, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.VERTEX)
             );
         };
     }
 
-    /**
-     * Computes the neighbor directions for a hexagon cell, based on its y-offset.
-     *
-     * @param hasHexagonCellYOffset whether the hexagon cell has a y-offset (affects arrangement)
-     * @return an immutable list of {@link GridDirection} objects for the hexagon cell
-     */
-    static List<GridDirection> computeHexagonDirections(boolean hasHexagonCellYOffset) {
+    static List<CellNeighborConnection> computeHexagonCellNeighborConnections(boolean hasHexagonCellYOffset) {
         if (hasHexagonCellYOffset) {
             return List.of(
-                    new GridDirection(-1, 0),
-                    new GridDirection(0, -1),
-                    new GridDirection(1, 0),
-                    new GridDirection(1, 1),
-                    new GridDirection(0, 1),
-                    new GridDirection(-1, 1)
+                    new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.NE, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.NW, CellConnectionType.EDGE)
             );
         } else {
             return List.of(
-                    new GridDirection(-1, -1),
-                    new GridDirection(0, -1),
-                    new GridDirection(1, -1),
-                    new GridDirection(1, 0),
-                    new GridDirection(0, 1),
-                    new GridDirection(-1, 0)
+                    new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.NE, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.SE, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.SW, CellConnectionType.EDGE),
+                    new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.EDGE)
             );
         }
     }
+
+    /**
+     * Internal record representing a single neighbor connection for calculation and caching purposes.
+     * <p>
+     * Encapsulates the relative offset, compass direction, and connection type (edge or vertex)
+     * between a cell and one of its neighbors.
+     *
+     * @param offset         the relative offset to the neighbor cell
+     * @param direction      the compass direction to the neighbor
+     * @param connectionType the type of connection (edge or vertex)
+     */
+    record CellNeighborConnection(GridOffset offset, CompassDirection direction, CellConnectionType connectionType) {}
 
 }

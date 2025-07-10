@@ -50,39 +50,6 @@ public enum NeighborhoodMode {
     }
 
     /**
-     * Estimates the maximum number of neighbors for a given cell shape and radius.
-     *
-     * @param cellShape the geometric shape of the cell (TRIANGLE, SQUARE, HEXAGON)
-     * @param radius the neighborhood radius (must be &gt; 0)
-     * @return the estimated maximum number of neighbors
-     */
-    @SuppressWarnings("MagicNumber")
-    public int maxNeighborCount(CellShape cellShape, int radius) {
-        if (radius <= 0) {
-            return 0;
-        }
-
-        return switch (cellShape) {
-            case TRIANGLE -> {
-                // For triangles: degree = 3 (edges only) or 12 (edges and vertices)
-                // Formula: 1 + ((degree * radius * (radius + 1)) / 2)
-                int degree = (this == EDGES_ONLY) ? 3 : 12;
-                yield 1 + ((degree * radius * (radius + 1)) / 2);
-            }
-            case SQUARE -> {
-                // For squares: degree = 4 (edges only) or 8 (edges and vertices)
-                // Formula: 1 + ((degree * radius * (radius + 1)) / 2)
-                int degree = (this == EDGES_ONLY) ? 4 : 8;
-                yield 1 + ((degree * radius * (radius + 1)) / 2);
-            }
-            case HEXAGON ->
-                // For hexagons: always 6 neighbors per ring, so degree = 6
-                // Formula: 1 + (3 * radius * (radius + 1))
-                    1 + (3 * radius * (radius + 1));
-        };
-    }
-
-    /**
      * Returns the resource key associated with this neighborhood mode.
      * <p>
      * The resource key can be used for resource lookup purposes.
