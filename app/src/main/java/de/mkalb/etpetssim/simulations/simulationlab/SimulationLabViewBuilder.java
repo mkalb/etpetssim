@@ -38,6 +38,7 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     private final FXGridCanvasPainter painter;
     private final FXGridCanvasPainter overlayPainter;
     private final @Nullable Font font;
+    private final @Nullable Font smallFont;
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
     private final ObjectProperty<RenderingMode> renderingMode = new SimpleObjectProperty<>(RenderingMode.SHAPE);
@@ -76,12 +77,15 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         if (fontSize > 6) {
             if (Font.getFamilies().contains("Verdana")) {
                 font = Font.font("Verdana", fontSize);
+                smallFont = Font.font("Verdana", 8);
             } else {
                 font = Font.font("System", fontSize);
+                smallFont = Font.font("System", 8);
             }
             AppLogger.info("Font for canvas: " + font);
         } else {
             font = null;
+            smallFont = null;
             AppLogger.info("Font size too small: " + fontSize);
         }
     }
@@ -265,12 +269,13 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
                     lastClickedCoordinate.set(coordinate);
                     overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
-                    GridArrangement.directionsFor(structure.cellShape(), NeighborhoodMode.EDGES_AND_VERTICES, coordinate)
-                                   .stream().map(coordinate::offset)
-                                   .filter(structure::isCoordinateValid)
-                                   .forEach(neighbor -> {
-                                           overlayPainter.drawCell(neighbor, Color.YELLOW, null, 0.0d);
-                                       });
+                    GridArrangement.validCellNeighborsStream(coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)
+                                   .forEach(cellNeighbor -> {
+                                       overlayPainter.drawCell(cellNeighbor.neighborCoordinate(), Color.YELLOW, null, 0.0d);
+                                       if (smallFont != null) {
+                                           overlayPainter.drawCenteredTextInCell(cellNeighbor.neighborCoordinate(), cellNeighbor.toDisplayString(), Color.BLACK, smallFont);
+                                       }
+                                   });
                 } else {
                     lastClickedCoordinate.set(null);
                 }
