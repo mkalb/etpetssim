@@ -232,22 +232,24 @@ public record GridCoordinate(int x, int y) {
     /**
      * Returns a new GridCoordinate offset by the given delta values.
      *
-     * @param dx the amount to add to the x-coordinate
-     * @param dy the amount to add to the y-coordinate
+     * @param dx the amount to add to the x-coordinate (horizontal offset)
+     * @param dy the amount to add to the y-coordinate (vertical offset)
      * @return a new GridCoordinate with x + dx and y + dy
+     * @see #offset(GridOffset)
      */
     public GridCoordinate offset(int dx, int dy) {
         return new GridCoordinate(x + dx, y + dy);
     }
 
     /**
-     * Returns a new GridCoordinate offset by the given grid direction.
+     * Returns a new GridCoordinate offset by the given GridOffset.
      *
-     * @param direction the direction specifying the delta for x and y
-     * @return a new GridCoordinate with x + direction.dx() and y + direction.dy()
+     * @param offset the GridOffset specifying the delta for x and y
+     * @return a new GridCoordinate with x + offset.dx() and y + offset.dy()
+     * @see #offset(int, int)
      */
-    public GridCoordinate offset(GridDirection direction) {
-        return new GridCoordinate(x + direction.dx(), y + direction.dy());
+    public GridCoordinate offset(GridOffset offset) {
+        return new GridCoordinate(x + offset.dx(), y + offset.dy());
     }
 
     /**
