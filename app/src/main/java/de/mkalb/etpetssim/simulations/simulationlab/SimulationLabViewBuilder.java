@@ -269,12 +269,19 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
                     lastClickedCoordinate.set(coordinate);
                     overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
-                    GridArrangement.validCellNeighborsStream(coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)
+                    GridArrangement.validCellNeighborsStream(coordinate, NeighborhoodMode.EDGES_AND_VERTICES,
+                                           structure)
                                    .forEach(cellNeighbor -> {
                                        overlayPainter.drawCell(cellNeighbor.neighborCoordinate(), Color.YELLOW, null, 0.0d);
                                        if (smallFont != null) {
                                            overlayPainter.drawCenteredTextInCell(cellNeighbor.neighborCoordinate(), cellNeighbor.toDisplayString(), Color.BLACK, smallFont);
                                        }
+                                   });
+
+                    GridArrangement.validNeighborCoordinatesStream(coordinate,
+                                           NeighborhoodMode.EDGES_AND_VERTICES, structure, 3)
+                                   .forEach(neighborCoordinate -> {
+                                       overlayPainter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.5d);
                                    });
                 } else {
                     lastClickedCoordinate.set(null);
