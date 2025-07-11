@@ -241,8 +241,9 @@ public final class GridArrangement {
             throw new IllegalArgumentException("Radius must be less than or equal to " + MAX_RADIUS + ", but was: " + radius);
         }
 
-        Set<GridCoordinate> visited = new HashSet<>();
-        Set<GridCoordinate> result = new HashSet<>();
+        int maxNeighbors = maxNeighborCount(cellShape, neighborhoodMode, radius);
+        Set<GridCoordinate> visited = HashSet.newHashSet(1 + maxNeighbors); // startCoordinate + maxNeighbors
+        Set<GridCoordinate> result = HashSet.newHashSet(maxNeighbors);
         Queue<GridCoordinate> queue = new ArrayDeque<>();
 
         visited.add(startCoordinate);
