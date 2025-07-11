@@ -8,6 +8,7 @@ package de.mkalb.etpetssim.engine.model;
  * to be chained and applied in sequence.
  *
  * @param <T> the type of {@link GridEntity} contained in the grid model
+ * @see GridModifier
  */
 @FunctionalInterface
 public interface GridInitializer<T extends GridEntity> {
