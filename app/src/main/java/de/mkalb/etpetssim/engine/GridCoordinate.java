@@ -253,6 +253,19 @@ public record GridCoordinate(int x, int y) {
     }
 
     /**
+     * Returns the offset (delta) from this coordinate to the specified target coordinate.
+     * <p>
+     * The offset is computed as (target.x - this.x, target.y - this.y).
+     *
+     * @param target the target coordinate
+     * @return a new GridOffset representing the difference from this to the target coordinate
+     * @see GridOffset#between(GridCoordinate, GridCoordinate)
+     */
+    public GridOffset offsetTo(GridCoordinate target) {
+        return GridOffset.between(this, target);
+    }
+
+    /**
      * Returns a short, human-readable string representation of this coordinate.
      * <p>
      * Format: {@code (x, y)}
