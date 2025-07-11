@@ -56,4 +56,29 @@ public final class GridEntityUtils {
         descriptorAt(coordinate, model, entityDescriptorRegistry).ifPresent(consumer);
     }
 
+    /**
+     * Places all entities from the given {@link GridPattern} into the specified {@link GridModel},
+     * offsetting each entity's position by the provided anchor coordinate.
+     * <p>
+     * For each entry in the pattern, the entity is placed at the coordinate computed by adding
+     * the pattern's offset to the anchor coordinate. Entities are only placed if the resulting
+     * coordinate is valid in the target grid model.
+     *
+     * @param coordinate the anchor coordinate at which to place the pattern's origin
+     * @param model the grid model to modify
+     * @param pattern the pattern of entities to place
+     * @param <T> the type of {@link GridEntity} in the model and pattern
+     */
+    public static <T extends GridEntity> void placePatternAt(GridCoordinate coordinate,
+                                                             GridModel<T> model,
+                                                             GridPattern<T> pattern) {
+        pattern.offsetMap()
+               .forEach((offset, entity) -> {
+                   GridCoordinate targetCoordinate = coordinate.offset(offset);
+                   if (model.isCoordinateValid(targetCoordinate)) {
+                       model.setEntity(targetCoordinate, entity);
+                   }
+               });
+    }
+
 }
