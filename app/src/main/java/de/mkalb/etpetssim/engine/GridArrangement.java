@@ -298,107 +298,103 @@ public final class GridArrangement {
             boolean isTriangleCellPointingDown,
             boolean hasTriangleCellXOffset) {
 
+        boolean isPointingDownAndOffset = isTriangleCellPointingDown && hasTriangleCellXOffset;
+        boolean isPointingDownNoOffset = isTriangleCellPointingDown && !hasTriangleCellXOffset;
+        boolean isPointingUpAndOffset = !isTriangleCellPointingDown && hasTriangleCellXOffset;
+
         // Directions for edge neighbors (3 per triangle)
-        if (neighborhoodMode == NeighborhoodMode.EDGES_ONLY) {
-            if (isTriangleCellPointingDown) {
-                if (hasTriangleCellXOffset) { // (2, 2)
-                    return List.of(
-                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SW, CellConnectionType.EDGE), // (2, 3) edge
+        return switch (neighborhoodMode) {
+            case NeighborhoodMode.EDGES_ONLY -> {
+                if (isPointingDownAndOffset) { // (2, 2)
+                    yield List.of(
                             new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE), // (2, 1) edge
-                            new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.EDGE) // (3, 3) edge
+                            new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.EDGE), // (3, 3) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SW, CellConnectionType.EDGE) // (2, 3) edge
                     );
-                } else { // (2, 4)
-                    return List.of(
-                            new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.EDGE), // (1, 5) edge
+                } else if (isPointingDownNoOffset) { // (2, 4)
+                    yield List.of(
                             new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE), // (2, 3) edge
-                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SE, CellConnectionType.EDGE) // (2, 5) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SE, CellConnectionType.EDGE), // (2, 5) edge
+                            new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.EDGE) // (1, 5) edge
                     );
-                }
-            } else { // pointing up
-                if (hasTriangleCellXOffset) { // (2, 5)
-                    return List.of(
-                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.NW, CellConnectionType.EDGE), // (2, 4) edge
+                } else if (isPointingUpAndOffset) { // (2, 5)
+                    yield List.of(
                             new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.NE, CellConnectionType.EDGE), // (3, 4) edge
-                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE) // (2, 6) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE), // (2, 6) edge
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.NW, CellConnectionType.EDGE) // (2, 4) edge
                     );
                 } else { // (2, 3)
-                    return List.of(
-                            new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.EDGE), // (1, 2) edge
+                    yield List.of(
                             new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.NE, CellConnectionType.EDGE), // (2, 2) edge
-                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE) // (2, 4) edge
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE), // (2, 4) edge
+                            new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.EDGE) // (1, 2) edge
                     );
                 }
             }
-        }
-
-        // TODO Fix CompassDirection for TRIANGLE and NeighborhoodMode.EDGES_AND_VERTICES
-
-        // Directions for edge + vertex neighbors (12 per triangle)
-        if (isTriangleCellPointingDown) {
-            if (hasTriangleCellXOffset) { // (2, 2)
-                return List.of(
-                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 3) edge
-                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (1, 2) vertex
-                        new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 1) vertex
-                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 0) vertex
-                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 1) edge
-                        new CellNeighborConnection(new GridOffset(1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 0) vertex
-                        new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 1) vertex
-                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 2) vertex
-                        new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) edge
-                        new CellNeighborConnection(new GridOffset(1, 2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) vertex
-                        new CellNeighborConnection(new GridOffset(0, 3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 5) vertex
-                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX) // (2, 4) vertex
-                );
-            } else { // (2, 4)
-                return List.of(
-                        new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 5) edge
-                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (1, 4) vertex
-                        new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 3) vertex
-                        new CellNeighborConnection(new GridOffset(-1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (1, 2) vertex
-                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 3) edge
-                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 2) vertex
-                        new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) vertex
-                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) vertex
-                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 5) edge
-                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 6) vertex
-                        new CellNeighborConnection(new GridOffset(0, 3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 7) vertex
-                        new CellNeighborConnection(new GridOffset(-1, 2), CompassDirection.N, CellConnectionType.VERTEX) // (1, 6) vertex
-                );
+            case NeighborhoodMode.EDGES_AND_VERTICES -> {
+                if (isPointingDownAndOffset) { // (2, 2)
+                    yield List.of(
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 1) edge
+                            new CellNeighborConnection(new GridOffset(1, -2), CompassDirection.NNE, CellConnectionType.VERTEX), // (3, 0) vertex
+                            new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.NE, CellConnectionType.VERTEX), // (3, 1) vertex
+                            new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.E, CellConnectionType.VERTEX), // (3, 2) vertex
+                            new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.EDGE), // (3, 3) edge
+                            new CellNeighborConnection(new GridOffset(1, 2), CompassDirection.SSE, CellConnectionType.VERTEX), // (3, 4) vertex
+                            new CellNeighborConnection(new GridOffset(0, 3), CompassDirection.S, CellConnectionType.VERTEX), // (2, 5) vertex
+                            new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.SSW, CellConnectionType.VERTEX), // (2, 4) vertex
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SW, CellConnectionType.EDGE), // (2, 3) edge
+                            new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.W, CellConnectionType.VERTEX), // (1, 2) vertex
+                            new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.VERTEX), // (1, 1) vertex
+                            new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.NNW, CellConnectionType.VERTEX) // (2, 0) vertex
+                    );
+                } else if (isPointingDownNoOffset) { // (2, 4)
+                    yield List.of(
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.EDGE), // (2, 3) edge
+                            new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.NNE, CellConnectionType.VERTEX), // (2, 2) vertex
+                            new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.NE, CellConnectionType.VERTEX), // (3, 3) vertex
+                            new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.E, CellConnectionType.VERTEX), // (3, 4) vertex
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.SE, CellConnectionType.EDGE), // (2, 5) edge
+                            new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.SSE, CellConnectionType.VERTEX), // (2, 6) vertex
+                            new CellNeighborConnection(new GridOffset(0, 3), CompassDirection.S, CellConnectionType.VERTEX), // (2, 7) vertex
+                            new CellNeighborConnection(new GridOffset(-1, 2), CompassDirection.SSW, CellConnectionType.VERTEX), // (1, 6) vertex
+                            new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.EDGE),// (1, 5) edge
+                            new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.W, CellConnectionType.VERTEX), // (1, 4) vertex
+                            new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.VERTEX), // (1, 3) vertex
+                            new CellNeighborConnection(new GridOffset(-1, -2), CompassDirection.NNW, CellConnectionType.VERTEX) // (1, 2) vertex
+                    );
+                } else if (isPointingUpAndOffset) { // (2, 5)
+                    yield List.of(
+                            new CellNeighborConnection(new GridOffset(0, -3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 2) vertex
+                            new CellNeighborConnection(new GridOffset(1, -2), CompassDirection.NNE, CellConnectionType.VERTEX), // (3, 3) vertex
+                            new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.NE, CellConnectionType.EDGE), // (3, 4) edge
+                            new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.E, CellConnectionType.VERTEX), // (3, 5) vertex
+                            new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.VERTEX), // (3, 6) vertex
+                            new CellNeighborConnection(new GridOffset(1, 2), CompassDirection.SSE, CellConnectionType.VERTEX), // (3, 7) vertex
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE), // (2, 6) edge
+                            new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.SSW, CellConnectionType.VERTEX), // (2, 7) vertex
+                            new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.VERTEX), // (1, 6) vertex
+                            new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.W, CellConnectionType.VERTEX), // (1, 5) vertex
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.NW, CellConnectionType.EDGE), // (2, 4) edge
+                            new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.NNW, CellConnectionType.VERTEX) // (2, 3) vertex
+                    );
+                } else { // (2, 3)
+                    yield List.of(
+                            new CellNeighborConnection(new GridOffset(0, -3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 0) vertex
+                            new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.NNE, CellConnectionType.VERTEX), // (2, 1) vertex
+                            new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.NE, CellConnectionType.EDGE), // (2, 2) edge
+                            new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.E, CellConnectionType.VERTEX), // (3, 3) vertex
+                            new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.SE, CellConnectionType.VERTEX), // (3, 4) vertex
+                            new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.SSE, CellConnectionType.VERTEX), // (2, 5) vertex
+                            new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.S, CellConnectionType.EDGE), // (2, 4) edge
+                            new CellNeighborConnection(new GridOffset(-1, 2), CompassDirection.SSW, CellConnectionType.VERTEX), // (1, 5) vertex
+                            new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.SW, CellConnectionType.VERTEX), // (1, 4) vertex
+                            new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.W, CellConnectionType.VERTEX), // (1, 3) vertex
+                            new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.NW, CellConnectionType.EDGE), // (1, 2) edge
+                            new CellNeighborConnection(new GridOffset(-1, -2), CompassDirection.NNW, CellConnectionType.VERTEX) // (1, 1) vertex
+                    );
+                }
             }
-        } else { // pointing up
-            if (hasTriangleCellXOffset) { // (2, 5)
-                return List.of(
-                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 4) edge
-                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 3) vertex
-                        new CellNeighborConnection(new GridOffset(0, -3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 2) vertex
-                        new CellNeighborConnection(new GridOffset(1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) vertex
-                        new CellNeighborConnection(new GridOffset(1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) edge
-                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 5) vertex
-                        new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 6) vertex
-                        new CellNeighborConnection(new GridOffset(1, 2), CompassDirection.N, CellConnectionType.VERTEX), // (3, 7) vertex
-                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 6) edge
-                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 7) vertex
-                        new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 6) vertex
-                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX) // (1, 5) vertex
-                );
-            } else { // (2, 3)
-                return List.of(
-                        new CellNeighborConnection(new GridOffset(-1, -1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 2) edge
-                        new CellNeighborConnection(new GridOffset(-1, -2), CompassDirection.N, CellConnectionType.VERTEX), // (1, 1) vertex
-                        new CellNeighborConnection(new GridOffset(0, -3), CompassDirection.N, CellConnectionType.VERTEX), // (2, 0) vertex
-                        new CellNeighborConnection(new GridOffset(0, -2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 1) vertex
-                        new CellNeighborConnection(new GridOffset(0, -1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 2) edge
-                        new CellNeighborConnection(new GridOffset(1, 0), CompassDirection.N, CellConnectionType.VERTEX), // (3, 3) vertex
-                        new CellNeighborConnection(new GridOffset(1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (3, 4) vertex
-                        new CellNeighborConnection(new GridOffset(0, 2), CompassDirection.N, CellConnectionType.VERTEX), // (2, 5) vertex
-                        new CellNeighborConnection(new GridOffset(0, 1), CompassDirection.N, CellConnectionType.VERTEX), // (2, 4) edge
-                        new CellNeighborConnection(new GridOffset(-1, 2), CompassDirection.N, CellConnectionType.VERTEX), // (1, 5) vertex
-                        new CellNeighborConnection(new GridOffset(-1, 1), CompassDirection.N, CellConnectionType.VERTEX), // (1, 4) vertex
-                        new CellNeighborConnection(new GridOffset(-1, 0), CompassDirection.N, CellConnectionType.VERTEX) // (1, 3) vertex
-                );
-            }
-        }
+        };
     }
 
     static List<CellNeighborConnection> computeSquareCellNeighborConnections(NeighborhoodMode neighborhoodMode) {
