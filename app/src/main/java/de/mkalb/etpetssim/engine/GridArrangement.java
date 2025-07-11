@@ -20,6 +20,15 @@ import java.util.stream.*;
 public final class GridArrangement {
 
     /**
+     * The maximum allowed neighborhood radius for neighbor calculations in the grid.
+     * <p>
+     * This value is used as an upper bound to prevent excessive computation and memory usage
+     * when determining neighbors within a given radius. Methods that accept a radius parameter
+     * will throw an {@link IllegalArgumentException} if the provided value exceeds this limit.
+     */
+    public static final int MAX_RADIUS = 100;
+
+    /**
      * Internal cache for computed cell neighbor connections.
      */
     private static final Map<String, List<CellNeighborConnection>> CACHE = HashMap.newHashMap(16);
@@ -147,6 +156,32 @@ public final class GridArrangement {
     }
 
     /**
+     * Returns a stream of all valid neighbor coordinates within the given radius for a cell in the grid, considering grid boundaries.
+     * <p>
+     * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
+     * {@link GridStructure}. If not, an empty stream is returned. Otherwise, it computes all theoretical neighbor coordinates
+     * (ignoring boundaries) and filters them to include only those that are valid within the grid.
+     *
+     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param structure        the grid structure defining size and topology
+     * @param radius           the neighborhood radius (&gt; 0) and less than or equal to {@link #MAX_RADIUS}
+     * @return a stream of {@link GridCoordinate} objects representing all valid neighbor coordinates of the cell within the given radius (respecting grid boundaries)
+     * @throws IllegalArgumentException if the radius is greater than {@link #MAX_RADIUS}
+     */
+    public static Stream<GridCoordinate> validNeighborCoordinatesStream(GridCoordinate startCoordinate,
+                                                                        NeighborhoodMode neighborhoodMode,
+                                                                        GridStructure structure,
+                                                                        int radius) {
+        if (!structure.isCoordinateValid(startCoordinate)) {
+            return Stream.empty();
+        }
+        return coordinatesOfNeighbors(startCoordinate, neighborhoodMode, structure.cellShape(), radius)
+                .stream()
+                .filter(structure::isCoordinateValid);
+    }
+
+    /**
      * Returns a list of all neighbors for a given cell in the grid, based on the specified
      * neighborhood mode and cell shape, ignoring grid boundaries.
      * <p>
@@ -181,6 +216,57 @@ public final class GridArrangement {
                                               startCoordinate.offset(neighborConnection.offset())
                                       ))
                                       .toList();
+    }
+
+    /**
+     * Returns a set of all neighbor coordinates within the given radius for a cell,
+     * based on the specified neighborhood mode and cell shape, ignoring grid boundaries.
+     * Uses breadth-first search to avoid redundant visits and ensure efficiency.
+     *
+     * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined
+     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape         the shape of the cell (triangle, square, hexagon)
+     * @param radius            the neighborhood radius (> 0) and less than or equal to {@link #MAX_RADIUS}
+     * @return a set of {@link GridCoordinate} objects representing all neighbor coordinates within the given radius
+     * @throws IllegalArgumentException if the radius is greater than {@link #MAX_RADIUS}
+     */
+    public static Set<GridCoordinate> coordinatesOfNeighbors(GridCoordinate startCoordinate,
+                                                             NeighborhoodMode neighborhoodMode,
+                                                             CellShape cellShape,
+                                                             int radius) {
+        if (radius <= 0) {
+            return Collections.emptySet();
+        }
+        if (radius > MAX_RADIUS) {
+            throw new IllegalArgumentException("Radius must be less than or equal to " + MAX_RADIUS + ", but was: " + radius);
+        }
+
+        Set<GridCoordinate> visited = new HashSet<>();
+        Set<GridCoordinate> result = new HashSet<>();
+        Queue<GridCoordinate> queue = new ArrayDeque<>();
+
+        visited.add(startCoordinate);
+        queue.add(startCoordinate);
+
+        int currentRadius = 0;
+
+        while (!queue.isEmpty() && (currentRadius < radius)) {
+            int levelSize = queue.size();
+            for (int i = 0; i < levelSize; i++) {
+                GridCoordinate current = Objects.requireNonNull(queue.poll());
+
+                for (CellNeighbor neighbor : cellNeighbors(current, neighborhoodMode, cellShape)) {
+                    GridCoordinate neighborCoordinate = neighbor.neighborCoordinate();
+                    if (visited.add(neighborCoordinate)) { // Only add if not visited
+                        result.add(neighborCoordinate);
+                        queue.add(neighborCoordinate);
+                    }
+                }
+            }
+            currentRadius++;
+        }
+
+        return result;
     }
 
     static String buildCacheKey(GridCoordinate startCoordinate,
