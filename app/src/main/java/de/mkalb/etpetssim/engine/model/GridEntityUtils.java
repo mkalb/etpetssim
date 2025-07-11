@@ -7,7 +7,7 @@ import java.util.function.*;
 
 /**
  * Utility class providing static methods for operations involving
- * {@link GridEntity}, {@link GridCell}, {@link GridModel}, {@link GridEntityDescriptor},
+ * {@link GridEntity}, {@link GridCell}, {@link GridModel}, {@link GridPattern} {@link GridEntityDescriptor},
  * and {@link GridEntityDescriptorRegistry}.
  */
 public final class GridEntityUtils {
