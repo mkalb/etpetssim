@@ -21,89 +21,6 @@ import java.util.function.*;
 public interface GridPattern<T extends GridEntity> {
 
     /**
-     * Returns an empty {@code GridPattern} containing no entities.
-     *
-     * @param <T> the type of {@link GridEntity}
-     * @return an empty pattern
-     */
-    static <T extends GridEntity> GridPattern<T> empty() {
-        return Collections::emptyMap;
-    }
-
-    /**
-     * Creates a {@code GridPattern} from the given map of offsets to entities.
-     * <p>
-     * The returned pattern contains all entries from the provided map. The pattern is
-     * <b>not guaranteed to be normalized</b>; offsets may have arbitrary values.
-     * <p>
-     * Modifications to the original map after calling this method do not affect the pattern.
-     *
-     * @param map the map of offsets to entities
-     * @param <T> the type of {@link GridEntity}
-     * @return a pattern containing the specified mapping
-     */
-    static <T extends GridEntity> GridPattern<T> of(Map<GridOffset, T> map) {
-        return () -> new HashMap<>(map);
-    }
-
-    /**
-     * Creates a {@code GridPattern} where the specified entity is placed at multiple offsets.
-     * <p>
-     * The returned pattern contains the given entity at each offset in the provided collection.
-     * The pattern is <b>not guaranteed to be normalized</b>; offsets may have arbitrary values.
-     * <p>
-     * Modifications to the original collection of offsets after calling this method do not affect the pattern.
-     *
-     * @param entity the entity to place at each offset
-     * @param offsets the collection of offsets where the entity will be placed
-     * @param <T> the type of {@link GridEntity}
-     * @return a pattern containing the entity at the specified offsets
-     */
-    static <T extends GridEntity> GridPattern<T> of(T entity, Collection<GridOffset> offsets) {
-        Map<GridOffset, T> map = new HashMap<>();
-        for (GridOffset offset : offsets) {
-            map.put(offset, entity);
-        }
-        return () -> map;
-    }
-
-    /**
-     * Creates a {@code GridPattern} containing a single entity at the specified offset.
-     * <p>
-     * The returned pattern contains exactly one entry at the given offset. The pattern is
-     * <b>not guaranteed to be normalized</b>; the offset may be any value.
-     *
-     * @param offset the offset of the entity
-     * @param entity the entity to place
-     * @param <T> the type of {@link GridEntity}
-     * @return a singleton pattern containing the entity at the specified offset
-     */
-    static <T extends GridEntity> GridPattern<T> singleton(GridOffset offset, T entity) {
-        return () -> Map.of(offset, entity);
-    }
-
-    /**
-     * Combines multiple {@code GridPattern} instances into a single pattern.
-     * <p>
-     * All entries from the provided patterns are merged into one pattern. If multiple patterns
-     * contain the same offset, the entity from the last pattern in the argument list is used.
-     * <p>
-     * The resulting pattern is <b>not guaranteed to be normalized</b>.
-     *
-     * @param patterns the patterns to combine
-     * @param <T> the type of {@link GridEntity}
-     * @return a combined pattern containing all entries from the input patterns
-     */
-    @SafeVarargs
-    static <T extends GridEntity> GridPattern<T> combine(GridPattern<T>... patterns) {
-        Map<GridOffset, T> combined = new HashMap<>();
-        for (GridPattern<T> pattern : patterns) {
-            combined.putAll(pattern.offsetMap());
-        }
-        return () -> combined;
-    }
-
-    /**
      * Returns the mapping of offsets to entities that defines this pattern.
      * <p>
      * It is recommended that the offsets are normalized so that the top-left corner
@@ -244,6 +161,73 @@ public interface GridPattern<T extends GridEntity> {
             }
             return flipped;
         };
+    }
+
+    /**
+     * Returns a new pattern rotated 90 degrees clockwise around its bounding box.
+     * <p>
+     * The top-left of the rotated pattern is at offset (0, 0).
+     *
+     * @return a pattern rotated 90° clockwise
+     */
+    default GridPattern<T> rotate90() {
+        Map<GridOffset, T> original = offsetMap();
+        int height = height();
+        int minDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
+        int minDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
+        Map<GridOffset, T> rotated = new HashMap<>();
+        for (var entry : original.entrySet()) {
+            int x = entry.getKey().dx() - minDx;
+            int y = entry.getKey().dy() - minDy;
+            // (x, y) -> (height - 1 - y, x)
+            rotated.put(new GridOffset(height - 1 - y, x), entry.getValue());
+        }
+        return () -> rotated;
+    }
+
+    /**
+     * Returns a new pattern rotated 180 degrees clockwise around its bounding box.
+     * <p>
+     * The top-left of the rotated pattern is at offset (0, 0).
+     *
+     * @return a pattern rotated 180° clockwise
+     */
+    default GridPattern<T> rotate180() {
+        Map<GridOffset, T> original = offsetMap();
+        int width = width();
+        int height = height();
+        int minDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
+        int minDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
+        Map<GridOffset, T> rotated = new HashMap<>();
+        for (var entry : original.entrySet()) {
+            int x = entry.getKey().dx() - minDx;
+            int y = entry.getKey().dy() - minDy;
+            // (x, y) -> (width - 1 - x, height - 1 - y)
+            rotated.put(new GridOffset(width - 1 - x, height - 1 - y), entry.getValue());
+        }
+        return () -> rotated;
+    }
+
+    /**
+     * Returns a new pattern rotated 270 degrees clockwise (or 90 degrees counterclockwise) around its bounding box.
+     * <p>
+     * The top-left of the rotated pattern is at offset (0, 0).
+     *
+     * @return a pattern rotated 270° clockwise
+     */
+    default GridPattern<T> rotate270() {
+        Map<GridOffset, T> original = offsetMap();
+        int width = width();
+        int minDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
+        int minDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
+        Map<GridOffset, T> rotated = new HashMap<>();
+        for (var entry : original.entrySet()) {
+            int x = entry.getKey().dx() - minDx;
+            int y = entry.getKey().dy() - minDy;
+            // (x, y) -> (y, width - 1 - x)
+            rotated.put(new GridOffset(y, width - 1 - x), entry.getValue());
+        }
+        return () -> rotated;
     }
 
     /**
