@@ -21,6 +21,7 @@ public final class ConwayViewModel implements SimulationController {
     private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(20.0);
     private final IntegerProperty gridWidth = new SimpleIntegerProperty(64);  // Default value
     private final IntegerProperty gridHeight = new SimpleIntegerProperty(32); // Default value
+    private final ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.READY);
     private @Nullable SimulationStartedListener simulationStartedListener;
     private @Nullable GridModel<ConwayEntity> model;
     private @Nullable SimulationExecutor<ConwayEntity> executor;
@@ -28,6 +29,18 @@ public final class ConwayViewModel implements SimulationController {
     public ConwayViewModel() {
         entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ConwayEntity.values());
         view = new ConwayView(this, entityDescriptorRegistry);
+    }
+
+    public ObjectProperty<SimulationState> simulationStateProperty() {
+        return simulationState;
+    }
+
+    public SimulationState getSimulationState() {
+        return simulationState.get();
+    }
+
+    public void setSimulationState(SimulationState state) {
+        simulationState.set(state);
     }
 
     @Override
@@ -99,6 +112,19 @@ public final class ConwayViewModel implements SimulationController {
             simulationStartedListener.onSimulationStarted(structure);
         }
     }
+
+    public void onActionButton() {
+        simulationState.set(switch (getSimulationState()) {
+            case READY, PAUSED -> SimulationState.RUNNING;
+            case RUNNING -> SimulationState.PAUSED;
+        });
+    }
+
+    public void onCancelButton() {
+        simulationState.set(SimulationState.READY);
+    }
+
+    public enum SimulationState {READY, RUNNING, PAUSED}
 
     @FunctionalInterface
     public interface SimulationStartedListener {

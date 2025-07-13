@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
@@ -76,6 +77,12 @@ public class ConwayView extends StackPane {
 
         HBox hbox = new HBox(10, widthLabel, widthSpinner, heightLabel, heightSpinner, cellLabel, cellSlider);
         hbox.setAlignment(Pos.CENTER_LEFT);
+
+        // Bind disableProperty directly to simulationStateProperty
+        hbox.disableProperty().bind(
+                viewModel.simulationStateProperty().isNotEqualTo(ConwayViewModel.SimulationState.READY)
+        );
+
         return hbox;
     }
 
@@ -96,15 +103,25 @@ public class ConwayView extends StackPane {
     }
 
     private Region createControlRegion() {
-        Button startButton = buildControlButton("Start", false);
-        Button resumeButton = buildControlButton("Resume", true);
-        Button pauseButton = buildControlButton("Pause", true);
+        Button actionButton = buildControlButton("Action", false);
         Button cancelButton = buildControlButton("Cancel", true);
 
-        startButton.setOnAction(e -> viewModel.startSimulation());
+        actionButton.textProperty().bind(
+                Bindings.createStringBinding(() -> switch (viewModel.getSimulationState()) {
+                    case READY -> "Start";
+                    case RUNNING -> "Pause";
+                    case PAUSED -> "Resume";
+                }, viewModel.simulationStateProperty())
+        );
+        cancelButton.disableProperty().bind(
+                viewModel.simulationStateProperty().isEqualTo(ConwayViewModel.SimulationState.READY)
+        );
+
+        actionButton.setOnAction(e -> viewModel.onActionButton());
+        cancelButton.setOnAction(e -> viewModel.onCancelButton());
 
         HBox hbox = new HBox();
-        hbox.getChildren().addAll(startButton, cancelButton);
+        hbox.getChildren().addAll(actionButton, cancelButton);
         hbox.getStyleClass().add("control-hbox");
 
         return hbox;
