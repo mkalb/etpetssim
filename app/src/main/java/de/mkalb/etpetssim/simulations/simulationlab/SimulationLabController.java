@@ -44,7 +44,7 @@ public final class SimulationLabController implements SimulationController {
 
         // Place a symmetric small cross pattern of highlighted entities
         GridEntityUtils.placePatternAt(new GridCoordinate(5, 5), model,
-                GridPattern.of(SimulationLabEntity.HIGHLIGHTED, List.of(
+                GridPatterns.of(SimulationLabEntity.HIGHLIGHTED, List.of(
                         new GridOffset(0, 1),
                         new GridOffset(1, 0),
                         new GridOffset(2, 1),
