@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.simulations.simulationlab.SimulationLabController;
 import de.mkalb.etpetssim.simulations.startscreen.StartScreenController;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
@@ -35,6 +36,7 @@ public final class SimulationFactory {
             case STARTSCREEN -> SimulationInstance.of(type, new StartScreenController(stage, stageUpdater));
             case SIMULATION_LAB -> SimulationInstance.of(type, new SimulationLabController(stage));
             case WATOR -> SimulationInstance.of(type, new WaTorController());
+            case CONWAYS_LIFE -> SimulationInstance.of(type, new ConwayViewModel());
             // add other simulation types here later after implementing them
             default -> {
                 AppLogger.error("Simulation type not implemented: " + type.name());
