@@ -222,8 +222,7 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         coordinateLabel.textProperty().bind(coordinateDisplayBinding);
         statBox.getChildren().add(coordinateLabel);
 
-        HBox hBox = new HBox(configBox, controlBox, statBox);
-        return hBox;
+        return new HBox(configBox, controlBox, statBox);
     }
 
     private Pane addVisibleCanvasBorder(Pane pane) {
