@@ -127,10 +127,10 @@ public final class ConwayViewModel implements SimulationController {
         GridEntityUtils.placePatternAt(new GridCoordinate(10, 10), model, ConwayPatterns.glider());
 
         BiConsumer<ReadableGridModel<ConwayEntity>, GridModel<ConwayEntity>> updateStrategy = (currentModel, nextModel) -> {};  // TODO Optimize later
-        SimulationStep<ConwayEntity> runner = new SynchronousStepRunner<>(model, updateStrategy);
+        SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, updateStrategy);
 
         SimulationTerminationCondition<ConwayEntity> terminationCondition = (currentModel, step) -> false; // TODO Optimize later
-        executor = new DefaultSimulationExecutor<>(runner, () -> model, terminationCondition);
+        executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition);
 
         if (simulationInitializedListener != null) {
             simulationInitializedListener.run();
