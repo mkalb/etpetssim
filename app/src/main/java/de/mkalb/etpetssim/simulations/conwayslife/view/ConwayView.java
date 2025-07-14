@@ -26,6 +26,8 @@ public class ConwayView extends StackPane {
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
+    private final Label stepLabel;
+    private final Label aliveCellsLabel;
     private @Nullable FXGridCanvasPainter painter;
     private @Nullable FXGridCanvasPainter overlayPainter;
 
@@ -35,6 +37,8 @@ public class ConwayView extends StackPane {
 
         baseCanvas = new Canvas(100, 100);
         overlayCanvas = new Canvas(100, 100);
+        stepLabel = new Label();
+        aliveCellsLabel = new Label();
     }
 
     public Region buildViewRegion() {
@@ -42,7 +46,6 @@ public class ConwayView extends StackPane {
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = createControlRegion();
         Region observationRegion = createObservationRegion();
-        observationRegion.setVisible(false);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
@@ -76,6 +79,7 @@ public class ConwayView extends StackPane {
             overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
 
             drawCanvas(currentModel, currentStep);
+            updateObservationLabels();
         });
         viewModel.setSimulationStepListener(() -> {
             ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
@@ -83,6 +87,7 @@ public class ConwayView extends StackPane {
             AppLogger.info("Drawing canvas for step " + currentStep);
 
             drawCanvas(currentModel, currentStep);
+            updateObservationLabels();
         });
     }
 
@@ -179,7 +184,26 @@ public class ConwayView extends StackPane {
     }
 
     private Region createObservationRegion() {
-        return new HBox(); // TODO Implement later
+        updateObservationLabels();
+
+        VBox vbox = new VBox(new Label("Step:"), stepLabel, new Label("Alive:"), aliveCellsLabel);
+        vbox.setAlignment(Pos.CENTER_LEFT);
+        vbox.getStyleClass().add("observation-vbox");
+        return vbox;
+    }
+
+    private void updateObservationLabels() {
+        if (viewModel.getSimulationState() == SimulationState.READY) {
+            stepLabel.setText("-");
+            aliveCellsLabel.setText("-");
+            return;
+        }
+        long step = viewModel.getCurrentStep();
+        ReadableGridModel<ConwayEntity> model = viewModel.getCurrentModel();
+        long aliveCount = model.count(cell -> cell.entity().isAlive());
+
+        stepLabel.setText(Long.toString(step));
+        aliveCellsLabel.setText(Long.toString(aliveCount));
     }
 
 }

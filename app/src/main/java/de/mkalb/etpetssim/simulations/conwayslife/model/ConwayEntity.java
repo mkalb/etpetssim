@@ -179,4 +179,22 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
         return renderPriority;
     }
 
+    /**
+     * Checks if this entity represents a dead cell.
+     *
+     * @return {@code true} if this entity is {@link #DEAD}, {@code false} otherwise
+     */
+    public boolean isDead() {
+        return this == DEAD;
+    }
+
+    /**
+     * Checks if this entity represents a living cell.
+     *
+     * @return {@code true} if this entity is {@link #ALIVE}, {@code false} otherwise
+     */
+    public boolean isAlive() {
+        return this == ALIVE;
+    }
+
 }
