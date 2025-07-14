@@ -141,7 +141,7 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
     public void fill(T entity) {
         data.clear(); // Clear existing entries
         if (!entity.equals(defaultEntity)) { // Set new entities only if different from default
-            structure.coordinatesStream().parallel().forEach(coordinate -> data.put(coordinate, entity));
+            structure.coordinatesStream().forEach(coordinate -> data.put(coordinate, entity));
         }
     }
 
