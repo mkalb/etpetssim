@@ -31,9 +31,11 @@ public class ConwayView extends StackPane {
 
     public Region buildViewRegion() {
         // Register callback
-        viewModel.setModelCreatedListener((structure) -> {
-            AppLogger.info("Structure:       " + structure.toDisplayString());
+        viewModel.setSimulationInitializedListener((structure) -> {
             double cellEdgeLength = viewModel.getCellEdgeLength();
+            AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
+                    " and cell edge length " + cellEdgeLength);
+
             painter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
             baseCanvas.setWidth(Math.min(6_000.0d, painter.gridDimension2D().getWidth()));
             baseCanvas.setHeight(Math.min(4_000.0d, painter.gridDimension2D().getHeight()));

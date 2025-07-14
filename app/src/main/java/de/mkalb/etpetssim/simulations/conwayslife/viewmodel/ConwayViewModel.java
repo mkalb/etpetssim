@@ -27,7 +27,7 @@ public final class ConwayViewModel implements SimulationController {
     private final IntegerProperty gridHeight = new SimpleIntegerProperty(32); // Default value
     private final ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.READY);
 
-    private @Nullable SimulationStartedListener simulationStartedListener;
+    private @Nullable SimulationInitializedListener simulationInitializedListener;
     private @Nullable GridModel<ConwayEntity> model;
     private @Nullable SimulationExecutor<ConwayEntity> executor;
 
@@ -54,8 +54,8 @@ public final class ConwayViewModel implements SimulationController {
         return view.buildViewRegion();
     }
 
-    public void setModelCreatedListener(SimulationStartedListener simulationStartedListener) {
-        this.simulationStartedListener = simulationStartedListener;
+    public void setSimulationInitializedListener(SimulationInitializedListener simulationInitializedListener) {
+        this.simulationInitializedListener = simulationInitializedListener;
     }
 
     public DoubleProperty cellEdgeLengthProperty() {
@@ -95,6 +95,10 @@ public final class ConwayViewModel implements SimulationController {
     }
 
     private void startSimulation() {
+        // Resetting the model and executor to ensure a fresh start
+        model = null;
+        executor = null;
+
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
                 new GridSize(getGridWidth(), getGridHeight())
@@ -110,17 +114,16 @@ public final class ConwayViewModel implements SimulationController {
         SimulationTerminationCondition<ConwayEntity> terminationCondition = (currentModel, step) -> false; // TODO Optimize later
         executor = new DefaultSimulationExecutor<>(runner, () -> model, terminationCondition);
 
-        executor.executeStep();
-
-        AppLogger.info("Structure:       " + structure.toDisplayString());
-
-        if (simulationStartedListener != null) {
-            simulationStartedListener.onSimulationStarted(structure);
+        if (simulationInitializedListener != null) {
+            simulationInitializedListener.onSimulationInitialized(structure);
         }
     }
 
     private void doSimulationStep() {
+        Objects.requireNonNull(executor, "Simulation executor must not be null before executing a step.");
         AppLogger.info("Simulation step started.");
+
+        executor.executeStep();
     }
 
     private void startTimeline() {
@@ -164,9 +167,9 @@ public final class ConwayViewModel implements SimulationController {
     public enum SimulationState {READY, RUNNING, PAUSED}
 
     @FunctionalInterface
-    public interface SimulationStartedListener {
+    public interface SimulationInitializedListener {
 
-        void onSimulationStarted(GridStructure structure);
+        void onSimulationInitialized(GridStructure structure);
 
     }
 
