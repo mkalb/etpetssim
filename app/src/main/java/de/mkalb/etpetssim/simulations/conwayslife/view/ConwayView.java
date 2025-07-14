@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -102,7 +103,7 @@ public class ConwayView extends StackPane {
 
         // Bind disableProperty directly to simulationStateProperty
         hbox.disableProperty().bind(
-                viewModel.simulationStateProperty().isNotEqualTo(ConwayViewModel.SimulationState.READY)
+                viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
         );
 
         return hbox;
@@ -136,7 +137,7 @@ public class ConwayView extends StackPane {
                 }, viewModel.simulationStateProperty())
         );
         cancelButton.disableProperty().bind(
-                viewModel.simulationStateProperty().isEqualTo(ConwayViewModel.SimulationState.READY)
+                viewModel.simulationStateProperty().isEqualTo(SimulationState.READY)
         );
 
         actionButton.setOnAction(e -> viewModel.onActionButton());

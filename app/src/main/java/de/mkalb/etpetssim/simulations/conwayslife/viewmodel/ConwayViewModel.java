@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.SimulationController;
+import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayPatterns;
 import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayView;
@@ -183,7 +184,5 @@ public final class ConwayViewModel implements SimulationController {
         AppLogger.info("Cancelling simulation...");
         setSimulationState(SimulationState.READY);
     }
-
-    public enum SimulationState {READY, RUNNING, PAUSED}
 
 }
