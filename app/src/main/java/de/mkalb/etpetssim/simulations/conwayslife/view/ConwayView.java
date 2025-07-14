@@ -12,7 +12,8 @@ import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
@@ -26,6 +27,7 @@ public class ConwayView extends StackPane {
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
+    private final ConwayConfigView configView;
     private final ConwayObservationView observationView;
     private @Nullable FXGridCanvasPainter painter;
     private @Nullable FXGridCanvasPainter overlayPainter;
@@ -37,11 +39,12 @@ public class ConwayView extends StackPane {
         baseCanvas = new Canvas(100, 100);
         overlayCanvas = new Canvas(100, 100);
 
+        configView = new ConwayConfigView(viewModel);
         observationView = new ConwayObservationView(viewModel);
     }
 
     public Region buildViewRegion() {
-        Region configRegion = createConfigRegion();
+        Region configRegion = configView.buildConfigRegion();
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = createControlRegion();
         Region observationRegion = observationView.buildObservationRegion();
@@ -104,43 +107,8 @@ public class ConwayView extends StackPane {
         currentModel.structure().coordinatesStream().forEachOrdered(coordinate -> {
             GridEntityUtils.consumeDescriptorAt(coordinate, currentModel, entityDescriptorRegistry,
                     descriptor -> painter.drawCell(coordinate, descriptor.colorAsOptional().orElse(Color.BLACK),
-                            Color.BLACK, 1.0d));
+                            null, 0.0d));
         });
-    }
-
-    private Region createConfigRegion() {
-        Label widthLabel = new Label("Grid Width:");
-        Spinner<Integer> widthSpinner = new Spinner<>(8, 16_384, viewModel.getGridWidth(), 2);
-        widthSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridWidthProperty().asObject());
-
-        Label heightLabel = new Label("Grid Height:");
-        Spinner<Integer> heightSpinner = new Spinner<>(8, 16_384, viewModel.getGridHeight(), 2);
-        heightSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridHeightProperty().asObject());
-
-        Label cellLabel = new Label("Cell Edge Length:");
-        Slider cellSlider = new Slider(5, 50, viewModel.getCellEdgeLength());
-        cellSlider.setShowTickLabels(true);
-        cellSlider.setShowTickMarks(true);
-        cellSlider.valueProperty().bindBidirectional(viewModel.cellEdgeLengthProperty());
-
-        Label percentLabel = new Label("Alive %:");
-        Slider percentSlider = new Slider(0.0, 1.0, viewModel.getAlivePercent());
-        percentSlider.setShowTickLabels(true);
-        percentSlider.setShowTickMarks(true);
-        percentSlider.setMajorTickUnit(0.1);
-        percentSlider.setMinorTickCount(4);
-        percentSlider.setBlockIncrement(0.01);
-        percentSlider.valueProperty().bindBidirectional(viewModel.alivePercentProperty());
-
-        HBox hbox = new HBox(10, widthLabel, widthSpinner, heightLabel, heightSpinner, cellLabel, cellSlider, percentLabel, percentSlider);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-
-        // Bind disableProperty directly to simulationStateProperty
-        hbox.disableProperty().bind(
-                viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
-        );
-
-        return hbox;
     }
 
     private Region createSimulationRegion() {
