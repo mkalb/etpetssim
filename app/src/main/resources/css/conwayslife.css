@@ -1,33 +1,54 @@
-/* Wator Styling */
-.config-grid-pane {
-    -fx-padding: 10;
-    -fx-hgap: 10;
-    -fx-vgap: 10;
-    -fx-background-color: #ffffff;
-    -fx-border-color: #dddddd;
-    -fx-border-width: 1;
-    -fx-border-radius: 5;
-    -fx-min-width: 1200px;
-}
-
-.config-slider {
-    -fx-min-width: 700px;
-}
-
-.config-vbox {
-    -fx-padding: 5;
-    -fx-spacing: 10;
-    -fx-alignment: top-left;
-}
-
+/* Config area background and border */
 .config-hbox {
-    -fx-padding: 10;
-    -fx-spacing: 20;
+    -fx-padding: 20;
+    -fx-spacing: 30;
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #cfd8dc;
+    -fx-border-width: 1 0 1 0;
+    -fx-border-radius: 8;
+    -fx-alignment: top-left;
+    -fx-min-width: 900px;
+    -fx-max-width: 1400px;
+}
+
+/* TitledPane styling */
+.config-titled-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #b0bec5;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-padding: 10 0 10 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 4, 0.2, 0, 2);
+}
+.config-titled-pane > .title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #37474f;
+    -fx-padding: 8 0 8 10;
+}
+
+/* VBox inside TitledPane */
+.config-vbox {
+    -fx-padding: 12 18 12 18;
+    -fx-spacing: 12;
     -fx-alignment: top-left;
 }
 
-.config-titled-pane {
-    /* Optional: custom styles for TitledPane */
+/* Controls */
+.config-slider {
+    -fx-min-width: 220px;
+    -fx-max-width: 350px;
+}
+.config-spinner {
+    -fx-pref-width: 120px;
+}
+
+/* Label alignment for better readability */
+.config-vbox .label {
+    -fx-min-width: 120px;
+    -fx-alignment: center-left;
+    -fx-font-weight: normal;
+    -fx-text-fill: #455a64;
 }
 
 .control-button {

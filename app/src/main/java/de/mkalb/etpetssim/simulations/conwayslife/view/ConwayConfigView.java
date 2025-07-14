@@ -21,9 +21,7 @@ final class ConwayConfigView {
         box.getStyleClass().add("config-vbox");
         TitledPane pane = new TitledPane(title, box);
         pane.setCollapsible(true);
-        pane.expandedProperty().bind(
-                viewModel.simulationStateProperty().isEqualTo(SimulationState.READY)
-        );
+        pane.setExpanded(false);
         pane.disableProperty().bind(
                 viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
         );
@@ -35,28 +33,46 @@ final class ConwayConfigView {
         // --- Structure/Layout Group ---
         Label widthLabel = new Label("Grid Width:");
         Spinner<Integer> widthSpinner = new Spinner<>(8, 16_384, viewModel.getGridWidth(), 2);
-        widthSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridWidthProperty().asObject());
+        widthLabel.setLabelFor(widthSpinner);
+        widthSpinner.getStyleClass().add("config-spinner");
+        widthSpinner.setTooltip(new Tooltip("Set the width of the grid (8 - 16384)"));
 
         Label heightLabel = new Label("Grid Height:");
         Spinner<Integer> heightSpinner = new Spinner<>(8, 16_384, viewModel.getGridHeight(), 2);
-        heightSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridHeightProperty().asObject());
+        heightLabel.setLabelFor(heightSpinner);
+        heightSpinner.getStyleClass().add("config-spinner");
+        heightSpinner.setTooltip(new Tooltip("Set the height of the grid (8 - 16384)"));
 
         Label cellLabel = new Label("Cell Edge Length:");
         Slider cellSlider = new Slider(5, 50, viewModel.getCellEdgeLength());
+        cellLabel.setLabelFor(cellSlider);
         cellSlider.setShowTickLabels(true);
         cellSlider.setShowTickMarks(true);
+        cellSlider.getStyleClass().add("config-slider");
+        cellSlider.setTooltip(new Tooltip("Adjust the edge length of each cell (5 - 50)"));
         cellSlider.valueProperty().bindBidirectional(viewModel.cellEdgeLengthProperty());
 
-        TitledPane structurePane = createConfigPane("Grid Structure", widthLabel, widthSpinner, heightLabel, heightSpinner, cellLabel, cellSlider);
+        widthSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridWidthProperty().asObject());
+        heightSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridHeightProperty().asObject());
+
+        TitledPane structurePane = createConfigPane(
+                "Grid Structure",
+                widthLabel, widthSpinner,
+                heightLabel, heightSpinner,
+                cellLabel, cellSlider
+        );
 
         // --- Initialization Group ---
         Label percentLabel = new Label("Alive %:");
         Slider percentSlider = new Slider(0.0, 1.0, viewModel.getAlivePercent());
+        percentLabel.setLabelFor(percentSlider);
         percentSlider.setShowTickLabels(true);
         percentSlider.setShowTickMarks(true);
         percentSlider.setMajorTickUnit(0.1);
         percentSlider.setMinorTickCount(4);
         percentSlider.setBlockIncrement(0.01);
+        percentSlider.getStyleClass().add("config-slider");
+        percentSlider.setTooltip(new Tooltip("Set the initial percentage of alive cells (0% - 100%)"));
         percentSlider.valueProperty().bindBidirectional(viewModel.alivePercentProperty());
 
         TitledPane initPane = createConfigPane("Initialization", percentLabel, percentSlider);
