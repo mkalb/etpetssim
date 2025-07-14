@@ -36,6 +36,17 @@
 .simulation-scroll-pane {
 }
 
+.observation-grid {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+    -fx-padding: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dddddd;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-min-width: 300px;
+}
+
 .observation-vbox {
     -fx-spacing: 10;
     -fx-padding: 10;
