@@ -7,8 +7,10 @@ import de.mkalb.etpetssim.simulations.SimulationController;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayPatterns;
 import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayView;
+import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.*;
 import javafx.scene.layout.Region;
+import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -17,17 +19,21 @@ import java.util.function.*;
 public final class ConwayViewModel implements SimulationController {
 
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
+    private final SimulationTimer simulationTimer;
     private final ConwayView view;
+
     private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(20.0);
     private final IntegerProperty gridWidth = new SimpleIntegerProperty(64);  // Default value
     private final IntegerProperty gridHeight = new SimpleIntegerProperty(32); // Default value
     private final ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.READY);
+
     private @Nullable SimulationStartedListener simulationStartedListener;
     private @Nullable GridModel<ConwayEntity> model;
     private @Nullable SimulationExecutor<ConwayEntity> executor;
 
     public ConwayViewModel() {
         entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ConwayEntity.values());
+        simulationTimer = new SimulationTimer(this::doSimulationStep);
         view = new ConwayView(this, entityDescriptorRegistry);
     }
 
@@ -88,7 +94,7 @@ public final class ConwayViewModel implements SimulationController {
         gridHeight.set(value);
     }
 
-    public void startSimulation() {
+    private void startSimulation() {
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
                 new GridSize(getGridWidth(), getGridHeight())
@@ -113,15 +119,46 @@ public final class ConwayViewModel implements SimulationController {
         }
     }
 
+    private void doSimulationStep() {
+        AppLogger.info("Simulation step started.");
+    }
+
+    private void startTimeline() {
+        simulationTimer.start(Duration.millis(1000));
+    }
+
+    private void stopTimeline() {
+        if (simulationTimer.isRunning()) {
+            simulationTimer.stop();
+        }
+    }
+
     public void onActionButton() {
-        simulationState.set(switch (getSimulationState()) {
-            case READY, PAUSED -> SimulationState.RUNNING;
-            case RUNNING -> SimulationState.PAUSED;
-        });
+        // Stopping the timeline first to ensure no steps are executed while changing state
+        stopTimeline();
+        switch (getSimulationState()) {
+            case READY -> {
+                AppLogger.info("Starting simulation...");
+                setSimulationState(SimulationState.RUNNING);
+                startSimulation();
+                startTimeline();
+            }
+            case RUNNING -> {
+                AppLogger.info("Pausing simulation...");
+                setSimulationState(SimulationState.PAUSED);
+            }
+            case PAUSED -> {
+                AppLogger.info("Resuming simulation...");
+                setSimulationState(SimulationState.RUNNING);
+                startTimeline();
+            }
+        }
     }
 
     public void onCancelButton() {
-        simulationState.set(SimulationState.READY);
+        stopTimeline();
+        AppLogger.info("Cancelling simulation...");
+        setSimulationState(SimulationState.READY);
     }
 
     public enum SimulationState {READY, RUNNING, PAUSED}
