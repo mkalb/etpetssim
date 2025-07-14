@@ -212,7 +212,7 @@ public final class GridInitializers {
      */
     @SuppressWarnings({"NumericCastThatLosesPrecision", "ResultOfMethodCallIgnored"})
     public static <T extends GridEntity> GridInitializer<T> placeRandomPercent(Supplier<T> entitySupplier, double percent, Random random) {
-        return model -> placeRandomCounted((int) Math.round(percent * model.structure().size().area()), entitySupplier, random);
+        return model -> placeRandomCounted((int) Math.round(percent * model.structure().size().area()), entitySupplier, random).initialize(model);
     }
 
     /**
