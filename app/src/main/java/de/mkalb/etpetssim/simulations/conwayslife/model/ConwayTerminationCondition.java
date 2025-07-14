@@ -7,7 +7,8 @@ public class ConwayTerminationCondition implements SimulationTerminationConditio
 
     @Override
     public boolean isFinished(GridModel<ConwayEntity> model, long step) {
-        return false;
+        return model.structure().coordinatesStream()
+                    .noneMatch(coordinate -> model.getEntity(coordinate).isAlive());
     }
 
 }

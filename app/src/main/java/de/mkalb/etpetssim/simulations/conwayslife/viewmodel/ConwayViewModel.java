@@ -128,7 +128,7 @@ public final class ConwayViewModel implements SimulationController {
         GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
         GridInitializers.placeRandomCounted(3, () -> ConwayEntity.ALIVE, new Random())
                         .initialize(model);
-        GridEntityUtils.placePatternAt(new GridCoordinate(10, 10), model, ConwayPatterns.glider());
+        //  GridEntityUtils.placePatternAt(new GridCoordinate(10, 10), model, ConwayPatterns.glider());
 
         SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure));
 
@@ -158,6 +158,12 @@ public final class ConwayViewModel implements SimulationController {
 
         if (simulationStepListener != null) {
             simulationStepListener.run();
+        }
+
+        if (!executor.isRunning()) {
+            stopTimeline();
+            AppLogger.info("Simulation finished at step " + getCurrentStep());
+            setSimulationState(SimulationState.READY); // Set state to READY when finished
         }
     }
 
