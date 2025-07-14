@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.conwayslife.view;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
@@ -13,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -58,8 +60,9 @@ public class ConwayView extends StackPane {
     private void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(() -> {
             double cellEdgeLength = viewModel.getCellEdgeLength();
-            ReadableGridModel<ConwayEntity> model = Objects.requireNonNull(viewModel.getCurrentModel());
+            ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
             GridStructure structure = viewModel.getGridStructure();
+            long currentStep = viewModel.getCurrentStep();
 
             AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
                     " and cell edge length " + cellEdgeLength);
@@ -71,15 +74,33 @@ public class ConwayView extends StackPane {
             overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
             overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
             overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+
+            drawCanvas(currentModel, currentStep);
         });
         viewModel.setSimulationStepListener(() -> {
             ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-            GridStructure structure = viewModel.getGridStructure();
             long currentStep = viewModel.getCurrentStep();
-            AppLogger.info("Drawing canvas for step " + currentStep +
-                    " with structure " + structure.toDisplayString() +
-                    " and cell edge length " + viewModel.getCellEdgeLength());
-            // TODO drawCanvas
+            AppLogger.info("Drawing canvas for step " + currentStep);
+
+            drawCanvas(currentModel, currentStep);
+        });
+    }
+
+    private void drawCanvas(ReadableGridModel<ConwayEntity> currentModel, long currentStep) {
+        if (painter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+
+        // Fill background
+        painter.fillCanvasBackground(javafx.scene.paint.Color.BLACK);
+        painter.fillGridBackground(javafx.scene.paint.Color.WHITE);
+
+        // Draw all cells
+        currentModel.structure().coordinatesStream().forEachOrdered(coordinate -> {
+            GridEntityUtils.consumeDescriptorAt(coordinate, currentModel, entityDescriptorRegistry,
+                    descriptor -> painter.drawCell(coordinate, descriptor.colorAsOptional().orElse(Color.BLACK),
+                            Color.BLACK, 1.0d));
         });
     }
 

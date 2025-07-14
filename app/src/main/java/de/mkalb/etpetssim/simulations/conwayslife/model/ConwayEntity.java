@@ -40,7 +40,7 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
             "conwayslife.entity.dead.long",
             "conwayslife.entity.dead.description",
             null,
-            null,
+            Color.LIGHTYELLOW,
             null,
             0
     ),
@@ -51,7 +51,7 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
             "conwayslife.entity.alive.long",
             "conwayslife.entity.alive.description",
             null,
-            null,
+            Color.DARKRED,
             null,
             1
     );
