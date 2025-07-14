@@ -13,5 +13,6 @@ module de.mkalb.etpetssim {
     exports de.mkalb.etpetssim.simulations.startscreen;
     exports de.mkalb.etpetssim.simulations.wator;
     exports de.mkalb.etpetssim.simulations;
+    exports de.mkalb.etpetssim.ui;
     exports de.mkalb.etpetssim;
 }
