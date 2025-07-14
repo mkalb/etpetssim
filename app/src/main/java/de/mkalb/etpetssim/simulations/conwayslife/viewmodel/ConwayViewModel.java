@@ -5,9 +5,7 @@ import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.SimulationController;
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayPatterns;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.conwayslife.model.*;
 import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayView;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.*;
@@ -16,7 +14,6 @@ import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.*;
 
 public final class ConwayViewModel implements SimulationController {
 
@@ -133,11 +130,9 @@ public final class ConwayViewModel implements SimulationController {
                         .initialize(model);
         GridEntityUtils.placePatternAt(new GridCoordinate(10, 10), model, ConwayPatterns.glider());
 
-        BiConsumer<ReadableGridModel<ConwayEntity>, GridModel<ConwayEntity>> updateStrategy = (currentModel, nextModel) -> {};  // TODO Optimize later
-        SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, updateStrategy);
+        SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure));
 
-        SimulationTerminationCondition<ConwayEntity> terminationCondition = (currentModel, step) -> false; // TODO Optimize later
-        executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition);
+        executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, new ConwayTerminationCondition());
 
         statistics = new ConwayStatistics(structure.cellCount());
         updateStatistics();
@@ -167,7 +162,7 @@ public final class ConwayViewModel implements SimulationController {
     }
 
     private void startTimeline() {
-        simulationTimer.start(Duration.millis(1_000));
+        simulationTimer.start(Duration.millis(300));
     }
 
     private void stopTimeline() {
