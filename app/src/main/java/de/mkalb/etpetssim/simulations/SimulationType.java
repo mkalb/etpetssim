@@ -79,7 +79,7 @@ public enum SimulationType {
             "simulation.conwayslife.url",
             "simulation.conwayslife.emoji",
             "conwayslife.css",
-            List.of("conwayslife", "conways-life", "conway", "life", "cgol")
+            List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol")
     ),
     /**
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>
