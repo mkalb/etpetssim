@@ -123,7 +123,16 @@ public class ConwayView extends StackPane {
         cellSlider.setShowTickMarks(true);
         cellSlider.valueProperty().bindBidirectional(viewModel.cellEdgeLengthProperty());
 
-        HBox hbox = new HBox(10, widthLabel, widthSpinner, heightLabel, heightSpinner, cellLabel, cellSlider);
+        Label percentLabel = new Label("Alive %:");
+        Slider percentSlider = new Slider(0.0, 1.0, viewModel.getAlivePercent());
+        percentSlider.setShowTickLabels(true);
+        percentSlider.setShowTickMarks(true);
+        percentSlider.setMajorTickUnit(0.1);
+        percentSlider.setMinorTickCount(4);
+        percentSlider.setBlockIncrement(0.01);
+        percentSlider.valueProperty().bindBidirectional(viewModel.alivePercentProperty());
+
+        HBox hbox = new HBox(10, widthLabel, widthSpinner, heightLabel, heightSpinner, cellLabel, cellSlider, percentLabel, percentSlider);
         hbox.setAlignment(Pos.CENTER_LEFT);
 
         // Bind disableProperty directly to simulationStateProperty

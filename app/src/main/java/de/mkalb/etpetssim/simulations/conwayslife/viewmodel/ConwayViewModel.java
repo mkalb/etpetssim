@@ -20,9 +20,10 @@ public final class ConwayViewModel implements SimulationController {
     private final SimulationTimer simulationTimer;
     private final ConwayView view;
 
-    private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(20.0);
+    private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(10.0);
     private final IntegerProperty gridWidth = new SimpleIntegerProperty(64);  // Default value
     private final IntegerProperty gridHeight = new SimpleIntegerProperty(32); // Default value
+    private final DoubleProperty alivePercent = new SimpleDoubleProperty(0.1d);
     private final ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.READY);
 
     private @Nullable Runnable simulationInitializedListener;
@@ -97,6 +98,18 @@ public final class ConwayViewModel implements SimulationController {
         gridHeight.set(value);
     }
 
+    public DoubleProperty alivePercentProperty() {
+        return alivePercent;
+    }
+
+    public double getAlivePercent() {
+        return alivePercent.get();
+    }
+
+    public void setAlivePercent(double value) {
+        alivePercent.set(value);
+    }
+
     public GridStructure getGridStructure() {
         Objects.requireNonNull(executor, "Simulation executor must not be null before accessing the grid structure.");
         return executor.currentModel().structure();
@@ -126,8 +139,9 @@ public final class ConwayViewModel implements SimulationController {
                 new GridSize(getGridWidth(), getGridHeight())
         );
         GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
-        GridInitializers.placeRandomCounted(3, () -> ConwayEntity.ALIVE, new Random())
-                        .initialize(model);
+
+        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, getAlivePercent(), new Random()).initialize(model);
+
         //  GridEntityUtils.placePatternAt(new GridCoordinate(10, 10), model, ConwayPatterns.glider());
 
         SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure));
