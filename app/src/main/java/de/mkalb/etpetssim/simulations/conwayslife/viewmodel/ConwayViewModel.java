@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.simulations.SimulationController;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayPatterns;
+import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayView;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.*;
@@ -31,6 +32,7 @@ public final class ConwayViewModel implements SimulationController {
     private @Nullable Runnable simulationStepListener;
 
     private @Nullable SimulationExecutor<ConwayEntity> executor;
+    private @Nullable ConwayStatistics statistics;
 
     public ConwayViewModel() {
         simulationTimer = new SimulationTimer(this::doSimulationStep);
@@ -113,6 +115,11 @@ public final class ConwayViewModel implements SimulationController {
         return executor.currentStep();
     }
 
+    public ConwayStatistics getStatistics() {
+        Objects.requireNonNull(statistics, "Statistics must not be null before accessing.");
+        return statistics;
+    }
+
     private void startSimulation() {
         // Resetting the executor to ensure a fresh start
         executor = null;
@@ -132,9 +139,18 @@ public final class ConwayViewModel implements SimulationController {
         SimulationTerminationCondition<ConwayEntity> terminationCondition = (currentModel, step) -> false; // TODO Optimize later
         executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition);
 
+        statistics = new ConwayStatistics(structure.cellCount());
+        updateStatistics();
+
         if (simulationInitializedListener != null) {
             simulationInitializedListener.run();
         }
+    }
+
+    private void updateStatistics() {
+        long step = getCurrentStep();
+        long alive = getCurrentModel().count(cell -> cell.entity().isAlive());
+        statistics.update(step, alive);
     }
 
     private void doSimulationStep() {
@@ -142,6 +158,9 @@ public final class ConwayViewModel implements SimulationController {
         AppLogger.info("Simulation step started.");
 
         executor.executeStep();
+
+        updateStatistics();
+
         if (simulationStepListener != null) {
             simulationStepListener.run();
         }

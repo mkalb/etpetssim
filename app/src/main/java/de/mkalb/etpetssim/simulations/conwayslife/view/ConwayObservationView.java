@@ -1,8 +1,7 @@
 package de.mkalb.etpetssim.simulations.conwayslife.view;
 
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -19,7 +18,10 @@ final class ConwayObservationView {
 
     private final ConwayViewModel viewModel;
     private final Label stepLabel = new Label();
+    private final Label cellCountLabel = new Label();
     private final Label aliveCellsLabel = new Label();
+    private final Label deadCellsLabel = new Label();
+    private final Label maxAliveCellsLabel = new Label();
 
     /**
      * Creates a new observation view for the given view model.
@@ -42,8 +44,14 @@ final class ConwayObservationView {
         grid.setAlignment(Pos.TOP_LEFT);
         grid.getStyleClass().add("observation-grid");
 
-        Label[] nameLabels = {new Label("Step:"), new Label("Alive:")};
-        Label[] valueLabels = {stepLabel, aliveCellsLabel};
+        Label[] nameLabels = {
+                new Label("Step:"),
+                new Label("Total cells:"),
+                new Label("Alive:"),
+                new Label("Max alive:"),
+                new Label("Dead:")
+        };
+        Label[] valueLabels = {stepLabel, cellCountLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel};
 
         for (int i = 0; i < nameLabels.length; i++) {
             grid.add(nameLabels[i], 0, i);
@@ -59,15 +67,19 @@ final class ConwayObservationView {
     void updateObservationLabels() {
         if (viewModel.getSimulationState() == SimulationState.READY) {
             stepLabel.setText("-");
+            cellCountLabel.setText("-");
             aliveCellsLabel.setText("-");
+            maxAliveCellsLabel.setText("-");
+            deadCellsLabel.setText("-");
             return;
         }
-        long step = viewModel.getCurrentStep();
-        ReadableGridModel<ConwayEntity> model = viewModel.getCurrentModel();
-        long aliveCount = model.count(cell -> cell.entity().isAlive());
+        ConwayStatistics statistics = viewModel.getStatistics();
 
-        stepLabel.setText(Long.toString(step));
-        aliveCellsLabel.setText(Long.toString(aliveCount));
+        stepLabel.setText(Long.toString(statistics.getStep()));
+        cellCountLabel.setText(Long.toString(statistics.getTotalCells()));
+        aliveCellsLabel.setText(Long.toString(statistics.getAliveCells()));
+        maxAliveCellsLabel.setText(Long.toString(statistics.getMaxAliveCells()));
+        deadCellsLabel.setText(Long.toString(statistics.getDeadCells()));
     }
 
 }
