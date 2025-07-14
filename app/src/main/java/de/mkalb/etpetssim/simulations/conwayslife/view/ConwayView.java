@@ -1,7 +1,10 @@
 package de.mkalb.etpetssim.simulations.conwayslife.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.beans.binding.Bindings;
@@ -10,6 +13,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
+
+import java.util.*;
 
 @SuppressWarnings("MagicNumber")
 public class ConwayView extends StackPane {
@@ -30,21 +35,6 @@ public class ConwayView extends StackPane {
     }
 
     public Region buildViewRegion() {
-        // Register callback
-        viewModel.setSimulationInitializedListener((structure) -> {
-            double cellEdgeLength = viewModel.getCellEdgeLength();
-            AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
-                    " and cell edge length " + cellEdgeLength);
-
-            painter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
-            baseCanvas.setWidth(Math.min(6_000.0d, painter.gridDimension2D().getWidth()));
-            baseCanvas.setHeight(Math.min(4_000.0d, painter.gridDimension2D().getHeight()));
-
-            overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
-            overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
-            overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
-        });
-
         Region configRegion = createConfigRegion();
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = createControlRegion();
@@ -59,7 +49,37 @@ public class ConwayView extends StackPane {
 
         borderPane.getStyleClass().add("simulation-border-pane");
 
+        registerViewModelListeners();
+
         return borderPane;
+    }
+
+    private void registerViewModelListeners() {
+        viewModel.setSimulationInitializedListener(() -> {
+            double cellEdgeLength = viewModel.getCellEdgeLength();
+            ReadableGridModel<ConwayEntity> model = Objects.requireNonNull(viewModel.getCurrentModel());
+            GridStructure structure = viewModel.getGridStructure();
+
+            AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
+                    " and cell edge length " + cellEdgeLength);
+
+            painter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
+            baseCanvas.setWidth(Math.min(6_000.0d, painter.gridDimension2D().getWidth()));
+            baseCanvas.setHeight(Math.min(4_000.0d, painter.gridDimension2D().getHeight()));
+
+            overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
+            overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
+            overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+        });
+        viewModel.setSimulationStepListener(() -> {
+            ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
+            GridStructure structure = viewModel.getGridStructure();
+            long currentStep = viewModel.getCurrentStep();
+            AppLogger.info("Drawing canvas for step " + currentStep +
+                    " with structure " + structure.toDisplayString() +
+                    " and cell edge length " + viewModel.getCellEdgeLength());
+            // TODO drawCanvas
+        });
     }
 
     private Region createConfigRegion() {
