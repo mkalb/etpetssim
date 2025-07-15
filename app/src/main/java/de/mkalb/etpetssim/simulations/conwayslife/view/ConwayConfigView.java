@@ -1,9 +1,11 @@
 package de.mkalb.etpetssim.simulations.conwayslife.view;
 
+import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXComponentBuilder.LabeledControl;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
@@ -16,70 +18,65 @@ final class ConwayConfigView {
         this.viewModel = viewModel;
     }
 
-    private TitledPane createConfigPane(String title, Node... content) {
-        VBox box = new VBox(content);
+    private TitledPane createConfigPane(String title, LabeledControl... content) {
+        VBox box = new VBox();
+        for (LabeledControl labeledControl : content) {
+            box.getChildren().addAll(labeledControl.label(), labeledControl.control());
+            labeledControl.control().disableProperty().bind(
+                    viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
+            );
+        }
         box.getStyleClass().add("config-vbox");
+
         TitledPane pane = new TitledPane(title, box);
-        pane.setCollapsible(true);
-        pane.setExpanded(false);
-        pane.disableProperty().bind(
-                viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
-        );
+        pane.setCollapsible(content.length > 0);
+        pane.setExpanded(content.length > 0);
+        pane.setDisable(content.length == 0);
         pane.getStyleClass().add("config-titled-pane");
         return pane;
     }
 
     Region buildConfigRegion() {
         // --- Structure/Layout Group ---
-        Label widthLabel = new Label("Grid Width:");
-        Spinner<Integer> widthSpinner = new Spinner<>(8, 16_384, viewModel.getGridWidth(), 2);
-        widthLabel.setLabelFor(widthSpinner);
-        widthSpinner.getStyleClass().add("config-spinner");
-        widthSpinner.setTooltip(new Tooltip("Set the width of the grid (8 - 16384)"));
+        var widthControl = FXComponentBuilder.createLabeledIntSpinner(
+                GridSize.MIN_SIZE, 512, 4,
+                viewModel.gridWidthProperty(),
+                "Grid Width: %d",
+                "Set the width of the grid (8 - 16384)",
+                "config-spinner"
+        );
 
-        Label heightLabel = new Label("Grid Height:");
-        Spinner<Integer> heightSpinner = new Spinner<>(8, 16_384, viewModel.getGridHeight(), 2);
-        heightLabel.setLabelFor(heightSpinner);
-        heightSpinner.getStyleClass().add("config-spinner");
-        heightSpinner.setTooltip(new Tooltip("Set the height of the grid (8 - 16384)"));
+        var heightControl = FXComponentBuilder.createLabeledIntSpinner(
+                GridSize.MIN_SIZE, 512, 4,
+                viewModel.gridHeightProperty(),
+                "Grid Height: %d",
+                "Set the height of the grid (8 - 16384)",
+                "config-spinner"
+        );
 
-        Label cellLabel = new Label("Cell Edge Length:");
-        Slider cellSlider = new Slider(5, 50, viewModel.getCellEdgeLength());
-        cellLabel.setLabelFor(cellSlider);
-        cellSlider.setShowTickLabels(true);
-        cellSlider.setShowTickMarks(true);
-        cellSlider.getStyleClass().add("config-slider");
-        cellSlider.setTooltip(new Tooltip("Adjust the edge length of each cell (5 - 50)"));
-        cellSlider.valueProperty().bindBidirectional(viewModel.cellEdgeLengthProperty());
-
-        widthSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridWidthProperty().asObject());
-        heightSpinner.getValueFactory().valueProperty().bindBidirectional(viewModel.gridHeightProperty().asObject());
+        var sliderControl = FXComponentBuilder.createLabeledIntSlider(1, 40,
+                viewModel.cellEdgeLengthProperty(), "Cell Edge Length: %.0f", "Adjust the edge length of each cell (1 - 40)", "config-slider"
+        );
 
         TitledPane structurePane = createConfigPane(
                 "Grid Structure",
-                widthLabel, widthSpinner,
-                heightLabel, heightSpinner,
-                cellLabel, cellSlider
+                widthControl,
+                heightControl,
+                sliderControl
         );
 
         // --- Initialization Group ---
-        Label percentLabel = new Label("Alive %:");
-        Slider percentSlider = new Slider(0.0, 1.0, viewModel.getAlivePercent());
-        percentLabel.setLabelFor(percentSlider);
-        percentSlider.setShowTickLabels(true);
-        percentSlider.setShowTickMarks(true);
-        percentSlider.setMajorTickUnit(0.1);
-        percentSlider.setMinorTickCount(4);
-        percentSlider.setBlockIncrement(0.01);
-        percentSlider.getStyleClass().add("config-slider");
-        percentSlider.setTooltip(new Tooltip("Set the initial percentage of alive cells (0% - 100%)"));
-        percentSlider.valueProperty().bindBidirectional(viewModel.alivePercentProperty());
+        var percentControl = FXComponentBuilder.createLabeledPercentSlider(
+                0.0d, 1.0d, viewModel.alivePercentProperty(),
+                "Alive %%: %.0f%%",
+                "Set the initial percentage of alive cells (0% - 100%)",
+                "config-slider"
+        );
 
-        TitledPane initPane = createConfigPane("Initialization", percentLabel, percentSlider);
+        TitledPane initPane = createConfigPane("Initialization", percentControl);
 
         // --- Rules Group ---
-        Label rulesLabel = new Label("Rules: (coming soon)");
-        TitledPane rulesPane = createConfigPane("Rules", rulesLabel);
+        TitledPane rulesPane = createConfigPane("Rules");
 
         // --- Main Layout as Columns ---
         HBox mainBox = new HBox(structurePane, initPane, rulesPane);
