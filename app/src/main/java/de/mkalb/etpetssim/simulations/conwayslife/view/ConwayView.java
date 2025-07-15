@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.simulations.SimulationController;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
@@ -21,28 +22,32 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public class ConwayView extends StackPane {
+public final class ConwayView extends StackPane implements SimulationController {
 
     private final ConwayViewModel viewModel;
+    private final ConwayConfigView configView;
+    private final ConwayObservationView observationView;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
-    private final ConwayConfigView configView;
-    private final ConwayObservationView observationView;
+
     private @Nullable FXGridCanvasPainter painter;
     private @Nullable FXGridCanvasPainter overlayPainter;
 
-    public ConwayView(ConwayViewModel viewModel, GridEntityDescriptorRegistry entityDescriptorRegistry) {
+    public ConwayView(ConwayViewModel viewModel,
+                      GridEntityDescriptorRegistry entityDescriptorRegistry,
+                      ConwayConfigView configView,
+                      ConwayObservationView observationView) {
         this.viewModel = viewModel;
+        this.configView = configView;
+        this.observationView = observationView;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
         baseCanvas = new Canvas(100, 100);
         overlayCanvas = new Canvas(100, 100);
-
-        configView = new ConwayConfigView(viewModel);
-        observationView = new ConwayObservationView(viewModel);
     }
 
+    @Override
     public Region buildViewRegion() {
         Region configRegion = configView.buildConfigRegion();
         Region simulationRegion = createSimulationRegion();
@@ -104,11 +109,19 @@ public class ConwayView extends StackPane {
         painter.fillGridBackground(javafx.scene.paint.Color.WHITE);
 
         // Draw all cells
-        currentModel.structure().coordinatesStream().forEachOrdered(coordinate -> {
-            GridEntityUtils.consumeDescriptorAt(coordinate, currentModel, entityDescriptorRegistry,
-                    descriptor -> painter.drawCell(coordinate, descriptor.colorAsOptional().orElse(Color.BLACK),
-                            null, 0.0d));
-        });
+        currentModel.structure()
+                    .coordinatesStream()
+                    .forEachOrdered(coordinate ->
+                            GridEntityUtils.consumeDescriptorAt(
+                                    coordinate,
+                                    currentModel,
+                                    entityDescriptorRegistry,
+                                    descriptor ->
+                                            painter.drawCell(
+                                                    coordinate,
+                                                    descriptor.colorAsOptional().orElse(Color.BLACK),
+                                                    null,
+                                                    0.0d)));
     }
 
     private Region createSimulationRegion() {

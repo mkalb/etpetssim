@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.conwayslife.view;
 
 import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
+import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXComponentBuilder.LabeledControl;
 import javafx.scene.control.TitledPane;
@@ -10,11 +10,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-final class ConwayConfigView {
+public final class ConwayConfigView {
 
-    private final ConwayViewModel viewModel;
+    private final ConwayConfigViewModel viewModel;
 
-    ConwayConfigView(ConwayViewModel viewModel) {
+    public ConwayConfigView(ConwayConfigViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
@@ -37,6 +37,8 @@ final class ConwayConfigView {
     }
 
     Region buildConfigRegion() {
+        // TODO Optimize (ResourceBundle, min/max values, ...
+
         // --- Structure/Layout Group ---
         var widthControl = FXComponentBuilder.createLabeledIntSpinner(
                 GridSize.MIN_SIZE, 512, 4,

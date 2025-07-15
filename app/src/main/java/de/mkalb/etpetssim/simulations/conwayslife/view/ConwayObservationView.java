@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.conwayslife.view;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
-import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
+import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayObservationViewModel;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -14,21 +14,17 @@ import javafx.scene.layout.Region;
  *
  * @see ConwayView
  */
-final class ConwayObservationView {
+public final class ConwayObservationView {
 
-    private final ConwayViewModel viewModel;
+    private final ConwayObservationViewModel viewModel;
+
     private final Label stepLabel = new Label();
     private final Label cellCountLabel = new Label();
     private final Label aliveCellsLabel = new Label();
     private final Label deadCellsLabel = new Label();
     private final Label maxAliveCellsLabel = new Label();
 
-    /**
-     * Creates a new observation view for the given view model.
-     *
-     * @param viewModel the Conway view model providing simulation data
-     */
-    ConwayObservationView(ConwayViewModel viewModel) {
+    public ConwayObservationView(ConwayObservationViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

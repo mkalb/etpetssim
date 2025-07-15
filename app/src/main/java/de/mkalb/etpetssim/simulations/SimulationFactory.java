@@ -1,6 +1,11 @@
 package de.mkalb.etpetssim.simulations;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayConfigView;
+import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayObservationView;
+import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayView;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.simulations.simulationlab.SimulationLabController;
 import de.mkalb.etpetssim.simulations.startscreen.StartScreenController;
@@ -36,7 +41,7 @@ public final class SimulationFactory {
             case STARTSCREEN -> SimulationInstance.of(type, new StartScreenController(stage, stageUpdater));
             case SIMULATION_LAB -> SimulationInstance.of(type, new SimulationLabController(stage));
             case WATOR -> SimulationInstance.of(type, new WaTorController());
-            case CONWAYS_LIFE -> SimulationInstance.of(type, new ConwayViewModel());
+            case CONWAYS_LIFE -> SimulationInstance.of(type, createConwayView());
             // add other simulation types here later after implementing them
             default -> {
                 AppLogger.error("Simulation type not implemented: " + type.name());
@@ -44,6 +49,17 @@ public final class SimulationFactory {
                 yield SimulationInstance.of(SimulationType.STARTSCREEN, new StartScreenController(stage, stageUpdater));
             }
         };
+    }
+
+    private static ConwayView createConwayView() {
+        var viewModel = new ConwayViewModel();
+
+        var configView = new ConwayConfigView(viewModel.getConfigViewModel());
+        var observationView = new ConwayObservationView(viewModel.getObservationViewModel());
+
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ConwayEntity.values());
+
+        return new ConwayView(viewModel, entityDescriptorRegistry, configView, observationView);
     }
 
 }

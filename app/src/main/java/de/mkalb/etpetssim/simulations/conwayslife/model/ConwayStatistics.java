@@ -21,6 +21,7 @@ public final class ConwayStatistics {
     }
 
     public void update(long step, long aliveCells) {
+        // TODO names
         this.step = step;
         this.aliveCells = aliveCells;
         deadCells = totalCells - aliveCells;

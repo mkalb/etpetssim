@@ -3,27 +3,22 @@ package de.mkalb.etpetssim.simulations.conwayslife.viewmodel;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.SimulationController;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.*;
-import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayView;
 import de.mkalb.etpetssim.ui.SimulationTimer;
-import javafx.beans.property.*;
-import javafx.scene.layout.Region;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class ConwayViewModel implements SimulationController {
+public final class ConwayViewModel {
 
+    private final ConwayConfigViewModel configViewModel;
+    private final ConwayObservationViewModel observationViewModel;
     private final SimulationTimer simulationTimer;
-    private final ConwayView view;
 
-    private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(10.0d);
-    private final IntegerProperty gridWidth = new SimpleIntegerProperty(64);  // Default value
-    private final IntegerProperty gridHeight = new SimpleIntegerProperty(32); // Default value
-    private final DoubleProperty alivePercent = new SimpleDoubleProperty(0.1d);
     private final ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.READY);
 
     private @Nullable Runnable simulationInitializedListener;
@@ -33,13 +28,17 @@ public final class ConwayViewModel implements SimulationController {
     private @Nullable ConwayStatistics statistics;
 
     public ConwayViewModel() {
+        configViewModel = new ConwayConfigViewModel(simulationState);
+        observationViewModel = new ConwayObservationViewModel(simulationState);
         simulationTimer = new SimulationTimer(this::doSimulationStep);
-        view = new ConwayView(this, GridEntityDescriptorRegistry.ofArray(ConwayEntity.values()));
     }
 
-    @Override
-    public Region buildViewRegion() {
-        return view.buildViewRegion();
+    public ConwayConfigViewModel getConfigViewModel() {
+        return configViewModel;
+    }
+
+    public ConwayObservationViewModel getObservationViewModel() {
+        return observationViewModel;
     }
 
     public void setSimulationInitializedListener(@Nullable Runnable listener) {
@@ -62,52 +61,8 @@ public final class ConwayViewModel implements SimulationController {
         simulationState.set(state);
     }
 
-    public DoubleProperty cellEdgeLengthProperty() {
-        return cellEdgeLength;
-    }
-
     public double getCellEdgeLength() {
-        return cellEdgeLength.get();
-    }
-
-    public void setCellEdgeLength(double value) {
-        cellEdgeLength.set(value);
-    }
-
-    public IntegerProperty gridWidthProperty() {
-        return gridWidth;
-    }
-
-    public int getGridWidth() {
-        return gridWidth.get();
-    }
-
-    public void setGridWidth(int value) {
-        gridWidth.set(value);
-    }
-
-    public IntegerProperty gridHeightProperty() {
-        return gridHeight;
-    }
-
-    public int getGridHeight() {
-        return gridHeight.get();
-    }
-
-    public void setGridHeight(int value) {
-        gridHeight.set(value);
-    }
-
-    public DoubleProperty alivePercentProperty() {
-        return alivePercent;
-    }
-
-    public double getAlivePercent() {
-        return alivePercent.get();
-    }
-
-    public void setAlivePercent(double value) {
-        alivePercent.set(value);
+        return configViewModel.getCellEdgeLength();
     }
 
     public GridStructure getGridStructure() {
@@ -134,13 +89,14 @@ public final class ConwayViewModel implements SimulationController {
         // Resetting the executor to ensure a fresh start
         executor = null;
 
+        ConwayConfig config = configViewModel.getConfig();
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
-                new GridSize(getGridWidth(), getGridHeight())
+                new GridSize(config.gridWidth(), config.gridHeight())
         );
         GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
 
-        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, getAlivePercent(), new Random()).initialize(model);
+        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, config.alivePercent(), new Random()).initialize(model);
 
         //  GridEntityUtils.placePatternAt(new GridCoordinate(10, 10), model, ConwayPatterns.glider());
 
@@ -157,9 +113,11 @@ public final class ConwayViewModel implements SimulationController {
     }
 
     private void updateStatistics() {
+        // TODO Nullability
         long step = getCurrentStep();
         long alive = getCurrentModel().count(cell -> cell.entity().isAlive());
         statistics.update(step, alive);
+        observationViewModel.setStatistics(statistics);
     }
 
     private void doSimulationStep() {
@@ -182,6 +140,7 @@ public final class ConwayViewModel implements SimulationController {
     }
 
     private void startTimeline() {
+        // TODO Optimize with speedProperty
         simulationTimer.start(Duration.millis(300));
     }
 
