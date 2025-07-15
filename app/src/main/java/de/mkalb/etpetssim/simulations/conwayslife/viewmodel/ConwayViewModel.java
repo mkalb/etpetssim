@@ -20,7 +20,7 @@ public final class ConwayViewModel implements SimulationController {
     private final SimulationTimer simulationTimer;
     private final ConwayView view;
 
-    private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(10.0);
+    private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(10.0d);
     private final IntegerProperty gridWidth = new SimpleIntegerProperty(64);  // Default value
     private final IntegerProperty gridHeight = new SimpleIntegerProperty(32); // Default value
     private final DoubleProperty alivePercent = new SimpleDoubleProperty(0.1d);
