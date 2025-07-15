@@ -25,7 +25,7 @@ public final class ConwayViewModel {
     private @Nullable Runnable simulationStepListener;
 
     private @Nullable SimulationExecutor<ConwayEntity> executor;
-    private @Nullable ConwayStatistics statistics;
+    private @Nullable ConwayStatisticsManager statisticsManager;
 
     public ConwayViewModel() {
         configViewModel = new ConwayConfigViewModel(simulationState);
@@ -80,11 +80,6 @@ public final class ConwayViewModel {
         return executor.currentStep();
     }
 
-    public ConwayStatistics getStatistics() {
-        Objects.requireNonNull(statistics, "Statistics must not be null before accessing.");
-        return statistics;
-    }
-
     private void startSimulation() {
         // Resetting the executor to ensure a fresh start
         executor = null;
@@ -104,29 +99,24 @@ public final class ConwayViewModel {
 
         executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, new ConwayTerminationCondition());
 
-        statistics = new ConwayStatistics(structure.cellCount());
-        updateStatistics();
+        statisticsManager = new ConwayStatisticsManager(structure.cellCount());
+        statisticsManager.update(executor);
+        observationViewModel.setStatistics(statisticsManager.statistics());
 
         if (simulationInitializedListener != null) {
             simulationInitializedListener.run();
         }
     }
 
-    private void updateStatistics() {
-        // TODO Nullability
-        long step = getCurrentStep();
-        long alive = getCurrentModel().count(cell -> cell.entity().isAlive());
-        statistics.update(step, alive);
-        observationViewModel.setStatistics(statistics);
-    }
-
     private void doSimulationStep() {
         Objects.requireNonNull(executor, "Simulation executor must not be null before executing a step.");
+        Objects.requireNonNull(statisticsManager, "Statistics manager must not be null before executing a step.");
         AppLogger.info("Simulation step started.");
 
         executor.executeStep();
 
-        updateStatistics();
+        statisticsManager.update(executor);
+        observationViewModel.setStatistics(statisticsManager.statistics());
 
         if (simulationStepListener != null) {
             simulationStepListener.run();
