@@ -1,12 +1,12 @@
 package de.mkalb.etpetssim.simulations.wator;
 
-import de.mkalb.etpetssim.simulations.SimulationController;
+import de.mkalb.etpetssim.simulations.SimulationView;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class WaTorController implements SimulationController {
+public final class WaTorController implements SimulationView {
 
     private static final int MAX_SIMULATION_TIME = 100;
     private static final double MAX_PROPORTION_OF_SIM_TIME_TO_SPEED = 0.5d;

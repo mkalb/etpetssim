@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.startscreen;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.SimulationController;
 import de.mkalb.etpetssim.simulations.SimulationType;
+import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,7 +17,7 @@ import java.util.function.*;
  * Controller for the start screen of the Extraterrestrial Pets Simulation application.
  * It builds the view region containing buttons for each available simulation type.
  */
-public final class StartScreenController implements SimulationController {
+public final class StartScreenController implements SimulationView {
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;

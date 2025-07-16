@@ -4,32 +4,32 @@ import javafx.scene.layout.Region;
 
 /**
  * Represents an instance of a simulation, encapsulating the type of simulation,
- * the controller managing it, and the view region for the simulation.
+ * the view managing it, and the view region for the simulation.
  *
  * @param simulationType the type of simulation
- * @param simulationController the controller managing the simulation
+ * @param simulationView the view managing the simulation
  * @param region the view region for the simulation
  */
 public record SimulationInstance(
         SimulationType simulationType,
-        SimulationController simulationController,
+        SimulationView simulationView,
         Region region) {
 
-    static SimulationInstance of(SimulationType type, SimulationController controller) {
-        return new SimulationInstance(type, controller, controller.buildViewRegion());
+    static SimulationInstance of(SimulationType type, SimulationView simulationView) {
+        return new SimulationInstance(type, simulationView, simulationView.buildViewRegion());
     }
 
     /**
      * Returns a concise string representation of this simulation instance.
      * <p>
-     * Format: {@code [SIMULATION_TYPE, CONTROLLER_CLASS]}
+     * Format: {@code [SIMULATION_TYPE, VIEW_CLASS]}
      * <br>
-     * Example: {@code [SIMULATION_LAB, SimulationLabController]}
+     * Example: {@code [CONWAYS_LIFE, ConwayView]}
      *
      * @return a concise display string for this simulation instance
      */
     public String toDisplayString() {
-        return String.format("[%s, %s]", simulationType, simulationController.getClass().getSimpleName());
+        return String.format("[%s, %s]", simulationType, simulationView.getClass().getSimpleName());
     }
 
 }

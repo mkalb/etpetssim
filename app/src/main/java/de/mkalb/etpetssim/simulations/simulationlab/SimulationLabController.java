@@ -2,14 +2,14 @@ package de.mkalb.etpetssim.simulations.simulationlab;
 
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.SimulationController;
+import de.mkalb.etpetssim.simulations.SimulationView;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class SimulationLabController implements SimulationController {
+public final class SimulationLabController implements SimulationView {
 
     private final Stage stage;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;

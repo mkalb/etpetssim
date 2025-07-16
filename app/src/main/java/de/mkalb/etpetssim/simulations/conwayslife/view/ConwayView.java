@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.simulations.SimulationController;
+import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class ConwayView extends StackPane implements SimulationController {
+public final class ConwayView extends StackPane implements SimulationView {
 
     private final ConwayViewModel viewModel;
     private final ConwayConfigView configView;
