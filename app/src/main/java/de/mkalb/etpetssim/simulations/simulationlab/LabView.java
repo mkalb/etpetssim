@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.simulationlab;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -10,17 +11,14 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.util.Builder;
 import org.jspecify.annotations.Nullable;
 
-@SuppressWarnings("MagicNumber")
-public final class SimulationLabViewBuilder implements Builder<Region> {
+public final class LabView implements SimulationView {
 
     private static final Color MOUSE_CLICK_COLOR = Color.ROSYBROWN;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
@@ -32,10 +30,14 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     private static final double MOUSE_CLICK_LINE_WIDTH = 8.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
 
-    private final ReadableGridModel<SimulationLabEntity> model;
+    private final LabViewModel viewModel;
+    private final Canvas baseCanvas;
+    private final Canvas overlayCanvas;
+
+    private final ReadableGridModel<LabEntity> model;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final GridStructure structure;
-    private final FXGridCanvasPainter painter;
+    private final FXGridCanvasPainter basePainter;
     private final FXGridCanvasPainter overlayPainter;
     private final @Nullable Font font;
     private final @Nullable Font smallFont;
@@ -45,21 +47,24 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     private final ObjectProperty<ColorMode> colorMode = new SimpleObjectProperty<>(ColorMode.COLOR);
     private final ObjectProperty<StrokeMode> strokeMode = new SimpleObjectProperty<>(StrokeMode.CENTERED);
 
-    public SimulationLabViewBuilder(ReadableGridModel<SimulationLabEntity> model,
-                                    GridEntityDescriptorRegistry entityDescriptorRegistry,
-                                    double cellEdgeLength) {
-        this.model = model;
+    public LabView(LabViewModel viewModel,
+                   LabSimulationManager manager,
+                   GridEntityDescriptorRegistry entityDescriptorRegistry) {
+        this.viewModel = viewModel;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
-        structure = model.structure();
+        structure = manager.structure();
+        model = manager.currentModel();
+        double cellEdgeLength = manager.config().cellEdgeLength();
 
         // Canvas and FXGridCanvasPainter
-        Canvas canvas = new Canvas(cellEdgeLength, cellEdgeLength);
-        painter = new FXGridCanvasPainter(canvas, structure, cellEdgeLength);
+        baseCanvas = new Canvas(cellEdgeLength, cellEdgeLength);
+        basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
         double additionalBorder = 0.0d; // only for testing grid dimension
-        canvas.setWidth(Math.min(6_000.0d, painter.gridDimension2D().getWidth() + additionalBorder));
-        canvas.setHeight(Math.min(4_000.0d, painter.gridDimension2D().getHeight() + additionalBorder));
+        baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth() + additionalBorder));
+        baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight() + additionalBorder));
+        baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
 
-        Canvas overlayCanvas = new Canvas(cellEdgeLength, cellEdgeLength);
+        overlayCanvas = new Canvas(cellEdgeLength, cellEdgeLength);
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
         overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
         overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
@@ -73,7 +78,7 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
 
         // Font
         double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
-        double fontSize = Math.round(painter.cellDimension().height() * fontHeightFactor);
+        double fontSize = Math.round(basePainter.cellDimension().height() * fontHeightFactor);
         if (fontSize > 6) {
             if (Font.getFamilies().contains("Verdana")) {
                 font = Font.font("Verdana", fontSize);
@@ -91,13 +96,33 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     }
 
     @Override
-    public Region build() {
-        Canvas baseCanvas = painter.canvas();
-        Canvas overlayCanvas = overlayPainter.canvas();
+    public Region buildViewRegion() {
+        Region configRegion = createConfigRegion();
+        Region simulationRegion = createSimulationRegion();
+        Region controlRegion = createControlRegion();
 
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(configRegion);
+        borderPane.setCenter(simulationRegion);
+        borderPane.setBottom(controlRegion);
+        borderPane.getStyleClass().add(FXStyleClasses.SIMULATION_BORDERPANE);
+
+        registerEvents();
+
+        drawCanvas();
+
+        return borderPane;
+    }
+
+    private Region createControlRegion() {
+        return new HBox();
+    }
+
+    private Region createSimulationRegion() {
         StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
         StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
         StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
+        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
 
         ScrollPane scrollPane = new ScrollPane(addVisibleCanvasBorder(stackPane));
         scrollPane.setFitToHeight(false);
@@ -105,29 +130,22 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setPannable(true);
-        scrollPane.getStyleClass().add("simulation-scroll-pane");
+        scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
-        Node topNode = builConfigAndControlAndStatNode();
+        return scrollPane;
+    }
 
-        BorderPane simulationBorderPane = new BorderPane();
-        simulationBorderPane.setTop(topNode);
-        simulationBorderPane.setCenter(scrollPane);
-        simulationBorderPane.getStyleClass().add("simulation-border-pane");
-
-        registerEvents();
-
-        drawCanvas();
-
-        return simulationBorderPane;
+    private Region createConfigRegion() {
+        return builConfigAndControlAndStatNode();
     }
 
     private void resetCanvas() {
         lastClickedCoordinate.set(null);
         overlayPainter.clearCanvasBackground();
-        painter.clearGridBackground();
+        basePainter.clearGridBackground();
     }
 
-    private Node builConfigAndControlAndStatNode() {
+    private Region builConfigAndControlAndStatNode() {
         VBox configBox = new VBox();
         configBox.setMinWidth(200);
         configBox.setMinHeight(50);
@@ -207,9 +225,9 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         statBox.setMinHeight(50);
 
         statBox.getChildren().add(new Label("Structure: " + structure.toDisplayString()));
-        statBox.getChildren().add(new Label("Edge length: " + painter.cellDimension().edgeLength()));
-        statBox.getChildren().add(new Label("Cell dimension: " + painter.cellDimension().toDisplayString()));
-        statBox.getChildren().add(new Label("Grid dimension: " + painter.gridDimension2D()));
+        statBox.getChildren().add(new Label("Edge length: " + basePainter.cellDimension().edgeLength()));
+        statBox.getChildren().add(new Label("Cell dimension: " + basePainter.cellDimension().toDisplayString()));
+        statBox.getChildren().add(new Label("Grid dimension: " + basePainter.gridDimension2D()));
         statBox.getChildren().add(new Label("Font: " + font));
         Label coordinateLabel = new Label();
         StringBinding coordinateDisplayBinding = Bindings.createStringBinding(
@@ -259,7 +277,7 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     private void registerEvents() {
         Canvas overlayCanvas = overlayPainter.canvas();
         overlayCanvas.setOnMouseClicked(event -> {
-            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), painter.cellDimension(), overlayPainter.gridDimension2D(), structure);
+            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), basePainter.cellDimension(), overlayPainter.gridDimension2D(), structure);
             overlayPainter.clearCanvasBackground();
             if (overlayPainter.isOutsideGrid(coordinate)) {
                 lastClickedCoordinate.set(null);
@@ -292,12 +310,12 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         overlayCanvas.setOnMouseMoved(event -> {
             overlayPainter.clearCanvasBackground();
             Point2D mousePoint = new Point2D(event.getX(), event.getY());
-            GridCoordinate estimatedCoordinate = GridGeometry.estimateGridCoordinate(mousePoint, painter.cellDimension(), overlayPainter.gridDimension2D(), structure);
+            GridCoordinate estimatedCoordinate = GridGeometry.estimateGridCoordinate(mousePoint, basePainter.cellDimension(), overlayPainter.gridDimension2D(), structure);
             if (!estimatedCoordinate.isIllegal()) {
                 overlayPainter.drawCell(estimatedCoordinate, null, Color.RED, 1.0d);
             }
             overlayPainter.drawCircle(mousePoint, 2.0d, Color.GREEN, null, 1.0d, StrokeAdjustment.CENTERED);
-            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(mousePoint, painter.cellDimension(), overlayPainter.gridDimension2D(), structure);
+            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(mousePoint, basePainter.cellDimension(), overlayPainter.gridDimension2D(), structure);
             if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
                 overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
@@ -321,11 +339,11 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         boolean useColorBlackWhite = colorMode.get() == ColorMode.BLACK_WHITE;
         boolean drawCellAsInnerCircle = renderingMode.get() == RenderingMode.CIRCLE;
         // Background
-        painter.fillCanvasBackground(CANVAS_COLOR);
+        basePainter.fillCanvasBackground(CANVAS_COLOR);
         if (useColorBlackWhite) {
-            painter.fillGridBackground(Color.WHITE);
+            basePainter.fillGridBackground(Color.WHITE);
         } else {
-            painter.fillGridBackground(FXPaintBuilder.createHorizontalGradient(GRID_BACKGROUND_COLOR.darker(), GRID_BACKGROUND_COLOR.brighter()));
+            basePainter.fillGridBackground(FXPaintBuilder.createHorizontalGradient(GRID_BACKGROUND_COLOR.darker(), GRID_BACKGROUND_COLOR.brighter()));
         }
 
         // Cells at all coordinates
@@ -335,19 +353,19 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
             if (drawCellAsInnerCircle) {
                 switch (strokeMode.get()) {
                     case StrokeMode.NONE ->
-                            painter.drawCellInnerCircle(coordinate, color, null, 0.0d, StrokeAdjustment.CENTERED);
+                            basePainter.drawCellInnerCircle(coordinate, color, null, 0.0d, StrokeAdjustment.CENTERED);
                     case StrokeMode.CENTERED ->
-                            painter.drawCellInnerCircle(coordinate, color, Color.BLACK, 0.5d, StrokeAdjustment.CENTERED);
+                            basePainter.drawCellInnerCircle(coordinate, color, Color.BLACK, 0.5d, StrokeAdjustment.CENTERED);
                 }
             } else {
                 if (strokeMode.get() == StrokeMode.NONE) {
-                    painter.drawCell(coordinate, color, null, 0.0d);
+                    basePainter.drawCell(coordinate, color, null, 0.0d);
                 } else {
-                    painter.drawCell(coordinate, color, Color.BLACK, 0.5d);
+                    basePainter.drawCell(coordinate, color, Color.BLACK, 0.5d);
                 }
             }
             if (font != null) {
-                painter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, font);
+                basePainter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, font);
             }
         });
     }
@@ -361,40 +379,40 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
         Color t1 = FXPaintBuilder.createColorWithAlpha(Color.RED, 0.5);
         Color t2 = FXPaintBuilder.createColorWithAlpha(Color.YELLOW, 0.8);
 
-        painter.drawCellBoundingBox(new GridCoordinate(2, 4), t1, t2, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellBoundingBox(new GridCoordinate(2, 6), t2, t1, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellBoundingBox(new GridCoordinate(2, 8), t1, t2, 8.0d, StrokeAdjustment.OUTSIDE);
-        painter.drawCellBoundingBox(new GridCoordinate(2, 10), t2, t1, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 4), t1, t2, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 6), t2, t1, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 8), t1, t2, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 10), t2, t1, 8.0d, StrokeAdjustment.OUTSIDE);
 
-        painter.drawCellBoundingBox(new GridCoordinate(4, 4), null, t2, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellBoundingBox(new GridCoordinate(4, 6), null, t1, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellBoundingBox(new GridCoordinate(4, 8), null, t2, 8.0d, StrokeAdjustment.OUTSIDE);
-        painter.drawCellBoundingBox(new GridCoordinate(4, 10), null, t1, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 4), null, t2, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 6), null, t1, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 8), null, t2, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 10), null, t1, 8.0d, StrokeAdjustment.OUTSIDE);
 
-        painter.drawCellInnerCircle(new GridCoordinate(6, 4), t1, t2, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellInnerCircle(new GridCoordinate(6, 6), t2, t1, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellInnerCircle(new GridCoordinate(6, 8), t1, t2, 8.0d, StrokeAdjustment.OUTSIDE);
-        painter.drawCellInnerCircle(new GridCoordinate(6, 10), t2, t1, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 4), t1, t2, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 6), t2, t1, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 8), t1, t2, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 10), t2, t1, 8.0d, StrokeAdjustment.OUTSIDE);
 
-        painter.drawCellInnerCircle(new GridCoordinate(8, 4), null, t2, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellInnerCircle(new GridCoordinate(8, 6), null, t1, 8.0d, StrokeAdjustment.INSIDE);
-        painter.drawCellInnerCircle(new GridCoordinate(8, 8), null, t2, 8.0d, StrokeAdjustment.OUTSIDE);
-        painter.drawCellInnerCircle(new GridCoordinate(8, 10), null, t1, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 4), null, t2, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 6), null, t1, 8.0d, StrokeAdjustment.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 8), null, t2, 8.0d, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 10), null, t1, 8.0d, StrokeAdjustment.OUTSIDE);
 
         for (int x = 50; x < 100; x++) {
-            painter.drawPixelDirect(x * 4, 100, Color.MAGENTA);
-            painter.drawPixelRect(x * 4, 120, Color.RED);
+            basePainter.drawPixelDirect(x * 4, 100, Color.MAGENTA);
+            basePainter.drawPixelRect(x * 4, 120, Color.RED);
         }
 
-        painter.drawTriangle(new GridCoordinate(11, 4),
-                GridGeometry.convertEdgeLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.TRIANGLE),
+        basePainter.drawTriangle(new GridCoordinate(11, 4),
+                GridGeometry.convertEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.TRIANGLE),
                 Color.WHITE, Color.BLACK, 4.0d);
-        painter.drawHexagon(new GridCoordinate(9, 3),
-                GridGeometry.convertEdgeLengthToMatchWidth(painter.cellDimension().edgeLength(), painter.gridStructure().cellShape(), CellShape.HEXAGON),
+        basePainter.drawHexagon(new GridCoordinate(9, 3),
+                GridGeometry.convertEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.HEXAGON),
                 Color.WHITE, Color.BLACK, 4.0d);
 
-        painter.drawCellFrameSegment(new GridCoordinate(0, 1), Color.DARKGREEN, 5.0, PolygonViewDirection.LEFT);
-        painter.drawCellFrameSegment(new GridCoordinate(1, 2), Color.DARKBLUE, 5.0, PolygonViewDirection.LEFT);
+        basePainter.drawCellFrameSegment(new GridCoordinate(0, 1), Color.DARKGREEN, 5.0, PolygonViewDirection.LEFT);
+        basePainter.drawCellFrameSegment(new GridCoordinate(1, 2), Color.DARKBLUE, 5.0, PolygonViewDirection.LEFT);
       /*
         boolean leftEdge = true;
         painter.drawColumnEdgeLine(0, 0, 3, leftEdge, Color.RED, 2.0d);
@@ -412,7 +430,7 @@ public final class SimulationLabViewBuilder implements Builder<Region> {
     private void drawModel() {
         Color fillColor = FXPaintBuilder.createColorWithAlpha(Color.RED, 0.5d);
         model.nonDefaultCells()
-             .forEach((GridCell<SimulationLabEntity> cell) -> painter.drawCell(cell.coordinate(), fillColor, null, 0.0d));
+             .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, 0.0d));
     }
 
     private Color calculateColumnSimilarityColor(GridCoordinate coordinate) {

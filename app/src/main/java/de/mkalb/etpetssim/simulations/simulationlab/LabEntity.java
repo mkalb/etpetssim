@@ -28,7 +28,7 @@ import org.jspecify.annotations.Nullable;
  * @see de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry
  * @see de.mkalb.etpetssim.engine.model.ConstantGridEntity
  */
-public enum SimulationLabEntity implements ConstantGridEntity, GridEntityDescribable {
+public enum LabEntity implements ConstantGridEntity, GridEntityDescribable {
     NORMAL(
             "normal",
             true,
@@ -62,7 +62,7 @@ public enum SimulationLabEntity implements ConstantGridEntity, GridEntityDescrib
     private final @Nullable Color borderColor;
     private final int renderPriority;
 
-    SimulationLabEntity(
+    LabEntity(
             String descriptorId,
             boolean visible,
             String shortKey,

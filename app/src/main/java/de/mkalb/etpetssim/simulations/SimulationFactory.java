@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.view.*;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.*;
-import de.mkalb.etpetssim.simulations.simulationlab.SimulationLabController;
+import de.mkalb.etpetssim.simulations.simulationlab.*;
 import de.mkalb.etpetssim.simulations.startscreen.StartScreenView;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
 import javafx.beans.property.SimpleObjectProperty;
@@ -38,7 +38,7 @@ public final class SimulationFactory {
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
         return switch (type) {
             case STARTSCREEN -> SimulationInstance.of(type, new StartScreenView(stage, stageUpdater));
-            case SIMULATION_LAB -> SimulationInstance.of(type, new SimulationLabController(stage));
+            case SIMULATION_LAB -> SimulationInstance.of(type, createLabView());
             case WATOR -> SimulationInstance.of(type, new WaTorController());
             case CONWAYS_LIFE -> SimulationInstance.of(type, createConwayView());
             // add other simulation types here later after implementing them
@@ -48,6 +48,21 @@ public final class SimulationFactory {
                 yield SimulationInstance.of(SimulationType.STARTSCREEN, new StartScreenView(stage, stageUpdater));
             }
         };
+    }
+
+    private static LabView createLabView() {
+        // Common / Model
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
+        var manager = new LabSimulationManager(LabSimulationManager.CONFIG_HEXAGON);
+
+        // ViewModel
+        var viewModel = new LabViewModel(manager);
+
+        // View
+        var view = new LabView(viewModel, manager, entityDescriptorRegistry);
+
+        // Return the main view
+        return view;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
