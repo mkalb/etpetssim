@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.conwayslife.view;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayControlViewModel;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -35,14 +36,14 @@ public final class ConwayControlView {
 
         HBox hbox = new HBox();
         hbox.getChildren().addAll(actionButton, cancelButton);
-        hbox.getStyleClass().add("control-hbox");
+        hbox.getStyleClass().add(FXStyleClasses.CONTROL_HBOX);
 
         return hbox;
     }
 
     private Button buildControlButton(String text, boolean disabled) {
         Button controlButton = new Button(text);
-        controlButton.getStyleClass().add("control-button");
+        controlButton.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
         controlButton.setDisable(disabled);
         return controlButton;
     }

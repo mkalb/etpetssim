@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXComponentBuilder.LabeledControl;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -26,13 +27,13 @@ public final class ConwayConfigView {
                     viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
             );
         }
-        box.getStyleClass().add("config-vbox");
+        box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
 
         TitledPane pane = new TitledPane(title, box);
         pane.setCollapsible(content.length > 0);
         pane.setExpanded(content.length > 0);
         pane.setDisable(content.length == 0);
-        pane.getStyleClass().add("config-titled-pane");
+        pane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
         return pane;
     }
 
@@ -45,7 +46,7 @@ public final class ConwayConfigView {
                 viewModel.gridWidthProperty(),
                 "Grid Width: %d",
                 "Set the width of the grid (8 - 16384)",
-                "config-spinner"
+                FXStyleClasses.CONFIG_SPINNER
         );
 
         var heightControl = FXComponentBuilder.createLabeledIntSpinner(
@@ -53,11 +54,11 @@ public final class ConwayConfigView {
                 viewModel.gridHeightProperty(),
                 "Grid Height: %d",
                 "Set the height of the grid (8 - 16384)",
-                "config-spinner"
+                FXStyleClasses.CONFIG_SPINNER
         );
 
         var sliderControl = FXComponentBuilder.createLabeledIntSlider(1, 40,
-                viewModel.cellEdgeLengthProperty(), "Cell Edge Length: %.0f", "Adjust the edge length of each cell (1 - 40)", "config-slider"
+                viewModel.cellEdgeLengthProperty(), "Cell Edge Length: %.0f", "Adjust the edge length of each cell (1 - 40)", FXStyleClasses.CONFIG_SLIDER
         );
 
         TitledPane structurePane = createConfigPane(
@@ -72,7 +73,7 @@ public final class ConwayConfigView {
                 0.0d, 1.0d, viewModel.alivePercentProperty(),
                 "Alive %%: %.0f%%",
                 "Set the initial percentage of alive cells (0% - 100%)",
-                "config-slider"
+                FXStyleClasses.CONFIG_SLIDER
         );
 
         TitledPane initPane = createConfigPane("Initialization", percentControl);
@@ -82,7 +83,7 @@ public final class ConwayConfigView {
 
         // --- Main Layout as Columns ---
         HBox mainBox = new HBox(structurePane, initPane, rulesPane);
-        mainBox.getStyleClass().add("config-hbox");
+        mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
 
         return mainBox;
     }

@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.simulations.SimulationController;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ScrollPane;
@@ -47,6 +48,7 @@ public final class ConwayView extends StackPane implements SimulationController 
 
         baseCanvas = new Canvas(100, 100);
         overlayCanvas = new Canvas(100, 100);
+        baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
     }
 
     @Override
@@ -61,8 +63,7 @@ public final class ConwayView extends StackPane implements SimulationController 
         borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
-
-        borderPane.getStyleClass().add("simulation-border-pane");
+        borderPane.getStyleClass().add(FXStyleClasses.SIMULATION_BORDERPANE);
 
         registerViewModelListeners();
 
@@ -130,6 +131,7 @@ public final class ConwayView extends StackPane implements SimulationController 
         StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
         StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
         StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
+        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
 
         ScrollPane scrollPane = new ScrollPane(stackPane);
         scrollPane.setFitToHeight(false);
@@ -137,7 +139,7 @@ public final class ConwayView extends StackPane implements SimulationController 
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setPannable(true);
-        scrollPane.getStyleClass().add("simulation-scroll-pane");
+        scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
         return scrollPane;
     }

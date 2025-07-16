@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.conwayslife.view;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayObservationViewModel;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -27,7 +28,7 @@ public final class ConwayObservationView {
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.TOP_LEFT);
-        grid.getStyleClass().add("observation-grid");
+        grid.getStyleClass().add(FXStyleClasses.OBSERVATION_GRID);
 
         Label[] nameLabels = {
                 new Label("Step:"),
@@ -39,6 +40,9 @@ public final class ConwayObservationView {
         Label[] valueLabels = {stepLabel, cellCountLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel};
 
         for (int i = 0; i < nameLabels.length; i++) {
+            nameLabels[i].getStyleClass().add(FXStyleClasses.OBSERVATION_NAME_LABEL);
+            valueLabels[i].getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
+
             grid.add(nameLabels[i], 0, i);
             grid.add(valueLabels[i], 1, i);
         }
