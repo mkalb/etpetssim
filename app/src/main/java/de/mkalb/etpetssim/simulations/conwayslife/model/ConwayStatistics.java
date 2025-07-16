@@ -20,10 +20,9 @@ public final class ConwayStatistics {
         maxAliveCells = 0;
     }
 
-    public void update(long step, long aliveCells) {
-        // TODO names
-        this.step = step;
-        this.aliveCells = aliveCells;
+    public void update(long newStep, long newAliveCells) {
+        step = newStep;
+        aliveCells = newAliveCells;
         deadCells = totalCells - aliveCells;
         if (aliveCells > maxAliveCells) {
             maxAliveCells = aliveCells;
