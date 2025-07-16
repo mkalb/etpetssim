@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.view.*;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.*;
 import de.mkalb.etpetssim.simulations.simulationlab.SimulationLabController;
-import de.mkalb.etpetssim.simulations.startscreen.StartScreenController;
+import de.mkalb.etpetssim.simulations.startscreen.StartScreenView;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
@@ -37,7 +37,7 @@ public final class SimulationFactory {
                                                     Stage stage,
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
         return switch (type) {
-            case STARTSCREEN -> SimulationInstance.of(type, new StartScreenController(stage, stageUpdater));
+            case STARTSCREEN -> SimulationInstance.of(type, new StartScreenView(stage, stageUpdater));
             case SIMULATION_LAB -> SimulationInstance.of(type, new SimulationLabController(stage));
             case WATOR -> SimulationInstance.of(type, new WaTorController());
             case CONWAYS_LIFE -> SimulationInstance.of(type, createConwayView());
@@ -45,7 +45,7 @@ public final class SimulationFactory {
             default -> {
                 AppLogger.error("Simulation type not implemented: " + type.name());
                 // Switch to the start screen as a fallback
-                yield SimulationInstance.of(SimulationType.STARTSCREEN, new StartScreenController(stage, stageUpdater));
+                yield SimulationInstance.of(SimulationType.STARTSCREEN, new StartScreenView(stage, stageUpdater));
             }
         };
     }

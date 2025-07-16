@@ -149,12 +149,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
     /**
      * Updates the JavaFX stage with a new scene based on the specified simulation type.
-     * It is passed as a method reference to the SimulationFactory and the StartScreenController.
+     * It is passed as a method reference to the SimulationFactory and the StartScreenView.
      *
      * @param stage the JavaFX stage to update
      * @param simulationType the type of simulation to display in the new scene
      * @see de.mkalb.etpetssim.simulations.SimulationFactory
-     * @see de.mkalb.etpetssim.simulations.startscreen.StartScreenController
+     * @see de.mkalb.etpetssim.simulations.startscreen.StartScreenView
      */
     void updateStageScene(Stage stage, SimulationType simulationType) {
         Objects.requireNonNull(stage, "Stage must not be null");

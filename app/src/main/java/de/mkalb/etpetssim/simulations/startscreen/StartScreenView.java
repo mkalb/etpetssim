@@ -14,16 +14,20 @@ import javafx.stage.Stage;
 import java.util.function.*;
 
 /**
- * Controller for the start screen of the Extraterrestrial Pets Simulation application.
- * It builds the view region containing buttons for each available simulation type.
+ * Main view for the start screen of the Extraterrestrial Pets Simulation application.
+ * <p>
+ * Implements {@link SimulationView} and builds the UI region containing buttons
+ * for each available simulation type. This class encapsulates both the view and
+ * its logic, as no separate ViewModel or Model is required for the start screen.
+ * </p>
  */
-public final class StartScreenController implements SimulationView {
+public final class StartScreenView implements SimulationView {
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
 
-    public StartScreenController(Stage stage,
-                                 BiConsumer<Stage, SimulationType> stageUpdater) {
+    public StartScreenView(Stage stage,
+                           BiConsumer<Stage, SimulationType> stageUpdater) {
         this.stage = stage;
         this.stageUpdater = stageUpdater;
     }
