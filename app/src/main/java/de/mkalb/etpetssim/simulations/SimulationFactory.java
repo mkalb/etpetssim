@@ -3,13 +3,12 @@ package de.mkalb.etpetssim.simulations;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayConfigView;
-import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayObservationView;
-import de.mkalb.etpetssim.simulations.conwayslife.view.ConwayView;
-import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
+import de.mkalb.etpetssim.simulations.conwayslife.view.*;
+import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.*;
 import de.mkalb.etpetssim.simulations.simulationlab.SimulationLabController;
 import de.mkalb.etpetssim.simulations.startscreen.StartScreenController;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
 
 import java.util.function.*;
@@ -51,15 +50,26 @@ public final class SimulationFactory {
         };
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     private static ConwayView createConwayView() {
-        var viewModel = new ConwayViewModel();
-
-        var configView = new ConwayConfigView(viewModel.getConfigViewModel());
-        var observationView = new ConwayObservationView(viewModel.getObservationViewModel());
-
+        // Common
+        var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ConwayEntity.values());
 
-        return new ConwayView(viewModel, entityDescriptorRegistry, configView, observationView);
+        // ViewModel
+        var configViewModel = new ConwayConfigViewModel(simulationState);
+        var controlViewModel = new ConwayControlViewModel(simulationState);
+        var observationViewModel = new ConwayObservationViewModel(simulationState);
+        var viewModel = new ConwayViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
+
+        // View
+        var configView = new ConwayConfigView(configViewModel);
+        var controlView = new ConwayControlView(controlViewModel);
+        var observationView = new ConwayObservationView(observationViewModel);
+        var view = new ConwayView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+
+        // Return the main view
+        return view;
     }
 
 }

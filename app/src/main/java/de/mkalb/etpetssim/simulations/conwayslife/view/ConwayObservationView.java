@@ -8,12 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-/**
- * Displays observation data (step and alive cell count) for Conway's Game of Life.
- * Used as a UI component in the simulation view.
- *
- * @see ConwayView
- */
 public final class ConwayObservationView {
 
     private final ConwayObservationViewModel viewModel;
@@ -28,12 +22,7 @@ public final class ConwayObservationView {
         this.viewModel = viewModel;
     }
 
-    /**
-     * Builds and returns the UI region displaying the observation data.
-     *
-     * @return the observation region as a {@link Region}
-     */
-    Region buildObservationRegion() {
+    Region buildRegion() {
         updateObservationLabels();
 
         GridPane grid = new GridPane();
@@ -57,9 +46,6 @@ public final class ConwayObservationView {
         return grid;
     }
 
-    /**
-     * Updates the displayed observation values (step and alive cell count).
-     */
     void updateObservationLabels() {
         if (viewModel.getSimulationState() == SimulationState.READY) {
             stepLabel.setText("-");

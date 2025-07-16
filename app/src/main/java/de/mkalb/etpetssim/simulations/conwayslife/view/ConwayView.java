@@ -6,16 +6,15 @@ import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationController;
-import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
@@ -26,6 +25,7 @@ public final class ConwayView extends StackPane implements SimulationController 
 
     private final ConwayViewModel viewModel;
     private final ConwayConfigView configView;
+    private final ConwayControlView controlView;
     private final ConwayObservationView observationView;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
@@ -37,10 +37,12 @@ public final class ConwayView extends StackPane implements SimulationController 
     public ConwayView(ConwayViewModel viewModel,
                       GridEntityDescriptorRegistry entityDescriptorRegistry,
                       ConwayConfigView configView,
+                      ConwayControlView controlView,
                       ConwayObservationView observationView) {
         this.viewModel = viewModel;
         this.configView = configView;
         this.observationView = observationView;
+        this.controlView = controlView;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
         baseCanvas = new Canvas(100, 100);
@@ -49,10 +51,10 @@ public final class ConwayView extends StackPane implements SimulationController 
 
     @Override
     public Region buildViewRegion() {
-        Region configRegion = configView.buildConfigRegion();
+        Region configRegion = configView.buildRegion();
         Region simulationRegion = createSimulationRegion();
-        Region controlRegion = createControlRegion();
-        Region observationRegion = observationView.buildObservationRegion();
+        Region controlRegion = controlView.buildRegion();
+        Region observationRegion = observationView.buildRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
@@ -138,38 +140,6 @@ public final class ConwayView extends StackPane implements SimulationController 
         scrollPane.getStyleClass().add("simulation-scroll-pane");
 
         return scrollPane;
-    }
-
-    private Region createControlRegion() {
-        Button actionButton = buildControlButton("Action", false);
-        Button cancelButton = buildControlButton("Cancel", true);
-
-        actionButton.textProperty().bind(
-                Bindings.createStringBinding(() -> switch (viewModel.getSimulationState()) {
-                    case READY -> "Start";
-                    case RUNNING -> "Pause";
-                    case PAUSED -> "Resume";
-                }, viewModel.simulationStateProperty())
-        );
-        cancelButton.disableProperty().bind(
-                viewModel.simulationStateProperty().isEqualTo(SimulationState.READY)
-        );
-
-        actionButton.setOnAction(e -> viewModel.onActionButton());
-        cancelButton.setOnAction(e -> viewModel.onCancelButton());
-
-        HBox hbox = new HBox();
-        hbox.getChildren().addAll(actionButton, cancelButton);
-        hbox.getStyleClass().add("control-hbox");
-
-        return hbox;
-    }
-
-    private Button buildControlButton(String text, boolean disabled) {
-        Button controlButton = new Button(text);
-        controlButton.getStyleClass().add("control-button");
-        controlButton.setDisable(disabled);
-        return controlButton;
     }
 
 }

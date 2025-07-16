@@ -6,14 +6,14 @@ import javafx.beans.property.*;
 
 public final class ConwayConfigViewModel {
 
-    private final ObjectProperty<SimulationState> simulationState;
+    private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
     private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(10.0d);
     private final IntegerProperty gridWidth = new SimpleIntegerProperty(64);
     private final IntegerProperty gridHeight = new SimpleIntegerProperty(32);
     private final DoubleProperty alivePercent = new SimpleDoubleProperty(0.1d);
 
-    public ConwayConfigViewModel(ObjectProperty<SimulationState> simulationState) {
+    public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
     }
 
@@ -28,16 +28,12 @@ public final class ConwayConfigViewModel {
         alivePercent.set(config.alivePercent());
     }
 
-    public ObjectProperty<SimulationState> simulationStateProperty() {
+    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
     public SimulationState getSimulationState() {
         return simulationState.get();
-    }
-
-    public void setSimulationState(SimulationState state) {
-        simulationState.set(state);
     }
 
     public DoubleProperty cellEdgeLengthProperty() {

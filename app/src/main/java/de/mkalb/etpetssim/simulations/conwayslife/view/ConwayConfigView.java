@@ -36,7 +36,7 @@ public final class ConwayConfigView {
         return pane;
     }
 
-    Region buildConfigRegion() {
+    Region buildRegion() {
         // TODO Optimize (ResourceBundle, min/max values, ...
 
         // --- Structure/Layout Group ---

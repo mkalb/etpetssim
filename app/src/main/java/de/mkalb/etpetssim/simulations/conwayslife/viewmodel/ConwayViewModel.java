@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwaySimulationManager;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
@@ -17,39 +17,40 @@ import java.util.*;
 public final class ConwayViewModel {
 
     private final ConwayConfigViewModel configViewModel;
+    private final ConwayControlViewModel controlViewModel;
     private final ConwayObservationViewModel observationViewModel;
     private final SimulationTimer simulationTimer;
 
-    private final ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.READY);
+    private final ObjectProperty<SimulationState> simulationState;
 
-    private @Nullable Runnable simulationInitializedListener;
-    private @Nullable Runnable simulationStepListener;
+    private Runnable simulationInitializedListener = () -> {};
+    private Runnable simulationStepListener = () -> {};
 
     private @Nullable ConwaySimulationManager simulationManager;
 
-    public ConwayViewModel() {
-        configViewModel = new ConwayConfigViewModel(simulationState);
-        observationViewModel = new ConwayObservationViewModel(simulationState);
+    public ConwayViewModel(ObjectProperty<SimulationState> simulationState,
+                           ConwayConfigViewModel configViewModel,
+                           ConwayControlViewModel controlViewModel,
+                           ConwayObservationViewModel observationViewModel) {
+        this.simulationState = simulationState;
+        this.configViewModel = configViewModel;
+        this.controlViewModel = controlViewModel;
+        this.observationViewModel = observationViewModel;
         simulationTimer = new SimulationTimer(this::doSimulationStep);
+
+        controlViewModel.setOnActionButtonListener(this::onActionButton);
+        controlViewModel.setOnCancelButtonListener(this::onCancelButton);
     }
 
-    public ConwayConfigViewModel getConfigViewModel() {
-        return configViewModel;
-    }
-
-    public ConwayObservationViewModel getObservationViewModel() {
-        return observationViewModel;
-    }
-
-    public void setSimulationInitializedListener(@Nullable Runnable listener) {
+    public void setSimulationInitializedListener(Runnable listener) {
         simulationInitializedListener = listener;
     }
 
-    public void setSimulationStepListener(@Nullable Runnable listener) {
+    public void setSimulationStepListener(Runnable listener) {
         simulationStepListener = listener;
     }
 
-    public ObjectProperty<SimulationState> simulationStateProperty() {
+    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
@@ -57,7 +58,7 @@ public final class ConwayViewModel {
         return simulationState.get();
     }
 
-    public void setSimulationState(SimulationState state) {
+    private void setSimulationState(SimulationState state) {
         simulationState.set(state);
     }
 
@@ -85,9 +86,7 @@ public final class ConwayViewModel {
 
         observationViewModel.setStatistics(simulationManager.statistics());
 
-        if (simulationInitializedListener != null) {
-            simulationInitializedListener.run();
-        }
+        simulationInitializedListener.run();
     }
 
     private void doSimulationStep() {
@@ -98,9 +97,7 @@ public final class ConwayViewModel {
 
         observationViewModel.setStatistics(simulationManager.statistics());
 
-        if (simulationStepListener != null) {
-            simulationStepListener.run();
-        }
+        simulationStepListener.run();
 
         if (!simulationManager.isRunning()) {
             stopTimeline();
