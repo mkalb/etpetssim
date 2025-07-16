@@ -5,8 +5,9 @@ import de.mkalb.etpetssim.engine.model.*;
 
 public final class ConwaySimulationManager {
 
-    private final GridStructure structure;
     private final ConwayConfig config;
+
+    private final GridStructure structure;
     private final SimulationExecutor<ConwayEntity> executor;
     private final ConwayStatistics statistics;
 
