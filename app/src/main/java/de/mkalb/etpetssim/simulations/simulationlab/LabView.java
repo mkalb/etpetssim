@@ -100,11 +100,13 @@ public final class LabView implements SimulationView {
         Region configRegion = createConfigRegion();
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = createControlRegion();
+        Region observationRegion = createObservationRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
         borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
+        borderPane.setRight(observationRegion);
         borderPane.getStyleClass().add(FXStyleClasses.SIMULATION_BORDERPANE);
 
         registerEvents();
@@ -114,38 +116,7 @@ public final class LabView implements SimulationView {
         return borderPane;
     }
 
-    private Region createControlRegion() {
-        return new HBox();
-    }
-
-    private Region createSimulationRegion() {
-        StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
-        StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
-        StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
-        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
-
-        ScrollPane scrollPane = new ScrollPane(addVisibleCanvasBorder(stackPane));
-        scrollPane.setFitToHeight(false);
-        scrollPane.setFitToWidth(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setPannable(true);
-        scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
-
-        return scrollPane;
-    }
-
     private Region createConfigRegion() {
-        return builConfigAndControlAndStatNode();
-    }
-
-    private void resetCanvas() {
-        lastClickedCoordinate.set(null);
-        overlayPainter.clearCanvasBackground();
-        basePainter.clearGridBackground();
-    }
-
-    private Region builConfigAndControlAndStatNode() {
         VBox configBox = new VBox();
         configBox.setMinWidth(200);
         configBox.setMinHeight(50);
@@ -201,9 +172,28 @@ public final class LabView implements SimulationView {
             configBox.getChildren().addAll(new Label("Stroke:"), strokeButtonNone, strokeButtonCentered);
         }
 
-        VBox controlBox = new VBox();
-        controlBox.setMinWidth(200);
-        controlBox.setMinHeight(50);
+        return configBox;
+    }
+
+    private Region createSimulationRegion() {
+        StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
+        StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
+        StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
+        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
+
+        ScrollPane scrollPane = new ScrollPane(addVisibleCanvasBorder(stackPane));
+        scrollPane.setFitToHeight(false);
+        scrollPane.setFitToWidth(false);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setPannable(true);
+        scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
+
+        return scrollPane;
+    }
+
+    private Region createControlRegion() {
+        HBox controlBox = new HBox();
 
         Button drawButton = new Button("draw");
         drawButton.setOnAction(event -> {
@@ -220,6 +210,10 @@ public final class LabView implements SimulationView {
         drawButtonTest.setOnAction(event -> drawTest());
         controlBox.getChildren().add(drawButtonTest);
 
+        return controlBox;
+    }
+
+    private Region createObservationRegion() {
         VBox statBox = new VBox();
         statBox.setMinWidth(200);
         statBox.setMinHeight(50);
@@ -240,7 +234,13 @@ public final class LabView implements SimulationView {
         coordinateLabel.textProperty().bind(coordinateDisplayBinding);
         statBox.getChildren().add(coordinateLabel);
 
-        return new HBox(configBox, controlBox, statBox);
+        return statBox;
+    }
+
+    private void resetCanvas() {
+        lastClickedCoordinate.set(null);
+        overlayPainter.clearCanvasBackground();
+        basePainter.clearGridBackground();
     }
 
     private Pane addVisibleCanvasBorder(Pane pane) {
@@ -459,12 +459,10 @@ public final class LabView implements SimulationView {
         };
     }
 
-    // Enum für die Render-Modi
     public enum RenderingMode {
         SHAPE, CIRCLE
     }
 
-    // 1. Enum for color mode
     public enum ColorMode {
         COLOR, BLACK_WHITE
     }
