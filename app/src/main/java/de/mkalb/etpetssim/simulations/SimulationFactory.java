@@ -37,7 +37,7 @@ public final class SimulationFactory {
                                                     Stage stage,
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
         return switch (type) {
-            case STARTSCREEN -> SimulationInstance.of(type, new StartScreenView(stage, stageUpdater));
+            case STARTSCREEN -> SimulationInstance.of(type, createStartScreenView(stage, stageUpdater));
             case SIMULATION_LAB -> SimulationInstance.of(type, createLabView());
             case WATOR -> SimulationInstance.of(type, new WaTorController());
             case CONWAYS_LIFE -> SimulationInstance.of(type, createConwayView());
@@ -45,9 +45,14 @@ public final class SimulationFactory {
             default -> {
                 AppLogger.error("Simulation type not implemented: " + type.name());
                 // Switch to the start screen as a fallback
-                yield SimulationInstance.of(SimulationType.STARTSCREEN, new StartScreenView(stage, stageUpdater));
+                yield SimulationInstance.of(SimulationType.STARTSCREEN, createStartScreenView(stage, stageUpdater));
             }
         };
+    }
+
+    private static StartScreenView createStartScreenView(Stage stage,
+                                                         BiConsumer<Stage, SimulationType> stageUpdater) {
+        return new StartScreenView(stage, stageUpdater);
     }
 
     private static LabView createLabView() {
