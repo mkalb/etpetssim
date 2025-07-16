@@ -22,7 +22,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class ConwayView extends StackPane implements SimulationView {
+public final class ConwayView implements SimulationView {
 
     private final ConwayViewModel viewModel;
     private final ConwayConfigView configView;
@@ -32,7 +32,7 @@ public final class ConwayView extends StackPane implements SimulationView {
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
 
-    private @Nullable FXGridCanvasPainter painter;
+    private @Nullable FXGridCanvasPainter basePainter;
     private @Nullable FXGridCanvasPainter overlayPainter;
 
     public ConwayView(ConwayViewModel viewModel,
@@ -80,9 +80,9 @@ public final class ConwayView extends StackPane implements SimulationView {
             AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
                     " and cell edge length " + cellEdgeLength);
 
-            painter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
-            baseCanvas.setWidth(Math.min(6_000.0d, painter.gridDimension2D().getWidth()));
-            baseCanvas.setHeight(Math.min(4_000.0d, painter.gridDimension2D().getHeight()));
+            basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
+            baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth()));
+            baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight()));
 
             overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
             overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
@@ -102,14 +102,14 @@ public final class ConwayView extends StackPane implements SimulationView {
     }
 
     private void drawCanvas(ReadableGridModel<ConwayEntity> currentModel, long currentStep) {
-        if (painter == null) {
+        if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
 
         // Fill background
-        painter.fillCanvasBackground(javafx.scene.paint.Color.BLACK);
-        painter.fillGridBackground(javafx.scene.paint.Color.WHITE);
+        basePainter.fillCanvasBackground(javafx.scene.paint.Color.BLACK);
+        basePainter.fillGridBackground(javafx.scene.paint.Color.WHITE);
 
         // Draw all cells
         currentModel.structure()
@@ -120,7 +120,7 @@ public final class ConwayView extends StackPane implements SimulationView {
                                     currentModel,
                                     entityDescriptorRegistry,
                                     descriptor ->
-                                            painter.drawCell(
+                                            basePainter.drawCell(
                                                     coordinate,
                                                     descriptor.colorAsOptional().orElse(Color.BLACK),
                                                     null,
