@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.conwayslife.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -17,14 +19,19 @@ public final class ConwayControlView {
     }
 
     Region buildRegion() {
-        Button actionButton = buildControlButton("Action", false);
-        Button cancelButton = buildControlButton("Cancel", true);
+        String textStart = AppLocalization.getText(AppLocalizationKeys.CONTROL_START);
+        String textPause = AppLocalization.getText(AppLocalizationKeys.CONTROL_PAUSE);
+        String textResume = AppLocalization.getText(AppLocalizationKeys.CONTROL_RESUME);
+        String textCancel = AppLocalization.getText(AppLocalizationKeys.CONTROL_CANCEL);
+
+        Button actionButton = buildControlButton(textStart, false);
+        Button cancelButton = buildControlButton(textCancel, true);
 
         actionButton.textProperty().bind(
                 Bindings.createStringBinding(() -> switch (viewModel.getSimulationState()) {
-                    case READY -> "Start";
-                    case RUNNING -> "Pause";
-                    case PAUSED -> "Resume";
+                    case READY -> textStart;
+                    case RUNNING -> textPause;
+                    case PAUSED -> textResume;
                 }, viewModel.simulationStateProperty())
         );
         cancelButton.disableProperty().bind(

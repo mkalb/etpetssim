@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.conwayslife.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayConfigViewModel;
@@ -12,6 +14,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public final class ConwayConfigView {
+
+    @SuppressWarnings("SpellCheckingInspection")
+    static final String CONWAYSLIFE_CONFIG_ALIVE_PERCENT = "conwayslife.config.alivepercent";
+    @SuppressWarnings("SpellCheckingInspection")
+    static final String CONWAYSLIFE_CONFIG_ALIVE_PERCENT_TOOLTIP = "conwayslife.config.alivepercent.tooltip";
 
     private final ConwayConfigViewModel viewModel;
 
@@ -38,31 +45,34 @@ public final class ConwayConfigView {
     }
 
     Region buildRegion() {
-        // TODO Optimize (ResourceBundle, min/max values, ...
+        // TODO Optimize min/max values, ...
 
         // --- Structure/Layout Group ---
         var widthControl = FXComponentBuilder.createLabeledIntSpinner(
                 GridSize.MIN_SIZE, 512, 4,
                 viewModel.gridWidthProperty(),
-                "Grid Width: %d",
-                "Set the width of the grid (8 - 16384)",
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, GridSize.MIN_SIZE, 512),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var heightControl = FXComponentBuilder.createLabeledIntSpinner(
                 GridSize.MIN_SIZE, 512, 4,
                 viewModel.gridHeightProperty(),
-                "Grid Height: %d",
-                "Set the height of the grid (8 - 16384)",
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, GridSize.MIN_SIZE, 512),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sliderControl = FXComponentBuilder.createLabeledIntSlider(1, 40,
-                viewModel.cellEdgeLengthProperty(), "Cell Edge Length: %.0f", "Adjust the edge length of each cell (1 - 40)", FXStyleClasses.CONFIG_SLIDER
+                viewModel.cellEdgeLengthProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, 1, 40),
+                FXStyleClasses.CONFIG_SLIDER
         );
 
         TitledPane structurePane = createConfigPane(
-                "Grid Structure",
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
                 widthControl,
                 heightControl,
                 sliderControl
@@ -71,15 +81,15 @@ public final class ConwayConfigView {
         // --- Initialization Group ---
         var percentControl = FXComponentBuilder.createLabeledPercentSlider(
                 0.0d, 1.0d, viewModel.alivePercentProperty(),
-                "Alive %%: %.0f%%",
-                "Set the initial percentage of alive cells (0% - 100%)",
+                AppLocalization.getText(CONWAYSLIFE_CONFIG_ALIVE_PERCENT),
+                AppLocalization.getText(CONWAYSLIFE_CONFIG_ALIVE_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane initPane = createConfigPane("Initialization", percentControl);
+        TitledPane initPane = createConfigPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), percentControl);
 
         // --- Rules Group ---
-        TitledPane rulesPane = createConfigPane("Rules");
+        TitledPane rulesPane = createConfigPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES));
 
         // --- Main Layout as Columns ---
         HBox mainBox = new HBox(structurePane, initPane, rulesPane);
