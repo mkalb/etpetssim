@@ -19,13 +19,19 @@ public final class FXStyleClasses {
     public static final String CONFIG_VBOX = "config-vbox";
     public static final String CONTROL_BUTTON = "control-button";
     public static final String CONTROL_HBOX = "control-hbox";
+    public static final String CONTROL_VBOX = "control-vbox";
+    public static final String MAIN_BORDERPANE = "main-borderpane";
     public static final String OBSERVATION_GRID = "observation-grid";
     public static final String OBSERVATION_NAME_LABEL = "observation-name-label";
     public static final String OBSERVATION_VALUE_LABEL = "observation-value-label";
-    public static final String SIMULATION_BORDERPANE = "simulation-borderpane";
+    public static final String SIMULATION_BOTTOM_BORDERPANE = "simulation-bottom-borderpane";
     public static final String SIMULATION_CANVAS = "simulation-canvas";
+    public static final String SIMULATION_CENTER_BORDERPANE = "simulation-center-borderpane";
+    public static final String SIMULATION_LEFT_BORDERPANE = "simulation-left-borderpane";
+    public static final String SIMULATION_RIGHT_BORDERPANE = "simulation-right-borderpane";
     public static final String SIMULATION_SCROLLPANE = "simulation-scrollpane";
     public static final String SIMULATION_STACKPANE = "simulation-stackpane";
+    public static final String SIMULATION_TOP_BORDERPANE = "simulation-top-borderpane";
 
     /**
      * Private constructor to prevent instantiation.
