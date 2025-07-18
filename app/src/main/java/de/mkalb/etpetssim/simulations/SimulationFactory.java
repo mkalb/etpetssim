@@ -56,15 +56,14 @@ public final class SimulationFactory {
     }
 
     private static LabView createLabView() {
-        // Common / Model
+        // Common
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
-        var manager = new LabSimulationManager(LabSimulationManager.CONFIG_HEXAGON);
 
         // ViewModel
-        var viewModel = new LabViewModel(manager);
+        var viewModel = new LabViewModel(LabSimulationManager.CONFIG_HEXAGON);
 
         // View
-        var view = new LabView(viewModel, manager, entityDescriptorRegistry);
+        var view = new LabView(viewModel, entityDescriptorRegistry);
 
         // Return the main view
         return view;
