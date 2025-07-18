@@ -10,7 +10,7 @@
 .choice-box {
   -fx-background-color: #263a4d;
   -fx-border-color: #3c4f5c;
-  -fx-border-radius: 4;
+  -fx-border-radius: 0;
   -fx-padding: 6;
   -fx-text-fill: #eaf6fb;
 }
@@ -69,7 +69,7 @@
   -fx-background-color: #263a4d;
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 1 0;
-  -fx-border-radius: 8;
+  -fx-border-radius: 0;
   -fx-alignment: top-left;
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
@@ -99,7 +99,7 @@
   -fx-background-color: #2e485c;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
-  -fx-border-radius: 6;
+  -fx-border-radius: 0;
   -fx-padding: 10 0 10 0;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.08), 4, 0.2, 0, 2);
 }
@@ -158,7 +158,7 @@
   -fx-padding: 0;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
-  -fx-border-radius: 8;
+  -fx-border-radius: 0;
   -fx-min-width: 500px;
   -fx-pref-width: 900px;
   -fx-min-height: 400px;
@@ -198,7 +198,7 @@
   -fx-background-color: #263a4d;
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
-  -fx-border-radius: 0 0 8 8;
+  -fx-border-radius: 0;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
@@ -211,7 +211,7 @@
   -fx-background-color: #263a4d;
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
-  -fx-border-radius: 0 0 8 8;
+  -fx-border-radius: 0;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
@@ -226,7 +226,7 @@
   -fx-background-color: #2e485c;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
-  -fx-border-radius: 5;
+  -fx-border-radius: 0;
   -fx-min-width: 200px;
   -fx-pref-width: 300px;
   -fx-min-height: 200px;
