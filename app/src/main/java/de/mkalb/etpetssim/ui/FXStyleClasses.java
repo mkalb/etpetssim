@@ -12,6 +12,8 @@ package de.mkalb.etpetssim.ui;
 @SuppressWarnings("SpellCheckingInspection")
 public final class FXStyleClasses {
 
+    public static final String APP_BORDERPANE = "app-borderpane";
+    public static final String APP_SCROLLPANE = "app-scrollpane";
     public static final String CONFIG_HBOX = "config-hbox";
     public static final String CONFIG_SLIDER = "config-slider";
     public static final String CONFIG_SPINNER = "config-spinner";
@@ -24,7 +26,6 @@ public final class FXStyleClasses {
     public static final String HEADER_TITLE_LABEL = "header-title-label";
     public static final String HEADER_URL_HYPERLINK = "header-url-hyperlink";
     public static final String HEADER_VBOX = "header-vbox";
-    public static final String MAIN_BORDERPANE = "main-borderpane";
     public static final String OBSERVATION_GRID = "observation-grid";
     public static final String OBSERVATION_NAME_LABEL = "observation-name-label";
     public static final String OBSERVATION_VALUE_LABEL = "observation-value-label";
@@ -37,6 +38,7 @@ public final class FXStyleClasses {
     public static final String SIMULATION_STACKPANE = "simulation-stackpane";
     public static final String SIMULATION_TOP_BORDERPANE = "simulation-top-borderpane";
     public static final String STARTSCREEN_TITLE_LABEL = "startscreen-title-label";
+    public static final String VIEW_BORDERPANE = "view-borderpane";
 
     /**
      * Private constructor to prevent instantiation.

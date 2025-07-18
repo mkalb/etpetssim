@@ -165,6 +165,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(buildSimulationHeaderNode(simulationType));
         borderPane.setCenter(buildSimulationMainNode(stage, simulationType));
+        borderPane.getStyleClass().add(FXStyleClasses.APP_BORDERPANE);
         Scene scene = new Scene(borderPane);
 
         // Add common stylesheets first and then the specific simulation type stylesheet
@@ -213,6 +214,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         ScrollPane scrollPane = new ScrollPane(simulationRegion);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add(FXStyleClasses.APP_SCROLLPANE);
         return scrollPane;
     }
 

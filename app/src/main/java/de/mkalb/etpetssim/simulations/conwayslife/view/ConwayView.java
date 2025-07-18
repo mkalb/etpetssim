@@ -67,7 +67,7 @@ public final class ConwayView implements SimulationView {
         borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.MAIN_BORDERPANE);
+        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
 
         registerViewModelListeners();
 

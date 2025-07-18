@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator;
 
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -162,7 +163,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setPannable(true);
-        scrollPane.getStyleClass().add("simulation-scroll-pane");
+        scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
         return scrollPane;
     }
 

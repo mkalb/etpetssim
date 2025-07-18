@@ -6,6 +6,20 @@
   -fx-background: #1a2233;
 }
 
+.scroll-pane .scroll-bar {
+  -fx-background-color: #263a4d;
+}
+
+.scroll-pane .thumb {
+  -fx-background-color: #00eaff;
+  -fx-background-radius: 0;
+}
+
+.scroll-pane .increment-arrow,
+.scroll-pane .decrement-arrow {
+  -fx-background-color: #2e485c;
+}
+
 /* ChoiceBox Styling */
 .choice-box {
   -fx-background-color: #263a4d;
@@ -17,6 +31,13 @@
 
 .choice-box:hover {
   -fx-border-color: #00eaff;
+}
+
+/* Main app */
+.app-borderpane {
+}
+
+.app-scrollpane {
 }
 
 /* Header Styling */
@@ -58,8 +79,8 @@
   -fx-font-weight: bold;
 }
 
-/* main region (contains: config, control, simulation, observation */
-.main-borderpane {
+/* view region (contains: config, control, simulation, observation */
+.view-borderpane {
 }
 
 /* config region (top) */
