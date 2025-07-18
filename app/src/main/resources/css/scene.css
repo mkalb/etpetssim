@@ -2,70 +2,72 @@
 .root {
   -fx-font-family: 'Verdana';
   -fx-font-size: 14px;
-  -fx-background-color: #f0f0f0;
-  -fx-background: #f0f0f0;
+  -fx-background-color: #1a2233;
+  -fx-background: #1a2233;
 }
 
 /* ChoiceBox Styling */
 .choice-box {
-  -fx-background-color: white;
-  -fx-border-color: #cccccc;
+  -fx-background-color: #263a4d;
+  -fx-border-color: #3c4f5c;
   -fx-border-radius: 4;
   -fx-padding: 6;
+  -fx-text-fill: #eaf6fb;
 }
 
 .choice-box:hover {
-  -fx-border-color: #0078d7;
+  -fx-border-color: #00eaff;
 }
 
 /* Header Styling */
 .header-vbox {
-  -fx-background-color: linear-gradient(to bottom, #eaf3fb, #d6e0eb);
+  -fx-background-color: linear-gradient(to bottom, #263a4d, #2e485c);
   -fx-padding: 14px;
   -fx-spacing: 6px;
   -fx-border-width: 0 0 1px 0;
-  -fx-border-color: #cccccc;
-  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0.3, 0, 2);
+  -fx-border-color: #00eaff;
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.15), 8, 0.4, 0, 2);
 }
 
 .header-title-label {
   -fx-font-size: 20px;
   -fx-font-weight: bold;
-  -fx-text-fill: #2c2c2c;
+  -fx-text-fill: #aeefff;
 }
 
 .header-subtitle-label {
   -fx-font-size: 13px;
-  -fx-text-fill: #555555;
+  -fx-text-fill: #7fffd4;
 }
 
 .header-url-hyperlink {
   -fx-font-size: 13px;
-  -fx-text-fill: #0066cc;
+  -fx-text-fill: #00eaff;
   -fx-underline: true;
   -fx-cursor: hand;
 }
 
 .header-url-hyperlink:hover {
-  -fx-text-fill: #004a99;
+  -fx-text-fill: #00bfff;
 }
 
 /* Start screen styling */
 .startscreen-title-label {
   -fx-font-size: 36px;
-  -fx-text-fill: #333333;
+  -fx-text-fill: #eaf6fb;
   -fx-font-weight: bold;
 }
 
 /* main region (contains: config, control, simulation, observation */
-.main-borderpane {}
+.main-borderpane {
+}
 
 /* config region (top) */
 .config-hbox {
   -fx-padding: 20;
   -fx-spacing: 30;
-  -fx-background-color: #f9fafb;
-  -fx-border-color: #cfd8dc;
+  -fx-background-color: #263a4d;
+  -fx-border-color: #00eaff;
   -fx-border-width: 1 0 1 0;
   -fx-border-radius: 8;
   -fx-alignment: top-left;
@@ -80,30 +82,32 @@
 }
 
 .config-slider .track {
-  -fx-background-color: #cccccc;
+  -fx-background-color: #3c4f5c;
 }
 
 .config-slider .thumb {
-  -fx-background-color: #0078d7;
+  -fx-background-color: #00eaff;
 }
 
 .config-spinner {
   -fx-pref-width: 120px;
+  -fx-background-color: #2e485c;
+  -fx-text-fill: #eaf6fb;
 }
 
 .config-titledpane {
-  -fx-background-color: #ffffff;
-  -fx-border-color: #b0bec5;
+  -fx-background-color: #2e485c;
+  -fx-border-color: #00eaff;
   -fx-border-width: 1;
   -fx-border-radius: 6;
   -fx-padding: 10 0 10 0;
-  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 4, 0.2, 0, 2);
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.08), 4, 0.2, 0, 2);
 }
 
 .config-titledpane>.title {
   -fx-font-size: 16px;
   -fx-font-weight: bold;
-  -fx-text-fill: #37474f;
+  -fx-text-fill: #aeefff;
   -fx-padding: 8 0 8 10;
 }
 
@@ -111,55 +115,48 @@
   -fx-padding: 12 18 12 18;
   -fx-spacing: 12;
   -fx-alignment: top-left;
+  -fx-background-color: #263a4d;
 }
 
 .config-vbox .label {
   -fx-min-width: 120px;
   -fx-alignment: center-left;
   -fx-font-weight: normal;
-  -fx-text-fill: #455a64;
+  -fx-text-fill: #7fffd4;
 }
 
 /* simulation region (center) */
-.simulation-canvas {}
-
-.simulation-stackpane {}
-
-.simulation-center-borderpane {}
-
-.simulation-left-borderpane {
-  -fx-background-color: #333333;
-  -fx-min-width: 10px;
-  -fx-pref-width: 10px;
-  -fx-max-width: 10px;
+.simulation-canvas {
+  -fx-background-color: #1a2233;
 }
 
+.simulation-stackpane {
+}
+
+.simulation-center-borderpane {
+}
+
+.simulation-left-borderpane,
 .simulation-right-borderpane {
-  -fx-background-color: #333333;
+  -fx-background-color: #263a4d;
   -fx-min-width: 10px;
   -fx-pref-width: 10px;
   -fx-max-width: 10px;
 }
 
-.simulation-top-borderpane {
-  -fx-background-color: #333333;
-  -fx-min-height: 10px;
-  -fx-pref-height: 10px;
-  -fx-max-height: 10px;
-}
-
+.simulation-top-borderpane,
 .simulation-bottom-borderpane {
-  -fx-background-color: #333333;
+  -fx-background-color: #263a4d;
   -fx-min-height: 10px;
   -fx-pref-height: 10px;
   -fx-max-height: 10px;
 }
 
 .simulation-scrollpane {
-  -fx-background: #f5f7fa;
-  -fx-background-color: #f5f7fa;
+  -fx-background: #2e485c;
+  -fx-background-color: #2e485c;
   -fx-padding: 0;
-  -fx-border-color: #cfd8dc;
+  -fx-border-color: #00eaff;
   -fx-border-width: 1;
   -fx-border-radius: 8;
   -fx-min-width: 500px;
@@ -177,32 +174,32 @@
   -fx-min-width: 140px;
   -fx-font-size: 15px;
   -fx-font-weight: bold;
-  -fx-background-color: linear-gradient(to bottom, #2196f3, #1976d2);
-  -fx-text-fill: white;
+  -fx-background-color: linear-gradient(to bottom, #00eaff, #00bfff);
+  -fx-text-fill: #1a2233;
   -fx-background-radius: 6;
   -fx-padding: 10 24;
-  -fx-effect: dropshadow(gaussian, rgba(33, 150, 243, 0.10), 2, 0.2, 0, 1);
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.10), 2, 0.2, 0, 1);
   -fx-cursor: hand;
-  -fx-border-color: #1565c0;
+  -fx-border-color: #00eaff;
   -fx-border-width: 1;
 }
 
 .control-button:hover {
-  -fx-background-color: linear-gradient(to bottom, #1976d2, #1565c0);
+  -fx-background-color: linear-gradient(to bottom, #00bfff, #00ff99);
 }
 
 .control-button:pressed {
-  -fx-background-color: #1565c0;
+  -fx-background-color: #00ff99;
 }
 
 .control-hbox {
   -fx-spacing: 18;
   -fx-padding: 14 24;
-  -fx-background-color: #f7fafd;
-  -fx-border-color: #b0bec5;
+  -fx-background-color: #263a4d;
+  -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
   -fx-border-radius: 0 0 8 8;
-  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 4, 0.2, 0, -2);
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
   -fx-alignment: center-left;
@@ -211,11 +208,11 @@
 .control-vbox {
   -fx-spacing: 18;
   -fx-padding: 24 14;
-  -fx-background-color: #f7fafd;
-  -fx-border-color: #b0bec5;
+  -fx-background-color: #263a4d;
+  -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
   -fx-border-radius: 0 0 8 8;
-  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 4, 0.2, 0, -2);
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
   -fx-alignment: center;
@@ -226,8 +223,8 @@
   -fx-hgap: 10;
   -fx-vgap: 10;
   -fx-padding: 10;
-  -fx-background-color: #ffffff;
-  -fx-border-color: #dddddd;
+  -fx-background-color: #2e485c;
+  -fx-border-color: #00eaff;
   -fx-border-width: 1;
   -fx-border-radius: 5;
   -fx-min-width: 200px;
@@ -239,7 +236,7 @@
 .observation-name-label {
   -fx-font-size: 13px;
   -fx-font-weight: bold;
-  -fx-text-fill: #37474f;
+  -fx-text-fill: #aeefff;
   -fx-alignment: center-left;
   -fx-padding: 2 8 2 0;
 }
@@ -247,7 +244,7 @@
 .observation-value-label {
   -fx-font-size: 13px;
   -fx-font-weight: normal;
-  -fx-text-fill: #1565c0;
+  -fx-text-fill: #00ff99;
   -fx-alignment: center-right;
   -fx-padding: 2 0 2 8;
 }
