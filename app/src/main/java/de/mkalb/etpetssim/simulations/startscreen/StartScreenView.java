@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.SimulationType;
 import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -34,10 +35,11 @@ public final class StartScreenView implements SimulationView {
 
     @Override
     public Region buildViewRegion() {
-        VBox root = new VBox();
+        VBox vbox = new VBox();
+        vbox.getStyleClass().add(FXStyleClasses.CONTROL_VBOX);
 
         Label titleLabel = FXComponentBuilder.createLabel(AppLocalization.getText(SimulationType.labelResourceKey()), "startscreen-title-label");
-        root.getChildren().add(titleLabel);
+        vbox.getChildren().add(titleLabel);
 
         for (SimulationType type : SimulationType.values()) {
             if (!type.isShownOnStartScreen()) {
@@ -45,6 +47,7 @@ public final class StartScreenView implements SimulationView {
             }
 
             Button button = new Button(type.title());
+            button.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
             if (type.isImplemented()) {
                 type.subtitle().ifPresent(subtitle -> button.setTooltip(new Tooltip(subtitle)));
                 button.setOnAction(_ -> stageUpdater.accept(stage, type));
@@ -52,10 +55,10 @@ public final class StartScreenView implements SimulationView {
                 button.setDisable(true);
             }
 
-            root.getChildren().add(button);
+            vbox.getChildren().add(button);
         }
 
-        return root;
+        return vbox;
     }
 
 }
