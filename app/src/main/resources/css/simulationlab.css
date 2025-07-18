@@ -1,26 +1,27 @@
-/* SimulationLab Styling */
-.simulation-scroll-pane {
+.simulation-left-borderpane {
+  -fx-background-color: linear-gradient(to bottom, #ff0000, #0000ff);
+  -fx-min-width: 15px;
+  -fx-pref-width: 15px;
+  -fx-max-width: 15px;
 }
 
-.simulation-border-pane {
+.simulation-right-borderpane {
+  -fx-background-color: linear-gradient(to bottom, #ffff00, #00ff00);
+  -fx-min-width: 15px;
+  -fx-pref-width: 15px;
+  -fx-max-width: 15px;
 }
 
-.canvas-left-border-pane {
-    -fx-background-color: linear-gradient(to bottom, #ff0000, #0000ff);
-    -fx-pref-width: 10px;
+.simulation-top-borderpane {
+  -fx-background-color: linear-gradient(to right, #ff0000, #ffff00);
+  -fx-min-height: 15px;
+  -fx-pref-height: 15px;
+  -fx-max-height: 15px;
 }
 
-.canvas-right-border-pane {
-    -fx-background-color: linear-gradient(to bottom, #ffff00, #00ff00);
-    -fx-pref-width: 10px;
-}
-
-.canvas-top-border-pane {
-    -fx-background-color: linear-gradient(to right, #ff0000, #ffff00);
-    -fx-pref-height: 10px;
-}
-
-.canvas-bottom-border-pane {
-    -fx-background-color: linear-gradient(to right, #0000ff, #00ff00);
-    -fx-pref-height: 10px;
+.simulation-bottom-borderpane {
+  -fx-background-color: linear-gradient(to right, #0000ff, #00ff00);
+  -fx-min-height: 15px;
+  -fx-pref-height: 15px;
+  -fx-max-height: 15px;
 }
