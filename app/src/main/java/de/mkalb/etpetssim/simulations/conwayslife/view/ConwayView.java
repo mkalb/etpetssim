@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conwayslife.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
@@ -31,6 +32,7 @@ public final class ConwayView implements SimulationView {
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
+    private final BorderPane canvasBorderPane;
 
     private @Nullable FXGridCanvasPainter basePainter;
     private @Nullable FXGridCanvasPainter overlayPainter;
@@ -49,6 +51,8 @@ public final class ConwayView implements SimulationView {
         baseCanvas = new Canvas(100, 100);
         overlayCanvas = new Canvas(100, 100);
         baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
+        overlayCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
+        canvasBorderPane = new BorderPane();
     }
 
     @Override
@@ -63,7 +67,7 @@ public final class ConwayView implements SimulationView {
         borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.SIMULATION_BORDERPANE);
+        borderPane.getStyleClass().add(FXStyleClasses.MAIN_BORDERPANE);
 
         registerViewModelListeners();
 
@@ -87,6 +91,8 @@ public final class ConwayView implements SimulationView {
             overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
             overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
             overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+
+            updateCanvasBorderPane(structure);
 
             drawCanvas(currentModel, currentStep);
             observationView.updateObservationLabels();
@@ -133,7 +139,10 @@ public final class ConwayView implements SimulationView {
         StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
         stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
 
-        ScrollPane scrollPane = new ScrollPane(stackPane);
+        canvasBorderPane.setCenter(stackPane);
+        canvasBorderPane.getStyleClass().add(FXStyleClasses.SIMULATION_CENTER_BORDERPANE);
+
+        ScrollPane scrollPane = new ScrollPane(canvasBorderPane);
         scrollPane.setFitToHeight(false);
         scrollPane.setFitToWidth(false);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
@@ -142,6 +151,23 @@ public final class ConwayView implements SimulationView {
         scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
         return scrollPane;
+    }
+
+    private void updateCanvasBorderPane(GridStructure structure) {
+        canvasBorderPane.setLeft((structure.edgeBehaviorX() == EdgeBehavior.WRAP) ? null :
+                createBorderRegion(FXStyleClasses.SIMULATION_LEFT_BORDERPANE));
+        canvasBorderPane.setRight((structure.edgeBehaviorX() == EdgeBehavior.WRAP) ? null :
+                createBorderRegion(FXStyleClasses.SIMULATION_RIGHT_BORDERPANE));
+        canvasBorderPane.setTop((structure.edgeBehaviorY() == EdgeBehavior.WRAP) ? null :
+                createBorderRegion(FXStyleClasses.SIMULATION_TOP_BORDERPANE));
+        canvasBorderPane.setBottom((structure.edgeBehaviorY() == EdgeBehavior.WRAP) ? null :
+                createBorderRegion(FXStyleClasses.SIMULATION_BOTTOM_BORDERPANE));
+    }
+
+    private Region createBorderRegion(String styleClass) {
+        Region border = new Region();
+        border.getStyleClass().add(styleClass);
+        return border;
     }
 
 }
