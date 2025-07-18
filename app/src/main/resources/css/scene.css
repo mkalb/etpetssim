@@ -43,8 +43,8 @@
 /* Header Styling */
 .header-vbox {
   -fx-background-color: linear-gradient(to bottom, #263a4d, #2e485c);
-  -fx-padding: 14px;
-  -fx-spacing: 6px;
+  -fx-padding: 8px;
+  -fx-spacing: 4px;
   -fx-border-width: 0 0 1px 0;
   -fx-border-color: #00eaff;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.15), 8, 0.4, 0, 2);
@@ -85,8 +85,8 @@
 
 /* config region (top) */
 .config-hbox {
-  -fx-padding: 20;
-  -fx-spacing: 30;
+  -fx-padding: 12;
+  -fx-spacing: 12;
   -fx-background-color: #263a4d;
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 1 0;
@@ -99,7 +99,7 @@
 .config-slider {
   -fx-min-width: 220px;
   -fx-max-width: 350px;
-  -fx-padding: 10;
+  -fx-padding: 6;
 }
 
 .config-slider .track {
@@ -121,7 +121,7 @@
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
   -fx-border-radius: 0;
-  -fx-padding: 10 0 10 0;
+  -fx-padding: 6 0 6 0;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.08), 4, 0.2, 0, 2);
 }
 
@@ -129,12 +129,12 @@
   -fx-font-size: 16px;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
-  -fx-padding: 8 0 8 10;
+  -fx-padding: 4 0 4 8;
 }
 
 .config-vbox {
-  -fx-padding: 12 18 12 18;
-  -fx-spacing: 12;
+  -fx-padding: 8 12 8 12;
+  -fx-spacing: 8;
   -fx-alignment: top-left;
   -fx-background-color: #263a4d;
 }
@@ -214,8 +214,8 @@
 }
 
 .control-hbox {
-  -fx-spacing: 18;
-  -fx-padding: 14 24;
+  -fx-padding: 8 12;
+  -fx-spacing: 8;
   -fx-background-color: #263a4d;
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
@@ -227,8 +227,8 @@
 }
 
 .control-vbox {
-  -fx-spacing: 18;
-  -fx-padding: 24 14;
+  -fx-padding: 12 8;
+  -fx-spacing: 8;
   -fx-background-color: #263a4d;
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
@@ -241,9 +241,9 @@
 
 /* observation region (right) */
 .observation-grid {
-  -fx-hgap: 10;
-  -fx-vgap: 10;
-  -fx-padding: 10;
+  -fx-padding: 6;
+  -fx-hgap: 6;
+  -fx-vgap: 6;
   -fx-background-color: #2e485c;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
@@ -267,5 +267,5 @@
   -fx-font-weight: normal;
   -fx-text-fill: #00ff99;
   -fx-alignment: center-right;
-  -fx-padding: 2 0 2 8;
+  -fx-padding: 1 4 1 0;
 }
