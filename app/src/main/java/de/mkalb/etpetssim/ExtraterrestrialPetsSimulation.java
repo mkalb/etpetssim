@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.SimulationFactory;
 import de.mkalb.etpetssim.simulations.SimulationType;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -183,15 +184,15 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @return a Node representing the header of the simulation
      */
     private Node buildSimulationHeaderNode(SimulationType simulationType) {
-        VBox simulationHeaderBox = new VBox(FXComponentBuilder.createLabel(simulationType.title(), "simulationHeader-title-label"));
-        simulationHeaderBox.getStyleClass().add("simulationHeader-vbox");
+        VBox simulationHeaderBox = new VBox(FXComponentBuilder.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
+        simulationHeaderBox.getStyleClass().add(FXStyleClasses.HEADER_VBOX);
 
         simulationType.subtitle()
-                      .ifPresent(subtitle -> simulationHeaderBox.getChildren().add(FXComponentBuilder.createLabel(subtitle, "simulationHeader-subtitle-label")));
+                      .ifPresent(subtitle -> simulationHeaderBox.getChildren().add(FXComponentBuilder.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
 
         simulationType.urlAsURI().ifPresent(url -> {
             Hyperlink urlLink = new Hyperlink(url.toString());
-            urlLink.getStyleClass().add("simulationHeader-url-hyperlink");
+            urlLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
             urlLink.setOnAction(e -> getHostServices().showDocument(url.toString()));
             simulationHeaderBox.getChildren().add(urlLink);
         });

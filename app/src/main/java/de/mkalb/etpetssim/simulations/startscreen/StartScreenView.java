@@ -38,7 +38,8 @@ public final class StartScreenView implements SimulationView {
         VBox vbox = new VBox();
         vbox.getStyleClass().add(FXStyleClasses.CONTROL_VBOX);
 
-        Label titleLabel = FXComponentBuilder.createLabel(AppLocalization.getText(SimulationType.labelResourceKey()), "startscreen-title-label");
+        Label titleLabel = FXComponentBuilder.createLabel(AppLocalization.getText(SimulationType.labelResourceKey()),
+                FXStyleClasses.STARTSCREEN_TITLE_LABEL);
         vbox.getChildren().add(titleLabel);
 
         for (SimulationType type : SimulationType.values()) {

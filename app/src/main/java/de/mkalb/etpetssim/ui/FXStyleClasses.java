@@ -20,6 +20,10 @@ public final class FXStyleClasses {
     public static final String CONTROL_BUTTON = "control-button";
     public static final String CONTROL_HBOX = "control-hbox";
     public static final String CONTROL_VBOX = "control-vbox";
+    public static final String HEADER_SUBTITLE_LABEL = "header-subtitle-label";
+    public static final String HEADER_TITLE_LABEL = "header-title-label";
+    public static final String HEADER_URL_HYPERLINK = "header-url-hyperlink";
+    public static final String HEADER_VBOX = "header-vbox";
     public static final String MAIN_BORDERPANE = "main-borderpane";
     public static final String OBSERVATION_GRID = "observation-grid";
     public static final String OBSERVATION_NAME_LABEL = "observation-name-label";
@@ -32,6 +36,7 @@ public final class FXStyleClasses {
     public static final String SIMULATION_SCROLLPANE = "simulation-scrollpane";
     public static final String SIMULATION_STACKPANE = "simulation-stackpane";
     public static final String SIMULATION_TOP_BORDERPANE = "simulation-top-borderpane";
+    public static final String STARTSCREEN_TITLE_LABEL = "startscreen-title-label";
 
     /**
      * Private constructor to prevent instantiation.

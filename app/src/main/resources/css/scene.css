@@ -19,7 +19,7 @@
 }
 
 /* Header Styling */
-.simulationHeader-vbox {
+.header-vbox {
   -fx-background-color: linear-gradient(to bottom, #eaf3fb, #d6e0eb);
   -fx-padding: 14px;
   -fx-spacing: 6px;
@@ -28,25 +28,25 @@
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0.3, 0, 2);
 }
 
-.simulationHeader-title-label {
+.header-title-label {
   -fx-font-size: 20px;
   -fx-font-weight: bold;
   -fx-text-fill: #2c2c2c;
 }
 
-.simulationHeader-subtitle-label {
+.header-subtitle-label {
   -fx-font-size: 13px;
   -fx-text-fill: #555555;
 }
 
-.simulationHeader-url-hyperlink {
+.header-url-hyperlink {
   -fx-font-size: 13px;
   -fx-text-fill: #0066cc;
   -fx-underline: true;
   -fx-cursor: hand;
 }
 
-.simulationHeader-url-hyperlink:hover {
+.header-url-hyperlink:hover {
   -fx-text-fill: #004a99;
 }
 
