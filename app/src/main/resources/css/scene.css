@@ -226,6 +226,12 @@
   -fx-cursor: hand;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
+  -fx-background-insets: 0;
+}
+
+.control-button:focused {
+  -fx-border-color: #00ff99;
+  -fx-border-width: 2;
 }
 
 .control-button:hover {
@@ -240,26 +246,22 @@
   -fx-padding: 8 12;
   -fx-spacing: 8;
   -fx-background-color: #263a4d;
-  -fx-border-color: #00eaff;
-  -fx-border-width: 1 0 0 0;
-  -fx-border-radius: 0;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
   -fx-alignment: center-left;
+  -fx-background-insets: 0;
 }
 
 .control-vbox {
   -fx-padding: 12 8;
   -fx-spacing: 8;
   -fx-background-color: #263a4d;
-  -fx-border-color: #00eaff;
-  -fx-border-width: 1 0 0 0;
-  -fx-border-radius: 0;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
   -fx-alignment: center;
+  -fx-background-insets: 0;
 }
 
 /* observation region (right) */
