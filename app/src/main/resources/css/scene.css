@@ -6,6 +6,23 @@
   -fx-background: #1a2233;
 }
 
+.scroll-pane {
+  -fx-background: #2e485c;
+  -fx-background-color: #2e485c;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 0;
+  -fx-background-insets: 0;
+}
+
+.scroll-pane > .viewport {
+  -fx-background-color: transparent;
+}
+
+.scroll-pane .corner {
+  -fx-background-color: #2e485c;
+}
+
 .scroll-pane .scroll-bar {
   -fx-background-color: #263a4d;
 }
@@ -38,27 +55,31 @@
 }
 
 .app-scrollpane {
+  -fx-padding: 4;
 }
 
 /* Header Styling */
 .header-vbox {
   -fx-background-color: linear-gradient(to bottom, #263a4d, #2e485c);
-  -fx-padding: 8px;
-  -fx-spacing: 4px;
-  -fx-border-width: 0 0 1px 0;
+  -fx-padding: 16px 12px 14px 12px;
+  -fx-spacing: 8px;
+  -fx-border-width: 0 0 2px 0;
   -fx-border-color: #00eaff;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.15), 8, 0.4, 0, 2);
+  -fx-border-radius: 0;
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.18), 10, 0.5, 0, 3);
 }
 
 .header-title-label {
-  -fx-font-size: 20px;
+  -fx-font-size: 22px;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
+  -fx-padding: 0 0 2px 0;
 }
 
 .header-subtitle-label {
-  -fx-font-size: 13px;
+  -fx-font-size: 14px;
   -fx-text-fill: #7fffd4;
+  -fx-padding: 0 0 2px 0;
 }
 
 .header-url-hyperlink {
@@ -66,10 +87,15 @@
   -fx-text-fill: #00eaff;
   -fx-underline: true;
   -fx-cursor: hand;
+  -fx-padding: 2 6;
+  -fx-background-radius: 0;
+  -fx-background-color: transparent;
+  -fx-border-width: 0;
 }
 
 .header-url-hyperlink:hover {
   -fx-text-fill: #00bfff;
+  -fx-background-color: #263a4d;
 }
 
 /* Start screen styling */
@@ -77,6 +103,8 @@
   -fx-font-size: 36px;
   -fx-text-fill: #eaf6fb;
   -fx-font-weight: bold;
+  -fx-padding: 12 0 16 0;
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.10), 4, 0.2, 0, 2);
 }
 
 /* view region (contains: config, control, simulation, observation */
@@ -174,12 +202,7 @@
 }
 
 .simulation-scrollpane {
-  -fx-background: #2e485c;
-  -fx-background-color: #2e485c;
   -fx-padding: 0;
-  -fx-border-color: #00eaff;
-  -fx-border-width: 1;
-  -fx-border-radius: 0;
   -fx-min-width: 500px;
   -fx-pref-width: 900px;
   -fx-min-height: 400px;
@@ -259,7 +282,7 @@
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
   -fx-alignment: center-left;
-  -fx-padding: 2 8 2 0;
+  -fx-padding: 1 4 1 0;
 }
 
 .observation-value-label {
