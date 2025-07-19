@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -35,6 +36,16 @@ public final class StartScreenView implements SimulationView {
 
     @Override
     public Region buildViewRegion() {
+        Region controlRegion = buildControlRegion();
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.setBottom(controlRegion);
+        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
+
+        return borderPane;
+    }
+
+    Region buildControlRegion() {
         VBox vbox = new VBox();
         vbox.getStyleClass().add(FXStyleClasses.CONTROL_VBOX);
 
