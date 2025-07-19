@@ -208,9 +208,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         updateStageIcons(primaryStage);
         updateStageScene(primaryStage, type);
         primaryStage.show();
-        // Show the stage first to ensure layout is finalized, then increase the height by 2 pixels to compensate
-        // for possible content clipping due to window decorations.
-        primaryStage.setHeight(primaryStage.getHeight() + 2);
     }
 
     @Override
