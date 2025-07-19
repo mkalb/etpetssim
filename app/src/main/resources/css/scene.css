@@ -225,7 +225,6 @@
 }
 
 .control-button {
-  -fx-min-width: 140;
   -fx-font-size: 15;
   -fx-font-weight: bold;
   -fx-background-color: linear-gradient(to bottom, #00eaff, #00bfff);
@@ -236,7 +235,9 @@
   -fx-cursor: hand;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
-  -fx-background-insets: 0;
+  -fx-min-width: 176;
+  /* prevent jump */
+  -fx-min-height: 44;
 }
 
 .control-button:focused {
@@ -257,10 +258,7 @@
   -fx-spacing: 8;
   -fx-background-color: #263a4d;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
-  -fx-min-width: 900;
-  -fx-pref-width: 1100;
   -fx-alignment: center-left;
-  -fx-background-insets: 0;
 }
 
 /* observation region (right) */
