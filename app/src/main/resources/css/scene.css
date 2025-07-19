@@ -112,9 +112,9 @@
 
 /* config region (top) */
 .config-hbox {
-  -fx-padding: 12;
-  -fx-spacing: 12;
-  -fx-background-color: #263a4d;
+  -fx-padding: 14;
+  -fx-spacing: 14;
+  -fx-background-color: #2e3b50;
   -fx-border-color: #00eaff;
   -fx-border-width: 0 0 1 0;
   -fx-border-radius: 0;
@@ -124,45 +124,83 @@
 }
 
 .config-slider {
-  -fx-min-width: 220;
-  -fx-max-width: 350;
-  -fx-padding: 6;
+  -fx-pref-width: 220;
+  -fx-padding: 0;
+}
+
+
+.config-slider .axis-tick-mark {
+  -fx-stroke: #aeefff;
+  -fx-stroke-width: 2;
+}
+
+.config-slider .axis-minor-tick-mark {
+  -fx-stroke: #7fffd4;
+  -fx-stroke-width: 1.5;
 }
 
 .config-slider .track {
-  -fx-background-color: #3c4f5c;
+  -fx-background-color: #46607a;
 }
 
 .config-slider .thumb {
-  -fx-background-color: #00eaff;
+  -fx-background-color: #00bfff;
+  -fx-effect: dropshadow(gaussian, #00eaff, 4, 0.3, 0, 1);
 }
 
 .config-spinner {
-  -fx-pref-width: 120;
-  -fx-background-color: #2e485c;
-  -fx-text-fill: #eaf6fb;
+  -fx-background-color: #2e3b50;
+  -fx-padding: 0;
+  -fx-border-radius: 0;
+}
+
+.config-spinner .text-field {
+  -fx-background-color: #c2d6e6;
+  -fx-text-fill: #223044;
+  -fx-border-width: 0;
+}
+
+.config-spinner .increment-arrow-button,
+.config-spinner .decrement-arrow-button {
+  -fx-background-color: #35516b;
+  -fx-background: #35516b;
+  -fx-border-width: 0;
+}
+
+.config-spinner .increment-arrow,
+.config-spinner .decrement-arrow {
+  -fx-background-color: #00eaff;
+  -fx-background: #00eaff;
+}
+
+.config-spinner .increment-arrow-button:hover,
+.config-spinner .decrement-arrow-button:hover {
+  -fx-background-color: #00bfff;
 }
 
 .config-titledpane {
-  -fx-background-color: #2e485c;
+  -fx-background-color: linear-gradient(to bottom, #2e3b50, #35516b 80%, #347ca3 100%);
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
-  -fx-border-radius: 0;
-  -fx-padding: 6 0 6 0;
+  -fx-border-radius: 6;
+  -fx-padding: 10 0 10 0;
 }
 
 .config-titledpane>.title {
+  -fx-background-color: linear-gradient(to right, #347ca3, #00bfff 80%, #2e3b50 100%);
   -fx-font-size: 16;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
-  -fx-padding: 4 0 4 8;
+  -fx-padding: 8 24 8 16;
+  -fx-background-radius: 6 6 0 0;
 }
 
 .config-vbox {
-  -fx-padding: 8 12 8 12;
-  -fx-spacing: 8;
+  -fx-padding: 10 16 10 16;
+  -fx-spacing: 10;
   -fx-alignment: top-left;
-  -fx-background-color: #263a4d;
+  -fx-background-color: #2e3b50;
+  -fx-border-radius: 0 0 8 8;
 }
 
 .config-vbox .label {
@@ -170,6 +208,7 @@
   -fx-alignment: center-left;
   -fx-font-weight: normal;
   -fx-text-fill: #7fffd4;
+  -fx-font-size: 14;
 }
 
 /* simulation region (center) */
