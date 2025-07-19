@@ -9,9 +9,10 @@
   -fx-background-radius: 0;
   -fx-padding: 0;
   -fx-spacing: 0;
+  -fx-effect: null;
   -fx-border-width: 0;
-  -fx-border-color: #00eaff;
   -fx-border-radius: 0;
+  -fx-border-color: transparent;
 }
 
 .scroll-pane {
@@ -56,6 +57,14 @@
 .app-vbox {
   -fx-background-color: #263a4d;
   -fx-background: #263a4d;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
 }
 
 .header-vbox {
@@ -104,14 +113,12 @@
   -fx-text-fill: #eaf6fb;
   -fx-font-weight: bold;
   -fx-padding: 18 0 22 0;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.14), 6, 0.3, 0, 3);
 }
 
 .startscreen-control-vbox {
   -fx-padding: 18 14 18 14;
   -fx-spacing: 14;
   -fx-background-color: #263a4d;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.08), 6, 0.3, 0, -2);
   -fx-alignment: center;
   -fx-min-width: 800;
   -fx-pref-width: 1000;
@@ -121,6 +128,12 @@
 .view-borderpane {
   -fx-border-width: 1;
   -fx-border-color: #00eaff;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-radius: 0;
 }
 
 /* config region (top) */
@@ -162,7 +175,6 @@
   -fx-border-width: 1;
   -fx-border-radius: 0;
   -fx-padding: 6 0 6 0;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.08), 4, 0.2, 0, 2);
 }
 
 .config-titledpane>.title {
@@ -191,9 +203,27 @@
   -fx-background-color: #1a2233;
 }
 
-.simulation-stackpane {}
+.simulation-stackpane {
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
+}
 
-.simulation-center-borderpane {}
+.simulation-center-borderpane {
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
+}
 
 .simulation-left-borderpane,
 .simulation-right-borderpane {
@@ -212,6 +242,14 @@
 }
 
 .simulation-scrollpane {
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
 }
 
 /* control region (bottom) */
@@ -252,7 +290,6 @@
   -fx-padding: 8 12;
   -fx-spacing: 8;
   -fx-background-color: #263a4d;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
   -fx-alignment: center-left;
   -fx-min-width: 900;
   -fx-pref-width: 1000;
