@@ -83,14 +83,14 @@
 }
 
 /* Start screen styling */
-.startscreen-title-label {
+.start-title-label {
   -fx-font-size: 36;
   -fx-text-fill: #eaf6fb;
   -fx-font-weight: bold;
   -fx-padding: 18 0 22 0;
 }
 
-.startscreen-control-vbox {
+.start-control-vbox {
   -fx-padding: 12 8 12 8;
   -fx-spacing: 8;
   -fx-background-color: #263a4d;

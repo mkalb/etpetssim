@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.startscreen;
+package de.mkalb.etpetssim.simulations.start;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.SimulationType;
@@ -23,13 +23,13 @@ import java.util.function.*;
  * its logic, as no separate ViewModel or Model is required for the start screen.
  * </p>
  */
-public final class StartScreenView implements SimulationView {
+public final class StartView implements SimulationView {
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
 
-    public StartScreenView(Stage stage,
-                           BiConsumer<Stage, SimulationType> stageUpdater) {
+    public StartView(Stage stage,
+                     BiConsumer<Stage, SimulationType> stageUpdater) {
         this.stage = stage;
         this.stageUpdater = stageUpdater;
     }
@@ -47,10 +47,10 @@ public final class StartScreenView implements SimulationView {
 
     Region buildControlRegion() {
         VBox vbox = new VBox();
-        vbox.getStyleClass().add(FXStyleClasses.STARTSCREEN_CONTROL_VBOX);
+        vbox.getStyleClass().add(FXStyleClasses.START_CONTROL_VBOX);
 
         Label titleLabel = FXComponentBuilder.createLabel(AppLocalization.getText(SimulationType.labelResourceKey()),
-                FXStyleClasses.STARTSCREEN_TITLE_LABEL);
+                FXStyleClasses.START_TITLE_LABEL);
         vbox.getChildren().add(titleLabel);
 
         for (SimulationType type : SimulationType.values()) {

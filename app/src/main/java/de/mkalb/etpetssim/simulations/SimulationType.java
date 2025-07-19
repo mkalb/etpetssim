@@ -22,10 +22,10 @@ public enum SimulationType {
     STARTSCREEN(
             false,
             false,
-            "simulation.startscreen.title",
-            "simulation.startscreen.subtitle",
-            "simulation.startscreen.url",
-            "simulation.startscreen.emoji",
+            "simulation.start.title",
+            "simulation.start.subtitle",
+            "simulation.start.url",
+            "simulation.start.emoji",
             "",
             List.of("startscreen", "start")
     ),

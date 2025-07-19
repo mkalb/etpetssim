@@ -10,7 +10,7 @@ module de.mkalb.etpetssim {
     exports de.mkalb.etpetssim.simulations.conwayslife.view;
     exports de.mkalb.etpetssim.simulations.conwayslife.viewmodel;
     exports de.mkalb.etpetssim.simulations.simulationlab;
-    exports de.mkalb.etpetssim.simulations.startscreen;
+    exports de.mkalb.etpetssim.simulations.start;
     exports de.mkalb.etpetssim.simulations.wator;
     exports de.mkalb.etpetssim.simulations;
     exports de.mkalb.etpetssim.ui;
