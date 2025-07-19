@@ -35,60 +35,26 @@ public final class LabView implements SimulationView {
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
     private final LabViewModel viewModel;
+    private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
     private final BorderPane canvasBorderPane;
 
-    private final GridEntityDescriptorRegistry entityDescriptorRegistry;
-    private final FXGridCanvasPainter basePainter;
-    private final FXGridCanvasPainter overlayPainter;
-    private final @Nullable Font font;
-    private final @Nullable Font smallFont;
+    private @Nullable FXGridCanvasPainter basePainter;
+    private @Nullable FXGridCanvasPainter overlayPainter;
+    private @Nullable Font font;
+    private @Nullable Font smallFont;
 
     public LabView(LabViewModel viewModel,
                    GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
-        double cellEdgeLength = viewModel.getCellEdgeLength();
-
-        // Canvas and FXGridCanvasPainter
         baseCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
-        basePainter = new FXGridCanvasPainter(baseCanvas, viewModel.getStructure(), cellEdgeLength);
-        double additionalBorder = 0.0d; // only for testing grid dimension
-        baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth() + additionalBorder));
-        baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight() + additionalBorder));
-        baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
-
         overlayCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
-        overlayPainter = new FXGridCanvasPainter(overlayCanvas, viewModel.getStructure(), cellEdgeLength);
-        overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
-        overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+        baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
         overlayCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
-
         canvasBorderPane = new BorderPane();
-
-        // Log information
-        AppLogger.info("GridDimension2D: " + overlayPainter.gridDimension2D());
-        AppLogger.info("CellDimension:   " + overlayPainter.cellDimension());
-
-        // Font
-        double fontHeightFactor = (viewModel.getStructure().cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
-        double fontSize = Math.round(basePainter.cellDimension().height() * fontHeightFactor);
-        if (fontSize > 6) {
-            if (Font.getFamilies().contains("Verdana")) {
-                font = Font.font("Verdana", fontSize);
-                smallFont = Font.font("Verdana", Math.min(8, fontSize));
-            } else {
-                font = Font.font("System", fontSize);
-                smallFont = Font.font("System", Math.min(8, fontSize));
-            }
-            AppLogger.info("Font for canvas: " + font);
-        } else {
-            font = null;
-            smallFont = null;
-            AppLogger.info("Font size too small: " + fontSize);
-        }
     }
 
     @Override
@@ -104,12 +70,6 @@ public final class LabView implements SimulationView {
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
         borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
-
-        registerEvents();
-
-        updateCanvasBorderPane(viewModel.getStructure());
-
-        drawBaseCanvas();
 
         return borderPane;
     }
@@ -258,12 +218,6 @@ public final class LabView implements SimulationView {
         return grid;
     }
 
-    private void resetCanvas() {
-        viewModel.setLastClickedCoordinate(null);
-        overlayPainter.clearCanvasBackground();
-        basePainter.clearGridBackground();
-    }
-
     private void updateCanvasBorderPane(GridStructure structure) {
         canvasBorderPane.setLeft((structure.edgeBehaviorX() == EdgeBehavior.WRAP) ? null :
                 createBorderRegion(FXStyleClasses.SIMULATION_LEFT_BORDERPANE));
@@ -341,8 +295,52 @@ public final class LabView implements SimulationView {
         });
     }
 
+    private void resetCanvasAndPainter() {
+        viewModel.setLastClickedCoordinate(null);
+
+        double cellEdgeLength = viewModel.getCellEdgeLength();
+        GridStructure structure = viewModel.getStructure();
+
+        AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
+                " and cell edge length " + cellEdgeLength);
+
+        basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
+        baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth()));
+        baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight()));
+
+        overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
+        overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
+        overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+
+        // Log information
+        AppLogger.info("GridDimension2D: " + overlayPainter.gridDimension2D());
+        AppLogger.info("CellDimension:   " + overlayPainter.cellDimension());
+
+        // Font
+        double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
+        double fontSize = Math.round(basePainter.cellDimension().height() * fontHeightFactor);
+        if (fontSize > 6) {
+            if (Font.getFamilies().contains("Verdana")) {
+                font = Font.font("Verdana", fontSize);
+                smallFont = Font.font("Verdana", Math.min(8, fontSize));
+            } else {
+                font = Font.font("System", fontSize);
+                smallFont = Font.font("System", Math.min(8, fontSize));
+            }
+            AppLogger.info("Font for canvas: " + font);
+        } else {
+            font = null;
+            smallFont = null;
+            AppLogger.info("Font size too small: " + fontSize);
+        }
+
+        updateCanvasBorderPane(structure);
+
+        registerEvents();
+    }
+
     private void drawBaseCanvas() {
-        resetCanvas();
+        resetCanvasAndPainter();
 
         boolean colorModeBW = viewModel.getColorMode() == LabViewModel.ColorMode.BLACK_WHITE;
         boolean renderingModeCircle = viewModel.getRenderingMode() == LabViewModel.RenderingMode.CIRCLE;
@@ -381,6 +379,10 @@ public final class LabView implements SimulationView {
     }
 
     private void drawTest() {
+        if ((basePainter == null) || (overlayPainter == null)) {
+            return;
+        }
+
         if (overlayPainter.cellDimension().edgeLength() < 16.0d) {
             AppLogger.warn("edge length is too small for drawing test elements, skipping test drawing.");
             return;
@@ -426,6 +428,10 @@ public final class LabView implements SimulationView {
     }
 
     private void drawModel() {
+        if ((basePainter == null) || (overlayPainter == null)) {
+            return;
+        }
+
         Color fillColor = FXPaintBuilder.createColorWithAlpha(Color.RED, 0.5d);
         viewModel.getModel().nonDefaultCells()
                  .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, 0.0d));
