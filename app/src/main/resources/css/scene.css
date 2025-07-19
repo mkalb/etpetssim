@@ -123,12 +123,6 @@
   -fx-pref-width: 1100;
 }
 
-.config-slider {
-  -fx-pref-width: 220;
-  -fx-padding: 0;
-}
-
-
 .config-slider .axis-tick-mark {
   -fx-stroke: #aeefff;
   -fx-stroke-width: 2;
@@ -146,12 +140,6 @@
 .config-slider .thumb {
   -fx-background-color: #00bfff;
   -fx-effect: dropshadow(gaussian, #00eaff, 4, 0.3, 0, 1);
-}
-
-.config-spinner {
-  -fx-background-color: #2e3b50;
-  -fx-padding: 0;
-  -fx-border-radius: 0;
 }
 
 .config-spinner .text-field {
@@ -178,6 +166,21 @@
   -fx-background-color: #00bfff;
 }
 
+.config-slider,
+.config-spinner {
+  -fx-background-color: #2e3b50;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
+  -fx-pref-width: 250;
+  -fx-min-width: 250;
+}
+
 .config-titledpane {
   -fx-background-color: linear-gradient(to bottom, #2e3b50, #35516b 80%, #347ca3 100%);
   -fx-border-color: #00eaff;
@@ -188,10 +191,10 @@
 
 .config-titledpane>.title {
   -fx-background-color: linear-gradient(to right, #347ca3, #00bfff 80%, #2e3b50 100%);
-  -fx-font-size: 16;
+  -fx-font-size: 14;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
-  -fx-padding: 8 24 8 16;
+  -fx-padding: 6 18 6 12;
   -fx-background-radius: 6 6 0 0;
 }
 
