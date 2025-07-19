@@ -142,7 +142,7 @@
   -fx-spacing: 12;
   -fx-background-color: #263a4d;
   -fx-border-color: #00eaff;
-  -fx-border-width: 0 1 0 1;
+  -fx-border-width: 0 0 1 0;
   -fx-border-radius: 0;
   -fx-alignment: top-left;
   -fx-min-width: 900;
@@ -290,6 +290,9 @@
   -fx-padding: 8 12;
   -fx-spacing: 8;
   -fx-background-color: #263a4d;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1 0 0 0;
+  -fx-border-radius: 0;
   -fx-alignment: center-left;
   -fx-min-width: 900;
   -fx-pref-width: 1000;
@@ -301,6 +304,9 @@
   -fx-hgap: 6;
   -fx-vgap: 6;
   -fx-background-color: #2e485c;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 0 0 0 1;
+  -fx-border-radius: 0;
   -fx-min-width: 200;
   -fx-pref-width: 300;
   -fx-min-height: 200;
