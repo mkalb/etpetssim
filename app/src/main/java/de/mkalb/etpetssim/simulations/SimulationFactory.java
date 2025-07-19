@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conwayslife.view.*;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.*;
-import de.mkalb.etpetssim.simulations.simulationlab.*;
+import de.mkalb.etpetssim.simulations.lab.*;
 import de.mkalb.etpetssim.simulations.start.StartView;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
 import javafx.beans.property.SimpleObjectProperty;

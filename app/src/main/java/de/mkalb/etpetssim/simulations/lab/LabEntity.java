@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.simulationlab;
+package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
 import de.mkalb.etpetssim.engine.model.GridEntityDescribable;
@@ -32,9 +32,9 @@ public enum LabEntity implements ConstantGridEntity, GridEntityDescribable {
     NORMAL(
             "normal",
             true,
-            "simulationlab.entity.normal.short",
-            "simulationlab.entity.normal.long",
-            "simulationlab.entity.normal.description",
+            "lab.entity.normal.short",
+            "lab.entity.normal.long",
+            "lab.entity.normal.description",
             null,
             null,
             null,
@@ -43,9 +43,9 @@ public enum LabEntity implements ConstantGridEntity, GridEntityDescribable {
     HIGHLIGHTED(
             "highlighted",
             true,
-            "simulationlab.entity.highlighted.short",
-            "simulationlab.entity.highlighted.long",
-            "simulationlab.entity.highlighted.description",
+            "lab.entity.highlighted.short",
+            "lab.entity.highlighted.long",
+            "lab.entity.highlighted.description",
             null,
             null,
             null,

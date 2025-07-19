@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.simulationlab;
+package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;

@@ -35,11 +35,11 @@ public enum SimulationType {
     SIMULATION_LAB(
             true,
             true,
-            "simulation.simulationlab.title",
-            "simulation.simulationlab.subtitle",
-            "simulation.simulationlab.url",
-            "simulation.simulationlab.emoji",
-            "simulationlab.css",
+            "simulation.lab.title",
+            "simulation.lab.subtitle",
+            "simulation.lab.url",
+            "simulation.lab.emoji",
+            "lab.css",
             List.of("simulationlab", "lab")
     ),
     /**
