@@ -1,15 +1,22 @@
 /* General Scene Styling */
 .root {
   -fx-font-family: 'Verdana';
-  -fx-font-size: 14px;
+  -fx-font-size: 14;
+  -fx-font-weight: normal;
   -fx-background-color: #1a2233;
   -fx-background: #1a2233;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-border-width: 0;
+  -fx-border-color: #00eaff;
+  -fx-border-radius: 0;
 }
 
 .scroll-pane {
   -fx-background: #2e485c;
   -fx-background-color: #2e485c;
-  -fx-background-insets: 0;
 }
 
 .scroll-pane>.viewport {
@@ -26,7 +33,6 @@
 
 .scroll-pane .thumb {
   -fx-background-color: #00eaff;
-  -fx-background-radius: 0;
 }
 
 .scroll-pane .increment-arrow,
@@ -38,7 +44,6 @@
 .choice-box {
   -fx-background-color: #263a4d;
   -fx-border-color: #3c4f5c;
-  -fx-border-radius: 0;
   -fx-padding: 6;
   -fx-text-fill: #eaf6fb;
 }
@@ -49,37 +54,36 @@
 
 /* Main app with VBox and Header */
 .app-vbox {
-  -fx-padding: 0;
-  -fx-spacing: 0;
   -fx-background-color: #263a4d;
   -fx-background: #263a4d;
 }
 
 .header-vbox {
   -fx-background-color: linear-gradient(to bottom, #263a4d, #2e485c);
-  -fx-padding: 20px 16px 16px 16px;
-  -fx-spacing: 10px;
-  -fx-border-width: 0 1 0 1;
+  -fx-padding: 20 16 16 16;
+  -fx-spacing: 10;
+  -fx-border-width: 2 1 0 1;
   -fx-border-color: #00eaff;
-  -fx-border-radius: 0;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.22), 12, 0.6, 0, 4);
+  -fx-min-width: 800;
+  -fx-pref-width: 1000;
 }
 
 .header-title-label {
-  -fx-font-size: 26px;
+  -fx-font-size: 26;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
-  -fx-padding: 0 0 4px 0;
+  -fx-padding: 0 0 4 0;
 }
 
 .header-subtitle-label {
-  -fx-font-size: 16px;
+  -fx-font-size: 16;
   -fx-text-fill: #7fffd4;
-  -fx-padding: 0 0 4px 0;
+  -fx-padding: 0 0 4 0;
 }
 
 .header-url-hyperlink {
-  -fx-font-size: 14px;
+  -fx-font-size: 14;
   -fx-text-fill: #00eaff;
   -fx-underline: true;
   -fx-cursor: hand;
@@ -96,7 +100,7 @@
 
 /* Start screen styling */
 .startscreen-title-label {
-  -fx-font-size: 40px;
+  -fx-font-size: 36;
   -fx-text-fill: #eaf6fb;
   -fx-font-weight: bold;
   -fx-padding: 18 0 22 0;
@@ -104,23 +108,19 @@
 }
 
 .startscreen-control-vbox {
-  -fx-padding: 18 12;
+  -fx-padding: 18 14 18 14;
   -fx-spacing: 14;
   -fx-background-color: #263a4d;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.08), 6, 0.3, 0, -2);
-  -fx-min-width: 900px;
-  -fx-pref-width: 1100px;
   -fx-alignment: center;
-  -fx-background-insets: 0;
-  -fx-border-radius: 8;
+  -fx-min-width: 800;
+  -fx-pref-width: 1000;
 }
 
 /* view region (contains: config, control, simulation, observation */
 .view-borderpane {
   -fx-border-width: 1;
   -fx-border-color: #00eaff;
-  -fx-border-radius: 0;
-  -fx-background-radius: 0;
 }
 
 /* config region (top) */
@@ -132,13 +132,13 @@
   -fx-border-width: 0 1 0 1;
   -fx-border-radius: 0;
   -fx-alignment: top-left;
-  -fx-min-width: 900px;
-  -fx-pref-width: 1100px;
+  -fx-min-width: 900;
+  -fx-pref-width: 1100;
 }
 
 .config-slider {
-  -fx-min-width: 220px;
-  -fx-max-width: 350px;
+  -fx-min-width: 220;
+  -fx-max-width: 350;
   -fx-padding: 6;
 }
 
@@ -151,7 +151,7 @@
 }
 
 .config-spinner {
-  -fx-pref-width: 120px;
+  -fx-pref-width: 120;
   -fx-background-color: #2e485c;
   -fx-text-fill: #eaf6fb;
 }
@@ -166,7 +166,7 @@
 }
 
 .config-titledpane>.title {
-  -fx-font-size: 16px;
+  -fx-font-size: 16;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
   -fx-padding: 4 0 4 8;
@@ -180,7 +180,7 @@
 }
 
 .config-vbox .label {
-  -fx-min-width: 120px;
+  -fx-min-width: 120;
   -fx-alignment: center-left;
   -fx-font-weight: normal;
   -fx-text-fill: #7fffd4;
@@ -198,35 +198,35 @@
 .simulation-left-borderpane,
 .simulation-right-borderpane {
   -fx-background-color: #263a4d;
-  -fx-min-width: 10px;
-  -fx-pref-width: 10px;
-  -fx-max-width: 10px;
+  -fx-min-width: 10;
+  -fx-pref-width: 10;
+  -fx-max-width: 10;
 }
 
 .simulation-top-borderpane,
 .simulation-bottom-borderpane {
   -fx-background-color: #263a4d;
-  -fx-min-height: 10px;
-  -fx-pref-height: 10px;
-  -fx-max-height: 10px;
+  -fx-min-height: 10;
+  -fx-pref-height: 10;
+  -fx-max-height: 10;
 }
 
 .simulation-scrollpane {
   -fx-padding: 0;
-  -fx-min-width: 500px;
-  -fx-pref-width: 900px;
-  -fx-min-height: 400px;
-  -fx-pref-height: 700px;
+  -fx-min-width: 500;
+  -fx-pref-width: 900;
+  -fx-min-height: 400;
+  -fx-pref-height: 700;
 }
 
 /* control region (bottom) */
 .control-slider {
-  -fx-min-width: 500px;
+  -fx-min-width: 500;
 }
 
 .control-button {
-  -fx-min-width: 140px;
-  -fx-font-size: 15px;
+  -fx-min-width: 140;
+  -fx-font-size: 15;
   -fx-font-weight: bold;
   -fx-background-color: linear-gradient(to bottom, #00eaff, #00bfff);
   -fx-text-fill: #1a2233;
@@ -257,8 +257,8 @@
   -fx-spacing: 8;
   -fx-background-color: #263a4d;
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
-  -fx-min-width: 900px;
-  -fx-pref-width: 1100px;
+  -fx-min-width: 900;
+  -fx-pref-width: 1100;
   -fx-alignment: center-left;
   -fx-background-insets: 0;
 }
@@ -270,16 +270,16 @@
   -fx-vgap: 6;
   -fx-background-color: #2e485c;
   -fx-border-color: #00eaff;
-  -fx-border-width: 1;
+  -fx-border-width: 0;
   -fx-border-radius: 0;
-  -fx-min-width: 200px;
-  -fx-pref-width: 300px;
-  -fx-min-height: 200px;
-  -fx-pref-height: 300px;
+  -fx-min-width: 200;
+  -fx-pref-width: 300;
+  -fx-min-height: 200;
+  -fx-pref-height: 300;
 }
 
 .observation-name-label {
-  -fx-font-size: 13px;
+  -fx-font-size: 13;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
   -fx-alignment: center-left;
@@ -287,7 +287,7 @@
 }
 
 .observation-value-label {
-  -fx-font-size: 13px;
+  -fx-font-size: 13;
   -fx-font-weight: normal;
   -fx-text-fill: #00ff99;
   -fx-alignment: center-right;
