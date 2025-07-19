@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.simulationlab;
 
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.GridCell;
@@ -9,6 +11,7 @@ import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
+import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -219,18 +222,19 @@ public final class LabView implements SimulationView {
 
     private Region createObservationRegion() {
         GridPane grid = new GridPane();
-        grid.setAlignment(Pos.TOP_LEFT);
         grid.getStyleClass().add(FXStyleClasses.OBSERVATION_GRID);
 
         Label[] nameLabels = {
                 new Label("Coordinate:")
         };
 
-        Label coordinateLabel = new Label("-");
+        String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
+
+        Label coordinateLabel = new Label(valueUnknown);
         StringBinding coordinateDisplayBinding = Bindings.createStringBinding(
                 () -> {
                     GridCoordinate coord = viewModel.getLastClickedCoordinate();
-                    return (coord != null) ? coord.toDisplayString() : "-";
+                    return (coord != null) ? coord.toDisplayString() : valueUnknown;
                 },
                 viewModel.lastClickedCoordinateProperty()
         );
@@ -246,6 +250,9 @@ public final class LabView implements SimulationView {
 
             grid.add(nameLabels[i], 0, i);
             grid.add(valueLabels[i], 1, i);
+
+            GridPane.setHalignment(nameLabels[i], HPos.LEFT);
+            GridPane.setHalignment(valueLabels[i], HPos.RIGHT);
         }
 
         return grid;

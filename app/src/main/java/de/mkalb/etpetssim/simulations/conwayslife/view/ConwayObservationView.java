@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.geometry.Pos;
+import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -38,7 +38,6 @@ public final class ConwayObservationView {
         updateObservationLabels();
 
         GridPane grid = new GridPane();
-        grid.setAlignment(Pos.TOP_LEFT);
         grid.getStyleClass().add(FXStyleClasses.OBSERVATION_GRID);
 
         String[] nameKeys = {
@@ -57,6 +56,9 @@ public final class ConwayObservationView {
 
             grid.add(nameLabel, 0, i);
             grid.add(valueLabels[i], 1, i);
+
+            GridPane.setHalignment(nameLabel, HPos.LEFT);
+            GridPane.setHalignment(valueLabels[i], HPos.RIGHT);
         }
 
         return grid;
