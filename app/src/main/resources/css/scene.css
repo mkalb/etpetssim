@@ -47,7 +47,8 @@
   -fx-spacing: 6;
   -fx-border-width: 1 1 0 1;
   -fx-border-color: #00eaff;
-/*  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.22), 12, 0.6, 0, 4); */
+
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.18), 10, 0.4, 0, 3);
   -fx-min-width: 900;
   -fx-pref-width: 1000;
 }
@@ -114,7 +115,7 @@
 .config-hbox {
   -fx-padding: 10;
   -fx-spacing: 10;
-  -fx-background-color: #2e3b50;
+  -fx-background-color: linear-gradient(to right, #2e3b50, #35516b 80%, #347ca3 100%);
   -fx-border-color: #00eaff;
   -fx-border-width: 0 0 1 0;
   -fx-border-radius: 0;
@@ -183,6 +184,7 @@
 
 .config-titledpane {
   -fx-background-color: linear-gradient(to bottom, #2e3b50, #35516b 80%, #347ca3 100%);
+  -fx-effect: dropshadow(gaussian, rgba(52, 124, 163, 0.16), 8, 0.3, 0, 2);
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
   -fx-border-radius: 6;
@@ -328,7 +330,7 @@
 .control-hbox {
   -fx-padding: 4 8;
   -fx-spacing: 5;
-  -fx-background-color: #263a4d;
+  -fx-background-color: linear-gradient(to right, #2e3b50, #35516b 80%, #347ca3 100%);
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
   -fx-border-radius: 0;
@@ -343,6 +345,7 @@
   -fx-hgap: 6;
   -fx-vgap: 6;
   -fx-background-color: #2e485c;
+  -fx-effect: innershadow(gaussian, rgba(0, 234, 255, 0.10), 6, 0.3, 0, 1);
   -fx-border-color: #00eaff;
   -fx-border-width: 0 0 0 1;
   -fx-border-radius: 0;
