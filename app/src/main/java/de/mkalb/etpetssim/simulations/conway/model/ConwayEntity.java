@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conwayslife.model;
+package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
 import de.mkalb.etpetssim.engine.model.GridEntityDescribable;
@@ -36,9 +36,9 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
     DEAD(
             "dead",
             true,
-            "conwayslife.entity.dead.short",
-            "conwayslife.entity.dead.long",
-            "conwayslife.entity.dead.description",
+            "conway.entity.dead.short",
+            "conway.entity.dead.long",
+            "conway.entity.dead.description",
             null,
             Color.LIGHTYELLOW,
             null,
@@ -47,9 +47,9 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
     ALIVE(
             "alive",
             true,
-            "conwayslife.entity.alive.short",
-            "conwayslife.entity.alive.long",
-            "conwayslife.entity.alive.description",
+            "conway.entity.alive.short",
+            "conway.entity.alive.long",
+            "conway.entity.alive.description",
             null,
             Color.DARKRED,
             null,

@@ -1,9 +1,9 @@
-package de.mkalb.etpetssim.simulations.conwayslife.view;
+package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayControlViewModel;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;

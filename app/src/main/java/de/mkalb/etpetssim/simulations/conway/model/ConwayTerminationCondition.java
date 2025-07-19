@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conwayslife.model;
+package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.SimulationTerminationCondition;

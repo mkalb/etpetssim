@@ -1,11 +1,11 @@
-package de.mkalb.etpetssim.simulations.conwayslife.viewmodel;
+package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwaySimulationManager;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;

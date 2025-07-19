@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conwayslife.model;
+package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridArrangement;
 import de.mkalb.etpetssim.engine.GridStructure;

@@ -1,7 +1,7 @@
-package de.mkalb.etpetssim.simulations.conwayslife.viewmodel;
+package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 

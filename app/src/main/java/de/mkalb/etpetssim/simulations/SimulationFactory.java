@@ -2,9 +2,9 @@ package de.mkalb.etpetssim.simulations;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conwayslife.view.*;
-import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.*;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.view.*;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.*;
 import de.mkalb.etpetssim.simulations.lab.*;
 import de.mkalb.etpetssim.simulations.start.StartView;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;

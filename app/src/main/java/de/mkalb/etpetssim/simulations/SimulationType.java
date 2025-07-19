@@ -74,11 +74,11 @@ public enum SimulationType {
     CONWAYS_LIFE(
             true,
             true,
-            "simulation.conwayslife.title",
-            "simulation.conwayslife.subtitle",
-            "simulation.conwayslife.url",
-            "simulation.conwayslife.emoji",
-            "conwayslife.css",
+            "simulation.conway.title",
+            "simulation.conway.subtitle",
+            "simulation.conway.url",
+            "simulation.conway.emoji",
+            "conway.css",
             List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol")
     ),
     /**

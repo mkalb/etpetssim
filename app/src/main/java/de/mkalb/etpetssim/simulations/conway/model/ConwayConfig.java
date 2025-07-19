@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conwayslife.model;
+package de.mkalb.etpetssim.simulations.conway.model;
 
 public record ConwayConfig(
         double cellEdgeLength,

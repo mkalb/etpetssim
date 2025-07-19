@@ -1,10 +1,10 @@
-package de.mkalb.etpetssim.simulations.conwayslife.view;
+package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayStatistics;
-import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayObservationViewModel;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
@@ -14,13 +14,13 @@ import javafx.scene.layout.Region;
 public final class ConwayObservationView {
 
     @SuppressWarnings("SpellCheckingInspection")
-    static final String CONWAYSLIFE_OBSERVATION_TOTAL_CELLS = "conwayslife.observation.cells.total";
+    static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
     @SuppressWarnings("SpellCheckingInspection")
-    static final String CONWAYSLIFE_OBSERVATION_ALIVE_CELLS = "conwayslife.observation.cells.alive";
+    static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
     @SuppressWarnings("SpellCheckingInspection")
-    static final String CONWAYSLIFE_OBSERVATION_MAX_ALIVE_CELLS = "conwayslife.observation.cells.maxalive";
+    static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
     @SuppressWarnings("SpellCheckingInspection")
-    static final String CONWAYSLIFE_OBSERVATION_DEAD_CELLS = "conwayslife.observation.cells.dead";
+    static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
 
     private final ConwayObservationViewModel viewModel;
 
@@ -42,10 +42,10 @@ public final class ConwayObservationView {
 
         String[] nameKeys = {
                 AppLocalizationKeys.OBSERVATION_STEP,
-                CONWAYSLIFE_OBSERVATION_TOTAL_CELLS,
-                CONWAYSLIFE_OBSERVATION_ALIVE_CELLS,
-                CONWAYSLIFE_OBSERVATION_MAX_ALIVE_CELLS,
-                CONWAYSLIFE_OBSERVATION_DEAD_CELLS
+                CONWAY_OBSERVATION_TOTAL_CELLS,
+                CONWAY_OBSERVATION_ALIVE_CELLS,
+                CONWAY_OBSERVATION_MAX_ALIVE_CELLS,
+                CONWAY_OBSERVATION_DEAD_CELLS
         };
         Label[] valueLabels = {stepLabel, totalCellsLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel};
 

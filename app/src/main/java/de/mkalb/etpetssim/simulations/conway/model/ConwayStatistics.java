@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conwayslife.model;
+package de.mkalb.etpetssim.simulations.conway.model;
 
 /**
  * Holds statistics for a running Conway's Game of Life simulation.

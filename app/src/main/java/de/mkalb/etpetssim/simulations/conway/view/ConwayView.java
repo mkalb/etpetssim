@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conwayslife.view;
+package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
@@ -7,8 +7,8 @@ import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationView;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conwayslife.viewmodel.ConwayViewModel;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Pos;

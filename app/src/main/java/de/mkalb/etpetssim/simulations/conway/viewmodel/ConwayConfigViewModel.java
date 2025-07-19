@@ -1,7 +1,7 @@
-package de.mkalb.etpetssim.simulations.conwayslife.viewmodel;
+package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.simulations.conwayslife.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import javafx.beans.property.*;
 
 public final class ConwayConfigViewModel {
