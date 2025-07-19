@@ -201,7 +201,7 @@
 
 .simulation-left-borderpane,
 .simulation-right-borderpane {
-  -fx-background-color: #263a4d; /* TODO change */
+  -fx-background-color: #347ca3;
   -fx-min-width: 10;
   -fx-pref-width: 10;
   -fx-max-width: 10;
@@ -209,15 +209,15 @@
 
 .simulation-top-borderpane,
 .simulation-bottom-borderpane {
-  -fx-background-color: #263a4d; /* TODO change */
+  -fx-background-color: #347ca3;
   -fx-min-height: 10;
   -fx-pref-height: 10;
   -fx-max-height: 10;
 }
 
 .simulation-scrollpane {
-  -fx-background: #2e485c; /* TODO change */
-  -fx-background-color: #2e485c; /* TODO change */
+  -fx-background: #263a4d;
+  -fx-background-color: #263a4d;
   -fx-background-insets: 0;
   -fx-background-radius: 0;
   -fx-padding: 0;
@@ -300,7 +300,7 @@
   -fx-padding: 6;
   -fx-hgap: 6;
   -fx-vgap: 6;
-  -fx-background-color: #2e485c;  /* TODO change */
+  -fx-background-color: #2e485c;
   -fx-border-color: #00eaff;
   -fx-border-width: 0 0 0 1;
   -fx-border-radius: 0;
