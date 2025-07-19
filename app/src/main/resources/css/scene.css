@@ -12,7 +12,7 @@
   -fx-background-insets: 0;
 }
 
-.scroll-pane > .viewport {
+.scroll-pane>.viewport {
   -fx-background-color: transparent;
 }
 
@@ -47,48 +47,43 @@
   -fx-border-color: #00eaff;
 }
 
-/* Main app */
-.app-borderpane {
+/* Main app with VBox and Header */
+.app-vbox {
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-background-color: #263a4d;
+  -fx-background: #263a4d;
 }
 
-.app-scrollpane {
-  -fx-padding: 4;
-  -fx-border-color: #00eaff;
-  -fx-border-width: 1;
-  -fx-border-radius: 0;
-  -fx-background-insets: 0;
-}
-
-/* Header Styling */
 .header-vbox {
   -fx-background-color: linear-gradient(to bottom, #263a4d, #2e485c);
-  -fx-padding: 16px 12px 14px 12px;
-  -fx-spacing: 8px;
+  -fx-padding: 20px 16px 16px 16px;
+  -fx-spacing: 10px;
   -fx-border-width: 0 1 0 1;
   -fx-border-color: #00eaff;
   -fx-border-radius: 0;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.18), 10, 0.5, 0, 3);
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.22), 12, 0.6, 0, 4);
 }
 
 .header-title-label {
-  -fx-font-size: 22px;
+  -fx-font-size: 26px;
   -fx-font-weight: bold;
   -fx-text-fill: #aeefff;
-  -fx-padding: 0 0 2px 0;
+  -fx-padding: 0 0 4px 0;
 }
 
 .header-subtitle-label {
-  -fx-font-size: 14px;
+  -fx-font-size: 16px;
   -fx-text-fill: #7fffd4;
-  -fx-padding: 0 0 2px 0;
+  -fx-padding: 0 0 4px 0;
 }
 
 .header-url-hyperlink {
-  -fx-font-size: 13px;
+  -fx-font-size: 14px;
   -fx-text-fill: #00eaff;
   -fx-underline: true;
   -fx-cursor: hand;
-  -fx-padding: 2 6;
+  -fx-padding: 4 0;
   -fx-background-radius: 0;
   -fx-background-color: transparent;
   -fx-border-width: 0;
@@ -96,20 +91,36 @@
 
 .header-url-hyperlink:hover {
   -fx-text-fill: #00bfff;
-  -fx-background-color: #263a4d;
+  -fx-background-color: transparent;
 }
 
 /* Start screen styling */
 .startscreen-title-label {
-  -fx-font-size: 36px;
+  -fx-font-size: 40px;
   -fx-text-fill: #eaf6fb;
   -fx-font-weight: bold;
-  -fx-padding: 12 0 16 0;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.10), 4, 0.2, 0, 2);
+  -fx-padding: 18 0 22 0;
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.14), 6, 0.3, 0, 3);
+}
+
+.startscreen-control-vbox {
+  -fx-padding: 18 12;
+  -fx-spacing: 14;
+  -fx-background-color: #263a4d;
+  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.08), 6, 0.3, 0, -2);
+  -fx-min-width: 900px;
+  -fx-pref-width: 1100px;
+  -fx-alignment: center;
+  -fx-background-insets: 0;
+  -fx-border-radius: 8;
 }
 
 /* view region (contains: config, control, simulation, observation */
 .view-borderpane {
+  -fx-border-width: 1;
+  -fx-border-color: #00eaff;
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
 }
 
 /* config region (top) */
@@ -180,11 +191,9 @@
   -fx-background-color: #1a2233;
 }
 
-.simulation-stackpane {
-}
+.simulation-stackpane {}
 
-.simulation-center-borderpane {
-}
+.simulation-center-borderpane {}
 
 .simulation-left-borderpane,
 .simulation-right-borderpane {
@@ -251,17 +260,6 @@
   -fx-min-width: 900px;
   -fx-pref-width: 1100px;
   -fx-alignment: center-left;
-  -fx-background-insets: 0;
-}
-
-.control-vbox {
-  -fx-padding: 12 8;
-  -fx-spacing: 8;
-  -fx-background-color: #263a4d;
-  -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.04), 4, 0.2, 0, -2);
-  -fx-min-width: 900px;
-  -fx-pref-width: 1100px;
-  -fx-alignment: center;
   -fx-background-insets: 0;
 }
 

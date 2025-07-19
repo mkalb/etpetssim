@@ -10,10 +10,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -37,8 +34,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             "etpetssim64.png",
             "etpetssim128.png"
     };
-    private static final int STAGE_MIN_WIDTH = 800;
-    private static final int STAGE_MIN_HEIGHT = 600;
 
     /**
      * The main entry point for the Extraterrestrial Pets Simulation application.
@@ -122,19 +117,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Updates the JavaFX stage with size restrictions.
-     *
-     * @param stage the JavaFX stage to update with size restrictions
-     */
-    private void updateStageSizeRestrictions(Stage stage) {
-        stage.setMinWidth(STAGE_MIN_WIDTH);
-        stage.setMinHeight(STAGE_MIN_HEIGHT);
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setMaxWidth(screenBounds.getWidth());
-        stage.setMaxHeight(screenBounds.getHeight());
-    }
-
-    /**
      * Updates the JavaFX stage with the application icons.
      *
      * @param stage the JavaFX stage to update with icons
@@ -161,12 +143,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         Objects.requireNonNull(stage, "Stage must not be null");
         Objects.requireNonNull(simulationType, "SimulationType must not be null");
 
-        // Scene with a BorderPane
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(buildSimulationHeaderNode(simulationType));
-        borderPane.setCenter(buildSimulationMainNode(stage, simulationType));
-        borderPane.getStyleClass().add(FXStyleClasses.APP_BORDERPANE);
-        Scene scene = new Scene(borderPane);
+        // Scene with a VBox
+        VBox vBox = new VBox();
+        vBox.getChildren().add(buildSimulationHeaderNode(simulationType));
+        vBox.getChildren().add(SimulationFactory.createInstance(simulationType, stage, this::updateStageScene).region());
+        vBox.getStyleClass().add(FXStyleClasses.APP_VBOX);
+        Scene scene = new Scene(vBox);
 
         // Add common stylesheets first and then the specific simulation type stylesheet
         AppResources.getCss("scene.css").ifPresent(scene.getStylesheets()::add);
@@ -175,7 +157,20 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         // Stage
         stage.setTitle(AppLocalization.getText("window.title") + " - " + simulationType.title());
         stage.setScene(scene);
+        stage.sizeToScene();
         stage.centerOnScreen();
+        // Ensure the window does not exceed the screen width and height
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        stage.setMaxWidth(screenBounds.getWidth());
+        stage.setMaxHeight(screenBounds.getHeight());
+        if (stage.getWidth() > screenBounds.getWidth()) {
+            stage.setWidth(screenBounds.getWidth());
+            stage.setX(screenBounds.getMinX());
+        }
+        if (stage.getHeight() > screenBounds.getHeight()) {
+            stage.setHeight(screenBounds.getHeight());
+            stage.setY(screenBounds.getMinY());
+        }
     }
 
     /**
@@ -201,23 +196,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         return simulationHeaderBox;
     }
 
-    /**
-     * Builds the main content node for the simulation based on the specified simulation type.
-     *
-     * @param stage the JavaFX stage to use for the simulation
-     * @param simulationType the type of simulation to create
-     * @return a Node representing the main content of the simulation
-     */
-    private Node buildSimulationMainNode(Stage stage, SimulationType simulationType) {
-        Region simulationRegion = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene).region();
-
-        ScrollPane scrollPane = new ScrollPane(simulationRegion);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFitToWidth(true);
-        scrollPane.getStyleClass().add(FXStyleClasses.APP_SCROLLPANE);
-        return scrollPane;
-    }
-
     @Override
     public void start(Stage primaryStage) {
         // Determine the simulation type from command-line arguments
@@ -227,10 +205,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         AppLogger.info("Application is starting with simulation type: " + type.name());
 
         // Initialize and show the primary stage with the appropriate scene
-        updateStageSizeRestrictions(primaryStage);
         updateStageIcons(primaryStage);
         updateStageScene(primaryStage, type);
         primaryStage.show();
+        // Show the stage first to ensure layout is finalized, then increase the height by 2 pixels to compensate
+        // for possible content clipping due to window decorations.
+        primaryStage.setHeight(primaryStage.getHeight() + 2);
     }
 
     @Override
