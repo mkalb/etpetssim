@@ -192,8 +192,8 @@ public final class LabView implements SimulationView {
         ScrollPane scrollPane = new ScrollPane(canvasBorderPane);
         scrollPane.setFitToHeight(false);
         scrollPane.setFitToWidth(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
