@@ -25,6 +25,8 @@ import java.util.*;
 @SuppressWarnings("MagicNumber")
 public final class ConwayView implements SimulationView {
 
+    private static final double INITIAL_CANVAS_SIZE = 100.0d;
+
     private final ConwayViewModel viewModel;
     private final ConwayConfigView configView;
     private final ConwayControlView controlView;
@@ -48,8 +50,8 @@ public final class ConwayView implements SimulationView {
         this.controlView = controlView;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
-        baseCanvas = new Canvas(100, 100);
-        overlayCanvas = new Canvas(100, 100);
+        baseCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
+        overlayCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
         baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
         overlayCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
         canvasBorderPane = new BorderPane();
