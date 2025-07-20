@@ -61,10 +61,10 @@ public final class ConwayConfigView {
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        var sliderControl = FXComponentBuilder.createLabeledIntSlider(viewModel.getCellEdgeLengthMin(), viewModel.getCellEdgeLengthMax(),
+        var sliderControl = FXComponentBuilder.createLabeledIntSlider(
                 viewModel.cellEdgeLengthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.getCellEdgeLengthMin(), viewModel.getCellEdgeLengthMax()),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.cellEdgeLengthProperty().min(), viewModel.cellEdgeLengthProperty().max()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

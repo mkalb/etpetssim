@@ -63,7 +63,7 @@ public final class ConwayViewModel {
     }
 
     public double getCellEdgeLength() {
-        return configViewModel.getCellEdgeLength();
+        return configViewModel.cellEdgeLengthProperty().getValue();
     }
 
     public GridStructure getGridStructure() {
@@ -107,7 +107,7 @@ public final class ConwayViewModel {
     }
 
     private void startTimeline() {
-        simulationTimer.start(Duration.millis(controlViewModel.getStepDuration()));
+        simulationTimer.start(Duration.millis(controlViewModel.stepDurationProperty().getValue()));
     }
 
     private void stopTimeline() {

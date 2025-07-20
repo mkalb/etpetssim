@@ -1,10 +1,8 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
-import de.mkalb.etpetssim.core.PropertyAdjuster;
 import de.mkalb.etpetssim.simulations.SimulationState;
-import javafx.beans.property.DoubleProperty;
+import de.mkalb.etpetssim.ui.ExtendedDoublePropertyIntRange;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.util.Duration;
 
 public final class ConwayControlViewModel {
 
@@ -13,7 +11,8 @@ public final class ConwayControlViewModel {
     private static final int STEP_DURATION_MAX = 2_000;
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
-    private final DoubleProperty stepDuration = PropertyAdjuster.createDoublePropertyWithIntRange(STEP_DURATION_INITIAL, STEP_DURATION_MIN, STEP_DURATION_MAX);
+    private final ExtendedDoublePropertyIntRange stepDuration = ExtendedDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
+            STEP_DURATION_MIN, STEP_DURATION_MAX);
     private Runnable onActionButtonListener = () -> {};
     private Runnable onCancelButtonListener = () -> {};
 
@@ -45,28 +44,8 @@ public final class ConwayControlViewModel {
         onCancelButtonListener.run();
     }
 
-    public DoubleProperty stepDurationProperty() {
+    public ExtendedDoublePropertyIntRange stepDurationProperty() {
         return stepDuration;
-    }
-
-    public double getStepDuration() {
-        return stepDuration.get();
-    }
-
-    public void setStepDuration(double value) {
-        stepDuration.set(value);
-    }
-
-    public Duration getStepDurationAsDuration() {
-        return Duration.millis(stepDuration.get());
-    }
-
-    public int getStepDurationMin() {
-        return STEP_DURATION_MIN;
-    }
-
-    public int getStepDurationMax() {
-        return STEP_DURATION_MAX;
     }
 
 }

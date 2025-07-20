@@ -12,7 +12,7 @@ import javafx.beans.property.SimpleIntegerProperty;
  * - The value must be between {@code min} and {@code max} (inclusive).
  * - The value must be a multiple of {@code step} starting from {@code min}.
  * <p>
- * Use {@link #of(int, int, int, int)} to create instances.
+ * Use {@link #of(int, int, int, int)} to create instances with validation.
  *
  * @param property the underlying {@link IntegerProperty}
  * @param min      the minimum allowed value (inclusive)

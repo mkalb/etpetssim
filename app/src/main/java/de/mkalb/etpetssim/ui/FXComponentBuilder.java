@@ -31,45 +31,39 @@ public final class FXComponentBuilder {
     }
 
     /**
-     * Creates a labeled integer slider with a bound value, formatted label, tooltip, and custom style class.
+     * Creates a labeled integer slider with a bound double value, formatted label, tooltip, and custom style class.
      * <p>
-     * The slider is configured for integer values in the specified range and is bidirectionally bound to the given property.
-     * The label displays the current value using the provided format string.
-     * Both the label and the slider share the same tooltip for improved accessibility.
+     * The slider is configured for integer values in the range defined by the given {@link ExtendedDoublePropertyIntRange}.
+     * The slider's value is bidirectionally bound to the underlying {@link DoubleProperty} of the record.
+     * The label displays the current value using the provided format string. Both the label and the slider share
+     * the same tooltip for improved accessibility.
      * <p>
-     * <b>Note:</b> This method is suitable for sliders with a moderate value range (not too large).
+     * This method is suitable for sliders with a moderate integer value range.
      *
-     * @param min              the minimum slider value (inclusive)
-     * @param max              the maximum slider value (inclusive)
-     * @param bindProperty     the {@link DoubleProperty} to bind the slider's value to
+     * @param extendedDoublePropertyIntRange the {@link ExtendedDoublePropertyIntRange} defining the integer range and value binding
      * @param labelFormatString the format string for the label (e.g., "%d px")
-     * @param tooltip          the tooltip text for both the label and the slider
-     * @param styleClass       the CSS style class to apply to the slider
+     * @param tooltip the tooltip text for both the label and the slider
+     * @param styleClass the CSS style class to apply to the slider
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
-     * @throws IllegalArgumentException if {@code min >= max}
      */
-    public static LabeledControl createLabeledIntSlider(int min,
-                                                        int max,
-                                                        DoubleProperty bindProperty,
+    public static LabeledControl createLabeledIntSlider(ExtendedDoublePropertyIntRange extendedDoublePropertyIntRange,
                                                         String labelFormatString,
                                                         String tooltip,
                                                         String styleClass) {
-        if (min >= max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
 
-        Slider slider = new Slider(min, max, bindProperty.getValue().intValue());
+        Slider slider = new Slider(extendedDoublePropertyIntRange.min(), extendedDoublePropertyIntRange.max(),
+                extendedDoublePropertyIntRange.getValue());
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(max - min);
-        slider.setMinorTickCount(max - min - 1);
+        slider.setMajorTickUnit(extendedDoublePropertyIntRange.max() - extendedDoublePropertyIntRange.min());
+        slider.setMinorTickCount(extendedDoublePropertyIntRange.max() - extendedDoublePropertyIntRange.min() - 1);
         slider.setBlockIncrement(1.0d);
         slider.setSnapToTicks(true);
         slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(bindProperty);
+        slider.valueProperty().bindBidirectional(extendedDoublePropertyIntRange.property());
 
         Label label = new Label();
-        label.textProperty().bind(bindProperty.asString(labelFormatString));
+        label.textProperty().bind(extendedDoublePropertyIntRange.asStringBinding(labelFormatString));
         label.setLabelFor(slider);
 
         Tooltip tooltipValue = new Tooltip(tooltip);
@@ -166,7 +160,6 @@ public final class FXComponentBuilder {
      * @param tooltip the tooltip text for both the label and the slider
      * @param styleClass the CSS style class to apply to the slider
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
-     * @throws IllegalArgumentException if {@code min >= max}
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static LabeledControl createLabeledPercentSlider(
