@@ -107,8 +107,7 @@ public final class ConwayViewModel {
     }
 
     private void startTimeline() {
-        // TODO Optimize with speedProperty
-        simulationTimer.start(Duration.millis(300));
+        simulationTimer.start(Duration.millis(controlViewModel.getStepDuration()));
     }
 
     private void stopTimeline() {

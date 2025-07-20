@@ -339,6 +339,22 @@
   -fx-pref-width: 1000;
 }
 
+.control-config-vbox {
+  -fx-padding: 8 12 8 12;
+  -fx-spacing: 4;
+  -fx-background-color: #2e3b50;
+  -fx-border-radius: 6;
+  -fx-alignment: center-left;
+}
+
+.control-config-vbox .label {
+  -fx-min-width: 120;
+  -fx-alignment: center-left;
+  -fx-font-weight: normal;
+  -fx-text-fill: #7fffd4;
+  -fx-font-size: 14;
+}
+
 /* observation region (right) */
 .observation-grid {
   -fx-padding: 3;

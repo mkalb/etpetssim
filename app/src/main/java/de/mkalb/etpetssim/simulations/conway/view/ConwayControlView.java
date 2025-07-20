@@ -4,11 +4,13 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayControlViewModel;
+import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 public final class ConwayControlView {
 
@@ -19,6 +21,7 @@ public final class ConwayControlView {
     }
 
     Region buildRegion() {
+        // Button
         String textStart = AppLocalization.getText(AppLocalizationKeys.CONTROL_START);
         String textPause = AppLocalization.getText(AppLocalizationKeys.CONTROL_PAUSE);
         String textResume = AppLocalization.getText(AppLocalizationKeys.CONTROL_RESUME);
@@ -41,8 +44,25 @@ public final class ConwayControlView {
         actionButton.setOnAction(_ -> viewModel.onActionButtonClicked());
         cancelButton.setOnAction(_ -> viewModel.onCancelButtonClicked());
 
+        // Config
+        var stepDurationControl = FXComponentBuilder.createLabeledIntSlider(
+                100, 5000, // TODO min / max (and tooltip text)
+                viewModel.stepDurationProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION),
+                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP),
+                FXStyleClasses.CONFIG_SLIDER
+        );
+
+        stepDurationControl.control().disableProperty().bind(
+                viewModel.simulationStateProperty().isEqualTo(SimulationState.RUNNING)
+        );
+
+        VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.control());
+        stepDurationBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
+
+        // Compose the buttons and config controls into a horizontal box
         HBox hbox = new HBox();
-        hbox.getChildren().addAll(actionButton, cancelButton);
+        hbox.getChildren().addAll(actionButton, cancelButton, stepDurationBox);
         hbox.getStyleClass().add(FXStyleClasses.CONTROL_HBOX);
 
         return hbox;
