@@ -3,8 +3,8 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 import de.mkalb.etpetssim.core.PropertyAdjuster;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.ui.ExtendedIntegerProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 public final class ConwayConfigViewModel {
@@ -27,8 +27,8 @@ public final class ConwayConfigViewModel {
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
     private final DoubleProperty cellEdgeLength = PropertyAdjuster.createDoublePropertyWithIntRange(CELL_EDGE_LENGTH_INITIAL, CELL_EDGE_LENGTH_MIN, CELL_EDGE_LENGTH_MAX);
-    private final IntegerProperty gridWidth = PropertyAdjuster.createAdjustedIntProperty(GRID_WIDTH_INITIAL, GRID_WIDTH_MIN, GRID_WIDTH_MAX, GRID_WIDTH_STEP);
-    private final IntegerProperty gridHeight = PropertyAdjuster.createAdjustedIntProperty(GRID_HEIGHT_INITIAL, GRID_HEIGHT_MIN, GRID_HEIGHT_MAX, GRID_HEIGHT_STEP);
+    private final ExtendedIntegerProperty gridWidth = ExtendedIntegerProperty.of(GRID_WIDTH_INITIAL, GRID_WIDTH_MIN, GRID_WIDTH_MAX, GRID_WIDTH_STEP);
+    private final ExtendedIntegerProperty gridHeight = ExtendedIntegerProperty.of(GRID_HEIGHT_INITIAL, GRID_HEIGHT_MIN, GRID_HEIGHT_MAX, GRID_HEIGHT_STEP);
     private final DoubleProperty alivePercent = PropertyAdjuster.createAdjustedDoubleProperty(ALIVE_PERCENT_INITIAL, ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
@@ -36,13 +36,13 @@ public final class ConwayConfigViewModel {
     }
 
     public ConwayConfig getConfig() {
-        return new ConwayConfig(cellEdgeLength.get(), gridWidth.get(), gridHeight.get(), alivePercent.get());
+        return new ConwayConfig(cellEdgeLength.get(), gridWidth.getValue(), gridHeight.getValue(), alivePercent.get());
     }
 
     public void setConfig(ConwayConfig config) {
         cellEdgeLength.set(config.cellEdgeLength());
-        gridWidth.set(config.gridWidth());
-        gridHeight.set(config.gridHeight());
+        gridWidth.setValue(config.gridWidth());
+        gridHeight.setValue(config.gridHeight());
         alivePercent.set(config.alivePercent());
     }
 
@@ -74,52 +74,12 @@ public final class ConwayConfigViewModel {
         return CELL_EDGE_LENGTH_MAX;
     }
 
-    public IntegerProperty gridWidthProperty() {
+    public ExtendedIntegerProperty gridWidthProperty() {
         return gridWidth;
     }
 
-    public int getGridWidth() {
-        return gridWidth.get();
-    }
-
-    public void setGridWidth(int value) {
-        gridWidth.set(value);
-    }
-
-    public int getGridWidthMin() {
-        return GRID_WIDTH_MIN;
-    }
-
-    public int getGridWidthMax() {
-        return GRID_WIDTH_MAX;
-    }
-
-    public int getGridWidthStep() {
-        return GRID_WIDTH_STEP;
-    }
-
-    public IntegerProperty gridHeightProperty() {
+    public ExtendedIntegerProperty gridHeightProperty() {
         return gridHeight;
-    }
-
-    public int getGridHeight() {
-        return gridHeight.get();
-    }
-
-    public void setGridHeight(int value) {
-        gridHeight.set(value);
-    }
-
-    public int getGridHeightMin() {
-        return GRID_HEIGHT_MIN;
-    }
-
-    public int getGridHeightMax() {
-        return GRID_HEIGHT_MAX;
-    }
-
-    public int getGridHeightStep() {
-        return GRID_HEIGHT_STEP;
     }
 
     public DoubleProperty alivePercentProperty() {

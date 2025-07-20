@@ -48,18 +48,16 @@ public final class ConwayConfigView {
 
         // --- Structure/Layout Group ---
         var widthControl = FXComponentBuilder.createLabeledIntSpinner(
-                viewModel.getGridWidthMin(), viewModel.getGridWidthMax(), viewModel.getGridWidthStep(),
                 viewModel.gridWidthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.getGridWidthMin(), viewModel.getGridWidthMax()),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty().min(), viewModel.gridWidthProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var heightControl = FXComponentBuilder.createLabeledIntSpinner(
-                viewModel.getGridHeightMin(), viewModel.getGridHeightMax(), viewModel.getGridHeightStep(),
                 viewModel.gridHeightProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.getGridHeightMin(), viewModel.getGridHeightMax()),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty().min(), viewModel.gridHeightProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 

@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.etpetssim.core.PropertyAdjuster;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.scene.control.*;
 
 /**
@@ -84,53 +82,43 @@ public final class FXComponentBuilder {
     /**
      * Creates a labeled integer spinner with a bound value, formatted label, tooltip, and custom style class.
      * <p>
-     * The spinner is configured for integer values in the specified range, with the given step size,
-     * and is bidirectionally bound to the provided property. The label displays the current value using
+     * The spinner is configured for integer values in the range and step defined by the given {@link ExtendedIntegerProperty}.
+     * The spinner's value is bidirectionally bound to the property. The label displays the current value using
      * the provided format string. Both the label and the spinner share the same tooltip for improved accessibility.
      * <p>
      * The spinner is editable, allowing direct user input, and uses the specified CSS style class.
      *
-     * @param min               the minimum spinner value (inclusive)
-     * @param max               the maximum spinner value (inclusive)
-     * @param step              the step size for increment/decrement
-     * @param bindProperty      the {@link IntegerProperty} to bind the spinner's value to
+     * @param extendedIntegerProperty the {@link ExtendedIntegerProperty} defining range, step, and value binding
      * @param labelFormatString the format string for the label (e.g., "Width: %d")
-     * @param tooltip           the tooltip text for both the label and the spinner
-     * @param styleClass        the CSS style class to apply to the spinner
+     * @param tooltip the tooltip text for both the label and the spinner
+     * @param styleClass the CSS style class to apply to the spinner
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the spinner
-     * @throws IllegalArgumentException if {@code min >= max}
      */
     public static LabeledControl createLabeledIntSpinner(
-            int min,
-            int max,
-            int step,
-            IntegerProperty bindProperty,
+            ExtendedIntegerProperty extendedIntegerProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        if (min >= max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
 
-        Spinner<Integer> spinner = new Spinner<>(min, max, bindProperty.get(), step);
+        Spinner<Integer> spinner = new Spinner<>(extendedIntegerProperty.min(), extendedIntegerProperty.max(), extendedIntegerProperty.getValue(), extendedIntegerProperty.step());
         spinner.setEditable(true);
         spinner.getStyleClass().add(styleClass);
-        spinner.getValueFactory().valueProperty().bindBidirectional(bindProperty.asObject());
+        spinner.getValueFactory().valueProperty().bindBidirectional(extendedIntegerProperty.asObjectProperty());
         spinner.getEditor().focusedProperty().addListener((_, _, isNowFocused) -> {
             if (!isNowFocused) {
-                processSpinnerEditorInput(spinner, min, max, step);
+                processSpinnerEditorInput(spinner, extendedIntegerProperty);
                 // Ensure the editor displays the bound property value
-                spinner.getEditor().setText(String.valueOf(bindProperty.get()));
+                spinner.getEditor().setText(String.valueOf(extendedIntegerProperty.getValue()));
             }
         });
         spinner.getEditor().setOnAction(_ -> {
-            processSpinnerEditorInput(spinner, min, max, step);
+            processSpinnerEditorInput(spinner, extendedIntegerProperty);
             // Ensure the editor displays the bound property value
-            spinner.getEditor().setText(String.valueOf(bindProperty.get()));
+            spinner.getEditor().setText(String.valueOf(extendedIntegerProperty.getValue()));
         });
 
         Label label = new Label();
-        label.textProperty().bind(bindProperty.asString(labelFormatString));
+        label.textProperty().bind(extendedIntegerProperty.asStringBinding(labelFormatString));
         label.setLabelFor(spinner);
 
         Tooltip tooltipValue = new Tooltip(tooltip);
@@ -143,22 +131,20 @@ public final class FXComponentBuilder {
     /**
      * Validates and normalizes the value entered in a {@link Spinner}'s editor.
      * <p>
-     * Parses the editor text as an integer, clamps and snaps it to the specified range and step,
-     * and sets the normalized value in the spinner's value factory. If parsing fails, resets the
-     * editor text to the current spinner value.
+     * Parses the editor text as an integer, clamps and snaps it to the valid range and step
+     * defined by the given {@link ExtendedIntegerProperty}, and sets the normalized value in the spinner.
+     * If parsing fails, resets the editor text to the current spinner value.
      *
      * @param spinner the {@link Spinner} whose editor input is to be processed
-     * @param min     the minimum allowed value (inclusive)
-     * @param max     the maximum allowed value (inclusive)
-     * @param step    the step size for normalization
+     * @param extendedIntegerProperty the {@link ExtendedIntegerProperty} providing range and step constraints
      */
-    private static void processSpinnerEditorInput(Spinner<Integer> spinner, int min, int max, int step) {
+    private static void processSpinnerEditorInput(Spinner<Integer> spinner, ExtendedIntegerProperty extendedIntegerProperty) {
         SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
         if (valueFactory != null) {
             String text = spinner.getEditor().getText().trim();
             try {
                 int parsedValue = Integer.parseInt(text);
-                int normalizedValue = PropertyAdjuster.adjustIntValue(parsedValue, min, max, step);
+                int normalizedValue = extendedIntegerProperty.adjustValue(parsedValue);
                 valueFactory.setValue(normalizedValue);
             } catch (NumberFormatException e) {
                 spinner.getEditor().setText(String.valueOf(spinner.getValue()));

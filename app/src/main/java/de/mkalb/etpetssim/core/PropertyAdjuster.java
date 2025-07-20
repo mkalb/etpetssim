@@ -47,29 +47,6 @@ public final class PropertyAdjuster {
     }
 
     /**
-     * Creates an {@link IntegerProperty} that automatically clamps and snaps its value
-     * to the specified range and step whenever it is set.
-     * <p>
-     * The initial value is normalized using {@link #adjustIntValue(int, int, int, int)}.
-     * Any subsequent calls to {@code set()} will also be normalized.
-     *
-     * @param initialValue the initial value for the property
-     * @param min          the minimum allowed value (inclusive)
-     * @param max          the maximum allowed value (inclusive)
-     * @param step         the step size for snapping
-     * @return an {@link IntegerProperty} with automatic clamping and snapping
-     */
-    public static IntegerProperty createAdjustedIntProperty(
-            int initialValue, int min, int max, int step) {
-        return new SimpleIntegerProperty(adjustIntValue(initialValue, min, max, step)) {
-            @Override
-            public void set(int newValue) {
-                super.set(adjustIntValue(newValue, min, max, step));
-            }
-        };
-    }
-
-    /**
      * Creates a {@link DoubleProperty} that clamps its value to the specified integer range whenever it is set.
      * <p>
      * The initial value is normalized using {@link #adjustDoubleValue(double, double, double)}.
