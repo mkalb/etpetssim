@@ -63,10 +63,10 @@ public final class ConwayConfigView {
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        var sliderControl = FXComponentBuilder.createLabeledIntSlider(1, 40,
+        var sliderControl = FXComponentBuilder.createLabeledIntSlider(viewModel.getCellEdgeLengthMin(), viewModel.getCellEdgeLengthMax(),
                 viewModel.cellEdgeLengthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, 1, 40),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.getCellEdgeLengthMin(), viewModel.getCellEdgeLengthMax()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
@@ -79,7 +79,7 @@ public final class ConwayConfigView {
 
         // --- Initialization Group ---
         var percentControl = FXComponentBuilder.createLabeledPercentSlider(
-                0.0d, 1.0d, viewModel.alivePercentProperty(),
+                viewModel.getAlivePercentMin(), viewModel.getAlivePercentMax(), viewModel.alivePercentProperty(),
                 AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT),
                 AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SLIDER
