@@ -155,40 +155,37 @@ public final class FXComponentBuilder {
     /**
      * Creates a labeled percent slider with a bound value, formatted label, tooltip, and custom style class.
      * <p>
-     * The slider is configured for percent values in the specified range and is bidirectionally bound to the given property.
-     * The label displays the current value using the provided format string.
-     * Both the label and the slider share the same tooltip for improved accessibility.
+     * The slider is configured for percent values in the range defined by the given {@link ExtendedDoubleProperty}.
+     * The slider's value is bidirectionally bound to the property. The label displays the current value using
+     * the provided format string. Both the label and the slider share the same tooltip for improved accessibility.
+     * <p>
+     * The slider is suitable for values between 0.0 and 1.0 (inclusive).
      *
-     * @param min              the minimum slider value (inclusive, between 0.0 and 1.0)
-     * @param max              the maximum slider value (inclusive, between 0.0 and 1.0)
-     * @param bindProperty     the {@link DoubleProperty} to bind the slider's value to
+     * @param extendedDoubleProperty the {@link ExtendedDoubleProperty} defining range and value binding
      * @param labelFormatString the format string for the label (e.g., "%.2f %%")
-     * @param tooltip          the tooltip text for both the label and the slider
-     * @param styleClass       the CSS style class to apply to the slider
+     * @param tooltip the tooltip text for both the label and the slider
+     * @param styleClass the CSS style class to apply to the slider
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
      * @throws IllegalArgumentException if {@code min >= max}
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static LabeledControl createLabeledPercentSlider(
-            double min,
-            double max,
-            DoubleProperty bindProperty,
+            ExtendedDoubleProperty extendedDoubleProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        if (min >= max) {
-            throw new IllegalArgumentException("max must be greater than min");
-        }
+        double min = extendedDoubleProperty.min();
+        double max = extendedDoubleProperty.max();
 
         double minRounded = Math.max(0.0d, Math.round(min * 100.0d) / 100.0d);
         double maxRounded = Math.min(1.0d, Math.round(max * 100.0d) / 100.0d);
-        double valueRounded = Math.round(bindProperty.get() * 100.0d) / 100.0d;
+        double valueRounded = Math.round(extendedDoubleProperty.getValue() * 100.0d) / 100.0d;
         double majorTickUnit = (maxRounded - minRounded);
         int range = ((int) (maxRounded * 100)) - ((int) (minRounded * 100));
         int minorTickCount = calculateMinorTickCountForPercentSlider(range);
 
         double value = Math.max(minRounded, Math.min(maxRounded, valueRounded));
-        bindProperty.set(value);
+        extendedDoubleProperty.setValue(value);
 
         Slider slider = new Slider(minRounded, maxRounded, value);
         slider.setShowTickLabels(false);
@@ -198,14 +195,14 @@ public final class FXComponentBuilder {
         slider.setBlockIncrement(0.01d);
         slider.setSnapToTicks(false);
         slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(bindProperty);
+        slider.valueProperty().bindBidirectional(extendedDoubleProperty.property());
         slider.valueProperty().addListener((_, _, newValue) -> {
             double rounded = Math.round(newValue.doubleValue() * 100.0d) / 100.0d;
             slider.setValue(rounded);
         });
 
         Label label = new Label();
-        label.textProperty().bind(bindProperty.multiply(100).asString(labelFormatString));
+        label.textProperty().bind(extendedDoubleProperty.property().multiply(100).asString(labelFormatString));
         label.setLabelFor(slider);
 
         Tooltip tooltipValue = new Tooltip(tooltip);

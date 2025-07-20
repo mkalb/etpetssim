@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 import de.mkalb.etpetssim.core.PropertyAdjuster;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.ui.ExtendedDoubleProperty;
 import de.mkalb.etpetssim.ui.ExtendedIntegerProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -29,21 +30,21 @@ public final class ConwayConfigViewModel {
     private final DoubleProperty cellEdgeLength = PropertyAdjuster.createDoublePropertyWithIntRange(CELL_EDGE_LENGTH_INITIAL, CELL_EDGE_LENGTH_MIN, CELL_EDGE_LENGTH_MAX);
     private final ExtendedIntegerProperty gridWidth = ExtendedIntegerProperty.of(GRID_WIDTH_INITIAL, GRID_WIDTH_MIN, GRID_WIDTH_MAX, GRID_WIDTH_STEP);
     private final ExtendedIntegerProperty gridHeight = ExtendedIntegerProperty.of(GRID_HEIGHT_INITIAL, GRID_HEIGHT_MIN, GRID_HEIGHT_MAX, GRID_HEIGHT_STEP);
-    private final DoubleProperty alivePercent = PropertyAdjuster.createAdjustedDoubleProperty(ALIVE_PERCENT_INITIAL, ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
+    private final ExtendedDoubleProperty alivePercent = ExtendedDoubleProperty.of(ALIVE_PERCENT_INITIAL, ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
     }
 
     public ConwayConfig getConfig() {
-        return new ConwayConfig(cellEdgeLength.get(), gridWidth.getValue(), gridHeight.getValue(), alivePercent.get());
+        return new ConwayConfig(cellEdgeLength.get(), gridWidth.getValue(), gridHeight.getValue(), alivePercent.getValue());
     }
 
     public void setConfig(ConwayConfig config) {
         cellEdgeLength.set(config.cellEdgeLength());
         gridWidth.setValue(config.gridWidth());
         gridHeight.setValue(config.gridHeight());
-        alivePercent.set(config.alivePercent());
+        alivePercent.setValue(config.alivePercent());
     }
 
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
@@ -82,24 +83,8 @@ public final class ConwayConfigViewModel {
         return gridHeight;
     }
 
-    public DoubleProperty alivePercentProperty() {
+    public ExtendedDoubleProperty alivePercentProperty() {
         return alivePercent;
-    }
-
-    public double getAlivePercent() {
-        return alivePercent.get();
-    }
-
-    public void setAlivePercent(double value) {
-        alivePercent.set(value);
-    }
-
-    public double getAlivePercentMin() {
-        return ALIVE_PERCENT_MIN;
-    }
-
-    public double getAlivePercentMax() {
-        return ALIVE_PERCENT_MAX;
     }
 
 }

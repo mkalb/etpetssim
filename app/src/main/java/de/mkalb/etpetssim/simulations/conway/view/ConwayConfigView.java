@@ -77,7 +77,7 @@ public final class ConwayConfigView {
 
         // --- Initialization Group ---
         var percentControl = FXComponentBuilder.createLabeledPercentSlider(
-                viewModel.getAlivePercentMin(), viewModel.getAlivePercentMax(), viewModel.alivePercentProperty(),
+                viewModel.alivePercentProperty(),
                 AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT),
                 AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SLIDER
