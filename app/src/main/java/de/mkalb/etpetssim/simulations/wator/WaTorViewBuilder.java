@@ -7,6 +7,7 @@ import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -58,6 +59,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
         borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
+        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
 
         return borderPane;
     }
@@ -157,13 +159,18 @@ public final class WaTorViewBuilder implements Builder<Region> {
     }
 
     private Region createSimulationRegion(Canvas simulationCanvas) {
-        ScrollPane scrollPane = new ScrollPane(simulationCanvas);
+        StackPane stackPane = new StackPane(simulationCanvas);
+        StackPane.setAlignment(simulationCanvas, Pos.TOP_LEFT);
+        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
+
+        ScrollPane scrollPane = new ScrollPane(stackPane);
         scrollPane.setFitToHeight(false);
         scrollPane.setFitToWidth(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
+
         return scrollPane;
     }
 
