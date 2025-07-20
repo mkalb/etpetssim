@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.PropertyAdjuster;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.scene.control.*;
@@ -115,6 +116,18 @@ public final class FXComponentBuilder {
         spinner.setEditable(true);
         spinner.getStyleClass().add(styleClass);
         spinner.getValueFactory().valueProperty().bindBidirectional(bindProperty.asObject());
+        spinner.getEditor().focusedProperty().addListener((_, _, isNowFocused) -> {
+            if (!isNowFocused) {
+                processSpinnerEditorInput(spinner, min, max, step);
+                // Ensure the editor displays the bound property value
+                spinner.getEditor().setText(String.valueOf(bindProperty.get()));
+            }
+        });
+        spinner.getEditor().setOnAction(_ -> {
+            processSpinnerEditorInput(spinner, min, max, step);
+            // Ensure the editor displays the bound property value
+            spinner.getEditor().setText(String.valueOf(bindProperty.get()));
+        });
 
         Label label = new Label();
         label.textProperty().bind(bindProperty.asString(labelFormatString));
@@ -125,6 +138,32 @@ public final class FXComponentBuilder {
         spinner.setTooltip(tooltipValue);
 
         return new LabeledControl(label, spinner);
+    }
+
+    /**
+     * Validates and normalizes the value entered in a {@link Spinner}'s editor.
+     * <p>
+     * Parses the editor text as an integer, clamps and snaps it to the specified range and step,
+     * and sets the normalized value in the spinner's value factory. If parsing fails, resets the
+     * editor text to the current spinner value.
+     *
+     * @param spinner the {@link Spinner} whose editor input is to be processed
+     * @param min     the minimum allowed value (inclusive)
+     * @param max     the maximum allowed value (inclusive)
+     * @param step    the step size for normalization
+     */
+    private static void processSpinnerEditorInput(Spinner<Integer> spinner, int min, int max, int step) {
+        SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            String text = spinner.getEditor().getText().trim();
+            try {
+                int parsedValue = Integer.parseInt(text);
+                int normalizedValue = PropertyAdjuster.adjustIntValue(parsedValue, min, max, step);
+                valueFactory.setValue(normalizedValue);
+            } catch (NumberFormatException e) {
+                spinner.getEditor().setText(String.valueOf(spinner.getValue()));
+            }
+        }
     }
 
     /**

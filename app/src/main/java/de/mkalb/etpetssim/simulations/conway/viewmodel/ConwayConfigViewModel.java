@@ -1,16 +1,26 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
+import de.mkalb.etpetssim.core.PropertyAdjuster;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import javafx.beans.property.*;
 
 public final class ConwayConfigViewModel {
 
+    public static final int GRID_WIDTH_INITIAL = 32;
+    public static final int GRID_WIDTH_MIN = 8;
+    public static final int GRID_WIDTH_MAX = 512;
+    public static final int GRID_WIDTH_STEP = 4;
+    public static final int GRID_HEIGHT_INITIAL = 32;
+    public static final int GRID_HEIGHT_MIN = 8;
+    public static final int GRID_HEIGHT_MAX = 512;
+    public static final int GRID_HEIGHT_STEP = 4;
+
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
     private final DoubleProperty cellEdgeLength = new SimpleDoubleProperty(10.0d);
-    private final IntegerProperty gridWidth = new SimpleIntegerProperty(64);
-    private final IntegerProperty gridHeight = new SimpleIntegerProperty(32);
+    private final IntegerProperty gridWidth = PropertyAdjuster.createAdjustedIntProperty(GRID_WIDTH_INITIAL, GRID_WIDTH_MIN, GRID_WIDTH_MAX, GRID_WIDTH_STEP);
+    private final IntegerProperty gridHeight = PropertyAdjuster.createAdjustedIntProperty(GRID_HEIGHT_INITIAL, GRID_HEIGHT_MIN, GRID_HEIGHT_MAX, GRID_HEIGHT_STEP);
     private final DoubleProperty alivePercent = new SimpleDoubleProperty(0.1d);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
@@ -60,6 +70,18 @@ public final class ConwayConfigViewModel {
         gridWidth.set(value);
     }
 
+    public int getGridWidthMin() {
+        return GRID_WIDTH_MIN;
+    }
+
+    public int getGridWidthMax() {
+        return GRID_WIDTH_MAX;
+    }
+
+    public int getGridWidthStep() {
+        return GRID_WIDTH_STEP;
+    }
+
     public IntegerProperty gridHeightProperty() {
         return gridHeight;
     }
@@ -70,6 +92,18 @@ public final class ConwayConfigViewModel {
 
     public void setGridHeight(int value) {
         gridHeight.set(value);
+    }
+
+    public int getGridHeightMin() {
+        return GRID_HEIGHT_MIN;
+    }
+
+    public int getGridHeightMax() {
+        return GRID_HEIGHT_MAX;
+    }
+
+    public int getGridHeightStep() {
+        return GRID_HEIGHT_STEP;
     }
 
     public DoubleProperty alivePercentProperty() {

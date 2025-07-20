@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
@@ -49,18 +48,18 @@ public final class ConwayConfigView {
 
         // --- Structure/Layout Group ---
         var widthControl = FXComponentBuilder.createLabeledIntSpinner(
-                GridSize.MIN_SIZE, 512, 4,
+                viewModel.getGridWidthMin(), viewModel.getGridWidthMax(), viewModel.getGridWidthStep(),
                 viewModel.gridWidthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, GridSize.MIN_SIZE, 512),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.getGridWidthMin(), viewModel.getGridWidthMax()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var heightControl = FXComponentBuilder.createLabeledIntSpinner(
-                GridSize.MIN_SIZE, 512, 4,
+                viewModel.getGridHeightMin(), viewModel.getGridHeightMax(), viewModel.getGridHeightStep(),
                 viewModel.gridHeightProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, GridSize.MIN_SIZE, 512),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.getGridHeightMin(), viewModel.getGridHeightMax()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
