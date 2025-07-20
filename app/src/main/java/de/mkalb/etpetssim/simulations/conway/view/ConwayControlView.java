@@ -46,10 +46,10 @@ public final class ConwayControlView {
 
         // Config
         var stepDurationControl = FXComponentBuilder.createLabeledIntSlider(
-                100, 5000, // TODO min / max (and tooltip text)
+                viewModel.getStepDurationMin(), viewModel.getStepDurationMax(),
                 viewModel.stepDurationProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION),
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP),
+                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP), // TODO Adjust tooltip with min and max
                 FXStyleClasses.CONFIG_SLIDER
         );
 
