@@ -15,18 +15,6 @@
   -fx-border-color: transparent;
 }
 
-/* ChoiceBox Styling */
-.choice-box {
-  -fx-background-color: #263a4d;
-  -fx-border-color: #3c4f5c;
-  -fx-padding: 6;
-  -fx-text-fill: #eaf6fb;
-}
-
-.choice-box:hover {
-  -fx-border-color: #00eaff;
-}
-
 /* Main app with VBox and Header */
 .app-vbox {
   -fx-background-color: #263a4d;
@@ -122,6 +110,34 @@
   -fx-alignment: top-left;
   -fx-min-width: 900;
   -fx-pref-width: 1100;
+}
+
+.config-combobox {
+  -fx-background-color: #2e3b50;
+  -fx-background-radius: 4;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 4;
+  -fx-font-size: 14;
+  -fx-text-fill: #aeefff;
+  -fx-padding: 4 10;
+}
+
+.config-combobox:focused {
+  -fx-border-color: #00ff99;
+}
+
+.config-combobox .arrow {
+  -fx-background-color: #00eaff;
+}
+
+.config-combobox .list-cell {
+  -fx-background-color: #2e3b50;
+  -fx-text-fill: #7fffd4;
+}
+
+.config-combobox .list-cell:selected {
+  -fx-text-fill: #aeefff;
 }
 
 .config-slider .axis-tick-mark {
