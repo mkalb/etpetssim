@@ -165,4 +165,15 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property, L
         return getValue() == value;
     }
 
+    /**
+     * Returns an unmodifiable list of valid enum values for this property.
+     * <p>
+     * Only values from this list are allowed to be set for the property.
+     *
+     * @return the list of valid enum values
+     */
+    public List<E> getValidValues() {
+        return validValues;
+    }
+
 }
