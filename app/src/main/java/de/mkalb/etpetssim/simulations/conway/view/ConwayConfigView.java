@@ -44,9 +44,7 @@ public final class ConwayConfigView {
     }
 
     Region buildRegion() {
-        // TODO Optimize min/max values, ...
-
-        // --- Structure/Layout Group ---
+        // --- Structure Group ---
         var widthControl = FXComponentBuilder.createLabeledIntSpinner(
                 viewModel.gridWidthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
