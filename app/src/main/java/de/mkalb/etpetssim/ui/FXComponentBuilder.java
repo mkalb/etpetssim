@@ -77,10 +77,11 @@ public final class FXComponentBuilder {
      * Creates a labeled integer spinner with a bound value, formatted label, tooltip, and custom style class.
      * <p>
      * The spinner is configured for integer values in the range and step defined by the given {@link ExtendedIntegerProperty}.
-     * The spinner's value is bidirectionally bound to the property. The label displays the current value using
+     * The spinner and the property are kept in sync via listeners and normalization logic. The label displays the current value using
      * the provided format string. Both the label and the spinner share the same tooltip for improved accessibility.
      * <p>
      * The spinner is editable, allowing direct user input, and uses the specified CSS style class.
+     * Input is validated and normalized to ensure only valid values are accepted.
      *
      * @param extendedIntegerProperty the {@link ExtendedIntegerProperty} defining range, step, and value binding
      * @param labelFormatString the format string for the label (e.g., "Width: %d")
@@ -94,27 +95,51 @@ public final class FXComponentBuilder {
             String tooltip,
             String styleClass) {
 
-        Spinner<Integer> spinner = new Spinner<>(extendedIntegerProperty.min(), extendedIntegerProperty.max(), extendedIntegerProperty.getValue(), extendedIntegerProperty.step());
+        // Create spinner with min, max, initial value, and step
+        Spinner<Integer> spinner = new Spinner<>(
+                extendedIntegerProperty.min(),
+                extendedIntegerProperty.max(),
+                extendedIntegerProperty.getValue(),
+                extendedIntegerProperty.step());
         spinner.setEditable(true);
         spinner.getStyleClass().add(styleClass);
-        spinner.getValueFactory().valueProperty().bindBidirectional(extendedIntegerProperty.asObjectProperty());
-        spinner.getEditor().focusedProperty().addListener((_, _, isNowFocused) -> {
-            if (!isNowFocused) {
-                processSpinnerEditorInput(spinner, extendedIntegerProperty);
-                // Ensure the editor displays the bound property value
-                spinner.getEditor().setText(String.valueOf(extendedIntegerProperty.getValue()));
+
+        // Only allow integer input in the editor
+        TextFormatter<Integer> formatter = new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("-?\\d*")) {
+                return change;
+            }
+            return null;
+        });
+        spinner.getEditor().setTextFormatter(formatter);
+
+        // Keep spinner in sync with property changes
+        extendedIntegerProperty.asObjectProperty().addListener((_, _, newVal) -> {
+            if (!spinner.getValueFactory().getValue().equals(newVal)) {
+                spinner.getValueFactory().setValue(newVal);
             }
         });
-        spinner.getEditor().setOnAction(_ -> {
-            processSpinnerEditorInput(spinner, extendedIntegerProperty);
-            // Ensure the editor displays the bound property value
-            spinner.getEditor().setText(String.valueOf(extendedIntegerProperty.getValue()));
+
+        // Normalize and sync on spinner value change
+        spinner.valueProperty().addListener((_, _, _) -> normalizeAndSyncSpinnerValue(spinner, extendedIntegerProperty));
+
+        // Normalize and sync when editor loses focus
+        spinner.getEditor().focusedProperty().addListener((_, _, isNowFocused) -> {
+            if (!isNowFocused) {
+                normalizeAndSyncSpinnerValue(spinner, extendedIntegerProperty);
+            }
         });
 
+        // Normalize and sync on Enter key in editor
+        spinner.getEditor().setOnAction(_ -> normalizeAndSyncSpinnerValue(spinner, extendedIntegerProperty));
+
+        // Label setup
         Label label = new Label();
         label.textProperty().bind(extendedIntegerProperty.asStringBinding(labelFormatString));
         label.setLabelFor(spinner);
 
+        // Tooltip for both label and spinner
         Tooltip tooltipValue = new Tooltip(tooltip);
         label.setTooltip(tooltipValue);
         spinner.setTooltip(tooltipValue);
@@ -123,25 +148,43 @@ public final class FXComponentBuilder {
     }
 
     /**
-     * Validates and normalizes the value entered in a {@link Spinner}'s editor.
+     * Normalizes and synchronizes the value of a {@link Spinner}'s editor with its value factory and the associated {@link ExtendedIntegerProperty}.
      * <p>
-     * Parses the editor text as an integer, clamps and snaps it to the valid range and step
-     * defined by the given {@link ExtendedIntegerProperty}, and sets the normalized value in the spinner.
-     * If parsing fails, resets the editor text to the current spinner value.
+     * Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
+     * defined by the given {@link ExtendedIntegerProperty}, and updates both the spinner and the property with the normalized value.
+     * If parsing fails, resets the editor text and spinner value to the current property value.
      *
-     * @param spinner the {@link Spinner} whose editor input is to be processed
+     * @param spinner the {@link Spinner} whose editor input is to be normalized and synchronized
      * @param extendedIntegerProperty the {@link ExtendedIntegerProperty} providing range and step constraints
      */
-    private static void processSpinnerEditorInput(Spinner<Integer> spinner, ExtendedIntegerProperty extendedIntegerProperty) {
+    private static void normalizeAndSyncSpinnerValue(Spinner<Integer> spinner,
+                                                     ExtendedIntegerProperty extendedIntegerProperty) {
         SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
         if (valueFactory != null) {
-            String text = spinner.getEditor().getText().trim();
+            String text = spinner.getEditor().getText();
             try {
                 int parsedValue = Integer.parseInt(text);
                 int normalizedValue = extendedIntegerProperty.adjustValue(parsedValue);
-                valueFactory.setValue(normalizedValue);
+
+                // 1. Update editor text if normalization changed the value
+                if (parsedValue != normalizedValue) {
+                    spinner.getEditor().setText(String.valueOf(normalizedValue));
+                }
+
+                // 2. Update property if needed
+                if (extendedIntegerProperty.getValue() != normalizedValue) {
+                    extendedIntegerProperty.setValue(normalizedValue);
+                }
+
+                // 3. Update spinner if needed
+                if (!valueFactory.getValue().equals(normalizedValue)) {
+                    valueFactory.setValue(normalizedValue);
+                }
             } catch (NumberFormatException e) {
-                spinner.getEditor().setText(String.valueOf(spinner.getValue()));
+                // Reset to current property value if parsing fails
+                int currentValue = extendedIntegerProperty.getValue();
+                spinner.getEditor().setText(String.valueOf(currentValue));
+                valueFactory.setValue(currentValue);
             }
         }
     }
