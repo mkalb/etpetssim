@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -57,10 +58,14 @@ public record ExtendedDoublePropertyIntRange(DoubleProperty property, int min, i
             throw new IllegalArgumentException("Initial value is not valid: " + initialValue);
         }
 
-        DoubleProperty property = new SimpleDoubleProperty(adjustValue(initialValue, min, max)) {
+        DoubleProperty property = new SimpleDoubleProperty(initialValue) {
             @Override
             public void set(double newValue) {
-                super.set(adjustValue(newValue, min, max));
+                if (!isValidValue(newValue, min, max)) {
+                    AppLogger.error("ExtendedDoublePropertyIntRange: Invalid value set: " + newValue +
+                            " (min=" + min + ", max=" + max + ")");
+                }
+                super.set(newValue);
             }
         };
         return new ExtendedDoublePropertyIntRange(property, min, max);

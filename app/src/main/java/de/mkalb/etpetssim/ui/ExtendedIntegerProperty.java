@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -77,7 +78,11 @@ public record ExtendedIntegerProperty(IntegerProperty property, int min, int max
         IntegerProperty property = new SimpleIntegerProperty(initialValue) {
             @Override
             public void set(int newValue) {
-                super.set(adjustValue(newValue, min, max, step));
+                if (!isValidValue(newValue, min, max, step)) {
+                    AppLogger.error("ExtendedIntegerProperty: Invalid value set: " + newValue +
+                            " (min=" + min + ", max=" + max + ", step=" + step + ")");
+                }
+                super.set(newValue);
             }
         };
         return new ExtendedIntegerProperty(property, min, max, step);
