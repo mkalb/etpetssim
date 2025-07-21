@@ -33,37 +33,37 @@ public final class FXComponentBuilder {
     /**
      * Creates a labeled integer slider with a bound double value, formatted label, tooltip, and custom style class.
      * <p>
-     * The slider is configured for integer values in the range defined by the given {@link ExtendedDoublePropertyIntRange}.
+     * The slider is configured for integer values in the range defined by the given {@link InputDoublePropertyIntRange}.
      * The slider's value is bidirectionally bound to the underlying {@link DoubleProperty} of the record.
      * The label displays the current value using the provided format string. Both the label and the slider share
      * the same tooltip for improved accessibility.
      * <p>
      * This method is suitable for sliders with a moderate integer value range.
      *
-     * @param extendedDoublePropertyIntRange the {@link ExtendedDoublePropertyIntRange} defining the integer range and value binding
+     * @param inputDoublePropertyIntRange the {@link InputDoublePropertyIntRange} defining the integer range and value binding
      * @param labelFormatString the format string for the label (e.g., "%d px")
      * @param tooltip the tooltip text for both the label and the slider
      * @param styleClass the CSS style class to apply to the slider
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
      */
-    public static LabeledControl createLabeledIntSlider(ExtendedDoublePropertyIntRange extendedDoublePropertyIntRange,
+    public static LabeledControl createLabeledIntSlider(InputDoublePropertyIntRange inputDoublePropertyIntRange,
                                                         String labelFormatString,
                                                         String tooltip,
                                                         String styleClass) {
 
-        Slider slider = new Slider(extendedDoublePropertyIntRange.min(), extendedDoublePropertyIntRange.max(),
-                extendedDoublePropertyIntRange.getValue());
+        Slider slider = new Slider(inputDoublePropertyIntRange.min(), inputDoublePropertyIntRange.max(),
+                inputDoublePropertyIntRange.getValue());
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(extendedDoublePropertyIntRange.max() - extendedDoublePropertyIntRange.min());
-        slider.setMinorTickCount(extendedDoublePropertyIntRange.max() - extendedDoublePropertyIntRange.min() - 1);
+        slider.setMajorTickUnit(inputDoublePropertyIntRange.max() - inputDoublePropertyIntRange.min());
+        slider.setMinorTickCount(inputDoublePropertyIntRange.max() - inputDoublePropertyIntRange.min() - 1);
         slider.setBlockIncrement(1.0d);
         slider.setSnapToTicks(true);
         slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(extendedDoublePropertyIntRange.property());
+        slider.valueProperty().bindBidirectional(inputDoublePropertyIntRange.property());
 
         Label label = new Label();
-        label.textProperty().bind(extendedDoublePropertyIntRange.asStringBinding(labelFormatString));
+        label.textProperty().bind(inputDoublePropertyIntRange.asStringBinding(labelFormatString));
         label.setLabelFor(slider);
 
         Tooltip tooltipValue = new Tooltip(tooltip);
@@ -76,31 +76,31 @@ public final class FXComponentBuilder {
     /**
      * Creates a labeled integer spinner with a bound value, formatted label, tooltip, and custom style class.
      * <p>
-     * The spinner is configured for integer values in the range and step defined by the given {@link ExtendedIntegerProperty}.
+     * The spinner is configured for integer values in the range and step defined by the given {@link InputIntegerProperty}.
      * The spinner and the property are kept in sync via listeners and normalization logic. The label displays the current value using
      * the provided format string. Both the label and the spinner share the same tooltip for improved accessibility.
      * <p>
      * The spinner is editable, allowing direct user input, and uses the specified CSS style class.
      * Input is validated and normalized to ensure only valid values are accepted.
      *
-     * @param extendedIntegerProperty the {@link ExtendedIntegerProperty} defining range, step, and value binding
+     * @param inputIntegerProperty the {@link InputIntegerProperty} defining range, step, and value binding
      * @param labelFormatString the format string for the label (e.g., "Width: %d")
      * @param tooltip the tooltip text for both the label and the spinner
      * @param styleClass the CSS style class to apply to the spinner
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the spinner
      */
     public static LabeledControl createLabeledIntSpinner(
-            ExtendedIntegerProperty extendedIntegerProperty,
+            InputIntegerProperty inputIntegerProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
 
         // Create spinner with min, max, initial value, and step
         Spinner<Integer> spinner = new Spinner<>(
-                extendedIntegerProperty.min(),
-                extendedIntegerProperty.max(),
-                extendedIntegerProperty.getValue(),
-                extendedIntegerProperty.step());
+                inputIntegerProperty.min(),
+                inputIntegerProperty.max(),
+                inputIntegerProperty.getValue(),
+                inputIntegerProperty.step());
         spinner.setEditable(true);
         spinner.getStyleClass().add(styleClass);
 
@@ -115,28 +115,28 @@ public final class FXComponentBuilder {
         spinner.getEditor().setTextFormatter(formatter);
 
         // Keep spinner in sync with property changes
-        extendedIntegerProperty.asObjectProperty().addListener((_, _, newVal) -> {
+        inputIntegerProperty.asObjectProperty().addListener((_, _, newVal) -> {
             if (!spinner.getValueFactory().getValue().equals(newVal)) {
                 spinner.getValueFactory().setValue(newVal);
             }
         });
 
         // Normalize and sync on spinner value change
-        spinner.valueProperty().addListener((_, _, _) -> normalizeAndSyncSpinnerValue(spinner, extendedIntegerProperty));
+        spinner.valueProperty().addListener((_, _, _) -> normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty));
 
         // Normalize and sync when editor loses focus
         spinner.getEditor().focusedProperty().addListener((_, _, isNowFocused) -> {
             if (!isNowFocused) {
-                normalizeAndSyncSpinnerValue(spinner, extendedIntegerProperty);
+                normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty);
             }
         });
 
         // Normalize and sync on Enter key in editor
-        spinner.getEditor().setOnAction(_ -> normalizeAndSyncSpinnerValue(spinner, extendedIntegerProperty));
+        spinner.getEditor().setOnAction(_ -> normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty));
 
         // Label setup
         Label label = new Label();
-        label.textProperty().bind(extendedIntegerProperty.asStringBinding(labelFormatString));
+        label.textProperty().bind(inputIntegerProperty.asStringBinding(labelFormatString));
         label.setLabelFor(spinner);
 
         // Tooltip for both label and spinner
@@ -148,23 +148,23 @@ public final class FXComponentBuilder {
     }
 
     /**
-     * Normalizes and synchronizes the value of a {@link Spinner}'s editor with its value factory and the associated {@link ExtendedIntegerProperty}.
+     * Normalizes and synchronizes the value of a {@link Spinner}'s editor with its value factory and the associated {@link InputIntegerProperty}.
      * <p>
      * Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
-     * defined by the given {@link ExtendedIntegerProperty}, and updates both the spinner and the property with the normalized value.
+     * defined by the given {@link InputIntegerProperty}, and updates both the spinner and the property with the normalized value.
      * If parsing fails, resets the editor text and spinner value to the current property value.
      *
      * @param spinner the {@link Spinner} whose editor input is to be normalized and synchronized
-     * @param extendedIntegerProperty the {@link ExtendedIntegerProperty} providing range and step constraints
+     * @param inputIntegerProperty the {@link InputIntegerProperty} providing range and step constraints
      */
     private static void normalizeAndSyncSpinnerValue(Spinner<Integer> spinner,
-                                                     ExtendedIntegerProperty extendedIntegerProperty) {
+                                                     InputIntegerProperty inputIntegerProperty) {
         SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
         if (valueFactory != null) {
             String text = spinner.getEditor().getText();
             try {
                 int parsedValue = Integer.parseInt(text);
-                int normalizedValue = extendedIntegerProperty.adjustValue(parsedValue);
+                int normalizedValue = inputIntegerProperty.adjustValue(parsedValue);
 
                 // 1. Update editor text if normalization changed the value
                 if (parsedValue != normalizedValue) {
@@ -172,8 +172,8 @@ public final class FXComponentBuilder {
                 }
 
                 // 2. Update property if needed
-                if (extendedIntegerProperty.getValue() != normalizedValue) {
-                    extendedIntegerProperty.setValue(normalizedValue);
+                if (inputIntegerProperty.getValue() != normalizedValue) {
+                    inputIntegerProperty.setValue(normalizedValue);
                 }
 
                 // 3. Update spinner if needed
@@ -182,7 +182,7 @@ public final class FXComponentBuilder {
                 }
             } catch (NumberFormatException e) {
                 // Reset to current property value if parsing fails
-                int currentValue = extendedIntegerProperty.getValue();
+                int currentValue = inputIntegerProperty.getValue();
                 spinner.getEditor().setText(String.valueOf(currentValue));
                 valueFactory.setValue(currentValue);
             }
@@ -192,13 +192,13 @@ public final class FXComponentBuilder {
     /**
      * Creates a labeled percent slider with a bound value, formatted label, tooltip, and custom style class.
      * <p>
-     * The slider is configured for percent values in the range defined by the given {@link ExtendedDoubleProperty}.
+     * The slider is configured for percent values in the range defined by the given {@link InputDoubleProperty}.
      * The slider's value is bidirectionally bound to the property. The label displays the current value using
      * the provided format string. Both the label and the slider share the same tooltip for improved accessibility.
      * <p>
      * The slider is suitable for values between 0.0 and 1.0 (inclusive).
      *
-     * @param extendedDoubleProperty the {@link ExtendedDoubleProperty} defining range and value binding
+     * @param inputDoubleProperty the {@link InputDoubleProperty} defining range and value binding
      * @param labelFormatString the format string for the label (e.g., "%.2f %%")
      * @param tooltip the tooltip text for both the label and the slider
      * @param styleClass the CSS style class to apply to the slider
@@ -206,22 +206,22 @@ public final class FXComponentBuilder {
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static LabeledControl createLabeledPercentSlider(
-            ExtendedDoubleProperty extendedDoubleProperty,
+            InputDoubleProperty inputDoubleProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        double min = extendedDoubleProperty.min();
-        double max = extendedDoubleProperty.max();
+        double min = inputDoubleProperty.min();
+        double max = inputDoubleProperty.max();
 
         double minRounded = Math.max(0.0d, Math.round(min * 100.0d) / 100.0d);
         double maxRounded = Math.min(1.0d, Math.round(max * 100.0d) / 100.0d);
-        double valueRounded = Math.round(extendedDoubleProperty.getValue() * 100.0d) / 100.0d;
+        double valueRounded = Math.round(inputDoubleProperty.getValue() * 100.0d) / 100.0d;
         double majorTickUnit = (maxRounded - minRounded);
         int range = ((int) (maxRounded * 100)) - ((int) (minRounded * 100));
         int minorTickCount = calculateMinorTickCountForPercentSlider(range);
 
         double value = Math.max(minRounded, Math.min(maxRounded, valueRounded));
-        extendedDoubleProperty.setValue(value);
+        inputDoubleProperty.setValue(value);
 
         Slider slider = new Slider(minRounded, maxRounded, value);
         slider.setShowTickLabels(false);
@@ -231,14 +231,14 @@ public final class FXComponentBuilder {
         slider.setBlockIncrement(0.01d);
         slider.setSnapToTicks(false);
         slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(extendedDoubleProperty.property());
+        slider.valueProperty().bindBidirectional(inputDoubleProperty.property());
         slider.valueProperty().addListener((_, _, newValue) -> {
             double rounded = Math.round(newValue.doubleValue() * 100.0d) / 100.0d;
             slider.setValue(rounded);
         });
 
         Label label = new Label();
-        label.textProperty().bind(extendedDoubleProperty.property().multiply(100).asString(labelFormatString));
+        label.textProperty().bind(inputDoubleProperty.property().multiply(100).asString(labelFormatString));
         label.setLabelFor(slider);
 
         Tooltip tooltipValue = new Tooltip(tooltip);

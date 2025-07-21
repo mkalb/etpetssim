@@ -20,10 +20,10 @@ import javafx.beans.property.SimpleIntegerProperty;
  * @param max      the maximum allowed value (inclusive)
  * @param step     the step size for valid values (must be positive)
  */
-public record ExtendedIntegerProperty(IntegerProperty property, int min, int max, int step) {
+public record InputIntegerProperty(IntegerProperty property, int min, int max, int step) {
 
     /**
-     * Constructs an {@code ExtendedIntegerProperty} with the given property, range, and step.
+     * Constructs an {@code InputIntegerProperty} with the given property, range, and step.
      * <p>
      * Validates that {@code min < max}, {@code step > 0}, the range is divisible by {@code step},
      * and the property's value is valid.
@@ -34,7 +34,7 @@ public record ExtendedIntegerProperty(IntegerProperty property, int min, int max
      * @param step     the step size
      * @throws IllegalArgumentException if any argument is invalid
      */
-    public ExtendedIntegerProperty {
+    public InputIntegerProperty {
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
@@ -50,7 +50,7 @@ public record ExtendedIntegerProperty(IntegerProperty property, int min, int max
     }
 
     /**
-     * Creates a new {@code ExtendedIntegerProperty} with the specified initial value, range, and step.
+     * Creates a new {@code InputIntegerProperty} with the specified initial value, range, and step.
      * <p>
      * Validates all arguments.
      *
@@ -58,10 +58,10 @@ public record ExtendedIntegerProperty(IntegerProperty property, int min, int max
      * @param min          the minimum allowed value
      * @param max          the maximum allowed value
      * @param step         the step size
-     * @return a new {@code ExtendedIntegerProperty}
+     * @return a new {@code InputIntegerProperty}
      * @throws IllegalArgumentException if any argument is invalid
      */
-    public static ExtendedIntegerProperty of(int initialValue, int min, int max, int step) {
+    public static InputIntegerProperty of(int initialValue, int min, int max, int step) {
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
@@ -79,13 +79,13 @@ public record ExtendedIntegerProperty(IntegerProperty property, int min, int max
             @Override
             public void set(int newValue) {
                 if (!isValidValue(newValue, min, max, step)) {
-                    AppLogger.error("ExtendedIntegerProperty: Invalid value set: " + newValue +
+                    AppLogger.error("InputIntegerProperty: Invalid value set: " + newValue +
                             " (min=" + min + ", max=" + max + ", step=" + step + ")");
                 }
                 super.set(newValue);
             }
         };
-        return new ExtendedIntegerProperty(property, min, max, step);
+        return new InputIntegerProperty(property, min, max, step);
     }
 
     /**

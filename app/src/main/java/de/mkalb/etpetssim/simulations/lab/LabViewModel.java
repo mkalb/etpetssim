@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.ui.ExtendedEnumProperty;
+import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
@@ -14,9 +14,9 @@ public final class LabViewModel {
     private final LabSimulationManager manager;
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
-    private final ExtendedEnumProperty<RenderingMode> renderingMode = ExtendedEnumProperty.of(RenderingMode.SHAPE, RenderingMode.class);
-    private final ExtendedEnumProperty<ColorMode> colorMode = ExtendedEnumProperty.of(ColorMode.COLOR, ColorMode.class);
-    private final ExtendedEnumProperty<StrokeMode> strokeMode = ExtendedEnumProperty.of(StrokeMode.CENTERED, StrokeMode.class);
+    private final InputEnumProperty<RenderingMode> renderingMode = InputEnumProperty.of(RenderingMode.SHAPE, RenderingMode.class);
+    private final InputEnumProperty<ColorMode> colorMode = InputEnumProperty.of(ColorMode.COLOR, ColorMode.class);
+    private final InputEnumProperty<StrokeMode> strokeMode = InputEnumProperty.of(StrokeMode.CENTERED, StrokeMode.class);
 
     public LabViewModel(LabConfig config) {
         manager = new LabSimulationManager(config);
@@ -39,15 +39,15 @@ public final class LabViewModel {
         lastClickedCoordinate.set(value);
     }
 
-    public ExtendedEnumProperty<RenderingMode> renderingModeProperty() {
+    public InputEnumProperty<RenderingMode> renderingModeProperty() {
         return renderingMode;
     }
 
-    public ExtendedEnumProperty<ColorMode> colorModeProperty() {
+    public InputEnumProperty<ColorMode> colorModeProperty() {
         return colorMode;
     }
 
-    public ExtendedEnumProperty<StrokeMode> strokeModeProperty() {
+    public InputEnumProperty<StrokeMode> strokeModeProperty() {
         return strokeMode;
     }
 

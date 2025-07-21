@@ -18,10 +18,10 @@ import javafx.beans.property.SimpleDoubleProperty;
  * @param min      the minimum allowed value (inclusive, integer)
  * @param max      the maximum allowed value (inclusive, integer)
  */
-public record ExtendedDoublePropertyIntRange(DoubleProperty property, int min, int max) {
+public record InputDoublePropertyIntRange(DoubleProperty property, int min, int max) {
 
     /**
-     * Constructs a {@code ExtendedDoublePropertyIntRange} with the given property and integer range.
+     * Constructs a {@code InputDoublePropertyIntRange} with the given property and integer range.
      * <p>
      * Validates that {@code min < max} and the property's value is valid.
      *
@@ -30,7 +30,7 @@ public record ExtendedDoublePropertyIntRange(DoubleProperty property, int min, i
      * @param max      the maximum allowed value
      * @throws IllegalArgumentException if any argument is invalid
      */
-    public ExtendedDoublePropertyIntRange {
+    public InputDoublePropertyIntRange {
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
@@ -40,17 +40,17 @@ public record ExtendedDoublePropertyIntRange(DoubleProperty property, int min, i
     }
 
     /**
-     * Creates a new {@code ExtendedDoublePropertyIntRange} with the specified initial value and integer range.
+     * Creates a new {@code InputDoublePropertyIntRange} with the specified initial value and integer range.
      * <p>
      * Validates all arguments.
      *
      * @param initialValue the initial value
      * @param min          the minimum allowed value
      * @param max          the maximum allowed value
-     * @return a new {@code ExtendedDoublePropertyIntRange}
+     * @return a new {@code InputDoublePropertyIntRange}
      * @throws IllegalArgumentException if any argument is invalid
      */
-    public static ExtendedDoublePropertyIntRange of(int initialValue, int min, int max) {
+    public static InputDoublePropertyIntRange of(int initialValue, int min, int max) {
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
@@ -62,13 +62,13 @@ public record ExtendedDoublePropertyIntRange(DoubleProperty property, int min, i
             @Override
             public void set(double newValue) {
                 if (!isValidValue(newValue, min, max)) {
-                    AppLogger.error("ExtendedDoublePropertyIntRange: Invalid value set: " + newValue +
+                    AppLogger.error("InputDoublePropertyIntRange: Invalid value set: " + newValue +
                             " (min=" + min + ", max=" + max + ")");
                 }
                 super.set(newValue);
             }
         };
-        return new ExtendedDoublePropertyIntRange(property, min, max);
+        return new InputDoublePropertyIntRange(property, min, max);
     }
 
     /**

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
-import de.mkalb.etpetssim.ui.ExtendedDoublePropertyIntRange;
+import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 public final class ConwayControlViewModel {
@@ -11,7 +11,7 @@ public final class ConwayControlViewModel {
     private static final int STEP_DURATION_MAX = 2_000;
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
-    private final ExtendedDoublePropertyIntRange stepDuration = ExtendedDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
+    private final InputDoublePropertyIntRange stepDuration = InputDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private Runnable onActionButtonListener = () -> {};
     private Runnable onCancelButtonListener = () -> {};
@@ -44,7 +44,7 @@ public final class ConwayControlViewModel {
         onCancelButtonListener.run();
     }
 
-    public ExtendedDoublePropertyIntRange stepDurationProperty() {
+    public InputDoublePropertyIntRange stepDurationProperty() {
         return stepDuration;
     }
 

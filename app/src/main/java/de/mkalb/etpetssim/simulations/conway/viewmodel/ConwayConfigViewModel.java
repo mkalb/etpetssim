@@ -2,9 +2,9 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
-import de.mkalb.etpetssim.ui.ExtendedDoubleProperty;
-import de.mkalb.etpetssim.ui.ExtendedDoublePropertyIntRange;
-import de.mkalb.etpetssim.ui.ExtendedIntegerProperty;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
+import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 public final class ConwayConfigViewModel {
@@ -26,13 +26,13 @@ public final class ConwayConfigViewModel {
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
-    private final ExtendedDoublePropertyIntRange cellEdgeLength = ExtendedDoublePropertyIntRange.of(CELL_EDGE_LENGTH_INITIAL,
+    private final InputDoublePropertyIntRange cellEdgeLength = InputDoublePropertyIntRange.of(CELL_EDGE_LENGTH_INITIAL,
             CELL_EDGE_LENGTH_MIN, CELL_EDGE_LENGTH_MAX);
-    private final ExtendedIntegerProperty gridWidth = ExtendedIntegerProperty.of(GRID_WIDTH_INITIAL,
+    private final InputIntegerProperty gridWidth = InputIntegerProperty.of(GRID_WIDTH_INITIAL,
             GRID_WIDTH_MIN, GRID_WIDTH_MAX, GRID_WIDTH_STEP);
-    private final ExtendedIntegerProperty gridHeight = ExtendedIntegerProperty.of(GRID_HEIGHT_INITIAL,
+    private final InputIntegerProperty gridHeight = InputIntegerProperty.of(GRID_HEIGHT_INITIAL,
             GRID_HEIGHT_MIN, GRID_HEIGHT_MAX, GRID_HEIGHT_STEP);
-    private final ExtendedDoubleProperty alivePercent = ExtendedDoubleProperty.of(ALIVE_PERCENT_INITIAL,
+    private final InputDoubleProperty alivePercent = InputDoubleProperty.of(ALIVE_PERCENT_INITIAL,
             ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
@@ -62,19 +62,19 @@ public final class ConwayConfigViewModel {
         return simulationState.get();
     }
 
-    public ExtendedDoublePropertyIntRange cellEdgeLengthProperty() {
+    public InputDoublePropertyIntRange cellEdgeLengthProperty() {
         return cellEdgeLength;
     }
 
-    public ExtendedIntegerProperty gridWidthProperty() {
+    public InputIntegerProperty gridWidthProperty() {
         return gridWidth;
     }
 
-    public ExtendedIntegerProperty gridHeightProperty() {
+    public InputIntegerProperty gridHeightProperty() {
         return gridHeight;
     }
 
-    public ExtendedDoubleProperty alivePercentProperty() {
+    public InputDoubleProperty alivePercentProperty() {
         return alivePercent;
     }
 

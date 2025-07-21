@@ -19,10 +19,10 @@ import java.util.*;
  * @param property    the underlying {@link ObjectProperty} for the enum
  * @param validValues the list of valid enum values (must not be empty)
  */
-public record ExtendedEnumProperty<E extends Enum<E>>(ObjectProperty<E> property, List<E> validValues) {
+public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property, List<E> validValues) {
 
     /**
-     * Constructs an {@code ExtendedEnumProperty} with the given property and valid values.
+     * Constructs an {@code InputEnumProperty} with the given property and valid values.
      * <p>
      * Validates that {@code validValues} is not empty and that the property's value is valid.
      * Makes a defensive copy of {@code validValues}.
@@ -31,7 +31,7 @@ public record ExtendedEnumProperty<E extends Enum<E>>(ObjectProperty<E> property
      * @param validValues the list of valid enum values
      * @throws IllegalArgumentException if {@code validValues} is empty or the property's value is not valid
      */
-    public ExtendedEnumProperty(ObjectProperty<E> property, List<E> validValues) {
+    public InputEnumProperty(ObjectProperty<E> property, List<E> validValues) {
         if (validValues.isEmpty()) {
             throw new IllegalArgumentException("validValues must not be empty");
         }
@@ -43,16 +43,16 @@ public record ExtendedEnumProperty<E extends Enum<E>>(ObjectProperty<E> property
     }
 
     /**
-     * Creates a new {@code ExtendedEnumProperty} with the specified initial value and valid values.
+     * Creates a new {@code InputEnumProperty} with the specified initial value and valid values.
      * <p>
      * Validates all arguments and ensures only valid values can be set.
      *
      * @param initialValue the initial enum value
      * @param validValues  the list of valid enum values
-     * @return a new {@code ExtendedEnumProperty}
+     * @return a new {@code InputEnumProperty}
      * @throws IllegalArgumentException if {@code validValues} is empty or the initial value is not valid
      */
-    public static <E extends Enum<E>> ExtendedEnumProperty<E> of(E initialValue, List<E> validValues) {
+    public static <E extends Enum<E>> InputEnumProperty<E> of(E initialValue, List<E> validValues) {
         if (validValues.isEmpty()) {
             throw new IllegalArgumentException("validValues must not be empty");
         }
@@ -65,26 +65,26 @@ public record ExtendedEnumProperty<E extends Enum<E>>(ObjectProperty<E> property
             @Override
             public void set(E newValue) {
                 if (!isValidValue(newValue, copiedValidValues)) {
-                    AppLogger.error("ExtendedEnumProperty: Invalid value set: " + newValue +
+                    AppLogger.error("InputEnumProperty: Invalid value set: " + newValue +
                             ". Valid values are: " + copiedValidValues);
                 }
                 super.set(newValue);
             }
         };
-        return new ExtendedEnumProperty<>(property, copiedValidValues);
+        return new InputEnumProperty<>(property, copiedValidValues);
     }
 
     /**
-     * Creates a new {@code ExtendedEnumProperty} with the specified initial value and all values of the given enum type as valid values.
+     * Creates a new {@code InputEnumProperty} with the specified initial value and all values of the given enum type as valid values.
      * <p>
      * This method uses {@code enumClass.getEnumConstants()} to determine the valid values.
      *
      * @param initialValue the initial enum value
      * @param enumClass    the {@link Class} object of the enum type
-     * @return a new {@code ExtendedEnumProperty} with all enum values as valid values
+     * @return a new {@code InputEnumProperty} with all enum values as valid values
      * @throws IllegalArgumentException if the initial value is not a valid enum constant
      */
-    public static <E extends Enum<E>> ExtendedEnumProperty<E> of(E initialValue, Class<E> enumClass) {
+    public static <E extends Enum<E>> InputEnumProperty<E> of(E initialValue, Class<E> enumClass) {
         List<E> validValues = List.of(enumClass.getEnumConstants());
         return of(initialValue, validValues);
     }
