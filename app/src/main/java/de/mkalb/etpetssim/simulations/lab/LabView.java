@@ -89,9 +89,9 @@ public final class LabView implements SimulationView {
 
             colorToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
                 if (newToggle == colorButton) {
-                    viewModel.setColorMode(LabViewModel.ColorMode.COLOR);
+                    viewModel.colorModeProperty().setValue(LabViewModel.ColorMode.COLOR);
                 } else if (newToggle == bwButton) {
-                    viewModel.setColorMode(LabViewModel.ColorMode.BLACK_WHITE);
+                    viewModel.colorModeProperty().setValue(LabViewModel.ColorMode.BLACK_WHITE);
                 }
             });
 
@@ -106,9 +106,9 @@ public final class LabView implements SimulationView {
             shapeButton.setSelected(true);
             renderToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
                 if (newToggle == shapeButton) {
-                    viewModel.setRenderingMode(LabViewModel.RenderingMode.SHAPE);
+                    viewModel.renderingModeProperty().setValue(LabViewModel.RenderingMode.SHAPE);
                 } else if (newToggle == circleButton) {
-                    viewModel.setRenderingMode(LabViewModel.RenderingMode.CIRCLE);
+                    viewModel.renderingModeProperty().setValue(LabViewModel.RenderingMode.CIRCLE);
                 }
             });
             box.getChildren().addAll(new Label("Rendering Mode:"), shapeButton, circleButton);
@@ -122,9 +122,9 @@ public final class LabView implements SimulationView {
             strokeButtonCentered.setSelected(true);
             strokeToogle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
                 if (newToggle == strokeButtonNone) {
-                    viewModel.setStrokeMode(LabViewModel.StrokeMode.NONE);
+                    viewModel.strokeModeProperty().setValue(LabViewModel.StrokeMode.NONE);
                 } else if (newToggle == strokeButtonCentered) {
-                    viewModel.setStrokeMode(LabViewModel.StrokeMode.CENTERED);
+                    viewModel.strokeModeProperty().setValue(LabViewModel.StrokeMode.CENTERED);
                 }
             });
             box.getChildren().addAll(new Label("Stroke:"), strokeButtonNone, strokeButtonCentered);
@@ -342,9 +342,10 @@ public final class LabView implements SimulationView {
     private void drawBaseCanvas() {
         resetCanvasAndPainter();
 
-        boolean colorModeBW = viewModel.getColorMode() == LabViewModel.ColorMode.BLACK_WHITE;
-        boolean renderingModeCircle = viewModel.getRenderingMode() == LabViewModel.RenderingMode.CIRCLE;
-        boolean strokeModeNone = viewModel.getStrokeMode() == LabViewModel.StrokeMode.NONE;
+        boolean colorModeBW = viewModel.colorModeProperty().isValue(LabViewModel.ColorMode.BLACK_WHITE);
+        boolean renderingModeCircle =
+                viewModel.renderingModeProperty().isValue(LabViewModel.RenderingMode.CIRCLE);
+        boolean strokeModeNone = viewModel.strokeModeProperty().isValue(LabViewModel.StrokeMode.NONE);
         double strokeLineWidth = 0.5d;
         Color textColor = colorModeBW ? Color.BLACK : TEXT_COLOR;
         Color strokeColor = strokeModeNone ? null : Color.BLACK;

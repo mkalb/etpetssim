@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.ui.ExtendedEnumProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
@@ -13,9 +14,9 @@ public final class LabViewModel {
     private final LabSimulationManager manager;
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
-    private final ObjectProperty<RenderingMode> renderingMode = new SimpleObjectProperty<>(RenderingMode.SHAPE);
-    private final ObjectProperty<ColorMode> colorMode = new SimpleObjectProperty<>(ColorMode.COLOR);
-    private final ObjectProperty<StrokeMode> strokeMode = new SimpleObjectProperty<>(StrokeMode.CENTERED);
+    private final ExtendedEnumProperty<RenderingMode> renderingMode = ExtendedEnumProperty.of(RenderingMode.SHAPE, RenderingMode.class);
+    private final ExtendedEnumProperty<ColorMode> colorMode = ExtendedEnumProperty.of(ColorMode.COLOR, ColorMode.class);
+    private final ExtendedEnumProperty<StrokeMode> strokeMode = ExtendedEnumProperty.of(StrokeMode.CENTERED, StrokeMode.class);
 
     public LabViewModel(LabConfig config) {
         manager = new LabSimulationManager(config);
@@ -38,40 +39,16 @@ public final class LabViewModel {
         lastClickedCoordinate.set(value);
     }
 
-    public ObjectProperty<RenderingMode> renderingModeProperty() {
+    public ExtendedEnumProperty<RenderingMode> renderingModeProperty() {
         return renderingMode;
     }
 
-    public RenderingMode getRenderingMode() {
-        return renderingMode.get();
-    }
-
-    public void setRenderingMode(RenderingMode value) {
-        renderingMode.set(value);
-    }
-
-    public ObjectProperty<ColorMode> colorModeProperty() {
+    public ExtendedEnumProperty<ColorMode> colorModeProperty() {
         return colorMode;
     }
 
-    public ColorMode getColorMode() {
-        return colorMode.get();
-    }
-
-    public void setColorMode(ColorMode value) {
-        colorMode.set(value);
-    }
-
-    public ObjectProperty<StrokeMode> strokeModeProperty() {
+    public ExtendedEnumProperty<StrokeMode> strokeModeProperty() {
         return strokeMode;
-    }
-
-    public StrokeMode getStrokeMode() {
-        return strokeMode.get();
-    }
-
-    public void setStrokeMode(StrokeMode value) {
-        strokeMode.set(value);
     }
 
     public GridStructure getStructure() {
