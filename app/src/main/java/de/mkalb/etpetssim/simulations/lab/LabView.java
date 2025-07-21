@@ -125,6 +125,14 @@ public final class LabView implements SimulationView {
             });
             box.getChildren().addAll(new Label("Stroke:"), strokeCheckBox);
         }
+        {
+            ComboBox<CellShape> shapeComboBox = new ComboBox<>();
+            shapeComboBox.getItems().addAll(viewModel.shapeModeProperty().getValidValues());
+            shapeComboBox.setValue(viewModel.shapeModeProperty().getValue());
+            shapeComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> viewModel.shapeModeProperty().setValue(newVal));
+            shapeComboBox.getStyleClass().add(FXStyleClasses.CONFIG_COMBOBOX);
+            box.getChildren().addAll(new Label("Cell Shape:"), shapeComboBox);
+        }
 
         TitledPane layoutPane = new TitledPane("Layout", box);
         layoutPane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
@@ -158,7 +166,10 @@ public final class LabView implements SimulationView {
 
     private Region createControlRegion() {
         Button drawButton = new Button("draw");
-        drawButton.setOnAction(_ -> drawBaseCanvas());
+        drawButton.setOnAction(_ -> {
+            viewModel.onDrawButtonClicked();
+            drawBaseCanvas();
+        });
         drawButton.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
 
         Button drawButtonModel = new Button("draw model");

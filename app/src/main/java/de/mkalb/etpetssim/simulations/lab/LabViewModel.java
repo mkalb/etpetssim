@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
@@ -9,22 +10,23 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
 
+import java.util.*;
+
 public final class LabViewModel {
 
-    private final LabSimulationManager manager;
-
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
+
     private final InputEnumProperty<RenderingMode> renderingMode = InputEnumProperty.of(RenderingMode.SHAPE, RenderingMode.class);
     private final InputEnumProperty<ColorMode> colorMode = InputEnumProperty.of(ColorMode.COLOR, ColorMode.class);
     private final InputEnumProperty<StrokeMode> strokeMode = InputEnumProperty.of(StrokeMode.CENTERED, StrokeMode.class);
+    private final InputEnumProperty<CellShape> shapeMode;
+
+    private LabConfig config;
+    private @Nullable LabSimulationManager simulationManager;
 
     public LabViewModel(LabConfig config) {
-        manager = new LabSimulationManager(config);
-
-        // Log information
-        AppLogger.info("Structure:       " + manager.currentModel().structure().toDisplayString());
-        AppLogger.info("Cell count:      " + manager.currentModel().structure().cellCount());
-        AppLogger.info("NonDefaultCells: " + manager.currentModel().nonDefaultCells().count());
+        this.config = config;
+        shapeMode = InputEnumProperty.of(config.shape(), CellShape.class);
     }
 
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
@@ -51,16 +53,37 @@ public final class LabViewModel {
         return strokeMode;
     }
 
+    public InputEnumProperty<CellShape> shapeModeProperty() {
+        return shapeMode;
+    }
+
+    public CellShape getCellShape() {
+        return shapeMode.getValue();
+    }
+
     public GridStructure getStructure() {
-        return manager.structure();
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        return simulationManager.structure();
     }
 
     public double getCellEdgeLength() {
-        return manager.config().cellEdgeLength();
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        return simulationManager.config().cellEdgeLength();
     }
 
     public ReadableGridModel<LabEntity> getModel() {
-        return manager.currentModel();
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        return simulationManager.currentModel();
+    }
+
+    public void onDrawButtonClicked() {
+        config = new LabConfig(getCellShape(), config.cellEdgeLength(), config.gridWidth(), config.gridHeight());
+        simulationManager = new LabSimulationManager(config);
+
+        // Log information
+        AppLogger.info("Structure:       " + simulationManager.currentModel().structure().toDisplayString());
+        AppLogger.info("Cell count:      " + simulationManager.currentModel().structure().cellCount());
+        AppLogger.info("NonDefaultCells: " + simulationManager.currentModel().nonDefaultCells().count());
     }
 
     public enum RenderingMode {
