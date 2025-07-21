@@ -114,20 +114,16 @@ public final class LabView implements SimulationView {
             box.getChildren().addAll(new Label("Rendering Mode:"), shapeButton, circleButton);
         }
         {
-            RadioButton strokeButtonNone = new RadioButton("None");
-            RadioButton strokeButtonCentered = new RadioButton("Centered");
-            ToggleGroup strokeToogle = new ToggleGroup();
-            strokeButtonNone.setToggleGroup(strokeToogle);
-            strokeButtonCentered.setToggleGroup(strokeToogle);
-            strokeButtonCentered.setSelected(true);
-            strokeToogle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-                if (newToggle == strokeButtonNone) {
-                    viewModel.strokeModeProperty().setValue(LabViewModel.StrokeMode.NONE);
-                } else if (newToggle == strokeButtonCentered) {
+            CheckBox strokeCheckBox = new CheckBox("Stroke");
+            strokeCheckBox.setSelected(viewModel.strokeModeProperty().isValue(LabViewModel.StrokeMode.CENTERED));
+            strokeCheckBox.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+                if (isSelected) {
                     viewModel.strokeModeProperty().setValue(LabViewModel.StrokeMode.CENTERED);
+                } else {
+                    viewModel.strokeModeProperty().setValue(LabViewModel.StrokeMode.NONE);
                 }
             });
-            box.getChildren().addAll(new Label("Stroke:"), strokeButtonNone, strokeButtonCentered);
+            box.getChildren().addAll(new Label("Stroke:"), strokeCheckBox);
         }
 
         TitledPane layoutPane = new TitledPane("Layout", box);
