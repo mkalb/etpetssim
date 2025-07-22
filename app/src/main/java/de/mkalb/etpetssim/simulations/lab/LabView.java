@@ -291,7 +291,7 @@ public final class LabView implements SimulationView {
                     // overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
                     // overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
                     if ((font != null) && !coordinate.equals(viewModel.getLastClickedCoordinate())) {
-                        GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getModel(), entityDescriptorRegistry,
+                        GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentModel(), entityDescriptorRegistry,
                                 descriptor -> overlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, font));
                     }
                 }
@@ -441,7 +441,7 @@ public final class LabView implements SimulationView {
         }
 
         Color fillColor = FXPaintBuilder.createColorWithAlpha(Color.RED, 0.5d);
-        viewModel.getModel().nonDefaultCells()
+        viewModel.getCurrentModel().nonDefaultCells()
                  .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, 0.0d));
     }
 

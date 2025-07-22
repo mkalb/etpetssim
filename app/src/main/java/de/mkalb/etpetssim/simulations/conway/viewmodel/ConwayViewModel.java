@@ -66,18 +66,18 @@ public final class ConwayViewModel {
         return configViewModel.cellEdgeLengthProperty().getValue();
     }
 
-    public GridStructure getGridStructure() {
-        Objects.requireNonNull(simulationManager, "Simulation executor must not be null before accessing the grid structure.");
+    public GridStructure getStructure() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentModel().structure();
     }
 
     public ReadableGridModel<ConwayEntity> getCurrentModel() {
-        Objects.requireNonNull(simulationManager, "Simulation executor must not be null before accessing the current model.");
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentModel();
     }
 
     public long getCurrentStep() {
-        Objects.requireNonNull(simulationManager, "Simulation manager must not be null before accessing the current step.");
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentStep();
     }
 

@@ -71,7 +71,7 @@ public final class LabViewModel {
         return simulationManager.config().cellEdgeLength();
     }
 
-    public ReadableGridModel<LabEntity> getModel() {
+    public ReadableGridModel<LabEntity> getCurrentModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentModel();
     }

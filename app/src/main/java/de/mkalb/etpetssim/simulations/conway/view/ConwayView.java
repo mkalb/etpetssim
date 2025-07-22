@@ -80,7 +80,7 @@ public final class ConwayView implements SimulationView {
         viewModel.setSimulationInitializedListener(() -> {
             double cellEdgeLength = viewModel.getCellEdgeLength();
             ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-            GridStructure structure = viewModel.getGridStructure();
+            GridStructure structure = viewModel.getStructure();
             long currentStep = viewModel.getCurrentStep();
 
             AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
