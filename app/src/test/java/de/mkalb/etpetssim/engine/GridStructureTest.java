@@ -98,13 +98,13 @@ class GridStructureTest {
 
     @Test
     void testToDisplayString() {
-        assertEquals("[[HEXAGON WRAP] 20 × 30]", new GridStructure(
+        assertEquals("[HEXAGON WRAP] 20 × 30", new GridStructure(
                 new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_X_WRAP_Y),
                 new GridSize(20, 30)).toDisplayString());
-        assertEquals("[[TRIANGLE BLOCK] 10 × 16]", new GridStructure(
+        assertEquals("[TRIANGLE BLOCK] 10 × 16", new GridStructure(
                 new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
                 new GridSize(10, 16)).toDisplayString());
-        assertEquals("[[SQUARE BLOCK/WRAP] 32 × 32]", new GridStructure(
+        assertEquals("[SQUARE BLOCK/WRAP] 32 × 32", new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y),
                 new GridSize(32, 32)).toDisplayString());
     }

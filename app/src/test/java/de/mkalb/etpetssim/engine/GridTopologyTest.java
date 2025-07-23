@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.engine;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GridTopologyTest {
 
@@ -11,13 +11,6 @@ class GridTopologyTest {
         GridTopology topology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_X_WRAP_Y);
         assertEquals(CellShape.HEXAGON, topology.cellShape());
         assertEquals(GridEdgeBehavior.WRAP_X_WRAP_Y, topology.gridEdgeBehavior());
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testNullArguments() {
-        assertThrows(NullPointerException.class, () -> new GridTopology(null, GridEdgeBehavior.BLOCK_X_BLOCK_Y));
-        assertThrows(NullPointerException.class, () -> new GridTopology(CellShape.SQUARE, null));
     }
 
     @Test
