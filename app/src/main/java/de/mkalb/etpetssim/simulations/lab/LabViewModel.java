@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.lab;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
@@ -16,9 +17,9 @@ public final class LabViewModel {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
 
-    private final InputEnumProperty<RenderingMode> renderingMode = InputEnumProperty.of(RenderingMode.SHAPE, RenderingMode.class);
-    private final InputEnumProperty<ColorMode> colorMode = InputEnumProperty.of(ColorMode.COLOR, ColorMode.class);
-    private final InputEnumProperty<StrokeMode> strokeMode = InputEnumProperty.of(StrokeMode.CENTERED, StrokeMode.class);
+    private final InputEnumProperty<RenderingMode> renderingMode = InputEnumProperty.of(RenderingMode.SHAPE, RenderingMode.class, Enum::toString);
+    private final InputEnumProperty<ColorMode> colorMode = InputEnumProperty.of(ColorMode.COLOR, ColorMode.class, Enum::toString);
+    private final InputEnumProperty<StrokeMode> strokeMode = InputEnumProperty.of(StrokeMode.CENTERED, StrokeMode.class, Enum::toString);
     private final InputEnumProperty<CellShape> shapeMode;
 
     private LabConfig config;
@@ -26,7 +27,7 @@ public final class LabViewModel {
 
     public LabViewModel(LabConfig config) {
         this.config = config;
-        shapeMode = InputEnumProperty.of(config.shape(), CellShape.class);
+        shapeMode = InputEnumProperty.of(config.shape(), CellShape.class, e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     }
 
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
