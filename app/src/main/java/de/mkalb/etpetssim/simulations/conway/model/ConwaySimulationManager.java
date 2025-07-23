@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.*;
 
 public final class ConwaySimulationManager {
@@ -15,7 +17,7 @@ public final class ConwaySimulationManager {
         this.config = config;
 
         structure = new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y),
+                new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
                 new GridSize(config.gridWidth(), config.gridHeight())
         );
         GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
