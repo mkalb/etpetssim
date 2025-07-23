@@ -2,6 +2,11 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.*;
+import org.jspecify.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * A utility class for creating JavaFX UI components with specific styles.
@@ -28,6 +33,82 @@ public final class FXComponentBuilder {
         Label label = new Label(text);
         label.getStyleClass().add(cssClass);
         return label;
+    }
+
+    /**
+     * Creates a labeled combo box for selecting enum values, with display names, formatted label, tooltip, and custom style class.
+     * <p>
+     * The combo box displays only valid enum values as provided by the {@link InputEnumProperty}.
+     * Display names for each enum value are supplied via the {@code displayNameProvider} function, allowing for localization or custom labels.
+     * The combo box and the property are kept in sync via listeners. The label displays the current value using the provided format string.
+     * Both the label and the combo box share the same tooltip for improved accessibility.
+     * <p>
+     * This method is suitable for enum-based selections with custom display names.
+     *
+     * @param inputEnumProperty the {@link InputEnumProperty} defining valid values and value binding
+     * @param displayNameProvider a function mapping enum values to their display names
+     * @param labelFormatString the format string for the label (e.g., "%s")
+     * @param tooltip the tooltip text for both the label and the combo box
+     * @param styleClass the CSS style class to apply to the combo box
+     * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the combo box
+     */
+    public static <E extends Enum<E>> LabeledControl createLabeledEnumComboBox(InputEnumProperty<E> inputEnumProperty,
+                                                                               Function<E, String> displayNameProvider,
+                                                                               String labelFormatString,
+                                                                               String tooltip,
+                                                                               String styleClass) {
+        Map<E, String> displayNames = inputEnumProperty
+                .getValidValues()
+                .stream()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        displayNameProvider,
+                        (v1, _) -> v1 // merge function, just in case the list contains duplicates
+                ));
+
+        ComboBox<E> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(inputEnumProperty.getValidValues());
+        comboBox.setValue(inputEnumProperty.getValue());
+        comboBox.setCellFactory(_ -> createDisplayNameListCell(displayNames));
+        comboBox.setButtonCell(createDisplayNameListCell(displayNames));
+        comboBox.getStyleClass().add(styleClass);
+        comboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> inputEnumProperty.setValue(newVal));
+
+        Label label = new Label();
+        label.textProperty().bind(inputEnumProperty.asStringBinding(labelFormatString));
+        label.setLabelFor(comboBox);
+
+        Tooltip tooltipValue = new Tooltip(tooltip);
+        label.setTooltip(tooltipValue);
+        comboBox.setTooltip(tooltipValue);
+
+        return new LabeledControl(label, comboBox);
+    }
+
+    /**
+     * Creates a {@link ListCell} for displaying enum values using their display names.
+     * <p>
+     * The cell uses the provided map to look up display names for each enum value.
+     * If a display name is not found, the enum's {@code toString()} value is used as a fallback.
+     *
+     * @param displayNames a map from enum values to their display names
+     * @param <E> the enum type
+     * @return a {@link ListCell} that displays the display name for each enum value
+     */
+    private static <E extends Enum<E>> ListCell<E> createDisplayNameListCell(Map<E, String> displayNames) {
+        return new ListCell<>() {
+            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
+            @Override
+            protected void updateItem(@Nullable E item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || (item == null)) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(displayNames.getOrDefault(item, item.toString()));
+                }
+            }
+        };
     }
 
     /**
