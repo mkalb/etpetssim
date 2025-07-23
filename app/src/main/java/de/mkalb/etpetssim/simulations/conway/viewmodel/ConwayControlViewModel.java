@@ -6,7 +6,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 
 public final class ConwayControlViewModel {
 
-    private static final int STEP_DURATION_INITIAL = 1_000;
+    private static final int STEP_DURATION_INITIAL = 700;
     private static final int STEP_DURATION_MIN = 100;
     private static final int STEP_DURATION_MAX = 2_000;
 
