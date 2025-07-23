@@ -68,7 +68,7 @@ public final class ConwayViewModel {
 
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentModel().structure();
+        return simulationManager.structure();
     }
 
     public ReadableGridModel<ConwayEntity> getCurrentModel() {
