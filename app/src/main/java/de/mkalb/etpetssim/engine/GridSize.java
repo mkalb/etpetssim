@@ -4,13 +4,13 @@ package de.mkalb.etpetssim.engine;
  * Represents the logical size of a two-dimensional simulation grid.
  * <p>
  * The grid size is defined by its {@code width} (number of columns) and {@code height} (number of rows).
- * Both values must be even numbers within the valid range from {@value #MIN_SIZE} to {@value #MAX_SIZE}.
+ * Both values must be within the valid range from {@value #MIN_SIZE} to {@value #MAX_SIZE}.
  * <p>
  * This record provides utility methods for size validation, area and perimeter calculation,
  * aspect ratio, orientation checks, and standard grid sizes.
  *
- * @param width  the number of columns (horizontal cells), must be even and within valid range
- * @param height the number of rows (vertical cells), must be even and within valid range
+ * @param width  the number of columns (horizontal cells), must be within valid range
+ * @param height the number of rows (vertical cells), must be within valid range
  *
  * @see #isInvalidSize(int)
  * @see #square(int)
@@ -49,30 +49,30 @@ public record GridSize(int width, int height) {
     /**
      * Constructs a new {@code GridSize} with the specified width and height.
      * <p>
-     * Both values must be even numbers within the valid range defined by {@link #MIN_SIZE} and {@link #MAX_SIZE}.
+     * Both values must be within the valid range defined by {@link #MIN_SIZE} and {@link #MAX_SIZE}.
      *
      * @param width  the number of columns (horizontal cells)
      * @param height the number of rows (vertical cells)
-     * @throws IllegalArgumentException if width or height is not even or out of bounds
+     * @throws IllegalArgumentException if width or height is out of bounds
      */
     public GridSize {
         if (isInvalidSize(width)) {
-            throw new IllegalArgumentException(String.format("Width must be an even number between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
+            throw new IllegalArgumentException(String.format("Width must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
         }
         if (isInvalidSize(height)) {
-            throw new IllegalArgumentException(String.format("Height must be an even number between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
+            throw new IllegalArgumentException(String.format("Height must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
         }
     }
 
     /**
      * Checks whether a given size value is invalid.
-     * A valid size must be even and within the allowed range.
+     * A valid size must be within the allowed range.
      *
      * @param size the size value to validate
      * @return {@code true} if the size is invalid, {@code false} otherwise
      */
     public static boolean isInvalidSize(int size) {
-        return (size < MIN_SIZE) || (size > MAX_SIZE) || ((size % 2) != 0);
+        return (size < MIN_SIZE) || (size > MAX_SIZE);
     }
 
     /**
@@ -80,7 +80,7 @@ public record GridSize(int width, int height) {
      *
      * @param size the dimension of both width and height
      * @return a new {@code GridSize} representing a square grid
-     * @throws IllegalArgumentException if the size is not even or out of bounds
+     * @throws IllegalArgumentException if the size is out of bounds
      */
     public static GridSize square(int size) {
         return new GridSize(size, size);
