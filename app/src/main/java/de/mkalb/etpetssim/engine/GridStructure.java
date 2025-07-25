@@ -50,6 +50,22 @@ public record GridStructure(GridTopology topology, GridSize size) {
     }
 
     /**
+     * Checks whether the specified {@link GridSize} is valid for the given {@link GridTopology}.
+     * <p>
+     * The grid width and height must be multiples of the required values as defined by the topology.
+     * This method returns {@code true} if both dimensions are valid, otherwise {@code false}.
+     *
+     * @param topology the grid topology (cell shape and edge behavior)
+     * @param size the grid size (width and height in cells)
+     * @return {@code true} if the size is valid for the topology, {@code false} otherwise
+     */
+    public static boolean isValid(GridTopology topology, GridSize size) {
+        int widthMultiple = topology.requiredWidthMultiple();
+        int heightMultiple = topology.requiredHeightMultiple();
+        return ((size.width() % widthMultiple) == 0) && ((size.height() % heightMultiple) == 0);
+    }
+
+    /**
      * Returns the shape of each cell in the grid (TRIANGLE, SQUARE, HEXAGON).
      *
      * @return the shape of each cell in the grid

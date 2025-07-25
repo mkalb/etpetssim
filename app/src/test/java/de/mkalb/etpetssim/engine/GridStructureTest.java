@@ -147,6 +147,31 @@ class GridStructureTest {
     }
 
     @Test
+    void testIsValidStaticMethod() {
+        // BLOCK: any size is valid
+        assertTrue(GridStructure.isValid(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_X_BLOCK_Y), new GridSize(9, 11)));
+        assertTrue(GridStructure.isValid(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_BLOCK_Y), new GridSize(9, 11)));
+        assertTrue(GridStructure.isValid(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_X_BLOCK_Y), new GridSize(9, 11)));
+
+        // SQUARE: any size is valid (WRAP)
+        GridTopology squareTopology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_X_WRAP_Y);
+        assertTrue(GridStructure.isValid(squareTopology, new GridSize(8, 8)));
+        assertTrue(GridStructure.isValid(squareTopology, new GridSize(9, 11)));
+
+        // TRIANGLE: height must be multiple of 4 (WRAP)
+        GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_WRAP_Y);
+        assertTrue(GridStructure.isValid(triTopology, new GridSize(8, 8)));
+        assertTrue(GridStructure.isValid(triTopology, new GridSize(9, 12)));
+        assertFalse(GridStructure.isValid(triTopology, new GridSize(8, 10))); // 10 not multiple of 4
+
+        // HEXAGON: width must be multiple of 2 (WRAP)
+        GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_X_WRAP_Y);
+        assertTrue(GridStructure.isValid(hexTopology, new GridSize(8, 8)));
+        assertTrue(GridStructure.isValid(hexTopology, new GridSize(10, 9)));
+        assertFalse(GridStructure.isValid(hexTopology, new GridSize(9, 8))); // 9 not multiple of 2
+    }
+
+    @Test
     void testInvalidWidthMultipleThrowsException() {
         GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_X_WRAP_Y);
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
