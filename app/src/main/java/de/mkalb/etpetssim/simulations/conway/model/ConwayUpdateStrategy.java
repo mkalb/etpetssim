@@ -1,10 +1,11 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
-import de.mkalb.etpetssim.engine.neighborhood.GridArrangement;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 
 import java.util.function.*;
@@ -22,13 +23,13 @@ public final class ConwayUpdateStrategy implements BiConsumer<ReadableGridModel<
     public void accept(ReadableGridModel<ConwayEntity> currentModel, GridModel<ConwayEntity> nextModel) {
         structure.coordinatesStream().forEach(coordinate -> {
             boolean isAlive = currentModel.getEntity(coordinate).isAlive();
-            long aliveNeighbors = GridArrangement.neighborEdgeResults(coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)
-                                                 .filter(result ->
-                                                         (result.action() == EdgeBehaviorAction.VALID)
-                                                                 || (result.action() == EdgeBehaviorAction.WRAPPED))
-                                                 .filter(result -> structure.isCoordinateValid(result.mapped()))
-                                                 .filter(n -> currentModel.getEntity(n.mapped()).isAlive())
-                                                 .count();
+            long aliveNeighbors = CellNeighborhoods.neighborEdgeResults(coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)
+                                                   .filter(result ->
+                                                           (result.action() == EdgeBehaviorAction.VALID)
+                                                                   || (result.action() == EdgeBehaviorAction.WRAPPED))
+                                                   .filter(result -> structure.isCoordinateValid(result.mapped()))
+                                                   .filter(n -> currentModel.getEntity(n.mapped()).isAlive())
+                                                   .count();
 
             // Only set ALIVE cells; DEAD is already the default
             if (structure.cellShape() == CellShape.HEXAGON) {

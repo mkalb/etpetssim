@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
-import de.mkalb.etpetssim.engine.neighborhood.GridArrangement;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.ui.*;
@@ -328,33 +328,33 @@ public final class LabView implements SimulationView {
                     viewModel.setLastClickedCoordinate(coordinate);
                     overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
-                    GridArrangement.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_AND_VERTICES,
-                                           viewModel.getStructure())
-                                   .forEach((neighborCoordinate, neighborCells) -> {
-                                       if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
-                                           overlayPainter.drawCell(neighborCoordinate, Color.YELLOW, null, 0.0d);
-                                           if (font != null) {
-                                               StringBuilder b = new StringBuilder(4);
-                                               for (CellNeighborWithEdgeBehavior cellNeighbor : neighborCells) {
-                                                   if (!b.isEmpty()) {
-                                                       b.append(" : ");
-                                                   }
-                                                   b.append(cellNeighbor.direction().arrow());
-                                               }
-                                               overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, font);
-                                           }
-                                       }
-                                   });
+                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_AND_VERTICES,
+                                             viewModel.getStructure())
+                                     .forEach((neighborCoordinate, neighborCells) -> {
+                                         if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
+                                             overlayPainter.drawCell(neighborCoordinate, Color.YELLOW, null, 0.0d);
+                                             if (font != null) {
+                                                 StringBuilder b = new StringBuilder(4);
+                                                 for (CellNeighborWithEdgeBehavior cellNeighbor : neighborCells) {
+                                                     if (!b.isEmpty()) {
+                                                         b.append(" : ");
+                                                     }
+                                                     b.append(cellNeighbor.direction().arrow());
+                                                 }
+                                                 overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, font);
+                                             }
+                                         }
+                                     });
 
-                    GridArrangement.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_ONLY,
-                                           viewModel.getStructure())
-                                   .forEach((neighborCoordinate, _) -> {
-                                       if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
-                                           overlayPainter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 2.5d);
-                                       }
-                                   });
+                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_ONLY,
+                                             viewModel.getStructure())
+                                     .forEach((neighborCoordinate, _) -> {
+                                         if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
+                                             overlayPainter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 2.5d);
+                                         }
+                                     });
 /*
-                    GridArrangement.validNeighborCoordinatesStream(coordinate,
+                    CellNeighborhoods.validNeighborCoordinatesStream(coordinate,
                                            NeighborhoodMode.EDGES_AND_VERTICES, viewModel.getStructure(), 3)
                                    .forEach(neighborCoordinate -> {
                                        overlayPainter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.5d);

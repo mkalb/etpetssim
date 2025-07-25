@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * Provides logic for determining the arrangement and neighbor relationships of cells
+ * Provides static utility methods for determining the arrangement and neighbor relationships of cells
  * in a two-dimensional grid, based on cell shape, neighborhood mode, and cell position.
  * <p>
  * This class centralizes the calculation of neighbor directions for different grid types
@@ -19,7 +19,7 @@ import java.util.stream.*;
  * @see de.mkalb.etpetssim.engine.GridCoordinate
  */
 @SuppressWarnings("MagicNumber")
-public final class GridArrangement {
+public final class CellNeighborhoods {
 
     /**
      * The maximum allowed neighborhood radius for neighbor calculations in the grid.
@@ -38,7 +38,7 @@ public final class GridArrangement {
     /**
      * Private constructor to prevent instantiation.
      */
-    private GridArrangement() {
+    private CellNeighborhoods() {
     }
 
     /**
