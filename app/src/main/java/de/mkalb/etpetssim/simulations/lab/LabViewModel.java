@@ -16,17 +16,17 @@ import java.util.*;
 public final class LabViewModel {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
-    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.BLOCK_X_BLOCK_Y;
+    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_X_WRAP_Y;
     private static final int GRID_WIDTH_INITIAL = 8;
     private static final int GRID_WIDTH_MAX = 64;
     private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
+    private static final int GRID_WIDTH_STEP = 1;
     private static final int GRID_HEIGHT_INITIAL = 8;
     private static final int GRID_HEIGHT_MAX = 64;
     private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
-    private static final int CELL_EDGE_LENGTH_INITIAL = 50;
-    private static final int CELL_EDGE_LENGTH_MAX = 100;
+    private static final int GRID_HEIGHT_STEP = 1;
+    private static final int CELL_EDGE_LENGTH_INITIAL = 80;
+    private static final int CELL_EDGE_LENGTH_MAX = 200;
     private static final int CELL_EDGE_LENGTH_MIN = 1;
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
@@ -41,7 +41,7 @@ public final class LabViewModel {
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputEnumProperty<GridEdgeBehavior> gridEdgeBehavior = InputEnumProperty.of(
             GRID_EDGE_BEHAVIOR_INITIAL,
-            List.of(GridEdgeBehavior.BLOCK_X_BLOCK_Y, GridEdgeBehavior.WRAP_X_WRAP_Y),
+            GridEdgeBehavior.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputIntegerProperty gridWidth = InputIntegerProperty.of(
             GRID_WIDTH_INITIAL,
@@ -140,7 +140,20 @@ public final class LabViewModel {
         return simulationManager.currentModel();
     }
 
+    public boolean hasSimulationManager() {
+        return simulationManager != null;
+    }
+
     public void onDrawButtonClicked() {
+        // Reset the simulation manager if it exists
+        simulationManager = null;
+
+        LabConfig config = getConfig();
+        if (!config.isValid()) {
+            AppLogger.warn("Invalid configuration: " + config);
+            return;
+        }
+
         simulationManager = new LabSimulationManager(getConfig());
 
         // Log information

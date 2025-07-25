@@ -433,6 +433,12 @@ public final class LabView implements SimulationView {
     }
 
     private void drawBaseCanvas() {
+        if (!viewModel.hasSimulationManager()) {
+            AppLogger.warn("Simulation manager is not initialized, cannot draw base canvas.");
+            disableCanvas();
+            return;
+        }
+
         resetCanvasAndPainter();
 
         boolean colorModeBW = viewModel.colorModeProperty().isValue(LabViewModel.ColorMode.BLACK_WHITE);
