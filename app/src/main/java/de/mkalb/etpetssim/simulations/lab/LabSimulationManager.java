@@ -7,22 +7,6 @@ import java.util.*;
 
 public final class LabSimulationManager {
 
-    public static final LabConfig CONFIG_TRIANGLE = new LabConfig(
-            CellShape.TRIANGLE,
-            90.0d,
-            24,
-            24);
-    public static final LabConfig CONFIG_SQUARE = new LabConfig(
-            CellShape.SQUARE,
-            70.0d,
-            24,
-            16);
-    public static final LabConfig CONFIG_HEXAGON = new LabConfig(
-            CellShape.HEXAGON,
-            40.0d,
-            24,
-            16);
-
     private final LabConfig config;
 
     private final GridStructure structure;
@@ -32,7 +16,7 @@ public final class LabSimulationManager {
         this.config = config;
 
         structure = new GridStructure(
-                new GridTopology(config.shape(), GridEdgeBehavior.BLOCK_X_BLOCK_Y),
+                new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
                 new GridSize(config.gridWidth(), config.gridHeight())
         );
 

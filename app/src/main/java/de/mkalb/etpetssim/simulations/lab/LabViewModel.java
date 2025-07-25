@@ -2,11 +2,11 @@ package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
@@ -15,19 +15,70 @@ import java.util.*;
 
 public final class LabViewModel {
 
+    private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
+    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.BLOCK_X_BLOCK_Y;
+    private static final int GRID_WIDTH_INITIAL = 8;
+    private static final int GRID_WIDTH_MAX = 64;
+    private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
+    private static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
+    private static final int GRID_HEIGHT_INITIAL = 8;
+    private static final int GRID_HEIGHT_MAX = 64;
+    private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
+    private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
+    private static final int CELL_EDGE_LENGTH_INITIAL = 50;
+    private static final int CELL_EDGE_LENGTH_MAX = 100;
+    private static final int CELL_EDGE_LENGTH_MIN = 1;
+
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
 
     private final InputEnumProperty<RenderingMode> renderingMode = InputEnumProperty.of(RenderingMode.SHAPE, RenderingMode.class, Enum::toString);
     private final InputEnumProperty<ColorMode> colorMode = InputEnumProperty.of(ColorMode.COLOR, ColorMode.class, Enum::toString);
     private final InputEnumProperty<StrokeMode> strokeMode = InputEnumProperty.of(StrokeMode.CENTERED, StrokeMode.class, Enum::toString);
-    private final InputEnumProperty<CellShape> shapeMode;
 
-    private LabConfig config;
+    private final InputEnumProperty<CellShape> cellShape = InputEnumProperty.of(
+            CELL_SHAPE_INITIAL,
+            CellShape.class,
+            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+    private final InputEnumProperty<GridEdgeBehavior> gridEdgeBehavior = InputEnumProperty.of(
+            GRID_EDGE_BEHAVIOR_INITIAL,
+            List.of(GridEdgeBehavior.BLOCK_X_BLOCK_Y, GridEdgeBehavior.WRAP_X_WRAP_Y),
+            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+    private final InputIntegerProperty gridWidth = InputIntegerProperty.of(
+            GRID_WIDTH_INITIAL,
+            GRID_WIDTH_MIN,
+            GRID_WIDTH_MAX,
+            GRID_WIDTH_STEP);
+    private final InputIntegerProperty gridHeight = InputIntegerProperty.of(
+            GRID_HEIGHT_INITIAL,
+            GRID_HEIGHT_MIN,
+            GRID_HEIGHT_MAX,
+            GRID_HEIGHT_STEP);
+    private final InputDoublePropertyIntRange cellEdgeLength = InputDoublePropertyIntRange.of(
+            CELL_EDGE_LENGTH_INITIAL,
+            CELL_EDGE_LENGTH_MIN,
+            CELL_EDGE_LENGTH_MAX);
+
     private @Nullable LabSimulationManager simulationManager;
 
-    public LabViewModel(LabConfig config) {
-        this.config = config;
-        shapeMode = InputEnumProperty.of(config.shape(), CellShape.class, e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+    public LabViewModel() {
+    }
+
+    public LabConfig getConfig() {
+        return new LabConfig(
+                cellShape.getValue(),
+                gridEdgeBehavior.getValue(),
+                gridWidth.getValue(),
+                gridHeight.getValue(),
+                cellEdgeLength.getValue()
+        );
+    }
+
+    public void setConfig(LabConfig config) {
+        cellShape.setValue(config.cellShape());
+        gridEdgeBehavior.setValue(config.gridEdgeBehavior());
+        cellEdgeLength.setValue(config.cellEdgeLength());
+        gridWidth.setValue(config.gridWidth());
+        gridHeight.setValue(config.gridHeight());
     }
 
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
@@ -54,12 +105,24 @@ public final class LabViewModel {
         return strokeMode;
     }
 
-    public InputEnumProperty<CellShape> shapeModeProperty() {
-        return shapeMode;
+    public InputEnumProperty<CellShape> cellShapeProperty() {
+        return cellShape;
     }
 
-    public CellShape getCellShape() {
-        return shapeMode.getValue();
+    public InputEnumProperty<GridEdgeBehavior> gridEdgeBehaviorProperty() {
+        return gridEdgeBehavior;
+    }
+
+    public InputIntegerProperty gridWidthProperty() {
+        return gridWidth;
+    }
+
+    public InputIntegerProperty gridHeightProperty() {
+        return gridHeight;
+    }
+
+    public InputDoublePropertyIntRange cellEdgeLengthProperty() {
+        return cellEdgeLength;
     }
 
     public GridStructure getStructure() {
@@ -78,8 +141,7 @@ public final class LabViewModel {
     }
 
     public void onDrawButtonClicked() {
-        config = new LabConfig(getCellShape(), config.cellEdgeLength(), config.gridWidth(), config.gridHeight());
-        simulationManager = new LabSimulationManager(config);
+        simulationManager = new LabSimulationManager(getConfig());
 
         // Log information
         AppLogger.info("Structure:       " + simulationManager.currentModel().structure().toDisplayString());

@@ -74,8 +74,80 @@ public final class LabView implements SimulationView {
         return borderPane;
     }
 
+    private TitledPane createConfigPane(String title, FXComponentBuilder.LabeledControl... content) {
+        VBox box = new VBox();
+        for (FXComponentBuilder.LabeledControl labeledControl : content) {
+            box.getChildren().addAll(labeledControl.label(), labeledControl.control());
+        }
+        box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
+
+        TitledPane pane = new TitledPane(title, box);
+        pane.setCollapsible(content.length > 0);
+        pane.setExpanded(content.length > 0);
+        pane.setDisable(content.length == 0);
+        pane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
+        return pane;
+    }
+
     private Region createConfigRegion() {
+        // --- Structure Group ---
+        var cellShapeControl = FXComponentBuilder.createLabeledEnumComboBox(
+                viewModel.cellShapeProperty(),
+                viewModel.cellShapeProperty().displayNameProvider(),
+                AppLocalization.getText(CellShape.labelResourceKey()),
+                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
+        var gridEdgeBehaviorControl = FXComponentBuilder.createLabeledEnumComboBox(
+                viewModel.gridEdgeBehaviorProperty(),
+                viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
+                AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
+                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
+        var gridWidthControl = FXComponentBuilder.createLabeledIntSpinner(
+                viewModel.gridWidthProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty().min(), viewModel.gridWidthProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
+
+        var gridHeightControl = FXComponentBuilder.createLabeledIntSpinner(
+                viewModel.gridHeightProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty().min(), viewModel.gridHeightProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
+
+        var cellEdgeLengthControl = FXComponentBuilder.createLabeledIntSlider(
+                viewModel.cellEdgeLengthProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.cellEdgeLengthProperty().min(), viewModel.cellEdgeLengthProperty().max()),
+                FXStyleClasses.CONFIG_SLIDER
+        );
+
+        TitledPane structurePane = createConfigPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
+                cellShapeControl,
+                gridEdgeBehaviorControl,
+                gridWidthControl,
+                gridHeightControl,
+                cellEdgeLengthControl
+        );
+
         // --- Layout Group ---
+        TitledPane layoutPane = createConfigLayoutTitledPane();
+
+        // --- Main Layout as Columns ---
+        HBox mainBox = new HBox(structurePane, layoutPane);
+        mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
+
+        return mainBox;
+    }
+
+    private TitledPane createConfigLayoutTitledPane() {
         VBox box = new VBox();
         box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
 
@@ -125,23 +197,10 @@ public final class LabView implements SimulationView {
             });
             box.getChildren().addAll(new Label("Stroke:"), strokeCheckBox);
         }
-        {
-            ComboBox<CellShape> shapeComboBox = new ComboBox<>();
-            shapeComboBox.getItems().addAll(viewModel.shapeModeProperty().getValidValues());
-            shapeComboBox.setValue(viewModel.shapeModeProperty().getValue());
-            shapeComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> viewModel.shapeModeProperty().setValue(newVal));
-            shapeComboBox.getStyleClass().add(FXStyleClasses.CONFIG_COMBOBOX);
-            box.getChildren().addAll(new Label("Cell Shape:"), shapeComboBox);
-        }
 
         TitledPane layoutPane = new TitledPane("Layout", box);
         layoutPane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
-
-        // --- Main Layout as Columns ---
-        HBox mainBox = new HBox(layoutPane);
-        mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
-
-        return mainBox;
+        return layoutPane;
     }
 
     private Region createSimulationRegion() {

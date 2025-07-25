@@ -1,10 +1,12 @@
 package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 
 public record LabConfig(
-        CellShape shape,
-        double cellEdgeLength,
+        CellShape cellShape,
+        GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
-        int gridHeight) {
+        int gridHeight,
+        double cellEdgeLength) {
 }
