@@ -16,7 +16,7 @@ import java.util.*;
 public final class LabViewModel {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
-    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_X_WRAP_Y;
+    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
     private static final int GRID_WIDTH_INITIAL = 8;
     private static final int GRID_WIDTH_MAX = 64;
     private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;

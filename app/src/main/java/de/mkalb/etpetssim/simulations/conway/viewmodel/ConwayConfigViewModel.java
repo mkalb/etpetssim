@@ -1,8 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.ui.*;
@@ -13,7 +12,7 @@ import java.util.*;
 public final class ConwayConfigViewModel {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
-    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.BLOCK_X_BLOCK_Y;
+    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.BLOCK_XY;
     private static final int GRID_WIDTH_INITIAL = 64;
     private static final int GRID_WIDTH_MAX = 512;
     private static final int GRID_WIDTH_MIN = 8;
@@ -37,7 +36,7 @@ public final class ConwayConfigViewModel {
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputEnumProperty<GridEdgeBehavior> gridEdgeBehavior = InputEnumProperty.of(
             GRID_EDGE_BEHAVIOR_INITIAL,
-            List.of(GridEdgeBehavior.BLOCK_X_BLOCK_Y, GridEdgeBehavior.WRAP_X_WRAP_Y),
+            List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputIntegerProperty gridWidth = InputIntegerProperty.of(
             GRID_WIDTH_INITIAL,
