@@ -15,4 +15,5 @@ module de.mkalb.etpetssim {
     exports de.mkalb.etpetssim.simulations;
     exports de.mkalb.etpetssim.ui;
     exports de.mkalb.etpetssim;
+    exports de.mkalb.etpetssim.engine.neighborhood;
 }

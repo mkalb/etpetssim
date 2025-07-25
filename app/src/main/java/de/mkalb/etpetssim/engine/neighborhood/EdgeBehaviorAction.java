@@ -1,8 +1,8 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.neighborhood;
 
 /**
  * Specifies the possible outcomes of an entity's interaction with a grid edge,
- * based on the configured {@link EdgeBehavior}.
+ * based on the configured {@link de.mkalb.etpetssim.engine.EdgeBehavior}.
  * <p>
  * Each constant represents a distinct action that can occur when an entity reaches
  * a grid boundary during simulation. These actions are used to determine whether
@@ -11,8 +11,8 @@ package de.mkalb.etpetssim.engine;
  * <p>
  * This enum is used throughout the grid framework to standardize edge behavior handling.
  *
- * @see EdgeBehavior
- * @see GridEdgeBehavior
+ * @see de.mkalb.etpetssim.engine.EdgeBehavior
+ * @see de.mkalb.etpetssim.engine.GridEdgeBehavior
  */
 public enum EdgeBehaviorAction {
 

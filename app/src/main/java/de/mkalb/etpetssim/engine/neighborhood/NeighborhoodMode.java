@@ -1,11 +1,11 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.neighborhood;
 
 /**
  * Defines the neighborhood mode for cell-based simulations.
  * Determines which neighboring cells are considered adjacent:
  * either only those sharing an edge, or those sharing an edge or a vertex.
  *
- * @see CellShape
+ * @see de.mkalb.etpetssim.engine.CellShape
  */
 public enum NeighborhoodMode {
 

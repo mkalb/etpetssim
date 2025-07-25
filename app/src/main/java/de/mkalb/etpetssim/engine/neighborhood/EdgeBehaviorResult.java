@@ -1,4 +1,6 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.neighborhood;
+
+import de.mkalb.etpetssim.engine.GridCoordinate;
 
 /**
  * Represents the result of applying an edge behavior to a grid coordinate.

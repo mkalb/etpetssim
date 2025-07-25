@@ -3,6 +3,9 @@ package de.mkalb.etpetssim.simulations.conway.model;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.neighborhood.GridArrangement;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 
 import java.util.function.*;
 

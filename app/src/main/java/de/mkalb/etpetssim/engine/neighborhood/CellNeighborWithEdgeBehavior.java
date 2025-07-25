@@ -1,4 +1,6 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.neighborhood;
+
+import de.mkalb.etpetssim.engine.GridCoordinate;
 
 /**
  * Represents the relationship between a cell and one of its neighbors in a two-dimensional grid,

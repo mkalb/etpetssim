@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.neighborhood;
 
 import java.util.*;
 import java.util.stream.*;

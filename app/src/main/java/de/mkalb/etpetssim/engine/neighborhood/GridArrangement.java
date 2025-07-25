@@ -1,4 +1,6 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.neighborhood;
+
+import de.mkalb.etpetssim.engine.*;
 
 import java.util.*;
 import java.util.stream.*;
@@ -10,11 +12,11 @@ import java.util.stream.*;
  * This class centralizes the calculation of neighbor directions for different grid types
  * (triangular, square, hexagonal) and supports both edge-only and edge-and-vertex neighborhood modes.
  *
- * @see CellShape
+ * @see de.mkalb.etpetssim.engine.CellShape
  * @see NeighborhoodMode
- * @see CellNeighbor
- * @see GridOffset
- * @see GridCoordinate
+ * @see de.mkalb.etpetssim.engine.neighborhood.CellNeighbor
+ * @see de.mkalb.etpetssim.engine.GridOffset
+ * @see de.mkalb.etpetssim.engine.GridCoordinate
  */
 @SuppressWarnings("MagicNumber")
 public final class GridArrangement {
@@ -135,10 +137,10 @@ public final class GridArrangement {
      * Returns {@code VALID} if the coordinate is within bounds. If out of bounds,
      * applies the configured edge behavior for each axis (X and Y) and prioritizes actions:
      * <ol>
-     *   <li>{@code BLOCKED} if either axis uses {@link EdgeBehavior#BLOCK}</li>
-     *   <li>{@code ABSORBED} if either axis uses {@link EdgeBehavior#ABSORB}</li>
-     *   <li>{@code REFLECTED} if either axis uses {@link EdgeBehavior#REFLECT}</li>
-     *   <li>{@code WRAPPED} if either axis uses {@link EdgeBehavior#WRAP}</li>
+     *   <li>{@code BLOCKED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#BLOCK}</li>
+     *   <li>{@code ABSORBED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#ABSORB}</li>
+     *   <li>{@code REFLECTED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#REFLECT}</li>
+     *   <li>{@code WRAPPED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#WRAP}</li>
      * </ol>
      *
      * @param coordinate the grid coordinate to check
@@ -371,7 +373,7 @@ public final class GridArrangement {
      * to each neighbor coordinate and grouping the results by the mapped (post-edge-behavior) coordinate.
      * <p>
      * For each theoretical neighbor (as determined by cell shape and neighborhood mode, ignoring boundaries),
-     * the grid's edge behavior is applied. The resulting {@link CellNeighborWithEdgeBehavior} records
+     * the grid's edge behavior is applied. The resulting {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records
      * contain both the original (theoretical) and mapped neighbor coordinates, as well as the edge behavior action
      * (e.g., VALID, WRAPPED, BLOCKED, ABSORBED, REFLECTED).
      * <p>
@@ -382,7 +384,7 @@ public final class GridArrangement {
      * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined (must be valid in the grid)
      * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
      * @param structure         the grid structure defining size, boundaries, and edge behavior
-     * @return a map from mapped neighbor coordinates to lists of {@link CellNeighborWithEdgeBehavior} records,
+     * @return a map from mapped neighbor coordinates to lists of {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records,
      *         each describing the relationship and edge behavior outcome for that neighbor
      */
     public static Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> cellNeighborsWithEdgeBehavior(

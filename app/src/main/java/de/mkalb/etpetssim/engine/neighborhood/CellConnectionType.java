@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.engine;
+package de.mkalb.etpetssim.engine.neighborhood;
 
 /**
  * Specifies how two cells in a grid are connected:
