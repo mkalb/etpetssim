@@ -23,6 +23,104 @@ package de.mkalb.etpetssim.engine;
 public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavior) {
 
     /**
+     * The maximum required multiple for grid width across all cell shapes.
+     * Used for configurations that must support any cell shape.
+     */
+    public static final int MAX_REQUIRED_WIDTH_MULTIPLE = 2;
+
+    /**
+     * The maximum required multiple for grid height across all cell shapes.
+     * Used for configurations that must support any cell shape.
+     */
+    public static final int MAX_REQUIRED_HEIGHT_MULTIPLE = 4;
+
+    /**
+     * The required width multiple for square cell shapes.
+     */
+    public static final int SQUARE_MAX_REQUIRED_WIDTH_MULTIPLE = 1;
+
+    /**
+     * The required height multiple for square cell shapes.
+     */
+    public static final int SQUARE_MAX_REQUIRED_HEIGHT_MULTIPLE = 1;
+
+    /**
+     * The required width multiple for triangle cell shapes.
+     */
+    public static final int TRIANGLE_MAX_REQUIRED_WIDTH_MULTIPLE = 1;
+
+    /**
+     * The required height multiple for triangle cell shapes.
+     */
+    public static final int TRIANGLE_MAX_REQUIRED_HEIGHT_MULTIPLE = 4;
+
+    /**
+     * The required width multiple for hexagon cell shapes.
+     */
+    public static final int HEXAGON_MAX_REQUIRED_WIDTH_MULTIPLE = 2;
+
+    /**
+     * The required height multiple for hexagon cell shapes.
+     */
+    public static final int HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE = 1;
+
+    /**
+     * Calculates the required width multiple for a given cell shape and X-axis edge behavior.
+     *
+     * @param cellShape the cell shape to evaluate
+     * @param edgeBehaviorX the edge behavior for the X-axis
+     * @return the required width multiple for the specified configuration
+     */
+    public static int requiredWidthMultiple(CellShape cellShape, EdgeBehavior edgeBehaviorX) {
+        if ((edgeBehaviorX == EdgeBehavior.BLOCK) || (edgeBehaviorX == EdgeBehavior.ABSORB)) {
+            return 1;
+        }
+        return switch (cellShape) {
+            case TRIANGLE -> TRIANGLE_MAX_REQUIRED_WIDTH_MULTIPLE;
+            case SQUARE -> SQUARE_MAX_REQUIRED_WIDTH_MULTIPLE;
+            case HEXAGON -> HEXAGON_MAX_REQUIRED_WIDTH_MULTIPLE;
+        };
+    }
+
+    /**
+     * Calculates the required height multiple for a given cell shape and Y-axis edge behavior.
+     *
+     * @param cellShape the cell shape to evaluate
+     * @param edgeBehaviorY the edge behavior for the Y-axis
+     * @return the required height multiple for the specified configuration
+     */
+    public static int requiredHeightMultiple(CellShape cellShape, EdgeBehavior edgeBehaviorY) {
+        if ((edgeBehaviorY == EdgeBehavior.BLOCK) || (edgeBehaviorY == EdgeBehavior.ABSORB)) {
+            return 1;
+        }
+        return switch (cellShape) {
+            case TRIANGLE -> TRIANGLE_MAX_REQUIRED_HEIGHT_MULTIPLE;
+            case SQUARE -> SQUARE_MAX_REQUIRED_HEIGHT_MULTIPLE;
+            case HEXAGON -> HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE;
+        };
+    }
+
+    /**
+     * Returns the required width multiple for this grid topology instance,
+     * based on its cell shape and X-axis edge behavior.
+     *
+     * @return the required width multiple for this topology
+     */
+    public int requiredWidthMultiple() {
+        return requiredWidthMultiple(cellShape, edgeBehaviorX());
+    }
+
+    /**
+     * Returns the required height multiple for this grid topology instance,
+     * based on its cell shape and Y-axis edge behavior.
+     *
+     * @return the required height multiple for this topology
+     */
+    public int requiredHeightMultiple() {
+        return requiredHeightMultiple(cellShape, edgeBehaviorY());
+    }
+
+    /**
      * Returns the edge behavior for the X-axis of the grid.
      *
      * @return the edge behavior for the X-axis
