@@ -15,15 +15,16 @@ class GridSizeTest {
     }
 
     @Test
-    void testInvalidWidthThrowsException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> new GridSize(15, 64));
-        assertTrue(ex.getMessage().contains("Width must be an even number"));
+    void testMinAndMaxSizeAreValid() {
+        assertDoesNotThrow(() -> new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE));
+        assertDoesNotThrow(() -> new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE));
     }
 
     @Test
-    void testInvalidHeightThrowsException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> new GridSize(32, 17));
-        assertTrue(ex.getMessage().contains("Height must be an even number"));
+    void testNegativeSizeThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, 8));
+        assertThrows(IllegalArgumentException.class, () -> new GridSize(8, -1));
+        assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, -1));
     }
 
     @Test
@@ -82,6 +83,13 @@ class GridSizeTest {
     void testToDisplayString() {
         assertEquals("32 × 64", new GridSize(32, 64).toDisplayString());
         assertEquals("1024 × 2048", new GridSize(1_024, 2_048).toDisplayString());
+        // Boundary values
+        assertEquals("8 × 8", new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE).toDisplayString());
+        assertEquals("16384 × 16384", new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE).toDisplayString());
+        // Square and rectangle
+        assertEquals("16 × 16", GridSize.square(16).toDisplayString());
+        assertEquals("16 × 8", new GridSize(16, 8).toDisplayString());
+        assertEquals("8 × 16", new GridSize(8, 16).toDisplayString());
     }
 
     @Test
@@ -94,7 +102,7 @@ class GridSizeTest {
 
     @Test
     void testIsInvalidSize() {
-        assertTrue(GridSize.isInvalidSize(15));
+        assertFalse(GridSize.isInvalidSize(15));
         assertTrue(GridSize.isInvalidSize(20_000));
         assertFalse(GridSize.isInvalidSize(32));
     }
