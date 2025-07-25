@@ -265,55 +265,32 @@ public final class GridArrangement {
     }
 
     /**
-     * Returns a stream of all valid neighbors for a given cell in the grid, considering grid boundaries.
+     * Returns a stream of all valid neighbors for a given cell, based on the specified
+     * neighborhood mode and cell shape, <b>respecting grid boundaries but ignoring edge behavior</b>.
      * <p>
-     * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
-     * {@link GridStructure}. If not, an empty stream is returned. Otherwise, it computes all theoretical neighbors
-     * (ignoring boundaries) and filters them to include only those whose coordinates are valid within the grid.
+     * The returned stream contains {@link CellNeighbor} objects, each describing the direction,
+     * connection type (edge or vertex), and coordinate of a neighboring cell relative to the
+     * given start coordinate. Only neighbors whose coordinates are valid within the provided
+     * {@link GridStructure} are included.
      * <p>
-     * The resulting stream contains {@link CellNeighbor} objects describing the direction, connection type,
-     * and coordinate of each valid neighbor.
+     * <b>Note:</b> This method checks the validity of both the start coordinate and each neighbor
+     * coordinate against the grid boundaries. Edge behavior is <b>ignored</b> when determining neighbors.
+     * If the start coordinate is not valid, an empty stream is returned.
      *
-     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
-     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
-     * @param structure        the grid structure defining size and topology
-     * @return a stream of {@link CellNeighbor} objects representing all valid neighbors of the cell (respecting grid boundaries)
+     * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined (must be valid in the grid)
+     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
+     * @param structure         the grid structure defining size and topology
+     * @return a stream of {@link CellNeighbor} objects representing all valid neighbors of the cell (respecting grid boundaries, ignoring edge behavior)
      */
-    public static Stream<CellNeighbor> validCellNeighborsStream(GridCoordinate startCoordinate,
-                                                                NeighborhoodMode neighborhoodMode,
-                                                                GridStructure structure) {
+    public static Stream<CellNeighbor> validCellNeighborsIgnoringEdgeBehavior(GridCoordinate startCoordinate,
+                                                                              NeighborhoodMode neighborhoodMode,
+                                                                              GridStructure structure) {
         if (!structure.isCoordinateValid(startCoordinate)) {
             return Stream.empty();
         }
         return cellNeighborsIgnoringEdgeBehavior(startCoordinate, neighborhoodMode, structure.cellShape())
                 .stream()
                 .filter(neighbor -> structure.isCoordinateValid(neighbor.neighborCoordinate()));
-    }
-
-    /**
-     * Returns a stream of all valid neighbor coordinates within the given radius for a cell in the grid, considering grid boundaries.
-     * <p>
-     * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
-     * {@link GridStructure}. If not, an empty stream is returned. Otherwise, it computes all theoretical neighbor coordinates
-     * (ignoring boundaries) and filters them to include only those that are valid within the grid.
-     *
-     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
-     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
-     * @param structure        the grid structure defining size and topology
-     * @param radius           the neighborhood radius (&gt; 0) and less than or equal to {@link #MAX_RADIUS}
-     * @return a stream of {@link GridCoordinate} objects representing all valid neighbor coordinates of the cell within the given radius (respecting grid boundaries)
-     * @throws IllegalArgumentException if the radius is greater than {@link #MAX_RADIUS}
-     */
-    public static Stream<GridCoordinate> validNeighborCoordinatesStream(GridCoordinate startCoordinate,
-                                                                        NeighborhoodMode neighborhoodMode,
-                                                                        GridStructure structure,
-                                                                        int radius) {
-        if (!structure.isCoordinateValid(startCoordinate)) {
-            return Stream.empty();
-        }
-        return coordinatesOfNeighbors(startCoordinate, neighborhoodMode, structure.cellShape(), radius)
-                .stream()
-                .filter(structure::isCoordinateValid);
     }
 
     /**
