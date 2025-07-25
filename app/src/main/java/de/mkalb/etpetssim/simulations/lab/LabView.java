@@ -144,6 +144,8 @@ public final class LabView implements SimulationView {
         HBox mainBox = new HBox(structurePane, layoutPane);
         mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
 
+        setupConfigListeners();
+
         return mainBox;
     }
 
@@ -201,6 +203,17 @@ public final class LabView implements SimulationView {
         TitledPane layoutPane = new TitledPane("Layout", box);
         layoutPane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
         return layoutPane;
+    }
+
+    private void setupConfigListeners() {
+        viewModel.cellShapeProperty().property().addListener((_, _, _) -> disableCanvas());
+        viewModel.gridEdgeBehaviorProperty().property().addListener((_, _, _) -> disableCanvas());
+        viewModel.gridWidthProperty().property().addListener((_, _, _) -> disableCanvas());
+        viewModel.gridHeightProperty().property().addListener((_, _, _) -> disableCanvas());
+        viewModel.cellEdgeLengthProperty().property().addListener((_, _, _) -> disableCanvas());
+        viewModel.colorModeProperty().property().addListener((_, _, _) -> disableCanvas());
+        viewModel.renderingModeProperty().property().addListener((_, _, _) -> disableCanvas());
+        viewModel.strokeModeProperty().property().addListener((_, _, _) -> disableCanvas());
     }
 
     private Region createSimulationRegion() {
@@ -359,6 +372,20 @@ public final class LabView implements SimulationView {
                 overlayPainter.drawCellOuterCircle(viewModel.getLastClickedCoordinate(), TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
             }
         });
+    }
+
+    private void disableCanvas() {
+        overlayCanvas.setOnMouseClicked(null);
+        overlayCanvas.setOnMouseExited(null);
+        overlayCanvas.setOnMouseMoved(null);
+
+        viewModel.setLastClickedCoordinate(null);
+
+        if (basePainter != null) {
+            basePainter.clearCanvasBackground();
+        }
+        basePainter = null;
+        overlayPainter = null;
     }
 
     private void resetCanvasAndPainter() {
