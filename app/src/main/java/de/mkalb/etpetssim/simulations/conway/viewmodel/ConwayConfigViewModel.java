@@ -12,15 +12,15 @@ import java.util.*;
 public final class ConwayConfigViewModel {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
-    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.BLOCK_XY;
+    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
     private static final int GRID_WIDTH_INITIAL = 64;
-    private static final int GRID_WIDTH_MAX = 512;
-    private static final int GRID_WIDTH_MIN = 8;
-    private static final int GRID_WIDTH_STEP = 4;
+    private static final int GRID_WIDTH_MAX = 1_024;
+    private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
+    private static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
     private static final int GRID_HEIGHT_INITIAL = 32;
-    private static final int GRID_HEIGHT_MAX = 512;
-    private static final int GRID_HEIGHT_MIN = 8;
-    private static final int GRID_HEIGHT_STEP = 4;
+    private static final int GRID_HEIGHT_MAX = 1_024;
+    private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
+    private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
     private static final int CELL_EDGE_LENGTH_INITIAL = 10;
     private static final int CELL_EDGE_LENGTH_MAX = 48;
     private static final int CELL_EDGE_LENGTH_MIN = 1;
