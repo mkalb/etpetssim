@@ -5,6 +5,10 @@ package de.mkalb.etpetssim.engine;
  * Each constant specifies how entities interact with both the horizontal (X) and vertical (Y) edges,
  * enabling flexible configuration of grid boundary handling in various simulation scenarios.
  *
+ * <p><b>Note:</b> The combination of {@link EdgeBehavior#WRAP} and {@link EdgeBehavior#REFLECT}
+ * for X and Y edges must never be used together (e.g., X=WRAP and Y=REFLECT or vice versa),
+ * as this would make grid calculations extremely complex.</p>
+ *
  * @see EdgeBehavior
  */
 public enum GridEdgeBehavior {
