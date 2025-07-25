@@ -325,20 +325,39 @@ public final class LabView implements SimulationView {
                     viewModel.setLastClickedCoordinate(coordinate);
                     overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
-                    GridArrangement.validCellNeighborsStream(coordinate, NeighborhoodMode.EDGES_AND_VERTICES,
+                    GridArrangement.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_AND_VERTICES,
                                            viewModel.getStructure())
-                                   .forEach(cellNeighbor -> {
-                                       overlayPainter.drawCell(cellNeighbor.neighborCoordinate(), Color.YELLOW, null, 0.0d);
-                                       if (smallFont != null) {
-                                           overlayPainter.drawCenteredTextInCell(cellNeighbor.neighborCoordinate(), cellNeighbor.toDisplayString(), Color.BLACK, smallFont);
+                                   .forEach((neighborCoordinate, neighborCells) -> {
+                                       if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
+                                           overlayPainter.drawCell(neighborCoordinate, Color.YELLOW, null, 0.0d);
+                                           if (font != null) {
+                                               StringBuilder b = new StringBuilder(4);
+                                               for (CellNeighborWithEdgeBehavior cellNeighbor : neighborCells) {
+                                                   if (!b.isEmpty()) {
+                                                       b.append(" : ");
+                                                   }
+                                                   b.append(cellNeighbor.direction().arrow());
+                                               }
+                                               overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, font);
+                                           }
                                        }
                                    });
 
+                    GridArrangement.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_ONLY,
+                                           viewModel.getStructure())
+                                   .forEach((neighborCoordinate, _) -> {
+                                       if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
+                                           overlayPainter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 2.5d);
+                                       }
+                                   });
+/*
                     GridArrangement.validNeighborCoordinatesStream(coordinate,
                                            NeighborhoodMode.EDGES_AND_VERTICES, viewModel.getStructure(), 3)
                                    .forEach(neighborCoordinate -> {
                                        overlayPainter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.5d);
                                    });
+
+ */
                 } else {
                     viewModel.setLastClickedCoordinate(null);
                 }
