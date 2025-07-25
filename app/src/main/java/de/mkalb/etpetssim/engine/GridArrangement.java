@@ -317,6 +317,44 @@ public final class GridArrangement {
     }
 
     /**
+     * Returns a stream of {@link EdgeBehaviorResult} for all theoretical neighbors of a given cell,
+     * applying the grid's edge behavior to each neighbor coordinate and ensuring only one result per mapped coordinate,
+     * always preferring results with {@link EdgeBehaviorAction#VALID} if present.
+     * <p>
+     * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
+     * {@link GridStructure}. If not, an empty stream is returned. Otherwise, it computes all theoretical neighbors
+     * (ignoring boundaries), applies edge behavior to each, and collects the results such that for each mapped coordinate,
+     * only the best result (preferably with action {@code VALID}) is included.
+     * <p>
+     * The resulting stream contains {@link EdgeBehaviorResult} objects describing the mapping and action for each unique
+     * mapped neighbor coordinate.
+     *
+     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param structure        the grid structure defining size and topology
+     * @return a stream of {@link EdgeBehaviorResult} for all unique mapped neighbor coordinates (with edge behavior applied)
+     */
+    public static Stream<EdgeBehaviorResult> neighborEdgeResults(
+            GridCoordinate startCoordinate,
+            NeighborhoodMode neighborhoodMode,
+            GridStructure structure) {
+        if (!structure.isCoordinateValid(startCoordinate)) {
+            return Stream.empty();
+        }
+        Map<GridCoordinate, EdgeBehaviorResult> bestResults = new HashMap<>();
+        for (CellNeighbor neighbor : cellNeighborsIgnoringEdgeBehavior(startCoordinate, neighborhoodMode, structure.cellShape())) {
+            EdgeBehaviorResult result = applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure);
+            bestResults.merge(
+                    result.mapped(),
+                    result,
+                    (existing, candidate) -> (existing.action() == EdgeBehaviorAction.VALID) ? existing :
+                            ((candidate.action() == EdgeBehaviorAction.VALID) ? candidate : existing)
+            );
+        }
+        return bestResults.values().stream();
+    }
+
+    /**
      * Returns a list of all theoretical neighbors for a given cell, based on the specified
      * neighborhood mode and cell shape, <b>ignoring grid boundaries and edge behavior</b>.
      * <p>

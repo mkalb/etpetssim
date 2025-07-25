@@ -19,9 +19,12 @@ public final class ConwayUpdateStrategy implements BiConsumer<ReadableGridModel<
     public void accept(ReadableGridModel<ConwayEntity> currentModel, GridModel<ConwayEntity> nextModel) {
         structure.coordinatesStream().forEach(coordinate -> {
             boolean isAlive = currentModel.getEntity(coordinate).isAlive();
-            long aliveNeighbors = GridArrangement.validCellNeighborsStream(
-                                                         coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)
-                                                 .filter(n -> currentModel.getEntity(n.neighborCoordinate()).isAlive())
+            long aliveNeighbors = GridArrangement.neighborEdgeResults(coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)
+                                                 .filter(result ->
+                                                         (result.action() == EdgeBehaviorAction.VALID)
+                                                                 || (result.action() == EdgeBehaviorAction.WRAPPED))
+                                                 .filter(result -> structure.isCoordinateValid(result.mapped()))
+                                                 .filter(n -> currentModel.getEntity(n.mapped()).isAlive())
                                                  .count();
 
             // Only set ALIVE cells; DEAD is already the default
