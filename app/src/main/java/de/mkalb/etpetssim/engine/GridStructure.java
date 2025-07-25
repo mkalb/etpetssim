@@ -27,6 +27,29 @@ import java.util.stream.*;
 public record GridStructure(GridTopology topology, GridSize size) {
 
     /**
+     * Validates that the provided {@link GridSize} is compatible with the given {@link GridTopology}.
+     * <p>
+     * The grid width and height must be multiples of the required values as specified by the topology.
+     * If these constraints are not met, an {@link IllegalArgumentException} is thrown.
+     *
+     * @throws IllegalArgumentException if the grid width or height is not a valid multiple for the topology
+     */
+    public GridStructure {
+        int widthMultiple = topology.requiredWidthMultiple();
+        int heightMultiple = topology.requiredHeightMultiple();
+        if ((size.width() % widthMultiple) != 0) {
+            throw new IllegalArgumentException(
+                    String.format("Grid width (%d) must be a multiple of %d for topology %s", size.width(), widthMultiple, topology.toDisplayString())
+            );
+        }
+        if ((size.height() % heightMultiple) != 0) {
+            throw new IllegalArgumentException(
+                    String.format("Grid height (%d) must be a multiple of %d for topology %s", size.height(), heightMultiple, topology.toDisplayString())
+            );
+        }
+    }
+
+    /**
      * Returns the shape of each cell in the grid (TRIANGLE, SQUARE, HEXAGON).
      *
      * @return the shape of each cell in the grid
