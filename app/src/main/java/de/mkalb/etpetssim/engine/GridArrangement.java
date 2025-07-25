@@ -130,6 +130,141 @@ public final class GridArrangement {
     }
 
     /**
+     * Determines the {@link EdgeBehaviorAction} for a given coordinate in a grid structure.
+     * <p>
+     * Returns {@code VALID} if the coordinate is within bounds. If out of bounds,
+     * applies the configured edge behavior for each axis (X and Y) and prioritizes actions:
+     * <ol>
+     *   <li>{@code BLOCKED} if either axis uses {@link EdgeBehavior#BLOCK}</li>
+     *   <li>{@code ABSORBED} if either axis uses {@link EdgeBehavior#ABSORB}</li>
+     *   <li>{@code REFLECTED} if either axis uses {@link EdgeBehavior#REFLECT}</li>
+     *   <li>{@code WRAPPED} if either axis uses {@link EdgeBehavior#WRAP}</li>
+     * </ol>
+     *
+     * @param coordinate the grid coordinate to check
+     * @param structure the grid structure defining bounds and edge behaviors
+     * @return the resulting {@link EdgeBehaviorAction} for the coordinate
+     * @throws IllegalArgumentException if an unknown edge behavior is encountered or if WRAP and REFLECT are combined
+     */
+    public static EdgeBehaviorAction edgeActionForCoordinate(GridCoordinate coordinate, GridStructure structure) {
+        if (structure.isCoordinateValid(coordinate)) {
+            return EdgeBehaviorAction.VALID;
+        }
+        GridCoordinate min = structure.minCoordinateInclusive();
+        GridCoordinate max = structure.maxCoordinateExclusive();
+
+        boolean outX = (coordinate.x() < min.x()) || (coordinate.x() >= max.x());
+        boolean outY = (coordinate.y() < min.y()) || (coordinate.y() >= max.y());
+
+        if (!outX && !outY) {
+            // Should not happen, but fallback to VALID
+            return EdgeBehaviorAction.VALID;
+        }
+
+        EdgeBehavior edgeBehaviorX = structure.edgeBehaviorX();
+        EdgeBehavior edgeBehaviorY = structure.edgeBehaviorY();
+
+        // Check for incompatible edge behaviors
+        if (((edgeBehaviorX == EdgeBehavior.WRAP) && (edgeBehaviorY == EdgeBehavior.REFLECT))
+                || ((edgeBehaviorX == EdgeBehavior.REFLECT) && (edgeBehaviorY == EdgeBehavior.WRAP))) {
+            throw new IllegalArgumentException("WRAP and REFLECT edge behaviors cannot be combined for X and Y edges in a GridEdgeBehavior.");
+        }
+
+        // Prioritize BLOCK, then ABSORB, REFLECT, WRAP
+        if ((outX && (edgeBehaviorX == EdgeBehavior.BLOCK)) || (outY && (edgeBehaviorY == EdgeBehavior.BLOCK))) {
+            return EdgeBehaviorAction.BLOCKED;
+        }
+        if ((outX && (edgeBehaviorX == EdgeBehavior.ABSORB)) || (outY && (edgeBehaviorY == EdgeBehavior.ABSORB))) {
+            return EdgeBehaviorAction.ABSORBED;
+        }
+        if ((outX && (edgeBehaviorX == EdgeBehavior.REFLECT)) || (outY && (edgeBehaviorY == EdgeBehavior.REFLECT))) {
+            return EdgeBehaviorAction.REFLECTED;
+        }
+        if ((outX && (edgeBehaviorX == EdgeBehavior.WRAP)) || (outY && (edgeBehaviorY == EdgeBehavior.WRAP))) {
+            return EdgeBehaviorAction.WRAPPED;
+        }
+
+        throw new IllegalArgumentException("Unknown EdgeBehavior for out-of-bounds coordinate: " +
+                "edgeBehaviorX=" + edgeBehaviorX + ", edgeBehaviorY=" + edgeBehaviorY);
+    }
+
+    /**
+     * Determines whether the given coordinate is valid within the grid after applying edge behavior.
+     * <p>
+     * A coordinate is considered valid if the edge behavior action is {@link EdgeBehaviorAction#VALID},
+     * {@link EdgeBehaviorAction#WRAPPED}, or {@link EdgeBehaviorAction#REFLECTED}.
+     * Coordinates resulting in {@link EdgeBehaviorAction#BLOCKED} or {@link EdgeBehaviorAction#ABSORBED}
+     * are not considered valid for further simulation steps.
+     *
+     * @param coordinate the grid coordinate to check
+     * @param structure  the grid structure defining size and edge behavior
+     * @return {@code true} if the coordinate is valid after edge behavior, {@code false} otherwise
+     */
+    public static boolean isValidEdgeCoordinate(GridCoordinate coordinate, GridStructure structure) {
+        EdgeBehaviorAction action = edgeActionForCoordinate(coordinate, structure);
+        return (action == EdgeBehaviorAction.VALID)
+                || (action == EdgeBehaviorAction.WRAPPED)
+                || (action == EdgeBehaviorAction.REFLECTED);
+    }
+
+    /**
+     * Applies the configured edge behavior to a given grid coordinate within the specified grid structure.
+     * <p>
+     * Depending on the edge behavior and whether the coordinate is out of bounds, this method
+     * returns a mapped coordinate and the resulting {@link EdgeBehaviorAction}:
+     * <ul>
+     *   <li>{@code VALID}, {@code BLOCKED}, {@code ABSORBED}: returns the original coordinate unchanged.</li>
+     *   <li>{@code WRAPPED}: wraps the coordinate to the opposite edge using modular arithmetic.</li>
+     *   <li>{@code REFLECTED}: reflects the coordinate at the grid boundary, simulating a bounce effect.</li>
+     * </ul>
+     *
+     * @param original the original grid coordinate to process
+     * @param structure the grid structure defining bounds and edge behaviors
+     * @return an {@link EdgeBehaviorResult} containing the original coordinate, the mapped coordinate, and the action taken
+     */
+    public static EdgeBehaviorResult applyEdgeBehaviorToCoordinate(GridCoordinate original, GridStructure structure) {
+        EdgeBehaviorAction action = edgeActionForCoordinate(original, structure);
+        return new EdgeBehaviorResult(
+                original,
+                switch (action) {
+                    case VALID, BLOCKED, ABSORBED -> original;
+                    case WRAPPED -> {
+                        GridCoordinate min = structure.minCoordinateInclusive();
+                        int width = structure.size().width();
+                        int height = structure.size().height();
+
+                        int wrappedX = ((((original.x() - min.x()) % width) + width) % width) + min.x();
+                        int wrappedY = ((((original.y() - min.y()) % height) + height) % height) + min.y();
+
+                        yield new GridCoordinate(wrappedX, wrappedY);
+                    }
+                    case REFLECTED -> {
+                        GridCoordinate min = structure.minCoordinateInclusive();
+                        GridCoordinate max = structure.maxCoordinateExclusive();
+                        int x = original.x();
+                        int y = original.y();
+
+                        // Reflect X if out of bounds
+                        if (x < min.x()) {
+                            x = min.x() + (min.x() - x - 1);
+                        } else if (x >= max.x()) {
+                            x = max.x() - ((x - max.x()) + 1);
+                        }
+
+                        // Reflect Y if out of bounds
+                        if (y < min.y()) {
+                            y = min.y() + (min.y() - y - 1);
+                        } else if (y >= max.y()) {
+                            y = max.y() - ((y - max.y()) + 1);
+                        }
+
+                        yield new GridCoordinate(x, y);
+                    }
+                },
+                action);
+    }
+
+    /**
      * Returns a stream of all valid neighbors for a given cell in the grid, considering grid boundaries.
      * <p>
      * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
