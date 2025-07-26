@@ -129,13 +129,13 @@ class GridStructureTest {
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
                 new GridSize(9, 11)));
 
-        // TRIANGLE: height must be multiple of 4 (WRAP)
+        // TRIANGLE: width and height must be multiple of 2 (WRAP)
         assertDoesNotThrow(() -> new GridStructure(
                 new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
                 new GridSize(8, 8)));
         assertDoesNotThrow(() -> new GridStructure(
                 new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(9, 12)));
+                new GridSize(10, 12)));
 
         // HEXAGON: width must be multiple of 2 (WRAP)
         assertDoesNotThrow(() -> new GridStructure(
@@ -158,11 +158,11 @@ class GridStructureTest {
         assertTrue(GridStructure.isValid(squareTopology, new GridSize(8, 8)));
         assertTrue(GridStructure.isValid(squareTopology, new GridSize(9, 11)));
 
-        // TRIANGLE: height must be multiple of 4 (WRAP)
+        // TRIANGLE: width and height must be multiple of 2 (WRAP)
         GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
         assertTrue(GridStructure.isValid(triTopology, new GridSize(8, 8)));
-        assertTrue(GridStructure.isValid(triTopology, new GridSize(9, 12)));
-        assertFalse(GridStructure.isValid(triTopology, new GridSize(8, 10))); // 10 not multiple of 4
+        assertTrue(GridStructure.isValid(triTopology, new GridSize(10, 12)));
+        assertFalse(GridStructure.isValid(triTopology, new GridSize(8, 9))); // 9 not multiple of 2
 
         // HEXAGON: width must be multiple of 2 (WRAP)
         GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
@@ -183,8 +183,8 @@ class GridStructureTest {
     void testInvalidHeightMultipleThrowsException() {
         GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                new GridStructure(triTopology, new GridSize(8, 10)));
-        assertTrue(ex.getMessage().contains("multiple of 4"));
+                new GridStructure(triTopology, new GridSize(8, 9)));
+        assertTrue(ex.getMessage().contains("multiple of 2"));
     }
 
     @SuppressWarnings("DataFlowIssue")

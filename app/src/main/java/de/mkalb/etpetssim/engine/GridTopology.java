@@ -32,7 +32,7 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
      * The maximum required multiple for grid height across all cell shapes.
      * Used for configurations that must support any cell shape.
      */
-    public static final int MAX_REQUIRED_HEIGHT_MULTIPLE = 4;
+    public static final int MAX_REQUIRED_HEIGHT_MULTIPLE = 2;
 
     /**
      * The required width multiple for square cell shapes.
@@ -47,12 +47,12 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
     /**
      * The required width multiple for triangle cell shapes.
      */
-    public static final int TRIANGLE_MAX_REQUIRED_WIDTH_MULTIPLE = 1;
+    public static final int TRIANGLE_MAX_REQUIRED_WIDTH_MULTIPLE = 2;
 
     /**
      * The required height multiple for triangle cell shapes.
      */
-    public static final int TRIANGLE_MAX_REQUIRED_HEIGHT_MULTIPLE = 4;
+    public static final int TRIANGLE_MAX_REQUIRED_HEIGHT_MULTIPLE = 2;
 
     /**
      * The required width multiple for hexagon cell shapes.
