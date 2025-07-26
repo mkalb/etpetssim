@@ -333,7 +333,7 @@ public final class LabView implements SimulationView {
                                      .forEach((neighborCoordinate, neighborCells) -> {
                                          if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
                                              overlayPainter.drawCell(neighborCoordinate, Color.YELLOW, null, 0.0d);
-                                             if (font != null) {
+                                             if (smallFont != null) {
                                                  StringBuilder b = new StringBuilder(4);
                                                  for (CellNeighborWithEdgeBehavior cellNeighbor : neighborCells) {
                                                      if (!b.isEmpty()) {
@@ -341,26 +341,27 @@ public final class LabView implements SimulationView {
                                                      }
                                                      b.append(cellNeighbor.direction().arrow());
                                                  }
-                                                 overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, font);
+                                                 overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, smallFont);
                                              }
                                          }
                                      });
-
-                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_ONLY,
+                    CellNeighborhoods.coordinatesOfNeighbors(coordinate,
+                                             NeighborhoodMode.EDGES_AND_VERTICES,
+                                             viewModel.getStructure().cellShape(),
+                                             2)
+                                     .forEach(neighborCoordinate -> {
+                                         if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
+                                             overlayPainter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.0d);
+                                         }
+                                     });
+                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate,
+                                             NeighborhoodMode.EDGES_ONLY,
                                              viewModel.getStructure())
                                      .forEach((neighborCoordinate, _) -> {
                                          if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
-                                             overlayPainter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 2.5d);
+                                             overlayPainter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 3.0d);
                                          }
                                      });
-/*
-                    CellNeighborhoods.validNeighborCoordinatesStream(coordinate,
-                                           NeighborhoodMode.EDGES_AND_VERTICES, viewModel.getStructure(), 3)
-                                   .forEach(neighborCoordinate -> {
-                                       overlayPainter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.5d);
-                                   });
-
- */
                 } else {
                     viewModel.setLastClickedCoordinate(null);
                 }
@@ -433,13 +434,13 @@ public final class LabView implements SimulationView {
         // Font
         double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
         double fontSize = Math.round(basePainter.cellDimension().height() * fontHeightFactor);
-        if (fontSize > 6) {
+        if (fontSize > 8) {
             if (Font.getFamilies().contains("Verdana")) {
                 font = Font.font("Verdana", fontSize);
-                smallFont = Font.font("Verdana", Math.min(8, fontSize));
+                smallFont = Font.font("Verdana", Math.min(9, fontSize));
             } else {
                 font = Font.font("System", fontSize);
-                smallFont = Font.font("System", Math.min(8, fontSize));
+                smallFont = Font.font("System", Math.min(9, fontSize));
             }
             AppLogger.info("Font for canvas: " + font);
         } else {
