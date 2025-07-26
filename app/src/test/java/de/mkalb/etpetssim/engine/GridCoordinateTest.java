@@ -120,39 +120,13 @@ class GridCoordinateTest {
     @Test
     void testIsTriangleCellPointingDown() {
         assertTrue(new GridCoordinate(0, 0).isTriangleCellPointingDown());
-        assertTrue(new GridCoordinate(1, 0).isTriangleCellPointingDown());
+        assertFalse(new GridCoordinate(1, 0).isTriangleCellPointingDown());
         assertFalse(new GridCoordinate(2, 1).isTriangleCellPointingDown());
-        assertFalse(new GridCoordinate(3, 1).isTriangleCellPointingDown());
+        assertTrue(new GridCoordinate(3, 1).isTriangleCellPointingDown());
         assertTrue(new GridCoordinate(4, 2).isTriangleCellPointingDown());
-        assertTrue(new GridCoordinate(5, 2).isTriangleCellPointingDown());
+        assertFalse(new GridCoordinate(5, 2).isTriangleCellPointingDown());
         assertFalse(new GridCoordinate(6, 3).isTriangleCellPointingDown());
-        assertFalse(new GridCoordinate(7, 3).isTriangleCellPointingDown());
-    }
-
-    @Test
-    void testTriangleRow() {
-        assertEquals(0, new GridCoordinate(0, 0).triangleRow());
-        assertEquals(0, new GridCoordinate(1, 0).triangleRow());
-        assertEquals(0, new GridCoordinate(2, 1).triangleRow());
-        assertEquals(0, new GridCoordinate(3, 1).triangleRow());
-        assertEquals(1, new GridCoordinate(4, 2).triangleRow());
-        assertEquals(1, new GridCoordinate(5, 2).triangleRow());
-        assertEquals(1, new GridCoordinate(6, 3).triangleRow());
-        assertEquals(1, new GridCoordinate(7, 3).triangleRow());
-        assertEquals(2, new GridCoordinate(8, 4).triangleRow());
-        assertEquals(2, new GridCoordinate(9, 4).triangleRow());
-    }
-
-    @Test
-    void testHasTriangleCellXOffset() {
-        assertFalse(new GridCoordinate(0, 0).hasTriangleCellXOffset());
-        assertFalse(new GridCoordinate(1, 0).hasTriangleCellXOffset());
-        assertTrue(new GridCoordinate(2, 1).hasTriangleCellXOffset());
-        assertTrue(new GridCoordinate(3, 1).hasTriangleCellXOffset());
-        assertTrue(new GridCoordinate(4, 2).hasTriangleCellXOffset());
-        assertTrue(new GridCoordinate(5, 2).hasTriangleCellXOffset());
-        assertFalse(new GridCoordinate(6, 3).hasTriangleCellXOffset());
-        assertFalse(new GridCoordinate(7, 3).hasTriangleCellXOffset());
+        assertTrue(new GridCoordinate(7, 3).isTriangleCellPointingDown());
     }
 
     @Test

@@ -129,31 +129,7 @@ public record GridCoordinate(int x, int y) {
      * @see de.mkalb.etpetssim.engine.CellShape#TRIANGLE
      */
     public boolean isTriangleCellPointingDown() {
-        return (y % 2) == 0;
-    }
-
-    /**
-     * Returns the logical triangle row index for this coordinate.
-     * In a triangle grid, each logical row consists of two stacked triangle rows.
-     * This method divides the y-coordinate by 2 to determine the triangle row.
-     *
-     * @return the logical triangle row index
-     */
-    public int triangleRow() {
-        return y / 2;
-    }
-
-    /**
-     * Determines whether a triangle cell at this coordinate should be horizontally offset.
-     * In a flat-topped triangle grid, every two rows form a repeating vertical pattern.
-     * Depending on the row's position in the 4-row cycle, some rows are horizontally offset by half a cell
-     * to ensure that upward- and downward-pointing triangles interlock correctly.
-     *
-     * @return {@code true} if the triangle cell at this coordinate is horizontally offset, {@code false} otherwise
-     */
-    public boolean hasTriangleCellXOffset() {
-        int triangleOrientationCycle = y % 4;
-        return ((triangleOrientationCycle == 1) || (triangleOrientationCycle == 2));
+        return (x % 2) == (y % 2);
     }
 
     /**

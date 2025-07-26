@@ -68,8 +68,7 @@ public final class GridGeometry {
      */
     private static final List<int[]> TRIANGLE_NEIGHBOR_OFFSETS = List.of(
             new int[]{0, 0},
-            new int[]{-1, 1},
-            new int[]{0, 1},
+            new int[]{1, 0},
             new int[]{-1, 0}
     );
     /**
@@ -158,7 +157,8 @@ public final class GridGeometry {
             case HEXAGON -> edgeLength;
         };
         double columnWidth = switch (shape) {
-            case TRIANGLE, SQUARE -> edgeLength;
+            case TRIANGLE -> halfEdgeLength;
+            case SQUARE -> edgeLength;
             case HEXAGON -> edgeLength * THREE_HALVES;
         };
         return new CellDimension(edgeLength, width, height,
@@ -181,9 +181,9 @@ public final class GridGeometry {
 
         switch (shape) {
             case TRIANGLE -> {
-                width = (gridSize.width() * cellDimension.columnWidth()) + cellDimension.halfWidth();
-                int rows = (gridSize.height() + 1) / 2; // Two triangles per logical row. Round up for odd heights.
-                height = rows * cellDimension.rowHeight();
+                double columnWidthOffset = cellDimension.halfEdgeLength();
+                width = (gridSize.width() * cellDimension.columnWidth()) + columnWidthOffset;
+                height = gridSize.height() * cellDimension.rowHeight();
             }
             case SQUARE -> {
                 width = gridSize.width() * cellDimension.columnWidth();
@@ -263,25 +263,10 @@ public final class GridGeometry {
      * @return the canvas position of the cell in pixel coordinates
      */
     public static Point2D toCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
-        return switch (shape) {
-            case TRIANGLE -> {
-                double x = (coordinate.x() * cellDimension.columnWidth())
-                        + (coordinate.hasTriangleCellXOffset() ? cellDimension.halfEdgeLength() : ZERO); // Add x offset if necessary for triangle cells.
-                double y = coordinate.triangleRow() * cellDimension.rowHeight();
-                yield new Point2D(x, y);
-            }
-            case SQUARE -> {
-                double x = coordinate.x() * cellDimension.columnWidth();
-                double y = coordinate.y() * cellDimension.rowHeight();
-                yield new Point2D(x, y);
-            }
-            case HEXAGON -> {
-                double x = coordinate.x() * cellDimension.columnWidth();
-                double y = (coordinate.y() * cellDimension.rowHeight())
-                        + (coordinate.hasHexagonCellYOffset() ? cellDimension.halfHeight() : ZERO); // Add y offset if necessary for hexagon cells.
-                yield new Point2D(x, y);
-            }
-        };
+        double x = coordinate.x() * cellDimension.columnWidth();
+        double yOffset = ((shape == CellShape.HEXAGON) && coordinate.hasHexagonCellYOffset()) ? cellDimension.halfHeight() : ZERO;
+        double y = (coordinate.y() * cellDimension.rowHeight()) + yOffset;
+        return new Point2D(x, y);
     }
 
     /**
@@ -311,9 +296,10 @@ public final class GridGeometry {
 
         return switch (structure.cellShape()) {
             case TRIANGLE -> {
-                int estimatedGridX = (int) (point.getX() / cellDimension.columnWidth());
-                int estimatedGridY = (int) (point.getY() / cellDimension.rowHeight()) * 2; // see GridCoordinate.isTriangleRow()
-                yield new GridCoordinate(estimatedGridX, estimatedGridY);
+                double xOffset = cellDimension.columnWidth() / 2;
+                int estimatedGridX = (int) ((point.getX() - xOffset) / cellDimension.columnWidth());
+                int y = (int) (point.getY() / cellDimension.rowHeight());
+                yield new GridCoordinate(estimatedGridX, y);
             }
             case SQUARE -> {
                 int x = (int) (point.getX() / cellDimension.columnWidth());
