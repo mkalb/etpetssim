@@ -17,14 +17,14 @@ public final class LabViewModel {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
-    private static final int GRID_WIDTH_INITIAL = 8;
-    private static final int GRID_WIDTH_MAX = 64;
+    private static final int GRID_WIDTH_INITIAL = GridSize.MIN_SIZE;
+    private static final int GRID_WIDTH_MAX = GridSize.LARGE_SQUARE.width();
     private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_WIDTH_STEP = 1;
-    private static final int GRID_HEIGHT_INITIAL = 8;
-    private static final int GRID_HEIGHT_MAX = 64;
+    private static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
+    private static final int GRID_HEIGHT_INITIAL = GridSize.MIN_SIZE;
+    private static final int GRID_HEIGHT_MAX = GridSize.LARGE_SQUARE.height();
     private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_HEIGHT_STEP = 1;
+    private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
     private static final int CELL_EDGE_LENGTH_INITIAL = 80;
     private static final int CELL_EDGE_LENGTH_MAX = 200;
     private static final int CELL_EDGE_LENGTH_MIN = 1;
