@@ -375,11 +375,9 @@ public final class LabView implements SimulationView {
             if (!estimatedCoordinate.isIllegal()) {
                 overlayPainter.drawCell(estimatedCoordinate, null, Color.RED, 1.0d);
             }
-            overlayPainter.drawCircle(mousePoint, 2.0d, Color.GREEN, null, 1.0d, StrokeAdjustment.CENTERED);
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(mousePoint, basePainter.cellDimension(), overlayPainter.gridDimension2D(), viewModel.getStructure());
             if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
                 overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-
                 if (overlayPainter.cellDimension().edgeLength() >= 8.0d) {
                     overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
                     // overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
@@ -393,6 +391,7 @@ public final class LabView implements SimulationView {
             if (viewModel.getLastClickedCoordinate() != null) {
                 overlayPainter.drawCellOuterCircle(viewModel.getLastClickedCoordinate(), TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
             }
+            overlayPainter.drawCircle(mousePoint, 2.0d, Color.DARKGREEN, null, 0.0d, StrokeAdjustment.CENTERED);
         });
     }
 
