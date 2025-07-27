@@ -88,9 +88,9 @@ public final class LabView implements SimulationView {
 
     private void registerViewModelListeners() {
         viewModel.setConfigChangedListener(this::disableCanvas);
-        viewModel.setDrawListener(this::drawBaseCanvas);
-        viewModel.setDrawModelListener(this::drawModel);
-        viewModel.setDrawTestListener(this::drawTest);
+        viewModel.setDrawRequestedListener(this::drawBaseCanvas);
+        viewModel.setDrawModelRequestedListener(this::drawModel);
+        viewModel.setDrawTestRequestedListener(this::drawTest);
     }
 
     private Region createSimulationRegion() {

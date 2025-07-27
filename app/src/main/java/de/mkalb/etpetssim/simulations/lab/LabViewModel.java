@@ -21,19 +21,39 @@ public final class LabViewModel {
     private @Nullable LabSimulationManager simulationManager;
 
     private Runnable configChangedListener = () -> {};
-    private Runnable drawListener = () -> {};
-    private Runnable drawModelListener = () -> {};
-    private Runnable drawTestListener = () -> {};
+    private Runnable drawRequestedListener = () -> {};
+    private Runnable drawModelRequestedListener = () -> {};
+    private Runnable drawTestRequestedListener = () -> {};
 
     public LabViewModel(SimpleObjectProperty<SimulationState> simulationState, LabConfigViewModel configViewModel, LabControlViewModel controlViewModel) {
         this.simulationState = simulationState;
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
 
-        configViewModel.setOnConfigChangedListener(this::onConfigChanged);
-        controlViewModel.setOnDrawButtonListener(this::onDrawEvent);
-        controlViewModel.setOnDrawModelButtonListener(this::onDrawModelEvent);
-        controlViewModel.setOnDrawTestButtonListener(this::onDrawTestEvent);
+        configViewModel.configChangedRequestedProperty().addListener((_, _, newVal) -> {
+            if (newVal) {
+                handleConfigChanged();
+                configViewModel.configChangedRequestedProperty().set(false); // reset
+            }
+        });
+        controlViewModel.drawRequestedProperty().addListener((_, _, newVal) -> {
+            if (newVal) {
+                handleDrawRequested();
+                controlViewModel.drawRequestedProperty().set(false); // reset
+            }
+        });
+        controlViewModel.drawModelRequestedProperty().addListener((_, _, newVal) -> {
+            if (newVal) {
+                handleDrawModelRequested();
+                controlViewModel.drawModelRequestedProperty().set(false); // reset
+            }
+        });
+        controlViewModel.drawTestRequestedProperty().addListener((_, _, newVal) -> {
+            if (newVal) {
+                handleDrawTestRequested();
+                controlViewModel.drawTestRequestedProperty().set(false); // reset
+            }
+        });
     }
 
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
@@ -83,19 +103,19 @@ public final class LabViewModel {
         configChangedListener = listener;
     }
 
-    public void setDrawListener(Runnable listener) {
-        drawListener = listener;
+    public void setDrawRequestedListener(Runnable listener) {
+        drawRequestedListener = listener;
     }
 
-    public void setDrawModelListener(Runnable listener) {
-        drawModelListener = listener;
+    public void setDrawModelRequestedListener(Runnable listener) {
+        drawModelRequestedListener = listener;
     }
 
-    public void setDrawTestListener(Runnable listener) {
-        drawTestListener = listener;
+    public void setDrawTestRequestedListener(Runnable listener) {
+        drawTestRequestedListener = listener;
     }
 
-    public void onConfigChanged() {
+    public void handleConfigChanged() {
         setSimulationState(SimulationState.READY);
         // Reset the simulation manager if it exists
         simulationManager = null;
@@ -103,7 +123,7 @@ public final class LabViewModel {
         configChangedListener.run();
     }
 
-    public void onDrawEvent() {
+    public void handleDrawRequested() {
         setSimulationState(SimulationState.RUNNING);
 
         // Reset the simulation manager if it exists
@@ -122,15 +142,15 @@ public final class LabViewModel {
         AppLogger.info("Cell count:      " + simulationManager.currentModel().structure().cellCount());
         AppLogger.info("NonDefaultCells: " + simulationManager.currentModel().nonDefaultCells().count());
 
-        drawListener.run();
+        drawRequestedListener.run();
     }
 
-    public void onDrawModelEvent() {
-        drawModelListener.run();
+    public void handleDrawModelRequested() {
+        drawModelRequestedListener.run();
     }
 
-    public void onDrawTestEvent() {
-        drawTestListener.run();
+    public void handleDrawTestRequested() {
+        drawTestRequestedListener.run();
     }
 
 }

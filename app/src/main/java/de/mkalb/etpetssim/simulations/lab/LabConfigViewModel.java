@@ -6,9 +6,7 @@ import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 
 public final class LabConfigViewModel {
 
@@ -52,8 +50,7 @@ public final class LabConfigViewModel {
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.StrokeMode> strokeMode = InputEnumProperty.of(LabConfig.StrokeMode.CENTERED, LabConfig.StrokeMode.class, Enum::toString);
     private final ObjectProperty<SimulationState> simulationState;
-
-    private Runnable onConfigChangedListener = () -> {};
+    private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(SimpleObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
@@ -125,22 +122,18 @@ public final class LabConfigViewModel {
     }
 
     private void setupConfigListeners() {
-        cellShapeProperty().property().addListener((_, _, _) -> onConfigChanged());
-        gridEdgeBehaviorProperty().property().addListener((_, _, _) -> onConfigChanged());
-        gridWidthProperty().property().addListener((_, _, _) -> onConfigChanged());
-        gridHeightProperty().property().addListener((_, _, _) -> onConfigChanged());
-        cellEdgeLengthProperty().property().addListener((_, _, _) -> onConfigChanged());
-        colorModeProperty().property().addListener((_, _, _) -> onConfigChanged());
-        renderingModeProperty().property().addListener((_, _, _) -> onConfigChanged());
-        strokeModeProperty().property().addListener((_, _, _) -> onConfigChanged());
+        cellShapeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridEdgeBehaviorProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        renderingModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        strokeModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
     }
 
-    public void setOnConfigChangedListener(Runnable listener) {
-        onConfigChangedListener = listener;
-    }
-
-    public void onConfigChanged() {
-        onConfigChangedListener.run();
+    public BooleanProperty configChangedRequestedProperty() {
+        return configChangedRequested;
     }
 
 }

@@ -16,12 +16,12 @@ public final class LabControlView {
 
     Region buildRegion() {
         Button drawButton = buildControlButton("draw", false);
-        Button drawButtonModel = buildControlButton("draw model", false);
-        Button drawButtonTest = buildControlButton("draw test", false);
+        Button drawButtonModel = buildControlButton("draw model", true);
+        Button drawButtonTest = buildControlButton("draw test", true);
 
-        drawButton.setOnAction(_ -> viewModel.onDrawButtonClicked());
-        drawButtonModel.setOnAction(_ -> viewModel.onDrawModelButtonClicked());
-        drawButtonTest.setOnAction(_ -> viewModel.onDrawTestButtonClicked());
+        drawButton.setOnAction(_ -> viewModel.requestDraw());
+        drawButtonModel.setOnAction(_ -> viewModel.requestDrawModel());
+        drawButtonTest.setOnAction(_ -> viewModel.requestDrawTest());
 
         drawButtonModel.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.READY));
         drawButtonTest.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.READY));

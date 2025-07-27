@@ -1,16 +1,14 @@
 package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 
 public final class LabControlViewModel {
 
     private final ObjectProperty<SimulationState> simulationState;
-    private Runnable onDrawButtonListener = () -> {};
-    private Runnable onDrawModelButtonListener = () -> {};
-    private Runnable onDrawTestButtonListener = () -> {};
+    private final BooleanProperty drawRequested = new SimpleBooleanProperty(false);
+    private final BooleanProperty drawModelRequested = new SimpleBooleanProperty(false);
+    private final BooleanProperty drawTestRequested = new SimpleBooleanProperty(false);
 
     public LabControlViewModel(SimpleObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
@@ -24,28 +22,28 @@ public final class LabControlViewModel {
         return simulationState.get();
     }
 
-    public void setOnDrawButtonListener(Runnable listener) {
-        onDrawButtonListener = listener;
+    public BooleanProperty drawRequestedProperty() {
+        return drawRequested;
     }
 
-    public void setOnDrawModelButtonListener(Runnable listener) {
-        onDrawModelButtonListener = listener;
+    public BooleanProperty drawModelRequestedProperty() {
+        return drawModelRequested;
     }
 
-    public void setOnDrawTestButtonListener(Runnable listener) {
-        onDrawTestButtonListener = listener;
+    public BooleanProperty drawTestRequestedProperty() {
+        return drawTestRequested;
     }
 
-    public void onDrawButtonClicked() {
-        onDrawButtonListener.run();
+    public void requestDraw() {
+        drawRequested.set(true);
     }
 
-    public void onDrawModelButtonClicked() {
-        onDrawModelButtonListener.run();
+    public void requestDrawModel() {
+        drawModelRequested.set(true);
     }
 
-    public void onDrawTestButtonClicked() {
-        onDrawTestButtonListener.run();
+    public void requestDrawTest() {
+        drawTestRequested.set(true);
     }
 
 }
