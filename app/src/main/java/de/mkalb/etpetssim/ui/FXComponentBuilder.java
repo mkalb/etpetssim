@@ -42,14 +42,15 @@ public final class FXComponentBuilder {
      * Creates a labeled checkbox for a binary enum property, mapping checked and unchecked states to specific enum values.
      * <p>
      * The checkbox reflects the current value of the {@link InputEnumProperty} and updates the property when toggled.
-     * The label displays a static text provided via {@code labelText}. Both the label and the checkbox share the same tooltip for improved accessibility.
+     * The label displays the current value using the provided format string.
+     * Both the label and the checkbox share the same tooltip for improved accessibility.
      * <p>
      * This method is suitable for enum properties with two valid states, allowing the user to toggle between them via a checkbox.
      *
      * @param inputEnumProperty the {@link InputEnumProperty} defining valid values and value binding
      * @param checkedEnumValue the enum value to set when the checkbox is checked
      * @param uncheckedEnumValue the enum value to set when the checkbox is unchecked
-     * @param labelText the static text for the label
+     * @param labelFormatString the format string for the label (e.g., "%s")
      * @param tooltip the tooltip text for both the label and the checkbox
      * @param styleClass the CSS style class to apply to the checkbox
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the checkbox
@@ -57,7 +58,7 @@ public final class FXComponentBuilder {
     public static <E extends Enum<E>> LabeledControl<CheckBox> createLabeledEnumCheckBox(InputEnumProperty<E> inputEnumProperty,
                                                                                          E checkedEnumValue,
                                                                                          E uncheckedEnumValue,
-                                                                                         String labelText,
+                                                                                         String labelFormatString,
                                                                                          String tooltip,
                                                                                          String styleClass) {
         CheckBox checkBox = new CheckBox();
@@ -76,11 +77,10 @@ public final class FXComponentBuilder {
                 inputEnumProperty.setValue(uncheckedEnumValue);
             }
         });
-        inputEnumProperty.property().addListener((_, _, newVal) -> {
-            checkBox.setSelected(newVal == checkedEnumValue);
-        });
+        inputEnumProperty.property().addListener((_, _, newVal) -> checkBox.setSelected(newVal == checkedEnumValue));
 
-        Label label = new Label(labelText);
+        Label label = new Label(labelFormatString);
+        label.textProperty().bind(inputEnumProperty.asStringBinding(labelFormatString));
         label.setLabelFor(checkBox);
 
         Tooltip tooltipValue = new Tooltip(tooltip);
@@ -107,11 +107,11 @@ public final class FXComponentBuilder {
      * @param styleClass the CSS style class to apply to the combo box
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the combo box
      */
-    public static <E extends Enum<E>> LabeledControl<ComboBox> createLabeledEnumComboBox(InputEnumProperty<E> inputEnumProperty,
-                                                                                         Function<E, String> displayNameProvider,
-                                                                                         String labelFormatString,
-                                                                                         String tooltip,
-                                                                                         String styleClass) {
+    public static <E extends Enum<E>> LabeledControl<ComboBox<E>> createLabeledEnumComboBox(InputEnumProperty<E> inputEnumProperty,
+                                                                                            Function<E, String> displayNameProvider,
+                                                                                            String labelFormatString,
+                                                                                            String tooltip,
+                                                                                            String styleClass) {
         Map<E, String> displayNames = inputEnumProperty
                 .getValidValues()
                 .stream()
@@ -225,7 +225,7 @@ public final class FXComponentBuilder {
      * @param styleClass the CSS style class to apply to the spinner
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the spinner
      */
-    public static LabeledControl<Spinner> createLabeledIntSpinner(
+    public static LabeledControl<Spinner<Integer>> createLabeledIntSpinner(
             InputIntegerProperty inputIntegerProperty,
             String labelFormatString,
             String tooltip,
