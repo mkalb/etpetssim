@@ -5,9 +5,7 @@ import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.view.*;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.*;
-import de.mkalb.etpetssim.simulations.lab.LabEntity;
-import de.mkalb.etpetssim.simulations.lab.LabView;
-import de.mkalb.etpetssim.simulations.lab.LabViewModel;
+import de.mkalb.etpetssim.simulations.lab.*;
 import de.mkalb.etpetssim.simulations.start.StartView;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
 import javafx.beans.property.SimpleObjectProperty;
@@ -63,10 +61,12 @@ public final class SimulationFactory {
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
 
         // ViewModel
-        var viewModel = new LabViewModel();
+        var configViewModel = new LabConfigViewModel();
+        var viewModel = new LabViewModel(configViewModel);
 
         // View
-        var view = new LabView(viewModel, entityDescriptorRegistry);
+        var configView = new LabConfigView(configViewModel);
+        var view = new LabView(viewModel, configView, entityDescriptorRegistry);
 
         // Return the main view
         return view;

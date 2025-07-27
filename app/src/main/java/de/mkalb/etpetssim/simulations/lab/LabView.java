@@ -18,7 +18,9 @@ import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -38,6 +40,7 @@ public final class LabView implements SimulationView {
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
     private final LabViewModel viewModel;
+    private final LabConfigView configView;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
@@ -49,8 +52,10 @@ public final class LabView implements SimulationView {
     private @Nullable Font smallFont;
 
     public LabView(LabViewModel viewModel,
+                   LabConfigView configView,
                    GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
+        this.configView = configView;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
         baseCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
@@ -62,7 +67,7 @@ public final class LabView implements SimulationView {
 
     @Override
     public Region buildViewRegion() {
-        Region configRegion = createConfigRegion();
+        Region configRegion = configView.buildRegion();
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = createControlRegion();
         Region observationRegion = createObservationRegion();
@@ -74,127 +79,13 @@ public final class LabView implements SimulationView {
         borderPane.setRight(observationRegion);
         borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
 
+        registerViewModelListeners();
+
         return borderPane;
     }
 
-    @SafeVarargs
-    private TitledPane createConfigPane(String title, FXComponentBuilder.LabeledControl<? extends Region>... content) {
-        VBox box = new VBox();
-        for (FXComponentBuilder.LabeledControl<? extends Region> labeledControl : content) {
-            box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
-        }
-        box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
-
-        TitledPane pane = new TitledPane(title, box);
-        pane.setCollapsible(content.length > 0);
-        pane.setExpanded(content.length > 0);
-        pane.setDisable(content.length == 0);
-        pane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
-        return pane;
-    }
-
-    private Region createConfigRegion() {
-        // --- Structure Group ---
-        var cellShapeControl = FXComponentBuilder.createLabeledEnumComboBox(
-                viewModel.cellShapeProperty(),
-                viewModel.cellShapeProperty().displayNameProvider(),
-                AppLocalization.getText(CellShape.labelResourceKey()),
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
-
-        var gridEdgeBehaviorControl = FXComponentBuilder.createLabeledEnumComboBox(
-                viewModel.gridEdgeBehaviorProperty(),
-                viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
-                AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
-
-        var gridWidthControl = FXComponentBuilder.createLabeledIntSpinner(
-                viewModel.gridWidthProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty().min(), viewModel.gridWidthProperty().max()),
-                FXStyleClasses.CONFIG_SPINNER
-        );
-
-        var gridHeightControl = FXComponentBuilder.createLabeledIntSpinner(
-                viewModel.gridHeightProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty().min(), viewModel.gridHeightProperty().max()),
-                FXStyleClasses.CONFIG_SPINNER
-        );
-
-        var cellEdgeLengthControl = FXComponentBuilder.createLabeledIntSlider(
-                viewModel.cellEdgeLengthProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.cellEdgeLengthProperty().min(), viewModel.cellEdgeLengthProperty().max()),
-                FXStyleClasses.CONFIG_SLIDER
-        );
-
-        TitledPane structurePane = createConfigPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
-                cellShapeControl,
-                gridEdgeBehaviorControl,
-                gridWidthControl,
-                gridHeightControl,
-                cellEdgeLengthControl
-        );
-
-        // --- Layout Group ---
-        TitledPane layoutPane = createConfigLayoutTitledPane();
-
-        // --- Main Layout as Columns ---
-        HBox mainBox = new HBox(structurePane, layoutPane);
-        mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
-
-        setupConfigListeners();
-
-        return mainBox;
-    }
-
-    private TitledPane createConfigLayoutTitledPane() {
-        var colorModeControl = FXComponentBuilder.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
-                viewModel.colorModeProperty().displayNameProvider(),
-                FXComponentBuilder.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Color Mode:", // TODO Label text
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
-                FXStyleClasses.CONFIG_RADIOBUTTON
-        );
-
-        var renderingModeControl = FXComponentBuilder.createLabeledEnumRadioButtons(viewModel.renderingModeProperty(),
-                viewModel.renderingModeProperty().displayNameProvider(),
-                FXComponentBuilder.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Rendering Mode:", // TODO Label text
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
-                FXStyleClasses.CONFIG_RADIOBUTTON
-        );
-
-        var strokeModeControl = FXComponentBuilder.createLabeledEnumCheckBox(viewModel.strokeModeProperty(),
-                LabViewModel.StrokeMode.CENTERED,
-                LabViewModel.StrokeMode.NONE,
-                "Stroke Mode:", // TODO Label text
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
-                FXStyleClasses.CONFIG_CHECKBOX
-        );
-
-        return createConfigPane(
-                "Layout",
-                colorModeControl,
-                renderingModeControl,
-                strokeModeControl
-        );
-    }
-
-    private void setupConfigListeners() {
-        viewModel.cellShapeProperty().property().addListener((_, _, _) -> disableCanvas());
-        viewModel.gridEdgeBehaviorProperty().property().addListener((_, _, _) -> disableCanvas());
-        viewModel.gridWidthProperty().property().addListener((_, _, _) -> disableCanvas());
-        viewModel.gridHeightProperty().property().addListener((_, _, _) -> disableCanvas());
-        viewModel.cellEdgeLengthProperty().property().addListener((_, _, _) -> disableCanvas());
-        viewModel.colorModeProperty().property().addListener((_, _, _) -> disableCanvas());
-        viewModel.renderingModeProperty().property().addListener((_, _, _) -> disableCanvas());
-        viewModel.strokeModeProperty().property().addListener((_, _, _) -> disableCanvas());
+    private void registerViewModelListeners() {
+        viewModel.setConfigChangedListener(this::disableCanvas);
     }
 
     private Region createSimulationRegion() {
@@ -391,7 +282,7 @@ public final class LabView implements SimulationView {
     private void resetCanvasAndPainter() {
         viewModel.setLastClickedCoordinate(null);
 
-        double cellEdgeLength = viewModel.getCellEdgeLength();
+        double cellEdgeLength = viewModel.getCurrentConfig().cellEdgeLength();
         GridStructure structure = viewModel.getStructure();
 
         AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
@@ -441,10 +332,11 @@ public final class LabView implements SimulationView {
 
         resetCanvasAndPainter();
 
-        boolean colorModeBW = viewModel.colorModeProperty().isValue(LabViewModel.ColorMode.BLACK_WHITE);
-        boolean renderingModeCircle =
-                viewModel.renderingModeProperty().isValue(LabViewModel.RenderingMode.CIRCLE);
-        boolean strokeModeNone = viewModel.strokeModeProperty().isValue(LabViewModel.StrokeMode.NONE);
+        LabConfig config = viewModel.getCurrentConfig();
+
+        boolean colorModeBW = (config.colorMode() == LabConfig.ColorMode.BLACK_WHITE);
+        boolean renderingModeCircle = (config.renderingMode() == LabConfig.RenderingMode.CIRCLE);
+        boolean strokeModeNone = (config.strokeMode() == LabConfig.StrokeMode.NONE);
         double strokeLineWidth = 0.5d;
         Color textColor = colorModeBW ? Color.BLACK : TEXT_COLOR;
         Color strokeColor = strokeModeNone ? null : Color.BLACK;

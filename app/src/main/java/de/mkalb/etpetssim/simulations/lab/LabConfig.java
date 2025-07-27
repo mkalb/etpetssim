@@ -7,7 +7,10 @@ public record LabConfig(
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
-        double cellEdgeLength) {
+        double cellEdgeLength,
+        RenderingMode renderingMode,
+        ColorMode colorMode,
+        StrokeMode strokeMode) {
 
     public GridTopology getGridTopology() {
         return new GridTopology(cellShape, gridEdgeBehavior);
@@ -22,6 +25,18 @@ public record LabConfig(
                 && !GridSize.isInvalidSize(gridHeight)
                 && GridStructure.isValid(getGridTopology(), getGridSize())
                 && (cellEdgeLength > 0);
+    }
+
+    public enum RenderingMode {
+        SHAPE, CIRCLE
+    }
+
+    public enum ColorMode {
+        COLOR, BLACK_WHITE
+    }
+
+    public enum StrokeMode {
+        NONE, CENTERED
     }
 
 }
