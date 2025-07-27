@@ -2,9 +2,13 @@ package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public final class LabConfigViewModel {
 
@@ -47,10 +51,12 @@ public final class LabConfigViewModel {
     private final InputEnumProperty<LabConfig.RenderingMode> renderingMode = InputEnumProperty.of(LabConfig.RenderingMode.SHAPE, LabConfig.RenderingMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.StrokeMode> strokeMode = InputEnumProperty.of(LabConfig.StrokeMode.CENTERED, LabConfig.StrokeMode.class, Enum::toString);
+    private final ObjectProperty<SimulationState> simulationState;
 
     private Runnable onConfigChangedListener = () -> {};
 
-    public LabConfigViewModel() {
+    public LabConfigViewModel(SimpleObjectProperty<SimulationState> simulationState) {
+        this.simulationState = simulationState;
         setupConfigListeners();
     }
 
@@ -76,6 +82,14 @@ public final class LabConfigViewModel {
         renderingMode.setValue(config.renderingMode());
         colorMode.setValue(config.colorMode());
         strokeMode.setValue(config.strokeMode());
+    }
+
+    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
+        return simulationState;
+    }
+
+    public SimulationState getSimulationState() {
+        return simulationState.get();
     }
 
     public InputEnumProperty<LabConfig.RenderingMode> renderingModeProperty() {

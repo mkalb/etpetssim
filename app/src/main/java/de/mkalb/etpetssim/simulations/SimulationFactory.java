@@ -58,12 +58,13 @@ public final class SimulationFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     private static LabView createLabView() {
         // Common
+        var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
 
         // ViewModel
-        var configViewModel = new LabConfigViewModel();
-        var controlViewModel = new LabControlViewModel();
-        var viewModel = new LabViewModel(configViewModel, controlViewModel);
+        var configViewModel = new LabConfigViewModel(simulationState);
+        var controlViewModel = new LabControlViewModel(simulationState);
+        var viewModel = new LabViewModel(simulationState, configViewModel, controlViewModel);
 
         // View
         var configView = new LabConfigView(configViewModel);

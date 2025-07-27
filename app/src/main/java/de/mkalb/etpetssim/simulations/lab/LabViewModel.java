@@ -4,7 +4,9 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.simulations.SimulationState;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
 
@@ -13,6 +15,7 @@ import java.util.*;
 public final class LabViewModel {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
+    private final ObjectProperty<SimulationState> simulationState;
     private final LabConfigViewModel configViewModel;
     private final LabControlViewModel controlViewModel;
     private @Nullable LabSimulationManager simulationManager;
@@ -22,7 +25,8 @@ public final class LabViewModel {
     private Runnable drawModelListener = () -> {};
     private Runnable drawTestListener = () -> {};
 
-    public LabViewModel(LabConfigViewModel configViewModel, LabControlViewModel controlViewModel) {
+    public LabViewModel(SimpleObjectProperty<SimulationState> simulationState, LabConfigViewModel configViewModel, LabControlViewModel controlViewModel) {
+        this.simulationState = simulationState;
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
 
@@ -30,6 +34,18 @@ public final class LabViewModel {
         controlViewModel.setOnDrawButtonListener(this::onDrawEvent);
         controlViewModel.setOnDrawModelButtonListener(this::onDrawModelEvent);
         controlViewModel.setOnDrawTestButtonListener(this::onDrawTestEvent);
+    }
+
+    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
+        return simulationState;
+    }
+
+    public SimulationState getSimulationState() {
+        return simulationState.get();
+    }
+
+    private void setSimulationState(SimulationState state) {
+        simulationState.set(state);
     }
 
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
@@ -80,10 +96,16 @@ public final class LabViewModel {
     }
 
     public void onConfigChanged() {
+        setSimulationState(SimulationState.READY);
+        // Reset the simulation manager if it exists
+        simulationManager = null;
+
         configChangedListener.run();
     }
 
     public void onDrawEvent() {
+        setSimulationState(SimulationState.RUNNING);
+
         // Reset the simulation manager if it exists
         simulationManager = null;
 
