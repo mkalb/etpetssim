@@ -2,9 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -36,6 +34,83 @@ public final class FXComponentBuilder {
         Label label = new Label(text);
         label.getStyleClass().add(cssClass);
         return label;
+    }
+
+    /**
+     * Creates a labeled group of radio buttons for selecting enum values, with display names, formatted label, tooltip, and custom style class.
+     * <p>
+     * Each radio button represents a valid enum value from the provided {@link InputEnumProperty}. All radio buttons are added to the given container pane,
+     * which can be any {@link Pane} (e.g., {@link VBox}, {@link HBox}) for flexible layout. The radio buttons are grouped using a {@link ToggleGroup},
+     * ensuring only one can be selected at a time. Selection changes are synchronized with the property, and vice versa.
+     * The label displays the current value using the provided format string.
+     * Both the label and the radio buttons share the same tooltip for accessibility.
+     * <p>
+     * This method is suitable for enum-based selections with custom display names and flexible layout requirements.
+     *
+     * @param inputEnumProperty the {@link InputEnumProperty} defining valid values and value binding
+     * @param displayNameProvider a function mapping enum values to their display names
+     * @param radioButtonContainerPane the {@link Pane} to contain the radio buttons (e.g., {@link VBox}, {@link HBox})
+     * @param labelFormatString the format string for the label (e.g., "%s")
+     * @param tooltip the tooltip text for both the label and the radio buttons
+     * @param styleClass the CSS style class to apply to the radio buttons and container pane
+     * @param <E> the enum type
+     * @param <P> the pane type
+     * @return a {@link LabeledControl} containing the label and the container pane with radio buttons
+     */
+    @SuppressWarnings("unchecked")
+    public static <E extends Enum<E>, P extends Pane> LabeledControl<P> createLabeledEnumRadioButtons(InputEnumProperty<E> inputEnumProperty,
+                                                                                                      Function<E, String> displayNameProvider,
+                                                                                                      P radioButtonContainerPane,
+                                                                                                      String labelFormatString,
+                                                                                                      String tooltip,
+                                                                                                      String styleClass) {
+        ToggleGroup toggleGroup = new ToggleGroup();
+
+        List<RadioButton> radioButtons = inputEnumProperty.getValidValues()
+                                                          .stream()
+                                                          .map(enumValue -> {
+                                                              RadioButton radioButton = new RadioButton(displayNameProvider.apply(enumValue));
+                                                              radioButton.setToggleGroup(toggleGroup);
+                                                              radioButton.getStyleClass().add(styleClass);
+                                                              radioButton.setUserData(enumValue);
+                                                              return radioButton;
+                                                          })
+                                                          .toList();
+
+        // Set initial selection
+        for (RadioButton rb : radioButtons) {
+            if (inputEnumProperty.isValue((E) rb.getUserData())) {
+                rb.setSelected(true);
+            }
+        }
+
+        // Update property when selection changes
+        toggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
+            if (newToggle != null) {
+                E selectedValue = (E) newToggle.getUserData();
+                inputEnumProperty.setValue(selectedValue);
+            }
+        });
+
+        // Update selection when property changes
+        inputEnumProperty.property().addListener((_, _, newVal) -> {
+            for (RadioButton rb : radioButtons) {
+                rb.setSelected(rb.getUserData() == newVal);
+            }
+        });
+
+        radioButtonContainerPane.getChildren().addAll(radioButtons);
+        radioButtonContainerPane.getStyleClass().add(styleClass);
+
+        Label label = new Label(labelFormatString);
+        label.textProperty().bind(inputEnumProperty.asStringBinding(labelFormatString));
+        label.setLabelFor(radioButtonContainerPane);
+
+        Tooltip tooltipValue = new Tooltip(tooltip);
+        label.setTooltip(tooltipValue);
+        radioButtons.forEach(rb -> rb.setTooltip(tooltipValue));
+
+        return new LabeledControl<>(label, radioButtonContainerPane);
     }
 
     /**

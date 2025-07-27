@@ -77,9 +77,10 @@ public final class LabView implements SimulationView {
         return borderPane;
     }
 
-    private TitledPane createConfigPane(String title, FXComponentBuilder.LabeledControl... content) {
+    @SafeVarargs
+    private TitledPane createConfigPane(String title, FXComponentBuilder.LabeledControl<? extends Region>... content) {
         VBox box = new VBox();
-        for (FXComponentBuilder.LabeledControl labeledControl : content) {
+        for (FXComponentBuilder.LabeledControl<? extends Region> labeledControl : content) {
             box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
         }
         box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
@@ -153,45 +154,17 @@ public final class LabView implements SimulationView {
     }
 
     private TitledPane createConfigLayoutTitledPane() {
-        VBox box = new VBox();
-        box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
+        var colorModeControl = FXComponentBuilder.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
+                viewModel.colorModeProperty().displayNameProvider(),
+                new VBox(),
+                "Color Mode:", "Tooltip", "css"
+        );
 
-        {
-            RadioButton colorButton = new RadioButton("Color");
-            RadioButton bwButton = new RadioButton("Black & White");
-            ToggleGroup colorToggle = new ToggleGroup();
-            colorButton.setToggleGroup(colorToggle);
-            bwButton.setToggleGroup(colorToggle);
-            colorButton.setSelected(true);
-
-            colorToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-                if (newToggle == colorButton) {
-                    viewModel.colorModeProperty().setValue(LabViewModel.ColorMode.COLOR);
-                } else if (newToggle == bwButton) {
-                    viewModel.colorModeProperty().setValue(LabViewModel.ColorMode.BLACK_WHITE);
-                }
-            });
-
-            box.getChildren().addAll(new Label("Color Mode:"), colorButton, bwButton);
-        }
-        {
-            RadioButton shapeButton = new RadioButton("Shape");
-            RadioButton circleButton = new RadioButton("Circle");
-            ToggleGroup renderToggle = new ToggleGroup();
-            shapeButton.setToggleGroup(renderToggle);
-            circleButton.setToggleGroup(renderToggle);
-            shapeButton.setSelected(true);
-            renderToggle.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-                if (newToggle == shapeButton) {
-                    viewModel.renderingModeProperty().setValue(LabViewModel.RenderingMode.SHAPE);
-                } else if (newToggle == circleButton) {
-                    viewModel.renderingModeProperty().setValue(LabViewModel.RenderingMode.CIRCLE);
-                }
-            });
-            HBox hBox = new HBox(shapeButton, circleButton);
-
-            box.getChildren().addAll(new Label("Rendering Mode:"), hBox);
-        }
+        var renderingModeControl = FXComponentBuilder.createLabeledEnumRadioButtons(viewModel.renderingModeProperty(),
+                viewModel.renderingModeProperty().displayNameProvider(),
+                new HBox(),
+                "Rendering Mode:", "Tooltip", "css"
+        );
 
         var strokeModeControl = FXComponentBuilder.createLabeledEnumCheckBox(viewModel.strokeModeProperty(),
                 LabViewModel.StrokeMode.CENTERED,
@@ -200,11 +173,13 @@ public final class LabView implements SimulationView {
                 "Check to apply stroke to cells",
                 FXStyleClasses.CONFIG_CHECKBOX
         );
-        box.getChildren().addAll(strokeModeControl.label(), strokeModeControl.controlRegion());
 
-        TitledPane layoutPane = new TitledPane("Layout", box);
-        layoutPane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
-        return layoutPane;
+        return createConfigPane(
+                "Layout",
+                colorModeControl,
+                renderingModeControl,
+                strokeModeControl
+        );
     }
 
     private void setupConfigListeners() {
