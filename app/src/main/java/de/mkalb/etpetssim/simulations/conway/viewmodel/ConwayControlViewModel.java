@@ -2,7 +2,9 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 public final class ConwayControlViewModel {
 
@@ -13,8 +15,8 @@ public final class ConwayControlViewModel {
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final InputDoublePropertyIntRange stepDuration = InputDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
-    private Runnable onActionButtonListener = () -> {};
-    private Runnable onCancelButtonListener = () -> {};
+    private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
+    private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
 
     public ConwayControlViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
@@ -28,20 +30,20 @@ public final class ConwayControlViewModel {
         return simulationState.get();
     }
 
-    public void setOnActionButtonListener(Runnable listener) {
-        onActionButtonListener = listener;
+    public BooleanProperty actionButtonRequestedProperty() {
+        return actionButtonRequested;
     }
 
-    public void setOnCancelButtonListener(Runnable listener) {
-        onCancelButtonListener = listener;
+    public BooleanProperty cancelButtonRequestedProperty() {
+        return cancelButtonRequested;
     }
 
-    public void onActionButtonClicked() {
-        onActionButtonListener.run();
+    public void requestActionButton() {
+        actionButtonRequested.set(true);
     }
 
-    public void onCancelButtonClicked() {
-        onCancelButtonListener.run();
+    public void requestCancelButton() {
+        cancelButtonRequested.set(true);
     }
 
     public InputDoublePropertyIntRange stepDurationProperty() {

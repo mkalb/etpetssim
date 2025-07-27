@@ -38,8 +38,18 @@ public final class ConwayViewModel {
         this.observationViewModel = observationViewModel;
         simulationTimer = new SimulationTimer(this::doSimulationStep);
 
-        controlViewModel.setOnActionButtonListener(this::onActionButton);
-        controlViewModel.setOnCancelButtonListener(this::onCancelButton);
+        controlViewModel.actionButtonRequestedProperty().addListener((_, _, newVal) -> {
+            if (newVal) {
+                handleActionButton();
+                controlViewModel.actionButtonRequestedProperty().set(false); // reset
+            }
+        });
+        controlViewModel.cancelButtonRequestedProperty().addListener((_, _, newVal) -> {
+            if (newVal) {
+                handleCancelButton();
+                controlViewModel.cancelButtonRequestedProperty().set(false); // reset
+            }
+        });
     }
 
     public void setSimulationInitializedListener(Runnable listener) {
@@ -116,7 +126,7 @@ public final class ConwayViewModel {
         }
     }
 
-    public void onActionButton() {
+    public void handleActionButton() {
         // Stopping the timeline first to ensure no steps are executed while changing state
         stopTimeline();
         switch (getSimulationState()) {
@@ -138,7 +148,7 @@ public final class ConwayViewModel {
         }
     }
 
-    public void onCancelButton() {
+    public void handleCancelButton() {
         stopTimeline();
         AppLogger.info("Cancelling simulation...");
         setSimulationState(SimulationState.READY);

@@ -41,8 +41,8 @@ public final class ConwayControlView {
                 viewModel.simulationStateProperty().isEqualTo(SimulationState.READY)
         );
 
-        actionButton.setOnAction(_ -> viewModel.onActionButtonClicked());
-        cancelButton.setOnAction(_ -> viewModel.onCancelButtonClicked());
+        actionButton.setOnAction(_ -> viewModel.requestActionButton());
+        cancelButton.setOnAction(_ -> viewModel.requestCancelButton());
 
         // Config
         var stepDurationControl = FXComponentBuilder.createLabeledIntSlider(
