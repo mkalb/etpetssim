@@ -62,11 +62,13 @@ public final class SimulationFactory {
 
         // ViewModel
         var configViewModel = new LabConfigViewModel();
-        var viewModel = new LabViewModel(configViewModel);
+        var controlViewModel = new LabControlViewModel();
+        var viewModel = new LabViewModel(configViewModel, controlViewModel);
 
         // View
         var configView = new LabConfigView(configViewModel);
-        var view = new LabView(viewModel, configView, entityDescriptorRegistry);
+        var controlView = new LabControlView(controlViewModel);
+        var view = new LabView(viewModel, configView, controlView, entityDescriptorRegistry);
 
         // Return the main view
         return view;

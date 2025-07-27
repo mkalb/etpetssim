@@ -18,7 +18,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
@@ -41,6 +40,7 @@ public final class LabView implements SimulationView {
 
     private final LabViewModel viewModel;
     private final LabConfigView configView;
+    private final LabControlView controlView;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
@@ -53,9 +53,11 @@ public final class LabView implements SimulationView {
 
     public LabView(LabViewModel viewModel,
                    LabConfigView configView,
+                   LabControlView controlView,
                    GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.configView = configView;
+        this.controlView = controlView;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
         baseCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
@@ -69,7 +71,7 @@ public final class LabView implements SimulationView {
     public Region buildViewRegion() {
         Region configRegion = configView.buildRegion();
         Region simulationRegion = createSimulationRegion();
-        Region controlRegion = createControlRegion();
+        Region controlRegion = controlView.buildRegion();
         Region observationRegion = createObservationRegion();
 
         BorderPane borderPane = new BorderPane();
@@ -86,6 +88,9 @@ public final class LabView implements SimulationView {
 
     private void registerViewModelListeners() {
         viewModel.setConfigChangedListener(this::disableCanvas);
+        viewModel.setDrawListener(this::drawBaseCanvas);
+        viewModel.setDrawModelListener(this::drawModel);
+        viewModel.setDrawTestListener(this::drawTest);
     }
 
     private Region createSimulationRegion() {
@@ -106,29 +111,6 @@ public final class LabView implements SimulationView {
         scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
         return scrollPane;
-    }
-
-    private Region createControlRegion() {
-        Button drawButton = new Button("draw");
-        drawButton.setOnAction(_ -> {
-            viewModel.onDrawButtonClicked();
-            drawBaseCanvas();
-        });
-        drawButton.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
-
-        Button drawButtonModel = new Button("draw model");
-        drawButtonModel.setOnAction(_ -> drawModel());
-        drawButtonModel.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
-
-        Button drawButtonTest = new Button("draw test");
-        drawButtonTest.setOnAction(_ -> drawTest());
-        drawButtonTest.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
-
-        HBox hbox = new HBox();
-        hbox.getChildren().addAll(drawButton, drawButtonModel, drawButtonTest);
-        hbox.getStyleClass().add(FXStyleClasses.CONTROL_HBOX);
-
-        return hbox;
     }
 
     private Region createObservationRegion() {

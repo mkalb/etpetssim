@@ -14,14 +14,22 @@ public final class LabViewModel {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
     private final LabConfigViewModel configViewModel;
+    private final LabControlViewModel controlViewModel;
     private @Nullable LabSimulationManager simulationManager;
 
     private Runnable configChangedListener = () -> {};
+    private Runnable drawListener = () -> {};
+    private Runnable drawModelListener = () -> {};
+    private Runnable drawTestListener = () -> {};
 
-    public LabViewModel(LabConfigViewModel configViewModel) {
+    public LabViewModel(LabConfigViewModel configViewModel, LabControlViewModel controlViewModel) {
         this.configViewModel = configViewModel;
+        this.controlViewModel = controlViewModel;
 
         configViewModel.setOnConfigChangedListener(this::onConfigChanged);
+        controlViewModel.setOnDrawButtonListener(this::onDrawEvent);
+        controlViewModel.setOnDrawModelButtonListener(this::onDrawModelEvent);
+        controlViewModel.setOnDrawTestButtonListener(this::onDrawTestEvent);
     }
 
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
@@ -59,11 +67,23 @@ public final class LabViewModel {
         configChangedListener = listener;
     }
 
+    public void setDrawListener(Runnable listener) {
+        drawListener = listener;
+    }
+
+    public void setDrawModelListener(Runnable listener) {
+        drawModelListener = listener;
+    }
+
+    public void setDrawTestListener(Runnable listener) {
+        drawTestListener = listener;
+    }
+
     public void onConfigChanged() {
         configChangedListener.run();
     }
 
-    public void onDrawButtonClicked() {
+    public void onDrawEvent() {
         // Reset the simulation manager if it exists
         simulationManager = null;
 
@@ -79,6 +99,16 @@ public final class LabViewModel {
         AppLogger.info("Structure:       " + simulationManager.currentModel().structure().toDisplayString());
         AppLogger.info("Cell count:      " + simulationManager.currentModel().structure().cellCount());
         AppLogger.info("NonDefaultCells: " + simulationManager.currentModel().nonDefaultCells().count());
+
+        drawListener.run();
+    }
+
+    public void onDrawModelEvent() {
+        drawModelListener.run();
+    }
+
+    public void onDrawTestEvent() {
+        drawTestListener.run();
     }
 
 }
