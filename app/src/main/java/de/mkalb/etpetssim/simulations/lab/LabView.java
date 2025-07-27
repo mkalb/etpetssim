@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.simulations.lab;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.GridCell;
@@ -12,15 +10,13 @@ import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.ui.*;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
-import javafx.geometry.HPos;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -41,6 +37,7 @@ public final class LabView implements SimulationView {
     private final LabViewModel viewModel;
     private final LabConfigView configView;
     private final LabControlView controlView;
+    private final LabObservationView observationView;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
@@ -54,10 +51,12 @@ public final class LabView implements SimulationView {
     public LabView(LabViewModel viewModel,
                    LabConfigView configView,
                    LabControlView controlView,
+                   LabObservationView observationView,
                    GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.configView = configView;
         this.controlView = controlView;
+        this.observationView = observationView;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
         baseCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
@@ -72,7 +71,7 @@ public final class LabView implements SimulationView {
         Region configRegion = configView.buildRegion();
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = controlView.buildRegion();
-        Region observationRegion = createObservationRegion();
+        Region observationRegion = observationView.buildRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
@@ -111,44 +110,6 @@ public final class LabView implements SimulationView {
         scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
         return scrollPane;
-    }
-
-    private Region createObservationRegion() {
-        GridPane grid = new GridPane();
-        grid.getStyleClass().add(FXStyleClasses.OBSERVATION_GRID);
-
-        Label[] nameLabels = {
-                new Label("Coordinate:")
-        };
-
-        String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-
-        Label coordinateLabel = new Label(valueUnknown);
-        StringBinding coordinateDisplayBinding = Bindings.createStringBinding(
-                () -> {
-                    GridCoordinate coord = viewModel.getLastClickedCoordinate();
-                    return (coord != null) ? coord.toDisplayString() : valueUnknown;
-                },
-                viewModel.lastClickedCoordinateProperty()
-        );
-        coordinateLabel.textProperty().bind(coordinateDisplayBinding);
-
-        Label[] valueLabels = {
-                coordinateLabel
-        };
-
-        for (int i = 0; i < nameLabels.length; i++) {
-            nameLabels[i].getStyleClass().add(FXStyleClasses.OBSERVATION_NAME_LABEL);
-            valueLabels[i].getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
-
-            grid.add(nameLabels[i], 0, i);
-            grid.add(valueLabels[i], 1, i);
-
-            GridPane.setHalignment(nameLabels[i], HPos.LEFT);
-            GridPane.setHalignment(valueLabels[i], HPos.RIGHT);
-        }
-
-        return grid;
     }
 
     private void updateCanvasBorderPane(GridStructure structure) {

@@ -18,6 +18,7 @@ public final class LabViewModel {
     private final ObjectProperty<SimulationState> simulationState;
     private final LabConfigViewModel configViewModel;
     private final LabControlViewModel controlViewModel;
+    private final LabObservationViewModel observationViewModel;
     private @Nullable LabSimulationManager simulationManager;
 
     private Runnable configChangedListener = () -> {};
@@ -25,10 +26,14 @@ public final class LabViewModel {
     private Runnable drawModelRequestedListener = () -> {};
     private Runnable drawTestRequestedListener = () -> {};
 
-    public LabViewModel(SimpleObjectProperty<SimulationState> simulationState, LabConfigViewModel configViewModel, LabControlViewModel controlViewModel) {
+    public LabViewModel(SimpleObjectProperty<SimulationState> simulationState,
+                        LabConfigViewModel configViewModel,
+                        LabControlViewModel controlViewModel,
+                        LabObservationViewModel observationViewModel) {
         this.simulationState = simulationState;
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
+        this.observationViewModel = observationViewModel;
 
         configViewModel.configChangedRequestedProperty().addListener((_, _, newVal) -> {
             if (newVal) {
@@ -53,6 +58,9 @@ public final class LabViewModel {
                 handleDrawTestRequested();
                 controlViewModel.drawTestRequestedProperty().set(false); // reset
             }
+        });
+        lastClickedCoordinate.addListener((_, _, newVal) -> {
+            observationViewModel.lastClickedCoordinateProperty().set(newVal);
         });
     }
 

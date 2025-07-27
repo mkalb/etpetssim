@@ -64,12 +64,14 @@ public final class SimulationFactory {
         // ViewModel
         var configViewModel = new LabConfigViewModel(simulationState);
         var controlViewModel = new LabControlViewModel(simulationState);
-        var viewModel = new LabViewModel(simulationState, configViewModel, controlViewModel);
+        var observationViewModel = new LabObservationViewModel(simulationState);
+        var viewModel = new LabViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View
         var configView = new LabConfigView(configViewModel);
         var controlView = new LabControlView(controlViewModel);
-        var view = new LabView(viewModel, configView, controlView, entityDescriptorRegistry);
+        var observationView = new LabObservationView(observationViewModel);
+        var view = new LabView(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
 
         // Return the main view
         return view;
