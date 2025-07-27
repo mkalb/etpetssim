@@ -156,21 +156,25 @@ public final class LabView implements SimulationView {
     private TitledPane createConfigLayoutTitledPane() {
         var colorModeControl = FXComponentBuilder.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
                 viewModel.colorModeProperty().displayNameProvider(),
-                new VBox(),
-                "Color Mode:", "Tooltip", "css"
+                FXComponentBuilder.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
+                "Color Mode:", // TODO Label text
+                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
         var renderingModeControl = FXComponentBuilder.createLabeledEnumRadioButtons(viewModel.renderingModeProperty(),
                 viewModel.renderingModeProperty().displayNameProvider(),
-                new HBox(),
-                "Rendering Mode:", "Tooltip", "css"
+                FXComponentBuilder.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
+                "Rendering Mode:", // TODO Label text
+                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
         var strokeModeControl = FXComponentBuilder.createLabeledEnumCheckBox(viewModel.strokeModeProperty(),
                 LabViewModel.StrokeMode.CENTERED,
                 LabViewModel.StrokeMode.NONE,
-                "Stroke Mode:",
-                "Check to apply stroke to cells",
+                "Stroke Mode:", // TODO Label text
+                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 

@@ -16,6 +16,8 @@ public final class FXStyleClasses {
     public static final String CONFIG_CHECKBOX = "config-checkbox";
     public static final String CONFIG_COMBOBOX = "config-combobox";
     public static final String CONFIG_HBOX = "config-hbox";
+    public static final String CONFIG_RADIOBUTTON = "config-radiobutton";
+    public static final String CONFIG_RADIOBUTTON_BOX = "config-radiobutton-box";
     public static final String CONFIG_SLIDER = "config-slider";
     public static final String CONFIG_SPINNER = "config-spinner";
     public static final String CONFIG_TITLEDPANE = "config-titledpane";
