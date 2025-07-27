@@ -27,13 +27,37 @@ public final class FXComponentBuilder {
     /**
      * Creates a Label with the specified text and CSS class.
      * @param text the text to display in the label
-     * @param cssClass the CSS class to apply to the label
+     * @param styleClass the style class to add to the label
      * @return a Label with the specified text and CSS class
      */
-    public static Label createLabel(String text, String cssClass) {
+    public static Label createLabel(String text, String styleClass) {
         Label label = new Label(text);
-        label.getStyleClass().add(cssClass);
+        label.getStyleClass().add(styleClass);
         return label;
+    }
+
+    /**
+     * Creates an {@link HBox} with the specified style class.
+     *
+     * @param styleClass the style class to add to the HBox
+     * @return a new HBox with the given style class
+     */
+    public static HBox createHBox(String styleClass) {
+        HBox hbox = new HBox();
+        hbox.getStyleClass().add(styleClass);
+        return hbox;
+    }
+
+    /**
+     * Creates a {@link VBox} with the specified style class.
+     *
+     * @param styleClass the style class to add to the VBox
+     * @return a new VBox with the given style class
+     */
+    public static VBox createVBox(String styleClass) {
+        VBox vbox = new VBox();
+        vbox.getStyleClass().add(styleClass);
+        return vbox;
     }
 
     /**
@@ -52,7 +76,7 @@ public final class FXComponentBuilder {
      * @param radioButtonContainerPane the {@link Pane} to contain the radio buttons (e.g., {@link VBox}, {@link HBox})
      * @param labelFormatString the format string for the label (e.g., "%s")
      * @param tooltip the tooltip text for both the label and the radio buttons
-     * @param styleClass the CSS style class to apply to the radio buttons and container pane
+     * @param styleClass the CSS style class to apply to the radio buttons
      * @param <E> the enum type
      * @param <P> the pane type
      * @return a {@link LabeledControl} containing the label and the container pane with radio buttons
@@ -100,7 +124,6 @@ public final class FXComponentBuilder {
         });
 
         radioButtonContainerPane.getChildren().addAll(radioButtons);
-        radioButtonContainerPane.getStyleClass().add(styleClass);
 
         Label label = new Label(labelFormatString);
         label.textProperty().bind(inputEnumProperty.asStringBinding(labelFormatString));
