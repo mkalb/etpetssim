@@ -13,6 +13,7 @@ package de.mkalb.etpetssim.ui;
 public final class FXStyleClasses {
 
     public static final String APP_VBOX = "app-vbox";
+    public static final String CONFIG_CHECKBOX = "config-checkbox";
     public static final String CONFIG_COMBOBOX = "config-combobox";
     public static final String CONFIG_HBOX = "config-hbox";
     public static final String CONFIG_SLIDER = "config-slider";

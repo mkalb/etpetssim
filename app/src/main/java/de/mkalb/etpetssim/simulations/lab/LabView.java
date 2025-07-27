@@ -190,18 +190,15 @@ public final class LabView implements SimulationView {
             });
             box.getChildren().addAll(new Label("Rendering Mode:"), shapeButton, circleButton);
         }
-        {
-            CheckBox strokeCheckBox = new CheckBox("Stroke");
-            strokeCheckBox.setSelected(viewModel.strokeModeProperty().isValue(LabViewModel.StrokeMode.CENTERED));
-            strokeCheckBox.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-                if (isSelected) {
-                    viewModel.strokeModeProperty().setValue(LabViewModel.StrokeMode.CENTERED);
-                } else {
-                    viewModel.strokeModeProperty().setValue(LabViewModel.StrokeMode.NONE);
-                }
-            });
-            box.getChildren().addAll(new Label("Stroke:"), strokeCheckBox);
-        }
+
+        var strokeModeControl = FXComponentBuilder.createLabeledEnumCheckBox(viewModel.strokeModeProperty(),
+                LabViewModel.StrokeMode.CENTERED,
+                LabViewModel.StrokeMode.NONE,
+                "Stroke Mode:",
+                "Check to apply stroke to cells",
+                FXStyleClasses.CONFIG_CHECKBOX
+        );
+        box.getChildren().addAll(strokeModeControl.label(), strokeModeControl.control());
 
         TitledPane layoutPane = new TitledPane("Layout", box);
         layoutPane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);

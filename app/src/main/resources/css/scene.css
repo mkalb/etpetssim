@@ -112,6 +112,45 @@
   -fx-pref-width: 1100;
 }
 
+.config-checkbox {
+  -fx-background-color: #2e3b50;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
+  -fx-font-size: 14;
+  -fx-font-weight: normal;
+  -fx-text-fill: #aeefff;
+}
+
+.config-checkbox .box {
+  -fx-background-color: #2e3b50;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 4;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 4;
+}
+
+.config-checkbox:focused .box {
+  -fx-border-color: #00ff99;
+}
+
+.config-checkbox .mark {
+  -fx-background-color: transparent;
+}
+
+.config-checkbox:selected .mark {
+  -fx-background-color: #aeefff;
+}
+
 .config-combobox {
   -fx-background-color: #2e3b50;
   -fx-background-radius: 4;
