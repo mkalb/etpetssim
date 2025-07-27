@@ -5,15 +5,17 @@ module de.mkalb.etpetssim {
     requires java.logging;
     exports de.mkalb.etpetssim.core;
     exports de.mkalb.etpetssim.engine.model;
+    exports de.mkalb.etpetssim.engine.neighborhood;
     exports de.mkalb.etpetssim.engine;
     exports de.mkalb.etpetssim.simulations.conway.model;
     exports de.mkalb.etpetssim.simulations.conway.view;
     exports de.mkalb.etpetssim.simulations.conway.viewmodel;
-    exports de.mkalb.etpetssim.simulations.lab;
+    exports de.mkalb.etpetssim.simulations.lab.model;
+    exports de.mkalb.etpetssim.simulations.lab.view;
+    exports de.mkalb.etpetssim.simulations.lab.viewmodel;
     exports de.mkalb.etpetssim.simulations.start;
     exports de.mkalb.etpetssim.simulations.wator;
     exports de.mkalb.etpetssim.simulations;
     exports de.mkalb.etpetssim.ui;
     exports de.mkalb.etpetssim;
-    exports de.mkalb.etpetssim.engine.neighborhood;
 }

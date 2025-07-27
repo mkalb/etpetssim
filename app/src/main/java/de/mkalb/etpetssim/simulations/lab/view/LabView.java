@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.lab;
+package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
@@ -9,6 +9,9 @@ import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.SimulationView;
+import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabViewModel;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;

@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.lab;
+package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
 import javafx.beans.property.*;

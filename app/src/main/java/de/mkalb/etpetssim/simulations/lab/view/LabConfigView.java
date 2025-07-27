@@ -1,9 +1,11 @@
-package de.mkalb.etpetssim.simulations.lab;
+package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;

@@ -1,6 +1,7 @@
-package de.mkalb.etpetssim.simulations.lab;
+package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
