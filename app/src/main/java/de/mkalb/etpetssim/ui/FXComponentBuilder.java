@@ -2,6 +2,9 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -51,12 +54,12 @@ public final class FXComponentBuilder {
      * @param styleClass the CSS style class to apply to the checkbox
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the checkbox
      */
-    public static <E extends Enum<E>> LabeledControl createLabeledEnumCheckBox(InputEnumProperty<E> inputEnumProperty,
-                                                                               E checkedEnumValue,
-                                                                               E uncheckedEnumValue,
-                                                                               String labelText,
-                                                                               String tooltip,
-                                                                               String styleClass) {
+    public static <E extends Enum<E>> LabeledControl<CheckBox> createLabeledEnumCheckBox(InputEnumProperty<E> inputEnumProperty,
+                                                                                         E checkedEnumValue,
+                                                                                         E uncheckedEnumValue,
+                                                                                         String labelText,
+                                                                                         String tooltip,
+                                                                                         String styleClass) {
         CheckBox checkBox = new CheckBox();
         if (inputEnumProperty.isValue(checkedEnumValue)) {
             checkBox.setSelected(true);
@@ -84,7 +87,7 @@ public final class FXComponentBuilder {
         label.setTooltip(tooltipValue);
         checkBox.setTooltip(tooltipValue);
 
-        return new LabeledControl(label, checkBox);
+        return new LabeledControl<>(label, checkBox);
     }
 
     /**
@@ -104,11 +107,11 @@ public final class FXComponentBuilder {
      * @param styleClass the CSS style class to apply to the combo box
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the combo box
      */
-    public static <E extends Enum<E>> LabeledControl createLabeledEnumComboBox(InputEnumProperty<E> inputEnumProperty,
-                                                                               Function<E, String> displayNameProvider,
-                                                                               String labelFormatString,
-                                                                               String tooltip,
-                                                                               String styleClass) {
+    public static <E extends Enum<E>> LabeledControl<ComboBox> createLabeledEnumComboBox(InputEnumProperty<E> inputEnumProperty,
+                                                                                         Function<E, String> displayNameProvider,
+                                                                                         String labelFormatString,
+                                                                                         String tooltip,
+                                                                                         String styleClass) {
         Map<E, String> displayNames = inputEnumProperty
                 .getValidValues()
                 .stream()
@@ -134,7 +137,7 @@ public final class FXComponentBuilder {
         label.setTooltip(tooltipValue);
         comboBox.setTooltip(tooltipValue);
 
-        return new LabeledControl(label, comboBox);
+        return new LabeledControl<>(label, comboBox);
     }
 
     /**
@@ -179,10 +182,10 @@ public final class FXComponentBuilder {
      * @param styleClass the CSS style class to apply to the slider
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
      */
-    public static LabeledControl createLabeledIntSlider(InputDoublePropertyIntRange inputDoublePropertyIntRange,
-                                                        String labelFormatString,
-                                                        String tooltip,
-                                                        String styleClass) {
+    public static LabeledControl<Slider> createLabeledIntSlider(InputDoublePropertyIntRange inputDoublePropertyIntRange,
+                                                                String labelFormatString,
+                                                                String tooltip,
+                                                                String styleClass) {
 
         Slider slider = new Slider(inputDoublePropertyIntRange.min(), inputDoublePropertyIntRange.max(),
                 inputDoublePropertyIntRange.getValue());
@@ -203,7 +206,7 @@ public final class FXComponentBuilder {
         label.setTooltip(tooltipValue);
         slider.setTooltip(tooltipValue);
 
-        return new LabeledControl(label, slider);
+        return new LabeledControl<>(label, slider);
     }
 
     /**
@@ -222,7 +225,7 @@ public final class FXComponentBuilder {
      * @param styleClass the CSS style class to apply to the spinner
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the spinner
      */
-    public static LabeledControl createLabeledIntSpinner(
+    public static LabeledControl<Spinner> createLabeledIntSpinner(
             InputIntegerProperty inputIntegerProperty,
             String labelFormatString,
             String tooltip,
@@ -277,7 +280,7 @@ public final class FXComponentBuilder {
         label.setTooltip(tooltipValue);
         spinner.setTooltip(tooltipValue);
 
-        return new LabeledControl(label, spinner);
+        return new LabeledControl<>(label, spinner);
     }
 
     /**
@@ -338,7 +341,7 @@ public final class FXComponentBuilder {
      * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    public static LabeledControl createLabeledPercentSlider(
+    public static LabeledControl<Slider> createLabeledPercentSlider(
             InputDoubleProperty inputDoubleProperty,
             String labelFormatString,
             String tooltip,
@@ -378,7 +381,7 @@ public final class FXComponentBuilder {
         label.setTooltip(tooltipValue);
         slider.setTooltip(tooltipValue);
 
-        return new LabeledControl(label, slider);
+        return new LabeledControl<>(label, slider);
     }
 
     /**
@@ -411,12 +414,15 @@ public final class FXComponentBuilder {
     }
 
     /**
-     * Bundles a {@link Label} and a {@link Control} (e.g., a {@link Slider}) for use in UIs.
-     * This record is typically used to return both the label and the associated control as a pair.
+     * Bundles a {@link Label} and a {@link Region} for use in UIs.
+     * <p>
+     * The {@code controlRegion} can be either a direct {@link Control} (e.g., {@link Slider}, {@link Spinner})
+     * or a {@link Region} that itself contains one or more controls (e.g., {@link HBox}, {@link VBox}).
+     * This record is typically used to return both the label and the associated region as a pair.
      *
-     * @param label   the label describing the control
-     * @param control the UI control (e.g., slider, spinner) associated with the label
+     * @param label         the label describing the control or region
+     * @param controlRegion the UI region (control or container) associated with the label
      */
-    public record LabeledControl(Label label, Control control) {}
+    public record LabeledControl<R extends Region>(Label label, R controlRegion) {}
 
 }

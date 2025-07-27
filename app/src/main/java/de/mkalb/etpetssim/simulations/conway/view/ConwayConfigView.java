@@ -30,8 +30,8 @@ public final class ConwayConfigView {
     private TitledPane createConfigPane(String title, LabeledControl... content) {
         VBox box = new VBox();
         for (LabeledControl labeledControl : content) {
-            box.getChildren().addAll(labeledControl.label(), labeledControl.control());
-            labeledControl.control().disableProperty().bind(
+            box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
+            labeledControl.controlRegion().disableProperty().bind(
                     viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
             );
         }

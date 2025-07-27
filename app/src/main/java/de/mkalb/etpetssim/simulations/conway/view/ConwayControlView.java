@@ -52,11 +52,11 @@ public final class ConwayControlView {
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        stepDurationControl.control().disableProperty().bind(
+        stepDurationControl.controlRegion().disableProperty().bind(
                 viewModel.simulationStateProperty().isEqualTo(SimulationState.RUNNING)
         );
 
-        VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.control());
+        VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.controlRegion());
         stepDurationBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
         // Compose the buttons and config controls into a horizontal box

@@ -80,7 +80,7 @@ public final class LabView implements SimulationView {
     private TitledPane createConfigPane(String title, FXComponentBuilder.LabeledControl... content) {
         VBox box = new VBox();
         for (FXComponentBuilder.LabeledControl labeledControl : content) {
-            box.getChildren().addAll(labeledControl.label(), labeledControl.control());
+            box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
         }
         box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
 
@@ -188,7 +188,9 @@ public final class LabView implements SimulationView {
                     viewModel.renderingModeProperty().setValue(LabViewModel.RenderingMode.CIRCLE);
                 }
             });
-            box.getChildren().addAll(new Label("Rendering Mode:"), shapeButton, circleButton);
+            HBox hBox = new HBox(shapeButton, circleButton);
+
+            box.getChildren().addAll(new Label("Rendering Mode:"), hBox);
         }
 
         var strokeModeControl = FXComponentBuilder.createLabeledEnumCheckBox(viewModel.strokeModeProperty(),
@@ -198,7 +200,7 @@ public final class LabView implements SimulationView {
                 "Check to apply stroke to cells",
                 FXStyleClasses.CONFIG_CHECKBOX
         );
-        box.getChildren().addAll(strokeModeControl.label(), strokeModeControl.control());
+        box.getChildren().addAll(strokeModeControl.label(), strokeModeControl.controlRegion());
 
         TitledPane layoutPane = new TitledPane("Layout", box);
         layoutPane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
