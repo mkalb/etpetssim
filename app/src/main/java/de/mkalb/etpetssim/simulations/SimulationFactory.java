@@ -9,7 +9,9 @@ import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
 import de.mkalb.etpetssim.simulations.start.StartView;
-import de.mkalb.etpetssim.simulations.wator.WaTorController;
+import de.mkalb.etpetssim.simulations.wator.model.WatorEntityDescribable;
+import de.mkalb.etpetssim.simulations.wator.view.*;
+import de.mkalb.etpetssim.simulations.wator.viewmodel.*;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
 
@@ -41,7 +43,7 @@ public final class SimulationFactory {
         return switch (type) {
             case STARTSCREEN -> SimulationInstance.of(type, createStartView(stage, stageUpdater));
             case SIMULATION_LAB -> SimulationInstance.of(type, createLabView());
-            case WATOR -> SimulationInstance.of(type, new WaTorController());
+            case WATOR -> SimulationInstance.of(type, createWatorView());
             case CONWAYS_LIFE -> SimulationInstance.of(type, createConwayView());
             // add other simulation types here later after implementing them
             default -> {
@@ -96,6 +98,28 @@ public final class SimulationFactory {
         var controlView = new ConwayControlView(controlViewModel);
         var observationView = new ConwayObservationView(observationViewModel);
         var view = new ConwayView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+
+        // Return the main view
+        return view;
+    }
+
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    private static WatorView createWatorView() {
+        // Common
+        var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(WatorEntityDescribable.values());
+
+        // ViewModel
+        var configViewModel = new WatorConfigViewModel(simulationState);
+        var controlViewModel = new WatorControlViewModel(simulationState);
+        var observationViewModel = new WatorObservationViewModel(simulationState);
+        var viewModel = new WatorViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
+
+        // View
+        var configView = new WatorConfigView(configViewModel);
+        var controlView = new WatorControlView(controlViewModel);
+        var observationView = new WatorObservationView(observationViewModel);
+        var view = new WatorView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view
         return view;

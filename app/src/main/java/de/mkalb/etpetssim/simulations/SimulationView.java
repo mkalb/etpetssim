@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.simulations.conway.view.ConwayView;
 import de.mkalb.etpetssim.simulations.lab.view.LabView;
 import de.mkalb.etpetssim.simulations.start.StartView;
 import de.mkalb.etpetssim.simulations.wator.WaTorController;
+import de.mkalb.etpetssim.simulations.wator.view.WatorView;
 import javafx.scene.layout.Region;
 
 /**
@@ -18,7 +19,7 @@ import javafx.scene.layout.Region;
  * - {@link WaTorController}
  */
 public sealed interface SimulationView
-        permits ConwayView, LabView, StartView, WaTorController {
+        permits ConwayView, LabView, StartView, WatorView, WaTorController {
 
     /**
      * Builds the main view region for the simulation.
