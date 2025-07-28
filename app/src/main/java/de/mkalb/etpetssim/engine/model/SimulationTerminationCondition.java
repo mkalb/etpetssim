@@ -4,21 +4,23 @@ package de.mkalb.etpetssim.engine.model;
  * Functional interface for determining whether a simulation has finished.
  * <p>
  * Implementations define the termination condition based on the current state
- * of the simulation model and the current simulation step.
+ * of the simulation model, the current simulation step, and a context object.
  *
  * @param <T> the type of {@link GridEntity} in the simulation
+ * @param <C> the type of the context object (e.g., statistics or additional state)
  */
 @FunctionalInterface
-public interface SimulationTerminationCondition<T extends GridEntity> {
+public interface SimulationTerminationCondition<T extends GridEntity, C> {
 
     /**
      * Checks whether the simulation is finished.
      *
      * @param model the current simulation model
      * @param step the current simulation step (starting from 0)
+     * @param context a context object with additional information
      * @return {@code true} if the simulation should terminate, {@code false} otherwise
      */
-    boolean isFinished(GridModel<T> model, long step);
+    boolean isFinished(GridModel<T> model, long step, C context);
 
     /**
      * Returns a composed termination condition that is satisfied only if both
@@ -27,8 +29,8 @@ public interface SimulationTerminationCondition<T extends GridEntity> {
      * @param other another termination condition to combine with
      * @return a new termination condition representing the logical AND of both conditions
      */
-    default SimulationTerminationCondition<T> and(SimulationTerminationCondition<T> other) {
-        return (model, step) -> isFinished(model, step) && other.isFinished(model, step);
+    default SimulationTerminationCondition<T, C> and(SimulationTerminationCondition<T, C> other) {
+        return (model, step, context) -> isFinished(model, step, context) && other.isFinished(model, step, context);
     }
 
     /**
@@ -38,8 +40,8 @@ public interface SimulationTerminationCondition<T extends GridEntity> {
      * @param other another termination condition to combine with
      * @return a new termination condition representing the logical OR of both conditions
      */
-    default SimulationTerminationCondition<T> or(SimulationTerminationCondition<T> other) {
-        return (model, step) -> isFinished(model, step) || other.isFinished(model, step);
+    default SimulationTerminationCondition<T, C> or(SimulationTerminationCondition<T, C> other) {
+        return (model, step, context) -> isFinished(model, step, context) || other.isFinished(model, step, context);
     }
 
     /**
@@ -47,8 +49,8 @@ public interface SimulationTerminationCondition<T extends GridEntity> {
      *
      * @return a new termination condition representing the logical negation of this condition
      */
-    default SimulationTerminationCondition<T> negate() {
-        return (model, step) -> !isFinished(model, step);
+    default SimulationTerminationCondition<T, C> negate() {
+        return (model, step, context) -> !isFinished(model, step, context);
     }
 
 }

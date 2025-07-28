@@ -11,12 +11,14 @@ import java.util.function.*;
  * to the current model state and step count, and allows resetting the simulation.
  *
  * @param <T> the type of {@link GridEntity} in the simulation
+ * @param <C> the type of the context object (e.g., statistics or additional state)
  */
-public final class DefaultSimulationExecutor<T extends GridEntity> implements SimulationExecutor<T> {
+public final class DefaultSimulationExecutor<T extends GridEntity, C> implements SimulationExecutor<T> {
 
     private final SimulationStep<T> step;
     private final Supplier<GridModel<T>> modelSupplier;
-    private final SimulationTerminationCondition<T> terminationCondition;
+    private final SimulationTerminationCondition<T, C> terminationCondition;
+    private final C context;
 
     private long currentStep;
 
@@ -26,14 +28,17 @@ public final class DefaultSimulationExecutor<T extends GridEntity> implements Si
      * @param step the logic to perform a single simulation step
      * @param modelSupplier supplies the current simulation model
      * @param terminationCondition the condition that determines when the simulation should stop
+     * @param context the context object with additional information for the termination condition
      */
     public DefaultSimulationExecutor(
             SimulationStep<T> step,
             Supplier<GridModel<T>> modelSupplier,
-            SimulationTerminationCondition<T> terminationCondition) {
+            SimulationTerminationCondition<T, C> terminationCondition,
+            C context) {
         this.step = step;
         this.modelSupplier = modelSupplier;
         this.terminationCondition = terminationCondition;
+        this.context = context;
         currentStep = 0;
     }
 
@@ -49,7 +54,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity> implements Si
 
     @Override
     public boolean isRunning() {
-        return (currentStep != Long.MAX_VALUE) && !terminationCondition.isFinished(currentModel(), currentStep);
+        return (currentStep != Long.MAX_VALUE) && !terminationCondition.isFinished(currentModel(), currentStep, context);
     }
 
     @Override

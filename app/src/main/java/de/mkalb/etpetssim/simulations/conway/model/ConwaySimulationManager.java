@@ -10,8 +10,8 @@ public final class ConwaySimulationManager {
     private final ConwayConfig config;
 
     private final GridStructure structure;
-    private final SimulationExecutor<ConwayEntity> executor;
     private final ConwayStatistics statistics;
+    private final SimulationExecutor<ConwayEntity> executor;
 
     public ConwaySimulationManager(ConwayConfig config) {
         this.config = config;
@@ -20,11 +20,17 @@ public final class ConwaySimulationManager {
                 new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
                 new GridSize(config.gridWidth(), config.gridHeight())
         );
-        GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
-        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, config.alivePercent(), new java.util.Random()).initialize(model);
-        SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure));
-        executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, new ConwayTerminationCondition());
+
         statistics = new ConwayStatistics(structure.cellCount());
+
+        GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
+
+        SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure));
+
+        executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, new ConwayTerminationCondition(), statistics);
+
+        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, config.alivePercent(), new java.util.Random()).initialize(model);
+
         updateStatistics(executor.currentStep(), executor.currentModel());
     }
 
