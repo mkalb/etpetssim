@@ -7,26 +7,35 @@ import java.util.function.*;
  * Executes asynchronous simulation steps on a {@link GridModel}.
  * <p>
  * This runner applies agent-specific logic to entities in the grid model
- * based on a predicate that identifies agents.
+ * based on a predicate that identifies agents. The agent logic operates on
+ * a context object, constructed for each agent using a {@link SimulationAgentContextBuilder}.
  *
  * @param <T> the type of {@link GridEntity} contained in the grid model
+ * @param <C> the type of context object provided to agent logic
  */
-public final class AsynchronousStepRunner<T extends GridEntity> implements SimulationStep<T> {
+public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStep<T> {
 
     private final Predicate<T> isAgent;
-    private final BiConsumer<GridCell<T>, GridModel<T>> agentLogic;
+    private final SimulationAgentContextBuilder<T, C> contextBuilder;
+    private final Consumer<C> agentLogic;
     private final GridModel<T> model;
 
     /**
-     * Constructs a new {@code AsynchronousStepRunner} with the given model, agent predicate, and agent logic.
+     * Constructs a new {@code AsynchronousStepRunner} with the given model, agent predicate,
+     * context builder, and agent logic.
      *
-     * @param model      the grid model to operate on
-     * @param isAgent    a predicate to identify agents in the grid
-     * @param agentLogic the logic to apply to each agent
+     * @param model         the grid model to operate on
+     * @param isAgent       a predicate to identify agents in the grid
+     * @param contextBuilder a builder to create the context for each agent
+     * @param agentLogic    the logic to apply to each agent context
      */
-    public AsynchronousStepRunner(GridModel<T> model, Predicate<T> isAgent, BiConsumer<GridCell<T>, GridModel<T>> agentLogic) {
+    public AsynchronousStepRunner(GridModel<T> model,
+                                  Predicate<T> isAgent,
+                                  SimulationAgentContextBuilder<T, C> contextBuilder,
+                                  Consumer<C> agentLogic) {
         this.model = model;
         this.isAgent = isAgent;
+        this.contextBuilder = contextBuilder;
         this.agentLogic = agentLogic;
     }
 
@@ -41,7 +50,8 @@ public final class AsynchronousStepRunner<T extends GridEntity> implements Simul
                                           .filter(cell -> isAgent.test(cell.entity()))
                                           .toList();
         for (GridCell<T> cell : snapshot) {
-            agentLogic.accept(cell, model);
+            C context = contextBuilder.build(cell, model);
+            agentLogic.accept(context);
         }
     }
 
