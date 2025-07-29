@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -116,23 +117,21 @@ public final class WatorView implements SimulationView {
         }
 
         // Fill background
-        basePainter.fillCanvasBackground(Color.BLACK);
-        basePainter.fillGridBackground(Color.WHITE);
+        Paint backgroundPaint = entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
+                                                        .colorAsOptional().orElse(Color.BLACK);
+        basePainter.fillCanvasBackground(backgroundPaint);
 
-        // Draw all cells
-        currentModel.structure()
-                    .coordinatesStream()
-                    .forEachOrdered(coordinate ->
-                            GridEntityUtils.consumeDescriptorAt(
-                                    coordinate,
-                                    currentModel,
-                                    entityDescriptorRegistry,
-                                    descriptor ->
-                                            basePainter.drawCell(
-                                                    coordinate,
-                                                    descriptor.colorAsOptional().orElse(Color.BLACK),
-                                                    null,
-                                                    0.0d)));
+        currentModel.nonDefaultCells().forEachOrdered(cell ->
+                GridEntityUtils.consumeDescriptorAt(
+                        cell.coordinate(),
+                        currentModel,
+                        entityDescriptorRegistry,
+                        descriptor -> basePainter.drawCell(
+                                cell.coordinate(),
+                                descriptor.colorAsOptional().orElse(Color.BLACK),
+                                descriptor.borderColorAsOptional().orElse(Color.BLACK),
+                                0.0d))
+        );
     }
 
     private Region createSimulationRegion() {
