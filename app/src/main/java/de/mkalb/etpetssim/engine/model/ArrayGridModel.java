@@ -135,6 +135,36 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
     }
 
     /**
+     * Swaps the entities at the coordinates of the two given {@link GridCell} objects.
+     * <p>
+     * After execution, the entity from {@code cellA} will be at {@code cellB}'s coordinate,
+     * and the entity from {@code cellB} will be at {@code cellA}'s coordinate.
+     * </p>
+     *
+     * @param cellA the first grid cell whose entity and coordinate are involved in the swap
+     * @param cellB the second grid cell whose entity and coordinate are involved in the swap
+     * @throws IndexOutOfBoundsException if either coordinate is not valid in this grid
+     */
+    @Override
+    public void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
+        GridCoordinate coordinateA = cellA.coordinate();
+        GridCoordinate coordinateB = cellB.coordinate();
+        if (!structure.isCoordinateValid(coordinateA)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateA + " for structure: " + structure);
+        }
+        if (!structure.isCoordinateValid(coordinateB)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure);
+        }
+        int xA = coordinateA.x();
+        int yA = coordinateA.y();
+        int xB = coordinateB.x();
+        int yB = coordinateB.y();
+        Object temp = data[yA][xA];
+        data[yA][xA] = data[yB][xB];
+        data[yB][xB] = temp;
+    }
+
+    /**
      * Returns a string representation of this grid model, including its structure and default entity.
      *
      * @return a string representation of this grid model

@@ -83,4 +83,22 @@ public interface GridModel<T extends GridEntity> extends ReadableGridModel<T> {
         structure().coordinatesStream().forEachOrdered(coordinate -> setEntity(coordinate, mapper.apply(coordinate)));
     }
 
+    /**
+     * Swaps the entities at the coordinates of the two given {@link GridCell} objects.
+     * <p>
+     * After execution, the entity from {@code cellA} will be at {@code cellB}'s coordinate,
+     * and the entity from {@code cellB} will be at {@code cellA}'s coordinate.
+     * </p>
+     *
+     * @param cellA the first grid cell whose entity and coordinate are involved in the swap
+     * @param cellB the second grid cell whose entity and coordinate are involved in the swap
+     * @throws IndexOutOfBoundsException if either coordinate is not valid in this grid
+     */
+    default void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
+        T entityA = cellA.entity();
+        T entityB = cellB.entity();
+        setEntity(cellA.coordinate(), entityB);
+        setEntity(cellB.coordinate(), entityA);
+    }
+
 }
