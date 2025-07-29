@@ -52,14 +52,31 @@ public final class WatorAgentLogicFactory {
             }
         }
 
-        if (entity.isFish()) {
+        if (entity instanceof WatorFish fish) {
+            GridCoordinate fishCoordinate = coordinate;
             // Move fish, if possible
             if (!waterCells.isEmpty()) {
                 GridCell<WatorEntity> newCell = chooseRandomCoordinate(waterCells);
                 model.swapEntities(agentCell, newCell);
+                fishCoordinate = newCell.coordinate();
 
                 // Reproduce, if conditions are met
-
+                if (fish.age(currentStep) >= 5) {
+                    if (fish.numberOfReproductions() < 4) {
+                        if (fish.timeOfLastReproduction().isEmpty() ||
+                                ((currentStep - fish.timeOfLastReproduction().getAsLong()) >= 3)) {
+                            WatorFish childFish = entityFactory.createFish(currentStep);
+                            statistics.incrementFishCells();
+                            fish.reproduce(childFish);
+                            model.setEntity(coordinate, childFish);
+                        }
+                    }
+                }
+            }
+            // Remove fish if it is too old
+            if (fish.age(currentStep) >= 30) {
+                model.setEntityToDefault(fishCoordinate);
+                statistics.decrementFishCells();
             }
         }
 
