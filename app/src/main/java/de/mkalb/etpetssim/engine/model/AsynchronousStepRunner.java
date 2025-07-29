@@ -6,55 +6,51 @@ import java.util.function.*;
 /**
  * Executes asynchronous simulation steps on a {@link GridModel}.
  * <p>
- * This runner applies agent-specific logic to entities in the grid model
- * based on a predicate that identifies agents. The agent logic operates on
- * a context object, constructed for each agent using a {@link SimulationAgentContextBuilder}.
+ * This runner applies agent-specific logic to all entities in the grid model
+ * that satisfy the given agent predicate. The agent logic is applied to each
+ * agent cell, using the provided context object for state sharing or accumulation.
  *
  * @param <T> the type of {@link GridEntity} contained in the grid model
- * @param <C> the type of context object provided to agent logic
+ * @param <C> the type of the context object provided to each simulation step
  */
-public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStep<T> {
+public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStep<C> {
 
     private final Predicate<T> isAgent;
-    private final SimulationAgentContextBuilder<T, C> contextBuilder;
-    private final Consumer<C> agentLogic;
     private final GridModel<T> model;
+    private final AgentStepLogic<T, C> agentStepLogic;
 
     /**
      * Constructs a new {@code AsynchronousStepRunner} with the given model, agent predicate,
-     * context builder, and agent logic.
+     * and agent logic.
      *
-     * @param model         the grid model to operate on
-     * @param isAgent       a predicate to identify agents in the grid
-     * @param contextBuilder a builder to create the context for each agent
-     * @param agentLogic    the logic to apply to each agent context
+     * @param model          the grid model to operate on
+     * @param isAgent        a predicate to identify agents in the grid
+     * @param agentStepLogic the logic to apply to each agent cell
      */
     public AsynchronousStepRunner(GridModel<T> model,
                                   Predicate<T> isAgent,
-                                  SimulationAgentContextBuilder<T, C> contextBuilder,
-                                  Consumer<C> agentLogic) {
+                                  AgentStepLogic<T, C> agentStepLogic) {
         this.model = model;
         this.isAgent = isAgent;
-        this.contextBuilder = contextBuilder;
-        this.agentLogic = agentLogic;
+        this.agentStepLogic = agentStepLogic;
     }
 
     /**
      * Performs a single asynchronous simulation step.
      * <p>
      * Applies the agent logic to all entities identified as agents in the grid model.
-     * </p>
+     * The context object is passed to each agent logic invocation.
      *
      * @param currentStep the current simulation step number
+     * @param context     the context object used to share or accumulate state during the simulation
      */
     @Override
-    public void performStep(long currentStep) {
+    public void performStep(long currentStep, C context) {
         List<GridCell<T>> snapshot = model.cellsAsStream()
                                           .filter(cell -> isAgent.test(cell.entity()))
                                           .toList();
         for (GridCell<T> cell : snapshot) {
-            C context = contextBuilder.build(cell, model);
-            agentLogic.accept(context);
+            agentStepLogic.performAgentStep(cell, model, currentStep, context);
         }
     }
 

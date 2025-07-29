@@ -11,11 +11,11 @@ import java.util.function.*;
  * to the current model state and step count, and allows resetting the simulation.
  *
  * @param <T> the type of {@link GridEntity} in the simulation
- * @param <C> the type of the context object (e.g., statistics or additional state)
+ * @param <C> the type of the context object used to share or accumulate state during the simulation
  */
 public final class DefaultSimulationExecutor<T extends GridEntity, C> implements SimulationExecutor<T> {
 
-    private final SimulationStep<T> step;
+    private final SimulationStep<C> step;
     private final Supplier<GridModel<T>> modelSupplier;
     private final SimulationTerminationCondition<T, C> terminationCondition;
     private final C context;
@@ -25,13 +25,13 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     /**
      * Creates a new {@code DefaultSimulationExecutor}.
      *
-     * @param step the logic to perform a single simulation step
+     * @param step the logic to perform a single simulation step, using the provided context
      * @param modelSupplier supplies the current simulation model
-     * @param terminationCondition the condition that determines when the simulation should stop
-     * @param context the context object with additional information for the termination condition
+     * @param terminationCondition the condition that determines when the simulation should stop, evaluated with the context
+     * @param context the context object used to share or accumulate state during the simulation
      */
     public DefaultSimulationExecutor(
-            SimulationStep<T> step,
+            SimulationStep<C> step,
             Supplier<GridModel<T>> modelSupplier,
             SimulationTerminationCondition<T, C> terminationCondition,
             C context) {
@@ -59,7 +59,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
 
     @Override
     public void executeStep() {
-        step.performStep(currentStep);
+        step.performStep(currentStep, context);
         currentStep++;
     }
 

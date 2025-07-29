@@ -1,18 +1,20 @@
 package de.mkalb.etpetssim.engine.model;
 
-import java.util.function.*;
-
 /**
  * Executes synchronous simulation steps on a {@link GridModel}.
  * <p>
- * The update strategy must only read from the current model (as {@link ReadableGridModel})
- * and write results to the next model.
+ * This runner applies a synchronous update strategy to the simulation model:
+ * it reads from the current model (as a {@link ReadableGridModel}) and writes results
+ * to the next model. After each step, the models are swapped, and the next model is cleared
+ * for the following step.
  *
  * @param <T> the type of {@link GridEntity} contained in the grid model
+ * @param <C> the type of the context object provided to each simulation step
+ * @see SynchronousStepLogic
  */
-public final class SynchronousStepRunner<T extends GridEntity> implements SimulationStep<T> {
+public final class SynchronousStepRunner<T extends GridEntity, C> implements SimulationStep<C> {
 
-    private final BiConsumer<ReadableGridModel<T>, GridModel<T>> updateStrategy;
+    private final SynchronousStepLogic<T, C> stepLogic;
     private GridModel<T> currentModel;
     private GridModel<T> nextModel;
 
@@ -20,27 +22,28 @@ public final class SynchronousStepRunner<T extends GridEntity> implements Simula
      * Constructs a new {@code SynchronousStepRunner} with the given initial model and update strategy.
      * The update strategy must not modify the {@code ReadableGridModel} parameter.
      *
-     * @param initialModel   the initial grid model
-     * @param updateStrategy the update strategy, which reads from the current model and writes to the next model
+     * @param initialModel the initial grid model
+     * @param stepLogic    the logic to apply for each synchronous simulation step
      */
     public SynchronousStepRunner(GridModel<T> initialModel,
-                                 BiConsumer<ReadableGridModel<T>, GridModel<T>> updateStrategy) {
+                                 SynchronousStepLogic<T, C> stepLogic) {
         currentModel = initialModel;
         nextModel = currentModel.copyWithDefaultEntity();
-        this.updateStrategy = updateStrategy;
+        this.stepLogic = stepLogic;
     }
 
     /**
      * Performs a single synchronous simulation step.
      * <p>
      * The update strategy reads from the current model and writes to the next model.
-     * </p>
+     * After the update, the models are swapped and the next model is cleared.
      *
      * @param currentStep the current simulation step number
+     * @param context     the context object used to share or accumulate state during the simulation
      */
     @Override
-    public void performStep(long currentStep) {
-        updateStrategy.accept(currentModel, nextModel);
+    public void performStep(long currentStep, C context) {
+        stepLogic.performSynchronousStep(currentModel, nextModel, currentStep, context);
         GridModel<T> tempModel = currentModel;
         currentModel = nextModel;
         nextModel = tempModel;
