@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.*;
 
 import java.util.*;
-import java.util.function.*;
 
 public final class WatorSimulationManager {
 
@@ -15,56 +14,47 @@ public final class WatorSimulationManager {
     private final GridStructure structure;
     private final WatorStatistics statistics;
     private final SimulationExecutor<WatorEntity> executor;
-    private final WatorEntityFactory entityFactory;
-    private final Random random;
 
     public WatorSimulationManager(WatorConfig config) {
         this.config = config;
-
-        random = new java.util.Random();
 
         structure = new GridStructure(
                 new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
                 new GridSize(config.gridWidth(), config.gridHeight())
         );
         statistics = new WatorStatistics(structure.cellCount());
+        var random = new java.util.Random();
+        var model = new ArrayGridModel<WatorEntity>(structure, WatorConstantEntity.WATER);
+        var entityFactory = new WatorEntityFactory();
 
-        GridModel<WatorEntity> model = new ArrayGridModel<>(structure, WatorConstantEntity.WATER);
+        // Executor with runner and terminationCondition
+        var agentLogicFactory = new WatorAgentLogicFactory(config, random, entityFactory);
+        var agentStepLogic = agentLogicFactory.createAgentLogic(WatorAgentLogicFactory.WatorLogicType.SIMPLE);
+        var runner = new AsynchronousStepRunner<>(model, WatorEntity::isAgent, agentStepLogic);
+        var terminationCondition = new WatorTerminationCondition();
+        executor = new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics);
 
-        entityFactory = new WatorEntityFactory();
-
-        // 1. Create the context builder
-        SimulationAgentContextBuilder<WatorEntity, WatorAgentContext> contextBuilder =
-                (c, m) -> new WatorAgentContext(c, m, statistics, random);
-
-        // 2. Create the agent logic as a Consumer<WatorAgentContext>
-        WatorAgentLogicFactory logicFactory = new WatorAgentLogicFactory(config, entityFactory);
-        Consumer<WatorAgentContext> agentLogic = logicFactory.createAgentLogic(WatorAgentLogicFactory.WatorLogicType.SIMPLE);
-
-        // 3. Pass both to the runner
-        AsynchronousStepRunner<WatorEntity, WatorAgentContext> runner =
-                new AsynchronousStepRunner<>(model, WatorEntity::isAgent, contextBuilder, agentLogic);
-
-        executor = new DefaultSimulationExecutor<>(runner, runner::model, new WatorTerminationCondition(), statistics);
-
-        GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
-                this::createFish, config.fishPercent(), random);
-        GridInitializer<WatorEntity> sharkInit = GridInitializers.placeRandomPercent(
-                this::createShark, config.sharkPercent(), random);
-
-        fishInit.initialize(executor.currentModel());
-        sharkInit.initialize(executor.currentModel());
-
-        updateStatistics(executor.currentStep(), executor.currentModel());
+        // Initialize the grid with fish and sharks
+        initializeGrid(model, random, entityFactory);
     }
 
-    private WatorFish createFish() {
+    private void initializeGrid(GridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {
+        GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
+                () -> createFish(entityFactory), config.fishPercent(), random);
+        GridInitializer<WatorEntity> sharkInit = GridInitializers.placeRandomPercent(
+                () -> createShark(entityFactory), config.sharkPercent(), random);
+
+        fishInit.initialize(model);
+        sharkInit.initialize(model);
+    }
+
+    private WatorFish createFish(WatorEntityFactory entityFactory) {
         WatorFish watorFish = entityFactory.createFish(0);
         statistics.incrementFishCells();
         return watorFish;
     }
 
-    private WatorShark createShark() {
+    private WatorShark createShark(WatorEntityFactory entityFactory) {
         WatorShark watorShark = entityFactory.createShark(0, config.sharkBirthEnergy());
         statistics.incrementSharkCells();
         return watorShark;
