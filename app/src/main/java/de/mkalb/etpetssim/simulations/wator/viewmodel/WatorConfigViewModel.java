@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.wator.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.ui.*;
@@ -34,6 +35,7 @@ public final class WatorConfigViewModel {
     private static final int SHARK_BIRTH_ENERGY_MAX = 100;
     private static final int SHARK_BIRTH_ENERGY_MIN = 1;
     private static final int SHARK_BIRTH_ENERGY_STEP = 1;
+    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
@@ -72,6 +74,9 @@ public final class WatorConfigViewModel {
             SHARK_BIRTH_ENERGY_MIN,
             SHARK_BIRTH_ENERGY_MAX,
             SHARK_BIRTH_ENERGY_STEP);
+    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode =
+            InputEnumProperty.of(NEIGHBORHOOD_MODE_INITIAL, NeighborhoodMode.class,
+                    e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
@@ -86,7 +91,8 @@ public final class WatorConfigViewModel {
                 cellEdgeLength.getValue(),
                 fishPercent.getValue(),
                 sharkPercent.getValue(),
-                sharkBirthEnergy.getValue()
+                sharkBirthEnergy.getValue(),
+                neighborhoodMode.getValue()
         );
     }
 
@@ -99,6 +105,7 @@ public final class WatorConfigViewModel {
         fishPercent.setValue(config.fishPercent());
         sharkPercent.setValue(config.sharkPercent());
         sharkBirthEnergy.setValue(config.sharkBirthEnergy());
+        neighborhoodMode.setValue(config.neighborhoodMode());
     }
 
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
@@ -139,6 +146,10 @@ public final class WatorConfigViewModel {
 
     public InputIntegerProperty sharkBirthEnergyProperty() {
         return sharkBirthEnergy;
+    }
+
+    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
+        return neighborhoodMode;
     }
 
 }
