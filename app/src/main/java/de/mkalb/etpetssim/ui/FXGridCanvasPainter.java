@@ -62,6 +62,30 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Scales the vertices of a polygon outward or inward from a given center point by the specified scale factor.
+     *
+     * @param xPoints the x-coordinates of the polygon's vertices
+     * @param yPoints the y-coordinates of the polygon's vertices
+     * @param centerX the x-coordinate of the center point
+     * @param centerY the y-coordinate of the center point
+     * @param scale the scale factor (greater than 1 enlarges, less than 1 shrinks)
+     * @return a two-dimensional array containing the scaled x and y coordinates
+     */
+    private static double[][] scalePolygonFromCenter(double[] xPoints, double[] yPoints,
+                                                     double centerX, double centerY,
+                                                     double scale) {
+        double[] newX = new double[xPoints.length];
+        double[] newY = new double[yPoints.length];
+        for (int i = 0; i < xPoints.length; i++) {
+            double dx = xPoints[i] - centerX;
+            double dy = yPoints[i] - centerY;
+            newX[i] = centerX + (dx * scale);
+            newY[i] = centerY + (dy * scale);
+        }
+        return new double[][]{newX, newY};
+    }
+
+    /**
      * Returns the JavaFX Canvas on which the grid will be drawn.
      *
      * @return the canvas used for drawing the grid
@@ -172,6 +196,28 @@ public final class FXGridCanvasPainter {
         // Optimization hint: Consider using `fillRect` or `PixelWriter.setColor()` for SQUARE cells.
         double[][] cellPolygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, structure.cellShape());
         drawPolygon(cellPolygon[0], cellPolygon[1], fillColor, strokeColor, strokeLineWidth);
+    }
+
+    /**
+     * Draws a cell at the specified grid coordinate, scaling its polygon shape from the center
+     * by the given scale factor before rendering. This can be used to slightly enlarge or shrink
+     * the cell to avoid rendering gaps between adjacent cells.
+     *
+     * @param coordinate the grid coordinate of the cell to draw
+     * @param fillColor the color used to fill the cell, or null if no fill is desired
+     * @param strokeColor the color used to draw the cell's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param scale the scale factor to apply to the cell polygon (e.g. 1.01 for 1% larger)
+     */
+    public void drawScaledCell(GridCoordinate coordinate,
+                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
+                               double strokeLineWidth,
+                               double scale) {
+        double[][] cellPolygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, structure.cellShape());
+        Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
+        // Slightly enlarge the polygon (e.g. 1.01 = 1% larger)
+        double[][] enlarged = scalePolygonFromCenter(cellPolygon[0], cellPolygon[1], center.getX(), center.getY(), scale);
+        drawPolygon(enlarged[0], enlarged[1], fillColor, strokeColor, strokeLineWidth);
     }
 
     /**
