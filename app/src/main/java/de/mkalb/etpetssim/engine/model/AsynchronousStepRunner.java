@@ -43,9 +43,12 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      * Performs a single asynchronous simulation step.
      * <p>
      * Applies the agent logic to all entities identified as agents in the grid model.
+     * </p>
+     *
+     * @param currentStep the current simulation step number
      */
     @Override
-    public void performStep() {
+    public void performStep(long currentStep) {
         List<GridCell<T>> snapshot = model.cellsAsStream()
                                           .filter(cell -> isAgent.test(cell.entity()))
                                           .toList();

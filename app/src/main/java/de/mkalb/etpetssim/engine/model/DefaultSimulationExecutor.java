@@ -59,7 +59,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
 
     @Override
     public void executeStep() {
-        step.performStep();
+        step.performStep(currentStep);
         currentStep++;
     }
 

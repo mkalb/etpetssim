@@ -13,9 +13,9 @@ public interface SimulationStep<T extends GridEntity> {
 
     /**
      * Performs a single simulation step.
-     * <p>
-     * The implementation should define the logic for advancing the simulation by one step.
+     *
+     * @param currentStep the current simulation step number
      */
-    void performStep();
+    void performStep(long currentStep);
 
 }

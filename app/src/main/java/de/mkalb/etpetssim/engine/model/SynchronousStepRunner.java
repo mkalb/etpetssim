@@ -34,9 +34,12 @@ public final class SynchronousStepRunner<T extends GridEntity> implements Simula
      * Performs a single synchronous simulation step.
      * <p>
      * The update strategy reads from the current model and writes to the next model.
+     * </p>
+     *
+     * @param currentStep the current simulation step number
      */
     @Override
-    public void performStep() {
+    public void performStep(long currentStep) {
         updateStrategy.accept(currentModel, nextModel);
         GridModel<T> tempModel = currentModel;
         currentModel = nextModel;
