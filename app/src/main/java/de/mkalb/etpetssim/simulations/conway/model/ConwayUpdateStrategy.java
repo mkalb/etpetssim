@@ -21,7 +21,7 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
     public void performSynchronousStep(ReadableGridModel<ConwayEntity> currentModel,
                                        GridModel<ConwayEntity> nextModel,
                                        long currentStep,
-                                       ConwayStatistics context) {
+                                       ConwayStatistics statistics) {
         // TODO Use ConwayStatistics
         structure.coordinatesStream().forEach(coordinate -> {
             boolean isAlive = currentModel.getEntity(coordinate).isAlive();
