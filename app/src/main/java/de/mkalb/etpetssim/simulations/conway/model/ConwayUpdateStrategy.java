@@ -4,14 +4,12 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.SynchronousStepLogic;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 
-import java.util.function.*;
-
-public final class ConwayUpdateStrategy implements BiConsumer<ReadableGridModel<ConwayEntity>,
-        GridModel<ConwayEntity>> {
+public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEntity, ConwayStatistics> {
 
     private final GridStructure structure;
 
@@ -20,7 +18,11 @@ public final class ConwayUpdateStrategy implements BiConsumer<ReadableGridModel<
     }
 
     @Override
-    public void accept(ReadableGridModel<ConwayEntity> currentModel, GridModel<ConwayEntity> nextModel) {
+    public void performSynchronousStep(ReadableGridModel<ConwayEntity> currentModel,
+                                       GridModel<ConwayEntity> nextModel,
+                                       long currentStep,
+                                       ConwayStatistics context) {
+        // TODO Use ConwayStatistics
         structure.coordinatesStream().forEach(coordinate -> {
             boolean isAlive = currentModel.getEntity(coordinate).isAlive();
             long aliveNeighbors = CellNeighborhoods.neighborEdgeResults(coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)

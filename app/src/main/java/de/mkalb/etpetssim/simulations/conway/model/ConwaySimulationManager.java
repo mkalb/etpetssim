@@ -25,7 +25,8 @@ public final class ConwaySimulationManager {
 
         GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
 
-        SynchronousStepRunner<ConwayEntity> runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure));
+        SynchronousStepRunner<ConwayEntity, ConwayStatistics> runner = new SynchronousStepRunner<>(model,
+                new ConwayUpdateStrategy(structure));
 
         executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, new ConwayTerminationCondition(), statistics);
 
