@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.AgentStepLogic;
@@ -52,35 +53,95 @@ public final class WatorAgentLogicFactory {
             }
         }
 
-        if (entity instanceof WatorFish fish) {
-            GridCoordinate fishCoordinate = coordinate;
-            // Move fish, if possible
-            if (!waterCells.isEmpty()) {
-                GridCell<WatorEntity> newCell = chooseRandomCoordinate(waterCells);
-                model.swapEntities(agentCell, newCell);
-                fishCoordinate = newCell.coordinate();
+        // TODO handle REFLECT and ABSORB
 
-                // Reproduce, if conditions are met
-                if (fish.age(currentStep) >= 5) {
-                    if (fish.numberOfReproductions() < 4) {
-                        if (fish.timeOfLastReproduction().isEmpty() ||
-                                ((currentStep - fish.timeOfLastReproduction().getAsLong()) >= 3)) {
-                            WatorFish childFish = entityFactory.createFish(currentStep);
-                            statistics.incrementFishCells();
-                            fish.reproduce(childFish);
-                            model.setEntity(coordinate, childFish);
-                        }
-                    }
+        if (entity instanceof WatorFish fish) {
+            fishSimpleLogic(agentCell, model, currentStep, statistics, fish, waterCells);
+        } else if (entity instanceof WatorShark shark) {
+            sharkSimpleLogic(agentCell, model, currentStep, statistics, shark, fishCells, waterCells);
+        }
+    }
+
+    private void fishSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, long currentStep, WatorStatistics statistics,
+                                 WatorFish fish, List<GridCell<WatorEntity>> waterCells) {
+        GridCoordinate fishOriginalCoordinate = agentCell.coordinate();
+        GridCoordinate fishNewCoordinate = fishOriginalCoordinate;
+
+        // Check if fish is still at its original coordinate. It could have been eaten by a shark.
+        if (!model.getEntity(fishOriginalCoordinate).equals(fish)) {
+            return;
+        }
+
+        // Move fish, if possible
+        if (!waterCells.isEmpty()) {
+            GridCell<WatorEntity> waterCell = chooseRandomCoordinate(waterCells);
+            model.swapEntities(agentCell, waterCell);
+            fishNewCoordinate = waterCell.coordinate();
+
+            // Reproduce, if conditions are met
+            if (fish.age(currentStep) >= 5) {
+                if (fish.timeOfLastReproduction().isEmpty() ||
+                        ((currentStep - fish.timeOfLastReproduction().getAsLong()) >= 3)) {
+                    WatorFish childFish = entityFactory.createFish(currentStep);
+                    statistics.incrementFishCells();
+                    fish.reproduce(childFish);
+                    model.setEntity(fishOriginalCoordinate, childFish);
+                    AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " reproduced with child at: " + fishOriginalCoordinate);
                 }
-            }
-            // Remove fish if it is too old
-            if (fish.age(currentStep) >= 30) {
-                model.setEntityToDefault(fishCoordinate);
-                statistics.decrementFishCells();
             }
         }
 
-        // TODO Implement simple agent logic here
+        // Remove fish if it is too old
+        if (fish.age(currentStep) >= 20) {
+            model.setEntityToDefault(fishNewCoordinate);
+            statistics.decrementFishCells();
+            AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
+        }
+    }
+
+    private void sharkSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, long currentStep, WatorStatistics statistics,
+                                  WatorShark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
+        GridCoordinate sharkOriginalCoordinate = agentCell.coordinate();
+        GridCoordinate sharkNewCoordinate = sharkOriginalCoordinate;
+
+        // Reduce energy
+        shark.reduceEnergy(1);
+
+        if (!fishCells.isEmpty()) {
+            GridCell<WatorEntity> fishCell = chooseRandomCoordinate(fishCells);
+            model.setEntity(fishCell.coordinate(), shark);
+            model.setEntityToDefault(sharkOriginalCoordinate);
+            sharkNewCoordinate = fishCell.coordinate();
+            shark.gainEnergy(2);
+            statistics.decrementFishCells();
+            AppLogger.info("WatorAgentLogicFactory - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
+        } else if (!waterCells.isEmpty()) {
+            GridCell<WatorEntity> waterCell = chooseRandomCoordinate(waterCells);
+            model.swapEntities(agentCell, waterCell);
+            sharkNewCoordinate = waterCell.coordinate();
+            //    AppLogger.info("WatorAgentLogicFactory - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
+        }
+        // Reproduce, if conditions are met
+        if (!sharkOriginalCoordinate.equals(sharkNewCoordinate)) {
+            if (shark.age(currentStep) >= 15) {
+                if (shark.currentEnergy() >= 5) {
+                    if (shark.timeOfLastReproduction().isEmpty() ||
+                            ((currentStep - shark.timeOfLastReproduction().getAsLong()) >= 3)) {
+                        WatorShark childShark = entityFactory.createShark(currentStep, config.sharkBirthEnergy());
+                        statistics.incrementSharkCells();
+                        shark.reproduce(childShark);
+                        model.setEntity(sharkOriginalCoordinate, childShark);
+                        AppLogger.info("WatorAgentLogicFactory - Reproducing shark at coordinate: " + sharkNewCoordinate + " with child at: " + sharkOriginalCoordinate);
+                    }
+                }
+            }
+        }
+        // Remove shark if it is too old or has no energy left
+        if ((shark.age(currentStep) >= 50) || (shark.currentEnergy() <= 0)) {
+            model.setEntityToDefault(sharkNewCoordinate);
+            statistics.decrementSharkCells();
+            AppLogger.info("WatorAgentLogicFactory - Removing shark at coordinate: " + sharkNewCoordinate);
+        }
     }
 
     private GridCell<WatorEntity> chooseRandomCoordinate(List<GridCell<WatorEntity>> cells) {
