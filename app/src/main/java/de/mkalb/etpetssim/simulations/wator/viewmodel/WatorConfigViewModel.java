@@ -25,10 +25,10 @@ public final class WatorConfigViewModel {
     private static final int CELL_EDGE_LENGTH_INITIAL = 10;
     private static final int CELL_EDGE_LENGTH_MAX = 48;
     private static final int CELL_EDGE_LENGTH_MIN = 1;
-    private static final double FISH_PERCENT_INITIAL = 0.15d;
+    private static final double FISH_PERCENT_INITIAL = 0.25d;
     private static final double FISH_PERCENT_MAX = 1.0d;
     private static final double FISH_PERCENT_MIN = 0.0d;
-    private static final double SHARK_PERCENT_INITIAL = 0.15d;
+    private static final double SHARK_PERCENT_INITIAL = 0.10d;
     private static final double SHARK_PERCENT_MAX = 1.0d;
     private static final double SHARK_PERCENT_MIN = 0.0d;
     private static final int SHARK_BIRTH_ENERGY_INITIAL = 10;
