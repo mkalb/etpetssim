@@ -92,7 +92,7 @@ public final class WatorAgentLogicFactory {
         }
 
         // Remove fish if it is too old
-        if (fish.age(currentStep) >= 20) {
+        if (fish.age(currentStep) >= config.fishMaxAge()) {
             model.setEntityToDefault(fishNewCoordinate);
             statistics.decrementFishCells();
             AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
@@ -137,7 +137,7 @@ public final class WatorAgentLogicFactory {
             }
         }
         // Remove shark if it is too old or has no energy left
-        if ((shark.age(currentStep) >= 50) || (shark.currentEnergy() <= 0)) {
+        if ((shark.age(currentStep) >= config.sharkMaxAge()) || (shark.currentEnergy() <= 0)) {
             model.setEntityToDefault(sharkNewCoordinate);
             statistics.decrementSharkCells();
             AppLogger.info("WatorAgentLogicFactory - Removing shark at coordinate: " + sharkNewCoordinate);

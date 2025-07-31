@@ -31,6 +31,14 @@ public final class WatorConfigViewModel {
     private static final double SHARK_PERCENT_INITIAL = 0.10d;
     private static final double SHARK_PERCENT_MAX = 1.0d;
     private static final double SHARK_PERCENT_MIN = 0.0d;
+    private static final int FISH_MAX_AGE_INITIAL = 20;
+    private static final int FISH_MAX_AGE_MAX = 100;
+    private static final int FISH_MAX_AGE_MIN = 10;
+    private static final int FISH_MAX_AGE_STEP = 1;
+    private static final int SHARK_MAX_AGE_INITIAL = 40;
+    private static final int SHARK_MAX_AGE_MAX = 100;
+    private static final int SHARK_MAX_AGE_MIN = 10;
+    private static final int SHARK_MAX_AGE_STEP = 1;
     private static final int SHARK_BIRTH_ENERGY_INITIAL = 10;
     private static final int SHARK_BIRTH_ENERGY_MAX = 100;
     private static final int SHARK_BIRTH_ENERGY_MIN = 1;
@@ -69,6 +77,16 @@ public final class WatorConfigViewModel {
             SHARK_PERCENT_INITIAL,
             SHARK_PERCENT_MIN,
             SHARK_PERCENT_MAX);
+    private final InputIntegerProperty fishMaxAge = InputIntegerProperty.of(
+            FISH_MAX_AGE_INITIAL,
+            FISH_MAX_AGE_MIN,
+            FISH_MAX_AGE_MAX,
+            FISH_MAX_AGE_STEP);
+    private final InputIntegerProperty sharkMaxAge = InputIntegerProperty.of(
+            SHARK_MAX_AGE_INITIAL,
+            SHARK_MAX_AGE_MIN,
+            SHARK_MAX_AGE_MAX,
+            SHARK_MAX_AGE_STEP);
     private final InputIntegerProperty sharkBirthEnergy = InputIntegerProperty.of(
             SHARK_BIRTH_ENERGY_INITIAL,
             SHARK_BIRTH_ENERGY_MIN,
@@ -91,6 +109,8 @@ public final class WatorConfigViewModel {
                 cellEdgeLength.getValue(),
                 fishPercent.getValue(),
                 sharkPercent.getValue(),
+                fishMaxAge.getValue(),
+                sharkMaxAge.getValue(),
                 sharkBirthEnergy.getValue(),
                 neighborhoodMode.getValue()
         );
@@ -104,6 +124,8 @@ public final class WatorConfigViewModel {
         gridHeight.setValue(config.gridHeight());
         fishPercent.setValue(config.fishPercent());
         sharkPercent.setValue(config.sharkPercent());
+        fishMaxAge.setValue(config.fishMaxAge());
+        sharkMaxAge.setValue(config.sharkMaxAge());
         sharkBirthEnergy.setValue(config.sharkBirthEnergy());
         neighborhoodMode.setValue(config.neighborhoodMode());
     }
@@ -142,6 +164,14 @@ public final class WatorConfigViewModel {
 
     public InputDoubleProperty sharkPercentProperty() {
         return sharkPercent;
+    }
+
+    public InputIntegerProperty fishMaxAgeProperty() {
+        return fishMaxAge;
+    }
+
+    public InputIntegerProperty sharkMaxAgeProperty() {
+        return sharkMaxAge;
     }
 
     public InputIntegerProperty sharkBirthEnergyProperty() {

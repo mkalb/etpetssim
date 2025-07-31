@@ -40,22 +40,28 @@ public final class WatorSimulationManager {
 
     private void initializeGrid(GridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {
         GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
-                () -> createFish(entityFactory), config.fishPercent(), random);
+                () -> createFish(entityFactory, random), config.fishPercent(), random);
         GridInitializer<WatorEntity> sharkInit = GridInitializers.placeRandomPercent(
-                () -> createShark(entityFactory), config.sharkPercent(), random);
+                () -> createShark(entityFactory, random), config.sharkPercent(), random);
 
         fishInit.initialize(model);
         sharkInit.initialize(model);
     }
 
-    private WatorFish createFish(WatorEntityFactory entityFactory) {
-        WatorFish watorFish = entityFactory.createFish(0);
+    private WatorFish createFish(WatorEntityFactory entityFactory, Random random) {
+        long randomAge = random.nextInt(config().fishMaxAge());
+        long timeOfBirth = -1 - randomAge; // negative age for birth time
+
+        WatorFish watorFish = entityFactory.createFish(timeOfBirth);
         statistics.incrementFishCells();
         return watorFish;
     }
 
-    private WatorShark createShark(WatorEntityFactory entityFactory) {
-        WatorShark watorShark = entityFactory.createShark(0, config.sharkBirthEnergy());
+    private WatorShark createShark(WatorEntityFactory entityFactory, Random random) {
+        long randomAge = random.nextInt(config.sharkMaxAge());
+        long timeOfBirth = -1 - randomAge; // negative age for birth time
+
+        WatorShark watorShark = entityFactory.createShark(timeOfBirth, config.sharkBirthEnergy());
         statistics.incrementSharkCells();
         return watorShark;
     }

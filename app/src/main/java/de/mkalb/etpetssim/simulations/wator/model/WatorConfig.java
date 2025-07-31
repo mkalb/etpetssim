@@ -12,6 +12,8 @@ public record WatorConfig(
         double cellEdgeLength,
         double fishPercent,
         double sharkPercent,
+        int fishMaxAge,
+        int sharkMaxAge,
         int sharkBirthEnergy,
         NeighborhoodMode neighborhoodMode) {}
 
