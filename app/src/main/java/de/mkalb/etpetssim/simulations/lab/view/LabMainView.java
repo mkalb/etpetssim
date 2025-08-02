@@ -1,7 +1,9 @@
 package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
@@ -15,12 +17,8 @@ import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -41,13 +39,7 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
     private final LabConfigView configView;
     private final LabControlView controlView;
     private final LabObservationView observationView;
-    private final GridEntityDescriptorRegistry entityDescriptorRegistry;
-    private final Canvas baseCanvas;
-    private final Canvas overlayCanvas;
-    private final BorderPane canvasBorderPane;
 
-    private @Nullable FXGridCanvasPainter basePainter;
-    private @Nullable FXGridCanvasPainter overlayPainter;
     private @Nullable Font font;
     private @Nullable Font smallFont;
 
@@ -56,17 +48,10 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
                        LabControlView controlView,
                        LabObservationView observationView,
                        GridEntityDescriptorRegistry entityDescriptorRegistry) {
-        super(viewModel);
+        super(viewModel, entityDescriptorRegistry);
         this.configView = configView;
         this.controlView = controlView;
         this.observationView = observationView;
-        this.entityDescriptorRegistry = entityDescriptorRegistry;
-
-        baseCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
-        overlayCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
-        baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
-        overlayCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
-        canvasBorderPane = new BorderPane();
     }
 
     @Override
@@ -93,43 +78,6 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
         viewModel.setDrawRequestedListener(this::drawBaseCanvas);
         viewModel.setDrawModelRequestedListener(this::drawModel);
         viewModel.setDrawTestRequestedListener(this::drawTest);
-    }
-
-    private Region createSimulationRegion() {
-        StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
-        StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
-        StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
-        stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
-
-        canvasBorderPane.setCenter(stackPane);
-        canvasBorderPane.getStyleClass().add(FXStyleClasses.SIMULATION_CENTER_BORDERPANE);
-
-        ScrollPane scrollPane = new ScrollPane(canvasBorderPane);
-        scrollPane.setFitToHeight(false);
-        scrollPane.setFitToWidth(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setPannable(true);
-        scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
-
-        return scrollPane;
-    }
-
-    private void updateCanvasBorderPane(GridStructure structure) {
-        canvasBorderPane.setLeft((structure.edgeBehaviorX() == EdgeBehavior.WRAP) ? null :
-                createBorderRegion(FXStyleClasses.SIMULATION_LEFT_BORDERPANE));
-        canvasBorderPane.setRight((structure.edgeBehaviorX() == EdgeBehavior.WRAP) ? null :
-                createBorderRegion(FXStyleClasses.SIMULATION_RIGHT_BORDERPANE));
-        canvasBorderPane.setTop((structure.edgeBehaviorY() == EdgeBehavior.WRAP) ? null :
-                createBorderRegion(FXStyleClasses.SIMULATION_TOP_BORDERPANE));
-        canvasBorderPane.setBottom((structure.edgeBehaviorY() == EdgeBehavior.WRAP) ? null :
-                createBorderRegion(FXStyleClasses.SIMULATION_BOTTOM_BORDERPANE));
-    }
-
-    private Region createBorderRegion(String styleClass) {
-        Region border = new Region();
-        border.getStyleClass().add(styleClass);
-        return border;
     }
 
     private void registerEvents() {
@@ -234,13 +182,7 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
         AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
                 " and cell edge length " + cellEdgeLength);
 
-        basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
-        baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth()));
-        baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight()));
-
-        overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
-        overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
-        overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+        createPainterAndUpdateCanvas(structure, cellEdgeLength);
 
         // Log information
         AppLogger.info("GridDimension2D: " + overlayPainter.gridDimension2D());
