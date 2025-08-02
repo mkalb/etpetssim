@@ -5,13 +5,14 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayObservationViewModel;
+import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-public final class ConwayObservationView {
+public final class ConwayObservationView extends AbstractObservationView<ConwayObservationViewModel> {
 
     @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
@@ -22,8 +23,6 @@ public final class ConwayObservationView {
     @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
 
-    private final ConwayObservationViewModel viewModel;
-
     private final Label stepLabel = new Label();
     private final Label totalCellsLabel = new Label();
     private final Label aliveCellsLabel = new Label();
@@ -31,10 +30,11 @@ public final class ConwayObservationView {
     private final Label maxAliveCellsLabel = new Label();
 
     public ConwayObservationView(ConwayObservationViewModel viewModel) {
-        this.viewModel = viewModel;
+        super(viewModel);
     }
 
-    Region buildRegion() {
+    @Override
+    public Region buildRegion() {
         updateObservationLabels();
 
         GridPane grid = new GridPane();

@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
+import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXComponentBuilder.LabeledControl;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -14,17 +15,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public final class ConwayConfigView {
+public final class ConwayConfigView extends AbstractConfigView<ConwayConfigViewModel> {
 
     @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_CONFIG_ALIVE_PERCENT = "conway.config.alivepercent";
     @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP = "conway.config.alivepercent.tooltip";
 
-    private final ConwayConfigViewModel viewModel;
-
     public ConwayConfigView(ConwayConfigViewModel viewModel) {
-        this.viewModel = viewModel;
+        super(viewModel);
     }
 
     private TitledPane createConfigPane(String title, LabeledControl... content) {
@@ -45,7 +44,8 @@ public final class ConwayConfigView {
         return pane;
     }
 
-    Region buildRegion() {
+    @Override
+    public Region buildRegion() {
         // --- Structure Group ---
         var cellShapeControl = FXComponentBuilder.createLabeledEnumComboBox(
                 viewModel.cellShapeProperty(),

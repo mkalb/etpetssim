@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.SimulationView;
+import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -23,11 +24,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class WatorMainView implements SimulationView {
+public final class WatorMainView extends AbstractMainView<WatorMainViewModel> implements SimulationView {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
-    private final WatorMainViewModel viewModel;
     private final WatorConfigView configView;
     private final WatorControlView controlView;
     private final WatorObservationView observationView;
@@ -44,7 +44,7 @@ public final class WatorMainView implements SimulationView {
                          WatorConfigView configView,
                          WatorControlView controlView,
                          WatorObservationView observationView) {
-        this.viewModel = viewModel;
+        super(viewModel);
         this.configView = configView;
         this.observationView = observationView;
         this.controlView = controlView;

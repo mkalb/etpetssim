@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.view.AbstractControlView;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorControlViewModel;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -12,15 +13,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public final class WatorControlView {
-
-    private final WatorControlViewModel viewModel;
+public final class WatorControlView extends AbstractControlView<WatorControlViewModel> {
 
     public WatorControlView(WatorControlViewModel viewModel) {
-        this.viewModel = viewModel;
+        super(viewModel);
     }
 
-    Region buildRegion() {
+    @Override
+    public Region buildRegion() {
         // Button
         String textStart = AppLocalization.getText(AppLocalizationKeys.CONTROL_START);
         String textPause = AppLocalization.getText(AppLocalizationKeys.CONTROL_PAUSE);

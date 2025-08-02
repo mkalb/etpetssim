@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
+import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
@@ -13,15 +14,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public final class LabConfigView {
-
-    private final LabConfigViewModel viewModel;
+public final class LabConfigView extends AbstractConfigView<LabConfigViewModel> {
 
     public LabConfigView(LabConfigViewModel viewModel) {
-        this.viewModel = viewModel;
+        super(viewModel);
     }
 
-    Region buildRegion() {
+    @Override
+    public Region buildRegion() {
         TitledPane structurePane = createStructurePane();
         TitledPane layoutPane = createLayoutPane();
 

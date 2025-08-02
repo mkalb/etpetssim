@@ -2,20 +2,20 @@ package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
+import de.mkalb.etpetssim.simulations.view.AbstractControlView;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-public final class LabControlView {
-
-    private final LabControlViewModel viewModel;
+public final class LabControlView extends AbstractControlView<LabControlViewModel> {
 
     public LabControlView(LabControlViewModel viewModel) {
-        this.viewModel = viewModel;
+        super(viewModel);
     }
 
-    Region buildRegion() {
+    @Override
+    public Region buildRegion() {
         Button drawButton = buildControlButton("draw", false);
         Button drawButtonModel = buildControlButton("draw model", true);
         Button drawButtonTest = buildControlButton("draw test", true);

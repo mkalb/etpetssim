@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -11,7 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-public final class WatorObservationView {
+public final class WatorObservationView extends AbstractObservationView<WatorObservationViewModel> {
 
     @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
@@ -20,18 +21,17 @@ public final class WatorObservationView {
     @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
 
-    private final WatorObservationViewModel viewModel;
-
     private final Label stepLabel = new Label();
     private final Label totalCellsLabel = new Label();
     private final Label fishCellsLabel = new Label();
     private final Label sharkCellsLabel = new Label();
 
     public WatorObservationView(WatorObservationViewModel viewModel) {
-        this.viewModel = viewModel;
+        super(viewModel);
     }
 
-    Region buildRegion() {
+    @Override
+    public Region buildRegion() {
         updateObservationLabels();
 
         GridPane grid = new GridPane();

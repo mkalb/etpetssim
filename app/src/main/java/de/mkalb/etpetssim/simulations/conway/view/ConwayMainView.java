@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
+import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Pos;
@@ -23,11 +24,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class ConwayMainView implements SimulationView {
+public final class ConwayMainView extends AbstractMainView<ConwayMainViewModel> implements SimulationView {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
-    private final ConwayMainViewModel viewModel;
     private final ConwayConfigView configView;
     private final ConwayControlView controlView;
     private final ConwayObservationView observationView;
@@ -44,7 +44,7 @@ public final class ConwayMainView implements SimulationView {
                           ConwayConfigView configView,
                           ConwayControlView controlView,
                           ConwayObservationView observationView) {
-        this.viewModel = viewModel;
+        super(viewModel);
         this.configView = configView;
         this.observationView = observationView;
         this.controlView = controlView;
