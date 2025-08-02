@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.simulations.wator.model.*;
-import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorViewModel;
+import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXPaintBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -23,11 +23,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class WatorView implements SimulationView {
+public final class WatorMainView implements SimulationView {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
-    private final WatorViewModel viewModel;
+    private final WatorMainViewModel viewModel;
     private final WatorConfigView configView;
     private final WatorControlView controlView;
     private final WatorObservationView observationView;
@@ -39,11 +39,11 @@ public final class WatorView implements SimulationView {
     private @Nullable FXGridCanvasPainter basePainter;
     private @Nullable FXGridCanvasPainter overlayPainter;
 
-    public WatorView(WatorViewModel viewModel,
-                     GridEntityDescriptorRegistry entityDescriptorRegistry,
-                     WatorConfigView configView,
-                     WatorControlView controlView,
-                     WatorObservationView observationView) {
+    public WatorMainView(WatorMainViewModel viewModel,
+                         GridEntityDescriptorRegistry entityDescriptorRegistry,
+                         WatorConfigView configView,
+                         WatorControlView controlView,
+                         WatorObservationView observationView) {
         this.viewModel = viewModel;
         this.configView = configView;
         this.observationView = observationView;

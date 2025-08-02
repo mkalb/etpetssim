@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class LabViewModel extends AbstractMainViewModel {
+public final class LabMainViewModel extends AbstractMainViewModel {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
     private final LabConfigViewModel configViewModel;
@@ -28,10 +28,10 @@ public final class LabViewModel extends AbstractMainViewModel {
     private Runnable drawModelRequestedListener = () -> {};
     private Runnable drawTestRequestedListener = () -> {};
 
-    public LabViewModel(SimpleObjectProperty<SimulationState> simulationState,
-                        LabConfigViewModel configViewModel,
-                        LabControlViewModel controlViewModel,
-                        LabObservationViewModel observationViewModel) {
+    public LabMainViewModel(SimpleObjectProperty<SimulationState> simulationState,
+                            LabConfigViewModel configViewModel,
+                            LabControlViewModel controlViewModel,
+                            LabObservationViewModel observationViewModel) {
         super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;

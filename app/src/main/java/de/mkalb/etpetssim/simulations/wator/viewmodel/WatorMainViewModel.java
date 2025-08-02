@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class WatorViewModel extends AbstractMainViewModel {
+public final class WatorMainViewModel extends AbstractMainViewModel {
 
     private final WatorConfigViewModel configViewModel;
     private final WatorControlViewModel controlViewModel;
@@ -27,10 +27,10 @@ public final class WatorViewModel extends AbstractMainViewModel {
 
     private @Nullable WatorSimulationManager simulationManager;
 
-    public WatorViewModel(ObjectProperty<SimulationState> simulationState,
-                          WatorConfigViewModel configViewModel,
-                          WatorControlViewModel controlViewModel,
-                          WatorObservationViewModel observationViewModel) {
+    public WatorMainViewModel(ObjectProperty<SimulationState> simulationState,
+                              WatorConfigViewModel configViewModel,
+                              WatorControlViewModel controlViewModel,
+                              WatorObservationViewModel observationViewModel) {
         super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;

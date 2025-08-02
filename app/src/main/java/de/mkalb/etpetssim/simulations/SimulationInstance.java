@@ -24,7 +24,7 @@ public record SimulationInstance(
      * <p>
      * Format: {@code [SIMULATION_TYPE, VIEW_CLASS]}
      * <br>
-     * Example: {@code [CONWAYS_LIFE, ConwayView]}
+     * Example: {@code [CONWAYS_LIFE, ConwayMainView]}
      *
      * @return a concise display string for this simulation instance
      */

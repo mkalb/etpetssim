@@ -60,7 +60,7 @@ public final class SimulationFactory {
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    private static LabView createLabView() {
+    private static LabMainView createLabView() {
         // Common
         var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
@@ -69,20 +69,20 @@ public final class SimulationFactory {
         var configViewModel = new LabConfigViewModel(simulationState);
         var controlViewModel = new LabControlViewModel(simulationState);
         var observationViewModel = new LabObservationViewModel(simulationState);
-        var viewModel = new LabViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
+        var viewModel = new LabMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View
         var configView = new LabConfigView(configViewModel);
         var controlView = new LabControlView(controlViewModel);
         var observationView = new LabObservationView(observationViewModel);
-        var view = new LabView(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
+        var view = new LabMainView(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
 
         // Return the main view
         return view;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    private static ConwayView createConwayView() {
+    private static ConwayMainView createConwayView() {
         // Common
         var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ConwayEntity.values());
@@ -91,20 +91,20 @@ public final class SimulationFactory {
         var configViewModel = new ConwayConfigViewModel(simulationState);
         var controlViewModel = new ConwayControlViewModel(simulationState);
         var observationViewModel = new ConwayObservationViewModel(simulationState);
-        var viewModel = new ConwayViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
+        var viewModel = new ConwayMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View
         var configView = new ConwayConfigView(configViewModel);
         var controlView = new ConwayControlView(controlViewModel);
         var observationView = new ConwayObservationView(observationViewModel);
-        var view = new ConwayView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        var view = new ConwayMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view
         return view;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    private static WatorView createWatorView() {
+    private static WatorMainView createWatorView() {
         // Common
         var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(WatorEntityDescribable.values());
@@ -113,13 +113,13 @@ public final class SimulationFactory {
         var configViewModel = new WatorConfigViewModel(simulationState);
         var controlViewModel = new WatorControlViewModel(simulationState);
         var observationViewModel = new WatorObservationViewModel(simulationState);
-        var viewModel = new WatorViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
+        var viewModel = new WatorMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View
         var configView = new WatorConfigView(configViewModel);
         var controlView = new WatorControlView(controlViewModel);
         var observationView = new WatorObservationView(observationViewModel);
-        var view = new WatorView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        var view = new WatorMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view
         return view;

@@ -11,7 +11,7 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
-import de.mkalb.etpetssim.simulations.lab.viewmodel.LabViewModel;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -24,7 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
-public final class LabView implements SimulationView {
+public final class LabMainView implements SimulationView {
 
     private static final Color MOUSE_CLICK_COLOR = Color.ROSYBROWN;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
@@ -37,7 +37,7 @@ public final class LabView implements SimulationView {
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
-    private final LabViewModel viewModel;
+    private final LabMainViewModel viewModel;
     private final LabConfigView configView;
     private final LabControlView controlView;
     private final LabObservationView observationView;
@@ -51,11 +51,11 @@ public final class LabView implements SimulationView {
     private @Nullable Font font;
     private @Nullable Font smallFont;
 
-    public LabView(LabViewModel viewModel,
-                   LabConfigView configView,
-                   LabControlView controlView,
-                   LabObservationView observationView,
-                   GridEntityDescriptorRegistry entityDescriptorRegistry) {
+    public LabMainView(LabMainViewModel viewModel,
+                       LabConfigView configView,
+                       LabControlView controlView,
+                       LabObservationView observationView,
+                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.configView = configView;
         this.controlView = controlView;

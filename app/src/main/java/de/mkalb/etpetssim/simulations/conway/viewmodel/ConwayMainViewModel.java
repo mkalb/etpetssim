@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class ConwayViewModel extends AbstractMainViewModel {
+public final class ConwayMainViewModel extends AbstractMainViewModel {
 
     private final ConwayConfigViewModel configViewModel;
     private final ConwayControlViewModel controlViewModel;
@@ -26,10 +26,10 @@ public final class ConwayViewModel extends AbstractMainViewModel {
 
     private @Nullable ConwaySimulationManager simulationManager;
 
-    public ConwayViewModel(ObjectProperty<SimulationState> simulationState,
-                           ConwayConfigViewModel configViewModel,
-                           ConwayControlViewModel controlViewModel,
-                           ConwayObservationViewModel observationViewModel) {
+    public ConwayMainViewModel(ObjectProperty<SimulationState> simulationState,
+                               ConwayConfigViewModel configViewModel,
+                               ConwayControlViewModel controlViewModel,
+                               ConwayObservationViewModel observationViewModel) {
         super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
