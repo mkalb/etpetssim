@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
@@ -59,19 +58,7 @@ public final class WatorControlView extends AbstractControlView<WatorControlView
         VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.controlRegion());
         stepDurationBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
-        // Compose the buttons and config controls into a horizontal box
-        HBox hbox = new HBox();
-        hbox.getChildren().addAll(actionButton, cancelButton, stepDurationBox);
-        hbox.getStyleClass().add(FXStyleClasses.CONTROL_HBOX);
-
-        return hbox;
-    }
-
-    private Button buildControlButton(String text, boolean disabled) {
-        Button controlButton = new Button(text);
-        controlButton.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
-        controlButton.setDisable(disabled);
-        return controlButton;
+        return createControlMainBox(actionButton, cancelButton, stepDurationBox);
     }
 
 }
