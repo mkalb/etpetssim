@@ -4,25 +4,23 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorEntity;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class WatorViewModel {
+public final class WatorViewModel extends AbstractMainViewModel {
 
     private final WatorConfigViewModel configViewModel;
     private final WatorControlViewModel controlViewModel;
     private final WatorObservationViewModel observationViewModel;
     private final SimulationTimer simulationTimer;
-
-    private final ObjectProperty<SimulationState> simulationState;
 
     private Runnable simulationInitializedListener = () -> {};
     private Runnable simulationStepListener = () -> {};
@@ -33,7 +31,7 @@ public final class WatorViewModel {
                           WatorConfigViewModel configViewModel,
                           WatorControlViewModel controlViewModel,
                           WatorObservationViewModel observationViewModel) {
-        this.simulationState = simulationState;
+        super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
         this.observationViewModel = observationViewModel;
@@ -59,18 +57,6 @@ public final class WatorViewModel {
 
     public void setSimulationStepListener(Runnable listener) {
         simulationStepListener = listener;
-    }
-
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    public SimulationState getSimulationState() {
-        return simulationState.get();
-    }
-
-    private void setSimulationState(SimulationState state) {
-        simulationState.set(state);
     }
 
     public double getCellEdgeLength() {

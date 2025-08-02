@@ -6,22 +6,20 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
+import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class ConwayViewModel {
+public final class ConwayViewModel extends AbstractMainViewModel {
 
     private final ConwayConfigViewModel configViewModel;
     private final ConwayControlViewModel controlViewModel;
     private final ConwayObservationViewModel observationViewModel;
     private final SimulationTimer simulationTimer;
-
-    private final ObjectProperty<SimulationState> simulationState;
 
     private Runnable simulationInitializedListener = () -> {};
     private Runnable simulationStepListener = () -> {};
@@ -32,7 +30,7 @@ public final class ConwayViewModel {
                            ConwayConfigViewModel configViewModel,
                            ConwayControlViewModel controlViewModel,
                            ConwayObservationViewModel observationViewModel) {
-        this.simulationState = simulationState;
+        super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
         this.observationViewModel = observationViewModel;
@@ -58,18 +56,6 @@ public final class ConwayViewModel {
 
     public void setSimulationStepListener(Runnable listener) {
         simulationStepListener = listener;
-    }
-
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    public SimulationState getSimulationState() {
-        return simulationState.get();
-    }
-
-    private void setSimulationState(SimulationState state) {
-        simulationState.set(state);
     }
 
     public double getCellEdgeLength() {

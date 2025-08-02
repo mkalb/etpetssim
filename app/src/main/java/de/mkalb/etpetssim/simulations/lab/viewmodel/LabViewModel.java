@@ -8,17 +8,16 @@ import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
+import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class LabViewModel {
+public final class LabViewModel extends AbstractMainViewModel {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
-    private final ObjectProperty<SimulationState> simulationState;
     private final LabConfigViewModel configViewModel;
     private final LabControlViewModel controlViewModel;
     private final LabObservationViewModel observationViewModel;
@@ -33,7 +32,7 @@ public final class LabViewModel {
                         LabConfigViewModel configViewModel,
                         LabControlViewModel controlViewModel,
                         LabObservationViewModel observationViewModel) {
-        this.simulationState = simulationState;
+        super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
         this.observationViewModel = observationViewModel;
@@ -65,18 +64,6 @@ public final class LabViewModel {
         lastClickedCoordinate.addListener((_, _, newVal) -> {
             observationViewModel.lastClickedCoordinateProperty().set(newVal);
         });
-    }
-
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    public SimulationState getSimulationState() {
-        return simulationState.get();
-    }
-
-    private void setSimulationState(SimulationState state) {
-        simulationState.set(state);
     }
 
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
