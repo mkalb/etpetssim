@@ -4,12 +4,13 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.*;
 
-public final class LabConfigViewModel {
+public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig> {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
@@ -50,14 +51,14 @@ public final class LabConfigViewModel {
     private final InputEnumProperty<LabConfig.RenderingMode> renderingMode = InputEnumProperty.of(LabConfig.RenderingMode.SHAPE, LabConfig.RenderingMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.StrokeMode> strokeMode = InputEnumProperty.of(LabConfig.StrokeMode.CENTERED, LabConfig.StrokeMode.class, Enum::toString);
-    private final ObjectProperty<SimulationState> simulationState;
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(SimpleObjectProperty<SimulationState> simulationState) {
-        this.simulationState = simulationState;
+        super(simulationState);
         setupConfigListeners();
     }
 
+    @Override
     public LabConfig getConfig() {
         return new LabConfig(
                 cellShape.getValue(),
@@ -71,6 +72,7 @@ public final class LabConfigViewModel {
         );
     }
 
+    @Override
     public void setConfig(LabConfig config) {
         cellShape.setValue(config.cellShape());
         gridEdgeBehavior.setValue(config.gridEdgeBehavior());
@@ -82,10 +84,12 @@ public final class LabConfigViewModel {
         strokeMode.setValue(config.strokeMode());
     }
 
+    @Override
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
+    @Override
     public SimulationState getSimulationState() {
         return simulationState.get();
     }

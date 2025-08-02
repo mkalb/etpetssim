@@ -4,12 +4,13 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
 
-public final class ConwayConfigViewModel {
+public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayConfig> {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
@@ -27,8 +28,6 @@ public final class ConwayConfigViewModel {
     private static final double ALIVE_PERCENT_INITIAL = 0.15d;
     private static final double ALIVE_PERCENT_MAX = 1.0d;
     private static final double ALIVE_PERCENT_MIN = 0.0d;
-
-    private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
     private final InputEnumProperty<CellShape> cellShape = InputEnumProperty.of(
             CELL_SHAPE_INITIAL,
@@ -58,9 +57,10 @@ public final class ConwayConfigViewModel {
             ALIVE_PERCENT_MAX);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        this.simulationState = simulationState;
+        super(simulationState);
     }
 
+    @Override
     public ConwayConfig getConfig() {
         return new ConwayConfig(
                 cellShape.getValue(),
@@ -72,6 +72,7 @@ public final class ConwayConfigViewModel {
         );
     }
 
+    @Override
     public void setConfig(ConwayConfig config) {
         cellShape.setValue(config.cellShape());
         gridEdgeBehavior.setValue(config.gridEdgeBehavior());
@@ -81,10 +82,12 @@ public final class ConwayConfigViewModel {
         alivePercent.setValue(config.alivePercent());
     }
 
+    @Override
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
+    @Override
     public SimulationState getSimulationState() {
         return simulationState.get();
     }

@@ -4,13 +4,14 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
 
-public final class WatorConfigViewModel {
+public final class WatorConfigViewModel extends AbstractConfigViewModel<WatorConfig> {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
@@ -44,8 +45,6 @@ public final class WatorConfigViewModel {
     private static final int SHARK_BIRTH_ENERGY_MIN = 1;
     private static final int SHARK_BIRTH_ENERGY_STEP = 1;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
-
-    private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
     private final InputEnumProperty<CellShape> cellShape = InputEnumProperty.of(
             CELL_SHAPE_INITIAL,
@@ -97,9 +96,10 @@ public final class WatorConfigViewModel {
                     e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        this.simulationState = simulationState;
+        super(simulationState);
     }
 
+    @Override
     public WatorConfig getConfig() {
         return new WatorConfig(
                 cellShape.getValue(),
@@ -116,6 +116,7 @@ public final class WatorConfigViewModel {
         );
     }
 
+    @Override
     public void setConfig(WatorConfig config) {
         cellShape.setValue(config.cellShape());
         gridEdgeBehavior.setValue(config.gridEdgeBehavior());
@@ -130,10 +131,12 @@ public final class WatorConfigViewModel {
         neighborhoodMode.setValue(config.neighborhoodMode());
     }
 
+    @Override
     public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
+    @Override
     public SimulationState getSimulationState() {
         return simulationState.get();
     }
