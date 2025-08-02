@@ -58,7 +58,7 @@ public final class ConwayMainView extends AbstractMainView<ConwayMainViewModel> 
     }
 
     @Override
-    public Region buildViewRegion() {
+    public Region buildRegion() {
         Region configRegion = configView.buildRegion();
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = controlView.buildRegion();

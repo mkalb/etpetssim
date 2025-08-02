@@ -12,6 +12,11 @@ public abstract class AbstractMainView<T extends BaseMainViewModel> implements B
     }
 
     @Override
-    public abstract Region buildViewRegion();
+    public final Region buildViewRegion() {
+        return buildRegion();
+    }
+
+    @Override
+    public abstract Region buildRegion();
 
 }

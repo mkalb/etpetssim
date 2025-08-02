@@ -62,7 +62,7 @@ public final class WatorMainView extends AbstractMainView<WatorMainViewModel> im
     }
 
     @Override
-    public Region buildViewRegion() {
+    public Region buildRegion() {
         Region configRegion = configView.buildRegion();
         Region simulationRegion = createSimulationRegion();
         Region controlRegion = controlView.buildRegion();
