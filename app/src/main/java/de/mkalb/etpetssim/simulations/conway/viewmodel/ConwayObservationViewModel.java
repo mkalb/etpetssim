@@ -2,24 +2,16 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.viewmodel.AbstractObservationViewModel;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
-public final class ConwayObservationViewModel {
+public final class ConwayObservationViewModel extends AbstractObservationViewModel {
 
-    private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final ReadOnlyObjectWrapper<ConwayStatistics> statistics = new ReadOnlyObjectWrapper<>();
 
     public ConwayObservationViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        this.simulationState = simulationState;
-    }
-
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    public SimulationState getSimulationState() {
-        return simulationState.get();
+        super(simulationState);
     }
 
     public ReadOnlyObjectProperty<ConwayStatistics> statisticsProperty() {
