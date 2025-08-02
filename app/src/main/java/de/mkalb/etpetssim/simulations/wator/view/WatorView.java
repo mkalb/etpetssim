@@ -3,13 +3,12 @@ package de.mkalb.etpetssim.simulations.wator.view;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.engine.model.GridEntityUtils;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.SimulationView;
-import de.mkalb.etpetssim.simulations.wator.model.WatorEntity;
+import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXPaintBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -36,7 +35,7 @@ public final class WatorView implements SimulationView {
     private final Canvas baseCanvas;
     private final Canvas overlayCanvas;
     private final BorderPane canvasBorderPane;
-
+    private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private @Nullable FXGridCanvasPainter basePainter;
     private @Nullable FXGridCanvasPainter overlayPainter;
 
@@ -56,6 +55,10 @@ public final class WatorView implements SimulationView {
         baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
         overlayCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
         canvasBorderPane = new BorderPane();
+
+        entityColors = HashMap.newHashMap(2);
+        entityColors.put(WatorEntityDescribable.FISH.descriptorId(), null);
+        entityColors.put(WatorEntityDescribable.SHARK.descriptorId(), null);
     }
 
     @Override
@@ -78,36 +81,85 @@ public final class WatorView implements SimulationView {
     }
 
     private void registerViewModelListeners() {
-        viewModel.setSimulationInitializedListener(() -> {
-            double cellEdgeLength = viewModel.getCellEdgeLength();
-            ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-            GridStructure structure = viewModel.getStructure();
-            long currentStep = viewModel.getCurrentStep();
+        viewModel.setSimulationInitializedListener(this::initializeSimulationCanvas);
+        viewModel.setSimulationStepListener(this::updateSimulationStep);
+    }
 
-            AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
-                    " and cell edge length " + cellEdgeLength);
+    private void initializeSimulationCanvas() {
+        double cellEdgeLength = viewModel.getCellEdgeLength();
+        ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
+        GridStructure structure = viewModel.getStructure();
+        long currentStep = viewModel.getCurrentStep();
 
-            basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
-            baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth()));
-            baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight()));
+        AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
+                " and cell edge length " + cellEdgeLength);
 
-            overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
-            overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
-            overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
+        basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
+        baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth()));
+        baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight()));
 
-            updateCanvasBorderPane(structure);
+        overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
+        overlayCanvas.setWidth(Math.min(5_000.0d, overlayPainter.gridDimension2D().getWidth()));
+        overlayCanvas.setHeight(Math.min(3_000.0d, overlayPainter.gridDimension2D().getHeight()));
 
-            drawCanvas(currentModel, currentStep);
-            observationView.updateObservationLabels();
-        });
-        viewModel.setSimulationStepListener(() -> {
-            ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-            long currentStep = viewModel.getCurrentStep();
-            AppLogger.info("Drawing canvas for step " + currentStep);
+        WatorConfig config = viewModel.getCurrentConfig();
 
-            drawCanvas(currentModel, currentStep);
-            observationView.updateObservationLabels();
-        });
+        initializeEntityColorVariants(WatorEntityDescribable.FISH, 0, config.fishMaxAge() - 1, 3, false, 0.05d);
+        initializeEntityColorVariants(WatorEntityDescribable.SHARK, 1, 30, 2, true, 0.05d);
+
+        updateCanvasBorderPane(structure);
+
+        drawCanvas(currentModel, currentStep);
+        observationView.updateObservationLabels();
+    }
+
+    private void initializeEntityColorVariants(WatorEntityDescribable entityDescribable, int min, int max, int step, boolean brighten, double factorStep) {
+        String descriptorId = entityDescribable.descriptorId();
+        GridEntityDescriptor descriptor = entityDescriptorRegistry.getRequiredByDescriptorId(descriptorId);
+        Paint paint = descriptor.color();
+        if (paint instanceof Color baseColor) {
+            Map<Integer, Color> colorMap = FXPaintBuilder.getBrightnessVariantsMap(baseColor, min, max, step, brighten, factorStep);
+            entityColors.put(descriptorId, colorMap);
+        } else {
+            AppLogger.warn("Descriptor " + descriptorId + " does not provide a Color for brightness variants.");
+            entityColors.put(descriptorId, null);
+        }
+    }
+
+    private void updateSimulationStep() {
+        ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
+        long currentStep = viewModel.getCurrentStep();
+        AppLogger.info("Drawing canvas for step " + currentStep);
+
+        drawCanvas(currentModel, currentStep);
+        observationView.updateObservationLabels();
+    }
+
+    private @Nullable Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor, WatorEntity entity, long step) {
+        Paint paint = entityDescriptor.color();
+        if (paint instanceof Color baseColor) {
+            Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
+            if (colorMap != null) {
+                Integer value = switch (entity) {
+                    case WatorFish fish -> fish.age(step);
+                    case WatorShark shark -> Math.min(30, shark.currentEnergy());
+                    default -> 0;
+                };
+                return colorMap.getOrDefault(value, baseColor);
+            }
+        }
+        return paint;
+    }
+
+    private void fillBackground() {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        Paint background = entityDescriptorRegistry
+                .getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
+                .colorAsOptional().orElse(Color.BLACK);
+        basePainter.fillCanvasBackground(background);
     }
 
     private void drawCanvas(ReadableGridModel<WatorEntity> currentModel, long currentStep) {
@@ -116,10 +168,7 @@ public final class WatorView implements SimulationView {
             return;
         }
 
-        // Fill background
-        Paint backgroundPaint = entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
-                                                        .colorAsOptional().orElse(Color.BLACK);
-        basePainter.fillCanvasBackground(backgroundPaint);
+        fillBackground();
 
         currentModel.nonDefaultCells().forEachOrdered(cell ->
                 GridEntityUtils.consumeDescriptorAt(
@@ -128,8 +177,8 @@ public final class WatorView implements SimulationView {
                         entityDescriptorRegistry,
                         descriptor -> basePainter.drawCell(
                                 cell.coordinate(),
-                                descriptor.colorAsOptional().orElse(Color.BLACK),
-                                descriptor.borderColorAsOptional().orElse(Color.BLACK),
+                                resolveEntityFillColor(descriptor, cell.entity(), currentStep),
+                                null,
                                 0.0d))
         );
     }
