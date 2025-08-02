@@ -4,16 +4,12 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
-import de.mkalb.etpetssim.simulations.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
-import de.mkalb.etpetssim.ui.FXComponentBuilder.LabeledControl;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 
 public final class ConwayConfigView extends AbstractConfigView<ConwayConfigViewModel> {
 
@@ -26,27 +22,27 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfigViewM
         super(viewModel);
     }
 
-    private TitledPane createConfigPane(String title, LabeledControl... content) {
-        VBox box = new VBox();
-        for (LabeledControl labeledControl : content) {
-            box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
-            labeledControl.controlRegion().disableProperty().bind(
-                    viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY)
-            );
-        }
-        box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
-
-        TitledPane pane = new TitledPane(title, box);
-        pane.setCollapsible(content.length > 0);
-        pane.setExpanded(content.length > 0);
-        pane.setDisable(content.length == 0);
-        pane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
-        return pane;
-    }
-
     @Override
     public Region buildRegion() {
-        // --- Structure Group ---
+        TitledPane structurePane = createStructurePane();
+
+        // --- Initialization Group ---
+        var alivePercentControl = FXComponentBuilder.createLabeledPercentSlider(
+                viewModel.alivePercentProperty(),
+                AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT),
+                AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP),
+                FXStyleClasses.CONFIG_SLIDER
+        );
+
+        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), alivePercentControl);
+
+        // --- Rules Group ---
+        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES));
+
+        return createConfigMainBox(structurePane, initPane, rulesPane);
+    }
+
+    private TitledPane createStructurePane() {
         var cellShapeControl = FXComponentBuilder.createLabeledEnumComboBox(
                 viewModel.cellShapeProperty(),
                 viewModel.cellShapeProperty().displayNameProvider(),
@@ -84,7 +80,7 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfigViewM
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane structurePane = createConfigPane(
+        return createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
                 cellShapeControl,
                 gridEdgeBehaviorControl,
@@ -92,25 +88,6 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfigViewM
                 gridHeightControl,
                 cellEdgeLengthControl
         );
-
-        // --- Initialization Group ---
-        var alivePercentControl = FXComponentBuilder.createLabeledPercentSlider(
-                viewModel.alivePercentProperty(),
-                AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT),
-                AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP),
-                FXStyleClasses.CONFIG_SLIDER
-        );
-
-        TitledPane initPane = createConfigPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), alivePercentControl);
-
-        // --- Rules Group ---
-        TitledPane rulesPane = createConfigPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES));
-
-        // --- Main Layout as Columns ---
-        HBox mainBox = new HBox(structurePane, initPane, rulesPane);
-        mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
-
-        return mainBox;
     }
 
 }

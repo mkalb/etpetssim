@@ -10,9 +10,7 @@ import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 
 public final class LabConfigView extends AbstractConfigView<LabConfigViewModel> {
 
@@ -25,26 +23,7 @@ public final class LabConfigView extends AbstractConfigView<LabConfigViewModel> 
         TitledPane structurePane = createStructurePane();
         TitledPane layoutPane = createLayoutPane();
 
-        HBox mainBox = new HBox(structurePane, layoutPane);
-        mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
-
-        return mainBox;
-    }
-
-    @SafeVarargs
-    private TitledPane createConfigPane(String title, FXComponentBuilder.LabeledControl<? extends Region>... content) {
-        VBox box = new VBox();
-        for (FXComponentBuilder.LabeledControl<? extends Region> labeledControl : content) {
-            box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
-        }
-        box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);
-
-        TitledPane pane = new TitledPane(title, box);
-        pane.setCollapsible(content.length > 0);
-        pane.setExpanded(content.length > 0);
-        pane.setDisable(content.length == 0);
-        pane.getStyleClass().add(FXStyleClasses.CONFIG_TITLEDPANE);
-        return pane;
+        return createConfigMainBox(structurePane, layoutPane);
     }
 
     private TitledPane createStructurePane() {
@@ -85,8 +64,9 @@ public final class LabConfigView extends AbstractConfigView<LabConfigViewModel> 
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        return createConfigPane(
+        return createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
+                false,
                 cellShapeControl,
                 gridEdgeBehaviorControl,
                 gridWidthControl,
@@ -120,8 +100,9 @@ public final class LabConfigView extends AbstractConfigView<LabConfigViewModel> 
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 
-        return createConfigPane(
+        return createConfigTitledPane(
                 "Layout",
+                false,
                 colorModeControl,
                 renderingModeControl,
                 strokeModeControl
