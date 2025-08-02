@@ -68,8 +68,9 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
         return timeOfBirth;
     }
 
-    public final long age(long timeCounter) {
-        return timeCounter - timeOfBirth();
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public final int age(long timeCounter) {
+        return (int) (timeCounter - timeOfBirth());
     }
 
     public final int numberOfReproductions() {
