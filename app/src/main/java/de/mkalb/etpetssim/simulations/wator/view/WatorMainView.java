@@ -8,7 +8,6 @@ import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;
 import de.mkalb.etpetssim.ui.FXPaintBuilder;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -42,25 +41,21 @@ public final class WatorMainView extends AbstractMainView<WatorMainViewModel> im
     }
 
     @Override
-    public Region buildRegion() {
+    public BorderPane buildMainBorderPane() {
         Region configRegion = configView.buildRegion();
-        Region simulationRegion = createSimulationRegion();
         Region controlRegion = controlView.buildRegion();
         Region observationRegion = observationView.buildRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
-        borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
-
-        registerViewModelListeners();
 
         return borderPane;
     }
 
-    private void registerViewModelListeners() {
+    @Override
+    protected void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(this::initializeSimulationCanvas);
         viewModel.setSimulationStepListener(this::updateSimulationStep);
     }

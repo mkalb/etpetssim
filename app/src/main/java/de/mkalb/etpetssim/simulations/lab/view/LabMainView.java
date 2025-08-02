@@ -55,25 +55,21 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
     }
 
     @Override
-    public Region buildRegion() {
+    public BorderPane buildMainBorderPane() {
         Region configRegion = configView.buildRegion();
-        Region simulationRegion = createSimulationRegion();
         Region controlRegion = controlView.buildRegion();
         Region observationRegion = observationView.buildRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
-        borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
-
-        registerViewModelListeners();
 
         return borderPane;
     }
 
-    private void registerViewModelListeners() {
+    @Override
+    protected void registerViewModelListeners() {
         viewModel.setConfigChangedListener(this::disableCanvas);
         viewModel.setDrawRequestedListener(this::drawBaseCanvas);
         viewModel.setDrawModelRequestedListener(this::drawModel);

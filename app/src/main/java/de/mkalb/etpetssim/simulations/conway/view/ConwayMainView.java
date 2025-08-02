@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.SimulationView;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -35,25 +34,21 @@ public final class ConwayMainView extends AbstractMainView<ConwayMainViewModel> 
     }
 
     @Override
-    public Region buildRegion() {
+    public BorderPane buildMainBorderPane() {
         Region configRegion = configView.buildRegion();
-        Region simulationRegion = createSimulationRegion();
         Region controlRegion = controlView.buildRegion();
         Region observationRegion = observationView.buildRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);
-        borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
-
-        registerViewModelListeners();
 
         return borderPane;
     }
 
-    private void registerViewModelListeners() {
+    @Override
+    protected void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(() -> {
             double cellEdgeLength = viewModel.getCellEdgeLength();
             ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());

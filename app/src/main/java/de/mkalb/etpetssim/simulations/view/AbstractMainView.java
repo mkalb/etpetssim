@@ -14,7 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractMainView<T extends BaseMainViewModel> implements BaseMainView {
+public abstract class AbstractMainView<T extends BaseMainViewModel> {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
@@ -41,13 +41,19 @@ public abstract class AbstractMainView<T extends BaseMainViewModel> implements B
         canvasBorderPane.getStyleClass().add(FXStyleClasses.SIMULATION_CENTER_BORDERPANE);
     }
 
-    @Override
     public final Region buildViewRegion() {
-        return buildRegion();
+        BorderPane borderPane = buildMainBorderPane();
+        borderPane.setCenter(createSimulationRegion());
+        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
+
+        registerViewModelListeners();
+
+        return borderPane;
     }
 
-    @Override
-    public abstract Region buildRegion();
+    public abstract BorderPane buildMainBorderPane();
+
+    protected abstract void registerViewModelListeners();
 
     protected final Region createSimulationRegion() {
         StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
