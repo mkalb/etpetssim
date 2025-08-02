@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorEntity;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.ui.SimulationTimer;
@@ -89,6 +90,11 @@ public final class WatorViewModel {
     public long getCurrentStep() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentStep();
+    }
+
+    public WatorConfig getCurrentConfig() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        return simulationManager.config();
     }
 
     private void startSimulation() {
