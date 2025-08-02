@@ -82,16 +82,6 @@ public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayC
         alivePercent.setValue(config.alivePercent());
     }
 
-    @Override
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    @Override
-    public SimulationState getSimulationState() {
-        return simulationState.get();
-    }
-
     public InputEnumProperty<CellShape> cellShapeProperty() {
         return cellShape;
     }

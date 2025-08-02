@@ -13,12 +13,12 @@ public abstract class AbstractMainViewModel implements BaseMainViewModel {
     }
 
     @Override
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
+    public final ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
         return simulationState;
     }
 
     @Override
-    public SimulationState getSimulationState() {
+    public final SimulationState getSimulationState() {
         return simulationState.get();
     }
 

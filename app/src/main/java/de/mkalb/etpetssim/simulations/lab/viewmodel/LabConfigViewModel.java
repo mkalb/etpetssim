@@ -8,7 +8,9 @@ import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig> {
 
@@ -82,16 +84,6 @@ public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig>
         renderingMode.setValue(config.renderingMode());
         colorMode.setValue(config.colorMode());
         strokeMode.setValue(config.strokeMode());
-    }
-
-    @Override
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    @Override
-    public SimulationState getSimulationState() {
-        return simulationState.get();
     }
 
     public InputEnumProperty<LabConfig.RenderingMode> renderingModeProperty() {

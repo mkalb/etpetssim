@@ -131,16 +131,6 @@ public final class WatorConfigViewModel extends AbstractConfigViewModel<WatorCon
         neighborhoodMode.setValue(config.neighborhoodMode());
     }
 
-    @Override
-    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
-        return simulationState;
-    }
-
-    @Override
-    public SimulationState getSimulationState() {
-        return simulationState.get();
-    }
-
     public InputEnumProperty<CellShape> cellShapeProperty() {
         return cellShape;
     }
