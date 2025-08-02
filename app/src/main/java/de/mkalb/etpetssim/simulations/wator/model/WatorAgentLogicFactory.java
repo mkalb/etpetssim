@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
-import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.AgentStepLogic;
@@ -86,7 +85,7 @@ public final class WatorAgentLogicFactory {
                     statistics.incrementFishCells();
                     fish.reproduce(childFish);
                     model.setEntity(fishOriginalCoordinate, childFish);
-                    AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " reproduced with child at: " + fishOriginalCoordinate);
+                    // AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " reproduced with child at: " + fishOriginalCoordinate);
                 }
             }
         }
@@ -95,7 +94,7 @@ public final class WatorAgentLogicFactory {
         if (fish.age(currentStep) >= config.fishMaxAge()) {
             model.setEntityToDefault(fishNewCoordinate);
             statistics.decrementFishCells();
-            AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
+            // AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
         }
     }
 
@@ -114,12 +113,12 @@ public final class WatorAgentLogicFactory {
             sharkNewCoordinate = fishCell.coordinate();
             shark.gainEnergy(2);
             statistics.decrementFishCells();
-            AppLogger.info("WatorAgentLogicFactory - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
+            // AppLogger.info("WatorAgentLogicFactory - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
         } else if (!waterCells.isEmpty()) {
             GridCell<WatorEntity> waterCell = chooseRandomCoordinate(waterCells);
             model.swapEntities(agentCell, waterCell);
             sharkNewCoordinate = waterCell.coordinate();
-            //    AppLogger.info("WatorAgentLogicFactory - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
+            //    // AppLogger.info("WatorAgentLogicFactory - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
         }
         // Reproduce, if conditions are met
         if (!sharkOriginalCoordinate.equals(sharkNewCoordinate)) {
@@ -131,7 +130,7 @@ public final class WatorAgentLogicFactory {
                         statistics.incrementSharkCells();
                         shark.reproduce(childShark);
                         model.setEntity(sharkOriginalCoordinate, childShark);
-                        AppLogger.info("WatorAgentLogicFactory - Reproducing shark at coordinate: " + sharkNewCoordinate + " with child at: " + sharkOriginalCoordinate);
+                        // AppLogger.info("WatorAgentLogicFactory - Reproducing shark at coordinate: " + sharkNewCoordinate + " with child at: " + sharkOriginalCoordinate);
                     }
                 }
             }
@@ -140,7 +139,7 @@ public final class WatorAgentLogicFactory {
         if ((shark.age(currentStep) >= config.sharkMaxAge()) || (shark.currentEnergy() <= 0)) {
             model.setEntityToDefault(sharkNewCoordinate);
             statistics.decrementSharkCells();
-            AppLogger.info("WatorAgentLogicFactory - Removing shark at coordinate: " + sharkNewCoordinate);
+            // AppLogger.info("WatorAgentLogicFactory - Removing shark at coordinate: " + sharkNewCoordinate);
         }
     }
 
