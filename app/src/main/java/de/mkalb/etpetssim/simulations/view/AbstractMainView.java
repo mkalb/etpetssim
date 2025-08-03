@@ -14,7 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractMainView<T extends BaseMainViewModel> {
+public abstract class AbstractMainView<T extends BaseMainViewModel> implements SimulationView {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
@@ -41,6 +41,7 @@ public abstract class AbstractMainView<T extends BaseMainViewModel> {
         canvasBorderPane.getStyleClass().add(FXStyleClasses.SIMULATION_CENTER_BORDERPANE);
     }
 
+    @Override
     public final Region buildViewRegion() {
         BorderPane borderPane = buildMainBorderPane();
         borderPane.setCenter(createSimulationRegion());
