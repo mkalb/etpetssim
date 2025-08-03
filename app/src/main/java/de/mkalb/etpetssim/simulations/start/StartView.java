@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.start;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.SimulationType;
+import de.mkalb.etpetssim.simulations.view.SimulationControlView;
 import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -23,7 +24,7 @@ import java.util.function.*;
  * its logic, as no separate ViewModel or Model is required for the start screen.
  * </p>
  */
-public final class StartView implements SimulationMainView {
+public final class StartView implements SimulationMainView, SimulationControlView {
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
@@ -45,7 +46,8 @@ public final class StartView implements SimulationMainView {
         return borderPane;
     }
 
-    Region buildControlRegion() {
+    @Override
+    public Region buildControlRegion() {
         VBox vbox = new VBox();
         vbox.getStyleClass().add(FXStyleClasses.START_CONTROL_VBOX);
 
