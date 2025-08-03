@@ -224,7 +224,7 @@ public final class LabMainView
     }
 
     private void drawCoordinateAtBaseCanvas(GridCoordinate coordinate, boolean colorModeBW, boolean renderingModeCircle, Color strokeColor, double strokeLineWidth, Color textColor) {
-        Color color = colorModeBW ? calculateColumnBlackWhiteColor(coordinate) : calculateColumnSimilarityColor(coordinate);
+        Color color = colorModeBW ? determineColumnBlackWhiteColor(coordinate) : determineColumnSimilarityColor(coordinate);
         if (renderingModeCircle) {
             basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeAdjustment.CENTERED);
         } else {
@@ -294,7 +294,7 @@ public final class LabMainView
                  .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, 0.0d));
     }
 
-    private Color calculateColumnSimilarityColor(GridCoordinate coordinate) {
+    private Color determineColumnSimilarityColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % 2;
         int rowGroup = coordinate.y() % 2;
 
@@ -307,7 +307,7 @@ public final class LabMainView
         };
     }
 
-    private Color calculateColumnBlackWhiteColor(GridCoordinate coordinate) {
+    private Color determineColumnBlackWhiteColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % 2;
         int rowGroup = coordinate.y() % 2;
 
