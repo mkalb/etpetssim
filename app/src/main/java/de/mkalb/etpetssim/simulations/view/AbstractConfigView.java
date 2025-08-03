@@ -18,7 +18,7 @@ public abstract class AbstractConfigView<C, T extends SimulationConfigViewModel<
     }
 
     @Override
-    public abstract Region buildRegion();
+    public abstract Region buildConfigRegion();
 
     protected final Region createConfigMainBox(TitledPane... titledPanes) {
         HBox mainBox = new HBox(titledPanes);

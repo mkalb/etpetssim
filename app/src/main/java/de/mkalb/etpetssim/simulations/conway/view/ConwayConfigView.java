@@ -24,7 +24,7 @@ public final class ConwayConfigView extends AbstractConfigView<ConwayConfig, Con
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane();
 
         // --- Initialization Group ---

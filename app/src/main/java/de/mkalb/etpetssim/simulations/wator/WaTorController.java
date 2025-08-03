@@ -26,7 +26,7 @@ public final class WaTorController implements SimulationMainView {
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildMainRegion() {
         return waTorViewBuilder.build();
     }
 

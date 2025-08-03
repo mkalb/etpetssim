@@ -13,6 +13,6 @@ public abstract class AbstractObservationView<T extends SimulationObservationVie
     }
 
     @Override
-    public abstract Region buildRegion();
+    public abstract Region buildObservationRegion();
 
 }

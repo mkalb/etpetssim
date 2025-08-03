@@ -19,7 +19,7 @@ public final class LabConfigView extends AbstractConfigView<LabConfig, LabConfig
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane();
         TitledPane layoutPane = createLayoutPane();
 

@@ -24,7 +24,7 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane();
 
         // --- Initialization Group ---

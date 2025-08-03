@@ -13,7 +13,7 @@ public final class LabControlView extends AbstractControlView<LabControlViewMode
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildControlRegion() {
         Button drawButton = buildControlButton("draw", false);
         Button drawButtonModel = buildControlButton("draw model", true);
         Button drawButtonTest = buildControlButton("draw test", true);

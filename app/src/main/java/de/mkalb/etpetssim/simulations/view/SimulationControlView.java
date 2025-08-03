@@ -5,6 +5,6 @@ import javafx.scene.layout.Region;
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SimulationControlView {
 
-    Region buildRegion();
+    Region buildControlRegion();
 
 }

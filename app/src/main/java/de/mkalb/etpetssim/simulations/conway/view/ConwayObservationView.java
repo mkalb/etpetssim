@@ -34,7 +34,7 @@ public final class ConwayObservationView extends AbstractObservationView<ConwayO
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildObservationRegion() {
         updateObservationLabels();
 
         GridPane grid = new GridPane();

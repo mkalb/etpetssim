@@ -19,7 +19,7 @@ public final class WatorControlView extends AbstractControlView<WatorControlView
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildControlRegion() {
         // Button
         String textStart = AppLocalization.getText(AppLocalizationKeys.CONTROL_START);
         String textPause = AppLocalization.getText(AppLocalizationKeys.CONTROL_PAUSE);

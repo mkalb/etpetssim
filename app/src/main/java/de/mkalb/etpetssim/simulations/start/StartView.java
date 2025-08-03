@@ -35,7 +35,7 @@ public final class StartView implements SimulationMainView {
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildMainRegion() {
         Region controlRegion = buildControlRegion();
 
         BorderPane borderPane = new BorderPane();

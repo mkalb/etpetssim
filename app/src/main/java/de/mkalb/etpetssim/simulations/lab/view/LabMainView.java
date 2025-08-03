@@ -56,9 +56,9 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
 
     @Override
     public BorderPane buildMainBorderPane() {
-        Region configRegion = configView.buildRegion();
-        Region controlRegion = controlView.buildRegion();
-        Region observationRegion = observationView.buildRegion();
+        Region configRegion = configView.buildConfigRegion();
+        Region controlRegion = controlView.buildControlRegion();
+        Region observationRegion = observationView.buildObservationRegion();
 
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(configRegion);

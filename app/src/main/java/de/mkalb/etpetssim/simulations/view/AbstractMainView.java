@@ -42,7 +42,7 @@ public abstract class AbstractMainView<T extends SimulationMainViewModel> implem
     }
 
     @Override
-    public final Region buildRegion() {
+    public final Region buildMainRegion() {
         BorderPane borderPane = buildMainBorderPane();
         borderPane.setCenter(createSimulationRegion());
         borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);

@@ -31,7 +31,7 @@ public final class WatorObservationView extends AbstractObservationView<WatorObs
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildObservationRegion() {
         updateObservationLabels();
 
         GridPane grid = new GridPane();

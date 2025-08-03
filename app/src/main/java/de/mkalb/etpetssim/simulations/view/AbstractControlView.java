@@ -15,7 +15,7 @@ public abstract class AbstractControlView<T extends SimulationControlViewModel> 
     }
 
     @Override
-    public abstract Region buildRegion();
+    public abstract Region buildControlRegion();
 
     protected final Region createControlMainBox(Region... children) {
         HBox mainBox = new HBox();

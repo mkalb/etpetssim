@@ -20,7 +20,7 @@ public final class LabObservationView extends AbstractObservationView<LabObserva
     }
 
     @Override
-    public Region buildRegion() {
+    public Region buildObservationRegion() {
         GridPane grid = new GridPane();
         grid.getStyleClass().add(FXStyleClasses.OBSERVATION_GRID);
 
