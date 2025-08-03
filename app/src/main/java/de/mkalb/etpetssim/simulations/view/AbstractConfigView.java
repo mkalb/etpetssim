@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.simulations.model.SimulationState;
-import de.mkalb.etpetssim.simulations.viewmodel.BaseConfigViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.SimulationConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public abstract class AbstractConfigView<T extends BaseConfigViewModel> implements SimulationConfigView {
+public abstract class AbstractConfigView<T extends SimulationConfigViewModel> implements SimulationConfigView {
 
     protected final T viewModel;
 

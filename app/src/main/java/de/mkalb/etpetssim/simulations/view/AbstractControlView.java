@@ -1,12 +1,12 @@
 package de.mkalb.etpetssim.simulations.view;
 
-import de.mkalb.etpetssim.simulations.viewmodel.BaseControlViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.SimulationControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-public abstract class AbstractControlView<T extends BaseControlViewModel> implements SimulationControlView {
+public abstract class AbstractControlView<T extends SimulationControlViewModel> implements SimulationControlView {
 
     protected final T viewModel;
 

@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.simulations.model.SimulationState;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-public abstract class AbstractMainViewModel implements BaseMainViewModel {
+public abstract class AbstractMainViewModel implements SimulationMainViewModel {
 
     private final ObjectProperty<SimulationState> simulationState;
 

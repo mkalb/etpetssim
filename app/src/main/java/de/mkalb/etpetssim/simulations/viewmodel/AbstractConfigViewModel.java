@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-public abstract class AbstractConfigViewModel<T> implements BaseConfigViewModel<T> {
+public abstract class AbstractConfigViewModel<T> implements SimulationConfigViewModel<T> {
 
     protected final ReadOnlyObjectProperty<SimulationState> simulationState;
 

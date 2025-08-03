@@ -1,9 +1,10 @@
 package de.mkalb.etpetssim.simulations.view;
 
-import de.mkalb.etpetssim.simulations.viewmodel.BaseObservationViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.SimulationObservationViewModel;
 import javafx.scene.layout.Region;
 
-public abstract class AbstractObservationView<T extends BaseObservationViewModel> implements SimulationObservationView {
+public abstract class AbstractObservationView<T extends SimulationObservationViewModel>
+        implements SimulationObservationView {
 
     protected final T viewModel;
 

@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.view;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.viewmodel.BaseMainViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Pos;
@@ -14,7 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractMainView<T extends BaseMainViewModel> implements SimulationMainView {
+public abstract class AbstractMainView<T extends SimulationMainViewModel> implements SimulationMainView {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
