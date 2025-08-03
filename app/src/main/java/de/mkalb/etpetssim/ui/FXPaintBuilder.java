@@ -129,15 +129,17 @@ public final class FXPaintBuilder {
     }
 
     /**
-     * Creates a new {@link Color} with the same RGB values as the given base color,
+     * Returns a new {@link Color} with the same RGB values as the given base color,
      * but with the specified alpha (opacity).
+     * <p>
+     * The red, green, and blue components are preserved, while the opacity is set to {@code alpha}.
      *
-     * @param baseColor the base color to use for RGB values
+     * @param baseColor the base color whose RGB values are used
      * @param alpha     the alpha value (opacity) in the range [0.0, 1.0]
      * @return a new Color with the specified alpha
-     * @throws IllegalArgumentException if alpha is not in the range [0.0, 1.0]
+     * @throws IllegalArgumentException if {@code alpha} is not in the range [0.0, 1.0]
      */
-    public static Color createColorWithAlpha(Color baseColor, double alpha) {
+    public static Color adjustColorAlpha(Color baseColor, double alpha) {
         if ((alpha < 0.0) || (alpha > 1.0)) {
             throw new IllegalArgumentException("Alpha must be in the range [0.0, 1.0]");
         }
