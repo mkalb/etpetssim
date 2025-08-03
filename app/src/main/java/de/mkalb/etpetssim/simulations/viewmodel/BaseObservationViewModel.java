@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
-import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 public interface BaseObservationViewModel {

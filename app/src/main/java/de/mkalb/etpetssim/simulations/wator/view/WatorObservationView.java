@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorObservationViewModel;

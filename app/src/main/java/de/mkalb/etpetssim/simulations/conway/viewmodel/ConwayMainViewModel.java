@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;

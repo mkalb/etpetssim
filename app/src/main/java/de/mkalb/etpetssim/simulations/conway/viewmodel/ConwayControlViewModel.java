@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
-import de.mkalb.etpetssim.simulations.SimulationState;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractControlViewModel;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import javafx.beans.property.BooleanProperty;

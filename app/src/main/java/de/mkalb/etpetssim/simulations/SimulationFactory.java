@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.conway.viewmodel.*;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.start.StartView;
 import de.mkalb.etpetssim.simulations.wator.model.WatorEntityDescribable;
 import de.mkalb.etpetssim.simulations.wator.view.*;

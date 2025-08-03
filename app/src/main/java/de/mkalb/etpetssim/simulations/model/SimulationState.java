@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations;
+package de.mkalb.etpetssim.simulations.model;
 
 /**
  * Defines the possible states of a simulation's lifecycle.
