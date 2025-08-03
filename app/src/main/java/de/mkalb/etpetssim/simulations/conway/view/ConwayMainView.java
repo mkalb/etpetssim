@@ -16,21 +16,18 @@ import javafx.scene.paint.Color;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class ConwayMainView extends AbstractMainView<ConwayMainViewModel> implements SimulationMainView {
-
-    private final ConwayConfigView configView;
-    private final ConwayControlView controlView;
-    private final ConwayObservationView observationView;
+public final class ConwayMainView
+        extends AbstractMainView<ConwayMainViewModel, ConwayConfigView, ConwayControlView, ConwayObservationView>
+        implements SimulationMainView {
 
     public ConwayMainView(ConwayMainViewModel viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
                           ConwayControlView controlView,
                           ConwayObservationView observationView) {
-        super(viewModel, entityDescriptorRegistry);
-        this.configView = configView;
-        this.observationView = observationView;
-        this.controlView = controlView;
+        super(viewModel,
+                configView, controlView, observationView,
+                entityDescriptorRegistry);
     }
 
     @Override

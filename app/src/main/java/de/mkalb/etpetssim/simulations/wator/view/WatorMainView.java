@@ -17,11 +17,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class WatorMainView extends AbstractMainView<WatorMainViewModel> implements SimulationMainView {
-
-    private final WatorConfigView configView;
-    private final WatorControlView controlView;
-    private final WatorObservationView observationView;
+public final class WatorMainView
+        extends AbstractMainView<WatorMainViewModel, WatorConfigView, WatorControlView, WatorObservationView>
+        implements SimulationMainView {
 
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
 
@@ -30,10 +28,9 @@ public final class WatorMainView extends AbstractMainView<WatorMainViewModel> im
                          WatorConfigView configView,
                          WatorControlView controlView,
                          WatorObservationView observationView) {
-        super(viewModel, entityDescriptorRegistry);
-        this.configView = configView;
-        this.observationView = observationView;
-        this.controlView = controlView;
+        super(viewModel,
+                configView, controlView, observationView,
+                entityDescriptorRegistry);
 
         entityColors = HashMap.newHashMap(2);
         entityColors.put(WatorEntityDescribable.FISH.descriptorId(), null);

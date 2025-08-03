@@ -23,7 +23,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
-public final class LabMainView extends AbstractMainView<LabMainViewModel> implements SimulationMainView {
+public final class LabMainView
+        extends AbstractMainView<LabMainViewModel, LabConfigView, LabControlView, LabObservationView>
+        implements SimulationMainView {
 
     private static final Color MOUSE_CLICK_COLOR = Color.ROSYBROWN;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
@@ -36,10 +38,6 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
-    private final LabConfigView configView;
-    private final LabControlView controlView;
-    private final LabObservationView observationView;
-
     private @Nullable Font font;
     private @Nullable Font smallFont;
 
@@ -48,10 +46,9 @@ public final class LabMainView extends AbstractMainView<LabMainViewModel> implem
                        LabControlView controlView,
                        LabObservationView observationView,
                        GridEntityDescriptorRegistry entityDescriptorRegistry) {
-        super(viewModel, entityDescriptorRegistry);
-        this.configView = configView;
-        this.controlView = controlView;
-        this.observationView = observationView;
+        super(viewModel,
+                configView, controlView, observationView,
+                entityDescriptorRegistry);
     }
 
     @Override
