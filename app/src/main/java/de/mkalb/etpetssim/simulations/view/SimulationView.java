@@ -17,6 +17,6 @@ public interface SimulationView {
      *
      * @return the main view region for the simulation
      */
-    Region buildViewRegion();
+    Region buildRegion();
 
 }

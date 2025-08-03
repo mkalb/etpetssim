@@ -17,7 +17,7 @@ public record SimulationInstance(
         Region region) {
 
     static SimulationInstance of(SimulationType type, SimulationView simulationView) {
-        return new SimulationInstance(type, simulationView, simulationView.buildViewRegion());
+        return new SimulationInstance(type, simulationView, simulationView.buildRegion());
     }
 
     /**
