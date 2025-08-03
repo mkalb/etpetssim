@@ -9,11 +9,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public abstract class AbstractConfigView<C, T extends SimulationConfigViewModel<C>> implements SimulationConfigView {
+public abstract class AbstractConfigView<C, VM extends SimulationConfigViewModel<C>> implements SimulationConfigView {
 
-    protected final T viewModel;
+    protected final VM viewModel;
 
-    protected AbstractConfigView(T viewModel) {
+    protected AbstractConfigView(VM viewModel) {
         this.viewModel = viewModel;
     }
 

@@ -14,11 +14,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractMainView<T extends SimulationMainViewModel> implements SimulationMainView {
+public abstract class AbstractMainView<VM extends SimulationMainViewModel> implements SimulationMainView {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 
-    protected final T viewModel;
+    protected final VM viewModel;
     protected final GridEntityDescriptorRegistry entityDescriptorRegistry;
     protected final Canvas baseCanvas;
     protected final Canvas overlayCanvas;
@@ -27,7 +27,7 @@ public abstract class AbstractMainView<T extends SimulationMainViewModel> implem
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
 
-    protected AbstractMainView(T viewModel,
+    protected AbstractMainView(VM viewModel,
                                GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
