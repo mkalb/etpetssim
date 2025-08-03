@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations;
 
-import de.mkalb.etpetssim.simulations.view.SimulationView;
+import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import javafx.scene.layout.Region;
 
 /**
@@ -8,16 +8,16 @@ import javafx.scene.layout.Region;
  * the view managing it, and the view region for the simulation.
  *
  * @param simulationType the type of simulation
- * @param simulationView the view managing the simulation
+ * @param simulationMainView the view managing the simulation
  * @param region the view region for the simulation
  */
 public record SimulationInstance(
         SimulationType simulationType,
-        SimulationView simulationView,
+        SimulationMainView simulationMainView,
         Region region) {
 
-    static SimulationInstance of(SimulationType type, SimulationView simulationView) {
-        return new SimulationInstance(type, simulationView, simulationView.buildRegion());
+    static SimulationInstance of(SimulationType type, SimulationMainView simulationMainView) {
+        return new SimulationInstance(type, simulationMainView, simulationMainView.buildRegion());
     }
 
     /**
@@ -30,7 +30,7 @@ public record SimulationInstance(
      * @return a concise display string for this simulation instance
      */
     public String toDisplayString() {
-        return String.format("[%s, %s]", simulationType, simulationView.getClass().getSimpleName());
+        return String.format("[%s, %s]", simulationType, simulationMainView.getClass().getSimpleName());
     }
 
 }

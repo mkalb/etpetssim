@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.view;
 
 import javafx.scene.layout.Region;
 
-public interface BaseObservationView {
+public interface SimulationObservationView {
 
     Region buildRegion();
 

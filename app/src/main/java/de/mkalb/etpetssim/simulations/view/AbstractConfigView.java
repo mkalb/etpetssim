@@ -9,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public abstract class AbstractConfigView<T extends BaseConfigViewModel> implements BaseConfigView {
+public abstract class AbstractConfigView<T extends BaseConfigViewModel> implements SimulationConfigView {
 
     protected final T viewModel;
 

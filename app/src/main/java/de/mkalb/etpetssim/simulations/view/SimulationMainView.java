@@ -3,10 +3,10 @@ package de.mkalb.etpetssim.simulations.view;
 import javafx.scene.layout.Region;
 
 /**
- * The SimulationView interface represents a contract for all simulation views
+ * The SimulationMainView interface represents a contract for all simulation views
  * in the application.
  */
-public interface SimulationView {
+public interface SimulationMainView {
 
     /**
      * Builds the main view region for the simulation.

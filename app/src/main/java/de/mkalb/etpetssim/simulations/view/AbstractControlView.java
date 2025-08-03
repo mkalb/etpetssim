@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-public abstract class AbstractControlView<T extends BaseControlViewModel> implements BaseControlView {
+public abstract class AbstractControlView<T extends BaseControlViewModel> implements SimulationControlView {
 
     protected final T viewModel;
 

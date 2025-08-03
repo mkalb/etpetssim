@@ -5,10 +5,10 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.simulations.view.SimulationView;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
+import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 import java.util.*;
 
 @SuppressWarnings("MagicNumber")
-public final class ConwayMainView extends AbstractMainView<ConwayMainViewModel> implements SimulationView {
+public final class ConwayMainView extends AbstractMainView<ConwayMainViewModel> implements SimulationMainView {
 
     private final ConwayConfigView configView;
     private final ConwayControlView controlView;

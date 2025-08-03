@@ -14,7 +14,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractMainView<T extends BaseMainViewModel> implements SimulationView {
+public abstract class AbstractMainView<T extends BaseMainViewModel> implements SimulationMainView {
 
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
 

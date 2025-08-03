@@ -10,11 +10,11 @@ import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.view.SimulationView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
+import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.BorderPane;
@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
-public final class LabMainView extends AbstractMainView<LabMainViewModel> implements SimulationView {
+public final class LabMainView extends AbstractMainView<LabMainViewModel> implements SimulationMainView {
 
     private static final Color MOUSE_CLICK_COLOR = Color.ROSYBROWN;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;

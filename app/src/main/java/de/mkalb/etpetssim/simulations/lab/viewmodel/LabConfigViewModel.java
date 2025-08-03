@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;

@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.ReadOnlyObjectProperty;

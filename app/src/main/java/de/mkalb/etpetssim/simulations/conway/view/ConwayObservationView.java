@@ -2,9 +2,9 @@ package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayObservationViewModel;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.HPos;
