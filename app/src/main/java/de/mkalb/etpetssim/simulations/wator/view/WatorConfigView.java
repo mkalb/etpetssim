@@ -5,13 +5,14 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
-public final class WatorConfigView extends AbstractConfigView<WatorConfigViewModel> {
+public final class WatorConfigView extends AbstractConfigView<WatorConfig, WatorConfigViewModel> {
 
     @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_CONFIG_FISH_PERCENT = "wator.config.alivepercent";

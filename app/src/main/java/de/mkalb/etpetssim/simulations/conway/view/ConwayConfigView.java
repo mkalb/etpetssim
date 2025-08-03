@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentBuilder;
@@ -11,7 +12,7 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
-public final class ConwayConfigView extends AbstractConfigView<ConwayConfigViewModel> {
+public final class ConwayConfigView extends AbstractConfigView<ConwayConfig, ConwayConfigViewModel> {
 
     @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_CONFIG_ALIVE_PERCENT = "conway.config.alivepercent";
