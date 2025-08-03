@@ -51,16 +51,23 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
 
     @Override
     public final Region buildMainRegion() {
-        BorderPane borderPane = buildMainBorderPane();
-        borderPane.setCenter(createSimulationRegion());
+        Region configRegion = configView.buildConfigRegion();
+        Region controlRegion = controlView.buildControlRegion();
+        Region observationRegion = observationView.buildObservationRegion();
+        Region simulationRegion = createSimulationRegion();
+
+        BorderPane borderPane = new BorderPane();
         borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
+
+        borderPane.setTop(configRegion);
+        borderPane.setBottom(controlRegion);
+        borderPane.setRight(observationRegion);
+        borderPane.setCenter(simulationRegion);
 
         registerViewModelListeners();
 
         return borderPane;
     }
-
-    public abstract BorderPane buildMainBorderPane();
 
     protected abstract void registerViewModelListeners();
 

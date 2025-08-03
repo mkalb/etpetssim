@@ -9,8 +9,6 @@ import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.view.SimulationMainView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -28,20 +26,6 @@ public final class ConwayMainView
         super(viewModel,
                 configView, controlView, observationView,
                 entityDescriptorRegistry);
-    }
-
-    @Override
-    public BorderPane buildMainBorderPane() {
-        Region configRegion = configView.buildConfigRegion();
-        Region controlRegion = controlView.buildControlRegion();
-        Region observationRegion = observationView.buildObservationRegion();
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(configRegion);
-        borderPane.setBottom(controlRegion);
-        borderPane.setRight(observationRegion);
-
-        return borderPane;
     }
 
     @Override

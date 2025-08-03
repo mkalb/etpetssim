@@ -17,8 +17,6 @@ import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -49,20 +47,6 @@ public final class LabMainView
         super(viewModel,
                 configView, controlView, observationView,
                 entityDescriptorRegistry);
-    }
-
-    @Override
-    public BorderPane buildMainBorderPane() {
-        Region configRegion = configView.buildConfigRegion();
-        Region controlRegion = controlView.buildControlRegion();
-        Region observationRegion = observationView.buildObservationRegion();
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(configRegion);
-        borderPane.setBottom(controlRegion);
-        borderPane.setRight(observationRegion);
-
-        return borderPane;
     }
 
     @Override
