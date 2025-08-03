@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.view;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.SimulationView;
+import de.mkalb.etpetssim.simulations.view.SimulationView;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;

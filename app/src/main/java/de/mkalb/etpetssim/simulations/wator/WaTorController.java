@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator;
 
-import de.mkalb.etpetssim.simulations.SimulationView;
+import de.mkalb.etpetssim.simulations.view.SimulationView;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 

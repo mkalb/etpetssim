@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations;
 
+import de.mkalb.etpetssim.simulations.view.SimulationView;
 import javafx.scene.layout.Region;
 
 /**

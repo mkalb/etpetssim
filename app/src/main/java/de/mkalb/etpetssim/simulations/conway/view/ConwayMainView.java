@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.simulations.SimulationView;
+import de.mkalb.etpetssim.simulations.view.SimulationView;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;

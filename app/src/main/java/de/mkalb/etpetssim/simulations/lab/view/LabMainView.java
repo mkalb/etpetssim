@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.SimulationView;
+import de.mkalb.etpetssim.simulations.view.SimulationView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
