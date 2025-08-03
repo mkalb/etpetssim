@@ -452,7 +452,7 @@ public final class FXComponentBuilder {
         double valueRounded = Math.round(inputDoubleProperty.getValue() * 100.0d) / 100.0d;
         double majorTickUnit = (maxRounded - minRounded);
         int range = ((int) (maxRounded * 100)) - ((int) (minRounded * 100));
-        int minorTickCount = calculateMinorTickCountForPercentSlider(range);
+        int minorTickCount = computeMinorTickCountForPercentSlider(range);
 
         double value = Math.max(minRounded, Math.min(maxRounded, valueRounded));
         inputDoubleProperty.setValue(value);
@@ -483,7 +483,7 @@ public final class FXComponentBuilder {
     }
 
     /**
-     * Calculates the number of minor tick marks for a percent slider based on the given range.
+     * Computes the number of minor tick marks for a percent slider based on the given range.
      * <p>
      * This method determines the number of minor ticks by checking if the range is divisible
      * by specific divisors. If a divisor matches, the method returns the divisor minus one.
@@ -495,7 +495,7 @@ public final class FXComponentBuilder {
      * @param range the range of the slider (difference between max and min values multiplied by 100)
      * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
      */
-    private static int calculateMinorTickCountForPercentSlider(int range) {
+    private static int computeMinorTickCountForPercentSlider(int range) {
         // Ensure the range is within the valid interval [2, 100]
         if ((range >= 2) && (range <= 100)) {
             // Array of divisors to check for divisibility
