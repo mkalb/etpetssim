@@ -25,7 +25,7 @@ public abstract class AbstractControlView<VM extends SimulationControlViewModel>
         return mainBox;
     }
 
-    protected final Button buildControlButton(String text, boolean disabled) {
+    protected final Button createControlButton(String text, boolean disabled) {
         Button controlButton = new Button(text);
         controlButton.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
         controlButton.setDisable(disabled);

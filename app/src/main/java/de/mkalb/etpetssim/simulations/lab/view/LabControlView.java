@@ -14,9 +14,9 @@ public final class LabControlView extends AbstractControlView<LabControlViewMode
 
     @Override
     public Region buildControlRegion() {
-        Button drawButton = buildControlButton("draw", false);
-        Button drawButtonModel = buildControlButton("draw model", true);
-        Button drawButtonTest = buildControlButton("draw test", true);
+        Button drawButton = createControlButton("draw", false);
+        Button drawButtonModel = createControlButton("draw model", true);
+        Button drawButtonTest = createControlButton("draw test", true);
 
         drawButton.setOnAction(_ -> viewModel.requestDraw());
         drawButtonModel.setOnAction(_ -> viewModel.requestDrawModel());

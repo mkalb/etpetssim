@@ -26,8 +26,8 @@ public final class ConwayControlView extends AbstractControlView<ConwayControlVi
         String textResume = AppLocalization.getText(AppLocalizationKeys.CONTROL_RESUME);
         String textCancel = AppLocalization.getText(AppLocalizationKeys.CONTROL_CANCEL);
 
-        Button actionButton = buildControlButton(textStart, false);
-        Button cancelButton = buildControlButton(textCancel, true);
+        Button actionButton = createControlButton(textStart, false);
+        Button cancelButton = createControlButton(textCancel, true);
 
         actionButton.textProperty().bind(
                 Bindings.createStringBinding(() -> switch (viewModel.getSimulationState()) {
