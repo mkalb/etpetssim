@@ -6,6 +6,7 @@ package de.mkalb.etpetssim.engine.model;
  * @see GridModel
  * @see GridCell
  */
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface GridEntity {
 
     /**

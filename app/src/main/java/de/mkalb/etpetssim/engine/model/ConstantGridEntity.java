@@ -6,6 +6,6 @@ package de.mkalb.etpetssim.engine.model;
  * All implementations of this interface represent entities whose state does not change during the simulation.
  * </p>
  */
-@SuppressWarnings("MarkerInterface")
+@SuppressWarnings({"MarkerInterface", "InterfaceMayBeAnnotatedFunctional"})
 public interface ConstantGridEntity extends GridEntity {
 }
