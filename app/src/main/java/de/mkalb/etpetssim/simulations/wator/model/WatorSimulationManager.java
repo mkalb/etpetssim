@@ -4,10 +4,11 @@ import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.simulations.model.SimulationManager;
 
 import java.util.*;
 
-public final class WatorSimulationManager {
+public final class WatorSimulationManager implements SimulationManager<WatorEntity, WatorConfig, WatorStatistics> {
 
     private final WatorConfig config;
 
@@ -66,37 +67,44 @@ public final class WatorSimulationManager {
         return watorShark;
     }
 
-    public void executeStep() {
-        executor.executeStep();
-        updateStatistics(executor.currentStep(), executor.currentModel());
+    @Override
+    public WatorConfig config() {
+        return config;
+    }
+
+    @Override
+    public GridStructure structure() {
+        return structure;
+    }
+
+    @Override
+    public WatorStatistics statistics() {
+        return statistics;
     }
 
     void updateStatistics(long currentStep, GridModel<WatorEntity> currentModel) {
         statistics.update(currentStep);
     }
 
+    @Override
+    public void executeStep() {
+        executor.executeStep();
+        updateStatistics(executor.currentStep(), executor.currentModel());
+    }
+
+    @Override
     public boolean isRunning() {
         return executor.isRunning();
     }
 
-    public ReadableGridModel<WatorEntity> currentModel() {
-        return executor.currentModel();
-    }
-
+    @Override
     public long currentStep() {
         return executor.currentStep();
     }
 
-    public WatorStatistics statistics() {
-        return statistics;
-    }
-
-    public GridStructure structure() {
-        return structure;
-    }
-
-    public WatorConfig config() {
-        return config;
+    @Override
+    public ReadableGridModel<WatorEntity> currentModel() {
+        return executor.currentModel();
     }
 
 }
