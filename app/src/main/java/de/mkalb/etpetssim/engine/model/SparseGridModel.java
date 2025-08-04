@@ -4,6 +4,8 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * An implementation of {@link GridModel} that stores only non-default entities in a map.
@@ -190,6 +192,25 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
         } else {
             data.put(coordinateB, entityA);
         }
+    }
+
+    @Override
+    public Stream<GridCell<T>> nonDefaultCells() {
+        return data.entrySet().stream()
+                   .map(entry -> new GridCell<>(entry.getKey(), entry.getValue()));
+    }
+
+    @Override
+    public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+        List<GridCell<T>> result = new ArrayList<>();
+        for (Map.Entry<GridCoordinate, T> entry : data.entrySet()) {
+            T entity = entry.getValue();
+            if (entityPredicate.test(entity)) {
+                result.add(new GridCell<>(entry.getKey(), entity));
+            }
+        }
+        result.sort(cellOrdering);
+        return result;
     }
 
     /**

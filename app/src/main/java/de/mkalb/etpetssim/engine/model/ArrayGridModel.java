@@ -4,6 +4,8 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 /**
  * An implementation of {@link GridModel} that stores grid entities in a two-dimensional array.
@@ -162,6 +164,32 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
         Object temp = data[yA][xA];
         data[yA][xA] = data[yB][xB];
         data[yB][xB] = temp;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Stream<GridCell<T>> nonDefaultCells() {
+        return IntStream.range(0, structure.size().height())
+                        .boxed()
+                        .flatMap(y -> IntStream.range(0, structure.size().width())
+                                               .mapToObj(x -> new GridCell<T>(new GridCoordinate(x, y), (T) data[y][x]))
+                                               .filter(cell -> !Objects.equals(cell.entity(), defaultEntity)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+        List<GridCell<T>> result = new ArrayList<>();
+        for (int y = 0; y < structure.size().height(); y++) {
+            for (int x = 0; x < structure.size().width(); x++) {
+                T entity = (T) data[y][x];
+                if (entityPredicate.test(entity)) {
+                    result.add(new GridCell<>(new GridCoordinate(x, y), entity));
+                }
+            }
+        }
+        result.sort(cellOrdering);
+        return result;
     }
 
     /**
