@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;
-import de.mkalb.etpetssim.ui.FXPaintBuilder;
+import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
@@ -68,7 +68,7 @@ public final class WatorMainView
         GridEntityDescriptor descriptor = entityDescriptorRegistry.getRequiredByDescriptorId(descriptorId);
         Paint paint = descriptor.color();
         if (paint instanceof Color baseColor) {
-            Map<Integer, Color> colorMap = FXPaintBuilder.getBrightnessVariantsMap(baseColor, min, max, step, brighten, factorStep);
+            Map<Integer, Color> colorMap = FXPaintFactory.getBrightnessVariantsMap(baseColor, min, max, step, brighten, factorStep);
             entityColors.put(descriptorId, colorMap);
         } else {
             AppLogger.warn("Descriptor " + descriptorId + " does not provide a Color for brightness variants.");

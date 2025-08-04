@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.SimulationType;
 import de.mkalb.etpetssim.simulations.view.SimulationControlView;
 import de.mkalb.etpetssim.simulations.view.SimulationMainView;
-import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -51,7 +51,7 @@ public final class StartView implements SimulationMainView, SimulationControlVie
         VBox vbox = new VBox();
         vbox.getStyleClass().add(FXStyleClasses.START_CONTROL_VBOX);
 
-        Label titleLabel = FXComponentBuilder.createLabel(AppLocalization.getText(SimulationType.labelResourceKey()),
+        Label titleLabel = FXComponentFactory.createLabel(AppLocalization.getText(SimulationType.labelResourceKey()),
                 FXStyleClasses.START_TITLE_LABEL);
         vbox.getChildren().add(titleLabel);
 

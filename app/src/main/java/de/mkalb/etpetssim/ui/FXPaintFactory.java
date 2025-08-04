@@ -11,12 +11,12 @@ import java.util.*;
  * for JavaFX components. It cannot be instantiated.
  */
 @SuppressWarnings("MagicNumber")
-public final class FXPaintBuilder {
+public final class FXPaintFactory {
 
     /**
      * Private constructor to prevent instantiation.
      */
-    private FXPaintBuilder() {
+    private FXPaintFactory() {
     }
 
     /**

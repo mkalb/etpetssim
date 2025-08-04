@@ -3,7 +3,7 @@ package de.mkalb.etpetssim;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.SimulationFactory;
 import de.mkalb.etpetssim.simulations.SimulationType;
-import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -180,11 +180,11 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @return a Node representing the header of the simulation
      */
     private Node buildSimulationHeaderNode(SimulationType simulationType) {
-        VBox simulationHeaderBox = new VBox(FXComponentBuilder.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
+        VBox simulationHeaderBox = new VBox(FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
         simulationHeaderBox.getStyleClass().add(FXStyleClasses.HEADER_VBOX);
 
         simulationType.subtitle()
-                      .ifPresent(subtitle -> simulationHeaderBox.getChildren().add(FXComponentBuilder.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
+                      .ifPresent(subtitle -> simulationHeaderBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
 
         simulationType.urlAsURI().ifPresent(url -> {
             Hyperlink urlLink = new Hyperlink(url.toString());

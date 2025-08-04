@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
-import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
@@ -28,13 +28,13 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
         TitledPane structurePane = createStructurePane();
 
         // --- Initialization Group ---
-        var fishPercentControl = FXComponentBuilder.createLabeledPercentSlider(
+        var fishPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.fishPercentProperty(),
                 "Fish", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
                 "", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SLIDER
         );
-        var sharkPercentControl = FXComponentBuilder.createLabeledPercentSlider(
+        var sharkPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.sharkPercentProperty(),
                 "Shark", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
                 "", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT_TOOLTIP),
@@ -44,7 +44,7 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), fishPercentControl, sharkPercentControl);
 
         // --- Rules Group ---
-        var sharkBirthEnergyControl = FXComponentBuilder.createLabeledIntSpinner(
+        var sharkBirthEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkBirthEnergyProperty(),
                 "Shark Birth Energy", //  AppLocalization.getText(AppLocalizationKeys.CONFIG_SHARK_BIRTH_ENERGY),
                 "", // AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP, viewModel.sharkBirthEnergyProperty().min(), viewModel.sharkBirthEnergyProperty().max()),
@@ -56,7 +56,7 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
     }
 
     private TitledPane createStructurePane() {
-        var cellShapeControl = FXComponentBuilder.createLabeledEnumComboBox(
+        var cellShapeControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.cellShapeProperty(),
                 viewModel.cellShapeProperty().displayNameProvider(),
                 AppLocalization.getText(CellShape.labelResourceKey()),
@@ -64,7 +64,7 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
-        var gridEdgeBehaviorControl = FXComponentBuilder.createLabeledEnumComboBox(
+        var gridEdgeBehaviorControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.gridEdgeBehaviorProperty(),
                 viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
                 AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
@@ -72,21 +72,21 @@ public final class WatorConfigView extends AbstractConfigView<WatorConfig, Wator
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
-        var gridWidthControl = FXComponentBuilder.createLabeledIntSpinner(
+        var gridWidthControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridWidthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
                 AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty().min(), viewModel.gridWidthProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        var gridHeightControl = FXComponentBuilder.createLabeledIntSpinner(
+        var gridHeightControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridHeightProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
                 AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty().min(), viewModel.gridHeightProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        var cellEdgeLengthControl = FXComponentBuilder.createLabeledIntSlider(
+        var cellEdgeLengthControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.cellEdgeLengthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
                 AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.cellEdgeLengthProperty().min(), viewModel.cellEdgeLengthProperty().max()),

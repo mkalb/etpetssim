@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationConfigViewModel;
-import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
@@ -29,15 +29,15 @@ public abstract class AbstractConfigView<C, VM extends SimulationConfigViewModel
 
     @SafeVarargs
     protected final TitledPane createConfigTitledPane(String title,
-                                                      FXComponentBuilder.LabeledControl<? extends Region>... content) {
+                                                      FXComponentFactory.LabeledControl<? extends Region>... content) {
         return createConfigTitledPane(title, true, content);
     }
 
     @SafeVarargs
     protected final TitledPane createConfigTitledPane(String title, boolean bindDisableToSimulationStateReady,
-                                                      FXComponentBuilder.LabeledControl<? extends Region>... content) {
+                                                      FXComponentFactory.LabeledControl<? extends Region>... content) {
         VBox box = new VBox();
-        for (FXComponentBuilder.LabeledControl<? extends Region> labeledControl : content) {
+        for (FXComponentFactory.LabeledControl<? extends Region> labeledControl : content) {
             box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
             if (bindDisableToSimulationStateReady) {
                 labeledControl.controlRegion().disableProperty().bind(

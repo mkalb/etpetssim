@@ -16,12 +16,12 @@ import java.util.stream.*;
  * It will grow during the development of the Extraterrestrial Pets Simulation application.
  */
 @SuppressWarnings("MagicNumber")
-public final class FXComponentBuilder {
+public final class FXComponentFactory {
 
     /**
      * Private constructor to prevent instantiation.
      */
-    private FXComponentBuilder() {
+    private FXComponentFactory() {
     }
 
     /**
@@ -151,7 +151,7 @@ public final class FXComponentBuilder {
      * @param labelFormatString the format string for the label (e.g., "%s")
      * @param tooltip the tooltip text for both the label and the checkbox
      * @param styleClass the CSS style class to apply to the checkbox
-     * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the checkbox
+     * @return a {@link FXComponentFactory.LabeledControl} containing the label and the checkbox
      */
     public static <E extends Enum<E>> LabeledControl<CheckBox> createLabeledEnumCheckBox(InputEnumProperty<E> inputEnumProperty,
                                                                                          E checkedEnumValue,
@@ -203,7 +203,7 @@ public final class FXComponentBuilder {
      * @param labelFormatString the format string for the label (e.g., "%s")
      * @param tooltip the tooltip text for both the label and the combo box
      * @param styleClass the CSS style class to apply to the combo box
-     * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the combo box
+     * @return a {@link FXComponentFactory.LabeledControl} containing the label and the combo box
      */
     public static <E extends Enum<E>> LabeledControl<ComboBox<E>> createLabeledEnumComboBox(InputEnumProperty<E> inputEnumProperty,
                                                                                             Function<E, String> displayNameProvider,
@@ -278,7 +278,7 @@ public final class FXComponentBuilder {
      * @param labelFormatString the format string for the label (e.g., "%d px")
      * @param tooltip the tooltip text for both the label and the slider
      * @param styleClass the CSS style class to apply to the slider
-     * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
+     * @return a {@link FXComponentFactory.LabeledControl} containing the label and the slider
      */
     public static LabeledControl<Slider> createLabeledIntSlider(InputDoublePropertyIntRange inputDoublePropertyIntRange,
                                                                 String labelFormatString,
@@ -321,7 +321,7 @@ public final class FXComponentBuilder {
      * @param labelFormatString the format string for the label (e.g., "Width: %d")
      * @param tooltip the tooltip text for both the label and the spinner
      * @param styleClass the CSS style class to apply to the spinner
-     * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the spinner
+     * @return a {@link FXComponentFactory.LabeledControl} containing the label and the spinner
      */
     public static LabeledControl<Spinner<Integer>> createLabeledIntSpinner(
             InputIntegerProperty inputIntegerProperty,
@@ -436,7 +436,7 @@ public final class FXComponentBuilder {
      * @param labelFormatString the format string for the label (e.g., "%.2f %%")
      * @param tooltip the tooltip text for both the label and the slider
      * @param styleClass the CSS style class to apply to the slider
-     * @return a {@link FXComponentBuilder.LabeledControl} containing the label and the slider
+     * @return a {@link FXComponentFactory.LabeledControl} containing the label and the slider
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public static LabeledControl<Slider> createLabeledPercentSlider(

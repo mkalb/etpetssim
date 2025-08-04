@@ -30,8 +30,8 @@ public final class LabMainView
     private static final Color TEXT_COLOR = Color.DARKSLATEGRAY;
     private static final Color CANVAS_COLOR = Color.BLACK;
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
-    private static final Color TRANSLUCENT_WHITE = FXPaintBuilder.adjustColorAlpha(Color.WHITE, 0.2); // for lightening effect
-    private static final Color TRANSLUCENT_BLACK = FXPaintBuilder.adjustColorAlpha(Color.BLACK, 0.2); // for darkening effect
+    private static final Color TRANSLUCENT_WHITE = FXPaintFactory.adjustColorAlpha(Color.WHITE, 0.2); // for lightening effect
+    private static final Color TRANSLUCENT_BLACK = FXPaintFactory.adjustColorAlpha(Color.BLACK, 0.2); // for darkening effect
     private static final double MOUSE_CLICK_LINE_WIDTH = 8.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
@@ -219,7 +219,7 @@ public final class LabMainView
         if (colorModeBW) {
             basePainter.fillGridBackground(Color.WHITE);
         } else {
-            basePainter.fillGridBackground(FXPaintBuilder.createHorizontalGradient(GRID_BACKGROUND_COLOR.darker(), GRID_BACKGROUND_COLOR.brighter()));
+            basePainter.fillGridBackground(FXPaintFactory.createHorizontalGradient(GRID_BACKGROUND_COLOR.darker(), GRID_BACKGROUND_COLOR.brighter()));
         }
     }
 
@@ -245,8 +245,8 @@ public final class LabMainView
             return;
         }
 
-        Color t1 = FXPaintBuilder.adjustColorAlpha(Color.RED, 0.5);
-        Color t2 = FXPaintBuilder.adjustColorAlpha(Color.YELLOW, 0.8);
+        Color t1 = FXPaintFactory.adjustColorAlpha(Color.RED, 0.5);
+        Color t2 = FXPaintFactory.adjustColorAlpha(Color.YELLOW, 0.8);
 
         basePainter.drawCellBoundingBox(new GridCoordinate(2, 4), t1, t2, 8.0d, StrokeAdjustment.INSIDE);
         basePainter.drawCellBoundingBox(new GridCoordinate(2, 6), t2, t1, 8.0d, StrokeAdjustment.INSIDE);
@@ -289,7 +289,7 @@ public final class LabMainView
             return;
         }
 
-        Color fillColor = FXPaintBuilder.adjustColorAlpha(Color.RED, 0.5d);
+        Color fillColor = FXPaintFactory.adjustColorAlpha(Color.RED, 0.5d);
         viewModel.getCurrentModel().nonDefaultCells()
                  .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, 0.0d));
     }

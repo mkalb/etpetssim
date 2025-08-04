@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractControlView;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorControlViewModel;
-import de.mkalb.etpetssim.ui.FXComponentBuilder;
+import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
@@ -44,7 +44,7 @@ public final class WatorControlView extends AbstractControlView<WatorControlView
         cancelButton.setOnAction(_ -> viewModel.requestCancelButton());
 
         // Config
-        var stepDurationControl = FXComponentBuilder.createLabeledIntSlider(
+        var stepDurationControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.stepDurationProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP), // TODO Adjust tooltip with min and max
