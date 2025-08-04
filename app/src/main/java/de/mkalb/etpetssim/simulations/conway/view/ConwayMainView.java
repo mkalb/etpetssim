@@ -13,7 +13,6 @@ import javafx.scene.paint.Color;
 
 import java.util.*;
 
-@SuppressWarnings("MagicNumber")
 public final class ConwayMainView
         extends AbstractMainView<ConwayMainViewModel, ConwayConfigView, ConwayControlView, ConwayObservationView>
         implements SimulationMainView {

@@ -14,13 +14,10 @@ import javafx.scene.layout.Region;
 
 public final class ConwayObservationView extends AbstractObservationView<ConwayObservationViewModel> {
 
-    @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
-    @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
     @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
-    @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
 
     private final Label stepLabel = new Label();

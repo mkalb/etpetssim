@@ -14,11 +14,8 @@ import javafx.scene.layout.Region;
 
 public final class WatorObservationView extends AbstractObservationView<WatorObservationViewModel> {
 
-    @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
-    @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
-    @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
 
     private final Label stepLabel = new Label();
