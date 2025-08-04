@@ -17,7 +17,10 @@ import org.jspecify.annotations.Nullable;
 public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV extends SimulationConfigView, CLV extends SimulationControlView, OV extends SimulationObservationView>
         implements SimulationMainView {
 
-    private static final double INITIAL_CANVAS_SIZE = 100.0d;
+    private static final double INITIAL_CANVAS_WIDTH = 640.0d;
+    private static final double INITIAL_CANVAS_HEIGHT = 480.0d;
+    private static final double MAX_CANVAS_WIDTH = 6_400.0d;
+    private static final double MAX_CANVAS_HEIGHT = 4_800.0d;
 
     protected final VM viewModel;
     protected final CFV configView;
@@ -40,8 +43,8 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         this.observationView = observationView;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
-        baseCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
-        overlayCanvas = new Canvas(INITIAL_CANVAS_SIZE, INITIAL_CANVAS_SIZE);
+        baseCanvas = new Canvas(INITIAL_CANVAS_WIDTH, INITIAL_CANVAS_HEIGHT);
+        overlayCanvas = new Canvas(INITIAL_CANVAS_WIDTH, INITIAL_CANVAS_HEIGHT);
         baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
         overlayCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
 
@@ -92,12 +95,12 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
 
     protected final void createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
         basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
-        baseCanvas.setWidth(Math.min(6_000.0d, basePainter.gridDimension2D().getWidth()));
-        baseCanvas.setHeight(Math.min(4_000.0d, basePainter.gridDimension2D().getHeight()));
+        baseCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, basePainter.gridDimension2D().getWidth()));
+        baseCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, basePainter.gridDimension2D().getHeight()));
 
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
-        overlayCanvas.setWidth(Math.min(6_000.0d, overlayPainter.gridDimension2D().getWidth()));
-        overlayCanvas.setHeight(Math.min(4_000.0d, overlayPainter.gridDimension2D().getHeight()));
+        overlayCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, overlayPainter.gridDimension2D().getWidth()));
+        overlayCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, overlayPainter.gridDimension2D().getHeight()));
     }
 
     protected final void updateCanvasBorderPane(GridStructure structure) {
