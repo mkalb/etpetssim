@@ -189,4 +189,22 @@ public interface ReadableGridModel<T extends GridEntity> {
         return cellsAsStream().filter(predicate).count();
     }
 
+    /**
+     * Returns a list of grid cells whose entities match the given predicate,
+     * ordered according to the provided comparator.
+     * <p>
+     * This method filters all grid cells using the specified {@code entityPredicate}
+     * and sorts the resulting cells using {@code cellOrdering}.
+     *
+     * @param entityPredicate the predicate to filter grid cell entities
+     * @param cellOrdering the comparator to define the order of the resulting grid cells
+     * @return a list of filtered and sorted {@link GridCell} objects
+     */
+    default List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+        return cellsAsStream()
+                .filter(cell -> entityPredicate.test(cell.entity()))
+                .sorted(cellOrdering)
+                .toList();
+    }
+
 }
