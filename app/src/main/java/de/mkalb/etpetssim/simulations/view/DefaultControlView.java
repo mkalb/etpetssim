@@ -46,7 +46,9 @@ public final class DefaultControlView extends AbstractControlView<DefaultControl
         var stepDurationControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.stepDurationProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION),
-                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP), // TODO Adjust tooltip with min and max
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_DURATION_TOOLTIP,
+                        viewModel.stepDurationProperty().min(),
+                        viewModel.stepDurationProperty().max()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
