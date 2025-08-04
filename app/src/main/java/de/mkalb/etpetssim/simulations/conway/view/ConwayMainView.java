@@ -9,14 +9,12 @@ import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
-import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import javafx.scene.paint.Color;
 
 import java.util.*;
 
 public final class ConwayMainView
-        extends AbstractMainView<ConwayMainViewModel, ConwayConfigView, DefaultControlView, ConwayObservationView>
-        implements SimulationMainView {
+        extends AbstractMainView<ConwayMainViewModel, ConwayConfigView, DefaultControlView, ConwayObservationView> {
 
     public ConwayMainView(ConwayMainViewModel viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,

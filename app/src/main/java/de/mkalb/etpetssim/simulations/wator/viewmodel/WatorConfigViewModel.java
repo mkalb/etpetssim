@@ -11,7 +11,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
 
-public final class WatorConfigViewModel extends AbstractConfigViewModel<WatorConfig> {
+public final class WatorConfigViewModel
+        extends AbstractConfigViewModel<WatorConfig> {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;

@@ -15,7 +15,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class WatorMainViewModel extends AbstractMainViewModel {
+public final class WatorMainViewModel
+        extends AbstractMainViewModel {
 
     private final WatorConfigViewModel configViewModel;
     private final DefaultControlViewModel controlViewModel;

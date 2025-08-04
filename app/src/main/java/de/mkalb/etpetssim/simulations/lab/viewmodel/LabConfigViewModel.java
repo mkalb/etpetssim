@@ -12,7 +12,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-public final class LabConfigViewModel extends AbstractConfigViewModel<LabConfig> {
+public final class LabConfigViewModel
+        extends AbstractConfigViewModel<LabConfig> {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;

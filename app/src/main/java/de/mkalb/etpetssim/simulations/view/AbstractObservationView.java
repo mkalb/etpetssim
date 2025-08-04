@@ -8,7 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-public abstract class AbstractObservationView<VM extends SimulationObservationViewModel>
+public abstract class AbstractObservationView<S, VM extends SimulationObservationViewModel<S>>
         implements SimulationObservationView {
 
     protected final VM viewModel;

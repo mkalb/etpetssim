@@ -11,7 +11,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public final class DefaultControlView extends AbstractControlView<DefaultControlViewModel> {
+public final class DefaultControlView
+        extends AbstractControlView<DefaultControlViewModel> {
 
     public DefaultControlView(DefaultControlViewModel viewModel) {
         super(viewModel);

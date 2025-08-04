@@ -5,7 +5,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 
 public abstract class AbstractConfigViewModel<C> implements SimulationConfigViewModel<C> {
 
-    protected final ReadOnlyObjectProperty<SimulationState> simulationState;
+    private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
     protected AbstractConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;

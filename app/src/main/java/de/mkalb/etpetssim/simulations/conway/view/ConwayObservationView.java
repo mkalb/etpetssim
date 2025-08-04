@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 
 public final class ConwayObservationView
-        extends AbstractObservationView<DefaultObservationViewModel<ConwayStatistics>> {
+        extends AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayStatistics>> {
 
     static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
     static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";

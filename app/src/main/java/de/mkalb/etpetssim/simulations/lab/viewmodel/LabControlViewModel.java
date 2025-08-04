@@ -6,7 +6,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
-public final class LabControlViewModel extends AbstractControlViewModel {
+public final class LabControlViewModel
+        extends AbstractControlViewModel {
 
     private final BooleanProperty drawRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty drawModelRequested = new SimpleBooleanProperty(false);

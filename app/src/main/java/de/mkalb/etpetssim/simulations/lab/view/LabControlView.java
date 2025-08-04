@@ -6,7 +6,8 @@ import de.mkalb.etpetssim.simulations.view.AbstractControlView;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 
-public final class LabControlView extends AbstractControlView<LabControlViewModel> {
+public final class LabControlView
+        extends AbstractControlView<LabControlViewModel> {
 
     public LabControlView(LabControlViewModel viewModel) {
         super(viewModel);

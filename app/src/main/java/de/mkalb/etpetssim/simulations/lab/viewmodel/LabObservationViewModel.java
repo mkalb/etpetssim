@@ -7,7 +7,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
 
-public final class LabObservationViewModel extends AbstractObservationViewModel {
+public final class LabObservationViewModel
+        extends AbstractObservationViewModel<Object> {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
 

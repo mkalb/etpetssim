@@ -9,7 +9,8 @@ import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 
-public final class WatorObservationView extends AbstractObservationView<DefaultObservationViewModel<WatorStatistics>> {
+public final class WatorObservationView
+        extends AbstractObservationView<WatorStatistics, DefaultObservationViewModel<WatorStatistics>> {
 
     static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
     static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";

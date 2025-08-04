@@ -17,7 +17,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class ConwayMainViewModel extends AbstractMainViewModel {
+public final class ConwayMainViewModel
+        extends AbstractMainViewModel {
 
     private final ConwayConfigViewModel configViewModel;
     private final DefaultControlViewModel controlViewModel;

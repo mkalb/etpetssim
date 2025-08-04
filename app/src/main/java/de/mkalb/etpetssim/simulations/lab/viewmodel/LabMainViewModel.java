@@ -15,7 +15,8 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public final class LabMainViewModel extends AbstractMainViewModel {
+public final class LabMainViewModel
+        extends AbstractMainViewModel {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
     private final LabConfigViewModel configViewModel;

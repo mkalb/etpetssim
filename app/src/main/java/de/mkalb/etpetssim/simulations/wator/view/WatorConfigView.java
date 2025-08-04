@@ -12,7 +12,8 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
-public final class WatorConfigView extends AbstractConfigView<WatorConfig, WatorConfigViewModel> {
+public final class WatorConfigView
+        extends AbstractConfigView<WatorConfig, WatorConfigViewModel> {
 
     @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_CONFIG_FISH_PERCENT = "wator.config.alivepercent";

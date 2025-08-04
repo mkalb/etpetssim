@@ -10,7 +10,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
 
-public final class ConwayConfigViewModel extends AbstractConfigViewModel<ConwayConfig> {
+public final class ConwayConfigViewModel
+        extends AbstractConfigViewModel<ConwayConfig> {
 
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;

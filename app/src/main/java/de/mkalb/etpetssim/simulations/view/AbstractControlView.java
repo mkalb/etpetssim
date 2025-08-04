@@ -6,7 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 
-public abstract class AbstractControlView<VM extends SimulationControlViewModel> implements SimulationControlView {
+public abstract class AbstractControlView<VM extends SimulationControlViewModel>
+        implements SimulationControlView {
 
     protected final VM viewModel;
 

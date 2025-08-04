@@ -14,7 +14,6 @@ import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
-import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -22,8 +21,7 @@ import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
 
 public final class LabMainView
-        extends AbstractMainView<LabMainViewModel, LabConfigView, LabControlView, LabObservationView>
-        implements SimulationMainView {
+        extends AbstractMainView<LabMainViewModel, LabConfigView, LabControlView, LabObservationView> {
 
     private static final Color MOUSE_CLICK_COLOR = Color.ROSYBROWN;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;

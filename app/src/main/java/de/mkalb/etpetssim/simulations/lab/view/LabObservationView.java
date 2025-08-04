@@ -13,7 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-public final class LabObservationView extends AbstractObservationView<LabObservationViewModel> {
+public final class LabObservationView
+        extends AbstractObservationView<Object, LabObservationViewModel> {
 
     public LabObservationView(LabObservationViewModel viewModel) {
         super(viewModel);

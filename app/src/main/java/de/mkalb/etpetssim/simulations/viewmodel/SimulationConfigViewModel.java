@@ -5,12 +5,12 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 
 public interface SimulationConfigViewModel<C> {
 
-    C getConfig();
-
-    void setConfig(C config);
-
     ReadOnlyObjectProperty<SimulationState> simulationStateProperty();
 
     SimulationState getSimulationState();
+
+    C getConfig();
+
+    void setConfig(C config);
 
 }

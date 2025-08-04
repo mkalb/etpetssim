@@ -23,7 +23,7 @@ public abstract class AbstractMainViewModel implements SimulationMainViewModel {
         return simulationState.get();
     }
 
-    protected void setSimulationState(SimulationState state) {
+    protected final void setSimulationState(SimulationState state) {
         simulationState.set(state);
     }
 
