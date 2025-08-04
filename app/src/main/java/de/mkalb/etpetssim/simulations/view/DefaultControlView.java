@@ -1,10 +1,9 @@
-package de.mkalb.etpetssim.simulations.conway.view;
+package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayControlViewModel;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
-import de.mkalb.etpetssim.simulations.view.AbstractControlView;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
@@ -12,9 +11,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public final class ConwayControlView extends AbstractControlView<ConwayControlViewModel> {
+public final class DefaultControlView extends AbstractControlView<DefaultControlViewModel> {
 
-    public ConwayControlView(ConwayControlViewModel viewModel) {
+    public DefaultControlView(DefaultControlViewModel viewModel) {
         super(viewModel);
     }
 

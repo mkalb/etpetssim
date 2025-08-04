@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
+import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;
@@ -16,7 +17,7 @@ import java.util.*;
 
 @SuppressWarnings("MagicNumber")
 public final class WatorMainView
-        extends AbstractMainView<WatorMainViewModel, WatorConfigView, WatorControlView, WatorObservationView>
+        extends AbstractMainView<WatorMainViewModel, WatorConfigView, DefaultControlView, WatorObservationView>
         implements SimulationMainView {
 
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
@@ -24,7 +25,7 @@ public final class WatorMainView
     public WatorMainView(WatorMainViewModel viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
-                         WatorControlView controlView,
+                         DefaultControlView controlView,
                          WatorObservationView observationView) {
         super(viewModel,
                 configView, controlView, observationView,

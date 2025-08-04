@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.model.WatorEntity;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
@@ -18,7 +19,7 @@ import java.util.*;
 public final class WatorMainViewModel extends AbstractMainViewModel {
 
     private final WatorConfigViewModel configViewModel;
-    private final WatorControlViewModel controlViewModel;
+    private final DefaultControlViewModel controlViewModel;
     private final WatorObservationViewModel observationViewModel;
     private final SimulationTimer simulationTimer;
 
@@ -29,7 +30,7 @@ public final class WatorMainViewModel extends AbstractMainViewModel {
 
     public WatorMainViewModel(ObjectProperty<SimulationState> simulationState,
                               WatorConfigViewModel configViewModel,
-                              WatorControlViewModel controlViewModel,
+                              DefaultControlViewModel controlViewModel,
                               WatorObservationViewModel observationViewModel) {
         super(simulationState);
         this.configViewModel = configViewModel;

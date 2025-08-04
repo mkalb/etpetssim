@@ -3,16 +3,26 @@ package de.mkalb.etpetssim.simulations;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.view.*;
-import de.mkalb.etpetssim.simulations.conway.viewmodel.*;
+import de.mkalb.etpetssim.simulations.conway.view.ConwayConfigView;
+import de.mkalb.etpetssim.simulations.conway.view.ConwayMainView;
+import de.mkalb.etpetssim.simulations.conway.view.ConwayObservationView;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayObservationViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.start.StartView;
+import de.mkalb.etpetssim.simulations.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorEntityDescribable;
-import de.mkalb.etpetssim.simulations.wator.view.*;
-import de.mkalb.etpetssim.simulations.wator.viewmodel.*;
+import de.mkalb.etpetssim.simulations.wator.view.WatorConfigView;
+import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
+import de.mkalb.etpetssim.simulations.wator.view.WatorObservationView;
+import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
+import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;
+import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorObservationViewModel;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
 
@@ -90,13 +100,13 @@ public final class SimulationFactory {
 
         // ViewModel
         var configViewModel = new ConwayConfigViewModel(simulationState);
-        var controlViewModel = new ConwayControlViewModel(simulationState);
+        var controlViewModel = new DefaultControlViewModel(simulationState);
         var observationViewModel = new ConwayObservationViewModel(simulationState);
         var viewModel = new ConwayMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View
         var configView = new ConwayConfigView(configViewModel);
-        var controlView = new ConwayControlView(controlViewModel);
+        var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ConwayObservationView(observationViewModel);
         var view = new ConwayMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
@@ -112,13 +122,13 @@ public final class SimulationFactory {
 
         // ViewModel
         var configViewModel = new WatorConfigViewModel(simulationState);
-        var controlViewModel = new WatorControlViewModel(simulationState);
+        var controlViewModel = new DefaultControlViewModel(simulationState);
         var observationViewModel = new WatorObservationViewModel(simulationState);
         var viewModel = new WatorMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View
         var configView = new WatorConfigView(configViewModel);
-        var controlView = new WatorControlView(controlViewModel);
+        var controlView = new DefaultControlView(controlViewModel);
         var observationView = new WatorObservationView(observationViewModel);
         var view = new WatorMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
