@@ -4,15 +4,15 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
-import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-public final class WatorObservationView extends AbstractObservationView<WatorObservationViewModel> {
+public final class WatorObservationView extends AbstractObservationView<DefaultObservationViewModel<WatorStatistics>> {
 
     static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
     static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
@@ -23,7 +23,7 @@ public final class WatorObservationView extends AbstractObservationView<WatorObs
     private final Label fishCellsLabel = new Label();
     private final Label sharkCellsLabel = new Label();
 
-    public WatorObservationView(WatorObservationViewModel viewModel) {
+    public WatorObservationView(DefaultObservationViewModel<WatorStatistics> viewModel) {
         super(viewModel);
     }
 

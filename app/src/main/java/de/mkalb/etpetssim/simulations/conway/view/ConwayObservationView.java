@@ -3,16 +3,17 @@ package de.mkalb.etpetssim.simulations.conway.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
-import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayObservationViewModel;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-public final class ConwayObservationView extends AbstractObservationView<ConwayObservationViewModel> {
+public final class ConwayObservationView
+        extends AbstractObservationView<DefaultObservationViewModel<ConwayStatistics>> {
 
     static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
     static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
@@ -26,7 +27,7 @@ public final class ConwayObservationView extends AbstractObservationView<ConwayO
     private final Label deadCellsLabel = new Label();
     private final Label maxAliveCellsLabel = new Label();
 
-    public ConwayObservationView(ConwayObservationViewModel viewModel) {
+    public ConwayObservationView(DefaultObservationViewModel<ConwayStatistics> viewModel) {
         super(viewModel);
     }
 

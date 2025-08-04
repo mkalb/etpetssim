@@ -5,9 +5,11 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.util.Duration;
@@ -19,7 +21,7 @@ public final class ConwayMainViewModel extends AbstractMainViewModel {
 
     private final ConwayConfigViewModel configViewModel;
     private final DefaultControlViewModel controlViewModel;
-    private final ConwayObservationViewModel observationViewModel;
+    private final DefaultObservationViewModel<ConwayStatistics> observationViewModel;
     private final SimulationTimer simulationTimer;
 
     private Runnable simulationInitializedListener = () -> {};
@@ -30,7 +32,7 @@ public final class ConwayMainViewModel extends AbstractMainViewModel {
     public ConwayMainViewModel(ObjectProperty<SimulationState> simulationState,
                                ConwayConfigViewModel configViewModel,
                                DefaultControlViewModel controlViewModel,
-                               ConwayObservationViewModel observationViewModel) {
+                               DefaultObservationViewModel<ConwayStatistics> observationViewModel) {
         super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;

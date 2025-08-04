@@ -6,9 +6,8 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
-import de.mkalb.etpetssim.simulations.wator.model.WatorEntity;
-import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.beans.property.ObjectProperty;
 import javafx.util.Duration;
@@ -20,7 +19,7 @@ public final class WatorMainViewModel extends AbstractMainViewModel {
 
     private final WatorConfigViewModel configViewModel;
     private final DefaultControlViewModel controlViewModel;
-    private final WatorObservationViewModel observationViewModel;
+    private final DefaultObservationViewModel<WatorStatistics> observationViewModel;
     private final SimulationTimer simulationTimer;
 
     private Runnable simulationInitializedListener = () -> {};
@@ -31,7 +30,7 @@ public final class WatorMainViewModel extends AbstractMainViewModel {
     public WatorMainViewModel(ObjectProperty<SimulationState> simulationState,
                               WatorConfigViewModel configViewModel,
                               DefaultControlViewModel controlViewModel,
-                              WatorObservationViewModel observationViewModel) {
+                              DefaultObservationViewModel<WatorStatistics> observationViewModel) {
         super(simulationState);
         this.configViewModel = configViewModel;
         this.controlViewModel = controlViewModel;
