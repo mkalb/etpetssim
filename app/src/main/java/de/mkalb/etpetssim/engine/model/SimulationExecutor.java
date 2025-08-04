@@ -4,8 +4,8 @@ package de.mkalb.etpetssim.engine.model;
  * Executes simulation steps for a given model until a specified termination condition is met.
  * <p>
  * This interface defines the contract for managing the simulation lifecycle,
- * including stepwise execution, batch execution, and running the simulation to completion.
- * It also provides access to the current model state and step count, and supports resetting the simulation.
+ * including stepwise execution and batch execution.
+ * It also provides access to the current model state and step count.
  *
  * @param <T> the type of {@link GridEntity} in the simulation
  */
@@ -46,15 +46,5 @@ public interface SimulationExecutor<T extends GridEntity> {
      * @param count the maximum number of steps to execute
      */
     void executeSteps(int count);
-
-    /**
-     * Executes simulation steps until the termination condition is met.
-     */
-    void executeAllSteps();
-
-    /**
-     * Resets the simulation step counter to zero.
-     */
-    void reset();
 
 }

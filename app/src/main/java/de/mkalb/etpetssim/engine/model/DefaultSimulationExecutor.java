@@ -6,9 +6,8 @@ import java.util.function.*;
  * Default implementation of {@link SimulationExecutor} that executes simulation steps
  * for a given model until a specified termination condition is met.
  * <p>
- * This executor manages the simulation lifecycle, supporting stepwise execution,
- * batch execution, and running the simulation to completion. It provides access
- * to the current model state and step count, and allows resetting the simulation.
+ * This executor manages the simulation lifecycle, supporting stepwise execution
+ * and batch execution. It provides access to the current model state and step count.
  *
  * @param <T> the type of {@link GridEntity} in the simulation
  * @param <C> the type of the context object used to share or accumulate state during the simulation
@@ -68,18 +67,6 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
         for (int i = 0; (i < count) && isRunning(); i++) {
             executeStep();
         }
-    }
-
-    @Override
-    public void executeAllSteps() {
-        while (isRunning()) {
-            executeStep();
-        }
-    }
-
-    @Override
-    public void reset() {
-        currentStep = 0;
     }
 
 }
