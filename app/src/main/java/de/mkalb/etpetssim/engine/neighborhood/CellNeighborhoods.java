@@ -355,7 +355,7 @@ public final class CellNeighborhoods {
                                                                        NeighborhoodMode neighborhoodMode,
                                                                        CellShape cellShape) {
         List<CellNeighborConnection> cellNeighborConnections = CACHE.computeIfAbsent(
-                buildCacheKey(startCoordinate, neighborhoodMode, cellShape),
+                generateCacheKey(startCoordinate, neighborhoodMode, cellShape),
                 _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));
 
         return cellNeighborConnections.stream()
@@ -455,9 +455,9 @@ public final class CellNeighborhoods {
         return result;
     }
 
-    static String buildCacheKey(GridCoordinate startCoordinate,
-                                NeighborhoodMode neighborhoodMode,
-                                CellShape cellShape) {
+    static String generateCacheKey(GridCoordinate startCoordinate,
+                                   NeighborhoodMode neighborhoodMode,
+                                   CellShape cellShape) {
         return switch (cellShape) {
             case TRIANGLE -> cellShape + "::" + neighborhoodMode + "::" + startCoordinate.isTriangleCellPointingDown();
             case SQUARE -> cellShape + "::" + neighborhoodMode;
