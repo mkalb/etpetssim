@@ -7,7 +7,7 @@ import java.util.function.*;
  * Executes asynchronous simulation steps on a {@link GridModel}.
  * <p>
  * This runner applies agent-specific logic to all entities in the grid model
- * that satisfy the given agent predicate. The agent logic is applied to each
+ * that satisfy the given {@code agentPredicate}. The agent logic is applied to each
  * agent cell, using the provided context object for state sharing or accumulation.
  * The order in which agents are processed is determined by the provided
  * {@code agentOrderingStrategy}.
@@ -17,26 +17,26 @@ import java.util.function.*;
  */
 public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStep<C> {
 
-    private final Predicate<T> isAgent;
     private final GridModel<T> model;
+    private final Predicate<T> agentPredicate;
     private final Comparator<GridCell<T>> agentOrderingStrategy;
     private final AgentStepLogic<T, C> agentStepLogic;
 
     /**
-     * Constructs a new {@code AsynchronousStepRunner} with the given model, agent predicate,
-     * agent ordering strategy, and agent logic.
+     * Constructs a new {@code AsynchronousStepRunner} with the given grid model, agent predicate,
+     * agent ordering strategy, and agent step logic.
      *
-     * @param model                  the grid model to operate on
-     * @param isAgent                a predicate to identify agents in the grid
-     * @param agentOrderingStrategy  the comparator defining the order in which agent cells are processed
-     * @param agentStepLogic         the logic to apply to each agent cell
+     * @param model                 the grid model to operate on
+     * @param agentPredicate        predicate to identify agent entities in the grid
+     * @param agentOrderingStrategy comparator defining the order in which agent cells are processed
+     * @param agentStepLogic        logic to apply to each agent cell
      */
     public AsynchronousStepRunner(GridModel<T> model,
-                                  Predicate<T> isAgent,
+                                  Predicate<T> agentPredicate,
                                   Comparator<GridCell<T>> agentOrderingStrategy,
                                   AgentStepLogic<T, C> agentStepLogic) {
         this.model = model;
-        this.isAgent = isAgent;
+        this.agentPredicate = agentPredicate;
         this.agentOrderingStrategy = agentOrderingStrategy;
         this.agentStepLogic = agentStepLogic;
     }
@@ -52,12 +52,12 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      */
     @Override
     public void performStep(long currentStep, C context) {
-        List<GridCell<T>> snapshot = model.cellsAsStream()
-                                          .filter(cell -> isAgent.test(cell.entity()))
-                                          .sorted(agentOrderingStrategy)
-                                          .toList();
-        for (GridCell<T> cell : snapshot) {
-            agentStepLogic.performAgentStep(cell, model, currentStep, context);
+        List<GridCell<T>> orderedAgentCells = model.cellsAsStream()
+                                                   .filter(cell -> agentPredicate.test(cell.entity()))
+                                                   .sorted(agentOrderingStrategy)
+                                                   .toList();
+        for (GridCell<T> agentCell : orderedAgentCells) {
+            agentStepLogic.performAgentStep(agentCell, model, currentStep, context);
         }
     }
 
