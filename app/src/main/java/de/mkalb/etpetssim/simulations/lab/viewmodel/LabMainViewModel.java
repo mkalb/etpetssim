@@ -61,9 +61,7 @@ public final class LabMainViewModel extends AbstractMainViewModel {
                 controlViewModel.drawTestRequestedProperty().set(false); // reset
             }
         });
-        lastClickedCoordinate.addListener((_, _, newVal) -> {
-            observationViewModel.lastClickedCoordinateProperty().set(newVal);
-        });
+        lastClickedCoordinate.addListener((_, _, newVal) -> observationViewModel.lastClickedCoordinateProperty().set(newVal));
     }
 
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
