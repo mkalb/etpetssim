@@ -172,7 +172,7 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
         return IntStream.range(0, structure.size().height())
                         .boxed()
                         .flatMap(y -> IntStream.range(0, structure.size().width())
-                                               .mapToObj(x -> new GridCell<T>(new GridCoordinate(x, y), (T) data[y][x]))
+                                               .mapToObj(x -> new GridCell<>(new GridCoordinate(x, y), (T) data[y][x]))
                                                .filter(cell -> !Objects.equals(cell.entity(), defaultEntity)));
     }
 
