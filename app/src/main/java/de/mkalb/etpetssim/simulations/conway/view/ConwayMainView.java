@@ -32,7 +32,7 @@ public final class ConwayMainView
             double cellEdgeLength = viewModel.getCellEdgeLength();
             ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
             GridStructure structure = viewModel.getStructure();
-            long currentStep = viewModel.getCurrentStep();
+            int stepCount = viewModel.getStepCount();
 
             AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
                     " and cell edge length " + cellEdgeLength);
@@ -41,20 +41,20 @@ public final class ConwayMainView
 
             updateCanvasBorderPane(structure);
 
-            drawCanvas(currentModel, currentStep);
+            drawCanvas(currentModel, stepCount);
             observationView.updateObservationLabels();
         });
         viewModel.setSimulationStepListener(() -> {
             ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-            long currentStep = viewModel.getCurrentStep();
-            AppLogger.info("Drawing canvas for step " + currentStep);
+            int stepCount = viewModel.getStepCount();
+            AppLogger.info("Drawing canvas for step " + stepCount);
 
-            drawCanvas(currentModel, currentStep);
+            drawCanvas(currentModel, stepCount);
             observationView.updateObservationLabels();
         });
     }
 
-    private void drawCanvas(ReadableGridModel<ConwayEntity> currentModel, long currentStep) {
+    private void drawCanvas(ReadableGridModel<ConwayEntity> currentModel, int stepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

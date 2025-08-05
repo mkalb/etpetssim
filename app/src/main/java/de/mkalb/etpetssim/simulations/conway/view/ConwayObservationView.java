@@ -18,7 +18,7 @@ public final class ConwayObservationView
     static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
     static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
 
-    private final Label stepLabel = new Label();
+    private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
     private final Label aliveCellsLabel = new Label();
     private final Label deadCellsLabel = new Label();
@@ -39,7 +39,7 @@ public final class ConwayObservationView
                 CONWAY_OBSERVATION_MAX_ALIVE_CELLS,
                 CONWAY_OBSERVATION_DEAD_CELLS
         };
-        Label[] valueLabels = {stepLabel, totalCellsLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel};
+        Label[] valueLabels = {stepCountLabel, totalCellsLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel};
 
         return createObservationGrid(nameKeys, valueLabels);
     }
@@ -47,7 +47,7 @@ public final class ConwayObservationView
     void updateObservationLabels() {
         if (viewModel.getSimulationState() == SimulationState.READY) {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepLabel.setText(valueUnknown);
+            stepCountLabel.setText(valueUnknown);
             totalCellsLabel.setText(valueUnknown);
             aliveCellsLabel.setText(valueUnknown);
             maxAliveCellsLabel.setText(valueUnknown);
@@ -56,7 +56,7 @@ public final class ConwayObservationView
         }
         ConwayStatistics statistics = viewModel.getStatistics();
 
-        stepLabel.setText(Long.toString(statistics.getStep()));
+        stepCountLabel.setText(Long.toString(statistics.getStepCount()));
         totalCellsLabel.setText(Long.toString(statistics.getTotalCells()));
         aliveCellsLabel.setText(Long.toString(statistics.getAliveCells()));
         maxAliveCellsLabel.setText(Long.toString(statistics.getMaxAliveCells()));

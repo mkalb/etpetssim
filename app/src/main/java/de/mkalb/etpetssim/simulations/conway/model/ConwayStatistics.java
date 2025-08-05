@@ -7,21 +7,21 @@ public final class ConwayStatistics {
 
     private final long totalCells;
 
-    private long step;
+    private int stepCount;
     private long aliveCells;
     private long deadCells;
     private long maxAliveCells;
 
     public ConwayStatistics(long totalCells) {
         this.totalCells = totalCells;
-        step = 0;
+        stepCount = 0;
         aliveCells = 0;
         deadCells = totalCells;
         maxAliveCells = 0;
     }
 
-    public void update(long newStep, long newAliveCells) {
-        step = newStep;
+    public void update(int newStepCount, long newAliveCells) {
+        stepCount = newStepCount;
         aliveCells = newAliveCells;
         deadCells = totalCells - aliveCells;
         if (aliveCells > maxAliveCells) {
@@ -29,8 +29,8 @@ public final class ConwayStatistics {
         }
     }
 
-    public long getStep() {
-        return step;
+    public int getStepCount() {
+        return stepCount;
     }
 
     public long getAliveCells() {

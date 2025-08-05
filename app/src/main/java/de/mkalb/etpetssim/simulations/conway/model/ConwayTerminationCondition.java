@@ -7,7 +7,7 @@ public final class ConwayTerminationCondition
         implements SimulationTerminationCondition<ConwayEntity, ConwayStatistics> {
 
     @Override
-    public boolean isFinished(GridModel<ConwayEntity> model, long step, ConwayStatistics statistics) {
+    public boolean isFinished(GridModel<ConwayEntity> model, int stepCount, ConwayStatistics statistics) {
         return statistics.getAliveCells() == 0;
     }
 

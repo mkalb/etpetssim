@@ -76,9 +76,9 @@ public final class ConwayMainViewModel
         return simulationManager.currentModel();
     }
 
-    public long getCurrentStep() {
+    public int getStepCount() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentStep();
+        return simulationManager.stepCount();
     }
 
     private void startSimulation() {
@@ -101,7 +101,7 @@ public final class ConwayMainViewModel
 
         if (!simulationManager.isRunning()) {
             stopTimeline();
-            AppLogger.info("Simulation finished at step " + getCurrentStep());
+            AppLogger.info("Simulation finished at step " + getStepCount());
             setSimulationState(SimulationState.READY); // Set state to READY when finished
         }
     }

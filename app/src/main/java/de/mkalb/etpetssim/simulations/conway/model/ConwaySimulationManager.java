@@ -33,7 +33,7 @@ public final class ConwaySimulationManager implements SimulationManager<ConwayEn
 
         GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, config.alivePercent(), new java.util.Random()).initialize(model);
 
-        updateStatistics(executor.currentStep(), executor.currentModel());
+        updateStatistics();
     }
 
     @Override
@@ -51,16 +51,17 @@ public final class ConwaySimulationManager implements SimulationManager<ConwayEn
         return statistics;
     }
 
-    void updateStatistics(long currentStep, GridModel<ConwayEntity> currentModel) {
+    void updateStatistics() {
         statistics.update(
-                currentStep,
-                currentModel.count(cell -> cell.entity().isAlive()));
+                executor.stepCount(),
+                executor.currentModel().count(cell -> cell.entity().isAlive()));
+        // TODO implement method countNonDefault
     }
 
     @Override
     public void executeStep() {
         executor.executeStep();
-        updateStatistics(executor.currentStep(), executor.currentModel());
+        updateStatistics();
     }
 
     @Override
@@ -69,8 +70,8 @@ public final class ConwaySimulationManager implements SimulationManager<ConwayEn
     }
 
     @Override
-    public long currentStep() {
-        return executor.currentStep();
+    public int stepCount() {
+        return executor.stepCount();
     }
 
     @Override

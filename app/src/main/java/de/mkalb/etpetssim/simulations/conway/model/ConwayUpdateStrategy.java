@@ -20,9 +20,8 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
     @Override
     public void performSynchronousStep(ReadableGridModel<ConwayEntity> currentModel,
                                        GridModel<ConwayEntity> nextModel,
-                                       long currentStep,
+                                       int stepIndex,
                                        ConwayStatistics statistics) {
-        // TODO Use ConwayStatistics
         structure.coordinatesStream().forEach(coordinate -> {
             boolean isAlive = currentModel.getEntity(coordinate).isAlive();
             long aliveNeighbors = CellNeighborhoods.neighborEdgeResults(coordinate, NeighborhoodMode.EDGES_AND_VERTICES, structure)
