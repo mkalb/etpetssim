@@ -16,7 +16,7 @@ public interface SimulationManager<ENT extends GridEntity, CON, STA> {
 
     boolean isRunning();
 
-    long currentStep();
+    int stepCount();
 
     ReadableGridModel<ENT> currentModel();
 
