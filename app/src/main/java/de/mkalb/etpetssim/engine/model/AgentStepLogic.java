@@ -5,7 +5,7 @@ package de.mkalb.etpetssim.engine.model;
  * <p>
  * Implementations of this interface specify how an agent, represented by a {@link GridCell},
  * should update its state or interact with the simulation environment at each step.
- * The method receives the agent's cell, the complete grid model, the current simulation step,
+ * The method receives the agent's cell, the complete grid model, the simulation step index,
  * and a context object for sharing or accumulating state across steps or agents.
  *
  * @param <T> the type of {@link GridEntity} contained in the grid model
@@ -20,9 +20,9 @@ public interface AgentStepLogic<T extends GridEntity, C> {
      *
      * @param agentCell   the grid cell containing the agent to update
      * @param model       the grid model representing the simulation environment
-     * @param currentStep the current simulation step number
+     * @param stepIndex   the index of the simulation step
      * @param context     the context object used to share or accumulate state during the simulation
      */
-    void performAgentStep(GridCell<T> agentCell, GridModel<T> model, long currentStep, C context);
+    void performAgentStep(GridCell<T> agentCell, GridModel<T> model, long stepIndex, C context);
 
 }
