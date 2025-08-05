@@ -15,7 +15,7 @@ import java.util.function.*;
  * @param <T> the type of {@link GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each simulation step
  */
-public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStep<C> {
+public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStepRunner<C> {
 
     private final GridModel<T> model;
     private final Predicate<T> agentPredicate;
@@ -47,14 +47,14 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      * Applies the agent logic to all entities identified as agents in the grid model.
      * The context object is passed to each agent logic invocation.
      *
-     * @param currentStep the current simulation step number
-     * @param context     the context object used to share or accumulate state during the simulation
+     * @param stepIndex the index of the current simulation step
+     * @param context   the context object used to share or accumulate state during the simulation
      */
     @Override
-    public void performStep(long currentStep, C context) {
+    public void performStep(long stepIndex, C context) {
         List<GridCell<T>> orderedAgentCells = model.filteredAndSortedCells(agentPredicate, agentOrderingStrategy);
         for (GridCell<T> agentCell : orderedAgentCells) {
-            agentStepLogic.performAgentStep(agentCell, model, currentStep, context);
+            agentStepLogic.performAgentStep(agentCell, model, stepIndex, context);
         }
     }
 

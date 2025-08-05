@@ -14,7 +14,7 @@ import java.util.function.*;
  */
 public final class DefaultSimulationExecutor<T extends GridEntity, C> implements SimulationExecutor<T> {
 
-    private final SimulationStep<C> step;
+    private final SimulationStepRunner<C> stepRunner;
     private final Supplier<GridModel<T>> modelSupplier;
     private final SimulationTerminationCondition<T, C> terminationCondition;
     private final C context;
@@ -24,17 +24,17 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     /**
      * Creates a new {@code DefaultSimulationExecutor}.
      *
-     * @param step the logic to perform a single simulation step, using the provided context
+     * @param stepRunner the logic to perform a single simulation step, using the provided context
      * @param modelSupplier supplies the current simulation model
      * @param terminationCondition the condition that determines when the simulation should stop, evaluated with the context
      * @param context the context object used to share or accumulate state during the simulation
      */
     public DefaultSimulationExecutor(
-            SimulationStep<C> step,
+            SimulationStepRunner<C> stepRunner,
             Supplier<GridModel<T>> modelSupplier,
             SimulationTerminationCondition<T, C> terminationCondition,
             C context) {
-        this.step = step;
+        this.stepRunner = stepRunner;
         this.modelSupplier = modelSupplier;
         this.terminationCondition = terminationCondition;
         this.context = context;
@@ -58,7 +58,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
 
     @Override
     public void executeStep() {
-        step.performStep(currentStep, context);
+        stepRunner.performStep(currentStep, context);
         currentStep++;
     }
 

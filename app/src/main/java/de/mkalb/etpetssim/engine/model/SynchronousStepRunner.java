@@ -12,7 +12,7 @@ package de.mkalb.etpetssim.engine.model;
  * @param <C> the type of the context object provided to each simulation step
  * @see SynchronousStepLogic
  */
-public final class SynchronousStepRunner<T extends GridEntity, C> implements SimulationStep<C> {
+public final class SynchronousStepRunner<T extends GridEntity, C> implements SimulationStepRunner<C> {
 
     private final SynchronousStepLogic<T, C> stepLogic;
     private GridModel<T> currentModel;
@@ -38,12 +38,12 @@ public final class SynchronousStepRunner<T extends GridEntity, C> implements Sim
      * The update strategy reads from the current model and writes to the next model.
      * After the update, the models are swapped and the next model is cleared.
      *
-     * @param currentStep the current simulation step number
-     * @param context     the context object used to share or accumulate state during the simulation
+     * @param stepIndex the index of the current simulation step
+     * @param context   the context object used to share or accumulate state during the simulation
      */
     @Override
-    public void performStep(long currentStep, C context) {
-        stepLogic.performSynchronousStep(currentModel, nextModel, currentStep, context);
+    public void performStep(long stepIndex, C context) {
+        stepLogic.performSynchronousStep(currentModel, nextModel, stepIndex, context);
         GridModel<T> tempModel = currentModel;
         currentModel = nextModel;
         nextModel = tempModel;
