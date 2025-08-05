@@ -44,7 +44,7 @@ public final class WatorMainView
         double cellEdgeLength = viewModel.getCellEdgeLength();
         ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
         GridStructure structure = viewModel.getStructure();
-        long currentStep = viewModel.getCurrentStep();
+        int stepCount = viewModel.getStepCount();
 
         AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
                 " and cell edge length " + cellEdgeLength);
@@ -58,7 +58,7 @@ public final class WatorMainView
 
         updateCanvasBorderPane(structure);
 
-        drawCanvas(currentModel, currentStep);
+        drawCanvas(currentModel, stepCount);
         observationView.updateObservationLabels();
     }
 
@@ -77,20 +77,21 @@ public final class WatorMainView
 
     private void updateSimulationStep() {
         ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-        long currentStep = viewModel.getCurrentStep();
-        AppLogger.info("Drawing canvas for step " + currentStep);
+        int stepCount = viewModel.getStepCount();
+        AppLogger.info("Drawing canvas for step " + stepCount);
 
-        drawCanvas(currentModel, currentStep);
+        drawCanvas(currentModel, stepCount);
         observationView.updateObservationLabels();
     }
 
-    private @Nullable Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor, WatorEntity entity, long step) {
+    private @Nullable Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor, WatorEntity entity,
+                                                   int stepCount) {
         Paint paint = entityDescriptor.color();
         if (paint instanceof Color baseColor) {
             Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
             if (colorMap != null) {
                 Integer value = switch (entity) {
-                    case WatorFish fish -> fish.age(step);
+                    case WatorFish fish -> fish.ageFromStepCount(stepCount);
                     case WatorShark shark -> Math.min(30, shark.currentEnergy());
                     default -> 0;
                 };
@@ -111,7 +112,7 @@ public final class WatorMainView
         basePainter.fillCanvasBackground(background);
     }
 
-    private void drawCanvas(ReadableGridModel<WatorEntity> currentModel, long currentStep) {
+    private void drawCanvas(ReadableGridModel<WatorEntity> currentModel, int stepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -126,7 +127,7 @@ public final class WatorMainView
                         entityDescriptorRegistry,
                         descriptor -> basePainter.drawCell(
                                 cell.coordinate(),
-                                resolveEntityFillColor(descriptor, cell.entity(), currentStep),
+                                resolveEntityFillColor(descriptor, cell.entity(), stepCount),
                                 null,
                                 0.0d))
         );

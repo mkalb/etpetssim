@@ -8,14 +8,14 @@ public final class WatorEntityFactory {
         sequence = 0;
     }
 
-    public WatorFish createFish(long timeOfBirth) {
-        WatorFish watorFish = new WatorFish(sequence, timeOfBirth);
+    public WatorFish createFish(int stepIndexOfBirth) {
+        WatorFish watorFish = new WatorFish(sequence, stepIndexOfBirth);
         sequence++;
         return watorFish;
     }
 
-    public WatorShark createShark(long timeOfBirth, int birthEnergy) {
-        WatorShark shark = new WatorShark(sequence, timeOfBirth, birthEnergy);
+    public WatorShark createShark(int stepIndexOfBirth, int birthEnergy) {
+        WatorShark shark = new WatorShark(sequence, stepIndexOfBirth, birthEnergy);
         sequence++;
         return shark;
     }

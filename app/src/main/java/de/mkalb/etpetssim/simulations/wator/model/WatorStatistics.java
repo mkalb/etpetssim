@@ -4,23 +4,35 @@ public final class WatorStatistics {
 
     private final long totalCells;
 
-    private long step;
+    private int stepCount;
     private long fishCells;
     private long sharkCells;
+    private long currentStepMillis;
+    private long timeOutMillis;
+    private long minStepMillis;
+    private long maxStepMillis;
 
     public WatorStatistics(long totalCells) {
         this.totalCells = totalCells;
-        step = 0;
+        stepCount = 0;
         fishCells = 0;
         sharkCells = 0;
+        currentStepMillis = 0;
+        timeOutMillis = 0;
+        minStepMillis = 0;
+        maxStepMillis = 0;
     }
 
-    public void update(long newStep) {
-        step = newStep;
+    public void update(int newStepCount, long currentStepMillis, long timeOutMillis, long minStepMillis, long maxStepMillis) {
+        stepCount = newStepCount;
+        this.currentStepMillis = currentStepMillis;
+        this.timeOutMillis = timeOutMillis;
+        this.minStepMillis = minStepMillis;
+        this.maxStepMillis = maxStepMillis;
     }
 
-    public long getStep() {
-        return step;
+    public int getStepCount() {
+        return stepCount;
     }
 
     public long getFishCells() {
@@ -33,6 +45,22 @@ public final class WatorStatistics {
 
     public long getTotalCells() {
         return totalCells;
+    }
+
+    public long currentStepMillis() {
+        return currentStepMillis;
+    }
+
+    public long timeOutMillis() {
+        return timeOutMillis;
+    }
+
+    public long minStepMillis() {
+        return minStepMillis;
+    }
+
+    public long maxStepMillis() {
+        return maxStepMillis;
     }
 
     public void incrementFishCells() {

@@ -4,8 +4,8 @@ public final class WatorShark extends WatorCreature {
 
     private int currentEnergy;
 
-    public WatorShark(long sequenceId, long timeOfBirth, int initialEnergy) {
-        super(WatorEntity.DESCRIPTOR_ID_SHARK, sequenceId, timeOfBirth);
+    public WatorShark(long sequenceId, int stepIndexOfBirth, int initialEnergy) {
+        super(WatorEntity.DESCRIPTOR_ID_SHARK, sequenceId, stepIndexOfBirth);
         currentEnergy = initialEnergy;
     }
 
@@ -13,14 +13,12 @@ public final class WatorShark extends WatorCreature {
         return currentEnergy;
     }
 
-    public int reduceEnergy(int loss) {
+    public void reduceEnergy(int loss) {
         currentEnergy = currentEnergy - loss;
-        return currentEnergy;
     }
 
-    public int gainEnergy(int gain) {
+    public void gainEnergy(int gain) {
         currentEnergy = currentEnergy + gain;
-        return currentEnergy;
     }
 
     @Override

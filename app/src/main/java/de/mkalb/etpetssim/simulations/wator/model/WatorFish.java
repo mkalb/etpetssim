@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.simulations.wator.model;
 
 public final class WatorFish extends WatorCreature {
 
-    WatorFish(long sequenceId, long timeOfBirth) {
-        super(WatorEntity.DESCRIPTOR_ID_FISH, sequenceId, timeOfBirth);
+    public WatorFish(long sequenceId, int stepIndexOfBirth) {
+        super(WatorEntity.DESCRIPTOR_ID_FISH, sequenceId, stepIndexOfBirth);
     }
 
     @Override

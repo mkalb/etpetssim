@@ -8,7 +8,7 @@ public final class WatorTerminationCondition implements SimulationTerminationCon
     private static final double FISH_MAX_PERCENTAGE = 0.9d;
 
     @Override
-    public boolean isFinished(GridModel<WatorEntity> model, long step, WatorStatistics statistics) {
+    public boolean isFinished(GridModel<WatorEntity> model, int stepCount, WatorStatistics statistics) {
         return (statistics.getSharkCells() == 0)
                 && ((statistics.getFishCells() == 0)
                 || (statistics.getFishCells() > (statistics.getTotalCells() * FISH_MAX_PERCENTAGE)));

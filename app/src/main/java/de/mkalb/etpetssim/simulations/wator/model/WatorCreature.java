@@ -7,17 +7,17 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
 
     private final String descriptorId;
     private final long sequenceId;
-    private final long timeOfBirth;
-    private final List<Long> timeOfReproduction;
+    private final int stepIndexOfBirth;
+    private final List<Integer> timeOfReproduction;
 
     protected WatorCreature(
             String descriptorId,
             long sequenceId,
-            long timeOfBirth
+            int stepIndexOfBirth
     ) {
         this.descriptorId = descriptorId;
         this.sequenceId = sequenceId;
-        this.timeOfBirth = timeOfBirth;
+        this.stepIndexOfBirth = stepIndexOfBirth;
 
         timeOfReproduction = new ArrayList<>();
     }
@@ -51,7 +51,7 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
         return "WatorCreature{" +
                 "sequenceId=" + sequenceId +
                 ", descriptorId='" + descriptorId + '\'' +
-                ", timeOfBirth=" + timeOfBirth +
+                ", stepIndexOfBirth=" + stepIndexOfBirth +
                 '}';
     }
 
@@ -64,25 +64,28 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
         return sequenceId;
     }
 
-    public final long timeOfBirth() {
-        return timeOfBirth;
+    public final int stepIndexOfBirth() {
+        return stepIndexOfBirth;
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    public final int age(long timeCounter) {
-        return (int) (timeCounter - timeOfBirth());
+    public final int age(int stepIndex) {
+        return stepIndex - stepIndexOfBirth;
+    }
+
+    public final int ageFromStepCount(int stepCount) {
+        return age(stepCount - 1);
     }
 
     public final int numberOfReproductions() {
         return timeOfReproduction.size();
     }
 
-    public final OptionalLong timeOfLastReproduction() {
-        return timeOfReproduction.isEmpty() ? OptionalLong.empty() : OptionalLong.of(timeOfReproduction.getLast());
+    public final OptionalInt timeOfLastReproduction() {
+        return timeOfReproduction.isEmpty() ? OptionalInt.empty() : OptionalInt.of(timeOfReproduction.getLast());
     }
 
     public final void reproduce(WatorCreature child) {
-        timeOfReproduction.add(child.timeOfBirth());
+        timeOfReproduction.add(child.stepIndexOfBirth);
     }
 
     @Override

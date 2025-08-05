@@ -29,7 +29,8 @@ public final class WatorAgentLogicFactory {
         };
     }
 
-    private void simpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, long currentStep, WatorStatistics statistics) {
+    private void simpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+                             WatorStatistics statistics) {
         GridCoordinate coordinate = agentCell.coordinate();
         WatorEntity entity = agentCell.entity();
         GridStructure structure = model.structure();
@@ -55,13 +56,14 @@ public final class WatorAgentLogicFactory {
         // TODO handle REFLECT and ABSORB
 
         if (entity instanceof WatorFish fish) {
-            fishSimpleLogic(agentCell, model, currentStep, statistics, fish, waterCells);
+            fishSimpleLogic(agentCell, model, stepIndex, statistics, fish, waterCells);
         } else if (entity instanceof WatorShark shark) {
-            sharkSimpleLogic(agentCell, model, currentStep, statistics, shark, fishCells, waterCells);
+            sharkSimpleLogic(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
         }
     }
 
-    private void fishSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, long currentStep, WatorStatistics statistics,
+    private void fishSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+                                 WatorStatistics statistics,
                                  WatorFish fish, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate fishOriginalCoordinate = agentCell.coordinate();
         GridCoordinate fishNewCoordinate = fishOriginalCoordinate;
@@ -78,10 +80,10 @@ public final class WatorAgentLogicFactory {
             fishNewCoordinate = waterCell.coordinate();
 
             // Reproduce, if conditions are met
-            if (fish.age(currentStep) >= 5) {
+            if (fish.age(stepIndex) >= 5) {
                 if (fish.timeOfLastReproduction().isEmpty() ||
-                        ((currentStep - fish.timeOfLastReproduction().getAsLong()) >= 3)) {
-                    WatorFish childFish = entityFactory.createFish(currentStep);
+                        ((stepIndex - fish.timeOfLastReproduction().getAsInt()) >= 3)) {
+                    WatorFish childFish = entityFactory.createFish(stepIndex);
                     statistics.incrementFishCells();
                     fish.reproduce(childFish);
                     model.setEntity(fishOriginalCoordinate, childFish);
@@ -91,14 +93,15 @@ public final class WatorAgentLogicFactory {
         }
 
         // Remove fish if it is too old
-        if (fish.age(currentStep) >= config.fishMaxAge()) {
+        if (fish.age(stepIndex) >= config.fishMaxAge()) {
             model.setEntityToDefault(fishNewCoordinate);
             statistics.decrementFishCells();
             // AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
         }
     }
 
-    private void sharkSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, long currentStep, WatorStatistics statistics,
+    private void sharkSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+                                  WatorStatistics statistics,
                                   WatorShark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate sharkOriginalCoordinate = agentCell.coordinate();
         GridCoordinate sharkNewCoordinate = sharkOriginalCoordinate;
@@ -122,11 +125,11 @@ public final class WatorAgentLogicFactory {
         }
         // Reproduce, if conditions are met
         if (!sharkOriginalCoordinate.equals(sharkNewCoordinate)) {
-            if (shark.age(currentStep) >= 15) {
+            if (shark.age(stepIndex) >= 15) {
                 if (shark.currentEnergy() >= 5) {
                     if (shark.timeOfLastReproduction().isEmpty() ||
-                            ((currentStep - shark.timeOfLastReproduction().getAsLong()) >= 3)) {
-                        WatorShark childShark = entityFactory.createShark(currentStep, config.sharkBirthEnergy());
+                            ((stepIndex - shark.timeOfLastReproduction().getAsInt()) >= 3)) {
+                        WatorShark childShark = entityFactory.createShark(stepIndex, config.sharkBirthEnergy());
                         statistics.incrementSharkCells();
                         shark.reproduce(childShark);
                         model.setEntity(sharkOriginalCoordinate, childShark);
@@ -136,7 +139,7 @@ public final class WatorAgentLogicFactory {
             }
         }
         // Remove shark if it is too old or has no energy left
-        if ((shark.age(currentStep) >= config.sharkMaxAge()) || (shark.currentEnergy() <= 0)) {
+        if ((shark.age(stepIndex) >= config.sharkMaxAge()) || (shark.currentEnergy() <= 0)) {
             model.setEntityToDefault(sharkNewCoordinate);
             statistics.decrementSharkCells();
             // AppLogger.info("WatorAgentLogicFactory - Removing shark at coordinate: " + sharkNewCoordinate);
@@ -147,7 +150,8 @@ public final class WatorAgentLogicFactory {
         return cells.get(random.nextInt(cells.size()));
     }
 
-    private void advancedLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, long currentStep, WatorStatistics statistics) {
+    private void advancedLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+                               WatorStatistics statistics) {
         // TODO Implement advanced agent logic here
     }
 

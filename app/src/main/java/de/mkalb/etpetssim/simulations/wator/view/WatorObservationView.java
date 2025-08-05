@@ -16,7 +16,7 @@ public final class WatorObservationView
     static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
 
-    private final Label stepLabel = new Label();
+    private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
     private final Label fishCellsLabel = new Label();
     private final Label sharkCellsLabel = new Label();
@@ -35,7 +35,7 @@ public final class WatorObservationView
                 WATOR_OBSERVATION_FISH_CELLS,
                 WATOR_OBSERVATION_SHARK_CELLS
         };
-        Label[] valueLabels = {stepLabel, totalCellsLabel, fishCellsLabel, sharkCellsLabel};
+        Label[] valueLabels = {stepCountLabel, totalCellsLabel, fishCellsLabel, sharkCellsLabel};
 
         return createObservationGrid(nameKeys, valueLabels);
     }
@@ -43,7 +43,7 @@ public final class WatorObservationView
     void updateObservationLabels() {
         if (viewModel.getSimulationState() == SimulationState.READY) {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepLabel.setText(valueUnknown);
+            stepCountLabel.setText(valueUnknown);
             totalCellsLabel.setText(valueUnknown);
             fishCellsLabel.setText(valueUnknown);
             sharkCellsLabel.setText(valueUnknown);
@@ -51,7 +51,7 @@ public final class WatorObservationView
         }
         WatorStatistics statistics = viewModel.getStatistics();
 
-        stepLabel.setText(Long.toString(statistics.getStep()));
+        stepCountLabel.setText(Long.toString(statistics.getStepCount()));
         totalCellsLabel.setText(Long.toString(statistics.getTotalCells()));
         fishCellsLabel.setText(Long.toString(statistics.getFishCells()));
         sharkCellsLabel.setText(Long.toString(statistics.getSharkCells()));
