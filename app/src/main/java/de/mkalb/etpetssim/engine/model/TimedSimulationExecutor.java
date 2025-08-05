@@ -60,13 +60,6 @@ public final class TimedSimulationExecutor<T extends GridEntity> implements Simu
         }
     }
 
-    @Override
-    public void executeSteps(int count) {
-        for (int i = 0; (i < count) && isRunning(); i++) {
-            executeStep();
-        }
-    }
-
     /**
      * Returns the minimum execution time (ms) of a simulation step so far.
      *

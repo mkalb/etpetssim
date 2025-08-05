@@ -46,6 +46,10 @@ public interface SimulationExecutor<T extends GridEntity> {
      *
      * @param count the maximum number of steps to execute
      */
-    void executeSteps(int count);
+    default void executeSteps(int count) {
+        for (int i = 0; (i < count) && isRunning(); i++) {
+            executeStep();
+        }
+    }
 
 }

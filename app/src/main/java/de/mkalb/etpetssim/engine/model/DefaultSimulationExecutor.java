@@ -67,11 +67,4 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
         stepCount++;
     }
 
-    @Override
-    public void executeSteps(int count) {
-        for (int i = 0; (i < count) && isRunning(); i++) {
-            executeStep();
-        }
-    }
-
 }
