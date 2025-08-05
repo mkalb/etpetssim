@@ -4,8 +4,8 @@ package de.mkalb.etpetssim.engine.model;
  * Executes simulation steps for a given model until a specified termination condition is met.
  * <p>
  * This interface defines the contract for managing the simulation lifecycle,
- * including stepwise execution and batch execution.
- * It also provides access to the current model state and step count.
+ * including stepwise and batch execution. It also provides access to the current model state
+ * and the simulation step count.
  *
  * @param <T> the type of {@link GridEntity} in the simulation
  */
@@ -19,11 +19,12 @@ public interface SimulationExecutor<T extends GridEntity> {
     GridModel<T> currentModel();
 
     /**
-     * Returns the current simulation step count.
+     * Returns the number of simulation steps completed so far.
+     * This value represents the next step to be executed (starting from 0).
      *
-     * @return the current step (starting from 0)
+     * @return the number of completed simulation steps
      */
-    long currentStep();
+    long stepCount();
 
     /**
      * Checks whether the simulation is currently running.

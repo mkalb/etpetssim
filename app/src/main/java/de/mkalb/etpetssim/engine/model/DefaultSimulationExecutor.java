@@ -19,7 +19,11 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     private final SimulationTerminationCondition<T, C> terminationCondition;
     private final C context;
 
-    private long currentStep;
+    /**
+     * The index of the current simulation step during execution.
+     * Represents the number of completed steps (i.e., the next step to execute).
+     */
+    private long stepCount;
 
     /**
      * Creates a new {@code DefaultSimulationExecutor}.
@@ -38,7 +42,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
         this.modelSupplier = modelSupplier;
         this.terminationCondition = terminationCondition;
         this.context = context;
-        currentStep = 0;
+        stepCount = 0;
     }
 
     @Override
@@ -47,19 +51,20 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     }
 
     @Override
-    public long currentStep() {
-        return currentStep;
+    public long stepCount() {
+        return stepCount;
     }
 
     @Override
     public boolean isRunning() {
-        return (currentStep != Long.MAX_VALUE) && !terminationCondition.isFinished(currentModel(), currentStep, context);
+        return (stepCount != Long.MAX_VALUE) && !terminationCondition.isFinished(currentModel(), stepCount, context);
     }
 
     @Override
     public void executeStep() {
-        stepRunner.performStep(currentStep, context);
-        currentStep++;
+        // Use stepCount as stepIndex for the current step
+        stepRunner.performStep(stepCount, context);
+        stepCount++;
     }
 
     @Override
