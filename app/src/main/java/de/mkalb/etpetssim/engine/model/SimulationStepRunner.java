@@ -15,7 +15,7 @@ public interface SimulationStepRunner<C> {
      * Performs a single simulation step.
      *
      * @param stepIndex the index of the current simulation step
-     * @param context the context object used to share or accumulate state during the simulation
+     * @param context   the context object used to share or accumulate state during the simulation
      */
     void performStep(long stepIndex, C context);
 
