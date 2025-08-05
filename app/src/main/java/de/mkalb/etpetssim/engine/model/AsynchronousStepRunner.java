@@ -51,7 +51,7 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      * @param context   the context object used to share or accumulate state during the simulation
      */
     @Override
-    public void performStep(long stepIndex, C context) {
+    public void performStep(int stepIndex, C context) {
         List<GridCell<T>> orderedAgentCells = model.filteredAndSortedCells(agentPredicate, agentOrderingStrategy);
         for (GridCell<T> agentCell : orderedAgentCells) {
             agentStepLogic.performAgentStep(agentCell, model, stepIndex, context);

@@ -24,7 +24,7 @@ public interface SimulationExecutor<T extends GridEntity> {
      *
      * @return the number of completed simulation steps
      */
-    long stepCount();
+    int stepCount();
 
     /**
      * Checks whether the simulation is currently running.

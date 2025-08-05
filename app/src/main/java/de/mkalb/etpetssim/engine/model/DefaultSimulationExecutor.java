@@ -23,7 +23,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
      * The index of the current simulation step during execution.
      * Represents the number of completed steps (i.e., the next step to execute).
      */
-    private long stepCount;
+    private int stepCount;
 
     /**
      * Creates a new {@code DefaultSimulationExecutor}.
@@ -51,13 +51,13 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     }
 
     @Override
-    public long stepCount() {
+    public int stepCount() {
         return stepCount;
     }
 
     @Override
     public boolean isRunning() {
-        return (stepCount != Long.MAX_VALUE) && !terminationCondition.isFinished(currentModel(), stepCount, context);
+        return (stepCount != Integer.MAX_VALUE) && !terminationCondition.isFinished(currentModel(), stepCount, context);
     }
 
     @Override

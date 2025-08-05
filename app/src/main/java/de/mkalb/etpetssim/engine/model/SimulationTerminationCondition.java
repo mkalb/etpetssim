@@ -20,7 +20,7 @@ public interface SimulationTerminationCondition<T extends GridEntity, C> {
      * @param context a context object with additional information
      * @return {@code true} if the simulation should terminate, {@code false} otherwise
      */
-    boolean isFinished(GridModel<T> model, long stepCount, C context);
+    boolean isFinished(GridModel<T> model, int stepCount, C context);
 
     /**
      * Returns a composed termination condition that is satisfied only if both

@@ -42,7 +42,7 @@ public final class SynchronousStepRunner<T extends GridEntity, C> implements Sim
      * @param context   the context object used to share or accumulate state during the simulation
      */
     @Override
-    public void performStep(long stepIndex, C context) {
+    public void performStep(int stepIndex, C context) {
         stepLogic.performSynchronousStep(currentModel, nextModel, stepIndex, context);
         GridModel<T> tempModel = currentModel;
         currentModel = nextModel;

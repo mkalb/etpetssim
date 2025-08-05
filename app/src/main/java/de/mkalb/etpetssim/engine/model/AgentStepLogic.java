@@ -23,6 +23,6 @@ public interface AgentStepLogic<T extends GridEntity, C> {
      * @param stepIndex the index of the current simulation step
      * @param context   the context object used to share or accumulate state during the simulation
      */
-    void performAgentStep(GridCell<T> agentCell, GridModel<T> model, long stepIndex, C context);
+    void performAgentStep(GridCell<T> agentCell, GridModel<T> model, int stepIndex, C context);
 
 }
