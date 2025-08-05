@@ -9,7 +9,9 @@ import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
@@ -18,10 +20,13 @@ import java.util.*;
 public final class WatorMainViewModel
         extends AbstractMainViewModel {
 
+    private static final double TIMEOUT_FACTOR = 0.5d;
+
     private final WatorConfigViewModel configViewModel;
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<WatorStatistics> observationViewModel;
     private final SimulationTimer simulationTimer;
+    private final BooleanProperty simulationTimeoutProperty = new SimpleBooleanProperty(false);
 
     private Runnable simulationInitializedListener = () -> {};
     private Runnable simulationStepListener = () -> {};
@@ -64,6 +69,10 @@ public final class WatorMainViewModel
         return configViewModel.cellEdgeLengthProperty().getValue();
     }
 
+    public BooleanProperty simulationTimeoutProperty() {
+        return simulationTimeoutProperty;
+    }
+
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.structure();
@@ -74,9 +83,9 @@ public final class WatorMainViewModel
         return simulationManager.currentModel();
     }
 
-    public long getCurrentStep() {
+    public int getStepCount() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentStep();
+        return simulationManager.stepCount();
     }
 
     public WatorConfig getCurrentConfig() {
@@ -84,8 +93,26 @@ public final class WatorMainViewModel
         return simulationManager.config();
     }
 
+    private void handleSimulationTimeout() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        stopTimeline();
+        AppLogger.warn("Simulation step took too long at step " + getStepCount() +
+                " (" + simulationManager.statistics().currentStepMillis() + " ms), pausing simulation.");
+        setSimulationState(SimulationState.PAUSED);
+        simulationTimeoutProperty.set(true);
+    }
+
+    private void configureSimulationTimeout() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        double stepDuration = controlViewModel.stepDurationProperty().getValue();
+        long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
+        simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
+        simulationTimeoutProperty.set(false);
+    }
+
     private void startSimulation() {
         simulationManager = new WatorSimulationManager(configViewModel.getConfig());
+        configureSimulationTimeout();
 
         observationViewModel.setStatistics(simulationManager.statistics());
 
@@ -97,6 +124,8 @@ public final class WatorMainViewModel
         AppLogger.info("Simulation step started.");
 
         simulationManager.executeStep();
+        //  AppLogger.info("Min duration: " + simulationManager.statistics().minStepMillis() + " Max duration: " +
+        //  simulationManager.statistics().maxStepMillis() + " Current: " + simulationManager.statistics().currentStepMillis());
 
         observationViewModel.setStatistics(simulationManager.statistics());
 
@@ -104,7 +133,7 @@ public final class WatorMainViewModel
 
         if (!simulationManager.isRunning()) {
             stopTimeline();
-            AppLogger.info("Simulation finished at step " + getCurrentStep());
+            AppLogger.info("Simulation finished after step " + getStepCount());
             setSimulationState(SimulationState.READY); // Set state to READY when finished
         }
     }
@@ -136,6 +165,7 @@ public final class WatorMainViewModel
             case PAUSED -> {
                 AppLogger.info("Resuming simulation...");
                 setSimulationState(SimulationState.RUNNING);
+                configureSimulationTimeout();
                 startTimeline();
             }
         }
