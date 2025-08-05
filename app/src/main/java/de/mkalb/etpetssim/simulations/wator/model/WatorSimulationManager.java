@@ -14,7 +14,10 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
 
     private final GridStructure structure;
     private final WatorStatistics statistics;
-    private final SimulationExecutor<WatorEntity> executor;
+    private final TimedSimulationExecutor<WatorEntity> executor;
+
+    private long timeoutMillis = Long.MAX_VALUE;
+    private Runnable onTimeout = () -> {};
 
     public WatorSimulationManager(WatorConfig config) {
         this.config = config;
@@ -33,7 +36,9 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
         var agentStepLogic = agentLogicFactory.createAgentLogic(WatorAgentLogicFactory.WatorLogicType.SIMPLE);
         var runner = new AsynchronousStepRunner<>(model, WatorEntity::isAgent, AgentOrderingStrategies.byPosition(), agentStepLogic);
         var terminationCondition = new WatorTerminationCondition();
-        executor = new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics);
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+
+        updateStatistics();
 
         // Initialize the grid with fish and sharks
         initializeGrid(model, random, entityFactory);
@@ -50,8 +55,8 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
     }
 
     private WatorFish createFish(WatorEntityFactory entityFactory, Random random) {
-        long randomAge = random.nextInt(config().fishMaxAge());
-        long timeOfBirth = -1 - randomAge; // negative age for birth time
+        int randomAge = random.nextInt(config().fishMaxAge());
+        int timeOfBirth = -1 - randomAge; // negative age for birth time
 
         WatorFish watorFish = entityFactory.createFish(timeOfBirth);
         statistics.incrementFishCells();
@@ -59,8 +64,8 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
     }
 
     private WatorShark createShark(WatorEntityFactory entityFactory, Random random) {
-        long randomAge = random.nextInt(config.sharkMaxAge());
-        long timeOfBirth = -1 - randomAge; // negative age for birth time
+        int randomAge = random.nextInt(config.sharkMaxAge());
+        int timeOfBirth = -1 - randomAge; // negative age for birth time
 
         WatorShark watorShark = entityFactory.createShark(timeOfBirth, config.sharkBirthEnergy());
         statistics.incrementSharkCells();
@@ -82,14 +87,24 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
         return statistics;
     }
 
-    void updateStatistics(long currentStep, GridModel<WatorEntity> currentModel) {
-        statistics.update(currentStep);
+    private void updateStatistics() {
+        statistics.update(
+                executor.stepCount(),
+                executor.currentStepMillis(),
+                timeoutMillis,
+                executor.minStepMillis(),
+                executor.maxStepMillis());
     }
 
     @Override
     public void executeStep() {
         executor.executeStep();
-        updateStatistics(executor.currentStep(), executor.currentModel());
+        updateStatistics();
+
+        // Check for timeout
+        if (executor.currentStepMillis() > timeoutMillis) {
+            onTimeout.run();
+        }
     }
 
     @Override
@@ -98,13 +113,19 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
     }
 
     @Override
-    public long currentStep() {
-        return executor.currentStep();
+    public int stepCount() {
+        return executor.stepCount();
     }
 
     @Override
     public ReadableGridModel<WatorEntity> currentModel() {
         return executor.currentModel();
+    }
+
+    public void configureStepTimeout(long newTimeoutMillis, Runnable newOnTimeout) {
+        timeoutMillis = newTimeoutMillis;
+        onTimeout = newOnTimeout;
+        updateStatistics();
     }
 
 }
