@@ -4,23 +4,19 @@ import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.model.SimulationManager;
+import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 
 import java.util.*;
 
-public final class WatorSimulationManager implements SimulationManager<WatorEntity, WatorConfig, WatorStatistics> {
-
-    private final WatorConfig config;
+public final class WatorSimulationManager
+        extends AbstractTimedSimulationManager<WatorEntity, WatorConfig, WatorStatistics> {
 
     private final GridStructure structure;
     private final WatorStatistics statistics;
     private final TimedSimulationExecutor<WatorEntity> executor;
 
-    private long timeoutMillis = Long.MAX_VALUE;
-    private Runnable onTimeout = () -> {};
-
     public WatorSimulationManager(WatorConfig config) {
-        this.config = config;
+        super(config);
 
         structure = new GridStructure(
                 new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
@@ -46,9 +42,9 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
 
     private void initializeGrid(GridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {
         GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
-                () -> createFish(entityFactory, random), config.fishPercent(), random);
+                () -> createFish(entityFactory, random), config().fishPercent(), random);
         GridInitializer<WatorEntity> sharkInit = GridInitializers.placeRandomPercent(
-                () -> createShark(entityFactory, random), config.sharkPercent(), random);
+                () -> createShark(entityFactory, random), config().sharkPercent(), random);
 
         fishInit.initialize(model);
         sharkInit.initialize(model);
@@ -64,17 +60,12 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
     }
 
     private WatorShark createShark(WatorEntityFactory entityFactory, Random random) {
-        int randomAge = random.nextInt(config.sharkMaxAge());
+        int randomAge = random.nextInt(config().sharkMaxAge());
         int timeOfBirth = -1 - randomAge; // negative age for birth time
 
-        WatorShark watorShark = entityFactory.createShark(timeOfBirth, config.sharkBirthEnergy());
+        WatorShark watorShark = entityFactory.createShark(timeOfBirth, config().sharkBirthEnergy());
         statistics.incrementSharkCells();
         return watorShark;
-    }
-
-    @Override
-    public WatorConfig config() {
-        return config;
     }
 
     @Override
@@ -87,45 +78,19 @@ public final class WatorSimulationManager implements SimulationManager<WatorEnti
         return statistics;
     }
 
-    private void updateStatistics() {
+    @Override
+    protected void updateStatistics() {
         statistics.update(
                 executor.stepCount(),
                 executor.currentStepMillis(),
-                timeoutMillis,
+                timeoutMillis(),
                 executor.minStepMillis(),
                 executor.maxStepMillis());
     }
 
     @Override
-    public void executeStep() {
-        executor.executeStep();
-        updateStatistics();
-
-        // Check for timeout
-        if (executor.currentStepMillis() > timeoutMillis) {
-            onTimeout.run();
-        }
-    }
-
-    @Override
-    public boolean isRunning() {
-        return executor.isRunning();
-    }
-
-    @Override
-    public int stepCount() {
-        return executor.stepCount();
-    }
-
-    @Override
-    public ReadableGridModel<WatorEntity> currentModel() {
-        return executor.currentModel();
-    }
-
-    public void configureStepTimeout(long newTimeoutMillis, Runnable newOnTimeout) {
-        timeoutMillis = newTimeoutMillis;
-        onTimeout = newOnTimeout;
-        updateStatistics();
+    protected TimedSimulationExecutor<WatorEntity> executor() {
+        return executor;
     }
 
 }

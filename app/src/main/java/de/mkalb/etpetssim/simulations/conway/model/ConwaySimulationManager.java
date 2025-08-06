@@ -4,41 +4,35 @@ import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.model.SimulationManager;
+import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 
-public final class ConwaySimulationManager implements SimulationManager<ConwayEntity, ConwayConfig, ConwayStatistics> {
-
-    private final ConwayConfig config;
+public final class ConwaySimulationManager
+        extends AbstractTimedSimulationManager<ConwayEntity, ConwayConfig, ConwayStatistics> {
 
     private final GridStructure structure;
     private final ConwayStatistics statistics;
-    private final SimulationExecutor<ConwayEntity> executor;
+    private final TimedSimulationExecutor<ConwayEntity> executor;
 
     public ConwaySimulationManager(ConwayConfig config) {
-        this.config = config;
+        super(config);
 
         structure = new GridStructure(
                 new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
                 new GridSize(config.gridWidth(), config.gridHeight())
         );
-
         statistics = new ConwayStatistics(structure.cellCount());
+        var random = new java.util.Random();
+        var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
 
-        GridModel<ConwayEntity> model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
-
+        // Executor with runner and terminationCondition
         SynchronousStepRunner<ConwayEntity, ConwayStatistics> runner = new SynchronousStepRunner<>(model,
                 new ConwayUpdateStrategy(structure));
+        var terminationCondition = new ConwayTerminationCondition();
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
-        executor = new DefaultSimulationExecutor<>(runner, runner::currentModel, new ConwayTerminationCondition(), statistics);
-
-        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, config.alivePercent(), new java.util.Random()).initialize(model);
+        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, config.alivePercent(), random).initialize(model);
 
         updateStatistics();
-    }
-
-    @Override
-    public ConwayConfig config() {
-        return config;
     }
 
     @Override
@@ -51,7 +45,8 @@ public final class ConwaySimulationManager implements SimulationManager<ConwayEn
         return statistics;
     }
 
-    void updateStatistics() {
+    @Override
+    protected void updateStatistics() {
         statistics.update(
                 executor.stepCount(),
                 executor.currentModel().count(cell -> cell.entity().isAlive()));
@@ -59,24 +54,8 @@ public final class ConwaySimulationManager implements SimulationManager<ConwayEn
     }
 
     @Override
-    public void executeStep() {
-        executor.executeStep();
-        updateStatistics();
-    }
-
-    @Override
-    public boolean isRunning() {
-        return executor.isRunning();
-    }
-
-    @Override
-    public int stepCount() {
-        return executor.stepCount();
-    }
-
-    @Override
-    public ReadableGridModel<ConwayEntity> currentModel() {
-        return executor.currentModel();
+    protected TimedSimulationExecutor<ConwayEntity> executor() {
+        return executor;
     }
 
 }
