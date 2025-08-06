@@ -154,14 +154,7 @@ public final class LabMainView
         double cellEdgeLength = viewModel.getCurrentConfig().cellEdgeLength();
         GridStructure structure = viewModel.getStructure();
 
-        AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
-                " and cell edge length " + cellEdgeLength);
-
         createPainterAndUpdateCanvas(structure, cellEdgeLength);
-
-        // Log information
-        AppLogger.info("GridDimension2D: " + overlayPainter.gridDimension2D());
-        AppLogger.info("CellDimension:   " + overlayPainter.cellDimension());
 
         // Font
         double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;

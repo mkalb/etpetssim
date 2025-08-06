@@ -34,9 +34,6 @@ public final class ConwayMainView
             GridStructure structure = viewModel.getStructure();
             int stepCount = viewModel.getStepCount();
 
-            AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
-                    " and cell edge length " + cellEdgeLength);
-
             createPainterAndUpdateCanvas(structure, cellEdgeLength);
 
             updateCanvasBorderPane(structure);

@@ -46,9 +46,6 @@ public final class WatorMainView
         GridStructure structure = viewModel.getStructure();
         int stepCount = viewModel.getStepCount();
 
-        AppLogger.info("Initialize canvas and painter with structure " + structure.toDisplayString() +
-                " and cell edge length " + cellEdgeLength);
-
         createPainterAndUpdateCanvas(structure, cellEdgeLength);
 
         WatorConfig config = viewModel.getCurrentConfig();
