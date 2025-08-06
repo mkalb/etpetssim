@@ -101,6 +101,24 @@
   -fx-border-radius: 0;
 }
 
+.view-notification-label {
+  -fx-font-family: 'Verdana';
+  -fx-font-size: 14;
+  -fx-font-weight: normal;
+  -fx-text-fill: #aeefff;
+  -fx-background-color: #1a2233;
+  -fx-background: #1a2233;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 10;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1 0 0 0;
+  -fx-border-radius: 0;
+  -fx-alignment: center-left;
+  -fx-max-width: infinity;
+  -fx-pref-width: 100%;
+}
+
 /* config region (top) */
 .config-hbox {
   -fx-padding: 10;

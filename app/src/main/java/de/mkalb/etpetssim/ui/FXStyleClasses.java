@@ -43,6 +43,7 @@ public final class FXStyleClasses {
     public static final String START_CONTROL_VBOX = "start-control-vbox";
     public static final String START_TITLE_LABEL = "start-title-label";
     public static final String VIEW_BORDERPANE = "view-borderpane";
+    public static final String VIEW_NOTIFICATION_LABEL = "view-notification-label";
 
     /**
      * Private constructor to prevent instantiation.

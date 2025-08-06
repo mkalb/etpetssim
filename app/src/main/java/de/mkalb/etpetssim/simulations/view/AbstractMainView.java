@@ -9,10 +9,9 @@ import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV extends SimulationConfigView, CLV extends SimulationControlView, OV extends SimulationObservationView>
@@ -31,6 +30,7 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
     protected final Canvas baseCanvas;
     protected final Canvas overlayCanvas;
     private final BorderPane canvasBorderPane;
+    private final Label notificationLabel;
 
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
@@ -51,6 +51,11 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
 
         canvasBorderPane = new BorderPane();
         canvasBorderPane.getStyleClass().add(FXStyleClasses.SIMULATION_CENTER_BORDERPANE);
+
+        notificationLabel = new Label();
+        notificationLabel.setVisible(false);
+        notificationLabel.setManaged(false);
+        notificationLabel.getStyleClass().add(FXStyleClasses.VIEW_NOTIFICATION_LABEL);
     }
 
     @Override
@@ -63,8 +68,10 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         BorderPane borderPane = new BorderPane();
         borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
 
+        VBox bottomBox = new VBox(controlRegion, notificationLabel);
+
         borderPane.setTop(configRegion);
-        borderPane.setBottom(controlRegion);
+        borderPane.setBottom(bottomBox);
         borderPane.setRight(observationRegion);
         borderPane.setCenter(simulationRegion);
 
@@ -74,6 +81,18 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
     }
 
     protected abstract void registerViewModelListeners();
+
+    protected final void updateNotification(String notification) {
+        if (notification.isBlank()) {
+            notificationLabel.setText(null);
+            notificationLabel.setVisible(false);
+            notificationLabel.setManaged(false);
+        } else {
+            notificationLabel.setText(notification);
+            notificationLabel.setVisible(true);
+            notificationLabel.setManaged(true);
+        }
+    }
 
     protected final Region createSimulationRegion() {
         StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
