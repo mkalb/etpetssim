@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
@@ -38,6 +40,13 @@ public final class WatorMainView
     protected void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(this::initializeSimulationCanvas);
         viewModel.setSimulationStepListener(this::updateSimulationStep);
+        viewModel.simulationTimeoutProperty().addListener((_, _, newVal) -> {
+            if (Boolean.TRUE.equals(newVal)) {
+                updateNotification(AppLocalization.getText(AppLocalizationKeys.NOTIFICATION_SIMULATION_TIMEOUT));
+            } else {
+                clearNotification();
+            }
+        });
     }
 
     private void initializeSimulationCanvas() {

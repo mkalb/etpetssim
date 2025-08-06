@@ -28,6 +28,8 @@ public final class AppLocalizationKeys {
     public static final String CONTROL_START = "control.start";
     public static final String CONTROL_STEP_DURATION = "control.stepduration";
     public static final String CONTROL_STEP_DURATION_TOOLTIP = "control.stepduration.tooltip";
+    public static final String NOTIFICATION_CANVAS_SIZE_LIMIT = "notification.canvas.sizelimit";
+    public static final String NOTIFICATION_SIMULATION_TIMEOUT = "notification.simulation.timeout";
     public static final String OBSERVATION_STEP = "observation.step";
     public static final String OBSERVATION_VALUE_UNKNOWN = "observation.valueunknown";
 

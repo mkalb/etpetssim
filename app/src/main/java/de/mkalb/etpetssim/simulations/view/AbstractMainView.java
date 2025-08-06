@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
@@ -122,7 +124,8 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         AppLogger.info("Canvas painter created: " + basePainter);
         if ((baseCanvas.getWidth() < basePainter.gridDimension2D().getWidth()) ||
                 (baseCanvas.getHeight() < basePainter.gridDimension2D().getHeight())) {
-            AppLogger.warn("Canvas size is smaller than the grid structure size, some cells may not be visible.");
+            AppLogger.warn("Canvas size is smaller than the grid dimension.");
+            updateNotification(AppLocalization.getText(AppLocalizationKeys.NOTIFICATION_CANVAS_SIZE_LIMIT));
         }
     }
 
