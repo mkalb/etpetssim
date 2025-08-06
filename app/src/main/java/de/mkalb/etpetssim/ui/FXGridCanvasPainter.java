@@ -85,6 +85,16 @@ public final class FXGridCanvasPainter {
         return new double[][]{newX, newY};
     }
 
+    @Override
+    public String toString() {
+        return "FXGridCanvasPainter{" +
+                "structure=" + structure +
+                ", gridDimension2D=[" + gridDimension2D.getWidth() + ", " + gridDimension2D.getHeight() + "]" +
+                ", canvas=[" + canvas.getWidth() + ", " + canvas.getHeight() + "]" +
+                ", cellDimension=" + cellDimension +
+                '}';
+    }
+
     /**
      * Returns the JavaFX Canvas on which the grid will be drawn.
      *
