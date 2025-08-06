@@ -53,9 +53,8 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         canvasBorderPane.getStyleClass().add(FXStyleClasses.SIMULATION_CENTER_BORDERPANE);
 
         notificationLabel = new Label();
-        notificationLabel.setVisible(false);
-        notificationLabel.setManaged(false);
         notificationLabel.getStyleClass().add(FXStyleClasses.VIEW_NOTIFICATION_LABEL);
+        clearNotification();
     }
 
     @Override
@@ -68,10 +67,8 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         BorderPane borderPane = new BorderPane();
         borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
 
-        VBox bottomBox = new VBox(controlRegion, notificationLabel);
-
         borderPane.setTop(configRegion);
-        borderPane.setBottom(bottomBox);
+        borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
         borderPane.setCenter(simulationRegion);
 
@@ -83,15 +80,15 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
     protected abstract void registerViewModelListeners();
 
     protected final void updateNotification(String notification) {
-        if (notification.isBlank()) {
-            notificationLabel.setText(null);
-            notificationLabel.setVisible(false);
-            notificationLabel.setManaged(false);
-        } else {
-            notificationLabel.setText(notification);
-            notificationLabel.setVisible(true);
-            notificationLabel.setManaged(true);
-        }
+        notificationLabel.setText(notification);
+        notificationLabel.setVisible(true);
+        notificationLabel.setManaged(true);
+    }
+
+    protected final void clearNotification() {
+        notificationLabel.setText(null);
+        notificationLabel.setVisible(false);
+        notificationLabel.setManaged(false);
     }
 
     protected final Region createSimulationRegion() {
@@ -110,7 +107,7 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
-        return scrollPane;
+        return new VBox(notificationLabel, scrollPane);
     }
 
     protected final void createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
