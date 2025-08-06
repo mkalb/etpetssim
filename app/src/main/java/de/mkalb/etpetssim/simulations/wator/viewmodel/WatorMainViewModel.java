@@ -175,6 +175,7 @@ public final class WatorMainViewModel
         stopTimeline();
         AppLogger.info("Cancelling simulation...");
         setSimulationState(SimulationState.READY);
+        simulationTimeoutProperty.set(false);
     }
 
 }
