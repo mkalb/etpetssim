@@ -75,11 +75,22 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         borderPane.setCenter(simulationRegion);
 
         registerViewModelListeners();
+        registerTimeoutListener();
 
         return borderPane;
     }
 
     protected abstract void registerViewModelListeners();
+
+    private void registerTimeoutListener() {
+        viewModel.simulationTimeoutProperty().addListener((_, _, newVal) -> {
+            if (Boolean.TRUE.equals(newVal)) {
+                updateNotification(AppLocalization.getText(AppLocalizationKeys.NOTIFICATION_SIMULATION_TIMEOUT));
+            } else {
+                clearNotification();
+            }
+        });
+    }
 
     protected final void updateNotification(String notification) {
         notificationLabel.setText(notification);

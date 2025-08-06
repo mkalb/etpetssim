@@ -9,9 +9,7 @@ import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
@@ -26,7 +24,6 @@ public final class WatorMainViewModel
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<WatorStatistics> observationViewModel;
     private final SimulationTimer simulationTimer;
-    private final BooleanProperty simulationTimeoutProperty = new SimpleBooleanProperty(false);
 
     private Runnable simulationInitializedListener = () -> {};
     private Runnable simulationStepListener = () -> {};
@@ -69,10 +66,6 @@ public final class WatorMainViewModel
         return configViewModel.cellEdgeLengthProperty().getValue();
     }
 
-    public BooleanProperty simulationTimeoutProperty() {
-        return simulationTimeoutProperty;
-    }
-
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.structure();
@@ -99,7 +92,7 @@ public final class WatorMainViewModel
         AppLogger.warn("Simulation step took too long at step " + getStepCount() +
                 " (" + simulationManager.statistics().currentStepMillis() + " ms), pausing simulation.");
         setSimulationState(SimulationState.PAUSED);
-        simulationTimeoutProperty.set(true);
+        setSimulationTimeout(true);
     }
 
     private void configureSimulationTimeout() {
@@ -107,7 +100,7 @@ public final class WatorMainViewModel
         double stepDuration = controlViewModel.stepDurationProperty().getValue();
         long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
         simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
-        simulationTimeoutProperty.set(false);
+        setSimulationTimeout(false);
     }
 
     private void startSimulation() {
@@ -175,7 +168,7 @@ public final class WatorMainViewModel
         stopTimeline();
         AppLogger.info("Cancelling simulation...");
         setSimulationState(SimulationState.READY);
-        simulationTimeoutProperty.set(false);
+        setSimulationTimeout(false);
     }
 
 }
