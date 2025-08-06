@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.view;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
@@ -85,8 +86,8 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         ScrollPane scrollPane = new ScrollPane(canvasBorderPane);
         scrollPane.setFitToHeight(false);
         scrollPane.setFitToWidth(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setPannable(true);
         scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
@@ -101,6 +102,12 @@ public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV e
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
         overlayCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, overlayPainter.gridDimension2D().getWidth()));
         overlayCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, overlayPainter.gridDimension2D().getHeight()));
+
+        AppLogger.info("Canvas painter created: " + basePainter);
+        if ((baseCanvas.getWidth() < basePainter.gridDimension2D().getWidth()) ||
+                (baseCanvas.getHeight() < basePainter.gridDimension2D().getHeight())) {
+            AppLogger.warn("Canvas size is smaller than the grid structure size, some cells may not be visible.");
+        }
     }
 
     protected final void updateCanvasBorderPane(GridStructure structure) {
