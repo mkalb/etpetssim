@@ -117,8 +117,6 @@ public final class WatorMainViewModel
         AppLogger.info("Simulation step started.");
 
         simulationManager.executeStep();
-        //  AppLogger.info("Min duration: " + simulationManager.statistics().minStepMillis() + " Max duration: " +
-        //  simulationManager.statistics().maxStepMillis() + " Current: " + simulationManager.statistics().currentStepMillis());
 
         observationViewModel.setStatistics(simulationManager.statistics());
 

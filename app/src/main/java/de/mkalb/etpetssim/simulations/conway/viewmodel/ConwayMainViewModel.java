@@ -3,9 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
-import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.conway.model.*;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
@@ -19,6 +17,8 @@ import java.util.*;
 
 public final class ConwayMainViewModel
         extends AbstractMainViewModel {
+
+    private static final double TIMEOUT_FACTOR = 0.5d;
 
     private final ConwayConfigViewModel configViewModel;
     private final DefaultControlViewModel controlViewModel;
@@ -81,8 +81,31 @@ public final class ConwayMainViewModel
         return simulationManager.stepCount();
     }
 
+    public ConwayConfig getCurrentConfig() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        return simulationManager.config();
+    }
+
+    private void handleSimulationTimeout() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        stopTimeline();
+        //     AppLogger.warn("Simulation step took too long at step " + getStepCount() +
+        //             " (" + simulationManager.statistics().currentStepMillis() + " ms), pausing simulation.");
+        setSimulationState(SimulationState.PAUSED);
+        setSimulationTimeout(true);
+    }
+
+    private void configureSimulationTimeout() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        double stepDuration = controlViewModel.stepDurationProperty().getValue();
+        long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
+        simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
+        setSimulationTimeout(false);
+    }
+
     private void startSimulation() {
         simulationManager = new ConwaySimulationManager(configViewModel.getConfig());
+        configureSimulationTimeout();
 
         observationViewModel.setStatistics(simulationManager.statistics());
 
@@ -101,7 +124,7 @@ public final class ConwayMainViewModel
 
         if (!simulationManager.isRunning()) {
             stopTimeline();
-            AppLogger.info("Simulation finished at step " + getStepCount());
+            AppLogger.info("Simulation finished after step " + getStepCount());
             setSimulationState(SimulationState.READY); // Set state to READY when finished
         }
     }
@@ -133,6 +156,7 @@ public final class ConwayMainViewModel
             case PAUSED -> {
                 AppLogger.info("Resuming simulation...");
                 setSimulationState(SimulationState.RUNNING);
+                configureSimulationTimeout();
                 startTimeline();
             }
         }
@@ -142,6 +166,7 @@ public final class ConwayMainViewModel
         stopTimeline();
         AppLogger.info("Cancelling simulation...");
         setSimulationState(SimulationState.READY);
+        setSimulationTimeout(false);
     }
 
 }
