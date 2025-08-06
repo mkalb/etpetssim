@@ -24,9 +24,9 @@ public final class WatorConfigViewModel
     private static final int GRID_HEIGHT_MAX = 1_024;
     private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
     private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
-    private static final int CELL_EDGE_LENGTH_INITIAL = 10;
-    private static final int CELL_EDGE_LENGTH_MAX = 48;
-    private static final int CELL_EDGE_LENGTH_MIN = 1;
+    private static final int CELL_EDGE_LENGTH_INITIAL = 8;
+    private static final int CELL_EDGE_LENGTH_MAX = 32;
+    private static final int CELL_EDGE_LENGTH_MIN = 2;
     private static final double FISH_PERCENT_INITIAL = 0.25d;
     private static final double FISH_PERCENT_MAX = 1.0d;
     private static final double FISH_PERCENT_MIN = 0.0d;
@@ -41,7 +41,7 @@ public final class WatorConfigViewModel
     private static final int SHARK_MAX_AGE_MAX = 100;
     private static final int SHARK_MAX_AGE_MIN = 10;
     private static final int SHARK_MAX_AGE_STEP = 1;
-    private static final int SHARK_BIRTH_ENERGY_INITIAL = 10;
+    private static final int SHARK_BIRTH_ENERGY_INITIAL = 8;
     private static final int SHARK_BIRTH_ENERGY_MAX = 100;
     private static final int SHARK_BIRTH_ENERGY_MIN = 1;
     private static final int SHARK_BIRTH_ENERGY_STEP = 1;
