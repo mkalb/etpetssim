@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.model;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 
 public record WatorConfig(
         CellShape cellShape,
@@ -15,5 +16,6 @@ public record WatorConfig(
         int fishMaxAge,
         int sharkMaxAge,
         int sharkBirthEnergy,
-        NeighborhoodMode neighborhoodMode) {}
+        NeighborhoodMode neighborhoodMode)
+        implements SimulationConfig {}
 

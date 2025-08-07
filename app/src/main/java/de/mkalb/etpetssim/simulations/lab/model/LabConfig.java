@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 
 public record LabConfig(
         CellShape cellShape,
@@ -10,7 +11,8 @@ public record LabConfig(
         double cellEdgeLength,
         RenderingMode renderingMode,
         ColorMode colorMode,
-        StrokeMode strokeMode) {
+        StrokeMode strokeMode)
+        implements SimulationConfig {
 
     public GridTopology getGridTopology() {
         return new GridTopology(cellShape, gridEdgeBehavior);

@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 
 public record ConwayConfig(
         CellShape cellShape,
@@ -9,4 +10,5 @@ public record ConwayConfig(
         int gridWidth,
         int gridHeight,
         double cellEdgeLength,
-        double alivePercent) {}
+        double alivePercent)
+        implements SimulationConfig {}

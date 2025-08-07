@@ -1,18 +1,21 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
+import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
+
 /**
  * Holds statistics for a running Conway's Game of Life simulation.
  */
-public final class ConwayStatistics {
+public final class ConwayStatistics
+        implements SimulationStatistics {
 
-    private final long totalCells;
+    private final int totalCells;
 
     private int stepCount;
     private long aliveCells;
     private long deadCells;
     private long maxAliveCells;
 
-    public ConwayStatistics(long totalCells) {
+    public ConwayStatistics(int totalCells) {
         this.totalCells = totalCells;
         stepCount = 0;
         aliveCells = 0;
@@ -29,6 +32,7 @@ public final class ConwayStatistics {
         }
     }
 
+    @Override
     public int getStepCount() {
         return stepCount;
     }
@@ -41,7 +45,8 @@ public final class ConwayStatistics {
         return deadCells;
     }
 
-    public long getTotalCells() {
+    @Override
+    public int getTotalCells() {
         return totalCells;
     }
 

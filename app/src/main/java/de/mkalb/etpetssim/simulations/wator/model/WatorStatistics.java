@@ -1,8 +1,11 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
-public final class WatorStatistics {
+import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 
-    private final long totalCells;
+public final class WatorStatistics
+        implements SimulationStatistics {
+
+    private final int totalCells;
 
     private int stepCount;
     private long fishCells;
@@ -12,7 +15,7 @@ public final class WatorStatistics {
     private long minStepMillis;
     private long maxStepMillis;
 
-    public WatorStatistics(long totalCells) {
+    public WatorStatistics(int totalCells) {
         this.totalCells = totalCells;
         stepCount = 0;
         fishCells = 0;
@@ -31,6 +34,7 @@ public final class WatorStatistics {
         this.maxStepMillis = maxStepMillis;
     }
 
+    @Override
     public int getStepCount() {
         return stepCount;
     }
@@ -43,7 +47,8 @@ public final class WatorStatistics {
         return sharkCells;
     }
 
-    public long getTotalCells() {
+    @Override
+    public int getTotalCells() {
         return totalCells;
     }
 
