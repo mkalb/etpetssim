@@ -15,7 +15,7 @@ import java.util.function.*;
 
 public final class DefaultMainViewModel<ENT extends GridEntity, CON extends SimulationConfig,
         STA extends SimulationStatistics>
-        extends AbstractMainViewModel {
+        extends AbstractMainViewModel<CON> {
 
     private static final double TIMEOUT_FACTOR = 0.5d;
 
@@ -62,6 +62,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         simulationStepListener = listener;
     }
 
+    @Override
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.structure();
@@ -77,6 +78,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return simulationManager.stepCount();
     }
 
+    @Override
     public CON getCurrentConfig() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.config();
@@ -99,6 +101,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         setSimulationTimeout(false);
     }
 
+    @Override
     public double getCellEdgeLength() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.config().cellEdgeLength();

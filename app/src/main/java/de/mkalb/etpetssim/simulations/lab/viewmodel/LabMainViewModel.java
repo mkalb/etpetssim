@@ -16,7 +16,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class LabMainViewModel
-        extends AbstractMainViewModel {
+        extends AbstractMainViewModel<LabConfig> {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
     private final LabConfigViewModel configViewModel;
@@ -77,11 +77,19 @@ public final class LabMainViewModel
         lastClickedCoordinate.set(value);
     }
 
+    @Override
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.structure();
     }
 
+    @Override
+    public double getCellEdgeLength() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        return simulationManager.config().cellEdgeLength();
+    }
+
+    @Override
     public LabConfig getCurrentConfig() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.config();

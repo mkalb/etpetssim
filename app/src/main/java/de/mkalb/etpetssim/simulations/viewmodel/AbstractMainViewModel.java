@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
+import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import javafx.beans.property.*;
 
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractMainViewModel
+public abstract class AbstractMainViewModel<CON extends SimulationConfig>
         implements SimulationMainViewModel {
 
     private final ObjectProperty<SimulationState> simulationState;
@@ -36,5 +36,7 @@ public abstract class AbstractMainViewModel
     protected final void setSimulationTimeout(boolean timeout) {
         simulationTimeoutProperty.set(timeout);
     }
+
+    protected abstract CON getCurrentConfig();
 
 }
