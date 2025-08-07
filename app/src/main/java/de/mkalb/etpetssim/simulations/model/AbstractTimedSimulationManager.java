@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.TimedSimulationExecutor;
 
-public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON, STA>
+public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON extends SimulationConfig, STA extends SimulationStatistics>
         implements SimulationManager<ENT, CON, STA> {
 
     private final CON config;

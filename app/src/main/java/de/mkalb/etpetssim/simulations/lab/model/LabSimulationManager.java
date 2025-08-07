@@ -2,14 +2,17 @@ package de.mkalb.etpetssim.simulations.lab.model;
 
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.simulations.model.SimulationManager;
 
 import java.util.*;
 
-public final class LabSimulationManager {
+public final class LabSimulationManager
+        implements SimulationManager<LabEntity, LabConfig, LabStatistics> {
 
     private final LabConfig config;
 
     private final GridStructure structure;
+    private final LabStatistics statistics;
     private final GridModel<LabEntity> model;
 
     public LabSimulationManager(LabConfig config) {
@@ -19,6 +22,7 @@ public final class LabSimulationManager {
                 new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
                 new GridSize(config.gridWidth(), config.gridHeight())
         );
+        statistics = new LabStatistics(structure.cellCount());
 
         model = new SparseGridModel<>(structure, LabEntity.NORMAL);
         GridInitializers.placeRandomCounted(3, () -> LabEntity.HIGHLIGHTED, new Random())
@@ -34,16 +38,39 @@ public final class LabSimulationManager {
                 )));
     }
 
-    public ReadableGridModel<LabEntity> currentModel() {
-        return model;
+    @Override
+    public LabConfig config() {
+        return config;
     }
 
+    @Override
     public GridStructure structure() {
         return structure;
     }
 
-    public LabConfig config() {
-        return config;
+    @Override
+    public LabStatistics statistics() {
+        return statistics;
+    }
+
+    @Override
+    public void executeStep() {
+        // Do nothing
+    }
+
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
+
+    @Override
+    public int stepCount() {
+        return 0;
+    }
+
+    @Override
+    public ReadableGridModel<LabEntity> currentModel() {
+        return model;
     }
 
 }
