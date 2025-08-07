@@ -6,7 +6,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public final class DefaultControlViewModel extends AbstractControlViewModel {
+public final class DefaultControlViewModel
+        extends AbstractControlViewModel {
 
     private static final int STEP_DURATION_INITIAL = 700;
     private static final int STEP_DURATION_MIN = 100;

@@ -5,8 +5,8 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
-import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorMainViewModel;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -16,11 +16,13 @@ import java.util.*;
 
 @SuppressWarnings("MagicNumber")
 public final class WatorMainView
-        extends AbstractMainView<WatorMainViewModel, WatorConfigView, DefaultControlView, WatorObservationView> {
+        extends
+        AbstractMainView<WatorConfig, WatorStatistics, DefaultMainViewModel<WatorEntity, WatorConfig, WatorStatistics>, WatorConfigView, DefaultControlView,
+                WatorObservationView> {
 
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
 
-    public WatorMainView(WatorMainViewModel viewModel,
+    public WatorMainView(DefaultMainViewModel<WatorEntity, WatorConfig, WatorStatistics> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
                          DefaultControlView controlView,

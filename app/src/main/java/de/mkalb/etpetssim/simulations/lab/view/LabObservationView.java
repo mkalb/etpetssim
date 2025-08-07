@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.lab.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabObservationViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -14,7 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
 public final class LabObservationView
-        extends AbstractObservationView<Object, LabObservationViewModel> {
+        extends AbstractObservationView<LabStatistics, LabObservationViewModel> {
 
     public LabObservationView(LabObservationViewModel viewModel) {
         super(viewModel);

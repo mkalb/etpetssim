@@ -5,18 +5,26 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayMainViewModel;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import javafx.scene.paint.Color;
 
 import java.util.*;
 
 public final class ConwayMainView
-        extends AbstractMainView<ConwayMainViewModel, ConwayConfigView, DefaultControlView, ConwayObservationView> {
+        extends AbstractMainView<
+        ConwayConfig,
+        ConwayStatistics,
+        DefaultMainViewModel<ConwayEntity, ConwayConfig, ConwayStatistics>,
+        ConwayConfigView,
+        DefaultControlView,
+        ConwayObservationView> {
 
-    public ConwayMainView(ConwayMainViewModel viewModel,
+    public ConwayMainView(DefaultMainViewModel<ConwayEntity, ConwayConfig, ConwayStatistics> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
                           DefaultControlView controlView,

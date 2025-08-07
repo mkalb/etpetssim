@@ -1,9 +1,11 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.simulations.model.SimulationState;
+import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-public final class DefaultObservationViewModel<S> extends AbstractObservationViewModel<S> {
+public final class DefaultObservationViewModel<STA extends SimulationStatistics>
+        extends AbstractObservationViewModel<STA> {
 
     public DefaultObservationViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState);

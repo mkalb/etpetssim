@@ -4,7 +4,8 @@ import de.mkalb.etpetssim.simulations.model.SimulationState;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractControlViewModel implements SimulationControlViewModel {
+public abstract class AbstractControlViewModel
+        implements SimulationControlViewModel {
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
 

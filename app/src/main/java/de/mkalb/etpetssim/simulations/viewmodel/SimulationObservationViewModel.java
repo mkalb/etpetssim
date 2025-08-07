@@ -1,18 +1,19 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.simulations.model.SimulationState;
+import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-public interface SimulationObservationViewModel<S> {
+public interface SimulationObservationViewModel<STA extends SimulationStatistics> {
 
     ReadOnlyObjectProperty<SimulationState> simulationStateProperty();
 
     SimulationState getSimulationState();
 
-    ReadOnlyObjectProperty<S> statisticsProperty();
+    ReadOnlyObjectProperty<STA> statisticsProperty();
 
-    S getStatistics();
+    STA getStatistics();
 
-    void setStatistics(S stats);
+    void setStatistics(STA stats);
 
 }

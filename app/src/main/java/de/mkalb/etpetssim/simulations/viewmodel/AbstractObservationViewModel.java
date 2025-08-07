@@ -1,14 +1,16 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.simulations.model.SimulationState;
+import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractObservationViewModel<S> implements SimulationObservationViewModel<S> {
+public abstract class AbstractObservationViewModel<STA extends SimulationStatistics>
+        implements SimulationObservationViewModel<STA> {
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
-    private final ReadOnlyObjectWrapper<S> statistics;
+    private final ReadOnlyObjectWrapper<STA> statistics;
 
     protected AbstractObservationViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
@@ -26,17 +28,17 @@ public abstract class AbstractObservationViewModel<S> implements SimulationObser
     }
 
     @Override
-    public final ReadOnlyObjectProperty<S> statisticsProperty() {
+    public final ReadOnlyObjectProperty<STA> statisticsProperty() {
         return statistics.getReadOnlyProperty();
     }
 
     @Override
-    public final S getStatistics() {
+    public final STA getStatistics() {
         return statistics.get();
     }
 
     @Override
-    public final void setStatistics(S stats) {
+    public final void setStatistics(STA stats) {
         statistics.set(stats);
     }
 

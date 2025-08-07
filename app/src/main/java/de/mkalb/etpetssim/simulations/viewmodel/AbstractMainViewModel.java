@@ -4,7 +4,8 @@ import de.mkalb.etpetssim.simulations.model.SimulationState;
 import javafx.beans.property.*;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractMainViewModel implements SimulationMainViewModel {
+public abstract class AbstractMainViewModel
+        implements SimulationMainViewModel {
 
     private final ObjectProperty<SimulationState> simulationState;
     private final BooleanProperty simulationTimeoutProperty = new SimpleBooleanProperty(false);

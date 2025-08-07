@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.HPos;
@@ -8,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-public abstract class AbstractObservationView<S, VM extends SimulationObservationViewModel<S>>
+public abstract class AbstractObservationView<STA extends SimulationStatistics, VM extends SimulationObservationViewModel<STA>>
         implements SimulationObservationView {
 
     protected final VM viewModel;

@@ -6,6 +6,8 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.model.SimulationConfig;
+import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -16,7 +18,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractMainView<VM extends SimulationMainViewModel, CFV extends SimulationConfigView, CLV extends SimulationControlView, OV extends SimulationObservationView>
+public abstract class AbstractMainView<
+        CON extends SimulationConfig,
+        STA extends SimulationStatistics,
+        VM extends SimulationMainViewModel,
+        CFV extends SimulationConfigView,
+        CLV extends SimulationControlView,
+        OV extends SimulationObservationView>
         implements SimulationMainView {
 
     private static final double INITIAL_CANVAS_WIDTH = 640.0d;

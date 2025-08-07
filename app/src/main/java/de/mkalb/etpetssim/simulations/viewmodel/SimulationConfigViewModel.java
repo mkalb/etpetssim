@@ -1,16 +1,17 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
+import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-public interface SimulationConfigViewModel<C> {
+public interface SimulationConfigViewModel<CON extends SimulationConfig> {
 
     ReadOnlyObjectProperty<SimulationState> simulationStateProperty();
 
     SimulationState getSimulationState();
 
-    C getConfig();
+    CON getConfig();
 
-    void setConfig(C config);
+    void setConfig(CON config);
 
 }
