@@ -30,33 +30,47 @@ public final class ConwayMainView
                           DefaultControlView controlView,
                           ConwayObservationView observationView) {
         super(viewModel,
-                configView, controlView, observationView,
+                configView,
+                controlView,
+                observationView,
                 entityDescriptorRegistry);
     }
 
     @Override
     protected void registerViewModelListeners() {
-        viewModel.setSimulationInitializedListener(() -> {
-            double cellEdgeLength = viewModel.getCellEdgeLength();
-            ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-            GridStructure structure = viewModel.getStructure();
-            int stepCount = viewModel.getStepCount();
+        viewModel.setSimulationInitializedListener(this::initializeSimulationCanvas);
+        viewModel.setSimulationStepListener(this::updateSimulationStep);
+    }
 
-            createPainterAndUpdateCanvas(structure, cellEdgeLength);
+    private void initializeSimulationCanvas() {
+        double cellEdgeLength = viewModel.getCellEdgeLength();
+        ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
+        GridStructure structure = viewModel.getStructure();
+        int stepCount = viewModel.getStepCount();
 
-            updateCanvasBorderPane(structure);
+        createPainterAndUpdateCanvas(structure, cellEdgeLength);
 
-            drawCanvas(currentModel, stepCount);
-            observationView.updateObservationLabels();
-        });
-        viewModel.setSimulationStepListener(() -> {
-            ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-            int stepCount = viewModel.getStepCount();
-            AppLogger.info("Drawing canvas for step " + stepCount);
+        updateCanvasBorderPane(structure);
 
-            drawCanvas(currentModel, stepCount);
-            observationView.updateObservationLabels();
-        });
+        drawCanvas(currentModel, stepCount);
+        observationView.updateObservationLabels();
+    }
+
+    private void updateSimulationStep() {
+        ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
+        int stepCount = viewModel.getStepCount();
+        AppLogger.info("Drawing canvas for step " + stepCount);
+
+        drawCanvas(currentModel, stepCount);
+        observationView.updateObservationLabels();
+    }
+
+    private void fillBackground() {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(javafx.scene.paint.Color.BLACK);
     }
 
     private void drawCanvas(ReadableGridModel<ConwayEntity> currentModel, int stepCount) {
@@ -65,9 +79,7 @@ public final class ConwayMainView
             return;
         }
 
-        // Fill background
-        basePainter.fillCanvasBackground(javafx.scene.paint.Color.BLACK);
-        basePainter.fillGridBackground(javafx.scene.paint.Color.WHITE);
+        fillBackground();
 
         // Draw all cells
         currentModel.structure()
