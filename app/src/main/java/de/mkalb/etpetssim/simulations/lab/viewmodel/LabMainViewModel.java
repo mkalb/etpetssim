@@ -4,9 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
-import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
-import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
+import de.mkalb.etpetssim.simulations.lab.model.*;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import javafx.beans.property.ObjectProperty;
@@ -16,12 +14,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class LabMainViewModel
-        extends AbstractMainViewModel<LabConfig> {
+        extends AbstractMainViewModel<LabConfig, LabStatistics> {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
-    private final LabConfigViewModel configViewModel;
-    private final LabControlViewModel controlViewModel;
-    private final LabObservationViewModel observationViewModel;
     private @Nullable LabSimulationManager simulationManager;
 
     private Runnable configChangedListener = () -> {};
@@ -33,10 +28,7 @@ public final class LabMainViewModel
                             LabConfigViewModel configViewModel,
                             LabControlViewModel controlViewModel,
                             LabObservationViewModel observationViewModel) {
-        super(simulationState);
-        this.configViewModel = configViewModel;
-        this.controlViewModel = controlViewModel;
-        this.observationViewModel = observationViewModel;
+        super(simulationState, configViewModel, observationViewModel);
 
         configViewModel.configChangedRequestedProperty().addListener((_, _, newVal) -> {
             if (newVal) {
@@ -100,6 +92,7 @@ public final class LabMainViewModel
         return simulationManager.currentModel();
     }
 
+    @Override
     public boolean hasSimulationManager() {
         return simulationManager != null;
     }

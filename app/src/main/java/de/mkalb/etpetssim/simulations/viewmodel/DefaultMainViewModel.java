@@ -15,13 +15,11 @@ import java.util.function.*;
 
 public final class DefaultMainViewModel<ENT extends GridEntity, CON extends SimulationConfig,
         STA extends TimedSimulationStatistics>
-        extends AbstractMainViewModel<CON> {
+        extends AbstractMainViewModel<CON, STA> {
 
     private static final double TIMEOUT_FACTOR = 0.5d;
 
-    private final SimulationConfigViewModel<CON> configViewModel;
     private final DefaultControlViewModel controlViewModel;
-    private final DefaultObservationViewModel<STA> observationViewModel;
     private final SimulationTimer simulationTimer;
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
     private @Nullable AbstractTimedSimulationManager<ENT, CON, STA> simulationManager;
@@ -33,10 +31,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory) {
-        super(simulationState);
-        this.configViewModel = configViewModel;
+        super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
-        this.observationViewModel = observationViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
         simulationTimer = new SimulationTimer(this::doSimulationStep);
 
@@ -82,6 +78,11 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     public CON getCurrentConfig() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.config();
+    }
+
+    @Override
+    public boolean hasSimulationManager() {
+        return simulationManager != null;
     }
 
     private void logSimulationInfo(String message) {
