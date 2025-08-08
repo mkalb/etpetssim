@@ -1,12 +1,13 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
+import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
+import de.mkalb.etpetssim.simulations.model.TimedSimulationStatistics;
 
 /**
  * Holds statistics for a running Conway's Game of Life simulation.
  */
 public final class ConwayStatistics
-        implements SimulationStatistics {
+        implements TimedSimulationStatistics {
 
     private final int totalCells;
 
@@ -14,6 +15,8 @@ public final class ConwayStatistics
     private long aliveCells;
     private long deadCells;
     private long maxAliveCells;
+    private long timeOutMillis;
+    private StepTimingStatistics stepTimingStatistics;
 
     public ConwayStatistics(int totalCells) {
         this.totalCells = totalCells;
@@ -21,15 +24,19 @@ public final class ConwayStatistics
         aliveCells = 0;
         deadCells = totalCells;
         maxAliveCells = 0;
+        timeOutMillis = 0;
+        stepTimingStatistics = StepTimingStatistics.empty();
     }
 
-    public void update(int newStepCount, long newAliveCells) {
+    public void update(int newStepCount, long newAliveCells, long newTimeOutMillis, StepTimingStatistics newStepTimingStatistics) {
         stepCount = newStepCount;
         aliveCells = newAliveCells;
         deadCells = totalCells - aliveCells;
         if (aliveCells > maxAliveCells) {
             maxAliveCells = aliveCells;
         }
+        timeOutMillis = newTimeOutMillis;
+        stepTimingStatistics = newStepTimingStatistics;
     }
 
     @Override
@@ -52,6 +59,29 @@ public final class ConwayStatistics
 
     public long getMaxAliveCells() {
         return maxAliveCells;
+    }
+
+    @Override
+    public long timeOutMillis() {
+        return timeOutMillis;
+    }
+
+    @Override
+    public StepTimingStatistics stepTimingStatistics() {
+        return stepTimingStatistics;
+    }
+
+    @Override
+    public String toString() {
+        return "ConwayStatistics{" +
+                "totalCells=" + totalCells +
+                ", stepCount=" + stepCount +
+                ", aliveCells=" + aliveCells +
+                ", deadCells=" + deadCells +
+                ", maxAliveCells=" + maxAliveCells +
+                ", timeOutMillis=" + timeOutMillis +
+                ", stepTimingStatistics=" + stepTimingStatistics +
+                '}';
     }
 
 }

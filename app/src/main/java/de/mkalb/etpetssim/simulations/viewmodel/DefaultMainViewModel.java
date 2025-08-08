@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.function.*;
 
 public final class DefaultMainViewModel<ENT extends GridEntity, CON extends SimulationConfig,
-        STA extends SimulationStatistics>
+        STA extends TimedSimulationStatistics>
         extends AbstractMainViewModel<CON> {
 
     private static final double TIMEOUT_FACTOR = 0.5d;
@@ -84,13 +84,21 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return simulationManager.config();
     }
 
+    private void logSimulationInfo(String message) {
+        if (simulationManager == null) {
+            AppLogger.info(message);
+        } else {
+            AppLogger.info(message + " config=" + simulationManager.config() + ", statistics=" + simulationManager.statistics());
+        }
+    }
+
     private void handleSimulationTimeout() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         stopTimeline();
         setSimulationState(SimulationState.PAUSED);
         setSimulationTimeout(true);
 
-        AppLogger.info("Simulation has been paused because a timeout has occurred. config=" + simulationManager.config() + ", statistics=" + simulationManager.statistics());
+        logSimulationInfo("Simulation has been paused because a timeout has occurred.");
     }
 
     private void configureSimulationTimeout() {
@@ -116,8 +124,20 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     }
 
     private void doSimulationStep() {
-        Objects.requireNonNull(simulationManager, "Simulation manager must not be null before executing a step.");
-        AppLogger.info("Simulation step started.");
+        if (!simulationTimer.isRunning()) {
+            AppLogger.error("Simulation timer is not running, cannot execute step.");
+            return;
+        }
+        if (simulationManager == null) {
+            AppLogger.error("Simulation manager is not initialized, cannot execute step.");
+            stopTimeline();
+            return;
+        }
+        if (getSimulationState() != SimulationState.RUNNING) {
+            AppLogger.error("Simulation is not in RUNNING state, cannot execute step.");
+            stopTimeline();
+            return;
+        }
 
         simulationManager.executeStep();
 
@@ -128,19 +148,25 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         if (!simulationManager.isRunning()) {
             stopTimeline();
             setSimulationState(SimulationState.READY); // Set state to READY when finished
-            AppLogger.info("Simulation has ended itself. config=" + simulationManager.config() + ", statistics=" + simulationManager.statistics());
+            logSimulationInfo("Simulation has ended itself.");
         }
     }
 
-    private void startSimulation() {
-        simulationManager = simulationManagerFactory.apply(configViewModel.getConfig());
+    private Optional<CON> createValidConfig() {
+        CON config = configViewModel.getConfig();
+        if (!config.isValid()) {
+            return Optional.empty();
+        }
+        return Optional.of(config);
+    }
+
+    private void startSimulation(CON config) {
+        simulationManager = simulationManagerFactory.apply(config);
         configureSimulationTimeout();
 
         updateObservationStatistics(simulationManager.statistics());
 
         simulationInitializedListener.run();
-
-        AppLogger.info("Simulation was started by the user. config=" + simulationManager.config() + ", statistics=" + simulationManager.statistics());
     }
 
     private void startTimeline() {
@@ -148,9 +174,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     }
 
     private void stopTimeline() {
-        if (simulationTimer.isRunning()) {
-            simulationTimer.stop();
-        }
+        simulationTimer.stop();
     }
 
     private void handleActionButton() {
@@ -158,20 +182,27 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         stopTimeline();
         switch (getSimulationState()) {
             case READY -> {
-                AppLogger.info("Starting simulation...");
-                setSimulationState(SimulationState.RUNNING);
-                startSimulation();
-                startTimeline();
+                Optional<CON> config = createValidConfig();
+                if (config.isEmpty()) {
+                    simulationManager = null;
+                    AppLogger.warn("Invalid configuration: " + config);
+                    // TODO show message at view
+                } else {
+                    setSimulationState(SimulationState.RUNNING);
+                    startSimulation(config.get());
+                    startTimeline();
+                    logSimulationInfo("Simulation was started by the user.  ");
+                }
             }
             case RUNNING -> {
-                AppLogger.info("Pausing simulation...");
                 setSimulationState(SimulationState.PAUSED);
+                logSimulationInfo("Simulation was paused by the user.   ");
             }
             case PAUSED -> {
-                AppLogger.info("Resuming simulation...");
                 setSimulationState(SimulationState.RUNNING);
                 configureSimulationTimeout();
                 startTimeline();
+                logSimulationInfo("Simulation was resumed by the user.  ");
             }
         }
     }
@@ -179,12 +210,9 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     private void handleCancelButton() {
         // Stopping the timeline first to ensure no steps are executed while changing state
         stopTimeline();
-        AppLogger.info("Cancelling simulation...");
         setSimulationState(SimulationState.READY);
         setSimulationTimeout(false);
-        if (simulationManager != null) {
-            AppLogger.info("Simulation was canceled by the user. config=" + simulationManager.config() + ", statistics=" + simulationManager.statistics());
-        }
+        logSimulationInfo("Simulation was canceled by the user. ");
     }
 
 }

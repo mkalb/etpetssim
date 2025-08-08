@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.SimulationManager;
 
@@ -18,10 +20,7 @@ public final class LabSimulationManager
     public LabSimulationManager(LabConfig config) {
         this.config = config;
 
-        structure = new GridStructure(
-                new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
-                new GridSize(config.gridWidth(), config.gridHeight())
-        );
+        structure = config.createGridStructure();
         statistics = new LabStatistics(structure.cellCount());
 
         model = new SparseGridModel<>(structure, LabEntity.NORMAL);

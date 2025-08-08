@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 
@@ -16,10 +14,7 @@ public final class ConwaySimulationManager
     public ConwaySimulationManager(ConwayConfig config) {
         super(config);
 
-        structure = new GridStructure(
-                new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
-                new GridSize(config.gridWidth(), config.gridHeight())
-        );
+        structure = config.createGridStructure();
         statistics = new ConwayStatistics(structure.cellCount());
         var random = new java.util.Random();
         var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
@@ -49,7 +44,9 @@ public final class ConwaySimulationManager
     protected void updateStatistics() {
         statistics.update(
                 executor.stepCount(),
-                executor.currentModel().count(cell -> cell.entity().isAlive()));
+                executor.currentModel().count(cell -> cell.entity().isAlive()),
+                timeoutMillis(),
+                executor.stepTimingStatistics());
         // TODO implement method countNonDefault
     }
 

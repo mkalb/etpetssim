@@ -1,37 +1,32 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
-import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
+import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
+import de.mkalb.etpetssim.simulations.model.TimedSimulationStatistics;
 
 public final class WatorStatistics
-        implements SimulationStatistics {
+        implements TimedSimulationStatistics {
 
     private final int totalCells;
 
     private int stepCount;
     private long fishCells;
     private long sharkCells;
-    private long currentStepMillis;
     private long timeOutMillis;
-    private long minStepMillis;
-    private long maxStepMillis;
+    private StepTimingStatistics stepTimingStatistics;
 
     public WatorStatistics(int totalCells) {
         this.totalCells = totalCells;
         stepCount = 0;
         fishCells = 0;
         sharkCells = 0;
-        currentStepMillis = 0;
         timeOutMillis = 0;
-        minStepMillis = 0;
-        maxStepMillis = 0;
+        stepTimingStatistics = StepTimingStatistics.empty();
     }
 
-    public void update(int newStepCount, long currentStepMillis, long timeOutMillis, long minStepMillis, long maxStepMillis) {
+    public void update(int newStepCount, long newTimeOutMillis, StepTimingStatistics newStepTimingStatistics) {
         stepCount = newStepCount;
-        this.currentStepMillis = currentStepMillis;
-        this.timeOutMillis = timeOutMillis;
-        this.minStepMillis = minStepMillis;
-        this.maxStepMillis = maxStepMillis;
+        timeOutMillis = newTimeOutMillis;
+        stepTimingStatistics = newStepTimingStatistics;
     }
 
     @Override
@@ -52,20 +47,14 @@ public final class WatorStatistics
         return totalCells;
     }
 
-    public long currentStepMillis() {
-        return currentStepMillis;
-    }
-
+    @Override
     public long timeOutMillis() {
         return timeOutMillis;
     }
 
-    public long minStepMillis() {
-        return minStepMillis;
-    }
-
-    public long maxStepMillis() {
-        return maxStepMillis;
+    @Override
+    public StepTimingStatistics stepTimingStatistics() {
+        return stepTimingStatistics;
     }
 
     public void incrementFishCells() {
@@ -82,6 +71,18 @@ public final class WatorStatistics
 
     public void decrementSharkCells() {
         sharkCells--;
+    }
+
+    @Override
+    public String toString() {
+        return "WatorStatistics{" +
+                "totalCells=" + totalCells +
+                ", stepCount=" + stepCount +
+                ", fishCells=" + fishCells +
+                ", sharkCells=" + sharkCells +
+                ", timeOutMillis=" + timeOutMillis +
+                ", stepTimingStatistics=" + stepTimingStatistics +
+                '}';
     }
 
 }

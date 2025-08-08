@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
-import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 
@@ -18,10 +16,7 @@ public final class WatorSimulationManager
     public WatorSimulationManager(WatorConfig config) {
         super(config);
 
-        structure = new GridStructure(
-                new GridTopology(config.cellShape(), config.gridEdgeBehavior()),
-                new GridSize(config.gridWidth(), config.gridHeight())
-        );
+        structure = config.createGridStructure();
         statistics = new WatorStatistics(structure.cellCount());
         var random = new java.util.Random();
         var model = new ArrayGridModel<WatorEntity>(structure, WatorConstantEntity.WATER);
@@ -82,10 +77,8 @@ public final class WatorSimulationManager
     protected void updateStatistics() {
         statistics.update(
                 executor.stepCount(),
-                executor.currentStepMillis(),
                 timeoutMillis(),
-                executor.minStepMillis(),
-                executor.maxStepMillis());
+                executor.stepTimingStatistics());
     }
 
     @Override

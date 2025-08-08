@@ -1,10 +1,8 @@
 package de.mkalb.etpetssim.simulations.model;
 
-import de.mkalb.etpetssim.engine.model.GridEntity;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.engine.model.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.model.*;
 
-public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON extends SimulationConfig, STA extends SimulationStatistics>
+public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON extends SimulationConfig, STA extends TimedSimulationStatistics>
         implements SimulationManager<ENT, CON, STA> {
 
     private final CON config;
@@ -59,6 +57,10 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
 
     public final long timeoutMillis() {
         return timeoutMillis;
+    }
+
+    public final StepTimingStatistics stepTimingStatistics() {
+        return executor().stepTimingStatistics();
     }
 
 }
