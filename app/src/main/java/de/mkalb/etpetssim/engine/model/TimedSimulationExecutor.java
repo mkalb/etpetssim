@@ -13,9 +13,10 @@ public final class TimedSimulationExecutor<T extends GridEntity> implements Simu
 
     private final SimulationExecutor<T> delegate;
 
+    private long currentStepMillis = Long.MIN_VALUE;
     private long minStepMillis = Long.MAX_VALUE;
     private long maxStepMillis = Long.MIN_VALUE;
-    private long currentStepMillis = Long.MIN_VALUE;
+    private long sumStepMillis = 0;
 
     /**
      * Creates a new {@code TimedSimulationExecutor}.
@@ -58,24 +59,31 @@ public final class TimedSimulationExecutor<T extends GridEntity> implements Simu
         if (currentStepMillis > maxStepMillis) {
             maxStepMillis = currentStepMillis;
         }
+        sumStepMillis += currentStepMillis;
     }
 
     /**
-     * Returns the minimum execution time (ms) of a simulation step so far.
+     * Returns an immutable record containing timing statistics for simulation steps.
+     * <p>
+     * The statistics include the minimum, maximum, and most recent step durations,
+     * as well as the sum and average of all step durations (in milliseconds).
+     * <p>
+     * If no steps have been executed yet, all values in the returned record are {@code 0}.
      *
-     * @return the minimum step duration in milliseconds, or {@link Long#MAX_VALUE} if no steps have been executed
+     * @return a {@link StepTimingStatistics} record with the current timing statistics
      */
-    public long minStepMillis() {
-        return minStepMillis;
-    }
-
-    /**
-     * Returns the maximum execution time (ms) of a simulation step so far.
-     *
-     * @return the maximum step duration in milliseconds, or {@link Long#MIN_VALUE} if no steps have been executed
-     */
-    public long maxStepMillis() {
-        return maxStepMillis;
+    public StepTimingStatistics stepTimingStatistics() {
+        int steps = stepCount();
+        if (steps > 0) {
+            return new StepTimingStatistics(
+                    currentStepMillis,
+                    minStepMillis,
+                    maxStepMillis,
+                    sumStepMillis,
+                    (sumStepMillis / steps)
+            );
+        }
+        return StepTimingStatistics.empty();
     }
 
     /**
