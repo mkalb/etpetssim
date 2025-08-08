@@ -1,47 +1,35 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.model.TimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationStatistics;
 
 /**
  * Holds statistics for a running Conway's Game of Life simulation.
  */
 public final class ConwayStatistics
-        implements TimedSimulationStatistics {
+        extends AbstractTimedSimulationStatistics {
 
-    private final int totalCells;
-
-    private int stepCount;
     private long aliveCells;
     private long deadCells;
     private long maxAliveCells;
-    private long timeOutMillis;
-    private StepTimingStatistics stepTimingStatistics;
 
     public ConwayStatistics(int totalCells) {
-        this.totalCells = totalCells;
-        stepCount = 0;
+        super(totalCells);
         aliveCells = 0;
         deadCells = totalCells;
         maxAliveCells = 0;
-        timeOutMillis = 0;
-        stepTimingStatistics = StepTimingStatistics.empty();
     }
 
-    public void update(int newStepCount, long newAliveCells, long newTimeOutMillis, StepTimingStatistics newStepTimingStatistics) {
-        stepCount = newStepCount;
+    public void update(int newStepCount,
+                       long newAliveCells,
+                       long newTimeOutMillis,
+                       StepTimingStatistics newStepTimingStatistics) {
+        updateCommon(newStepCount, newTimeOutMillis, newStepTimingStatistics);
         aliveCells = newAliveCells;
-        deadCells = totalCells - aliveCells;
+        deadCells = getTotalCells() - aliveCells;
         if (aliveCells > maxAliveCells) {
             maxAliveCells = aliveCells;
         }
-        timeOutMillis = newTimeOutMillis;
-        stepTimingStatistics = newStepTimingStatistics;
-    }
-
-    @Override
-    public int getStepCount() {
-        return stepCount;
     }
 
     public long getAliveCells() {
@@ -52,35 +40,17 @@ public final class ConwayStatistics
         return deadCells;
     }
 
-    @Override
-    public int getTotalCells() {
-        return totalCells;
-    }
-
     public long getMaxAliveCells() {
         return maxAliveCells;
     }
 
     @Override
-    public long timeOutMillis() {
-        return timeOutMillis;
-    }
-
-    @Override
-    public StepTimingStatistics stepTimingStatistics() {
-        return stepTimingStatistics;
-    }
-
-    @Override
     public String toString() {
         return "ConwayStatistics{" +
-                "totalCells=" + totalCells +
-                ", stepCount=" + stepCount +
+                baseToString() +
                 ", aliveCells=" + aliveCells +
                 ", deadCells=" + deadCells +
                 ", maxAliveCells=" + maxAliveCells +
-                ", timeOutMillis=" + timeOutMillis +
-                ", stepTimingStatistics=" + stepTimingStatistics +
                 '}';
     }
 
