@@ -24,7 +24,7 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
     }
 
     @Override
-    public void executeStep() {
+    public final void executeStep() {
         executor().executeStep();
         updateStatistics();
 
@@ -32,6 +32,14 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
         if (executor().currentStepMillis() > timeoutMillis) {
             onTimeout.run();
         }
+    }
+
+    @Override
+    public final void executeSteps(int count, Runnable onStep) {
+        executor().executeSteps(count, () -> {
+            updateStatistics();
+            onStep.run();
+        });
     }
 
     @Override

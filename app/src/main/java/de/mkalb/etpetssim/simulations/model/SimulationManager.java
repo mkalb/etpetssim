@@ -14,6 +14,8 @@ public interface SimulationManager<ENT extends GridEntity, CON extends Simulatio
 
     void executeStep();
 
+    void executeSteps(int count, Runnable onStep);
+
     boolean isRunning();
 
     int stepCount();

@@ -42,13 +42,24 @@ public interface SimulationExecutor<T extends GridEntity> {
     void executeStep();
 
     /**
-     * Executes up to the specified number of simulation steps, or until the simulation is finished.
+     * Executes up to the specified number of simulation steps, or until the simulation is finished or the thread is interrupted.
+     * <p>
+     * After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track progress,
+     * update the UI, or perform other actions after each step.
+     * <p>
+     * The method will terminate early if the simulation is no longer running (as determined by {@link #isRunning()})
+     * or if the current thread is interrupted.
      *
-     * @param count the maximum number of steps to execute
+     * @param count  the maximum number of steps to execute
+     * @param onStep a {@link Runnable} to be called after each executed step
      */
-    default void executeSteps(int count) {
+    default void executeSteps(int count, Runnable onStep) {
         for (int i = 0; (i < count) && isRunning(); i++) {
+            if (Thread.currentThread().isInterrupted()) {
+                break;
+            }
             executeStep();
+            onStep.run();
         }
     }
 
