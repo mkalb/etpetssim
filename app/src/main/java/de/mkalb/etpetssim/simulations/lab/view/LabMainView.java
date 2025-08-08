@@ -158,7 +158,7 @@ public final class LabMainView
     private void resetCanvasAndPainter() {
         viewModel.setLastClickedCoordinate(null);
 
-        double cellEdgeLength = viewModel.getCurrentConfig().cellEdgeLength();
+        double cellEdgeLength = viewModel.getCellEdgeLength();
         GridStructure structure = viewModel.getStructure();
 
         createPainterAndUpdateCanvas(structure, cellEdgeLength);
