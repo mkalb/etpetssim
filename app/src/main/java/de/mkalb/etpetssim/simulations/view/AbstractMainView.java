@@ -88,6 +88,11 @@ public abstract class AbstractMainView<
         return borderPane;
     }
 
+    @Override
+    public void shutdownSimulation() {
+        viewModel.shutdownSimulation();
+    }
+
     protected abstract void registerViewModelListeners();
 
     private void registerTimeoutListener() {

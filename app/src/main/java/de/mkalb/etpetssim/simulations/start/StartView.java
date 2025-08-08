@@ -47,6 +47,11 @@ public final class StartView implements SimulationMainView, SimulationControlVie
     }
 
     @Override
+    public void shutdownSimulation() {
+        // Do nothing
+    }
+
+    @Override
     public Region buildControlRegion() {
         VBox vbox = new VBox();
         vbox.getStyleClass().add(FXStyleClasses.START_CONTROL_VBOX);

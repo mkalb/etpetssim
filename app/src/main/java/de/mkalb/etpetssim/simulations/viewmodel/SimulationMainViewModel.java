@@ -17,4 +17,6 @@ public interface SimulationMainViewModel {
 
     double getCellEdgeLength();
 
+    void shutdownSimulation();
+
 }

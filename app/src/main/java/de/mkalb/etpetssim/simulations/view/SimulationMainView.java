@@ -6,7 +6,6 @@ import javafx.scene.layout.Region;
  * The SimulationMainView interface represents a contract for all simulation views
  * in the application.
  */
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SimulationMainView {
 
     /**
@@ -19,5 +18,19 @@ public interface SimulationMainView {
      * @return the main view region for the simulation
      */
     Region buildMainRegion();
+
+    /**
+     * Shuts down the simulation and releases all associated resources.
+     * <p>
+     * This method should be called when the simulation is no longer needed,
+     * for example, when the user closes the simulation window. It is responsible
+     * for stopping background tasks, terminating executors, and performing any
+     * necessary cleanup to prevent resource leaks.
+     * </p>
+     * <p>
+     * After calling this method, the simulation instance should not be used again.
+     * </p>
+     */
+    void shutdownSimulation();
 
 }

@@ -57,6 +57,11 @@ public final class LabMainViewModel
         lastClickedCoordinate.addListener((_, _, newVal) -> observationViewModel.lastClickedCoordinateProperty().set(newVal));
     }
 
+    @Override
+    public void shutdownSimulation() {
+        // Do nothing
+    }
+
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
         return lastClickedCoordinate;
     }

@@ -30,6 +30,11 @@ public final class WaTorController implements SimulationMainView {
         return waTorViewBuilder.build();
     }
 
+    @Override
+    public void shutdownSimulation() {
+        // Do nothing
+    }
+
     public Optional<WaTorCreature> creatureAt(WaTorCoordinate coordinate) {
         return waTorSimulation.creatureAt(coordinate);
     }

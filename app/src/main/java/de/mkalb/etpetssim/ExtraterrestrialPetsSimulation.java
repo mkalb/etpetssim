@@ -146,7 +146,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         // Scene with a VBox
         VBox vBox = new VBox();
         vBox.getChildren().add(buildSimulationHeaderNode(simulationType));
-        vBox.getChildren().add(SimulationFactory.createInstance(simulationType, stage, this::updateStageScene).region());
+        var instance = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene);
+        stage.setOnCloseRequest(_ -> {
+            AppLogger.info("Shutting down simulation instance: " + instance.simulationType());
+            instance.simulationMainView().shutdownSimulation();
+        });
+        vBox.getChildren().add(instance.region());
         vBox.getStyleClass().add(FXStyleClasses.APP_VBOX);
         Scene scene = new Scene(vBox);
 
