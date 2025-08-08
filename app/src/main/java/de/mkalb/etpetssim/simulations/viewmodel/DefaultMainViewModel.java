@@ -216,4 +216,9 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         logSimulationInfo("Simulation was canceled by the user. ");
     }
 
+    @Override
+    public void shutdownSimulation() {
+        stopTimeline();
+    }
+
 }
