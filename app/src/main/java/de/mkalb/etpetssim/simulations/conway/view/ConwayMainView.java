@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
@@ -56,13 +57,15 @@ public final class ConwayMainView
         observationView.updateObservationLabels();
     }
 
-    private void updateSimulationStep() {
-        ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-        int stepCount = viewModel.getStepCount();
-        AppLogger.info("Drawing canvas for step " + stepCount);
+    private void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
+        if (simulationStepEvent.batchModeRunning()) {
+            // TODO handle batch mode
+        } else {
+            AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
 
-        drawCanvas(currentModel, stepCount);
-        observationView.updateObservationLabels();
+            drawCanvas(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
+            observationView.updateObservationLabels();
+        }
     }
 
     private void fillBackground() {
