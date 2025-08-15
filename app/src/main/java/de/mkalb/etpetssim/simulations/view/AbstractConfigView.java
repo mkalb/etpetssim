@@ -43,7 +43,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
             box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
             if (configControlsEnabledOnlyIfSimulationCanStart) {
                 labeledControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().canStart(),
+                        () -> viewModel.getSimulationState().cannotStart(),
                         viewModel.simulationStateProperty()
                 ));
             }

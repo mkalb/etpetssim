@@ -1,49 +1,95 @@
 package de.mkalb.etpetssim.simulations.model;
 
 /**
- * Defines the possible states of a simulation's lifecycle.
- * Used to represent and control the current execution state of a simulation.
+ * Defines the possible states in the lifecycle of a simulation.
+ * <p>
+ * Each constant represents a distinct phase or control state, used to manage simulation execution
+ * and UI control availability in the application.
+ * <p>
+ * The state determines which actions (start, pause, resume, cancel) are available and
+ * whether configuration controls are enabled or disabled.
  *
+ * @see de.mkalb.etpetssim.simulations.SimulationFactory
+ * @see de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel
+ * @see de.mkalb.etpetssim.simulations.view.DefaultControlView
  */
 public enum SimulationState {
 
-    /** App launched, no simulation yet */
+    /**
+     * Application launched, no simulation has been started yet.
+     * <p>
+     * Configuration controls are enabled. Simulation can be started.
+     */
     INITIAL,
 
-    /** Live mode running (stepwise with UI updates) */
+    /**
+     * Simulation is running in live mode (stepwise execution with UI updates).
+     * <p>
+     * Configuration controls are disabled. Pause and cancel actions are available.
+     */
     RUNNING_LIVE,
 
-    /** Batch mode running (no intermediate UI updates) */
+    /**
+     * Simulation is running in batch mode (continuous execution without intermediate UI updates).
+     * <p>
+     * Configuration controls are disabled. Pause and cancel actions are available.
+     */
     RUNNING_BATCH,
 
-    /** Batch pause requested; waiting for safe point */
+    /**
+     * Pause requested during batch mode; waiting for a safe point to pause.
+     * <p>
+     * Configuration controls are disabled. Cancel action is available.
+     */
     PAUSING_BATCH,
 
-    /** Fully paused (applies to live and batch) */
+    /**
+     * Simulation is fully paused (applies to both live and batch modes).
+     * <p>
+     * Configuration controls are enabled. Resume and cancel actions are available.
+     */
     PAUSED,
 
-    /** Batch cancellation requested; waiting for safe point */
+    /**
+     * Cancellation requested during batch mode; waiting for a safe point to cancel.
+     * <p>
+     * Configuration controls are disabled. No further actions available until cancellation completes.
+     */
     CANCELLING_BATCH,
 
-    /** Batch finalization/cleanup in progress */
-    FINALIZING_BATCH,
-
-    /** Simulation was cancelled */
+    /**
+     * Simulation was cancelled by the user.
+     * <p>
+     * Configuration controls are enabled. Simulation can be started again.
+     */
     CANCELLED,
 
-    /** Simulation completed successfully */
+    /**
+     * Simulation completed successfully.
+     * <p>
+     * Configuration controls are enabled. Simulation can be started again.
+     */
     FINISHED,
 
     /**
-     * Error state: The simulation could not be started or was terminated due to an error.
-     * A completely new simulation can be started from this state.
+     * Error state: Simulation could not be started or was terminated due to an error.
+     * <p>
+     * Configuration controls are enabled. Simulation can be started again.
      */
     ERROR,
 
-    /** Global shutdown initiated */
+    /**
+     * Global shutdown initiated; simulation and resources are being terminated.
+     * <p>
+     * All controls are disabled.
+     */
     SHUTTING_DOWN;
 
-    /** Whether a (re)start of the simulation is allowed */
+    /**
+     * Checks if the simulation can be started from the current state.
+     *
+     * @return true if simulation can be started, false otherwise
+     */
     public boolean canStart() {
         return switch (this) {
             case INITIAL, CANCELLED, FINISHED, ERROR -> true;
@@ -51,53 +97,40 @@ public enum SimulationState {
         };
     }
 
-    /** Whether the simulation is actively running (live or batch) */
+    /**
+     * Checks if the simulation cannot be started from the current state.
+     *
+     * @return true if simulation cannot be started, false otherwise
+     */
+    public boolean cannotStart() {
+        return !canStart();
+    }
+
+    /**
+     * Checks if configuration controls should be disabled in the UI for the current state.
+     *
+     * @return true if configuration controls are disabled, false otherwise
+     */
+    public boolean isControlConfigDisabled() {
+        return !(canStart() || isPaused());
+    }
+
+    /**
+     * Checks if the simulation is currently running (live or batch mode).
+     *
+     * @return true if simulation is running, false otherwise
+     */
     public boolean isRunning() {
         return (this == RUNNING_LIVE) || (this == RUNNING_BATCH);
     }
 
-    /** Whether the simulation is fully paused (not just pausing) */
+    /**
+     * Checks if the simulation is currently paused.
+     *
+     * @return true if simulation is paused, false otherwise
+     */
     public boolean isPaused() {
         return this == PAUSED;
-    }
-
-    /** Whether a batch cancellation is in progress */
-    public boolean isCancelling() {
-        return this == CANCELLING_BATCH;
-    }
-
-    /** Whether batch finalization/cleanup is in progress */
-    public boolean isFinalizing() {
-        return this == FINALIZING_BATCH;
-    }
-
-    /** Whether a global shutdown is in progress */
-    public boolean isShuttingDown() {
-        return this == SHUTTING_DOWN;
-    }
-
-    /** Whether the simulation reached a terminal end state */
-    public boolean isTerminal() {
-        return switch (this) {
-            case CANCELLED, FINISHED, ERROR -> true;
-            default -> false;
-        };
-    }
-
-    /** Optional: lock user interactions and scheduling during teardown */
-    public boolean isInteractionLocked() {
-        return isShuttingDown() || isCancelling() || isFinalizing();
-    }
-
-    public boolean canTransitionTo(SimulationState next) {
-        return switch (this) {
-            case INITIAL -> (next == RUNNING_LIVE) || (next == RUNNING_BATCH) || (next == SHUTTING_DOWN);
-            case RUNNING_LIVE -> (next == PAUSED) || (next == SHUTTING_DOWN);
-            case RUNNING_BATCH ->
-                    (next == PAUSING_BATCH) || (next == CANCELLING_BATCH) || (next == FINALIZING_BATCH) || (next == SHUTTING_DOWN);
-            // TODO Add all states
-            default -> false;
-        };
     }
 
 }

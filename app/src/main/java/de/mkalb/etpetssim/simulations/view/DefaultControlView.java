@@ -42,12 +42,15 @@ public final class DefaultControlView
                 }, viewModel.simulationStateProperty())
         );
         actionButton.disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().canStart() && !viewModel.getSimulationState().isRunning() && !viewModel.getSimulationState().isPaused(),
+                        () -> !viewModel.getSimulationState().canStart()
+                                && !viewModel.getSimulationState().isRunning()
+                                && !viewModel.getSimulationState().isPaused(),
                         viewModel.simulationStateProperty()
                 )
         );
         cancelButton.disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().isRunning() && !viewModel.getSimulationState().isPaused(),
+                        () -> !viewModel.getSimulationState().isRunning()
+                                && !viewModel.getSimulationState().isPaused(),
                         viewModel.simulationStateProperty()
                 )
         );
@@ -65,7 +68,7 @@ public final class DefaultControlView
         );
 
         simulationModeControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().canStart() && !viewModel.getSimulationState().isPaused(),
+                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
                         viewModel.simulationStateProperty()
                 )
         );
@@ -80,7 +83,7 @@ public final class DefaultControlView
         );
 
         stepDurationControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().canStart() && !viewModel.getSimulationState().isPaused(),
+                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
                         viewModel.simulationStateProperty()
                 )
         );

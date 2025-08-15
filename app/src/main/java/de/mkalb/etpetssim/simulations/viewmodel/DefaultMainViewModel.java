@@ -22,15 +22,19 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     private static final double TIMEOUT_FACTOR = 0.5d;
 
     private final DefaultControlViewModel controlViewModel;
-    private final SimulationTimer simulationTimer;
+
+    // Manager
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
-    private final ExecutorService batchExecutor = Executors.newSingleThreadExecutor();
-    private final boolean batchMode = false; // TODO Implement input for batchMode
+    // Execution (live or batch)
+    private final SimulationTimer liveTimer;
+    private final ExecutorService batchExecutor;
     private @Nullable AbstractTimedSimulationManager<ENT, CON, STA> simulationManager;
-    private Runnable simulationInitializedListener = () -> {};
-    private Consumer<SimulationStepEvent> simulationStepListener = _ -> {};
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
+
+    // Listener
+    private Runnable simulationInitializedListener = () -> {};
+    private Consumer<SimulationStepEvent> simulationStepListener = _ -> {};
 
     public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
                                 SimulationConfigViewModel<CON> configViewModel,
@@ -40,7 +44,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
-        simulationTimer = new SimulationTimer(this::doSimulationStep);
+        liveTimer = new SimulationTimer(this::runLiveStep);
+        batchExecutor = Executors.newSingleThreadExecutor();
 
         controlViewModel.actionButtonRequestedProperty().addListener((_, _, newVal) -> {
             if (newVal) {
@@ -91,6 +96,12 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return simulationManager != null;
     }
 
+    @Override
+    public double getCellEdgeLength() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        return simulationManager.config().cellEdgeLength();
+    }
+
     private void logSimulationInfo(String message) {
         if (simulationManager == null) {
             AppLogger.info(Thread.currentThread().getName() + " : " + message);
@@ -101,25 +112,25 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
 
     private void handleSimulationTimeout() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        stopTimeline();
-        setSimulationState(SimulationState.PAUSED);
-        setSimulationTimeout(true);
+        if ((getSimulationState() == SimulationState.RUNNING_LIVE) && isLiveRunning()) {
+            stopLiveTimer();
+            setSimulationState(SimulationState.PAUSED);
+            setSimulationTimeout(true);
 
-        logSimulationInfo("Simulation has been paused because a timeout has occurred.");
+            logSimulationInfo("Simulation has been paused because a timeout has occurred.");
+        }
     }
 
     private void configureSimulationTimeout() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        double stepDuration = getStepDuration();
-        long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
-        simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
+        if (controlViewModel.isLiveMode()) {
+            double stepDuration = getStepDuration();
+            long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
+            simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
+        } else if (controlViewModel.isBatchMode()) {
+            simulationManager.configureStepTimeout(Long.MAX_VALUE, () -> {});
+        }
         setSimulationTimeout(false);
-    }
-
-    @Override
-    public double getCellEdgeLength() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.config().cellEdgeLength();
     }
 
     private double getStepDuration() {
@@ -130,19 +141,19 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         observationViewModel.setStatistics(statistics);
     }
 
-    private void doSimulationStep() {
-        if (!simulationTimer.isRunning()) {
+    private void runLiveStep() {
+        if (!liveTimer.isRunning()) {
             AppLogger.error("Simulation timer is not running, cannot execute step.");
             return;
         }
         if (simulationManager == null) {
             AppLogger.error("Simulation manager is not initialized, cannot execute step.");
-            stopTimeline();
+            stopLiveTimer();
             return;
         }
         if (getSimulationState() != SimulationState.RUNNING_LIVE) {
-            AppLogger.error("Simulation is not in RUNNING state, cannot execute step.");
-            stopTimeline();
+            AppLogger.error("Simulation is not in RUNNING_LIVE state, cannot execute step.");
+            stopLiveTimer();
             return;
         }
 
@@ -153,7 +164,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
 
         if (!simulationManager.isRunning()) {
-            stopTimeline();
+            stopLiveTimer();
             setSimulationState(SimulationState.FINISHED);
             logSimulationInfo("Simulation has ended itself.");
         }
@@ -167,8 +178,9 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return Optional.of(config);
     }
 
-    private void startSimulation(CON config) {
+    private void createAndInitSimulation(CON config) {
         simulationManager = simulationManagerFactory.apply(config);
+
         configureSimulationTimeout();
 
         updateObservationStatistics(simulationManager.statistics());
@@ -176,17 +188,24 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         simulationInitializedListener.run();
     }
 
-    private void startTimeline() {
-        simulationTimer.start(Duration.millis(getStepDuration()));
+    private void startLiveTimer() {
+        liveTimer.start(Duration.millis(getStepDuration()));
     }
 
-    private void stopTimeline() {
-        simulationTimer.stop();
+    private void stopLiveTimer() {
+        liveTimer.stop();
     }
 
     private void handleActionButton() {
         if (getSimulationState().canStart()) {
+            if (isLiveRunning()) {
+                setSimulationState(SimulationState.ERROR);
+                AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is already running, cannot start a new simulation.");
+                // TODO show message at view
+                return;
+            }
             if (isBatchRunning()) {
+                setSimulationState(SimulationState.ERROR);
                 AppLogger.error(Thread.currentThread().getName() + " : " + "A batch is already running, cannot start a new simulation.");
                 // TODO show message at view
                 return;
@@ -196,49 +215,150 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                 setSimulationState(SimulationState.ERROR);
                 AppLogger.warn("Invalid configuration: " + config);
                 // TODO show message at view
-            } else if (batchMode) {
-                cancelBatch();
-                setSimulationState(SimulationState.RUNNING_BATCH);
-                simulationManager = simulationManagerFactory.apply(config.get());
-                simulationManager.configureStepTimeout(Long.MAX_VALUE, () -> {});
-                setSimulationTimeout(false);
-                updateObservationStatistics(simulationManager.statistics());
-                simulationInitializedListener.run();
-                runBatchSteps(500);
-                logSimulationInfo("Simulation batch was started by the user.  ");
-            } else {
+            } else if (controlViewModel.isLiveMode()) {
+                createAndInitSimulation(config.get());
                 setSimulationState(SimulationState.RUNNING_LIVE);
-                startSimulation(config.get());
-                startTimeline();
-                logSimulationInfo("Simulation was started by the user.  ");
+                logSimulationInfo("Simulation (live) was started by the user.  ");
+                startLiveTimer();
+            } else if (controlViewModel.isBatchMode()) {
+                createAndInitSimulation(config.get());
+                setSimulationState(SimulationState.RUNNING_BATCH);
+                logSimulationInfo("Simulation (batch) was started by the user.  ");
+                runBatchSteps(100);
             }
         } else if (getSimulationState() == SimulationState.RUNNING_LIVE) {
-            stopTimeline();
+            stopLiveTimer();
             setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation (live) was paused by the user.   ");
-        } else if (getSimulationState().isPaused()) {
-            setSimulationState(SimulationState.RUNNING_LIVE);
-            configureSimulationTimeout();
-            startTimeline();
-            logSimulationInfo("Simulation was resumed by the user.  ");
+        } else if (getSimulationState() == SimulationState.RUNNING_BATCH) {
+            setSimulationState(SimulationState.PAUSING_BATCH);
+            logSimulationInfo("Simulation (batch) is pausing, waiting for batch to finish.  ");
+            cancelBatch();
+        } else if (getSimulationState() == SimulationState.PAUSED) {
+            if (controlViewModel.isLiveMode()) {
+                configureSimulationTimeout();
+                setSimulationState(SimulationState.RUNNING_LIVE);
+                logSimulationInfo("Simulation (live) was resumed by the user.  ");
+                startLiveTimer();
+            } else if (controlViewModel.isBatchMode()) {
+                configureSimulationTimeout();
+                setSimulationState(SimulationState.RUNNING_BATCH);
+                logSimulationInfo("Simulation (batch) was resumed by the user.  ");
+                runBatchSteps(100);
+            }
         } else {
+            setSimulationState(SimulationState.ERROR);
             AppLogger.error(Thread.currentThread().getName() + " : " + "Cannot handle action button in current state: " + getSimulationState());
         }
     }
 
     private void handleCancelButton() {
         if (getSimulationState() == SimulationState.RUNNING_LIVE) {
-            stopTimeline();
+            stopLiveTimer();
             setSimulationState(SimulationState.CANCELLED);
             setSimulationTimeout(false);
             logSimulationInfo("Simulation was canceled by the user. ");
         } else if (getSimulationState() == SimulationState.RUNNING_BATCH) {
+            setSimulationState(SimulationState.CANCELLING_BATCH);
             cancelBatch();
-            // TODO Optimize cancel (batch can sill be running)
         } else if (getSimulationState() == SimulationState.PAUSED) {
             setSimulationState(SimulationState.CANCELLED);
             setSimulationTimeout(false);
             logSimulationInfo("Simulation was canceled by the user. ");
+        }
+    }
+
+    private boolean isLiveRunning() {
+        return liveTimer.isRunning();
+    }
+
+    private boolean isBatchRunning() {
+        Thread thread = batchThread;
+        return (thread != null) && thread.isAlive();
+    }
+
+    private void runBatchSteps(int count) {
+        if (getSimulationState() != SimulationState.RUNNING_BATCH) {
+            AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING_BATCH state, cannot execute steps.");
+            return;
+        }
+        if (isLiveRunning()) {
+            AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot execute steps in batch mode.");
+            return;
+        }
+        if (isBatchRunning()) {
+            AppLogger.error(Thread.currentThread().getName() + " : " + "A batch is already running. New batch will not be started.");
+            return;
+        }
+
+        batchFuture = batchExecutor.submit(() -> {
+            batchThread = Thread.currentThread();
+            try {
+                if (getSimulationState() != SimulationState.RUNNING_BATCH) {
+                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING_BATCH state, cannot execute steps.");
+                    return;
+                }
+                if (isLiveRunning()) {
+                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot execute steps in batch mode.");
+                    return;
+                }
+                if (simulationManager == null) {
+                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation manager is not initialized, cannot execute steps.");
+                    stopLiveTimer();
+                    return;
+                }
+
+                simulationManager.executeSteps(count, () -> {
+                    SimulationStepEvent stepEvent = new SimulationStepEvent(true, simulationManager.stepCount());
+                    Platform.runLater(() -> {
+                        if (getSimulationState() == SimulationState.RUNNING_BATCH) {
+                            simulationStepListener.accept(stepEvent);
+                        }
+                    });
+                });
+                logSimulationInfo("Batch execution finished. Plan to finish batch execution in UI thread.");
+                Platform.runLater(() -> {
+                    if (getSimulationState() == SimulationState.RUNNING_BATCH) {
+                        logSimulationInfo("Finishing batch execution at state RUNNING_BATCH.");
+                        if (!simulationManager.isRunning()) {
+                            setSimulationState(SimulationState.FINISHED);
+                            logSimulationInfo("Simulation has ended itself.");
+                        } else {
+                            setSimulationState(SimulationState.PAUSED);
+                        }
+                        updateObservationStatistics(simulationManager.statistics());
+                        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
+                    } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
+                        logSimulationInfo("Finishing batch execution at state PAUSING_BATCH.");
+                        if (!simulationManager.isRunning()) {
+                            setSimulationState(SimulationState.FINISHED);
+                            logSimulationInfo("Simulation has ended itself.");
+                        } else {
+                            setSimulationState(SimulationState.PAUSED);
+                        }
+                        updateObservationStatistics(simulationManager.statistics());
+                        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
+                    } else if (getSimulationState() == SimulationState.CANCELLING_BATCH) {
+                        logSimulationInfo("Finishing batch execution at state CANCELLING_BATCH.");
+                        setSimulationState(SimulationState.CANCELLED);
+                        updateObservationStatistics(simulationManager.statistics());
+                        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
+                    } else if (getSimulationState() == SimulationState.SHUTTING_DOWN) {
+                        logSimulationInfo("Finishing batch execution at state SHUTTING_DOWN.");
+                    } else {
+                        AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in a valid state for batch execution: " + getSimulationState());
+                    }
+                });
+            } finally {
+                batchThread = null;
+                logSimulationInfo("Batch thread has finished execution.");
+            }
+        });
+    }
+
+    private void cancelBatch() {
+        if ((batchFuture != null) && !batchFuture.isDone()) {
+            batchFuture.cancel(true); // Attempts to interrupt
         }
     }
 
@@ -254,95 +374,10 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         }
     }
 
-    public boolean isBatchRunning() {
-        return (batchThread != null) && batchThread.isAlive();
-    }
-
-    public void runBatchSteps(int count) {
-        if (isBatchRunning()) {
-            AppLogger.warn(Thread.currentThread().getName() + " : " + "A batch is already running. New batch will not be started.");
-            return;
-        }
-
-        batchFuture = batchExecutor.submit(() -> {
-            batchThread = Thread.currentThread();
-            try {
-            /*    if (simulationTimer.isRunning()) {
-                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot execute steps.");
-                    return;
-                }
-                if (simulationManager == null) {
-                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation manager is not initialized, cannot execute steps.");
-                    stopTimeline();
-                    return;
-                }
-                if (getSimulationState() != SimulationState.RUNNING) {
-                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING state, cannot execute steps.");
-                    stopTimeline();
-                    return;
-                }
-
-             */
-
-                simulationManager.executeSteps(count, () -> {
-                    Platform.runLater(() -> {
-                        simulationStepListener.accept(new SimulationStepEvent(true, simulationManager.stepCount()));
-                    });
-                });
-                Platform.runLater(() -> {
-               /* if (!isBatchRunning()) { // TODO warum tritt das auf?
-                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation batch has not been started correctly.");
-                    return;
-                }
-
-
-                    if (simulationTimer.isRunning()) {
-                        AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot finish batch mode.");
-                        return;
-                    }
-                    if (simulationManager == null) {
-                        AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation manager is not " +
-                                "initialized, cannot finish batch mode.");
-                        stopTimeline();
-                        return;
-                    }
-                    if (getSimulationState() != SimulationState.RUNNING) {
-                        AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING state, cannot finish batch mode.");
-                        stopTimeline();
-                        return;
-                    }
-
-                */
-
-                    setSimulationState(SimulationState.PAUSED);
-                    updateObservationStatistics(simulationManager.statistics());
-                    simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
-
-                    // TODO Check if cancelled
-                    if (!simulationManager.isRunning()) {
-                        // TODO setSimulationState(SimulationState.READY); // Set state to READY when finished
-                        logSimulationInfo("Simulation has ended itself.");
-                    } else {
-                        logSimulationInfo("Simulation was paused after batch execution.");
-                    }
-
-                });
-            } finally {
-                batchThread = null;
-            }
-        });
-    }
-
-    public void cancelBatch() {
-        if ((batchFuture != null) && !batchFuture.isDone()) {
-            batchFuture.cancel(true); // Attempts to interrupt
-        }
-    }
-
     @Override
     public void shutdownSimulation() {
         setSimulationState(SimulationState.SHUTTING_DOWN);
-        stopTimeline();
+        stopLiveTimer();
         cancelBatch();
         shutdownThreadExecutor();
     }
