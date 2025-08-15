@@ -75,14 +75,18 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return simulationManager.structure();
     }
 
-    public ReadableGridModel<ENT> getCurrentModel() {
+    @Override
+    public double getCellEdgeLength() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentModel();
+        return simulationManager.config().cellEdgeLength();
     }
 
-    public int getStepCount() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.stepCount();
+    @Override
+    public void shutdownSimulation() {
+        setSimulationState(SimulationState.SHUTTING_DOWN);
+        stopLiveTimer();
+        cancelBatch();
+        shutdownBatchExecutor();
     }
 
     @Override
@@ -96,104 +100,16 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return simulationManager != null;
     }
 
-    @Override
-    public double getCellEdgeLength() {
+    // TODO Add to AbstractMainViewModel
+    public ReadableGridModel<ENT> getCurrentModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.config().cellEdgeLength();
+        return simulationManager.currentModel();
     }
 
-    private void logSimulationInfo(String message) {
-        if (simulationManager == null) {
-            AppLogger.info(Thread.currentThread().getName() + " : " + message);
-        } else {
-            AppLogger.info(Thread.currentThread().getName() + " : " + message + " config=" + simulationManager.config() + ", statistics=" + simulationManager.statistics());
-        }
-    }
-
-    private void handleSimulationTimeout() {
+    // TODO Add to AbstractMainViewModel
+    public int getStepCount() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        if ((getSimulationState() == SimulationState.RUNNING_LIVE) && isLiveRunning()) {
-            stopLiveTimer();
-            setSimulationState(SimulationState.PAUSED);
-            setSimulationTimeout(true);
-
-            logSimulationInfo("Simulation has been paused because a timeout has occurred.");
-        }
-    }
-
-    private void configureSimulationTimeout() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        if (controlViewModel.isLiveMode()) {
-            double stepDuration = getStepDuration();
-            long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
-            simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
-        } else if (controlViewModel.isBatchMode()) {
-            simulationManager.configureStepTimeout(Long.MAX_VALUE, () -> {});
-        }
-        setSimulationTimeout(false);
-    }
-
-    private double getStepDuration() {
-        return controlViewModel.stepDurationProperty().getValue();
-    }
-
-    private void updateObservationStatistics(STA statistics) {
-        observationViewModel.setStatistics(statistics);
-    }
-
-    private void runLiveStep() {
-        if (!liveTimer.isRunning()) {
-            AppLogger.error("Simulation timer is not running, cannot execute step.");
-            return;
-        }
-        if (simulationManager == null) {
-            AppLogger.error("Simulation manager is not initialized, cannot execute step.");
-            stopLiveTimer();
-            return;
-        }
-        if (getSimulationState() != SimulationState.RUNNING_LIVE) {
-            AppLogger.error("Simulation is not in RUNNING_LIVE state, cannot execute step.");
-            stopLiveTimer();
-            return;
-        }
-
-        simulationManager.executeStep();
-
-        updateObservationStatistics(simulationManager.statistics());
-
-        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
-
-        if (!simulationManager.isRunning()) {
-            stopLiveTimer();
-            setSimulationState(SimulationState.FINISHED);
-            logSimulationInfo("Simulation has ended itself.");
-        }
-    }
-
-    private Optional<CON> createValidConfig() {
-        CON config = configViewModel.getConfig();
-        if (!config.isValid()) {
-            return Optional.empty();
-        }
-        return Optional.of(config);
-    }
-
-    private void createAndInitSimulation(CON config) {
-        simulationManager = simulationManagerFactory.apply(config);
-
-        configureSimulationTimeout();
-
-        updateObservationStatistics(simulationManager.statistics());
-
-        simulationInitializedListener.run();
-    }
-
-    private void startLiveTimer() {
-        liveTimer.start(Duration.millis(getStepDuration()));
-    }
-
-    private void stopLiveTimer() {
-        liveTimer.stop();
+        return simulationManager.stepCount();
     }
 
     private void handleActionButton() {
@@ -268,13 +184,74 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         }
     }
 
-    private boolean isLiveRunning() {
-        return liveTimer.isRunning();
+    private Optional<CON> createValidConfig() {
+        CON config = configViewModel.getConfig();
+        if (!config.isValid()) {
+            return Optional.empty();
+        }
+        return Optional.of(config);
     }
 
-    private boolean isBatchRunning() {
-        Thread thread = batchThread;
-        return (thread != null) && thread.isAlive();
+    private void createAndInitSimulation(CON config) {
+        simulationManager = simulationManagerFactory.apply(config);
+
+        configureSimulationTimeout();
+
+        updateObservationStatistics(simulationManager.statistics());
+
+        simulationInitializedListener.run();
+    }
+
+    private void configureSimulationTimeout() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        if (controlViewModel.isLiveMode()) {
+            double stepDuration = getStepDuration();
+            long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
+            simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
+        } else if (controlViewModel.isBatchMode()) {
+            simulationManager.configureStepTimeout(Long.MAX_VALUE, () -> {});
+        }
+        setSimulationTimeout(false);
+    }
+
+    private void handleSimulationTimeout() {
+        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
+        if ((getSimulationState() == SimulationState.RUNNING_LIVE) && isLiveRunning()) {
+            stopLiveTimer();
+            setSimulationState(SimulationState.PAUSED);
+            setSimulationTimeout(true);
+
+            logSimulationInfo("Simulation has been paused because a timeout has occurred.");
+        }
+    }
+
+    private void runLiveStep() {
+        if (!liveTimer.isRunning()) {
+            AppLogger.error("Simulation timer is not running, cannot execute step.");
+            return;
+        }
+        if (simulationManager == null) {
+            AppLogger.error("Simulation manager is not initialized, cannot execute step.");
+            stopLiveTimer();
+            return;
+        }
+        if (getSimulationState() != SimulationState.RUNNING_LIVE) {
+            AppLogger.error("Simulation is not in RUNNING_LIVE state, cannot execute step.");
+            stopLiveTimer();
+            return;
+        }
+
+        simulationManager.executeStep();
+
+        updateObservationStatistics(simulationManager.statistics());
+
+        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
+
+        if (!simulationManager.isRunning()) {
+            stopLiveTimer();
+            setSimulationState(SimulationState.FINISHED);
+            logSimulationInfo("Simulation has ended itself.");
+        }
     }
 
     private void runBatchSteps(int count) {
@@ -356,13 +333,30 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         });
     }
 
+    private boolean isLiveRunning() {
+        return liveTimer.isRunning();
+    }
+
+    private boolean isBatchRunning() {
+        Thread thread = batchThread;
+        return (thread != null) && thread.isAlive();
+    }
+
+    private void startLiveTimer() {
+        liveTimer.start(Duration.millis(getStepDuration()));
+    }
+
+    private void stopLiveTimer() {
+        liveTimer.stop();
+    }
+
     private void cancelBatch() {
         if ((batchFuture != null) && !batchFuture.isDone()) {
             batchFuture.cancel(true); // Attempts to interrupt
         }
     }
 
-    private void shutdownThreadExecutor() {
+    private void shutdownBatchExecutor() {
         batchExecutor.shutdown();
         try {
             if (!batchExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
@@ -374,12 +368,20 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         }
     }
 
-    @Override
-    public void shutdownSimulation() {
-        setSimulationState(SimulationState.SHUTTING_DOWN);
-        stopLiveTimer();
-        cancelBatch();
-        shutdownThreadExecutor();
+    private double getStepDuration() {
+        return controlViewModel.stepDurationProperty().getValue();
+    }
+
+    private void updateObservationStatistics(STA statistics) {
+        observationViewModel.setStatistics(statistics);
+    }
+
+    private void logSimulationInfo(String message) {
+        if (simulationManager == null) {
+            AppLogger.info(Thread.currentThread().getName() + " : " + message);
+        } else {
+            AppLogger.info(Thread.currentThread().getName() + " : " + message + " config=" + simulationManager.config() + ", statistics=" + simulationManager.statistics());
+        }
     }
 
 }
