@@ -58,8 +58,9 @@ public final class LabSimulationManager
     }
 
     @Override
-    public void executeSteps(int count, Runnable onStep) {
+    public int executeSteps(int count, Runnable onStep) {
         // Do nothing
+        return 0;
     }
 
     @Override

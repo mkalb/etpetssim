@@ -35,11 +35,13 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
     }
 
     @Override
-    public final void executeSteps(int count, Runnable onStep) {
+    public final int executeSteps(int count, Runnable onStep) {
+        int startStepCount = stepCount();
         executor().executeSteps(count, () -> {
             updateStatistics();
             onStep.run();
         });
+        return stepCount() - startStepCount;
     }
 
     @Override
