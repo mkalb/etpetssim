@@ -25,12 +25,12 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     private final SimulationTimer simulationTimer;
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
     private final ExecutorService batchExecutor = Executors.newSingleThreadExecutor();
-    private final boolean batchMode = false; // TODO Implement input for batchMode
+    private final boolean batchMode = true; // TODO Implement input for batchMode
     private @Nullable AbstractTimedSimulationManager<ENT, CON, STA> simulationManager;
     private Runnable simulationInitializedListener = () -> {};
     private Consumer<SimulationStepEvent> simulationStepListener = _ -> {};
     private @Nullable Future<?> batchFuture;
-
+    private volatile @Nullable Thread batchThread;
     public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
                                 SimulationConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
@@ -189,6 +189,11 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         cancelBatch();
         switch (getSimulationState()) {
             case READY -> {
+                if (isBatchRunning()) {
+                    AppLogger.error(Thread.currentThread().getName() + " : " + "A batch is already running, cannot start a new simulation.");
+                    // TODO show message at view
+                    return;
+                }
                 Optional<CON> config = createValidConfig();
                 if (config.isEmpty()) {
                     simulationManager = null;
@@ -230,6 +235,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         setSimulationState(SimulationState.READY);
         setSimulationTimeout(false);
         logSimulationInfo("Simulation was canceled by the user. ");
+        // TODO Optimize cancel (batch can sill be running)
     }
 
     private void shutdownThreadExecutor() {
@@ -245,7 +251,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     }
 
     public boolean isBatchRunning() {
-        return (batchFuture != null) && !batchFuture.isDone();
+        return (batchThread != null) && batchThread.isAlive();
     }
 
     public void runBatchSteps(int count) {
@@ -255,61 +261,67 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         }
 
         batchFuture = batchExecutor.submit(() -> {
-            if (simulationTimer.isRunning()) {
-                AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot execute steps.");
-                return;
-            }
-            if (simulationManager == null) {
-                AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation manager is not initialized, cannot execute steps.");
-                stopTimeline();
-                return;
-            }
-            if (getSimulationState() != SimulationState.RUNNING) {
-                AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING state, cannot execute steps.");
-                stopTimeline();
-                return;
-            }
+            batchThread = Thread.currentThread();
+            try {
+                if (simulationTimer.isRunning()) {
+                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot execute steps.");
+                    return;
+                }
+                if (simulationManager == null) {
+                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation manager is not initialized, cannot execute steps.");
+                    stopTimeline();
+                    return;
+                }
+                if (getSimulationState() != SimulationState.RUNNING) {
+                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING state, cannot execute steps.");
+                    stopTimeline();
+                    return;
+                }
 
-            simulationManager.executeSteps(count, () -> {
-                Platform.runLater(() -> {
-                    simulationStepListener.accept(new SimulationStepEvent(true, simulationManager.stepCount()));
+                simulationManager.executeSteps(count, () -> {
+                    Platform.runLater(() -> {
+                        simulationStepListener.accept(new SimulationStepEvent(true, simulationManager.stepCount()));
+                    });
                 });
-            });
-            Platform.runLater(() -> {
+                Platform.runLater(() -> {
                /* if (!isBatchRunning()) { // TODO warum tritt das auf?
                     AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation batch has not been started correctly.");
                     return;
                 }
 
                 */
-                if (simulationTimer.isRunning()) {
-                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot execute steps.");
-                    return;
-                }
-                if (simulationManager == null) {
-                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation manager is not initialized, cannot execute step.");
-                    stopTimeline();
-                    return;
-                }
-                if (getSimulationState() != SimulationState.RUNNING) {
-                    AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING state, cannot execute step.");
-                    stopTimeline();
-                    return;
-                }
+                    if (simulationTimer.isRunning()) {
+                        AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation timer is running, cannot finish batch mode.");
+                        return;
+                    }
+                    if (simulationManager == null) {
+                        AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation manager is not " +
+                                "initialized, cannot finish batch mode.");
+                        stopTimeline();
+                        return;
+                    }
+                    if (getSimulationState() != SimulationState.RUNNING) {
+                        AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in RUNNING state, cannot finish batch mode.");
+                        stopTimeline();
+                        return;
+                    }
 
-                setSimulationState(SimulationState.PAUSED);
-                updateObservationStatistics(simulationManager.statistics());
-                simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
+                    setSimulationState(SimulationState.PAUSED);
+                    updateObservationStatistics(simulationManager.statistics());
+                    simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
 
-                // TODO Check if cancelled
-                if (!simulationManager.isRunning()) {
-                    setSimulationState(SimulationState.READY); // Set state to READY when finished
-                    logSimulationInfo("Simulation has ended itself.");
-                } else {
-                    logSimulationInfo("Simulation was paused after batch execution.");
-                }
+                    // TODO Check if cancelled
+                    if (!simulationManager.isRunning()) {
+                        setSimulationState(SimulationState.READY); // Set state to READY when finished
+                        logSimulationInfo("Simulation has ended itself.");
+                    } else {
+                        logSimulationInfo("Simulation was paused after batch execution.");
+                    }
 
-            });
+                });
+            } finally {
+                batchThread = null;
+            }
         });
     }
 
