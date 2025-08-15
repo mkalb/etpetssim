@@ -60,6 +60,7 @@ public final class ConwayMainView
     private void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
         if (simulationStepEvent.batchModeRunning()) {
             // TODO handle batch mode
+            AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
         } else {
             AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
 
