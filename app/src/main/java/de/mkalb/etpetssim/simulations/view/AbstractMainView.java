@@ -150,6 +150,8 @@ public abstract class AbstractMainView<
                 (baseCanvas.getHeight() < basePainter.gridDimension2D().getHeight())) {
             AppLogger.warn("Canvas size is smaller than the grid dimension.");
             updateNotification(AppLocalization.getText(AppLocalizationKeys.NOTIFICATION_CANVAS_SIZE_LIMIT));
+        } else {
+            clearNotification();
         }
     }
 
