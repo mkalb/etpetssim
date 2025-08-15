@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import javafx.beans.binding.Bindings;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -36,14 +36,16 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
     }
 
     @SafeVarargs
-    protected final TitledPane createConfigTitledPane(String title, boolean bindDisableToSimulationStateReady,
+    protected final TitledPane createConfigTitledPane(String title, boolean configControlsEnabledOnlyIfSimulationCanStart,
                                                       FXComponentFactory.LabeledControl<? extends Region>... content) {
         VBox box = new VBox();
         for (FXComponentFactory.LabeledControl<? extends Region> labeledControl : content) {
             box.getChildren().addAll(labeledControl.label(), labeledControl.controlRegion());
-            if (bindDisableToSimulationStateReady) {
-                labeledControl.controlRegion().disableProperty().bind(
-                        viewModel.simulationStateProperty().isNotEqualTo(SimulationState.READY));
+            if (configControlsEnabledOnlyIfSimulationCanStart) {
+                labeledControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
+                        () -> !viewModel.getSimulationState().canStart(),
+                        viewModel.simulationStateProperty()
+                ));
             }
         }
         box.getStyleClass().add(FXStyleClasses.CONFIG_VBOX);

@@ -24,7 +24,7 @@ public final class LabMainViewModel
     private Runnable drawModelRequestedListener = () -> {};
     private Runnable drawTestRequestedListener = () -> {};
 
-    public LabMainViewModel(SimpleObjectProperty<SimulationState> simulationState,
+    public LabMainViewModel(ObjectProperty<SimulationState> simulationState,
                             LabConfigViewModel configViewModel,
                             LabControlViewModel controlViewModel,
                             LabObservationViewModel observationViewModel) {
@@ -119,7 +119,7 @@ public final class LabMainViewModel
     }
 
     public void handleConfigChanged() {
-        setSimulationState(SimulationState.READY);
+        setSimulationState(SimulationState.INITIAL);
         // Reset the simulation manager if it exists
         simulationManager = null;
 
@@ -127,7 +127,7 @@ public final class LabMainViewModel
     }
 
     public void handleDrawRequested() {
-        setSimulationState(SimulationState.RUNNING);
+        setSimulationState(SimulationState.RUNNING_LIVE);
 
         // Reset the simulation manager if it exists
         simulationManager = null;
@@ -146,6 +146,8 @@ public final class LabMainViewModel
         AppLogger.info("NonDefaultCells: " + simulationManager.currentModel().nonDefaultCells().count());
 
         drawRequestedListener.run();
+
+        setSimulationState(SimulationState.PAUSED);
     }
 
     public void handleDrawModelRequested() {

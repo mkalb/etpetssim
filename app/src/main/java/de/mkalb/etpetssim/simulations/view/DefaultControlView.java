@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -30,14 +29,27 @@ public final class DefaultControlView
         Button cancelButton = createControlButton(textCancel, true);
 
         actionButton.textProperty().bind(
-                Bindings.createStringBinding(() -> switch (viewModel.getSimulationState()) {
-                    case READY -> textStart;
-                    case RUNNING -> textPause;
-                    case PAUSED -> textResume;
+                Bindings.createStringBinding(() -> {
+                    if (viewModel.getSimulationState().canStart()) {
+                        return textStart;
+                    } else if (viewModel.getSimulationState().isRunning()) {
+                        return textPause;
+                    } else if (viewModel.getSimulationState().isPaused()) {
+                        return textResume;
+                    } else {
+                        return "...";
+                    }
                 }, viewModel.simulationStateProperty())
         );
-        cancelButton.disableProperty().bind(
-                viewModel.simulationStateProperty().isEqualTo(SimulationState.READY)
+        actionButton.disableProperty().bind(Bindings.createBooleanBinding(
+                        () -> !viewModel.getSimulationState().canStart() && !viewModel.getSimulationState().isRunning() && !viewModel.getSimulationState().isPaused(),
+                        viewModel.simulationStateProperty()
+                )
+        );
+        cancelButton.disableProperty().bind(Bindings.createBooleanBinding(
+                        () -> !viewModel.getSimulationState().isRunning() && !viewModel.getSimulationState().isPaused(),
+                        viewModel.simulationStateProperty()
+                )
         );
 
         actionButton.setOnAction(_ -> viewModel.requestActionButton());
@@ -53,8 +65,10 @@ public final class DefaultControlView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        stepDurationControl.controlRegion().disableProperty().bind(
-                viewModel.simulationStateProperty().isEqualTo(SimulationState.RUNNING)
+        stepDurationControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
+                        () -> !viewModel.getSimulationState().canStart() && !viewModel.getSimulationState().isPaused(),
+                        viewModel.simulationStateProperty()
+                )
         );
 
         VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.controlRegion());

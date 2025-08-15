@@ -23,8 +23,8 @@ public final class LabControlView
         drawButtonModel.setOnAction(_ -> viewModel.requestDrawModel());
         drawButtonTest.setOnAction(_ -> viewModel.requestDrawTest());
 
-        drawButtonModel.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.READY));
-        drawButtonTest.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.READY));
+        drawButtonModel.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.INITIAL));
+        drawButtonTest.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.INITIAL));
 
         return createControlMainBox(drawButton, drawButtonModel, drawButtonTest);
     }

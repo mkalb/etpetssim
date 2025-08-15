@@ -3,8 +3,8 @@ package de.mkalb.etpetssim.simulations.lab.viewmodel;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractControlViewModel;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 public final class LabControlViewModel
         extends AbstractControlViewModel {
@@ -13,7 +13,7 @@ public final class LabControlViewModel
     private final BooleanProperty drawModelRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty drawTestRequested = new SimpleBooleanProperty(false);
 
-    public LabControlViewModel(SimpleObjectProperty<SimulationState> simulationState) {
+    public LabControlViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState);
     }
 

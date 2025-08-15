@@ -9,8 +9,8 @@ import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 public final class LabConfigViewModel
         extends AbstractConfigViewModel<LabConfig> {
@@ -56,7 +56,7 @@ public final class LabConfigViewModel
     private final InputEnumProperty<LabConfig.StrokeMode> strokeMode = InputEnumProperty.of(LabConfig.StrokeMode.CENTERED, LabConfig.StrokeMode.class, Enum::toString);
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
-    public LabConfigViewModel(SimpleObjectProperty<SimulationState> simulationState) {
+    public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState);
         setupConfigListeners();
     }

@@ -41,7 +41,7 @@ public final class WatorObservationView
     }
 
     void updateObservationLabels() {
-        if (viewModel.getSimulationState() == SimulationState.READY) {
+        if (viewModel.getSimulationState() == SimulationState.INITIAL) {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
             stepCountLabel.setText(valueUnknown);
             totalCellsLabel.setText(valueUnknown);

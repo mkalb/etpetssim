@@ -25,6 +25,8 @@ import de.mkalb.etpetssim.simulations.wator.view.WatorConfigView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorObservationView;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
 
@@ -75,13 +77,14 @@ public final class SimulationFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     private static LabMainView createLabView() {
         // Common
-        var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
+        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
 
         // ViewModel
-        var configViewModel = new LabConfigViewModel(simulationState);
-        var controlViewModel = new LabControlViewModel(simulationState);
-        var observationViewModel = new LabObservationViewModel(simulationState);
+        var configViewModel = new LabConfigViewModel(readOnlySimulationState);
+        var controlViewModel = new LabControlViewModel(readOnlySimulationState);
+        var observationViewModel = new LabObservationViewModel(readOnlySimulationState);
         var viewModel = new LabMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View
@@ -97,13 +100,14 @@ public final class SimulationFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     private static ConwayMainView createConwayView() {
         // Common
-        var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
+        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ConwayEntity.values());
 
         // ViewModel
-        var configViewModel = new ConwayConfigViewModel(simulationState);
-        var controlViewModel = new DefaultControlViewModel(simulationState);
-        var observationViewModel = new DefaultObservationViewModel<ConwayStatistics>(simulationState);
+        var configViewModel = new ConwayConfigViewModel(readOnlySimulationState);
+        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var observationViewModel = new DefaultObservationViewModel<ConwayStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
                 observationViewModel, ConwaySimulationManager::new);
         // View
@@ -119,13 +123,14 @@ public final class SimulationFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     private static WatorMainView createWatorView() {
         // Common
-        var simulationState = new SimpleObjectProperty<>(SimulationState.READY);
+        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(WatorEntityDescribable.values());
 
         // ViewModel
-        var configViewModel = new WatorConfigViewModel(simulationState);
-        var controlViewModel = new DefaultControlViewModel(simulationState);
-        var observationViewModel = new DefaultObservationViewModel<WatorStatistics>(simulationState);
+        var configViewModel = new WatorConfigViewModel(readOnlySimulationState);
+        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var observationViewModel = new DefaultObservationViewModel<WatorStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
                 observationViewModel, WatorSimulationManager::new);
 
