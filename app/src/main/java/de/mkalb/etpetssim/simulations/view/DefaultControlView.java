@@ -56,6 +56,20 @@ public final class DefaultControlView
         cancelButton.setOnAction(_ -> viewModel.requestCancelButton());
 
         // Config
+        var simulationModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.simulationModeProperty(),
+                viewModel.simulationModeProperty().displayNameProvider(),
+                FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
+                "Simulation Mode:", // TODO Label text
+                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                FXStyleClasses.CONFIG_RADIOBUTTON
+        );
+
+        simulationModeControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
+                        () -> !viewModel.getSimulationState().canStart() && !viewModel.getSimulationState().isPaused(),
+                        viewModel.simulationStateProperty()
+                )
+        );
+
         var stepDurationControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.stepDurationProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_DURATION),
@@ -71,10 +85,13 @@ public final class DefaultControlView
                 )
         );
 
+        VBox simulationModeBox = new VBox(simulationModeControl.label(), simulationModeControl.controlRegion());
+        simulationModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
+
         VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.controlRegion());
         stepDurationBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
-        return createControlMainBox(actionButton, cancelButton, stepDurationBox);
+        return createControlMainBox(actionButton, cancelButton, simulationModeBox, stepDurationBox);
     }
 
 }
