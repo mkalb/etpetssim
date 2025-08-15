@@ -50,4 +50,12 @@ public final class DefaultControlViewModel
         return stepDuration;
     }
 
+    public boolean isLiveMode() {
+        return simulationMode.getValue() == SimulationMode.LIVE;
+    }
+
+    public boolean isBatchMode() {
+        return simulationMode.getValue() == SimulationMode.BATCH;
+    }
+
 }
