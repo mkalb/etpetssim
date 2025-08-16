@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.simulations.model.SimulationMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,10 +16,17 @@ public final class DefaultControlViewModel
     private static final int STEP_DURATION_MIN = 100;
     private static final int STEP_DURATION_MAX = 2_000;
 
+    private static final int STEP_COUNT_INITIAL = 100;
+    private static final int STEP_COUNT_MIN = 1;
+    private static final int STEP_COUNT_MAX = 10_000;
+    private static final int STEP_COUNT_STEP = 1;
+
     private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.LIVE,
             SimulationMode.class, Enum::toString);
     private final InputDoublePropertyIntRange stepDuration = InputDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
+    private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
+            STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
 
@@ -48,6 +56,10 @@ public final class DefaultControlViewModel
 
     public InputDoublePropertyIntRange stepDurationProperty() {
         return stepDuration;
+    }
+
+    public InputIntegerProperty stepCountProperty() {
+        return stepCount;
     }
 
     public boolean isLiveMode() {

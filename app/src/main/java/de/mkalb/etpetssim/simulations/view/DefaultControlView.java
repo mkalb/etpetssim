@@ -2,12 +2,14 @@ package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.simulations.model.SimulationMode;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public final class DefaultControlView
@@ -88,13 +90,40 @@ public final class DefaultControlView
                 )
         );
 
+        var stepCountControl = FXComponentFactory.createLabeledIntSpinner(viewModel.stepCountProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_COUNT),
+                AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_COUNT_TOOLTIP,
+                        viewModel.stepCountProperty().min(),
+                        viewModel.stepCountProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER);
+
+        stepCountControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
+                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
+                        viewModel.simulationStateProperty()
+                )
+        );
+
         VBox simulationModeBox = new VBox(simulationModeControl.label(), simulationModeControl.controlRegion());
         simulationModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
         VBox stepDurationBox = new VBox(stepDurationControl.label(), stepDurationControl.controlRegion());
         stepDurationBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
-        return createControlMainBox(actionButton, cancelButton, simulationModeBox, stepDurationBox);
+        VBox stepCountBox = new VBox(stepCountControl.label(), stepCountControl.controlRegion());
+        stepCountBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
+
+        // Place both boxes in a StackPane
+        StackPane stepConfigPane = new StackPane(stepDurationBox, stepCountBox);
+
+        // Show stepDurationBox only in LIVE mode
+        stepDurationBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.LIVE));
+        stepDurationBox.managedProperty().bind(stepDurationBox.visibleProperty());
+
+        // Show stepCountBox only in BATCH mode
+        stepCountBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.BATCH));
+        stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
+
+        return createControlMainBox(actionButton, cancelButton, simulationModeBox, stepConfigPane);
     }
 
 }

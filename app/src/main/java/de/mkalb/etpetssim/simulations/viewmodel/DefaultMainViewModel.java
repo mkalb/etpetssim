@@ -163,7 +163,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was started by the user.");
 
-            runBatchSteps(100); // TODO Configure steps
+            runBatchSteps(getControlStepCount());
         }
     }
 
@@ -192,7 +192,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was resumed by the user.");
 
-            runBatchSteps(100); // TODO Configure steps
+            runBatchSteps(getControlStepCount());
         }
     }
 
@@ -218,7 +218,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     private void configureSimulationTimeout() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         if (controlViewModel.isLiveMode()) {
-            double stepDuration = getStepDuration();
+            double stepDuration = getControlStepDuration();
             long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
             simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
         } else if (controlViewModel.isBatchMode()) {
@@ -339,7 +339,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     }
 
     private void startLiveTimer() {
-        liveTimer.start(Duration.millis(getStepDuration()));
+        liveTimer.start(Duration.millis(getControlStepDuration()));
     }
 
     private void stopLiveTimer() {
@@ -364,8 +364,12 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         }
     }
 
-    private double getStepDuration() {
+    private double getControlStepDuration() {
         return controlViewModel.stepDurationProperty().getValue();
+    }
+
+    private int getControlStepCount() {
+        return controlViewModel.stepCountProperty().getValue();
     }
 
     private void updateObservationStatistics(STA statistics) {
