@@ -274,7 +274,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                     return;
                 }
 
-                int executedSteps = simulationManager.executeSteps(count, () -> {
+                var executionResult = simulationManager.executeSteps(count, () -> {
                     // Create the event before the "runLater".
                     var stepEvent = new SimulationStepEvent(true, simulationManager.stepCount());
                     Platform.runLater(() -> {
@@ -285,7 +285,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                     });
                 });
 
-                logSimulationInfo("Simulation (batch) finished. Executed " + executedSteps + " steps of " + count + " requested steps.");
+                logSimulationInfo("Simulation (batch) finished. Requested steps: " + count + ", " + executionResult);
 
                 // Create the event and statistics before the "runLater".
                 var stepEvent = new SimulationStepEvent(false, simulationManager.stepCount());
@@ -294,7 +294,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                 Platform.runLater(() -> {
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state RUNNING_BATCH.");
-                        if (!simulationManager.isRunning()) {
+                        if (!executionResult.isRunning()) {
                             setSimulationState(SimulationState.FINISHED);
                             logSimulationInfo("Simulation has ended itself.");
                         } else {
@@ -304,7 +304,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                         simulationStepListener.accept(stepEvent);
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state PAUSING_BATCH.");
-                        if (!simulationManager.isRunning()) {
+                        if (!executionResult.isRunning()) {
                             setSimulationState(SimulationState.FINISHED);
                             logSimulationInfo("Simulation has ended itself.");
                         } else {

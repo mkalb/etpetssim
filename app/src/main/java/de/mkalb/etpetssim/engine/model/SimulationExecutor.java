@@ -52,15 +52,41 @@ public interface SimulationExecutor<T extends GridEntity> {
      *
      * @param count  the maximum number of steps to execute
      * @param onStep a {@link Runnable} to be called after each executed step
+     * @return an {@link ExecutionResult} containing:
+     *         <ul>
+     *           <li>the current step count</li>
+     *           <li>the number of steps executed in this call</li>
+     *           <li>whether the simulation is still running</li>
+     *           <li>whether the thread was interrupted</li>
+     *         </ul>
      */
-    default void executeSteps(int count, Runnable onStep) {
-        for (int i = 0; (i < count) && isRunning(); i++) {
+    default ExecutionResult executeSteps(int count, Runnable onStep) {
+        int stepBefore = stepCount();
+        for (int i = 0; i < count; i++) {
             if (Thread.currentThread().isInterrupted()) {
-                break;
+                int stepAfter = stepCount();
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, true);
             }
             executeStep();
             onStep.run();
+            if (Thread.currentThread().isInterrupted()) {
+                int stepAfter = stepCount();
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, true);
+            }
+            if (!isRunning()) {
+                int stepAfter = stepCount();
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, false);
+            }
         }
+        int stepAfter = stepCount();
+        return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, false);
     }
+
+    record ExecutionResult(
+            int stepCount,
+            int executedSteps,
+            boolean isRunning,
+            boolean isInterrupted
+    ) {}
 
 }

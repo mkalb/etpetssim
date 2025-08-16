@@ -58,9 +58,9 @@ public final class LabSimulationManager
     }
 
     @Override
-    public int executeSteps(int count, Runnable onStep) {
+    public SimulationExecutor.ExecutionResult executeSteps(int count, Runnable onStep) {
         // Do nothing
-        return 0;
+        return new SimulationExecutor.ExecutionResult(stepCount(), 0, false, false);
     }
 
     @Override
