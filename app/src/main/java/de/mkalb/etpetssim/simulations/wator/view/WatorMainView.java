@@ -84,11 +84,15 @@ public final class WatorMainView
         if (simulationStepEvent.batchModeRunning()) {
             // TODO handle batch mode
             AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
+
+            controlView.updateStepCount(simulationStepEvent.stepCount());
         } else {
             AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
 
-            drawCanvas(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
+            controlView.updateStepCount(simulationStepEvent.stepCount());
             observationView.updateObservationLabels();
+
+            drawCanvas(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
         }
     }
 

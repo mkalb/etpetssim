@@ -8,12 +8,15 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public final class DefaultControlView
         extends AbstractControlView<DefaultControlViewModel> {
+
+    private final Label stepNumberLabel = new Label();
 
     public DefaultControlView(DefaultControlViewModel viewModel) {
         super(viewModel);
@@ -123,7 +126,15 @@ public final class DefaultControlView
         stepCountBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.BATCH));
         stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
 
-        return createControlMainBox(actionButton, cancelButton, simulationModeBox, stepConfigPane);
+        // Step
+        Label stepTitleLabel = new Label(AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_TITLE));
+        VBox stepBox = new VBox(stepTitleLabel, stepNumberLabel);
+
+        return createControlMainBox(actionButton, cancelButton, simulationModeBox, stepConfigPane, stepBox);
+    }
+
+    public void updateStepCount(int stepCount) {
+        stepNumberLabel.setText(AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
     }
 
 }
