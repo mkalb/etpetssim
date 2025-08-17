@@ -9,9 +9,9 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+
+import java.util.*;
 
 public final class DefaultControlView
         extends AbstractControlView<DefaultControlViewModel> {
@@ -23,8 +23,7 @@ public final class DefaultControlView
     }
 
     @Override
-    public Region buildControlRegion() {
-        // Button
+    protected Region createControlButtonRegion() {
         String textStart = AppLocalization.getText(AppLocalizationKeys.CONTROL_START);
         String textPause = AppLocalization.getText(AppLocalizationKeys.CONTROL_PAUSE);
         String textResume = AppLocalization.getText(AppLocalizationKeys.CONTROL_RESUME);
@@ -63,7 +62,11 @@ public final class DefaultControlView
         actionButton.setOnAction(_ -> viewModel.requestActionButton());
         cancelButton.setOnAction(_ -> viewModel.requestCancelButton());
 
-        // Config
+        return new HBox(actionButton, cancelButton);
+    }
+
+    @Override
+    protected Optional<Region> createControlConfigRegion() {
         var simulationModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.simulationModeProperty(),
                 viewModel.simulationModeProperty().displayNameProvider(),
                 FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
@@ -126,11 +129,13 @@ public final class DefaultControlView
         stepCountBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.BATCH));
         stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
 
-        // Step
-        Label stepTitleLabel = new Label(AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_TITLE));
-        VBox stepBox = new VBox(stepTitleLabel, stepNumberLabel);
+        return Optional.of(new HBox(simulationModeBox, stepConfigPane));
+    }
 
-        return createControlMainBox(actionButton, cancelButton, simulationModeBox, stepConfigPane, stepBox);
+    @Override
+    protected Optional<Region> createControlObservationRegion() {
+        Label stepTitleLabel = new Label(AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_TITLE));
+        return Optional.of(new VBox(stepTitleLabel, stepNumberLabel));
     }
 
     public void updateStepCount(int stepCount) {
