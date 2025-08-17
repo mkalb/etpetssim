@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
@@ -41,23 +40,9 @@ public final class WatorMainView
     }
 
     @Override
-    protected void initializeSimulationCanvas() {
-        double cellEdgeLength = viewModel.getCellEdgeLength();
-        ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
-        GridStructure structure = viewModel.getStructure();
-        int stepCount = viewModel.getStepCount();
-
-        createPainterAndUpdateCanvas(structure, cellEdgeLength);
-
-        WatorConfig config = viewModel.getCurrentConfig();
-
+    protected void initSimulation(WatorConfig config) {
         initializeEntityColorVariants(WatorEntityDescribable.FISH, 0, config.fishMaxAge() - 1, 3, false, 0.05d);
         initializeEntityColorVariants(WatorEntityDescribable.SHARK, 1, 30, 2, true, 0.05d);
-
-        updateCanvasBorderPane(structure);
-
-        drawCanvas(currentModel, stepCount);
-        observationView.updateObservationLabels();
     }
 
     private void initializeEntityColorVariants(WatorEntityDescribable entityDescribable, int min, int max, int step, boolean brighten, double factorStep) {
@@ -102,7 +87,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void drawCanvas(ReadableGridModel<WatorEntity> currentModel, int stepCount) {
+    protected void drawSimulation(ReadableGridModel<WatorEntity> currentModel, int stepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

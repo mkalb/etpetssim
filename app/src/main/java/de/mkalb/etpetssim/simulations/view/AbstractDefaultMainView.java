@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
@@ -29,33 +29,49 @@ public abstract class AbstractDefaultMainView<
                                       CFV configView, DefaultControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
-
     }
 
     @Override
     protected final void registerViewModelListeners() {
-        viewModel.setSimulationInitializedListener(this::initializeSimulationCanvas);
-        viewModel.setSimulationStepListener(this::updateSimulationStep);
+        viewModel.setSimulationInitializedListener(this::handleSimulationInitialized);
+        viewModel.setSimulationStepListener(this::handleSimulationStep);
     }
 
-    protected abstract void initializeSimulationCanvas();
+    protected final void handleSimulationInitialized() {
+        double cellEdgeLength = viewModel.getCellEdgeLength();
+        ReadableGridModel<ENT> currentModel = viewModel.getCurrentModel();
+        GridStructure structure = viewModel.getStructure();
+        int stepCount = viewModel.getStepCount();
+        CON config = viewModel.getCurrentConfig();
 
-    protected final void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
+        initSimulation(config);
+
+        createPainterAndUpdateCanvas(structure, cellEdgeLength);
+        updateCanvasBorderPane(structure);
+
+        controlView.updateStepCount(stepCount);
+
+        observationView.updateObservationLabels();
+        drawSimulation(currentModel, stepCount);
+    }
+
+    protected final void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
         if (simulationStepEvent.batchModeRunning()) {
-            // TODO handle batch mode
-            AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
+            // AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
 
             controlView.updateStepCount(simulationStepEvent.stepCount());
         } else {
-            AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
+            // AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
 
             controlView.updateStepCount(simulationStepEvent.stepCount());
-            observationView.updateObservationLabels();
 
-            drawCanvas(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
+            observationView.updateObservationLabels();
+            drawSimulation(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
         }
     }
 
-    protected abstract void drawCanvas(ReadableGridModel<ENT> currentModel, int stepCount);
+    protected abstract void initSimulation(CON config);
+
+    protected abstract void drawSimulation(ReadableGridModel<ENT> currentModel, int stepCount);
 
 }
