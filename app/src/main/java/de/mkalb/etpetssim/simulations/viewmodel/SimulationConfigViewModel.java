@@ -12,6 +12,4 @@ public interface SimulationConfigViewModel<CON extends SimulationConfig> {
 
     CON getConfig();
 
-    void setConfig(CON config);
-
 }

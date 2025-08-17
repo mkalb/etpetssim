@@ -6,7 +6,9 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
+import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
@@ -17,16 +19,17 @@ public final class WatorConfigViewModel
     private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
     private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
     private static final int GRID_WIDTH_INITIAL = 64;
-    private static final int GRID_WIDTH_MAX = 1_024;
     private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
+    private static final int GRID_WIDTH_MAX = 1_024;
     private static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
     private static final int GRID_HEIGHT_INITIAL = 32;
-    private static final int GRID_HEIGHT_MAX = 1_024;
     private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
+    private static final int GRID_HEIGHT_MAX = 1_024;
     private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
     private static final int CELL_EDGE_LENGTH_INITIAL = 8;
-    private static final int CELL_EDGE_LENGTH_MAX = 32;
     private static final int CELL_EDGE_LENGTH_MIN = 2;
+    private static final int CELL_EDGE_LENGTH_MAX = 32;
+
     private static final double FISH_PERCENT_INITIAL = 0.25d;
     private static final double FISH_PERCENT_MAX = 1.0d;
     private static final double FISH_PERCENT_MIN = 0.0d;
@@ -47,28 +50,6 @@ public final class WatorConfigViewModel
     private static final int SHARK_BIRTH_ENERGY_STEP = 1;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
 
-    private final InputEnumProperty<CellShape> cellShape = InputEnumProperty.of(
-            CELL_SHAPE_INITIAL,
-            CellShape.class,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
-    private final InputEnumProperty<GridEdgeBehavior> gridEdgeBehavior = InputEnumProperty.of(
-            GRID_EDGE_BEHAVIOR_INITIAL,
-            List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
-    private final InputIntegerProperty gridWidth = InputIntegerProperty.of(
-            GRID_WIDTH_INITIAL,
-            GRID_WIDTH_MIN,
-            GRID_WIDTH_MAX,
-            GRID_WIDTH_STEP);
-    private final InputIntegerProperty gridHeight = InputIntegerProperty.of(
-            GRID_HEIGHT_INITIAL,
-            GRID_HEIGHT_MIN,
-            GRID_HEIGHT_MAX,
-            GRID_HEIGHT_STEP);
-    private final InputDoublePropertyIntRange cellEdgeLength = InputDoublePropertyIntRange.of(
-            CELL_EDGE_LENGTH_INITIAL,
-            CELL_EDGE_LENGTH_MIN,
-            CELL_EDGE_LENGTH_MAX);
     private final InputDoubleProperty fishPercent = InputDoubleProperty.of(
             FISH_PERCENT_INITIAL,
             FISH_PERCENT_MIN,
@@ -97,17 +78,31 @@ public final class WatorConfigViewModel
                     e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState);
+        super(simulationState, new GridStructureSettings(
+                CELL_SHAPE_INITIAL,
+                GRID_EDGE_BEHAVIOR_INITIAL,
+                List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
+                GRID_WIDTH_INITIAL,
+                GRID_WIDTH_MIN,
+                GRID_WIDTH_MAX,
+                GRID_WIDTH_STEP,
+                GRID_HEIGHT_INITIAL,
+                GRID_HEIGHT_MIN,
+                GRID_HEIGHT_MAX,
+                GRID_HEIGHT_STEP,
+                CELL_EDGE_LENGTH_INITIAL,
+                CELL_EDGE_LENGTH_MIN,
+                CELL_EDGE_LENGTH_MAX));
     }
 
     @Override
     public WatorConfig getConfig() {
         return new WatorConfig(
-                cellShape.getValue(),
-                gridEdgeBehavior.getValue(),
-                gridWidth.getValue(),
-                gridHeight.getValue(),
-                cellEdgeLength.getValue(),
+                cellShapeProperty().property().getValue(),
+                gridEdgeBehaviorProperty().property().getValue(),
+                gridWidthProperty().property().getValue(),
+                gridHeightProperty().property().getValue(),
+                cellEdgeLengthProperty().property().getValue(),
                 fishPercent.getValue(),
                 sharkPercent.getValue(),
                 fishMaxAge.getValue(),
@@ -115,41 +110,6 @@ public final class WatorConfigViewModel
                 sharkBirthEnergy.getValue(),
                 neighborhoodMode.getValue()
         );
-    }
-
-    @Override
-    public void setConfig(WatorConfig config) {
-        cellShape.setValue(config.cellShape());
-        gridEdgeBehavior.setValue(config.gridEdgeBehavior());
-        cellEdgeLength.setValue(config.cellEdgeLength());
-        gridWidth.setValue(config.gridWidth());
-        gridHeight.setValue(config.gridHeight());
-        fishPercent.setValue(config.fishPercent());
-        sharkPercent.setValue(config.sharkPercent());
-        fishMaxAge.setValue(config.fishMaxAge());
-        sharkMaxAge.setValue(config.sharkMaxAge());
-        sharkBirthEnergy.setValue(config.sharkBirthEnergy());
-        neighborhoodMode.setValue(config.neighborhoodMode());
-    }
-
-    public InputEnumProperty<CellShape> cellShapeProperty() {
-        return cellShape;
-    }
-
-    public InputEnumProperty<GridEdgeBehavior> gridEdgeBehaviorProperty() {
-        return gridEdgeBehavior;
-    }
-
-    public InputIntegerProperty gridWidthProperty() {
-        return gridWidth;
-    }
-
-    public InputIntegerProperty gridHeightProperty() {
-        return gridHeight;
-    }
-
-    public InputDoublePropertyIntRange cellEdgeLengthProperty() {
-        return cellEdgeLength;
     }
 
     public InputDoubleProperty fishPercentProperty() {
