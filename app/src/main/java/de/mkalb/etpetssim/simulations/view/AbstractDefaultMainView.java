@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.view;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
@@ -24,6 +25,10 @@ public abstract class AbstractDefaultMainView<
                 CFV,
                 DefaultControlView,
                 OV> {
+
+    private static final int DRAW_THROTTLER_HISTORY_SIZE = 5;
+
+    private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE);
 
     protected AbstractDefaultMainView(DefaultMainViewModel<ENT, CON, STA> viewModel,
                                       CFV configView, DefaultControlView controlView, OV observationView,
@@ -56,17 +61,32 @@ public abstract class AbstractDefaultMainView<
     }
 
     protected final void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
+        int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             // AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
 
-            controlView.updateStepCount(simulationStepEvent.stepCount());
+            controlView.updateStepCount(stepCount);
         } else {
             // AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
 
-            controlView.updateStepCount(simulationStepEvent.stepCount());
+            controlView.updateStepCount(stepCount);
 
             observationView.updateObservationLabels();
-            drawSimulation(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
+
+            throttleAndDrawSimulationStep(stepCount, viewModel.getTimeoutDrawMillis());
+        }
+    }
+
+    private void throttleAndDrawSimulationStep(int stepCount, long thresholdMillis) {
+        if (!drawThrottler.shouldSkip(stepCount, thresholdMillis)) {
+            long start = System.currentTimeMillis();
+            drawSimulation(viewModel.getCurrentModel(), stepCount);
+            long duration = System.currentTimeMillis() - start;
+            drawThrottler.recordDuration(duration);
+        } else {
+            AppLogger.warn("Skipping draw for step " + stepCount +
+                    " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +
+                    "ms, Threshold: " + thresholdMillis + "ms");
         }
     }
 
