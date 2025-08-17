@@ -409,8 +409,53 @@
 }
 
 /* control region (bottom) */
-.control-slider {
-  -fx-min-width: 500;
+.control-hbox {
+  -fx-padding: 4 8;
+  -fx-spacing: 5;
+
+  -fx-background-color: #2e3b50;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1 0 0 0;
+  -fx-border-radius: 0;
+  -fx-alignment: center-left;
+  -fx-min-width: 900;
+  -fx-pref-width: 1000;
+}
+
+.control-button-hbox {
+  -fx-padding: 0;
+  -fx-spacing: 5;
+  -fx-alignment: center-left;
+}
+
+.control-config-hbox {
+  -fx-padding: 0;
+  -fx-spacing: 5;
+  -fx-alignment: top-left;
+  -fx-background-color: #2e3b50;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 6;
+  -fx-padding: 6 0 6 0;
+}
+
+.control-observation-vbox {
+  -fx-padding: 0;
+  -fx-spacing: 5;
+  -fx-alignment: top-right;
+  -fx-background-color: #2e3b50;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 6;
+  -fx-padding: 6 0 6 0;
+}
+
+.control-observation-vbox .label {
+  -fx-min-width: 120;
+  -fx-alignment: top-right;
+  -fx-font-weight: normal;
+  -fx-text-fill: #7fffd4;
+  -fx-font-size: 14;
 }
 
 .control-button {
@@ -442,24 +487,12 @@
   -fx-background-color: #00ff99;
 }
 
-.control-hbox {
-  -fx-padding: 4 8;
-  -fx-spacing: 5;
-  -fx-background-color: linear-gradient(to right, #2e3b50, #35516b 80%, #347ca3 100%);
-  -fx-border-color: #00eaff;
-  -fx-border-width: 1 0 0 0;
-  -fx-border-radius: 0;
-  -fx-alignment: center-left;
-  -fx-min-width: 900;
-  -fx-pref-width: 1000;
-}
-
 .control-config-vbox {
   -fx-padding: 8 12 8 12;
   -fx-spacing: 4;
   -fx-background-color: #2e3b50;
   -fx-border-radius: 6;
-  -fx-alignment: center-left;
+  -fx-alignment: top-left;
 }
 
 .control-config-vbox .label {
