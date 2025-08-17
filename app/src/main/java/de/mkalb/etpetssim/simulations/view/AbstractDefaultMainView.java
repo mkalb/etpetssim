@@ -73,12 +73,12 @@ public abstract class AbstractDefaultMainView<
 
             observationView.updateObservationLabels();
 
-            throttleAndDrawSimulationStep(stepCount, viewModel.getTimeoutDrawMillis());
+            throttleAndDrawSimulationStep(stepCount, viewModel.getThrottleDrawMillis());
         }
     }
 
-    private void throttleAndDrawSimulationStep(int stepCount, long thresholdMillis) {
-        if (!drawThrottler.shouldSkip(stepCount, thresholdMillis)) {
+    private void throttleAndDrawSimulationStep(int stepCount, long throttleDrawMillis) {
+        if (!drawThrottler.shouldSkip(stepCount, throttleDrawMillis)) {
             long start = System.currentTimeMillis();
             drawSimulation(viewModel.getCurrentModel(), stepCount);
             long duration = System.currentTimeMillis() - start;
@@ -86,7 +86,7 @@ public abstract class AbstractDefaultMainView<
         } else {
             AppLogger.warn("Skipping draw for step " + stepCount +
                     " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +
-                    "ms, Threshold: " + thresholdMillis + "ms");
+                    "ms, Threshold: " + throttleDrawMillis + "ms");
         }
     }
 

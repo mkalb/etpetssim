@@ -19,8 +19,9 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         STA extends TimedSimulationStatistics>
         extends AbstractMainViewModel<CON, STA> {
 
-    private static final double TIMEOUT_FACTOR_EXECUTE = 0.3d;
-    private static final double TIMEOUT_FACTOR_DRAW = 0.2d;
+    private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
+    private static final double TIMEOUT_DRAW_FACTOR = 0.3d;
+    private static final double THROTTLE_DRAW_FACTOR = 0.2d;
 
     private final DefaultControlViewModel controlViewModel;
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
@@ -31,6 +32,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     private volatile @Nullable Thread batchThread;
     private long timeoutExecuteMillis = Long.MAX_VALUE;
     private long timeoutDrawMillis = Long.MAX_VALUE;
+    private long throttleDrawMillis = Long.MAX_VALUE;
 
     // Listener for view
     private Runnable simulationInitializedListener = () -> {};
@@ -112,12 +114,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return simulationManager.stepCount();
     }
 
-    public long getTimeoutExecuteMillis() {
-        return timeoutExecuteMillis;
-    }
-
-    public long getTimeoutDrawMillis() {
-        return timeoutDrawMillis;
+    public long getThrottleDrawMillis() {
+        return throttleDrawMillis;
     }
 
     private void handleActionButton() {
@@ -230,12 +228,14 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         if (controlViewModel.isLiveMode()) {
             double stepDuration = getControlStepDuration();
-            timeoutExecuteMillis = (long) (stepDuration * TIMEOUT_FACTOR_EXECUTE);
-            timeoutDrawMillis = (long) (stepDuration * TIMEOUT_FACTOR_DRAW);
+            timeoutExecuteMillis = (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR);
+            timeoutDrawMillis = (long) (stepDuration * TIMEOUT_DRAW_FACTOR);
+            throttleDrawMillis = (long) (stepDuration * THROTTLE_DRAW_FACTOR);
             simulationManager.configureStepTimeout(timeoutExecuteMillis, this::handleSimulationTimeout);
         } else if (controlViewModel.isBatchMode()) {
             timeoutExecuteMillis = Long.MAX_VALUE;
             timeoutDrawMillis = Long.MAX_VALUE;
+            throttleDrawMillis = Long.MAX_VALUE;
             simulationManager.configureStepTimeout(timeoutExecuteMillis, () -> {});
         }
         setSimulationTimeout(false);
