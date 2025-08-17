@@ -23,7 +23,7 @@ This project uses the latest stable versions of all technologies whenever possib
 |---------------------|------------------|---------------------------------|
 | Java (OpenJDK)      | Temurin 24.0.1+9 | https://adoptium.net/           |
 | JavaFX              | 24.0.1           | https://openjfx.io/             |
-| Gradle              | 8.14.2           | https://gradle.org/             |
+| Gradle              | 8.14.3           | https://gradle.org/             |
 | IntelliJ IDEA       | 2025.1.2         | https://www.jetbrains.com/idea/ |
 
 ## License
