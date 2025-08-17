@@ -1,7 +1,9 @@
 package de.mkalb.etpetssim.simulations.view;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationStatistics;
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
@@ -38,6 +40,22 @@ public abstract class AbstractDefaultMainView<
 
     protected abstract void initializeSimulationCanvas();
 
-    protected abstract void updateSimulationStep(SimulationStepEvent simulationStepEvent);
+    protected final void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
+        if (simulationStepEvent.batchModeRunning()) {
+            // TODO handle batch mode
+            AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
+
+            controlView.updateStepCount(simulationStepEvent.stepCount());
+        } else {
+            AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
+
+            controlView.updateStepCount(simulationStepEvent.stepCount());
+            observationView.updateObservationLabels();
+
+            drawCanvas(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
+        }
+    }
+
+    protected abstract void drawCanvas(ReadableGridModel<ENT> currentModel, int stepCount);
 
 }

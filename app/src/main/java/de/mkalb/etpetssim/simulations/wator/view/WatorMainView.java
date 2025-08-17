@@ -3,7 +3,6 @@ package de.mkalb.etpetssim.simulations.wator.view;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
@@ -74,23 +73,6 @@ public final class WatorMainView
         }
     }
 
-    @Override
-    protected void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
-        if (simulationStepEvent.batchModeRunning()) {
-            // TODO handle batch mode
-            AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
-
-            controlView.updateStepCount(simulationStepEvent.stepCount());
-        } else {
-            AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
-
-            controlView.updateStepCount(simulationStepEvent.stepCount());
-            observationView.updateObservationLabels();
-
-            drawCanvas(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
-        }
-    }
-
     private @Nullable Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor, WatorEntity entity,
                                                    int stepCount) {
         Paint paint = entityDescriptor.color();
@@ -119,7 +101,8 @@ public final class WatorMainView
         basePainter.fillCanvasBackground(background);
     }
 
-    private void drawCanvas(ReadableGridModel<WatorEntity> currentModel, int stepCount) {
+    @Override
+    protected void drawCanvas(ReadableGridModel<WatorEntity> currentModel, int stepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

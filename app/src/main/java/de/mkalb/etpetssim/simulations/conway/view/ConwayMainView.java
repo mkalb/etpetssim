@@ -8,7 +8,6 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
-import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
@@ -51,23 +50,6 @@ public final class ConwayMainView
         observationView.updateObservationLabels();
     }
 
-    @Override
-    protected void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
-        if (simulationStepEvent.batchModeRunning()) {
-            // TODO handle batch mode
-            AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
-
-            controlView.updateStepCount(simulationStepEvent.stepCount());
-        } else {
-            AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
-
-            controlView.updateStepCount(simulationStepEvent.stepCount());
-            observationView.updateObservationLabels();
-
-            drawCanvas(viewModel.getCurrentModel(), simulationStepEvent.stepCount());
-        }
-    }
-
     private void fillBackground() {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
@@ -76,7 +58,8 @@ public final class ConwayMainView
         basePainter.fillCanvasBackground(javafx.scene.paint.Color.BLACK);
     }
 
-    private void drawCanvas(ReadableGridModel<ConwayEntity> currentModel, int stepCount) {
+    @Override
+    protected void drawCanvas(ReadableGridModel<ConwayEntity> currentModel, int stepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
