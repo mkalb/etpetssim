@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
-import de.mkalb.etpetssim.simulations.view.AbstractMainView;
+import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
@@ -16,12 +16,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class WatorMainView
-        extends AbstractMainView<
+        extends AbstractDefaultMainView<
+        WatorEntity,
         WatorConfig,
         WatorStatistics,
-        DefaultMainViewModel<WatorEntity, WatorConfig, WatorStatistics>,
         WatorConfigView,
-        DefaultControlView,
         WatorObservationView> {
 
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
@@ -43,12 +42,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void registerViewModelListeners() {
-        viewModel.setSimulationInitializedListener(this::initializeSimulationCanvas);
-        viewModel.setSimulationStepListener(this::updateSimulationStep);
-    }
-
-    private void initializeSimulationCanvas() {
+    protected void initializeSimulationCanvas() {
         double cellEdgeLength = viewModel.getCellEdgeLength();
         ReadableGridModel<WatorEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
         GridStructure structure = viewModel.getStructure();
@@ -80,7 +74,8 @@ public final class WatorMainView
         }
     }
 
-    private void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
+    @Override
+    protected void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
         if (simulationStepEvent.batchModeRunning()) {
             // TODO handle batch mode
             AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());

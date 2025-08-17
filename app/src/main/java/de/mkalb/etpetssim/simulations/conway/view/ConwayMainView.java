@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
-import de.mkalb.etpetssim.simulations.view.AbstractMainView;
+import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import javafx.scene.paint.Color;
@@ -17,12 +17,11 @@ import javafx.scene.paint.Color;
 import java.util.*;
 
 public final class ConwayMainView
-        extends AbstractMainView<
+        extends AbstractDefaultMainView<
+        ConwayEntity,
         ConwayConfig,
         ConwayStatistics,
-        DefaultMainViewModel<ConwayEntity, ConwayConfig, ConwayStatistics>,
         ConwayConfigView,
-        DefaultControlView,
         ConwayObservationView> {
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, ConwayConfig, ConwayStatistics> viewModel,
@@ -38,12 +37,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void registerViewModelListeners() {
-        viewModel.setSimulationInitializedListener(this::initializeSimulationCanvas);
-        viewModel.setSimulationStepListener(this::updateSimulationStep);
-    }
-
-    private void initializeSimulationCanvas() {
+    protected void initializeSimulationCanvas() {
         double cellEdgeLength = viewModel.getCellEdgeLength();
         ReadableGridModel<ConwayEntity> currentModel = Objects.requireNonNull(viewModel.getCurrentModel());
         GridStructure structure = viewModel.getStructure();
@@ -57,7 +51,8 @@ public final class ConwayMainView
         observationView.updateObservationLabels();
     }
 
-    private void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
+    @Override
+    protected void updateSimulationStep(SimulationStepEvent simulationStepEvent) {
         if (simulationStepEvent.batchModeRunning()) {
             // TODO handle batch mode
             AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
