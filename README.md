@@ -19,12 +19,12 @@ will be added over time.
 
 This project uses the latest stable versions of all technologies whenever possible.
 
-| Technology          | Version          | URL                             |
-|---------------------|------------------|---------------------------------|
-| Java (OpenJDK)      | Temurin 24.0.1+9 | https://adoptium.net/           |
-| JavaFX              | 24.0.1           | https://openjfx.io/             |
-| Gradle              | 8.14.3           | https://gradle.org/             |
-| IntelliJ IDEA       | 2025.1.2         | https://www.jetbrains.com/idea/ |
+| Technology          | Version      | URL                             |
+|---------------------|--------------|---------------------------------|
+| Java (OpenJDK)      | Temurin 24.0 | https://adoptium.net/           |
+| JavaFX              | 24.0.2       | https://openjfx.io/             |
+| Gradle              | 8.14.3       | https://gradle.org/             |
+| IntelliJ IDEA       | 2025.1       | https://www.jetbrains.com/idea/ |
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

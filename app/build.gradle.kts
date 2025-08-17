@@ -25,7 +25,7 @@ java {
 
 javafx {
     modules = listOf("javafx.controls")
-    version = "24.0.1"
+    version = "24.0.2"
 }
 
 application {
@@ -43,7 +43,7 @@ testing {
         // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
             // Use JUnit Jupiter test framework
-            useJUnitJupiter("5.12.1")
+            useJUnitJupiter("5.13.4")
         }
     }
 }
