@@ -40,4 +40,6 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         return grid;
     }
 
+    protected abstract void updateObservationLabels();
+
 }

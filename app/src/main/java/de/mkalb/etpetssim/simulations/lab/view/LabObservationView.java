@@ -60,4 +60,8 @@ public final class LabObservationView
         return grid;
     }
 
+    @Override
+    protected void updateObservationLabels() {
+    }
+
 }

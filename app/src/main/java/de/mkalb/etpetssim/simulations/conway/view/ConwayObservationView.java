@@ -44,7 +44,8 @@ public final class ConwayObservationView
         return createObservationGrid(nameKeys, valueLabels);
     }
 
-    void updateObservationLabels() {
+    @Override
+    protected void updateObservationLabels() {
         if (viewModel.getSimulationState() == SimulationState.INITIAL) {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
             stepCountLabel.setText(valueUnknown);
