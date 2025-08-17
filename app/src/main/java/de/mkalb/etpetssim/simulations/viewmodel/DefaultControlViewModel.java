@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.model.SimulationMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
@@ -22,7 +23,8 @@ public final class DefaultControlViewModel
     private static final int STEP_COUNT_STEP = 1;
 
     private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.LIVE,
-            SimulationMode.class, Enum::toString);
+            SimulationMode.class,
+            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputDoublePropertyIntRange stepDuration = InputDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,

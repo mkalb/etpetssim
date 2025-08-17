@@ -67,8 +67,8 @@ public final class DefaultControlView
         var simulationModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.simulationModeProperty(),
                 viewModel.simulationModeProperty().displayNameProvider(),
                 FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Simulation Mode:", // TODO Label text
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                AppLocalization.getText(SimulationMode.labelResourceKey()),
+                AppLocalization.getText(AppLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
