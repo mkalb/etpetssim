@@ -19,7 +19,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         STA extends TimedSimulationStatistics>
         extends AbstractMainViewModel<CON, STA> {
 
-    private static final double TIMEOUT_FACTOR = 0.5d;
+    private static final double TIMEOUT_FACTOR_EXECUTE = 0.3d;
+    private static final double TIMEOUT_FACTOR_DRAW = 0.2d;
 
     private final DefaultControlViewModel controlViewModel;
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
@@ -229,8 +230,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         if (controlViewModel.isLiveMode()) {
             double stepDuration = getControlStepDuration();
-            timeoutExecuteMillis = (long) (stepDuration * TIMEOUT_FACTOR);
-            timeoutDrawMillis = (long) (stepDuration * TIMEOUT_FACTOR);
+            timeoutExecuteMillis = (long) (stepDuration * TIMEOUT_FACTOR_EXECUTE);
+            timeoutDrawMillis = (long) (stepDuration * TIMEOUT_FACTOR_DRAW);
             simulationManager.configureStepTimeout(timeoutExecuteMillis, this::handleSimulationTimeout);
         } else if (controlViewModel.isBatchMode()) {
             timeoutExecuteMillis = Long.MAX_VALUE;
