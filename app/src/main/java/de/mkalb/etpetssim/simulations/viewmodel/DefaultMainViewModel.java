@@ -28,6 +28,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     private @Nullable AbstractTimedSimulationManager<ENT, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
+    private long timeoutExecuteMillis = Long.MAX_VALUE;
+    private long timeoutDrawMillis = Long.MAX_VALUE;
 
     // Listener for view
     private Runnable simulationInitializedListener = () -> {};
@@ -107,6 +109,14 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     public int getStepCount() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.stepCount();
+    }
+
+    public long getTimeoutExecuteMillis() {
+        return timeoutExecuteMillis;
+    }
+
+    public long getTimeoutDrawMillis() {
+        return timeoutDrawMillis;
     }
 
     private void handleActionButton() {
@@ -219,10 +229,13 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         if (controlViewModel.isLiveMode()) {
             double stepDuration = getControlStepDuration();
-            long timeoutMillis = (long) (stepDuration * TIMEOUT_FACTOR);
-            simulationManager.configureStepTimeout(timeoutMillis, this::handleSimulationTimeout);
+            timeoutExecuteMillis = (long) (stepDuration * TIMEOUT_FACTOR);
+            timeoutDrawMillis = (long) (stepDuration * TIMEOUT_FACTOR);
+            simulationManager.configureStepTimeout(timeoutExecuteMillis, this::handleSimulationTimeout);
         } else if (controlViewModel.isBatchMode()) {
-            simulationManager.configureStepTimeout(Long.MAX_VALUE, () -> {});
+            timeoutExecuteMillis = Long.MAX_VALUE;
+            timeoutDrawMillis = Long.MAX_VALUE;
+            simulationManager.configureStepTimeout(timeoutExecuteMillis, () -> {});
         }
         setSimulationTimeout(false);
     }
