@@ -3,9 +3,10 @@ package de.mkalb.etpetssim.simulations.lab.view;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractControlView;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.Pane;
 
 import java.util.*;
 
@@ -17,7 +18,7 @@ public final class LabControlView
     }
 
     @Override
-    protected Region createControlButtonRegion() {
+    protected Pane createControlButtonPane() {
         Button drawButton = createControlButton("draw", false);
         Button drawButtonModel = createControlButton("draw model", true);
         Button drawButtonTest = createControlButton("draw test", true);
@@ -29,16 +30,18 @@ public final class LabControlView
         drawButtonModel.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.INITIAL));
         drawButtonTest.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.INITIAL));
 
-        return new HBox(drawButton, drawButtonModel, drawButtonTest);
+        HBox buttonBox = new HBox(drawButton, drawButtonModel, drawButtonTest);
+        buttonBox.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON_HBOX);
+        return buttonBox;
     }
 
     @Override
-    protected Optional<Region> createControlConfigRegion() {
+    protected Optional<Pane> createControlConfigPane() {
         return Optional.empty();
     }
 
     @Override
-    protected Optional<Region> createControlObservationRegion() {
+    protected Optional<Pane> createControlObservationPane() {
         return Optional.empty();
     }
 

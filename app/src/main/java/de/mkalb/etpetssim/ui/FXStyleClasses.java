@@ -23,8 +23,11 @@ public final class FXStyleClasses {
     public static final String CONFIG_TITLEDPANE = "config-titledpane";
     public static final String CONFIG_VBOX = "config-vbox";
     public static final String CONTROL_BUTTON = "control-button";
+    public static final String CONTROL_BUTTON_HBOX = "control-button-hbox";
+    public static final String CONTROL_CONFIG_HBOX = "control-config-hbox";
     public static final String CONTROL_CONFIG_VBOX = "control-config-vbox";
     public static final String CONTROL_HBOX = "control-hbox";
+    public static final String CONTROL_OBSERVATION_VBOX = "control-observation-vbox";
     public static final String HEADER_SUBTITLE_LABEL = "header-subtitle-label";
     public static final String HEADER_TITLE_LABEL = "header-title-label";
     public static final String HEADER_URL_HYPERLINK = "header-url-hyperlink";

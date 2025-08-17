@@ -23,7 +23,7 @@ public final class DefaultControlView
     }
 
     @Override
-    protected Region createControlButtonRegion() {
+    protected Pane createControlButtonPane() {
         String textStart = AppLocalization.getText(AppLocalizationKeys.CONTROL_START);
         String textPause = AppLocalization.getText(AppLocalizationKeys.CONTROL_PAUSE);
         String textResume = AppLocalization.getText(AppLocalizationKeys.CONTROL_RESUME);
@@ -62,11 +62,13 @@ public final class DefaultControlView
         actionButton.setOnAction(_ -> viewModel.requestActionButton());
         cancelButton.setOnAction(_ -> viewModel.requestCancelButton());
 
-        return new HBox(actionButton, cancelButton);
+        HBox buttonBox = new HBox(actionButton, cancelButton);
+        buttonBox.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON_HBOX);
+        return buttonBox;
     }
 
     @Override
-    protected Optional<Region> createControlConfigRegion() {
+    protected Optional<Pane> createControlConfigPane() {
         var simulationModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.simulationModeProperty(),
                 viewModel.simulationModeProperty().displayNameProvider(),
                 FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
@@ -118,9 +120,6 @@ public final class DefaultControlView
         VBox stepCountBox = new VBox(stepCountControl.label(), stepCountControl.controlRegion());
         stepCountBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
-        // Place both boxes in a StackPane
-        StackPane stepConfigPane = new StackPane(stepDurationBox, stepCountBox);
-
         // Show stepDurationBox only in LIVE mode
         stepDurationBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.LIVE));
         stepDurationBox.managedProperty().bind(stepDurationBox.visibleProperty());
@@ -129,13 +128,21 @@ public final class DefaultControlView
         stepCountBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.BATCH));
         stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
 
-        return Optional.of(new HBox(simulationModeBox, stepConfigPane));
+        // Place both boxes in a StackPane
+        StackPane stepConfigPane = new StackPane(stepDurationBox, stepCountBox);
+
+        HBox configBox = new HBox(simulationModeBox, stepConfigPane);
+        configBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_HBOX);
+        return Optional.of(configBox);
     }
 
     @Override
-    protected Optional<Region> createControlObservationRegion() {
+    protected Optional<Pane> createControlObservationPane() {
         Label stepTitleLabel = new Label(AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_TITLE));
-        return Optional.of(new VBox(stepTitleLabel, stepNumberLabel));
+
+        VBox observationBox = new VBox(stepTitleLabel, stepNumberLabel);
+        observationBox.getStyleClass().add(FXStyleClasses.CONTROL_OBSERVATION_VBOX);
+        return Optional.of(observationBox);
     }
 
     public void updateStepCount(int stepCount) {
