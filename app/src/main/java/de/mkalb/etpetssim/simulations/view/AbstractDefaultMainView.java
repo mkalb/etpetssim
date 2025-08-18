@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
@@ -11,6 +10,7 @@ import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 
+@SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
         CON extends SimulationConfig,
@@ -25,6 +25,11 @@ public abstract class AbstractDefaultMainView<
                 CFV,
                 DefaultControlView,
                 OV> {
+
+    /**
+     * Only used for debugging purposes to log draw calls and performance.
+     */
+    private static final boolean DEBUG_MODE = false;
 
     private static final int DRAW_THROTTLER_HISTORY_SIZE = 5;
 
@@ -45,31 +50,34 @@ public abstract class AbstractDefaultMainView<
     }
 
     protected final void handleSimulationInitialized() {
-        double cellEdgeLength = viewModel.getCellEdgeLength();
-        ReadableGridModel<ENT> currentModel = viewModel.getCurrentModel();
-        GridStructure structure = viewModel.getStructure();
         int stepCount = viewModel.getStepCount();
-        CON config = viewModel.getCurrentConfig();
 
-        initSimulation(config);
+        initSimulation(viewModel.getCurrentConfig());
 
-        createPainterAndUpdateCanvas(structure, cellEdgeLength);
-        updateCanvasBorderPane(structure);
+        createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
+        updateCanvasBorderPane(viewModel.getStructure());
 
         controlView.updateStepCount(stepCount);
-
         observationView.updateObservationLabels();
-        drawSimulation(currentModel, stepCount);
+        drawAndMeasureSimulationStep(stepCount);
+
+        if (DEBUG_MODE) {
+            AppLogger.info("Simulation initialized and drawn in the view. step=" + stepCount);
+        }
     }
 
     protected final void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
-            // AppLogger.info("Updating view for batch mode step " + simulationStepEvent.stepCount());
+            if (DEBUG_MODE) {
+                AppLogger.info("Handle simulation step at view for batch mode. " + simulationStepEvent);
+            }
 
             controlView.updateStepCount(stepCount);
         } else {
-            // AppLogger.info("Drawing canvas for step " + simulationStepEvent.stepCount());
+            if (DEBUG_MODE) {
+                AppLogger.info("Handle simulation step at view for live mode. " + simulationStepEvent);
+            }
 
             controlView.updateStepCount(stepCount);
 
@@ -78,22 +86,35 @@ public abstract class AbstractDefaultMainView<
             // Never draw the same step twice
             if (lastDrawnStepCount != stepCount) {
                 throttleAndDrawSimulationStep(stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
+            } else if (DEBUG_MODE) {
+                AppLogger.info("Skipping draw for step because it was already drawn. " + simulationStepEvent);
             }
+        }
+    }
+
+    private void drawAndMeasureSimulationStep(int stepCount) {
+        long start = System.currentTimeMillis();
+        drawSimulation(viewModel.getCurrentModel(), stepCount);
+        long duration = System.currentTimeMillis() - start;
+        drawThrottler.recordDuration(duration);
+
+        lastDrawnStepCount = stepCount;
+
+        if (DEBUG_MODE) {
+            AppLogger.info("Drawn step " + stepCount +
+                    " in " + duration + "ms. Average draw time: " + drawThrottler.getAverageDuration() + "ms");
         }
     }
 
     private void throttleAndDrawSimulationStep(int stepCount, boolean finalStep, long throttleDrawMillis) {
         if (finalStep || !drawThrottler.shouldSkip(stepCount, throttleDrawMillis)) {
-            long start = System.currentTimeMillis();
-            drawSimulation(viewModel.getCurrentModel(), stepCount);
-            long duration = System.currentTimeMillis() - start;
-            drawThrottler.recordDuration(duration);
-
-            lastDrawnStepCount = stepCount;
+            drawAndMeasureSimulationStep(stepCount);
         } else {
-            AppLogger.warn("Skipping draw for step " + stepCount +
-                    " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +
-                    "ms, Threshold: " + throttleDrawMillis + "ms");
+            if (DEBUG_MODE) {
+                AppLogger.warn("Skipping draw for step " + stepCount +
+                        " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +
+                        "ms, Threshold: " + throttleDrawMillis + "ms");
+            }
         }
     }
 
