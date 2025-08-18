@@ -30,6 +30,8 @@ public abstract class AbstractDefaultMainView<
 
     private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE);
 
+    private int lastDrawnStepCount = Integer.MIN_VALUE;
+
     protected AbstractDefaultMainView(DefaultMainViewModel<ENT, CON, STA> viewModel,
                                       CFV configView, DefaultControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -73,16 +75,21 @@ public abstract class AbstractDefaultMainView<
 
             observationView.updateObservationLabels();
 
-            throttleAndDrawSimulationStep(stepCount, viewModel.getThrottleDrawMillis());
+            // Never draw the same step twice
+            if (lastDrawnStepCount != stepCount) {
+                throttleAndDrawSimulationStep(stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
+            }
         }
     }
 
-    private void throttleAndDrawSimulationStep(int stepCount, long throttleDrawMillis) {
-        if (!drawThrottler.shouldSkip(stepCount, throttleDrawMillis)) {
+    private void throttleAndDrawSimulationStep(int stepCount, boolean finalStep, long throttleDrawMillis) {
+        if (finalStep || !drawThrottler.shouldSkip(stepCount, throttleDrawMillis)) {
             long start = System.currentTimeMillis();
             drawSimulation(viewModel.getCurrentModel(), stepCount);
             long duration = System.currentTimeMillis() - start;
             drawThrottler.recordDuration(duration);
+
+            lastDrawnStepCount = stepCount;
         } else {
             AppLogger.warn("Skipping draw for step " + stepCount +
                     " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +

@@ -236,6 +236,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     }
 
     private void runLiveStep() {
+        // Check simulation manager and state
         if (simulationManager == null) {
             AppLogger.error("Simulation manager is not initialized, cannot execute step.");
             stopLiveTimer();
@@ -247,30 +248,45 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
             return;
         }
 
+        // Execute simulation step
         simulationManager.executeStep();
-        if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
-            setSimulationTimeout(true);
 
-            setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation (live) has been paused because a timeout has occurred.");
-
-            stopLiveTimer();
-        }
-
-        long startView = System.currentTimeMillis();
+        // Update statistics
         updateObservationStatistics(simulationManager.statistics());
-        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
-        long durationView = System.currentTimeMillis() - startView;
-        if (durationView > timeoutViewMillis) {
-            setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation (live) has been paused because a timeout has occurred.");
 
-            stopLiveTimer();
-        }
-
+        // Check if simulation finished
         if (!simulationManager.isRunning()) {
             setSimulationState(SimulationState.FINISHED);
             logSimulationInfo("Simulation (live) has ended itself.");
+        }
+
+        // Notify view about the step and measure duration
+        long startView = System.currentTimeMillis();
+        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
+        long durationView = System.currentTimeMillis() - startView;
+
+        // Check timeout if still running (not finished)
+        if (getSimulationState() == SimulationState.RUNNING_LIVE) {
+            // Check for calculation timeout
+            if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
+                setSimulationTimeout(true);
+
+                setSimulationState(SimulationState.PAUSED);
+                logSimulationInfo("Simulation (live) has been paused because the simulation step took too long to calculate.");
+            }
+
+            // Check for view timeout
+            if (durationView > timeoutViewMillis) {
+                setSimulationTimeout(true);
+
+                setSimulationState(SimulationState.PAUSED);
+                logSimulationInfo("Simulation (live) has been paused because the view took too long to process.");
+            }
+        }
+
+        // If simulation is paused or finished, notify view for final step and stop live timer.
+        if (getSimulationState() != SimulationState.RUNNING_LIVE) {
+            simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), true));
 
             stopLiveTimer();
         }
@@ -287,7 +303,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
 
                 var executionResult = simulationManager.executeSteps(count, () -> {
                     // Create the event before the "runLater".
-                    var stepEvent = new SimulationStepEvent(true, simulationManager.stepCount());
+                    var stepEvent = new SimulationStepEvent(true, simulationManager.stepCount(), false);
                     Platform.runLater(() -> {
                         // Check at JavaFX-Thread if it is still running.
                         if (getSimulationState() == SimulationState.RUNNING_BATCH) {
@@ -299,7 +315,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                 logSimulationInfo("Simulation (batch) finished. Requested steps: " + count + ", " + executionResult);
 
                 // Create the event and statistics before the "runLater".
-                var stepEvent = new SimulationStepEvent(false, simulationManager.stepCount());
+                var stepEvent = new SimulationStepEvent(false, simulationManager.stepCount(), true);
                 var statistics = simulationManager.statistics();
 
                 Platform.runLater(() -> {
