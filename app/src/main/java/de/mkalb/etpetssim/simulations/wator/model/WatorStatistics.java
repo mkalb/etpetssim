@@ -16,9 +16,8 @@ public final class WatorStatistics
     }
 
     public void update(int newStepCount,
-                       long newTimeOutMillis,
                        StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newTimeOutMillis, newStepTimingStatistics);
+        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     public long getFishCells() {

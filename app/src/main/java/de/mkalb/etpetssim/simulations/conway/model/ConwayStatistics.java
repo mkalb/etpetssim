@@ -22,9 +22,8 @@ public final class ConwayStatistics
 
     public void update(int newStepCount,
                        long newAliveCells,
-                       long newTimeOutMillis,
                        StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newTimeOutMillis, newStepTimingStatistics);
+        updateCommon(newStepCount, newStepTimingStatistics);
         aliveCells = newAliveCells;
         deadCells = getTotalCells() - aliveCells;
         if (aliveCells > maxAliveCells) {

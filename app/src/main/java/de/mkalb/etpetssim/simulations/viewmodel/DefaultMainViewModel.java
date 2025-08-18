@@ -20,7 +20,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         extends AbstractMainViewModel<CON, STA> {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
-    private static final double TIMEOUT_DRAW_FACTOR = 0.3d;
+    private static final double TIMEOUT_VIEW_FACTOR = 0.3d;
     private static final double THROTTLE_DRAW_FACTOR = 0.2d;
 
     private final DefaultControlViewModel controlViewModel;
@@ -31,7 +31,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
     private long timeoutExecuteMillis = Long.MAX_VALUE;
-    private long timeoutDrawMillis = Long.MAX_VALUE;
+    private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
 
     // Listener for view
@@ -229,28 +229,10 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         if (controlViewModel.isLiveMode()) {
             double stepDuration = getControlStepDuration();
             timeoutExecuteMillis = (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR);
-            timeoutDrawMillis = (long) (stepDuration * TIMEOUT_DRAW_FACTOR);
+            timeoutViewMillis = (long) (stepDuration * TIMEOUT_VIEW_FACTOR);
             throttleDrawMillis = (long) (stepDuration * THROTTLE_DRAW_FACTOR);
-            simulationManager.configureStepTimeout(timeoutExecuteMillis, this::handleSimulationTimeout);
-        } else if (controlViewModel.isBatchMode()) {
-            timeoutExecuteMillis = Long.MAX_VALUE;
-            timeoutDrawMillis = Long.MAX_VALUE;
-            throttleDrawMillis = Long.MAX_VALUE;
-            simulationManager.configureStepTimeout(timeoutExecuteMillis, () -> {});
         }
         setSimulationTimeout(false);
-    }
-
-    private void handleSimulationTimeout() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        if ((getSimulationState() == SimulationState.RUNNING_LIVE) && isLiveRunning()) {
-            setSimulationTimeout(true);
-
-            setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation (live) has been paused because a timeout has occurred.");
-
-            stopLiveTimer();
-        }
     }
 
     private void runLiveStep() {
@@ -266,10 +248,25 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         }
 
         simulationManager.executeStep();
+        if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
+            setSimulationTimeout(true);
 
+            setSimulationState(SimulationState.PAUSED);
+            logSimulationInfo("Simulation (live) has been paused because a timeout has occurred.");
+
+            stopLiveTimer();
+        }
+
+        long startView = System.currentTimeMillis();
         updateObservationStatistics(simulationManager.statistics());
-
         simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount()));
+        long durationView = System.currentTimeMillis() - startView;
+        if (durationView > timeoutViewMillis) {
+            setSimulationState(SimulationState.PAUSED);
+            logSimulationInfo("Simulation (live) has been paused because a timeout has occurred.");
+
+            stopLiveTimer();
+        }
 
         if (!simulationManager.isRunning()) {
             setSimulationState(SimulationState.FINISHED);

@@ -77,7 +77,6 @@ public final class WatorSimulationManager
     protected void updateStatistics() {
         statistics.update(
                 executor.stepCount(),
-                timeoutMillis(),
                 executor.stepTimingStatistics());
     }
 

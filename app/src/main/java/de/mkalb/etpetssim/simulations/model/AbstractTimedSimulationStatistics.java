@@ -9,13 +9,11 @@ public abstract class AbstractTimedSimulationStatistics
     private final int totalCells;
 
     private int stepCount;
-    private long timeOutMillis;
     private StepTimingStatistics stepTimingStatistics;
 
     protected AbstractTimedSimulationStatistics(int totalCells) {
         this.totalCells = totalCells;
         stepCount = 0;
-        timeOutMillis = 0;
         stepTimingStatistics = StepTimingStatistics.empty();
     }
 
@@ -30,27 +28,19 @@ public abstract class AbstractTimedSimulationStatistics
     }
 
     @Override
-    public final long timeOutMillis() {
-        return timeOutMillis;
-    }
-
-    @Override
     public final StepTimingStatistics stepTimingStatistics() {
         return stepTimingStatistics;
     }
 
     protected final void updateCommon(int newStepCount,
-                                      long newTimeOutMillis,
                                       StepTimingStatistics newStepTimingStatistics) {
         stepCount = newStepCount;
-        timeOutMillis = newTimeOutMillis;
         stepTimingStatistics = newStepTimingStatistics;
     }
 
     protected final String baseToString() {
         return "totalCells=" + totalCells +
                 ", stepCount=" + stepCount +
-                ", timeOutMillis=" + timeOutMillis +
                 ", stepTimingStatistics=" + stepTimingStatistics;
     }
 
