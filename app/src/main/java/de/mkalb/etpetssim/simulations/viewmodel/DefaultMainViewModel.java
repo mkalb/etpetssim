@@ -20,8 +20,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         extends AbstractMainViewModel<CON, STA> {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
-    private static final double TIMEOUT_VIEW_FACTOR = 0.3d;
-    private static final double THROTTLE_DRAW_FACTOR = 0.2d;
+    private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
+    private static final double THROTTLE_DRAW_FACTOR = 0.3d;
 
     private final DefaultControlViewModel controlViewModel;
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
@@ -144,6 +144,8 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         if (getSimulationState() == SimulationState.RUNNING_LIVE) {
             setSimulationState(SimulationState.CANCELLED);
             logSimulationInfo("Simulation (live) was canceled by the user.");
+
+            notifyFinalStepAndStopLiveTimer();
         } else if (getSimulationState() == SimulationState.RUNNING_BATCH) {
             setSimulationState(SimulationState.CANCELLING_BATCH);
             logSimulationInfo("Simulation (batch) was canceled by the user. Waiting for batch to finish.");
@@ -181,7 +183,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
             setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation (live) was paused by the user.");
 
-            stopLiveTimer();
+            notifyFinalStepAndStopLiveTimer();
         } else if (getSimulationState() == SimulationState.RUNNING_BATCH) {
             setSimulationState(SimulationState.PAUSING_BATCH);
             logSimulationInfo("Simulation (batch) was paused by the user. Waiting for batch to finish.");
@@ -286,9 +288,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
 
         // If simulation is paused or finished, notify view for final step and stop live timer.
         if (getSimulationState() != SimulationState.RUNNING_LIVE) {
-            simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), true));
-
-            stopLiveTimer();
+            notifyFinalStepAndStopLiveTimer();
         }
     }
 
@@ -371,6 +371,13 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
 
     private void stopLiveTimer() {
         liveTimer.stop();
+    }
+
+    private void notifyFinalStepAndStopLiveTimer() {
+        if (simulationManager != null) {
+            simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), true));
+        }
+        stopLiveTimer();
     }
 
     private void cancelBatch() {
