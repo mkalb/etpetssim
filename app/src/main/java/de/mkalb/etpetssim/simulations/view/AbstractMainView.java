@@ -171,10 +171,10 @@ public abstract class AbstractMainView<
         overlayCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, overlayPainter.gridDimension2D().getWidth()));
         overlayCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, overlayPainter.gridDimension2D().getHeight()));
 
-        AppLogger.info("Canvas painter created: " + basePainter);
+        AppLogger.info("MainView: Canvas painter created: " + basePainter);
         if ((baseCanvas.getWidth() < basePainter.gridDimension2D().getWidth()) ||
                 (baseCanvas.getHeight() < basePainter.gridDimension2D().getHeight())) {
-            AppLogger.warn("Canvas size is smaller than the grid dimension.");
+            AppLogger.warn("MainView: Canvas size is smaller than the grid dimension.");
             updateNotification(AppLocalization.getText(AppLocalizationKeys.NOTIFICATION_CANVAS_SIZE_LIMIT));
         } else {
             clearNotification();
@@ -184,10 +184,10 @@ public abstract class AbstractMainView<
         double fontSize = computeCellFontSize(basePainter.cellDimension(), structure.cellShape());
         if (fontSize >= MIN_CELL_FONT_SIZE) {
             cellFont = getPreferredFont(fontSize);
-            AppLogger.info("Cell font created: " + cellFont);
+            AppLogger.info("MainView: Cell font created: " + cellFont);
         } else {
             cellFont = null;
-            AppLogger.info("Cell font not created, because font size is too small: " + fontSize);
+            AppLogger.info("MainView: Cell font not created, because font size is too small: " + fontSize);
         }
     }
 

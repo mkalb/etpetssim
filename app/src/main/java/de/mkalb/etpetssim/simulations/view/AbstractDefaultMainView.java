@@ -74,7 +74,7 @@ public abstract class AbstractDefaultMainView<
         drawAndMeasureSimulationStep(stepCount);
 
         if (DEBUG_MODE) {
-            AppLogger.info("Simulation initialized and drawn in the view. step=" + stepCount);
+            AppLogger.info("MainView: Simulation initialized and drawn in the view. step=" + stepCount);
         }
     }
 
@@ -82,13 +82,13 @@ public abstract class AbstractDefaultMainView<
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             if (DEBUG_MODE) {
-                AppLogger.info("Handle simulation step at view for batch mode. " + simulationStepEvent);
+                AppLogger.info("MainView: Handle simulation step at view for batch mode. " + simulationStepEvent);
             }
 
             controlView.updateStepCount(stepCount);
         } else {
             if (DEBUG_MODE) {
-                AppLogger.info("Handle simulation step at view for live mode. " + simulationStepEvent);
+                AppLogger.info("MainView: Handle simulation step at view for live mode. " + simulationStepEvent);
             }
 
             controlView.updateStepCount(stepCount);
@@ -99,7 +99,7 @@ public abstract class AbstractDefaultMainView<
             if (lastDrawnStepCount != stepCount) {
                 throttleAndDrawSimulationStep(stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
             } else if (DEBUG_MODE) {
-                AppLogger.info("Skipping draw for step because it was already drawn. " + simulationStepEvent);
+                AppLogger.info("MainView: Skipping draw for step because it was already drawn. " + simulationStepEvent);
             }
         }
     }
@@ -113,7 +113,7 @@ public abstract class AbstractDefaultMainView<
         lastDrawnStepCount = stepCount;
 
         if (DEBUG_MODE) {
-            AppLogger.info("Drawn step " + stepCount +
+            AppLogger.info("MainView: Drawn step " + stepCount +
                     " in " + duration + "ms. Average draw time: " + drawThrottler.getAverageDuration() + "ms");
         }
     }
@@ -125,7 +125,7 @@ public abstract class AbstractDefaultMainView<
         } else {
             showSkipOverlay();
             if (DEBUG_MODE) {
-                AppLogger.warn("Skipping draw for step " + stepCount +
+                AppLogger.warn("MainView: Skipping draw for step " + stepCount +
                         " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +
                         "ms, Threshold: " + throttleDrawMillis + "ms");
             }
