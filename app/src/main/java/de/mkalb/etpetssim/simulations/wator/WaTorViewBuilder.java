@@ -59,7 +59,7 @@ public final class WaTorViewBuilder implements Builder<Region> {
         borderPane.setCenter(simulationRegion);
         borderPane.setBottom(controlRegion);
         borderPane.setRight(observationRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
+        borderPane.getStyleClass().add(FXStyleClasses.MAIN_BORDERPANE);
 
         return borderPane;
     }

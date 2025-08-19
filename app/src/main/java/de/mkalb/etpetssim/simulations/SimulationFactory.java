@@ -13,7 +13,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
-import de.mkalb.etpetssim.simulations.start.StartView;
+import de.mkalb.etpetssim.simulations.start.StartMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
@@ -69,9 +69,9 @@ public final class SimulationFactory {
         };
     }
 
-    private static StartView createStartView(Stage stage,
-                                             BiConsumer<Stage, SimulationType> stageUpdater) {
-        return new StartView(stage, stageUpdater);
+    private static StartMainView createStartView(Stage stage,
+                                                 BiConsumer<Stage, SimulationType> stageUpdater) {
+        return new StartMainView(stage, stageUpdater);
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")

@@ -80,7 +80,7 @@ public abstract class AbstractMainView<
         fontCache = new HashMap<>();
 
         notificationLabel = new Label();
-        notificationLabel.getStyleClass().add(FXStyleClasses.VIEW_NOTIFICATION_LABEL);
+        notificationLabel.getStyleClass().add(FXStyleClasses.SIMULATION_NOTIFICATION_LABEL);
         clearNotification();
     }
 
@@ -102,7 +102,7 @@ public abstract class AbstractMainView<
         Region simulationRegion = createSimulationRegion();
 
         BorderPane borderPane = new BorderPane();
-        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
+        borderPane.getStyleClass().add(FXStyleClasses.MAIN_BORDERPANE);
 
         borderPane.setTop(configRegion);
         borderPane.setBottom(controlRegion);

@@ -24,13 +24,13 @@ import java.util.function.*;
  * its logic, as no separate ViewModel or Model is required for the start screen.
  * </p>
  */
-public final class StartView implements SimulationMainView, SimulationControlView {
+public final class StartMainView implements SimulationMainView, SimulationControlView {
 
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
 
-    public StartView(Stage stage,
-                     BiConsumer<Stage, SimulationType> stageUpdater) {
+    public StartMainView(Stage stage,
+                         BiConsumer<Stage, SimulationType> stageUpdater) {
         this.stage = stage;
         this.stageUpdater = stageUpdater;
     }
@@ -41,7 +41,7 @@ public final class StartView implements SimulationMainView, SimulationControlVie
 
         BorderPane borderPane = new BorderPane();
         borderPane.setBottom(controlRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.VIEW_BORDERPANE);
+        borderPane.getStyleClass().add(FXStyleClasses.MAIN_BORDERPANE);
 
         return borderPane;
     }
