@@ -47,7 +47,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         initAppLogger(arguments);
         initializeAppLocalization(arguments);
 
-        AppLogger.info("Application is launching with arguments: " + arguments.argumentsAsString());
+        AppLogger.info("Application: Launching with arguments: " + arguments.argumentsAsString());
         launch(args);
     }
 
@@ -64,7 +64,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         if (arguments.isFlagActive(AppArgs.Key.HELP)) {
             AppArgs.Key.printHelp(System.out);
             // Exit the JavaFX application after printing help
-            AppLogger.info("Exiting application after printing help.");
+            AppLogger.info("Application: Exiting after printing help.");
             System.exit(0);
         }
         return arguments;
@@ -88,7 +88,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         } catch (IOException e) {
             // Initialize the AppLogger with the specified log level, console usage and null log file path
             AppLogger.initialize(logLevel, useConsole, null);
-            AppLogger.error("Failed to initialize log file.", e);
+            AppLogger.error("Application: Failed to initialize log file.", e);
         }
     }
 
@@ -124,7 +124,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private void updateStageIcons(Stage stage) {
         List<Image> icons = AppResources.getImages(APP_IMAGES);
         if (icons.isEmpty()) {
-            AppLogger.error("Failed to load application icons. Icons will not be set.");
+            AppLogger.error("Application: Failed to load application icons. Icons will not be set.");
         } else {
             stage.getIcons().addAll(icons);
         }
@@ -148,7 +148,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         vBox.getChildren().add(buildSimulationHeaderNode(simulationType));
         var instance = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene);
         stage.setOnCloseRequest(_ -> {
-            AppLogger.info("Shutting down simulation instance: " + instance.simulationType());
+            AppLogger.info("Application: Shutting down simulation instance: " + instance.simulationType());
             instance.simulationMainView().shutdownSimulation();
         });
         vBox.getChildren().add(instance.region());
@@ -207,7 +207,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
         SimulationType type = determineSimulationType(arguments, true)
                 .orElse(SimulationType.STARTSCREEN); // Default to STARTSCREEN if no valid simulation type is found
-        AppLogger.info("Application is starting with simulation type: " + type.name());
+        AppLogger.info("Application: Starting with simulation type: " + type.name());
 
         // Initialize and show the primary stage with the appropriate scene
         updateStageIcons(primaryStage);
@@ -217,7 +217,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
     @Override
     public void stop() {
-        AppLogger.info("Application is shutting down.");
+        AppLogger.info("Application: Shutting down.");
         AppLogger.shutdown();
     }
 
