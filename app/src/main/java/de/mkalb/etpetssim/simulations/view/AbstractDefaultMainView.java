@@ -12,7 +12,6 @@ import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
 @SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
@@ -143,7 +142,7 @@ public abstract class AbstractDefaultMainView<
                     center,
                     SKIP_OVERLAY_SYMBOL,
                     SKIP_OVERLAY_TEXT_COLOR,
-                    Font.font(SKIP_FONT_SIZE),
+                    getPreferredFont(SKIP_FONT_SIZE),
                     SKIP_OVERLAY_BACKGROUND_COLOR,
                     SKIP_PADDING
             );

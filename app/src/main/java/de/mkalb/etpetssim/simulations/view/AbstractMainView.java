@@ -17,7 +17,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
+
+import java.util.*;
 
 public abstract class AbstractMainView<
         CON extends SimulationConfig,
@@ -32,6 +35,8 @@ public abstract class AbstractMainView<
     private static final double INITIAL_CANVAS_HEIGHT = 480.0d;
     private static final double MAX_CANVAS_WIDTH = 6_400.0d;
     private static final double MAX_CANVAS_HEIGHT = 4_800.0d;
+    private static final String MAIN_FONT_FAMILY = "Verdana";
+    private static final String FALLBACK_FONT_FAMILY = "System";
 
     protected final VM viewModel;
     protected final CFV configView;
@@ -43,6 +48,7 @@ public abstract class AbstractMainView<
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
+    private final Map<Double, Font> fontCache;
 
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
@@ -66,6 +72,8 @@ public abstract class AbstractMainView<
 
         canvasScrollPane = new ScrollPane();
         canvasScrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
+
+        fontCache = new HashMap<>();
 
         notificationLabel = new Label();
         notificationLabel.getStyleClass().add(FXStyleClasses.VIEW_NOTIFICATION_LABEL);
@@ -192,6 +200,16 @@ public abstract class AbstractMainView<
         double y = y0 + (viewportHeight / 2.0d);
 
         return new Point2D(x, y);
+    }
+
+    protected final Font getPreferredFont(double size) {
+        return fontCache.computeIfAbsent(size, s -> {
+            if (Font.getFamilies().contains(MAIN_FONT_FAMILY)) {
+                return Font.font(MAIN_FONT_FAMILY, s);
+            } else {
+                return Font.font(FALLBACK_FONT_FAMILY, s);
+            }
+        });
     }
 
 }
