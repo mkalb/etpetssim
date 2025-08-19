@@ -18,8 +18,6 @@ import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import org.jspecify.annotations.Nullable;
 
 public final class LabMainView
         extends AbstractMainView<
@@ -40,9 +38,6 @@ public final class LabMainView
     private static final double MOUSE_CLICK_LINE_WIDTH = 8.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private static final double INITIAL_CANVAS_SIZE = 100.0d;
-
-    private @Nullable Font font;
-    private @Nullable Font smallFont;
 
     public LabMainView(LabMainViewModel viewModel,
                        LabConfigView configView,
@@ -78,7 +73,7 @@ public final class LabMainView
                                      .forEach((neighborCoordinate, neighborCells) -> {
                                          if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
                                              overlayPainter.drawCell(neighborCoordinate, Color.YELLOW, null, 0.0d);
-                                             if (smallFont != null) {
+                                             if (cellFont != null) {
                                                  StringBuilder b = new StringBuilder(4);
                                                  for (CellNeighborWithEdgeBehavior cellNeighbor : neighborCells) {
                                                      if (!b.isEmpty()) {
@@ -86,7 +81,7 @@ public final class LabMainView
                                                      }
                                                      b.append(cellNeighbor.direction().arrow());
                                                  }
-                                                 overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, smallFont);
+                                                 overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, cellFont);
                                              }
                                          }
                                      });
@@ -128,9 +123,9 @@ public final class LabMainView
                     overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
                     // overlayPainter.drawHexagonMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
                     // overlayPainter.drawTriangleMatchingCellWidth(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH);
-                    if ((font != null) && !coordinate.equals(viewModel.getLastClickedCoordinate())) {
+                    if ((cellFont != null) && !coordinate.equals(viewModel.getLastClickedCoordinate())) {
                         GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentModel(), entityDescriptorRegistry,
-                                descriptor -> overlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, font));
+                                descriptor -> overlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, cellFont));
                     }
                 }
             }
@@ -162,24 +157,6 @@ public final class LabMainView
         GridStructure structure = viewModel.getStructure();
 
         createPainterAndUpdateCanvas(structure, cellEdgeLength);
-
-        // Font
-        double fontHeightFactor = (structure.cellShape() == CellShape.TRIANGLE) ? 0.14d : 0.18d;
-        double fontSize = Math.round(basePainter.cellDimension().height() * fontHeightFactor);
-        if (fontSize > 8) {
-            if (Font.getFamilies().contains("Verdana")) {
-                font = Font.font("Verdana", fontSize);
-                smallFont = Font.font("Verdana", Math.min(9, fontSize));
-            } else {
-                font = Font.font("System", fontSize);
-                smallFont = Font.font("System", Math.min(9, fontSize));
-            }
-            AppLogger.info("Font for canvas: " + font);
-        } else {
-            font = null;
-            smallFont = null;
-            AppLogger.info("Font size too small: " + fontSize);
-        }
 
         updateCanvasBorderPane(structure);
 
@@ -228,8 +205,8 @@ public final class LabMainView
         } else {
             basePainter.drawCell(coordinate, color, strokeColor, strokeLineWidth);
         }
-        if (font != null) {
-            basePainter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, font);
+        if (cellFont != null) {
+            basePainter.drawCenteredTextInCell(coordinate, coordinate.toDisplayString(), textColor, cellFont);
         }
     }
 
