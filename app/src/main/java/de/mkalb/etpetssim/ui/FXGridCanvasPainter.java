@@ -548,6 +548,19 @@ public final class FXGridCanvasPainter {
      */
     public void drawCenteredTextInCell(GridCoordinate coordinate, String text, Paint textColor, Font font) {
         Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
+        drawCenteredTextAt(center, text, textColor, font);
+    }
+
+    /**
+     * Draws text centered at the specified canvas position.
+     * The text is positioned so that its center aligns with the given point.
+     *
+     * @param center the center position on the canvas where the text should be drawn
+     * @param text the text to draw
+     * @param textColor the color of the text
+     * @param font the font used for rendering the text
+     */
+    public void drawCenteredTextAt(Point2D center, String text, Paint textColor, Font font) {
         Point2D textOffset = computeCenteredTextOffset(text, font);
 
         gc.setFill(textColor);
@@ -556,6 +569,33 @@ public final class FXGridCanvasPainter {
                 center.getX() + textOffset.getX(),
                 center.getY() + textOffset.getY()
         );
+    }
+
+    /**
+     * Draws text centered at the specified canvas position with a background rectangle.
+     * The background rectangle is sized to fit the text plus the given padding and is centered at the provided point.
+     *
+     * @param center the center position on the canvas where the text and background should be drawn
+     * @param text the text to draw
+     * @param textColor the color of the text
+     * @param font the font used for rendering the text
+     * @param backgroundColor the color used to fill the background rectangle
+     * @param padding the padding added around the text inside the background rectangle
+     */
+    public void drawCenteredTextWithBackgroundAt(Point2D center, String text, Paint textColor, Font font, Paint backgroundColor, double padding) {
+        Dimension2D textDimension = computeTextDimension(text, font);
+
+        double bgWidth = textDimension.getWidth() + padding;
+        double bgHeight = textDimension.getHeight() + padding;
+        double bgX = center.getX() - (bgWidth / 2);
+        double bgY = center.getY() - (bgHeight / 2);
+
+        // Draw background rectangle
+        gc.setFill(backgroundColor);
+        gc.fillRect(bgX, bgY, bgWidth, bgHeight);
+
+        // Draw centered text
+        drawCenteredTextAt(center, text, textColor, font);
     }
 
     /**
