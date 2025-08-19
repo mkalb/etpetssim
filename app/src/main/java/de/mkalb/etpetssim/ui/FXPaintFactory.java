@@ -10,8 +10,11 @@ import java.util.*;
  * This class provides static factory methods to simplify the creation of common paint patterns
  * for JavaFX components. It cannot be instantiated.
  */
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings({"MagicNumber", "SpellCheckingInspection"})
 public final class FXPaintFactory {
+
+    public static final Color BACKGROUND_COLOR = Color.web("#1a2233");
+    public static final Color BORDER_COLOR = Color.web("#00eaff");
 
     /**
      * Private constructor to prevent instantiation.
