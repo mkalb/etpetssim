@@ -230,9 +230,9 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         if (controlViewModel.isLiveMode()) {
             double stepDuration = getControlStepDuration();
-            timeoutExecuteMillis = (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR);
-            timeoutViewMillis = (long) (stepDuration * TIMEOUT_VIEW_FACTOR);
-            throttleDrawMillis = (long) (stepDuration * THROTTLE_DRAW_FACTOR);
+            timeoutExecuteMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR));
+            timeoutViewMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_VIEW_FACTOR));
+            throttleDrawMillis = Math.max(1L, (long) (stepDuration * THROTTLE_DRAW_FACTOR));
         }
         setSimulationTimeout(false);
     }
@@ -274,7 +274,9 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                 setSimulationTimeout(true);
 
                 setSimulationState(SimulationState.PAUSED);
-                logSimulationInfo("Simulation (live) has been paused because the simulation step took too long to calculate.");
+                logSimulationInfo("Simulation (live) has been paused because the simulation step took too long to " +
+                        "calculate. duration=" + simulationManager.stepTimingStatistics().current() + " " +
+                        "timeoutExecuteMillis=" + timeoutExecuteMillis);
             }
 
             // Check for view timeout
@@ -282,7 +284,9 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
                 setSimulationTimeout(true);
 
                 setSimulationState(SimulationState.PAUSED);
-                logSimulationInfo("Simulation (live) has been paused because the view took too long to process.");
+                logSimulationInfo("Simulation (live) has been paused because the view took too long to process. " +
+                        "duration=" + durationView+ " " +
+                        "timeoutViewMillis=" + timeoutViewMillis);
             }
         }
 
