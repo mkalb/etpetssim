@@ -10,16 +10,12 @@ final class DrawCallThrottler {
     private int skipCounter = 0;
     private long averageDuration = 0;
 
-    DrawCallThrottler(int historySize) {
-        this(historySize, 3);
-    }
-
     DrawCallThrottler(int historySize, int maxSkips) {
         this.historySize = historySize;
         this.maxSkips = maxSkips;
     }
 
-    boolean shouldSkip(int stepCount, long thresholdMillis) {
+    boolean shouldSkip(long thresholdMillis) {
         if (durations.isEmpty()) {
             skipCounter = 0;
             return false;

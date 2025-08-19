@@ -9,6 +9,10 @@ import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.ui.FXPaintFactory;
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 @SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
@@ -26,16 +30,25 @@ public abstract class AbstractDefaultMainView<
                 DefaultControlView,
                 OV> {
 
+    private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR, 0.95);
+    private static final Color SKIP_OVERLAY_BACKGROUND_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BACKGROUND_COLOR, 0.95);
+    private static final String SKIP_OVERLAY_SYMBOL = "⏳"; // Hourglass Not Done
+    private static final double SKIP_FONT_SIZE = 48.0d;
+    private static final double SKIP_PADDING = 24.0d;
+
     /**
      * Only used for debugging purposes to log draw calls and performance.
      */
     private static final boolean DEBUG_MODE = false;
 
-    private static final int DRAW_THROTTLER_HISTORY_SIZE = 5;
+    private static final int DRAW_THROTTLER_HISTORY_SIZE = 3;
+    private static final int DRAW_THROTTLER_MAX_SKIPS = 4;
 
-    private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE);
+    private final DrawCallThrottler drawThrottler = new DrawCallThrottler(DRAW_THROTTLER_HISTORY_SIZE, DRAW_THROTTLER_MAX_SKIPS);
 
     private int lastDrawnStepCount = Integer.MIN_VALUE;
+
+    private boolean skipOverlayActive = false;
 
     protected AbstractDefaultMainView(DefaultMainViewModel<ENT, CON, STA> viewModel,
                                       CFV configView, DefaultControlView controlView, OV observationView,
@@ -107,15 +120,42 @@ public abstract class AbstractDefaultMainView<
     }
 
     private void throttleAndDrawSimulationStep(int stepCount, boolean finalStep, long throttleDrawMillis) {
-        if (finalStep || !drawThrottler.shouldSkip(stepCount, throttleDrawMillis)) {
+        if (finalStep || !drawThrottler.shouldSkip(throttleDrawMillis)) {
+            clearSkipOverlay();
             drawAndMeasureSimulationStep(stepCount);
         } else {
+            showSkipOverlay();
             if (DEBUG_MODE) {
                 AppLogger.warn("Skipping draw for step " + stepCount +
                         " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +
                         "ms, Threshold: " + throttleDrawMillis + "ms");
             }
         }
+    }
+
+    private void showSkipOverlay() {
+        if (!skipOverlayActive && (overlayPainter != null)) {
+            overlayPainter.clearCanvasBackground();
+
+            Point2D center = computeVisibleCanvasCenter(overlayCanvas);
+
+            overlayPainter.drawCenteredTextWithBackgroundAt(
+                    center,
+                    SKIP_OVERLAY_SYMBOL,
+                    SKIP_OVERLAY_TEXT_COLOR,
+                    Font.font(SKIP_FONT_SIZE),
+                    SKIP_OVERLAY_BACKGROUND_COLOR,
+                    SKIP_PADDING
+            );
+        }
+        skipOverlayActive = true;
+    }
+
+    private void clearSkipOverlay() {
+        if (skipOverlayActive && (overlayPainter != null)) {
+            overlayPainter.clearCanvasBackground();
+        }
+        skipOverlayActive = false;
     }
 
     protected abstract void initSimulation(CON config);

@@ -11,6 +11,7 @@ import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
@@ -39,6 +40,7 @@ public abstract class AbstractMainView<
     protected final GridEntityDescriptorRegistry entityDescriptorRegistry;
     protected final Canvas baseCanvas;
     protected final Canvas overlayCanvas;
+    private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
 
@@ -61,6 +63,9 @@ public abstract class AbstractMainView<
 
         canvasBorderPane = new BorderPane();
         canvasBorderPane.getStyleClass().add(FXStyleClasses.SIMULATION_CENTER_BORDERPANE);
+
+        canvasScrollPane = new ScrollPane();
+        canvasScrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
 
         notificationLabel = new Label();
         notificationLabel.getStyleClass().add(FXStyleClasses.VIEW_NOTIFICATION_LABEL);
@@ -125,15 +130,14 @@ public abstract class AbstractMainView<
 
         canvasBorderPane.setCenter(stackPane);
 
-        ScrollPane scrollPane = new ScrollPane(canvasBorderPane);
-        scrollPane.setFitToHeight(false);
-        scrollPane.setFitToWidth(false);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        scrollPane.setPannable(true);
-        scrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_SCROLLPANE);
+        canvasScrollPane.setContent(canvasBorderPane);
+        canvasScrollPane.setFitToHeight(false);
+        canvasScrollPane.setFitToWidth(false);
+        canvasScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        canvasScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        canvasScrollPane.setPannable(true);
 
-        return new VBox(notificationLabel, scrollPane);
+        return new VBox(notificationLabel, canvasScrollPane);
     }
 
     protected final void createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
@@ -170,6 +174,24 @@ public abstract class AbstractMainView<
         Region border = new Region();
         border.getStyleClass().add(styleClass);
         return border;
+    }
+
+    protected final Point2D computeVisibleCanvasCenter(Canvas canvas) {
+        double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
+        double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
+
+        double hValue = canvasScrollPane.getHvalue();
+        double vValue = canvasScrollPane.getVvalue();
+
+        double maxX = canvas.getWidth() - viewportWidth;
+        double maxY = canvas.getHeight() - viewportHeight;
+        double x0 = (maxX > 0) ? (hValue * maxX) : 0;
+        double y0 = (maxY > 0) ? (vValue * maxY) : 0;
+
+        double x = x0 + (viewportWidth / 2.0d);
+        double y = y0 + (viewportHeight / 2.0d);
+
+        return new Point2D(x, y);
     }
 
 }
