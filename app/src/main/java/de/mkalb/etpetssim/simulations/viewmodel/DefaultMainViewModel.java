@@ -110,7 +110,6 @@ public final class DefaultMainViewModel<
         return simulationManager.currentModel();
     }
 
-    // TODO Add to AbstractMainViewModel
     public int getStepCount() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.stepCount();
