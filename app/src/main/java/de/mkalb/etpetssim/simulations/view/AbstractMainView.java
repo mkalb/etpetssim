@@ -3,12 +3,14 @@ package de.mkalb.etpetssim.simulations.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
+import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Point2D;
@@ -37,6 +39,7 @@ public abstract class AbstractMainView<
     private static final double MAX_CANVAS_HEIGHT = 4_800.0d;
     private static final String MAIN_FONT_FAMILY = "Verdana";
     private static final String FALLBACK_FONT_FAMILY = "System";
+    private static final double MIN_CELL_FONT_SIZE = 7.0d;
 
     protected final VM viewModel;
     protected final CFV configView;
@@ -52,6 +55,7 @@ public abstract class AbstractMainView<
 
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
+    protected @Nullable Font cellFont;
 
     protected AbstractMainView(VM viewModel,
                                CFV configView, CLV controlView, OV observationView,
@@ -78,6 +82,16 @@ public abstract class AbstractMainView<
         notificationLabel = new Label();
         notificationLabel.getStyleClass().add(FXStyleClasses.VIEW_NOTIFICATION_LABEL);
         clearNotification();
+    }
+
+    @SuppressWarnings("MagicNumber")
+    protected static double computeCellFontSize(CellDimension cellDimension, CellShape cellShape) {
+        return Math.round(cellDimension.height() *
+                switch (cellShape) {
+                    case TRIANGLE -> 0.135d;
+                    case SQUARE -> 0.18d;
+                    case HEXAGON -> 0.175d;
+                });
     }
 
     @Override
@@ -165,6 +179,16 @@ public abstract class AbstractMainView<
         } else {
             clearNotification();
         }
+
+        // Font
+        double fontSize = computeCellFontSize(basePainter.cellDimension(), structure.cellShape());
+        if (fontSize >= MIN_CELL_FONT_SIZE) {
+            cellFont = getPreferredFont(fontSize);
+            AppLogger.info("Cell font created: " + cellFont);
+        } else {
+            cellFont = null;
+            AppLogger.info("Cell font not created, because font size is too small: " + fontSize);
+        }
     }
 
     protected final void updateCanvasBorderPane(GridStructure structure) {
@@ -184,6 +208,7 @@ public abstract class AbstractMainView<
         return border;
     }
 
+    @SuppressWarnings("MagicNumber")
     protected final Point2D computeVisibleCanvasCenter(Canvas canvas) {
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
