@@ -223,12 +223,12 @@ public final class AppLocalization {
         try {
             String text = bundle.getString(key);
             if (text.isBlank()) {
-                AppLogger.info("AppLocalization: Key found in ResourceBundle but text is empty or blank: " + key);
+                // AppLogger.info("AppLocalization: Key found in ResourceBundle but text is empty or blank: " + key);
                 return Optional.empty();
             }
             return Optional.of(text);
         } catch (MissingResourceException e) {
-            AppLogger.info("AppLocalization: Key not found in ResourceBundle: " + key);
+            // AppLogger.info("AppLocalization: Key not found in ResourceBundle: " + key);
             return Optional.empty();
         }
     }
