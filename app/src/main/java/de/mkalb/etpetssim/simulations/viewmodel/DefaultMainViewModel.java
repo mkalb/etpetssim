@@ -15,9 +15,11 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-public final class DefaultMainViewModel<ENT extends GridEntity, CON extends SimulationConfig,
+public final class DefaultMainViewModel<
+        ENT extends GridEntity,
+        CON extends SimulationConfig,
         STA extends TimedSimulationStatistics>
-        extends AbstractMainViewModel<CON, STA> {
+        extends AbstractMainViewModel<ENT, CON, STA> {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
     private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
@@ -102,7 +104,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
         return simulationManager != null;
     }
 
-    // TODO Add to AbstractMainViewModel
+    @Override
     public ReadableGridModel<ENT> getCurrentModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentModel();
@@ -285,7 +287,7 @@ public final class DefaultMainViewModel<ENT extends GridEntity, CON extends Simu
 
                 setSimulationState(SimulationState.PAUSED);
                 logSimulationInfo("Simulation (live) has been paused because the view took too long to process. " +
-                        "duration=" + durationView+ " " +
+                        "duration=" + durationView + " " +
                         "timeoutViewMillis=" + timeoutViewMillis);
             }
         }

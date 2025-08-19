@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class LabMainViewModel
-        extends AbstractMainViewModel<LabConfig, LabStatistics> {
+        extends AbstractMainViewModel<LabEntity, LabConfig, LabStatistics> {
 
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
     private @Nullable LabSimulationManager simulationManager;
@@ -92,6 +92,7 @@ public final class LabMainViewModel
         return simulationManager.config();
     }
 
+    @Override
     public ReadableGridModel<LabEntity> getCurrentModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentModel();

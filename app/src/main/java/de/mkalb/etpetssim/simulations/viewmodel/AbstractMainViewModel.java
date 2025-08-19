@@ -1,11 +1,16 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
+import de.mkalb.etpetssim.engine.model.GridEntity;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import javafx.beans.property.*;
 
-public abstract class AbstractMainViewModel<CON extends SimulationConfig, STA extends SimulationStatistics>
+public abstract class AbstractMainViewModel<
+        ENT extends GridEntity,
+        CON extends SimulationConfig,
+        STA extends SimulationStatistics>
         implements SimulationMainViewModel {
 
     protected final SimulationConfigViewModel<CON> configViewModel;
@@ -47,5 +52,7 @@ public abstract class AbstractMainViewModel<CON extends SimulationConfig, STA ex
     protected abstract CON getCurrentConfig();
 
     public abstract boolean hasSimulationManager();
+
+    public abstract ReadableGridModel<ENT> getCurrentModel();
 
 }
