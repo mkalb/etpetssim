@@ -2,10 +2,10 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.simulations.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
-import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
-import javafx.beans.property.*;
+import de.mkalb.etpetssim.simulations.model.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public abstract class AbstractMainViewModel<
         ENT extends GridEntity,
@@ -16,7 +16,8 @@ public abstract class AbstractMainViewModel<
     protected final SimulationConfigViewModel<CON> configViewModel;
     protected final SimulationObservationViewModel<STA> observationViewModel;
     private final ObjectProperty<SimulationState> simulationState;
-    private final BooleanProperty simulationTimeoutProperty = new SimpleBooleanProperty(false);
+    private final ObjectProperty<SimulationNotificationType> notificationTypeProperty =
+            new SimpleObjectProperty<>(SimulationNotificationType.NONE);
 
     protected AbstractMainViewModel(ObjectProperty<SimulationState> simulationState,
                                     SimulationConfigViewModel<CON> configViewModel,
@@ -41,12 +42,13 @@ public abstract class AbstractMainViewModel<
     }
 
     @Override
-    public BooleanProperty simulationTimeoutProperty() {
-        return simulationTimeoutProperty;
+    public final ObjectProperty<SimulationNotificationType> notificationTypeProperty() {
+        return notificationTypeProperty;
     }
 
-    protected final void setSimulationTimeout(boolean timeout) {
-        simulationTimeoutProperty.set(timeout);
+    @Override
+    public final void setNotificationType(SimulationNotificationType notificationType) {
+        notificationTypeProperty.set(notificationType);
     }
 
     protected abstract CON getCurrentConfig();

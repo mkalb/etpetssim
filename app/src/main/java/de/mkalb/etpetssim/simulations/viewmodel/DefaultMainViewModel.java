@@ -136,11 +136,12 @@ public final class DefaultMainViewModel<
     }
 
     private void handleCancelButton() {
+        // Reset notification type.
+        setNotificationType(SimulationNotificationType.NONE);
+
         // Stop batch and live, if running.
         cancelBatch();
         stopLiveTimer();
-        // Reset timeout
-        setSimulationTimeout(false);
 
         if (getSimulationState() == SimulationState.RUNNING_LIVE) {
             setSimulationState(SimulationState.CANCELLED);
@@ -161,7 +162,7 @@ public final class DefaultMainViewModel<
         if (config.isEmpty()) {
             setSimulationState(SimulationState.ERROR);
             AppLogger.warn("Cannot start simulation, because configuration is invalid. " + config);
-            // TODO show message at view
+            setNotificationType(SimulationNotificationType.INVALID_CONFIG);
             return;
         }
 
@@ -194,6 +195,9 @@ public final class DefaultMainViewModel<
     }
 
     private void handleResumeAction() {
+        // Reset notification type.
+        setNotificationType(SimulationNotificationType.NONE);
+
         configureSimulationTimeout();
         if (controlViewModel.isLiveMode()) {
             setSimulationState(SimulationState.RUNNING_LIVE);
@@ -235,7 +239,6 @@ public final class DefaultMainViewModel<
             timeoutViewMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_VIEW_FACTOR));
             throttleDrawMillis = Math.max(1L, (long) (stepDuration * THROTTLE_DRAW_FACTOR));
         }
-        setSimulationTimeout(false);
     }
 
     private void runLiveStep() {
@@ -272,7 +275,7 @@ public final class DefaultMainViewModel<
         if (getSimulationState() == SimulationState.RUNNING_LIVE) {
             // Check for calculation timeout
             if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
-                setSimulationTimeout(true);
+                setNotificationType(SimulationNotificationType.TIMEOUT);
 
                 setSimulationState(SimulationState.PAUSED);
                 logSimulationInfo("Simulation (live) has been paused because the simulation step took too long to " +
@@ -282,7 +285,7 @@ public final class DefaultMainViewModel<
 
             // Check for view timeout
             if (durationView > timeoutViewMillis) {
-                setSimulationTimeout(true);
+                setNotificationType(SimulationNotificationType.TIMEOUT);
 
                 setSimulationState(SimulationState.PAUSED);
                 logSimulationInfo("Simulation (live) has been paused because the view took too long to process. " +

@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.lab.model.*;
+import de.mkalb.etpetssim.simulations.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import javafx.beans.property.ObjectProperty;
@@ -128,6 +129,9 @@ public final class LabMainViewModel
     }
 
     public void handleDrawRequested() {
+        // Reset notification type.
+        setNotificationType(SimulationNotificationType.NONE);
+
         setSimulationState(SimulationState.RUNNING_LIVE);
 
         // Reset the simulation manager if it exists
@@ -135,7 +139,9 @@ public final class LabMainViewModel
 
         LabConfig config = configViewModel.getConfig();
         if (!config.isValid()) {
-            AppLogger.warn("Invalid configuration: " + config);
+            setSimulationState(SimulationState.ERROR);
+            AppLogger.warn("Cannot start simulation, because configuration is invalid. " + config);
+            setNotificationType(SimulationNotificationType.INVALID_CONFIG);
             return;
         }
 

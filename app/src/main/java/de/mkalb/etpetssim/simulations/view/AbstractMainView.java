@@ -1,13 +1,13 @@
 package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
+import de.mkalb.etpetssim.simulations.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
@@ -110,7 +110,7 @@ public abstract class AbstractMainView<
         borderPane.setCenter(simulationRegion);
 
         registerViewModelListeners();
-        registerTimeoutListener();
+        registerNotificationListener();
 
         return borderPane;
     }
@@ -122,23 +122,23 @@ public abstract class AbstractMainView<
 
     protected abstract void registerViewModelListeners();
 
-    private void registerTimeoutListener() {
-        viewModel.simulationTimeoutProperty().addListener((_, _, newVal) -> {
-            if (Boolean.TRUE.equals(newVal)) {
-                updateNotification(AppLocalization.getText(AppLocalizationKeys.NOTIFICATION_SIMULATION_TIMEOUT));
-            } else {
+    private void registerNotificationListener() {
+        viewModel.notificationTypeProperty().addListener((_, _, newVal) -> {
+            if (newVal == SimulationNotificationType.NONE) {
                 clearNotification();
+            } else {
+                updateNotification(AppLocalization.getText(newVal.resourceKey()));
             }
         });
     }
 
-    protected final void updateNotification(String notification) {
+    private void updateNotification(String notification) {
         notificationLabel.setText(notification);
         notificationLabel.setVisible(true);
         notificationLabel.setManaged(true);
     }
 
-    protected final void clearNotification() {
+    private void clearNotification() {
         notificationLabel.setText(null);
         notificationLabel.setVisible(false);
         notificationLabel.setManaged(false);
@@ -175,9 +175,7 @@ public abstract class AbstractMainView<
         if ((baseCanvas.getWidth() < basePainter.gridDimension2D().getWidth()) ||
                 (baseCanvas.getHeight() < basePainter.gridDimension2D().getHeight())) {
             AppLogger.warn("MainView: Canvas size is smaller than the grid dimension.");
-            updateNotification(AppLocalization.getText(AppLocalizationKeys.NOTIFICATION_CANVAS_SIZE_LIMIT));
-        } else {
-            clearNotification();
+            viewModel.setNotificationType(SimulationNotificationType.CANVAS_SIZE_LIMIT);
         }
 
         // Font

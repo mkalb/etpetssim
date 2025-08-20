@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
-import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
@@ -19,14 +21,14 @@ public final class LabConfigViewModel
     private static final int GRID_WIDTH_INITIAL = GridSize.MIN_SIZE;
     private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
     private static final int GRID_WIDTH_MAX = GridSize.LARGE_SQUARE.width();
-    private static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
+    private static final int GRID_WIDTH_STEP = 1;
     private static final int GRID_HEIGHT_INITIAL = GridSize.MIN_SIZE;
     private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
     private static final int GRID_HEIGHT_MAX = GridSize.LARGE_SQUARE.height();
-    private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
-    private static final int CELL_EDGE_LENGTH_INITIAL = 80;
+    private static final int GRID_HEIGHT_STEP = 1;
+    private static final int CELL_EDGE_LENGTH_INITIAL = 50;
     private static final int CELL_EDGE_LENGTH_MIN = 1;
-    private static final int CELL_EDGE_LENGTH_MAX = 200;
+    private static final int CELL_EDGE_LENGTH_MAX = 500;
 
     private final InputEnumProperty<LabConfig.RenderingMode> renderingMode = InputEnumProperty.of(LabConfig.RenderingMode.SHAPE, LabConfig.RenderingMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
