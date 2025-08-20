@@ -27,4 +27,15 @@ This project uses the latest stable versions of all technologies whenever possib
 | IntelliJ IDEA       | 2025.1       | https://www.jetbrains.com/idea/ |
 
 ## License
+
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+### Third-Party Libraries and Licenses
+
+| Library    | License                   | URL                                                    |
+|------------|---------------------------|--------------------------------------------------------|
+| Gradle     | Apache License 2.0        | https://gradle.org/license                             |
+| JavaFX     | GPL + Classpath Exception | https://openjfx.io/                                    |
+| JUnit      | EPL 2.0                   | https://junit.org                                      |
+| Mockito    | MIT License               | https://github.com/mockito/mockito/blob/main/LICENSE   |
+| JSpecify   | Apache License 2.0        | https://github.com/jspecify/jspecify/blob/main/LICENSE |
