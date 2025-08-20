@@ -1,0 +1,86 @@
+package de.mkalb.etpetssim;
+
+import de.mkalb.etpetssim.core.*;
+import javafx.application.Application;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
+public final class AppLauncher {
+
+    /**
+     * Private constructor to prevent instantiation.
+     */
+    private AppLauncher() {
+    }
+
+    /**
+     * Parses command-line arguments and handles the help flag.
+     * If the help flag is active, it prints the help message and exits the application.
+     *
+     * @param args the command-line arguments passed to the application
+     * @return an instance of AppArgs containing the parsed arguments
+     */
+    @SuppressWarnings("CallToSystemExit")
+    private static AppArgs parseArgumentsAndHandleHelp(String[] args) {
+        AppArgs arguments = new AppArgs(args);
+        if (arguments.isFlagActive(AppArgs.Key.HELP)) {
+            AppArgs.Key.printHelp(System.out);
+            // Exit the JavaFX application after printing help
+            AppLogger.info("AppLauncher: Exiting after printing help.");
+            System.exit(0);
+        }
+        return arguments;
+    }
+
+    /**
+     * Initializes the application logger based on command-line arguments.
+     * @param arguments the parsed command-line arguments
+     */
+    private static void initAppLogger(AppArgs arguments) {
+        var logLevel = arguments.getValue(AppArgs.Key.LOG_LEVEL)
+                                .flatMap(AppLogger.LogLevel::fromString)
+                                .orElse(AppLogger.DEFAULT_LOG_LEVEL);
+        boolean useConsole = arguments.getBoolean(AppArgs.Key.LOG_CONSOLE, false);
+        try {
+            boolean useFile = arguments.getBoolean(AppArgs.Key.LOG_FILE, false);
+            Path logPath = useFile ? AppStorage.getLogFile(AppLogger.LOG_FILE_NAME, AppStorage.OperatingSystem.detect()) : null;
+
+            // Initialize the AppLogger with the specified log level, console usage, and log file path
+            AppLogger.initialize(logLevel, useConsole, logPath);
+        } catch (IOException e) {
+            // Initialize the AppLogger with the specified log level, console usage and null log file path
+            AppLogger.initialize(logLevel, useConsole, null);
+            AppLogger.error("AppLauncher: Failed to initialize log file.", e);
+        }
+    }
+
+    /**
+     * Initializes the application localization based on command-line arguments.
+     * Set the default locale for the application.
+     *
+     * @param arguments the parsed command-line arguments
+     */
+    private static void initializeAppLocalization(AppArgs arguments) {
+        AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
+        Locale.setDefault(AppLocalization.locale());
+    }
+
+    /**
+     * The main entry point for the Extraterrestrial Pets Simulation application.
+     * The command-line arguments are parsed with AppArgs.
+     * Use "--help" to display the help message and exit the application.
+     *
+     * @param args the command-line arguments passed to the application
+     */
+    public static void main(String[] args) {
+        var arguments = parseArgumentsAndHandleHelp(args);
+        initAppLogger(arguments);
+        initializeAppLocalization(arguments);
+
+        AppLogger.info("AppLauncher: Launching application with arguments: " + arguments.argumentsAsString());
+        Application.launch(ExtraterrestrialPetsSimulation.class, args);
+    }
+
+}

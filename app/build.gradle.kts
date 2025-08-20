@@ -30,7 +30,7 @@ javafx {
 
 application {
     applicationName = "ExtraterrestrialPetsSimulation"
-    mainClass = "de.mkalb.etpetssim.ExtraterrestrialPetsSimulation"
+    mainClass = "de.mkalb.etpetssim.AppLauncher"
     mainModule = "de.mkalb.etpetssim"
     applicationDefaultJvmArgs = listOf(
         "--enable-native-access=javafx.graphics",
