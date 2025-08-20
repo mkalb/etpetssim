@@ -18,8 +18,12 @@ import javafx.stage.Stage;
 import java.util.*;
 
 /**
- * The main class for the Extraterrestrial Pets Simulation application.
- * It initializes the application, sets up logging, localization, and starts the JavaFX application.
+ * The main JavaFX {@link Application} class for the Extraterrestrial Pets Simulation.
+ * <p>
+ * Responsible for setting up the user interface, handling simulation selection,
+ * and managing the application lifecycle events such as startup and shutdown.
+ * Command-line argument parsing, logging, and localization are initialized in {@link AppLauncher}.
+ * </p>
  */
 public final class ExtraterrestrialPetsSimulation extends Application {
 

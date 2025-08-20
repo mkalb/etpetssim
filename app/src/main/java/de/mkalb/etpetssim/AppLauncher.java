@@ -7,6 +7,20 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
+/**
+ * The launcher class for the Extraterrestrial Pets Simulation application.
+ * <p>
+ * Responsible for parsing command-line arguments, initializing logging and localization,
+ * and starting the JavaFX application. This class does not extend {@link javafx.application.Application}
+ * and serves as the main entry point for the application.
+ * </p>
+ * <p>
+ * The JavaFX application is started via {@link ExtraterrestrialPetsSimulation}.
+ * </p>
+ * <p>
+ * Use the {@code --help} flag to display usage information and exit.
+ * </p>
+ */
 public final class AppLauncher {
 
     /**
