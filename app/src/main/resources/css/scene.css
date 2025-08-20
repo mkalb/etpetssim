@@ -101,6 +101,24 @@
   -fx-border-radius: 0;
 }
 
+.center-splitpane {
+  -fx-background-color: #263a4d;
+  -fx-padding: 0;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+}
+
+.center-splitpane>.split-pane-divider {
+  -fx-background-color: #00eaff;
+  -fx-padding: 0 2 0 2;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+}
+
+.center-splitpane>.split-pane-divider:hover {
+  -fx-effect: dropshadow(gaussian, #00eaff, 6, 0.2, 0, 0);
+}
+
 /* config region (top) */
 .config-hbox {
   -fx-padding: 10;
@@ -342,7 +360,9 @@
 
 .simulation-left-borderpane,
 .simulation-right-borderpane {
-  -fx-background-color: #347ca3;
+  -fx-background-color: #00eaff;
+  -fx-border-color: #005c73;
+  -fx-border-width: 4;
   -fx-min-width: 10;
   -fx-pref-width: 10;
   -fx-max-width: 10;
@@ -350,7 +370,9 @@
 
 .simulation-top-borderpane,
 .simulation-bottom-borderpane {
-  -fx-background-color: #347ca3;
+  -fx-background-color: #00eaff;
+  -fx-border-color: #005c73;
+  -fx-border-width: 4;
   -fx-min-height: 10;
   -fx-pref-height: 10;
   -fx-max-height: 10;
@@ -374,20 +396,20 @@
 }
 
 .simulation-scrollpane .corner {
-  -fx-background-color: #2e485c;
+  -fx-background-color: transparent;
 }
 
 .simulation-scrollpane .scroll-bar {
-  -fx-background-color: #263a4d;
+  -fx-background-color: transparent;
 }
 
 .simulation-scrollpane .thumb {
-  -fx-background-color: #00eaff;
+  -fx-background-color: #347ca3;
 }
 
 .simulation-scrollpane .increment-arrow,
 .simulation-scrollpane .decrement-arrow {
-  -fx-background-color: #2e485c;
+  -fx-background-color: #347ca3;
 }
 
 .simulation-notification-label {

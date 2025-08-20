@@ -13,11 +13,13 @@ import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -40,6 +42,7 @@ public abstract class AbstractMainView<
     private static final String MAIN_FONT_FAMILY = "Verdana";
     private static final String FALLBACK_FONT_FAMILY = "System";
     private static final double MIN_CELL_FONT_SIZE = 7.0d;
+    private static final double CENTER_SPLIT_PANE_DIVIDER_POSITION = 0.75d;
 
     protected final VM viewModel;
     protected final CFV configView;
@@ -101,13 +104,19 @@ public abstract class AbstractMainView<
         Region observationRegion = observationView.buildObservationRegion();
         Region simulationRegion = createSimulationRegion();
 
+        SplitPane centerSplitPane = new SplitPane();
+        centerSplitPane.setOrientation(Orientation.HORIZONTAL);
+        centerSplitPane.getStyleClass().add(FXStyleClasses.CENTER_SPLITPANE);
+        centerSplitPane.getItems().addAll(simulationRegion, observationRegion);
+        centerSplitPane.setDividerPositions(CENTER_SPLIT_PANE_DIVIDER_POSITION);
+        SplitPane.setResizableWithParent(observationRegion, false);
+
         BorderPane borderPane = new BorderPane();
         borderPane.getStyleClass().add(FXStyleClasses.MAIN_BORDERPANE);
 
         borderPane.setTop(configRegion);
         borderPane.setBottom(controlRegion);
-        borderPane.setRight(observationRegion);
-        borderPane.setCenter(simulationRegion);
+        borderPane.setCenter(centerSplitPane);
 
         registerViewModelListeners();
         registerNotificationListener();
