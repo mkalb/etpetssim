@@ -71,6 +71,7 @@ class GridSizeTest {
         assertFalse(new GridSize(64, 32).isPortrait());
     }
 
+    @SuppressWarnings("InsertLiteralUnderscores")
     @Test
     void testAspectRatio() {
         assertEquals(1.0d, new GridSize(32, 32).aspectRatio(), 0.00001d);
