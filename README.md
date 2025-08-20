@@ -2,9 +2,23 @@
 
 ## Overview
 Welcome to the **Extraterrestrial Pets Simulation** project (_etpetssim_)!
-This open-source project aims to create various simple 2D simulations with a top-down view.
-The first subproject is a variant of "WaTor", and additional similar simulations (_Toy models_, _Agent-Based Models_)
-will be added over time.
+This open-source project aims to create various simple 2D simulations (_Toy models_, _Agent-Based Models_) with a 
+top-down view.
+
+**Status:** This project is currently under active development.
+
+### Implemented Simulations:
+- Wa-Tor (Predator-prey world)
+- Conway's Game of Life
+- Simulation Lab (for experiments and tests)
+
+### Planned/Future Simulations:
+- Extraterrestrial Pets Simulation (ET Pets)
+- Sugarscape
+- Snake
+- Forest Fire
+- Langton's Ant
+- Paterson's Worms
 
 ## Goals
 - Explore and apply modern Java features in practice.
