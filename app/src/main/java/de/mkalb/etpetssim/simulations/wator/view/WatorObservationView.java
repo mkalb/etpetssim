@@ -37,7 +37,7 @@ public final class WatorObservationView
         };
         Label[] valueLabels = {stepCountLabel, totalCellsLabel, fishCellsLabel, sharkCellsLabel};
 
-        return createObservationGrid(nameKeys, valueLabels);
+        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
     @Override

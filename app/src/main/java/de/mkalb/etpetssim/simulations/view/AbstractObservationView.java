@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.simulations.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
@@ -20,6 +21,13 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
 
     @Override
     public abstract Region buildObservationRegion();
+
+    protected final ScrollPane createObservationScrollPane(Region region) {
+        ScrollPane observationScrollPane = new ScrollPane(region);
+        observationScrollPane.getStyleClass().add(FXStyleClasses.OBSERVATION_SCROLLPANE);
+
+        return observationScrollPane;
+    }
 
     protected final GridPane createObservationGrid(String[] nameKeys, Label[] valueLabels) {
         GridPane grid = new GridPane();

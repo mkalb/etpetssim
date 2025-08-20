@@ -41,7 +41,7 @@ public final class ConwayObservationView
         };
         Label[] valueLabels = {stepCountLabel, totalCellsLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel};
 
-        return createObservationGrid(nameKeys, valueLabels);
+        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
     @Override

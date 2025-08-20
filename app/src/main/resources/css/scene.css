@@ -531,7 +531,7 @@
   -fx-hgap: 6;
   -fx-vgap: 6;
   -fx-background-color: #2e485c;
-  -fx-effect: innershadow(gaussian, rgba(0, 234, 255, 0.10), 6, 0.3, 0, 1);
+  -fx-effect: null;
   -fx-border-color: #00eaff;
   -fx-border-width: 0 0 0 1;
   -fx-border-radius: 0;
@@ -552,4 +552,38 @@
   -fx-font-weight: normal;
   -fx-text-fill: #00ff99;
   -fx-padding: 1 4 1 0;
+}
+
+.observation-scrollpane {
+  -fx-background: #263a4d;
+  -fx-background-color: #263a4d;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
+}
+
+.observation-scrollpane>.viewport {
+  -fx-background-color: #2e485c;
+}
+
+.observation-scrollpane .corner {
+  -fx-background-color: transparent;
+}
+
+.observation-scrollpane .scroll-bar {
+  -fx-background-color: transparent;
+}
+
+.observation-scrollpane .thumb {
+  -fx-background-color: #347ca3;
+}
+
+.observation-scrollpane .increment-arrow,
+.observation-scrollpane .decrement-arrow {
+  -fx-background-color: #347ca3;
 }
