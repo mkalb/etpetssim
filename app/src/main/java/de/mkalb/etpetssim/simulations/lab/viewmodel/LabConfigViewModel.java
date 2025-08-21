@@ -16,19 +16,21 @@ import java.util.*;
 public final class LabConfigViewModel
         extends AbstractConfigViewModel<LabConfig> {
 
-    private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
-    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
-    private static final int GRID_WIDTH_INITIAL = GridSize.MIN_SIZE;
-    private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_WIDTH_MAX = GridSize.LARGE_SQUARE.width();
-    private static final int GRID_WIDTH_STEP = 1;
-    private static final int GRID_HEIGHT_INITIAL = GridSize.MIN_SIZE;
-    private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_HEIGHT_MAX = GridSize.LARGE_SQUARE.height();
-    private static final int GRID_HEIGHT_STEP = 1;
-    private static final int CELL_EDGE_LENGTH_INITIAL = 50;
-    private static final int CELL_EDGE_LENGTH_MIN = 1;
-    private static final int CELL_EDGE_LENGTH_MAX = 500;
+    private static final GridStructureSettings STRUCTURE_SETTINGS = new GridStructureSettings(
+            CellShape.HEXAGON,
+            GridEdgeBehavior.WRAP_XY,
+            List.of(GridEdgeBehavior.values()),
+            16,
+            GridSize.MIN_SIZE,
+            GridSize.LARGE_SQUARE.width(),
+            1,
+            12,
+            GridSize.MIN_SIZE,
+            GridSize.LARGE_SQUARE.height(),
+            1,
+            40,
+            1,
+            500);
 
     private final InputEnumProperty<LabConfig.RenderingMode> renderingMode = InputEnumProperty.of(LabConfig.RenderingMode.SHAPE, LabConfig.RenderingMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
@@ -36,21 +38,7 @@ public final class LabConfigViewModel
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, new GridStructureSettings(
-                CELL_SHAPE_INITIAL,
-                GRID_EDGE_BEHAVIOR_INITIAL,
-                List.of(GridEdgeBehavior.values()),
-                GRID_WIDTH_INITIAL,
-                GRID_WIDTH_MIN,
-                GRID_WIDTH_MAX,
-                GRID_WIDTH_STEP,
-                GRID_HEIGHT_INITIAL,
-                GRID_HEIGHT_MIN,
-                GRID_HEIGHT_MAX,
-                GRID_HEIGHT_STEP,
-                CELL_EDGE_LENGTH_INITIAL,
-                CELL_EDGE_LENGTH_MIN,
-                CELL_EDGE_LENGTH_MAX));
+        super(simulationState, STRUCTURE_SETTINGS);
         setupConfigListeners();
     }
 

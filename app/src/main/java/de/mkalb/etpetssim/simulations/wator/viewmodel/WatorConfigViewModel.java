@@ -16,19 +16,21 @@ import java.util.*;
 public final class WatorConfigViewModel
         extends AbstractConfigViewModel<WatorConfig> {
 
-    private static final CellShape CELL_SHAPE_INITIAL = CellShape.SQUARE;
-    private static final GridEdgeBehavior GRID_EDGE_BEHAVIOR_INITIAL = GridEdgeBehavior.WRAP_XY;
-    private static final int GRID_WIDTH_INITIAL = 64;
-    private static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_WIDTH_MAX = 1_024;
-    private static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
-    private static final int GRID_HEIGHT_INITIAL = 32;
-    private static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
-    private static final int GRID_HEIGHT_MAX = 1_024;
-    private static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
-    private static final int CELL_EDGE_LENGTH_INITIAL = 8;
-    private static final int CELL_EDGE_LENGTH_MIN = 2;
-    private static final int CELL_EDGE_LENGTH_MAX = 32;
+    private static final GridStructureSettings STRUCTURE_SETTINGS = new GridStructureSettings(
+            CellShape.SQUARE,
+            GridEdgeBehavior.WRAP_XY,
+            List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
+            200,
+            GridSize.MIN_SIZE,
+            1_024,
+            GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE,
+            100,
+            GridSize.MIN_SIZE,
+            1_024,
+            GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
+            4,
+            2,
+            32);
 
     private static final double FISH_PERCENT_INITIAL = 0.25d;
     private static final double FISH_PERCENT_MAX = 1.0d;
@@ -78,21 +80,7 @@ public final class WatorConfigViewModel
                     e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, new GridStructureSettings(
-                CELL_SHAPE_INITIAL,
-                GRID_EDGE_BEHAVIOR_INITIAL,
-                List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
-                GRID_WIDTH_INITIAL,
-                GRID_WIDTH_MIN,
-                GRID_WIDTH_MAX,
-                GRID_WIDTH_STEP,
-                GRID_HEIGHT_INITIAL,
-                GRID_HEIGHT_MIN,
-                GRID_HEIGHT_MAX,
-                GRID_HEIGHT_STEP,
-                CELL_EDGE_LENGTH_INITIAL,
-                CELL_EDGE_LENGTH_MIN,
-                CELL_EDGE_LENGTH_MAX));
+        super(simulationState, STRUCTURE_SETTINGS);
     }
 
     @Override
