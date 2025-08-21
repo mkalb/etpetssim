@@ -221,6 +221,7 @@ public final class DefaultMainViewModel<
     }
 
     private void createAndInitSimulation(CON config) {
+        // TODO handle initialization errors
         simulationManager = simulationManagerFactory.apply(config);
 
         configureSimulationTimeout();
