@@ -1,10 +1,14 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayRules;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
+import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
@@ -27,6 +31,7 @@ public final class ConwayConfigViewModel
             4,
             1,
             48);
+    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
 
     private static final double ALIVE_PERCENT_INITIAL = 0.15d;
     private static final double ALIVE_PERCENT_MAX = 1.0d;
@@ -36,6 +41,9 @@ public final class ConwayConfigViewModel
             ALIVE_PERCENT_INITIAL,
             ALIVE_PERCENT_MIN,
             ALIVE_PERCENT_MAX);
+    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode =
+            InputEnumProperty.of(NEIGHBORHOOD_MODE_INITIAL, NeighborhoodMode.class,
+                    e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, STRUCTURE_SETTINGS);
@@ -49,12 +57,18 @@ public final class ConwayConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
-                alivePercent.getValue()
+                alivePercent.getValue(),
+                neighborhoodMode.getValue(),
+                ConwayRules.of("23/3")
         );
     }
 
     public InputDoubleProperty alivePercentProperty() {
         return alivePercent;
+    }
+
+    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
+        return neighborhoodMode;
     }
 
 }

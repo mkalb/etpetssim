@@ -21,7 +21,7 @@ public final class ConwaySimulationManager
 
         // Executor with runner and terminationCondition
         SynchronousStepRunner<ConwayEntity, ConwayStatistics> runner = new SynchronousStepRunner<>(model,
-                new ConwayUpdateStrategy(structure));
+                new ConwayUpdateStrategy(structure, config));
         var terminationCondition = new ConwayTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
