@@ -1,5 +1,8 @@
 package de.mkalb.etpetssim.simulations.lab.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
@@ -20,7 +23,20 @@ public final class LabConfigView
         TitledPane structurePane = createStructurePane(false);
         TitledPane layoutPane = createLayoutPane();
 
-        return createConfigMainBox(structurePane, layoutPane);
+        // --- Rules Group ---
+        var neighborhoodModeControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.neighborhoodModeProperty(),
+                viewModel.neighborhoodModeProperty().displayNameProvider(),
+                AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
+        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
+                false,
+                neighborhoodModeControl);
+
+        return createConfigMainBox(structurePane, layoutPane, rulesPane);
     }
 
     private TitledPane createLayoutPane() {

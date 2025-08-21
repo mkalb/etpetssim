@@ -57,7 +57,7 @@ public final class LabMainView
         viewModel.setDrawTestRequestedListener(this::drawTest);
     }
 
-    private void registerEvents() {
+    private void registerEvents(NeighborhoodMode neighborhoodMode) {
         overlayCanvas.setOnMouseClicked(event -> {
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), basePainter.cellDimension(), overlayPainter.gridDimension2D(), viewModel.getStructure());
             overlayPainter.clearCanvasBackground();
@@ -68,7 +68,7 @@ public final class LabMainView
                     viewModel.setLastClickedCoordinate(coordinate);
                     overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
 
-                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate, NeighborhoodMode.EDGES_AND_VERTICES,
+                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate, neighborhoodMode,
                                              viewModel.getStructure())
                                      .forEach((neighborCoordinate, neighborCells) -> {
                                          if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
@@ -86,7 +86,7 @@ public final class LabMainView
                                          }
                                      });
                     CellNeighborhoods.coordinatesOfNeighbors(coordinate,
-                                             NeighborhoodMode.EDGES_AND_VERTICES,
+                                             neighborhoodMode,
                                              viewModel.getStructure().cellShape(),
                                              2)
                                      .forEach(neighborCoordinate -> {
@@ -95,7 +95,7 @@ public final class LabMainView
                                          }
                                      });
                     CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate,
-                                             NeighborhoodMode.EDGES_ONLY,
+                                             neighborhoodMode,
                                              viewModel.getStructure())
                                      .forEach((neighborCoordinate, _) -> {
                                          if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
@@ -150,7 +150,7 @@ public final class LabMainView
         overlayPainter = null;
     }
 
-    private void resetCanvasAndPainter() {
+    private void resetCanvasAndPainter(LabConfig config) {
         viewModel.setLastClickedCoordinate(null);
 
         double cellEdgeLength = viewModel.getCellEdgeLength();
@@ -160,7 +160,7 @@ public final class LabMainView
 
         updateCanvasBorderPane(structure);
 
-        registerEvents();
+        registerEvents(config.neighborhoodMode());
     }
 
     private void drawBaseCanvas() {
@@ -170,9 +170,9 @@ public final class LabMainView
             return;
         }
 
-        resetCanvasAndPainter();
-
         LabConfig config = viewModel.getCurrentConfig();
+
+        resetCanvasAndPainter(config);
 
         boolean colorModeBW = (config.colorMode() == LabConfig.ColorMode.BLACK_WHITE);
         boolean renderingModeCircle = (config.renderingMode() == LabConfig.RenderingMode.CIRCLE);
