@@ -21,6 +21,7 @@ public final class AppLocalizationKeys {
     public static final String CONFIG_GRID_HEIGHT_TOOLTIP = "config.grid.height.tooltip";
     public static final String CONFIG_GRID_WIDTH = "config.grid.width";
     public static final String CONFIG_GRID_WIDTH_TOOLTIP = "config.grid.width.tooltip";
+    public static final String CONFIG_NEIGHBORHOOD_MODE_TOOLTIP = "config.neighborhoodmode.tooltip";
     public static final String CONFIG_TITLE_INITIALIZATION = "config.title.initialization";
     public static final String CONFIG_TITLE_RULES = "config.title.rules";
     public static final String CONFIG_TITLE_STRUCTURE = "config.title.structure";

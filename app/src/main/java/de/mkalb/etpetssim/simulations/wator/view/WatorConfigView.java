@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
@@ -23,6 +24,10 @@ public final class WatorConfigView
     static final String WATOR_CONFIG_SHARK_PERCENT = "wator.config.sharkpercent";
     @SuppressWarnings("SpellCheckingInspection")
     static final String WATOR_CONFIG_SHARK_PERCENT_TOOLTIP = "wator.config.sharkpercent.tooltip";
+    @SuppressWarnings("SpellCheckingInspection")
+    static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY = "wator.config.sharkbirthenergy";
+    @SuppressWarnings("SpellCheckingInspection")
+    static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP = "wator.config.sharkbirthenergy.tooltip";
 
     public WatorConfigView(WatorConfigViewModel viewModel) {
         super(viewModel);
@@ -46,16 +51,27 @@ public final class WatorConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), fishPercentControl, sharkPercentControl);
+        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
+                fishPercentControl, sharkPercentControl);
 
         // --- Rules Group ---
+        var neighborhoodModeControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.neighborhoodModeProperty(),
+                viewModel.neighborhoodModeProperty().displayNameProvider(),
+                AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
         var sharkBirthEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkBirthEnergyProperty(),
-                "Shark Birth Energy", //  AppLocalization.getText(AppLocalizationKeys.CONFIG_SHARK_BIRTH_ENERGY),
-                "", // AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP, viewModel.sharkBirthEnergyProperty().min(), viewModel.sharkBirthEnergyProperty().max()),
+                AppLocalization.getText(WATOR_CONFIG_SHARK_BIRTH_ENERGY),
+                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP, viewModel.sharkBirthEnergyProperty().min(), viewModel.sharkBirthEnergyProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
         );
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), sharkBirthEnergyControl);
+
+        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
+                neighborhoodModeControl, sharkBirthEnergyControl);
 
         return createConfigMainBox(structurePane, initPane, rulesPane);
     }
