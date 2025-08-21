@@ -49,7 +49,7 @@ public final class ConwayConfigView
                 viewModel.cellShapeProperty(),
                 viewModel.cellShapeProperty().displayNameProvider(),
                 AppLocalization.getText(CellShape.labelResourceKey()),
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_SHAPE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
@@ -57,7 +57,7 @@ public final class ConwayConfigView
                 viewModel.gridEdgeBehaviorProperty(),
                 viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
                 AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 

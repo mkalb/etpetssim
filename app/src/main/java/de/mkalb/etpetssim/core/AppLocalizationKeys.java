@@ -15,6 +15,8 @@ public final class AppLocalizationKeys {
 
     public static final String CONFIG_CELL_EDGE_LENGTH = "config.celledgelength";
     public static final String CONFIG_CELL_EDGE_LENGTH_TOOLTIP = "config.celledgelength.tooltip";
+    public static final String CONFIG_CELL_SHAPE_TOOLTIP = "config.cellshape.tooltip";
+    public static final String CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP = "config.gridedgebehavior.tooltip";
     public static final String CONFIG_GRID_HEIGHT = "config.grid.height";
     public static final String CONFIG_GRID_HEIGHT_TOOLTIP = "config.grid.height.tooltip";
     public static final String CONFIG_GRID_WIDTH = "config.grid.width";

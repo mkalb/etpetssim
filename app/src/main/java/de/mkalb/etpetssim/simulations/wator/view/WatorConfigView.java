@@ -16,9 +16,13 @@ public final class WatorConfigView
         extends AbstractConfigView<WatorConfig, WatorConfigViewModel> {
 
     @SuppressWarnings("SpellCheckingInspection")
-    static final String WATOR_CONFIG_FISH_PERCENT = "wator.config.alivepercent";
+    static final String WATOR_CONFIG_FISH_PERCENT = "wator.config.fishpercent";
     @SuppressWarnings("SpellCheckingInspection")
-    static final String WATOR_CONFIG_FISH_PERCENT_TOOLTIP = "wator.config.alivepercent.tooltip";
+    static final String WATOR_CONFIG_FISH_PERCENT_TOOLTIP = "wator.config.fishpercent.tooltip";
+    @SuppressWarnings("SpellCheckingInspection")
+    static final String WATOR_CONFIG_SHARK_PERCENT = "wator.config.sharkpercent";
+    @SuppressWarnings("SpellCheckingInspection")
+    static final String WATOR_CONFIG_SHARK_PERCENT_TOOLTIP = "wator.config.sharkpercent.tooltip";
 
     public WatorConfigView(WatorConfigViewModel viewModel) {
         super(viewModel);
@@ -31,14 +35,14 @@ public final class WatorConfigView
         // --- Initialization Group ---
         var fishPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.fishPercentProperty(),
-                "Fish", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
-                "", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT_TOOLTIP),
+                AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
+                AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var sharkPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.sharkPercentProperty(),
-                "Shark", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
-                "", // AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT_TOOLTIP),
+                AppLocalization.getText(WATOR_CONFIG_SHARK_PERCENT),
+                AppLocalization.getText(WATOR_CONFIG_SHARK_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
@@ -61,7 +65,7 @@ public final class WatorConfigView
                 viewModel.cellShapeProperty(),
                 viewModel.cellShapeProperty().displayNameProvider(),
                 AppLocalization.getText(CellShape.labelResourceKey()),
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_SHAPE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
@@ -69,7 +73,7 @@ public final class WatorConfigView
                 viewModel.gridEdgeBehaviorProperty(),
                 viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
                 AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
