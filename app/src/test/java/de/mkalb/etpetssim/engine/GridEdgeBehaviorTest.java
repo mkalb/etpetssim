@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public final class GridEdgeBehaviorTest {
+final class GridEdgeBehaviorTest {
 
     @Test
     public void testEnumValues() {
@@ -47,23 +47,22 @@ public final class GridEdgeBehaviorTest {
     }
 
     @Test
-    public void testEdgeBehaviorAccessors() {
+    public void testEdgeBehaviorX() {
         assertEquals(EdgeBehavior.BLOCK, GridEdgeBehavior.BLOCK_XY.edgeBehaviorX());
-        assertEquals(EdgeBehavior.BLOCK, GridEdgeBehavior.BLOCK_XY.edgeBehaviorY());
-
         assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.WRAP_XY.edgeBehaviorX());
-        assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.WRAP_XY.edgeBehaviorY());
-
         assertEquals(EdgeBehavior.ABSORB, GridEdgeBehavior.ABSORB_XY.edgeBehaviorX());
-        assertEquals(EdgeBehavior.ABSORB, GridEdgeBehavior.ABSORB_XY.edgeBehaviorY());
-
         assertEquals(EdgeBehavior.REFLECT, GridEdgeBehavior.REFLECT_XY.edgeBehaviorX());
-        assertEquals(EdgeBehavior.REFLECT, GridEdgeBehavior.REFLECT_XY.edgeBehaviorY());
-
         assertEquals(EdgeBehavior.BLOCK, GridEdgeBehavior.BLOCK_X_WRAP_Y.edgeBehaviorX());
-        assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.BLOCK_X_WRAP_Y.edgeBehaviorY());
-
         assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.WRAP_X_BLOCK_Y.edgeBehaviorX());
+    }
+
+    @Test
+    public void testEdgeBehaviorY() {
+        assertEquals(EdgeBehavior.BLOCK, GridEdgeBehavior.BLOCK_XY.edgeBehaviorY());
+        assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.WRAP_XY.edgeBehaviorY());
+        assertEquals(EdgeBehavior.ABSORB, GridEdgeBehavior.ABSORB_XY.edgeBehaviorY());
+        assertEquals(EdgeBehavior.REFLECT, GridEdgeBehavior.REFLECT_XY.edgeBehaviorY());
+        assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.BLOCK_X_WRAP_Y.edgeBehaviorY());
         assertEquals(EdgeBehavior.BLOCK, GridEdgeBehavior.WRAP_X_BLOCK_Y.edgeBehaviorY());
     }
 

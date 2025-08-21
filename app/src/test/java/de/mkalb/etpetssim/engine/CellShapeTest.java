@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CellShapeTest {
+final class CellShapeTest {
 
     @Test
     void testEnumValues() {
@@ -26,13 +26,6 @@ class CellShapeTest {
     }
 
     @Test
-    void testVertexCounts() {
-        assertEquals(3, CellShape.TRIANGLE.vertexCount(), "TRIANGLE should have 3 vertices");
-        assertEquals(4, CellShape.SQUARE.vertexCount(), "SQUARE should have 4 vertices");
-        assertEquals(6, CellShape.HEXAGON.vertexCount(), "HEXAGON should have 6 vertices");
-    }
-
-    @Test
     void testResourceKey() {
         assertEquals("cellshape.triangle", CellShape.TRIANGLE.resourceKey(), "TRIANGLE should have the correct resource key");
         assertEquals("cellshape.square", CellShape.SQUARE.resourceKey(), "SQUARE should have the correct resource key");
@@ -42,6 +35,13 @@ class CellShapeTest {
     @Test
     void testLabelResourceKey() {
         assertEquals("cellshape.label", CellShape.labelResourceKey(), "CellShape should have the correct resource key");
+    }
+
+    @Test
+    void testVertexCounts() {
+        assertEquals(3, CellShape.TRIANGLE.vertexCount(), "TRIANGLE should have 3 vertices");
+        assertEquals(4, CellShape.SQUARE.vertexCount(), "SQUARE should have 4 vertices");
+        assertEquals(6, CellShape.HEXAGON.vertexCount(), "HEXAGON should have 6 vertices");
     }
 
 }
