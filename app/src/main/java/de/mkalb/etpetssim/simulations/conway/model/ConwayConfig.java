@@ -13,5 +13,5 @@ public record ConwayConfig(
         double cellEdgeLength,
         double alivePercent,
         NeighborhoodMode neighborhoodMode,
-        ConwayRules conwayRules)
+        ConwayTransitionRules transitionRules)
         implements SimulationConfig {}

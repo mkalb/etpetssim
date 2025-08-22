@@ -22,7 +22,7 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
                                        GridModel<ConwayEntity> nextModel,
                                        int stepIndex,
                                        ConwayStatistics statistics) {
-        ConwayRules conwayRules = config.conwayRules();
+        ConwayTransitionRules transitionRules = config.transitionRules();
 
         // TODO check if updating ConwayStatistics would be helpful here
 
@@ -37,8 +37,8 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
                                                         .filter(n -> currentModel.getEntity(n.mapped()).isAlive())
                                                         .count();
 
-            if (isAlive ? conwayRules.shouldSurvive(aliveNeighbors)
-                    : conwayRules.shouldBeBorn(aliveNeighbors)) {
+            if (isAlive ? transitionRules.shouldSurvive(aliveNeighbors)
+                    : transitionRules.shouldBeBorn(aliveNeighbors)) {
                 nextModel.setEntity(coordinate, ConwayEntity.ALIVE);
             }
         });

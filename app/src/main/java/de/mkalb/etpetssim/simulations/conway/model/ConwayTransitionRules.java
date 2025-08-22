@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 import java.util.*;
 
 /**
- * Represents the rule set for Conway-style cellular automata.
+ * Represents the transition rule set for Conway-style cellular automata.
  * <p>
  * The rules are defined by two sets:
  * <ul>
@@ -17,7 +17,7 @@ import java.util.*;
  * @param surviveCounts the sorted set of neighbor counts for cell survival
  * @param birthCounts   the sorted set of neighbor counts for cell birth
  */
-public record ConwayRules(
+public record ConwayTransitionRules(
         SortedSet<Integer> surviveCounts,
         SortedSet<Integer> birthCounts) {
 
@@ -36,23 +36,17 @@ public record ConwayRules(
     public static final int MAX_NEIGHBOR_COUNT = 9;
 
     /**
-     * Constructs a new {@code ConwayRules} record with the specified survival and birth neighbor counts.
+     * Constructs a new {@code ConwayTransitionRules} record with the specified survival and birth neighbor counts.
      * <p>
      * Both sets must be non-empty and all values must be within the allowed range from
      * {@link #MIN_NEIGHBOR_COUNT} to {@link #MAX_NEIGHBOR_COUNT}.
      *
      * @param surviveCounts the sorted set of neighbor counts for cell survival
      * @param birthCounts   the sorted set of neighbor counts for cell birth
-     * @throws IllegalArgumentException if either set is empty or contains out-of-range values
+     * @throws IllegalArgumentException if either set contains out-of-range values
      */
-    public ConwayRules(SortedSet<Integer> surviveCounts,
-                       SortedSet<Integer> birthCounts) {
-        if (surviveCounts.isEmpty()) {
-            throw new IllegalArgumentException("surviveCounts must not be empty");
-        }
-        if (birthCounts.isEmpty()) {
-            throw new IllegalArgumentException("birthCounts must not be empty");
-        }
+    public ConwayTransitionRules(SortedSet<Integer> surviveCounts,
+                                 SortedSet<Integer> birthCounts) {
         for (int n : surviveCounts) {
             if ((n < MIN_NEIGHBOR_COUNT) || (n > MAX_NEIGHBOR_COUNT)) {
                 throw new IllegalArgumentException("surviveCounts value out of range: " + n);
@@ -68,21 +62,21 @@ public record ConwayRules(
     }
 
     /**
-     * Creates a new {@code ConwayRules} instance from two collections of neighbor counts.
+     * Creates a new {@code ConwayTransitionRules} instance from two collections of neighbor counts.
      * <p>
      * The collections are converted to sorted sets internally.
      *
      * @param surviveCounts the collection of neighbor counts for cell survival
      * @param birthCounts   the collection of neighbor counts for cell birth
-     * @return a new {@code ConwayRules} instance with the specified rules
-     * @throws IllegalArgumentException if either set is empty or contains out-of-range values
+     * @return a new {@code ConwayTransitionRules} instance with the specified rules
+     * @throws IllegalArgumentException if either set contains out-of-range values
      */
-    public static ConwayRules of(Collection<Integer> surviveCounts, Collection<Integer> birthCounts) {
-        return new ConwayRules(new java.util.TreeSet<>(surviveCounts), new java.util.TreeSet<>(birthCounts));
+    public static ConwayTransitionRules of(Collection<Integer> surviveCounts, Collection<Integer> birthCounts) {
+        return new ConwayTransitionRules(new java.util.TreeSet<>(surviveCounts), new java.util.TreeSet<>(birthCounts));
     }
 
     /**
-     * Creates a new {@code ConwayRules} instance from a display string.
+     * Creates a new {@code ConwayTransitionRules} instance from a display string.
      * <p>
      * The input string must be in the format {@code surviveCounts/birthCounts},
      * where each part is a sequence of digits representing allowed neighbor counts.
@@ -93,10 +87,10 @@ public record ConwayRules(
      * The numbers after the slash represent the neighbor counts for which a cell is born.
      *
      * @param displayString the string representation of Conway rules
-     * @return a new {@code ConwayRules} instance parsed from the string
+     * @return a new {@code ConwayTransitionRules} instance parsed from the string
      * @throws IllegalArgumentException if the format is invalid or contains out-of-range values
      */
-    public static ConwayRules of(String displayString) {
+    public static ConwayTransitionRules of(String displayString) {
         if (!displayString.contains("/")) {
             throw new IllegalArgumentException("Invalid format: must contain '/'");
         }
@@ -116,7 +110,7 @@ public record ConwayRules(
                 birth.add(Character.getNumericValue(c));
             }
         }
-        return new ConwayRules(survive, birth);
+        return new ConwayTransitionRules(survive, birth);
     }
 
     /**
