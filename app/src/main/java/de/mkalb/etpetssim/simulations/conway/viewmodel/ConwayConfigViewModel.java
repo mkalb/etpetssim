@@ -72,10 +72,11 @@ public final class ConwayConfigViewModel
     }
 
     private void updateMaxNeighborCount() {
-        int maxNeighbors = CellNeighborhoods.maxNeighborCount(
-                cellShapeProperty().property().getValue(),
-                NEIGHBORHOOD_MODE_INITIAL
-        );
+        int maxNeighbors = Math.min(ConwayTransitionRules.MAX_NEIGHBOR_COUNT,
+                CellNeighborhoods.maxNeighborCount(
+                        cellShapeProperty().property().getValue(),
+                        NEIGHBORHOOD_MODE_INITIAL
+                ));
         maxNeighborCount.set(maxNeighbors);
     }
 

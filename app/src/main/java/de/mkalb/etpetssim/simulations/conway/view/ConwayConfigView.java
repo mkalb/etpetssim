@@ -10,6 +10,7 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
@@ -62,6 +63,7 @@ public final class ConwayConfigView
         var rulesControl = createTransitionRulesControl(viewModel.getSurviveProperties(),
                 viewModel.getBirthProperties(),
                 viewModel.transitionRulesProperty(),
+                viewModel.maxNeighborCountProperty(),
                 AppLocalization.getText(CONWAY_CONFIG_RULES),
                 AppLocalization.getText(CONWAY_CONFIG_RULES_TOOLTIP));
 
@@ -83,27 +85,34 @@ public final class ConwayConfigView
     private FXComponentFactory.LabeledControl<GridPane> createTransitionRulesControl(List<BooleanProperty> surviveProperties,
                                                                                      List<BooleanProperty> bornProperties,
                                                                                      ObjectProperty<ConwayTransitionRules> conwayRulesProperty,
+                                                                                     IntegerProperty maxNeighborCountProperty,
                                                                                      String labelFormatString,
-                                                                                     String tooltip) {
+                                                                                     String tooltipFormatString) {
         Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(
                 () -> String.format(labelFormatString, conwayRulesProperty.get().toDisplayString()),
                 conwayRulesProperty
         ));
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
+        Tooltip tooltip = new Tooltip(tooltipFormatString);
+        tooltip.textProperty().bind(
+                Bindings.createStringBinding(
+                        () -> String.format(tooltipFormatString, maxNeighborCountProperty.get()),
+                        maxNeighborCountProperty
+                )
+        );
+        label.setTooltip(tooltip);
 
         GridPane gridPane = new GridPane();
         gridPane.getStyleClass().add(CONWAY_TRANSITIONRULES_GRIDPANE);
 
-        gridPane.add(createRulesLabel("", tooltipValue, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 0);
-        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_SURVIVE), tooltipValue, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 1);
-        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_BIRTH), tooltipValue, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 2);
+        gridPane.add(createRulesLabel("", tooltip, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 0);
+        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_SURVIVE), tooltip, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 1);
+        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_BIRTH), tooltip, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 2);
 
         // Add digit labels (row 0)
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
-            Label digitLabel = createRulesLabel(String.valueOf(i), tooltipValue, HPos.CENTER, CONWAY_TRANSITIONRULES_DIGIT_LABEL);
+            Label digitLabel = createRulesLabel(String.valueOf(i), tooltip, HPos.CENTER, CONWAY_TRANSITIONRULES_DIGIT_LABEL);
             gridPane.add(digitLabel, 1 + index, 0);
             GridPane.setHalignment(digitLabel, HPos.CENTER);
         }
@@ -116,7 +125,7 @@ public final class ConwayConfigView
             surviveCheckBox.disableProperty().bind(
                     viewModel.maxNeighborCountProperty().lessThan(i)
             );
-            surviveCheckBox.setTooltip(tooltipValue);
+            surviveCheckBox.setTooltip(tooltip);
             surviveCheckBox.getStyleClass().add(FXStyleClasses.CONFIG_CHECKBOX);
             gridPane.add(surviveCheckBox, 1 + index, 1);
             GridPane.setHalignment(surviveCheckBox, HPos.CENTER);
@@ -130,7 +139,7 @@ public final class ConwayConfigView
             bornCheckBox.disableProperty().bind(
                     viewModel.maxNeighborCountProperty().lessThan(i)
             );
-            bornCheckBox.setTooltip(tooltipValue);
+            bornCheckBox.setTooltip(tooltip);
             bornCheckBox.getStyleClass().add(FXStyleClasses.CONFIG_CHECKBOX);
             gridPane.add(bornCheckBox, 1 + index, 2);
             GridPane.setHalignment(bornCheckBox, HPos.CENTER);
