@@ -213,11 +213,16 @@ public final class DefaultMainViewModel<
     }
 
     private Optional<CON> createValidConfig() {
-        CON config = configViewModel.getConfig();
-        if (!config.isValid()) {
+        try {
+            CON config = configViewModel.getConfig();
+            if (!config.isValid()) {
+                return Optional.empty();
+            }
+            return Optional.of(config);
+        } catch (IllegalArgumentException | IllegalStateException | NullPointerException e) {
+            AppLogger.error("Failed to create simulation configuration: " + e.getMessage(), e);
             return Optional.empty();
         }
-        return Optional.of(config);
     }
 
     private void createAndInitSimulation(CON config) {
