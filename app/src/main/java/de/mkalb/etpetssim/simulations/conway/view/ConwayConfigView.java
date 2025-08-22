@@ -113,6 +113,9 @@ public final class ConwayConfigView
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
             var surviveCheckBox = new javafx.scene.control.CheckBox();
             surviveCheckBox.selectedProperty().bindBidirectional(surviveProperties.get(index));
+            surviveCheckBox.disableProperty().bind(
+                    viewModel.maxNeighborCountProperty().lessThan(i)
+            );
             surviveCheckBox.setTooltip(tooltipValue);
             surviveCheckBox.getStyleClass().add(FXStyleClasses.CONFIG_CHECKBOX);
             gridPane.add(surviveCheckBox, 1 + index, 1);
@@ -124,6 +127,9 @@ public final class ConwayConfigView
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
             var bornCheckBox = new javafx.scene.control.CheckBox();
             bornCheckBox.selectedProperty().bindBidirectional(bornProperties.get(index));
+            bornCheckBox.disableProperty().bind(
+                    viewModel.maxNeighborCountProperty().lessThan(i)
+            );
             bornCheckBox.setTooltip(tooltipValue);
             bornCheckBox.getStyleClass().add(FXStyleClasses.CONFIG_CHECKBOX);
             gridPane.add(bornCheckBox, 1 + index, 2);

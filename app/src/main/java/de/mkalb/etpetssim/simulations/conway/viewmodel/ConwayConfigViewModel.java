@@ -45,7 +45,8 @@ public final class ConwayConfigViewModel
 
     private final List<BooleanProperty> surviveProperties = new ArrayList<>();
     private final List<BooleanProperty> birthProperties = new ArrayList<>();
-    private final ObjectProperty<ConwayTransitionRules> transitionRulesProperty = new SimpleObjectProperty<>(DEFAULT_TRANSITION_RULES);
+    private final ObjectProperty<ConwayTransitionRules> transitionRules = new SimpleObjectProperty<>(DEFAULT_TRANSITION_RULES);
+    private final IntegerProperty maxNeighborCount = new SimpleIntegerProperty(0);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, STRUCTURE_SETTINGS);
@@ -63,15 +64,23 @@ public final class ConwayConfigViewModel
         // SQUARE: 23/3
         // TRIANGLE: 45/456
 
-        cellShapeProperty().property()
-                           .addListener((_, _, _) -> disableUnusedNeighborProperties());
+        maxNeighborCountProperty().addListener((_, _, _) -> disableUnusedNeighborProperties());
+
+        cellShapeProperty().property().addListener((_, _, _) -> updateMaxNeighborCount());
+
+        updateMaxNeighborCount();
     }
 
-    private void disableUnusedNeighborProperties() {
+    private void updateMaxNeighborCount() {
         int maxNeighbors = CellNeighborhoods.maxNeighborCount(
                 cellShapeProperty().property().getValue(),
                 NEIGHBORHOOD_MODE_INITIAL
         );
+        maxNeighborCount.set(maxNeighbors);
+    }
+
+    private void disableUnusedNeighborProperties() {
+        int maxNeighbors = maxNeighborCount.get();
         if (maxNeighbors < ConwayTransitionRules.MAX_NEIGHBOR_COUNT) {
             for (int i = maxNeighbors + 1; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
                 surviveProperties.get(i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT).set(false);
@@ -91,7 +100,7 @@ public final class ConwayConfigViewModel
                 birthCounts.add(i);
             }
         }
-        transitionRulesProperty.set(new ConwayTransitionRules(surviveCounts, birthCounts));
+        transitionRules.set(new ConwayTransitionRules(surviveCounts, birthCounts));
     }
 
     @Override
@@ -121,7 +130,11 @@ public final class ConwayConfigViewModel
     }
 
     public ObjectProperty<ConwayTransitionRules> transitionRulesProperty() {
-        return transitionRulesProperty;
+        return transitionRules;
+    }
+
+    public IntegerProperty maxNeighborCountProperty() {
+        return maxNeighborCount;
     }
 
 }
