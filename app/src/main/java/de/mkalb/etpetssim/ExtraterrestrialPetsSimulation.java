@@ -6,9 +6,11 @@ import de.mkalb.etpetssim.simulations.SimulationType;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
@@ -137,6 +139,18 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        // Initialize exception handling for uncaught exceptions
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Unexpected Error");
+                alert.setHeaderText("An unexpected error occurred.");
+                alert.setContentText(throwable.getMessage());
+                alert.showAndWait();
+            });
+            AppLogger.error("Uncaught exception in thread " + thread.getName(), throwable);
+        });
+
         // Determine the simulation type from command-line arguments
         AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
         SimulationType type = determineSimulationType(arguments, true)
