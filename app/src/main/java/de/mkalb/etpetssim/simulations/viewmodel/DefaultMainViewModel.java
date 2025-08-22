@@ -158,15 +158,26 @@ public final class DefaultMainViewModel<
     }
 
     private void handleStartAction() {
-        Optional<CON> config = createValidConfig();
-        if (config.isEmpty()) {
+        // Reset notification type.
+        setNotificationType(SimulationNotificationType.NONE);
+
+        try {
+            Optional<CON> config = createValidConfig();
+            if (config.isEmpty()) {
+                setSimulationState(SimulationState.ERROR);
+                AppLogger.warn("Cannot start simulation, because configuration is invalid. " + config);
+                setNotificationType(SimulationNotificationType.INVALID_CONFIG);
+                return;
+            }
+
+            createAndInitSimulation(config.get());
+        } catch (IllegalArgumentException | IllegalStateException | NullPointerException
+                 | IndexOutOfBoundsException | NoSuchElementException e) {
             setSimulationState(SimulationState.ERROR);
-            AppLogger.warn("Cannot start simulation, because configuration is invalid. " + config);
-            setNotificationType(SimulationNotificationType.INVALID_CONFIG);
+            AppLogger.error("Failed to start simulation: " + e.getMessage(), e);
+            setNotificationType(SimulationNotificationType.EXCEPTION);
             return;
         }
-
-        createAndInitSimulation(config.get());
         if (controlViewModel.isLiveMode()) {
             setSimulationState(SimulationState.RUNNING_LIVE);
             logSimulationInfo("Simulation (live) was started by the user.");
@@ -213,20 +224,14 @@ public final class DefaultMainViewModel<
     }
 
     private Optional<CON> createValidConfig() {
-        try {
-            CON config = configViewModel.getConfig();
-            if (!config.isValid()) {
-                return Optional.empty();
-            }
-            return Optional.of(config);
-        } catch (IllegalArgumentException | IllegalStateException | NullPointerException e) {
-            AppLogger.error("Failed to create simulation configuration: " + e.getMessage(), e);
+        CON config = configViewModel.getConfig();
+        if (!config.isValid()) {
             return Optional.empty();
         }
+        return Optional.of(config);
     }
 
     private void createAndInitSimulation(CON config) {
-        // TODO handle initialization errors
         simulationManager = simulationManagerFactory.apply(config);
 
         configureSimulationTimeout();

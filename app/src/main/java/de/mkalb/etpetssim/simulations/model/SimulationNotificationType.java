@@ -19,6 +19,11 @@ public enum SimulationNotificationType {
     NONE("notification.none"),
 
     /**
+     *An exception occurred during the simulation.
+     */
+    EXCEPTION("notification.exception"),
+
+    /**
      * The simulation was stopped due to a timeout.
      */
     TIMEOUT("notification.timeout"),
