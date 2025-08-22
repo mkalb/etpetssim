@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayTransitionRules;
@@ -54,16 +55,32 @@ public final class ConwayConfigViewModel
             birthProperties.add(new SimpleBooleanProperty(DEFAULT_TRANSITION_RULES.birthCounts().contains(i)));
         }
 
-        ChangeListener<Boolean> updateListener = (_, _, _) -> updateConwayRules();
+        ChangeListener<Boolean> updateListener = (_, _, _) -> updateTransitionRules();
         surviveProperties.forEach(p -> p.addListener(updateListener));
         birthProperties.forEach(p -> p.addListener(updateListener));
 
         // HEXAGON: 23/34
         // SQUARE: 23/3
         // TRIANGLE: 45/456
+
+        cellShapeProperty().property()
+                           .addListener((_, _, _) -> disableUnusedNeighborProperties());
     }
 
-    private void updateConwayRules() {
+    private void disableUnusedNeighborProperties() {
+        int maxNeighbors = CellNeighborhoods.maxNeighborCount(
+                cellShapeProperty().property().getValue(),
+                NEIGHBORHOOD_MODE_INITIAL
+        );
+        if (maxNeighbors < ConwayTransitionRules.MAX_NEIGHBOR_COUNT) {
+            for (int i = maxNeighbors + 1; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
+                surviveProperties.get(i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT).set(false);
+                birthProperties.get(i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT).set(false);
+            }
+        }
+    }
+
+    private void updateTransitionRules() {
         SortedSet<Integer> surviveCounts = new TreeSet<>();
         SortedSet<Integer> birthCounts = new TreeSet<>();
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
