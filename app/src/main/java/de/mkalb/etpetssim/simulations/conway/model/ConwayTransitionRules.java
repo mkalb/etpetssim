@@ -26,7 +26,7 @@ public record ConwayTransitionRules(
      * <p>
      * This value is used to validate rule sets and display formats.
      */
-    public static final int MIN_NEIGHBOR_COUNT = 1;
+    public static final int MIN_NEIGHBOR_COUNT = 0;
 
     /**
      * The maximum allowed neighbor count for Conway rules.

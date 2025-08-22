@@ -17,6 +17,7 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
         this.config = config;
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
     public void performSynchronousStep(ReadableGridModel<ConwayEntity> currentModel,
                                        GridModel<ConwayEntity> nextModel,
