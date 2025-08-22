@@ -1,0 +1,28 @@
+.config-vbox .conway-transitionrules-gridpane {
+  -fx-background-color: transparent;
+  -fx-background-radius: 0;
+  -fx-background-insets: 0;
+  -fx-padding: 4 10;
+  -fx-hgap: 4;
+  -fx-vgap: 4;
+  -fx-effect: null;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 4;
+}
+
+.config-vbox .conway-transitionrules-digit-label {
+  -fx-min-width: 10;
+  -fx-alignment: center;
+  -fx-font-weight: normal;
+  -fx-text-fill: #eaf6fb;
+  -fx-font-size: 13;
+}
+
+.config-vbox .conway-transitionrules-label {
+  -fx-min-width: 10;
+  -fx-alignment: center-left;
+  -fx-font-weight: normal;
+  -fx-text-fill: #eaf6fb;
+  -fx-font-size: 14;
+}
