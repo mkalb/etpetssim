@@ -13,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -87,8 +89,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             AppLogger.info("Application: Shutting down simulation instance: " + instance.simulationType());
             instance.simulationMainView().shutdownSimulation();
         });
-        vBox.getChildren().add(instance.region());
+        Region instanceRegion = instance.region();
+        vBox.getChildren().add(instanceRegion);
         vBox.getStyleClass().add(FXStyleClasses.APP_VBOX);
+        VBox.setVgrow(instanceRegion, Priority.ALWAYS);
         Scene scene = new Scene(vBox);
 
         // Add common stylesheets first and then the specific simulation type stylesheet
