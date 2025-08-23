@@ -39,8 +39,8 @@
   -fx-border-color: #00eaff;
 
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.18), 10, 0.4, 0, 3);
-  -fx-min-width: 900;
-  -fx-pref-width: 1000;
+  -fx-min-width: 500;
+  -fx-pref-width: 1200;
 }
 
 .header-title-label {
@@ -92,7 +92,7 @@
   -fx-spacing: 8;
   -fx-alignment: center;
   -fx-min-width: 500;
-  -fx-pref-width: 1000;
+  -fx-pref-width: 1200;
 }
 
 /* main region (contains: config, control, simulation, observation */
@@ -135,7 +135,7 @@
   -fx-border-radius: 0;
   -fx-alignment: top-left;
   -fx-min-width: 900;
-  -fx-pref-width: 1100;
+  -fx-pref-width: 1200;
 }
 
 .config-checkbox {
@@ -299,8 +299,8 @@
   -fx-border-width: 0;
   -fx-border-radius: 0;
   -fx-border-color: transparent;
-  -fx-pref-width: 250;
   -fx-min-width: 250;
+  -fx-pref-width: 250;
 }
 
 .config-titledpane {
@@ -447,7 +447,7 @@
   -fx-border-radius: 0;
   -fx-alignment: center-left;
   -fx-min-width: 900;
-  -fx-pref-width: 1000;
+  -fx-pref-width: 1200;
 }
 
 .control-button-hbox {
@@ -542,7 +542,7 @@
   -fx-border-width: 0 0 0 1;
   -fx-border-radius: 0;
   -fx-min-width: 200;
-  -fx-pref-width: 300;
+  -fx-pref-width: 250;
   -fx-min-height: 200;
 }
 
