@@ -173,30 +173,44 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that places a fixed number of entities at random free positions.
+     * Returns an initializer that places a fixed number of entities at random positions,
+     * avoiding placement on cells that already contain an entity with the same {@code descriptorId}.
+     * <p>
+     * The method does <b>not</b> check for default entities, but instead compares the {@code descriptorId}
+     * of the entity to be placed with the entity currently at the randomly chosen position.
+     * If the {@code descriptorId} matches, the entity is not placed at that position.
+     * This allows placement of entities even if the supplier may return default entities.
+     * </p>
      *
-     * @param count         the number of entities to place
+     * @param count          the number of entities to place
      * @param entitySupplier the supplier for entities to place
-     * @param random        the random number generator
-     * @param <T>           the type of grid entity
-     * @return a grid initializer that places entities at random positions
-     * @throws IllegalStateException if not all entities could be placed
+     * @param random         the random number generator
+     * @param <T>            the type of grid entity
+     * @return a grid initializer that places entities at random positions, skipping positions with matching {@code descriptorId}
+     * @throws IllegalStateException if not all entities could be placed within the maximum number of attempts
      */
     public static <T extends GridEntity> GridInitializer<T> placeRandomCounted(int count, Supplier<T> entitySupplier, Random random) {
         return model -> {
             int placed = 0;
-            int attempts = 0;
-            int maxAttempts = count * 10; // Arbitrary limit to prevent infinite loop
-            while ((placed < count) && (attempts < maxAttempts)) {
-                GridCoordinate coordinate = randomCoordinate(model.structure().size(), random);
-                if (model.isDefaultEntity(coordinate)) {
-                    model.setEntity(coordinate, entitySupplier.get());
-                    placed++;
+            int gridArea = model.structure().size().area();
+            int maxAttempts = Math.max(100, gridArea / 2); // Scales with grid size, minimum 100
+            while (placed < count) {
+                T nextEntity = entitySupplier.get();
+                int attempts = 0;
+                boolean nextEntityPlaced = false;
+                while (!nextEntityPlaced && (attempts < maxAttempts)) {
+                    GridCoordinate coordinate = randomCoordinate(model.structure().size(), random);
+                    T existingEntity = model.getEntity(coordinate);
+                    if (!existingEntity.descriptorId().equals(nextEntity.descriptorId())) {
+                        model.setEntity(coordinate, nextEntity);
+                        placed++;
+                        nextEntityPlaced = true;
+                    }
+                    attempts++;
                 }
-                attempts++;
-            }
-            if (placed < count) {
-                throw new IllegalStateException("Unable to place all entities within the maximum number of attempts.");
+                if (!nextEntityPlaced) {
+                    throw new IllegalStateException("Unable to place all entities within the maximum number of attempts.");
+                }
             }
         };
     }
@@ -231,7 +245,7 @@ public final class GridInitializers {
             Collections.shuffle(coordinates, random);
             int placed = 0;
             for (GridCoordinate coordinate : coordinates) {
-                if (model.isDefaultEntity(coordinate)) {
+                if (model.isDefaultEntity(coordinate)) {// TODO Fix bug
                     model.setEntity(coordinate, entitySupplier.get());
                     placed++;
                     if (placed >= count) {
