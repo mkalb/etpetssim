@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -37,13 +36,7 @@ public final class StartMainView implements SimulationMainView, SimulationContro
 
     @Override
     public Region buildMainRegion() {
-        Region controlRegion = buildControlRegion();
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.setBottom(controlRegion);
-        borderPane.getStyleClass().add(FXStyleClasses.MAIN_BORDERPANE);
-
-        return borderPane;
+        return buildControlRegion();
     }
 
     @Override
