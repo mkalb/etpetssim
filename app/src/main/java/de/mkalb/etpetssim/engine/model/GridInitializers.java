@@ -230,26 +230,37 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that places a fixed number of entities at shuffled free positions.
+     * Returns an initializer that places a fixed number of entities at shuffled positions.
+     * <p>
+     * The grid coordinates are shuffled once, and the method iterates over them a single time.
+     * For each coordinate, it attempts to place the current entity if its {@code descriptorId} does not match
+     * the existing entity at that position. Only after a successful placement is a new entity generated.
+     * If not enough suitable positions are found, placement stops and an exception is thrown.
+     * </p>
      *
      * @param count          the number of entities to place
      * @param entitySupplier the supplier for entities to place
      * @param random         the random number generator
      * @param <T>            the type of grid entity
-     * @return a grid initializer that places entities at shuffled positions
+     * @return a grid initializer that places entities at shuffled positions, skipping blocked cells
      * @throws IllegalStateException if not all entities could be placed
      */
     public static <T extends GridEntity> GridInitializer<T> placeShuffledCounted(int count, Supplier<T> entitySupplier, Random random) {
         return model -> {
-            List<GridCoordinate> coordinates = model.structure().coordinatesList();
-            Collections.shuffle(coordinates, random);
             int placed = 0;
-            for (GridCoordinate coordinate : coordinates) {
-                if (model.isDefaultEntity(coordinate)) {// TODO Fix bug
-                    model.setEntity(coordinate, entitySupplier.get());
-                    placed++;
-                    if (placed >= count) {
-                        break;
+            if (placed < count) {
+                List<GridCoordinate> coordinates = model.structure().coordinatesList();
+                Collections.shuffle(coordinates, random);
+                T nextEntity = entitySupplier.get();
+                for (GridCoordinate coordinate : coordinates) {
+                    T existingEntity = model.getEntity(coordinate);
+                    if (!existingEntity.descriptorId().equals(nextEntity.descriptorId())) {
+                        model.setEntity(coordinate, entitySupplier.get());
+                        placed++;
+                        if (placed >= count) {
+                            break;
+                        }
+                        nextEntity = entitySupplier.get();
                     }
                 }
             }
