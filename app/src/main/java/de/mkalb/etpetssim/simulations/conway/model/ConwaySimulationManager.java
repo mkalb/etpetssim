@@ -4,6 +4,8 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 
+import java.util.*;
+
 public final class ConwaySimulationManager
         extends AbstractTimedSimulationManager<ConwayEntity, ConwayConfig, ConwayStatistics> {
 
@@ -16,7 +18,7 @@ public final class ConwaySimulationManager
 
         structure = config.createGridStructure();
         statistics = new ConwayStatistics(structure.cellCount());
-        var random = new java.util.Random();
+        var random = new Random();
         var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
 
         // Executor with runner and terminationCondition
@@ -25,9 +27,26 @@ public final class ConwaySimulationManager
         var terminationCondition = new ConwayTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
-        GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, config.alivePercent(), random).initialize(model);
+        initializeGrid(config, model, random);
 
         updateStatistics();
+    }
+
+    @SuppressWarnings("MagicNumber")
+    private void initializeGrid(ConwayConfig config, GridModel<ConwayEntity> model, Random random) {
+        double alivePercent = config.alivePercent();
+        double deadPercent = 1.0d - config.alivePercent();
+
+        GridInitializer<ConwayEntity> gridInitializer;
+        if ((alivePercent > 0) && (alivePercent <= 0.75d)) {
+            gridInitializer = GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, alivePercent, random);
+        } else if (deadPercent < 1.0d) {
+            gridInitializer = GridInitializers.constant(ConwayEntity.ALIVE)
+                                              .andThen(GridInitializers.placeRandomPercent(() -> ConwayEntity.DEAD, deadPercent, random));
+        } else {
+            gridInitializer = GridInitializers.identity();
+        }
+        gridInitializer.initialize(model);
     }
 
     @Override
