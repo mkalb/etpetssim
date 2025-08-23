@@ -164,11 +164,14 @@ public abstract class AbstractMainView<
         canvasScrollPane.setContent(canvasBorderPane);
         canvasScrollPane.setFitToHeight(false);
         canvasScrollPane.setFitToWidth(false);
-        canvasScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        canvasScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        canvasScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        canvasScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         canvasScrollPane.setPannable(true);
 
-        return new VBox(notificationLabel, canvasScrollPane);
+        VBox vBox = new VBox(notificationLabel, canvasScrollPane);
+        VBox.setVgrow(canvasScrollPane, Priority.ALWAYS);
+
+        return vBox;
     }
 
     protected final void createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
