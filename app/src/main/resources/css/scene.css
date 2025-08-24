@@ -538,8 +538,8 @@
   -fx-vgap: 6;
   -fx-background-color: #2e485c;
   -fx-effect: null;
-  -fx-border-color: #00eaff;
-  -fx-border-width: 0 0 0 1;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
   -fx-border-radius: 0;
   -fx-min-width: 200;
   -fx-pref-width: 250;
