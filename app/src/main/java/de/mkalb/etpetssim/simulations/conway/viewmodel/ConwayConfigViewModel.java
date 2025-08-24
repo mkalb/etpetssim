@@ -34,7 +34,7 @@ public final class ConwayConfigViewModel
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
     private static final ConwayTransitionRules DEFAULT_TRANSITION_RULES = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
 
-    private static final double ALIVE_PERCENT_INITIAL = 0.15d;
+    private static final double ALIVE_PERCENT_INITIAL = 0.1d;
     private static final double ALIVE_PERCENT_MAX = 1.0d;
     private static final double ALIVE_PERCENT_MIN = 0.0d;
 
