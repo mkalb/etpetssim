@@ -22,14 +22,15 @@ public final class ConwaySimulationManager
         var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
 
         // Executor with runner and terminationCondition
-        SynchronousStepRunner<ConwayEntity, ConwayStatistics> runner = new SynchronousStepRunner<>(model,
-                new ConwayUpdateStrategy(structure, config));
+        var runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure, config));
         var terminationCondition = new ConwayTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
+        updateStatistics();
+
         initializeGrid(config, model, random);
 
-        updateStatistics();
+        updateInitialStatistics(model);
     }
 
     @SuppressWarnings("MagicNumber")
@@ -64,6 +65,12 @@ public final class ConwaySimulationManager
         statistics.update(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
+    }
+
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private void updateInitialStatistics(GridModel<ConwayEntity> model) {
+        int aliveCells = (int) model.count(e -> e.entity().isAlive());
+        statistics.updateCells(aliveCells, aliveCells);
     }
 
     @Override
