@@ -31,15 +31,17 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
         // TODO check if updating ConwayStatistics would be helpful here
 
         // long start = System.currentTimeMillis();
-        updateGrid(currentModel, nextModel, transitionRules);
+        updateGrid(currentModel, nextModel, transitionRules, statistics);
         // long duration = System.currentTimeMillis() - start;
         // AppLogger.info("Duration perform: " + duration);
     }
 
     private void updateGrid(ReadableGridModel<ConwayEntity> currentModel, GridModel<ConwayEntity> nextModel,
-                            ConwayTransitionRules transitionRules) {
+                            ConwayTransitionRules transitionRules, ConwayStatistics statistics) {
         Map<GridCoordinate, Integer> deadNeighborCounts = new HashMap<>();
         Set<GridCoordinate> alive = currentModel.nonDefaultCoordinates();
+
+        int aliveCells = 0;
 
         for (GridCoordinate coordinate : alive) {
             int aliveNeighbors = 0;
@@ -54,14 +56,18 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
             }
             if (transitionRules.shouldSurvive(aliveNeighbors)) {
                 nextModel.setEntity(coordinate, ConwayEntity.ALIVE);
+                aliveCells++;
             }
         }
 
         for (Map.Entry<GridCoordinate, Integer> entry : deadNeighborCounts.entrySet()) {
             if (transitionRules.shouldBeBorn(entry.getValue())) {
                 nextModel.setEntity(entry.getKey(), ConwayEntity.ALIVE);
+                aliveCells++;
             }
         }
+
+        statistics.updateAliveCells(aliveCells);
     }
 
 }

@@ -63,9 +63,7 @@ public final class ConwaySimulationManager
     protected void updateStatistics() {
         statistics.update(
                 executor.stepCount(),
-                executor.currentModel().count(cell -> cell.entity().isAlive()),
                 executor.stepTimingStatistics());
-        // TODO implement method countNonDefault
     }
 
     @Override

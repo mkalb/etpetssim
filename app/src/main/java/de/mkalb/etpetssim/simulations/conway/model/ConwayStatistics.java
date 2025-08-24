@@ -20,10 +20,12 @@ public final class ConwayStatistics
         maxAliveCells = 0;
     }
 
-    public void update(int newStepCount,
-                       long newAliveCells,
+    void update(int newStepCount,
                        StepTimingStatistics newStepTimingStatistics) {
         updateCommon(newStepCount, newStepTimingStatistics);
+    }
+
+    void updateAliveCells(int newAliveCells) {
         aliveCells = newAliveCells;
         deadCells = getTotalCells() - aliveCells;
         if (aliveCells > maxAliveCells) {
