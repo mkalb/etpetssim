@@ -270,6 +270,8 @@ public final class DefaultMainViewModel<
         // Execute simulation step
         simulationManager.executeStep();
 
+        AppLogger.debug(() -> "Simulation (live) has executed step. duration=" + simulationManager.stepTimingStatistics().current());
+
         // Update statistics
         updateObservationStatistics(simulationManager.statistics());
 
@@ -283,6 +285,8 @@ public final class DefaultMainViewModel<
         long startView = System.currentTimeMillis();
         simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
         long durationView = System.currentTimeMillis() - startView;
+
+        AppLogger.debug(() -> "Simulation (live) has informed step listener. duration=" + durationView);
 
         // Check timeout if still running (not finished) and not the first step
         if ((getSimulationState() == SimulationState.RUNNING_LIVE) && (simulationManager.stepCount() > 1)) {
