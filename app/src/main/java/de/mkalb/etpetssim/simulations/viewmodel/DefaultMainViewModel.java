@@ -161,6 +161,7 @@ public final class DefaultMainViewModel<
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
+        long start = System.currentTimeMillis();
         try {
             Optional<CON> config = createValidConfig();
             if (config.isEmpty()) {
@@ -178,14 +179,16 @@ public final class DefaultMainViewModel<
             setNotificationType(SimulationNotificationType.EXCEPTION);
             return;
         }
+        long duration = System.currentTimeMillis() - start;
+
         if (controlViewModel.isLiveMode()) {
             setSimulationState(SimulationState.RUNNING_LIVE);
-            logSimulationInfo("Simulation (live) was started by the user.");
+            logSimulationInfo("Simulation (live) was started by the user. duration=" + duration);
 
             startLiveTimer();
         } else if (controlViewModel.isBatchMode()) {
             setSimulationState(SimulationState.RUNNING_BATCH);
-            logSimulationInfo("Simulation (batch) was started by the user.");
+            logSimulationInfo("Simulation (batch) was started by the user. duration=" + duration);
 
             runBatchSteps(getControlStepCount());
         }
