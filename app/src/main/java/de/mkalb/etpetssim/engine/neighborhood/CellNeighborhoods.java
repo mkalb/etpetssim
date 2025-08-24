@@ -122,13 +122,8 @@ public final class CellNeighborhoods {
         if (from.equals(to)) {
             return false;
         }
-        List<CellNeighbor> neighbors = cellNeighborsIgnoringEdgeBehavior(from, neighborhoodMode, cellShape);
-        for (CellNeighbor neighbor : neighbors) {
-            if (neighbor.neighborCoordinate().equals(to)) {
-                return true;
-            }
-        }
-        return false;
+        return cellNeighborsIgnoringEdgeBehavior(from, neighborhoodMode, cellShape)
+                .anyMatch(neighbor -> neighbor.neighborCoordinate().equals(to));
     }
 
     /**
@@ -267,61 +262,32 @@ public final class CellNeighborhoods {
     }
 
     /**
-     * Returns a stream of all valid neighbors for a given cell, based on the specified
-     * neighborhood mode and cell shape, <b>respecting grid boundaries but ignoring edge behavior</b>.
-     * <p>
-     * The returned stream contains {@link CellNeighbor} objects, each describing the direction,
-     * connection type (edge or vertex), and coordinate of a neighboring cell relative to the
-     * given start coordinate. Only neighbors whose coordinates are valid within the provided
-     * {@link GridStructure} are included.
-     * <p>
-     * <b>Note:</b> This method checks the validity of both the start coordinate and each neighbor
-     * coordinate against the grid boundaries. Edge behavior is <b>ignored</b> when determining neighbors.
-     * If the start coordinate is not valid, an empty stream is returned.
-     *
-     * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined (must be valid in the grid)
-     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
-     * @param structure         the grid structure defining size and topology
-     * @return a stream of {@link CellNeighbor} objects representing all valid neighbors of the cell (respecting grid boundaries, ignoring edge behavior)
-     */
-    public static Stream<CellNeighbor> validCellNeighborsIgnoringEdgeBehavior(GridCoordinate startCoordinate,
-                                                                              NeighborhoodMode neighborhoodMode,
-                                                                              GridStructure structure) {
-        if (!structure.isCoordinateValid(startCoordinate)) {
-            return Stream.empty();
-        }
-        return cellNeighborsIgnoringEdgeBehavior(startCoordinate, neighborhoodMode, structure.cellShape())
-                .stream()
-                .filter(neighbor -> structure.isCoordinateValid(neighbor.neighborCoordinate()));
-    }
-
-    /**
-     * Returns a stream of {@link EdgeBehaviorResult} for all theoretical neighbors of a given cell,
+     * Returns a collection of {@link EdgeBehaviorResult} for all theoretical neighbors of a given cell,
      * applying the grid's edge behavior to each neighbor coordinate and ensuring only one result per mapped coordinate,
      * always preferring results with {@link EdgeBehaviorAction#VALID} if present.
      * <p>
      * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
-     * {@link GridStructure}. If not, an empty stream is returned. Otherwise, it computes all theoretical neighbors
+     * {@link GridStructure}. If not, an empty collection is returned. Otherwise, it computes all theoretical neighbors
      * (ignoring boundaries), applies edge behavior to each, and collects the results such that for each mapped coordinate,
      * only the best result (preferably with action {@code VALID}) is included.
      * <p>
-     * The resulting stream contains {@link EdgeBehaviorResult} objects describing the mapping and action for each unique
+     * The resulting collection contains {@link EdgeBehaviorResult} objects describing the mapping and action for each unique
      * mapped neighbor coordinate.
      *
      * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param structure        the grid structure defining size and topology
-     * @return a stream of {@link EdgeBehaviorResult} for all unique mapped neighbor coordinates (with edge behavior applied)
+     * @return an unmodifiable collection of {@link EdgeBehaviorResult} for all unique mapped neighbor coordinates (with edge behavior applied)
      */
-    public static Stream<EdgeBehaviorResult> neighborEdgeResults(
+    public static Collection<EdgeBehaviorResult> neighborEdgeResults(
             GridCoordinate startCoordinate,
             NeighborhoodMode neighborhoodMode,
             GridStructure structure) {
         if (!structure.isCoordinateValid(startCoordinate)) {
-            return Stream.empty();
+            return Collections.emptyList();
         }
         Map<GridCoordinate, EdgeBehaviorResult> bestResults = new HashMap<>();
-        for (CellNeighbor neighbor : cellNeighborsIgnoringEdgeBehavior(startCoordinate, neighborhoodMode, structure.cellShape())) {
+        for (CellNeighbor neighbor : cellNeighborsIgnoringEdgeBehavior(startCoordinate, neighborhoodMode, structure.cellShape()).toList()) {
             EdgeBehaviorResult result = applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure);
             bestResults.merge(
                     result.mapped(),
@@ -330,30 +296,30 @@ public final class CellNeighborhoods {
                             ((candidate.action() == EdgeBehaviorAction.VALID) ? candidate : existing)
             );
         }
-        return bestResults.values().stream();
+        return Collections.unmodifiableCollection(bestResults.values());
     }
 
     /**
-     * Returns a list of all theoretical neighbors for a given cell, based on the specified
+     * Returns a stream of all theoretical neighbors for a given cell, based on the specified
      * neighborhood mode and cell shape, <b>ignoring grid boundaries and edge behavior</b>.
      * <p>
-     * The returned list contains {@link CellNeighbor} objects, each describing the direction,
+     * The returned stream contains {@link CellNeighbor} objects, each describing the direction,
      * connection type (edge or vertex), and coordinate of a neighboring cell relative to the
      * given start coordinate. The calculation assumes an infinite grid and does not check
      * whether the start or neighbor coordinates are valid within any grid structure.
      * <p>
      * <b>Note:</b> This method does <b>not</b> apply any edge behavior or boundary checks.
      * It is intended for use cases where only the geometric neighbor relationships are needed.
-     * The returned list is unmodifiable.
+     * The caller can collect the stream into a list if needed.
      *
      * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined (not checked for grid validity)
      * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
      * @param cellShape         the shape of the cell (triangle, square, hexagon)
-     * @return an immutable list of {@link CellNeighbor} objects representing all theoretical neighbors of the cell (ignoring grid boundaries and edge behavior)
+     * @return a stream of {@link CellNeighbor} objects representing all theoretical neighbors of the cell (ignoring grid boundaries and edge behavior)
      */
-    public static List<CellNeighbor> cellNeighborsIgnoringEdgeBehavior(GridCoordinate startCoordinate,
-                                                                       NeighborhoodMode neighborhoodMode,
-                                                                       CellShape cellShape) {
+    public static Stream<CellNeighbor> cellNeighborsIgnoringEdgeBehavior(GridCoordinate startCoordinate,
+                                                                         NeighborhoodMode neighborhoodMode,
+                                                                         CellShape cellShape) {
         List<CellNeighborConnection> cellNeighborConnections = CACHE.computeIfAbsent(
                 generateCacheKey(startCoordinate, neighborhoodMode, cellShape),
                 _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));
@@ -364,8 +330,7 @@ public final class CellNeighborhoods {
                                               neighborConnection.direction(),
                                               neighborConnection.connectionType(),
                                               startCoordinate.offset(neighborConnection.offset())
-                                      ))
-                                      .toList();
+                                      ));
     }
 
     /**
@@ -387,6 +352,7 @@ public final class CellNeighborhoods {
      * @return a map from mapped neighbor coordinates to lists of {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records,
      *         each describing the relationship and edge behavior outcome for that neighbor
      */
+    // TODO Check if it can be replaced with neighborEdgeResults
     public static Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> cellNeighborsWithEdgeBehavior(
             GridCoordinate startCoordinate,
             NeighborhoodMode neighborhoodMode,
@@ -395,7 +361,6 @@ public final class CellNeighborhoods {
             return Collections.emptyMap();
         }
         return cellNeighborsIgnoringEdgeBehavior(startCoordinate, neighborhoodMode, structure.cellShape())
-                .stream()
                 .map(neighbor -> {
                     EdgeBehaviorResult result = applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure);
                     return CellNeighborWithEdgeBehavior.of(neighbor, result);
@@ -441,7 +406,7 @@ public final class CellNeighborhoods {
             for (int i = 0; i < levelSize; i++) {
                 GridCoordinate current = Objects.requireNonNull(queue.poll());
 
-                for (CellNeighbor neighbor : cellNeighborsIgnoringEdgeBehavior(current, neighborhoodMode, cellShape)) {
+                for (CellNeighbor neighbor : cellNeighborsIgnoringEdgeBehavior(current, neighborhoodMode, cellShape).toList()) {
                     GridCoordinate neighborCoordinate = neighbor.neighborCoordinate();
                     if (visited.add(neighborCoordinate)) { // Only add if not visited
                         result.add(neighborCoordinate);
