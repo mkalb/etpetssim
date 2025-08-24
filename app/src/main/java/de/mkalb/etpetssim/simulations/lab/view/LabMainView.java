@@ -17,7 +17,10 @@ import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
+
+import java.util.*;
 
 public final class LabMainView
         extends AbstractMainView<
@@ -55,6 +58,11 @@ public final class LabMainView
         viewModel.setDrawRequestedListener(this::drawBaseCanvas);
         viewModel.setDrawModelRequestedListener(this::drawModel);
         viewModel.setDrawTestRequestedListener(this::drawTest);
+    }
+
+    @Override
+    protected List<Node> createModificationToolbarNodes() {
+        return List.of();
     }
 
     private void registerEvents(NeighborhoodMode neighborhoodMode) {

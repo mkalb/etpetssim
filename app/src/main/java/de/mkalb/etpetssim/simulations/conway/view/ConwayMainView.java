@@ -9,8 +9,11 @@ import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+
+import java.util.*;
 
 public final class ConwayMainView
         extends AbstractDefaultMainView<
@@ -62,6 +65,11 @@ public final class ConwayMainView
                                     alivePaint,
                                     null,
                                     0.0d));
+    }
+
+    @Override
+    protected List<Node> createModificationToolbarNodes() {
+        return List.of();
     }
 
 }

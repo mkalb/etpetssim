@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
@@ -106,6 +107,11 @@ public final class WatorMainView
                                 null,
                                 0.0d))
         );
+    }
+
+    @Override
+    protected List<Node> createModificationToolbarNodes() {
+        return List.of();
     }
 
 }

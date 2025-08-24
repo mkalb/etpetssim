@@ -6,9 +6,7 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.EdgeBehavior;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.model.SimulationNotificationType;
-import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.model.*;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
@@ -16,10 +14,9 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -153,6 +150,8 @@ public abstract class AbstractMainView<
         notificationLabel.setManaged(false);
     }
 
+    protected abstract List<Node> createModificationToolbarNodes();
+
     protected final Region createSimulationRegion() {
         StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
         StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
@@ -168,7 +167,20 @@ public abstract class AbstractMainView<
         canvasScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         canvasScrollPane.setPannable(true);
 
-        VBox vBox = new VBox(notificationLabel, canvasScrollPane);
+        VBox vBox = new VBox();
+        vBox.getChildren().add(notificationLabel);
+
+        var modificationNodes = createModificationToolbarNodes();
+        if (!modificationNodes.isEmpty()) {
+            ToolBar modificationToolbar = new ToolBar();
+            modificationToolbar.getItems().addAll(modificationToolbar);
+            modificationToolbar.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR);
+            modificationToolbar.visibleProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.PAUSED));
+            modificationToolbar.managedProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.PAUSED));
+            vBox.getChildren().add(modificationToolbar);
+        }
+
+        vBox.getChildren().add(canvasScrollPane);
         VBox.setVgrow(canvasScrollPane, Priority.ALWAYS);
 
         return vBox;

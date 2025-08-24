@@ -436,6 +436,9 @@
   -fx-pref-width: 100%;
 }
 
+.simulation-toolbar {
+}
+
 /* control region (bottom) */
 .control-hbox {
   -fx-padding: 4 8;
