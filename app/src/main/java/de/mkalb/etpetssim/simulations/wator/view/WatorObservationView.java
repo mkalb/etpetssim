@@ -2,12 +2,13 @@ package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+
+import java.util.*;
 
 public final class WatorObservationView
         extends AbstractObservationView<WatorStatistics, DefaultObservationViewModel<WatorStatistics>> {
@@ -42,20 +43,21 @@ public final class WatorObservationView
 
     @Override
     protected void updateObservationLabels() {
-        if (viewModel.getSimulationState() == SimulationState.INITIAL) {
+        Optional<WatorStatistics> statistics = viewModel.getStatistics();
+
+        if (statistics.isPresent()) {
+            stepCountLabel.setText(Long.toString(statistics.get().getStepCount()));
+            totalCellsLabel.setText(Long.toString(statistics.get().getTotalCells()));
+            fishCellsLabel.setText(Long.toString(statistics.get().getFishCells()));
+            sharkCellsLabel.setText(Long.toString(statistics.get().getSharkCells()));
+        } else {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
             stepCountLabel.setText(valueUnknown);
             totalCellsLabel.setText(valueUnknown);
             fishCellsLabel.setText(valueUnknown);
             sharkCellsLabel.setText(valueUnknown);
-            return;
-        }
-        WatorStatistics statistics = viewModel.getStatistics();
 
-        stepCountLabel.setText(Long.toString(statistics.getStepCount()));
-        totalCellsLabel.setText(Long.toString(statistics.getTotalCells()));
-        fishCellsLabel.setText(Long.toString(statistics.getFishCells()));
-        sharkCellsLabel.setText(Long.toString(statistics.getSharkCells()));
+        }
     }
 
 }

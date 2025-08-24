@@ -5,6 +5,8 @@ import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
+import java.util.*;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class AbstractObservationViewModel<STA extends SimulationStatistics>
         implements SimulationObservationViewModel<STA> {
@@ -32,9 +34,10 @@ public abstract class AbstractObservationViewModel<STA extends SimulationStatist
         return statistics.getReadOnlyProperty();
     }
 
+    @SuppressWarnings("OptionalOfNullableMisuse")
     @Override
-    public final STA getStatistics() {
-        return statistics.get();
+    public final Optional<STA> getStatistics() {
+        return Optional.ofNullable(statistics.get());
     }
 
     @Override

@@ -3,11 +3,12 @@ package de.mkalb.etpetssim.simulations.conway.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+
+import java.util.*;
 
 public final class ConwayObservationView
         extends AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayStatistics>> {
@@ -49,7 +50,16 @@ public final class ConwayObservationView
 
     @Override
     protected void updateObservationLabels() {
-        if (viewModel.getSimulationState() == SimulationState.INITIAL) {
+        Optional<ConwayStatistics> statistics = viewModel.getStatistics();
+
+        if (statistics.isPresent()) {
+            stepCountLabel.setText(Integer.toString(statistics.get().getStepCount()));
+            totalCellsLabel.setText(Integer.toString(statistics.get().getTotalCells()));
+            aliveCellsLabel.setText(Integer.toString(statistics.get().getAliveCells()));
+            maxAliveCellsLabel.setText(Integer.toString(statistics.get().getMaxAliveCells()));
+            deadCellsLabel.setText(Integer.toString(statistics.get().getDeadCells()));
+            changedCellsLabel.setText(Integer.toString(statistics.get().getChangedCells()));
+        } else {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
             stepCountLabel.setText(valueUnknown);
             totalCellsLabel.setText(valueUnknown);
@@ -57,16 +67,7 @@ public final class ConwayObservationView
             maxAliveCellsLabel.setText(valueUnknown);
             deadCellsLabel.setText(valueUnknown);
             changedCellsLabel.setText(valueUnknown);
-            return;
         }
-        ConwayStatistics statistics = viewModel.getStatistics();
-
-        stepCountLabel.setText(Integer.toString(statistics.getStepCount()));
-        totalCellsLabel.setText(Integer.toString(statistics.getTotalCells()));
-        aliveCellsLabel.setText(Integer.toString(statistics.getAliveCells()));
-        maxAliveCellsLabel.setText(Integer.toString(statistics.getMaxAliveCells()));
-        deadCellsLabel.setText(Integer.toString(statistics.getDeadCells()));
-        changedCellsLabel.setText(Integer.toString(statistics.getChangedCells()));
     }
 
 }
