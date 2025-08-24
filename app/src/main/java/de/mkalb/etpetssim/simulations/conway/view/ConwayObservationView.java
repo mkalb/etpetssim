@@ -17,12 +17,14 @@ public final class ConwayObservationView
     @SuppressWarnings("SpellCheckingInspection")
     static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
     static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
+    static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
     private final Label aliveCellsLabel = new Label();
     private final Label deadCellsLabel = new Label();
     private final Label maxAliveCellsLabel = new Label();
+    private final Label changedCellsLabel = new Label();
 
     public ConwayObservationView(DefaultObservationViewModel<ConwayStatistics> viewModel) {
         super(viewModel);
@@ -37,9 +39,10 @@ public final class ConwayObservationView
                 CONWAY_OBSERVATION_TOTAL_CELLS,
                 CONWAY_OBSERVATION_ALIVE_CELLS,
                 CONWAY_OBSERVATION_MAX_ALIVE_CELLS,
-                CONWAY_OBSERVATION_DEAD_CELLS
+                CONWAY_OBSERVATION_DEAD_CELLS,
+                CONWAY_OBSERVATION_CHANGED_CELLS
         };
-        Label[] valueLabels = {stepCountLabel, totalCellsLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel};
+        Label[] valueLabels = {stepCountLabel, totalCellsLabel, aliveCellsLabel, maxAliveCellsLabel, deadCellsLabel, changedCellsLabel};
 
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
@@ -53,15 +56,17 @@ public final class ConwayObservationView
             aliveCellsLabel.setText(valueUnknown);
             maxAliveCellsLabel.setText(valueUnknown);
             deadCellsLabel.setText(valueUnknown);
+            changedCellsLabel.setText(valueUnknown);
             return;
         }
         ConwayStatistics statistics = viewModel.getStatistics();
 
-        stepCountLabel.setText(Long.toString(statistics.getStepCount()));
-        totalCellsLabel.setText(Long.toString(statistics.getTotalCells()));
-        aliveCellsLabel.setText(Long.toString(statistics.getAliveCells()));
-        maxAliveCellsLabel.setText(Long.toString(statistics.getMaxAliveCells()));
-        deadCellsLabel.setText(Long.toString(statistics.getDeadCells()));
+        stepCountLabel.setText(Integer.toString(statistics.getStepCount()));
+        totalCellsLabel.setText(Integer.toString(statistics.getTotalCells()));
+        aliveCellsLabel.setText(Integer.toString(statistics.getAliveCells()));
+        maxAliveCellsLabel.setText(Integer.toString(statistics.getMaxAliveCells()));
+        deadCellsLabel.setText(Integer.toString(statistics.getDeadCells()));
+        changedCellsLabel.setText(Integer.toString(statistics.getChangedCells()));
     }
 
 }

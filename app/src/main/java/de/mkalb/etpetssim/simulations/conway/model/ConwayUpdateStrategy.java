@@ -7,7 +7,6 @@ import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.SynchronousStepLogic;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
 
 import java.util.*;
 
@@ -26,26 +25,16 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
                                        GridModel<ConwayEntity> nextModel,
                                        int stepIndex,
                                        ConwayStatistics statistics) {
-        ConwayTransitionRules transitionRules = config.transitionRules();
+        // Counter for ConwayStatistics
+        int aliveCells = 0;
+        int changedCells = 0;
 
-        // TODO check if updating ConwayStatistics would be helpful here
-
-        // long start = System.currentTimeMillis();
-        updateGrid(currentModel, nextModel, transitionRules, statistics);
-        // long duration = System.currentTimeMillis() - start;
-        // AppLogger.info("Duration perform: " + duration);
-    }
-
-    private void updateGrid(ReadableGridModel<ConwayEntity> currentModel, GridModel<ConwayEntity> nextModel,
-                            ConwayTransitionRules transitionRules, ConwayStatistics statistics) {
         Map<GridCoordinate, Integer> deadNeighborCounts = new HashMap<>();
         Set<GridCoordinate> alive = currentModel.nonDefaultCoordinates();
 
-        int aliveCells = 0;
-
-        for (GridCoordinate coordinate : alive) {
+        for (var coordinate : alive) {
             int aliveNeighbors = 0;
-            for (EdgeBehaviorResult result : CellNeighborhoods.neighborEdgeResults(coordinate, config.neighborhoodMode(), structure)) {
+            for (var result : CellNeighborhoods.neighborEdgeResults(coordinate, config.neighborhoodMode(), structure)) {
                 if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
                     if (alive.contains(result.mapped())) {
                         aliveNeighbors++;
@@ -54,20 +43,23 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
                     }
                 }
             }
-            if (transitionRules.shouldSurvive(aliveNeighbors)) {
+            if (config.transitionRules().shouldSurvive(aliveNeighbors)) {
                 nextModel.setEntity(coordinate, ConwayEntity.ALIVE);
                 aliveCells++;
+            } else {
+                changedCells++;
             }
         }
 
-        for (Map.Entry<GridCoordinate, Integer> entry : deadNeighborCounts.entrySet()) {
-            if (transitionRules.shouldBeBorn(entry.getValue())) {
+        for (var entry : deadNeighborCounts.entrySet()) {
+            if (config.transitionRules().shouldBeBorn(entry.getValue())) {
                 nextModel.setEntity(entry.getKey(), ConwayEntity.ALIVE);
                 aliveCells++;
+                changedCells++;
             }
         }
 
-        statistics.updateAliveCells(aliveCells);
+        statistics.updateCells(aliveCells, changedCells);
     }
 
 }
