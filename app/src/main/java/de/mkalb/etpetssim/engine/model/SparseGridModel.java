@@ -201,6 +201,11 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
     }
 
     @Override
+    public Set<GridCoordinate> nonDefaultCoordinates() {
+        return Collections.unmodifiableSet(data.keySet());
+    }
+
+    @Override
     public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
         List<GridCell<T>> result = new ArrayList<>();
         for (Map.Entry<GridCoordinate, T> entry : data.entrySet()) {

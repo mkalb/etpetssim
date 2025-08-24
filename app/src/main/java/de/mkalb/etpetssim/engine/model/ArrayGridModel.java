@@ -192,6 +192,21 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
         return result;
     }
 
+    @Override
+    public Set<GridCoordinate> nonDefaultCoordinates() {
+        Set<GridCoordinate> result = new HashSet<>();
+        for (int y = 0; y < structure.size().height(); y++) {
+            for (int x = 0; x < structure.size().width(); x++) {
+                @SuppressWarnings("unchecked")
+                T entity = (T) data[y][x];
+                if (!Objects.equals(entity, defaultEntity)) {
+                    result.add(new GridCoordinate(x, y));
+                }
+            }
+        }
+        return Collections.unmodifiableSet(result);
+    }
+
     /**
      * Returns a string representation of this grid model, including its structure and default entity.
      *

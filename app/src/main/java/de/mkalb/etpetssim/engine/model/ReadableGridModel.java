@@ -161,6 +161,17 @@ public interface ReadableGridModel<T extends GridEntity> {
     }
 
     /**
+     * Returns a set of coordinates for all grid cells whose entity is not equal to the default entity.
+     *
+     * @return an unmodifiable set of coordinates for non-default entities
+     */
+    default Set<GridCoordinate> nonDefaultCoordinates() {
+        return nonDefaultCells()
+                .map(GridCell::coordinate)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
      * Finds the first grid cell that matches the given predicate.
      * <p>
      * This method filters the stream of all grid cells using the provided predicate
