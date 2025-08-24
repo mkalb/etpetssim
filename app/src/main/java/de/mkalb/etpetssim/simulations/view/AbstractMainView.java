@@ -173,7 +173,7 @@ public abstract class AbstractMainView<
         var modificationNodes = createModificationToolbarNodes();
         if (!modificationNodes.isEmpty()) {
             ToolBar modificationToolbar = new ToolBar();
-            modificationToolbar.getItems().addAll(modificationToolbar);
+            modificationToolbar.getItems().addAll(modificationNodes);
             modificationToolbar.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR);
             modificationToolbar.visibleProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.PAUSED));
             modificationToolbar.managedProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.PAUSED));

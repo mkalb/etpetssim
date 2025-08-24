@@ -437,6 +437,15 @@
 }
 
 .simulation-toolbar {
+  -fx-background-color: #1a2233;
+  -fx-background: #1a2233;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 8 16 8 16;
+  -fx-spacing: 12;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1 0 0 0;
+  -fx-border-radius: 0;
 }
 
 /* control region (bottom) */
