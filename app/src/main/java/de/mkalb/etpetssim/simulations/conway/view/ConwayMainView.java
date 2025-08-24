@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
@@ -11,6 +10,7 @@ import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public final class ConwayMainView
         extends AbstractDefaultMainView<
@@ -19,6 +19,9 @@ public final class ConwayMainView
         ConwayStatistics,
         ConwayConfigView,
         ConwayObservationView> {
+
+    private final Paint backgroundPaint;
+    private final Paint alivePaint;
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, ConwayConfig, ConwayStatistics> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -30,19 +33,17 @@ public final class ConwayMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
+        backgroundPaint = entityDescriptorRegistry
+                .getRequiredByDescriptorId(ConwayEntity.DEAD.descriptorId())
+                .colorAsOptional().orElse(Color.BLACK);
+        alivePaint = entityDescriptorRegistry
+                .getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId())
+                .colorAsOptional().orElse(Color.WHITE);
     }
 
     @Override
     protected void initSimulation(ConwayConfig config) {
         // Do nothing
-    }
-
-    private void fillBackground() {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
-        basePainter.fillCanvasBackground(javafx.scene.paint.Color.BLACK);
     }
 
     @Override
@@ -52,22 +53,15 @@ public final class ConwayMainView
             return;
         }
 
-        fillBackground();
+        basePainter.fillCanvasBackground(backgroundPaint);
 
-        // Draw all cells
-        currentModel.structure()
-                    .coordinatesStream()
-                    .forEachOrdered(coordinate ->
-                            GridEntityUtils.consumeDescriptorAt(
+        currentModel.nonDefaultCoordinates()
+                    .forEach(coordinate ->
+                            basePainter.drawCell(
                                     coordinate,
-                                    currentModel,
-                                    entityDescriptorRegistry,
-                                    descriptor ->
-                                            basePainter.drawCell(
-                                                    coordinate,
-                                                    descriptor.colorAsOptional().orElse(Color.BLACK),
-                                                    null,
-                                                    0.0d)));
+                                    alivePaint,
+                                    null,
+                                    0.0d));
     }
 
 }
