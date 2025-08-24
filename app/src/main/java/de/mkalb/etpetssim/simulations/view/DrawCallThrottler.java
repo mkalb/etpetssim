@@ -6,32 +6,27 @@ final class DrawCallThrottler {
 
     private final int historySize;
     private final int maxSkips;
-    private final Queue<Long> durations = new ArrayDeque<>();
+    private final Queue<Long> durations;
     private int skipCounter = 0;
     private long averageDuration = 0;
 
     DrawCallThrottler(int historySize, int maxSkips) {
         this.historySize = historySize;
         this.maxSkips = maxSkips;
+        durations = new ArrayDeque<>(historySize);
     }
 
     boolean shouldSkip(long thresholdMillis) {
-        if (durations.isEmpty()) {
-            skipCounter = 0;
-            return false;
-        }
-        if (averageDuration > thresholdMillis) {
+        if ((averageDuration > thresholdMillis)
+                && (durations.size() >= historySize)) {
             skipCounter++;
             if (skipCounter <= maxSkips) {
                 return true;
-            } else {
-                skipCounter = 0;
-                return false;
             }
-        } else {
-            skipCounter = 0;
-            return false;
         }
+
+        skipCounter = 0;
+        return false;
     }
 
     void recordDuration(long durationMillis) {
