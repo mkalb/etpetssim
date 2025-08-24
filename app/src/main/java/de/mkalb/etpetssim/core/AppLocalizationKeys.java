@@ -30,6 +30,8 @@ public final class AppLocalizationKeys {
     public static final String CONTROL_RESUME = "control.resume";
     public static final String CONTROL_SIMULATION_MODE_TOOLTIP = "control.simulationmode.tooltip";
     public static final String CONTROL_START = "control.start";
+    public static final String CONTROL_START_PAUSED = "control.startpaused";
+    public static final String CONTROL_START_PAUSED_TOOLTIP = "control.startpaused.tooltip";
     public static final String CONTROL_STEP_COUNT = "control.stepcount";
     public static final String CONTROL_STEP_COUNT_TOOLTIP = "control.stepcount.tooltip";
     public static final String CONTROL_STEP_DURATION = "control.stepduration";
