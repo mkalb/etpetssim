@@ -243,7 +243,6 @@ public final class DefaultMainViewModel<
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private void configureSimulationTimeout() {
-        Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         if (controlViewModel.isLiveMode()) {
             double stepDuration = getControlStepDuration();
             timeoutExecuteMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR));
@@ -282,8 +281,8 @@ public final class DefaultMainViewModel<
         simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
         long durationView = System.currentTimeMillis() - startView;
 
-        // Check timeout if still running (not finished)
-        if (getSimulationState() == SimulationState.RUNNING_LIVE) {
+        // Check timeout if still running (not finished) and not the first step
+        if ((getSimulationState() == SimulationState.RUNNING_LIVE) && (simulationManager.stepCount() > 1)) {
             // Check for calculation timeout
             if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
                 setNotificationType(SimulationNotificationType.TIMEOUT);
