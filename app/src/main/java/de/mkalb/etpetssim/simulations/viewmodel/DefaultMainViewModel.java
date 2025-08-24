@@ -181,7 +181,10 @@ public final class DefaultMainViewModel<
         }
         long duration = System.currentTimeMillis() - start;
 
-        if (controlViewModel.isLiveMode()) {
+        if (controlViewModel.isStartPaused()) {
+            setSimulationState(SimulationState.PAUSED);
+            logSimulationInfo("Simulation was started in paused state by the user. duration=" + duration);
+        } else if (controlViewModel.isLiveMode()) {
             setSimulationState(SimulationState.RUNNING_LIVE);
             logSimulationInfo("Simulation (live) was started by the user. duration=" + duration);
 

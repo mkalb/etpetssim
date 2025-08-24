@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.model.SimulationMode;
+import de.mkalb.etpetssim.simulations.model.SimulationStartMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
@@ -29,6 +30,8 @@ public final class DefaultControlViewModel
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
+    private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.RUNNING, SimulationStartMode.class, Enum::toString);
+
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
 
@@ -64,12 +67,20 @@ public final class DefaultControlViewModel
         return stepCount;
     }
 
+    public InputEnumProperty<SimulationStartMode> startModeProperty() {
+        return startMode;
+    }
+
     public boolean isLiveMode() {
         return simulationMode.getValue() == SimulationMode.LIVE;
     }
 
     public boolean isBatchMode() {
         return simulationMode.getValue() == SimulationMode.BATCH;
+    }
+
+    public boolean isStartPaused() {
+        return startMode.getValue() == SimulationStartMode.PAUSED;
     }
 
 }
