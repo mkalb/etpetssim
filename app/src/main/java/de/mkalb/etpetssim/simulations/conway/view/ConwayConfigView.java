@@ -136,9 +136,13 @@ public final class ConwayConfigView
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
             var bornCheckBox = new javafx.scene.control.CheckBox();
             bornCheckBox.selectedProperty().bindBidirectional(bornProperties.get(index));
-            bornCheckBox.disableProperty().bind(
-                    viewModel.maxNeighborCountProperty().lessThan(i)
-            );
+            if (index == 0) { // It is not possible to be born without a neighbor.
+                bornCheckBox.setDisable(true);
+            } else {
+                bornCheckBox.disableProperty().bind(
+                        viewModel.maxNeighborCountProperty().lessThan(i)
+                );
+            }
             bornCheckBox.setTooltip(tooltip);
             bornCheckBox.getStyleClass().add(FXStyleClasses.CONFIG_CHECKBOX);
             gridPane.add(bornCheckBox, 1 + index, 2);
