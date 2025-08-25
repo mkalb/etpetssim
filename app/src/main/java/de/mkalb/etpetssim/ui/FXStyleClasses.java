@@ -19,6 +19,7 @@ public final class FXStyleClasses {
     public static final String CONFIG_HBOX = "config-hbox";
     public static final String CONFIG_RADIOBUTTON = "config-radiobutton";
     public static final String CONFIG_RADIOBUTTON_BOX = "config-radiobutton-box";
+    public static final String CONFIG_SCROLLPANE = "config-scrollpane";
     public static final String CONFIG_SLIDER = "config-slider";
     public static final String CONFIG_SPINNER = "config-spinner";
     public static final String CONFIG_TITLEDPANE = "config-titledpane";
@@ -29,6 +30,7 @@ public final class FXStyleClasses {
     public static final String CONTROL_CONFIG_VBOX = "control-config-vbox";
     public static final String CONTROL_HBOX = "control-hbox";
     public static final String CONTROL_OBSERVATION_VBOX = "control-observation-vbox";
+    public static final String CONTROL_SCROLLPANE = "control-scrollpane";
     public static final String HEADER_SUBTITLE_LABEL = "header-subtitle-label";
     public static final String HEADER_TITLE_LABEL = "header-title-label";
     public static final String HEADER_URL_HYPERLINK = "header-url-hyperlink";

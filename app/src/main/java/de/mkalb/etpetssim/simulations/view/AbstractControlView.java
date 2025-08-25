@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.view;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -39,7 +40,16 @@ public abstract class AbstractControlView<VM extends SimulationControlViewModel>
             controlHBox.getChildren().add(observationRegion.get());
         }
 
-        return controlHBox;
+        ScrollPane controlScrollPane = new ScrollPane();
+        controlScrollPane.getStyleClass().add(FXStyleClasses.CONTROL_SCROLLPANE);
+        controlScrollPane.setContent(controlHBox);
+        controlScrollPane.setFitToHeight(false);
+        controlScrollPane.setFitToWidth(false);
+        controlScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        controlScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        controlScrollPane.setPannable(false);
+
+        return controlScrollPane;
     }
 
     protected abstract Pane createControlButtonPane();

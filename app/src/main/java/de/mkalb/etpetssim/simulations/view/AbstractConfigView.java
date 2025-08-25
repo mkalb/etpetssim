@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -27,10 +28,19 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
     public abstract Region buildConfigRegion();
 
     protected final Region createConfigMainBox(TitledPane... titledPanes) {
-        HBox mainBox = new HBox(titledPanes);
-        mainBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
+        HBox configHBox = new HBox(titledPanes);
+        configHBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
 
-        return mainBox;
+        ScrollPane configScrollPane = new ScrollPane();
+        configScrollPane.getStyleClass().add(FXStyleClasses.CONFIG_SCROLLPANE);
+        configScrollPane.setContent(configHBox);
+        configScrollPane.setFitToHeight(false);
+        configScrollPane.setFitToWidth(false);
+        configScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        configScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        configScrollPane.setPannable(false);
+
+        return configScrollPane;
     }
 
     @SafeVarargs
