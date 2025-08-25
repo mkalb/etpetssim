@@ -17,6 +17,23 @@
   -fx-border-color: transparent;
 }
 
+ScrollPane .corner {
+  -fx-background-color: #263a4d;
+}
+
+ScrollPane .scroll-bar {
+  -fx-background-color: #263a4d;
+}
+
+ScrollPane .thumb {
+  -fx-background-color: #347ca3;
+}
+
+ScrollPane .increment-arrow,
+ScrollPane .decrement-arrow {
+  -fx-background-color: #347ca3;
+}
+
 /* Main app with VBox and Header */
 .app-vbox {
   -fx-background-color: #263a4d;
@@ -126,13 +143,23 @@
 }
 
 /* config region (top) */
+.config-scrollpane {
+  -fx-border-width: 0 0 1 0;
+  -fx-border-radius: 0;
+  -fx-border-color: #00eaff;
+}
+
+.config-scrollpane>.viewport {
+  -fx-background-color: #2e3b50;
+}
+
 .config-hbox {
   -fx-padding: 10;
   -fx-spacing: 10;
-  -fx-background-color: linear-gradient(to right, #2e3b50, #35516b 80%, #347ca3 100%);
-  -fx-border-color: #00eaff;
-  -fx-border-width: 0 0 1 0;
+  -fx-background-color: transparent;
+  -fx-border-width: 0;
   -fx-border-radius: 0;
+  -fx-border-color: transparent;
   -fx-alignment: top-left;
   -fx-min-width: 900;
   -fx-pref-width: 1200;
@@ -398,24 +425,7 @@
 }
 
 .simulation-scrollpane>.viewport {
-  -fx-background-color: transparent;
-}
-
-.simulation-scrollpane .corner {
-  -fx-background-color: transparent;
-}
-
-.simulation-scrollpane .scroll-bar {
-  -fx-background-color: transparent;
-}
-
-.simulation-scrollpane .thumb {
-  -fx-background-color: #347ca3;
-}
-
-.simulation-scrollpane .increment-arrow,
-.simulation-scrollpane .decrement-arrow {
-  -fx-background-color: #347ca3;
+  -fx-background-color: #263a4d;
 }
 
 .simulation-notification-label {
@@ -449,14 +459,23 @@
 }
 
 /* control region (bottom) */
+.control-scrollpane {
+  -fx-border-width: 1 0 0 0;
+  -fx-border-radius: 0;
+  -fx-border-color: #00eaff;
+}
+
+.control-scrollpane>.viewport {
+  -fx-background-color: #2e3b50;
+}
+
 .control-hbox {
   -fx-padding: 4 8;
   -fx-spacing: 5;
-
-  -fx-background-color: #2e3b50;
-  -fx-border-color: #00eaff;
-  -fx-border-width: 1 0 0 0;
+  -fx-background-color: transparent;
+  -fx-border-width: 0;
   -fx-border-radius: 0;
+  -fx-border-color: transparent;
   -fx-alignment: center-left;
   -fx-min-width: 900;
   -fx-pref-width: 1200;
@@ -573,13 +592,6 @@
 }
 
 .observation-scrollpane {
-  -fx-background: #263a4d;
-  -fx-background-color: #263a4d;
-  -fx-background-insets: 0;
-  -fx-background-radius: 0;
-  -fx-padding: 0;
-  -fx-spacing: 0;
-  -fx-effect: null;
   -fx-border-width: 0;
   -fx-border-radius: 0;
   -fx-border-color: transparent;
@@ -587,21 +599,4 @@
 
 .observation-scrollpane>.viewport {
   -fx-background-color: #2e485c;
-}
-
-.observation-scrollpane .corner {
-  -fx-background-color: transparent;
-}
-
-.observation-scrollpane .scroll-bar {
-  -fx-background-color: transparent;
-}
-
-.observation-scrollpane .thumb {
-  -fx-background-color: #347ca3;
-}
-
-.observation-scrollpane .increment-arrow,
-.observation-scrollpane .decrement-arrow {
-  -fx-background-color: #347ca3;
 }
