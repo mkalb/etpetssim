@@ -11,10 +11,15 @@
   -fx-background-radius: 0;
   -fx-padding: 0;
   -fx-spacing: 0;
-  -fx-effect: null;
   -fx-border-width: 0;
   -fx-border-radius: 0;
   -fx-border-color: transparent;
+  -fx-effect: null;
+}
+
+ScrollPane {
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
 }
 
 ScrollPane .corner {
@@ -42,10 +47,10 @@ ScrollPane .decrement-arrow {
   -fx-background-radius: 0;
   -fx-padding: 2;
   -fx-spacing: 0;
-  -fx-effect: null;
   -fx-border-width: 0;
   -fx-border-radius: 0;
   -fx-border-color: transparent;
+  -fx-effect: null;
 }
 
 .header-vbox {
@@ -53,8 +58,8 @@ ScrollPane .decrement-arrow {
   -fx-padding: 14 10 10 10;
   -fx-spacing: 6;
   -fx-border-width: 1 1 0 1;
+  -fx-border-radius: 0;
   -fx-border-color: #00eaff;
-
   -fx-effect: dropshadow(gaussian, rgba(0, 234, 255, 0.18), 10, 0.4, 0, 3);
   -fx-min-width: 500;
   -fx-pref-width: 1200;
@@ -82,6 +87,7 @@ ScrollPane .decrement-arrow {
   -fx-background-radius: 0;
   -fx-background-color: transparent;
   -fx-border-width: 0;
+  -fx-border-radius: 0;
 }
 
 .header-url-hyperlink:hover {
@@ -98,30 +104,30 @@ ScrollPane .decrement-arrow {
 }
 
 .start-control-vbox {
-  -fx-border-width: 1;
-  -fx-border-color: #00eaff;
-  -fx-border-radius: 0;
   -fx-background-color: #263a4d;
   -fx-background-insets: 0;
   -fx-background-radius: 0;
-  -fx-effect: null;
   -fx-padding: 12 8 12 8;
   -fx-spacing: 8;
   -fx-alignment: center;
+  -fx-border-width: 1;
+  -fx-border-radius: 0;
+  -fx-border-color: #00eaff;
+  -fx-effect: null;
   -fx-min-width: 500;
   -fx-pref-width: 1200;
 }
 
 /* main region (contains: config, control, simulation, observation */
 .main-borderpane {
-  -fx-border-width: 1;
-  -fx-border-color: #00eaff;
   -fx-background-insets: 0;
   -fx-background-radius: 0;
   -fx-padding: 0;
   -fx-spacing: 0;
-  -fx-effect: null;
+  -fx-border-width: 1;
   -fx-border-radius: 0;
+  -fx-border-color: #00eaff;
+  -fx-effect: null;
 }
 
 .center-splitpane {
@@ -161,8 +167,6 @@ ScrollPane .decrement-arrow {
   -fx-border-radius: 0;
   -fx-border-color: transparent;
   -fx-alignment: top-left;
-  -fx-min-width: 900;
-  -fx-pref-width: 1200;
 }
 
 .config-checkbox {
@@ -477,8 +481,6 @@ ScrollPane .decrement-arrow {
   -fx-border-radius: 0;
   -fx-border-color: transparent;
   -fx-alignment: center-left;
-  -fx-min-width: 900;
-  -fx-pref-width: 1200;
 }
 
 .control-button-hbox {
@@ -488,25 +490,23 @@ ScrollPane .decrement-arrow {
 }
 
 .control-config-hbox {
-  -fx-padding: 0;
+  -fx-padding: 6 0 6 0;
   -fx-spacing: 5;
   -fx-alignment: top-left;
   -fx-background-color: #2e3b50;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
   -fx-border-radius: 6;
-  -fx-padding: 6 0 6 0;
 }
 
 .control-observation-vbox {
-  -fx-padding: 0;
+  -fx-padding: 6 0 6 0;
   -fx-spacing: 5;
   -fx-alignment: top-right;
   -fx-background-color: #2e3b50;
   -fx-border-color: #00eaff;
   -fx-border-width: 1;
   -fx-border-radius: 6;
-  -fx-padding: 6 0 6 0;
 }
 
 .control-observation-vbox .label {
@@ -563,18 +563,25 @@ ScrollPane .decrement-arrow {
 }
 
 /* observation region (right) */
+.observation-scrollpane {
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-border-color: transparent;
+}
+
+.observation-scrollpane>.viewport {
+  -fx-background-color: #2e485c;
+}
+
 .observation-grid {
   -fx-padding: 3;
   -fx-hgap: 6;
   -fx-vgap: 6;
   -fx-background-color: #2e485c;
-  -fx-effect: null;
-  -fx-border-color: transparent;
   -fx-border-width: 0;
   -fx-border-radius: 0;
-  -fx-min-width: 200;
-  -fx-pref-width: 250;
-  -fx-min-height: 200;
+  -fx-border-color: transparent;
+  -fx-effect: null;
 }
 
 .observation-name-label {
@@ -589,14 +596,4 @@ ScrollPane .decrement-arrow {
   -fx-font-weight: normal;
   -fx-text-fill: #00ff99;
   -fx-padding: 1 4 1 0;
-}
-
-.observation-scrollpane {
-  -fx-border-width: 0;
-  -fx-border-radius: 0;
-  -fx-border-color: transparent;
-}
-
-.observation-scrollpane>.viewport {
-  -fx-background-color: #2e485c;
 }
