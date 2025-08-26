@@ -280,7 +280,7 @@ public final class DefaultMainViewModel<
 
         // Check if simulation finished
         if (!simulationManager.isRunning()) {
-            setSimulationState(SimulationState.FINISHED);
+            setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation (live) has ended itself.");
         }
 
@@ -350,7 +350,7 @@ public final class DefaultMainViewModel<
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state RUNNING_BATCH.");
                         if (!executionResult.isRunning()) {
-                            setSimulationState(SimulationState.FINISHED);
+                            setSimulationState(SimulationState.PAUSED);
                             logSimulationInfo("Simulation has ended itself.");
                         } else {
                             setSimulationState(SimulationState.PAUSED);
@@ -360,7 +360,7 @@ public final class DefaultMainViewModel<
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state PAUSING_BATCH.");
                         if (!executionResult.isRunning()) {
-                            setSimulationState(SimulationState.FINISHED);
+                            setSimulationState(SimulationState.PAUSED);
                             logSimulationInfo("Simulation has ended itself.");
                         } else {
                             setSimulationState(SimulationState.PAUSED);
