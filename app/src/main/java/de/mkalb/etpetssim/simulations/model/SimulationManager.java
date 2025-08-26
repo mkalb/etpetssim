@@ -15,9 +15,9 @@ public interface SimulationManager<ENT extends GridEntity, CON extends Simulatio
 
     void executeStep();
 
-    SimulationExecutor.ExecutionResult executeSteps(int count, Runnable onStep);
+    SimulationExecutor.ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep);
 
-    boolean isRunning();
+    boolean isFinished();
 
     int stepCount();
 

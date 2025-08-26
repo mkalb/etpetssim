@@ -27,16 +27,16 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
     }
 
     @Override
-    public final SimulationExecutor.ExecutionResult executeSteps(int count, Runnable onStep) {
-        return executor().executeSteps(count, () -> {
+    public final SimulationExecutor.ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
+        return executor().executeSteps(count, checkTermination, () -> {
             updateStatistics();
             onStep.run();
         });
     }
 
     @Override
-    public final boolean isRunning() {
-        return executor().isRunning();
+    public final boolean isFinished() {
+        return executor().isFinished();
     }
 
     @Override

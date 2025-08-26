@@ -58,14 +58,14 @@ public final class LabSimulationManager
     }
 
     @Override
-    public SimulationExecutor.ExecutionResult executeSteps(int count, Runnable onStep) {
+    public SimulationExecutor.ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         // Do nothing
-        return new SimulationExecutor.ExecutionResult(stepCount(), 0, false, false);
+        return new SimulationExecutor.ExecutionResult(stepCount(), 0, true, false);
     }
 
     @Override
-    public boolean isRunning() {
-        return false;
+    public boolean isFinished() {
+        return true;
     }
 
     @Override

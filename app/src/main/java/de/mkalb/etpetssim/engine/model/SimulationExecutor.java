@@ -27,14 +27,14 @@ public interface SimulationExecutor<T extends GridEntity> {
     int stepCount();
 
     /**
-     * Checks whether the simulation is currently running.
+     * Checks whether the simulation has finished.
      * <p>
-     * Returns {@code true} if the simulation has not yet reached its termination condition
-     * and can continue to execute steps; returns {@code false} if the simulation is finished.
+     * Returns {@code true} if the simulation has reached its termination condition;
+     * further calls to {@code executeStep} or {@code executeSteps} may still be possible.
      *
-     * @return {@code true} if the simulation is still running, {@code false} otherwise
+     * @return {@code true} if the simulation is finished, {@code false} otherwise
      */
-    boolean isRunning();
+    boolean isFinished();
 
     /**
      * Executes a single simulation step and increments the step counter.
@@ -47,45 +47,46 @@ public interface SimulationExecutor<T extends GridEntity> {
      * After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track progress,
      * update the UI, or perform other actions after each step.
      * <p>
-     * The method will terminate early if the simulation is no longer running (as determined by {@link #isRunning()})
-     * or if the current thread is interrupted.
+     * The method will terminate early if {@code checkTermination} is {@code true} and the simulation has reached its termination condition
+     * (as determined by {@link #isFinished()}), or if the current thread is interrupted.
      *
-     * @param count  the maximum number of steps to execute
+     * @param count the maximum number of steps to execute
+     * @param checkTermination if {@code true}, the method will terminate early when the simulation is finished
      * @param onStep a {@link Runnable} to be called after each executed step
      * @return an {@link ExecutionResult} containing:
-     *         <ul>
-     *           <li>the current step count</li>
-     *           <li>the number of steps executed in this call</li>
-     *           <li>whether the simulation is still running</li>
-     *           <li>whether the thread was interrupted</li>
-     *         </ul>
+     * <ul>
+     *   <li>the current step count</li>
+     *   <li>the number of steps executed in this call</li>
+     *   <li>whether the simulation has reached its termination condition</li>
+     *   <li>whether the thread was interrupted</li>
+     * </ul>
      */
-    default ExecutionResult executeSteps(int count, Runnable onStep) {
+    default ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         int stepBefore = stepCount();
         for (int i = 0; i < count; i++) {
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, true);
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, true);
             }
             executeStep();
             onStep.run();
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, true);
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, true);
             }
-            if (!isRunning()) {
+            if (checkTermination && isFinished()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, false);
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, false);
             }
         }
         int stepAfter = stepCount();
-        return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, false);
+        return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, false);
     }
 
     record ExecutionResult(
             int stepCount,
             int executedSteps,
-            boolean isRunning,
+            boolean isFinished,
             boolean isInterrupted
     ) {}
 

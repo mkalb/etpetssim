@@ -279,7 +279,7 @@ public final class DefaultMainViewModel<
         updateObservationStatistics(simulationManager.statistics());
 
         // Check if simulation finished
-        if (!simulationManager.isRunning()) {
+        if (simulationManager.isFinished()) {
             setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation (live) has ended itself.");
         }
@@ -329,7 +329,7 @@ public final class DefaultMainViewModel<
                     return;
                 }
 
-                var executionResult = simulationManager.executeSteps(count, () -> {
+                var executionResult = simulationManager.executeSteps(count, true, () -> {
                     // Create the event before the "runLater".
                     var stepEvent = new SimulationStepEvent(true, simulationManager.stepCount(), false);
                     Platform.runLater(() -> {
@@ -349,7 +349,7 @@ public final class DefaultMainViewModel<
                 Platform.runLater(() -> {
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state RUNNING_BATCH.");
-                        if (!executionResult.isRunning()) {
+                        if (executionResult.isFinished()) {
                             setSimulationState(SimulationState.PAUSED);
                             logSimulationInfo("Simulation has ended itself.");
                         } else {
@@ -359,7 +359,7 @@ public final class DefaultMainViewModel<
                         simulationStepListener.accept(stepEvent);
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state PAUSING_BATCH.");
-                        if (!executionResult.isRunning()) {
+                        if (executionResult.isFinished()) {
                             setSimulationState(SimulationState.PAUSED);
                             logSimulationInfo("Simulation has ended itself.");
                         } else {

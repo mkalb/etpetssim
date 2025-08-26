@@ -38,8 +38,8 @@ public final class TimedSimulationExecutor<T extends GridEntity> implements Simu
     }
 
     @Override
-    public boolean isRunning() {
-        return delegate.isRunning();
+    public boolean isFinished() {
+        return delegate.isFinished();
     }
 
     /**

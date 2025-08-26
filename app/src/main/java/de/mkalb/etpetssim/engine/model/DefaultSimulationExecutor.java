@@ -56,8 +56,8 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     }
 
     @Override
-    public boolean isRunning() {
-        return (stepCount != Integer.MAX_VALUE) && !terminationCondition.isFinished(currentModel(), stepCount, context);
+    public boolean isFinished() {
+        return (stepCount == Integer.MAX_VALUE) || terminationCondition.isFinished(currentModel(), stepCount, context);
     }
 
     @Override
