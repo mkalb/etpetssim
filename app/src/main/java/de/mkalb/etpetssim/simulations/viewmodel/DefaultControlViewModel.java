@@ -30,6 +30,7 @@ public final class DefaultControlViewModel
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
     private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.RUNNING, SimulationStartMode.class, Enum::toString);
     private final InputEnumProperty<SimulationTerminationCheck> terminationCheck = InputEnumProperty.of(SimulationTerminationCheck.CHECKED, SimulationTerminationCheck.class, Enum::toString);
+    private final InputEnumProperty<SimulationRestartMode> restartMode = InputEnumProperty.of(SimulationRestartMode.NO_RESTART, SimulationRestartMode.class, Enum::toString);
 
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
@@ -74,6 +75,10 @@ public final class DefaultControlViewModel
         return terminationCheck;
     }
 
+    public InputEnumProperty<SimulationRestartMode> restartModeProperty() {
+        return restartMode;
+    }
+
     public boolean isLiveMode() {
         return simulationMode.getValue() == SimulationMode.LIVE;
     }
@@ -88,6 +93,10 @@ public final class DefaultControlViewModel
 
     public boolean isTerminationChecked() {
         return terminationCheck.getValue() == SimulationTerminationCheck.CHECKED;
+    }
+
+    public boolean isRestartEnabled() {
+        return restartMode.getValue() == SimulationRestartMode.RESTART;
     }
 
 }

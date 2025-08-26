@@ -193,7 +193,7 @@ public final class DefaultMainViewModel<
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was started by the user. duration=" + duration);
 
-            runBatchSteps(getControlStepCount());
+            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(), controlViewModel.isRestartEnabled());
         }
     }
 
@@ -225,7 +225,7 @@ public final class DefaultMainViewModel<
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was resumed by the user.");
 
-            runBatchSteps(getControlStepCount());
+            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(), controlViewModel.isRestartEnabled());
         }
     }
 
@@ -250,7 +250,7 @@ public final class DefaultMainViewModel<
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private void configureSimulationTimeout() {
         if (controlViewModel.isLiveMode()) {
-            double stepDuration = getControlStepDuration();
+            double stepDuration = controlViewModel.stepDurationProperty().getValue();
             timeoutExecuteMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR));
             timeoutViewMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_VIEW_FACTOR));
             throttleDrawMillis = Math.max(1L, (long) (stepDuration * THROTTLE_DRAW_FACTOR));
@@ -320,8 +320,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void runBatchSteps(int count) {
-        boolean checkTermination = controlViewModel.isTerminationChecked();
+    private void runBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
         batchFuture = batchExecutor.submit(() -> {
             batchThread = Thread.currentThread();
             try {
@@ -350,21 +349,22 @@ public final class DefaultMainViewModel<
                 Platform.runLater(() -> {
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state RUNNING_BATCH.");
+                        setSimulationState(SimulationState.PAUSED);
                         if (executionResult.isFinished()) {
-                            setSimulationState(SimulationState.PAUSED);
                             logSimulationInfo("Simulation has ended itself.");
-                        } else {
-                            setSimulationState(SimulationState.PAUSED);
                         }
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
+                        if (restartBatchIfPossible && !executionResult.isFinished()) {
+                            setSimulationState(SimulationState.RUNNING_BATCH);
+                            logSimulationInfo("Restarting batch execution for next steps.");
+                            runBatchSteps(count, checkTermination, restartBatchIfPossible);
+                        }
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state PAUSING_BATCH.");
+                        setSimulationState(SimulationState.PAUSED);
                         if (executionResult.isFinished()) {
-                            setSimulationState(SimulationState.PAUSED);
                             logSimulationInfo("Simulation has ended itself.");
-                        } else {
-                            setSimulationState(SimulationState.PAUSED);
                         }
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
@@ -395,7 +395,7 @@ public final class DefaultMainViewModel<
     }
 
     private void startLiveTimer() {
-        liveTimer.start(Duration.millis(getControlStepDuration()));
+        liveTimer.start(Duration.millis(controlViewModel.stepDurationProperty().getValue()));
     }
 
     private void stopLiveTimer() {
@@ -425,14 +425,6 @@ public final class DefaultMainViewModel<
             batchExecutor.shutdownNow();
             Thread.currentThread().interrupt();
         }
-    }
-
-    private double getControlStepDuration() {
-        return controlViewModel.stepDurationProperty().getValue();
-    }
-
-    private int getControlStepCount() {
-        return controlViewModel.stepCountProperty().getValue();
     }
 
     private void updateObservationStatistics(STA statistics) {
