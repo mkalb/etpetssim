@@ -279,7 +279,7 @@ public final class DefaultMainViewModel<
         updateObservationStatistics(simulationManager.statistics());
 
         // Check if simulation finished
-        if (simulationManager.isFinished()) {
+        if (controlViewModel.isTerminationChecked() && simulationManager.isFinished()) {
             setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation (live) has ended itself.");
         }
@@ -321,6 +321,7 @@ public final class DefaultMainViewModel<
     }
 
     private void runBatchSteps(int count) {
+        boolean checkTermination = controlViewModel.isTerminationChecked();
         batchFuture = batchExecutor.submit(() -> {
             batchThread = Thread.currentThread();
             try {
@@ -329,7 +330,7 @@ public final class DefaultMainViewModel<
                     return;
                 }
 
-                var executionResult = simulationManager.executeSteps(count, true, () -> {
+                var executionResult = simulationManager.executeSteps(count, checkTermination, () -> {
                     // Create the event before the "runLater".
                     var stepEvent = new SimulationStepEvent(true, simulationManager.stepCount(), false);
                     Platform.runLater(() -> {
