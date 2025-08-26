@@ -44,7 +44,7 @@ public abstract class AbstractControlView<VM extends SimulationControlViewModel>
         controlScrollPane.getStyleClass().add(FXStyleClasses.CONTROL_SCROLLPANE);
         controlScrollPane.setContent(controlHBox);
         controlScrollPane.setFitToHeight(false);
-        controlScrollPane.setFitToWidth(false);
+        controlScrollPane.setFitToWidth(true);
         controlScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         controlScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         controlScrollPane.setPannable(false);
