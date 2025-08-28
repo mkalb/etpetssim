@@ -8,11 +8,13 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Read-only view of a grid model.
+ * Read-only view of a {@link GridModel}.
+ * <p>
+ * All mutating (write and update) methods are defined in the {@link GridModel} interface.
+ * This interface provides only read-only access to grid entities.
+ * </p>
  *
  * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
- *
- * @see GridModel
  */
 public interface ReadableGridModel<T extends GridEntity> {
 
@@ -134,6 +136,7 @@ public interface ReadableGridModel<T extends GridEntity> {
      * @return a stream of GridCell<T>
      */
     // TODO Optimize and rename the method as soon as it is used later.
+    // TODO Optimize performance
     default Stream<GridCell<T>> cellsAsStream() {
         return structure().coordinatesStream()
                           .map(coordinate -> new GridCell<>(coordinate, getEntity(coordinate)));
@@ -196,6 +199,7 @@ public interface ReadableGridModel<T extends GridEntity> {
      * @return the count of grid cells that match the predicate
      */
     // TODO Optimize and rename the method as soon as it is used later.
+    // TODO Optimize performance
     default long count(Predicate<? super GridCell<T>> predicate) {
         return cellsAsStream().filter(predicate).count();
     }
