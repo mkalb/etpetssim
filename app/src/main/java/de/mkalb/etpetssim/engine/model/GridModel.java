@@ -7,6 +7,10 @@ import java.util.function.*;
 /**
  * Represents a generic grid model that stores entities at grid coordinates.
  * Provides methods for accessing, modifying, and querying grid entities.
+ * <p>
+ * This interface contains only mutating (write and update) methods for grid entities.
+ * All read-only methods are defined in the {@link ReadableGridModel} interface.
+ * </p>
  *
  * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  */
@@ -31,6 +35,7 @@ public interface GridModel<T extends GridEntity> extends ReadableGridModel<T> {
      *
      * @param coordinate the grid coordinate
      * @param entity the entity to set
+     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     void setEntity(GridCoordinate coordinate, T entity);
 
@@ -41,23 +46,17 @@ public interface GridModel<T extends GridEntity> extends ReadableGridModel<T> {
      * and sets the entity at the corresponding coordinate in the grid.
      *
      * @param cell the {@link GridCell} containing the coordinate and entity to set
+     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     default void setEntity(GridCell<T> cell) {
         setEntity(cell.coordinate(), cell.entity());
     }
 
     /**
-     * Sets all grid cells to the default entity.
-     * Should be overwritten by subclasses to optimize performance.
-     */
-    default void clear() {
-        fill(defaultEntity());
-    }
-
-    /**
      * Sets the entity at the specified coordinate to the default entity.
      *
      * @param coordinate the grid coordinate
+     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     default void setEntityToDefault(GridCoordinate coordinate) {
         setEntity(coordinate, defaultEntity());
@@ -65,6 +64,7 @@ public interface GridModel<T extends GridEntity> extends ReadableGridModel<T> {
 
     /**
      * Sets all grid cells to the specified entity.
+     * <p>
      * Should be overwritten by subclasses to optimize performance.
      *
      * @param entity the entity to set
@@ -74,21 +74,36 @@ public interface GridModel<T extends GridEntity> extends ReadableGridModel<T> {
     }
 
     /**
+     * Sets all grid cells using a supplier that provides a new entity for each cell.
+     *
+     * @param supplier the supplier to generate entities for each coordinate
+     */
+    default void fill(Supplier<T> supplier) {
+        structure().coordinatesStream().forEachOrdered(coordinate -> setEntity(coordinate, supplier.get()));
+    }
+
+    /**
      * Sets all grid cells using a mapping function from coordinate to entity.
      *
      * @param mapper the function to compute entities for each coordinate
      */
-    // TODO Optimize and rename the method as soon as it is used later.
     default void fill(Function<GridCoordinate, T> mapper) {
         structure().coordinatesStream().forEachOrdered(coordinate -> setEntity(coordinate, mapper.apply(coordinate)));
     }
 
     /**
+     * Sets all grid cells to the default entity.
+     * <p>
+     * Should be overwritten by subclasses to optimize performance.
+     */
+    default void clear() {
+        fill(defaultEntity());
+    }
+
+    /**
      * Swaps the entities at the coordinates of the two given {@link GridCell} objects.
      * <p>
-     * After execution, the entity from {@code cellA} will be at {@code cellB}'s coordinate,
-     * and the entity from {@code cellB} will be at {@code cellA}'s coordinate.
-     * </p>
+     * Should be overwritten by subclasses to optimize performance.
      *
      * @param cellA the first grid cell whose entity and coordinate are involved in the swap
      * @param cellB the second grid cell whose entity and coordinate are involved in the swap
