@@ -24,7 +24,10 @@ public final class LabSimulationManager
         statistics = new LabStatistics(structure.cellCount());
 
         model = new SparseGridModel<>(structure, LabEntity.NORMAL);
-        GridInitializers.placeRandomCounted(3, () -> LabEntity.HIGHLIGHTED, new Random())
+        GridInitializers.placeRandomCounted(3,
+                                () -> LabEntity.HIGHLIGHTED,
+                                e -> e == LabEntity.NORMAL,
+                                new Random())
                         .initialize(model);
 
         // Place a symmetric small cross pattern of highlighted entities

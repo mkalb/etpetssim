@@ -40,10 +40,16 @@ public final class ConwaySimulationManager
 
         GridInitializer<ConwayEntity> gridInitializer;
         if ((alivePercent > 0) && (alivePercent <= 0.75d)) {
-            gridInitializer = GridInitializers.placeRandomPercent(() -> ConwayEntity.ALIVE, alivePercent, random);
+            gridInitializer = GridInitializers.placeRandomPercent(
+                    () -> ConwayEntity.ALIVE,
+                    ConwayEntity::isDead,
+                    alivePercent, random);
         } else if (deadPercent < 1.0d) {
             gridInitializer = GridInitializers.constant(ConwayEntity.ALIVE)
-                                              .andThen(GridInitializers.placeRandomPercent(() -> ConwayEntity.DEAD, deadPercent, random));
+                                              .andThen(GridInitializers.placeRandomPercent(
+                                                      () -> ConwayEntity.DEAD,
+                                                      ConwayEntity::isAlive,
+                                                      deadPercent, random));
         } else {
             gridInitializer = GridInitializers.identity();
         }

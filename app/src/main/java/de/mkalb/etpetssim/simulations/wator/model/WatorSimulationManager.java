@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
@@ -37,9 +38,15 @@ public final class WatorSimulationManager
 
     private void initializeGrid(GridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {
         GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
-                () -> createFish(entityFactory, random), config().fishPercent(), random);
+                () -> createFish(entityFactory, random),
+                WatorEntity::isWater,
+                config().fishPercent(),
+                random);
         GridInitializer<WatorEntity> sharkInit = GridInitializers.placeRandomPercent(
-                () -> createShark(entityFactory, random), config().sharkPercent(), random);
+                () -> createShark(entityFactory, random),
+                WatorEntity::isWater,
+                config().sharkPercent(),
+                random);
 
         fishInit.initialize(model);
         sharkInit.initialize(model);

@@ -173,23 +173,24 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that places a fixed number of entities at random positions,
-     * avoiding placement on cells that already contain an entity with the same {@code descriptorId}.
+     * Returns an initializer that places a fixed number of entities at random positions.
      * <p>
-     * The method does <b>not</b> check for default entities, but instead compares the {@code descriptorId}
-     * of the entity to be placed with the entity currently at the randomly chosen position.
-     * If the {@code descriptorId} matches, the entity is not placed at that position.
-     * This allows placement of entities even if the supplier may return default entities.
+     * Placement is only performed if the {@code canReplaceExisting} predicate returns {@code true}
+     * for the entity currently at the chosen position.
      * </p>
      *
-     * @param count          the number of entities to place
-     * @param entitySupplier the supplier for entities to place
-     * @param random         the random number generator
-     * @param <T>            the type of grid entity
-     * @return a grid initializer that places entities at random positions, skipping positions with matching {@code descriptorId}
+     * @param count              the number of entities to place
+     * @param entitySupplier     the supplier for entities to place
+     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
+     * @param random             the random number generator
+     * @param <T>                the type of grid entity
+     * @return a grid initializer that places entities at random positions, using the replacement predicate
      * @throws IllegalStateException if not all entities could be placed within the maximum number of attempts
      */
-    public static <T extends GridEntity> GridInitializer<T> placeRandomCounted(int count, Supplier<T> entitySupplier, Random random) {
+    public static <T extends GridEntity> GridInitializer<T> placeRandomCounted(int count,
+                                                                               Supplier<T> entitySupplier,
+                                                                               Predicate<T> canReplaceExisting,
+                                                                               Random random) {
         return model -> {
             int placed = 0;
             int gridArea = model.structure().size().area();
@@ -201,7 +202,7 @@ public final class GridInitializers {
                 while (!nextEntityPlaced && (attempts < maxAttempts)) {
                     GridCoordinate coordinate = randomCoordinate(model.structure().size(), random);
                     T existingEntity = model.getEntity(coordinate);
-                    if (!existingEntity.descriptorId().equals(nextEntity.descriptorId())) {
+                    if (canReplaceExisting.test(existingEntity)) {
                         model.setEntity(coordinate, nextEntity);
                         placed++;
                         nextEntityPlaced = true;
@@ -217,16 +218,26 @@ public final class GridInitializers {
 
     /**
      * Returns an initializer that places entities at a random percentage of grid positions.
+     * <p>
+     * Placement is only performed if the {@code canReplaceExisting} predicate returns {@code true}
+     * for the entity currently at the chosen position.
+     * </p>
      *
-     * @param entitySupplier the supplier for entities to place
-     * @param percent        the percentage of positions to fill (0.0 to 1.0)
-     * @param random         the random number generator
-     * @param <T>            the type of grid entity
-     * @return a grid initializer that places entities at a random percentage of positions
+     * @param entitySupplier     the supplier for entities to place
+     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
+     * @param percent            the percentage of positions to fill (0.0 to 1.0)
+     * @param random             the random number generator
+     * @param <T>                the type of grid entity
+     * @return a grid initializer that places entities at a random percentage of positions, using the replacement predicate
+     * @throws IllegalStateException if not all entities could be placed within the maximum number of attempts
      */
     @SuppressWarnings({"NumericCastThatLosesPrecision"})
-    public static <T extends GridEntity> GridInitializer<T> placeRandomPercent(Supplier<T> entitySupplier, double percent, Random random) {
-        return model -> placeRandomCounted((int) Math.round(percent * model.structure().size().area()), entitySupplier, random).initialize(model);
+    public static <T extends GridEntity> GridInitializer<T> placeRandomPercent(Supplier<T> entitySupplier,
+                                                                               Predicate<T> canReplaceExisting,
+                                                                               double percent,
+                                                                               Random random) {
+        return model -> placeRandomCounted((int) Math.round(percent * model.structure().size().area()),
+                entitySupplier, canReplaceExisting, random).initialize(model);
     }
 
     /**
