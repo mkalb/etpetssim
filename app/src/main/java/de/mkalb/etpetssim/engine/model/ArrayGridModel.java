@@ -48,38 +48,6 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
         return defaultEntity;
     }
 
-    /**
-     * Creates a deep copy of this grid model, including all entities.
-     *
-     * @return a new {@code ArrayGridModel} with the same structure, default entity, and data
-     */
-    @Override
-    public ArrayGridModel<T> copy() {
-        ArrayGridModel<T> clone = new ArrayGridModel<>(structure, defaultEntity);
-        for (int y = 0; y < structure.size().height(); y++) {
-            System.arraycopy(data[y], 0, clone.data[y], 0, structure.size().width());
-        }
-        return clone;
-    }
-
-    /**
-     * Creates a new {@code ArrayGridModel} with the same structure and default entity,
-     * but with all cells set to the default entity.
-     *
-     * @return a blank copy of this grid model
-     */
-    @Override
-    public ArrayGridModel<T> copyWithDefaultEntity() {
-        return new ArrayGridModel<>(structure, defaultEntity);
-    }
-
-    /**
-     * Returns the entity at the specified coordinate.
-     *
-     * @param coordinate the grid coordinate
-     * @return the entity at the given coordinate
-     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
-     */
     @Override
     @SuppressWarnings("unchecked")
     public T getEntity(GridCoordinate coordinate) {
@@ -89,81 +57,17 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
         return (T) data[coordinate.y()][coordinate.x()];
     }
 
-    /**
-     * Sets the entity at the specified coordinate.
-     *
-     * @param coordinate the grid coordinate
-     * @param entity the entity to set
-     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
-     */
     @Override
-    public void setEntity(GridCoordinate coordinate, T entity) {
+    public boolean isDefaultEntity(GridCoordinate coordinate) {
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
-        data[coordinate.y()][coordinate.x()] = entity;
+        return Objects.equals(data[coordinate.y()][coordinate.x()], defaultEntity);
     }
 
-    /**
-     * Sets all grid cells to the default entity.
-     */
-    @Override
-    public void clear() {
-        for (int y = 0; y < structure.size().height(); y++) {
-            Arrays.fill(data[y], defaultEntity);
-        }
-    }
-
-    /**
-     * Sets all grid cells to the specified entity.
-     *
-     * @param entity the entity to set
-     */
-    @Override
-    public void fill(T entity) {
-        for (Object[] row : data) {
-            Arrays.fill(row, entity);
-        }
-    }
-
-    /**
-     * Indicates that this grid model is not sparse.
-     *
-     * @return {@code false}, as this implementation is for dense grids
-     */
     @Override
     public boolean isModelSparse() {
         return false;
-    }
-
-    /**
-     * Swaps the entities at the coordinates of the two given {@link GridCell} objects.
-     * <p>
-     * After execution, the entity from {@code cellA} will be at {@code cellB}'s coordinate,
-     * and the entity from {@code cellB} will be at {@code cellA}'s coordinate.
-     * </p>
-     *
-     * @param cellA the first grid cell whose entity and coordinate are involved in the swap
-     * @param cellB the second grid cell whose entity and coordinate are involved in the swap
-     * @throws IndexOutOfBoundsException if either coordinate is not valid in this grid
-     */
-    @Override
-    public void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
-        GridCoordinate coordinateA = cellA.coordinate();
-        GridCoordinate coordinateB = cellB.coordinate();
-        if (!structure.isCoordinateValid(coordinateA)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateA + " for structure: " + structure);
-        }
-        if (!structure.isCoordinateValid(coordinateB)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure);
-        }
-        int xA = coordinateA.x();
-        int yA = coordinateA.y();
-        int xB = coordinateB.x();
-        int yB = coordinateB.y();
-        Object temp = data[yA][xA];
-        data[yA][xA] = data[yB][xB];
-        data[yB][xB] = temp;
     }
 
     @SuppressWarnings("unchecked")
@@ -174,6 +78,21 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
                         .flatMap(y -> IntStream.range(0, structure.size().width())
                                                .mapToObj(x -> new GridCell<>(new GridCoordinate(x, y), (T) data[y][x]))
                                                .filter(cell -> !Objects.equals(cell.entity(), defaultEntity)));
+    }
+
+    @Override
+    public Set<GridCoordinate> nonDefaultCoordinates() {
+        Set<GridCoordinate> result = new HashSet<>();
+        for (int y = 0; y < structure.size().height(); y++) {
+            for (int x = 0; x < structure.size().width(); x++) {
+                @SuppressWarnings("unchecked")
+                T entity = (T) data[y][x];
+                if (!Objects.equals(entity, defaultEntity)) {
+                    result.add(new GridCoordinate(x, y));
+                }
+            }
+        }
+        return Collections.unmodifiableSet(result);
     }
 
     @SuppressWarnings("unchecked")
@@ -193,18 +112,84 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
     }
 
     @Override
-    public Set<GridCoordinate> nonDefaultCoordinates() {
-        Set<GridCoordinate> result = new HashSet<>();
+    public ArrayGridModel<T> copy() {
+        ArrayGridModel<T> clone = new ArrayGridModel<>(structure, defaultEntity);
+        for (int y = 0; y < structure.size().height(); y++) {
+            System.arraycopy(data[y], 0, clone.data[y], 0, structure.size().width());
+        }
+        return clone;
+    }
+
+    @Override
+    public ArrayGridModel<T> copyWithDefaultEntity() {
+        return new ArrayGridModel<>(structure, defaultEntity);
+    }
+
+    @Override
+    public void setEntity(GridCoordinate coordinate, T entity) {
+        if (!structure.isCoordinateValid(coordinate)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+        }
+        data[coordinate.y()][coordinate.x()] = entity;
+    }
+
+    @Override
+    public void setEntityToDefault(GridCoordinate coordinate) {
+        if (!structure.isCoordinateValid(coordinate)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+        }
+        data[coordinate.y()][coordinate.x()] = defaultEntity;
+    }
+
+    @Override
+    public void fill(T entity) {
+        for (Object[] row : data) {
+            Arrays.fill(row, entity);
+        }
+    }
+
+    @Override
+    public void fill(Supplier<T> supplier) {
         for (int y = 0; y < structure.size().height(); y++) {
             for (int x = 0; x < structure.size().width(); x++) {
-                @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
-                if (!Objects.equals(entity, defaultEntity)) {
-                    result.add(new GridCoordinate(x, y));
-                }
+                data[y][x] = supplier.get();
             }
         }
-        return Collections.unmodifiableSet(result);
+    }
+
+    @Override
+    public void fill(Function<GridCoordinate, T> mapper) {
+        for (int y = 0; y < structure.size().height(); y++) {
+            for (int x = 0; x < structure.size().width(); x++) {
+                data[y][x] = mapper.apply(new GridCoordinate(x, y));
+            }
+        }
+    }
+
+    @Override
+    public void clear() {
+        for (int y = 0; y < structure.size().height(); y++) {
+            Arrays.fill(data[y], defaultEntity);
+        }
+    }
+
+    @Override
+    public void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
+        GridCoordinate coordinateA = cellA.coordinate();
+        GridCoordinate coordinateB = cellB.coordinate();
+        if (!structure.isCoordinateValid(coordinateA)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateA + " for structure: " + structure);
+        }
+        if (!structure.isCoordinateValid(coordinateB)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure);
+        }
+        int xA = coordinateA.x();
+        int yA = coordinateA.y();
+        int xB = coordinateB.x();
+        int yB = coordinateB.y();
+        Object temp = data[yA][xA];
+        data[yA][xA] = data[yB][xB];
+        data[yB][xB] = temp;
     }
 
     /**
