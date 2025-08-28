@@ -93,4 +93,9 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
         return true;
     }
 
+    @Override
+    public final boolean isWater() {
+        return false;
+    }
+
 }

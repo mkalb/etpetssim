@@ -38,4 +38,9 @@ public enum WatorConstantEntity implements WatorEntity, ConstantGridEntity {
         return false;
     }
 
+    @Override
+    public final boolean isWater() {
+        return this == WATER;
+    }
+
 }

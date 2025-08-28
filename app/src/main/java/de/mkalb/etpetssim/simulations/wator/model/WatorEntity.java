@@ -15,4 +15,6 @@ public sealed interface WatorEntity extends GridEntity
 
     boolean isShark();
 
+    boolean isWater();
+
 }
