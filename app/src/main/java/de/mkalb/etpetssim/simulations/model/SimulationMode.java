@@ -3,21 +3,36 @@ package de.mkalb.etpetssim.simulations.model;
 /**
  * Defines the available simulation modes for running a simulation.
  * <p>
- * Each mode represents a distinct way of executing the simulation, either interactively (live)
- * or in a batch process. The {@code resourceKey} field allows for resource lookup, such as
- * internationalized labels.
+ * Each mode represents a distinct way of executing the simulation:
+ * <ul>
+ *   <li>{@link #TIMED}: Executes simulation steps at a fixed interval using a timer.
+ *   Drawing may be throttled if rendering is slow.</li>
+ *   <li>{@link #BATCH_SINGLE}: Executes a fixed number of steps in a background thread, then pauses.
+ *   Drawing occurs only after the batch completes.</li>
+ *   <li>{@link #BATCH_CONTINUOUS}: Continuously executes batches of steps in a background thread,
+ *   drawing after each batch, and automatically starts the next batch until paused or canceled.</li>
+ * </ul>
+ * The {@code resourceKey} field allows for resource lookup, such as internationalized labels.
  */
 public enum SimulationMode {
 
     /**
-     * Live mode: The simulation runs interactively and updates in real time.
+     * Timed mode: Executes simulation steps at a fixed interval (using a timer).
+     * Drawing may be skipped if rendering takes too long.
      */
-    LIVE("simulationmode.live"),
+    TIMED("simulationmode.timed"),
 
     /**
-     * Batch mode: The simulation runs as a batch process, typically without real-time interaction.
+     * Batch (single) mode: Executes a fixed number of steps in a background thread, then pauses.
+     * Drawing occurs only after the batch completes.
      */
-    BATCH("simulationmode.batch");
+    BATCH_SINGLE("simulationmode.batchsingle"),
+
+    /**
+     * Batch (continuous) mode: Continuously executes batches of steps in a background thread.
+     * After each batch, drawing occurs and the next batch starts automatically until paused or finished.
+     */
+    BATCH_CONTINUOUS("simulationmode.batchcontinuous");
 
     private final String resourceKey;
 

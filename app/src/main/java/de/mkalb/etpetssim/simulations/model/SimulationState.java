@@ -12,6 +12,7 @@ package de.mkalb.etpetssim.simulations.model;
  * @see de.mkalb.etpetssim.simulations.SimulationFactory
  * @see de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel
  * @see de.mkalb.etpetssim.simulations.view.DefaultControlView
+ * @see de.mkalb.etpetssim.simulations.model.SimulationMode
  */
 public enum SimulationState {
 
@@ -23,11 +24,11 @@ public enum SimulationState {
     INITIAL,
 
     /**
-     * Simulation is running in live mode (stepwise execution with UI updates).
+     * Simulation is running in timed mode (stepwise execution with UI updates).
      * <p>
      * Configuration controls are disabled. Pause and cancel actions are available.
      */
-    RUNNING_LIVE,
+    RUNNING_TIMED,
 
     /**
      * Simulation is running in batch mode (continuous execution without intermediate UI updates).
@@ -44,7 +45,7 @@ public enum SimulationState {
     PAUSING_BATCH,
 
     /**
-     * Simulation is fully paused (applies to both live and batch modes).
+     * Simulation is fully paused (applies to both timed and batch modes).
      * <p>
      * Configuration controls are enabled. Resume and cancel actions are available.
      */
@@ -116,12 +117,12 @@ public enum SimulationState {
     }
 
     /**
-     * Checks if the simulation is currently running (live or batch mode).
+     * Checks if the simulation is currently running (timed or batch mode).
      *
      * @return true if simulation is running, false otherwise
      */
     public boolean isRunning() {
-        return (this == RUNNING_LIVE) || (this == RUNNING_BATCH);
+        return (this == RUNNING_TIMED) || (this == RUNNING_BATCH);
     }
 
     /**

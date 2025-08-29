@@ -82,13 +82,13 @@ public abstract class AbstractDefaultMainView<
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             if (DEBUG_MODE) {
-                AppLogger.info("MainView: Handle simulation step at view for batch mode. " + simulationStepEvent);
+                AppLogger.info("MainView: Handle simulation step at view for running batch mode. " + simulationStepEvent);
             }
 
             controlView.updateStepCount(stepCount);
         } else {
             if (DEBUG_MODE) {
-                AppLogger.info("MainView: Handle simulation step at view for live mode. " + simulationStepEvent);
+                AppLogger.info("MainView: Handle simulation step at view. " + simulationStepEvent);
             }
 
             controlView.updateStepCount(stepCount);

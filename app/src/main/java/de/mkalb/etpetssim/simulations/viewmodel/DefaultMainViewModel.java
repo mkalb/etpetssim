@@ -27,7 +27,7 @@ public final class DefaultMainViewModel<
 
     private final DefaultControlViewModel controlViewModel;
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
-    private final SimulationTimer liveTimer;
+    private final SimulationTimer timer;
     private final ExecutorService batchExecutor;
     private @Nullable AbstractTimedSimulationManager<ENT, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
@@ -48,7 +48,7 @@ public final class DefaultMainViewModel<
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
-        liveTimer = new SimulationTimer(this::runLiveStep);
+        timer = new SimulationTimer(this::runTimerStep);
         batchExecutor = Executors.newSingleThreadExecutor();
 
         controlViewModel.actionButtonRequestedProperty().addListener((_, _, newVal) -> {
@@ -88,7 +88,7 @@ public final class DefaultMainViewModel<
     @Override
     public void shutdownSimulation() {
         setSimulationState(SimulationState.SHUTTING_DOWN);
-        stopLiveTimer();
+        stopTimer();
         cancelBatch();
         shutdownBatchExecutor();
     }
@@ -120,8 +120,8 @@ public final class DefaultMainViewModel<
     }
 
     private void handleActionButton() {
-        if (!getSimulationState().isRunning() && (isLiveRunning() || isBatchRunning())) {
-            throw new IllegalStateException("Simulation is running but state is not RUNNING_LIVE or RUNNING_BATCH: " + getSimulationState());
+        if (!getSimulationState().isRunning() && (isTimerRunning() || isBatchRunning())) {
+            throw new IllegalStateException("Simulation is running but state is not RUNNING_TIMED or RUNNING_BATCH: " + getSimulationState());
         }
 
         if (getSimulationState().canStart()) {
@@ -139,15 +139,15 @@ public final class DefaultMainViewModel<
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
-        // Stop batch and live, if running.
+        // Stop batch and timer, if running.
         cancelBatch();
-        stopLiveTimer();
+        stopTimer();
 
-        if (getSimulationState() == SimulationState.RUNNING_LIVE) {
+        if (getSimulationState() == SimulationState.RUNNING_TIMED) {
             setSimulationState(SimulationState.CANCELLED);
-            logSimulationInfo("Simulation (live) was canceled by the user.");
+            logSimulationInfo("Simulation (timer) was canceled by the user.");
 
-            notifyFinalStepAndStopLiveTimer();
+            notifyFinalStepAndStopTimer();
         } else if (getSimulationState() == SimulationState.RUNNING_BATCH) {
             setSimulationState(SimulationState.CANCELLING_BATCH);
             logSimulationInfo("Simulation (batch) was canceled by the user. Waiting for batch to finish.");
@@ -184,25 +184,26 @@ public final class DefaultMainViewModel<
         if (controlViewModel.isStartPaused()) {
             setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation was started in paused state by the user. duration=" + duration);
-        } else if (controlViewModel.isLiveMode()) {
-            setSimulationState(SimulationState.RUNNING_LIVE);
-            logSimulationInfo("Simulation (live) was started by the user. duration=" + duration);
+        } else if (controlViewModel.isModeTimed()) {
+            setSimulationState(SimulationState.RUNNING_TIMED);
+            logSimulationInfo("Simulation (timer) was started by the user. duration=" + duration);
 
-            startLiveTimer();
-        } else if (controlViewModel.isBatchMode()) {
+            startTimer();
+        } else if (controlViewModel.isModeBatch()) {
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was started by the user. duration=" + duration);
 
-            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(), controlViewModel.isRestartEnabled());
+            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
+                    controlViewModel.isModeBatchContinuous());
         }
     }
 
     private void handlePauseAction() {
-        if (getSimulationState() == SimulationState.RUNNING_LIVE) {
+        if (getSimulationState() == SimulationState.RUNNING_TIMED) {
             setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation (live) was paused by the user.");
+            logSimulationInfo("Simulation (timer) was paused by the user.");
 
-            notifyFinalStepAndStopLiveTimer();
+            notifyFinalStepAndStopTimer();
         } else if (getSimulationState() == SimulationState.RUNNING_BATCH) {
             setSimulationState(SimulationState.PAUSING_BATCH);
             logSimulationInfo("Simulation (batch) was paused by the user. Waiting for batch to finish.");
@@ -216,16 +217,17 @@ public final class DefaultMainViewModel<
         setNotificationType(SimulationNotificationType.NONE);
 
         configureSimulationTimeout();
-        if (controlViewModel.isLiveMode()) {
-            setSimulationState(SimulationState.RUNNING_LIVE);
-            logSimulationInfo("Simulation (live) was resumed by the user.");
+        if (controlViewModel.isModeTimed()) {
+            setSimulationState(SimulationState.RUNNING_TIMED);
+            logSimulationInfo("Simulation (timer) was resumed by the user.");
 
-            startLiveTimer();
-        } else if (controlViewModel.isBatchMode()) {
+            startTimer();
+        } else if (controlViewModel.isModeBatch()) {
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was resumed by the user.");
 
-            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(), controlViewModel.isRestartEnabled());
+            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
+                    controlViewModel.isModeBatchContinuous());
         }
     }
 
@@ -249,7 +251,7 @@ public final class DefaultMainViewModel<
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private void configureSimulationTimeout() {
-        if (controlViewModel.isLiveMode()) {
+        if (controlViewModel.isModeTimed()) {
             double stepDuration = controlViewModel.stepDurationProperty().getValue();
             timeoutExecuteMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR));
             timeoutViewMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_VIEW_FACTOR));
@@ -257,23 +259,23 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void runLiveStep() {
+    private void runTimerStep() {
         // Check simulation manager and state
         if (simulationManager == null) {
             AppLogger.error("Simulation manager is not initialized, cannot execute step.");
-            stopLiveTimer();
+            stopTimer();
             return;
         }
-        if (getSimulationState() != SimulationState.RUNNING_LIVE) {
-            AppLogger.error("Simulation is not in RUNNING_LIVE state, cannot execute step.");
-            stopLiveTimer();
+        if (getSimulationState() != SimulationState.RUNNING_TIMED) {
+            AppLogger.error("Simulation is not in RUNNING_TIMED state, cannot execute step.");
+            stopTimer();
             return;
         }
 
         // Execute simulation step
         simulationManager.executeStep();
 
-        AppLogger.debug(() -> "Simulation (live) has executed step. duration=" + simulationManager.stepTimingStatistics().current());
+        AppLogger.debug(() -> "Simulation (timer) has executed step. duration=" + simulationManager.stepTimingStatistics().current());
 
         // Update statistics
         updateObservationStatistics(simulationManager.statistics());
@@ -281,7 +283,7 @@ public final class DefaultMainViewModel<
         // Check if simulation finished
         if (controlViewModel.isTerminationChecked() && simulationManager.isFinished()) {
             setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation (live) has ended itself.");
+            logSimulationInfo("Simulation (timer) has ended itself.");
         }
 
         // Notify view about the step and measure duration
@@ -289,16 +291,16 @@ public final class DefaultMainViewModel<
         simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
         long durationView = System.currentTimeMillis() - startView;
 
-        AppLogger.debug(() -> "Simulation (live) has informed step listener. duration=" + durationView);
+        AppLogger.debug(() -> "Simulation (timer) has informed step listener. duration=" + durationView);
 
         // Check timeout if still running (not finished) and not the first step
-        if ((getSimulationState() == SimulationState.RUNNING_LIVE) && (simulationManager.stepCount() > 1)) {
+        if ((getSimulationState() == SimulationState.RUNNING_TIMED) && (simulationManager.stepCount() > 1)) {
             // Check for calculation timeout
             if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
                 setNotificationType(SimulationNotificationType.TIMEOUT);
 
                 setSimulationState(SimulationState.PAUSED);
-                logSimulationInfo("Simulation (live) has been paused because the simulation step took too long to " +
+                logSimulationInfo("Simulation (timer) has been paused because the simulation step took too long to " +
                         "calculate. duration=" + simulationManager.stepTimingStatistics().current() + " " +
                         "timeoutExecuteMillis=" + timeoutExecuteMillis);
             }
@@ -308,15 +310,15 @@ public final class DefaultMainViewModel<
                 setNotificationType(SimulationNotificationType.TIMEOUT);
 
                 setSimulationState(SimulationState.PAUSED);
-                logSimulationInfo("Simulation (live) has been paused because the view took too long to process. " +
+                logSimulationInfo("Simulation (timer) has been paused because the view took too long to process. " +
                         "duration=" + durationView + " " +
                         "timeoutViewMillis=" + timeoutViewMillis);
             }
         }
 
-        // If simulation is paused or finished, notify view for final step and stop live timer.
-        if (getSimulationState() != SimulationState.RUNNING_LIVE) {
-            notifyFinalStepAndStopLiveTimer();
+        // If simulation is paused or finished, notify view for final step and stop timer.
+        if (getSimulationState() != SimulationState.RUNNING_TIMED) {
+            notifyFinalStepAndStopTimer();
         }
     }
 
@@ -385,8 +387,8 @@ public final class DefaultMainViewModel<
         });
     }
 
-    private boolean isLiveRunning() {
-        return liveTimer.isRunning();
+    private boolean isTimerRunning() {
+        return timer.isRunning();
     }
 
     private boolean isBatchRunning() {
@@ -394,19 +396,19 @@ public final class DefaultMainViewModel<
         return (thread != null) && thread.isAlive();
     }
 
-    private void startLiveTimer() {
-        liveTimer.start(Duration.millis(controlViewModel.stepDurationProperty().getValue()));
+    private void startTimer() {
+        timer.start(Duration.millis(controlViewModel.stepDurationProperty().getValue()));
     }
 
-    private void stopLiveTimer() {
-        liveTimer.stop();
+    private void stopTimer() {
+        timer.stop();
     }
 
-    private void notifyFinalStepAndStopLiveTimer() {
+    private void notifyFinalStepAndStopTimer() {
         if (simulationManager != null) {
             simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), true));
         }
-        stopLiveTimer();
+        stopTimer();
     }
 
     private void cancelBatch() {

@@ -138,12 +138,12 @@ public final class DefaultControlView
         VBox startModeBox = new VBox(startModeControl.label(), startModeControl.controlRegion());
         startModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
-        // Show stepDurationBox only in LIVE mode
-        stepDurationBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.LIVE));
+        // Show stepDurationBox only in TIMED mode
+        stepDurationBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.TIMED));
         stepDurationBox.managedProperty().bind(stepDurationBox.visibleProperty());
 
-        // Show stepCountBox only in BATCH mode
-        stepCountBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.BATCH));
+        // Show stepCountBox only in BATCH mode (not TIMED mode)
+        stepCountBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isNotEqualTo(SimulationMode.TIMED));
         stepCountBox.managedProperty().bind(stepCountBox.visibleProperty());
 
         // Place both boxes in a StackPane

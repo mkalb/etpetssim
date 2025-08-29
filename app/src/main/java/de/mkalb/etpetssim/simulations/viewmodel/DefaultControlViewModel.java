@@ -21,7 +21,7 @@ public final class DefaultControlViewModel
     private static final int STEP_COUNT_MAX = 10_000;
     private static final int STEP_COUNT_STEP = 1;
 
-    private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.LIVE,
+    private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.TIMED,
             SimulationMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputDoublePropertyIntRange stepDuration = InputDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
@@ -30,7 +30,6 @@ public final class DefaultControlViewModel
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
     private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.RUNNING, SimulationStartMode.class, Enum::toString);
     private final InputEnumProperty<SimulationTerminationCheck> terminationCheck = InputEnumProperty.of(SimulationTerminationCheck.CHECKED, SimulationTerminationCheck.class, Enum::toString);
-    private final InputEnumProperty<SimulationRestartMode> restartMode = InputEnumProperty.of(SimulationRestartMode.NO_RESTART, SimulationRestartMode.class, Enum::toString);
 
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
@@ -75,16 +74,20 @@ public final class DefaultControlViewModel
         return terminationCheck;
     }
 
-    public InputEnumProperty<SimulationRestartMode> restartModeProperty() {
-        return restartMode;
+    public boolean isModeTimed() {
+        return simulationMode.getValue() == SimulationMode.TIMED;
     }
 
-    public boolean isLiveMode() {
-        return simulationMode.getValue() == SimulationMode.LIVE;
+    public boolean isModeBatch() {
+        return isModeBatchSingle() || isModeBatchContinuous();
     }
 
-    public boolean isBatchMode() {
-        return simulationMode.getValue() == SimulationMode.BATCH;
+    public boolean isModeBatchSingle() {
+        return simulationMode.getValue() == SimulationMode.BATCH_SINGLE;
+    }
+
+    public boolean isModeBatchContinuous() {
+        return simulationMode.getValue() == SimulationMode.BATCH_CONTINUOUS;
     }
 
     public boolean isStartPaused() {
@@ -93,10 +96,6 @@ public final class DefaultControlViewModel
 
     public boolean isTerminationChecked() {
         return terminationCheck.getValue() == SimulationTerminationCheck.CHECKED;
-    }
-
-    public boolean isRestartEnabled() {
-        return restartMode.getValue() == SimulationRestartMode.RESTART;
     }
 
 }

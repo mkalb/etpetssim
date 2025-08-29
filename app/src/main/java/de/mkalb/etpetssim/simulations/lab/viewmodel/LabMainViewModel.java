@@ -132,7 +132,7 @@ public final class LabMainViewModel
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
-        setSimulationState(SimulationState.RUNNING_LIVE);
+        setSimulationState(SimulationState.RUNNING_TIMED);
 
         // Reset the simulation manager if it exists
         simulationManager = null;
