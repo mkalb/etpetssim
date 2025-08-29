@@ -60,7 +60,7 @@ public final class ConwayConfigViewModel
         surviveProperties.forEach(p -> p.addListener(updateListener));
         birthProperties.forEach(p -> p.addListener(updateListener));
 
-        // HEXAGON: 23/34
+        // HEXAGON: 23/34, 34/34
         // SQUARE: 23/3
         // TRIANGLE: 45/456
 
