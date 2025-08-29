@@ -72,6 +72,11 @@ public final class LabSimulationManager
     }
 
     @Override
+    public boolean isExecutorFinished() {
+        return true;
+    }
+
+    @Override
     public int stepCount() {
         return 0;
     }

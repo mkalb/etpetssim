@@ -38,6 +38,10 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
     public final boolean isFinished() {
         return executor().isFinished();
     }
+    @Override
+    public final boolean isExecutorFinished() {
+        return executor().isExecutorFinished();
+    }
 
     @Override
     public final int stepCount() {

@@ -19,6 +19,8 @@ public interface SimulationManager<ENT extends GridEntity, CON extends Simulatio
 
     boolean isFinished();
 
+    boolean isExecutorFinished();
+
     int stepCount();
 
     ReadableGridModel<ENT> currentModel();
