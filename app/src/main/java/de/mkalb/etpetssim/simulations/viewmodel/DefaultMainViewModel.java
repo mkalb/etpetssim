@@ -286,6 +286,11 @@ public final class DefaultMainViewModel<
             logSimulationInfo("Simulation (timer) has ended itself.");
         }
 
+        if (simulationManager.isExecutorFinished()) {
+            setSimulationState(SimulationState.FINISHED);
+            logSimulationInfo("Simulation (timer) executor has finished.");
+        }
+
         // Notify view about the step and measure duration
         long startView = System.currentTimeMillis();
         simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
@@ -347,13 +352,19 @@ public final class DefaultMainViewModel<
                 // Create the event and statistics before the "runLater".
                 var stepEvent = new SimulationStepEvent(false, simulationManager.stepCount(), true);
                 var statistics = simulationManager.statistics();
+                boolean executorFinished = executionResult.isFinished() && simulationManager.isExecutorFinished();
 
                 Platform.runLater(() -> {
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state RUNNING_BATCH.");
-                        setSimulationState(SimulationState.PAUSED);
-                        if (executionResult.isFinished()) {
-                            logSimulationInfo("Simulation has ended itself.");
+                        if (executorFinished) {
+                            setSimulationState(SimulationState.FINISHED);
+                            logSimulationInfo("Simulation executor has finished.");
+                        } else {
+                            setSimulationState(SimulationState.PAUSED);
+                            if (executionResult.isFinished()) {
+                                logSimulationInfo("Simulation has ended itself.");
+                            }
                         }
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
@@ -364,9 +375,14 @@ public final class DefaultMainViewModel<
                         }
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         logSimulationInfo("Finishing batch execution at state PAUSING_BATCH.");
-                        setSimulationState(SimulationState.PAUSED);
-                        if (executionResult.isFinished()) {
-                            logSimulationInfo("Simulation has ended itself.");
+                        if (executorFinished) {
+                            setSimulationState(SimulationState.FINISHED);
+                            logSimulationInfo("Simulation executor has finished.");
+                        } else {
+                            setSimulationState(SimulationState.PAUSED);
+                            if (executionResult.isFinished()) {
+                                logSimulationInfo("Simulation has ended itself.");
+                            }
                         }
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
