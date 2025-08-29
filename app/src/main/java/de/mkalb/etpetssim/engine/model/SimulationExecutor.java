@@ -37,6 +37,21 @@ public interface SimulationExecutor<T extends GridEntity> {
     boolean isFinished();
 
     /**
+     * Checks whether the executor has reached its technical termination condition.
+     * <p>
+     * Returns {@code true} if the number of executed steps equals {@link Integer#MAX_VALUE}.
+     * This is independent of the simulation's logical termination condition ({@link #isFinished()}).
+     * <p>
+     * This method can be used to detect overflow or to prevent further execution
+     * when the step counter has reached its maximum value.
+     *
+     * @return {@code true} if the executor is finished due to step count overflow, {@code false} otherwise
+     */
+    default boolean isExecutorFinished() {
+        return stepCount() == Integer.MAX_VALUE;
+    }
+
+    /**
      * Executes a single simulation step and increments the step counter.
      */
     void executeStep();
@@ -66,21 +81,21 @@ public interface SimulationExecutor<T extends GridEntity> {
         for (int i = 0; i < count; i++) {
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, true);
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
             }
             executeStep();
             onStep.run();
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, true);
+                return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
             }
-            if (checkTermination && isFinished()) {
+            if ((checkTermination && isFinished()) || isExecutorFinished()) {
                 int stepAfter = stepCount();
                 return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, false);
             }
         }
         int stepAfter = stepCount();
-        return new ExecutionResult(stepAfter, stepAfter - stepBefore, false, false);
+        return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), false);
     }
 
     record ExecutionResult(

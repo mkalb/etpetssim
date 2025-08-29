@@ -42,6 +42,11 @@ public final class TimedSimulationExecutor<T extends GridEntity> implements Simu
         return delegate.isFinished();
     }
 
+    @Override
+    public boolean isExecutorFinished() {
+        return delegate.isExecutorFinished();
+    }
+
     /**
      * Executes a single simulation step, increments the step counter,
      * measures its duration, and updates timing statistics.
