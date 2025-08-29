@@ -150,11 +150,8 @@ public final class DefaultControlView
         VBox stepCountBox = new VBox(stepCountControl.label(), stepCountControl.controlRegion());
         stepCountBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
-        VBox startModeBox = new VBox(startModeControl.label(), startModeControl.controlRegion());
-        startModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
-
-        VBox terminationCheckBox = new VBox(terminationCheckControl.label(), terminationCheckControl.controlRegion());
-        terminationCheckBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
+        VBox pauseBox = new VBox(startModeControl.label(), startModeControl.controlRegion(), terminationCheckControl.label(), terminationCheckControl.controlRegion());
+        pauseBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
         // Show stepDurationBox only in TIMED mode
         stepDurationBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.TIMED));
@@ -167,7 +164,7 @@ public final class DefaultControlView
         // Place both boxes in a StackPane
         StackPane stepConfigPane = new StackPane(stepDurationBox, stepCountBox);
 
-        HBox configBox = new HBox(simulationModeBox, stepConfigPane, startModeBox, terminationCheckBox);
+        HBox configBox = new HBox(simulationModeBox, stepConfigPane, pauseBox);
         configBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_HBOX);
         return Optional.of(configBox);
     }
