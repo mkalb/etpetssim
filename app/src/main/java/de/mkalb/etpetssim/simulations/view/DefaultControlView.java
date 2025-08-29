@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.model.SimulationMode;
 import de.mkalb.etpetssim.simulations.model.SimulationStartMode;
+import de.mkalb.etpetssim.simulations.model.SimulationTerminationCheck;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -126,6 +127,20 @@ public final class DefaultControlView
                 )
         );
 
+        var terminationCheckControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.terminationCheckProperty(),
+                SimulationTerminationCheck.CHECKED,
+                SimulationTerminationCheck.UNCHECKED,
+                AppLocalization.getText(AppLocalizationKeys.CONTROL_TERMINATION_CHECK),
+                AppLocalization.getText(AppLocalizationKeys.CONTROL_TERMINATION_CHECK_TOOLTIP),
+                FXStyleClasses.CONFIG_CHECKBOX
+        );
+
+        terminationCheckControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
+                        () -> viewModel.getSimulationState().cannotStart(),
+                        viewModel.simulationStateProperty()
+                )
+        );
+
         VBox simulationModeBox = new VBox(simulationModeControl.label(), simulationModeControl.controlRegion());
         simulationModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
@@ -138,6 +153,9 @@ public final class DefaultControlView
         VBox startModeBox = new VBox(startModeControl.label(), startModeControl.controlRegion());
         startModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
 
+        VBox terminationCheckBox = new VBox(terminationCheckControl.label(), terminationCheckControl.controlRegion());
+        terminationCheckBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
+
         // Show stepDurationBox only in TIMED mode
         stepDurationBox.visibleProperty().bind(viewModel.simulationModeProperty().property().isEqualTo(SimulationMode.TIMED));
         stepDurationBox.managedProperty().bind(stepDurationBox.visibleProperty());
@@ -149,7 +167,7 @@ public final class DefaultControlView
         // Place both boxes in a StackPane
         StackPane stepConfigPane = new StackPane(stepDurationBox, stepCountBox);
 
-        HBox configBox = new HBox(simulationModeBox, stepConfigPane, startModeBox);
+        HBox configBox = new HBox(simulationModeBox, stepConfigPane, startModeBox, terminationCheckBox);
         configBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_HBOX);
         return Optional.of(configBox);
     }

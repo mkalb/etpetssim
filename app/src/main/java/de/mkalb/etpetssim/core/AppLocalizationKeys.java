@@ -38,6 +38,8 @@ public final class AppLocalizationKeys {
     public static final String CONTROL_STEP_DURATION_TOOLTIP = "control.stepduration.tooltip";
     public static final String CONTROL_STEP_NUMBER = "control.step.number";
     public static final String CONTROL_STEP_TITLE = "control.step.title";
+    public static final String CONTROL_TERMINATION_CHECK = "control.terminationcheck";
+    public static final String CONTROL_TERMINATION_CHECK_TOOLTIP = "control.terminationcheck.tooltip";
     public static final String OBSERVATION_STEP = "observation.step";
     public static final String OBSERVATION_VALUE_UNKNOWN = "observation.valueunknown";
 
