@@ -83,73 +83,13 @@ public interface ReadableGridModel<T extends GridEntity> {
     }
 
     /**
-     * Returns a map of coordinates to entities for which the predicate returns true.
-     *
-     * @param isValid predicate to filter entities
-     * @return a map of coordinates to entities
-     */
-    // TODO Optimize and rename the method as soon as it is used later.
-    default Map<GridCoordinate, T> toMap(Predicate<T> isValid) {
-        Map<GridCoordinate, T> result = new LinkedHashMap<>();
-        for (GridCoordinate coordinate : structure().coordinatesList()) {
-            T entity = getEntity(coordinate);
-            if (isValid.test(entity)) {
-                result.put(coordinate, entity);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Returns a map of coordinates to entities that are not equal to the default entity.
-     *
-     * @return a map of coordinates to non-default entities
-     */
-    // TODO Optimize and rename the method as soon as it is used later.
-    default Map<GridCoordinate, T> toMap() {
-        return toMap(entity -> !Objects.equals(entity, defaultEntity()));
-    }
-
-    /**
-     * Returns a stream of all entities in the grid.
-     *
-     * @return a stream of grid entities
-     */
-    // TODO Optimize and rename the method as soon as it is used later.
-    default Stream<T> entitiesAsStream() {
-        return structure().coordinatesStream().map(this::getEntity);
-    }
-
-    /**
-     * Checks if all grid cells contain the default entity.
-     *
-     * @return true if the grid is empty, false otherwise
-     */
-    // TODO Optimize and rename the method as soon as it is used later.
-    default boolean isEmpty() {
-        return entitiesAsStream().allMatch(entity -> Objects.equals(entity, defaultEntity()));
-    }
-
-    /**
      * Returns a stream of all grid cells (coordinate and entity).
      *
      * @return a stream of GridCell<T>
      */
-    // TODO Optimize and rename the method as soon as it is used later.
-    // TODO Optimize performance
-    default Stream<GridCell<T>> cellsAsStream() {
+    default Stream<GridCell<T>> cells() {
         return structure().coordinatesStream()
                           .map(coordinate -> new GridCell<>(coordinate, getEntity(coordinate)));
-    }
-
-    /**
-     * Returns a collection of all grid cells (coordinate and entity).
-     *
-     * @return a collection of GridCell<T>
-     */
-    // TODO Optimize and rename the method as soon as it is used later.
-    default Collection<GridCell<T>> cellsAsCollection() {
-        return cellsAsStream().toList();
     }
 
     /**
@@ -157,10 +97,9 @@ public interface ReadableGridModel<T extends GridEntity> {
      *
      * @return a stream of non-default GridCell<T>
      */
-    // TODO Optimize and rename the method as soon as it is used later.
     default Stream<GridCell<T>> nonDefaultCells() {
         T def = defaultEntity();
-        return cellsAsStream().filter(cell -> !Objects.equals(cell.entity(), def));
+        return cells().filter(cell -> !Objects.equals(cell.entity(), def));
     }
 
     /**
@@ -175,21 +114,6 @@ public interface ReadableGridModel<T extends GridEntity> {
     }
 
     /**
-     * Finds the first grid cell that matches the given predicate.
-     * <p>
-     * This method filters the stream of all grid cells using the provided predicate
-     * and returns the first matching cell wrapped in an {@link Optional}. If no cell
-     * matches the predicate, {@code Optional.empty()} is returned.
-     *
-     * @param predicate the condition to test each grid cell against
-     * @return an {@link Optional} containing the first matching {@link GridCell}, or empty if none match
-     */
-    // TODO Optimize and rename the method as soon as it is used later.
-    default Optional<GridCell<T>> findCell(Predicate<? super GridCell<T>> predicate) {
-        return cellsAsStream().filter(predicate).findFirst();
-    }
-
-    /**
      * Counts the number of grid cells that match the given predicate.
      * <p>
      * This method filters the stream of all grid cells using the provided predicate
@@ -198,10 +122,24 @@ public interface ReadableGridModel<T extends GridEntity> {
      * @param predicate the condition to test each grid cell against
      * @return the count of grid cells that match the predicate
      */
-    // TODO Optimize and rename the method as soon as it is used later.
-    // TODO Optimize performance
-    default long count(Predicate<? super GridCell<T>> predicate) {
-        return cellsAsStream().filter(predicate).count();
+    default long countCells(Predicate<? super GridCell<T>> predicate) {
+        return cells().filter(predicate).count();
+    }
+
+    /**
+     * Counts the number of entities that match the given predicate.
+     * <p>
+     * This method filters the stream of all entities using the provided predicate
+     * and returns the count of matching entities.
+     *
+     * @param predicate the condition to test each entity against
+     * @return the count of entities that match the predicate
+     */
+    default long countEntities(Predicate<? super T> predicate) {
+        return structure().coordinatesStream()
+                          .map(this::getEntity)
+                          .filter(predicate)
+                          .count();
     }
 
     /**
@@ -216,7 +154,7 @@ public interface ReadableGridModel<T extends GridEntity> {
      * @return a list of filtered and sorted {@link GridCell} objects
      */
     default List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
-        return cellsAsStream()
+        return cells()
                 .filter(cell -> entityPredicate.test(cell.entity()))
                 .sorted(cellOrdering)
                 .toList();

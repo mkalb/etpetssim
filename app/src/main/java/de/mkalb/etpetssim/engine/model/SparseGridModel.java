@@ -80,6 +80,31 @@ public final class SparseGridModel<T extends GridEntity> implements GridModel<T>
     }
 
     @Override
+    public long countCells(Predicate<? super GridCell<T>> predicate) {
+        long count = 0;
+        for (GridCoordinate coordinate : structure.coordinatesList()) {
+            T entity = getEntity(coordinate);
+            GridCell<T> cell = new GridCell<>(coordinate, entity);
+            if (predicate.test(cell)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public long countEntities(Predicate<? super T> predicate) {
+        long count = 0;
+        for (GridCoordinate coordinate : structure.coordinatesList()) {
+            T entity = getEntity(coordinate);
+            if (predicate.test(entity)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    @Override
     public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
         List<GridCell<T>> result = new ArrayList<>();
         for (Map.Entry<GridCoordinate, T> entry : data.entrySet()) {

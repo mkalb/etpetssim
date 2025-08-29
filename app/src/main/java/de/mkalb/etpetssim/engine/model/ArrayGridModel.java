@@ -95,6 +95,37 @@ public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> 
         return Collections.unmodifiableSet(result);
     }
 
+    @Override
+    public long countCells(Predicate<? super GridCell<T>> predicate) {
+        long count = 0;
+        for (int y = 0; y < structure.size().height(); y++) {
+            for (int x = 0; x < structure.size().width(); x++) {
+                @SuppressWarnings("unchecked")
+                T entity = (T) data[y][x];
+                GridCell<T> cell = new GridCell<>(new GridCoordinate(x, y), entity);
+                if (predicate.test(cell)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public long countEntities(Predicate<? super T> predicate) {
+        long count = 0;
+        for (int y = 0; y < structure.size().height(); y++) {
+            for (int x = 0; x < structure.size().width(); x++) {
+                @SuppressWarnings("unchecked")
+                T entity = (T) data[y][x];
+                if (predicate.test(entity)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {

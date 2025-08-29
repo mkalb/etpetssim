@@ -75,8 +75,8 @@ public final class ConwaySimulationManager
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private void updateInitialStatistics(GridModel<ConwayEntity> model) {
-        int aliveCells = (int) model.count(e -> e.entity().isAlive());
-        statistics.updateCells(aliveCells, aliveCells);
+        int aliveEntities = (int) model.countEntities(ConwayEntity::isAlive);
+        statistics.updateCells(aliveEntities, aliveEntities);
     }
 
     @Override
