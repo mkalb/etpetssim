@@ -107,47 +107,6 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that sets each cell using a mapping function from coordinate to cell.
-     *
-     * @param mapper the function mapping coordinates to grid cells
-     * @param <T>    the type of grid entity
-     * @return a grid initializer using the given mapper
-     */
-    public static <T extends GridEntity> GridInitializer<T> mapFromCoordinate(Function<GridCoordinate, GridCell<T>> mapper) {
-        return model -> model.structure().coordinatesStream().map(mapper).forEach(model::setEntity);
-    }
-
-    /**
-     * Returns an initializer that sets cells for coordinates matching a condition, using a mapping function.
-     *
-     * @param mapper    the function mapping coordinates to grid cells
-     * @param condition the predicate to filter coordinates
-     * @param <T>       the type of grid entity
-     * @return a grid initializer using the mapper for matching coordinates
-     */
-    public static <T extends GridEntity> GridInitializer<T> mapFromCoordinateIf(Function<GridCoordinate, GridCell<T>> mapper, Predicate<GridCoordinate> condition) {
-        return model ->
-                model.structure().coordinatesStream().filter(condition).map(mapper).forEach(model::setEntity);
-    }
-
-    /**
-     * Returns an initializer that replaces each entity in the grid using a mapping function.
-     *
-     * @param mapper the function to transform each entity
-     * @param <T>    the type of grid entity
-     * @return a grid initializer that maps existing entities
-     */
-    public static <T extends GridEntity> GridInitializer<T> mapFromEntity(Function<T, T> mapper) {
-        return model -> {
-            for (GridCoordinate coordinate : model.structure().coordinatesList()) {
-                T current = model.getEntity(coordinate);
-                T mapped = mapper.apply(current);
-                model.setEntity(coordinate, mapped);
-            }
-        };
-    }
-
-    /**
      * Returns a random coordinate within the given grid size.
      *
      * @param size   the grid size
@@ -169,7 +128,7 @@ public final class GridInitializers {
      * @return a grid initializer that fills the grid randomly
      */
     public static <T extends GridEntity> GridInitializer<T> fillRandomly(Function<Random, T> generator, Random random) {
-        return model -> model.fill(_ -> generator.apply(random));
+        return model -> model.fill(() -> generator.apply(random));
     }
 
     /**
@@ -244,19 +203,23 @@ public final class GridInitializers {
      * Returns an initializer that places a fixed number of entities at shuffled positions.
      * <p>
      * The grid coordinates are shuffled once, and the method iterates over them a single time.
-     * For each coordinate, it attempts to place the current entity if its {@code descriptorId} does not match
-     * the existing entity at that position. Only after a successful placement is a new entity generated.
+     * For each coordinate, it attempts to place the current entity if {@code canReplaceExisting} returns {@code true}
+     * for the existing entity at that position. Only after a successful placement is a new entity generated.
      * If not enough suitable positions are found, placement stops and an exception is thrown.
      * </p>
      *
-     * @param count          the number of entities to place
-     * @param entitySupplier the supplier for entities to place
-     * @param random         the random number generator
-     * @param <T>            the type of grid entity
+     * @param count              the number of entities to place
+     * @param entitySupplier     the supplier for entities to place
+     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
+     * @param random             the random number generator
+     * @param <T>                the type of grid entity
      * @return a grid initializer that places entities at shuffled positions, skipping blocked cells
      * @throws IllegalStateException if not all entities could be placed
      */
-    public static <T extends GridEntity> GridInitializer<T> placeShuffledCounted(int count, Supplier<T> entitySupplier, Random random) {
+    public static <T extends GridEntity> GridInitializer<T> placeShuffledCounted(int count,
+                                                                                 Supplier<T> entitySupplier,
+                                                                                 Predicate<T> canReplaceExisting,
+                                                                                 Random random) {
         return model -> {
             int placed = 0;
             if (placed < count) {
@@ -265,8 +228,8 @@ public final class GridInitializers {
                 T nextEntity = entitySupplier.get();
                 for (GridCoordinate coordinate : coordinates) {
                     T existingEntity = model.getEntity(coordinate);
-                    if (!existingEntity.descriptorId().equals(nextEntity.descriptorId())) {
-                        model.setEntity(coordinate, entitySupplier.get());
+                    if (canReplaceExisting.test(existingEntity)) {
+                        model.setEntity(coordinate, nextEntity);
                         placed++;
                         if (placed >= count) {
                             break;
@@ -294,13 +257,7 @@ public final class GridInitializers {
      */
     public static <T extends GridEntity> GridInitializer<T> placeWithProbability(T entity, double probability, T fallback, Random random) {
         return model ->
-                model.fill(coordinate -> {
-                    if (random.nextDouble() < probability) {
-                        model.setEntity(coordinate, entity);
-                        return entity;
-                    }
-                    return fallback;
-                });
+                model.fill(() -> (random.nextDouble() < probability) ? entity : fallback);
     }
 
     /**
