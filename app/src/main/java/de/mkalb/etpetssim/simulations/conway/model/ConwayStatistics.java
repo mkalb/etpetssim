@@ -9,16 +9,16 @@ import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationStatistics;
 public final class ConwayStatistics
         extends AbstractTimedSimulationStatistics {
 
+    private int maxAliveCells;
     private int aliveCells;
     private int deadCells;
-    private int maxAliveCells;
     private int changedCells;
 
     public ConwayStatistics(int totalCells) {
         super(totalCells);
+        maxAliveCells = 0;
         aliveCells = 0;
         deadCells = totalCells;
-        maxAliveCells = 0;
         changedCells = 0;
     }
 
@@ -28,12 +28,16 @@ public final class ConwayStatistics
     }
 
     void updateCells(int newAliveCells, int newChangedCells) {
-        aliveCells = newAliveCells;
-        deadCells = getTotalCells() - aliveCells;
         if (aliveCells > maxAliveCells) {
             maxAliveCells = aliveCells;
         }
+        aliveCells = newAliveCells;
+        deadCells = getTotalCells() - aliveCells;
         changedCells = newChangedCells;
+    }
+
+    public int getMaxAliveCells() {
+        return maxAliveCells;
     }
 
     public int getAliveCells() {
@@ -44,10 +48,6 @@ public final class ConwayStatistics
         return deadCells;
     }
 
-    public int getMaxAliveCells() {
-        return maxAliveCells;
-    }
-
     public int getChangedCells() {
         return changedCells;
     }
@@ -56,9 +56,9 @@ public final class ConwayStatistics
     public String toString() {
         return "ConwayStatistics{" +
                 baseToString() +
+                ", maxAliveCells=" + maxAliveCells +
                 ", aliveCells=" + aliveCells +
                 ", deadCells=" + deadCells +
-                ", maxAliveCells=" + maxAliveCells +
                 ", changedCells=" + changedCells +
                 '}';
     }
