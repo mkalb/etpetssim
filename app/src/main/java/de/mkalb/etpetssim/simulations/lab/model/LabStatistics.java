@@ -23,4 +23,12 @@ public final class LabStatistics implements SimulationStatistics {
         return totalCells;
     }
 
+    @Override
+    public String toString() {
+        return "LabStatistics{" +
+                "totalCells=" + totalCells +
+                ", stepCount=" + stepCount +
+                '}';
+    }
+
 }

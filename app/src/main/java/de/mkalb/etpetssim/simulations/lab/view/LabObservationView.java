@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabObservationViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
@@ -35,8 +34,8 @@ public final class LabObservationView
         Label coordinateLabel = new Label(valueUnknown);
         StringBinding coordinateDisplayBinding = Bindings.createStringBinding(
                 () -> {
-                    GridCoordinate coord = viewModel.getLastClickedCoordinate();
-                    return (coord != null) ? coord.toDisplayString() : valueUnknown;
+                    var coordinate = viewModel.getLastClickedCoordinate();
+                    return (coordinate != null) ? coordinate.toDisplayString() : valueUnknown;
                 },
                 viewModel.lastClickedCoordinateProperty()
         );

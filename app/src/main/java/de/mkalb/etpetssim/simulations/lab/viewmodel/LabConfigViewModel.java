@@ -38,10 +38,8 @@ public final class LabConfigViewModel
     private final InputEnumProperty<LabConfig.RenderingMode> renderingMode = InputEnumProperty.of(LabConfig.RenderingMode.SHAPE, LabConfig.RenderingMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.StrokeMode> strokeMode = InputEnumProperty.of(LabConfig.StrokeMode.CENTERED, LabConfig.StrokeMode.class, Enum::toString);
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode =
-            InputEnumProperty.of(NEIGHBORHOOD_MODE_INITIAL, NeighborhoodMode.class,
-                    e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
-
+    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(NEIGHBORHOOD_MODE_INITIAL, NeighborhoodMode.class,
+            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
@@ -90,8 +88,8 @@ public final class LabConfigViewModel
         gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         renderingModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         strokeModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
     }

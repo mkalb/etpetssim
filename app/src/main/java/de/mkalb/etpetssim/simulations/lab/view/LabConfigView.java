@@ -40,27 +40,27 @@ public final class LabConfigView
     }
 
     private TitledPane createLayoutPane() {
-        var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
-                viewModel.colorModeProperty().displayNameProvider(),
-                FXComponentFactory.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Color Mode:", // TODO Label text
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
-                FXStyleClasses.CONFIG_RADIOBUTTON
-        );
-
         var renderingModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.renderingModeProperty(),
                 viewModel.renderingModeProperty().displayNameProvider(),
                 FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Rendering Mode:", // TODO Label text
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                "Rendering:",
+                "Draw the selected shape or just its inner circle.",
+                FXStyleClasses.CONFIG_RADIOBUTTON
+        );
+
+        var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
+                viewModel.colorModeProperty().displayNameProvider(),
+                FXComponentFactory.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
+                "Color:",
+                "Draw in color or black and white.",
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
         var strokeModeControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.strokeModeProperty(),
                 LabConfig.StrokeMode.CENTERED,
                 LabConfig.StrokeMode.NONE,
-                "Stroke Mode:", // TODO Label text
-                "TODO Tooltip", // TODO Add Tooltip to AppLocalizationKeys
+                "Stroke:",
+                "Draw a border around the shape.",
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 

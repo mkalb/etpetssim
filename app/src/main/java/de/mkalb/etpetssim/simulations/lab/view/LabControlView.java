@@ -19,9 +19,9 @@ public final class LabControlView
 
     @Override
     protected Pane createControlButtonPane() {
-        Button drawButton = createControlButton("draw", false);
-        Button drawButtonModel = createControlButton("draw model", true);
-        Button drawButtonTest = createControlButton("draw test", true);
+        Button drawButton = createControlButton("Draw", false);
+        Button drawButtonModel = createControlButton("Draw Model", true);
+        Button drawButtonTest = createControlButton("Draw Test", true);
 
         drawButton.setOnAction(_ -> viewModel.requestDraw());
         drawButtonModel.setOnAction(_ -> viewModel.requestDrawModel());

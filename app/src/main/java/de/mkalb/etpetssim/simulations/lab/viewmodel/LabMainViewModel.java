@@ -122,8 +122,7 @@ public final class LabMainViewModel
 
     public void handleConfigChanged() {
         setSimulationState(SimulationState.INITIAL);
-        // Reset the simulation manager if it exists
-        simulationManager = null;
+        reset();
 
         configChangedListener.run();
     }
@@ -134,8 +133,7 @@ public final class LabMainViewModel
 
         setSimulationState(SimulationState.RUNNING_TIMED);
 
-        // Reset the simulation manager if it exists
-        simulationManager = null;
+        reset();
 
         LabConfig config = configViewModel.getConfig();
         if (!config.isValid()) {
@@ -163,6 +161,13 @@ public final class LabMainViewModel
 
     public void handleDrawTestRequested() {
         drawTestRequestedListener.run();
+    }
+
+    private void reset() {
+        // Reset the simulation manager if it exists
+        simulationManager = null;
+        // Clear last clicked coordinate
+        setLastClickedCoordinate(null);
     }
 
 }
