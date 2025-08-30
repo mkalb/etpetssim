@@ -23,8 +23,11 @@ public final class ConwayMainView
         ConwayConfigView,
         ConwayObservationView> {
 
+    private static final double ALIVE_BORDER_WIDTH = 1.0d;
+
     private final Paint backgroundPaint;
     private final Paint alivePaint;
+    private final Color aliveBorderColor;
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, ConwayConfig, ConwayStatistics> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -42,6 +45,9 @@ public final class ConwayMainView
         alivePaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId())
                 .colorAsOptional().orElse(Color.WHITE);
+        aliveBorderColor = entityDescriptorRegistry
+                .getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId())
+                .borderColorAsOptional().orElse(Color.GRAY);
     }
 
     @Override
@@ -63,8 +69,8 @@ public final class ConwayMainView
                             basePainter.drawCell(
                                     coordinate,
                                     alivePaint,
-                                    null,
-                                    0.0d));
+                                    aliveBorderColor,
+                                    ALIVE_BORDER_WIDTH));
     }
 
     @Override

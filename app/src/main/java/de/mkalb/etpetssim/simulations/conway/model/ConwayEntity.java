@@ -52,7 +52,7 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
             "conway.entity.alive.description",
             null,
             Color.DARKRED,
-            null,
+            Color.INDIANRED,
             1
     );
 
