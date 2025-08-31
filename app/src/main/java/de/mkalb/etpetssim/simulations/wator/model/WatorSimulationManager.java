@@ -33,6 +33,8 @@ public final class WatorSimulationManager
 
         // Initialize the grid with fish and sharks
         initializeGrid(model, random, entityFactory);
+
+        statistics.updateCells();
     }
 
     private void initializeGrid(GridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {

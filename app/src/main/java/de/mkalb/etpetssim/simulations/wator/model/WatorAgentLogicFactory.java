@@ -51,6 +51,8 @@ public final class WatorAgentLogicFactory {
         } else if (entity instanceof WatorShark shark) {
             sharkSimpleLogic(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
         }
+
+        statistics.updateCells();
     }
 
     private void fishSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
