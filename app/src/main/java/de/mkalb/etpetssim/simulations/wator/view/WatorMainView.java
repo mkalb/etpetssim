@@ -66,7 +66,7 @@ public final class WatorMainView
             Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
             if (colorMap != null) {
                 Integer value = switch (entity) {
-                    case WatorFish fish -> fish.ageFromStepCount(stepCount);
+                    case WatorFish fish -> fish.ageAtStepCount(stepCount);
                     case WatorShark shark -> Math.min(30, shark.currentEnergy());
                     default -> 0;
                 };

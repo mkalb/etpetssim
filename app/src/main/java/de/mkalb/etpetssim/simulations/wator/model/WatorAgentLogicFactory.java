@@ -80,7 +80,7 @@ public final class WatorAgentLogicFactory {
             fishNewCoordinate = waterCell.coordinate();
 
             // Reproduce, if conditions are met
-            if (fish.age(stepIndex) >= 5) {
+            if (fish.ageAtStepIndex(stepIndex) >= 5) {
                 if (fish.timeOfLastReproduction().isEmpty() ||
                         ((stepIndex - fish.timeOfLastReproduction().getAsInt()) >= 3)) {
                     WatorFish childFish = entityFactory.createFish(stepIndex);
@@ -93,7 +93,7 @@ public final class WatorAgentLogicFactory {
         }
 
         // Remove fish if it is too old
-        if (fish.age(stepIndex) >= config.fishMaxAge()) {
+        if (fish.ageAtStepIndex(stepIndex) >= config.fishMaxAge()) {
             model.setEntityToDefault(fishNewCoordinate);
             statistics.decrementFishCells();
             // AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
@@ -125,7 +125,7 @@ public final class WatorAgentLogicFactory {
         }
         // Reproduce, if conditions are met
         if (!sharkOriginalCoordinate.equals(sharkNewCoordinate)) {
-            if (shark.age(stepIndex) >= 15) {
+            if (shark.ageAtStepIndex(stepIndex) >= 15) {
                 if (shark.currentEnergy() >= 5) {
                     if (shark.timeOfLastReproduction().isEmpty() ||
                             ((stepIndex - shark.timeOfLastReproduction().getAsInt()) >= 3)) {
@@ -139,7 +139,7 @@ public final class WatorAgentLogicFactory {
             }
         }
         // Remove shark if it is too old or has no energy left
-        if ((shark.age(stepIndex) >= config.sharkMaxAge()) || (shark.currentEnergy() <= 0)) {
+        if ((shark.ageAtStepIndex(stepIndex) >= config.sharkMaxAge()) || (shark.currentEnergy() <= 0)) {
             model.setEntityToDefault(sharkNewCoordinate);
             statistics.decrementSharkCells();
             // AppLogger.info("WatorAgentLogicFactory - Removing shark at coordinate: " + sharkNewCoordinate);

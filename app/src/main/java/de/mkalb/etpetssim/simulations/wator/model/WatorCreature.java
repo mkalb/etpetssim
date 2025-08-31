@@ -22,11 +22,6 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
         timeOfReproduction = new ArrayList<>();
     }
 
-    /**
-     * Returns the unique descriptor ID for this entity.
-     *
-     * @return the descriptor ID string
-     */
     @Override
     public final String descriptorId() {
         return descriptorId;
@@ -68,12 +63,12 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
         return stepIndexOfBirth;
     }
 
-    public final int age(int stepIndex) {
+    public final int ageAtStepIndex(int stepIndex) {
         return stepIndex - stepIndexOfBirth;
     }
 
-    public final int ageFromStepCount(int stepCount) {
-        return age(stepCount - 1);
+    public final int ageAtStepCount(int stepCount) {
+        return ageAtStepIndex(stepCount - 1);
     }
 
     public final int numberOfReproductions() {
