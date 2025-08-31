@@ -1,12 +1,11 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.AgentStepLogic;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridModel;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 
 import java.util.*;
 
@@ -31,29 +30,21 @@ public final class WatorAgentLogicFactory {
 
     private void simpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
                              WatorStatistics statistics) {
-        GridCoordinate coordinate = agentCell.coordinate();
         WatorEntity entity = agentCell.entity();
-        GridStructure structure = model.structure();
 
         List<GridCell<WatorEntity>> fishCells = new ArrayList<>();
-        List<GridCell<WatorEntity>> sharkCells = new ArrayList<>();
         List<GridCell<WatorEntity>> waterCells = new ArrayList<>();
 
-        Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> neighbors = CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate, config.neighborhoodMode(), structure);
-        for (GridCoordinate neighborCoordinate : neighbors.keySet()) {
-            if (structure.isCoordinateValid(neighborCoordinate)) {
-                WatorEntity neighborEntity = model.getEntity(neighborCoordinate);
+        for (var result : CellNeighborhoods.neighborEdgeResults(agentCell.coordinate(), config.neighborhoodMode(), model.structure())) {
+            if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
+                WatorEntity neighborEntity = model.getEntity(result.mapped());
                 if (neighborEntity.isFish()) {
-                    fishCells.add(new GridCell<>(neighborCoordinate, neighborEntity));
-                } else if (neighborEntity.isShark()) {
-                    sharkCells.add(new GridCell<>(neighborCoordinate, neighborEntity));
-                } else {
-                    waterCells.add(new GridCell<>(neighborCoordinate, neighborEntity));
+                    fishCells.add(new GridCell<>(result.mapped(), neighborEntity));
+                } else if (neighborEntity.isWater()) {
+                    waterCells.add(new GridCell<>(result.mapped(), neighborEntity));
                 }
             }
         }
-
-        // TODO handle REFLECT and ABSORB
 
         if (entity instanceof WatorFish fish) {
             fishSimpleLogic(agentCell, model, stepIndex, statistics, fish, waterCells);
@@ -80,9 +71,9 @@ public final class WatorAgentLogicFactory {
             fishNewCoordinate = waterCell.coordinate();
 
             // Reproduce, if conditions are met
-            if (fish.ageAtStepIndex(stepIndex) >= 5) {
+            if (fish.ageAtStepIndex(stepIndex) >= config.fishMinReproductionAge()) {
                 if (fish.timeOfLastReproduction().isEmpty() ||
-                        ((stepIndex - fish.timeOfLastReproduction().getAsInt()) >= 3)) {
+                        ((stepIndex - fish.timeOfLastReproduction().getAsInt()) >= config.fishMinReproductionInterval())) {
                     WatorFish childFish = entityFactory.createFish(stepIndex);
                     statistics.incrementFishCells();
                     fish.reproduce(childFish);
@@ -107,14 +98,14 @@ public final class WatorAgentLogicFactory {
         GridCoordinate sharkNewCoordinate = sharkOriginalCoordinate;
 
         // Reduce energy
-        shark.reduceEnergy(1);
+        shark.reduceEnergy(config.sharkEnergyLossPerStep());
 
         if (!fishCells.isEmpty()) {
             GridCell<WatorEntity> fishCell = chooseRandomCoordinate(fishCells);
             model.setEntity(fishCell.coordinate(), shark);
             model.setEntityToDefault(sharkOriginalCoordinate);
             sharkNewCoordinate = fishCell.coordinate();
-            shark.gainEnergy(2);
+            shark.gainEnergy(config.sharkEnergyGainPerFish());
             statistics.decrementFishCells();
             // AppLogger.info("WatorAgentLogicFactory - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
         } else if (!waterCells.isEmpty()) {
@@ -125,10 +116,10 @@ public final class WatorAgentLogicFactory {
         }
         // Reproduce, if conditions are met
         if (!sharkOriginalCoordinate.equals(sharkNewCoordinate)) {
-            if (shark.ageAtStepIndex(stepIndex) >= 15) {
-                if (shark.currentEnergy() >= 5) {
+            if (shark.ageAtStepIndex(stepIndex) >= config.sharkMinReproductionAge()) {
+                if (shark.currentEnergy() >= config.sharkMinReproductionEnergy()) {
                     if (shark.timeOfLastReproduction().isEmpty() ||
-                            ((stepIndex - shark.timeOfLastReproduction().getAsInt()) >= 3)) {
+                            ((stepIndex - shark.timeOfLastReproduction().getAsInt()) >= config.sharkMinReproductionInterval())) {
                         WatorShark childShark = entityFactory.createShark(stepIndex, config.sharkBirthEnergy());
                         statistics.incrementSharkCells();
                         shark.reproduce(childShark);
@@ -150,6 +141,7 @@ public final class WatorAgentLogicFactory {
         return cells.get(random.nextInt(cells.size()));
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void advancedLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
                                WatorStatistics statistics) {
         // TODO Implement advanced agent logic here

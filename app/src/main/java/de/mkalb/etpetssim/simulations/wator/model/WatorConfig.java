@@ -14,8 +14,15 @@ public record WatorConfig(
         double fishPercent,
         double sharkPercent,
         int fishMaxAge,
+        int fishMinReproductionAge,
+        int fishMinReproductionInterval,
         int sharkMaxAge,
         int sharkBirthEnergy,
+        int sharkEnergyLossPerStep,
+        int sharkEnergyGainPerFish,
+        int sharkMinReproductionAge,
+        int sharkMinReproductionEnergy,
+        int sharkMinReproductionInterval,
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {}
 
