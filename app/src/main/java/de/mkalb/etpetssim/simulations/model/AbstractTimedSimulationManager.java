@@ -24,14 +24,27 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
     public final void executeStep() {
         executor().executeStep();
         updateStatistics();
+        afterStepExecuted();
     }
 
     @Override
     public final SimulationExecutor.ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
-        return executor().executeSteps(count, checkTermination, () -> {
+        var result = executor().executeSteps(count, checkTermination, () -> {
             updateStatistics();
             onStep.run();
         });
+        afterStepsExecuted(result);
+        return result;
+    }
+
+    @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass"})
+    protected void afterStepExecuted() {
+        // Do nothing. Can be overridden by subclasses.
+    }
+
+    @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass", "unused"})
+    protected void afterStepsExecuted(SimulationExecutor.ExecutionResult result) {
+        // Do nothing. Can be overridden by subclasses.
     }
 
     @Override
