@@ -42,45 +42,44 @@ public final class WatorConfigViewModel
 
     // Rules
     private static final int FISH_MAX_AGE_INITIAL = 20;
-    private static final int FISH_MAX_AGE_MIN = 10;
-    private static final int FISH_MAX_AGE_MAX = 100;
+    private static final int FISH_MAX_AGE_MIN = 1;
+    private static final int FISH_MAX_AGE_MAX = 1_000;
     private static final int FISH_MAX_AGE_STEP = 1;
     private static final int FISH_MIN_REPRODUCTION_AGE_INITIAL = 5;
     private static final int FISH_MIN_REPRODUCTION_AGE_MIN = 1;
-    private static final int FISH_MIN_REPRODUCTION_AGE_MAX = 100;
+    private static final int FISH_MIN_REPRODUCTION_AGE_MAX = 1_000;
     private static final int FISH_MIN_REPRODUCTION_AGE_STEP = 1;
     private static final int FISH_MIN_REPRODUCTION_INTERVAL_INITIAL = 3;
     private static final int FISH_MIN_REPRODUCTION_INTERVAL_MIN = 1;
-    private static final int FISH_MIN_REPRODUCTION_INTERVAL_MAX = 100;
+    private static final int FISH_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
     private static final int FISH_MIN_REPRODUCTION_INTERVAL_STEP = 1;
-
     private static final int SHARK_MAX_AGE_INITIAL = 40;
-    private static final int SHARK_MAX_AGE_MIN = 10;
-    private static final int SHARK_MAX_AGE_MAX = 100;
+    private static final int SHARK_MAX_AGE_MIN = 1;
+    private static final int SHARK_MAX_AGE_MAX = 1_000;
     private static final int SHARK_MAX_AGE_STEP = 1;
     private static final int SHARK_BIRTH_ENERGY_INITIAL = 8;
     private static final int SHARK_BIRTH_ENERGY_MIN = 1;
-    private static final int SHARK_BIRTH_ENERGY_MAX = 100;
+    private static final int SHARK_BIRTH_ENERGY_MAX = 1_000;
     private static final int SHARK_BIRTH_ENERGY_STEP = 1;
     private static final int SHARK_ENERGY_LOSS_PER_STEP_INITIAL = 1;
     private static final int SHARK_ENERGY_LOSS_PER_STEP_MIN = 1;
-    private static final int SHARK_ENERGY_LOSS_PER_STEP_MAX = 100;
+    private static final int SHARK_ENERGY_LOSS_PER_STEP_MAX = 1_000;
     private static final int SHARK_ENERGY_LOSS_PER_STEP_STEP = 1;
     private static final int SHARK_ENERGY_GAIN_PER_FISH_INITIAL = 2;
     private static final int SHARK_ENERGY_GAIN_PER_FISH_MIN = 1;
-    private static final int SHARK_ENERGY_GAIN_PER_FISH_MAX = 100;
+    private static final int SHARK_ENERGY_GAIN_PER_FISH_MAX = 1_000;
     private static final int SHARK_ENERGY_GAIN_PER_FISH_STEP = 1;
     private static final int SHARK_MIN_REPRODUCTION_AGE_INITIAL = 15;
     private static final int SHARK_MIN_REPRODUCTION_AGE_MIN = 1;
-    private static final int SHARK_MIN_REPRODUCTION_AGE_MAX = 100;
+    private static final int SHARK_MIN_REPRODUCTION_AGE_MAX = 1_000;
     private static final int SHARK_MIN_REPRODUCTION_AGE_STEP = 1;
     private static final int SHARK_MIN_REPRODUCTION_ENERGY_INITIAL = 5;
     private static final int SHARK_MIN_REPRODUCTION_ENERGY_MIN = 1;
-    private static final int SHARK_MIN_REPRODUCTION_ENERGY_MAX = 100;
+    private static final int SHARK_MIN_REPRODUCTION_ENERGY_MAX = 1_000;
     private static final int SHARK_MIN_REPRODUCTION_ENERGY_STEP = 1;
     private static final int SHARK_MIN_REPRODUCTION_INTERVAL_INITIAL = 3;
     private static final int SHARK_MIN_REPRODUCTION_INTERVAL_MIN = 1;
-    private static final int SHARK_MIN_REPRODUCTION_INTERVAL_MAX = 100;
+    private static final int SHARK_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
     private static final int SHARK_MIN_REPRODUCTION_INTERVAL_STEP = 1;
 
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
@@ -158,13 +157,16 @@ public final class WatorConfigViewModel
     @Override
     public WatorConfig getConfig() {
         return new WatorConfig(
+                // Structure
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
+                // Initialization
                 fishPercent.getValue(),
                 sharkPercent.getValue(),
+                // Rules
                 fishMaxAge.getValue(),
                 fishMinReproductionAge.getValue(),
                 fishMinReproductionInterval.getValue(),

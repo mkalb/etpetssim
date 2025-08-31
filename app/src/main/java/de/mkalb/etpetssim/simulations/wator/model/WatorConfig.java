@@ -11,8 +11,10 @@ public record WatorConfig(
         int gridWidth,
         int gridHeight,
         double cellEdgeLength,
+        // Initialization
         double fishPercent,
         double sharkPercent,
+        // Rules
         int fishMaxAge,
         int fishMinReproductionAge,
         int fishMinReproductionInterval,
