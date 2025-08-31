@@ -72,9 +72,9 @@ public final class FXPaintFactory {
      * @return a new color with adjusted brightness
      */
     public static Color adjustBrightness(Color color, double factor) {
-        double r = Math.min(color.getRed() * factor, 1.0);
-        double g = Math.min(color.getGreen() * factor, 1.0);
-        double b = Math.min(color.getBlue() * factor, 1.0);
+        double r = Math.max(Math.min(color.getRed() * factor, 1.0d), 0.0d);
+        double g = Math.max(Math.min(color.getGreen() * factor, 1.0d), 0.0d);
+        double b = Math.max(Math.min(color.getBlue() * factor, 1.0d), 0.0d);
         return new Color(r, g, b, color.getOpacity());
     }
 
