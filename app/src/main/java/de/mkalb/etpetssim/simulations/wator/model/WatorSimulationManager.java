@@ -63,9 +63,8 @@ public final class WatorSimulationManager
 
     private WatorShark createShark(WatorEntityFactory entityFactory, Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().sharkMaxAge()); // negative age for birth time
-        int birthEnergy = 1 + random.nextInt(config().sharkBirthEnergy()); // between 1 and sharkBirthEnergy
 
-        WatorShark watorShark = entityFactory.createShark(stepIndexOfBirth, birthEnergy);
+        WatorShark watorShark = entityFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
         statistics.incrementSharkCells();
         return watorShark;
     }
