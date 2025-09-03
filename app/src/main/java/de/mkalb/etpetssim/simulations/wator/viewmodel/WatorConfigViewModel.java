@@ -33,10 +33,10 @@ public final class WatorConfigViewModel
             32);
 
     // Initialization
-    private static final double FISH_PERCENT_INITIAL = 0.30d;
+    private static final double FISH_PERCENT_INITIAL = 0.20d;
     private static final double FISH_PERCENT_MIN = 0.0d;
     private static final double FISH_PERCENT_MAX = 1.0d;
-    private static final double SHARK_PERCENT_INITIAL = 0.10d;
+    private static final double SHARK_PERCENT_INITIAL = 0.05d;
     private static final double SHARK_PERCENT_MIN = 0.0d;
     private static final double SHARK_PERCENT_MAX = 1.0d;
 
