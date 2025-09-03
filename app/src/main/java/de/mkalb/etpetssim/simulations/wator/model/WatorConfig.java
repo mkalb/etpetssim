@@ -26,5 +26,14 @@ public record WatorConfig(
         int sharkMinReproductionEnergy,
         int sharkMinReproductionInterval,
         NeighborhoodMode neighborhoodMode)
-        implements SimulationConfig {}
+        implements SimulationConfig {
+
+    @Override
+    public boolean isValid() {
+        boolean baseValid = SimulationConfig.super.isValid();
+        boolean watorValid = (fishPercent + sharkPercent) < 1.0d;
+        return baseValid && watorValid;
+    }
+
+}
 
