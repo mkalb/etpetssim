@@ -166,7 +166,7 @@ public final class DefaultMainViewModel<
             Optional<CON> config = createValidConfig();
             if (config.isEmpty()) {
                 setSimulationState(SimulationState.ERROR);
-                AppLogger.warn("Cannot start simulation, because configuration is invalid. " + config);
+                AppLogger.warn("Cannot start simulation, because configuration is invalid.");
                 setNotificationType(SimulationNotificationType.INVALID_CONFIG);
                 return;
             }
