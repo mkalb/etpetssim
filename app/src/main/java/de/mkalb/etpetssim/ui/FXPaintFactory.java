@@ -25,40 +25,58 @@ public final class FXPaintFactory {
     /**
      * Returns a map of brightness variants for a base color.
      * <p>
-     * For each integer value in the range [min, max], assigns a color variant based on the brightness adjustment.
-     * All values within a step group share the same color.
+     * For each integer value in the range {@code [minInclusive, maxInclusive]}, assigns a color variant based on brightness adjustment.
+     * All values within a group share the same color.
+     * The brightness adjustment is distributed linearly from the base color (factor 1.0) up to {@code 1.0 + maxFactorDelta}.
+     * If {@code maxFactorDelta} is positive, colors are brightened; if negative, colors are darkened.
+     * The number of groups determines how many distinct brightness levels are used.
+     * The distribution ensures all values are covered, and groups are as evenly sized as possible.
      *
-     * @param baseColor  the base color to adjust
-     * @param min        the lower bound (inclusive)
-     * @param max        the upper bound (inclusive)
-     * @param step       the step size for grouping values
-     * @param brighten   true to brighten, false to darken
-     * @param factorStep the brightness factor per step (e.g. 0.08)
+     * @param baseColor      the base color to adjust
+     * @param minInclusive   the lower bound (inclusive)
+     * @param maxInclusive   the upper bound (inclusive)
+     * @param groupCount     the number of brightness groups
+     * @param maxFactorDelta the total brightness change (positive to brighten, negative to darken)
      * @return a map from integer value to color variant
+     * @throws IllegalArgumentException if the range is invalid, groupCount is less than 1,
+     * or maxFactorDelta is outside the range [-1.0, 10.0]
      */
     public static Map<Integer, Color> getBrightnessVariantsMap(
             Color baseColor,
-            int min,
-            int max,
-            int step,
-            boolean brighten,
-            double factorStep) {
-        int range = max - min;
-        double steps = range / (double) step;
-        double invRange = 1.0 / range;
-        int direction = brighten ? 1 : -1;
-        double factorStepTotal = factorStep * steps;
-        double stepFactor = direction * invRange * factorStepTotal;
-
-        Map<Integer, Color> map = HashMap.newHashMap(range + 1);
-        for (int s = min; s <= max; s += step) {
-            double factor = 1.0 + ((s - min) * stepFactor);
-            Color color = adjustBrightness(baseColor, factor);
-            int end = Math.min((s + step) - 1, max);
-            for (int i = s; i <= end; i++) {
-                map.put(i, color);
-            }
+            int minInclusive,
+            int maxInclusive,
+            int groupCount,
+            double maxFactorDelta) {
+        int range = (maxInclusive - minInclusive) + 1;
+        if (range < 1) {
+            throw new IllegalArgumentException("Invalid range: " + minInclusive + " to " + maxInclusive);
         }
+        if (groupCount < 1) {
+            throw new IllegalArgumentException("Group count must be at least 1: " + groupCount);
+        }
+        if (Double.isNaN(maxFactorDelta) || (maxFactorDelta < -1.0d) || (maxFactorDelta > 10.0d)) {
+            throw new IllegalArgumentException("maxFactorDelta must be in the range [-1.0, 10.0]: " + maxFactorDelta);
+        }
+
+        int baseGroupSize = Math.max(1, range / groupCount);
+        int remainder = range % groupCount;
+        double brightnessStep = (groupCount > 1) ? (maxFactorDelta / (groupCount - 1)) : 0.0d;
+
+        Map<Integer, Color> map = HashMap.newHashMap(range);
+        int groupStart = minInclusive;
+        for (int groupIndex = 0; groupIndex < groupCount; groupIndex++) {
+            double groupIndexFactor = 1.0d + (groupIndex * brightnessStep);
+            Color groupColor = adjustBrightness(baseColor, groupIndexFactor);
+
+            int currentGroupSize = baseGroupSize + ((groupIndex < remainder) ? 1 : 0);
+            int groupEnd = Math.min((groupStart + currentGroupSize) - 1, maxInclusive);
+
+            for (int value = groupStart; value <= groupEnd; value++) {
+                map.put(value, groupColor);
+            }
+            groupStart += currentGroupSize;
+        }
+
         return map;
     }
 

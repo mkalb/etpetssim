@@ -22,7 +22,18 @@ public final class WatorMainView
         WatorConfigView,
         WatorObservationView> {
 
+    private static final Color FALLBACK_COLOR_AGENT = Color.WHITE;
+    private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
+    private static final double FISH_MAX_FACTOR_DELTA = -0.5d;
+    private static final double SHARK_MAX_FACTOR_DELTA = 0.7d;
+    private static final int FISH_GROUP_COUNT = 10;
+    private static final int SHARK_GROUP_COUNT = 6;
+    private static final int MAX_COLOR_SHARK_ENERGY_FACTOR = 3;
+
+    private final Paint backgroundPaint;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
+
+    private int maxColorSharkEnergy = 1;
 
     public WatorMainView(DefaultMainViewModel<WatorEntity, WatorConfig, WatorStatistics> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -34,57 +45,59 @@ public final class WatorMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-
+        backgroundPaint = entityDescriptorRegistry
+                .getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
+                .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
         entityColors = HashMap.newHashMap(2);
         entityColors.put(WatorEntityDescribable.FISH.descriptorId(), null);
         entityColors.put(WatorEntityDescribable.SHARK.descriptorId(), null);
     }
 
+    private int computeMaxColorSharkEnergy(WatorConfig config) {
+        return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
+    }
+
     @Override
     protected void initSimulation(WatorConfig config) {
-        initializeEntityColorVariants(WatorEntityDescribable.FISH, 0, config.fishMaxAge() - 1, 3, false, 0.05d);
-        initializeEntityColorVariants(WatorEntityDescribable.SHARK, 1, 30, 2, true, 0.05d);
+        maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
+        entityColors.put(WatorEntityDescribable.FISH.descriptorId(),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntityDescribable.FISH.descriptorId()),
+                        0, config.fishMaxAge() - 1, FISH_GROUP_COUNT, FISH_MAX_FACTOR_DELTA));
+        entityColors.put(WatorEntityDescribable.SHARK.descriptorId(),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntityDescribable.SHARK.descriptorId()),
+                        1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
     }
 
-    private void initializeEntityColorVariants(WatorEntityDescribable entityDescribable, int min, int max, int step, boolean brighten, double factorStep) {
-        String descriptorId = entityDescribable.descriptorId();
-        GridEntityDescriptor descriptor = entityDescriptorRegistry.getRequiredByDescriptorId(descriptorId);
-        Paint paint = descriptor.color();
-        if (paint instanceof Color baseColor) {
-            Map<Integer, Color> colorMap = FXPaintFactory.getBrightnessVariantsMap(baseColor, min, max, step, brighten, factorStep);
-            entityColors.put(descriptorId, colorMap);
-        } else {
-            AppLogger.warn("Descriptor " + descriptorId + " does not provide a Color for brightness variants.");
-            entityColors.put(descriptorId, null);
+    private @Nullable Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
+                                                                       int min,
+                                                                       int max,
+                                                                       int groupCount,
+                                                                       double maxFactorDelta) {
+        if (!(descriptor.color() instanceof Color baseColor)) {
+            return null;
         }
+        return FXPaintFactory.getBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
     }
 
-    private @Nullable Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor, WatorEntity entity,
-                                                   int stepCount) {
+    private Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor,
+                                         WatorEntity entity,
+                                         int stepCount) {
         Paint paint = entityDescriptor.color();
         if (paint instanceof Color baseColor) {
             Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
             if (colorMap != null) {
                 Integer value = switch (entity) {
                     case WatorFish fish -> fish.ageAtStepCount(stepCount);
-                    case WatorShark shark -> Math.min(30, shark.currentEnergy());
-                    default -> 0;
+                    case WatorShark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
+                    default -> -1; // Illegal value
                 };
+
                 return colorMap.getOrDefault(value, baseColor);
             }
+        } else if (paint == null) {
+            paint = FALLBACK_COLOR_AGENT;
         }
         return paint;
-    }
-
-    private void fillBackground() {
-        if (basePainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
-        Paint background = entityDescriptorRegistry
-                .getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
-                .colorAsOptional().orElse(Color.BLACK);
-        basePainter.fillCanvasBackground(background);
     }
 
     @Override
@@ -94,19 +107,21 @@ public final class WatorMainView
             return;
         }
 
-        fillBackground();
+        basePainter.fillCanvasBackground(backgroundPaint);
 
-        currentModel.nonDefaultCells().forEachOrdered(cell ->
-                GridEntityUtils.consumeDescriptorAt(
-                        cell.coordinate(),
-                        currentModel,
-                        entityDescriptorRegistry,
-                        descriptor -> basePainter.drawCell(
-                                cell.coordinate(),
-                                resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                                null,
-                                0.0d))
-        );
+        currentModel.nonDefaultCells()
+                    .forEachOrdered(cell ->
+                            GridEntityUtils.consumeDescriptorAt(
+                                    cell.coordinate(),
+                                    currentModel,
+                                    entityDescriptorRegistry,
+                                    descriptor ->
+                                            basePainter.drawCell(
+                                                    cell.coordinate(),
+                                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                                                    null,
+                                                    0.0d))
+                    );
     }
 
     @Override
