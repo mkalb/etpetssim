@@ -36,7 +36,7 @@ public enum WatorEntityDescribable implements GridEntityDescribable {
             "wator.entity.shark.long",
             "wator.entity.shark.description",
             null,
-            Color.rgb(160, 170, 170),
+            Color.rgb(115, 120, 120),
             null,
             3
     );
