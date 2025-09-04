@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
@@ -70,61 +69,57 @@ public final class LabMainView
         return List.of();
     }
 
-    private void registerEvents(NeighborhoodMode neighborhoodMode) {
-        // Clicked
-        overlayCanvas.setOnMouseClicked(event -> {
-            if ((basePainter == null) || (overlayPainter == null)) {
-                return;
-            }
-            GridCoordinate coordinate = GridGeometry.fromCanvasPosition(new Point2D(event.getX(), event.getY()), basePainter.cellDimension(), overlayPainter.gridDimension2D(), viewModel.getStructure());
-            overlayPainter.clearCanvasBackground();
-            if (overlayPainter.isOutsideGrid(coordinate)) {
-                viewModel.setLastClickedCoordinate(null);
-            } else {
-                if (!coordinate.equals(viewModel.getLastClickedCoordinate())) {
-                    viewModel.setLastClickedCoordinate(coordinate);
-                    overlayPainter.drawCellOuterCircle(coordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+    @Override
+    protected void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
+        var neighborhoodMode = viewModel.getCurrentConfig().neighborhoodMode();
 
-                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate, neighborhoodMode,
-                                             viewModel.getStructure())
-                                     .forEach((neighborCoordinate, neighborCells) -> {
-                                         if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
-                                             overlayPainter.drawCell(neighborCoordinate, Color.YELLOW, null, 0.0d);
-                                             if (cellFont != null) {
-                                                 StringBuilder b = new StringBuilder(4);
-                                                 for (CellNeighborWithEdgeBehavior cellNeighbor : neighborCells) {
-                                                     if (!b.isEmpty()) {
-                                                         b.append(" : ");
-                                                     }
-                                                     b.append(cellNeighbor.direction().arrow());
-                                                 }
-                                                 overlayPainter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, cellFont);
+        painter.clearCanvasBackground();
+
+        if (viewModel.getLastClickedCoordinate().filter(c -> c.equals(mouseCoordinate)).isEmpty()) {
+            viewModel.updateClickedCoordinateProperties(mouseCoordinate);
+            painter.drawCellOuterCircle(mouseCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+
+            GridStructure gridStructure = painter.gridStructure();
+            CellNeighborhoods.cellNeighborsWithEdgeBehavior(mouseCoordinate, neighborhoodMode,
+                                     gridStructure)
+                             .forEach((neighborCoordinate, neighborCells) -> {
+                                 if (gridStructure.isCoordinateValid(neighborCoordinate)) {
+                                     painter.drawCell(neighborCoordinate, Color.YELLOW, null, 0.0d);
+                                     if (cellFont != null) {
+                                         StringBuilder b = new StringBuilder(4);
+                                         for (CellNeighborWithEdgeBehavior cellNeighbor : neighborCells) {
+                                             if (!b.isEmpty()) {
+                                                 b.append(" : ");
                                              }
+                                             b.append(cellNeighbor.direction().arrow());
                                          }
-                                     });
-                    CellNeighborhoods.coordinatesOfNeighbors(coordinate,
-                                             neighborhoodMode,
-                                             viewModel.getStructure().cellShape(),
-                                             2)
-                                     .forEach(neighborCoordinate -> {
-                                         if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
-                                             overlayPainter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.0d);
-                                         }
-                                     });
-                    CellNeighborhoods.cellNeighborsWithEdgeBehavior(coordinate,
-                                             neighborhoodMode,
-                                             viewModel.getStructure())
-                                     .forEach((neighborCoordinate, _) -> {
-                                         if (viewModel.getStructure().isCoordinateValid(neighborCoordinate)) {
-                                             overlayPainter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 3.0d);
-                                         }
-                                     });
-                } else {
-                    viewModel.setLastClickedCoordinate(null);
-                }
-            }
-        });
+                                         painter.drawCenteredTextInCell(neighborCoordinate, b.toString(), Color.BLACK, cellFont);
+                                     }
+                                 }
+                             });
+            CellNeighborhoods.coordinatesOfNeighbors(mouseCoordinate,
+                                     neighborhoodMode,
+                                     gridStructure.cellShape(),
+                                     2)
+                             .forEach(neighborCoordinate -> {
+                                 if (gridStructure.isCoordinateValid(neighborCoordinate)) {
+                                     painter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.0d);
+                                 }
+                             });
+            CellNeighborhoods.cellNeighborsWithEdgeBehavior(mouseCoordinate,
+                                     neighborhoodMode,
+                                     gridStructure)
+                             .forEach((neighborCoordinate, _) -> {
+                                 if (gridStructure.isCoordinateValid(neighborCoordinate)) {
+                                     painter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 3.0d);
+                                 }
+                             });
+        } else {
+            viewModel.resetClickedCoordinateProperties();
+        }
+    }
 
+    private void registerEvents() {
         // Exited
         overlayCanvas.setOnMouseExited(_ -> {
             if ((basePainter == null) || (overlayPainter == null)) {
@@ -155,9 +150,8 @@ public final class LabMainView
                     }
                 }
             }
-            if (viewModel.getLastClickedCoordinate() != null) {
-                overlayPainter.drawCellOuterCircle(viewModel.getLastClickedCoordinate(), TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-            }
+            viewModel.getLastClickedCoordinate().ifPresent(lastCoordinate -> overlayPainter.drawCellOuterCircle(lastCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE));
+
             overlayPainter.drawCircle(mousePoint, 2.0d, Color.DARKGREEN, null, 0.0d, StrokeAdjustment.CENTERED);
         });
     }
@@ -167,7 +161,7 @@ public final class LabMainView
         overlayCanvas.setOnMouseExited(null);
         overlayCanvas.setOnMouseMoved(null);
 
-        viewModel.setLastClickedCoordinate(null);
+        viewModel.resetClickedCoordinateProperties();
 
         if (basePainter != null) {
             basePainter.clearCanvasBackground();
@@ -177,7 +171,7 @@ public final class LabMainView
     }
 
     private void resetCanvasAndPainter(LabConfig config) {
-        viewModel.setLastClickedCoordinate(null);
+        viewModel.resetClickedCoordinateProperties();
 
         double cellEdgeLength = viewModel.getCellEdgeLength();
         GridStructure structure = viewModel.getStructure();
@@ -186,7 +180,7 @@ public final class LabMainView
 
         updateCanvasBorderPane(structure);
 
-        registerEvents(config.neighborhoodMode());
+        registerEvents();
     }
 
     private void drawBaseCanvas() {

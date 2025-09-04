@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.lab.model.*;
@@ -9,7 +8,6 @@ import de.mkalb.etpetssim.simulations.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractMainViewModel;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -17,7 +15,6 @@ import java.util.*;
 public final class LabMainViewModel
         extends AbstractMainViewModel<LabEntity, LabConfig, LabStatistics> {
 
-    private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>(null);
     private @Nullable LabSimulationManager simulationManager;
 
     private Runnable configChangedListener = () -> {};
@@ -55,24 +52,12 @@ public final class LabMainViewModel
                 controlViewModel.drawTestRequestedProperty().set(false); // reset
             }
         });
-        lastClickedCoordinate.addListener((_, _, newVal) -> observationViewModel.lastClickedCoordinateProperty().set(newVal));
+        lastClickedCoordinateProperty().addListener((_, _, newVal) -> observationViewModel.lastClickedCoordinateProperty().set(newVal));
     }
 
     @Override
     public void shutdownSimulation() {
         // Do nothing
-    }
-
-    public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
-        return lastClickedCoordinate;
-    }
-
-    public @Nullable GridCoordinate getLastClickedCoordinate() {
-        return lastClickedCoordinate.get();
-    }
-
-    public void setLastClickedCoordinate(@Nullable GridCoordinate value) {
-        lastClickedCoordinate.set(value);
     }
 
     @Override
@@ -167,7 +152,7 @@ public final class LabMainViewModel
         // Reset the simulation manager if it exists
         simulationManager = null;
         // Clear last clicked coordinate
-        setLastClickedCoordinate(null);
+        resetClickedCoordinateProperties();
     }
 
 }

@@ -2,21 +2,20 @@ package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.EdgeBehavior;
-import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.model.*;
 import de.mkalb.etpetssim.simulations.viewmodel.SimulationMainViewModel;
-import de.mkalb.etpetssim.ui.CellDimension;
-import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -117,6 +116,7 @@ public abstract class AbstractMainView<
 
         registerViewModelListeners();
         registerNotificationListener();
+        registerOverlayPrimaryMouseEvents();
 
         return borderPane;
     }
@@ -127,6 +127,38 @@ public abstract class AbstractMainView<
     }
 
     protected abstract void registerViewModelListeners();
+
+    private void registerOverlayPrimaryMouseEvents() {
+        BooleanProperty isDragging = new SimpleBooleanProperty(false);
+
+        overlayCanvas.setOnMousePressed(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                isDragging.set(false);
+            }
+        });
+
+        overlayCanvas.setOnMouseDragged(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                isDragging.set(true);
+            }
+        });
+
+        overlayCanvas.setOnMouseReleased(event -> {
+            if ((overlayPainter != null)
+                    && (event.getButton() == MouseButton.PRIMARY)
+                    && !isDragging.get()
+                    && (event.getClickCount() == 1)) {
+                Point2D mousePoint = new Point2D(event.getX(), event.getY());
+                GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
+                        overlayPainter.cellDimension(), overlayPainter.gridDimension2D(), overlayPainter.gridStructure());
+                if (!mouseCoordinate.isIllegal() && !overlayPainter.isOutsideGrid(mouseCoordinate)) {
+                    handleMouseClickedCoordinate(mousePoint, mouseCoordinate, overlayPainter);
+                }
+            }
+        });
+    }
+
+    protected abstract void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
 
     private void registerNotificationListener() {
         viewModel.notificationTypeProperty().addListener((_, _, newVal) -> {

@@ -161,6 +161,8 @@ public final class DefaultMainViewModel<
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
+        resetClickedCoordinateProperties();
+
         long start = System.currentTimeMillis();
         try {
             Optional<CON> config = createValidConfig();

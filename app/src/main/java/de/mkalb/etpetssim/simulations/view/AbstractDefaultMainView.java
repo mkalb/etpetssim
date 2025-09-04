@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
@@ -9,6 +10,7 @@ import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -59,6 +61,11 @@ public abstract class AbstractDefaultMainView<
     protected final void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(this::handleSimulationInitialized);
         viewModel.setSimulationStepListener(this::handleSimulationStep);
+    }
+
+    @Override
+    protected void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
+        viewModel.updateClickedCoordinateProperties(mouseCoordinate);
     }
 
     protected final void handleSimulationInitialized() {

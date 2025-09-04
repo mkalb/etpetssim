@@ -1,11 +1,15 @@
 package de.mkalb.etpetssim.simulations.viewmodel;
 
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.model.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import org.jspecify.annotations.Nullable;
+
+import java.util.*;
 
 public abstract class AbstractMainViewModel<
         ENT extends GridEntity,
@@ -18,6 +22,9 @@ public abstract class AbstractMainViewModel<
     private final ObjectProperty<SimulationState> simulationState;
     private final ObjectProperty<SimulationNotificationType> notificationTypeProperty =
             new SimpleObjectProperty<>(SimulationNotificationType.NONE);
+
+    private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
+    private final ObjectProperty<@Nullable GridCoordinate> previousClickedCoordinate = new SimpleObjectProperty<>();
 
     protected AbstractMainViewModel(ObjectProperty<SimulationState> simulationState,
                                     SimulationConfigViewModel<CON> configViewModel,
@@ -56,5 +63,31 @@ public abstract class AbstractMainViewModel<
     public abstract boolean hasSimulationManager();
 
     public abstract ReadableGridModel<ENT> getCurrentModel();
+
+    public final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
+        return lastClickedCoordinate;
+    }
+
+    public final ObjectProperty<@Nullable GridCoordinate> previousClickedCoordinateProperty() {
+        return previousClickedCoordinate;
+    }
+
+    public Optional<GridCoordinate> getLastClickedCoordinate() {
+        return Optional.ofNullable(lastClickedCoordinate.get());
+    }
+
+    public Optional<GridCoordinate> getPreviousClickedCoordinate() {
+        return Optional.ofNullable(previousClickedCoordinate.get());
+    }
+
+    public final void updateClickedCoordinateProperties(@Nullable GridCoordinate coordinate) {
+        previousClickedCoordinate.set(lastClickedCoordinate.get());
+        lastClickedCoordinate.set(coordinate);
+    }
+
+    public final void resetClickedCoordinateProperties() {
+        previousClickedCoordinate.set(null);
+        lastClickedCoordinate.set(null);
+    }
 
 }
