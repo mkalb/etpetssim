@@ -43,7 +43,7 @@ public final class DefaultMainViewModel<
     public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
                                 SimulationConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
-                                DefaultObservationViewModel<STA> observationViewModel,
+                                DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;

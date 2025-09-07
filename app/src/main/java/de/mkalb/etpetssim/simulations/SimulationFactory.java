@@ -18,9 +18,7 @@ import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.wator.model.WatorEntityDescribable;
-import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
-import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
+import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.view.WatorConfigView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorObservationView;
@@ -107,7 +105,7 @@ public final class SimulationFactory {
         // ViewModel
         var configViewModel = new ConwayConfigViewModel(readOnlySimulationState);
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
-        var observationViewModel = new DefaultObservationViewModel<ConwayStatistics>(readOnlySimulationState);
+        var observationViewModel = new DefaultObservationViewModel<ConwayEntity, ConwayStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
                 observationViewModel, ConwaySimulationManager::new);
         // View
@@ -130,7 +128,7 @@ public final class SimulationFactory {
         // ViewModel
         var configViewModel = new WatorConfigViewModel(readOnlySimulationState);
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
-        var observationViewModel = new DefaultObservationViewModel<WatorStatistics>(readOnlySimulationState);
+        var observationViewModel = new DefaultObservationViewModel<WatorEntity, WatorStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
                 observationViewModel, WatorSimulationManager::new);
 

@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.wator.model.WatorEntity;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
@@ -13,7 +14,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public final class WatorObservationView
-        extends AbstractObservationView<WatorStatistics, DefaultObservationViewModel<WatorStatistics>> {
+        extends AbstractObservationView<WatorStatistics, DefaultObservationViewModel<WatorEntity, WatorStatistics>> {
 
     static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
     static final String WATOR_OBSERVATION_MAX_FISH_CELLS = "wator.observation.cells.maxfish";
@@ -34,7 +35,7 @@ public final class WatorObservationView
 
     private @Nullable NumberFormat intFormat;
 
-    public WatorObservationView(DefaultObservationViewModel<WatorStatistics> viewModel) {
+    public WatorObservationView(DefaultObservationViewModel<WatorEntity, WatorStatistics> viewModel) {
         super(viewModel);
     }
 

@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
@@ -13,7 +14,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public final class ConwayObservationView
-        extends AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayStatistics>> {
+        extends AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
 
     static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
     @SuppressWarnings("SpellCheckingInspection")
@@ -31,7 +32,7 @@ public final class ConwayObservationView
 
     private @Nullable NumberFormat intFormat;
 
-    public ConwayObservationView(DefaultObservationViewModel<ConwayStatistics> viewModel) {
+    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel) {
         super(viewModel);
     }
 
