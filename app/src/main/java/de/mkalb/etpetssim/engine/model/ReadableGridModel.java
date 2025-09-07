@@ -41,6 +41,16 @@ public interface ReadableGridModel<T extends GridEntity> {
     T getEntity(GridCoordinate coordinate);
 
     /**
+     * Returns a {@link GridCell} containing the specified coordinate and its associated entity.
+     *
+     * @param coordinate the grid coordinate
+     * @return a GridCell with the coordinate and its entity
+     */
+    default GridCell<T> getGridCell(GridCoordinate coordinate) {
+        return new GridCell<>(coordinate, getEntity(coordinate));
+    }
+
+    /**
      * Checks whether the entity at the specified coordinate is equal to the default entity.
      *
      * @param coordinate the grid coordinate to check
