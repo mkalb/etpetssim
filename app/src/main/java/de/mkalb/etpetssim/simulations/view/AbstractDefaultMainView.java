@@ -2,9 +2,7 @@ package de.mkalb.etpetssim.simulations.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.GridEntity;
-import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationStatistics;
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
@@ -14,6 +12,7 @@ import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
@@ -61,6 +60,11 @@ public abstract class AbstractDefaultMainView<
     protected final void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(this::handleSimulationInitialized);
         viewModel.setSimulationStepListener(this::handleSimulationStep);
+        viewModel.selectedGridCellProperty().addListener((_, oldGridCell, newGridCell) -> {
+            if (overlayPainter != null) {
+                handleGridCellSelected(overlayPainter, oldGridCell, newGridCell);
+            }
+        });
     }
 
     @Override
@@ -110,6 +114,10 @@ public abstract class AbstractDefaultMainView<
             }
         }
     }
+
+    protected abstract void handleGridCellSelected(FXGridCanvasPainter painter,
+                                                   @Nullable GridCell<ENT> oldGridCell,
+                                                   @Nullable GridCell<ENT> newGridCell);
 
     private void drawAndMeasureSimulationStep(int stepCount) {
         long start = System.currentTimeMillis();

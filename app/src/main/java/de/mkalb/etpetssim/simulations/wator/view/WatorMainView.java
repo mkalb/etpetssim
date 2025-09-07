@@ -6,7 +6,9 @@ import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
+import de.mkalb.etpetssim.ui.StrokeAdjustment;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -29,6 +31,8 @@ public final class WatorMainView
     private static final int FISH_GROUP_COUNT = 10;
     private static final int SHARK_GROUP_COUNT = 6;
     private static final int MAX_COLOR_SHARK_ENERGY_FACTOR = 3;
+    private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 255, 120);
+    private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
     private final Paint backgroundPaint;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
@@ -98,6 +102,20 @@ public final class WatorMainView
             paint = FALLBACK_COLOR_AGENT;
         }
         return paint;
+    }
+
+    @Override
+    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+                                          @Nullable GridCell<WatorEntity> oldGridCell,
+                                          @Nullable GridCell<WatorEntity> newGridCell) {
+        if ((oldGridCell != null) && oldGridCell.entity().isAgent()) {
+            painter.clearCanvasBackground();
+        }
+        if ((newGridCell != null) && newGridCell.entity().isAgent()) {
+            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                    StrokeAdjustment.OUTSIDE);
+        }
     }
 
     @Override

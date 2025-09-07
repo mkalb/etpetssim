@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
@@ -9,9 +10,11 @@ import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -52,6 +55,13 @@ public final class ConwayMainView
 
     @Override
     protected void initSimulation(ConwayConfig config) {
+        // Do nothing
+    }
+
+    @Override
+    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+                                          @Nullable GridCell<ConwayEntity> oldGridCell,
+                                          @Nullable GridCell<ConwayEntity> newGridCell) {
         // Do nothing
     }
 
