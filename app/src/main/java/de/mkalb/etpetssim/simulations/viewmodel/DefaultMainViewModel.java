@@ -2,12 +2,14 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.model.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
@@ -29,6 +31,7 @@ public final class DefaultMainViewModel<
     private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
     private final SimulationTimer timer;
     private final ExecutorService batchExecutor;
+    private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
     private @Nullable AbstractTimedSimulationManager<ENT, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
@@ -63,6 +66,27 @@ public final class DefaultMainViewModel<
                 controlViewModel.cancelButtonRequestedProperty().set(false); // reset
             }
         });
+        observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
+        lastClickedCoordinateProperty().addListener(((_, _, newValue) -> {
+            if ((newValue != null)
+                    && hasSimulationManager()
+                    && ((getSimulationState() == SimulationState.PAUSED)
+                    || (getSimulationState() == SimulationState.CANCELLED)
+                    || (getSimulationState() == SimulationState.FINISHED))) {
+                try {
+                    selectedGridCell.set(getCurrentModel().getGridCell(newValue));
+                } catch (NullPointerException | IndexOutOfBoundsException e) {
+                    AppLogger.error("Cannot determine selected cell! " + newValue, e);
+                    selectedGridCell.set(null);
+                }
+            } else {
+                selectedGridCell.set(null);
+            }
+        }));
+    }
+
+    public ObjectProperty<@Nullable GridCell<ENT>> selectedGridCellProperty() {
+        return selectedGridCell;
     }
 
     public void setSimulationInitializedListener(Runnable listener) {
@@ -124,6 +148,8 @@ public final class DefaultMainViewModel<
             throw new IllegalStateException("Simulation is running but state is not RUNNING_TIMED or RUNNING_BATCH: " + getSimulationState());
         }
 
+        resetClickedCoordinateProperties();
+
         if (getSimulationState().canStart()) {
             handleStartAction();
         } else if (getSimulationState().isRunning()) {
@@ -143,6 +169,8 @@ public final class DefaultMainViewModel<
         cancelBatch();
         stopTimer();
 
+        resetClickedCoordinateProperties();
+
         if (getSimulationState() == SimulationState.RUNNING_TIMED) {
             setSimulationState(SimulationState.CANCELLED);
             logSimulationInfo("Simulation (timer) was canceled by the user.");
@@ -160,8 +188,6 @@ public final class DefaultMainViewModel<
     private void handleStartAction() {
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
-
-        resetClickedCoordinateProperties();
 
         long start = System.currentTimeMillis();
         try {
