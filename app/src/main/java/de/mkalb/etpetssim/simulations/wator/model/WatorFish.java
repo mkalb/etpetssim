@@ -16,4 +16,9 @@ public final class WatorFish extends WatorCreature {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "WatorFish{} " + super.toString();
+    }
+
 }

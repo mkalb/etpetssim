@@ -31,4 +31,11 @@ public final class WatorShark extends WatorCreature {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "WatorShark{" +
+                "currentEnergy=" + currentEnergy +
+                "} " + super.toString();
+    }
+
 }
