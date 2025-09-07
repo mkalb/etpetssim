@@ -18,7 +18,7 @@ public final class WatorSimulationManager
 
         structure = config.createGridStructure();
         statistics = new WatorStatistics(structure.cellCount());
-        var random = new java.util.Random();
+        var random = new Random();
         var model = new ArrayGridModel<WatorEntity>(structure, WatorConstantEntity.WATER);
         var entityFactory = new WatorEntityFactory();
 
