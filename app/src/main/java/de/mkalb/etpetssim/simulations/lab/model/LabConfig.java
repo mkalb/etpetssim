@@ -11,6 +11,7 @@ public record LabConfig(
         int gridWidth,
         int gridHeight,
         double cellEdgeLength,
+        long seed,
         RenderingMode renderingMode,
         ColorMode colorMode,
         StrokeMode strokeMode,

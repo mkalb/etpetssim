@@ -11,6 +11,7 @@ public record ConwayConfig(
         int gridWidth,
         int gridHeight,
         double cellEdgeLength,
+        long seed,
         double alivePercent,
         NeighborhoodMode neighborhoodMode,
         ConwayTransitionRules transitionRules)

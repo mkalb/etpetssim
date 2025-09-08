@@ -11,6 +11,7 @@ public record WatorConfig(
         int gridWidth,
         int gridHeight,
         double cellEdgeLength,
+        long seed,
         // Initialization
         double fishPercent,
         double sharkPercent,

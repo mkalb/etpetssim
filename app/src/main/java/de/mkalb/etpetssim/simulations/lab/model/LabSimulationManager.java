@@ -27,7 +27,7 @@ public final class LabSimulationManager
         GridInitializers.placeRandomCounted(3,
                                 () -> LabEntity.HIGHLIGHTED,
                                 e -> e == LabEntity.NORMAL,
-                                new Random())
+                                new Random(config.seed()))
                         .initialize(model);
 
         // Place a symmetric small cross pattern of highlighted entities

@@ -14,6 +14,8 @@ public interface SimulationConfig {
 
     double cellEdgeLength();
 
+    long seed();
+
     default GridTopology createGridTopology() {
         return new GridTopology(cellShape(), gridEdgeBehavior());
     }

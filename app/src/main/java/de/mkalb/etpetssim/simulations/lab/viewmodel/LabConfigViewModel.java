@@ -43,7 +43,7 @@ public final class LabConfigViewModel
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, STRUCTURE_SETTINGS);
+        super(simulationState, STRUCTURE_SETTINGS, "");
         setupConfigListeners();
     }
 
@@ -55,6 +55,7 @@ public final class LabConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
+                seedProperty().computeSeed(),
                 renderingMode.getValue(),
                 colorMode.getValue(),
                 strokeMode.getValue(),

@@ -49,7 +49,7 @@ public final class ConwayConfigViewModel
     private final IntegerProperty maxNeighborCount = new SimpleIntegerProperty(0);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, STRUCTURE_SETTINGS);
+        super(simulationState, STRUCTURE_SETTINGS, "");
 
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             surviveProperties.add(new SimpleBooleanProperty(DEFAULT_TRANSITION_RULES.surviveCounts().contains(i)));
@@ -112,6 +112,7 @@ public final class ConwayConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
+                seedProperty().computeSeed(),
                 alivePercent.getValue(),
                 NEIGHBORHOOD_MODE_INITIAL,
                 transitionRulesProperty().get()

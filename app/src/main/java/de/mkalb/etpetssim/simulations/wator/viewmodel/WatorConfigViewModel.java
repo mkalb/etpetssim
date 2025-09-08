@@ -151,7 +151,7 @@ public final class WatorConfigViewModel
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, STRUCTURE_SETTINGS);
+        super(simulationState, STRUCTURE_SETTINGS, "");
     }
 
     @Override
@@ -163,6 +163,7 @@ public final class WatorConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
+                seedProperty().computeSeed(),
                 // Initialization
                 fishPercent.getValue(),
                 sharkPercent.getValue(),

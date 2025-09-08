@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.simulations.model.SeedProperty;
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
@@ -22,9 +23,11 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
     private final InputIntegerProperty gridWidth;
     private final InputIntegerProperty gridHeight;
     private final InputDoublePropertyIntRange cellEdgeLength;
+    private final SeedProperty seed;
 
     protected AbstractConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState,
-                                      GridStructureSettings gridStructureSettings) {
+                                      GridStructureSettings gridStructureSettings,
+                                      String initialSeed) {
         this.simulationState = simulationState;
 
         cellShape = InputEnumProperty.of(
@@ -49,6 +52,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
                 gridStructureSettings.cellEdgeLengthInitial(),
                 gridStructureSettings.cellEdgeLengthMin(),
                 gridStructureSettings.cellEdgeLengthMax());
+        seed = new SeedProperty(initialSeed);
     }
 
     @Override
@@ -79,6 +83,10 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
 
     public final InputDoublePropertyIntRange cellEdgeLengthProperty() {
         return cellEdgeLength;
+    }
+
+    public final SeedProperty seedProperty() {
+        return seed;
     }
 
     public record GridStructureSettings(
