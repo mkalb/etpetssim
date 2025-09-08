@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.ui;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
@@ -509,6 +511,55 @@ public final class FXComponentFactory {
         }
         // Return 0 if no divisor matches or the range is out of bounds
         return 0;
+    }
+
+    /**
+     * Creates a labeled text box with a clear button, formatted label, prompt text, tooltips, and custom style class.
+     * <p>
+     * The text field is bidirectionally bound to the given {@link StringProperty}. The label displays the current value
+     * using the provided format string and is bound to the given label property. A clear button allows users to quickly
+     * clear the text field and includes its own tooltip. Both the label and the text field share the same tooltip for
+     * accessibility. The entire control is wrapped in an {@link HBox} for layout.
+     *
+     * @param inputProperty the {@link StringProperty} to bind to the text field
+     * @param labelProperty the {@link StringProperty} to bind to the label
+     * @param labelFormatString the format string for the label (e.g., "Name: %s")
+     * @param promptText the prompt text to display in the text field
+     * @param tooltip the tooltip text for both the label and the text field
+     * @param tooltipButton the tooltip text for the clear button
+     * @param styleClass the CSS style class to apply to the text field and container
+     * @return a {@link LabeledControl} containing the label and the HBox with the text field and clear button
+     */
+    public static LabeledControl<HBox> createLabeledStringTextBox(StringProperty inputProperty,
+                                                                  StringProperty labelProperty,
+                                                                  String labelFormatString,
+                                                                  String promptText,
+                                                                  String tooltip,
+                                                                  String tooltipButton,
+                                                                  String styleClass) {
+        TextField textField = new TextField();
+        textField.textProperty().bindBidirectional(inputProperty);
+        textField.getStyleClass().add(styleClass);
+        textField.setPromptText(promptText);
+
+        // Add clear button for the text field
+        Button clearButton = new Button("✕");
+        clearButton.setFocusTraversable(false);
+        clearButton.setOnAction(_ -> textField.clear());
+        clearButton.setTooltip(new Tooltip(tooltipButton));
+
+        HBox hBox = new HBox(textField, clearButton);
+        hBox.getStyleClass().add(styleClass);
+
+        Label label = new Label(labelFormatString);
+        label.textProperty().bind(Bindings.format(labelFormatString, labelProperty));
+        label.setLabelFor(textField);
+
+        Tooltip tooltipValue = new Tooltip(tooltip);
+        label.setTooltip(tooltipValue);
+        textField.setTooltip(tooltipValue);
+
+        return new LabeledControl<>(label, hBox);
     }
 
     /**
