@@ -11,16 +11,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.*;
 
 /**
- * SeedProperty encapsulates a string-based seed for simulations, supporting random, numeric, and hash-based seeds.
+ * Encapsulates a string-based seed for simulations, supporting random, numeric, and hash-based seed generation.
  * <p>
- * The seed can be set as a string, interpreted as a random value (if blank), a numeric value, or a hash of the string.
- * The class provides helper methods for seed type detection and conversion, and exposes JavaFX properties for UI binding.
+ * The seed can be set as a string, interpreted as a random value (if blank or null), a numeric value, or a hash of the string.
+ * This class provides helper methods for seed type detection and conversion, and exposes JavaFX properties for UI binding.
+ * <p>
+ * Note: The {@code labelProperty} is only updated when {@link #computeSeedAndUpdateLabel()} is called.
  */
 public final class SeedProperty {
-
-    private static final String LABEL_RANDOM = "Random";
-    private static final String LABEL_NUMBER = "Number";
-    private static final String LABEL_HASH = "Hash";
 
     private static final String HASH_ALGORITHM = "SHA-256";
     private static final int LONG_SHIFT = 32;
@@ -32,31 +30,19 @@ public final class SeedProperty {
     /**
      * Constructs a SeedProperty with the given initial value.
      * <p>
-     * The labelProperty is automatically updated to reflect the seed type (Random, Number, or Hash).
+     * The labelProperty is initialized as an empty string. It is updated only when {@link #computeSeedAndUpdateLabel()} is called.
      *
      * @param initialValue the initial seed value as a string (may be blank or null for random)
      */
     public SeedProperty(@Nullable String initialValue) {
-        stringProperty = new SimpleStringProperty();
-        labelProperty = new SimpleStringProperty();
-
-        stringProperty.addListener((_, _, newVal) -> {
-            if (isRandomSeed(newVal)) {
-                labelProperty.set(LABEL_RANDOM);
-            } else if (isNumericSeed(newVal)) {
-                labelProperty.set(LABEL_NUMBER);
-            } else {
-                labelProperty.set(LABEL_HASH);
-            }
-        });
-
-        stringProperty.set(initialValue);
+        stringProperty = new SimpleStringProperty(initialValue);
+        labelProperty = new SimpleStringProperty("");
     }
 
     /**
      * Checks if the given text represents a random seed (null or blank).
      *
-     * @param text the seed string to check
+     * @param text the seed string to check (may be null)
      * @return true if the text is null or blank, false otherwise
      */
     static boolean isRandomSeed(@Nullable String text) {
@@ -66,7 +52,7 @@ public final class SeedProperty {
     /**
      * Checks if the given text can be parsed as a numeric seed (long).
      *
-     * @param text the seed string to check
+     * @param text the seed string to check (may be null)
      * @return true if the text can be parsed as a long, false otherwise
      */
     static boolean isNumericSeed(@Nullable String text) {
@@ -84,7 +70,7 @@ public final class SeedProperty {
     /**
      * Parses the given text as a numeric seed (long).
      *
-     * @param text the seed string to parse (must be numeric)
+     * @param text the seed string to parse (must be non-null and numeric)
      * @return the parsed long value
      * @throws NumberFormatException if the text cannot be parsed as a long
      */
@@ -95,7 +81,7 @@ public final class SeedProperty {
     /**
      * Hashes the given text using SHA-256 and returns the first 8 bytes as a long seed.
      *
-     * @param text the seed string to hash
+     * @param text the seed string to hash (must be non-null)
      * @return a long value derived from the hash
      * @throws NoSuchAlgorithmException if SHA-256 is not available
      */
@@ -109,8 +95,9 @@ public final class SeedProperty {
 
     /**
      * Fallback: combines the hashCode of the text into a long value using bit shifting and masking.
+     * Used if the SHA-256 algorithm is not available.
      *
-     * @param text the seed string to hash
+     * @param text the seed string to hash (must be non-null)
      * @return a long value derived from the hashCode
      */
     static long fallbackHashSeed(String text) {
@@ -121,6 +108,11 @@ public final class SeedProperty {
 
     /**
      * Computes a seed value from the given text, using random, numeric, or hash-based strategies.
+     * <ul>
+     *   <li>If the text is null or blank, a random seed is generated.</li>
+     *   <li>If the text is numeric, it is parsed as a long.</li>
+     *   <li>Otherwise, a hash-based seed is computed from the text.</li>
+     * </ul>
      *
      * @param text the seed string (may be null or blank for random)
      * @return the computed seed as a long
@@ -143,14 +135,14 @@ public final class SeedProperty {
     /**
      * Returns the JavaFX StringProperty representing the seed value.
      *
-     * @return the StringProperty for the seed
+     * @return the StringProperty for the seed value
      */
     public StringProperty stringProperty() {
         return stringProperty;
     }
 
     /**
-     * Returns the JavaFX StringProperty representing the seed type label (Random, Number, or Hash).
+     * Returns the JavaFX StringProperty representing the seed label (typically the computed seed as a string).
      *
      * @return the StringProperty for the label
      */
@@ -159,12 +151,15 @@ public final class SeedProperty {
     }
 
     /**
-     * Computes the seed value based on the current stringProperty value.
+     * Computes the seed from the current string property, updates the label property with the seed value,
+     * and returns the seed.
      *
      * @return the computed seed as a long
      */
-    public long computeSeed() {
-        return computeSeed(stringProperty.get());
+    public long computeSeedAndUpdateLabel() {
+        long seed = computeSeed(stringProperty.get());
+        labelProperty.set(String.valueOf(seed));
+        return seed;
     }
 
 }

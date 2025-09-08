@@ -163,7 +163,7 @@ public final class WatorConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
-                seedProperty().computeSeed(),
+                seedProperty().computeSeedAndUpdateLabel(),
                 // Initialization
                 fishPercent.getValue(),
                 sharkPercent.getValue(),

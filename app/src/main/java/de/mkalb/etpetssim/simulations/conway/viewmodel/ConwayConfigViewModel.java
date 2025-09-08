@@ -112,7 +112,7 @@ public final class ConwayConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
-                seedProperty().computeSeed(),
+                seedProperty().computeSeedAndUpdateLabel(),
                 alivePercent.getValue(),
                 NEIGHBORHOOD_MODE_INITIAL,
                 transitionRulesProperty().get()

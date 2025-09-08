@@ -55,7 +55,7 @@ public final class LabConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
-                seedProperty().computeSeed(),
+                seedProperty().computeSeedAndUpdateLabel(),
                 renderingMode.getValue(),
                 colorMode.getValue(),
                 strokeMode.getValue(),
