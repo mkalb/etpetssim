@@ -129,7 +129,7 @@ public record GridCoordinate(int x, int y) {
      * @see de.mkalb.etpetssim.engine.CellShape#TRIANGLE
      */
     public boolean isTriangleCellPointingDown() {
-        return (x % 2) == (y % 2);
+        return isOddColumn() == isOddRow();
     }
 
     /**
