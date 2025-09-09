@@ -334,6 +334,50 @@ ScrollPane .decrement-arrow {
   -fx-pref-width: 250;
 }
 
+.config-textbox {
+  -fx-background-color: #2e3b50;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-effect: null;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-min-width: 250;
+  -fx-pref-width: 250;
+}
+
+.config-textbox>.text-field {
+  -fx-background-color: #c2d6e6;
+  -fx-background-radius: 4 0 0 4;
+  -fx-padding: 6 8;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-text-fill: #223044;
+  -fx-prompt-text-fill: #667788;
+  -fx-font-size: 14;
+  -fx-min-width: 200;
+}
+
+.config-textbox>.button {
+  -fx-background-color: #35516b;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0 4 4 0;
+  -fx-padding: 6 8;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
+  -fx-border-radius: 0;
+  -fx-text-fill: #00eaff;
+  -fx-font-size: 14;
+  -fx-font-weight: normal;
+}
+
+.config-textbox>.button:hover {
+  -fx-background-color: #00bfff;
+}
+
 .config-titledpane {
   -fx-background-color: linear-gradient(to bottom, #2e3b50, #35516b 80%, #347ca3 100%);
   -fx-effect: dropshadow(gaussian, rgba(52, 124, 163, 0.16), 8, 0.3, 0, 2);

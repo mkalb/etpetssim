@@ -54,6 +54,15 @@ public final class WatorConfigView
         TitledPane structurePane = createStructurePane(true);
 
         // --- Initialization Group ---
+        var seedControl = FXComponentFactory.createLabeledStringTextBox(
+                viewModel.seedProperty().stringProperty(),
+                viewModel.seedProperty().labelProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
+                FXStyleClasses.CONFIG_TEXTBOX
+        );
         var fishPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.fishPercentProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
@@ -69,10 +78,9 @@ public final class WatorConfigView
 
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 true,
-                fishPercentControl, sharkPercentControl);
+                seedControl, fishPercentControl, sharkPercentControl);
 
         // --- Rules Group ---
-
         var neighborhoodModeControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.neighborhoodModeProperty(),
                 viewModel.neighborhoodModeProperty().displayNameProvider(),

@@ -22,6 +22,7 @@ public final class FXStyleClasses {
     public static final String CONFIG_SCROLLPANE = "config-scrollpane";
     public static final String CONFIG_SLIDER = "config-slider";
     public static final String CONFIG_SPINNER = "config-spinner";
+    public static final String CONFIG_TEXTBOX = "config-textbox";
     public static final String CONFIG_TITLEDPANE = "config-titledpane";
     public static final String CONFIG_VBOX = "config-vbox";
     public static final String CONTROL_BUTTON = "control-button";

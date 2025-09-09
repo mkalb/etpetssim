@@ -49,6 +49,15 @@ public final class ConwayConfigView
         TitledPane structurePane = createStructurePane(true);
 
         // --- Initialization Group ---
+        var seedControl = FXComponentFactory.createLabeledStringTextBox(
+                viewModel.seedProperty().stringProperty(),
+                viewModel.seedProperty().labelProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
+                FXStyleClasses.CONFIG_TEXTBOX
+        );
         var alivePercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.alivePercentProperty(),
                 AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT),
@@ -57,7 +66,7 @@ public final class ConwayConfigView
         );
 
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true, alivePercentControl);
+                true, seedControl, alivePercentControl);
 
         // --- Rules Group ---
         var rulesControl = createTransitionRulesControl(viewModel.getSurviveProperties(),
