@@ -352,7 +352,6 @@ public final class CellNeighborhoods {
      * @return a map from mapped neighbor coordinates to lists of {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records,
      *         each describing the relationship and edge behavior outcome for that neighbor
      */
-    // TODO Check if it can be replaced with neighborEdgeResults
     public static Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> cellNeighborsWithEdgeBehavior(
             GridCoordinate startCoordinate,
             NeighborhoodMode neighborhoodMode,

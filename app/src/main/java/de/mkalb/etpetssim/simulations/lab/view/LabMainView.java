@@ -40,6 +40,7 @@ public final class LabMainView
     private static final Color CANVAS_COLOR = Color.BLACK;
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
     private static final Color TRANSLUCENT_WHITE = FXPaintFactory.adjustColorAlpha(Color.WHITE, 0.2); // for lightening effect
+    private static final Color TRANSLUCENT_SILVER = FXPaintFactory.adjustColorAlpha(Color.SILVER, 0.7d); // for reflection
     private static final double MOUSE_CLICK_LINE_WIDTH = 4.0d;
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private static final double SHAPE_LINE_WIDTH = 0.5d;
@@ -106,12 +107,19 @@ public final class LabMainView
                                      painter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.0d);
                                  }
                              });
-            CellNeighborhoods.cellNeighborsWithEdgeBehavior(mouseCoordinate,
+            CellNeighborhoods.neighborEdgeResults(mouseCoordinate,
                                      neighborhoodMode,
                                      gridStructure)
-                             .forEach((neighborCoordinate, _) -> {
-                                 if (gridStructure.isCoordinateValid(neighborCoordinate)) {
-                                     painter.drawCell(neighborCoordinate, null, Color.DARKORANGE, 3.0d);
+                             .forEach((edgeResult) -> {
+                                 switch (edgeResult.action()) {
+                                     case VALID -> painter.drawCell(edgeResult.mapped(), null, Color.DARKORANGE, 3.0d);
+                                     case WRAPPED -> painter.drawCell(edgeResult.mapped(), null, Color.DARKRED, 3.0d);
+                                     case REFLECTED ->
+                                             painter.drawCell(edgeResult.mapped(), TRANSLUCENT_SILVER, null, 0.0d);
+                                     case BLOCKED -> painter.drawCell(edgeResult.mapped(), Color.DARKRED, null, 0.0d);
+                                     case ABSORBED -> {
+                                         // do nothing
+                                     }
                                  }
                              });
         } else {
