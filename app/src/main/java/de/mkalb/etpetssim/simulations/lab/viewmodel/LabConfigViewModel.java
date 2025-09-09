@@ -89,6 +89,7 @@ public final class LabConfigViewModel
         gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
         renderingModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         strokeModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
