@@ -55,6 +55,7 @@ public abstract class AbstractMainView<
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
     protected @Nullable Font cellFont;
+    protected @Nullable Font cellEmojiFont;
 
     protected AbstractMainView(VM viewModel,
                                CFV configView, CLV controlView, OV observationView,
@@ -90,6 +91,16 @@ public abstract class AbstractMainView<
                     case TRIANGLE -> 0.135d;
                     case SQUARE -> 0.18d;
                     case HEXAGON -> 0.175d;
+                });
+    }
+
+    @SuppressWarnings("MagicNumber")
+    protected static double computeCellEmojiFontSize(CellDimension cellDimension, CellShape cellShape) {
+        return Math.round(cellDimension.height() *
+                switch (cellShape) {
+                    case TRIANGLE -> 0.6d;
+                    case SQUARE -> 0.9d;
+                    case HEXAGON -> 0.8d;
                 });
     }
 
@@ -220,12 +231,12 @@ public abstract class AbstractMainView<
 
     protected final void createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
         basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
-        baseCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, basePainter.gridDimension2D().getWidth()));
-        baseCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, basePainter.gridDimension2D().getHeight()));
+        baseCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, Math.ceil(basePainter.gridDimension2D().getWidth())));
+        baseCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, Math.ceil(basePainter.gridDimension2D().getHeight())));
 
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
-        overlayCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, overlayPainter.gridDimension2D().getWidth()));
-        overlayCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, overlayPainter.gridDimension2D().getHeight()));
+        overlayCanvas.setWidth(baseCanvas.getWidth());
+        overlayCanvas.setHeight(baseCanvas.getHeight());
 
         AppLogger.info("MainView: Canvas painter created: " + basePainter);
         if ((baseCanvas.getWidth() < basePainter.gridDimension2D().getWidth()) ||
@@ -242,6 +253,14 @@ public abstract class AbstractMainView<
         } else {
             cellFont = null;
             AppLogger.info("MainView: Cell font not created, because font size is too small: " + fontSize);
+        }
+        double fontSizeEmoji = computeCellEmojiFontSize(basePainter.cellDimension(), structure.cellShape());
+        if (fontSizeEmoji >= MIN_CELL_FONT_SIZE) {
+            cellEmojiFont = getPreferredFont(fontSizeEmoji);
+            AppLogger.info("MainView: Cell emoji font created: " + cellEmojiFont);
+        } else {
+            cellEmojiFont = null;
+            AppLogger.info("MainView: Cell emoji font not created, because font size is too small: " + fontSizeEmoji);
         }
     }
 
