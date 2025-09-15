@@ -10,6 +10,7 @@ import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -54,7 +55,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void initSimulation(ConwayConfig config) {
+    protected void initSimulation(ConwayConfig config, CellDimension cellDimension) {
         // Do nothing
     }
 

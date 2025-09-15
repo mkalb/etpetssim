@@ -229,7 +229,7 @@ public abstract class AbstractMainView<
         return vBox;
     }
 
-    protected final void createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
+    protected final CellDimension createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
         basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
         baseCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, Math.ceil(basePainter.gridDimension2D().getWidth())));
         baseCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, Math.ceil(basePainter.gridDimension2D().getHeight())));
@@ -237,6 +237,8 @@ public abstract class AbstractMainView<
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
         overlayCanvas.setWidth(baseCanvas.getWidth());
         overlayCanvas.setHeight(baseCanvas.getHeight());
+
+        CellDimension cellDimension = basePainter.cellDimension();
 
         AppLogger.info("MainView: Canvas painter created: " + basePainter);
         if ((baseCanvas.getWidth() < basePainter.gridDimension2D().getWidth()) ||
@@ -246,7 +248,7 @@ public abstract class AbstractMainView<
         }
 
         // Font
-        double fontSize = computeCellFontSize(basePainter.cellDimension(), structure.cellShape());
+        double fontSize = computeCellFontSize(cellDimension, structure.cellShape());
         if (fontSize >= MIN_CELL_FONT_SIZE) {
             cellFont = getPreferredFont(fontSize);
             AppLogger.info("MainView: Cell font created: " + cellFont);
@@ -254,7 +256,7 @@ public abstract class AbstractMainView<
             cellFont = null;
             AppLogger.info("MainView: Cell font not created, because font size is too small: " + fontSize);
         }
-        double fontSizeEmoji = computeCellEmojiFontSize(basePainter.cellDimension(), structure.cellShape());
+        double fontSizeEmoji = computeCellEmojiFontSize(cellDimension, structure.cellShape());
         if (fontSizeEmoji >= MIN_CELL_FONT_SIZE) {
             cellEmojiFont = getPreferredFont(fontSizeEmoji);
             AppLogger.info("MainView: Cell emoji font created: " + cellEmojiFont);
@@ -262,6 +264,8 @@ public abstract class AbstractMainView<
             cellEmojiFont = null;
             AppLogger.info("MainView: Cell emoji font not created, because font size is too small: " + fontSizeEmoji);
         }
+
+        return cellDimension;
     }
 
     protected final void updateCanvasBorderPane(GridStructure structure) {

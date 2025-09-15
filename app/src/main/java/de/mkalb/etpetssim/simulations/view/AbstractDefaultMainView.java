@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.model.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.geometry.Point2D;
@@ -75,10 +76,10 @@ public abstract class AbstractDefaultMainView<
     protected final void handleSimulationInitialized() {
         int stepCount = viewModel.getStepCount();
 
-        createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
+        var cellDimension = createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
         updateCanvasBorderPane(viewModel.getStructure());
 
-        initSimulation(viewModel.getCurrentConfig());
+        initSimulation(viewModel.getCurrentConfig(), cellDimension);
 
         controlView.updateStepCount(stepCount);
         observationView.updateObservationLabels();
@@ -172,7 +173,7 @@ public abstract class AbstractDefaultMainView<
         skipOverlayActive = false;
     }
 
-    protected abstract void initSimulation(CON config);
+    protected abstract void initSimulation(CON config, CellDimension cellDimension);
 
     protected abstract void drawSimulation(ReadableGridModel<ENT> currentModel, int stepCount);
 
