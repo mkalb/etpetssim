@@ -38,6 +38,7 @@ public abstract class AbstractMainView<
     private static final String MAIN_FONT_FAMILY = "Verdana";
     private static final String FALLBACK_FONT_FAMILY = "System";
     private static final double MIN_CELL_FONT_SIZE = 7.0d;
+    private static final double MIN_EMOJI_FONT_SIZE = 3.0d;
     private static final double CENTER_SPLIT_PANE_DIVIDER_POSITION = 0.75d;
 
     protected final VM viewModel;
@@ -230,6 +231,13 @@ public abstract class AbstractMainView<
     }
 
     protected final CellDimension createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
+        if ((basePainter != null) && (overlayPainter != null)) {
+            basePainter.clearCanvasBackground();
+            overlayPainter.clearCanvasBackground();
+            basePainter = null;
+            overlayPainter = null;
+        }
+
         basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
         baseCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, Math.ceil(basePainter.gridDimension2D().getWidth())));
         baseCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, Math.ceil(basePainter.gridDimension2D().getHeight())));
@@ -257,7 +265,7 @@ public abstract class AbstractMainView<
             AppLogger.info("MainView: Cell font not created, because font size is too small: " + fontSize);
         }
         double fontSizeEmoji = computeCellEmojiFontSize(cellDimension, structure.cellShape());
-        if (fontSizeEmoji >= MIN_CELL_FONT_SIZE) {
+        if (fontSizeEmoji >= MIN_EMOJI_FONT_SIZE) {
             cellEmojiFont = getPreferredFont(fontSizeEmoji);
             AppLogger.info("MainView: Cell emoji font created: " + cellEmojiFont);
         } else {
