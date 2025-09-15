@@ -1,14 +1,14 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
-import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
-import de.mkalb.etpetssim.ui.FXPaintFactory;
-import de.mkalb.etpetssim.ui.StrokeAdjustment;
+import de.mkalb.etpetssim.ui.*;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -36,6 +36,7 @@ public final class WatorMainView
 
     private final Paint backgroundPaint;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
+    private @Nullable CellDrawer cellDrawer;
 
     private int maxColorSharkEnergy = 1;
 
@@ -61,8 +62,15 @@ public final class WatorMainView
         return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
     }
 
+    private double computeStrokeLineWidth(CellShape cellShape, CellDimension cellDimension) {
+        if (cellDimension.innerRadius() < 2.0d) {
+            return 0.0d;
+        }
+        return Math.log(cellDimension.innerRadius());
+    }
+
     @Override
-    protected void initSimulation(WatorConfig config) {
+    protected void initSimulation(WatorConfig config, CellDimension cellDimension) {
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
         entityColors.put(WatorEntityDescribable.FISH.descriptorId(),
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntityDescribable.FISH.descriptorId()),
@@ -70,6 +78,59 @@ public final class WatorMainView
         entityColors.put(WatorEntityDescribable.SHARK.descriptorId(),
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntityDescribable.SHARK.descriptorId()),
                         1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
+
+        double strokeLineWidth = config.cellDisplayMode().isBordered() ?
+                computeStrokeLineWidth(config.cellShape(), cellDimension) : 0.0d;
+
+        cellDrawer = switch (config.cellDisplayMode()) {
+            case CellDisplayMode.SHAPE ->
+                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                            painter.drawCell(
+                                    cell.coordinate(),
+                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                                    null,
+                                    strokeLineWidth);
+            case CellDisplayMode.SHAPE_BORDERED ->
+                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                            painter.drawCell(
+                                    cell.coordinate(),
+                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                                    backgroundPaint,
+                                    strokeLineWidth);
+            case CellDisplayMode.CIRCLE ->
+                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                            painter.drawCellInnerCircle(
+                                    cell.coordinate(),
+                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                                    null,
+                                    strokeLineWidth,
+                                    StrokeAdjustment.INSIDE);
+            case CellDisplayMode.CIRCLE_BORDERED ->
+                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                            painter.drawCellInnerCircle(
+                                    cell.coordinate(),
+                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                                    backgroundPaint,
+                                    strokeLineWidth,
+                                    StrokeAdjustment.INSIDE);
+            case CellDisplayMode.EMOJI -> {
+                if (cellEmojiFont == null) {
+                    yield (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                            painter.drawCellInnerCircle(
+                                    cell.coordinate(),
+                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                                    null,
+                                    strokeLineWidth,
+                                    StrokeAdjustment.INSIDE);
+                }
+                yield (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                        painter.drawCenteredTextInCell(
+                                cell.coordinate(),
+                                descriptor.emojiAsOptional().orElse("#"),
+                                resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                                cellEmojiFont);
+            }
+        };
     }
 
     private @Nullable Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
@@ -124,6 +185,10 @@ public final class WatorMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        if (cellDrawer == null) {
+            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            return;
+        }
 
         basePainter.fillCanvasBackground(backgroundPaint);
 
@@ -134,17 +199,23 @@ public final class WatorMainView
                                     currentModel,
                                     entityDescriptorRegistry,
                                     descriptor ->
-                                            basePainter.drawCell(
-                                                    cell.coordinate(),
-                                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                                                    null,
-                                                    0.0d))
-                    );
+                                            cellDrawer.draw(descriptor, basePainter, cell, stepCount)));
+
     }
 
     @Override
     protected List<Node> createModificationToolbarNodes() {
         return List.of();
+    }
+
+    @FunctionalInterface
+    private interface CellDrawer {
+
+        void draw(GridEntityDescriptor descriptor,
+                  FXGridCanvasPainter painter,
+                  GridCell<WatorEntity> cell,
+                  int stepCount);
+
     }
 
 }
