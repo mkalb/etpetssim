@@ -77,12 +77,14 @@ public abstract class AbstractDefaultMainView<
         int stepCount = viewModel.getStepCount();
 
         var cellDimension = createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
-        updateCanvasBorderPane(viewModel.getStructure());
 
-        initSimulation(viewModel.getCurrentConfig(), cellDimension);
+        updateCanvasBorderPane(viewModel.getStructure());
 
         controlView.updateStepCount(stepCount);
         observationView.updateObservationLabels();
+
+        initSimulation(viewModel.getCurrentConfig(), cellDimension);
+
         drawAndMeasureSimulationStep(stepCount);
 
         if (DEBUG_MODE) {
