@@ -27,6 +27,7 @@ public final class AppLocalizationKeys {
     public static final String CONFIG_SEED_PROMPT = "config.seed.prompt";
     public static final String CONFIG_SEED_TOOLTIP = "config.seed.tooltip";
     public static final String CONFIG_TITLE_INITIALIZATION = "config.title.initialization";
+    public static final String CONFIG_TITLE_LAYOUT = "config.title.layout";
     public static final String CONFIG_TITLE_RULES = "config.title.rules";
     public static final String CONFIG_TITLE_STRUCTURE = "config.title.structure";
     public static final String CONTROL_CANCEL = "control.cancel";
