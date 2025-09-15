@@ -428,27 +428,47 @@ public final class FXGridCanvasPainter {
                            @Nullable Paint fillColor, @Nullable Paint strokeColor,
                            double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
         if (radius > 0.0d) {
+            boolean hasStroke = (strokeColor != null) && (strokeLineWidth > 0.0d);
+
             if (fillColor != null) {
                 double diameter = radius * 2;
                 double x = center.getX() - radius;
                 double y = center.getY() - radius;
+                double fillDiameter = diameter;
+                double fillX = x;
+                double fillY = y;
+                if (hasStroke && (strokeLineWidth >= 1.0d) && (strokeAdjustment != StrokeAdjustment.CENTERED)) {
+                    double epsilon = Math.min(2.0d, strokeLineWidth * 0.4d);
+                    switch (strokeAdjustment) {
+                        case INSIDE -> {
+                            fillDiameter -= epsilon;
+                            fillX += epsilon / 2.0d;
+                            fillY += epsilon / 2.0d;
+                        }
+                        case OUTSIDE -> {
+                            fillDiameter += epsilon;
+                            fillX -= epsilon / 2.0d;
+                            fillY -= epsilon / 2.0d;
+                        }
+                    }
+                }
                 gc.setFill(fillColor);
-                gc.fillOval(x, y, diameter, diameter);
+                gc.fillOval(fillX, fillY, fillDiameter, fillDiameter);
             }
 
-            if ((strokeColor != null) && (strokeLineWidth > 0.0d)) {
+            if (hasStroke) {
                 double adjustedRadius = switch (strokeAdjustment) {
                     case INSIDE -> radius - (strokeLineWidth / 2.0d);
                     case OUTSIDE -> radius + (strokeLineWidth / 2.0d);
                     case CENTERED -> radius;
                 };
 
-                double diameter = adjustedRadius * 2;
-                double x = center.getX() - adjustedRadius;
-                double y = center.getY() - adjustedRadius;
+                double strokeDiameter = adjustedRadius * 2;
+                double strokeX = center.getX() - adjustedRadius;
+                double strokeY = center.getY() - adjustedRadius;
                 gc.setStroke(strokeColor);
                 gc.setLineWidth(strokeLineWidth);
-                gc.strokeOval(x, y, diameter, diameter);
+                gc.strokeOval(strokeX, strokeY, strokeDiameter, strokeDiameter);
             }
         }
     }
