@@ -190,4 +190,13 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
         return validValues;
     }
 
+    /**
+     * Checks whether this record has more than one valid value.
+     *
+     * @return {@code true} if there are more than one valid value, {@code false} otherwise
+     */
+    public boolean hasMultipleValidValues() {
+        return validValues.size() > 1;
+    }
+
 }

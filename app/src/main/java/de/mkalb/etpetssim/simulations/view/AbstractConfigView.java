@@ -119,18 +119,27 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        var cellDisplayModeControl = FXComponentFactory.createLabeledEnumComboBox(
-                viewModel.cellDisplayModeProperty(),
-                viewModel.cellDisplayModeProperty().displayNameProvider(),
-                AppLocalization.getText(CellDisplayMode.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
+        // Only add cellDisplayModeControl if there are multiple valid values
+        FXComponentFactory.LabeledControl<? extends Region> cellDisplayModeControl = null;
+        if (viewModel.cellDisplayModeProperty().hasMultipleValidValues()) {
+            cellDisplayModeControl = FXComponentFactory.createLabeledEnumComboBox(
+                    viewModel.cellDisplayModeProperty(),
+                    viewModel.cellDisplayModeProperty().displayNameProvider(),
+                    AppLocalization.getText(CellDisplayMode.labelResourceKey()),
+                    AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
+                    FXStyleClasses.CONFIG_COMBOBOX
+            );
+        }
 
-        var content = new FXComponentFactory.LabeledControl[2 + additionalContent.length];
+        int baseControls = (cellDisplayModeControl != null) ? 2 : 1;
+        var content = new FXComponentFactory.LabeledControl[baseControls + additionalContent.length];
         content[0] = cellEdgeLengthControl;
-        content[1] = cellDisplayModeControl;
-        System.arraycopy(additionalContent, 0, content, 2, additionalContent.length);
+        if (cellDisplayModeControl != null) {
+            content[1] = cellDisplayModeControl;
+        }
+        if (additionalContent.length > 0) {
+            System.arraycopy(additionalContent, 0, content, baseControls, additionalContent.length);
+        }
 
         return createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_LAYOUT),
