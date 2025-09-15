@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.viewmodel;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
@@ -16,7 +17,7 @@ import java.util.*;
 public final class WatorConfigViewModel
         extends AbstractConfigViewModel<WatorConfig> {
 
-    private static final GridStructureSettings STRUCTURE_SETTINGS = new GridStructureSettings(
+    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.SQUARE,
             GridEdgeBehavior.WRAP_XY,
             List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
@@ -30,7 +31,15 @@ public final class WatorConfigViewModel
             GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
             4,
             2,
-            32);
+            64,
+            CellDisplayMode.SHAPE,
+            List.of(CellDisplayMode.SHAPE,
+                    CellDisplayMode.SHAPE_BORDERED,
+                    CellDisplayMode.CIRCLE,
+                    CellDisplayMode.CIRCLE_BORDERED,
+                    CellDisplayMode.EMOJI),
+            ""
+    );
 
     // Initialization
     private static final double FISH_PERCENT_INITIAL = 0.20d;
@@ -151,7 +160,7 @@ public final class WatorConfigViewModel
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, STRUCTURE_SETTINGS, "");
+        super(simulationState, COMMON_SETTINGS);
     }
 
     @Override
@@ -163,6 +172,7 @@ public final class WatorConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
+                cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 // Initialization
                 fishPercent.getValue(),

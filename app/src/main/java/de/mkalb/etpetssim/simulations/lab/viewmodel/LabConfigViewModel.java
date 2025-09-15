@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
@@ -18,7 +19,7 @@ import java.util.*;
 public final class LabConfigViewModel
         extends AbstractConfigViewModel<LabConfig> {
 
-    private static final GridStructureSettings STRUCTURE_SETTINGS = new GridStructureSettings(
+    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.HEXAGON,
             GridEdgeBehavior.WRAP_XY,
             List.of(GridEdgeBehavior.values()),
@@ -32,18 +33,23 @@ public final class LabConfigViewModel
             1,
             40,
             1,
-            500);
+            500,
+            CellDisplayMode.SHAPE,
+            List.of(CellDisplayMode.SHAPE,
+                    CellDisplayMode.SHAPE_BORDERED,
+                    CellDisplayMode.CIRCLE,
+                    CellDisplayMode.CIRCLE_BORDERED),
+            ""
+    );
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
 
-    private final InputEnumProperty<LabConfig.RenderingMode> renderingMode = InputEnumProperty.of(LabConfig.RenderingMode.SHAPE, LabConfig.RenderingMode.class, Enum::toString);
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
-    private final InputEnumProperty<LabConfig.StrokeMode> strokeMode = InputEnumProperty.of(LabConfig.StrokeMode.CENTERED, LabConfig.StrokeMode.class, Enum::toString);
     private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(NEIGHBORHOOD_MODE_INITIAL, NeighborhoodMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, STRUCTURE_SETTINGS, "");
+        super(simulationState, COMMON_SETTINGS);
         setupConfigListeners();
     }
 
@@ -55,24 +61,15 @@ public final class LabConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
+                cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
-                renderingMode.getValue(),
                 colorMode.getValue(),
-                strokeMode.getValue(),
                 neighborhoodMode.getValue()
         );
     }
 
-    public InputEnumProperty<LabConfig.RenderingMode> renderingModeProperty() {
-        return renderingMode;
-    }
-
     public InputEnumProperty<LabConfig.ColorMode> colorModeProperty() {
         return colorMode;
-    }
-
-    public InputEnumProperty<LabConfig.StrokeMode> strokeModeProperty() {
-        return strokeMode;
     }
 
     public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
@@ -89,10 +86,9 @@ public final class LabConfigViewModel
         gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        cellDisplayModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
-        renderingModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        strokeModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
     }
 

@@ -3,9 +3,7 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
-import de.mkalb.etpetssim.simulations.model.SeedProperty;
-import de.mkalb.etpetssim.simulations.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
+import de.mkalb.etpetssim.simulations.model.*;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
@@ -23,36 +21,40 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
     private final InputIntegerProperty gridWidth;
     private final InputIntegerProperty gridHeight;
     private final InputDoublePropertyIntRange cellEdgeLength;
+    private final InputEnumProperty<CellDisplayMode> cellDisplayMode;
     private final SeedProperty seed;
 
     protected AbstractConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState,
-                                      GridStructureSettings gridStructureSettings,
-                                      String initialSeed) {
+                                      CommonConfigSettings commonConfigSettings) {
         this.simulationState = simulationState;
 
         cellShape = InputEnumProperty.of(
-                gridStructureSettings.cellShapeInitial(),
+                commonConfigSettings.cellShapeInitial(),
                 CellShape.class,
                 e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
         gridEdgeBehavior = InputEnumProperty.of(
-                gridStructureSettings.gridEdgeBehaviorInitial(),
-                gridStructureSettings.gridEdgeBehaviorValues(),
+                commonConfigSettings.gridEdgeBehaviorInitial(),
+                commonConfigSettings.gridEdgeBehaviorValues(),
                 e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
         gridWidth = InputIntegerProperty.of(
-                gridStructureSettings.gridWidthInitial(),
-                gridStructureSettings.gridWidthMin(),
-                gridStructureSettings.gridWidthMax(),
-                gridStructureSettings.gridWidthStep());
+                commonConfigSettings.gridWidthInitial(),
+                commonConfigSettings.gridWidthMin(),
+                commonConfigSettings.gridWidthMax(),
+                commonConfigSettings.gridWidthStep());
         gridHeight = InputIntegerProperty.of(
-                gridStructureSettings.gridHeightInitial(),
-                gridStructureSettings.gridHeightMin(),
-                gridStructureSettings.gridHeightMax(),
-                gridStructureSettings.gridHeightStep());
+                commonConfigSettings.gridHeightInitial(),
+                commonConfigSettings.gridHeightMin(),
+                commonConfigSettings.gridHeightMax(),
+                commonConfigSettings.gridHeightStep());
         cellEdgeLength = InputDoublePropertyIntRange.of(
-                gridStructureSettings.cellEdgeLengthInitial(),
-                gridStructureSettings.cellEdgeLengthMin(),
-                gridStructureSettings.cellEdgeLengthMax());
-        seed = new SeedProperty(initialSeed);
+                commonConfigSettings.cellEdgeLengthInitial(),
+                commonConfigSettings.cellEdgeLengthMin(),
+                commonConfigSettings.cellEdgeLengthMax());
+        cellDisplayMode = InputEnumProperty.of(
+                commonConfigSettings.cellDisplayModeInitial(),
+                commonConfigSettings.cellDisplayModeValues(),
+                e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+        seed = new SeedProperty(commonConfigSettings.seedInitial());
     }
 
     @Override
@@ -85,11 +87,15 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         return cellEdgeLength;
     }
 
+    public final InputEnumProperty<CellDisplayMode> cellDisplayModeProperty() {
+        return cellDisplayMode;
+    }
+
     public final SeedProperty seedProperty() {
         return seed;
     }
 
-    public record GridStructureSettings(
+    public record CommonConfigSettings(
             CellShape cellShapeInitial,
             GridEdgeBehavior gridEdgeBehaviorInitial,
             List<GridEdgeBehavior> gridEdgeBehaviorValues,
@@ -103,7 +109,10 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
             int gridHeightStep,
             int cellEdgeLengthInitial,
             int cellEdgeLengthMin,
-            int cellEdgeLengthMax
+            int cellEdgeLengthMax,
+            CellDisplayMode cellDisplayModeInitial,
+            List<CellDisplayMode> cellDisplayModeValues,
+            String seedInitial
     ) {}
 
 }

@@ -13,6 +13,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
+import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.view.AbstractMainView;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
@@ -203,10 +204,9 @@ public final class LabMainView
         resetCanvasAndPainter(config);
 
         boolean colorModeBW = (config.colorMode() == LabConfig.ColorMode.BLACK_WHITE);
-        boolean renderingModeCircle = (config.renderingMode() == LabConfig.RenderingMode.CIRCLE);
-        boolean strokeModeNone = (config.strokeMode() == LabConfig.StrokeMode.NONE);
+        boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE) || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
         Color textColor = colorModeBW ? TEXT_COLOR_BW : TEXT_COLOR;
-        Color strokeColor = strokeModeNone ? null : STROKE_COLOR;
+        Color strokeColor = config.cellDisplayMode().isBordered() ? STROKE_COLOR : null;
 
         drawBaseCanvasBackground(colorModeBW);
 

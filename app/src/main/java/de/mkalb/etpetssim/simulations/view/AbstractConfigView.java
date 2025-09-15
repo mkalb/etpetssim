@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -97,6 +98,20 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 FXStyleClasses.CONFIG_SPINNER
         );
 
+        return createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
+                configControlsEnabledOnlyIfSimulationCanStart,
+                cellShapeControl,
+                gridEdgeBehaviorControl,
+                gridWidthControl,
+                gridHeightControl
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    @SafeVarargs
+    protected final TitledPane createLayoutPane(boolean configControlsEnabledOnlyIfSimulationCanStart,
+                                                FXComponentFactory.LabeledControl<? extends Region>... additionalContent) {
         var cellEdgeLengthControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.cellEdgeLengthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
@@ -104,14 +119,23 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 FXStyleClasses.CONFIG_SLIDER
         );
 
+        var cellDisplayModeControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.cellDisplayModeProperty(),
+                viewModel.cellDisplayModeProperty().displayNameProvider(),
+                AppLocalization.getText(CellDisplayMode.labelResourceKey()),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
+        var content = new FXComponentFactory.LabeledControl[2 + additionalContent.length];
+        content[0] = cellEdgeLengthControl;
+        content[1] = cellDisplayModeControl;
+        System.arraycopy(additionalContent, 0, content, 2, additionalContent.length);
+
         return createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_LAYOUT),
                 configControlsEnabledOnlyIfSimulationCanStart,
-                cellShapeControl,
-                gridEdgeBehaviorControl,
-                gridWidthControl,
-                gridHeightControl,
-                cellEdgeLengthControl
+                content
         );
     }
 

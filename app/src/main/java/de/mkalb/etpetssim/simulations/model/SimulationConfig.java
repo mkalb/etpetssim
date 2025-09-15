@@ -14,6 +14,8 @@ public interface SimulationConfig {
 
     double cellEdgeLength();
 
+    CellDisplayMode cellDisplayMode();
+
     long seed();
 
     default GridTopology createGridTopology() {

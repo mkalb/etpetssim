@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayTransitionRules;
+import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
@@ -16,7 +17,7 @@ import java.util.*;
 public final class ConwayConfigViewModel
         extends AbstractConfigViewModel<ConwayConfig> {
 
-    private static final GridStructureSettings STRUCTURE_SETTINGS = new GridStructureSettings(
+    private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.SQUARE,
             GridEdgeBehavior.WRAP_XY,
             List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
@@ -30,7 +31,11 @@ public final class ConwayConfigViewModel
             GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
             4,
             1,
-            48);
+            48,
+            CellDisplayMode.SHAPE_BORDERED,
+            List.of(CellDisplayMode.SHAPE_BORDERED),
+            ""
+    );
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
     private static final ConwayTransitionRules DEFAULT_TRANSITION_RULES = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
 
@@ -49,7 +54,7 @@ public final class ConwayConfigViewModel
     private final IntegerProperty maxNeighborCount = new SimpleIntegerProperty(0);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState, STRUCTURE_SETTINGS, "");
+        super(simulationState, COMMON_SETTINGS);
 
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             surviveProperties.add(new SimpleBooleanProperty(DEFAULT_TRANSITION_RULES.surviveCounts().contains(i)));
@@ -112,6 +117,7 @@ public final class ConwayConfigViewModel
                 gridWidthProperty().property().getValue(),
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
+                cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 alivePercent.getValue(),
                 NEIGHBORHOOD_MODE_INITIAL,

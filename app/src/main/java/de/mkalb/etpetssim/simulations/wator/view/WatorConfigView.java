@@ -52,6 +52,7 @@ public final class WatorConfigView
     @Override
     public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane(true);
+        TitledPane layoutPane = createLayoutPane(true);
 
         // --- Initialization Group ---
         var seedControl = FXComponentFactory.createLabeledStringTextBox(
@@ -98,7 +99,7 @@ public final class WatorConfigView
         TitledPane sharkRulesPane = createSharkRulesPane();
         sharkRulesPane.setExpanded(false);
 
-        return createConfigMainBox(structurePane, initPane, rulesPane, fishRulesPane, sharkRulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane, fishRulesPane, sharkRulesPane);
     }
 
     private TitledPane createFishRulesPane() {

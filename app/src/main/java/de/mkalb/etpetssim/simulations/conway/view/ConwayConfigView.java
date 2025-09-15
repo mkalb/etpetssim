@@ -47,6 +47,7 @@ public final class ConwayConfigView
     @Override
     public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane(true);
+        TitledPane layoutPane = createLayoutPane(true);
 
         // --- Initialization Group ---
         var seedControl = FXComponentFactory.createLabeledStringTextBox(
@@ -79,7 +80,7 @@ public final class ConwayConfigView
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
                 true, rulesControl);
 
-        return createConfigMainBox(structurePane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
     }
 
     private Label createRulesLabel(String text, Tooltip tooltipValue, HPos pos, String styleClass) {

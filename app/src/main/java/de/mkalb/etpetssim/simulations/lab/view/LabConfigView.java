@@ -21,7 +21,17 @@ public final class LabConfigView
     @Override
     public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane(false);
-        TitledPane layoutPane = createLayoutPane();
+
+        // Layout
+        var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
+                viewModel.colorModeProperty().displayNameProvider(),
+                FXComponentFactory.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
+                "Color:",
+                "Draw in color or black and white.",
+                FXStyleClasses.CONFIG_RADIOBUTTON
+        );
+
+        TitledPane layoutPane = createLayoutPane(false, colorModeControl);
 
         // --- Initialization Group ---
         var seedControl = FXComponentFactory.createLabeledStringTextBox(
@@ -51,40 +61,6 @@ public final class LabConfigView
                 neighborhoodModeControl);
 
         return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
-    }
-
-    private TitledPane createLayoutPane() {
-        var renderingModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.renderingModeProperty(),
-                viewModel.renderingModeProperty().displayNameProvider(),
-                FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Rendering:",
-                "Draw the selected shape or just its inner circle.",
-                FXStyleClasses.CONFIG_RADIOBUTTON
-        );
-
-        var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
-                viewModel.colorModeProperty().displayNameProvider(),
-                FXComponentFactory.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Color:",
-                "Draw in color or black and white.",
-                FXStyleClasses.CONFIG_RADIOBUTTON
-        );
-
-        var strokeModeControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.strokeModeProperty(),
-                LabConfig.StrokeMode.CENTERED,
-                LabConfig.StrokeMode.NONE,
-                "Stroke:",
-                "Draw a border around the shape.",
-                FXStyleClasses.CONFIG_CHECKBOX
-        );
-
-        return createConfigTitledPane(
-                "Layout",
-                false,
-                colorModeControl,
-                renderingModeControl,
-                strokeModeControl
-        );
     }
 
 }
