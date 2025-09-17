@@ -8,12 +8,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * An implementation of {@link GridModel} that stores grid entities in a two-dimensional array.
+ * An implementation of {@link WritableGridModel} that stores grid entities in a two-dimensional array.
  * Efficient for dense grids with mostly non-default entities.
  *
  * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  */
-public final class ArrayGridModel<T extends GridEntity> implements GridModel<T> {
+public final class ArrayGridModel<T extends GridEntity> implements WritableGridModel<T> {
 
     /** The structure describing the grid's dimensions and valid coordinates. */
     private final GridStructure structure;

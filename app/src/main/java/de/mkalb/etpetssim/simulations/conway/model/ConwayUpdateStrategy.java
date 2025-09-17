@@ -2,9 +2,9 @@ package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.SynchronousStepLogic;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 
@@ -22,7 +22,7 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
 
     @Override
     public void performSynchronousStep(ReadableGridModel<ConwayEntity> currentModel,
-                                       GridModel<ConwayEntity> nextModel,
+                                       WritableGridModel<ConwayEntity> nextModel,
                                        int stepIndex,
                                        ConwayStatistics statistics) {
         // Counter for ConwayStatistics

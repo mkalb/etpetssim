@@ -8,12 +8,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * An implementation of {@link GridModel} that stores only non-default entities in a map.
+ * An implementation of {@link WritableGridModel} that stores only non-default entities in a map.
  * Efficient for sparse grids where most cells contain the default entity.
  *
  * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  */
-public final class SparseGridModel<T extends GridEntity> implements GridModel<T> {
+public final class SparseGridModel<T extends GridEntity> implements WritableGridModel<T> {
 
     /** The structure describing the grid's dimensions and valid coordinates. */
     private final GridStructure structure;

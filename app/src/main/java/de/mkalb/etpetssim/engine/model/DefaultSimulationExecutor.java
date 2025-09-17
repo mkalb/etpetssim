@@ -15,7 +15,7 @@ import java.util.function.*;
 public final class DefaultSimulationExecutor<T extends GridEntity, C> implements SimulationExecutor<T> {
 
     private final SimulationStepRunner<C> stepRunner;
-    private final Supplier<GridModel<T>> modelSupplier;
+    private final Supplier<WritableGridModel<T>> modelSupplier;
     private final SimulationTerminationCondition<T, C> terminationCondition;
     private final C context;
 
@@ -35,7 +35,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
      */
     public DefaultSimulationExecutor(
             SimulationStepRunner<C> stepRunner,
-            Supplier<GridModel<T>> modelSupplier,
+            Supplier<WritableGridModel<T>> modelSupplier,
             SimulationTerminationCondition<T, C> terminationCondition,
             C context) {
         this.stepRunner = stepRunner;
@@ -46,7 +46,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     }
 
     @Override
-    public GridModel<T> currentModel() {
+    public WritableGridModel<T> currentModel() {
         return modelSupplier.get();
     }
 

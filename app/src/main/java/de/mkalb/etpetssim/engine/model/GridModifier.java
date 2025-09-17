@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.function.*;
 
 /**
- * Functional interface for modifying a {@link GridModel} during runtime or in response to events.
+ * Functional interface for modifying a {@link WritableGridModel} during runtime or in response to events.
  * <p>
  * Implementations can perform targeted or rule-based changes to the grid model.
  *
@@ -33,7 +33,7 @@ public interface GridModifier<T extends GridEntity> {
      * @return a grid modifier that clears the grid
      */
     static <T extends GridEntity> GridModifier<T> clear() {
-        return GridModel::clear;
+        return WritableGridModel::clear;
     }
 
     /**
@@ -57,7 +57,7 @@ public interface GridModifier<T extends GridEntity> {
      * @return a conditional grid modifier
      */
     static <T extends GridEntity> GridModifier<T> conditional(
-            Predicate<GridModel<T>> condition,
+            Predicate<WritableGridModel<T>> condition,
             GridModifier<T> modifier) {
         return model -> {
             if (condition.test(model)) {
@@ -68,7 +68,7 @@ public interface GridModifier<T extends GridEntity> {
 
     /**
      * Returns a composed {@code GridModifier} that performs, in sequence, all given modifiers
-     * on the same {@link GridModel}. If no modifiers are given, the identity modifier is returned.
+     * on the same {@link WritableGridModel}. If no modifiers are given, the identity modifier is returned.
      *
      * @param modifiers the modifiers to compose
      * @param <T> the type of grid entity
@@ -81,15 +81,15 @@ public interface GridModifier<T extends GridEntity> {
     }
 
     /**
-     * Modifies the given {@link GridModel}.
+     * Modifies the given {@link WritableGridModel}.
      *
      * @param model the grid model to modify
      */
-    void modify(GridModel<T> model);
+    void modify(WritableGridModel<T> model);
 
     /**
      * Returns a composed {@code GridModifier} that performs, in sequence, this modifier
-     * followed by the {@code after} modifier on the same {@link GridModel}.
+     * followed by the {@code after} modifier on the same {@link WritableGridModel}.
      *
      * @param after the modifier to apply after this modifier
      * @return a composed {@code GridModifier}
@@ -109,7 +109,7 @@ public interface GridModifier<T extends GridEntity> {
      * @param condition the predicate to test the model
      * @return a conditional grid modifier
      */
-    default GridModifier<T> onlyIf(Predicate<GridModel<T>> condition) {
+    default GridModifier<T> onlyIf(Predicate<WritableGridModel<T>> condition) {
         return model -> {
             if (condition.test(model)) {
                 modify(model);

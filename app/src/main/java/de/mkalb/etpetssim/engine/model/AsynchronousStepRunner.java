@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 /**
- * Executes asynchronous simulation steps on a {@link GridModel}.
+ * Executes asynchronous simulation steps on a {@link WritableGridModel}.
  * <p>
  * This runner applies agent-specific logic to all entities in the grid model
  * that satisfy the given {@code agentPredicate}. The agent logic is applied to each
@@ -17,7 +17,7 @@ import java.util.function.*;
  */
 public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStepRunner<C> {
 
-    private final GridModel<T> model;
+    private final WritableGridModel<T> model;
     private final Predicate<T> agentPredicate;
     private final Comparator<GridCell<T>> agentOrderingStrategy;
     private final AgentStepLogic<T, C> agentStepLogic;
@@ -31,7 +31,7 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      * @param agentOrderingStrategy comparator defining the order in which agent cells are processed
      * @param agentStepLogic        logic to apply to each agent cell
      */
-    public AsynchronousStepRunner(GridModel<T> model,
+    public AsynchronousStepRunner(WritableGridModel<T> model,
                                   Predicate<T> agentPredicate,
                                   Comparator<GridCell<T>> agentOrderingStrategy,
                                   AgentStepLogic<T, C> agentStepLogic) {
@@ -61,9 +61,9 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
     /**
      * Returns the grid model used by this runner.
      *
-     * @return the current {@link GridModel}
+     * @return the current {@link WritableGridModel}
      */
-    public GridModel<T> model() {
+    public WritableGridModel<T> model() {
         return model;
     }
 

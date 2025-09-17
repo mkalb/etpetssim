@@ -28,7 +28,7 @@ public final class TimedSimulationExecutor<T extends GridEntity> implements Simu
     }
 
     @Override
-    public GridModel<T> currentModel() {
+    public WritableGridModel<T> currentModel() {
         return delegate.currentModel();
     }
 

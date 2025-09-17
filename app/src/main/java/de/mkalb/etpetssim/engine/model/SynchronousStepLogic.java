@@ -25,6 +25,6 @@ public interface SynchronousStepLogic<T extends GridEntity, C> {
      * @param stepIndex    the index of the current simulation step
      * @param context      the context object used to share or accumulate state during the simulation
      */
-    void performSynchronousStep(ReadableGridModel<T> currentModel, GridModel<T> nextModel, int stepIndex, C context);
+    void performSynchronousStep(ReadableGridModel<T> currentModel, WritableGridModel<T> nextModel, int stepIndex, C context);
 
 }

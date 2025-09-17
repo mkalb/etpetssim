@@ -1,29 +1,22 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Read-only view of a {@link GridModel}.
+ * Read-only view of a {@link WritableGridModel}.
  * <p>
- * All mutating (write and update) methods are defined in the {@link GridModel} interface.
- * This interface provides only read-only access to grid entities.
+ * Provides methods for accessing grid entities and querying grid state.
+ * All mutating (write and update) methods are defined in the {@link WritableGridModel} interface.
  * </p>
  *
  * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  */
-public interface ReadableGridModel<T extends GridEntity> {
-
-    /**
-     * Returns the structure of the grid, including its dimensions and valid coordinates.
-     *
-     * @return the grid structure
-     */
-    GridStructure structure();
+public sealed interface ReadableGridModel<T extends GridEntity> extends GridModel<T>
+        permits WritableGridModel {
 
     /**
      * Returns the default entity for grid cells.
@@ -66,16 +59,6 @@ public interface ReadableGridModel<T extends GridEntity> {
      * @return true if the grid is sparse, false otherwise
      */
     boolean isModelSparse();
-
-    /**
-     * Checks if the given coordinate is valid within the grid structure.
-     *
-     * @param coordinate the grid coordinate
-     * @return true if the coordinate is valid, false otherwise
-     */
-    default boolean isCoordinateValid(GridCoordinate coordinate) {
-        return structure().isCoordinateValid(coordinate);
-    }
 
     /**
      * Returns the entity at the specified coordinate as an {@link Optional}.

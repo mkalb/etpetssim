@@ -34,7 +34,7 @@ public final class ConwaySimulationManager
     }
 
     @SuppressWarnings("MagicNumber")
-    private void initializeGrid(ConwayConfig config, GridModel<ConwayEntity> model, Random random) {
+    private void initializeGrid(ConwayConfig config, WritableGridModel<ConwayEntity> model, Random random) {
         double alivePercent = config.alivePercent();
         double deadPercent = 1.0d - config.alivePercent();
 
@@ -74,7 +74,7 @@ public final class ConwaySimulationManager
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private void updateInitialStatistics(GridModel<ConwayEntity> model) {
+    private void updateInitialStatistics(ReadableGridModel<ConwayEntity> model) {
         int aliveEntities = (int) model.countEntities(ConwayEntity::isAlive);
         statistics.updateCells(aliveEntities, aliveEntities);
     }

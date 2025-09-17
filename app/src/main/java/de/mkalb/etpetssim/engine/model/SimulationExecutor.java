@@ -14,9 +14,9 @@ public interface SimulationExecutor<T extends GridEntity> {
     /**
      * Returns the current simulation model.
      *
-     * @return the current {@link GridModel}
+     * @return the current {@link WritableGridModel}
      */
-    GridModel<T> currentModel();
+    WritableGridModel<T> currentModel();
 
     /**
      * Returns the number of simulation steps completed so far.

@@ -9,7 +9,7 @@ import java.util.function.*;
 /**
  * Utility class providing various static factory methods for creating {@link GridInitializer} instances.
  * <p>
- * These initializers can be used to set up or modify the contents of a {@link GridModel}
+ * These initializers can be used to set up or modify the contents of a {@link WritableGridModel}
  * in different ways, such as filling, mapping, or placing entities with specific patterns or randomness.
  * </p>
  */
@@ -38,7 +38,7 @@ public final class GridInitializers {
      * @return a grid initializer that clears the grid
      */
     public static <T extends GridEntity> GridInitializer<T> clear() {
-        return GridModel::clear;
+        return WritableGridModel::clear;
     }
 
     /**

@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.AgentStepLogic;
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.GridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 
@@ -28,7 +28,7 @@ public final class WatorAgentLogicFactory {
         };
     }
 
-    private void simpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+    private void simpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                              WatorStatistics statistics) {
         WatorEntity entity = agentCell.entity();
 
@@ -55,7 +55,7 @@ public final class WatorAgentLogicFactory {
         statistics.updateCells();
     }
 
-    private void fishSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+    private void fishSimpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                                  WatorStatistics statistics,
                                  WatorFish fish, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate fishOriginalCoordinate = agentCell.coordinate();
@@ -93,7 +93,7 @@ public final class WatorAgentLogicFactory {
         }
     }
 
-    private void sharkSimpleLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+    private void sharkSimpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                                   WatorStatistics statistics,
                                   WatorShark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate sharkOriginalCoordinate = agentCell.coordinate();
@@ -144,7 +144,7 @@ public final class WatorAgentLogicFactory {
     }
 
     @SuppressWarnings("EmptyMethod")
-    private void advancedLogic(GridCell<WatorEntity> agentCell, GridModel<WatorEntity> model, int stepIndex,
+    private void advancedLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                                WatorStatistics statistics) {
         // TODO Implement advanced agent logic here
     }

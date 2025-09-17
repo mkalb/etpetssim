@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
  * @param coordinate the coordinate of the cell in the grid
  * @param entity the entity associated with the cell
  *
- * @see GridModel
+ * @see WritableGridModel
  */
 public record GridCell<T extends GridEntity>(GridCoordinate coordinate, T entity) {
 

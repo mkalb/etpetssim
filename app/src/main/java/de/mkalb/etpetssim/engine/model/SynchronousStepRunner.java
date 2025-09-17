@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
 /**
- * Executes synchronous simulation steps on a {@link GridModel}.
+ * Executes synchronous simulation steps on a {@link WritableGridModel}.
  * <p>
  * This runner applies a synchronous update strategy to the simulation model:
  * it reads from the current model (as a {@link ReadableGridModel}) and writes results
@@ -15,8 +15,8 @@ package de.mkalb.etpetssim.engine.model;
 public final class SynchronousStepRunner<T extends GridEntity, C> implements SimulationStepRunner<C> {
 
     private final SynchronousStepLogic<T, C> stepLogic;
-    private GridModel<T> currentModel;
-    private GridModel<T> nextModel;
+    private WritableGridModel<T> currentModel;
+    private WritableGridModel<T> nextModel;
 
     /**
      * Constructs a new {@code SynchronousStepRunner} with the given initial model and update strategy.
@@ -25,7 +25,7 @@ public final class SynchronousStepRunner<T extends GridEntity, C> implements Sim
      * @param initialModel the initial grid model
      * @param stepLogic    the logic to apply for each synchronous simulation step
      */
-    public SynchronousStepRunner(GridModel<T> initialModel,
+    public SynchronousStepRunner(WritableGridModel<T> initialModel,
                                  SynchronousStepLogic<T, C> stepLogic) {
         currentModel = initialModel;
         nextModel = currentModel.copyWithDefaultEntity();
@@ -44,7 +44,7 @@ public final class SynchronousStepRunner<T extends GridEntity, C> implements Sim
     @Override
     public void performStep(int stepIndex, C context) {
         stepLogic.performSynchronousStep(currentModel, nextModel, stepIndex, context);
-        GridModel<T> tempModel = currentModel;
+        WritableGridModel<T> tempModel = currentModel;
         currentModel = nextModel;
         nextModel = tempModel;
         nextModel.clear();
@@ -53,18 +53,18 @@ public final class SynchronousStepRunner<T extends GridEntity, C> implements Sim
     /**
      * Returns the current grid model representing the latest simulation state.
      *
-     * @return the current {@link GridModel}
+     * @return the current {@link WritableGridModel}
      */
-    public GridModel<T> currentModel() {
+    public WritableGridModel<T> currentModel() {
         return currentModel;
     }
 
     /**
      * Returns the next grid model used for the upcoming simulation step.
      *
-     * @return the next {@link GridModel}
+     * @return the next {@link WritableGridModel}
      */
-    public GridModel<T> nextModel() {
+    public WritableGridModel<T> nextModel() {
         return nextModel;
     }
 

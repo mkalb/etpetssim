@@ -37,7 +37,7 @@ public final class WatorSimulationManager
         statistics.updateCells();
     }
 
-    private void initializeGrid(GridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {
+    private void initializeGrid(WritableGridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {
         GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
                 () -> createFish(entityFactory, random),
                 WatorEntity::isWater,

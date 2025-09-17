@@ -15,7 +15,7 @@ public final class LabSimulationManager
 
     private final GridStructure structure;
     private final LabStatistics statistics;
-    private final GridModel<LabEntity> model;
+    private final WritableGridModel<LabEntity> model;
 
     public LabSimulationManager(LabConfig config) {
         this.config = config;

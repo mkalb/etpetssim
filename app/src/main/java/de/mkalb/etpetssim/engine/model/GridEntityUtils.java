@@ -7,7 +7,7 @@ import java.util.function.*;
 
 /**
  * Utility class providing static methods for operations involving
- * {@link GridEntity}, {@link GridCell}, {@link GridModel}, {@link GridPattern} {@link GridEntityDescriptor},
+ * {@link GridEntity}, {@link GridCell}, {@link WritableGridModel}, {@link GridPattern} {@link GridEntityDescriptor},
  * and {@link GridEntityDescriptorRegistry}.
  */
 public final class GridEntityUtils {
@@ -57,7 +57,7 @@ public final class GridEntityUtils {
     }
 
     /**
-     * Places all entities from the given {@link GridPattern} into the specified {@link GridModel},
+     * Places all entities from the given {@link GridPattern} into the specified {@link WritableGridModel},
      * offsetting each entity's position by the provided anchor coordinate.
      * <p>
      * For each entry in the pattern, the entity is placed at the coordinate computed by adding
@@ -70,7 +70,7 @@ public final class GridEntityUtils {
      * @param <T> the type of {@link GridEntity} in the model and pattern
      */
     public static <T extends GridEntity> void placePatternAt(GridCoordinate coordinate,
-                                                             GridModel<T> model,
+                                                             WritableGridModel<T> model,
                                                              GridPattern<T> pattern) {
         pattern.offsetMap()
                .forEach((offset, entity) -> {
