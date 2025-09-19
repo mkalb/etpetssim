@@ -14,6 +14,7 @@ import java.util.*;
  *
  * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  */
+@SuppressWarnings("ClassCanBeRecord")
 public final class CompositeGridModel<T extends GridEntity> implements GridModel<T> {
 
     private final List<WritableGridModel<? extends T>> layers;
