@@ -9,14 +9,19 @@ import java.util.function.*;
  * This executor manages the simulation lifecycle, supporting stepwise execution
  * and batch execution. It provides access to the current model state and step count.
  *
- * @param <T> the type of {@link GridEntity} in the simulation
- * @param <C> the type of the context object used to share or accumulate state during the simulation
+ * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <GM> the type of {@link GridModel} in the simulation
+ * @param <C> the type of the context object used to share or accumulate state or statistics during the simulation
  */
-public final class DefaultSimulationExecutor<T extends GridEntity, C> implements SimulationExecutor<T> {
+public final class DefaultSimulationExecutor<
+        ENT extends GridEntity,
+        GM extends GridModel<ENT>,
+        C>
+        implements SimulationExecutor<ENT, GM> {
 
     private final SimulationStepRunner<C> stepRunner;
-    private final Supplier<WritableGridModel<T>> modelSupplier;
-    private final SimulationTerminationCondition<T, C> terminationCondition;
+    private final Supplier<GM> modelSupplier;
+    private final SimulationTerminationCondition<ENT, GM, C> terminationCondition;
     private final C context;
 
     /**
@@ -35,8 +40,8 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
      */
     public DefaultSimulationExecutor(
             SimulationStepRunner<C> stepRunner,
-            Supplier<WritableGridModel<T>> modelSupplier,
-            SimulationTerminationCondition<T, C> terminationCondition,
+            Supplier<GM> modelSupplier,
+            SimulationTerminationCondition<ENT, GM, C> terminationCondition,
             C context) {
         this.stepRunner = stepRunner;
         this.modelSupplier = modelSupplier;
@@ -46,7 +51,7 @@ public final class DefaultSimulationExecutor<T extends GridEntity, C> implements
     }
 
     @Override
-    public WritableGridModel<T> currentModel() {
+    public GM currentModel() {
         return modelSupplier.get();
     }
 

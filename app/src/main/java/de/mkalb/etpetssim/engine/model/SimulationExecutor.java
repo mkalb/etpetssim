@@ -7,16 +7,19 @@ package de.mkalb.etpetssim.engine.model;
  * including stepwise and batch execution. It also provides access to the current model state
  * and the simulation step count.
  *
- * @param <T> the type of {@link GridEntity} in the simulation
+ * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <GM> the type of {@link GridModel} in the simulation
  */
-public interface SimulationExecutor<T extends GridEntity> {
+public interface SimulationExecutor<
+        ENT extends GridEntity,
+        GM extends GridModel<ENT>> {
 
     /**
      * Returns the current simulation model.
      *
      * @return the current {@link WritableGridModel}
      */
-    WritableGridModel<T> currentModel();
+    GM currentModel();
 
     /**
      * Returns the number of simulation steps completed so far.

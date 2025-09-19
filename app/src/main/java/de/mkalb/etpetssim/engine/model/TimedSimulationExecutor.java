@@ -7,11 +7,15 @@ package de.mkalb.etpetssim.engine.model;
  * <p>
  * Timing statistics are accessible via getter methods.
  *
- * @param <T> the type of {@link GridEntity} in the simulation
+ * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <GM> the type of {@link GridModel} in the simulation
  */
-public final class TimedSimulationExecutor<T extends GridEntity> implements SimulationExecutor<T> {
+public final class TimedSimulationExecutor<
+        ENT extends GridEntity,
+        GM extends GridModel<ENT>>
+        implements SimulationExecutor<ENT, GM> {
 
-    private final SimulationExecutor<T> delegate;
+    private final SimulationExecutor<ENT, GM> delegate;
 
     private long currentStepMillis = Long.MIN_VALUE;
     private long minStepMillis = Long.MAX_VALUE;
@@ -23,12 +27,12 @@ public final class TimedSimulationExecutor<T extends GridEntity> implements Simu
      *
      * @param delegate the underlying {@link SimulationExecutor} to decorate
      */
-    public TimedSimulationExecutor(SimulationExecutor<T> delegate) {
+    public TimedSimulationExecutor(SimulationExecutor<ENT, GM> delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    public WritableGridModel<T> currentModel() {
+    public GM currentModel() {
         return delegate.currentModel();
     }
 
