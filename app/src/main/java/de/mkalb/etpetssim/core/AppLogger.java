@@ -275,6 +275,14 @@ public final class AppLogger {
 
         if (logHandlers.isEmpty()) {
             APP_LOGGER.logger.warning("AppLogger: No logging handlers were created.");
+
+            // Remove all existing handlers
+            for (Handler handler : APP_LOGGER.logger.getHandlers()) {
+                APP_LOGGER.logger.removeHandler(handler);
+            }
+
+            // Disable all logging
+            APP_LOGGER.logger.setLevel(Level.OFF);
         } else {
             // Remove all existing handlers from the logger before adding new ones
             for (Handler handler : APP_LOGGER.logger.getHandlers()) {
