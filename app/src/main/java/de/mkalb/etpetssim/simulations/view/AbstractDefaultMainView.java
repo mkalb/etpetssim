@@ -18,6 +18,7 @@ import org.jspecify.annotations.Nullable;
 @SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
+        GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends AbstractTimedSimulationStatistics,
         CFV extends SimulationConfigView,
@@ -26,7 +27,7 @@ public abstract class AbstractDefaultMainView<
         AbstractMainView<
                 CON,
                 STA,
-                DefaultMainViewModel<ENT, CON, STA>,
+                DefaultMainViewModel<ENT, GM, CON, STA>,
                 CFV,
                 DefaultControlView,
                 OV> {
@@ -51,7 +52,7 @@ public abstract class AbstractDefaultMainView<
 
     private boolean skipOverlayActive = false;
 
-    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, CON, STA> viewModel,
+    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GM, CON, STA> viewModel,
                                       CFV configView, DefaultControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
@@ -177,6 +178,6 @@ public abstract class AbstractDefaultMainView<
 
     protected abstract void initSimulation(CON config, CellDimension cellDimension);
 
-    protected abstract void drawSimulation(ReadableGridModel<ENT> currentModel, int stepCount);
+    protected abstract void drawSimulation(GM currentModel, int stepCount);
 
 }

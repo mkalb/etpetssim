@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.lab.model.*;
 import de.mkalb.etpetssim.simulations.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
@@ -13,7 +13,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class LabMainViewModel
-        extends AbstractMainViewModel<LabEntity, LabConfig, LabStatistics> {
+        extends AbstractMainViewModel<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
     private @Nullable LabSimulationManager simulationManager;
 
@@ -79,7 +79,7 @@ public final class LabMainViewModel
     }
 
     @Override
-    public ReadableGridModel<LabEntity> getCurrentModel() {
+    public WritableGridModel<LabEntity> getCurrentModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentModel();
     }
@@ -131,9 +131,8 @@ public final class LabMainViewModel
         simulationManager = new LabSimulationManager(config);
 
         // Log information
-        AppLogger.info("Structure:       " + simulationManager.currentModel().structure().toDisplayString());
-        AppLogger.info("Cell count:      " + simulationManager.currentModel().structure().cellCount());
-        AppLogger.info("NonDefaultCells: " + simulationManager.currentModel().nonDefaultCells().count());
+        AppLogger.info("Structure:       " + simulationManager.structure().toDisplayString());
+        AppLogger.info("Cell count:      " + simulationManager.structure().cellCount());
 
         drawRequestedListener.run();
 

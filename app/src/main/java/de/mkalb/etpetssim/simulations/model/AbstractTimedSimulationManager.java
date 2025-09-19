@@ -2,8 +2,12 @@ package de.mkalb.etpetssim.simulations.model;
 
 import de.mkalb.etpetssim.engine.model.*;
 
-public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON extends SimulationConfig, STA extends TimedSimulationStatistics>
-        implements SimulationManager<ENT, CON, STA> {
+public abstract class AbstractTimedSimulationManager<
+        ENT extends GridEntity,
+        GM extends GridModel<ENT>,
+        CON extends SimulationConfig,
+        STA extends TimedSimulationStatistics>
+        implements SimulationManager<ENT, GM, CON, STA> {
 
     private final CON config;
 
@@ -13,7 +17,7 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
 
     protected abstract void updateStatistics();
 
-    protected abstract TimedSimulationExecutor<ENT> executor();
+    protected abstract TimedSimulationExecutor<ENT, GM> executor();
 
     @Override
     public final CON config() {
@@ -63,7 +67,7 @@ public abstract class AbstractTimedSimulationManager<ENT extends GridEntity, CON
     }
 
     @Override
-    public final ReadableGridModel<ENT> currentModel() {
+    public final GM currentModel() {
         return executor().currentModel();
     }
 

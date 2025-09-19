@@ -7,11 +7,12 @@ import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 import java.util.*;
 
 public final class WatorSimulationManager
-        extends AbstractTimedSimulationManager<WatorEntity, WatorConfig, WatorStatistics> {
+        extends AbstractTimedSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
+        WatorStatistics> {
 
     private final GridStructure structure;
     private final WatorStatistics statistics;
-    private final TimedSimulationExecutor<WatorEntity> executor;
+    private final TimedSimulationExecutor<WatorEntity, WritableGridModel<WatorEntity>> executor;
 
     public WatorSimulationManager(WatorConfig config) {
         super(config);
@@ -87,7 +88,7 @@ public final class WatorSimulationManager
     }
 
     @Override
-    protected TimedSimulationExecutor<WatorEntity> executor() {
+    protected TimedSimulationExecutor<WatorEntity, WritableGridModel<WatorEntity>> executor() {
         return executor;
     }
 

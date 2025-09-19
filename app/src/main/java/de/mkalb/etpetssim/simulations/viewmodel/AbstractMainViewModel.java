@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridEntity;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.simulations.model.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -13,6 +13,7 @@ import java.util.*;
 
 public abstract class AbstractMainViewModel<
         ENT extends GridEntity,
+        GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends SimulationStatistics>
         implements SimulationMainViewModel {
@@ -62,7 +63,7 @@ public abstract class AbstractMainViewModel<
 
     public abstract boolean hasSimulationManager();
 
-    public abstract ReadableGridModel<ENT> getCurrentModel();
+    public abstract GM getCurrentModel();
 
     public final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
         return lastClickedCoordinate;

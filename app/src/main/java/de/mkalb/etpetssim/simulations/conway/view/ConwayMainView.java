@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.view;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
@@ -22,6 +22,7 @@ import java.util.*;
 public final class ConwayMainView
         extends AbstractDefaultMainView<
         ConwayEntity,
+        WritableGridModel<ConwayEntity>,
         ConwayConfig,
         ConwayStatistics,
         ConwayConfigView,
@@ -33,7 +34,8 @@ public final class ConwayMainView
     private final Paint alivePaint;
     private final Color aliveBorderColor;
 
-    public ConwayMainView(DefaultMainViewModel<ConwayEntity, ConwayConfig, ConwayStatistics> viewModel,
+    public ConwayMainView(DefaultMainViewModel<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+                                  ConwayStatistics> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
                           DefaultControlView controlView,
@@ -67,7 +69,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void drawSimulation(ReadableGridModel<ConwayEntity> currentModel, int stepCount) {
+    protected void drawSimulation(WritableGridModel<ConwayEntity> currentModel, int stepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

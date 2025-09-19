@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.model.SimulationManager;
 import java.util.*;
 
 public final class LabSimulationManager
-        implements SimulationManager<LabEntity, LabConfig, LabStatistics> {
+        implements SimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
     private final LabConfig config;
 
@@ -82,7 +82,7 @@ public final class LabSimulationManager
     }
 
     @Override
-    public ReadableGridModel<LabEntity> currentModel() {
+    public WritableGridModel<LabEntity> currentModel() {
         return model;
     }
 

@@ -2,10 +2,14 @@ package de.mkalb.etpetssim.simulations.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridEntity;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.SimulationExecutor;
 
-public interface SimulationManager<ENT extends GridEntity, CON extends SimulationConfig, STA extends SimulationStatistics> {
+public interface SimulationManager<
+        ENT extends GridEntity,
+        GM extends GridModel<ENT>,
+        CON extends SimulationConfig,
+        STA extends SimulationStatistics> {
 
     CON config();
 
@@ -23,6 +27,6 @@ public interface SimulationManager<ENT extends GridEntity, CON extends Simulatio
 
     int stepCount();
 
-    ReadableGridModel<ENT> currentModel();
+    GM currentModel();
 
 }

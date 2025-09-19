@@ -2,9 +2,7 @@ package de.mkalb.etpetssim.simulations.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.GridEntity;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.application.Platform;
@@ -19,20 +17,21 @@ import java.util.function.*;
 
 public final class DefaultMainViewModel<
         ENT extends GridEntity,
+        GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends TimedSimulationStatistics>
-        extends AbstractMainViewModel<ENT, CON, STA> {
+        extends AbstractMainViewModel<ENT, GM, CON, STA> {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
     private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
     private static final double THROTTLE_DRAW_FACTOR = 0.3d;
 
     private final DefaultControlViewModel controlViewModel;
-    private final Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory;
+    private final Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory;
     private final SimulationTimer timer;
     private final ExecutorService batchExecutor;
     private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
-    private @Nullable AbstractTimedSimulationManager<ENT, CON, STA> simulationManager;
+    private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
     private long timeoutExecuteMillis = Long.MAX_VALUE;
@@ -47,7 +46,7 @@ public final class DefaultMainViewModel<
                                 SimulationConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
-                                Function<CON, AbstractTimedSimulationManager<ENT, CON, STA>> simulationManagerFactory) {
+                                Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
@@ -74,7 +73,14 @@ public final class DefaultMainViewModel<
                     || (getSimulationState() == SimulationState.CANCELLED)
                     || (getSimulationState() == SimulationState.FINISHED))) {
                 try {
-                    selectedGridCell.set(getCurrentModel().getGridCell(newValue));
+                    GM gridModel = getCurrentModel();
+                    if (gridModel instanceof ReadableGridModel<?>) {
+                        @SuppressWarnings("unchecked")
+                        ReadableGridModel<ENT> readableGridModel = (ReadableGridModel<ENT>) gridModel;
+                        selectedGridCell.set(readableGridModel.getGridCell(newValue));
+                    } else {
+                        // TODO fina a solution for 'selectedGridCell' and CombinedGridModel
+                    }
                 } catch (NullPointerException | IndexOutOfBoundsException e) {
                     AppLogger.error("Cannot determine selected cell! " + newValue, e);
                     selectedGridCell.set(null);
@@ -129,7 +135,7 @@ public final class DefaultMainViewModel<
     }
 
     @Override
-    public ReadableGridModel<ENT> getCurrentModel() {
+    public GM getCurrentModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
         return simulationManager.currentModel();
     }

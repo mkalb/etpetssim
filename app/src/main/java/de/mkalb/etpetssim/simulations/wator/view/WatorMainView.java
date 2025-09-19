@@ -19,6 +19,7 @@ import java.util.*;
 public final class WatorMainView
         extends AbstractDefaultMainView<
         WatorEntity,
+        WritableGridModel<WatorEntity>,
         WatorConfig,
         WatorStatistics,
         WatorConfigView,
@@ -40,7 +41,8 @@ public final class WatorMainView
 
     private int maxColorSharkEnergy = 1;
 
-    public WatorMainView(DefaultMainViewModel<WatorEntity, WatorConfig, WatorStatistics> viewModel,
+    public WatorMainView(DefaultMainViewModel<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
+                                 WatorStatistics> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
                          DefaultControlView controlView,
@@ -180,7 +182,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void drawSimulation(ReadableGridModel<WatorEntity> currentModel, int stepCount) {
+    protected void drawSimulation(WritableGridModel<WatorEntity> currentModel, int stepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

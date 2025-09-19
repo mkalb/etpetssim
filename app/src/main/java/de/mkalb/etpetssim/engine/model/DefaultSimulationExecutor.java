@@ -21,7 +21,7 @@ public final class DefaultSimulationExecutor<
 
     private final SimulationStepRunner<C> stepRunner;
     private final Supplier<GM> modelSupplier;
-    private final SimulationTerminationCondition<ENT, GM, C> terminationCondition;
+    private final SimulationTerminationCondition<ENT, ? super GM, C> terminationCondition;
     private final C context;
 
     /**
@@ -41,7 +41,7 @@ public final class DefaultSimulationExecutor<
     public DefaultSimulationExecutor(
             SimulationStepRunner<C> stepRunner,
             Supplier<GM> modelSupplier,
-            SimulationTerminationCondition<ENT, GM, C> terminationCondition,
+            SimulationTerminationCondition<ENT, ? super GM, C> terminationCondition,
             C context) {
         this.stepRunner = stepRunner;
         this.modelSupplier = modelSupplier;

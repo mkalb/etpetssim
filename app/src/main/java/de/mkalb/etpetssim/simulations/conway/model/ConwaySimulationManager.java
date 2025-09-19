@@ -7,11 +7,12 @@ import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 import java.util.*;
 
 public final class ConwaySimulationManager
-        extends AbstractTimedSimulationManager<ConwayEntity, ConwayConfig, ConwayStatistics> {
+        extends AbstractTimedSimulationManager<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
+        ConwayStatistics> {
 
     private final GridStructure structure;
     private final ConwayStatistics statistics;
-    private final TimedSimulationExecutor<ConwayEntity> executor;
+    private final TimedSimulationExecutor<ConwayEntity, WritableGridModel<ConwayEntity>> executor;
 
     public ConwaySimulationManager(ConwayConfig config) {
         super(config);
@@ -80,7 +81,7 @@ public final class ConwaySimulationManager
     }
 
     @Override
-    protected TimedSimulationExecutor<ConwayEntity> executor() {
+    protected TimedSimulationExecutor<ConwayEntity, WritableGridModel<ConwayEntity>> executor() {
         return executor;
     }
 
