@@ -75,7 +75,7 @@ public final class CompositeGridModel<T extends GridEntity> implements GridModel
      * @return the writable grid model at the given index
      * @throws IndexOutOfBoundsException if the index is out of range
      */
-    public WritableGridModel<?> getLayer(int index) {
+    public WritableGridModel<? extends T> getLayer(int index) {
         return layers.get(index);
     }
 
