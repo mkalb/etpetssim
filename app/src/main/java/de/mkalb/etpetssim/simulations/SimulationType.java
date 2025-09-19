@@ -124,14 +124,14 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>
      */
     LANGTONS_ANT(
-            false,
+            true,
             true,
             "simulation.langtonsant.title",
             "simulation.langtonsant.subtitle",
             "simulation.langtonsant.url",
             "simulation.langtonsant.emoji",
-            "",
-            List.of("langtonsant", "langtons-ant", "ant")
+            "langton.css",
+            List.of("langton", "langtonsant", "langtons-ant", "ant")
     ),
     /**
      * <a href="https://en.wikipedia.org/wiki/Paterson%27s_worms">Paterson's worms</a>

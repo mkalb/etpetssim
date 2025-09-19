@@ -13,6 +13,9 @@ module de.mkalb.etpetssim {
     exports de.mkalb.etpetssim.simulations.lab.model;
     exports de.mkalb.etpetssim.simulations.lab.view;
     exports de.mkalb.etpetssim.simulations.lab.viewmodel;
+    exports de.mkalb.etpetssim.simulations.langton.model;
+    exports de.mkalb.etpetssim.simulations.langton.view;
+    exports de.mkalb.etpetssim.simulations.langton.viewmodel;
     exports de.mkalb.etpetssim.simulations.model;
     exports de.mkalb.etpetssim.simulations.start;
     exports de.mkalb.etpetssim.simulations.view;
