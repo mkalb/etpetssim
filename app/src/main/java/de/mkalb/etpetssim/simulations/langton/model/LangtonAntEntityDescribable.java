@@ -14,8 +14,8 @@ public enum LangtonAntEntityDescribable implements GridEntityDescribable {
             "langton.entity.ant.long",
             "langton.entity.ant.description",
             null,
-            null,
-            null,
+            Color.RED,
+            Color.BLACK,
             1
     );
 

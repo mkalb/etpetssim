@@ -30,9 +30,9 @@ public final class LangtonConfigViewModel
             50,
             1_000,
             GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
-            4,
+            8,
             1,
-            16,
+            32,
             CellDisplayMode.SHAPE,
             List.of(CellDisplayMode.SHAPE, CellDisplayMode.SHAPE_BORDERED),
             ""

@@ -1,15 +1,16 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.CompositeGridModel;
-import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.langton.model.*;
+import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.StrokeAdjustment;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -27,6 +28,8 @@ public final class LangtonMainView
         LangtonObservationView> {
 
     private final Paint backgroundPaint;
+    private @Nullable CellDrawer<LangtonGroundEntity> cellGroundDrawer;
+    private @Nullable CellDrawer<LangtonAntEntity> cellAntDrawer;
 
     public LangtonMainView(DefaultMainViewModel<LangtonEntity, CompositeGridModel<LangtonEntity>, LangtonConfig, LangtonStatistics> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -45,7 +48,35 @@ public final class LangtonMainView
 
     @Override
     protected void initSimulation(LangtonConfig config, CellDimension cellDimension) {
-        // Do nothing
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(backgroundPaint);
+
+        cellGroundDrawer = switch (config.cellDisplayMode()) {
+            case CellDisplayMode.SHAPE -> (descriptor, painter, cell, stepCount) ->
+                    painter.drawCell(
+                            cell.coordinate(),
+                            descriptor.color(),
+                            null,
+                            0.0d);
+            case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, stepCount) ->
+                    painter.drawCell(
+                            cell.coordinate(),
+                            descriptor.color(),
+                            backgroundPaint,
+                            1.0d);
+            default -> null;
+        };
+        cellAntDrawer = (descriptor, painter, cell, stepCount) -> {
+            painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeAdjustment.INSIDE);
+            if ((cellEmojiFont != null)
+                    && (descriptor.borderColor() != null)
+                    && (cell.entity() instanceof LangtonAnt ant)) {
+                painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(), cellEmojiFont);
+            }
+        };
     }
 
     @Override
@@ -61,11 +92,34 @@ public final class LangtonMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        if (overlayPainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        if (cellGroundDrawer == null) {
+            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            return;
+        }
+        if (cellAntDrawer == null) {
+            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            return;
+        }
 
-        // TODO draw background only at beginning?
-        basePainter.fillCanvasBackground(backgroundPaint);
+        overlayPainter.clearCanvasBackground();
 
-        // TODO implement drawSimulation
+        ReadableGridModel<LangtonGroundEntity> groundModel = (ReadableGridModel<LangtonGroundEntity>) currentModel.getLayer(LangtonSimulationManager.MODEL_LAYER_GROUND);
+        ReadableGridModel<LangtonAntEntity> antModel = (ReadableGridModel<LangtonAntEntity>) currentModel.getLayer(LangtonSimulationManager.MODEL_LAYER_ANT);
+
+        antModel.nonDefaultCells()
+                .forEachOrdered(antCell -> {
+                    GridCell<LangtonGroundEntity> groundCell = groundModel.getGridCell(antCell.coordinate());
+                    // draw ground
+                    cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.entity().descriptorId()),
+                            basePainter, groundCell, stepCount);
+                    // draw ant
+                    cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.entity().descriptorId()),
+                            overlayPainter, antCell, stepCount);
+                });
     }
 
     @Override

@@ -29,4 +29,8 @@ public final class LangtonAnt implements LangtonAntEntity {
         return "TODO"; // TODO implement
     }
 
+    public CompassDirection direction() {
+        return direction;
+    }
+
 }

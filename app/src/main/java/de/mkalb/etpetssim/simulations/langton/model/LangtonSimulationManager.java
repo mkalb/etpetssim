@@ -12,8 +12,8 @@ public final class LangtonSimulationManager
         extends AbstractTimedSimulationManager<LangtonEntity, CompositeGridModel<LangtonEntity>, LangtonConfig,
         LangtonStatistics> {
 
-    private static final int MODEL_LAYER_GROUND = 0;
-    private static final int MODEL_LAYER_ANT = 1;
+    public static final int MODEL_LAYER_GROUND = 0;
+    public static final int MODEL_LAYER_ANT = 1;
 
     private final GridStructure structure;
     private final LangtonStatistics statistics;
@@ -29,23 +29,22 @@ public final class LangtonSimulationManager
         CompositeGridModel<LangtonEntity> compositeGridModel = new CompositeGridModel<>(List.of(groundModel, antModel));
 
         // Executor with runner and terminationCondition
-        var runner = new LangtonStepRunner(compositeGridModel);
+        var runner = new LangtonStepRunner(structure, config, groundModel, antModel, compositeGridModel);
         var terminationCondition = new LangtonTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::compositeGridModel, terminationCondition, statistics));
 
         updateStatistics();
 
-        initializeGrid(config, compositeGridModel);
+        initializeGrid(config, groundModel, antModel);
 
-        updateInitialStatistics(config, compositeGridModel);
+        updateInitialStatistics(config, groundModel, antModel);
     }
 
-    @SuppressWarnings("unchecked")
-    private void initializeGrid(LangtonConfig config, CompositeGridModel<LangtonEntity> compositeGridModel) {
+    private void initializeGrid(LangtonConfig config, WritableGridModel<LangtonGroundEntity> groundModel, WritableGridModel<LangtonAntEntity> antModel) {
         LangtonAnt ant = new LangtonAnt(CompassDirection.N);
-        WritableGridModel<LangtonAntEntity> antModel = (WritableGridModel<LangtonAntEntity>) compositeGridModel.getLayer(MODEL_LAYER_ANT);
         GridCoordinate coordinate = new GridCoordinate(structure.size().width() / 2, structure.size().height() / 2);
         antModel.setEntity(coordinate, ant);
+        groundModel.setEntity(coordinate, LangtonGroundEntity.COLOR_1);
     }
 
     @Override
@@ -65,9 +64,8 @@ public final class LangtonSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    @SuppressWarnings({"unchecked", "NumericCastThatLosesPrecision"})
-    private void updateInitialStatistics(LangtonConfig config, CompositeGridModel<LangtonEntity> compositeGridModel) {
-        WritableGridModel<LangtonAntEntity> antModel = (WritableGridModel<LangtonAntEntity>) compositeGridModel.getLayer(MODEL_LAYER_ANT);
+    @SuppressWarnings({"NumericCastThatLosesPrecision"})
+    private void updateInitialStatistics(LangtonConfig config, WritableGridModel<LangtonGroundEntity> groundModel, WritableGridModel<LangtonAntEntity> antModel) {
         statistics.updateCells((int) antModel.countEntities(LangtonEntity::isAgent), true);
     }
 
