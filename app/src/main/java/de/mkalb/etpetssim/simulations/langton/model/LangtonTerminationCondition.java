@@ -8,7 +8,7 @@ public final class LangtonTerminationCondition
 
     @Override
     public boolean isFinished(CompositeGridModel<LangtonEntity> model, int stepCount, LangtonStatistics statistics) {
-        return statistics.getAntCells() == 0;
+        return (statistics.getAntCells() == 0) || (statistics.getTotalCells() == statistics.getVisitedCells());
     }
 
 }
