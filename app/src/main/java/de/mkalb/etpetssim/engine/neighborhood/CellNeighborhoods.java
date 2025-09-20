@@ -320,9 +320,8 @@ public final class CellNeighborhoods {
     public static Stream<CellNeighbor> cellNeighborsIgnoringEdgeBehavior(GridCoordinate startCoordinate,
                                                                          NeighborhoodMode neighborhoodMode,
                                                                          CellShape cellShape) {
-        List<CellNeighborConnection> cellNeighborConnections = CACHE.computeIfAbsent(
-                generateCacheKey(startCoordinate, neighborhoodMode, cellShape),
-                _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));
+        List<CellNeighborConnection> cellNeighborConnections =
+                getCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
 
         return cellNeighborConnections.stream()
                                       .map(neighborConnection -> new CellNeighbor(
@@ -331,6 +330,46 @@ public final class CellNeighborhoods {
                                               neighborConnection.connectionType(),
                                               startCoordinate.offset(neighborConnection.offset())
                                       ));
+    }
+
+    /**
+     * Returns an {@link Optional} containing a {@link CellNeighborWithEdgeBehavior} for the neighbor of a cell
+     * in the specified compass direction, applying the grid's edge behavior to the neighbor coordinate.
+     * <p>
+     * This method determines the theoretical neighbor in the given direction (based on cell shape and neighborhood mode),
+     * applies the grid's edge behavior to the neighbor coordinate, and returns a record describing the relationship
+     * and edge behavior outcome. If no neighbor exists in the specified direction, an empty {@link Optional} is returned.
+     *
+     * @param startCoordinate   the coordinate of the cell whose neighbor is to be determined
+     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
+     * @param direction         the compass direction of the desired neighbor
+     * @param structure         the grid structure defining size, boundaries, and edge behavior
+     * @return an {@link Optional} containing the {@link CellNeighborWithEdgeBehavior} for the neighbor in the given direction,
+     *         or an empty {@link Optional} if no such neighbor exists
+     */
+    public static Optional<CellNeighborWithEdgeBehavior> cellNeighborWithEdgeBehavior(GridCoordinate startCoordinate,
+                                                                                      NeighborhoodMode neighborhoodMode,
+                                                                                      CompassDirection direction,
+                                                                                      GridStructure structure) {
+        List<CellNeighborConnection> cellNeighborConnections =
+                getCellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
+
+        for (CellNeighborConnection neighborConnection : cellNeighborConnections) {
+            if (neighborConnection.direction() == direction) {
+                GridCoordinate neighborCoordinate = startCoordinate.offset(neighborConnection.offset());
+                EdgeBehaviorResult edgeResult = applyEdgeBehaviorToCoordinate(neighborCoordinate, structure);
+
+                return Optional.of(new CellNeighborWithEdgeBehavior(
+                        startCoordinate,
+                        neighborConnection.direction(),
+                        neighborConnection.connectionType(),
+                        neighborCoordinate,
+                        edgeResult.mapped(),
+                        edgeResult.action()
+                ));
+            }
+        }
+        return Optional.empty();
     }
 
     /**
@@ -417,6 +456,14 @@ public final class CellNeighborhoods {
         }
 
         return result;
+    }
+
+    static List<CellNeighborConnection> getCellNeighborConnections(GridCoordinate startCoordinate,
+                                                                   NeighborhoodMode neighborhoodMode,
+                                                                   CellShape cellShape) {
+        return CACHE.computeIfAbsent(
+                generateCacheKey(startCoordinate, neighborhoodMode, cellShape),
+                _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));
     }
 
     static String generateCacheKey(GridCoordinate startCoordinate,
