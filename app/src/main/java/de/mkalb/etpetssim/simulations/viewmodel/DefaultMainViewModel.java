@@ -306,56 +306,65 @@ public final class DefaultMainViewModel<
             return;
         }
 
-        // Execute simulation step
-        simulationManager.executeStep();
+        try {
+            // Execute simulation step
+            simulationManager.executeStep();
 
-        AppLogger.debug(() -> "Simulation (timer) has executed step. duration=" + simulationManager.stepTimingStatistics().current());
+            AppLogger.debug(() -> "Simulation (timer) has executed step. duration=" + simulationManager.stepTimingStatistics().current());
 
-        // Update statistics
-        updateObservationStatistics(simulationManager.statistics());
+            // Update statistics
+            updateObservationStatistics(simulationManager.statistics());
 
-        // Check if simulation finished
-        if (controlViewModel.isTerminationChecked() && simulationManager.isFinished()) {
-            setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation (timer) has ended itself.");
-        }
-
-        if (simulationManager.isExecutorFinished()) {
-            setSimulationState(SimulationState.FINISHED);
-            logSimulationInfo("Simulation (timer) executor has finished.");
-        }
-
-        // Notify view about the step and measure duration
-        long startView = System.currentTimeMillis();
-        simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
-        long durationView = System.currentTimeMillis() - startView;
-
-        AppLogger.debug(() -> "Simulation (timer) has informed step listener. duration=" + durationView);
-
-        // Check timeout if still running (not finished) and not the first step
-        if ((getSimulationState() == SimulationState.RUNNING_TIMED) && (simulationManager.stepCount() > 1)) {
-            // Check for calculation timeout
-            if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
-                setNotificationType(SimulationNotificationType.TIMEOUT);
-
+            // Check if simulation finished
+            if (controlViewModel.isTerminationChecked() && simulationManager.isFinished()) {
                 setSimulationState(SimulationState.PAUSED);
-                logSimulationInfo("Simulation (timer) has been paused because the simulation step took too long to " +
-                        "calculate. duration=" + simulationManager.stepTimingStatistics().current() + " " +
-                        "timeoutExecuteMillis=" + timeoutExecuteMillis);
+                logSimulationInfo("Simulation (timer) has ended itself.");
             }
 
-            // Check for view timeout
-            if (durationView > timeoutViewMillis) {
-                setNotificationType(SimulationNotificationType.TIMEOUT);
-
-                setSimulationState(SimulationState.PAUSED);
-                logSimulationInfo("Simulation (timer) has been paused because the view took too long to process. " +
-                        "duration=" + durationView + " " +
-                        "timeoutViewMillis=" + timeoutViewMillis);
+            if (simulationManager.isExecutorFinished()) {
+                setSimulationState(SimulationState.FINISHED);
+                logSimulationInfo("Simulation (timer) executor has finished.");
             }
+
+            // Notify view about the step and measure duration
+            long startView = System.currentTimeMillis();
+            simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
+            long durationView = System.currentTimeMillis() - startView;
+
+            AppLogger.debug(() -> "Simulation (timer) has informed step listener. duration=" + durationView);
+
+            // Check timeout if still running (not finished) and not the first step
+            if ((getSimulationState() == SimulationState.RUNNING_TIMED) && (simulationManager.stepCount() > 1)) {
+                // Check for calculation timeout
+                if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
+                    setNotificationType(SimulationNotificationType.TIMEOUT);
+
+                    setSimulationState(SimulationState.PAUSED);
+                    logSimulationInfo("Simulation (timer) has been paused because the simulation step took too long to " +
+                            "calculate. duration=" + simulationManager.stepTimingStatistics().current() + " " +
+                            "timeoutExecuteMillis=" + timeoutExecuteMillis);
+                }
+
+                // Check for view timeout
+                if (durationView > timeoutViewMillis) {
+                    setNotificationType(SimulationNotificationType.TIMEOUT);
+
+                    setSimulationState(SimulationState.PAUSED);
+                    logSimulationInfo("Simulation (timer) has been paused because the view took too long to process. " +
+                            "duration=" + durationView + " " +
+                            "timeoutViewMillis=" + timeoutViewMillis);
+                }
+            }
+        } catch (IllegalArgumentException | IllegalStateException | NullPointerException
+                 | IndexOutOfBoundsException | NoSuchElementException e) {
+            setNotificationType(SimulationNotificationType.EXCEPTION);
+
+            setSimulationState(SimulationState.ERROR);
+            logSimulationInfo("Simulation (timer) has encountered an error and is stopped: " + e.getMessage());
         }
 
-        // If simulation is paused or finished, notify view for final step and stop timer.
+        // If simulation is paused, finished or caught an error,
+        // notify view for final step and stop timer.
         if (getSimulationState() != SimulationState.RUNNING_TIMED) {
             notifyFinalStepAndStopTimer();
         }
@@ -430,6 +439,14 @@ public final class DefaultMainViewModel<
                     } else {
                         AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in a valid state for batch execution: " + getSimulationState());
                     }
+                });
+            } catch (IllegalArgumentException | IllegalStateException | NullPointerException
+                     | IndexOutOfBoundsException | NoSuchElementException e) {
+                Platform.runLater(() -> {
+                    setNotificationType(SimulationNotificationType.EXCEPTION);
+
+                    setSimulationState(SimulationState.ERROR);
+                    logSimulationInfo("Simulation (batch) has encountered an error and is stopped: " + e.getMessage());
                 });
             } finally {
                 batchThread = null;
