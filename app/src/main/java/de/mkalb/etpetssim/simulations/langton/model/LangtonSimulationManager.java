@@ -66,7 +66,8 @@ public final class LangtonSimulationManager
 
     @SuppressWarnings({"NumericCastThatLosesPrecision"})
     private void updateInitialStatistics(LangtonConfig config, WritableGridModel<LangtonGroundEntity> groundModel, WritableGridModel<LangtonAntEntity> antModel) {
-        statistics.updateCells((int) antModel.countEntities(LangtonEntity::isAgent), true);
+        int newAnts = (int) antModel.countEntities(LangtonEntity::isAgent);
+        statistics.updateCells(newAnts, newAnts);
     }
 
     @Override
