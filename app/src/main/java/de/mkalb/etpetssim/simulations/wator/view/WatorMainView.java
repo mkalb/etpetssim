@@ -179,7 +179,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<WatorEntity> currentModel, int stepCount) {
+    protected void drawSimulation(WritableGridModel<WatorEntity> currentModel, int stepCount, int lastDrawnStepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

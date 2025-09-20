@@ -125,7 +125,7 @@ public abstract class AbstractDefaultMainView<
 
     private void drawAndMeasureSimulationStep(int stepCount) {
         long start = System.currentTimeMillis();
-        drawSimulation(viewModel.getCurrentModel(), stepCount);
+        drawSimulation(viewModel.getCurrentModel(), stepCount, lastDrawnStepCount);
         long duration = System.currentTimeMillis() - start;
         drawThrottler.recordDuration(duration);
 
@@ -178,6 +178,6 @@ public abstract class AbstractDefaultMainView<
 
     protected abstract void initSimulation(CON config, CellDimension cellDimension);
 
-    protected abstract void drawSimulation(GM currentModel, int stepCount);
+    protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);
 
 }

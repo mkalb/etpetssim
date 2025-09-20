@@ -87,7 +87,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void drawSimulation(CompositeGridModel<LangtonEntity> currentModel, int stepCount) {
+    protected void drawSimulation(CompositeGridModel<LangtonEntity> currentModel, int stepCount, int lastDrawnStepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -110,16 +110,31 @@ public final class LangtonMainView
         ReadableGridModel<LangtonGroundEntity> groundModel = (ReadableGridModel<LangtonGroundEntity>) currentModel.getLayer(LangtonSimulationManager.MODEL_LAYER_GROUND);
         ReadableGridModel<LangtonAntEntity> antModel = (ReadableGridModel<LangtonAntEntity>) currentModel.getLayer(LangtonSimulationManager.MODEL_LAYER_ANT);
 
-        antModel.nonDefaultCells()
-                .forEachOrdered(antCell -> {
-                    GridCell<LangtonGroundEntity> groundCell = groundModel.getGridCell(antCell.coordinate());
-                    // draw ground
-                    cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.entity().descriptorId()),
-                            basePainter, groundCell, stepCount);
-                    // draw ant
-                    cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.entity().descriptorId()),
-                            overlayPainter, antCell, stepCount);
-                });
+        if ((lastDrawnStepCount + 1) < stepCount) {
+            groundModel.nonDefaultCells()
+                       .forEachOrdered(groundCell -> {
+                           // draw ground
+                           cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.entity().descriptorId()),
+                                   basePainter, groundCell, stepCount);
+                       });
+            antModel.nonDefaultCells()
+                    .forEachOrdered(antCell -> {
+                        // draw ant
+                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.entity().descriptorId()),
+                                overlayPainter, antCell, stepCount);
+                    });
+        } else {
+            antModel.nonDefaultCells()
+                    .forEachOrdered(antCell -> {
+                        GridCell<LangtonGroundEntity> groundCell = groundModel.getGridCell(antCell.coordinate());
+                        // draw ground
+                        cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.entity().descriptorId()),
+                                basePainter, groundCell, stepCount);
+                        // draw ant
+                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.entity().descriptorId()),
+                                overlayPainter, antCell, stepCount);
+                    });
+        }
     }
 
     @Override
