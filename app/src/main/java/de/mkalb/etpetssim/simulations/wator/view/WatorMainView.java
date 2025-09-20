@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
@@ -37,7 +38,7 @@ public final class WatorMainView
 
     private final Paint backgroundPaint;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
-    private @Nullable CellDrawer cellDrawer;
+    private @Nullable CellDrawer<WatorEntity> cellDrawer;
 
     private int maxColorSharkEnergy = 1;
 
@@ -85,39 +86,35 @@ public final class WatorMainView
                 computeStrokeLineWidth(config.cellShape(), cellDimension) : 0.0d;
 
         cellDrawer = switch (config.cellDisplayMode()) {
-            case CellDisplayMode.SHAPE ->
-                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
-                            painter.drawCell(
-                                    cell.coordinate(),
-                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                                    null,
-                                    strokeLineWidth);
-            case CellDisplayMode.SHAPE_BORDERED ->
-                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
-                            painter.drawCell(
-                                    cell.coordinate(),
-                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                                    backgroundPaint,
-                                    strokeLineWidth);
-            case CellDisplayMode.CIRCLE ->
-                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
-                            painter.drawCellInnerCircle(
-                                    cell.coordinate(),
-                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                                    null,
-                                    strokeLineWidth,
-                                    StrokeAdjustment.INSIDE);
-            case CellDisplayMode.CIRCLE_BORDERED ->
-                    (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
-                            painter.drawCellInnerCircle(
-                                    cell.coordinate(),
-                                    resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                                    backgroundPaint,
-                                    strokeLineWidth,
-                                    StrokeAdjustment.INSIDE);
+            case CellDisplayMode.SHAPE -> (descriptor, painter, cell, stepCount) ->
+                    painter.drawCell(
+                            cell.coordinate(),
+                            resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                            null,
+                            strokeLineWidth);
+            case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, stepCount) ->
+                    painter.drawCell(
+                            cell.coordinate(),
+                            resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                            backgroundPaint,
+                            strokeLineWidth);
+            case CellDisplayMode.CIRCLE -> (descriptor, painter, cell, stepCount) ->
+                    painter.drawCellInnerCircle(
+                            cell.coordinate(),
+                            resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                            null,
+                            strokeLineWidth,
+                            StrokeAdjustment.INSIDE);
+            case CellDisplayMode.CIRCLE_BORDERED -> (descriptor, painter, cell, stepCount) ->
+                    painter.drawCellInnerCircle(
+                            cell.coordinate(),
+                            resolveEntityFillColor(descriptor, cell.entity(), stepCount),
+                            backgroundPaint,
+                            strokeLineWidth,
+                            StrokeAdjustment.INSIDE);
             case CellDisplayMode.EMOJI -> {
                 if (cellEmojiFont == null) {
-                    yield (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                    yield (descriptor, painter, cell, stepCount) ->
                             painter.drawCellInnerCircle(
                                     cell.coordinate(),
                                     resolveEntityFillColor(descriptor, cell.entity(), stepCount),
@@ -125,7 +122,7 @@ public final class WatorMainView
                                     strokeLineWidth,
                                     StrokeAdjustment.INSIDE);
                 }
-                yield (GridEntityDescriptor descriptor, FXGridCanvasPainter painter, GridCell<WatorEntity> cell, int stepCount) ->
+                yield (descriptor, painter, cell, stepCount) ->
                         painter.drawCenteredTextInCell(
                                 cell.coordinate(),
                                 descriptor.emojiAsOptional().orElse("#"),
@@ -196,28 +193,13 @@ public final class WatorMainView
 
         currentModel.nonDefaultCells()
                     .forEachOrdered(cell ->
-                            GridEntityUtils.consumeDescriptorAt(
-                                    cell.coordinate(),
-                                    currentModel,
-                                    entityDescriptorRegistry,
-                                    descriptor ->
-                                            cellDrawer.draw(descriptor, basePainter, cell, stepCount)));
-
+                            cellDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(cell.entity().descriptorId()),
+                                    basePainter, cell, stepCount));
     }
 
     @Override
     protected List<Node> createModificationToolbarNodes() {
         return List.of();
-    }
-
-    @FunctionalInterface
-    private interface CellDrawer {
-
-        void draw(GridEntityDescriptor descriptor,
-                  FXGridCanvasPainter painter,
-                  GridCell<WatorEntity> cell,
-                  int stepCount);
-
     }
 
 }
