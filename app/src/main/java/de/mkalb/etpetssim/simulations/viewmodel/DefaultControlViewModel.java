@@ -13,7 +13,7 @@ public final class DefaultControlViewModel
         extends AbstractControlViewModel {
 
     private static final int STEP_DURATION_INITIAL = 700;
-    private static final int STEP_DURATION_MIN = 100;
+    private static final int STEP_DURATION_MIN = 50;
     private static final int STEP_DURATION_MAX = 2_000;
 
     private static final int STEP_COUNT_INITIAL = 100;
