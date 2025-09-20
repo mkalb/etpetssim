@@ -20,8 +20,8 @@ public final class LangtonStatistics
         updateCommon(newStepCount, newStepTimingStatistics);
     }
 
-    void updateCells(int newAntCells, boolean newCellVisited) {
-        antCells = newAntCells;
+    void updateCells(int antCellsChange, boolean newCellVisited) {
+        antCells += antCellsChange;
         if (newCellVisited) {
             visitedCells++;
         }
