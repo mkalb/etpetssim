@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.model.*;
 
 import java.util.*;
 
+@SuppressWarnings("ClassCanBeRecord")
 public final class LangtonStepRunner
         implements SimulationStepRunner<LangtonStatistics> {
 

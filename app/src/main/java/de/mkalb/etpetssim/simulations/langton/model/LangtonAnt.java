@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 
+@SuppressWarnings("ClassCanBeRecord")
 public final class LangtonAnt implements LangtonAntEntity {
 
     private final CompassDirection direction;
