@@ -136,7 +136,7 @@ public final class DefaultControlView
         );
 
         terminationCheckControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> viewModel.getSimulationState().cannotStart(),
+                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
                         viewModel.simulationStateProperty()
                 )
         );
