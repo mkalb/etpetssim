@@ -390,8 +390,6 @@ public final class DefaultMainViewModel<
                     });
                 });
 
-                logSimulationInfo("Simulation (batch) finished. Requested steps: " + count + ", " + executionResult);
-
                 // Create the event and statistics before the "runLater".
                 var stepEvent = new SimulationStepEvent(false, simulationManager.stepCount(), true);
                 var statistics = simulationManager.statistics();
@@ -399,43 +397,47 @@ public final class DefaultMainViewModel<
 
                 Platform.runLater(() -> {
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
-                        logSimulationInfo("Finishing batch execution at state RUNNING_BATCH.");
                         if (executorFinished) {
                             setSimulationState(SimulationState.FINISHED);
-                            logSimulationInfo("Simulation executor has finished.");
+                            logSimulationInfo("Simulation (batch) finished and executor finished. RUNNING_BATCH -> FINISHED count=" + count + ", executionResult=" + executionResult);
                         } else {
                             setSimulationState(SimulationState.PAUSED);
                             if (executionResult.isFinished()) {
-                                logSimulationInfo("Simulation has ended itself.");
+                                logSimulationInfo("Simulation (batch) finished and simulation finished. RUNNING_BATCH -> PAUSED count=" + count + ", executionResult=" + executionResult);
+                            } else if (count >= 100) {
+                                logSimulationInfo("Simulation (batch) finished. RUNNING_BATCH -> PAUSED count=" + count + ", executionResult=" + executionResult);
                             }
                         }
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
                         if (restartBatchIfPossible && !executionResult.isFinished()) {
                             setSimulationState(SimulationState.RUNNING_BATCH);
-                            logSimulationInfo("Restarting batch execution for next steps.");
+                            if (count >= 100) {
+                                logSimulationInfo("Simulation (batch) finished. Restart new batch. RUNNING_BATCH -> RUNNING_BATCH count=" + count + ", executionResult=" + executionResult);
+                            }
                             runBatchSteps(count, checkTermination, restartBatchIfPossible);
                         }
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
-                        logSimulationInfo("Finishing batch execution at state PAUSING_BATCH.");
                         if (executorFinished) {
                             setSimulationState(SimulationState.FINISHED);
-                            logSimulationInfo("Simulation executor has finished.");
+                            logSimulationInfo("Simulation (batch) finished and executor finished. PAUSING_BATCH -> FINISHED count=" + count + ", executionResult=" + executionResult);
                         } else {
                             setSimulationState(SimulationState.PAUSED);
                             if (executionResult.isFinished()) {
-                                logSimulationInfo("Simulation has ended itself.");
+                                logSimulationInfo("Simulation (batch) finished and simulation finished. PAUSING_BATCH -> PAUSED count=" + count + ", executionResult=" + executionResult);
+                            } else {
+                                logSimulationInfo("Simulation (batch) finished. PAUSING_BATCH -> PAUSED count=" + count + ", executionResult=" + executionResult);
                             }
                         }
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
                     } else if (getSimulationState() == SimulationState.CANCELLING_BATCH) {
-                        logSimulationInfo("Finishing batch execution at state CANCELLING_BATCH.");
                         setSimulationState(SimulationState.CANCELLED);
+                        logSimulationInfo("Simulation (batch) finished. CANCELLING_BATCH -> CANCELLED count=" + count + ", executionResult=" + executionResult);
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
                     } else if (getSimulationState() == SimulationState.SHUTTING_DOWN) {
-                        logSimulationInfo("Finishing batch execution at state SHUTTING_DOWN.");
+                        logSimulationInfo("Simulation (batch) finished. SHUTTING_DOWN. count=" + count + ", executionResult=" + executionResult);
                     } else {
                         AppLogger.error(Thread.currentThread().getName() + " : " + "Simulation is not in a valid state for batch execution: " + getSimulationState());
                     }
