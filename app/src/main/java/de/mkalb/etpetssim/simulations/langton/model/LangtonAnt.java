@@ -2,10 +2,9 @@ package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 
-@SuppressWarnings("ClassCanBeRecord")
 public final class LangtonAnt implements LangtonAntEntity {
 
-    private final CompassDirection direction;
+    private CompassDirection direction;
 
     public LangtonAnt(CompassDirection direction) {
         this.direction = direction;
@@ -32,6 +31,10 @@ public final class LangtonAnt implements LangtonAntEntity {
 
     public CompassDirection direction() {
         return direction;
+    }
+
+    public void changeDirection(CompassDirection newDirection) {
+        direction = newDirection;
     }
 
 }
