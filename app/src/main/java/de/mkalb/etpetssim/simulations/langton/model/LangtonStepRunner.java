@@ -15,13 +15,13 @@ public final class LangtonStepRunner
     private final LangtonConfig config;
     private final WritableGridModel<LangtonGroundEntity> groundModel;
     private final WritableGridModel<LangtonAntEntity> antModel;
-    private final CompositeGridModel<LangtonEntity> compositeGridModel;
+    private final LayeredCompositeGridModel<LangtonEntity> compositeGridModel;
 
     public LangtonStepRunner(GridStructure structure,
                              LangtonConfig config,
                              WritableGridModel<LangtonGroundEntity> groundModel,
                              WritableGridModel<LangtonAntEntity> antModel,
-                             CompositeGridModel<LangtonEntity> compositeGridModel) {
+                             LayeredCompositeGridModel<LangtonEntity> compositeGridModel) {
         this.structure = structure;
         this.config = config;
         this.groundModel = groundModel;
@@ -29,7 +29,7 @@ public final class LangtonStepRunner
         this.compositeGridModel = compositeGridModel;
     }
 
-    public CompositeGridModel<LangtonEntity> compositeGridModel() {
+    public LayeredCompositeGridModel<LangtonEntity> compositeGridModel() {
         return compositeGridModel;
     }
 

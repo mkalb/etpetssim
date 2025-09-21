@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 import java.util.*;
 
 public final class LangtonSimulationManager
-        extends AbstractTimedSimulationManager<LangtonEntity, CompositeGridModel<LangtonEntity>, LangtonConfig,
+        extends AbstractTimedSimulationManager<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>, LangtonConfig,
         LangtonStatistics> {
 
     public static final int MODEL_LAYER_GROUND = 0;
@@ -17,7 +17,7 @@ public final class LangtonSimulationManager
 
     private final GridStructure structure;
     private final LangtonStatistics statistics;
-    private final TimedSimulationExecutor<LangtonEntity, CompositeGridModel<LangtonEntity>> executor;
+    private final TimedSimulationExecutor<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>> executor;
 
     public LangtonSimulationManager(LangtonConfig config) {
         super(config);
@@ -26,7 +26,7 @@ public final class LangtonSimulationManager
         statistics = new LangtonStatistics(structure.cellCount());
         WritableGridModel<LangtonGroundEntity> groundModel = new SparseGridModel<>(structure, LangtonGroundEntity.UNVISITED);
         WritableGridModel<LangtonAntEntity> antModel = new SparseGridModel<>(structure, LangtonAntNone.NONE);
-        CompositeGridModel<LangtonEntity> compositeGridModel = new CompositeGridModel<>(List.of(groundModel, antModel));
+        LayeredCompositeGridModel<LangtonEntity> compositeGridModel = new LayeredCompositeGridModel<>(List.of(groundModel, antModel));
 
         // Executor with runner and terminationCondition
         var runner = new LangtonStepRunner(structure, config, groundModel, antModel, compositeGridModel);
@@ -76,7 +76,7 @@ public final class LangtonSimulationManager
     }
 
     @Override
-    protected TimedSimulationExecutor<LangtonEntity, CompositeGridModel<LangtonEntity>> executor() {
+    protected TimedSimulationExecutor<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>> executor() {
         return executor;
     }
 

@@ -21,7 +21,7 @@ import java.util.*;
 public final class LangtonMainView
         extends AbstractDefaultMainView<
         LangtonEntity,
-        CompositeGridModel<LangtonEntity>,
+        LayeredCompositeGridModel<LangtonEntity>,
         LangtonConfig,
         LangtonStatistics,
         LangtonConfigView,
@@ -31,7 +31,7 @@ public final class LangtonMainView
     private @Nullable CellDrawer<LangtonGroundEntity> cellGroundDrawer;
     private @Nullable CellDrawer<LangtonAntEntity> cellAntDrawer;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, CompositeGridModel<LangtonEntity>, LangtonConfig, LangtonStatistics> viewModel,
+    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>, LangtonConfig, LangtonStatistics> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
                            DefaultControlView controlView,
@@ -87,7 +87,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void drawSimulation(CompositeGridModel<LangtonEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(LayeredCompositeGridModel<LangtonEntity> currentModel, int stepCount, int lastDrawnStepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

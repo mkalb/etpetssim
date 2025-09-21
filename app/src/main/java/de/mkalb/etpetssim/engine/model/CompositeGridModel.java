@@ -1,82 +1,38 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
 
 import java.util.*;
 
 /**
- * A grid model composed of multiple layers, each represented by a {@link WritableGridModel}.
+ * Represents a grid model composed of multiple sub-models or layers.
  * <p>
- * All layers must share the same grid structure. This model provides read-only access to entities
- * across all layers at a given coordinate.
+ * Provides a unified interface for grid models that aggregate or combine other grid models,
+ * such as layered or composite grids. All sub-models must share the same grid structure.
  * </p>
  *
  * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
  */
-@SuppressWarnings("ClassCanBeRecord")
-public final class CompositeGridModel<T extends GridEntity> implements GridModel<T> {
-
-    private final List<WritableGridModel<? extends T>> layers;
+public non-sealed interface CompositeGridModel<T extends GridEntity> extends GridModel<T> {
 
     /**
-     * Constructs a composite grid model from the given layers.
-     * <p>
-     * All layers must have the same grid structure.
-     *
-     * @param layers the list of grid model layers
-     * @throws IllegalArgumentException if no layers are provided or grid structures do not match
-     */
-    public CompositeGridModel(List<WritableGridModel<? extends T>> layers) {
-        if (layers.isEmpty()) {
-            throw new IllegalArgumentException("At least one layer required");
-        }
-        GridStructure structure = layers.getFirst().structure();
-        for (WritableGridModel<?> layer : layers) {
-            if (!layer.structure().equals(structure)) {
-                throw new IllegalArgumentException("All grid structures must match");
-            }
-        }
-        this.layers = layers;
-    }
-
-    @Override
-    public GridStructure structure() {
-        return layers.getFirst().structure();
-    }
-
-    /**
-     * Returns a list of entities at the specified coordinate, one from each layer.
+     * Returns a list of entities at the specified coordinate.
      *
      * @param coordinate the grid coordinate
-     * @return a list of entities at the coordinate, in layer order
+     * @return a list of entities at the coordinate
      */
-    public List<T> getEntities(GridCoordinate coordinate) {
-        List<T> entities = new ArrayList<>(layers.size());
-        for (WritableGridModel<? extends T> layer : layers) {
-            entities.add(layer.getEntity(coordinate));
-        }
-        return entities;
-    }
+    List<T> getEntities(GridCoordinate coordinate);
 
     /**
-     * Returns the number of layers in this composite grid model.
+     * Returns the number of sub-models or layers contained in this composite grid model.
      *
-     * @return the layer count
+     * @return the count of sub-models
      */
-    public int layerCount() {
-        return layers.size();
-    }
+    int subModelCount();
 
-    /**
-     * Returns the writable grid model for the specified layer index.
-     *
-     * @param index the layer index
-     * @return the writable grid model at the given index
-     * @throws IndexOutOfBoundsException if the index is out of range
-     */
-    public WritableGridModel<? extends T> getLayer(int index) {
-        return layers.get(index);
+    @Override
+    default boolean isComposite() {
+        return true;
     }
 
 }

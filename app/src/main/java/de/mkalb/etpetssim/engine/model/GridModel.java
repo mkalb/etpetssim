@@ -19,6 +19,13 @@ public sealed interface GridModel<T extends GridEntity>
     GridStructure structure();
 
     /**
+     * Indicates whether this grid model is a composite model that aggregates multiple sub-models or layers.
+     *
+     * @return {@code true} if the grid model is composite, {@code false} otherwise
+     */
+    boolean isComposite();
+
+    /**
      * Checks if the given coordinate is valid within the grid structure.
      *
      * @param coordinate the grid coordinate

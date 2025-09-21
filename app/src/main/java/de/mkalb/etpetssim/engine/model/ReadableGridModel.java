@@ -18,6 +18,11 @@ import java.util.stream.*;
 public sealed interface ReadableGridModel<T extends GridEntity> extends GridModel<T>
         permits WritableGridModel {
 
+    @Override
+    default boolean isComposite() {
+        return false;
+    }
+
     /**
      * Returns the default entity for grid cells.
      *
