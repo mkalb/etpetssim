@@ -42,9 +42,14 @@ public final class LangtonSimulationManager
 
     private void initializeGrid(LangtonConfig config, WritableGridModel<LangtonGroundEntity> groundModel, WritableGridModel<LangtonAntEntity> antModel) {
         LangtonAnt ant = new LangtonAnt(CompassDirection.N);
-        GridCoordinate coordinate = new GridCoordinate(structure.size().width() / 2, structure.size().height() / 2);
+        // Start at the middle of teh grid but round down to an even number. This avoids problems with TRIANGLE.
+        GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
         antModel.setEntity(coordinate, ant);
         groundModel.setEntity(coordinate, LangtonGroundEntity.COLOR_1);
+    }
+
+    int halveToEven(int n) {
+        return (n / 2) & ~1;
     }
 
     @Override
