@@ -1,15 +1,21 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
+import de.mkalb.etpetssim.engine.CellShape;
+
 import java.util.*;
 
 public record LangtonMovementRules(
         List<AntTurn> turns) {
 
     public static final int MIN_RULE_COUNT = 2;
+    public static final int MAX_RULE_COUNT = 16;
 
     public LangtonMovementRules(List<AntTurn> turns) {
         if (turns.size() < MIN_RULE_COUNT) {
             throw new IllegalArgumentException("At least " + MIN_RULE_COUNT + " rules required, got: " + turns.size());
+        }
+        if (turns.size() > MAX_RULE_COUNT) {
+            throw new IllegalArgumentException("At most " + MAX_RULE_COUNT + " rules allowed, got: " + turns.size());
         }
         this.turns = List.copyOf(turns);
     }
@@ -53,6 +59,17 @@ public record LangtonMovementRules(
 
     public int getColorCount() {
         return turns.size();
+    }
+
+    public boolean isValidForCellShape(CellShape cellShape) {
+        if (cellShape == CellShape.TRIANGLE) {
+            for (AntTurn turn : turns) {
+                if ((turn != AntTurn.LEFT) && (turn != AntTurn.RIGHT)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public String toDisplayString() {

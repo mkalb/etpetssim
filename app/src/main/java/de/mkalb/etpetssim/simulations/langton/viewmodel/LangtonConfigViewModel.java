@@ -5,13 +5,11 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
-import de.mkalb.etpetssim.simulations.langton.model.LangtonMovementRules;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonRuleProperty;
 import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.model.SimulationState;
 import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 
 import java.util.*;
 
@@ -38,9 +36,9 @@ public final class LangtonConfigViewModel
             ""
     );
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
-    private static final LangtonMovementRules DEFAULT_MOVEMENT_RULES = LangtonMovementRules.fromString("RL");
+    private static final String RULE_INITIAL = "RL";
 
-    private final ObjectProperty<LangtonMovementRules> transitionRules = new SimpleObjectProperty<>(DEFAULT_MOVEMENT_RULES);
+    private final LangtonRuleProperty rule = new LangtonRuleProperty(RULE_INITIAL);
 
     public LangtonConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
@@ -57,12 +55,12 @@ public final class LangtonConfigViewModel
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 NEIGHBORHOOD_MODE_INITIAL,
-                transitionRulesProperty().get()
+                ruleProperty().computeRuleAndUpdateProperties(cellShapeProperty().property().getValue())
         );
     }
 
-    public ObjectProperty<LangtonMovementRules> transitionRulesProperty() {
-        return transitionRules;
+    public LangtonRuleProperty ruleProperty() {
+        return rule;
     }
 
 }
