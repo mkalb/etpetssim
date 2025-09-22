@@ -1,7 +1,9 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.simulations.langton.model.*;
 import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.view.AbstractDefaultMainView;
@@ -21,7 +23,7 @@ import java.util.*;
 public final class LangtonMainView
         extends AbstractDefaultMainView<
         LangtonEntity,
-        LayeredCompositeGridModel<LangtonEntity>,
+        LangtonGridModel,
         LangtonConfig,
         LangtonStatistics,
         LangtonConfigView,
@@ -31,7 +33,7 @@ public final class LangtonMainView
     private @Nullable CellDrawer<LangtonGroundEntity> cellGroundDrawer;
     private @Nullable CellDrawer<LangtonAntEntity> cellAntDrawer;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>, LangtonConfig, LangtonStatistics> viewModel,
+    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonGridModel, LangtonConfig, LangtonStatistics> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
                            DefaultControlView controlView,
@@ -55,13 +57,13 @@ public final class LangtonMainView
         basePainter.fillCanvasBackground(backgroundPaint);
 
         cellGroundDrawer = switch (config.cellDisplayMode()) {
-            case CellDisplayMode.SHAPE -> (descriptor, painter, cell, stepCount) ->
+            case CellDisplayMode.SHAPE -> (descriptor, painter, cell, _) ->
                     painter.drawCell(
                             cell.coordinate(),
                             descriptor.color(),
                             null,
                             0.0d);
-            case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, stepCount) ->
+            case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, _) ->
                     painter.drawCell(
                             cell.coordinate(),
                             descriptor.color(),
@@ -69,7 +71,7 @@ public final class LangtonMainView
                             1.0d);
             default -> null;
         };
-        cellAntDrawer = (descriptor, painter, cell, stepCount) -> {
+        cellAntDrawer = (descriptor, painter, cell, _) -> {
             painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeAdjustment.INSIDE);
             if ((cellEmojiFont != null)
                     && (descriptor.borderColor() != null)
@@ -87,7 +89,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void drawSimulation(LayeredCompositeGridModel<LangtonEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(LangtonGridModel currentModel, int stepCount, int lastDrawnStepCount) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -107,8 +109,8 @@ public final class LangtonMainView
 
         overlayPainter.clearCanvasBackground();
 
-        ReadableGridModel<LangtonGroundEntity> groundModel = (ReadableGridModel<LangtonGroundEntity>) currentModel.getLayer(LangtonSimulationManager.MODEL_LAYER_GROUND);
-        ReadableGridModel<LangtonAntEntity> antModel = (ReadableGridModel<LangtonAntEntity>) currentModel.getLayer(LangtonSimulationManager.MODEL_LAYER_ANT);
+        ReadableGridModel<LangtonGroundEntity> groundModel = currentModel.groundModel();
+        ReadableGridModel<LangtonAntEntity> antModel = currentModel.antModel();
 
         if ((lastDrawnStepCount + 1) < stepCount) {
             groundModel.nonDefaultCells()

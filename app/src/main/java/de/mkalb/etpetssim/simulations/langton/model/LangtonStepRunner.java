@@ -2,39 +2,36 @@ package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.AgentOrderingStrategies;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.SimulationStepRunner;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 
 import java.util.*;
 
-@SuppressWarnings("ClassCanBeRecord")
 public final class LangtonStepRunner
         implements SimulationStepRunner<LangtonStatistics> {
 
     private final GridStructure structure;
     private final LangtonConfig config;
-    private final WritableGridModel<LangtonGroundEntity> groundModel;
-    private final WritableGridModel<LangtonAntEntity> antModel;
-    private final LayeredCompositeGridModel<LangtonEntity> compositeGridModel;
+    private final LangtonGridModel model;
 
-    public LangtonStepRunner(GridStructure structure,
-                             LangtonConfig config,
-                             WritableGridModel<LangtonGroundEntity> groundModel,
-                             WritableGridModel<LangtonAntEntity> antModel,
-                             LayeredCompositeGridModel<LangtonEntity> compositeGridModel) {
-        this.structure = structure;
+    public LangtonStepRunner(LangtonConfig config,
+                             LangtonGridModel model) {
         this.config = config;
-        this.groundModel = groundModel;
-        this.antModel = antModel;
-        this.compositeGridModel = compositeGridModel;
+        this.model = model;
+        structure = model.structure();
     }
 
-    public LayeredCompositeGridModel<LangtonEntity> compositeGridModel() {
-        return compositeGridModel;
+    public LangtonGridModel model() {
+        return model;
     }
 
     @Override
     public void performStep(int stepIndex, LangtonStatistics statistics) {
+        var antModel = model.antModel();
+        var groundModel = model.groundModel();
+
         List<GridCell<LangtonAntEntity>> orderedAgentCells = antModel.filteredAndSortedCells(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition());
         for (GridCell<LangtonAntEntity> agentCell : orderedAgentCells) {
             if (agentCell.entity() instanceof LangtonAnt ant) {
@@ -64,6 +61,7 @@ public final class LangtonStepRunner
     }
 
     LangtonGroundEntity determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {
+        var groundModel = model.groundModel();
         LangtonGroundEntity groundEntity = groundModel.getEntity(newCoordinate);
         if (groundEntity == LangtonGroundEntity.UNVISITED) {
             groundEntity = LangtonGroundEntity.COLOR_0;

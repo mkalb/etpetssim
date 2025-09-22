@@ -6,46 +6,41 @@ import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationManager;
 
-import java.util.*;
-
 public final class LangtonSimulationManager
-        extends AbstractTimedSimulationManager<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>, LangtonConfig,
+        extends AbstractTimedSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig,
         LangtonStatistics> {
-
-    public static final int MODEL_LAYER_GROUND = 0;
-    public static final int MODEL_LAYER_ANT = 1;
 
     private final GridStructure structure;
     private final LangtonStatistics statistics;
-    private final TimedSimulationExecutor<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>> executor;
+    private final TimedSimulationExecutor<LangtonEntity, LangtonGridModel> executor;
 
     public LangtonSimulationManager(LangtonConfig config) {
         super(config);
 
         structure = config.createGridStructure();
         statistics = new LangtonStatistics(structure.cellCount());
-        WritableGridModel<LangtonGroundEntity> groundModel = new SparseGridModel<>(structure, LangtonGroundEntity.UNVISITED);
-        WritableGridModel<LangtonAntEntity> antModel = new SparseGridModel<>(structure, LangtonAntNone.NONE);
-        LayeredCompositeGridModel<LangtonEntity> compositeGridModel = new LayeredCompositeGridModel<>(List.of(groundModel, antModel));
+        var model = new LangtonGridModel(structure,
+                new ArrayGridModel<>(structure, LangtonGroundEntity.UNVISITED),
+                new SparseGridModel<>(structure, LangtonAntNone.NONE));
 
         // Executor with runner and terminationCondition
-        var runner = new LangtonStepRunner(structure, config, groundModel, antModel, compositeGridModel);
+        var runner = new LangtonStepRunner(config, model);
         var terminationCondition = new LangtonTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::compositeGridModel, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
         updateStatistics();
 
-        initializeGrid(config, groundModel, antModel);
+        initializeGrid(config, model);
 
-        updateInitialStatistics(config, groundModel, antModel);
+        updateInitialStatistics(config, model);
     }
 
-    private void initializeGrid(LangtonConfig config, WritableGridModel<LangtonGroundEntity> groundModel, WritableGridModel<LangtonAntEntity> antModel) {
+    private void initializeGrid(LangtonConfig config, LangtonGridModel model) {
         LangtonAnt ant = new LangtonAnt(CompassDirection.N);
         // Start at the middle of teh grid but round down to an even number. This avoids problems with TRIANGLE.
         GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
-        antModel.setEntity(coordinate, ant);
-        groundModel.setEntity(coordinate, LangtonGroundEntity.COLOR_1);
+        model.antModel().setEntity(coordinate, ant);
+        model.groundModel().setEntity(coordinate, LangtonGroundEntity.COLOR_1);
     }
 
     int halveToEven(int n) {
@@ -70,13 +65,13 @@ public final class LangtonSimulationManager
     }
 
     @SuppressWarnings({"NumericCastThatLosesPrecision"})
-    private void updateInitialStatistics(LangtonConfig config, WritableGridModel<LangtonGroundEntity> groundModel, WritableGridModel<LangtonAntEntity> antModel) {
-        int newAnts = (int) antModel.countEntities(LangtonEntity::isAgent);
+    private void updateInitialStatistics(LangtonConfig config, LangtonGridModel model) {
+        int newAnts = (int) model.antModel().countEntities(LangtonEntity::isAgent);
         statistics.updateCells(newAnts, newAnts);
     }
 
     @Override
-    protected TimedSimulationExecutor<LangtonEntity, LayeredCompositeGridModel<LangtonEntity>> executor() {
+    protected TimedSimulationExecutor<LangtonEntity, LangtonGridModel> executor() {
         return executor;
     }
 
