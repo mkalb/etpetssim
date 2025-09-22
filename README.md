@@ -10,6 +10,7 @@ top-down view.
 ### Implemented Simulations:
 - Wa-Tor (Predator-prey world)
 - Conway's Game of Life
+- Langton's Ant
 - Simulation Lab (for experiments and tests)
 
 ### Planned/Future Simulations:
@@ -17,7 +18,6 @@ top-down view.
 - Sugarscape
 - Snake
 - Forest Fire
-- Langton's Ant
 - Paterson's Worms
 
 ## Goals
@@ -36,9 +36,9 @@ This project uses the latest stable versions of all technologies whenever possib
 | Technology          | Version      | URL                             |
 |---------------------|--------------|---------------------------------|
 | Java (OpenJDK)      | Temurin 24.0 | https://adoptium.net/           |
-| JavaFX              | 24.0.2       | https://openjfx.io/             |
-| Gradle              | 8.14.3       | https://gradle.org/             |
-| IntelliJ IDEA       | 2025.1       | https://www.jetbrains.com/idea/ |
+| JavaFX              | 25           | https://openjfx.io/             |
+| Gradle              | 9.1.0        | https://gradle.org/             |
+| IntelliJ IDEA       | 2025.2       | https://www.jetbrains.com/idea/ |
 
 ## License
 
@@ -51,5 +51,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
 | Gradle     | Apache License 2.0        | https://gradle.org/license                             |
 | JavaFX     | GPL + Classpath Exception | https://openjfx.io/                                    |
 | JUnit      | EPL 2.0                   | https://junit.org                                      |
-| Mockito    | MIT License               | https://github.com/mockito/mockito/blob/main/LICENSE   |
 | JSpecify   | Apache License 2.0        | https://github.com/jspecify/jspecify/blob/main/LICENSE |
