@@ -28,6 +28,14 @@ public final class LangtonConfigView
         TitledPane layoutPane = createLayoutPane(true);
 
         // --- Rules Group ---
+        var presetControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.ruleProperty().presetProperty(),
+                viewModel.ruleProperty().presetProperty().displayNameProvider(),
+                "", // TODO KEY
+                "", // TODO KEY
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
         var ruleControl = FXComponentFactory.createLabeledStringTextBox(
                 viewModel.ruleProperty().stringProperty(),
                 viewModel.ruleProperty().labelProperty(),
@@ -39,7 +47,7 @@ public final class LangtonConfigView
         );
 
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true, ruleControl);
+                true, presetControl, ruleControl);
 
         return createConfigMainBox(structurePane, layoutPane, rulesPane);
     }

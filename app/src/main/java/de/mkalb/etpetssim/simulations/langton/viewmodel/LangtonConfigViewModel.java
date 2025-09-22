@@ -36,9 +36,8 @@ public final class LangtonConfigViewModel
             ""
     );
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
-    private static final String RULE_INITIAL = "RL";
 
-    private final LangtonRuleProperty rule = new LangtonRuleProperty(RULE_INITIAL);
+    private final LangtonRuleProperty rule = new LangtonRuleProperty();
 
     public LangtonConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
