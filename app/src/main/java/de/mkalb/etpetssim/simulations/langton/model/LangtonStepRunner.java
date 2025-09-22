@@ -75,79 +75,75 @@ public final class LangtonStepRunner
 
         CompassDirection newDirection = null;
         switch (structure.cellShape()) {
-            case SQUARE -> {
-                newDirection = switch (turn) {
-                    case LEFT -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.W;
-                        case CompassDirection.E -> CompassDirection.N;
-                        case CompassDirection.S -> CompassDirection.E;
-                        case CompassDirection.W -> CompassDirection.S;
-                        default -> null;
-                    };
-                    case RIGHT -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.E;
-                        case CompassDirection.E -> CompassDirection.S;
-                        case CompassDirection.S -> CompassDirection.W;
-                        case CompassDirection.W -> CompassDirection.N;
-                        default -> null;
-                    };
-                    case LEFT2, RIGHT2 -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.S;
-                        case CompassDirection.E -> CompassDirection.W;
-                        case CompassDirection.S -> CompassDirection.N;
-                        case CompassDirection.W -> CompassDirection.E;
-                        default -> null;
-                    };
-                    case NONE -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.N;
-                        case CompassDirection.E -> CompassDirection.E;
-                        case CompassDirection.S -> CompassDirection.S;
-                        case CompassDirection.W -> CompassDirection.W;
-                        default -> null;
-                    };
+            case SQUARE -> newDirection = switch (turn) {
+                case LEFT -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.W;
+                    case CompassDirection.E -> CompassDirection.N;
+                    case CompassDirection.S -> CompassDirection.E;
+                    case CompassDirection.W -> CompassDirection.S;
+                    default -> null;
                 };
-            }
-            case HEXAGON -> {
-                newDirection = switch (turn) {
-                    case LEFT -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.NW;
-                        case CompassDirection.NE -> CompassDirection.N;
-                        case CompassDirection.SE -> CompassDirection.NE;
-                        case CompassDirection.S -> CompassDirection.SE;
-                        case CompassDirection.SW -> CompassDirection.S;
-                        case CompassDirection.NW -> CompassDirection.SW;
-                        default -> null;
-                    };
-                    case RIGHT -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.NE;
-                        case CompassDirection.NE -> CompassDirection.SE;
-                        case CompassDirection.SE -> CompassDirection.S;
-                        case CompassDirection.S -> CompassDirection.SW;
-                        case CompassDirection.SW -> CompassDirection.NW;
-                        case CompassDirection.NW -> CompassDirection.N;
-                        default -> null;
-                    };
-                    case LEFT2 -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.SW;
-                        case CompassDirection.NE -> CompassDirection.NW;
-                        case CompassDirection.SE -> CompassDirection.N;
-                        case CompassDirection.S -> CompassDirection.NE;
-                        case CompassDirection.SW -> CompassDirection.SE;
-                        case CompassDirection.NW -> CompassDirection.S;
-                        default -> null;
-                    };
-                    case RIGHT2 -> switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.SE;
-                        case CompassDirection.NE -> CompassDirection.S;
-                        case CompassDirection.SE -> CompassDirection.SW;
-                        case CompassDirection.S -> CompassDirection.NW;
-                        case CompassDirection.SW -> CompassDirection.N;
-                        case CompassDirection.NW -> CompassDirection.NE;
-                        default -> null;
-                    };
-                    case NONE -> currentDirection;
+                case RIGHT -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.E;
+                    case CompassDirection.E -> CompassDirection.S;
+                    case CompassDirection.S -> CompassDirection.W;
+                    case CompassDirection.W -> CompassDirection.N;
+                    default -> null;
                 };
-            }
+                case LEFT2, RIGHT2 -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.S;
+                    case CompassDirection.E -> CompassDirection.W;
+                    case CompassDirection.S -> CompassDirection.N;
+                    case CompassDirection.W -> CompassDirection.E;
+                    default -> null;
+                };
+                case NONE -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.N;
+                    case CompassDirection.E -> CompassDirection.E;
+                    case CompassDirection.S -> CompassDirection.S;
+                    case CompassDirection.W -> CompassDirection.W;
+                    default -> null;
+                };
+            };
+            case HEXAGON -> newDirection = switch (turn) {
+                case LEFT -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.NW;
+                    case CompassDirection.NE -> CompassDirection.N;
+                    case CompassDirection.SE -> CompassDirection.NE;
+                    case CompassDirection.S -> CompassDirection.SE;
+                    case CompassDirection.SW -> CompassDirection.S;
+                    case CompassDirection.NW -> CompassDirection.SW;
+                    default -> null;
+                };
+                case RIGHT -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.NE;
+                    case CompassDirection.NE -> CompassDirection.SE;
+                    case CompassDirection.SE -> CompassDirection.S;
+                    case CompassDirection.S -> CompassDirection.SW;
+                    case CompassDirection.SW -> CompassDirection.NW;
+                    case CompassDirection.NW -> CompassDirection.N;
+                    default -> null;
+                };
+                case LEFT2 -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.SW;
+                    case CompassDirection.NE -> CompassDirection.NW;
+                    case CompassDirection.SE -> CompassDirection.N;
+                    case CompassDirection.S -> CompassDirection.NE;
+                    case CompassDirection.SW -> CompassDirection.SE;
+                    case CompassDirection.NW -> CompassDirection.S;
+                    default -> null;
+                };
+                case RIGHT2 -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.SE;
+                    case CompassDirection.NE -> CompassDirection.S;
+                    case CompassDirection.SE -> CompassDirection.SW;
+                    case CompassDirection.S -> CompassDirection.NW;
+                    case CompassDirection.SW -> CompassDirection.N;
+                    case CompassDirection.NW -> CompassDirection.NE;
+                    default -> null;
+                };
+                case NONE -> currentDirection;
+            };
             case TRIANGLE -> {
                 if (turn == LangtonMovementRules.AntTurn.LEFT) {
                     newDirection = switch (currentDirection) {
