@@ -76,27 +76,40 @@ public final class LangtonStepRunner
         CompassDirection newDirection = null;
         switch (structure.cellShape()) {
             case SQUARE -> {
-                if (turn == LangtonMovementRules.AntTurn.LEFT) {
-                    newDirection = switch (currentDirection) {
+                newDirection = switch (turn) {
+                    case LEFT -> switch (currentDirection) {
                         case CompassDirection.N -> CompassDirection.W;
                         case CompassDirection.E -> CompassDirection.N;
                         case CompassDirection.S -> CompassDirection.E;
                         case CompassDirection.W -> CompassDirection.S;
                         default -> null;
                     };
-                } else if (turn == LangtonMovementRules.AntTurn.RIGHT) {
-                    newDirection = switch (currentDirection) {
+                    case RIGHT -> switch (currentDirection) {
                         case CompassDirection.N -> CompassDirection.E;
                         case CompassDirection.E -> CompassDirection.S;
                         case CompassDirection.S -> CompassDirection.W;
                         case CompassDirection.W -> CompassDirection.N;
                         default -> null;
                     };
-                }
+                    case LEFT2, RIGHT2 -> switch (currentDirection) {
+                        case CompassDirection.N -> CompassDirection.S;
+                        case CompassDirection.E -> CompassDirection.W;
+                        case CompassDirection.S -> CompassDirection.N;
+                        case CompassDirection.W -> CompassDirection.E;
+                        default -> null;
+                    };
+                    case NONE -> switch (currentDirection) {
+                        case CompassDirection.N -> CompassDirection.N;
+                        case CompassDirection.E -> CompassDirection.E;
+                        case CompassDirection.S -> CompassDirection.S;
+                        case CompassDirection.W -> CompassDirection.W;
+                        default -> null;
+                    };
+                };
             }
             case HEXAGON -> {
-                if (turn == LangtonMovementRules.AntTurn.LEFT) {
-                    newDirection = switch (currentDirection) {
+                newDirection = switch (turn) {
+                    case LEFT -> switch (currentDirection) {
                         case CompassDirection.N -> CompassDirection.NW;
                         case CompassDirection.NE -> CompassDirection.N;
                         case CompassDirection.SE -> CompassDirection.NE;
@@ -105,8 +118,7 @@ public final class LangtonStepRunner
                         case CompassDirection.NW -> CompassDirection.SW;
                         default -> null;
                     };
-                } else if (turn == LangtonMovementRules.AntTurn.RIGHT) {
-                    newDirection = switch (currentDirection) {
+                    case RIGHT -> switch (currentDirection) {
                         case CompassDirection.N -> CompassDirection.NE;
                         case CompassDirection.NE -> CompassDirection.SE;
                         case CompassDirection.SE -> CompassDirection.S;
@@ -115,8 +127,7 @@ public final class LangtonStepRunner
                         case CompassDirection.NW -> CompassDirection.N;
                         default -> null;
                     };
-                } else if (turn == LangtonMovementRules.AntTurn.LEFT2) {
-                    newDirection = switch (currentDirection) {
+                    case LEFT2 -> switch (currentDirection) {
                         case CompassDirection.N -> CompassDirection.SW;
                         case CompassDirection.NE -> CompassDirection.NW;
                         case CompassDirection.SE -> CompassDirection.N;
@@ -125,8 +136,7 @@ public final class LangtonStepRunner
                         case CompassDirection.NW -> CompassDirection.S;
                         default -> null;
                     };
-                } else if (turn == LangtonMovementRules.AntTurn.RIGHT2) {
-                    newDirection = switch (currentDirection) {
+                    case RIGHT2 -> switch (currentDirection) {
                         case CompassDirection.N -> CompassDirection.SE;
                         case CompassDirection.NE -> CompassDirection.S;
                         case CompassDirection.SE -> CompassDirection.SW;
@@ -135,9 +145,8 @@ public final class LangtonStepRunner
                         case CompassDirection.NW -> CompassDirection.NE;
                         default -> null;
                     };
-                } else if (turn == LangtonMovementRules.AntTurn.NONE) {
-                    newDirection = currentDirection;
-                }
+                    case NONE -> currentDirection;
+                };
             }
             case TRIANGLE -> {
                 if (turn == LangtonMovementRules.AntTurn.LEFT) {
