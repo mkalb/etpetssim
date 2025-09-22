@@ -2,12 +2,8 @@ package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.AgentOrderingStrategies;
-import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.SimulationStepRunner;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-
-import java.util.*;
 
 public final class LangtonStepRunner
         implements SimulationStepRunner<LangtonStatistics> {
@@ -32,32 +28,48 @@ public final class LangtonStepRunner
         var antModel = model.antModel();
         var groundModel = model.groundModel();
 
-        List<GridCell<LangtonAntEntity>> orderedAgentCells = antModel.filteredAndSortedCells(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition());
-        for (GridCell<LangtonAntEntity> agentCell : orderedAgentCells) {
-            if (agentCell.entity() instanceof LangtonAnt ant) {
-                Optional<CellNeighborWithEdgeBehavior> neighbor = CellNeighborhoods.cellNeighborWithEdgeBehavior(agentCell.coordinate(), config.neighborhoodMode(), ant.direction(), structure);
-                if (neighbor.isPresent() && (neighbor.get().edgeBehaviorAction() != EdgeBehaviorAction.ABSORBED) && (neighbor.get().edgeBehaviorAction() != EdgeBehaviorAction.BLOCKED)) {
-                    GridCoordinate newCoordinate = neighbor.get().mappedNeighborCoordinate();
-
-                    // determine ground
-                    LangtonGroundEntity groundEntity = determineGround(newCoordinate, statistics);
-
-                    // move ant
-                    antModel.setEntityToDefault(agentCell.coordinate());
-                    antModel.setEntity(newCoordinate, agentCell.entity());
-                    ant.changeDirection(computeNewAntDirection(ant.direction(), groundEntity.ruleIndex()));
-
-                    // switch ground
-                    int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getColorCount();
-                    LangtonGroundEntity newGroundEntity = LangtonGroundEntity.forRuleIndex(newRuleIndex);
-                    groundModel.setEntity(newCoordinate, newGroundEntity);
-                } else {
-                    // remove ant
-                    antModel.setEntityToDefault(agentCell.coordinate());
-                    statistics.updateCells(-1, 0);
-                }
+        for (GridCell<LangtonAntEntity> agentCell : antModel.filteredAndSortedCells(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition())) {
+            if (!(agentCell.entity() instanceof LangtonAnt ant)) {
+                continue;
             }
+
+            var neighborOpt = CellNeighborhoods.cellNeighborWithEdgeBehavior(
+                    agentCell.coordinate(),
+                    config.neighborhoodMode(),
+                    ant.direction(),
+                    structure);
+
+            if (neighborOpt.isEmpty() || isEdgeAbsorbedOrBlocked(neighborOpt.get())) {
+                removeAnt(agentCell, antModel, statistics);
+                continue;
+            }
+
+            var newCoordinate = neighborOpt.get().mappedNeighborCoordinate();
+            var groundEntity = determineGround(newCoordinate, statistics);
+            moveAnt(agentCell, newCoordinate, antModel, ant, groundEntity);
+            switchGround(newCoordinate, groundEntity, groundModel);
         }
+    }
+
+    boolean isEdgeAbsorbedOrBlocked(CellNeighborWithEdgeBehavior neighbor) {
+        return (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.ABSORBED)
+                || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED);
+    }
+
+    void removeAnt(GridCell<LangtonAntEntity> agentCell, WritableGridModel<LangtonAntEntity> antModel, LangtonStatistics statistics) {
+        antModel.setEntityToDefault(agentCell.coordinate());
+        statistics.updateCells(-1, 0);
+    }
+
+    void moveAnt(GridCell<LangtonAntEntity> agentCell, GridCoordinate newCoordinate, WritableGridModel<LangtonAntEntity> antModel, LangtonAnt ant, LangtonGroundEntity groundEntity) {
+        antModel.setEntityToDefault(agentCell.coordinate());
+        antModel.setEntity(newCoordinate, agentCell.entity());
+        ant.changeDirection(computeNewAntDirection(ant.direction(), groundEntity.ruleIndex()));
+    }
+
+    void switchGround(GridCoordinate coordinate, LangtonGroundEntity groundEntity, WritableGridModel<LangtonGroundEntity> groundModel) {
+        int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getColorCount();
+        groundModel.setEntity(coordinate, LangtonGroundEntity.forRuleIndex(newRuleIndex));
     }
 
     LangtonGroundEntity determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {
