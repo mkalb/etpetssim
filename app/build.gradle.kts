@@ -24,7 +24,7 @@ java {
 
 javafx {
     modules = listOf("javafx.controls")
-    version = "24.0.2"
+    version = "25"
 }
 
 application {
