@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.CellShape;
 
 import java.util.*;
@@ -23,15 +24,16 @@ public record LangtonMovementRules(
     }
 
     public static LangtonMovementRules fromString(String ruleString) {
+        String preparedString = ruleString.trim().toUpperCase(AppLocalization.locale());
         List<AntTurn> result = new ArrayList<>();
-        for (int i = 0; i < ruleString.length(); ) {
-            char c = ruleString.charAt(i);
+        for (int i = 0; i < preparedString.length(); ) {
+            char c = preparedString.charAt(i);
             switch (c) {
                 case 'L' -> {
-                    if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '2')) {
+                    if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '2')) {
                         result.add(AntTurn.LEFT2);
                         i += 2;
-                    } else if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '1')) {
+                    } else if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '1')) {
                         result.add(AntTurn.LEFT);
                         i += 2;
                     } else {
@@ -40,10 +42,10 @@ public record LangtonMovementRules(
                     }
                 }
                 case 'R' -> {
-                    if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '2')) {
+                    if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '2')) {
                         result.add(AntTurn.RIGHT2);
                         i += 2;
-                    } else if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '1')) {
+                    } else if (((i + 1) < preparedString.length()) && (preparedString.charAt(i + 1) == '1')) {
                         result.add(AntTurn.RIGHT);
                         i += 2;
                     } else {
@@ -51,11 +53,11 @@ public record LangtonMovementRules(
                         i++;
                     }
                 }
-                case 'N' -> {
+                case 'N', 'C', 'F' -> {
                     result.add(AntTurn.NONE);
                     i++;
                 }
-                case 'U' -> {
+                case 'U', 'B' -> {
                     result.add(AntTurn.U_TURN);
                     i++;
                 }
