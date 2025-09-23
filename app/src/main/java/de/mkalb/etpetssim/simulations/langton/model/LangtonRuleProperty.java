@@ -100,10 +100,10 @@ public final class LangtonRuleProperty {
         EMPTY,
         RL,
         RL2,
-        R2R2,
         R2N,
         NR,
         NR2,
+        R2RR,
         L2NNLL2L;
 
         public String toString() {
