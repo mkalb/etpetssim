@@ -32,8 +32,7 @@ application {
     mainClass = "de.mkalb.etpetssim.AppLauncher"
     mainModule = "de.mkalb.etpetssim"
     applicationDefaultJvmArgs = listOf(
-        "--enable-native-access=javafx.graphics",
-        "--sun-misc-unsafe-memory-access=allow"
+        "--enable-native-access=ALL-UNNAMED"
     )
 }
 
