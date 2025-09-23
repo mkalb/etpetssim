@@ -15,6 +15,13 @@ import javafx.scene.layout.Region;
 public final class LangtonConfigView
         extends AbstractConfigView<LangtonConfig, LangtonConfigViewModel> {
 
+    static final String LANGTON_CONFIG_PRESET_TRIANGLE = "langton.config.preset.triangle";
+    static final String LANGTON_CONFIG_PRESET_TRIANGLE_TOOLTIP = "langton.config.preset.triangle.tooltip";
+    static final String LANGTON_CONFIG_PRESET_SQUARE = "langton.config.preset.square";
+    static final String LANGTON_CONFIG_PRESET_SQUARE_TOOLTIP = "langton.config.preset.square.tooltip";
+    static final String LANGTON_CONFIG_PRESET_HEXAGON = "langton.config.preset.hexagon";
+    static final String LANGTON_CONFIG_PRESET_HEXAGON_TOOLTIP = "langton.config.preset.hexagon.tooltip";
+
     static final String LANGTON_CONFIG_RULE = "langton.config.rule";
     static final String LANGTON_CONFIG_RULE_PROMPT = "langton.config.rule.prompt";
     static final String LANGTON_CONFIG_RULE_TOOLTIP = "langton.config.rule.tooltip";
@@ -33,22 +40,22 @@ public final class LangtonConfigView
         var presetTriangleControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.ruleProperty().presetTriangleProperty(),
                 viewModel.ruleProperty().presetTriangleProperty().displayNameProvider(),
-                "Triangle", // TODO KEY
-                "Triangle", // TODO KEY
+                AppLocalization.getText(LANGTON_CONFIG_PRESET_TRIANGLE),
+                AppLocalization.getText(LANGTON_CONFIG_PRESET_TRIANGLE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
         var presetSquareControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.ruleProperty().presetSquareProperty(),
                 viewModel.ruleProperty().presetSquareProperty().displayNameProvider(),
-                "Square", // TODO KEY
-                "Square", // TODO KEY
+                AppLocalization.getText(LANGTON_CONFIG_PRESET_SQUARE),
+                AppLocalization.getText(LANGTON_CONFIG_PRESET_SQUARE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
         var presetHexagonControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.ruleProperty().presetHexagonProperty(),
                 viewModel.ruleProperty().presetHexagonProperty().displayNameProvider(),
-                "Hexagon", // TODO KEY
-                "Hexagon", // TODO KEY
+                AppLocalization.getText(LANGTON_CONFIG_PRESET_HEXAGON),
+                AppLocalization.getText(LANGTON_CONFIG_PRESET_HEXAGON_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
