@@ -83,8 +83,8 @@ public final class LangtonRuleProperty {
         RLR,
         RLLR,
         RRLL,
-        LRRRRRLLR,
-        LLRRRLRLRLLR,
+        RNNU,
+        RLLLLLRRL,
         RRLLLRLLLRRR;
 
         public String toString() {
@@ -99,6 +99,11 @@ public final class LangtonRuleProperty {
     public enum LangtonRulePresetHexagon {
         EMPTY,
         RL,
+        RL2,
+        R2R2,
+        R2N,
+        NR,
+        NR2,
         L2NNLL2L;
 
         public String toString() {
@@ -112,7 +117,9 @@ public final class LangtonRuleProperty {
 
     public enum LangtonRulePresetTriangle {
         EMPTY,
-        RL;
+        RL,
+        RLL,
+        URR;
 
         public String toString() {
             if (this == EMPTY) {
