@@ -10,6 +10,8 @@ public record LangtonMovementRules(
     public static final int MIN_RULE_COUNT = 2;
     public static final int MAX_RULE_COUNT = 16;
 
+    private static final int INITIAL_CAPACITY_DISPLAY_STRING = 32;
+
     public LangtonMovementRules(List<AntTurn> turns) {
         if (turns.size() < MIN_RULE_COUNT) {
             throw new IllegalArgumentException("At least " + MIN_RULE_COUNT + " rules required, got: " + turns.size());
@@ -29,6 +31,9 @@ public record LangtonMovementRules(
                     if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '2')) {
                         result.add(AntTurn.LEFT2);
                         i += 2;
+                    } else if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '1')) {
+                        result.add(AntTurn.LEFT);
+                        i += 2;
                     } else {
                         result.add(AntTurn.LEFT);
                         i++;
@@ -38,6 +43,9 @@ public record LangtonMovementRules(
                     if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '2')) {
                         result.add(AntTurn.RIGHT2);
                         i += 2;
+                    } else if (((i + 1) < ruleString.length()) && (ruleString.charAt(i + 1) == '1')) {
+                        result.add(AntTurn.RIGHT);
+                        i += 2;
                     } else {
                         result.add(AntTurn.RIGHT);
                         i++;
@@ -45,6 +53,10 @@ public record LangtonMovementRules(
                 }
                 case 'N' -> {
                     result.add(AntTurn.NONE);
+                    i++;
+                }
+                case 'U' -> {
+                    result.add(AntTurn.U_TURN);
                     i++;
                 }
                 default -> throw new IllegalArgumentException("Unknown rule character: " + c);
@@ -64,7 +76,7 @@ public record LangtonMovementRules(
     public boolean isValidForCellShape(CellShape cellShape) {
         if (cellShape == CellShape.TRIANGLE) {
             for (AntTurn turn : turns) {
-                if ((turn != AntTurn.LEFT) && (turn != AntTurn.RIGHT)) {
+                if ((turn != AntTurn.LEFT) && (turn != AntTurn.RIGHT) && (turn != AntTurn.U_TURN)) {
                     return false;
                 }
             }
@@ -73,21 +85,22 @@ public record LangtonMovementRules(
     }
 
     public String toDisplayString() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(INITIAL_CAPACITY_DISPLAY_STRING);
         for (AntTurn turn : turns) {
             sb.append(switch (turn) {
                 case LEFT -> "L";
                 case RIGHT -> "R";
-                case NONE -> "N";
                 case LEFT2 -> "L2";
                 case RIGHT2 -> "R2";
+                case NONE -> "N";
+                case U_TURN -> "U";
             });
         }
         return sb.toString();
     }
 
     public enum AntTurn {
-        LEFT, RIGHT, NONE, LEFT2, RIGHT2
+        LEFT, RIGHT, LEFT2, RIGHT2, NONE, U_TURN
     }
 
 }

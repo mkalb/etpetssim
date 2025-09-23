@@ -102,7 +102,7 @@ public final class LangtonStepRunner
                     case CompassDirection.W -> CompassDirection.N;
                     default -> null;
                 };
-                case LEFT2, RIGHT2 -> switch (currentDirection) {
+                case LEFT2, RIGHT2, U_TURN -> switch (currentDirection) {
                     case CompassDirection.N -> CompassDirection.S;
                     case CompassDirection.E -> CompassDirection.W;
                     case CompassDirection.S -> CompassDirection.N;
@@ -155,6 +155,15 @@ public final class LangtonStepRunner
                     default -> null;
                 };
                 case NONE -> currentDirection;
+                case U_TURN -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.S;
+                    case CompassDirection.NE -> CompassDirection.SW;
+                    case CompassDirection.SE -> CompassDirection.NW;
+                    case CompassDirection.S -> CompassDirection.N;
+                    case CompassDirection.SW -> CompassDirection.NE;
+                    case CompassDirection.NW -> CompassDirection.SE;
+                    default -> null;
+                };
             };
             case TRIANGLE -> {
                 if (turn == LangtonMovementRules.AntTurn.LEFT) {
@@ -175,6 +184,16 @@ public final class LangtonStepRunner
                         case CompassDirection.S -> CompassDirection.SW;
                         case CompassDirection.SW -> CompassDirection.NW;
                         case CompassDirection.NW -> CompassDirection.N;
+                        default -> null;
+                    };
+                } else if (turn == LangtonMovementRules.AntTurn.U_TURN) {
+                    newDirection = switch (currentDirection) {
+                        case CompassDirection.N -> CompassDirection.S;
+                        case CompassDirection.NE -> CompassDirection.SW;
+                        case CompassDirection.SE -> CompassDirection.NW;
+                        case CompassDirection.S -> CompassDirection.N;
+                        case CompassDirection.SW -> CompassDirection.NE;
+                        case CompassDirection.NW -> CompassDirection.SE;
                         default -> null;
                     };
                 }

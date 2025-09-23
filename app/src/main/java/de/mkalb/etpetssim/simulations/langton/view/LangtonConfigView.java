@@ -2,11 +2,13 @@ package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
 import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonConfigViewModel;
 import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
@@ -28,13 +30,31 @@ public final class LangtonConfigView
         TitledPane layoutPane = createLayoutPane(true);
 
         // --- Rules Group ---
-        var presetControl = FXComponentFactory.createLabeledEnumComboBox(
-                viewModel.ruleProperty().presetProperty(),
-                viewModel.ruleProperty().presetProperty().displayNameProvider(),
-                "", // TODO KEY
-                "", // TODO KEY
+        var presetTriangleControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.ruleProperty().presetTriangleProperty(),
+                viewModel.ruleProperty().presetTriangleProperty().displayNameProvider(),
+                "Triangle", // TODO KEY
+                "Triangle", // TODO KEY
                 FXStyleClasses.CONFIG_COMBOBOX
         );
+        var presetSquareControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.ruleProperty().presetSquareProperty(),
+                viewModel.ruleProperty().presetSquareProperty().displayNameProvider(),
+                "Square", // TODO KEY
+                "Square", // TODO KEY
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+        var presetHexagonControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.ruleProperty().presetHexagonProperty(),
+                viewModel.ruleProperty().presetHexagonProperty().displayNameProvider(),
+                "Hexagon", // TODO KEY
+                "Hexagon", // TODO KEY
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
+        setupPresetControlBindings(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
+        setupPresetControlBindings(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
+        setupPresetControlBindings(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
 
         var ruleControl = FXComponentFactory.createLabeledStringTextBox(
                 viewModel.ruleProperty().stringProperty(),
@@ -47,9 +67,18 @@ public final class LangtonConfigView
         );
 
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true, presetControl, ruleControl);
+                true,
+                presetTriangleControl, presetSquareControl, presetHexagonControl,
+                ruleControl);
 
         return createConfigMainBox(structurePane, layoutPane, rulesPane);
+    }
+
+    private void setupPresetControlBindings(Label label, Region controlRegion, CellShape shape) {
+        label.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+        label.managedProperty().bind(label.visibleProperty());
+        controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+        controlRegion.managedProperty().bind(controlRegion.visibleProperty());
     }
 
 }
