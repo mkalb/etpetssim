@@ -18,7 +18,6 @@ top-down view.
 - Sugarscape
 - Snake
 - Forest Fire
-- Paterson's Worms
 
 ## Goals
 - Explore and apply modern Java features in practice.

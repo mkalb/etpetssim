@@ -20,12 +20,11 @@ final class SimulationTypeTest {
         assertNotNull(SimulationType.valueOf("SNAKE"));
         assertNotNull(SimulationType.valueOf("FOREST_FIRE"));
         assertNotNull(SimulationType.valueOf("LANGTONS_ANT"));
-        assertNotNull(SimulationType.valueOf("PATERSONS_WORMS"));
     }
 
     @Test
     void testEnumCount() {
-        assertEquals(10, SimulationType.values().length, "There should be exactly 10 values");
+        assertEquals(9, SimulationType.values().length, "There should be exactly 9 values");
     }
 
     @Test
@@ -39,7 +38,6 @@ final class SimulationTypeTest {
         assertEquals(6, SimulationType.SNAKE.ordinal());
         assertEquals(7, SimulationType.FOREST_FIRE.ordinal());
         assertEquals(8, SimulationType.LANGTONS_ANT.ordinal());
-        assertEquals(9, SimulationType.PATERSONS_WORMS.ordinal());
     }
 
     @Test
@@ -72,7 +70,6 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.title", SimulationType.SNAKE.titleKey());
         assertEquals("simulation.forestfire.title", SimulationType.FOREST_FIRE.titleKey());
         assertEquals("simulation.langtonsant.title", SimulationType.LANGTONS_ANT.titleKey());
-        assertEquals("simulation.patersonsworms.title", SimulationType.PATERSONS_WORMS.titleKey());
     }
 
     @Test
@@ -86,7 +83,6 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.subtitle", SimulationType.SNAKE.subtitleKey());
         assertEquals("simulation.forestfire.subtitle", SimulationType.FOREST_FIRE.subtitleKey());
         assertEquals("simulation.langtonsant.subtitle", SimulationType.LANGTONS_ANT.subtitleKey());
-        assertEquals("simulation.patersonsworms.subtitle", SimulationType.PATERSONS_WORMS.subtitleKey());
     }
 
     @Test
@@ -100,7 +96,6 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.url", SimulationType.SNAKE.urlKey());
         assertEquals("simulation.forestfire.url", SimulationType.FOREST_FIRE.urlKey());
         assertEquals("simulation.langtonsant.url", SimulationType.LANGTONS_ANT.urlKey());
-        assertEquals("simulation.patersonsworms.url", SimulationType.PATERSONS_WORMS.urlKey());
     }
 
     @Test
@@ -114,7 +109,6 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.emoji", SimulationType.SNAKE.emojiKey());
         assertEquals("simulation.forestfire.emoji", SimulationType.FOREST_FIRE.emojiKey());
         assertEquals("simulation.langtonsant.emoji", SimulationType.LANGTONS_ANT.emojiKey());
-        assertEquals("simulation.patersonsworms.emoji", SimulationType.PATERSONS_WORMS.emojiKey());
     }
 
     @Test
@@ -127,8 +121,7 @@ final class SimulationTypeTest {
         assertEquals("", SimulationType.SUGARSCAPE.cssPath());
         assertEquals("", SimulationType.SNAKE.cssPath());
         assertEquals("", SimulationType.FOREST_FIRE.cssPath());
-        assertEquals("", SimulationType.LANGTONS_ANT.cssPath());
-        assertEquals("", SimulationType.PATERSONS_WORMS.cssPath());
+        assertEquals("langton.css", SimulationType.LANGTONS_ANT.cssPath());
     }
 
     @Test
@@ -141,8 +134,7 @@ final class SimulationTypeTest {
         assertEquals(List.of("sugarscape", "sugar"), SimulationType.SUGARSCAPE.cliArguments());
         assertEquals(List.of("snake", "snakes"), SimulationType.SNAKE.cliArguments());
         assertEquals(List.of("forestfire", "forest-fire", "fire", "forestfiremodel"), SimulationType.FOREST_FIRE.cliArguments());
-        assertEquals(List.of("langtonsant", "langtons-ant", "ant"), SimulationType.LANGTONS_ANT.cliArguments());
-        assertEquals(List.of("patersonsworms", "patersons-worms", "worms"), SimulationType.PATERSONS_WORMS.cliArguments());
+        assertEquals(List.of("langton", "langtonsant", "langtons-ant", "ant"), SimulationType.LANGTONS_ANT.cliArguments());
     }
 
     @Test

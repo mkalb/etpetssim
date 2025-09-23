@@ -132,19 +132,6 @@ public enum SimulationType {
             "simulation.langtonsant.emoji",
             "langton.css",
             List.of("langton", "langtonsant", "langtons-ant", "ant")
-    ),
-    /**
-     * <a href="https://en.wikipedia.org/wiki/Paterson%27s_worms">Paterson's worms</a>
-     */
-    PATERSONS_WORMS(
-            false,
-            true,
-            "simulation.patersonsworms.title",
-            "simulation.patersonsworms.subtitle",
-            "simulation.patersonsworms.url",
-            "simulation.patersonsworms.emoji",
-            "",
-            List.of("patersonsworms", "patersons-worms", "worms")
     );
 
     private final boolean implemented;
