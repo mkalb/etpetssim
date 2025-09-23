@@ -66,10 +66,10 @@ final class SimulationTypeTest {
         assertEquals("simulation.etpetssim.title", SimulationType.ET_PETS_SIM.titleKey());
         assertEquals("simulation.wator.title", SimulationType.WATOR.titleKey());
         assertEquals("simulation.conway.title", SimulationType.CONWAYS_LIFE.titleKey());
-        assertEquals("simulation.sugarscape.title", SimulationType.SUGARSCAPE.titleKey());
+        assertEquals("simulation.sugar.title", SimulationType.SUGARSCAPE.titleKey());
         assertEquals("simulation.snake.title", SimulationType.SNAKE.titleKey());
-        assertEquals("simulation.forestfire.title", SimulationType.FOREST_FIRE.titleKey());
-        assertEquals("simulation.langtonsant.title", SimulationType.LANGTONS_ANT.titleKey());
+        assertEquals("simulation.forest.title", SimulationType.FOREST_FIRE.titleKey());
+        assertEquals("simulation.langton.title", SimulationType.LANGTONS_ANT.titleKey());
     }
 
     @Test
@@ -79,10 +79,10 @@ final class SimulationTypeTest {
         assertEquals("simulation.etpetssim.subtitle", SimulationType.ET_PETS_SIM.subtitleKey());
         assertEquals("simulation.wator.subtitle", SimulationType.WATOR.subtitleKey());
         assertEquals("simulation.conway.subtitle", SimulationType.CONWAYS_LIFE.subtitleKey());
-        assertEquals("simulation.sugarscape.subtitle", SimulationType.SUGARSCAPE.subtitleKey());
+        assertEquals("simulation.sugar.subtitle", SimulationType.SUGARSCAPE.subtitleKey());
         assertEquals("simulation.snake.subtitle", SimulationType.SNAKE.subtitleKey());
-        assertEquals("simulation.forestfire.subtitle", SimulationType.FOREST_FIRE.subtitleKey());
-        assertEquals("simulation.langtonsant.subtitle", SimulationType.LANGTONS_ANT.subtitleKey());
+        assertEquals("simulation.forest.subtitle", SimulationType.FOREST_FIRE.subtitleKey());
+        assertEquals("simulation.langton.subtitle", SimulationType.LANGTONS_ANT.subtitleKey());
     }
 
     @Test
@@ -92,10 +92,10 @@ final class SimulationTypeTest {
         assertEquals("simulation.etpetssim.url", SimulationType.ET_PETS_SIM.urlKey());
         assertEquals("simulation.wator.url", SimulationType.WATOR.urlKey());
         assertEquals("simulation.conway.url", SimulationType.CONWAYS_LIFE.urlKey());
-        assertEquals("simulation.sugarscape.url", SimulationType.SUGARSCAPE.urlKey());
+        assertEquals("simulation.sugar.url", SimulationType.SUGARSCAPE.urlKey());
         assertEquals("simulation.snake.url", SimulationType.SNAKE.urlKey());
-        assertEquals("simulation.forestfire.url", SimulationType.FOREST_FIRE.urlKey());
-        assertEquals("simulation.langtonsant.url", SimulationType.LANGTONS_ANT.urlKey());
+        assertEquals("simulation.forest.url", SimulationType.FOREST_FIRE.urlKey());
+        assertEquals("simulation.langton.url", SimulationType.LANGTONS_ANT.urlKey());
     }
 
     @Test
@@ -105,10 +105,10 @@ final class SimulationTypeTest {
         assertEquals("simulation.etpetssim.emoji", SimulationType.ET_PETS_SIM.emojiKey());
         assertEquals("simulation.wator.emoji", SimulationType.WATOR.emojiKey());
         assertEquals("simulation.conway.emoji", SimulationType.CONWAYS_LIFE.emojiKey());
-        assertEquals("simulation.sugarscape.emoji", SimulationType.SUGARSCAPE.emojiKey());
+        assertEquals("simulation.sugar.emoji", SimulationType.SUGARSCAPE.emojiKey());
         assertEquals("simulation.snake.emoji", SimulationType.SNAKE.emojiKey());
-        assertEquals("simulation.forestfire.emoji", SimulationType.FOREST_FIRE.emojiKey());
-        assertEquals("simulation.langtonsant.emoji", SimulationType.LANGTONS_ANT.emojiKey());
+        assertEquals("simulation.forest.emoji", SimulationType.FOREST_FIRE.emojiKey());
+        assertEquals("simulation.langton.emoji", SimulationType.LANGTONS_ANT.emojiKey());
     }
 
     @Test

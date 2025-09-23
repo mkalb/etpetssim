@@ -87,10 +87,10 @@ public enum SimulationType {
     SUGARSCAPE(
             false,
             true,
-            "simulation.sugarscape.title",
-            "simulation.sugarscape.subtitle",
-            "simulation.sugarscape.url",
-            "simulation.sugarscape.emoji",
+            "simulation.sugar.title",
+            "simulation.sugar.subtitle",
+            "simulation.sugar.url",
+            "simulation.sugar.emoji",
             "",
             List.of("sugarscape", "sugar")
     ),
@@ -113,10 +113,10 @@ public enum SimulationType {
     FOREST_FIRE(
             false,
             true,
-            "simulation.forestfire.title",
-            "simulation.forestfire.subtitle",
-            "simulation.forestfire.url",
-            "simulation.forestfire.emoji",
+            "simulation.forest.title",
+            "simulation.forest.subtitle",
+            "simulation.forest.url",
+            "simulation.forest.emoji",
             "",
             List.of("forestfire", "forest-fire", "fire", "forestfiremodel")
     ),
@@ -126,10 +126,10 @@ public enum SimulationType {
     LANGTONS_ANT(
             true,
             true,
-            "simulation.langtonsant.title",
-            "simulation.langtonsant.subtitle",
-            "simulation.langtonsant.url",
-            "simulation.langtonsant.emoji",
+            "simulation.langton.title",
+            "simulation.langton.subtitle",
+            "simulation.langton.url",
+            "simulation.langton.emoji",
             "langton.css",
             List.of("langton", "langtonsant", "langtons-ant", "ant")
     );
