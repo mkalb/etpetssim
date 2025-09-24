@@ -48,6 +48,7 @@ public final class LangtonMainView
                 .colorAsOptional().orElse(Color.WHITE);
     }
 
+    @SuppressWarnings("MagicNumber")
     @Override
     protected void initSimulation(LangtonConfig config, CellDimension cellDimension) {
         if (basePainter == null) {
@@ -55,6 +56,8 @@ public final class LangtonMainView
             return;
         }
         basePainter.fillCanvasBackground(backgroundPaint);
+
+        double strokeLineWidth = (cellDimension.innerRadius() < 2.0d) ? 0.0d : 1.0d;
 
         cellGroundDrawer = switch (config.cellDisplayMode()) {
             case CellDisplayMode.SHAPE -> (descriptor, painter, cell, _) ->
@@ -68,15 +71,20 @@ public final class LangtonMainView
                             cell.coordinate(),
                             descriptor.color(),
                             backgroundPaint,
-                            1.0d);
+                            strokeLineWidth);
             default -> null;
         };
         cellAntDrawer = (descriptor, painter, cell, _) -> {
-            painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeAdjustment.INSIDE);
             if ((cellEmojiFont != null)
+                    && (cellDimension.innerRadius() > 5.0d)
                     && (descriptor.borderColor() != null)
                     && (cell.entity() instanceof LangtonAnt ant)) {
+                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeAdjustment.INSIDE);
                 painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(), cellEmojiFont);
+            } else if (cellDimension.innerRadius() > 2.0d) {
+                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, 0.0d, StrokeAdjustment.INSIDE);
+            } else {
+                painter.drawCell(cell.coordinate(), descriptor.color(), null, 0.0d);
             }
         };
     }
