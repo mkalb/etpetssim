@@ -65,9 +65,9 @@ public final class ConwayConfigViewModel
         surviveProperties.forEach(p -> p.addListener(updateListener));
         birthProperties.forEach(p -> p.addListener(updateListener));
 
-        // HEXAGON: 23/34, 34/34
+        // HEXAGON: 23/34, 34/34, 3/2456
         // SQUARE: 23/3
-        // TRIANGLE: 45/456
+        // TRIANGLE: 45/456, 25/3
 
         maxNeighborCountProperty().addListener((_, _, _) -> disableUnusedNeighborProperties());
 
