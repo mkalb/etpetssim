@@ -32,12 +32,12 @@ top-down view.
 
 This project uses the latest stable versions of all technologies whenever possible.
 
-| Technology          | Version      | URL                             |
-|---------------------|--------------|---------------------------------|
-| Java (OpenJDK)      | Temurin 24.0 | https://adoptium.net/           |
-| JavaFX              | 25           | https://openjfx.io/             |
-| Gradle              | 9.1.0        | https://gradle.org/             |
-| IntelliJ IDEA       | 2025.2       | https://www.jetbrains.com/idea/ |
+| Technology          | Version    | URL                             |
+|---------------------|------------|---------------------------------|
+| Java (OpenJDK)      | Temurin 25 | https://adoptium.net/           |
+| JavaFX              | 25         | https://openjfx.io/             |
+| Gradle              | 9.1.0      | https://gradle.org/             |
+| IntelliJ IDEA       | 2025.2     | https://www.jetbrains.com/idea/ |
 
 ## License
 
