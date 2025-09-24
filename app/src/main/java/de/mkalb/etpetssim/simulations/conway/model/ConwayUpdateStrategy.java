@@ -10,6 +10,7 @@ import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 
 import java.util.*;
 
+@SuppressWarnings("ClassCanBeRecord")
 public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEntity, ConwayStatistics> {
 
     private final GridStructure structure;

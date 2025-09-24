@@ -88,7 +88,7 @@ public final class AppLauncher {
      *
      * @param args the command-line arguments passed to the application
      */
-    public static void main(String[] args) {
+    static void main(String[] args) {
         var arguments = parseArgumentsAndHandleHelp(args);
         initAppLogger(arguments);
         initializeAppLocalization(arguments);

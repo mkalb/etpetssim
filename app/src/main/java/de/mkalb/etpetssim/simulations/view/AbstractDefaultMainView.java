@@ -178,6 +178,7 @@ public abstract class AbstractDefaultMainView<
 
     protected abstract void initSimulation(CON config, CellDimension cellDimension);
 
+    @SuppressWarnings("ParameterHidesMemberVariable")
     protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);
 
 }

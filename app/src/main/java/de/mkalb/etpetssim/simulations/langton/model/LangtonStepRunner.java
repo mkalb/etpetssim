@@ -165,39 +165,36 @@ public final class LangtonStepRunner
                     default -> null;
                 };
             };
-            case TRIANGLE -> {
-                if (turn == LangtonMovementRules.AntTurn.LEFT) {
-                    newDirection = switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.NW;
-                        case CompassDirection.NE -> CompassDirection.N;
-                        case CompassDirection.SE -> CompassDirection.NE;
-                        case CompassDirection.S -> CompassDirection.SE;
-                        case CompassDirection.SW -> CompassDirection.S;
-                        case CompassDirection.NW -> CompassDirection.SW;
-                        default -> null;
-                    };
-                } else if (turn == LangtonMovementRules.AntTurn.RIGHT) {
-                    newDirection = switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.NE;
-                        case CompassDirection.NE -> CompassDirection.SE;
-                        case CompassDirection.SE -> CompassDirection.S;
-                        case CompassDirection.S -> CompassDirection.SW;
-                        case CompassDirection.SW -> CompassDirection.NW;
-                        case CompassDirection.NW -> CompassDirection.N;
-                        default -> null;
-                    };
-                } else if (turn == LangtonMovementRules.AntTurn.U_TURN) {
-                    newDirection = switch (currentDirection) {
-                        case CompassDirection.N -> CompassDirection.S;
-                        case CompassDirection.NE -> CompassDirection.SW;
-                        case CompassDirection.SE -> CompassDirection.NW;
-                        case CompassDirection.S -> CompassDirection.N;
-                        case CompassDirection.SW -> CompassDirection.NE;
-                        case CompassDirection.NW -> CompassDirection.SE;
-                        default -> null;
-                    };
-                }
-            }
+            case TRIANGLE -> newDirection = switch (turn) {
+                case LEFT -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.NW;
+                    case CompassDirection.NE -> CompassDirection.N;
+                    case CompassDirection.SE -> CompassDirection.NE;
+                    case CompassDirection.S -> CompassDirection.SE;
+                    case CompassDirection.SW -> CompassDirection.S;
+                    case CompassDirection.NW -> CompassDirection.SW;
+                    default -> null;
+                };
+                case RIGHT -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.NE;
+                    case CompassDirection.NE -> CompassDirection.SE;
+                    case CompassDirection.SE -> CompassDirection.S;
+                    case CompassDirection.S -> CompassDirection.SW;
+                    case CompassDirection.SW -> CompassDirection.NW;
+                    case CompassDirection.NW -> CompassDirection.N;
+                    default -> null;
+                };
+                case U_TURN -> switch (currentDirection) {
+                    case CompassDirection.N -> CompassDirection.S;
+                    case CompassDirection.NE -> CompassDirection.SW;
+                    case CompassDirection.SE -> CompassDirection.NW;
+                    case CompassDirection.S -> CompassDirection.N;
+                    case CompassDirection.SW -> CompassDirection.NE;
+                    case CompassDirection.NW -> CompassDirection.SE;
+                    default -> null;
+                };
+                default -> null;
+            };
         }
 
         if (newDirection == null) {

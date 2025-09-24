@@ -34,6 +34,7 @@ public interface SimulationConfig {
         return gridWidth() * gridHeight();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     default boolean isValid() {
         return !GridSize.isInvalidSize(gridWidth())
                 && !GridSize.isInvalidSize(gridHeight())

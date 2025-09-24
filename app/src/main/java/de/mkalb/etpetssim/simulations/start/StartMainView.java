@@ -23,6 +23,7 @@ import java.util.function.*;
  * its logic, as no separate ViewModel or Model is required for the start screen.
  * </p>
  */
+@SuppressWarnings("ClassCanBeRecord")
 public final class StartMainView implements SimulationMainView, SimulationControlView {
 
     private final Stage stage;

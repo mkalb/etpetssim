@@ -11,6 +11,7 @@ public final class LangtonRuleProperty {
     private static final LangtonRulePresetTriangle PRESET_TRIANGLE_INITIAL = LangtonRulePresetTriangle.EMPTY;
     private static final LangtonRulePresetSquare PRESET_SQUARE_INITIAL = LangtonRulePresetSquare.EMPTY;
     private static final LangtonRulePresetHexagon PRESET_HEXAGON_INITIAL = LangtonRulePresetHexagon.EMPTY;
+    private static final String INITIAL_STRING = "RL";
 
     private final StringProperty stringProperty;
     private final StringProperty labelProperty;
@@ -19,7 +20,7 @@ public final class LangtonRuleProperty {
     private final InputEnumProperty<LangtonRulePresetHexagon> presetHexagonProperty;
 
     public LangtonRuleProperty() {
-        stringProperty = new SimpleStringProperty(PRESET_SQUARE_INITIAL.toString());
+        stringProperty = new SimpleStringProperty(INITIAL_STRING);
         labelProperty = new SimpleStringProperty("");
 
         presetTriangleProperty = InputEnumProperty.of(PRESET_TRIANGLE_INITIAL, LangtonRulePresetTriangle.class, Enum::toString);

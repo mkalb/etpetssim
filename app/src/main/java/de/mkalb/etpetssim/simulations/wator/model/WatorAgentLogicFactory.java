@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 
 import java.util.*;
 
+@SuppressWarnings("ClassCanBeRecord")
 public final class WatorAgentLogicFactory {
 
     private final WatorConfig config;

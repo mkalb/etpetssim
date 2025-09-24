@@ -46,6 +46,7 @@ public final class LabMainView
     private static final double MOUSE_HOVER_LINE_WIDTH = 2.0d;
     private static final double SHAPE_LINE_WIDTH = 0.5d;
     private static final double TEST_LINE_WIDTH = 6.0d;
+    private static final double HOVER_MIN_EDGE_LENGTH = 6.0d;
     private static final double COLOR_ALPHA = 0.5d;
 
     public LabMainView(LabMainViewModel viewModel,
@@ -151,9 +152,9 @@ public final class LabMainView
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(mousePoint, basePainter.cellDimension(), overlayPainter.gridDimension2D(), viewModel.getStructure());
             if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
                 overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-                if (overlayPainter.cellDimension().edgeLength() >= TEST_LINE_WIDTH) {
+                if (overlayPainter.cellDimension().edgeLength() >= HOVER_MIN_EDGE_LENGTH) {
                     overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
-                    if ((cellFont != null) && !coordinate.equals(viewModel.getLastClickedCoordinate())) {
+                    if (cellFont != null) {
                         GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentModel(), entityDescriptorRegistry,
                                 descriptor -> overlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, cellFont));
                     }

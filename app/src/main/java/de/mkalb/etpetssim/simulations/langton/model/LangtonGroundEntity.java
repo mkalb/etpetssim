@@ -43,7 +43,7 @@ public enum LangtonGroundEntity implements LangtonEntity, ConstantGridEntity, Gr
     private final String longKey;
     private final String descriptionKey;
     private final @Nullable String emojiKey;
-    private final @Nullable Paint color;
+    private final Paint color;
     private final @Nullable Color borderColor;
     private final int renderPriority;
 
@@ -104,7 +104,7 @@ public enum LangtonGroundEntity implements LangtonEntity, ConstantGridEntity, Gr
     }
 
     @Override
-    public @Nullable Paint color() {
+    public Paint color() {
         return color;
     }
 

@@ -65,6 +65,7 @@ public final class WatorMainView
         return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
     }
 
+    @SuppressWarnings("MagicNumber")
     private double computeStrokeLineWidth(CellShape cellShape, CellDimension cellDimension) {
         if (cellDimension.innerRadius() < 2.0d) {
             return 0.0d;
