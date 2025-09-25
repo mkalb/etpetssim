@@ -83,7 +83,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     /**
      * Returns a stream of all grid cells (coordinate and entity).
      *
-     * @return a stream of GridCell<T>
+     * @return a stream of GridCell
      */
     default Stream<GridCell<T>> cells() {
         return structure().coordinatesStream()
@@ -93,7 +93,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     /**
      * Returns a stream of grid cells whose entity is not the default entity.
      *
-     * @return a stream of non-default GridCell<T>
+     * @return a stream of non-default GridCell
      */
     default Stream<GridCell<T>> nonDefaultCells() {
         T def = defaultEntity();

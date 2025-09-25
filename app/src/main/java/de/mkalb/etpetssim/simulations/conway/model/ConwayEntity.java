@@ -15,7 +15,6 @@ import org.jspecify.annotations.Nullable;
  *   <li>{@link #ALIVE}: A living (active) cell.</li>
  * </ul>
  * Provides all necessary descriptor information for registration and rendering.
- * </p>
  *
  * <ul>
  *   <li><b>descriptorId</b>: Unique identifier for the entity descriptor.</li>

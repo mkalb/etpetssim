@@ -187,7 +187,7 @@ public record GridCoordinate(int x, int y) {
 
     /**
      * Returns a new GridCoordinate with both x and y incremented by 1.
-     * Useful when converting bounds (inclusive <-> exclusive).
+     * Useful when converting bounds (inclusive &lt;-&gt; exclusive).
      *
      * @return a new GridCoordinate with x + 1 and y + 1
      */
@@ -197,7 +197,7 @@ public record GridCoordinate(int x, int y) {
 
     /**
      * Returns a new GridCoordinate with both x and y decremented by 1.
-     * Useful when converting bounds (inclusive <-> exclusive).
+     * Useful when converting bounds (inclusive &lt;-&gt; exclusive).
      *
      * @return a new GridCoordinate with x - 1 and y - 1
      */
