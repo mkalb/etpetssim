@@ -1,3 +1,5 @@
+import java.time.Instant
+
 plugins {
     application
     id("project-report")
@@ -6,6 +8,12 @@ plugins {
 
 group = "de.mkalb.etpetssim"
 version = "0.0.1-SNAPSHOT"
+val buildTimestamp = Instant.now().toString()
+val baseName = "ExtraterrestrialPetsSimulation"
+
+base {
+    archivesName = baseName
+}
 
 repositories {
     mavenCentral()
@@ -28,7 +36,7 @@ javafx {
 }
 
 application {
-    applicationName = "ExtraterrestrialPetsSimulation"
+    applicationName = baseName
     mainClass = "de.mkalb.etpetssim.AppLauncher"
     mainModule = "de.mkalb.etpetssim"
     applicationDefaultJvmArgs = listOf(
@@ -39,10 +47,40 @@ application {
 
 testing {
     suites {
-        // Configure the built-in test suite
         val test by getting(JvmTestSuite::class) {
-            // Use JUnit Jupiter test framework
             useJUnitJupiter("5.13.4")
+            targets {
+                all {
+                    testTask.configure {
+                        jvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+                    }
+                }
+            }
         }
+    }
+}
+
+distributions {
+    main {
+        distributionBaseName.set(baseName)
+        contents {
+            from("LICENSE")
+            from("README.md")
+        }
+    }
+}
+
+tasks.jar {
+    manifest {
+        attributes(
+            "Implementation-Title" to "Extraterrestrial Pets Simulation",
+            "Implementation-Version" to archiveVersion,
+            "Main-Class" to application.mainClass,
+            "Main-Module" to application.mainModule,
+            "Built-By" to System.getProperty("user.name"),
+            "Build-Jdk" to System.getProperty("java.version"),
+            "Created-By" to "Gradle ${gradle.gradleVersion}",
+            "Build-Timestamp" to buildTimestamp
+        )
     }
 }
