@@ -64,3 +64,9 @@ This project uses several third-party libraries, each with its own license.
 For a complete list, see the [THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES) file.
 
 Both license files are also available in the application's About dialog.
+
+## Author
+
+- Name: Mathias Kalb
+- GitHub: [mkalb](https://github.com/mkalb)
+- Project: [Extraterrestrial Pets Simulation](https://github.com/mkalb/etpetssim)
