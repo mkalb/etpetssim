@@ -43,7 +43,7 @@ public record GridCoordinate(int x, int y) {
      */
     @SuppressWarnings("ObjectEquality")
     public boolean isIllegal() {
-        // Compares first with identity equality for performance. The real check is done afterward.
+        // First performs an identity check for performance; then validates x and y against MIN_VALID_COORDINATE.
         return (this == ILLEGAL) || (x < MIN_VALID_COORDINATE) || (y < MIN_VALID_COORDINATE);
     }
 

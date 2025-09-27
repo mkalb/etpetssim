@@ -51,14 +51,14 @@ public final class FXGridCanvasPainter {
         this.canvas = canvas;
         this.structure = structure;
 
-        // Store the graphics context of the canvas
+        // Store the graphics context of the canvas.
         gc = canvas.getGraphicsContext2D();
 
-        // Compute cell and grid dimension based on the cell shape
+        // Compute cell and grid dimensions based on the cell shape.
         cellDimension = GridGeometry.computeCellDimension(cellEdgeLength, structure.cellShape());
         gridDimension2D = GridGeometry.computeGridDimension(structure.size(), cellDimension, structure.cellShape());
 
-        // Instance for reusable text measurement
+        // Reusable Text instance for measuring text.
         textHelper = new Text();
     }
 
@@ -226,7 +226,7 @@ public final class FXGridCanvasPainter {
                                double scale) {
         double[][] cellPolygon = GridGeometry.computeCellPolygon(coordinate, cellDimension, structure.cellShape());
         Point2D center = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
-        // Slightly enlarge the polygon (e.g. 1.01 = 1% larger)
+        // Slightly enlarge the polygon (e.g., 1.01 = 1% larger).
         double[][] enlarged = scalePolygonFromCenter(cellPolygon[0], cellPolygon[1], center.getX(), center.getY(), scale);
         drawPolygon(enlarged[0], enlarged[1], fillColor, strokeColor, strokeLineWidth);
     }
@@ -312,10 +312,10 @@ public final class FXGridCanvasPainter {
     public void drawTriangle(GridCoordinate coordinate, double triangleEdgeLength,
                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                              double strokeLineWidth) {
-        // Compute the position from the current dimension and shape
+        // Compute the position from the current dimensions and shape.
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
 
-        // Compute a new dimension for the triangle based on the triangle edge length
+        // Compute new dimensions for the triangle based on its edge length.
         CellDimension triangleCellDimension = GridGeometry.computeCellDimension(triangleEdgeLength, CellShape.TRIANGLE);
         double[][] trianglePoints = GridGeometry.computeTrianglePolygon(cellTopLeft, triangleCellDimension, coordinate.isTriangleCellPointingDown());
         drawPolygon(trianglePoints[0], trianglePoints[1], fillColor, strokeColor, strokeLineWidth);
@@ -351,10 +351,10 @@ public final class FXGridCanvasPainter {
     public void drawHexagon(GridCoordinate coordinate, double hexagonEdgeLength,
                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
                             double strokeLineWidth) {
-        // Compute the position from the current dimension and shape
+        // Compute the position from the current dimensions and shape.
         Point2D cellTopLeft = GridGeometry.toCanvasPosition(coordinate, cellDimension, structure.cellShape());
 
-        // Compute a new dimension for the hexagon based on the hexagon edge length
+        // Compute new dimensions for the hexagon based on its edge length.
         CellDimension hexagonCellDimension = GridGeometry.computeCellDimension(hexagonEdgeLength, CellShape.HEXAGON);
         double[][] hexagonPoints = GridGeometry.computeHexagonPolygon(cellTopLeft, hexagonCellDimension);
         drawPolygon(hexagonPoints[0], hexagonPoints[1], fillColor, strokeColor, strokeLineWidth);
@@ -611,11 +611,11 @@ public final class FXGridCanvasPainter {
         double bgX = center.getX() - (bgWidth / 2);
         double bgY = center.getY() - (bgHeight / 2);
 
-        // Draw background rectangle
+        // Draw background rectangle.
         gc.setFill(backgroundColor);
         gc.fillRect(bgX, bgY, bgWidth, bgHeight);
 
-        // Draw centered text
+        // Draw centered text.
         drawCenteredTextAt(center, text, textColor, font);
     }
 

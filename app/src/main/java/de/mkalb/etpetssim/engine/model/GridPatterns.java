@@ -209,7 +209,7 @@ public final class GridPatterns {
             }
         }
 
-        // Normalize offsets so top-left is at (0, 0)
+        // Normalize offsets so top-left is at (0, 0).
         int minDx = offsets.stream().mapToInt(GridOffset::dx).min().orElse(0);
         int minDy = offsets.stream().mapToInt(GridOffset::dy).min().orElse(0);
         Map<GridOffset, T> map = new HashMap<>();

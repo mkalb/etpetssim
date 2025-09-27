@@ -86,7 +86,7 @@ public final class AppLocalization {
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
         bundle = AppResources.getBundle(locale).orElseThrow(() ->
-                new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded.")); // This should never happen
+                new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded.")); // This should never happen.
         AppLogger.info("AppLocalization: Initialized with locale: " + locale + " and loaded ResourceBundle");
     }
 
@@ -116,7 +116,7 @@ public final class AppLocalization {
         Locale resolvedLocale = null;
         if ((localeArgument != null) && !localeArgument.isBlank()) {
             for (CountryLocale supportedLocale : CountryLocale.values()) {
-                // It must match exactly the locale code (e.g., "en_US" or "de_DE")
+                // It must match exactly the locale code (e.g., "en_US" or "de_DE").
                 if (supportedLocale.localeCode().equals(localeArgument)) {
                     resolvedLocale = supportedLocale.countryLocale();
                     break;
@@ -146,7 +146,7 @@ public final class AppLocalization {
         Objects.requireNonNull(defaultLocale, "Default locale must not be null");
         Locale resolvedLocale = null;
         for (CountryLocale supportedLocale : CountryLocale.values()) {
-            // It must match exactly the country locale (e.g., Locale.US or Locale.GERMANY)
+            // It must match exactly the country locale (e.g., Locale.US or Locale.GERMANY).
             if (supportedLocale.countryLocale().equals(defaultLocale)) {
                 resolvedLocale = supportedLocale.countryLocale();
                 break;

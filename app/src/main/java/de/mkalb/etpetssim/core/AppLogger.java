@@ -42,9 +42,9 @@ public final class AppLogger {
 
     private AppLogger() {
         initialized = false;
-        // Root logger for the application
+        // Root logger for the application.
         logger = Logger.getLogger("");
-        // Set default log level
+        // Set the default log level.
         logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
     }
 
@@ -237,12 +237,12 @@ public final class AppLogger {
 
         Level level = logLevel.toJavaLogLevel();
 
-        // Set the log level for the logger
+        // Set the log level for the logger.
         APP_LOGGER.logger.setLevel(level);
 
         List<StreamHandler> logHandlers = new ArrayList<>();
 
-        // ConsoleHandler for console output
+        // ConsoleHandler for console output.
         if (useConsole) {
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setFormatter(new AppLogFormatter());
@@ -255,7 +255,7 @@ public final class AppLogger {
             logHandlers.add(consoleHandler);
         }
 
-        // FileHandler for file output
+        // FileHandler for file output.
         if (logPath != null) {
             try {
                 Path parent = logPath.getParent();
@@ -276,20 +276,20 @@ public final class AppLogger {
         if (logHandlers.isEmpty()) {
             APP_LOGGER.logger.warning("AppLogger: No logging handlers were created.");
 
-            // Remove all existing handlers
+            // Remove all existing handlers.
             for (Handler handler : APP_LOGGER.logger.getHandlers()) {
                 APP_LOGGER.logger.removeHandler(handler);
             }
 
-            // Disable all logging
+            // Disable all logging.
             APP_LOGGER.logger.setLevel(Level.OFF);
         } else {
-            // Remove all existing handlers from the logger before adding new ones
+            // Remove all existing handlers from the logger before adding new ones.
             for (Handler handler : APP_LOGGER.logger.getHandlers()) {
                 APP_LOGGER.logger.removeHandler(handler);
             }
 
-            // Add all new handlers to the logger
+            // Add all new handlers to the logger.
             logHandlers.forEach(APP_LOGGER.logger::addHandler);
             if (logLevel == LogLevel.DEBUG) {
                 logHandlers.forEach(handler -> debug("AppLogger: Added handler: " + handler.getClass().getSimpleName()));
@@ -340,25 +340,25 @@ public final class AppLogger {
     private static class AppLogFormatter extends Formatter {
 
         private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-        private static final int BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used in formatting
-        private static final int LEVEL_PADDING = 7; // Padding for log level alignment
+        private static final int BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used in formatting.
+        private static final int LEVEL_PADDING = 7; // Padding for log level alignment.
 
         @SuppressWarnings("StringConcatenationMissingWhitespace")
         @Override
         public String format(LogRecord record) {
             StringBuilder sb = new StringBuilder(BUILDER_CAPACITY);
 
-            // Time
+            // Time.
             String time = TIME_FORMATTER.format(LocalTime.ofInstant(Instant.ofEpochMilli(record.getMillis()), ZoneId.systemDefault()));
             sb.append("[").append(time).append("] ");
 
-            // Log-Level
+            // Log level.
             sb.append("[").append(String.format("%-" + LEVEL_PADDING + "s", record.getLevel().getName())).append("] ");
 
-            // Message
+            // Message.
             sb.append(formatMessage(record)).append(System.lineSeparator());
 
-            // Exception (if any)
+            // Exception (if any).
             if (record.getThrown() != null) {
                 var throwable = record.getThrown();
                 sb.append(throwable.toString()).append(System.lineSeparator());

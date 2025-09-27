@@ -32,7 +32,7 @@ public record GridSize(int width, int height) {
      * The maximum valid size for grid dimensions.
      * This is set to 16384 (2^14), which is the largest even number allowed.
      */
-    public static final int MAX_SIZE = 16_384; // 2^14
+    public static final int MAX_SIZE = 16_384; // equals 2^14.
 
     public static final GridSize EXTRA_SMALL_SQUARE = square(MIN_SIZE);
     public static final GridSize SMALL_SQUARE = square(MIN_SIZE * 2);

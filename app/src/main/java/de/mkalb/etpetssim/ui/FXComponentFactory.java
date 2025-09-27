@@ -103,14 +103,14 @@ public final class FXComponentFactory {
                                                           })
                                                           .toList();
 
-        // Set initial selection
+        // Set the initial selection.
         for (RadioButton rb : radioButtons) {
             if (inputEnumProperty.isValue((E) rb.getUserData())) {
                 rb.setSelected(true);
             }
         }
 
-        // Update property when selection changes
+        // Update the property when the selection changes.
         toggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
             if (newToggle != null) {
                 E selectedValue = (E) newToggle.getUserData();
@@ -118,7 +118,7 @@ public final class FXComponentFactory {
             }
         });
 
-        // Update selection when property changes
+        // Update the selection when the property changes.
         inputEnumProperty.property().addListener((_, _, newVal) -> {
             for (RadioButton rb : radioButtons) {
                 rb.setSelected(rb.getUserData() == newVal);
@@ -218,7 +218,7 @@ public final class FXComponentFactory {
                 .collect(Collectors.toMap(
                         Function.identity(),
                         displayNameProvider,
-                        (v1, _) -> v1 // merge function, just in case the list contains duplicates
+                        (v1, _) -> v1 // Merge function, in case the list contains duplicates.
                 ));
 
         ComboBox<E> comboBox = new ComboBox<>();
@@ -331,7 +331,7 @@ public final class FXComponentFactory {
             String tooltip,
             String styleClass) {
 
-        // Create spinner with min, max, initial value, and step
+        // Create the spinner with min, max, initial value, and step.
         Spinner<Integer> spinner = new Spinner<>(
                 inputIntegerProperty.min(),
                 inputIntegerProperty.max(),
@@ -340,7 +340,7 @@ public final class FXComponentFactory {
         spinner.setEditable(true);
         spinner.getStyleClass().add(styleClass);
 
-        // Only allow integer input in the editor
+        // Only allow integer input in the editor.
         TextFormatter<Integer> formatter = new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
             if (newText.matches("-?\\d*")) {
@@ -350,32 +350,32 @@ public final class FXComponentFactory {
         });
         spinner.getEditor().setTextFormatter(formatter);
 
-        // Keep spinner in sync with property changes
+        // Keep the spinner in sync with property changes.
         inputIntegerProperty.asObjectProperty().addListener((_, _, newVal) -> {
             if (!spinner.getValueFactory().getValue().equals(newVal)) {
                 spinner.getValueFactory().setValue(newVal);
             }
         });
 
-        // Normalize and sync on spinner value change
+        // Normalize and sync on spinner value change.
         spinner.valueProperty().addListener((_, _, _) -> normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty));
 
-        // Normalize and sync when editor loses focus
+        // Normalize and sync when the editor loses focus.
         spinner.getEditor().focusedProperty().addListener((_, _, isNowFocused) -> {
             if (!isNowFocused) {
                 normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty);
             }
         });
 
-        // Normalize and sync on Enter key in editor
+        // Normalize and sync on Enter key in the editor.
         spinner.getEditor().setOnAction(_ -> normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty));
 
-        // Label setup
+        // Set up the label.
         Label label = new Label();
         label.textProperty().bind(inputIntegerProperty.asStringBinding(labelFormatString));
         label.setLabelFor(spinner);
 
-        // Tooltip for both label and spinner
+        // Tooltip for both the label and the spinner.
         Tooltip tooltipValue = new Tooltip(tooltip);
         label.setTooltip(tooltipValue);
         spinner.setTooltip(tooltipValue);
@@ -402,22 +402,22 @@ public final class FXComponentFactory {
                 int parsedValue = Integer.parseInt(text);
                 int normalizedValue = inputIntegerProperty.adjustValue(parsedValue);
 
-                // 1. Update editor text if normalization changed the value
+                // 1. Update the editor text if normalization changed the value.
                 if (parsedValue != normalizedValue) {
                     spinner.getEditor().setText(String.valueOf(normalizedValue));
                 }
 
-                // 2. Update property if needed
+                // 2. Update the property if needed.
                 if (inputIntegerProperty.getValue() != normalizedValue) {
                     inputIntegerProperty.setValue(normalizedValue);
                 }
 
-                // 3. Update spinner if needed
+                // 3. Update the spinner if needed.
                 if (!valueFactory.getValue().equals(normalizedValue)) {
                     valueFactory.setValue(normalizedValue);
                 }
             } catch (NumberFormatException e) {
-                // Reset to current property value if parsing fails
+                // Reset to the current property value if parsing fails.
                 int currentValue = inputIntegerProperty.getValue();
                 spinner.getEditor().setText(String.valueOf(currentValue));
                 valueFactory.setValue(currentValue);
@@ -498,18 +498,18 @@ public final class FXComponentFactory {
      * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
      */
     private static int computeMinorTickCountForPercentSlider(int range) {
-        // Ensure the range is within the valid interval [2, 100]
+        // Ensure the range is within the valid interval [2, 100].
         if ((range >= 2) && (range <= 100)) {
-            // Array of divisors to check for divisibility
+            // Array of divisors to check for divisibility.
             int[] divisors = {10, 8, 6, 4, 9, 7, 5, 11, 13, 17, 19, 3, 2};
             for (int divisor : divisors) {
-                // If the range is divisible by the current divisor, return divisor - 1
+                // If the range is divisible by the current divisor, return divisor - 1.
                 if ((range % divisor) == 0) {
                     return divisor - 1;
                 }
             }
         }
-        // Return 0 if no divisor matches or the range is out of bounds
+        // Return 0 if no divisor matches or the range is out of bounds.
         return 0;
     }
 
@@ -542,7 +542,7 @@ public final class FXComponentFactory {
         textField.getStyleClass().add(styleClass);
         textField.setPromptText(promptText);
 
-        // Add clear button for the text field
+        // Add a clear button for the text field.
         Button clearButton = new Button("✕");
         clearButton.setFocusTraversable(false);
         clearButton.setOnAction(_ -> textField.clear());

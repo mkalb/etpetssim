@@ -61,7 +61,7 @@ public final class TimedSimulationExecutor<
         delegate.executeStep();
         currentStepMillis = System.currentTimeMillis() - start;
 
-        // Update min/max
+        // Update min/max.
         if (currentStepMillis < minStepMillis) {
             minStepMillis = currentStepMillis;
         }

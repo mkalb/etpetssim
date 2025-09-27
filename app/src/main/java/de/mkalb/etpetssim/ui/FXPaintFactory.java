@@ -105,7 +105,7 @@ public final class FXPaintFactory {
      */
     public static Paint createHorizontalGradient(Color leftColor, Color rightColor) {
         return new LinearGradient(
-                0, 0, 1, 0, // horizontal
+                0, 0, 1, 0, // Horizontal.
                 true,
                 CycleMethod.NO_CYCLE,
                 new Stop(0, leftColor),
@@ -122,7 +122,7 @@ public final class FXPaintFactory {
      */
     public static Paint createVerticalGradient(Color topColor, Color bottomColor) {
         return new LinearGradient(
-                0, 0, 0, 1, // vertical
+                0, 0, 0, 1, // Vertical.
                 true,
                 CycleMethod.NO_CYCLE,
                 new Stop(0, topColor),
@@ -139,10 +139,10 @@ public final class FXPaintFactory {
      */
     public static Paint createRadialGradient(Color centerColor, Color edgeColor) {
         return new RadialGradient(
-                0, 0, // focusAngle, focusDistance
-                0.5, 0.5, // centerX, centerY (relative)
-                0.5, // radius (relative)
-                true, // proportional
+                0, 0, // Focus angle, focus distance.
+                0.5, 0.5, // Center X, center Y (relative).
+                0.5, // Radius (relative).
+                true, // Proportional.
                 CycleMethod.NO_CYCLE,
                 new Stop(0, centerColor),
                 new Stop(1, edgeColor)

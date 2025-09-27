@@ -154,7 +154,7 @@ public final class GridInitializers {
         return model -> {
             int placed = 0;
             int gridArea = model.structure().size().area();
-            int maxAttempts = Math.max(100, gridArea / 2); // Scales with grid size, minimum 100
+            int maxAttempts = Math.max(100, gridArea / 2); // Scales with grid size; minimum 100.
             while (placed < count) {
                 T nextEntity = entitySupplier.get();
                 int attempts = 0;

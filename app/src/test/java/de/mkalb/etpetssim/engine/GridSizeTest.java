@@ -84,10 +84,10 @@ class GridSizeTest {
     void testToDisplayString() {
         assertEquals("32 × 64", new GridSize(32, 64).toDisplayString());
         assertEquals("1024 × 2048", new GridSize(1_024, 2_048).toDisplayString());
-        // Boundary values
+        // Boundary values (min/max).
         assertEquals("8 × 8", new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE).toDisplayString());
         assertEquals("16384 × 16384", new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE).toDisplayString());
-        // Square and rectangle
+        // Square and rectangle examples.
         assertEquals("16 × 16", GridSize.square(16).toDisplayString());
         assertEquals("16 × 8", new GridSize(16, 8).toDisplayString());
         assertEquals("8 × 16", new GridSize(8, 16).toDisplayString());

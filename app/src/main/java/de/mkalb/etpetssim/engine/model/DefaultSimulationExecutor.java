@@ -67,7 +67,7 @@ public final class DefaultSimulationExecutor<
 
     @Override
     public void executeStep() {
-        // Use stepCount as stepIndex for the current step
+        // Use stepCount as the step index for the current step.
         stepRunner.performStep(stepCount, context);
         stepCount++;
     }

@@ -151,8 +151,8 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
 
     @Override
     public void fill(T entity) {
-        data.clear(); // Clear existing entries
-        if (!entity.equals(defaultEntity)) { // Set new entities only if different from default
+        data.clear(); // Clear existing entities.
+        if (!entity.equals(defaultEntity)) { // Set new entities only if different from the default.
             structure.coordinatesStream().forEach(coordinate -> data.put(coordinate, entity));
         }
     }

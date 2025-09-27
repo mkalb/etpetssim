@@ -311,7 +311,7 @@ public final class GridGeometry {
             }
             case HEXAGON -> {
                 int estimatedGridX = (int) (point.getX() / cellDimension.columnWidth());
-                boolean hasHexagonCellYOffset = (estimatedGridX % 2) != 0; // see GridCoordinate.hasHexagonCellYOffset()
+                boolean hasHexagonCellYOffset = (estimatedGridX % 2) != 0; // See GridCoordinate.hasHexagonCellYOffset().
                 double yOffset = hasHexagonCellYOffset ? ONE_HALF : ZERO;
                 int estimatedGridY = (int) ((point.getY() / cellDimension.rowHeight()) - yOffset);
                 yield new GridCoordinate(estimatedGridX, estimatedGridY);
@@ -351,7 +351,7 @@ public final class GridGeometry {
                                                       .orElse(GridCoordinate.ILLEGAL);
             case SQUARE -> estimatedCoordinate;
             case HEXAGON -> {
-                // Test candidate coordinates for the hexagon cell.
+                // Evaluate candidate coordinates for the hexagon cell.
                 GridCoordinate closestValidHexCell = GridCoordinate.ILLEGAL;
                 double minDistance = Double.MAX_VALUE;
                 double earlyAcceptThreshold = cellDimension.halfEdgeLength();
@@ -558,7 +558,7 @@ public final class GridGeometry {
                 }
                 default -> throw new IllegalArgumentException("Unsupported PolygonViewDirection: " + direction);
             }
-        } else { // pointing up
+        } else { // Triangle pointing up.
             switch (direction) {
                 case TOP -> {
                     xPoints = new double[3];

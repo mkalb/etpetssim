@@ -17,7 +17,7 @@ class AppLocalizationTest {
 
     @BeforeEach
     void setUpBeforeEach() {
-        // Reset AppLocalization before each test
+        // Reset AppLocalization before each test.
         AppLocalization.resetForTesting();
     }
 
@@ -137,7 +137,6 @@ class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getText(null));
     }
 
-
     @Test
     void testGetOptionalText() {
         AppLocalization.initialize("en_US");
@@ -154,6 +153,7 @@ class AppLocalizationTest {
         assertEquals(Optional.empty(), AppLocalization.getOptionalText("non_existent_key"));
         assertThrows(NullPointerException.class, () -> AppLocalization.getOptionalText(null));
     }
+
     /**
      * Tests the retrieval and formatting of localized text for the key "welcome" with a parameter.
      *
@@ -182,7 +182,7 @@ class AppLocalizationTest {
 
     @Test
     void testEnumCountryLocale() {
-        // Test that enum country locales are not null or empty
+        // Test that enum country locales are not null.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             Locale country = locale.countryLocale();
             assertNotNull(country);
@@ -194,7 +194,7 @@ class AppLocalizationTest {
 
     @Test
     void testEnumDisplayName() {
-        // Test that enum display names are not null or empty
+        // Test that enum display names are not null or empty.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String displayName = locale.displayName();
             assertNotNull(displayName);
@@ -207,7 +207,7 @@ class AppLocalizationTest {
 
     @Test
     void testEnumLanguageCode() {
-        // Test that enum language codes are not null or empty
+        // Test that enum language codes are not null or empty.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.languageCode();
             assertNotNull(code);
@@ -221,7 +221,7 @@ class AppLocalizationTest {
 
     @Test
     void testEnumCountryCode() {
-        // Test that enum country codes are not null or empty
+        // Test that enum country codes are not null or empty.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.countryCode();
             assertNotNull(code);
@@ -235,7 +235,7 @@ class AppLocalizationTest {
 
     @Test
     void testEnumLocaleCode() {
-        // Test that enum locale codes match the expected format
+        // Test that enum locale codes match the expected format.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.localeCode();
             assertNotNull(code);

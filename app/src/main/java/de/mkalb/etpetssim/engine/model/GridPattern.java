@@ -179,7 +179,7 @@ public interface GridPattern<T extends GridEntity> {
         for (var entry : original.entrySet()) {
             int x = entry.getKey().dx() - minDx;
             int y = entry.getKey().dy() - minDy;
-            // (x, y) -> (height - 1 - y, x)
+            // (x, y) -> (height - 1 - y, x).
             rotated.put(new GridOffset(height - 1 - y, x), entry.getValue());
         }
         return () -> rotated;
@@ -202,7 +202,7 @@ public interface GridPattern<T extends GridEntity> {
         for (var entry : original.entrySet()) {
             int x = entry.getKey().dx() - minDx;
             int y = entry.getKey().dy() - minDy;
-            // (x, y) -> (width - 1 - x, height - 1 - y)
+            // (x, y) -> (width - 1 - x, height - 1 - y).
             rotated.put(new GridOffset(width - 1 - x, height - 1 - y), entry.getValue());
         }
         return () -> rotated;
@@ -224,7 +224,7 @@ public interface GridPattern<T extends GridEntity> {
         for (var entry : original.entrySet()) {
             int x = entry.getKey().dx() - minDx;
             int y = entry.getKey().dy() - minDy;
-            // (x, y) -> (y, width - 1 - x)
+            // (x, y) -> (y, width - 1 - x).
             rotated.put(new GridOffset(y, width - 1 - x), entry.getValue());
         }
         return () -> rotated;
