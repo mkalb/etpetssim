@@ -35,6 +35,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @param coordinate the grid coordinate
      * @return the entity at the coordinate
+     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     T getEntity(GridCoordinate coordinate);
 
@@ -43,6 +44,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @param coordinate the grid coordinate
      * @return a GridCell with the coordinate and its entity
+     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     default GridCell<T> getGridCell(GridCoordinate coordinate) {
         return new GridCell<>(coordinate, getEntity(coordinate));
@@ -53,6 +55,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @param coordinate the grid coordinate to check
      * @return {@code true} if the entity at the coordinate is the default entity, {@code false} otherwise
+     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
      */
     default boolean isDefaultEntity(GridCoordinate coordinate) {
         return getEntity(coordinate).equals(defaultEntity());

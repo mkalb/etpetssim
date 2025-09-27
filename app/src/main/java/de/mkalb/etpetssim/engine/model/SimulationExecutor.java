@@ -17,7 +17,7 @@ public interface SimulationExecutor<
     /**
      * Returns the current simulation model.
      *
-     * @return the current {@link WritableGridModel}
+     * @return the current model instance
      */
     GM currentModel();
 
