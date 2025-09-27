@@ -488,7 +488,7 @@ public final class FXGridCanvasPainter {
     public void drawPolygon(double[] xPoints, double[] yPoints,
                             @Nullable Paint fillColor, @Nullable Paint strokeColor,
                             double strokeLineWidth) {
-        if ((xPoints.length > 0) || (xPoints.length == yPoints.length)) {
+        if ((xPoints.length > 0) && (xPoints.length == yPoints.length)) {
             if (fillColor != null) {
                 graphicsContext2D.setFill(fillColor);
                 graphicsContext2D.fillPolygon(xPoints, yPoints, xPoints.length);
