@@ -210,11 +210,6 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
         }
     }
 
-    /**
-     * Returns a string representation of this grid model, including its structure and default entity.
-     *
-     * @return a string representation of this grid model
-     */
     @Override
     public String toString() {
         return "SparseGridModel{" +

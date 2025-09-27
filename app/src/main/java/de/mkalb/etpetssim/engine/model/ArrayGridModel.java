@@ -223,11 +223,6 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
         data[yB][xB] = temp;
     }
 
-    /**
-     * Returns a string representation of this grid model, including its structure and default entity.
-     *
-     * @return a string representation of this grid model
-     */
     @Override
     public String toString() {
         return "ArrayGridModel{" +
