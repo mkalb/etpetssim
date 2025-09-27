@@ -58,13 +58,9 @@ This project uses the latest stable versions of all technologies whenever possib
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the [MIT License](LICENSE).
 
-### Third-Party Libraries and Licenses
+This project uses several third-party libraries, each with its own license.
+For a complete list, see the [THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES) file.
 
-| Library  | License                   | URL                                                    |
-|----------|---------------------------|--------------------------------------------------------|
-| Gradle   | Apache License 2.0        | https://gradle.org/license                             |
-| JavaFX   | GPL + Classpath Exception | https://openjfx.io/                                    |
-| JUnit    | EPL 2.0                   | https://junit.org                                      |
-| JSpecify | Apache License 2.0        | https://github.com/jspecify/jspecify/blob/main/LICENSE |
+Both license files are also available in the application's About dialog.
