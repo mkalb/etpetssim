@@ -307,8 +307,8 @@ public final class LabMainView
                 Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
 
         // draw frame segment
-        basePainter.drawCellFrameSegment(new GridCoordinate(0, 1), Color.DARKGREEN, TEST_LINE_WIDTH, PolygonViewDirection.LEFT);
-        basePainter.drawCellFrameSegment(new GridCoordinate(1, 2), Color.DARKBLUE, TEST_LINE_WIDTH, PolygonViewDirection.LEFT);
+        basePainter.drawCellFrameSegment(new GridCoordinate(0, 1), Color.DARKGREEN, TEST_LINE_WIDTH, CellShapeSide.LEFT);
+        basePainter.drawCellFrameSegment(new GridCoordinate(1, 2), Color.DARKBLUE, TEST_LINE_WIDTH, CellShapeSide.LEFT);
     }
 
     private Color determineColumnSimilarityColor(GridCoordinate coordinate) {

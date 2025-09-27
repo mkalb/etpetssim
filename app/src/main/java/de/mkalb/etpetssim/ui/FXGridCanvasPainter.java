@@ -233,18 +233,18 @@ public final class FXGridCanvasPainter {
 
     /**
      * Draws a partial frame (one or more connected edges) of a cell at the specified grid coordinate.
-     * The frame segment is defined by the cell's shape and the given view direction.
+     * The frame segment is defined by the cell's shape and the given side.
      *
      * @param coordinate the grid coordinate of the cell whose frame segment is to be drawn
      * @param strokeColor the color used to draw the frame segment
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @param direction the direction specifying which part of the cell frame to draw
+     * @param side the side specifying which part of the cell frame to draw
      */
     public void drawCellFrameSegment(GridCoordinate coordinate,
                                      Paint strokeColor,
                                      double strokeLineWidth,
-                                     PolygonViewDirection direction) {
-        double[][] cellPolygon = GridGeometry.computeCellFrameSegmentPolyline(coordinate, cellDimension, structure.cellShape(), direction);
+                                     CellShapeSide side) {
+        double[][] cellPolygon = GridGeometry.computeCellFrameSegmentPolyline(coordinate, cellDimension, structure.cellShape(), side);
         drawPolyline(cellPolygon[0], cellPolygon[1], strokeColor, strokeLineWidth);
     }
 

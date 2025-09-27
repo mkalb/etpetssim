@@ -436,30 +436,30 @@ public final class GridGeometry {
 
     /**
      * Computes the x and y coordinates of the points forming a polyline segment of a cell's frame,
-     * based on the specified grid coordinate, cell dimensions, cell shape, and frame segment direction.
+     * based on the specified grid coordinate, cell dimensions, cell shape, and frame segment side.
      *
      * <p>
      * The returned 2D array contains the ordered points (as x and y arrays) that define the requested
      * segment of the cell's outline (frame) as a polyline. The order and number of points depend on
-     * the cell shape and the specified {@link PolygonViewDirection}.
+     * the cell shape and the specified {@link CellShapeSide}.
      * </p>
      *
      * @param coordinate the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
      * @param shape the shape of the cell
-     * @param direction the direction or segment of the cell frame to compute
+     * @param side the side or segment of the cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code direction} is unsupported
+     * @throws IllegalArgumentException if {@code side} is unsupported
      */
     public static double[][] computeCellFrameSegmentPolyline(GridCoordinate coordinate, CellDimension cellDimension,
-                                                             CellShape shape, PolygonViewDirection direction) {
+                                                             CellShape shape, CellShapeSide side) {
         Point2D topLeft = toCanvasPosition(coordinate, cellDimension, shape);
 
         return switch (shape) {
             case TRIANGLE ->
-                    computeTriangleFrameSegmentPolyline(topLeft, cellDimension, coordinate.isTriangleCellPointingDown(), direction);
-            case SQUARE -> computeSquareFrameSegmentPolyline(topLeft, cellDimension, direction);
-            case HEXAGON -> computeHexagonFrameSegmentPolyline(topLeft, cellDimension, direction);
+                    computeTriangleFrameSegmentPolyline(topLeft, cellDimension, coordinate.isTriangleCellPointingDown(), side);
+            case SQUARE -> computeSquareFrameSegmentPolyline(topLeft, cellDimension, side);
+            case HEXAGON -> computeHexagonFrameSegmentPolyline(topLeft, cellDimension, side);
         };
     }
 
@@ -498,30 +498,30 @@ public final class GridGeometry {
 
     /**
      * Computes the x and y coordinates of the points forming a polyline segment of a triangle cell's frame,
-     * based on the specified top-left position, cell dimensions, triangle orientation, and frame segment direction.
+     * based on the specified top-left position, cell dimensions, triangle orientation, and frame segment side.
      *
      * <p>
      * This method is specifically designed for cells of shape {@link CellShape#TRIANGLE} and only computes
      * polyline segments for triangle cells. The returned 2D array contains the ordered points (as x and y arrays)
      * that define the requested segment of the triangle cell's outline (frame) as a polyline.
-     * The number and order of points depend on the triangle's orientation and the specified {@link PolygonViewDirection}.
+     * The number and order of points depend on the triangle's orientation and the specified {@link CellShapeSide}.
      * </p>
      *
      * @param topLeft the top-left position of the triangle cell in canvas coordinates
      * @param cellDimension the dimensions of the triangle cell
      * @param isPointingDown whether the triangle is pointing downwards
-     * @param direction the direction or segment of the triangle cell frame to compute
+     * @param side the side or segment of the triangle cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code direction} is unsupported
+     * @throws IllegalArgumentException if {@code side} is unsupported
      */
-    public static double[][] computeTriangleFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown, PolygonViewDirection direction) {
+    public static double[][] computeTriangleFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown, CellShapeSide side) {
         double[] xPoints;
         double[] yPoints;
         double x = topLeft.getX();
         double y = topLeft.getY();
 
         if (isPointingDown) {
-            switch (direction) {
+            switch (side) {
                 case TOP -> {
                     xPoints = new double[2];
                     yPoints = new double[2];
@@ -556,10 +556,10 @@ public final class GridGeometry {
                     xPoints[1] = x + cellDimension.halfEdgeLength();
                     yPoints[1] = y + cellDimension.height();
                 }
-                default -> throw new IllegalArgumentException("Unsupported PolygonViewDirection: " + direction);
+                default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
             }
         } else { // Triangle pointing up.
-            switch (direction) {
+            switch (side) {
                 case TOP -> {
                     xPoints = new double[3];
                     yPoints = new double[3];
@@ -594,7 +594,7 @@ public final class GridGeometry {
                     xPoints[1] = x + cellDimension.edgeLength();
                     yPoints[1] = y + cellDimension.height();
                 }
-                default -> throw new IllegalArgumentException("Unsupported PolygonViewDirection: " + direction);
+                default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
             }
         }
 
@@ -628,7 +628,7 @@ public final class GridGeometry {
 
     /**
      * Computes the x and y coordinates of the points forming a polyline segment of a square cell's frame,
-     * based on the specified top-left position, cell dimensions, and frame segment direction.
+     * based on the specified top-left position, cell dimensions, and frame segment side.
      *
      * <p>
      * This method is specifically designed for cells of shape {@link CellShape#SQUARE} and only computes
@@ -638,18 +638,18 @@ public final class GridGeometry {
      *
      * @param topLeft the top-left position of the square cell in canvas coordinates
      * @param cellDimension the dimensions of the square cell
-     * @param direction the direction or segment of the square cell frame to compute
+     * @param side the side or segment of the square cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code direction} is unsupported
+     * @throws IllegalArgumentException if {@code side} is unsupported
      */
     public static double[][] computeSquareFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
-                                                               PolygonViewDirection direction) {
+                                                               CellShapeSide side) {
         double[] xPoints;
         double[] yPoints;
         double x = topLeft.getX();
         double y = topLeft.getY();
 
-        switch (direction) {
+        switch (side) {
             case TOP -> {
                 xPoints = new double[2];
                 yPoints = new double[2];
@@ -682,7 +682,7 @@ public final class GridGeometry {
                 xPoints[1] = x + cellDimension.edgeLength();
                 yPoints[1] = y + cellDimension.edgeLength();
             }
-            default -> throw new IllegalArgumentException("Unsupported PolygonViewDirection: " + direction);
+            default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
         }
 
         return new double[][]{xPoints, yPoints};
@@ -719,30 +719,30 @@ public final class GridGeometry {
 
     /**
      * Computes the x and y coordinates of the points forming a polyline segment of a hexagon cell's frame,
-     * based on the specified top-left position, cell dimensions, and frame segment direction.
+     * based on the specified top-left position, cell dimensions, and frame segment side.
      *
      * <p>
      * This method is specifically designed for cells of shape {@link CellShape#HEXAGON} (flat-topped) and only computes
      * polyline segments for hexagon cells. The returned 2D array contains the ordered points (as x and y arrays)
      * that define the requested segment of the hexagon cell's outline (frame) as a polyline.
-     * The number and order of points depend on the specified {@link PolygonViewDirection}.
+     * The number and order of points depend on the specified {@link CellShapeSide}.
      * </p>
      *
      * @param topLeft the top-left position of the hexagon cell in canvas coordinates
      * @param cellDimension the dimensions of the hexagon cell
-     * @param direction the direction or segment of the hexagon cell frame to compute
+     * @param side the side or segment of the hexagon cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code direction} is unsupported
+     * @throws IllegalArgumentException if {@code side} is unsupported
      */
     @SuppressWarnings("DuplicateExpressions")
     public static double[][] computeHexagonFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
-                                                                PolygonViewDirection direction) {
+                                                                CellShapeSide side) {
         double x = topLeft.getX();
         double y = topLeft.getY();
         double[] xPoints;
         double[] yPoints;
 
-        switch (direction) {
+        switch (side) {
             case TOP -> {
                 xPoints = new double[4];
                 yPoints = new double[4];
@@ -787,7 +787,7 @@ public final class GridGeometry {
                 xPoints[2] = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
                 yPoints[2] = y + cellDimension.height();
             }
-            default -> throw new IllegalArgumentException("Unsupported PolygonViewDirection: " + direction);
+            default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
         }
 
         return new double[][]{xPoints, yPoints};
