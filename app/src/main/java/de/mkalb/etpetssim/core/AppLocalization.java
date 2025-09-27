@@ -95,6 +95,7 @@ public final class AppLocalization {
      * The AppLocalization must be initialized exactly once at the beginning.
      *
      * @param localeArgument the locale argument provided by the user, can be null or empty
+     * @throws IllegalStateException if the AppLocalization is already initialized
      * @see #initialize(String, Locale)
      * @see java.util.Locale#getDefault()
      */
