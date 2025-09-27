@@ -18,9 +18,10 @@ import java.util.function.*;
 /**
  * Main view for the start screen of the Extraterrestrial Pets Simulation application.
  * <p>
- * Implements {@link de.mkalb.etpetssim.simulations.view.SimulationMainView} and builds the UI region containing buttons
- * for each available simulation type. This class encapsulates both the view and
- * its logic, as no separate ViewModel or Model is required for the start screen.
+ * Implements {@link SimulationMainView} and {@link SimulationControlView}. It builds a vertical list of
+ * buttons for each {@link SimulationType} that is configured to be shown on the start screen. Implemented
+ * simulations are clickable and switch the stage to the selected type; unimplemented ones are disabled.
+ * This class encapsulates both the view and minimal control behavior; no dedicated ViewModel is required.
  * </p>
  */
 @SuppressWarnings("ClassCanBeRecord")
@@ -29,6 +30,12 @@ public final class StartMainView implements SimulationMainView, SimulationContro
     private final Stage stage;
     private final BiConsumer<Stage, SimulationType> stageUpdater;
 
+    /**
+     * Creates a new start screen main view.
+     *
+     * @param stage the primary stage hosting the UI
+     * @param stageUpdater a callback that switches the stage to a different simulation type
+     */
     public StartMainView(Stage stage,
                          BiConsumer<Stage, SimulationType> stageUpdater) {
         this.stage = stage;
