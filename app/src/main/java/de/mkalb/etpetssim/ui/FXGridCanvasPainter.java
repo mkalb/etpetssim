@@ -183,7 +183,7 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * CLear the background of the grid area.
+     * Clear the background of the grid area.
      * The grid area is defined by the grid size, cell shape and cell edge length.
      *
      * @see #gridDimension2D
