@@ -19,13 +19,13 @@ public enum SimulationStartMode {
      * <p>
      * No manual intervention is possible before the first step.
      */
-    RUNNING,
+    START_IMMEDIATELY,
 
     /**
      * The simulation is initialized in a paused state.
      * <p>
      * Manual editing and intervention are possible before starting execution.
      */
-    PAUSED
+    START_PAUSED
 
 }

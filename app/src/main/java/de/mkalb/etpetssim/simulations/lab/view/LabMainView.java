@@ -208,7 +208,7 @@ public final class LabMainView
         boolean colorModeBW = (config.colorMode() == LabConfig.ColorMode.BLACK_WHITE);
         boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE) || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
         Color textColor = colorModeBW ? TEXT_COLOR_BW : TEXT_COLOR;
-        Color strokeColor = config.cellDisplayMode().isBordered() ? STROKE_COLOR : null;
+        Color strokeColor = config.cellDisplayMode().hasBorder() ? STROKE_COLOR : null;
 
         drawBaseCanvasBackground(colorModeBW);
 

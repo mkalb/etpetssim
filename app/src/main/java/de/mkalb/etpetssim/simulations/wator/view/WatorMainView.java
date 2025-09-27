@@ -86,7 +86,7 @@ public final class WatorMainView
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntityDescribable.SHARK.descriptorId()),
                         1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
 
-        double strokeLineWidth = config.cellDisplayMode().isBordered() ?
+        double strokeLineWidth = config.cellDisplayMode().hasBorder() ?
                 computeStrokeLineWidth(config.cellShape(), cellDimension) : 0.0d;
 
         cellDrawer = switch (config.cellDisplayMode()) {

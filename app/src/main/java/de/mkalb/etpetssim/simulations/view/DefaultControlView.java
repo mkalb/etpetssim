@@ -114,8 +114,8 @@ public final class DefaultControlView
         );
 
         var startModeControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.startModeProperty(),
-                SimulationStartMode.PAUSED,
-                SimulationStartMode.RUNNING,
+                SimulationStartMode.START_PAUSED,
+                SimulationStartMode.START_IMMEDIATELY,
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_START_PAUSED),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_START_PAUSED_TOOLTIP),
                 FXStyleClasses.CONFIG_CHECKBOX

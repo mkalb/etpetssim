@@ -28,7 +28,7 @@ public final class DefaultControlViewModel
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
-    private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.RUNNING, SimulationStartMode.class, Enum::toString);
+    private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
     private final InputEnumProperty<SimulationTerminationCheck> terminationCheck = InputEnumProperty.of(SimulationTerminationCheck.CHECKED, SimulationTerminationCheck.class, Enum::toString);
 
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
@@ -91,7 +91,7 @@ public final class DefaultControlViewModel
     }
 
     public boolean isStartPaused() {
-        return startMode.getValue() == SimulationStartMode.PAUSED;
+        return startMode.getValue() == SimulationStartMode.START_PAUSED;
     }
 
     public boolean isTerminationChecked() {
