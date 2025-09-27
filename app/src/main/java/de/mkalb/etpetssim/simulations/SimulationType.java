@@ -8,9 +8,11 @@ import java.net.URI;
 import java.util.*;
 
 /**
- * Enum representing different types of simulations available in the Extraterrestrial Pets Simulation application.
- * Each simulation type has properties such as whether it is implemented, whether it should be shown on the start screen,
- * and various keys for localization and CLI arguments.
+ * Represents the types of simulations available in the Extraterrestrial Pets Simulation application.
+ * <p>
+ * Each simulation type declares whether it is implemented, whether it should be shown on the
+ * start screen, and provides localization keys, a CSS path, and CLI argument aliases.
+ * </p>
  */
 @SuppressWarnings("SpellCheckingInspection")
 public enum SimulationType {
@@ -43,7 +45,7 @@ public enum SimulationType {
             List.of("simulationlab", "lab")
     ),
     /**
-     * Extraterrestrial Pets Simulation (ET pets) will be the simulation I developed and designed myself.
+     * Extraterrestrial Pets Simulation (ET pets): a planned custom simulation by the author.
      */
     ET_PETS_SIM(
             false,
@@ -158,10 +160,11 @@ public enum SimulationType {
     }
 
     /**
-     * Returns an Optional containing the SimulationType that matches the provided CLI argument.
-     * @param arg the CLI argument to match against the simulation types
-     * @param onlyImplemented if true, only considers implemented simulations
-     * @return an Optional containing the matching SimulationType, or empty if none found
+     * Finds a simulation type by a CLI argument, case-insensitively.
+     *
+     * @param arg the CLI argument alias to match
+     * @param onlyImplemented if {@code true}, only consider simulations marked as implemented
+     * @return an Optional containing the matching type, or empty if none matches
      */
     public static Optional<SimulationType> fromCliArgument(String arg, boolean onlyImplemented) {
         return Arrays.stream(values())
@@ -171,35 +174,65 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum SimulationType.
+     * Returns the resource key for the localized label (title) of the enum SimulationType.
      *
-     * @return the resource key for the label of the enum SimulationType
+     * @return the resource key identifier
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
         return "simulationtype.label";
     }
 
+    /**
+     * Indicates whether this simulation type is implemented and usable.
+     *
+     * @return {@code true} if implemented; {@code false} otherwise
+     */
     public boolean isImplemented() {
         return implemented;
     }
 
+    /**
+     * Indicates whether this simulation type should be shown on the start screen.
+     *
+     * @return {@code true} if it should be displayed on the start screen; {@code false} otherwise
+     */
     public boolean isShownOnStartScreen() {
         return showOnStartScreen;
     }
 
+    /**
+     * Returns the localization key for the title of this simulation type.
+     *
+     * @return the title resource key
+     */
     public String titleKey() {
         return titleKey;
     }
 
+    /**
+     * Returns the localization key for the optional subtitle of this simulation type.
+     *
+     * @return the subtitle resource key
+     */
     public String subtitleKey() {
         return subtitleKey;
     }
 
+    /**
+     * Returns the localization key for the optional URL of this simulation type.
+     *
+     * @return the URL resource key
+     */
     public String urlKey() {
         return urlKey;
     }
 
+    /**
+     * Returns the localization key for the optional emoji of this simulation type.
+     *
+     * @return the emoji resource key
+     */
     public String emojiKey() {
         return emojiKey;
     }
@@ -213,45 +246,55 @@ public enum SimulationType {
         return cssPath;
     }
 
+    /**
+     * Returns all CLI argument aliases that can be used to select this simulation from the command line.
+     *
+     * @return an immutable list of CLI argument aliases
+     */
     public List<String> cliArguments() {
         return cliArguments;
     }
 
     /**
      * Returns the localized title for this simulation type.
-     * @return the localized title of the simulation
+     *
+     * @return the localized title text
      */
     public String title() {
         return AppLocalization.getText(titleKey);
     }
 
     /**
-     * Returns the localized subtitle for this simulation type as an Optional.
-     * @return an Optional containing the localized subtitle of the simulation, or empty if not available
+     * Returns the localized subtitle for this simulation type.
+     *
+     * @return an Optional containing the subtitle text, if present
      */
     public Optional<String> subtitle() {
         return AppLocalization.getOptionalText(subtitleKey);
     }
 
     /**
-     * Returns the localized URL for this simulation type as an Optional.
-     * @return an Optional containing the URL of the simulation, or empty if not available
+     * Returns the localized URL for this simulation type.
+     *
+     * @return an Optional containing the URL text, if present
      */
     public Optional<String> url() {
         return AppLocalization.getOptionalText(urlKey);
     }
 
     /**
-     * Returns the localized emoji for this simulation type as an Optional.
-     * @return an Optional containing the emoji of the simulation, or empty if not available
+     * Returns the localized emoji for this simulation type.
+     *
+     * @return an Optional containing the emoji, if present
      */
     public Optional<String> emoji() {
         return AppLocalization.getOptionalText(emojiKey);
     }
 
     /**
-     * Converts the URL of this simulation type to a URI and returns it as an Optional.
-     * @return an Optional containing the URI of the simulation URL, or empty if the URL is invalid or missing
+     * Converts the localized URL of this simulation type to a {@link URI}.
+     *
+     * @return an Optional containing the URI, or empty if the URL is missing or invalid
      */
     public Optional<URI> urlAsURI() {
         return url().flatMap(text -> {
@@ -265,8 +308,9 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the CSS resource path for this simulation type as an Optional.
-     * @return an Optional containing the CSS resource path, or empty if the path is blank
+     * Resolves the CSS resource for this simulation type.
+     *
+     * @return an Optional containing the resolved CSS resource path, or empty if no CSS is defined
      */
     public Optional<String> cssResource() {
         if (cssPath.isBlank()) {

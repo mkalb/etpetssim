@@ -8,14 +8,22 @@ import javafx.scene.layout.Region;
  * the view managing it, and the view region for the simulation.
  *
  * @param simulationType the type of simulation
- * @param simulationMainView the view managing the simulation
- * @param region the view region for the simulation
+ * @param simulationMainView the view managing the simulation lifecycle and UI composition
+ * @param region the root UI region for the simulation
  */
 public record SimulationInstance(
         SimulationType simulationType,
         SimulationMainView simulationMainView,
         Region region) {
 
+    /**
+     * Creates a new {@code SimulationInstance} for the given type and main view.
+     * The region is built via {@link SimulationMainView#buildMainRegion()}.
+     *
+     * @param type the simulation type
+     * @param simulationMainView the main view responsible for building the UI
+     * @return a new instance bundling type, view, and its main region
+     */
     static SimulationInstance of(SimulationType type, SimulationMainView simulationMainView) {
         return new SimulationInstance(type, simulationMainView, simulationMainView.buildMainRegion());
     }
