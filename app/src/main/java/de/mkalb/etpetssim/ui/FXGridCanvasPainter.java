@@ -31,7 +31,7 @@ public final class FXGridCanvasPainter {
     private final Canvas canvas;
     private final GridStructure structure;
 
-    private final GraphicsContext gc;
+    private final GraphicsContext graphicsContext2D;
     private final CellDimension cellDimension;
     private final Dimension2D gridDimension2D;
     private final Text textHelper;
@@ -53,7 +53,7 @@ public final class FXGridCanvasPainter {
         this.structure = structure;
 
         // Store the graphics context of the canvas.
-        gc = canvas.getGraphicsContext2D();
+        graphicsContext2D = canvas.getGraphicsContext2D();
 
         // Compute cell and grid dimensions based on the cell shape.
         cellDimension = GridGeometry.computeCellDimension(cellEdgeLength, structure.cellShape());
@@ -121,7 +121,7 @@ public final class FXGridCanvasPainter {
      * @return the GraphicsContext for the canvas
      */
     public GraphicsContext graphicsContext2D() {
-        return gc;
+        return graphicsContext2D;
     }
 
     /**
@@ -161,15 +161,15 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the canvas background
      */
     public void fillCanvasBackground(Paint fillColor) {
-        gc.setFill(fillColor);
-        gc.fillRect(0.0d, 0.0d, canvas.getWidth(), canvas.getHeight());
+        graphicsContext2D.setFill(fillColor);
+        graphicsContext2D.fillRect(0.0d, 0.0d, canvas.getWidth(), canvas.getHeight());
     }
 
     /**
      * Clear the entire canvas background.
      */
     public void clearCanvasBackground() {
-        gc.clearRect(0.0d, 0.0d, canvas.getWidth(), canvas.getHeight());
+        graphicsContext2D.clearRect(0.0d, 0.0d, canvas.getWidth(), canvas.getHeight());
     }
 
     /**
@@ -180,8 +180,8 @@ public final class FXGridCanvasPainter {
      * @see #gridDimension2D
      */
     public void fillGridBackground(Paint fillColor) {
-        gc.setFill(fillColor);
-        gc.fillRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
+        graphicsContext2D.setFill(fillColor);
+        graphicsContext2D.fillRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
     }
 
     /**
@@ -191,7 +191,7 @@ public final class FXGridCanvasPainter {
      * @see #gridDimension2D
      */
     public void clearGridBackground() {
-        gc.clearRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
+        graphicsContext2D.clearRect(0.0d, 0.0d, gridDimension2D.getWidth(), gridDimension2D.getHeight());
     }
 
     /**
@@ -393,19 +393,19 @@ public final class FXGridCanvasPainter {
                               double strokeLineWidth, StrokeType strokeType) {
         if ((rectangle.getWidth() > 0.0d) && (rectangle.getHeight() > 0.0d)) {
             if (fillColor != null) {
-                gc.setFill(fillColor);
-                gc.fillRect(rectangle.getMinX(), rectangle.getMinY(), rectangle.getWidth(), rectangle.getHeight());
+                graphicsContext2D.setFill(fillColor);
+                graphicsContext2D.fillRect(rectangle.getMinX(), rectangle.getMinY(), rectangle.getWidth(), rectangle.getHeight());
             }
 
             if ((strokeColor != null) && (strokeLineWidth > 0.0d)) {
-                gc.setStroke(strokeColor);
-                gc.setLineWidth(strokeLineWidth);
+                graphicsContext2D.setStroke(strokeColor);
+                graphicsContext2D.setLineWidth(strokeLineWidth);
                 double adjustment = switch (strokeType) {
                     case INSIDE -> strokeLineWidth / 2.0d;
                     case OUTSIDE -> -strokeLineWidth / 2.0d;
                     case CENTERED -> 0.0d;
                 };
-                gc.strokeRect(
+                graphicsContext2D.strokeRect(
                         rectangle.getMinX() + adjustment,
                         rectangle.getMinY() + adjustment,
                         rectangle.getWidth() - (adjustment * 2),
@@ -454,8 +454,8 @@ public final class FXGridCanvasPainter {
                         }
                     }
                 }
-                gc.setFill(fillColor);
-                gc.fillOval(fillX, fillY, fillDiameter, fillDiameter);
+                graphicsContext2D.setFill(fillColor);
+                graphicsContext2D.fillOval(fillX, fillY, fillDiameter, fillDiameter);
             }
 
             if (hasStroke) {
@@ -468,9 +468,9 @@ public final class FXGridCanvasPainter {
                 double strokeDiameter = adjustedRadius * 2;
                 double strokeX = center.getX() - adjustedRadius;
                 double strokeY = center.getY() - adjustedRadius;
-                gc.setStroke(strokeColor);
-                gc.setLineWidth(strokeLineWidth);
-                gc.strokeOval(strokeX, strokeY, strokeDiameter, strokeDiameter);
+                graphicsContext2D.setStroke(strokeColor);
+                graphicsContext2D.setLineWidth(strokeLineWidth);
+                graphicsContext2D.strokeOval(strokeX, strokeY, strokeDiameter, strokeDiameter);
             }
         }
     }
@@ -490,13 +490,13 @@ public final class FXGridCanvasPainter {
                             double strokeLineWidth) {
         if ((xPoints.length > 0) || (xPoints.length == yPoints.length)) {
             if (fillColor != null) {
-                gc.setFill(fillColor);
-                gc.fillPolygon(xPoints, yPoints, xPoints.length);
+                graphicsContext2D.setFill(fillColor);
+                graphicsContext2D.fillPolygon(xPoints, yPoints, xPoints.length);
             }
             if ((strokeColor != null) && (strokeLineWidth > 0)) {
-                gc.setStroke(strokeColor);
-                gc.setLineWidth(strokeLineWidth);
-                gc.strokePolygon(xPoints, yPoints, xPoints.length);
+                graphicsContext2D.setStroke(strokeColor);
+                graphicsContext2D.setLineWidth(strokeLineWidth);
+                graphicsContext2D.strokePolygon(xPoints, yPoints, xPoints.length);
             }
         }
     }
@@ -515,9 +515,9 @@ public final class FXGridCanvasPainter {
                              double strokeLineWidth) {
         if ((xPoints.length > 0) && (xPoints.length == yPoints.length)) {
             if (strokeLineWidth > 0) {
-                gc.setStroke(strokeColor);
-                gc.setLineWidth(strokeLineWidth);
-                gc.strokePolyline(xPoints, yPoints, xPoints.length);
+                graphicsContext2D.setStroke(strokeColor);
+                graphicsContext2D.setLineWidth(strokeLineWidth);
+                graphicsContext2D.strokePolyline(xPoints, yPoints, xPoints.length);
             }
         }
     }
@@ -536,7 +536,7 @@ public final class FXGridCanvasPainter {
         if ((fillColor != null)
                 && (x >= 0) && (x < (int) canvas.getWidth())
                 && (y >= 0) && (y < (int) canvas.getHeight())) {
-            PixelWriter pw = gc.getPixelWriter();
+            PixelWriter pw = graphicsContext2D.getPixelWriter();
             pw.setColor(x, y, fillColor);
         }
     }
@@ -555,8 +555,8 @@ public final class FXGridCanvasPainter {
         if ((fillColor != null)
                 && (x >= 0) && (x < (int) canvas.getWidth())
                 && (y >= 0) && (y < (int) canvas.getHeight())) {
-            gc.setFill(fillColor);
-            gc.fillRect(x, y, 1, 1);
+            graphicsContext2D.setFill(fillColor);
+            graphicsContext2D.fillRect(x, y, 1, 1);
         }
     }
 
@@ -585,9 +585,9 @@ public final class FXGridCanvasPainter {
     public void drawCenteredTextAt(Point2D center, String text, Paint textColor, Font font) {
         Point2D textOffset = computeCenteredTextOffset(text, font);
 
-        gc.setFill(textColor);
-        gc.setFont(font);
-        gc.fillText(text,
+        graphicsContext2D.setFill(textColor);
+        graphicsContext2D.setFont(font);
+        graphicsContext2D.fillText(text,
                 center.getX() + textOffset.getX(),
                 center.getY() + textOffset.getY()
         );
@@ -613,8 +613,8 @@ public final class FXGridCanvasPainter {
         double bgY = center.getY() - (bgHeight / 2);
 
         // Draw background rectangle.
-        gc.setFill(backgroundColor);
-        gc.fillRect(bgX, bgY, bgWidth, bgHeight);
+        graphicsContext2D.setFill(backgroundColor);
+        graphicsContext2D.fillRect(bgX, bgY, bgWidth, bgHeight);
 
         // Draw centered text.
         drawCenteredTextAt(center, text, textColor, font);
