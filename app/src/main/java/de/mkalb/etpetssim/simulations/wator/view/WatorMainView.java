@@ -9,10 +9,13 @@ import de.mkalb.etpetssim.simulations.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
-import de.mkalb.etpetssim.ui.*;
+import de.mkalb.etpetssim.ui.CellDimension;
+import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -105,14 +108,14 @@ public final class WatorMainView
                             resolveEntityFillColor(descriptor, cell.entity(), stepCount),
                             null,
                             strokeLineWidth,
-                            StrokeAdjustment.INSIDE);
+                            StrokeType.INSIDE);
             case CellDisplayMode.CIRCLE_BORDERED -> (descriptor, painter, cell, stepCount) ->
                     painter.drawCellInnerCircle(
                             cell.coordinate(),
                             resolveEntityFillColor(descriptor, cell.entity(), stepCount),
                             backgroundPaint,
                             strokeLineWidth,
-                            StrokeAdjustment.INSIDE);
+                            StrokeType.INSIDE);
             case CellDisplayMode.EMOJI -> {
                 if (cellEmojiFont == null) {
                     yield (descriptor, painter, cell, stepCount) ->
@@ -121,7 +124,7 @@ public final class WatorMainView
                                     resolveEntityFillColor(descriptor, cell.entity(), stepCount),
                                     null,
                                     strokeLineWidth,
-                                    StrokeAdjustment.INSIDE);
+                                    StrokeType.INSIDE);
                 }
                 yield (descriptor, painter, cell, stepCount) ->
                         painter.drawCenteredTextInCell(
@@ -175,7 +178,7 @@ public final class WatorMainView
         if ((newGridCell != null) && newGridCell.entity().isAgent()) {
             painter.drawCellOuterCircle(newGridCell.coordinate(), null,
                     SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
-                    StrokeAdjustment.OUTSIDE);
+                    StrokeType.OUTSIDE);
         }
     }
 
@@ -204,4 +207,3 @@ public final class WatorMainView
     }
 
 }
-

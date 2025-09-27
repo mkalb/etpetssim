@@ -12,10 +12,10 @@ import de.mkalb.etpetssim.simulations.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
-import de.mkalb.etpetssim.ui.StrokeAdjustment;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -79,10 +79,10 @@ public final class LangtonMainView
                     && (cellDimension.innerRadius() > 5.0d)
                     && (descriptor.borderColor() != null)
                     && (cell.entity() instanceof LangtonAnt ant)) {
-                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeAdjustment.INSIDE);
+                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeType.INSIDE);
                 painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(), cellEmojiFont);
             } else if (cellDimension.innerRadius() > 2.0d) {
-                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, 0.0d, StrokeAdjustment.INSIDE);
+                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, 0.0d, StrokeType.INSIDE);
             } else {
                 painter.drawCell(cell.coordinate(), descriptor.color(), null, 0.0d);
             }
@@ -153,4 +153,3 @@ public final class LangtonMainView
     }
 
 }
-

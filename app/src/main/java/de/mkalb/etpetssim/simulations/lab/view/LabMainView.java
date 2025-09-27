@@ -19,6 +19,7 @@ import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -80,7 +81,7 @@ public final class LabMainView
 
         if (viewModel.getLastClickedCoordinate().filter(c -> c.equals(mouseCoordinate)).isEmpty()) {
             viewModel.updateClickedCoordinateProperties(mouseCoordinate);
-            painter.drawCellOuterCircle(mouseCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+            painter.drawCellOuterCircle(mouseCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeType.OUTSIDE);
 
             GridStructure gridStructure = painter.gridStructure();
             CellNeighborhoods.cellNeighborsWithEdgeBehavior(mouseCoordinate, neighborhoodMode,
@@ -151,18 +152,18 @@ public final class LabMainView
             }
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(mousePoint, basePainter.cellDimension(), overlayPainter.gridDimension2D(), viewModel.getStructure());
             if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
-                overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+                overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeType.OUTSIDE);
                 if (overlayPainter.cellDimension().edgeLength() >= HOVER_MIN_EDGE_LENGTH) {
-                    overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeAdjustment.INSIDE);
+                    overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeType.INSIDE);
                     if (cellFont != null) {
                         GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentModel(), entityDescriptorRegistry,
                                 descriptor -> overlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, cellFont));
                     }
                 }
             }
-            viewModel.getLastClickedCoordinate().ifPresent(lastCoordinate -> overlayPainter.drawCellOuterCircle(lastCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeAdjustment.OUTSIDE));
+            viewModel.getLastClickedCoordinate().ifPresent(lastCoordinate -> overlayPainter.drawCellOuterCircle(lastCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeType.OUTSIDE));
 
-            overlayPainter.drawCircle(mousePoint, 2.0d, Color.DARKGREEN, null, 0.0d, StrokeAdjustment.CENTERED);
+            overlayPainter.drawCircle(mousePoint, 2.0d, Color.DARKGREEN, null, 0.0d, StrokeType.CENTERED);
         });
     }
 
@@ -242,7 +243,7 @@ public final class LabMainView
 
         Color color = colorModeBW ? determineColumnBlackWhiteColor(coordinate) : determineColumnSimilarityColor(coordinate);
         if (renderingModeCircle) {
-            basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeAdjustment.CENTERED);
+            basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeType.CENTERED);
         } else {
             basePainter.drawCell(coordinate, color, strokeColor, strokeLineWidth);
         }
@@ -271,26 +272,26 @@ public final class LabMainView
         Color t2 = FXPaintFactory.adjustColorAlpha(Color.YELLOW, COLOR_ALPHA);
 
         // Draw bounding box
-        basePainter.drawCellBoundingBox(new GridCoordinate(2, 4), t1, t2, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(2, 6), t2, t1, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(2, 8), t1, t2, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(2, 10), t2, t1, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 4), t1, t2, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 6), t2, t1, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 8), t1, t2, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(2, 10), t2, t1, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
 
-        basePainter.drawCellBoundingBox(new GridCoordinate(4, 4), null, t2, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(4, 6), null, t1, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(4, 8), null, t2, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-        basePainter.drawCellBoundingBox(new GridCoordinate(4, 10), null, t1, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 4), null, t2, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 6), null, t1, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 8), null, t2, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+        basePainter.drawCellBoundingBox(new GridCoordinate(4, 10), null, t1, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
 
         // draw inner circle
-        basePainter.drawCellInnerCircle(new GridCoordinate(6, 4), t1, t2, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(6, 6), t2, t1, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(6, 8), t1, t2, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(6, 10), t2, t1, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 4), t1, t2, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 6), t2, t1, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 8), t1, t2, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(6, 10), t2, t1, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
 
-        basePainter.drawCellInnerCircle(new GridCoordinate(8, 4), null, t2, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(8, 6), null, t1, TEST_LINE_WIDTH, StrokeAdjustment.INSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(8, 8), null, t2, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
-        basePainter.drawCellInnerCircle(new GridCoordinate(8, 10), null, t1, TEST_LINE_WIDTH, StrokeAdjustment.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 4), null, t2, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 6), null, t1, TEST_LINE_WIDTH, StrokeType.INSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 8), null, t2, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
+        basePainter.drawCellInnerCircle(new GridCoordinate(8, 10), null, t1, TEST_LINE_WIDTH, StrokeType.OUTSIDE);
 
         // draw pixel
         for (int x = 50; x < 100; x++) {

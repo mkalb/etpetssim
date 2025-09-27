@@ -11,6 +11,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import org.jspecify.annotations.Nullable;
@@ -256,13 +257,13 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the bounding box, or null if no fill is desired
      * @param strokeColor the color used to draw the bounding box's border, or null if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @param strokeAdjustment specifies how the stroke is rendered relative to the bounding box outline
+     * @param strokeType specifies how the stroke is rendered relative to the bounding box outline
      */
     public void drawCellBoundingBox(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
-                                    double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+                                    double strokeLineWidth, StrokeType strokeType) {
         Rectangle2D cellBounds = GridGeometry.computeCellBounds(coordinate, cellDimension, structure.cellShape());
-        drawRectangle(cellBounds, fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
+        drawRectangle(cellBounds, fillColor, strokeColor, strokeLineWidth, strokeType);
     }
 
     /**
@@ -273,13 +274,13 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the inner circle, or null if no fill is desired
      * @param strokeColor the color used to draw the inner circle's border, or null if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @param strokeAdjustment specifies how the stroke is rendered relative to the circle outline
+     * @param strokeType specifies how the stroke is rendered relative to the circle outline
      */
     public void drawCellInnerCircle(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
-                                    double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+                                    double strokeLineWidth, StrokeType strokeType) {
         Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
-        drawCircle(cellCenter, cellDimension.innerRadius(), fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
+        drawCircle(cellCenter, cellDimension.innerRadius(), fillColor, strokeColor, strokeLineWidth, strokeType);
     }
 
     /**
@@ -290,13 +291,13 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the outer circle, or null if no fill is desired
      * @param strokeColor the color used to draw the outer circle's border, or null if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @param strokeAdjustment specifies how the stroke is rendered relative to the circle outline
+     * @param strokeType specifies how the stroke is rendered relative to the circle outline
      */
     public void drawCellOuterCircle(GridCoordinate coordinate,
                                     @Nullable Paint fillColor, @Nullable Paint strokeColor,
-                                    double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+                                    double strokeLineWidth, StrokeType strokeType) {
         Point2D cellCenter = GridGeometry.computeCellCenter(coordinate, cellDimension, structure.cellShape());
-        drawCircle(cellCenter, cellDimension.outerRadius(), fillColor, strokeColor, strokeLineWidth, strokeAdjustment);
+        drawCircle(cellCenter, cellDimension.outerRadius(), fillColor, strokeColor, strokeLineWidth, strokeType);
     }
 
     /**
@@ -385,11 +386,11 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the rectangle, or null if no fill is desired
      * @param strokeColor the color used to draw the rectangle's border, or null if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @param strokeAdjustment specifies how the stroke is rendered relative to the rectangle's outline
+     * @param strokeType specifies how the stroke is rendered relative to the rectangle's outline
      */
     public void drawRectangle(Rectangle2D rectangle,
                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
-                              double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+                              double strokeLineWidth, StrokeType strokeType) {
         if ((rectangle.getWidth() > 0.0d) && (rectangle.getHeight() > 0.0d)) {
             if (fillColor != null) {
                 gc.setFill(fillColor);
@@ -399,7 +400,7 @@ public final class FXGridCanvasPainter {
             if ((strokeColor != null) && (strokeLineWidth > 0.0d)) {
                 gc.setStroke(strokeColor);
                 gc.setLineWidth(strokeLineWidth);
-                double adjustment = switch (strokeAdjustment) {
+                double adjustment = switch (strokeType) {
                     case INSIDE -> strokeLineWidth / 2.0d;
                     case OUTSIDE -> -strokeLineWidth / 2.0d;
                     case CENTERED -> 0.0d;
@@ -423,11 +424,11 @@ public final class FXGridCanvasPainter {
      * @param fillColor the color used to fill the circle, or null if no fill is desired
      * @param strokeColor the color used to draw the circle's border, or null if no border is desired
      * @param strokeLineWidth the width of the stroke line in pixels
-     * @param strokeAdjustment specifies how the stroke is rendered relative to the circle's outline
+     * @param strokeType specifies how the stroke is rendered relative to the circle's outline
      */
     public void drawCircle(Point2D center, double radius,
                            @Nullable Paint fillColor, @Nullable Paint strokeColor,
-                           double strokeLineWidth, StrokeAdjustment strokeAdjustment) {
+                           double strokeLineWidth, StrokeType strokeType) {
         if (radius > 0.0d) {
             boolean hasStroke = (strokeColor != null) && (strokeLineWidth > 0.0d);
 
@@ -438,9 +439,9 @@ public final class FXGridCanvasPainter {
                 double fillDiameter = diameter;
                 double fillX = x;
                 double fillY = y;
-                if (hasStroke && (strokeLineWidth >= 1.0d) && (strokeAdjustment != StrokeAdjustment.CENTERED)) {
+                if (hasStroke && (strokeLineWidth >= 1.0d) && (strokeType != StrokeType.CENTERED)) {
                     double epsilon = Math.min(2.0d, strokeLineWidth * 0.4d);
-                    switch (strokeAdjustment) {
+                    switch (strokeType) {
                         case INSIDE -> {
                             fillDiameter -= epsilon;
                             fillX += epsilon / 2.0d;
@@ -458,7 +459,7 @@ public final class FXGridCanvasPainter {
             }
 
             if (hasStroke) {
-                double adjustedRadius = switch (strokeAdjustment) {
+                double adjustedRadius = switch (strokeType) {
                     case INSIDE -> radius - (strokeLineWidth / 2.0d);
                     case OUTSIDE -> radius + (strokeLineWidth / 2.0d);
                     case CENTERED -> radius;
