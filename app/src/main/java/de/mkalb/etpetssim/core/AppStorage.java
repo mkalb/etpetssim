@@ -53,6 +53,7 @@ public final class AppStorage {
      *
      * @param os the name of the operating system
      * @return the path to the application data directory
+     * @throws IOException if the directory cannot be created or is not writable
      */
     private static Path getOrCreateAppDataDir(OperatingSystem os) throws IOException {
         Objects.requireNonNull(os, "Operating system must not be null");
@@ -70,6 +71,7 @@ public final class AppStorage {
      *
      * @param os the name of the operating system
      * @return the path to the log directory
+     * @throws IOException if the directory cannot be created or is not writable
      */
     private static Path getOrCreateLogDir(OperatingSystem os) throws IOException {
         Objects.requireNonNull(os, "Operating system must not be null");
@@ -86,6 +88,7 @@ public final class AppStorage {
      *
      * @param os the name of the operating system
      * @return the path to the cache directory
+     * @throws IOException if the directory cannot be created or is not writable
      */
     private static Path getOrCreateCacheDir(OperatingSystem os) throws IOException {
         Objects.requireNonNull(os, "Operating system must not be null");

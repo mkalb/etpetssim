@@ -214,6 +214,7 @@ public final class AppLocalization {
      * @param key the key for the desired text
      * @return an Optional containing the text associated with the key if found,
      * or an empty Optional if the key is not found or if the text is empty or blank
+     * @throws IllegalStateException if the AppLocalization has not been initialized
      */
     public static Optional<String> getOptionalText(String key) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -338,4 +339,3 @@ public final class AppLocalization {
     }
 
 }
-
