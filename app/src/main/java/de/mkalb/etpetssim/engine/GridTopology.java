@@ -163,7 +163,7 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
      * @return a concise display string for this grid topology
      */
     public String toDisplayString() {
-        if (gridEdgeBehavior.isEqualEdgeBehavior()) {
+        if (gridEdgeBehavior.hasEqualEdgeBehaviors()) {
             return String.format("[%s %s]",
                     cellShape.name(),
                     gridEdgeBehavior.edgeBehaviorX().name());

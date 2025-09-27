@@ -67,13 +67,13 @@ final class GridEdgeBehaviorTest {
     }
 
     @Test
-    public void testIsEqualEdgeBehavior() {
-        assertTrue(GridEdgeBehavior.BLOCK_XY.isEqualEdgeBehavior());
-        assertTrue(GridEdgeBehavior.WRAP_XY.isEqualEdgeBehavior());
-        assertTrue(GridEdgeBehavior.ABSORB_XY.isEqualEdgeBehavior());
-        assertTrue(GridEdgeBehavior.REFLECT_XY.isEqualEdgeBehavior());
-        assertFalse(GridEdgeBehavior.BLOCK_X_WRAP_Y.isEqualEdgeBehavior());
-        assertFalse(GridEdgeBehavior.WRAP_X_BLOCK_Y.isEqualEdgeBehavior());
+    public void testHasEqualEdgeBehaviors() {
+        assertTrue(GridEdgeBehavior.BLOCK_XY.hasEqualEdgeBehaviors());
+        assertTrue(GridEdgeBehavior.WRAP_XY.hasEqualEdgeBehaviors());
+        assertTrue(GridEdgeBehavior.ABSORB_XY.hasEqualEdgeBehaviors());
+        assertTrue(GridEdgeBehavior.REFLECT_XY.hasEqualEdgeBehaviors());
+        assertFalse(GridEdgeBehavior.BLOCK_X_WRAP_Y.hasEqualEdgeBehaviors());
+        assertFalse(GridEdgeBehavior.WRAP_X_BLOCK_Y.hasEqualEdgeBehaviors());
     }
 
 }

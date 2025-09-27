@@ -200,14 +200,14 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testAllClockwise() {
+    void testListClockwise() {
         var expectedClockwiseN = List.of(
                 CompassDirection.N, CompassDirection.NNE, CompassDirection.NE, CompassDirection.ENE,
                 CompassDirection.E, CompassDirection.ESE, CompassDirection.SE, CompassDirection.SSE,
                 CompassDirection.S, CompassDirection.SSW, CompassDirection.SW, CompassDirection.WSW,
                 CompassDirection.W, CompassDirection.WNW, CompassDirection.NW, CompassDirection.NNW
         );
-        assertEquals(expectedClockwiseN, CompassDirection.N.allClockwise());
+        assertEquals(expectedClockwiseN, CompassDirection.N.listClockwise());
 
         var expectedClockwiseS = List.of(
                 CompassDirection.S, CompassDirection.SSW, CompassDirection.SW, CompassDirection.WSW,
@@ -215,18 +215,18 @@ final class CompassDirectionTest {
                 CompassDirection.N, CompassDirection.NNE, CompassDirection.NE, CompassDirection.ENE,
                 CompassDirection.E, CompassDirection.ESE, CompassDirection.SE, CompassDirection.SSE
         );
-        assertEquals(expectedClockwiseS, CompassDirection.S.allClockwise());
+        assertEquals(expectedClockwiseS, CompassDirection.S.listClockwise());
     }
 
     @Test
-    void testAllCounterClockwise() {
+    void testListCounterClockwise() {
         var expectedCounterClockwiseN = List.of(
                 CompassDirection.N, CompassDirection.NNW, CompassDirection.NW, CompassDirection.WNW,
                 CompassDirection.W, CompassDirection.WSW, CompassDirection.SW, CompassDirection.SSW,
                 CompassDirection.S, CompassDirection.SSE, CompassDirection.SE, CompassDirection.ESE,
                 CompassDirection.E, CompassDirection.ENE, CompassDirection.NE, CompassDirection.NNE
         );
-        assertEquals(expectedCounterClockwiseN, CompassDirection.N.allCounterClockwise());
+        assertEquals(expectedCounterClockwiseN, CompassDirection.N.listCounterClockwise());
 
         var expectedCounterClockwiseS = List.of(
                 CompassDirection.S, CompassDirection.SSE, CompassDirection.SE, CompassDirection.ESE,
@@ -234,7 +234,7 @@ final class CompassDirectionTest {
                 CompassDirection.N, CompassDirection.NNW, CompassDirection.NW, CompassDirection.WNW,
                 CompassDirection.W, CompassDirection.WSW, CompassDirection.SW, CompassDirection.SSW
         );
-        assertEquals(expectedCounterClockwiseS, CompassDirection.S.allCounterClockwise());
+        assertEquals(expectedCounterClockwiseS, CompassDirection.S.listCounterClockwise());
     }
 
     @Test

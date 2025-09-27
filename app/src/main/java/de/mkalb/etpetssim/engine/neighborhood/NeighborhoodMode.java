@@ -45,7 +45,7 @@ public enum NeighborhoodMode {
      *
      * @return true if neighbors sharing a vertex are included, false otherwise
      */
-    public boolean isVertexNeighborIncluded() {
+    public boolean includesVertexNeighbors() {
         return this == EDGES_AND_VERTICES;
     }
 

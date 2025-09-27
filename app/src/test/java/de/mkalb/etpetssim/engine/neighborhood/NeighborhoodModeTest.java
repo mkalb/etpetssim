@@ -36,9 +36,9 @@ final class NeighborhoodModeTest {
     }
 
     @Test
-    void testIsVertexNeighborIncluded() {
-        assertFalse(NeighborhoodMode.EDGES_ONLY.isVertexNeighborIncluded());
-        assertTrue(NeighborhoodMode.EDGES_AND_VERTICES.isVertexNeighborIncluded());
+    void testIncludesVertexNeighbors() {
+        assertFalse(NeighborhoodMode.EDGES_ONLY.includesVertexNeighbors());
+        assertTrue(NeighborhoodMode.EDGES_AND_VERTICES.includesVertexNeighbors());
     }
 
 }

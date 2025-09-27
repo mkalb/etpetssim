@@ -9,7 +9,7 @@ import java.util.stream.*;
  * This enum is used throughout the grid framework to describe directions between cells,
  * supporting both edge and vertex neighbor relationships (see {@link CellNeighbor} and {@link CellConnectionType}).
  * The values are intentionally ordered clockwise, starting from North (N), to allow for efficient navigation
- * and sorting based on compass direction. This order enables methods like {@link #nextClockwise()} and {@link #allClockwise()}
+ * and sorting based on compass direction. This order enables methods like {@link #nextClockwise()} and {@link #listClockwise()}
  * to traverse the compass directions in their natural sequence.
  * </p>
  * <p>
@@ -150,7 +150,7 @@ public enum CompassDirection {
      *
      * @return list of directions in clockwise order, starting from this
      */
-    public List<CompassDirection> allClockwise() {
+    public List<CompassDirection> listClockwise() {
         List<CompassDirection> result = new ArrayList<>();
         CompassDirection current = this;
         do {
@@ -166,7 +166,7 @@ public enum CompassDirection {
      *
      * @return list of directions in counterclockwise order, starting from this
      */
-    public List<CompassDirection> allCounterClockwise() {
+    public List<CompassDirection> listCounterClockwise() {
         List<CompassDirection> result = new ArrayList<>();
         CompassDirection current = this;
         do {

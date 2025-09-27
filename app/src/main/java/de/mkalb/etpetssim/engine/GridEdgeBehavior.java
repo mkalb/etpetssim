@@ -93,7 +93,7 @@ public enum GridEdgeBehavior {
      *
      * @return true if both edge behaviors are identical, false otherwise
      */
-    public boolean isEqualEdgeBehavior() {
+    public boolean hasEqualEdgeBehaviors() {
         return edgeBehaviorX == edgeBehaviorY;
     }
 
