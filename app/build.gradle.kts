@@ -64,10 +64,19 @@ distributions {
     main {
         distributionBaseName.set(baseName)
         contents {
-            from("LICENSE")
-            from("README.md")
+            from(rootProject.file("README.md"))
+            from(rootProject.file("LICENSE"))
+            from(rootProject.file("THIRD-PARTY-LICENSES"))
         }
     }
+}
+
+tasks.processResources {
+    from(
+        rootProject.layout.projectDirectory.file("README.md"),
+        rootProject.layout.projectDirectory.file("LICENSE"),
+        rootProject.layout.projectDirectory.file("THIRD-PARTY-LICENSES")
+    )
 }
 
 tasks.jar {
