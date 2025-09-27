@@ -120,6 +120,8 @@ public final class GridGeometry {
      *                   and  {@link #MAX_EDGE_LENGTH}
      * @param shape the shape of the cell
      * @return a CellDimension object representing the dimensions of the cell
+     * @throws IllegalArgumentException if {@code edgeLength} is outside the inclusive range
+     *                                  [{@link #MIN_EDGE_LENGTH}, {@link #MAX_EDGE_LENGTH}]
      * @see de.mkalb.etpetssim.ui.GridGeometry#MIN_EDGE_LENGTH
      * @see de.mkalb.etpetssim.ui.GridGeometry#MAX_EDGE_LENGTH
      */
@@ -174,6 +176,7 @@ public final class GridGeometry {
      * @param cellDimension the dimensions of a single cell in the grid
      * @param shape the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
+     * @throws IllegalArgumentException if {@code shape} is unsupported
      */
     public static Dimension2D computeGridDimension(GridSize gridSize, CellDimension cellDimension, CellShape shape) {
         double width;
@@ -446,6 +449,7 @@ public final class GridGeometry {
      * @param shape the shape of the cell
      * @param direction the direction or segment of the cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
+     * @throws IllegalArgumentException if {@code direction} is unsupported
      */
     public static double[][] computeCellFrameSegmentPolyline(GridCoordinate coordinate, CellDimension cellDimension,
                                                              CellShape shape, PolygonViewDirection direction) {
@@ -508,6 +512,7 @@ public final class GridGeometry {
      * @param isPointingDown whether the triangle is pointing downwards
      * @param direction the direction or segment of the triangle cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
+     * @throws IllegalArgumentException if {@code direction} is unsupported
      */
     public static double[][] computeTriangleFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown, PolygonViewDirection direction) {
         double[] xPoints;
@@ -635,6 +640,7 @@ public final class GridGeometry {
      * @param cellDimension the dimensions of the square cell
      * @param direction the direction or segment of the square cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
+     * @throws IllegalArgumentException if {@code direction} is unsupported
      */
     public static double[][] computeSquareFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
                                                                PolygonViewDirection direction) {
@@ -726,6 +732,7 @@ public final class GridGeometry {
      * @param cellDimension the dimensions of the hexagon cell
      * @param direction the direction or segment of the hexagon cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
+     * @throws IllegalArgumentException if {@code direction} is unsupported
      */
     @SuppressWarnings("DuplicateExpressions")
     public static double[][] computeHexagonFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,

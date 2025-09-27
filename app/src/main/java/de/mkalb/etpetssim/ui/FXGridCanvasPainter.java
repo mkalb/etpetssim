@@ -41,6 +41,7 @@ public final class FXGridCanvasPainter {
      * @param canvas the canvas to draw on
      * @param structure the structure of the grid, defining its cell shape and size
      * @param cellEdgeLength the length of each edge of the cell in pixels
+     * @throws IllegalArgumentException if {@code cellEdgeLength} is less than 1 pixel
      */
     public FXGridCanvasPainter(Canvas canvas, GridStructure structure, double cellEdgeLength) {
         if (cellEdgeLength < 1.0d) {

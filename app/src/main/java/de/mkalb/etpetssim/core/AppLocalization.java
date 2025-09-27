@@ -274,6 +274,13 @@ public final class AppLocalization {
         private final Locale countryLocale;
         private final String displayName;
 
+        /**
+         * Constructs a CountryLocale with the provided locale and display name.
+         *
+         * @param countryLocale the Locale containing non-empty language and country codes
+         * @param displayName the human-readable display name for the locale
+         * @throws IllegalArgumentException if the locale lacks a valid language or country code
+         */
         CountryLocale(Locale countryLocale, String displayName) {
             Objects.requireNonNull(countryLocale, "Country locale must not be null");
             Objects.requireNonNull(displayName, "Display name must not be null");

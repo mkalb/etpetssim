@@ -43,6 +43,13 @@ public record CellDimension(
 
     private static final double DOUBLE_COMPARE_EPSILON = 1.0e-9;
 
+    /**
+     * Validates the provided dimensions and derived values for consistency and positivity.
+     *
+     * @throws IllegalArgumentException if any required dimension is non-positive, if half-dimensions
+     *                                  do not match half of their corresponding full dimensions, or if
+     *                                  outerRadius is not greater than innerRadius
+     */
     public CellDimension {
         if ((edgeLength <= 0) || (width <= 0) || (height <= 0)
                 || (innerRadius <= 0) || (outerRadius <= 0)
