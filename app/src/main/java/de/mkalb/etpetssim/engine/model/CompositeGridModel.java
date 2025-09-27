@@ -20,6 +20,7 @@ public non-sealed interface CompositeGridModel<T extends GridEntity> extends Gri
      *
      * @param coordinate the grid coordinate
      * @return a list of entities at the coordinate
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     List<T> getEntities(GridCoordinate coordinate);
 

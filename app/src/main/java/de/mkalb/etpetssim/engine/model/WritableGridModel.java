@@ -34,7 +34,7 @@ public non-sealed interface WritableGridModel<T extends GridEntity> extends Read
      *
      * @param coordinate the grid coordinate
      * @param entity the entity to set
-     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     void setEntity(GridCoordinate coordinate, T entity);
 
@@ -45,7 +45,7 @@ public non-sealed interface WritableGridModel<T extends GridEntity> extends Read
      * and sets the entity at the corresponding coordinate in the grid.
      *
      * @param cell the {@link GridCell} containing the coordinate and entity to set
-     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     default void setEntity(GridCell<T> cell) {
         setEntity(cell.coordinate(), cell.entity());
@@ -55,7 +55,7 @@ public non-sealed interface WritableGridModel<T extends GridEntity> extends Read
      * Sets the entity at the specified coordinate to the default entity.
      *
      * @param coordinate the grid coordinate
-     * @throws IndexOutOfBoundsException if the coordinate is not valid in this grid
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     default void setEntityToDefault(GridCoordinate coordinate) {
         setEntity(coordinate, defaultEntity());
@@ -106,7 +106,7 @@ public non-sealed interface WritableGridModel<T extends GridEntity> extends Read
      *
      * @param cellA the first grid cell whose entity and coordinate are involved in the swap
      * @param cellB the second grid cell whose entity and coordinate are involved in the swap
-     * @throws IndexOutOfBoundsException if either coordinate is not valid in this grid
+     * @throws IndexOutOfBoundsException if either coordinate is not valid
      */
     default void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
         T entityA = cellA.entity();

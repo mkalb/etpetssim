@@ -97,6 +97,7 @@ public final class GridInitializers {
      * @param cells the list of grid cells to set
      * @param <T>   the type of grid entity
      * @return a grid initializer that sets the specified cells
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     public static <T extends GridEntity> GridInitializer<T> fromList(List<GridCell<T>> cells) {
         return model -> {

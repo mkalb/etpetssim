@@ -43,6 +43,7 @@ public interface GridModifier<T extends GridEntity> {
      * @param entity     the entity to set
      * @param <T>        the type of grid entity
      * @return a grid modifier that sets the entity at the given coordinate
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     static <T extends GridEntity> GridModifier<T> setEntityAt(GridCoordinate coordinate, T entity) {
         return model -> model.setEntity(coordinate, entity);
