@@ -6,6 +6,8 @@ package de.mkalb.etpetssim.engine.neighborhood;
  * <p>
  * Used in {@link CellNeighbor} to describe the type of neighbor relationship.
  * Note: Vertex-only connections are possible for SQUARE and TRIANGLE grids.
+ *
+ * @see NeighborhoodMode
  */
 public enum CellConnectionType {
 

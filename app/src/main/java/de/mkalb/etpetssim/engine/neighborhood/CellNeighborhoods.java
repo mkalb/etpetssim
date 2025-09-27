@@ -67,11 +67,13 @@ public final class CellNeighborhoods {
      * <p>
      * The result is a theoretical upper bound for the number of cells within the given radius,
      * not the actual count for edge or corner cells in a finite grid.
+     * <p>
+     * If {@code radius <= 0}, this method returns {@code 0}.
      *
      * @param cellShape        the geometric shape of the cell (TRIANGLE, SQUARE, HEXAGON)
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
-     * @param radius           the neighborhood radius (&gt; 0)
-     * @return the maximum possible number of neighbors within the given radius
+     * @param radius           the neighborhood radius (non-negative)
+     * @return the maximum possible number of neighbors within the given radius (or {@code 0} if {@code radius <= 0})
      */
     public static int maxNeighborCount(CellShape cellShape, NeighborhoodMode neighborhoodMode, int radius) {
         if (radius <= 0) {
@@ -410,11 +412,14 @@ public final class CellNeighborhoods {
      * Returns a set of all neighbor coordinates within the given radius for a cell,
      * based on the specified neighborhood mode and cell shape, ignoring grid boundaries.
      * Uses breadth-first search to avoid redundant visits and ensure efficiency.
+     * <p>
+     * If {@code radius <= 0}, this method returns an empty set. If {@code radius > MAX_RADIUS}, an
+     * {@link IllegalArgumentException} is thrown.
      *
      * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined
      * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
      * @param cellShape         the shape of the cell (triangle, square, hexagon)
-     * @param radius            the neighborhood radius (> 0) and less than or equal to {@link #MAX_RADIUS}
+     * @param radius            the neighborhood radius (non-negative) and less than or equal to {@link #MAX_RADIUS}
      * @return a set of {@link GridCoordinate} objects representing all neighbor coordinates within the given radius
      * @throws IllegalArgumentException if the radius is greater than {@link #MAX_RADIUS}
      */
