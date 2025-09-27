@@ -19,7 +19,7 @@ public record LabConfig(
         implements SimulationConfig {
 
     public enum ColorMode {
-        COLOR, BLACK_WHITE
+        COLOR, GRAYSCALE
     }
 
 }

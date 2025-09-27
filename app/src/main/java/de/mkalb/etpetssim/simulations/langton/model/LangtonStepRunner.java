@@ -68,8 +68,8 @@ public final class LangtonStepRunner
     }
 
     void switchGround(GridCoordinate coordinate, LangtonGroundEntity groundEntity, WritableGridModel<LangtonGroundEntity> groundModel) {
-        int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getColorCount();
-        groundModel.setEntity(coordinate, LangtonGroundEntity.forRuleIndex(newRuleIndex));
+        int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getRuleCount();
+        groundModel.setEntity(coordinate, LangtonGroundEntity.byRuleIndex(newRuleIndex));
     }
 
     LangtonGroundEntity determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {

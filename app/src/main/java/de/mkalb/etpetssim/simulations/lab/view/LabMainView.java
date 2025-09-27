@@ -37,7 +37,7 @@ public final class LabMainView
     private static final Color MOUSE_CLICK_COLOR = Color.ROSYBROWN;
     private static final Color MOUSE_HOVER_COLOR = Color.DARKSLATEBLUE;
     private static final Color TEXT_COLOR = Color.DARKSLATEGRAY;
-    private static final Color TEXT_COLOR_BW = Color.BLACK;
+    private static final Color TEXT_COLOR_GRAYSCALE = Color.BLACK;
     private static final Color STROKE_COLOR = Color.BLACK;
     private static final Color CANVAS_COLOR = Color.BLACK;
     private static final Color GRID_BACKGROUND_COLOR = Color.DIMGRAY;
@@ -205,17 +205,17 @@ public final class LabMainView
 
         resetCanvasAndPainter(config);
 
-        boolean colorModeBW = (config.colorMode() == LabConfig.ColorMode.BLACK_WHITE);
+        boolean colorModeGrayscale = (config.colorMode() == LabConfig.ColorMode.GRAYSCALE);
         boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE) || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
-        Color textColor = colorModeBW ? TEXT_COLOR_BW : TEXT_COLOR;
+        Color textColor = colorModeGrayscale ? TEXT_COLOR_GRAYSCALE : TEXT_COLOR;
         Color strokeColor = config.cellDisplayMode().hasBorder() ? STROKE_COLOR : null;
 
-        drawBaseCanvasBackground(colorModeBW);
+        drawBaseCanvasBackground(colorModeGrayscale);
 
         viewModel.getStructure()
                  .coordinatesStream()
                  .forEachOrdered(coordinate ->
-                         drawCoordinateAtBaseCanvas(coordinate, colorModeBW, renderingModeCircle,
+                         drawCoordinateAtBaseCanvas(coordinate, colorModeGrayscale, renderingModeCircle,
                                  strokeColor, SHAPE_LINE_WIDTH,
                                  textColor));
     }
@@ -234,14 +234,14 @@ public final class LabMainView
     }
 
     private void drawCoordinateAtBaseCanvas(GridCoordinate coordinate,
-                                            boolean colorModeBW, boolean renderingModeCircle,
+                                            boolean colorModeGrayscale, boolean renderingModeCircle,
                                             @Nullable Color strokeColor, double strokeLineWidth,
                                             Color textColor) {
         if ((basePainter == null) || (overlayPainter == null)) {
             return;
         }
 
-        Color color = colorModeBW ? determineColumnBlackWhiteColor(coordinate) : determineColumnSimilarityColor(coordinate);
+        Color color = colorModeGrayscale ? determineColumnGrayscaleColor(coordinate) : determineColumnSimilarityColor(coordinate);
         if (renderingModeCircle) {
             basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeType.CENTERED);
         } else {
@@ -325,7 +325,7 @@ public final class LabMainView
         };
     }
 
-    private Color determineColumnBlackWhiteColor(GridCoordinate coordinate) {
+    private Color determineColumnGrayscaleColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % 2;
         int rowGroup = coordinate.y() % 2;
 

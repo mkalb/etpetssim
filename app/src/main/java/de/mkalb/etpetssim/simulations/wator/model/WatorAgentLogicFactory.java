@@ -69,7 +69,7 @@ public final class WatorAgentLogicFactory {
 
         // Move fish, if possible
         if (!waterCells.isEmpty()) {
-            GridCell<WatorEntity> waterCell = chooseRandomCoordinate(waterCells);
+            GridCell<WatorEntity> waterCell = chooseRandomCell(waterCells);
             model.swapEntities(agentCell, waterCell);
             fishNewCoordinate = waterCell.coordinate();
 
@@ -104,7 +104,7 @@ public final class WatorAgentLogicFactory {
         shark.reduceEnergy(config.sharkEnergyLossPerStep());
 
         if (!fishCells.isEmpty()) {
-            GridCell<WatorEntity> fishCell = chooseRandomCoordinate(fishCells);
+            GridCell<WatorEntity> fishCell = chooseRandomCell(fishCells);
             model.setEntity(fishCell.coordinate(), shark);
             model.setEntityToDefault(sharkOriginalCoordinate);
             sharkNewCoordinate = fishCell.coordinate();
@@ -112,7 +112,7 @@ public final class WatorAgentLogicFactory {
             statistics.decrementFishCells();
             // AppLogger.info("WatorAgentLogicFactory - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
         } else if (!waterCells.isEmpty()) {
-            GridCell<WatorEntity> waterCell = chooseRandomCoordinate(waterCells);
+            GridCell<WatorEntity> waterCell = chooseRandomCell(waterCells);
             model.swapEntities(agentCell, waterCell);
             sharkNewCoordinate = waterCell.coordinate();
             //    // AppLogger.info("WatorAgentLogicFactory - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
@@ -140,7 +140,7 @@ public final class WatorAgentLogicFactory {
         }
     }
 
-    private GridCell<WatorEntity> chooseRandomCoordinate(List<GridCell<WatorEntity>> cells) {
+    private GridCell<WatorEntity> chooseRandomCell(List<GridCell<WatorEntity>> cells) {
         return cells.get(random.nextInt(cells.size()));
     }
 

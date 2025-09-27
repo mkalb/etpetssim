@@ -71,7 +71,7 @@ public record LangtonMovementRules(
         return turns.get(state % turns.size());
     }
 
-    public int getColorCount() {
+    public int getRuleCount() {
         return turns.size();
     }
 

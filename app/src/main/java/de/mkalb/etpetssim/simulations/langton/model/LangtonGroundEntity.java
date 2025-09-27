@@ -28,11 +28,11 @@ public enum LangtonGroundEntity implements LangtonEntity, ConstantGridEntity, Gr
     COLOR_14(14, Color.DEEPPINK),
     COLOR_15(15, Color.GOLD);
 
-    private static final Map<Integer, LangtonGroundEntity> CACHE = HashMap.newHashMap(LangtonGroundEntity.values().length);
+    private static final Map<Integer, LangtonGroundEntity> BY_RULE_INDEX = HashMap.newHashMap(LangtonGroundEntity.values().length);
 
     static {
         for (LangtonGroundEntity ground : values()) {
-            CACHE.put(ground.ruleIndex(), ground);
+            BY_RULE_INDEX.put(ground.ruleIndex(), ground);
         }
     }
 
@@ -61,8 +61,8 @@ public enum LangtonGroundEntity implements LangtonEntity, ConstantGridEntity, Gr
         renderPriority = 2;
     }
 
-    public static LangtonGroundEntity forRuleIndex(int ruleIndex) {
-        return CACHE.get(ruleIndex);
+    public static LangtonGroundEntity byRuleIndex(int ruleIndex) {
+        return BY_RULE_INDEX.get(ruleIndex);
     }
 
     public boolean isUnvisited() {
