@@ -105,7 +105,8 @@ public final class LangtonRuleProperty {
         NR,
         NR2,
         R2RR,
-        L2NNLL2L;
+        R2NNRR2R,
+        RR2NUR2RL2;
 
         public String toString() {
             if (this == EMPTY) {
