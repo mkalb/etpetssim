@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -131,6 +132,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
                               titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
 
         VBox linkBox = new VBox();
+        linkBox.setAlignment(Pos.TOP_RIGHT);
         linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
 
         Hyperlink aboutLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK));
