@@ -32,10 +32,12 @@ public final class FXStyleClasses {
     public static final String CONTROL_HBOX = "control-hbox";
     public static final String CONTROL_OBSERVATION_VBOX = "control-observation-vbox";
     public static final String CONTROL_SCROLLPANE = "control-scrollpane";
+    public static final String HEADER_HBOX = "header-hbox";
+    public static final String HEADER_LINK_VBOX = "header-link-vbox";
     public static final String HEADER_SUBTITLE_LABEL = "header-subtitle-label";
     public static final String HEADER_TITLE_LABEL = "header-title-label";
+    public static final String HEADER_TITLE_VBOX = "header-title-vbox";
     public static final String HEADER_URL_HYPERLINK = "header-url-hyperlink";
-    public static final String HEADER_VBOX = "header-vbox";
     public static final String MAIN_BORDERPANE = "main-borderpane";
     public static final String OBSERVATION_GRID = "observation-grid";
     public static final String OBSERVATION_NAME_LABEL = "observation-name-label";

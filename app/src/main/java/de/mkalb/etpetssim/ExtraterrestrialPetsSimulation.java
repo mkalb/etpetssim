@@ -13,9 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -119,24 +117,39 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Builds the header node for the simulation, which includes the title, subtitle, and URL link if available.
+     * Builds the header node for the simulation, which includes the title, subtitle, and links.
      *
      * @param simulationType the type of simulation to create the header for
      * @return a Node representing the header of the simulation
      */
     private Node buildSimulationHeaderNode(SimulationType simulationType) {
-        VBox simulationHeaderBox = new VBox(FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
-        simulationHeaderBox.getStyleClass().add(FXStyleClasses.HEADER_VBOX);
+        VBox titleBox = new VBox(FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
+        titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
 
         simulationType.subtitle()
-                      .ifPresent(subtitle -> simulationHeaderBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
+                      .ifPresent(subtitle ->
+                              titleBox.getChildren().add(FXComponentFactory.createLabel(subtitle, FXStyleClasses.HEADER_SUBTITLE_LABEL)));
+
+        VBox linkBox = new VBox();
+        linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
+
+        Hyperlink aboutLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK));
+        aboutLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
+        aboutLink.setOnAction(_ -> new AboutDialog(AppResources.getImages(APP_IMAGES)).showAboutDialog());
+        linkBox.getChildren().add(aboutLink);
 
         simulationType.urlAsURI().ifPresent(url -> {
             Hyperlink urlLink = new Hyperlink(url.toString());
             urlLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-            urlLink.setOnAction(e -> getHostServices().showDocument(url.toString()));
-            simulationHeaderBox.getChildren().add(urlLink);
+            urlLink.setOnAction(_ -> getHostServices().showDocument(url.toString()));
+            linkBox.getChildren().add(urlLink);
         });
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+
+        HBox simulationHeaderBox = new HBox(titleBox, spacer, linkBox);
+        simulationHeaderBox.getStyleClass().add(FXStyleClasses.HEADER_HBOX);
 
         return simulationHeaderBox;
     }
