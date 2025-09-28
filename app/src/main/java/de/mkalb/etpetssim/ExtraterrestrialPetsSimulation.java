@@ -98,7 +98,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         simulationType.cssResource().ifPresent(scene.getStylesheets()::add);
 
         // Stage
-        stage.setTitle(AppLocalization.getText(AppLocalizationKeys.WINDOW_TITLE) + " - " + simulationType.title());
+        stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, simulationType.title()));
         stage.setScene(scene);
         stage.sizeToScene();
         stage.centerOnScreen();
