@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -129,6 +130,28 @@ public final class AppResources {
             return Optional.empty();
         }
         return Optional.of(stream);
+    }
+
+    /**
+     * Loads a resource from the classpath as a String using the specified charset.
+     *
+     * @param relativePath the relative path to the resource
+     * @param charset the charset to use for decoding the resource bytes
+     * @return an Optional containing the resource content as a String, or Optional.empty() if not found or an error occurs
+     */
+    public static Optional<String> getResourceAsString(String relativePath, Charset charset) {
+        Objects.requireNonNull(relativePath, "relativePath must not be null");
+        Objects.requireNonNull(charset, "charset must not be null");
+        try (InputStream stream = AppResources.class.getResourceAsStream("/" + relativePath)) {
+            if (stream == null) {
+                AppLogger.error("Resource not found: /" + relativePath);
+                return Optional.empty();
+            }
+            return Optional.of(new String(stream.readAllBytes(), charset));
+        } catch (Exception e) {
+            AppLogger.error("Failed to read resource as string: /" + relativePath, e);
+            return Optional.empty();
+        }
     }
 
     /**

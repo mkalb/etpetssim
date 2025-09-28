@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -164,6 +165,21 @@ class AppResourcesTest {
     void testMissingResourceAsStream() {
         Optional<InputStream> streamOpt = AppResources.getResourceAsStream("missing/file.txt");
         assertFalse(streamOpt.isPresent(), "Missing resource stream should not be present");
+    }
+
+    @Test
+    void testGetResourceAsString() {
+        Optional<String> resOpt = AppResources.getResourceAsString("LICENSE", StandardCharsets.UTF_8);
+        assertTrue(resOpt.isPresent(), "Resource string should be present");
+
+        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsString(null, StandardCharsets.UTF_8));
+        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsString("", null));
+    }
+
+    @Test
+    void testMissingResourceString() {
+        Optional<String> resOpt = AppResources.getResourceAsString("missing/file.txt", StandardCharsets.UTF_8);
+        assertFalse(resOpt.isPresent(), "Missing string should not be present");
     }
 
     /**
