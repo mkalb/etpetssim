@@ -167,6 +167,7 @@ class AppResourcesTest {
         assertFalse(streamOpt.isPresent(), "Missing resource stream should not be present");
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsString() {
         Optional<String> resOpt = AppResources.getResourceAsString("LICENSE", StandardCharsets.UTF_8);

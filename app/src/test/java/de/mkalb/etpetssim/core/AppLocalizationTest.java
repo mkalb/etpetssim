@@ -137,6 +137,7 @@ class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getText(null));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetOptionalText() {
         AppLocalization.initialize("en_US");
