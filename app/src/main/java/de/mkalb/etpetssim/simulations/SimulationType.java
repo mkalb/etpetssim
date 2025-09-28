@@ -22,7 +22,7 @@ public enum SimulationType {
      * It is not a simulation in the traditional sense but serves as a menu to select other simulations.
      */
     STARTSCREEN(
-            false,
+            true,
             false,
             "simulation.start.title",
             "simulation.start.subtitle",
@@ -30,32 +30,6 @@ public enum SimulationType {
             "simulation.start.emoji",
             "",
             List.of("startscreen", "start")
-    ),
-    /**
-     * The simulation lab is not a specific simulation but a collection of various tests during development.
-     */
-    SIMULATION_LAB(
-            true,
-            true,
-            "simulation.lab.title",
-            "simulation.lab.subtitle",
-            "simulation.lab.url",
-            "simulation.lab.emoji",
-            "lab.css",
-            List.of("simulationlab", "lab")
-    ),
-    /**
-     * Extraterrestrial Pets Simulation (ET pets): a planned custom simulation by the author.
-     */
-    ET_PETS_SIM(
-            false,
-            true,
-            "simulation.etpetssim.title",
-            "simulation.etpetssim.subtitle",
-            "simulation.etpetssim.url",
-            "simulation.etpetssim.emoji",
-            "",
-            List.of("etpetssim", "etpets")
     ),
     /**
      * <a href="https://en.wikipedia.org/wiki/Wa-Tor">Wa-Tor</a>
@@ -82,6 +56,32 @@ public enum SimulationType {
             "simulation.conway.emoji",
             "conway.css",
             List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol")
+    ),
+    /**
+     * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>
+     */
+    LANGTONS_ANT(
+            true,
+            true,
+            "simulation.langton.title",
+            "simulation.langton.subtitle",
+            "simulation.langton.url",
+            "simulation.langton.emoji",
+            "langton.css",
+            List.of("langton", "langtonsant", "langtons-ant", "ant")
+    ),
+    /**
+     * Extraterrestrial Pets Simulation (ET pets): a planned custom simulation by the author.
+     */
+    ET_PETS_SIM(
+            false,
+            true,
+            "simulation.etpetssim.title",
+            "simulation.etpetssim.subtitle",
+            "simulation.etpetssim.url",
+            "simulation.etpetssim.emoji",
+            "",
+            List.of("etpetssim", "etpets")
     ),
     /**
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>
@@ -123,17 +123,17 @@ public enum SimulationType {
             List.of("forestfire", "forest-fire", "fire", "forestfiremodel")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>
+     * The simulation lab is not a specific simulation but a collection of various tests during development.
      */
-    LANGTONS_ANT(
+    SIMULATION_LAB(
             true,
             true,
-            "simulation.langton.title",
-            "simulation.langton.subtitle",
-            "simulation.langton.url",
-            "simulation.langton.emoji",
-            "langton.css",
-            List.of("langton", "langtonsant", "langtons-ant", "ant")
+            "simulation.lab.title",
+            "simulation.lab.subtitle",
+            "simulation.lab.url",
+            "simulation.lab.emoji",
+            "lab.css",
+            List.of("simulationlab", "lab")
     );
 
     private final boolean implemented;
