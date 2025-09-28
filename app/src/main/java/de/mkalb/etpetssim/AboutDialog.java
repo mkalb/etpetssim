@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim;
 
-import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.core.AppResources;
+import de.mkalb.etpetssim.core.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Region;
@@ -38,20 +37,25 @@ public final class AboutDialog {
      * The dialog contains tabs for version, readme, license, and third-party licenses.
      */
     public void showAboutDialog() {
-        Tab tabManifest = createTextAreaTab("Version",
+        Tab tabManifest = createTextAreaTab(
+                AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_VERSION),
                 buildManifestContent());
-        Tab tabReadme = createTextAreaTab("Readme",
+        Tab tabReadme = createTextAreaTab(
+                AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_README),
                 getResourceAsString("README.md"));
-        Tab tabLicense = createTextAreaTab("License",
+        Tab tabLicense = createTextAreaTab(
+                AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_LICENSE),
                 getResourceAsString("LICENSE"));
-        Tab tabThirdParty = createTextAreaTab("Third-Party Licenses",
+        Tab tabThirdParty = createTextAreaTab(
+                AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_THIRD_PARTY_LICENSES),
                 getResourceAsString("THIRD-PARTY-LICENSES"));
 
         TabPane tabPane = new TabPane(tabManifest, tabReadme, tabLicense, tabThirdParty);
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText("Extraterrestrial Pets Simulation");
+        String title = AppLocalization.getText(AppLocalizationKeys.ABOUT_TITLE);
+        alert.setTitle(title);
+        alert.setHeaderText(title);
         alert.getDialogPane().setContent(tabPane);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         if (!icons.isEmpty()) {

@@ -13,6 +13,11 @@ package de.mkalb.etpetssim.core;
 @SuppressWarnings("SpellCheckingInspection")
 public final class AppLocalizationKeys {
 
+    public static final String ABOUT_TAB_LICENSE = "about.tab.license";
+    public static final String ABOUT_TAB_README = "about.tab.readme";
+    public static final String ABOUT_TAB_THIRD_PARTY_LICENSES = "about.tab.thirdpartylicenses";
+    public static final String ABOUT_TAB_VERSION = "about.tab.version";
+    public static final String ABOUT_TITLE = "about.title";
     public static final String CONFIG_CELL_EDGE_LENGTH = "config.celledgelength";
     public static final String CONFIG_CELL_EDGE_LENGTH_TOOLTIP = "config.celledgelength.tooltip";
     public static final String CONFIG_CELL_SHAPE_TOOLTIP = "config.cellshape.tooltip";
@@ -48,6 +53,7 @@ public final class AppLocalizationKeys {
     public static final String HEADER_ABOUT_LINK = "header.about.link";
     public static final String OBSERVATION_STEP = "observation.step";
     public static final String OBSERVATION_VALUE_UNKNOWN = "observation.valueunknown";
+    public static final String WINDOW_TITLE = "window.title";
 
     /**
      * Private constructor to prevent instantiation.
