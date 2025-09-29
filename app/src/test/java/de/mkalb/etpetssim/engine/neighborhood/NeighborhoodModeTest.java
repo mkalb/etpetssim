@@ -25,13 +25,7 @@ final class NeighborhoodModeTest {
     }
 
     @Test
-    void testResourceKey() {
-        assertEquals("neighborhoodmode.edgesonly", NeighborhoodMode.EDGES_ONLY.resourceKey());
-        assertEquals("neighborhoodmode.edgesandvertices", NeighborhoodMode.EDGES_AND_VERTICES.resourceKey());
-    }
-
-    @Test
-    void testLabelResourceKey() {
+    void testStaticLabelResourceKey() {
         assertEquals("neighborhoodmode.label", NeighborhoodMode.labelResourceKey());
     }
 
@@ -39,6 +33,12 @@ final class NeighborhoodModeTest {
     void testIncludesVertexNeighbors() {
         assertFalse(NeighborhoodMode.EDGES_ONLY.includesVertexNeighbors());
         assertTrue(NeighborhoodMode.EDGES_AND_VERTICES.includesVertexNeighbors());
+    }
+
+    @Test
+    void testResourceKey() {
+        assertEquals("neighborhoodmode.edgesonly", NeighborhoodMode.EDGES_ONLY.resourceKey());
+        assertEquals("neighborhoodmode.edgesandvertices", NeighborhoodMode.EDGES_AND_VERTICES.resourceKey());
     }
 
 }

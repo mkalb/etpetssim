@@ -25,14 +25,14 @@ final class CellConnectionTypeTest {
     }
 
     @Test
-    void testResourceKey() {
-        assertEquals("cellconnectiontype.edge", CellConnectionType.EDGE.resourceKey());
-        assertEquals("cellconnectiontype.vertex", CellConnectionType.VERTEX.resourceKey());
+    void testStaticLabelResourceKey() {
+        assertEquals("cellconnectiontype.label", CellConnectionType.labelResourceKey());
     }
 
     @Test
-    void testLabelResourceKey() {
-        assertEquals("cellconnectiontype.label", CellConnectionType.labelResourceKey());
+    void testResourceKey() {
+        assertEquals("cellconnectiontype.edge", CellConnectionType.EDGE.resourceKey());
+        assertEquals("cellconnectiontype.vertex", CellConnectionType.VERTEX.resourceKey());
     }
 
 }

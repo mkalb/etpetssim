@@ -55,6 +55,11 @@ final class CompassDirectionTest {
     }
 
     @Test
+    void testStaticLabelResourceKey() {
+        assertEquals("compass.label", CompassDirection.labelResourceKey());
+    }
+
+    @Test
     void testAbbrResourceKeys() {
         assertEquals("compass.abbr.n", CompassDirection.N.abbrResourceKey());
         assertEquals("compass.abbr.nne", CompassDirection.NNE.abbrResourceKey());
@@ -92,11 +97,6 @@ final class CompassDirectionTest {
         assertEquals("compass.name.wnw", CompassDirection.WNW.nameResourceKey());
         assertEquals("compass.name.nw", CompassDirection.NW.nameResourceKey());
         assertEquals("compass.name.nnw", CompassDirection.NNW.nameResourceKey());
-    }
-
-    @Test
-    void testLabelResourceKey() {
-        assertEquals("compass.label", CompassDirection.labelResourceKey());
     }
 
     @Test
@@ -140,7 +140,7 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testOppositeDirection() {
+    void testOpposite() {
         assertEquals(CompassDirection.S, CompassDirection.N.opposite());
         assertEquals(CompassDirection.N, CompassDirection.S.opposite());
         assertEquals(CompassDirection.SSW, CompassDirection.NNE.opposite());
