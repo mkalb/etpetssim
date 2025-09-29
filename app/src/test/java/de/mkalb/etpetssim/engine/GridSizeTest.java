@@ -5,13 +5,16 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
-class GridSizeTest {
+final class GridSizeTest {
 
     @Test
-    void testValidConstruction() {
+    void testRecord() {
         GridSize size = new GridSize(32, 64);
         assertEquals(32, size.width());
         assertEquals(64, size.height());
+
+        assertTrue(size.toString().contains("width=32"));
+        assertTrue(size.toString().contains("height=64"));
     }
 
     @Test
@@ -42,15 +45,36 @@ class GridSizeTest {
     }
 
     @Test
-    void testArea() {
-        GridSize size = new GridSize(20, 30);
-        assertEquals(20 * 30, size.area());
+    void testStaticIsInvalidSize() {
+        assertFalse(GridSize.isInvalidSize(8));
+        assertFalse(GridSize.isInvalidSize(15));
+        assertFalse(GridSize.isInvalidSize(32));
+        assertFalse(GridSize.isInvalidSize(1_000));
+
+        assertTrue(GridSize.isInvalidSize(-1));
+        assertTrue(GridSize.isInvalidSize(0));
+        assertTrue(GridSize.isInvalidSize(7));
+        assertTrue(GridSize.isInvalidSize(20_000));
+    }
+
+    @Test
+    void testStaticSquare() {
+        GridSize square = GridSize.square(64);
+        assertEquals(64, square.width());
+        assertEquals(64, square.height());
+        assertTrue(square.isSquare());
     }
 
     @Test
     void testPerimeter() {
         GridSize size = new GridSize(20, 30);
         assertEquals(2 * (20 + 30), size.perimeter());
+    }
+
+    @Test
+    void testArea() {
+        GridSize size = new GridSize(20, 30);
+        assertEquals(20 * 30, size.area());
     }
 
     @Test
@@ -91,21 +115,6 @@ class GridSizeTest {
         assertEquals("16 × 16", GridSize.square(16).toDisplayString());
         assertEquals("16 × 8", new GridSize(16, 8).toDisplayString());
         assertEquals("8 × 16", new GridSize(8, 16).toDisplayString());
-    }
-
-    @Test
-    void testSquareFactoryMethod() {
-        GridSize square = GridSize.square(64);
-        assertEquals(64, square.width());
-        assertEquals(64, square.height());
-        assertTrue(square.isSquare());
-    }
-
-    @Test
-    void testIsInvalidSize() {
-        assertFalse(GridSize.isInvalidSize(15));
-        assertTrue(GridSize.isInvalidSize(20_000));
-        assertFalse(GridSize.isInvalidSize(32));
     }
 
 }

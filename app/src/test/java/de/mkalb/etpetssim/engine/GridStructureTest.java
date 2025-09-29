@@ -7,16 +7,115 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
-class GridStructureTest {
+final class GridStructureTest {
 
     @Test
-    void testCellShapeAndEdgeBehaviors() {
+    void testRecord() {
         GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
                 new GridSize(20, 30));
 
         assertEquals(CellShape.SQUARE, structure.cellShape());
         assertEquals(EdgeBehavior.WRAP, structure.edgeBehaviorX());
         assertEquals(EdgeBehavior.BLOCK, structure.edgeBehaviorY());
+
+        assertTrue(structure.toString().contains("size=GridSize[width=20, height=30]"));
+        assertTrue(structure.toString().contains("topology=GridTopology[cellShape=SQUARE, gridEdgeBehavior=WRAP_X_BLOCK_Y]"));
+    }
+
+    @Test
+    void testInvalidWidthMultipleThrowsException() {
+        GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                new GridStructure(hexTopology, new GridSize(9, 8)));
+        assertTrue(ex.getMessage().contains("multiple of 2"));
+    }
+
+    @Test
+    void testInvalidHeightMultipleThrowsException() {
+        GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                new GridStructure(triTopology, new GridSize(8, 9)));
+        assertTrue(ex.getMessage().contains("multiple of 2"));
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testNullArgumentsThrowException() {
+        GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY);
+        GridSize size = new GridSize(8, 8);
+
+        assertThrows(NullPointerException.class, () -> new GridStructure(null, size));
+        assertThrows(NullPointerException.class, () -> new GridStructure(topology, null));
+        assertThrows(NullPointerException.class, () -> new GridStructure(null, null));
+    }
+
+    @Test
+    void testValidMultiplesForAllCellShapes() {
+        // BLOCK: Any size is valid.
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY),
+                new GridSize(9, 11)));
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
+                new GridSize(9, 11)));
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY),
+                new GridSize(9, 11)));
+
+        // SQUARE: Any size is valid (WRAP).
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
+                new GridSize(8, 8)));
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
+                new GridSize(9, 11)));
+
+        // TRIANGLE: Width and height must be multiples of 2 (WRAP).
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
+                new GridSize(8, 8)));
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
+                new GridSize(10, 12)));
+
+        // HEXAGON: Width must be a multiple of 2 (WRAP).
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY),
+                new GridSize(8, 8)));
+        assertDoesNotThrow(() -> new GridStructure(
+                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY),
+                new GridSize(10, 9)));
+    }
+
+    @Test
+    void testStaticIsValid() {
+        // BLOCK: Any size is valid.
+        assertTrue(GridStructure.isValid(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
+        assertTrue(GridStructure.isValid(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
+        assertTrue(GridStructure.isValid(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
+
+        // SQUARE: Any size is valid (WRAP).
+        GridTopology squareTopology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY);
+        assertTrue(GridStructure.isValid(squareTopology, new GridSize(8, 8)));
+        assertTrue(GridStructure.isValid(squareTopology, new GridSize(9, 11)));
+
+        // TRIANGLE: Width and height must be multiples of 2 (WRAP).
+        GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
+        assertTrue(GridStructure.isValid(triTopology, new GridSize(8, 8)));
+        assertTrue(GridStructure.isValid(triTopology, new GridSize(10, 12)));
+        assertFalse(GridStructure.isValid(triTopology, new GridSize(8, 9))); // 9 is not a multiple of 2.
+
+        // HEXAGON: Width must be a multiple of 2 (WRAP).
+        GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
+        assertTrue(GridStructure.isValid(hexTopology, new GridSize(8, 8)));
+        assertTrue(GridStructure.isValid(hexTopology, new GridSize(10, 9)));
+        assertFalse(GridStructure.isValid(hexTopology, new GridSize(9, 8))); // 9 is not a multiple of 2.
+    }
+
+    @Test
+    void testCellShape() {
+        assertEquals(CellShape.TRIANGLE, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
+                new GridSize(20, 30)).cellShape());
     }
 
     @Test
@@ -27,12 +126,38 @@ class GridStructureTest {
     }
 
     @Test
-    void testCoordinateBounds() {
+    void testEdgeBehaviorX() {
+        assertEquals(EdgeBehavior.WRAP, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
+                new GridSize(20, 30)).edgeBehaviorX());
+    }
+
+    @Test
+    void testEdgeBehaviorY() {
+        assertEquals(EdgeBehavior.BLOCK, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
+                new GridSize(20, 30)).edgeBehaviorY());
+    }
+
+    @Test
+    void testMinCoordinateInclusive() {
         GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY),
                 new GridSize(20, 30));
 
         assertEquals(new GridCoordinate(0, 0), structure.minCoordinateInclusive());
+    }
+
+    @Test
+    void testMaxCoordinateExclusive() {
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY),
+                new GridSize(20, 30));
+
         assertEquals(new GridCoordinate(20, 30), structure.maxCoordinateExclusive());
+    }
+
+    @Test
+    void testMaxCoordinateInclusive() {
+        GridStructure structure = new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY),
+                new GridSize(20, 30));
+
         assertEquals(new GridCoordinate(19, 29), structure.maxCoordinateInclusive());
     }
 
@@ -106,96 +231,6 @@ class GridStructureTest {
         assertEquals("[SQUARE BLOCK/WRAP] 32 × 32", new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y),
                 new GridSize(32, 32)).toDisplayString());
-    }
-
-    @Test
-    void testValidMultiplesForAllCellShapes() {
-        // BLOCK: Any size is valid.
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(9, 11)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(9, 11)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(9, 11)));
-
-        // SQUARE: Any size is valid (WRAP).
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(8, 8)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(9, 11)));
-
-        // TRIANGLE: Width and height must be multiples of 2 (WRAP).
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(8, 8)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(10, 12)));
-
-        // HEXAGON: Width must be a multiple of 2 (WRAP).
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY),
-                new GridSize(8, 8)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY),
-                new GridSize(10, 9)));
-    }
-
-    @Test
-    void testIsValidStaticMethod() {
-        // BLOCK: Any size is valid.
-        assertTrue(GridStructure.isValid(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
-        assertTrue(GridStructure.isValid(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
-        assertTrue(GridStructure.isValid(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
-
-        // SQUARE: Any size is valid (WRAP).
-        GridTopology squareTopology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY);
-        assertTrue(GridStructure.isValid(squareTopology, new GridSize(8, 8)));
-        assertTrue(GridStructure.isValid(squareTopology, new GridSize(9, 11)));
-
-        // TRIANGLE: Width and height must be multiples of 2 (WRAP).
-        GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
-        assertTrue(GridStructure.isValid(triTopology, new GridSize(8, 8)));
-        assertTrue(GridStructure.isValid(triTopology, new GridSize(10, 12)));
-        assertFalse(GridStructure.isValid(triTopology, new GridSize(8, 9))); // 9 is not a multiple of 2.
-
-        // HEXAGON: Width must be a multiple of 2 (WRAP).
-        GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
-        assertTrue(GridStructure.isValid(hexTopology, new GridSize(8, 8)));
-        assertTrue(GridStructure.isValid(hexTopology, new GridSize(10, 9)));
-        assertFalse(GridStructure.isValid(hexTopology, new GridSize(9, 8))); // 9 is not a multiple of 2.
-    }
-
-    @Test
-    void testInvalidWidthMultipleThrowsException() {
-        GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                new GridStructure(hexTopology, new GridSize(9, 8)));
-        assertTrue(ex.getMessage().contains("multiple of 2"));
-    }
-
-    @Test
-    void testInvalidHeightMultipleThrowsException() {
-        GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                new GridStructure(triTopology, new GridSize(8, 9)));
-        assertTrue(ex.getMessage().contains("multiple of 2"));
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testNullArgumentsThrowException() {
-        GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY);
-        GridSize size = new GridSize(8, 8);
-
-        assertThrows(NullPointerException.class, () -> new GridStructure(null, size));
-        assertThrows(NullPointerException.class, () -> new GridStructure(topology, null));
-        assertThrows(NullPointerException.class, () -> new GridStructure(null, null));
     }
 
 }

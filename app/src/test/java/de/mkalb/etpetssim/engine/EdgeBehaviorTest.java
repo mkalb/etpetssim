@@ -28,16 +28,16 @@ final class EdgeBehaviorTest {
     }
 
     @Test
+    void testStaticLabelResourceKey() {
+        assertEquals("edgebehavior.label", EdgeBehavior.labelResourceKey(), "EdgeBehavior should have the correct resource key");
+    }
+
+    @Test
     void testResourceKey() {
         assertEquals("edgebehavior.block", EdgeBehavior.BLOCK.resourceKey(), "BLOCK should have the correct resource key");
         assertEquals("edgebehavior.wrap", EdgeBehavior.WRAP.resourceKey(), "WRAP should have the correct resource key");
         assertEquals("edgebehavior.absorb", EdgeBehavior.ABSORB.resourceKey(), "ABSORB should have the correct resource key");
         assertEquals("edgebehavior.reflect", EdgeBehavior.REFLECT.resourceKey(), "REFLECT should have the correct resource key");
-    }
-
-    @Test
-    void testLabelResourceKey() {
-        assertEquals("edgebehavior.label", EdgeBehavior.labelResourceKey(), "EdgeBehavior should have the correct resource key");
     }
 
 }

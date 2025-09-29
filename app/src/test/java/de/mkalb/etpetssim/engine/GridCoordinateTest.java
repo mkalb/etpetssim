@@ -5,13 +5,25 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
-class GridCoordinateTest {
+final class GridCoordinateTest {
 
     @Test
-    void testConstructorAndAccessors() {
+    void testRecord() {
         GridCoordinate coordinate = new GridCoordinate(5, 10);
         assertEquals(5, coordinate.x());
         assertEquals(10, coordinate.y());
+
+        assertTrue(coordinate.toString().contains("x=5"));
+        assertTrue(coordinate.toString().contains("y=10"));
+    }
+
+    @Test
+    void testConstants() {
+        assertEquals(0, GridCoordinate.ORIGIN.x());
+        assertEquals(0, GridCoordinate.ORIGIN.y());
+        assertTrue(GridCoordinate.ILLEGAL.isIllegal());
+        assertEquals(Integer.MIN_VALUE, GridCoordinate.ILLEGAL.x());
+        assertEquals(Integer.MIN_VALUE, GridCoordinate.ILLEGAL.y());
     }
 
     @Test
@@ -34,7 +46,7 @@ class GridCoordinateTest {
     }
 
     @Test
-    void testIsWithinBoundsCoordinates() {
+    void testIsWithinBounds() {
         GridCoordinate coordinate = new GridCoordinate(5, 5);
         assertTrue(coordinate.isWithinBounds(new GridCoordinate(0, 0), new GridCoordinate(10, 10)));
         assertFalse(coordinate.isWithinBounds(new GridCoordinate(0, 0), new GridCoordinate(5, 5)));
@@ -47,46 +59,6 @@ class GridCoordinateTest {
         assertTrue(coordinate.isWithinOriginBounds(new GridCoordinate(10, 10)));
         assertFalse(coordinate.isWithinOriginBounds(new GridCoordinate(5, 5)));
         assertFalse(GridCoordinate.ILLEGAL.isWithinOriginBounds(new GridCoordinate(5, 5)));
-    }
-
-    @Test
-    void testClampToBoundsInt() {
-        GridCoordinate coordinate = new GridCoordinate(15, -5);
-        GridCoordinate clamped = coordinate.clampToBounds(0, 0, 10, 10);
-        assertEquals(new GridCoordinate(9, 0), clamped);
-    }
-
-    @Test
-    void testClampToBoundsCoordinates() {
-        GridCoordinate coordinate = new GridCoordinate(15, -5);
-        GridCoordinate clamped = coordinate.clampToBounds(new GridCoordinate(0, 0), new GridCoordinate(10, 10));
-        assertEquals(new GridCoordinate(9, 0), clamped);
-    }
-
-    @Test
-    void testClampToOriginBounds() {
-        GridCoordinate coordinate = new GridCoordinate(15, -5);
-        assertEquals(new GridCoordinate(9, 0), coordinate.clampToOriginBounds(new GridCoordinate(10, 10)));
-        assertEquals(new GridCoordinate(0, 0), GridCoordinate.ILLEGAL.clampToOriginBounds(new GridCoordinate(10, 10)));
-    }
-
-    @Test
-    void testIncremented() {
-        GridCoordinate coordinate = new GridCoordinate(3, 4);
-        assertEquals(new GridCoordinate(4, 5), coordinate.incremented());
-    }
-
-    @Test
-    void testDecremented() {
-        GridCoordinate coordinate = new GridCoordinate(3, 4);
-        assertEquals(new GridCoordinate(2, 3), coordinate.decremented());
-    }
-
-    @Test
-    void testOffset() {
-        GridCoordinate coordinate = new GridCoordinate(3, 4);
-        assertEquals(new GridCoordinate(5, 1), coordinate.offset(2, -3));
-        assertEquals(new GridCoordinate(1, 7), coordinate.offset(-2, 3));
     }
 
     @Test
@@ -142,6 +114,60 @@ class GridCoordinateTest {
     }
 
     @Test
+    void testClampToBoundsInt() {
+        GridCoordinate coordinate = new GridCoordinate(15, -5);
+        GridCoordinate clamped = coordinate.clampToBounds(0, 0, 10, 10);
+        assertEquals(new GridCoordinate(9, 0), clamped);
+    }
+
+    @Test
+    void testClampToBounds() {
+        GridCoordinate coordinate = new GridCoordinate(15, -5);
+        GridCoordinate clamped = coordinate.clampToBounds(new GridCoordinate(0, 0), new GridCoordinate(10, 10));
+        assertEquals(new GridCoordinate(9, 0), clamped);
+    }
+
+    @Test
+    void testClampToOriginBounds() {
+        GridCoordinate coordinate = new GridCoordinate(15, -5);
+        assertEquals(new GridCoordinate(9, 0), coordinate.clampToOriginBounds(new GridCoordinate(10, 10)));
+        assertEquals(new GridCoordinate(0, 0), GridCoordinate.ILLEGAL.clampToOriginBounds(new GridCoordinate(10, 10)));
+    }
+
+    @Test
+    void testIncremented() {
+        GridCoordinate coordinate = new GridCoordinate(3, 4);
+        assertEquals(new GridCoordinate(4, 5), coordinate.incremented());
+    }
+
+    @Test
+    void testDecremented() {
+        GridCoordinate coordinate = new GridCoordinate(3, 4);
+        assertEquals(new GridCoordinate(2, 3), coordinate.decremented());
+    }
+
+    @Test
+    void testOffsetInt() {
+        GridCoordinate coordinate = new GridCoordinate(3, 4);
+        assertEquals(new GridCoordinate(5, 1), coordinate.offset(2, -3));
+        assertEquals(new GridCoordinate(1, 7), coordinate.offset(-2, 3));
+    }
+
+    @Test
+    void testOffset() {
+        GridCoordinate coordinate = new GridCoordinate(3, 4);
+        assertEquals(new GridCoordinate(5, 1), coordinate.offset(new GridOffset(2, -3)));
+        assertEquals(new GridCoordinate(1, 7), coordinate.offset(new GridOffset(-2, 3)));
+    }
+
+    @Test
+    void testOffsetTo() {
+        GridCoordinate coordinate = new GridCoordinate(3, 4);
+        assertEquals(new GridOffset(-1, 3), coordinate.offsetTo(new GridCoordinate(2, 7)));
+        assertEquals(new GridOffset(-3, -4), coordinate.offsetTo(new GridCoordinate(0, 0)));
+    }
+
+    @Test
     void testToDisplayString() {
         assertEquals("(7, 8)", new GridCoordinate(7, 8).toDisplayString());
         assertEquals("(2048, -1024)", new GridCoordinate(2_048, -1_024).toDisplayString());
@@ -150,15 +176,6 @@ class GridCoordinateTest {
         assertEquals("(-2147483648, -2147483648)", new GridCoordinate(Integer.MIN_VALUE, Integer.MIN_VALUE).toDisplayString());
         assertEquals("(2147483647, 2147483647)",
                 new GridCoordinate(Integer.MAX_VALUE, Integer.MAX_VALUE).toDisplayString());
-    }
-
-    @Test
-    void testConstants() {
-        assertEquals(0, GridCoordinate.ORIGIN.x());
-        assertEquals(0, GridCoordinate.ORIGIN.y());
-        assertTrue(GridCoordinate.ILLEGAL.isIllegal());
-        assertEquals(Integer.MIN_VALUE, GridCoordinate.ILLEGAL.x());
-        assertEquals(Integer.MIN_VALUE, GridCoordinate.ILLEGAL.y());
     }
 
 }

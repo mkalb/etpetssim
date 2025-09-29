@@ -32,17 +32,7 @@ final class GridEdgeBehaviorTest {
     }
 
     @Test
-    void testResourceKey() {
-        assertEquals("gridedgebehavior.block_xy", GridEdgeBehavior.BLOCK_XY.resourceKey(), "BLOCK_XY should have the correct resource key");
-        assertEquals("gridedgebehavior.wrap_xy", GridEdgeBehavior.WRAP_XY.resourceKey(), "WRAP_XY should have the correct resource key");
-        assertEquals("gridedgebehavior.absorb_xy", GridEdgeBehavior.ABSORB_XY.resourceKey(), "ABSORB_XY should have the correct resource key");
-        assertEquals("gridedgebehavior.reflect_xy", GridEdgeBehavior.REFLECT_XY.resourceKey(), "REFLECT_XY should have the correct resource key");
-        assertEquals("gridedgebehavior.block_x_wrap_y", GridEdgeBehavior.BLOCK_X_WRAP_Y.resourceKey(), "BLOCK_X_WRAP_Y should have the correct resource key");
-        assertEquals("gridedgebehavior.wrap_x_block_y", GridEdgeBehavior.WRAP_X_BLOCK_Y.resourceKey(), "WRAP_X_BLOCK_Y should have the correct resource key");
-    }
-
-    @Test
-    void testLabelResourceKey() {
+    void testStaticLabelResourceKey() {
         assertEquals("gridedgebehavior.label", GridEdgeBehavior.labelResourceKey(), "GridEdgeBehavior should have the correct resource key");
     }
 
@@ -74,6 +64,16 @@ final class GridEdgeBehaviorTest {
         assertTrue(GridEdgeBehavior.REFLECT_XY.hasEqualEdgeBehaviors());
         assertFalse(GridEdgeBehavior.BLOCK_X_WRAP_Y.hasEqualEdgeBehaviors());
         assertFalse(GridEdgeBehavior.WRAP_X_BLOCK_Y.hasEqualEdgeBehaviors());
+    }
+
+    @Test
+    void testResourceKey() {
+        assertEquals("gridedgebehavior.block_xy", GridEdgeBehavior.BLOCK_XY.resourceKey(), "BLOCK_XY should have the correct resource key");
+        assertEquals("gridedgebehavior.wrap_xy", GridEdgeBehavior.WRAP_XY.resourceKey(), "WRAP_XY should have the correct resource key");
+        assertEquals("gridedgebehavior.absorb_xy", GridEdgeBehavior.ABSORB_XY.resourceKey(), "ABSORB_XY should have the correct resource key");
+        assertEquals("gridedgebehavior.reflect_xy", GridEdgeBehavior.REFLECT_XY.resourceKey(), "REFLECT_XY should have the correct resource key");
+        assertEquals("gridedgebehavior.block_x_wrap_y", GridEdgeBehavior.BLOCK_X_WRAP_Y.resourceKey(), "BLOCK_X_WRAP_Y should have the correct resource key");
+        assertEquals("gridedgebehavior.wrap_x_block_y", GridEdgeBehavior.WRAP_X_BLOCK_Y.resourceKey(), "WRAP_X_BLOCK_Y should have the correct resource key");
     }
 
 }
