@@ -48,7 +48,7 @@ application {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter("5.13.4")
+            useJUnitJupiter("5.14.0")
             targets {
                 all {
                     testTask.configure {
