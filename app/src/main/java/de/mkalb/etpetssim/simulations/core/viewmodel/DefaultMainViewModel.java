@@ -121,6 +121,7 @@ public final class DefaultMainViewModel<
         stopTimer();
         cancelBatch();
         shutdownBatchExecutor();
+        simulationManager = null;
     }
 
     @Override
@@ -484,6 +485,7 @@ public final class DefaultMainViewModel<
         if ((batchFuture != null) && !batchFuture.isDone()) {
             batchFuture.cancel(true); // Attempts to interrupt
         }
+        batchFuture = null;
     }
 
     private void shutdownBatchExecutor() {

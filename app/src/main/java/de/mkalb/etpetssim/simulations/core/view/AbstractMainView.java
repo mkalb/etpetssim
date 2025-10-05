@@ -136,6 +136,10 @@ public abstract class AbstractMainView<
     @Override
     public void shutdownSimulation() {
         viewModel.shutdownSimulation();
+        basePainter = null;
+        overlayPainter = null;
+        cellFont = null;
+        cellEmojiFont = null;
     }
 
     protected abstract void registerViewModelListeners();
