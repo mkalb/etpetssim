@@ -2,7 +2,6 @@ package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.core.SimulationFactory;
-import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.application.Application;

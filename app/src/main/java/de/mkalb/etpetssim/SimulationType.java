@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core;
+package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;

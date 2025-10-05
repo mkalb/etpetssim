@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.start;
 
-import de.mkalb.etpetssim.simulations.core.SimulationType;
+import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import javafx.stage.Stage;
 

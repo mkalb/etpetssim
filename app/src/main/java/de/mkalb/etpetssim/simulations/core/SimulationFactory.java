@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.core;
 
+import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
 import de.mkalb.etpetssim.simulations.lab.LabFactory;
@@ -13,8 +14,8 @@ import java.util.function.*;
 /**
  * Factory for creating simulation main views and wrapping them in {@link SimulationInstance} objects.
  * <p>
- * The {@link #createInstance(SimulationType, Stage, BiConsumer)} method builds and wires the appropriate
- * view and view models for the requested {@link SimulationType}. If the type is unknown or not implemented,
+ * The {@link #createInstance(de.mkalb.etpetssim.SimulationType, Stage, BiConsumer)} method builds and wires the appropriate
+ * view and view models for the requested {@link de.mkalb.etpetssim.SimulationType}. If the type is unknown or not implemented,
  * the factory logs an error and returns the start screen as a safe fallback.
  * </p>
  */
