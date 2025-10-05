@@ -1,11 +1,11 @@
 package de.mkalb.etpetssim.simulations.lab;
 
 import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.lab.model.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
-import de.mkalb.etpetssim.simulations.view.SimulationMainView;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

@@ -1,9 +1,9 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractObservationViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
-import de.mkalb.etpetssim.simulations.viewmodel.AbstractObservationViewModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

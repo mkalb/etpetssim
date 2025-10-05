@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
-import de.mkalb.etpetssim.simulations.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 
 public final class LabStatistics implements SimulationStatistics {
 

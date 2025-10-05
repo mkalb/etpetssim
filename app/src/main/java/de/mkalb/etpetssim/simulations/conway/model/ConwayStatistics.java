@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
 /**
  * Holds statistics for a running Conway's Game of Life simulation.

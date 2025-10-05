@@ -3,8 +3,8 @@ package de.mkalb.etpetssim.simulations.langton.model;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.model.SimulationConfig;
+import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 
 public record LangtonConfig(
         CellShape cellShape,

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
 public final class LangtonStatistics
         extends AbstractTimedSimulationStatistics {

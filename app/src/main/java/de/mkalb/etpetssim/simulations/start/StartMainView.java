@@ -1,9 +1,9 @@
 package de.mkalb.etpetssim.simulations.start;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.SimulationType;
-import de.mkalb.etpetssim.simulations.view.SimulationControlView;
-import de.mkalb.etpetssim.simulations.view.SimulationMainView;
+import de.mkalb.etpetssim.simulations.core.SimulationType;
+import de.mkalb.etpetssim.simulations.core.view.SimulationControlView;
+import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;

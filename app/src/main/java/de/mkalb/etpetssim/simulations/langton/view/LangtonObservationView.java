@@ -2,10 +2,10 @@ package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonEntity;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
-import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
-import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;

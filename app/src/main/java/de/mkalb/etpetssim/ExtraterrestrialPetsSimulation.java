@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.simulations.SimulationFactory;
-import de.mkalb.etpetssim.simulations.SimulationType;
+import de.mkalb.etpetssim.simulations.core.SimulationFactory;
+import de.mkalb.etpetssim.simulations.core.SimulationType;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.application.Application;
@@ -73,7 +73,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      *
      * @param stage the JavaFX stage to update
      * @param simulationType the type of simulation to display in the new scene
-     * @see de.mkalb.etpetssim.simulations.SimulationFactory
+     * @see de.mkalb.etpetssim.simulations.core.SimulationFactory
      * @see de.mkalb.etpetssim.simulations.start.StartMainView
      */
     void updateStageScene(Stage stage, SimulationType simulationType) {

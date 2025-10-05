@@ -2,9 +2,9 @@ package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabObservationViewModel;
-import de.mkalb.etpetssim.simulations.view.AbstractObservationView;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;

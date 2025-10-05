@@ -4,11 +4,11 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonRuleProperty;
-import de.mkalb.etpetssim.simulations.model.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.model.SimulationState;
-import de.mkalb.etpetssim.simulations.viewmodel.AbstractConfigViewModel;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;

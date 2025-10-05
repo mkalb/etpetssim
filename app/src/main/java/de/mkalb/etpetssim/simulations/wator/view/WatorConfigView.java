@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;

@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.simulations.model.SimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.SimulationManager;
 
 import java.util.*;
 

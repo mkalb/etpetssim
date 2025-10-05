@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
-import de.mkalb.etpetssim.simulations.view.AbstractConfigView;
+import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
