@@ -1,0 +1,52 @@
+package de.mkalb.etpetssim.simulations.langton;
+
+import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonEntity;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonSimulationManager;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
+import de.mkalb.etpetssim.simulations.langton.view.LangtonConfigView;
+import de.mkalb.etpetssim.simulations.langton.view.LangtonMainView;
+import de.mkalb.etpetssim.simulations.langton.view.LangtonObservationView;
+import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonConfigViewModel;
+import de.mkalb.etpetssim.simulations.model.SimulationState;
+import de.mkalb.etpetssim.simulations.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.view.SimulationMainView;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultControlViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.viewmodel.DefaultObservationViewModel;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
+public final class LangtonFactory {
+
+    /**
+     * Private constructor to prevent instantiation.
+     */
+    private LangtonFactory() {
+    }
+
+    @SuppressWarnings("UnnecessaryLocalVariable")
+    public static SimulationMainView createMainView() {
+        // Common
+        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.fromCollection(LangtonEntity.allEntityDescribable());
+
+        // ViewModel
+        var configViewModel = new LangtonConfigViewModel(readOnlySimulationState);
+        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var observationViewModel = new DefaultObservationViewModel<LangtonEntity, LangtonStatistics>(readOnlySimulationState);
+        var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
+                observationViewModel, LangtonSimulationManager::new);
+        // View
+        var configView = new LangtonConfigView(configViewModel);
+        var controlView = new DefaultControlView(controlViewModel);
+        var observationView = new LangtonObservationView(observationViewModel);
+        var view = new LangtonMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+
+        // Return the main view
+        return view;
+    }
+
+}
