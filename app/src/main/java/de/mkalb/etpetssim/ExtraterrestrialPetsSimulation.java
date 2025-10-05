@@ -2,6 +2,7 @@ package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.core.SimulationFactory;
+import de.mkalb.etpetssim.simulations.core.SimulationInstance;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.application.Application;
@@ -79,12 +80,16 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         Objects.requireNonNull(stage, "Stage must not be null");
         Objects.requireNonNull(simulationType, "SimulationType must not be null");
 
+        AppLogger.info("Application: Updating stage scene to simulation: " + simulationType);
+
+        var instance = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene);
+
         // Scene with a VBox
         VBox vBox = new VBox();
-        vBox.getChildren().add(buildSimulationHeaderNode(simulationType));
-        var instance = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene);
+        vBox.getChildren().add(buildSimulationHeaderNode(stage, instance));
         stage.setOnCloseRequest(_ -> {
             AppLogger.info("Application: Shutting down simulation instance: " + instance.simulationType());
+            instance.region().setDisable(true);
             instance.simulationMainView().shutdownSimulation();
         });
         Region instanceRegion = instance.region();
@@ -119,10 +124,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * Builds the header node for the simulation, which includes the title, subtitle, and links.
      *
-     * @param simulationType the type of simulation to create the header for
+     * @param instance the simulation instance
      * @return a Node representing the header of the simulation
      */
-    private Node buildSimulationHeaderNode(SimulationType simulationType) {
+    private Node buildSimulationHeaderNode(Stage stage, SimulationInstance instance) {
+        SimulationType simulationType = instance.simulationType();
+
         VBox titleBox = new VBox(FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
         titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
 
@@ -133,6 +140,19 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         VBox linkBox = new VBox();
         linkBox.setAlignment(Pos.TOP_RIGHT);
         linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
+
+        /*
+        if (simulationType != SimulationType.STARTSCREEN) {
+            Button startScreenButton = new Button("Stop and go to start screen");
+            startScreenButton.setOnAction(_ -> {
+                AppLogger.info("Application: Switching to start screen from simulation: " + instance.simulationType());
+                instance.region().setDisable(true);
+                instance.simulationMainView().shutdownSimulation();
+                updateStageScene(stage, SimulationType.STARTSCREEN);
+            });
+            linkBox.getChildren().add(startScreenButton);
+        }
+         */
 
         Hyperlink aboutLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK));
         aboutLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
