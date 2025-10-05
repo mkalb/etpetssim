@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core;
 
 import de.mkalb.etpetssim.SimulationType;
-import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
 import de.mkalb.etpetssim.simulations.lab.LabFactory;
 import de.mkalb.etpetssim.simulations.langton.LangtonFactory;
@@ -13,11 +12,6 @@ import java.util.function.*;
 
 /**
  * Factory for creating simulation main views and wrapping them in {@link SimulationInstance} objects.
- * <p>
- * The {@link #createInstance(de.mkalb.etpetssim.SimulationType, Stage, BiConsumer)} method builds and wires the appropriate
- * view and view models for the requested {@link de.mkalb.etpetssim.SimulationType}. If the type is unknown or not implemented,
- * the factory logs an error and returns the start screen as a safe fallback.
- * </p>
  */
 public final class SimulationFactory {
 
@@ -30,30 +24,27 @@ public final class SimulationFactory {
     /**
      * Creates a new instance of a simulation based on the provided type, stage, and stage updater.
      * <p>
-     * If the type is not supported, this method logs an error and returns a start screen instance.
+     * If the provided simulation type is not supported, this method throws an {@link IllegalArgumentException}.
      * </p>
      *
      * @param type the type of simulation to create
      * @param stage the primary stage where the simulation will be displayed
      * @param stageUpdater a callback to switch the stage content to a different simulation type
-     * @return a new {@link SimulationInstance} for the specified type (or a start screen instance on fallback)
+     * @return a new {@link SimulationInstance} for the specified type
+     * @throws IllegalArgumentException if the simulation type is not supported
      */
     public static SimulationInstance createInstance(SimulationType type,
                                                     Stage stage,
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
-        return switch (type) {
-            case STARTSCREEN -> SimulationInstance.of(type, StartFactory.createMainView(stage, stageUpdater));
-            case SIMULATION_LAB -> SimulationInstance.of(type, LabFactory.createMainView());
-            case WATOR -> SimulationInstance.of(type, WatorFactory.createMainView());
-            case CONWAYS_LIFE -> SimulationInstance.of(type, ConwayFactory.createMainView());
-            case LANGTONS_ANT -> SimulationInstance.of(type, LangtonFactory.createMainView());
+        return SimulationInstance.of(type, switch (type) {
+            case STARTSCREEN -> StartFactory.createMainView(stage, stageUpdater);
+            case SIMULATION_LAB -> LabFactory.createMainView();
+            case WATOR -> WatorFactory.createMainView();
+            case CONWAYS_LIFE -> ConwayFactory.createMainView();
+            case LANGTONS_ANT -> LangtonFactory.createMainView();
             // Add other simulation types here after implementing them
-            default -> {
-                AppLogger.error("Simulation type not implemented: " + type.name());
-                // Switch to the start screen as a fallback
-                yield SimulationInstance.of(SimulationType.STARTSCREEN, StartFactory.createMainView(stage, stageUpdater));
-            }
-        };
+            default -> throw new IllegalArgumentException("Unsupported simulation type: " + type);
+        });
     }
 
 }
