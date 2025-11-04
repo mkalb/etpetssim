@@ -1,6 +1,5 @@
-package de.mkalb.etpetssim.simulations;
+package de.mkalb.etpetssim;
 
-import de.mkalb.etpetssim.SimulationType;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
