@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations;
 
+import de.mkalb.etpetssim.SimulationType;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -30,24 +31,24 @@ final class SimulationTypeTest {
     @Test
     void testEnumOrdinal() {
         assertEquals(0, SimulationType.STARTSCREEN.ordinal());
-        assertEquals(1, SimulationType.SIMULATION_LAB.ordinal());
-        assertEquals(2, SimulationType.ET_PETS_SIM.ordinal());
-        assertEquals(3, SimulationType.WATOR.ordinal());
-        assertEquals(4, SimulationType.CONWAYS_LIFE.ordinal());
+        assertEquals(1, SimulationType.WATOR.ordinal());
+        assertEquals(2, SimulationType.CONWAYS_LIFE.ordinal());
+        assertEquals(3, SimulationType.LANGTONS_ANT.ordinal());
+        assertEquals(4, SimulationType.ET_PETS_SIM.ordinal());
         assertEquals(5, SimulationType.SUGARSCAPE.ordinal());
         assertEquals(6, SimulationType.SNAKE.ordinal());
         assertEquals(7, SimulationType.FOREST_FIRE.ordinal());
-        assertEquals(8, SimulationType.LANGTONS_ANT.ordinal());
+        assertEquals(8, SimulationType.SIMULATION_LAB.ordinal());
     }
 
     @Test
-    void testLabelResourceKey() {
+    void testStaticLabelResourceKey() {
         assertEquals("simulationtype.label", SimulationType.labelResourceKey());
     }
 
     @Test
     void testIsImplemented() {
-        assertFalse(SimulationType.STARTSCREEN.isImplemented());
+        assertTrue(SimulationType.STARTSCREEN.isImplemented());
         assertTrue(SimulationType.SIMULATION_LAB.isImplemented());
         // Only test mandatory simulations.
     }
