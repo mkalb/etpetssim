@@ -141,18 +141,17 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         linkBox.setAlignment(Pos.TOP_RIGHT);
         linkBox.getStyleClass().add(FXStyleClasses.HEADER_LINK_VBOX);
 
-        /*
         if (simulationType != SimulationType.STARTSCREEN) {
-            Button startScreenButton = new Button("Stop and go to start screen");
-            startScreenButton.setOnAction(_ -> {
+            Hyperlink startScreenLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK));
+            startScreenLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
+            startScreenLink.setOnAction(_ -> {
                 AppLogger.info("Application: Switching to start screen from simulation: " + instance.simulationType());
                 instance.region().setDisable(true);
                 instance.simulationMainView().shutdownSimulation();
                 updateStageScene(stage, SimulationType.STARTSCREEN);
             });
-            linkBox.getChildren().add(startScreenButton);
+            linkBox.getChildren().add(startScreenLink);
         }
-         */
 
         Hyperlink aboutLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK));
         aboutLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);

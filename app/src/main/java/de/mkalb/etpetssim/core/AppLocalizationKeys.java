@@ -51,6 +51,7 @@ public final class AppLocalizationKeys {
     public static final String CONTROL_TERMINATION_CHECK = "control.terminationcheck";
     public static final String CONTROL_TERMINATION_CHECK_TOOLTIP = "control.terminationcheck.tooltip";
     public static final String HEADER_ABOUT_LINK = "header.about.link";
+    public static final String HEADER_STARTSCREEN_LINK = "header.startscreen.link";
     public static final String OBSERVATION_STEP = "observation.step";
     public static final String OBSERVATION_VALUE_UNKNOWN = "observation.valueunknown";
     public static final String WINDOW_TITLE = "window.title";
