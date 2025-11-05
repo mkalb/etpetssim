@@ -514,6 +514,69 @@ public final class FXComponentFactory {
     }
 
     /**
+     * Creates a labeled double slider with configurable decimal precision, formatted label, tooltip, and custom style class.
+     * <p>
+     * The slider is configured for double values in the range defined by the given {@link InputDoubleProperty}.
+     * The {@code decimalPlaces} parameter is clamped to the range [0, 9] to avoid excessively large precision and
+     * non-finite scaling factors. The slider's value is rounded to the specified number of decimal places and is
+     * bidirectionally bound to the property. The label displays the current value using the provided format string.
+     * Both the label and the slider share the same tooltip for improved accessibility.
+     * <p>
+     * This method is suitable for sliders requiring decimal precision and a continuous value range.
+     *
+     * @param inputDoubleProperty the {@link InputDoubleProperty} defining range and value binding
+     * @param decimalPlaces the requested number of decimal places to round the slider's value to; will be clamped to the range 0..9
+     * @param labelFormatString the format string for the label (e.g., "%.2f")
+     * @param tooltip the tooltip text for both the label and the slider
+     * @param styleClass the CSS style class to apply to the slider
+     * @return a {@link FXComponentFactory.LabeledControl} containing the label and the slider
+     */
+    public static LabeledControl<Slider> createLabeledDoubleSlider(
+            InputDoubleProperty inputDoubleProperty,
+            int decimalPlaces,
+            String labelFormatString,
+            String tooltip,
+            String styleClass) {
+        int decimals = Math.max(0, Math.min(9, decimalPlaces)); // clamp to [0,9]
+        double factor = Math.pow(10.0d, decimals);
+        double blockIncrement = 1.0d / factor;
+
+        double min = inputDoubleProperty.min();
+        double max = inputDoubleProperty.max();
+
+        double valueRounded = Math.round(inputDoubleProperty.getValue() * factor) / factor;
+        double majorTickUnit = (max - min);
+        int minorTickCount = 0; // No minor ticks for general double sliders.
+
+        double value = Math.max(min, Math.min(max, valueRounded));
+        inputDoubleProperty.setValue(value);
+
+        Slider slider = new Slider(min, max, value);
+        slider.setShowTickLabels(false);
+        slider.setShowTickMarks(true);
+        slider.setMajorTickUnit(majorTickUnit);
+        slider.setMinorTickCount(minorTickCount);
+        slider.setBlockIncrement(blockIncrement);
+        slider.setSnapToTicks(false);
+        slider.getStyleClass().add(styleClass);
+        slider.valueProperty().bindBidirectional(inputDoubleProperty.property());
+        slider.valueProperty().addListener((_, _, newValue) -> {
+            double rounded = Math.round(newValue.doubleValue() * factor) / factor;
+            slider.setValue(rounded);
+        });
+
+        Label label = new Label();
+        label.textProperty().bind(inputDoubleProperty.asStringBinding(labelFormatString));
+        label.setLabelFor(slider);
+
+        Tooltip tooltipValue = new Tooltip(tooltip);
+        label.setTooltip(tooltipValue);
+        slider.setTooltip(tooltipValue);
+
+        return new LabeledControl<>(label, slider);
+    }
+
+    /**
      * Creates a labeled text box with a clear button, formatted label, prompt text, tooltips, and custom style class.
      * <p>
      * The text field is bidirectionally bound to the given {@link StringProperty}. The label displays the current value
