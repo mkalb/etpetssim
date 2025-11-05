@@ -14,6 +14,9 @@ module de.mkalb.etpetssim {
     exports de.mkalb.etpetssim.simulations.core.view;
     exports de.mkalb.etpetssim.simulations.core.viewmodel;
     exports de.mkalb.etpetssim.simulations.core;
+    exports de.mkalb.etpetssim.simulations.forest.model;
+    exports de.mkalb.etpetssim.simulations.forest.view;
+    exports de.mkalb.etpetssim.simulations.forest.viewmodel;
     exports de.mkalb.etpetssim.simulations.lab.model;
     exports de.mkalb.etpetssim.simulations.lab.view;
     exports de.mkalb.etpetssim.simulations.lab.viewmodel;

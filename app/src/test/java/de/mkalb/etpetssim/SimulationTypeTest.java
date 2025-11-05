@@ -33,10 +33,10 @@ final class SimulationTypeTest {
         assertEquals(1, SimulationType.WATOR.ordinal());
         assertEquals(2, SimulationType.CONWAYS_LIFE.ordinal());
         assertEquals(3, SimulationType.LANGTONS_ANT.ordinal());
-        assertEquals(4, SimulationType.ET_PETS_SIM.ordinal());
+        assertEquals(4, SimulationType.FOREST_FIRE.ordinal());
         assertEquals(5, SimulationType.SUGARSCAPE.ordinal());
         assertEquals(6, SimulationType.SNAKE.ordinal());
-        assertEquals(7, SimulationType.FOREST_FIRE.ordinal());
+        assertEquals(7, SimulationType.ET_PETS_SIM.ordinal());
         assertEquals(8, SimulationType.SIMULATION_LAB.ordinal());
     }
 
@@ -120,7 +120,7 @@ final class SimulationTypeTest {
         assertEquals("conway.css", SimulationType.CONWAYS_LIFE.cssPath());
         assertEquals("", SimulationType.SUGARSCAPE.cssPath());
         assertEquals("", SimulationType.SNAKE.cssPath());
-        assertEquals("", SimulationType.FOREST_FIRE.cssPath());
+        assertEquals("forest.css", SimulationType.FOREST_FIRE.cssPath());
         assertEquals("langton.css", SimulationType.LANGTONS_ANT.cssPath());
     }
 
@@ -133,7 +133,7 @@ final class SimulationTypeTest {
         assertEquals(List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol"), SimulationType.CONWAYS_LIFE.cliArguments());
         assertEquals(List.of("sugarscape", "sugar"), SimulationType.SUGARSCAPE.cliArguments());
         assertEquals(List.of("snake", "snakes"), SimulationType.SNAKE.cliArguments());
-        assertEquals(List.of("forestfire", "forest-fire", "fire", "forestfiremodel"), SimulationType.FOREST_FIRE.cliArguments());
+        assertEquals(List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel"), SimulationType.FOREST_FIRE.cliArguments());
         assertEquals(List.of("langton", "langtonsant", "langtons-ant", "ant"), SimulationType.LANGTONS_ANT.cliArguments());
     }
 

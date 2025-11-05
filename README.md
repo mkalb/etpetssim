@@ -19,6 +19,7 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 - Wa-Tor (Predator-prey world)
 - Conway's Game of Life
 - Langton's Ant
+- Forest Fire
 - Simulation Lab (for experiments and tests)
 
 ### Planned/Future Simulations:
@@ -26,7 +27,6 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 - Extraterrestrial Pets Simulation (ET Pets)
 - Sugarscape
 - Snake
-- Forest Fire
 
 ## Goals
 

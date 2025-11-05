@@ -71,17 +71,17 @@ public enum SimulationType {
             List.of("langton", "langtonsant", "langtons-ant", "ant")
     ),
     /**
-     * Extraterrestrial Pets Simulation (ET pets): a planned custom simulation by the author.
+     * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>
      */
-    ET_PETS_SIM(
-            false,
+    FOREST_FIRE(
             true,
-            "simulation.etpetssim.title",
-            "simulation.etpetssim.subtitle",
-            "simulation.etpetssim.url",
-            "simulation.etpetssim.emoji",
-            "",
-            List.of("etpetssim", "etpets")
+            true,
+            "simulation.forest.title",
+            "simulation.forest.subtitle",
+            "simulation.forest.url",
+            "simulation.forest.emoji",
+            "forest.css",
+            List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel")
     ),
     /**
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>
@@ -110,17 +110,17 @@ public enum SimulationType {
             List.of("snake", "snakes")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>
+     * Extraterrestrial Pets Simulation (ET pets): a planned custom simulation by the author.
      */
-    FOREST_FIRE(
+    ET_PETS_SIM(
             false,
             true,
-            "simulation.forest.title",
-            "simulation.forest.subtitle",
-            "simulation.forest.url",
-            "simulation.forest.emoji",
+            "simulation.etpetssim.title",
+            "simulation.etpetssim.subtitle",
+            "simulation.etpetssim.url",
+            "simulation.etpetssim.emoji",
             "",
-            List.of("forestfire", "forest-fire", "fire", "forestfiremodel")
+            List.of("etpetssim", "etpets")
     ),
     /**
      * The simulation lab is not a specific simulation but a collection of various tests during development.
