@@ -35,7 +35,7 @@ public final class LangtonStatistics
 
     @Override
     public String toString() {
-        return "ConwayStatistics{" +
+        return "LangtonStatistics{" +
                 baseToString() +
                 ", antCells=" + antCells +
                 ", visitedCells=" + visitedCells +
