@@ -28,11 +28,9 @@ public final class ConwayStatistics
     }
 
     void updateCells(int newAliveCells, int newChangedCells) {
-        if (aliveCells > maxAliveCells) {
-            maxAliveCells = aliveCells;
-        }
+        maxAliveCells = Math.max(newAliveCells, maxAliveCells);
         aliveCells = newAliveCells;
-        deadCells = getTotalCells() - aliveCells;
+        deadCells = getTotalCells() - newAliveCells;
         changedCells = newChangedCells;
     }
 
