@@ -32,7 +32,7 @@ java {
 
 javafx {
     modules = listOf("javafx.controls")
-    version = "25"
+    version = "25.0.1"
 }
 
 application {
@@ -48,7 +48,7 @@ application {
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter("5.14.0")
+            useJUnitJupiter("5.14.1")
             targets {
                 all {
                     testTask.configure {
