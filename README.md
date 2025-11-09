@@ -32,6 +32,23 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 - Snake
 - Extraterrestrial Pets Simulation (ET Pets)
 
+### Screenshots
+
+#### Wa-Tor
+![Wa-Tor - Screenshot 01](assets/screenshots/screenshot_wator_01.png)
+
+#### Conway's Game of Life
+![Conway's Game of Life - Screenshot 01](assets/screenshots/screenshot_conway_01.png)
+
+#### Langton's Ant
+![Langton's Ant - Screenshot 01](assets/screenshots/screenshot_langton_01.png)
+
+#### Forest-fire model
+![Forest-fire model - Screenshot 01](assets/screenshots/screenshot_forest_01.png) 
+
+#### Simulation Lab
+![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
+
 ## Goals
 
 - Explore and apply modern Java features in practice.
