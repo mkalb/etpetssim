@@ -18,13 +18,13 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 ### Implemented Simulations
 
-| Name                                  | Wikipedia URL                                         | Cell Shape                | Sync / Async | Grid Model                       | Default Entity / Background  | Entities / Agents / Cells                          |
-|---------------------------------------|-------------------------------------------------------|---------------------------|--------------|----------------------------------|------------------------------|----------------------------------------------------|
-| Wa-Tor (Predator-prey world)          | https://en.wikipedia.org/wiki/Wa-Tor                  | triangle, square, hexagon | asynchronous | ArrayGridModel                   | Water 🟦                     | Shark 🦈 (many), Fish 🐟 (many)                    |
-| Conway's Game of Life                 | https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life | triangle, square, hexagon | synchronous  | SparseGridModel                  | Dead 🟨                      | Alive 🟥 (many)                                    |
-| Langton's Ant                         | https://en.wikipedia.org/wiki/Langton%27s_ant         | triangle, square, hexagon | asynchronous | ArrayGridModel & SparseGridModel | Unvisited ⬜                  | Ant 🐜 (1 agent), Visited Ground (many, 16 colors) |
-| Forest-fire model                     | https://en.wikipedia.org/wiki/Forest-fire_model       | triangle, square, hexagon | synchronous  | ArrayGridModel                   | Empty 🟫                     | Tree 🌲 (many), Burning 🔥 (many)                  |
-| Simulation Lab (experiments & tests)  |                                                       | triangle, square, hexagon |              | SparseGridModel                  | Normal                       | Highlighted                                        |
+| Name (Wikipedia)                                                               | Sync / Async | Grid Model     | Default Entity  | Entities / Agents / Cells                          |
+|--------------------------------------------------------------------------------|--------------|----------------|-----------------|----------------------------------------------------|
+| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | asynchronous | Array          | 🟦 Water        | Shark 🦈 (many), Fish 🐟 (many)                    |
+| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | synchronous  | Sparse         | 🟨 Dead         | Alive 🟥 (many)                                    |
+| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | asynchronous | Array & Sparse | ⬜ Unvisited     | Ant 🐜 (1 agent), Visited Ground (many, 16 colors) |
+| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | synchronous  | Array          | 🟫 Empty        | Tree 🌲 (many), Burning 🔥 (many)                  |
+| Simulation Lab                                                                 |              | Sparse         | Normal          | Highlighted                                        |
 
 ### Planned/Future Simulations
 
