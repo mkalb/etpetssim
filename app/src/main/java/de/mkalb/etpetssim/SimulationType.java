@@ -87,7 +87,7 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>
      */
     SUGARSCAPE(
-            false,
+            true,
             true,
             "simulation.sugar.title",
             "simulation.sugar.subtitle",

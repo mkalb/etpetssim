@@ -24,6 +24,10 @@ module de.mkalb.etpetssim {
     exports de.mkalb.etpetssim.simulations.langton.view;
     exports de.mkalb.etpetssim.simulations.langton.viewmodel;
     exports de.mkalb.etpetssim.simulations.start;
+    exports de.mkalb.etpetssim.simulations.sugar.model.entity;
+    exports de.mkalb.etpetssim.simulations.sugar.model;
+    exports de.mkalb.etpetssim.simulations.sugar.view;
+    exports de.mkalb.etpetssim.simulations.sugar.viewmodel;
     exports de.mkalb.etpetssim.simulations.wator.model;
     exports de.mkalb.etpetssim.simulations.wator.view;
     exports de.mkalb.etpetssim.simulations.wator.viewmodel;
