@@ -16,6 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+import java.util.*;
+
 public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>>
         implements SimulationConfigView {
 
@@ -67,44 +69,57 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         return pane;
     }
 
+    @SuppressWarnings("unchecked")
+    protected final FXComponentFactory.LabeledControl<? extends Region>[] toLabeledControlArray(
+            List<FXComponentFactory.LabeledControl<? extends Region>> content) {
+        return content.toArray(new FXComponentFactory.LabeledControl[0]);
+    }
+
     protected final TitledPane createStructurePane(boolean configControlsEnabledOnlyIfSimulationCanStart) {
-        var cellShapeControl = FXComponentFactory.createLabeledEnumComboBox(
-                viewModel.cellShapeProperty(),
-                viewModel.cellShapeProperty().displayNameProvider(),
-                AppLocalization.getText(CellShape.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_SHAPE_TOOLTIP),
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
+        List<FXComponentFactory.LabeledControl<? extends Region>> content = new ArrayList<>(4);
 
-        var gridEdgeBehaviorControl = FXComponentFactory.createLabeledEnumComboBox(
-                viewModel.gridEdgeBehaviorProperty(),
-                viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
-                AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
+        // cellShapeProperty
+        if (viewModel.cellShapeProperty().hasMultipleValidValues()) {
+            content.add(FXComponentFactory.createLabeledEnumComboBox(
+                    viewModel.cellShapeProperty(),
+                    viewModel.cellShapeProperty().displayNameProvider(),
+                    AppLocalization.getText(CellShape.labelResourceKey()),
+                    AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_SHAPE_TOOLTIP),
+                    FXStyleClasses.CONFIG_COMBOBOX
+            ));
+        }
 
-        var gridWidthControl = FXComponentFactory.createLabeledIntSpinner(
+        // gridEdgeBehaviorProperty
+        if (viewModel.gridEdgeBehaviorProperty().hasMultipleValidValues()) {
+            content.add(FXComponentFactory.createLabeledEnumComboBox(
+                    viewModel.gridEdgeBehaviorProperty(),
+                    viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
+                    AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
+                    AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
+                    FXStyleClasses.CONFIG_COMBOBOX
+            ));
+        }
+
+        // gridWidthProperty
+        content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridWidthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
                 AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty().min(), viewModel.gridWidthProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
-        );
+        ));
 
-        var gridHeightControl = FXComponentFactory.createLabeledIntSpinner(
+        // gridHeightProperty
+        content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridHeightProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
                 AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty().min(), viewModel.gridHeightProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
-        );
+        ));
 
         return createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_STRUCTURE),
                 configControlsEnabledOnlyIfSimulationCanStart,
-                cellShapeControl,
-                gridEdgeBehaviorControl,
-                gridWidthControl,
-                gridHeightControl
+                toLabeledControlArray(content)
         );
     }
 
