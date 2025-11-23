@@ -212,46 +212,55 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that fills the grid with one of two constant entities and then
-     * randomly replaces a percentage of cells with the other constant so that the final
-     * proportion of {@code primaryEntity} approximates {@code primaryPercent}.
+     * Returns an initializer that fills the entire grid either with entities produced by
+     * {@code entitySupplier} or with the provided {@code fallback} so that approximately
+     * {@code percent} of cells contain values from the supplier.
      *
-     * @param primaryPercent   the desired fraction of cells containing {@code primaryEntity} (0.0 to 1.0)
-     * @param primaryEntity    the entity considered primary
-     * @param secondaryEntity  the other constant entity
-     * @param random           the random number generator used for random placement
-     * @param <T>              the type of grid entity; must extend {@link ConstantGridEntity}
-     * @return a {@link GridInitializer} that produces the described placement
-     * @throws IllegalStateException if the underlying placement cannot place the requested number of entities
+     * <p><b>Note:</b> For larger values of {@code percent} this initializer may first
+     * fill the grid using {@code entitySupplier}, which results in the supplier being
+     * invoked once per cell (i.e. up to the grid area times). If your supplier has
+     * side effects or is expensive, those effects will occur during this full-grid fill.</p>
+     *
+     * @param entitySupplier supplier producing entities to place
+     * @param percent        the desired fraction of cells populated from {@code entitySupplier} (0.0 to 1.0)
+     * @param fallback       the entity used as fallback where the supplier is not applied
+     * @param random         the random number generator used for random placement
+     * @param <T>            the type of grid entity
+     * @return a {@link GridInitializer} that fills the grid according to the described policy
+     * @throws IllegalStateException if an underlying placement (via {@code placeRandomPercent}) cannot place the requested entities
      */
     @SuppressWarnings("MagicNumber")
-    public static <T extends ConstantGridEntity> GridInitializer<T> placeRandomPercentWithConstants(
-            double primaryPercent,
-            T primaryEntity,
-            T secondaryEntity,
+    public static <T extends GridEntity> GridInitializer<T> fillRandomPercent(
+            Supplier<T> entitySupplier,
+            double percent,
+            T fallback,
             Random random) {
-        if (primaryPercent <= 0.0d) {
-            return GridInitializers.constant(secondaryEntity);
+        if (percent <= 0.0d) {
+            // No cells from supplier, all fallback
+            return GridInitializers.constant(fallback);
         }
 
-        if (primaryPercent >= 1.0d) {
-            return GridInitializers.constant(primaryEntity);
+        if (percent >= 1.0d) {
+            // All cells from supplier, no fallback
+            return GridInitializers.supplier(entitySupplier);
         }
 
-        if (primaryPercent <= 0.5d) {
-            return GridInitializers.constant(secondaryEntity)
+        if (percent <= 0.8d) {
+            // Fill completely with fallback, then place from supplier
+            return GridInitializers.constant(fallback)
                                    .andThen(GridInitializers.placeRandomPercent(
-                                           () -> primaryEntity,
-                                           secondaryEntity::equals,
-                                           primaryPercent,
+                                           entitySupplier,
+                                           fallback::equals,
+                                           percent,
                                            random));
         }
 
-        return GridInitializers.constant(primaryEntity)
+        // Fill completely from supplier, then place fallbacks
+        return GridInitializers.supplier(entitySupplier)
                                .andThen(GridInitializers.placeRandomPercent(
-                                       () -> secondaryEntity,
-                                       primaryEntity::equals,
-                                       1.0d - primaryPercent,
+                                       () -> fallback,
+                                       Predicate.not(fallback::equals),
+                                       1.0d - percent,
                                        random));
     }
 

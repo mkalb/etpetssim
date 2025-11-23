@@ -35,12 +35,11 @@ public final class ConwaySimulationManager
     }
 
     private void initializeGrid(ConwayConfig config, WritableGridModel<ConwayEntity> model, Random random) {
-        GridInitializer<ConwayEntity> gridInitializer =
-                GridInitializers.placeRandomPercentWithConstants(
-                        config.alivePercent(),
-                        ConwayEntity.ALIVE,
-                        ConwayEntity.DEAD,
-                        random);
+        var gridInitializer = GridInitializers.fillRandomPercent(
+                () -> ConwayEntity.ALIVE,
+                config.alivePercent(),
+                ConwayEntity.DEAD,
+                random);
         gridInitializer.initialize(model);
     }
 

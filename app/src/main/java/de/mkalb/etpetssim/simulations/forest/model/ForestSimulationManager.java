@@ -35,12 +35,11 @@ public final class ForestSimulationManager
     }
 
     private void initializeGrid(ForestConfig config, WritableGridModel<ForestEntity> model, Random random) {
-        GridInitializer<ForestEntity> gridInitializer =
-                GridInitializers.placeRandomPercentWithConstants(
-                        config.treeDensity(),
-                        ForestEntity.TREE,
-                        ForestEntity.EMPTY,
-                        random);
+        var gridInitializer = GridInitializers.fillRandomPercent(
+                () -> ForestEntity.TREE,
+                config.treeDensity(),
+                ForestEntity.EMPTY,
+                random);
         gridInitializer.initialize(model);
     }
 
