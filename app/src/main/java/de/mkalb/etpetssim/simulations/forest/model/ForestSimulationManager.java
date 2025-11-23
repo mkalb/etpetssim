@@ -34,26 +34,13 @@ public final class ForestSimulationManager
         updateInitialStatistics(model);
     }
 
-    @SuppressWarnings("MagicNumber")
     private void initializeGrid(ForestConfig config, WritableGridModel<ForestEntity> model, Random random) {
-        double treePercent = config.treeDensity();
-        double emptyPercent = 1.0d - treePercent;
-
-        GridInitializer<ForestEntity> gridInitializer;
-        if ((treePercent > 0) && (treePercent <= 0.75d)) {
-            gridInitializer = GridInitializers.placeRandomPercent(
-                    () -> ForestEntity.TREE,
-                    ForestEntity::isEmpty,
-                    treePercent, random);
-        } else if (emptyPercent < 1.0d) {
-            gridInitializer = GridInitializers.constant(ForestEntity.TREE)
-                                              .andThen(GridInitializers.placeRandomPercent(
-                                                      () -> ForestEntity.EMPTY,
-                                                      ForestEntity::isTree,
-                                                      emptyPercent, random));
-        } else {
-            gridInitializer = GridInitializers.identity();
-        }
+        GridInitializer<ForestEntity> gridInitializer =
+                GridInitializers.placeRandomPercentWithConstants(
+                        config.treeDensity(),
+                        ForestEntity.TREE,
+                        ForestEntity.EMPTY,
+                        random);
         gridInitializer.initialize(model);
     }
 

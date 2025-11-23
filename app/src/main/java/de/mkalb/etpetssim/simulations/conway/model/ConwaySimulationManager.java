@@ -34,26 +34,13 @@ public final class ConwaySimulationManager
         updateInitialStatistics(model);
     }
 
-    @SuppressWarnings("MagicNumber")
     private void initializeGrid(ConwayConfig config, WritableGridModel<ConwayEntity> model, Random random) {
-        double alivePercent = config.alivePercent();
-        double deadPercent = 1.0d - config.alivePercent();
-
-        GridInitializer<ConwayEntity> gridInitializer;
-        if ((alivePercent > 0) && (alivePercent <= 0.75d)) {
-            gridInitializer = GridInitializers.placeRandomPercent(
-                    () -> ConwayEntity.ALIVE,
-                    ConwayEntity::isDead,
-                    alivePercent, random);
-        } else if (deadPercent < 1.0d) {
-            gridInitializer = GridInitializers.constant(ConwayEntity.ALIVE)
-                                              .andThen(GridInitializers.placeRandomPercent(
-                                                      () -> ConwayEntity.DEAD,
-                                                      ConwayEntity::isAlive,
-                                                      deadPercent, random));
-        } else {
-            gridInitializer = GridInitializers.identity();
-        }
+        GridInitializer<ConwayEntity> gridInitializer =
+                GridInitializers.placeRandomPercentWithConstants(
+                        config.alivePercent(),
+                        ConwayEntity.ALIVE,
+                        ConwayEntity.DEAD,
+                        random);
         gridInitializer.initialize(model);
     }
 

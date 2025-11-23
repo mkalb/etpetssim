@@ -53,6 +53,17 @@ public final class GridInitializers {
     }
 
     /**
+     * Returns an initializer that fills the entire grid using entities from the provided supplier.
+     *
+     * @param entitySupplier the supplier for entities to fill the grid
+     * @param <T>            the type of grid entity
+     * @return a grid initializer that fills the grid using the supplier
+     */
+    public static <T extends GridEntity> GridInitializer<T> supplier(Supplier<T> entitySupplier) {
+        return model -> model.fill(entitySupplier);
+    }
+
+    /**
      * Returns an initializer that sets the border cells of the grid to the specified entity.
      *
      * @param entity the entity to set at the border
@@ -198,6 +209,50 @@ public final class GridInitializers {
                                                                                Random random) {
         return model -> placeRandomCounted((int) Math.round(percent * model.structure().size().area()),
                 entitySupplier, canReplaceExisting, random).initialize(model);
+    }
+
+    /**
+     * Returns an initializer that fills the grid with one of two constant entities and then
+     * randomly replaces a percentage of cells with the other constant so that the final
+     * proportion of {@code primaryEntity} approximates {@code primaryPercent}.
+     *
+     * @param primaryPercent   the desired fraction of cells containing {@code primaryEntity} (0.0 to 1.0)
+     * @param primaryEntity    the entity considered primary
+     * @param secondaryEntity  the other constant entity
+     * @param random           the random number generator used for random placement
+     * @param <T>              the type of grid entity; must extend {@link ConstantGridEntity}
+     * @return a {@link GridInitializer} that produces the described placement
+     * @throws IllegalStateException if the underlying placement cannot place the requested number of entities
+     */
+    @SuppressWarnings("MagicNumber")
+    public static <T extends ConstantGridEntity> GridInitializer<T> placeRandomPercentWithConstants(
+            double primaryPercent,
+            T primaryEntity,
+            T secondaryEntity,
+            Random random) {
+        if (primaryPercent <= 0.0d) {
+            return GridInitializers.constant(secondaryEntity);
+        }
+
+        if (primaryPercent >= 1.0d) {
+            return GridInitializers.constant(primaryEntity);
+        }
+
+        if (primaryPercent <= 0.5d) {
+            return GridInitializers.constant(secondaryEntity)
+                                   .andThen(GridInitializers.placeRandomPercent(
+                                           () -> primaryEntity,
+                                           secondaryEntity::equals,
+                                           primaryPercent,
+                                           random));
+        }
+
+        return GridInitializers.constant(primaryEntity)
+                               .andThen(GridInitializers.placeRandomPercent(
+                                       () -> secondaryEntity,
+                                       primaryEntity::equals,
+                                       1.0d - primaryPercent,
+                                       random));
     }
 
     /**
