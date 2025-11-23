@@ -15,6 +15,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
+import java.util.*;
+
 @SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
@@ -67,6 +69,18 @@ public abstract class AbstractDefaultMainView<
                 handleGridCellSelected(overlayPainter, oldGridCell, newGridCell);
             }
         });
+    }
+
+    @Nullable
+    protected final Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
+                                                                     int min,
+                                                                     int max,
+                                                                     int groupCount,
+                                                                     double maxFactorDelta) {
+        if (!(descriptor.color() instanceof Color baseColor)) {
+            return null;
+        }
+        return FXPaintFactory.getBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
     }
 
     @Override

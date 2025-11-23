@@ -11,7 +11,6 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
-import de.mkalb.etpetssim.ui.FXPaintFactory;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -68,7 +67,7 @@ public final class WatorMainView
         return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
     }
 
-    @SuppressWarnings("MagicNumber")
+    @SuppressWarnings({"MagicNumber", "unused"})
     private double computeStrokeLineWidth(CellShape cellShape, CellDimension cellDimension) {
         if (cellDimension.innerRadius() < 2.0d) {
             return 0.0d;
@@ -134,17 +133,6 @@ public final class WatorMainView
                                 cellEmojiFont);
             }
         };
-    }
-
-    private @Nullable Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
-                                                                       int min,
-                                                                       int max,
-                                                                       int groupCount,
-                                                                       double maxFactorDelta) {
-        if (!(descriptor.color() instanceof Color baseColor)) {
-            return null;
-        }
-        return FXPaintFactory.getBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
     }
 
     private Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor,
