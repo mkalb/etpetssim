@@ -19,6 +19,9 @@ public final class SugarStepRunner
                       // deterministic tie-breaker using direction of moveTo
                       .thenComparingInt(c -> c.moveTo.direction().ordinal());
 
+    private static final int DISTANCE_ORIGINAL = 0;
+    private static final int DISTANCE_DIRECT_NEIGHBOR = 1;
+
     private final GridStructure structure;
     private final Random random;
     private final SugarConfig config;
@@ -56,26 +59,19 @@ public final class SugarStepRunner
                 GridCoordinate originalCoordinate = agentCell.coordinate();
 
                 // 1.1 Agent sight (scan visible cells within vision range)
-                // include original cell and skip occupied cells
-                List<AgentMoveCandidate> moveCandidates = new ArrayList<>();
-                CellNeighborWithEdgeBehavior originalCellNeighbor = new CellNeighborWithEdgeBehavior(originalCoordinate, CompassDirection.N, CellConnectionType.EDGE, originalCoordinate, originalCoordinate, EdgeBehaviorAction.VALID);
-                moveCandidates.add(new AgentMoveCandidate(originalCellNeighbor, originalCellNeighbor, sugarAmountAtCoordinate(originalCoordinate, resourceModel), 0));
-                // TODO fill moveCandidates with other visible cells
+                List<AgentMoveCandidate> moveCandidates = collectMoveCandidates(originalCoordinate, agentModel, resourceModel);
 
                 // 1.2 Agent choose target cell (highest sugar, free cell)
                 // prefer closer cells or original cell in case of ties
-                GridCoordinate newCoordinate = Collections.max(moveCandidates, AGENT_MOVE_CANDIDATE_COMPARATOR)
+                GridCoordinate newCoordinate = Collections.min(moveCandidates, AGENT_MOVE_CANDIDATE_COMPARATOR)
                                                           .moveTo()
                                                           .mappedNeighborCoordinate();
 
                 // 1.3 Agent movement (move one step toward chosen cell or stay if blocked)
-                if (!newCoordinate.equals(originalCoordinate)) {
-                    agentModel.setEntityToDefault(originalCoordinate);
-                    agentModel.setEntity(newCoordinate, agent);
-                }
+                GridCoordinate finalCoordinate = attemptMove(originalCoordinate, newCoordinate, agent, agentModel);
 
                 // 1.4 Agent harvest (collect all sugar from current cell)
-                SugarResourceEntity sugarResourceEntity = resourceModel.getEntity(newCoordinate);
+                SugarResourceEntity sugarResourceEntity = resourceModel.getEntity(finalCoordinate);
                 if (sugarResourceEntity instanceof SugarResourceSugar sugar) {
                     int harvestedSugar = sugar.currentAmount();
                     agent.gainEnergy(harvestedSugar);
@@ -85,20 +81,11 @@ public final class SugarStepRunner
                 // 1.5 Agent metabolism and death (consume sugar, die if energy <= 0)
                 agent.reduceEnergy(config.agentMetabolismRate());
                 if (agent.currentEnergy() <= 0) {
-                    agentModel.setEntityToDefault(newCoordinate);
+                    agentModel.setEntityToDefault(finalCoordinate);
                     statistics.updateCells(-1);
                 }
             }
         }
-    }
-
-    private int sugarAmountAtCoordinate(GridCoordinate coordinate,
-                                        WritableGridModel<SugarResourceEntity> resourceModel) {
-        SugarResourceEntity entity = resourceModel.getEntity(coordinate);
-        if (entity instanceof SugarResourceSugar sugar) {
-            return sugar.currentAmount();
-        }
-        return 0;
     }
 
     private void performResourceStep(WritableGridModel<SugarResourceEntity> resourceModel) {
@@ -108,6 +95,87 @@ public final class SugarStepRunner
                 sugar.gainEnergy(config.sugarRegenerationRate());
             }
         });
+    }
+
+    private List<AgentMoveCandidate> collectMoveCandidates(GridCoordinate originalCoordinate,
+                                                           WritableGridModel<SugarAgentEntity> agentModel,
+                                                           WritableGridModel<SugarResourceEntity> resourceModel) {
+        List<AgentMoveCandidate> moveCandidates = new ArrayList<>();
+
+        // Always include original cell as candidate and use NNW direction as dummy
+        CellNeighborWithEdgeBehavior originalCellNeighbor = new CellNeighborWithEdgeBehavior(
+                originalCoordinate, CompassDirection.NNW, CellConnectionType.EDGE,
+                originalCoordinate, originalCoordinate, EdgeBehaviorAction.VALID);
+        moveCandidates.add(new AgentMoveCandidate(originalCellNeighbor, originalCellNeighbor,
+                sugarAmountAtCoordinate(originalCoordinate, resourceModel), DISTANCE_ORIGINAL));
+
+        // Find sight directions and iterate over them
+        Set<CompassDirection> directions = CellNeighborhoods.cellNeighborDirections(originalCoordinate, config.neighborhoodMode(), structure.cellShape());
+        for (CompassDirection direction : directions) {
+            Optional<CellNeighborWithEdgeBehavior> neighborOpt = CellNeighborhoods.cellNeighborWithEdgeBehavior(originalCoordinate, config.neighborhoodMode(), direction, structure);
+
+            if (neighborOpt.isPresent()
+                    && ((neighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.VALID)
+                    || (neighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED))) {
+                CellNeighborWithEdgeBehavior neighbor = neighborOpt.get();
+                GridCoordinate neighborCoordinate = neighbor.mappedNeighborCoordinate();
+                // Check if the cell is free (not occupied by another agent)
+                if (agentModel.isDefaultEntity(neighborCoordinate)) {
+                    int sugarAmount = sugarAmountAtCoordinate(neighborCoordinate, resourceModel);
+                    if (sugarAmount > 0) {
+                        moveCandidates.add(new AgentMoveCandidate(neighbor, neighbor, sugarAmount, DISTANCE_DIRECT_NEIGHBOR));
+                    }
+
+                    // If direct neighbor is free and vision range > 1, look further in the same direction
+                    if (config.agentVisionRange() > DISTANCE_DIRECT_NEIGHBOR) {
+                        CellNeighborWithEdgeBehavior furtherNeighbor = neighbor;
+                        for (int d = DISTANCE_DIRECT_NEIGHBOR + 1; d <= config.agentVisionRange(); d++) {
+                            Optional<CellNeighborWithEdgeBehavior> furtherNeighborOpt = CellNeighborhoods.cellNeighborWithEdgeBehavior(
+                                    furtherNeighbor.mappedNeighborCoordinate(),
+                                    config.neighborhoodMode(),
+                                    direction,
+                                    structure);
+                            if (furtherNeighborOpt.isPresent()
+                                    && ((furtherNeighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.VALID)
+                                    || (furtherNeighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED))) {
+                                furtherNeighbor = furtherNeighborOpt.get();
+                                GridCoordinate furtherNeighborCoordinate = furtherNeighbor.mappedNeighborCoordinate();
+                                // Check if the cell is free (not occupied by another agent)
+                                if (agentModel.isDefaultEntity(furtherNeighborCoordinate)) {
+                                    int furtherSugarAmount = sugarAmountAtCoordinate(furtherNeighborCoordinate, resourceModel);
+                                    if (furtherSugarAmount > 0) {
+                                        moveCandidates.add(new AgentMoveCandidate(furtherNeighbor, neighbor, furtherSugarAmount, d));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return moveCandidates;
+    }
+
+    private GridCoordinate attemptMove(GridCoordinate originalCoordinate,
+                                       GridCoordinate newCoordinate,
+                                       SugarAgent agent,
+                                       WritableGridModel<SugarAgentEntity> agentModel) {
+        GridCoordinate finalCoordinate = originalCoordinate;
+        if (!newCoordinate.equals(originalCoordinate) && agentModel.isDefaultEntity(newCoordinate)) {
+            agentModel.setEntityToDefault(originalCoordinate);
+            agentModel.setEntity(newCoordinate, agent);
+            finalCoordinate = newCoordinate;
+        }
+        return finalCoordinate;
+    }
+
+    private int sugarAmountAtCoordinate(GridCoordinate coordinate,
+                                        WritableGridModel<SugarResourceEntity> resourceModel) {
+        SugarResourceEntity entity = resourceModel.getEntity(coordinate);
+        if (entity instanceof SugarResourceSugar sugar) {
+            return sugar.currentAmount();
+        }
+        return 0;
     }
 
     private record AgentMoveCandidate(CellNeighborWithEdgeBehavior target,
