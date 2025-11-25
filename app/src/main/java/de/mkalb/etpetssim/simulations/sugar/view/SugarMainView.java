@@ -31,10 +31,9 @@ public final class SugarMainView
 
     private static final Color FALLBACK_COLOR_SUGAR = Color.WHITE;
     private static final Color FALLBACK_COLOR_AGENT = Color.BLUE;
-    private static final double SUGAR_MAX_FACTOR_DELTA = 0.5d;
-    private static final double AGENT_MAX_FACTOR_DELTA = -0.7d;
-    private static final int SUGAR_GROUP_COUNT = 10;
-    private static final int AGENT_GROUP_COUNT = 6;
+    private static final double SUGAR_MAX_FACTOR_DELTA = 0.7d;
+    private static final double AGENT_MAX_FACTOR_DELTA = 0.6d;
+    private static final int AGENT_GROUP_COUNT = 5;
     private static final int MAX_COLOR_AGENT_ENERGY_FACTOR = 3;
 
     private final Paint backgroundPaint;
@@ -71,7 +70,7 @@ public final class SugarMainView
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR,
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR),
-                        0, config.maxSugarAmount(), SUGAR_GROUP_COUNT, SUGAR_MAX_FACTOR_DELTA));
+                        0, config.maxSugarAmount(), config.maxSugarAmount() + 1, SUGAR_MAX_FACTOR_DELTA));
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT,
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
                         1, maxColorAgentEnergy, AGENT_GROUP_COUNT, AGENT_MAX_FACTOR_DELTA));
