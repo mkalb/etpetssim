@@ -463,6 +463,33 @@ public final class CellNeighborhoods {
         return result;
     }
 
+    /**
+     * Returns the set of compass directions for all theoretical direct neighbors of the cell at
+     * the given {@link GridCoordinate}, according to the specified {@link NeighborhoodMode} and
+     * {@link CellShape}.
+     *
+     * <p>This method extracts the {@link CompassDirection} values from the internal neighbor
+     * connection list (via {@link #getCellNeighborConnections(GridCoordinate, NeighborhoodMode, CellShape)})
+     * and therefore does not perform any boundary checks or apply edge behavior. The returned
+     * directions represent neighbors in an infinite grid. Note that {@code startCoordinate} is
+     * relevant for triangle parity and hexagon Y-offsets but is effectively ignored for square cells
+     * (consistent with the cache key strategy).
+     *
+     * @param startCoordinate  the coordinate of the cell whose neighbor directions are requested (not validated)
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape        the shape of the cell (triangle, square, hexagon)
+     * @return a modifiable {@link java.util.EnumSet} of {@link CompassDirection} containing the
+     *         directions of all theoretical direct neighbors for the given configuration
+     */
+    public static Set<CompassDirection> cellNeighborDirections(GridCoordinate startCoordinate,
+                                                               NeighborhoodMode neighborhoodMode,
+                                                               CellShape cellShape) {
+        return getCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape)
+                .stream()
+                .map(CellNeighborConnection::direction)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(CompassDirection.class)));
+    }
+
     static List<CellNeighborConnection> getCellNeighborConnections(GridCoordinate startCoordinate,
                                                                    NeighborhoodMode neighborhoodMode,
                                                                    CellShape cellShape) {
