@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.sugar.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
 import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarConfigViewModel;
@@ -38,17 +37,8 @@ public final class SugarConfigView
                 true, seedControl);
 
         // --- Rules Group ---
-        var neighborhoodModeControl = FXComponentFactory.createLabeledEnumComboBox(
-                viewModel.neighborhoodModeProperty(),
-                viewModel.neighborhoodModeProperty().displayNameProvider(),
-                AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
-
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true,
-                neighborhoodModeControl);
+                true);
 
         return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
     }
