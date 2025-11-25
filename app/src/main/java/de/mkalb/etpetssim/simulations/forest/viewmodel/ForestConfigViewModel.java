@@ -21,6 +21,7 @@ public final class ForestConfigViewModel
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.HEXAGON,
+            Arrays.asList(CellShape.values()),
             GridEdgeBehavior.BLOCK_XY,
             List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
             200,

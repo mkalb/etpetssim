@@ -21,6 +21,7 @@ public final class LabConfigViewModel
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.HEXAGON,
+            Arrays.asList(CellShape.values()),
             GridEdgeBehavior.WRAP_XY,
             List.of(GridEdgeBehavior.values()),
             16,

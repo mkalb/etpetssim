@@ -18,6 +18,7 @@ public final class LangtonConfigViewModel
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.SQUARE,
+            Arrays.asList(CellShape.values()),
             GridEdgeBehavior.WRAP_XY,
             List.of(GridEdgeBehavior.WRAP_XY, GridEdgeBehavior.ABSORB_XY),
             100,

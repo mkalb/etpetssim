@@ -30,7 +30,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
 
         cellShape = InputEnumProperty.of(
                 commonConfigSettings.cellShapeInitial(),
-                CellShape.class,
+                commonConfigSettings.cellShapeValues(),
                 e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
         gridEdgeBehavior = InputEnumProperty.of(
                 commonConfigSettings.gridEdgeBehaviorInitial(),
@@ -97,6 +97,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
 
     public record CommonConfigSettings(
             CellShape cellShapeInitial,
+            List<CellShape> cellShapeValues,
             GridEdgeBehavior gridEdgeBehaviorInitial,
             List<GridEdgeBehavior> gridEdgeBehaviorValues,
             int gridWidthInitial,

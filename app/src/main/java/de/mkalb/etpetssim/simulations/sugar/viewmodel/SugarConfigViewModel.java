@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.sugar.viewmodel;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridTopology;
@@ -9,7 +8,6 @@ import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
@@ -19,14 +17,18 @@ public final class SugarConfigViewModel
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.SQUARE,
+            List.of(CellShape.SQUARE, CellShape.HEXAGON),
             GridEdgeBehavior.BLOCK_XY,
-            List.of(GridEdgeBehavior.BLOCK_XY),
-            100,
+            List.of(GridEdgeBehavior.BLOCK_XY,
+                    GridEdgeBehavior.WRAP_XY,
+                    GridEdgeBehavior.BLOCK_X_WRAP_Y,
+                    GridEdgeBehavior.WRAP_X_BLOCK_Y),
             50,
+            10,
             1_000,
             GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE,
-            100,
             50,
+            10,
             1_000,
             GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
             12,
@@ -42,10 +44,6 @@ public final class SugarConfigViewModel
 
     // Initialization
     // Rules
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
-            NEIGHBORHOOD_MODE_INITIAL,
-            NeighborhoodMode.class,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public SugarConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
@@ -63,17 +61,13 @@ public final class SugarConfigViewModel
                 seedProperty().computeSeedAndUpdateLabel(),
                 0.1d,
                 0.05d,
-                10,
-                20,
+                6,
+                5,
                 1,
                 1,
                 4,
-                neighborhoodMode.getValue()
+                NEIGHBORHOOD_MODE_INITIAL
         );
-    }
-
-    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
-        return neighborhoodMode;
     }
 
 }

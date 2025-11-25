@@ -19,6 +19,7 @@ public final class ConwayConfigViewModel
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.SQUARE,
+            Arrays.asList(CellShape.values()),
             GridEdgeBehavior.WRAP_XY,
             List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
             200,
