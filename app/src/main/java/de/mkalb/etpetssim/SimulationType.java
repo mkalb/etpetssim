@@ -93,7 +93,7 @@ public enum SimulationType {
             "simulation.sugar.subtitle",
             "simulation.sugar.url",
             "simulation.sugar.emoji",
-            "",
+            "sugar.css",
             List.of("sugarscape", "sugar")
     ),
     /**
