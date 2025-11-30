@@ -14,7 +14,7 @@ public enum SugarEntityDescribable implements GridEntityDescribable {
             "sugar.entity.terrain.long",
             "sugar.entity.terrain.description",
             null,
-            Color.web("#5C2E0B"),
+            Color.web("#453525"),
             null,
             1
     ),
@@ -25,7 +25,7 @@ public enum SugarEntityDescribable implements GridEntityDescribable {
             "sugar.entity.resource.long",
             "sugar.entity.resource.description",
             "sugar.entity.resource.emoji",
-            Color.web("#BD9400"),
+            Color.web("#D7BE13"),
             null,
             2
     ),
@@ -36,7 +36,7 @@ public enum SugarEntityDescribable implements GridEntityDescribable {
             "sugar.entity.agent.long",
             "sugar.entity.agent.description",
             "sugar.entity.agent.emoji",
-            Color.DARKBLUE,
+            Color.web("#1B5ABA"),
             null,
             3
     );
