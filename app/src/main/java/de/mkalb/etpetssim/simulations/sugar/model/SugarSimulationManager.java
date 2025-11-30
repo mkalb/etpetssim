@@ -58,11 +58,15 @@ public final class SugarSimulationManager
 
         // Only for testing purposes
         // for (int i = 1; i < 30; i++) {
-        //     model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 10), new SugarAgent(i));
+        //     model.agentModel().setEntity(new de.mkalb.etpetssim.engine.GridCoordinate(10 + (i * 2), 10), new SugarAgent(i));
         // }
         //
         // for (int i = 1; i <= config.maxSugarAmount(); i++) {
-        //     model.resourceModel().setEntity(new GridCoordinate(10 + (i * 2), 20), new SugarResourceSugar(config.maxSugarAmount(), i));
+        //     model.resourceModel().setEntity(new de.mkalb.etpetssim.engine.GridCoordinate(10 + (i * 2), 20), new SugarResourceSugar(config.maxSugarAmount(), i));
+        //
+        //     model.resourceModel().setEntity(new de.mkalb.etpetssim.engine.GridCoordinate(10 + (i * 2), 30),
+        //             new SugarResourceSugar(config.maxSugarAmount(), 1));
+        //     model.agentModel().setEntity(new de.mkalb.etpetssim.engine.GridCoordinate(10 + (i * 2), 30), new SugarAgent(i));
         // }
     }
 
