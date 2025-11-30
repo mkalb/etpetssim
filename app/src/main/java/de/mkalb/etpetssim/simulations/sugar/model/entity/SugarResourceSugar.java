@@ -49,8 +49,8 @@ public final class SugarResourceSugar implements SugarResourceEntity {
     @Override
     public String toString() {
         return "SugarResourceSugar{" +
-                "currentAmount=" + currentAmount +
-                ", maxAmount=" + maxAmount +
+                "maxAmount=" + maxAmount +
+                ", currentAmount=" + currentAmount +
                 "}";
     }
 
