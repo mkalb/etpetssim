@@ -64,14 +64,14 @@ public final class SugarConfigView
         var maxSugarAmountControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.maxSugarAmountProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_MAX_SUGAR_AMOUNT),
-                AppLocalization.getText(SUGAR_CONFIG_MAX_SUGAR_AMOUNT_TOOLTIP),
-                FXStyleClasses.CONFIG_SLIDER
+                AppLocalization.getFormattedText(SUGAR_CONFIG_MAX_SUGAR_AMOUNT_TOOLTIP, viewModel.maxSugarAmountProperty().min(), viewModel.maxSugarAmountProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
         );
         var agentInitialEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentInitialEnergyProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_INITIAL_ENERGY),
-                AppLocalization.getText(SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP),
-                FXStyleClasses.CONFIG_SLIDER
+                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP, viewModel.agentInitialEnergyProperty().min(), viewModel.agentInitialEnergyProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
         );
 
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
@@ -82,20 +82,20 @@ public final class SugarConfigView
         var sugarRegenerationRateControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sugarRegenerationRateProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_SUGAR_REGENERATION_RATE),
-                AppLocalization.getText(SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP),
-                FXStyleClasses.CONFIG_SLIDER
+                AppLocalization.getFormattedText(SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP, viewModel.sugarRegenerationRateProperty().min(), viewModel.sugarRegenerationRateProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
         );
         var agentMetabolismRateControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentMetabolismRateProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_METABOLISM_RATE),
-                AppLocalization.getText(SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP),
-                FXStyleClasses.CONFIG_SLIDER
+                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP, viewModel.agentMetabolismRateProperty().min(), viewModel.agentMetabolismRateProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
         );
         var agentVisionRangeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentVisionRangeProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_VISION_RANGE),
-                AppLocalization.getText(SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP),
-                FXStyleClasses.CONFIG_SLIDER
+                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP, viewModel.agentVisionRangeProperty().min(), viewModel.agentVisionRangeProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
         );
 
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
