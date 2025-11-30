@@ -18,17 +18,17 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 ### Implemented Simulations
 
-| Name (Wikipedia)                                                               | Sync / Async | Grid Model     | Default Entity  | Entities / Agents / Cells                          |
-|--------------------------------------------------------------------------------|--------------|----------------|-----------------|----------------------------------------------------|
-| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | asynchronous | Array          | 🟦 Water        | Shark 🦈 (many), Fish 🐟 (many)                    |
-| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | synchronous  | Sparse         | 🟨 Dead         | Alive 🟥 (many)                                    |
-| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | asynchronous | Array & Sparse | ⬜ Unvisited     | Ant 🐜 (1 agent), Visited Ground (many, 16 colors) |
-| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | synchronous  | Array          | 🟫 Empty        | Tree 🌲 (many), Burning 🔥 (many)                  |
-| Simulation Lab                                                                 |              | Sparse         | Normal          | Highlighted                                        |
+| Name (Wikipedia)                                                               | Sync / Async | Grid Model     | Default Entity    | Entities / Agents / Cells                          |
+|--------------------------------------------------------------------------------|--------------|----------------|-------------------|----------------------------------------------------|
+| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | asynchronous | Array          | 🟦 Water          | Shark 🦈 (many), Fish 🐟 (many)                    |
+| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | synchronous  | Sparse         | 🟨 Dead           | Alive 🟥 (many)                                    |
+| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | asynchronous | Array & Sparse | ⬜ Unvisited       | Ant 🐜 (1 agent), Visited Ground (many, 16 colors) |
+| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | synchronous  | Array          | 🟫 Empty          | Tree 🌲 (many), Burning 🔥 (many)                  |
+| [Sugarsacpe](https://en.wikipedia.org/wiki/Sugarscape)                         | asynchronous | Sparse         | None (🟫 Terrain) | 🟨 Sugar (many), 🟦 Agent (many)                   |
+| Simulation Lab                                                                 |              | Sparse         | Normal            | Highlighted                                        |
 
 ### Planned/Future Simulations
 
-- Sugarscape
 - Snake
 - Extraterrestrial Pets Simulation (ET Pets)
 
@@ -45,6 +45,8 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 #### Forest-fire model
 ![Forest-fire model - Screenshot 01](assets/screenshots/screenshot_forest_01.png) 
+
+#### Sugarscape
 
 #### Simulation Lab
 ![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
