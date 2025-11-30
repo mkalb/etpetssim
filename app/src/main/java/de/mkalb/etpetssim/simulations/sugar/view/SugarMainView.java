@@ -70,7 +70,7 @@ public final class SugarMainView
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR,
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR),
-                        0, config.maxSugarAmount(), config.maxSugarAmount() + 1, SUGAR_MAX_FACTOR_DELTA));
+                        1, config.maxSugarAmount(), config.maxSugarAmount(), SUGAR_MAX_FACTOR_DELTA));
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT,
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
                         1, maxColorAgentEnergy, AGENT_GROUP_COUNT, AGENT_MAX_FACTOR_DELTA));

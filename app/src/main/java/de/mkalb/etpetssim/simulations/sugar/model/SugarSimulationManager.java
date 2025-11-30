@@ -40,7 +40,10 @@ public final class SugarSimulationManager
     private void initializeGrid(SugarConfig config, SugarGridModel model, Random random) {
         GridInitializer<SugarResourceEntity> resourceGridInitializer =
                 GridInitializers.fillRandomPercent(
-                        () -> new SugarResourceSugar(config.maxSugarAmount(), config.maxSugarAmount()),
+                        () -> {
+                            int sugarAmount = random.nextInt(config.maxSugarAmount()) + 1;
+                            return new SugarResourceSugar(sugarAmount, sugarAmount);
+                        },
                         config.sugarPercent(), SugarResourceNone.NONE,
                         random);
         resourceGridInitializer.initialize(model.resourceModel());
@@ -52,6 +55,15 @@ public final class SugarSimulationManager
                         SugarAgentNone.NONE,
                         random);
         agentGridInitializer.initialize(model.agentModel());
+
+        // Only for testing purposes
+        // for (int i = 1; i < 30; i++) {
+        //     model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 10), new SugarAgent(i));
+        // }
+        //
+        // for (int i = 1; i <= config.maxSugarAmount(); i++) {
+        //     model.resourceModel().setEntity(new GridCoordinate(10 + (i * 2), 20), new SugarResourceSugar(config.maxSugarAmount(), i));
+        // }
     }
 
     @Override
