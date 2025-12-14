@@ -14,10 +14,12 @@ public final class SugarConfigView
         extends AbstractConfigView<SugarConfig, SugarConfigViewModel> {
 
     // Initialization
-    static final String SUGAR_CONFIG_SUGAR_PERCENT = "sugar.config.sugarpercent";
-    static final String SUGAR_CONFIG_SUGAR_PERCENT_TOOLTIP = "sugar.config.sugarpercent.tooltip";
     static final String SUGAR_CONFIG_AGENT_PERCENT = "sugar.config.agentpercent";
     static final String SUGAR_CONFIG_AGENT_PERCENT_TOOLTIP = "sugar.config.agentpercent.tooltip";
+    static final String SUGAR_CONFIG_SUGAR_PEAKS = "sugar.config.sugarpeaks";
+    static final String SUGAR_CONFIG_SUGAR_PEAKS_TOOLTIP = "sugar.config.sugarpeaks.tooltip";
+    static final String SUGAR_CONFIG_SUGAR_RADIUS_LIMIT = "sugar.config.sugarradiuslimit";
+    static final String SUGAR_CONFIG_SUGAR_RADIUS_LIMIT_TOOLTIP = "sugar.config.sugarradiuslimit.tooltip";
     static final String SUGAR_CONFIG_MAX_SUGAR_AMOUNT = "sugar.config.maxsugaramount";
     static final String SUGAR_CONFIG_MAX_SUGAR_AMOUNT_TOOLTIP = "sugar.config.maxsugaramount.tooltip";
     static final String SUGAR_CONFIG_AGENT_INITIAL_ENERGY = "sugar.config.agentinitialenergy";
@@ -49,17 +51,23 @@ public final class SugarConfigView
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
                 FXStyleClasses.CONFIG_TEXTBOX
         );
-        var sugarPercentControl = FXComponentFactory.createLabeledPercentSlider(
-                viewModel.sugarPercentProperty(),
-                AppLocalization.getText(SUGAR_CONFIG_SUGAR_PERCENT),
-                AppLocalization.getText(SUGAR_CONFIG_SUGAR_PERCENT_TOOLTIP),
-                FXStyleClasses.CONFIG_SLIDER
-        );
         var agentPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.agentPercentProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_PERCENT),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SLIDER
+        );
+        var sugarPeaksControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.sugarPeaksProperty(),
+                AppLocalization.getText(SUGAR_CONFIG_SUGAR_PEAKS),
+                AppLocalization.getFormattedText(SUGAR_CONFIG_SUGAR_PEAKS_TOOLTIP, viewModel.sugarPeaksProperty().min(), viewModel.sugarPeaksProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
+        var sugarRadiusLimitControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.sugarRadiusLimitProperty(),
+                AppLocalization.getText(SUGAR_CONFIG_SUGAR_RADIUS_LIMIT),
+                AppLocalization.getFormattedText(SUGAR_CONFIG_SUGAR_RADIUS_LIMIT_TOOLTIP, viewModel.sugarRadiusLimitProperty().min(), viewModel.sugarRadiusLimitProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
         );
         var maxSugarAmountControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.maxSugarAmountProperty(),
@@ -76,7 +84,7 @@ public final class SugarConfigView
 
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 true,
-                seedControl, sugarPercentControl, agentPercentControl, maxSugarAmountControl, agentInitialEnergyControl);
+                seedControl, agentPercentControl, sugarPeaksControl, sugarRadiusLimitControl, maxSugarAmountControl, agentInitialEnergyControl);
 
         // --- Rules Group ---
         var sugarRegenerationRateControl = FXComponentFactory.createLabeledIntSpinner(

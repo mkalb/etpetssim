@@ -41,12 +41,18 @@ public final class SugarConfigViewModel
             ""
     );
     // Initialization
-    private static final double SUGAR_PERCENT_INITIAL = 0.05d;
-    private static final double SUGAR_PERCENT_MIN = 0.0d;
-    private static final double SUGAR_PERCENT_MAX = 1.0d;
     private static final double AGENT_PERCENT_INITIAL = 0.05d;
     private static final double AGENT_PERCENT_MIN = 0.0d;
     private static final double AGENT_PERCENT_MAX = 1.0d;
+    private static final int SUGAR_PEAKS_INITIAL = 2;
+    private static final int SUGAR_PEAKS_MIN = 1;
+    private static final int SUGAR_PEAKS_MAX = 5;
+    private static final int SUGAR_PEAKS_STEP = 1;
+    private static final int SUGAR_RADIUS_LIMIT_INITIAL = 10;
+    private static final int SUGAR_RADIUS_LIMIT_MIN = 0;
+    private static final int SUGAR_RADIUS_LIMIT_MAX = 100;
+    private static final int SUGAR_RADIUS_LIMIT_STEP = 1;
+    private static final int MIN_SUGAR_AMOUNT = 1;
     private static final int MAX_SUGAR_AMOUNT_INITIAL = 6;
     private static final int MAX_SUGAR_AMOUNT_MIN = 1;
     private static final int MAX_SUGAR_AMOUNT_MAX = 20;
@@ -68,17 +74,23 @@ public final class SugarConfigViewModel
     private static final int AGENT_VISION_RANGE_MIN = 1;
     private static final int AGENT_VISION_RANGE_MAX = 10;
     private static final int AGENT_VISION_RANGE_STEP = 1;
-    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
+    private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
 
     // Initialization
-    private final InputDoubleProperty sugarPercent = InputDoubleProperty.of(
-            SUGAR_PERCENT_INITIAL,
-            SUGAR_PERCENT_MIN,
-            SUGAR_PERCENT_MAX);
     private final InputDoubleProperty agentPercent = InputDoubleProperty.of(
             AGENT_PERCENT_INITIAL,
             AGENT_PERCENT_MIN,
             AGENT_PERCENT_MAX);
+    private final InputIntegerProperty sugarPeaks = InputIntegerProperty.of(
+            SUGAR_PEAKS_INITIAL,
+            SUGAR_PEAKS_MIN,
+            SUGAR_PEAKS_MAX,
+            SUGAR_PEAKS_STEP);
+    private final InputIntegerProperty sugarRadiusLimit = InputIntegerProperty.of(
+            SUGAR_RADIUS_LIMIT_INITIAL,
+            SUGAR_RADIUS_LIMIT_MIN,
+            SUGAR_RADIUS_LIMIT_MAX,
+            SUGAR_RADIUS_LIMIT_STEP);
     private final InputIntegerProperty maxSugarAmount = InputIntegerProperty.of(
             MAX_SUGAR_AMOUNT_INITIAL,
             MAX_SUGAR_AMOUNT_MIN,
@@ -120,23 +132,29 @@ public final class SugarConfigViewModel
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
-                sugarPercent.getValue(),
                 agentPercent.getValue(),
+                sugarPeaks.getValue(),
+                sugarRadiusLimit.getValue(),
+                MIN_SUGAR_AMOUNT,
                 maxSugarAmount.getValue(),
                 agentInitialEnergy.getValue(),
                 sugarRegenerationRate.getValue(),
                 agentMetabolismRate.getValue(),
                 agentVisionRange.getValue(),
-                NEIGHBORHOOD_MODE_INITIAL
+                NEIGHBORHOOD_MODE
         );
-    }
-
-    public InputDoubleProperty sugarPercentProperty() {
-        return sugarPercent;
     }
 
     public InputDoubleProperty agentPercentProperty() {
         return agentPercent;
+    }
+
+    public InputIntegerProperty sugarPeaksProperty() {
+        return sugarPeaks;
+    }
+
+    public InputIntegerProperty sugarRadiusLimitProperty() {
+        return sugarRadiusLimit;
     }
 
     public InputIntegerProperty maxSugarAmountProperty() {

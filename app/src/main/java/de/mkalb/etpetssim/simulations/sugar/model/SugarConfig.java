@@ -15,8 +15,10 @@ public record SugarConfig(
         CellDisplayMode cellDisplayMode,
         long seed,
         // Initialization
-        double sugarPercent,
         double agentPercent,
+        int sugarPeaks,
+        int sugarRadiusLimit,
+        int minSugarAmount,
         int maxSugarAmount,
         int agentInitialEnergy,
         // Rules
