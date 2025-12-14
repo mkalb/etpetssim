@@ -31,10 +31,10 @@ public final class SugarMainView
 
     private static final Color FALLBACK_COLOR_SUGAR = Color.WHITE;
     private static final Color FALLBACK_COLOR_AGENT = Color.BLUE;
-    private static final double SUGAR_MAX_FACTOR_DELTA = 0.7d;
+    private static final double SUGAR_MAX_FACTOR_DELTA = 0.4d;
     private static final double AGENT_MAX_FACTOR_DELTA = 0.6d;
-    private static final int AGENT_GROUP_COUNT = 5;
-    private static final int MAX_COLOR_AGENT_ENERGY_FACTOR = 3;
+    private static final int AGENT_GROUP_COUNT = 7;
+    private static final int MAX_COLOR_AGENT_ENERGY_FACTOR = 2;
 
     private final Paint backgroundPaint;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
