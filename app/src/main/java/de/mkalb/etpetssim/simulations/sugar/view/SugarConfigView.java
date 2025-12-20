@@ -31,6 +31,8 @@ public final class SugarConfigView
     static final String SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP = "sugar.config.agentmetabolismrate.tooltip";
     static final String SUGAR_CONFIG_AGENT_VISION_RANGE = "sugar.config.agentvisionrange";
     static final String SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP = "sugar.config.agentvisionrange.tooltip";
+    static final String SUGAR_CONFIG_AGENT_MAX_AGE = "sugar.config.agentmaxage";
+    static final String SUGAR_CONFIG_AGENT_MAX_AGE_TOOLTIP = "sugar.config.agentmaxage.tooltip";
 
     public SugarConfigView(SugarConfigViewModel viewModel) {
         super(viewModel);
@@ -105,10 +107,16 @@ public final class SugarConfigView
                 AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP, viewModel.agentVisionRangeProperty().min(), viewModel.agentVisionRangeProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
         );
+        var agentMaxAgeControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.agentMaxAgeProperty(),
+                AppLocalization.getText(SUGAR_CONFIG_AGENT_MAX_AGE),
+                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_MAX_AGE_TOOLTIP, viewModel.agentMaxAgeProperty().min(), viewModel.agentMaxAgeProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
 
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
                 true,
-                sugarRegenerationRateControl, agentMetabolismRateControl, agentVisionRangeControl);
+                sugarRegenerationRateControl, agentMetabolismRateControl, agentVisionRangeControl, agentMaxAgeControl);
 
         return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
     }

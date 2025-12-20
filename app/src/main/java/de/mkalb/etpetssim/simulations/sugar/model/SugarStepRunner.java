@@ -21,6 +21,7 @@ public final class SugarStepRunner
 
     private static final int DISTANCE_ORIGINAL = 0;
     private static final int DISTANCE_DIRECT_NEIGHBOR = 1;
+    private static final int MAX_RANDOM_ATTEMPTS = 100;
 
     private final GridStructure structure;
     private final Random random;
@@ -42,17 +43,19 @@ public final class SugarStepRunner
 
     @Override
     public void performStep(int stepIndex, SugarStatistics statistics) {
-        performAgentStep(model.agentModel(), model.resourceModel(), statistics);
+        performAgentStep(model.agentModel(), model.resourceModel(), stepIndex, statistics);
         performResourceStep(model.resourceModel());
     }
 
     private void performAgentStep(WritableGridModel<SugarAgentEntity> agentModel,
                                   WritableGridModel<SugarResourceEntity> resourceModel,
+                                  int stepIndex,
                                   SugarStatistics statistics) {
         // 1. Agent actions
         List<GridCell<SugarAgentEntity>> agentCells = new ArrayList<>(agentModel.nonDefaultCells().toList());
         // Random order is important
         Collections.shuffle(agentCells, random);
+        int diedAgents = 0;
         for (GridCell<SugarAgentEntity> agentCell : agentCells) {
             // Case to SugarAgent. All non default cells must be agents.
             if (agentCell.entity() instanceof SugarAgent agent) {
@@ -78,14 +81,43 @@ public final class SugarStepRunner
                     sugar.reduceEnergy(harvestedSugar);
                 }
 
-                // 1.5 Agent metabolism and death (consume sugar, die if energy <= 0)
+                // 1.5 Agent metabolism and death (consume sugar, die if energy <= 0 or age > maxAge)
                 agent.reduceEnergy(config.agentMetabolismRate());
-                if (agent.currentEnergy() <= 0) {
+                if ((agent.ageAtStepIndex(stepIndex) >= config.agentMaxAge()) || (agent.currentEnergy() <= 0)) {
                     agentModel.setEntityToDefault(finalCoordinate);
                     statistics.updateCells(-1);
+                    diedAgents++;
                 }
             }
         }
+        for (int i = 0; i < diedAgents; i++) {
+            // Find free random coordinate to spawn new agent
+            Optional<GridCoordinate> spawnCoordinate = findRandomFreeCell(agentModel);
+            if (spawnCoordinate.isPresent()) {
+                // Spawn new agent
+                SugarAgent newAgent = new SugarAgent(config.agentInitialEnergy(), stepIndex);
+                agentModel.setEntity(spawnCoordinate.get(), newAgent);
+                statistics.updateCells(1);
+            }
+        }
+    }
+
+    private Optional<GridCoordinate> findRandomFreeCell(WritableGridModel<SugarAgentEntity> agentModel) {
+        GridCoordinate freeCoordinate = null;
+
+        int attempts = 0;
+        do {
+            int x = random.nextInt(structure.size().width());
+            int y = random.nextInt(structure.size().height());
+            GridCoordinate coordinate = new GridCoordinate(x, y);
+            if (agentModel.isDefaultEntity(coordinate)) {
+                freeCoordinate = coordinate;
+            }
+
+            attempts++;
+        } while ((freeCoordinate == null) && (attempts < MAX_RANDOM_ATTEMPTS));
+
+        return Optional.ofNullable(freeCoordinate);
     }
 
     private void performResourceStep(WritableGridModel<SugarResourceEntity> resourceModel) {

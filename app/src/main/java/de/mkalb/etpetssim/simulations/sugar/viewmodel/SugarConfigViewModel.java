@@ -74,6 +74,10 @@ public final class SugarConfigViewModel
     private static final int AGENT_VISION_RANGE_MIN = 1;
     private static final int AGENT_VISION_RANGE_MAX = 10;
     private static final int AGENT_VISION_RANGE_STEP = 1;
+    private static final int AGENT_MAX_AGE_INITIAL = 100;
+    private static final int AGENT_MAX_AGE_MIN = 1;
+    private static final int AGENT_MAX_AGE_MAX = 1_000;
+    private static final int AGENT_MAX_AGE_STEP = 1;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
 
     // Initialization
@@ -117,6 +121,11 @@ public final class SugarConfigViewModel
             AGENT_VISION_RANGE_MIN,
             AGENT_VISION_RANGE_MAX,
             AGENT_VISION_RANGE_STEP);
+    private final InputIntegerProperty agentMaxAge = InputIntegerProperty.of(
+            AGENT_MAX_AGE_INITIAL,
+            AGENT_MAX_AGE_MIN,
+            AGENT_MAX_AGE_MAX,
+            AGENT_MAX_AGE_STEP);
 
     public SugarConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
@@ -141,6 +150,7 @@ public final class SugarConfigViewModel
                 sugarRegenerationRate.getValue(),
                 agentMetabolismRate.getValue(),
                 agentVisionRange.getValue(),
+                agentMaxAge.getValue(),
                 NEIGHBORHOOD_MODE
         );
     }
@@ -175,6 +185,10 @@ public final class SugarConfigViewModel
 
     public InputIntegerProperty agentVisionRangeProperty() {
         return agentVisionRange;
+    }
+
+    public InputIntegerProperty agentMaxAgeProperty() {
+        return agentMaxAge;
     }
 
 }

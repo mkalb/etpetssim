@@ -25,6 +25,7 @@ public record SugarConfig(
         int sugarRegenerationRate,
         int agentMetabolismRate,
         int agentVisionRange,
+        int agentMaxAge,
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 }

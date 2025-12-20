@@ -85,13 +85,26 @@ public final class SugarMainView
                         null,
                         0.0d);
 
-        cellAgentDrawer = (descriptor, painter, cell, _) ->
+        cellAgentDrawer = (descriptor, painter, cell, stepCount) -> {
+            if ((stepCount > 0)
+                    && (cell.entity() instanceof SugarAgent agent)
+                    && (agent.stepIndexOfSpawn() == (stepCount - 1))) {
+                // draw newly spawned agents with a white border (not for stepCount == 0, as all agents are new then)
+                painter.drawCellInnerCircle(
+                        cell.coordinate(),
+                        resolveAgentFillColor(descriptor, cell.entity()),
+                        Color.WHITE,
+                        1.0d,
+                        StrokeType.CENTERED);
+            } else {
                 painter.drawCellInnerCircle(
                         cell.coordinate(),
                         resolveAgentFillColor(descriptor, cell.entity()),
                         null,
                         0.0d,
                         StrokeType.CENTERED);
+            }
+        };
     }
 
     private Paint resolveResourceFillColor(GridEntityDescriptor entityDescriptor,
@@ -102,7 +115,7 @@ public final class SugarMainView
             if (colorMap != null) {
                 Integer value = switch (entity) {
                     case SugarResourceSugar sugar -> sugar.currentAmount();
-                    case SugarResourceNone none -> -1;
+                    case SugarResourceNone _ -> -1;
                 };
 
                 return colorMap.getOrDefault(value, baseColor);
@@ -121,7 +134,7 @@ public final class SugarMainView
             if (colorMap != null) {
                 Integer value = switch (entity) {
                     case SugarAgent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
-                    case SugarAgentNone none -> -1;
+                    case SugarAgentNone _ -> -1;
                 };
 
                 return colorMap.getOrDefault(value, baseColor);
