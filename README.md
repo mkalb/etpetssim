@@ -47,6 +47,7 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 ![Forest-fire model - Screenshot 01](assets/screenshots/screenshot_forest_01.png) 
 
 #### Sugarscape
+![Sugarscape - Screenshot 01](assets/screenshots/screenshot_sugar_01.png)
 
 #### Simulation Lab
 ![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
