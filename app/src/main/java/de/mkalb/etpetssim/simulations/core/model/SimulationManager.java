@@ -1,9 +1,9 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.GridEntity;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.SimulationExecutor;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 public interface SimulationManager<
         ENT extends GridEntity,

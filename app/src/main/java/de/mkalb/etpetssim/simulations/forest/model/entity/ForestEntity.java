@@ -1,18 +1,19 @@
-package de.mkalb.etpetssim.simulations.conway.model;
+package de.mkalb.etpetssim.simulations.forest.model.entity;
 
-import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
-import de.mkalb.etpetssim.engine.model.GridEntityDescribable;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescribable;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Defines the possible cell states for Conway's Game of Life.
+ * Defines the possible cell states for Forest-fire model simulation.
  * <p>
  * Each enum constant represents a cell state in the simulation grid:
  * <ul>
- *   <li>{@link #DEAD}: A dead cell (background).</li>
- *   <li>{@link #ALIVE}: A living (active) cell.</li>
+ *   <li>{@link #EMPTY}: An empty cell.</li>
+ *   <li>{@link #TREE}: A cell occupied by a healthy tree.</li>
+ *   <li>{@link #BURNING}: A cell with a burning tree.</li>
  * </ul>
  * Provides all necessary descriptor information for registration and rendering.
  *
@@ -28,31 +29,42 @@ import org.jspecify.annotations.Nullable;
  *   <li><b>renderPriority</b>: Priority for rendering order (higher values are rendered above lower ones).</li>
  * </ul>
  *
- * @see de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry
- * @see de.mkalb.etpetssim.engine.model.ConstantGridEntity
+ * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
+ * @see de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity
  */
-public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
-    DEAD(
-            "dead",
+public enum ForestEntity implements ConstantGridEntity, GridEntityDescribable {
+    EMPTY(
+            "empty",
             true,
-            "conway.entity.dead.short",
-            "conway.entity.dead.long",
-            "conway.entity.dead.description",
+            "forest.entity.empty.short",
+            "forest.entity.empty.long",
+            "forest.entity.empty.description",
             null,
-            Color.LIGHTYELLOW,
+            Color.rgb(45, 30, 15),
             null,
             0
     ),
-    ALIVE(
-            "alive",
+    TREE(
+            "tree",
             true,
-            "conway.entity.alive.short",
-            "conway.entity.alive.long",
-            "conway.entity.alive.description",
+            "forest.entity.tree.short",
+            "forest.entity.tree.long",
+            "forest.entity.tree.description",
             null,
-            Color.DARKRED,
-            Color.INDIANRED,
+            Color.FORESTGREEN,
+            null,
             1
+    ),
+    BURNING(
+            "burning",
+            true,
+            "forest.entity.burning.short",
+            "forest.entity.burning.long",
+            "forest.entity.burning.description",
+            null,
+            Color.ORANGERED,
+            null,
+            2
     );
 
     private final String descriptorId;
@@ -65,7 +77,7 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
     private final @Nullable Color borderColor;
     private final int renderPriority;
 
-    ConwayEntity(
+    ForestEntity(
             String descriptorId,
             boolean visible,
             String shortKey,
@@ -133,21 +145,30 @@ public enum ConwayEntity implements ConstantGridEntity, GridEntityDescribable {
     }
 
     /**
-     * Checks if this entity represents a dead cell.
+     * Checks if this entity represents an empty cell.
      *
-     * @return {@code true} if this entity is {@link #DEAD}, {@code false} otherwise
+     * @return {@code true} if this entity is {@link #EMPTY}, {@code false} otherwise
      */
-    public boolean isDead() {
-        return this == DEAD;
+    public boolean isEmpty() {
+        return this == EMPTY;
     }
 
     /**
-     * Checks if this entity represents a living cell.
+     * Checks if this entity represents a tree cell.
      *
-     * @return {@code true} if this entity is {@link #ALIVE}, {@code false} otherwise
+     * @return {@code true} if this entity is {@link #TREE}, {@code false} otherwise
      */
-    public boolean isAlive() {
-        return this == ALIVE;
+    public boolean isTree() {
+        return this == TREE;
+    }
+
+    /**
+     * Checks if this entity represents a burning cell.
+     *
+     * @return {@code true} if this entity is {@link #BURNING}, {@code false} otherwise
+     */
+    public boolean isBurning() {
+        return this == BURNING;
     }
 
 }

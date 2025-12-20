@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 public abstract class AbstractTimedSimulationManager<
         ENT extends GridEntity,

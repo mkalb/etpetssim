@@ -6,7 +6,10 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractMainViewModel;
-import de.mkalb.etpetssim.simulations.lab.model.*;
+import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
+import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
+import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
+import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import javafx.beans.property.ObjectProperty;
 import org.jspecify.annotations.Nullable;
 

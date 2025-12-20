@@ -1,6 +1,6 @@
-package de.mkalb.etpetssim.simulations.langton.model;
+package de.mkalb.etpetssim.simulations.langton.model.entity;
 
-import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 public enum LangtonAntNone implements LangtonAntEntity, ConstantGridEntity {
 

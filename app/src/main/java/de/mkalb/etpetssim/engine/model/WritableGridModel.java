@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.function.*;
 
@@ -11,7 +12,7 @@ import java.util.function.*;
  * All read-only methods are defined in the {@link ReadableGridModel} interface.
  * </p>
  *
- * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
+ * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
 public non-sealed interface WritableGridModel<T extends GridEntity> extends ReadableGridModel<T> {
 

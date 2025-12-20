@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 import java.util.*;
 import java.util.function.*;
 
@@ -12,7 +14,7 @@ import java.util.function.*;
  * The order in which agents are processed is determined by the provided
  * {@code agentOrderingStrategy}.
  *
- * @param <T> the type of {@link GridEntity} contained in the grid model
+ * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each simulation step
  */
 @SuppressWarnings("ClassCanBeRecord")

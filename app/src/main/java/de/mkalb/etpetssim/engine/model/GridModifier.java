@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 import java.util.function.*;
@@ -10,7 +11,7 @@ import java.util.function.*;
  * <p>
  * Implementations can perform targeted or rule-based changes to the grid model.
  *
- * @param <T> the type of {@link GridEntity} in the grid model
+ * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the grid model
  * @see GridInitializer
  */
 @FunctionalInterface

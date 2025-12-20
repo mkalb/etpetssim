@@ -1,10 +1,10 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.model.entity;
 
 /**
  * Represents a grid entity in the simulation engine.
  *
- * @see GridModel
- * @see GridCell
+ * @see de.mkalb.etpetssim.engine.model.GridModel
+ * @see de.mkalb.etpetssim.engine.model.GridCell
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface GridEntity {

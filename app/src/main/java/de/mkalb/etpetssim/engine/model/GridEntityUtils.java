@@ -1,14 +1,17 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 
 import java.util.*;
 import java.util.function.*;
 
 /**
  * Utility class providing static methods for operations involving
- * {@link GridEntity}, {@link GridCell}, {@link WritableGridModel}, {@link GridPattern} {@link GridEntityDescriptor},
- * and {@link GridEntityDescriptorRegistry}.
+ * {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}, {@link GridCell}, {@link WritableGridModel}, {@link GridPattern} {@link de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor},
+ * and {@link de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry}.
  */
 public final class GridEntityUtils {
 
@@ -19,13 +22,13 @@ public final class GridEntityUtils {
     }
 
     /**
-     * Retrieves the {@link GridEntityDescriptor} for the entity located at the specified coordinate
+     * Retrieves the {@link de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor} for the entity located at the specified coordinate
      * in the given grid model, using the provided descriptor registry.
      *
      * @param coordinate the coordinate to look up
      * @param model the grid model containing the entities
      * @param entityDescriptorRegistry the registry to resolve descriptors
-     * @param <T> the type of {@link GridEntity} in the model
+     * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the model
      * @return an {@link Optional} containing the descriptor if present, or {@link Optional#empty()} if not found or invalid coordinate
      */
     public static <T extends GridEntity> Optional<GridEntityDescriptor> descriptorAt(

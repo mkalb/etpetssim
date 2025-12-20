@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.sugar.model.entity;
 
-import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 public enum SugarResourceNone implements SugarResourceEntity, ConstantGridEntity {
 

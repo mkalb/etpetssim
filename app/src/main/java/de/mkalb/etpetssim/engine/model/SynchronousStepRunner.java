@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 /**
  * Executes synchronous simulation steps on a {@link WritableGridModel}.
  * <p>
@@ -8,7 +10,7 @@ package de.mkalb.etpetssim.engine.model;
  * to the next model. After each step, the models are swapped, and the next model is cleared
  * for the following step.
  *
- * @param <T> the type of {@link GridEntity} contained in the grid model
+ * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each simulation step
  * @see SynchronousStepLogic
  */

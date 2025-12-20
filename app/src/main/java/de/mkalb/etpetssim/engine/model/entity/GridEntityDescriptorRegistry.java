@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.model.entity;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import javafx.scene.paint.Color;

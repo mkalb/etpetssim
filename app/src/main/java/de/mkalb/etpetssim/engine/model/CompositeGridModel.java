@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 
@@ -11,7 +12,7 @@ import java.util.*;
  * such as layered or composite grids. All sub-models must share the same grid structure.
  * </p>
  *
- * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
+ * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
 public non-sealed interface CompositeGridModel<T extends GridEntity> extends GridModel<T> {
 

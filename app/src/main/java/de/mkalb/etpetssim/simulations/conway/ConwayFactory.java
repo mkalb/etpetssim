@@ -1,9 +1,9 @@
 package de.mkalb.etpetssim.simulations.conway;
 
-import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.conway.model.ConwayEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwaySimulationManager;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
+import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayConfigView;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayMainView;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayObservationView;

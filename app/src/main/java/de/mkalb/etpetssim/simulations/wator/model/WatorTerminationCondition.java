@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.SimulationTerminationCondition;
+import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 
 public final class WatorTerminationCondition implements SimulationTerminationCondition<WatorEntity,
         ReadableGridModel<WatorEntity>, WatorStatistics> {

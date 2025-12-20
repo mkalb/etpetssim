@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.model.SimulationTerminationCondition;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 
 public final class LangtonTerminationCondition
         implements

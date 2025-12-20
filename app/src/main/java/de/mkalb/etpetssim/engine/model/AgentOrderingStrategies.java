@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 import java.util.*;
 
 /**
@@ -14,7 +16,7 @@ import java.util.*;
  * agents are processed in the grid model.
  *
  * @see GridCell
- * @see GridEntity
+ * @see de.mkalb.etpetssim.engine.model.entity.GridEntity
  * @see AsynchronousStepRunner
  */
 public final class AgentOrderingStrategies {

@@ -2,11 +2,12 @@ package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Base interface for grid models, providing access to grid structure and coordinate validation.
  *
- * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
+ * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
 public sealed interface GridModel<T extends GridEntity>
         permits ReadableGridModel, CompositeGridModel {

@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.engine.model.SynchronousStepLogic;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
 import java.util.*;
 

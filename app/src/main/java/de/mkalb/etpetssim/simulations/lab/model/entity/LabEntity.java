@@ -1,7 +1,7 @@
-package de.mkalb.etpetssim.simulations.lab.model;
+package de.mkalb.etpetssim.simulations.lab.model.entity;
 
-import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
-import de.mkalb.etpetssim.engine.model.GridEntityDescribable;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescribable;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
@@ -25,8 +25,8 @@ import org.jspecify.annotations.Nullable;
  *   <li><b>renderPriority</b>: Priority for rendering order (higher values are rendered above lower ones).</li>
  * </ul>
  *
- * @see de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry
- * @see de.mkalb.etpetssim.engine.model.ConstantGridEntity
+ * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
+ * @see de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity
  */
 public enum LabEntity implements ConstantGridEntity, GridEntityDescribable {
     NORMAL(

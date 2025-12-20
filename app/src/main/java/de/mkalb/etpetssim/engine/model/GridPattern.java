@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 import java.util.function.*;
@@ -8,14 +9,14 @@ import java.util.function.*;
 /**
  * Functional interface representing a fixed pattern of entities on a grid.
  * <p>
- * A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link GridEntity} instances,
+ * A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} instances,
  * describing how entities are arranged relative to an origin (0, 0).
  * <p>
  * <b>Normalization:</b> It is recommended that all patterns are created in normalized form,
  * meaning the top-left corner of the pattern's bounding box is always at offset (0, 0).
  * If a pattern is not normalized, this must be clearly documented in its implementation.
  *
- * @param <T> the type of {@link GridEntity} contained in the pattern
+ * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the pattern
  */
 @FunctionalInterface
 public interface GridPattern<T extends GridEntity> {

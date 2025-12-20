@@ -1,12 +1,14 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 /**
  * Functional interface for determining whether a simulation has finished.
  * <p>
  * Implementations define the termination condition based on the current state
  * of the simulation model, the simulation step count, and a context object.
  *
- * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
  * @param <GM> the type of {@link GridModel} in the simulation
  * @param <C> the type of the context object used to share or accumulate state or statistics during the simulation
  */

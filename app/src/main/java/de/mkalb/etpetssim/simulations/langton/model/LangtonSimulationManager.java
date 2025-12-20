@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 
 public final class LangtonSimulationManager
         extends AbstractTimedSimulationManager<LangtonEntity, LangtonGridModel, LangtonConfig,

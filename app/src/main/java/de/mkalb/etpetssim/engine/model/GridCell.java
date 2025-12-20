@@ -1,11 +1,12 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * A record representing a cell in a grid model, associating a coordinate with an entity.
  *
- * @param <T> the type of entity stored in the cell, must implement {@link GridEntity}
+ * @param <T> the type of entity stored in the cell, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  * @param coordinate the coordinate of the cell in the grid
  * @param entity the entity associated with the cell
  *

@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
  * across all layers at a given coordinate.
  * </p>
  *
- * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
+ * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
 @SuppressWarnings("ClassCanBeRecord")
 public final class LayeredCompositeGridModel<T extends GridEntity> implements CompositeGridModel<T> {

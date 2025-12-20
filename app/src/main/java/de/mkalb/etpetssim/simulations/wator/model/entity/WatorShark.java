@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.wator.model;
+package de.mkalb.etpetssim.simulations.wator.model.entity;
 
 public final class WatorShark extends WatorCreature {
 

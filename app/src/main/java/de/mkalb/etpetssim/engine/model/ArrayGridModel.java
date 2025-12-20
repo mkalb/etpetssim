@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 import java.util.function.*;
@@ -11,7 +12,7 @@ import java.util.stream.*;
  * An implementation of {@link WritableGridModel} that stores grid entities in a two-dimensional array.
  * Efficient for dense grids with mostly non-default entities.
  *
- * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
+ * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
 public final class ArrayGridModel<T extends GridEntity> implements WritableGridModel<T> {
 

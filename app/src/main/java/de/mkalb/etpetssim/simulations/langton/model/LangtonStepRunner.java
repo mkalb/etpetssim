@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 
 public final class LangtonStepRunner
         implements SimulationStepRunner<LangtonStatistics> {

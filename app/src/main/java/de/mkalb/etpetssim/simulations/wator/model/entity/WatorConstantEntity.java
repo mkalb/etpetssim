@@ -1,6 +1,6 @@
-package de.mkalb.etpetssim.simulations.wator.model;
+package de.mkalb.etpetssim.simulations.wator.model.entity;
 
-import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 public enum WatorConstantEntity implements WatorEntity, ConstantGridEntity {
 

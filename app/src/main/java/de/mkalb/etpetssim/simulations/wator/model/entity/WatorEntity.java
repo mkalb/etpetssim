@@ -1,6 +1,6 @@
-package de.mkalb.etpetssim.simulations.wator.model;
+package de.mkalb.etpetssim.simulations.wator.model.entity;
 
-import de.mkalb.etpetssim.engine.model.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 public sealed interface WatorEntity extends GridEntity
         permits WatorCreature, WatorConstantEntity {

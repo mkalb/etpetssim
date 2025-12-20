@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 /**
  * Functional interface defining the logic for a synchronous simulation step on a grid model.
  * <p>
@@ -8,7 +10,7 @@ package de.mkalb.etpetssim.engine.model;
  * The method receives the current model, the next model, the simulation step index, and a context object
  * for sharing or accumulating state across steps.
  *
- * @param <T> the type of {@link GridEntity} contained in the grid model
+ * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each simulation step
  * @see de.mkalb.etpetssim.engine.model.SynchronousStepRunner
  */

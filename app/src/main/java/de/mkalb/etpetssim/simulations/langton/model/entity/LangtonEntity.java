@@ -1,7 +1,7 @@
-package de.mkalb.etpetssim.simulations.langton.model;
+package de.mkalb.etpetssim.simulations.langton.model.entity;
 
-import de.mkalb.etpetssim.engine.model.GridEntity;
-import de.mkalb.etpetssim.engine.model.GridEntityDescribable;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescribable;
 
 import java.util.*;
 

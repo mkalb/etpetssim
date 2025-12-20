@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 import java.util.function.*;
 
 /**
@@ -9,7 +11,7 @@ import java.util.function.*;
  * This executor manages the simulation lifecycle, supporting stepwise execution
  * and batch execution. It provides access to the current model state and step count.
  *
- * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
  * @param <GM> the type of {@link GridModel} in the simulation
  * @param <C> the type of the context object used to share or accumulate state or statistics during the simulation
  */

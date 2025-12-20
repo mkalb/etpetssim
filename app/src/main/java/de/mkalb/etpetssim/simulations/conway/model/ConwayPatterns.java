@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.model.GridPattern;
+import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
 import java.util.*;
 
@@ -10,13 +11,13 @@ import java.util.*;
  * used in Conway's Game of Life.
  * <p>
  * Each method returns a normalized pattern (top-left at (0, 0)), fully filled with
- * {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells, representing classic
+ * {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#ALIVE} and {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#DEAD} cells, representing classic
  * Game of Life configurations such as the glider, block, beehive, and blinker.
  * <p>
  * This class cannot be instantiated.
  *
  * @see de.mkalb.etpetssim.engine.model.GridPattern
- * @see ConwayEntity
+ * @see de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity
  */
 @SuppressWarnings("MagicNumber")
 public final class ConwayPatterns {
@@ -30,15 +31,15 @@ public final class ConwayPatterns {
     /**
      * Returns a normalized 3x3 {@link GridPattern} representing the classic "Glider" from Conway's Game of Life.
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells:
+     * The pattern is fully filled with {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#ALIVE} and {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#DEAD} cells:
      * <pre>
      * D A D
      * D D A
      * A A A
      * </pre>
      * <ul>
-     *   <li>D = {@link ConwayEntity#DEAD}</li>
-     *   <li>A = {@link ConwayEntity#ALIVE}</li>
+     *   <li>D = {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#DEAD}</li>
+     *   <li>A = {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#ALIVE}</li>
      * </ul>
      * The top-left of the pattern is at offset (0, 0).
      *

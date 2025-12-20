@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.model.entity;
 
 /**
  * Marker interface for grid entities that are considered constant in the simulation engine.

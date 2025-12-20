@@ -1,7 +1,7 @@
-package de.mkalb.etpetssim.simulations.langton.model;
+package de.mkalb.etpetssim.simulations.langton.model.entity;
 
-import de.mkalb.etpetssim.engine.model.ConstantGridEntity;
-import de.mkalb.etpetssim.engine.model.GridEntityDescribable;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescribable;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;

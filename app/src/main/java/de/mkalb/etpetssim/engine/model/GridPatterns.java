@@ -1,13 +1,14 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 
 /**
  * Utility class providing various static factory methods for creating {@link GridPattern} instances.
  * <p>
- * A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link GridEntity} instances,
+ * A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} instances,
  * describing how entities are arranged relative to an origin (0, 0).
  * <p>
  * <b>Normalization:</b> It is recommended that all patterns are created in normalized form,
@@ -25,7 +26,7 @@ public final class GridPatterns {
     /**
      * Returns an empty {@code GridPattern} containing no entities.
      *
-     * @param <T> the type of {@link GridEntity}
+     * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
      * @return an empty pattern
      */
     public static <T extends GridEntity> GridPattern<T> empty() {

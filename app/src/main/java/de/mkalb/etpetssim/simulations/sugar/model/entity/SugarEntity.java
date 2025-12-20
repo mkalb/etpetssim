@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.sugar.model.entity;
 
-import de.mkalb.etpetssim.engine.model.GridEntity;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 public sealed interface SugarEntity extends GridEntity
         permits SugarResourceEntity, SugarAgentEntity {

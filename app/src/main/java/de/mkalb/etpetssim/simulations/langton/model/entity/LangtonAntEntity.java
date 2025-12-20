@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.langton.model;
+package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 public sealed interface LangtonAntEntity extends LangtonEntity
         permits LangtonAnt, LangtonAntNone {

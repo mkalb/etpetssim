@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.langton.model;
+package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 

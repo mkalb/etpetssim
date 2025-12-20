@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.model;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 
 import java.util.*;
 

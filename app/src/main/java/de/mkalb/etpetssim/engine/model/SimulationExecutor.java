@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 /**
  * Executes simulation steps for a given model until a specified termination condition is met.
  * <p>
@@ -7,7 +9,7 @@ package de.mkalb.etpetssim.engine.model;
  * including stepwise and batch execution. It also provides access to the current model state
  * and the simulation step count.
  *
- * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
  * @param <GM> the type of {@link GridModel} in the simulation
  */
 public interface SimulationExecutor<

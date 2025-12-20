@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 import java.util.function.*;
@@ -13,7 +14,7 @@ import java.util.stream.*;
  * All mutating (write and update) methods are defined in the {@link WritableGridModel} interface.
  * </p>
  *
- * @param <T> the type of entities stored in the grid, must implement {@link GridEntity}
+ * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
 public sealed interface ReadableGridModel<T extends GridEntity> extends GridModel<T>
         permits WritableGridModel {

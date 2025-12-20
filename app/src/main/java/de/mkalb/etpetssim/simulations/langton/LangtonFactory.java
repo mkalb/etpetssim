@@ -1,15 +1,15 @@
 package de.mkalb.etpetssim.simulations.langton;
 
-import de.mkalb.etpetssim.engine.model.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.langton.model.LangtonEntity;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonSimulationManager;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
+import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import de.mkalb.etpetssim.simulations.langton.view.LangtonConfigView;
 import de.mkalb.etpetssim.simulations.langton.view.LangtonMainView;
 import de.mkalb.etpetssim.simulations.langton.view.LangtonObservationView;

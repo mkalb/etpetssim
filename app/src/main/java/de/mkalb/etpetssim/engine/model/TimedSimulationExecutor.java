@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.model;
 
+import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+
 /**
  * Decorator for {@link SimulationExecutor} that measures the execution time of each simulation step.
  * <p>
@@ -7,7 +9,7 @@ package de.mkalb.etpetssim.engine.model;
  * <p>
  * Timing statistics are accessible via getter methods.
  *
- * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
  * @param <GM> the type of {@link GridModel} in the simulation
  */
 public final class TimedSimulationExecutor<
