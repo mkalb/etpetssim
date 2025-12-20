@@ -95,7 +95,8 @@ public final class SugarStepRunner
             Optional<GridCoordinate> spawnCoordinate = findRandomFreeCell(agentModel);
             if (spawnCoordinate.isPresent()) {
                 // Spawn new agent
-                SugarAgent newAgent = new SugarAgent(config.agentInitialEnergy(), stepIndex);
+                int randomEnergy = random.nextInt(config.agentInitialEnergy()) + 1;
+                SugarAgent newAgent = new SugarAgent(randomEnergy, stepIndex);
                 agentModel.setEntity(spawnCoordinate.get(), newAgent);
                 statistics.updateCells(1);
             }
