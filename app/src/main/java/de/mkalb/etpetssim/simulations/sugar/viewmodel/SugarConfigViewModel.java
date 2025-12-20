@@ -20,20 +20,20 @@ public final class SugarConfigViewModel
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.SQUARE,
             List.of(CellShape.SQUARE, CellShape.HEXAGON),
-            GridEdgeBehavior.BLOCK_XY,
+            GridEdgeBehavior.WRAP_XY,
             List.of(GridEdgeBehavior.BLOCK_XY,
                     GridEdgeBehavior.WRAP_XY,
                     GridEdgeBehavior.BLOCK_X_WRAP_Y,
                     GridEdgeBehavior.WRAP_X_BLOCK_Y),
-            100,
+            50,
             10,
             1_000,
             GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE,
-            100,
+            50,
             10,
             1_000,
             GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
-            6,
+            8,
             4,
             32,
             CellDisplayMode.SHAPE,
@@ -41,23 +41,23 @@ public final class SugarConfigViewModel
             ""
     );
     // Initialization
-    private static final double AGENT_PERCENT_INITIAL = 0.05d;
+    private static final double AGENT_PERCENT_INITIAL = 0.1d;
     private static final double AGENT_PERCENT_MIN = 0.0d;
     private static final double AGENT_PERCENT_MAX = 1.0d;
-    private static final int SUGAR_PEAKS_INITIAL = 2;
+    private static final int SUGAR_PEAKS_INITIAL = 4;
     private static final int SUGAR_PEAKS_MIN = 1;
     private static final int SUGAR_PEAKS_MAX = 5;
     private static final int SUGAR_PEAKS_STEP = 1;
-    private static final int SUGAR_RADIUS_LIMIT_INITIAL = 10;
+    private static final int SUGAR_RADIUS_LIMIT_INITIAL = 15;
     private static final int SUGAR_RADIUS_LIMIT_MIN = 0;
     private static final int SUGAR_RADIUS_LIMIT_MAX = 100;
     private static final int SUGAR_RADIUS_LIMIT_STEP = 1;
     private static final int MIN_SUGAR_AMOUNT = 1;
-    private static final int MAX_SUGAR_AMOUNT_INITIAL = 6;
+    private static final int MAX_SUGAR_AMOUNT_INITIAL = 5;
     private static final int MAX_SUGAR_AMOUNT_MIN = 1;
     private static final int MAX_SUGAR_AMOUNT_MAX = 20;
     private static final int MAX_SUGAR_AMOUNT_STEP = 1;
-    private static final int AGENT_INITIAL_ENERGY_INITIAL = 5;
+    private static final int AGENT_INITIAL_ENERGY_INITIAL = 10;
     private static final int AGENT_INITIAL_ENERGY_MIN = 1;
     private static final int AGENT_INITIAL_ENERGY_MAX = 20;
     private static final int AGENT_INITIAL_ENERGY_STEP = 1;
@@ -66,11 +66,11 @@ public final class SugarConfigViewModel
     private static final int SUGAR_REGENERATION_RATE_MIN = 1;
     private static final int SUGAR_REGENERATION_RATE_MAX = 10;
     private static final int SUGAR_REGENERATION_RATE_STEP = 1;
-    private static final int AGENT_METABOLISM_RATE_INITIAL = 1;
+    private static final int AGENT_METABOLISM_RATE_INITIAL = 2;
     private static final int AGENT_METABOLISM_RATE_MIN = 1;
     private static final int AGENT_METABOLISM_RATE_MAX = 10;
     private static final int AGENT_METABOLISM_RATE_STEP = 1;
-    private static final int AGENT_VISION_RANGE_INITIAL = 4;
+    private static final int AGENT_VISION_RANGE_INITIAL = 7;
     private static final int AGENT_VISION_RANGE_MIN = 1;
     private static final int AGENT_VISION_RANGE_MAX = 10;
     private static final int AGENT_VISION_RANGE_STEP = 1;
