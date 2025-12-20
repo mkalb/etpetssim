@@ -53,7 +53,7 @@ public final class SugarConfigViewModel
     private static final int SUGAR_RADIUS_LIMIT_MAX = 100;
     private static final int SUGAR_RADIUS_LIMIT_STEP = 1;
     private static final int MIN_SUGAR_AMOUNT = 1;
-    private static final int MAX_SUGAR_AMOUNT_INITIAL = 5;
+    private static final int MAX_SUGAR_AMOUNT_INITIAL = 10;
     private static final int MAX_SUGAR_AMOUNT_MIN = 1;
     private static final int MAX_SUGAR_AMOUNT_MAX = 20;
     private static final int MAX_SUGAR_AMOUNT_STEP = 1;
