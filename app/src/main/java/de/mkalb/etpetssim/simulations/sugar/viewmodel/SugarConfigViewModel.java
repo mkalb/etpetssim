@@ -41,23 +41,23 @@ public final class SugarConfigViewModel
             ""
     );
     // Initialization
-    private static final double AGENT_PERCENT_INITIAL = 0.1d;
+    private static final double AGENT_PERCENT_INITIAL = 0.2d;
     private static final double AGENT_PERCENT_MIN = 0.0d;
     private static final double AGENT_PERCENT_MAX = 1.0d;
     private static final int SUGAR_PEAKS_INITIAL = 4;
     private static final int SUGAR_PEAKS_MIN = 1;
     private static final int SUGAR_PEAKS_MAX = 5;
     private static final int SUGAR_PEAKS_STEP = 1;
-    private static final int SUGAR_RADIUS_LIMIT_INITIAL = 15;
+    private static final int SUGAR_RADIUS_LIMIT_INITIAL = 14;
     private static final int SUGAR_RADIUS_LIMIT_MIN = 0;
     private static final int SUGAR_RADIUS_LIMIT_MAX = 100;
     private static final int SUGAR_RADIUS_LIMIT_STEP = 1;
     private static final int MIN_SUGAR_AMOUNT = 1;
-    private static final int MAX_SUGAR_AMOUNT_INITIAL = 10;
+    private static final int MAX_SUGAR_AMOUNT_INITIAL = 8;
     private static final int MAX_SUGAR_AMOUNT_MIN = 1;
     private static final int MAX_SUGAR_AMOUNT_MAX = 20;
     private static final int MAX_SUGAR_AMOUNT_STEP = 1;
-    private static final int AGENT_INITIAL_ENERGY_INITIAL = 10;
+    private static final int AGENT_INITIAL_ENERGY_INITIAL = 12;
     private static final int AGENT_INITIAL_ENERGY_MIN = 1;
     private static final int AGENT_INITIAL_ENERGY_MAX = 20;
     private static final int AGENT_INITIAL_ENERGY_STEP = 1;
@@ -70,7 +70,7 @@ public final class SugarConfigViewModel
     private static final int AGENT_METABOLISM_RATE_MIN = 1;
     private static final int AGENT_METABOLISM_RATE_MAX = 10;
     private static final int AGENT_METABOLISM_RATE_STEP = 1;
-    private static final int AGENT_VISION_RANGE_INITIAL = 7;
+    private static final int AGENT_VISION_RANGE_INITIAL = 8;
     private static final int AGENT_VISION_RANGE_MIN = 1;
     private static final int AGENT_VISION_RANGE_MAX = 10;
     private static final int AGENT_VISION_RANGE_STEP = 1;
