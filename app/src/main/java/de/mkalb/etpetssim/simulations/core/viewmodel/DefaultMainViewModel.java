@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridModel;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
@@ -50,6 +50,15 @@ public final class DefaultMainViewModel<
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory) {
+        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory, null);
+    }
+
+    public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
+                                SimulationConfigViewModel<CON> configViewModel,
+                                DefaultControlViewModel controlViewModel,
+                                DefaultObservationViewModel<ENT, STA> observationViewModel,
+                                Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
+                                @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
@@ -68,30 +77,28 @@ public final class DefaultMainViewModel<
                 controlViewModel.cancelButtonRequestedProperty().set(false); // reset
             }
         });
-        observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
-        lastClickedCoordinateProperty().addListener(((_, _, newValue) -> {
-            if ((newValue != null)
-                    && hasSimulationManager()
-                    && ((getSimulationState() == SimulationState.PAUSED)
-                    || (getSimulationState() == SimulationState.CANCELLED)
-                    || (getSimulationState() == SimulationState.FINISHED))) {
-                try {
-                    GM gridModel = getCurrentModel();
-                    if (gridModel instanceof ReadableGridModel<?>) {
-                        @SuppressWarnings("unchecked")
-                        ReadableGridModel<ENT> readableGridModel = (ReadableGridModel<ENT>) gridModel;
-                        selectedGridCell.set(readableGridModel.getGridCell(newValue));
-                    } else {
-                        // TODO fina a solution for 'selectedGridCell' and CombinedGridModel
+        // Initialize selected grid cell handling if provider is given
+        if (selectedGridCellProvider != null) {
+            observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
+            lastClickedCoordinateProperty().addListener(((_, _, newValue) -> {
+                if ((newValue != null)
+                        && hasSimulationManager()
+                        && ((getSimulationState() == SimulationState.PAUSED)
+                        || (getSimulationState() == SimulationState.CANCELLED)
+                        || (getSimulationState() == SimulationState.FINISHED))) {
+                    try {
+                        var cell = selectedGridCellProvider.apply(getCurrentModel(), newValue);
+                        selectedGridCell.set(cell);
+                        AppLogger.info("Cell selected: " + cell);
+                    } catch (NullPointerException | IndexOutOfBoundsException e) {
+                        AppLogger.error("Cannot determine selected cell! " + newValue, e);
+                        selectedGridCell.set(null);
                     }
-                } catch (NullPointerException | IndexOutOfBoundsException e) {
-                    AppLogger.error("Cannot determine selected cell! " + newValue, e);
+                } else {
                     selectedGridCell.set(null);
                 }
-            } else {
-                selectedGridCell.set(null);
-            }
-        }));
+            }));
+        }
     }
 
     public ObjectProperty<@Nullable GridCell<ENT>> selectedGridCellProperty() {
