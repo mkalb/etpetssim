@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.sugar;
 
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -39,7 +40,14 @@ public final class SugarFactory {
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel = new DefaultObservationViewModel<SugarEntity, SugarStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
-                observationViewModel, SugarSimulationManager::new);
+                observationViewModel, SugarSimulationManager::new,
+                (sugarGridModel, selectedCoordinate) -> {
+                    if (!sugarGridModel.agentModel().isDefaultEntity(selectedCoordinate)) {
+                        return new GridCell<>(selectedCoordinate, sugarGridModel.agentModel().getEntity(selectedCoordinate));
+                    } else {
+                        return new GridCell<>(selectedCoordinate, sugarGridModel.resourceModel().getEntity(selectedCoordinate));
+                    }
+                });
         // View
         var configView = new SugarConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
