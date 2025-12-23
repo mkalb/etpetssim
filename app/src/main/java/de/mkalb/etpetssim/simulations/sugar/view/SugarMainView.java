@@ -38,6 +38,8 @@ public final class SugarMainView
     private static final double AGENT_MAX_FACTOR_DELTA = 0.6d;
     private static final int AGENT_GROUP_COUNT = 7;
     private static final int MAX_COLOR_AGENT_ENERGY_FACTOR = 2;
+    private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 120, 120);
+    private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
     private final Paint backgroundPaint;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
@@ -149,7 +151,14 @@ public final class SugarMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<SugarEntity> oldGridCell,
                                           @Nullable GridCell<SugarEntity> newGridCell) {
-        // Do nothing
+        if ((oldGridCell != null) && !oldGridCell.entity().isNone()) {
+            painter.clearCanvasBackground();
+        }
+        if ((newGridCell != null) && !newGridCell.entity().isNone()) {
+            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                    StrokeType.OUTSIDE);
+        }
     }
 
     @Override
