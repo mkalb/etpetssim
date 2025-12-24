@@ -127,6 +127,7 @@ public final class DefaultMainViewModel<
 
     @Override
     public void shutdownSimulation() {
+        AppLogger.info("Shutting down simulation during state: " + getSimulationState());
         setSimulationState(SimulationState.SHUTTING_DOWN);
         stopTimer();
         cancelBatch();
