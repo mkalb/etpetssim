@@ -31,14 +31,19 @@ import java.util.*;
 public final class ExtraterrestrialPetsSimulation extends Application {
 
     /**
-     * The application icon images used in the JavaFX application.
+     * The application icon image paths used in the JavaFX application.
+     * They are loaded from the resources and set on the application stage.
+     * It contains standard sizes: 16x16, 32x32, 64x64, and 128x128 pixels.
      */
-    private static final String[] APP_IMAGES = {
+    private static final String[] APP_ICON_PATHS = {
             "etpetssim16.png",
             "etpetssim32.png",
             "etpetssim64.png",
             "etpetssim128.png"
     };
+    private static final double FALLBACK_WINDOW_DECORATION_WIDTH = 16.0d;
+    private static final double FALLBACK_WINDOW_DECORATION_HEIGHT = 39.0d;
+    private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
 
     /**
      * Determines the simulation type based on the command-line arguments.
@@ -59,7 +64,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @param stage the JavaFX stage to update with icons
      */
     private void updateStageIcons(Stage stage) {
-        List<Image> icons = AppResources.getImages(APP_IMAGES);
+        List<Image> icons = AppResources.getImages(APP_ICON_PATHS);
         if (icons.isEmpty()) {
             AppLogger.error("Application: Failed to load application icons. Icons will not be set.");
         } else {
@@ -76,14 +81,14 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @see de.mkalb.etpetssim.simulations.core.SimulationFactory
      * @see de.mkalb.etpetssim.simulations.start.StartMainView
      */
-    void updateStageScene(Stage stage, SimulationType simulationType) {
+    private void switchToSimulation(Stage stage, SimulationType simulationType) {
         Objects.requireNonNull(stage, "Stage must not be null");
         Objects.requireNonNull(simulationType, "SimulationType must not be null");
 
         AppLogger.info("Application: Updating stage scene to simulation: " + simulationType);
 
         // Create new simulation instance with header and main region
-        var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene);
+        var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::switchToSimulation);
         var simulationHeaderNode = buildSimulationHeaderNode(stage, simulationInstance);
         var simulationMainRegion = simulationInstance.region();
 
@@ -121,7 +126,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         });
 
         // Adjust stage size and position to fit the screen. Run later to ensure layout is calculated.
-        Platform.runLater(() -> adjustStageToScreen(stage, root));
+        Platform.runLater(() -> adjustStageLayoutToScreen(stage, root));
     }
 
     /**
@@ -132,7 +137,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @see Screen#getScreens()
      */
     @SuppressWarnings("MagicNumber")
-    private Screen findScreenByCenter(Stage stage) {
+    private Screen findScreenContainingStage(Stage stage) {
         // Calculate center coordinates of the stage
         double cx = stage.getX() + (stage.getWidth() / 2.0d);
         double cy = stage.getY() + (stage.getHeight() / 2.0d);
@@ -149,14 +154,26 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * Adjusts the stage size and position to fit within the visual bounds of the screen.
      * <p>
-     * It must be called at Platform.runLater to ensure layout calculations are done.
+     * Handles three distinct stage states:
+     * <ul>
+     *   <li><b>Iconified:</b> No adjustments are made</li>
+     *   <li><b>Fullscreen:</b> Sets root max dimensions to screen bounds</li>
+     *   <li><b>Maximized/Normal:</b> Resizes and repositions the stage within visual bounds,
+     *       accounting for window decorations and margins</li>
+     * </ul>
+     * </p>
+     * <p>
+     * <b>Important:</b> Must be invoked via {@link Platform#runLater(Runnable)} to ensure
+     * layout calculations are complete before adjustments.
      * </p>
      *
-     * @param stage the JavaFX stage to adjust
-     * @param root the root region of the stage's scene
+     * @param stage the JavaFX stage to adjust; must not be {@code null}
+     * @param root the root region of the stage's scene; must not be {@code null}
      */
-    @SuppressWarnings("MagicNumber")
-    private void adjustStageToScreen(Stage stage, Region root) {
+    private void adjustStageLayoutToScreen(Stage stage, Region root) {
+        Objects.requireNonNull(stage, "Stage must not be null");
+        Objects.requireNonNull(root, "Root region must not be null");
+
         // Skip if minimized
         if (stage.isIconified()) {
             root.setDisable(false); // Enable now. No adjustments needed.
@@ -166,7 +183,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         }
 
         // Visual screen bounds
-        Screen screen = findScreenByCenter(stage);
+        Screen screen = findScreenContainingStage(stage);
         Rectangle2D visualBounds = screen.getVisualBounds();
         AppLogger.info("Application: Found screen and using visual bounds: " + visualBounds);
 
@@ -218,11 +235,11 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             double decoWidth = Math.max(0, stage.getWidth() - stage.getScene().getWidth());
             double decoHeight = Math.max(0, stage.getHeight() - stage.getScene().getHeight());
             if ((decoWidth == 0) || (decoHeight == 0)) {
-                decoWidth = 16;
-                decoHeight = 39;
+                decoWidth = FALLBACK_WINDOW_DECORATION_WIDTH;
+                decoHeight = FALLBACK_WINDOW_DECORATION_HEIGHT;
             }
 
-            double margin = 8;
+            double margin = DEFAULT_WINDOW_MARGIN;
 
             // Limit root max size to visual bounds minus decoration and margin
             root.setMaxWidth(visualBounds.getWidth() - decoWidth - margin);
@@ -255,6 +272,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * Builds the header node for the simulation, which includes the title, subtitle, and links.
      *
+     * @param stage the JavaFX stage
      * @param instance the simulation instance
      * @return a Node representing the header of the simulation
      */
@@ -279,14 +297,14 @@ public final class ExtraterrestrialPetsSimulation extends Application {
                 AppLogger.info("Application: Switching to start screen from simulation: " + instance.simulationType());
                 instance.region().setDisable(true);
                 instance.simulationMainView().shutdownSimulation();
-                updateStageScene(stage, SimulationType.STARTSCREEN);
+                switchToSimulation(stage, SimulationType.STARTSCREEN);
             });
             linkBox.getChildren().add(startScreenLink);
         }
 
         Hyperlink aboutLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK));
         aboutLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-        aboutLink.setOnAction(_ -> new AboutDialog(AppResources.getImages(APP_IMAGES)).showAboutDialog());
+        aboutLink.setOnAction(_ -> new AboutDialog(AppResources.getImages(APP_ICON_PATHS)).showAboutDialog());
         linkBox.getChildren().add(aboutLink);
 
         simulationType.urlAsURI().ifPresent(url -> {
@@ -309,6 +327,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     public void start(Stage primaryStage) {
         // Initialize exception handling for uncaught exceptions
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            AppLogger.error("Uncaught exception in thread " + thread.getName(), throwable);
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Unexpected Error");
@@ -316,7 +335,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
                 alert.setContentText(throwable.getMessage());
                 alert.showAndWait();
             });
-            AppLogger.error("Uncaught exception in thread " + thread.getName(), throwable);
         });
 
         // Determine the simulation type from command-line arguments
@@ -327,7 +345,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         // Initialize and show the primary stage with the appropriate scene
         updateStageIcons(primaryStage);
-        updateStageScene(primaryStage, type);
+        switchToSimulation(primaryStage, type);
         primaryStage.show();
         AppLogger.info("Application: Application started successfully. Primary stage is now visible.");
     }
