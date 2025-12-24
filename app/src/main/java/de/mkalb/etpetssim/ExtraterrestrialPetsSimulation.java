@@ -82,42 +82,173 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         AppLogger.info("Application: Updating stage scene to simulation: " + simulationType);
 
-        var instance = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene);
+        // Create new simulation instance with header and main region
+        var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::updateStageScene);
+        var simulationHeaderNode = buildSimulationHeaderNode(stage, simulationInstance);
+        var simulationMainRegion = simulationInstance.region();
 
-        // Scene with a VBox
-        VBox vBox = new VBox();
-        vBox.getChildren().add(buildSimulationHeaderNode(stage, instance));
-        stage.setOnCloseRequest(_ -> {
-            AppLogger.info("Application: Shutting down simulation instance: " + instance.simulationType());
-            instance.region().setDisable(true);
-            instance.simulationMainView().shutdownSimulation();
-        });
-        Region instanceRegion = instance.region();
-        vBox.getChildren().add(instanceRegion);
-        vBox.getStyleClass().add(FXStyleClasses.APP_VBOX);
-        VBox.setVgrow(instanceRegion, Priority.ALWAYS);
-        Scene scene = new Scene(vBox);
+        // Create new root layout with header and main region
+        VBox root = new VBox(simulationHeaderNode, simulationMainRegion);
+        root.getStyleClass().add(FXStyleClasses.APP_VBOX);
+        VBox.setVgrow(simulationMainRegion, Priority.ALWAYS);
+        root.setDisable(true); // Disable first until fully initialized later
 
-        // Add common stylesheets first and then the specific simulation type stylesheet
-        AppResources.getCss("scene.css").ifPresent(scene.getStylesheets()::add);
-        simulationType.cssResource().ifPresent(scene.getStylesheets()::add);
-
-        // Stage
-        stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, simulationType.title()));
-        stage.setScene(scene);
-        stage.sizeToScene();
-        stage.centerOnScreen();
-        // Ensure the window does not exceed the screen width and height
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        stage.setMaxWidth(screenBounds.getWidth());
-        stage.setMaxHeight(screenBounds.getHeight());
-        if (stage.getWidth() > screenBounds.getWidth()) {
-            stage.setWidth(screenBounds.getWidth());
-            stage.setX(screenBounds.getMinX());
+        // Create or update scene with new root
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            scene = new Scene(root);
+            stage.setScene(scene);
+        } else {
+            scene.setRoot(root);
         }
-        if (stage.getHeight() > screenBounds.getHeight()) {
-            stage.setHeight(screenBounds.getHeight());
-            stage.setY(screenBounds.getMinY());
+
+        // Update scene styles -  Add common stylesheets first and then the specific simulation type stylesheet
+        List<String> styles = new ArrayList<>();
+        AppResources.getCss("scene.css").ifPresent(styles::add);
+        simulationType.cssResource().ifPresent(styles::add);
+        scene.getStylesheets().setAll(styles);
+
+        // Update stage
+        stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, simulationType.title()));
+        stage.setOnCloseRequest(_ -> {
+            try {
+                AppLogger.info("Application: Shutting down simulation instance: " + simulationInstance.simulationType());
+                simulationMainRegion.setDisable(true);
+                simulationInstance.simulationMainView().shutdownSimulation();
+            } catch (Exception e) {
+                AppLogger.error("Application: Error during simulation shutdown: " + simulationInstance.simulationType(), e);
+            }
+        });
+
+        // Adjust stage size and position to fit the screen. Run later to ensure layout is calculated.
+        Platform.runLater(() -> adjustStageToScreen(stage, root));
+    }
+
+    /**
+     * Finds the screen that contains the center point of the given stage.
+     *
+     * @param stage the stage to find the screen for
+     * @return the screen containing the center of the stage, or the primary screen if none found
+     * @see Screen#getScreens()
+     */
+    @SuppressWarnings("MagicNumber")
+    private Screen findScreenByCenter(Stage stage) {
+        // Calculate center coordinates of the stage
+        double cx = stage.getX() + (stage.getWidth() / 2.0d);
+        double cy = stage.getY() + (stage.getHeight() / 2.0d);
+
+        for (Screen s : Screen.getScreens()) {
+            if (s.getBounds().contains(cx, cy)) {
+                return s;
+            }
+        }
+        // Fallback to primary screen
+        return Screen.getPrimary();
+    }
+
+    /**
+     * Adjusts the stage size and position to fit within the visual bounds of the screen.
+     * <p>
+     * It must be called at Platform.runLater to ensure layout calculations are done.
+     * </p>
+     *
+     * @param stage the JavaFX stage to adjust
+     * @param root the root region of the stage's scene
+     */
+    @SuppressWarnings("MagicNumber")
+    private void adjustStageToScreen(Stage stage, Region root) {
+        // Skip if minimized
+        if (stage.isIconified()) {
+            root.setDisable(false); // Enable now. No adjustments needed.
+
+            AppLogger.info("Application: Stage is minimized. No adjustments made.");
+            return;
+        }
+
+        // Visual screen bounds
+        Screen screen = findScreenByCenter(stage);
+        Rectangle2D visualBounds = screen.getVisualBounds();
+        AppLogger.info("Application: Found screen and using visual bounds: " + visualBounds);
+
+        // Handle Fullscreen separately
+        if (stage.isFullScreen()) {
+            root.setMaxWidth(visualBounds.getWidth());
+            root.setMaxHeight(visualBounds.getHeight());
+
+            // Stabilize layout calculations
+            root.applyCss();
+            root.layout();
+
+            root.setDisable(false); // Enable now after all adjustments are done
+
+            AppLogger.info("Application: Stage is fullscreen.");
+            return;
+        }
+
+        // Stabilize layout calculations
+        root.applyCss();
+        root.layout();
+
+        if (stage.isMaximized()) {
+            // First un-maximize the stage, so we can resize/relocate it
+            stage.setMaximized(false);
+
+            // Adjust stage size and position to visual bounds
+            stage.setX(visualBounds.getMinX());
+            stage.setY(visualBounds.getMinY());
+            stage.setWidth(visualBounds.getWidth());
+            stage.setHeight(visualBounds.getHeight());
+
+            // Stabilize layout calculations another time after changing size/position
+            root.applyCss();
+            root.layout();
+
+            // Re-maximize the stage one step later to ensure proper maximized state
+            Platform.runLater(() -> {
+                // Important: Set only maximized, do NOT set size/position again here!
+                stage.setMaximized(true);
+                root.setDisable(false); // Enable now after all adjustments are done
+
+                AppLogger.info("Application: Stage maximized");
+            });
+        } else {
+            double prefWidth = Math.max(0, root.prefWidth(-1));
+            double prefHeight = Math.max(0, root.prefHeight(-1));
+
+            double decoWidth = Math.max(0, stage.getWidth() - stage.getScene().getWidth());
+            double decoHeight = Math.max(0, stage.getHeight() - stage.getScene().getHeight());
+            if ((decoWidth == 0) || (decoHeight == 0)) {
+                decoWidth = 16;
+                decoHeight = 39;
+            }
+
+            double margin = 8;
+
+            // Limit root max size to visual bounds minus decoration and margin
+            root.setMaxWidth(visualBounds.getWidth() - decoWidth - margin);
+            root.setMaxHeight(visualBounds.getHeight() - decoHeight - margin);
+
+            // Stabilize layout calculations another time after changing max sizes
+            root.applyCss();
+            root.layout();
+
+            // Limit stage max size to visual bounds
+            stage.setMaxWidth(visualBounds.getWidth());
+            stage.setMaxHeight(visualBounds.getHeight());
+
+            // Set new stage size within visual bounds
+            stage.setWidth(Math.min(prefWidth + decoWidth + margin, visualBounds.getWidth()));
+            stage.setHeight(Math.min(prefHeight + decoHeight + margin, visualBounds.getHeight()));
+
+            // Set new stage position within visual bounds
+            stage.setX(Math.clamp(stage.getX(), visualBounds.getMinX(), visualBounds.getMaxX() - stage.getWidth()));
+            stage.setY(Math.clamp(stage.getY(), visualBounds.getMinY(), visualBounds.getMaxY() - stage.getHeight()));
+
+            root.setDisable(false); // Enable now after all adjustments are done
+
+            // noinspection StringConcatenationMissingWhitespace
+            AppLogger.info("Application: Stage adjusted to size: " + stage.getWidth() + "x" + stage.getHeight() +
+                    " at position: (" + stage.getX() + ", " + stage.getY() + ")");
         }
     }
 
@@ -198,6 +329,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         updateStageIcons(primaryStage);
         updateStageScene(primaryStage, type);
         primaryStage.show();
+        AppLogger.info("Application: Application started successfully. Primary stage is now visible.");
     }
 
     @Override
