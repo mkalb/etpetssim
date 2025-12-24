@@ -30,11 +30,14 @@ public final class AppLauncher {
     }
 
     /**
-     * Parses command-line arguments and handles the help flag.
-     * If the help flag is active, it prints the help message and exits the application.
+     * Parses command-line arguments and terminates the application if the help flag is present.
      *
-     * @param args the command-line arguments passed to the application
-     * @return an instance of AppArgs containing the parsed arguments
+     * <p>When {@link AppArgs.Key#HELP} is active, this method prints usage information
+     * to {@link System#out} and calls {@link System#exit(int)} with code 0.</p>
+     *
+     * @param args the command-line arguments to parse; must not be {@code null}. Can be empty.
+     * @return the parsed {@link AppArgs} instance
+     * @see AppArgs.Key#printHelp(Appendable)
      */
     @SuppressWarnings("CallToSystemExit")
     private static AppArgs parseArgumentsAndHandleHelp(String[] args) {
@@ -76,13 +79,15 @@ public final class AppLauncher {
      *
      * @param arguments the parsed command-line arguments
      */
-    private static void initializeAppLocalization(AppArgs arguments) {
+    private static void initAppLocalization(AppArgs arguments) {
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
         Locale.setDefault(AppLocalization.locale());
     }
 
     /**
      * The main entry point for the Extraterrestrial Pets Simulation application.
+     * <p>
+     * It is not the JavaFX Application class itself.
      * The command-line arguments are parsed with AppArgs.
      * Use "--help" to display the help message and exit the application.
      *
@@ -91,7 +96,7 @@ public final class AppLauncher {
     static void main(String[] args) {
         var arguments = parseArgumentsAndHandleHelp(args);
         initAppLogger(arguments);
-        initializeAppLocalization(arguments);
+        initAppLocalization(arguments);
 
         AppLogger.info("AppLauncher: Launching application with arguments: " + arguments.argumentsAsString());
         Application.launch(ExtraterrestrialPetsSimulation.class, args);
