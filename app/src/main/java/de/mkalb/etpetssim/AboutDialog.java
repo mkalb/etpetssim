@@ -19,8 +19,11 @@ import java.util.jar.*;
  */
 public final class AboutDialog {
 
+    private static final int DEFAULT_TEXT_AREA_COLUMNS = 120;
+    private static final int DEFAULT_TEXT_AREA_ROWS = 30;
+
     private final List<Image> icons;
-    private final Font monospaced;
+    private final Font monospacedFont;
 
     /**
      * Constructs an AboutDialog with the specified application icons.
@@ -29,7 +32,7 @@ public final class AboutDialog {
      */
     public AboutDialog(List<Image> icons) {
         this.icons = icons;
-        monospaced = Font.font("Monospaced", 12);
+        monospacedFont = Font.font("Monospaced", 12);
     }
 
     /**
@@ -39,7 +42,7 @@ public final class AboutDialog {
     public void showAboutDialog() {
         Tab tabManifest = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_VERSION),
-                buildManifestContent());
+                buildManifestSummary());
         Tab tabReadme = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_README),
                 getResourceAsString("README.md"));
@@ -71,14 +74,13 @@ public final class AboutDialog {
      * @param text the text to display in the tab
      * @return a Tab containing the text area
      */
-    @SuppressWarnings("MagicNumber")
     private Tab createTextAreaTab(String tabTitle, String text) {
         TextArea textArea = new TextArea(text);
         textArea.setEditable(false);
         textArea.setWrapText(true);
-        textArea.setPrefColumnCount(120);
-        textArea.setPrefRowCount(30);
-        textArea.setFont(monospaced);
+        textArea.setPrefColumnCount(DEFAULT_TEXT_AREA_COLUMNS);
+        textArea.setPrefRowCount(DEFAULT_TEXT_AREA_ROWS);
+        textArea.setFont(monospacedFont);
 
         Tab tab = new Tab(tabTitle);
         tab.setContent(textArea);
@@ -93,7 +95,7 @@ public final class AboutDialog {
      * @return a formatted string with manifest details
      */
     @SuppressWarnings("HardcodedLineSeparator")
-    private String buildManifestContent() {
+    private String buildManifestSummary() {
         Map<String, String> mf = readManifestInfo();
         return "Title: " + mf.getOrDefault("Implementation-Title", "") + "\n" +
                 "Version: " + mf.getOrDefault("Implementation-Version", "") + "\n" +
