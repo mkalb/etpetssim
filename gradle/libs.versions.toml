@@ -3,6 +3,8 @@
 
 [versions]
 jspecify = "1.0.0"
+junit-jupiter = "5.14.1"
 
 [libraries]
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }

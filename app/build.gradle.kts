@@ -20,6 +20,10 @@ repositories {
 }
 
 dependencies {
+    testImplementation(libs.junit.jupiter)
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
     implementation(libs.jspecify)
 }
 
@@ -38,26 +42,21 @@ javafx {
 application {
     applicationName = baseName
     mainClass = "de.mkalb.etpetssim.AppLauncher"
-    mainModule = "de.mkalb.etpetssim"
     applicationDefaultJvmArgs = listOf(
         "--enable-native-access=javafx.graphics",
         "--enable-native-access=ALL-UNNAMED"
     )
 }
 
-testing {
-    suites {
-        val test by getting(JvmTestSuite::class) {
-            useJUnitJupiter("5.14.1")
-            targets {
-                all {
-                    testTask.configure {
-                        jvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
-                    }
-                }
-            }
-        }
-    }
+tasks.named<Test>("test") {
+    // Use JUnit Platform for unit tests.
+    useJUnitPlatform()
+    // Set JVM args for JavaFX headless testing
+    jvmArgs(
+        "--enable-native-access=ALL-UNNAMED",
+        "-Dprism.order=sw",
+        "-Djavafx.headless=true"
+    )
 }
 
 distributions {
