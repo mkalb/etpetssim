@@ -108,6 +108,7 @@ class AppLocalizationTest {
         assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.UK));
         assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.FRANCE));
         assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.CANADA_FRENCH));
+        assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromDefault(Locale.GERMAN));
         assertThrows(NullPointerException.class, () -> AppLocalization.resolveLocaleFromDefault(null));
     }
 

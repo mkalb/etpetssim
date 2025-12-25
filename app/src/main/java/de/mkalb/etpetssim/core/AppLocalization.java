@@ -36,6 +36,7 @@ public final class AppLocalization {
     }
 
     /**
+     * ONLY for testing purposes.
      * Resets the AppLocalization for testing purposes.
      * This method clears the locale and bundle, allowing for re-initialization in tests.
      */
@@ -152,12 +153,14 @@ public final class AppLocalization {
                 break;
             }
         }
-        for (CountryLocale supportedLocale : CountryLocale.values()) {
-            // It must match the language code (e.g., "en" or "de").
-            // Default locale can contain country code, but we only check the language code.
-            if (supportedLocale.languageCode().equals(defaultLocale.getLanguage())) {
-                resolvedLocale = supportedLocale.countryLocale();
-                break;
+        if (resolvedLocale == null) {
+            for (CountryLocale supportedLocale : CountryLocale.values()) {
+                // It must match the language code (e.g., "en" or "de").
+                // Default locale can contain country code, but we only check the language code.
+                if (supportedLocale.languageCode().equals(defaultLocale.getLanguage())) {
+                    resolvedLocale = supportedLocale.countryLocale();
+                    break;
+                }
             }
         }
         return Optional.ofNullable(resolvedLocale);
