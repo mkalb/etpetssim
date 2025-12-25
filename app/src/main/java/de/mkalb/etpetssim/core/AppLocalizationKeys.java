@@ -6,7 +6,10 @@ package de.mkalb.etpetssim.core;
  * This class provides a central place for referencing keys in resource bundles,
  * ensuring consistency and reducing the risk of typos throughout the codebase.
  * <p>
- * The constants are grouped by their usage context (e.g., configuration, control, observation).
+ * The constants are generally sorted alphabetically and start with a prefix indicating their
+ * usage context, followed by a descriptive name. However, this sorting is not enforced programmatically.
+ * <p>
+ * The keys correspond to entries in the localization resource files located at {@code i18n/messages_*.properties}.
  * <p>
  * This class is not intended to be instantiated.
  */
