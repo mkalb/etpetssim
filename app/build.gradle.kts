@@ -1,5 +1,3 @@
-import java.time.Instant
-
 plugins {
     application
     id("project-report")
@@ -8,7 +6,6 @@ plugins {
 
 group = "de.mkalb.etpetssim"
 version = "0.0.1-SNAPSHOT"
-val buildTimestamp = Instant.now().toString()
 val baseName = "ExtraterrestrialPetsSimulation"
 
 base {
@@ -42,10 +39,7 @@ javafx {
 application {
     applicationName = baseName
     mainClass = "de.mkalb.etpetssim.AppLauncher"
-    applicationDefaultJvmArgs = listOf(
-        "--enable-native-access=javafx.graphics",
-        "--enable-native-access=ALL-UNNAMED"
-    )
+    applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics")
 }
 
 tasks.named<Test>("test") {
@@ -83,12 +77,9 @@ tasks.jar {
         attributes(
             "Implementation-Title" to "Extraterrestrial Pets Simulation",
             "Implementation-Version" to archiveVersion,
-            "Main-Class" to application.mainClass,
-            "Main-Module" to application.mainModule,
-            "Built-By" to System.getProperty("user.name"),
-            "Build-Jdk" to System.getProperty("java.version"),
-            "Created-By" to "Gradle ${gradle.gradleVersion}",
-            "Build-Timestamp" to buildTimestamp
+            "Implementation-Vendor" to "Mathias Kalb",
+            "Implementation-URL" to "https://github.com/mkalb/etpetssim",
+            "Main-Class" to application.mainClass
         )
     }
 }
