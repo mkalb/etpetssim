@@ -161,7 +161,7 @@ public final class AppStorage {
     }
 
     /**
-     * Created a new temporary log file at the cache directory with the specified prefix and suffix.
+     * Creates a new temporary log file at the cache directory with the specified prefix and suffix.
      *
      * @param prefix the prefix for the temporary log file
      * @param suffix the suffix for the temporary log file, can be null
@@ -183,6 +183,11 @@ public final class AppStorage {
 
         /**
          * Detects the operating system based on the system property ("os.name").
+         * <ul>
+         *    <li>Returns {@link #WINDOWS} for Windows operating systems containing "win".</li>
+         *    <li>Returns {@link #MAC} for macOS operating systems containing "mac".</li>
+         *    <li>Returns {@link #LINUX} for all other operating systems.</li>
+         * </ul>
          *
          * @return the detected operating system
          */
