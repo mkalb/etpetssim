@@ -11,8 +11,8 @@ public final class AppArgs {
     /**
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
      */
-    private static final String ARGUMENTS_PATTERN = "--([a-zA-Z0-9\\-]+)(=(\\S+))?";
-    private static final int BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used to build the arguments string
+    private static final String ARGUMENT_PATTERN = "--([a-zA-Z0-9\\-]+)(=(\\S+))?";
+    private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used to build the arguments string
 
     /**
      * Map to store parsed command-line arguments.
@@ -27,7 +27,7 @@ public final class AppArgs {
     public AppArgs(String[] args) {
         Objects.requireNonNull(args, "Arguments must not be null");
         if (args.length > 0) {
-            Pattern pattern = Pattern.compile(ARGUMENTS_PATTERN);
+            Pattern pattern = Pattern.compile(ARGUMENT_PATTERN);
             for (String arg : args) {
                 Matcher matcher = pattern.matcher(arg);
                 if (matcher.matches()) {
@@ -104,7 +104,7 @@ public final class AppArgs {
 
     /**
      * Returns the integer value of the given key.
-     * If the key is not present or the value is not a valid integer, the default is returned.
+     * If the key is not present, the value is blank or the value is not a valid integer, the default is returned.
      *
      * @param key          the key to look up
      * @param defaultValue the value to return if the key is missing or invalid
@@ -165,7 +165,7 @@ public final class AppArgs {
      * @return a string containing all arguments in the format --key=value or --flag
      */
     public String argumentsAsString() {
-        StringBuilder sb = new StringBuilder(BUILDER_CAPACITY);
+        StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
         for (Map.Entry<Key, String> entry : arguments.entrySet()) {
             if (!sb.isEmpty()) {
                 sb.append(" ");
