@@ -109,8 +109,8 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         // Update scene styles -  Add common stylesheets first and then the specific simulation type stylesheet
         List<String> styles = new ArrayList<>();
-        AppResources.getCss("scene.css").ifPresent(styles::add);
-        simulationType.cssResource().ifPresent(styles::add);
+        AppResources.getCssUrl("scene.css").ifPresent(styles::add);
+        simulationType.cssUrl().ifPresent(styles::add);
         scene.getStylesheets().setAll(styles);
 
         // Update stage

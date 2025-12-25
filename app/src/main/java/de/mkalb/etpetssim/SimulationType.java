@@ -308,15 +308,17 @@ public enum SimulationType {
     }
 
     /**
-     * Resolves the CSS resource for this simulation type.
+     * Returns the full URL to the CSS resource for this simulation type.
      *
-     * @return an Optional containing the resolved CSS resource path, or empty if no CSS is defined
+     * @return an Optional containing the CSS URL, or empty if no CSS is set
+     * @see AppResources#getCssUrl(String)
+     * @see java.net.URL#toExternalForm()
      */
-    public Optional<String> cssResource() {
+    public Optional<String> cssUrl() {
         if (cssPath.isBlank()) {
             return Optional.empty();
         }
-        return AppResources.getCss(cssPath);
+        return AppResources.getCssUrl(cssPath);
     }
 
 }

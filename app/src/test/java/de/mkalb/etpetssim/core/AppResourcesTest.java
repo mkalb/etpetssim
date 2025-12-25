@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.core;
 
+import de.mkalb.FxTestSupport;
 import javafx.scene.image.Image;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ class AppResourcesTest {
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
+        FxTestSupport.ensureStarted();
     }
 
     /**
@@ -31,7 +33,6 @@ class AppResourcesTest {
      *
      * <p>If the resource bundle is not present or does not contain the expected key, the test will fail.</p>
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetBundleDefaultWithLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(TEST_LOCALE);
@@ -52,7 +53,6 @@ class AppResourcesTest {
      *
      * <p>If the resource bundle is not present or does not contain the expected key, the test will fail.</p>
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetBundleWithBaseNameAndLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, TEST_LOCALE);
@@ -74,24 +74,23 @@ class AppResourcesTest {
      *
      * <p><b>Test data prerequisites:</b></p>
      * <ul>
-     *     <li>The CSS file "scene.css" must exist in the /css/ directory.</li>
+     *     <li>The CSS file "etpetssim.css" must exist in the /css/ directory.</li>
      * </ul>
      *
      * <p>If this CSS file is not present, the test will fail.</p>
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetCss() {
-        Optional<String> cssUrlOpt = AppResources.getCss("scene.css");
+    void testGetCssUrl() {
+        Optional<String> cssUrlOpt = AppResources.getCssUrl("etpetssim.css");
         assertTrue(cssUrlOpt.isPresent(), "CSS URL should be present");
-        assertTrue(cssUrlOpt.get().endsWith("scene.css"), "CSS URL should end with 'scene.css'");
+        assertTrue(cssUrlOpt.get().endsWith("etpetssim.css"), "CSS URL should end with 'etpetssim.css'");
 
-        assertThrows(NullPointerException.class, () -> AppResources.getCss(null));
+        assertThrows(NullPointerException.class, () -> AppResources.getCssUrl(null));
     }
 
     @Test
-    void testMissingCss() {
-        Optional<String> cssUrlOpt = AppResources.getCss("missing.css");
+    void testMissingCssUrl() {
+        Optional<String> cssUrlOpt = AppResources.getCssUrl("missing.css");
         assertFalse(cssUrlOpt.isPresent(), "Missing CSS should not be present");
     }
 
@@ -105,7 +104,6 @@ class AppResourcesTest {
      *
      * <p>If this image is not present, the test will fail.</p>
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImage() {
         Optional<Image> imageOpt = AppResources.getImage("etpetssim16.png");
@@ -125,7 +123,6 @@ class AppResourcesTest {
      *
      * <p>If these images are not present, the test will fail.</p>
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImages() {
         List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
@@ -142,17 +139,22 @@ class AppResourcesTest {
         assertFalse(imageOpt.isPresent(), "Missing image should not be present");
     }
 
+    @Test
+    void testIllegalImage() {
+        Optional<Image> imageOpt = AppResources.getImage("illegal_image.png");
+        assertFalse(imageOpt.isPresent(), "Illegal image should not be present");
+    }
+
     /**
      * Tests the retrieval of a resource as an InputStream.
      *
      * <p><b>Test data prerequisites:</b></p>
      * <ul>
-     *     <li>The resource "css/scene.css" must exist in the classpath.</li>
+     *     <li>The resource "css/etpetssim.css" must exist in the classpath.</li>
      * </ul>
      *
      * <p>If this resource is not present, the test will fail.</p>
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsStream() {
         Optional<InputStream> streamOpt = AppResources.getResourceAsStream("css/etpetssim.css");
@@ -167,7 +169,6 @@ class AppResourcesTest {
         assertFalse(streamOpt.isPresent(), "Missing resource stream should not be present");
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsString() {
         Optional<String> resOpt = AppResources.getResourceAsString("LICENSE", StandardCharsets.UTF_8);
@@ -188,23 +189,22 @@ class AppResourcesTest {
      *
      * <p><b>Test data prerequisites:</b></p>
      * <ul>
-     *     <li>The resource "css/scene.css" must exist in the classpath.</li>
+     *     <li>The resource "css/etpetssim.css" must exist in the classpath.</li>
      * </ul>
      *
      * <p>If this resource is not present, the test will fail.</p>
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetResourceAsURL() {
-        Optional<URL> urlOpt = AppResources.getResourceAsURL("css/etpetssim.css");
+    void testGetResourceAsUrl() {
+        Optional<URL> urlOpt = AppResources.getResourceAsUrl("css/etpetssim.css");
         assertTrue(urlOpt.isPresent(), "URL should be present");
 
-        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsURL(null));
+        assertThrows(NullPointerException.class, () -> AppResources.getResourceAsUrl(null));
     }
 
     @Test
-    void testMissingResourceAsURL() {
-        Optional<URL> urlOpt = AppResources.getResourceAsURL("missing/file.txt");
+    void testMissingResourceAsUrl() {
+        Optional<URL> urlOpt = AppResources.getResourceAsUrl("missing/file.txt");
         assertFalse(urlOpt.isPresent(), "Missing resource URL should not be present");
     }
 

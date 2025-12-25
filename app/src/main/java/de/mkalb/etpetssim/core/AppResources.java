@@ -67,11 +67,12 @@ public final class AppResources {
     /**
      * Loads a CSS file as a URL string.
      *
-     * @param relativePath the relative path to the CSS file under /css/
+     * @param relativePath the relative path to the CSS file under "/css/", without leading slash
      * @return an Optional containing the external form of the URL
      * @see #FOLDER_CSS
+     * @see java.net.URL#toExternalForm()
      */
-    public static Optional<String> getCss(String relativePath) {
+    public static Optional<String> getCssUrl(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
         String name = "/" + FOLDER_CSS + relativePath;
         URL url = AppResources.class.getResource(name);
@@ -84,26 +85,38 @@ public final class AppResources {
 
     /**
      * Loads an image from the /images/ directory.
+     * <p>
+     * If the URL is not found or the image cannot be decoded, an empty Optional is returned.
      *
-     * @param relativePath the relative path to the image file
+     * @param relativePath the relative path to the image file, without leading slash
      * @return an Optional containing the loaded Image
      * @see #FOLDER_IMAGES
      */
     public static Optional<Image> getImage(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
         String name = "/" + FOLDER_IMAGES + relativePath;
-        InputStream stream = AppResources.class.getResourceAsStream(name);
-        if (stream == null) {
+        URL url = AppResources.class.getResource(name);
+        if (url == null) {
             AppLogger.error("Image resource not found: " + name);
             return Optional.empty();
         }
-        return Optional.of(new Image(stream));
+        // backgroundLoading=false => load/decoding completes in constructor
+        Image image = new Image(url.toExternalForm(), 0, 0,
+                true, true,
+                false);
+        if (image.isError()) {
+            AppLogger.error("Failed to decode image: " + name, image.getException());
+            return Optional.empty();
+        }
+        return Optional.of(image);
     }
 
     /**
      * Loads multiple images from the /images/ directory.
+     * <p>
+     * Images that cannot be found are skipped.
      *
-     * @param relativePaths the relative paths to the image files
+     * @param relativePaths the relative paths to the image files, without leading slash
      * @return a List of loaded Images
      * @see #FOLDER_IMAGES
      */
@@ -119,7 +132,7 @@ public final class AppResources {
     /**
      * Loads any resource as an InputStream.
      *
-     * @param relativePath the relative path to the resource
+     * @param relativePath the relative path to the resource, without leading slash
      * @return an Optional containing the InputStream
      */
     public static Optional<InputStream> getResourceAsStream(String relativePath) {
@@ -135,7 +148,7 @@ public final class AppResources {
     /**
      * Loads a resource from the classpath as a String using the specified charset.
      *
-     * @param relativePath the relative path to the resource
+     * @param relativePath the relative path to the resource, without leading slash
      * @param charset the charset to use for decoding the resource bytes
      * @return an Optional containing the resource content as a String, or Optional.empty() if not found or an error occurs
      */
@@ -157,10 +170,10 @@ public final class AppResources {
     /**
      * Loads any resource as a URL.
      *
-     * @param relativePath the relative path to the resource
+     * @param relativePath the relative path to the resource, without leading slash
      * @return an Optional containing the URL
      */
-    public static Optional<URL> getResourceAsURL(String relativePath) {
+    public static Optional<URL> getResourceAsUrl(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
         URL url = AppResources.class.getResource("/" + relativePath);
         if (url == null) {
