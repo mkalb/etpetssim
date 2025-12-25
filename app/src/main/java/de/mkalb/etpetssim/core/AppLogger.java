@@ -76,6 +76,7 @@ public final class AppLogger {
      * Initializes the AppLogger for testing purposes.
      * This method sets the log level to DEBUG and enables console output.
      * It initializes the logger only if it has not been initialized yet.
+     * It can be called multiple times without throwing an exception.
      */
     public static synchronized void initializeForTesting() {
         if (!isInitialized()) {
@@ -85,6 +86,7 @@ public final class AppLogger {
     }
 
     /**
+     * ONLY for testing purposes.
      * Resets the AppLogger singleton instance for testing purposes.
      * This method sets the logger to its default state, allowing for re-initialization in tests.
      * It resets the logger only if it has been initialized.
@@ -233,14 +235,14 @@ public final class AppLogger {
         }
         Objects.requireNonNull(logLevel, "Log level must not be null");
 
-        APP_LOGGER.logger.setUseParentHandlers(false);
+        logger.setUseParentHandlers(false);
 
         Level level = logLevel.toJavaLogLevel();
 
         // Set the log level for the logger.
-        APP_LOGGER.logger.setLevel(level);
+        logger.setLevel(level);
 
-        List<StreamHandler> logHandlers = new ArrayList<>();
+        List<Handler> logHandlers = new ArrayList<>();
 
         // ConsoleHandler for console output.
         if (useConsole) {
@@ -249,7 +251,7 @@ public final class AppLogger {
             try {
                 consoleHandler.setEncoding(StandardCharsets.UTF_8.name());
             } catch (UnsupportedEncodingException e) {
-                APP_LOGGER.logger.log(Level.SEVERE, "AppLogger: Failed to set encoding for console handler", e);
+                logger.log(Level.SEVERE, "AppLogger: Failed to set encoding for console handler", e);
             }
             consoleHandler.setLevel(level);
             logHandlers.add(consoleHandler);
@@ -266,31 +268,31 @@ public final class AppLogger {
                     fileHandler.setLevel(level);
                     logHandlers.add(fileHandler);
                 } else {
-                    APP_LOGGER.logger.severe("AppLogger: Parent directory for log file does not exist or is not writable: " + logPath);
+                    logger.severe("AppLogger: Parent directory for log file does not exist or is not writable: " + logPath);
                 }
             } catch (IOException e) {
-                APP_LOGGER.logger.log(Level.SEVERE, "AppLogger: Failed to create log file handler: " + logPath, e);
+                logger.log(Level.SEVERE, "AppLogger: Failed to create log file handler: " + logPath, e);
             }
         }
 
         if (logHandlers.isEmpty()) {
-            APP_LOGGER.logger.warning("AppLogger: No logging handlers were created.");
+            logger.warning("AppLogger: No logging handlers were created.");
 
             // Remove all existing handlers.
-            for (Handler handler : APP_LOGGER.logger.getHandlers()) {
-                APP_LOGGER.logger.removeHandler(handler);
+            for (Handler handler : logger.getHandlers()) {
+                logger.removeHandler(handler);
             }
 
             // Disable all logging.
-            APP_LOGGER.logger.setLevel(Level.OFF);
+            logger.setLevel(Level.OFF);
         } else {
             // Remove all existing handlers from the logger before adding new ones.
-            for (Handler handler : APP_LOGGER.logger.getHandlers()) {
-                APP_LOGGER.logger.removeHandler(handler);
+            for (Handler handler : logger.getHandlers()) {
+                logger.removeHandler(handler);
             }
 
             // Add all new handlers to the logger.
-            logHandlers.forEach(APP_LOGGER.logger::addHandler);
+            logHandlers.forEach(logger::addHandler);
             if (logLevel == LogLevel.DEBUG) {
                 logHandlers.forEach(handler -> debug("AppLogger: Added handler: " + handler.getClass().getSimpleName()));
             }
@@ -340,20 +342,20 @@ public final class AppLogger {
     private static class AppLogFormatter extends Formatter {
 
         private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
-        private static final int BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used in formatting.
-        private static final int LEVEL_PADDING = 7; // Padding for log level alignment.
+        private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used in formatting.
+        private static final int LOG_LEVEL_PADDING_WIDTH = 7; // Padding for log level alignment.
 
         @SuppressWarnings("StringConcatenationMissingWhitespace")
         @Override
         public String format(LogRecord record) {
-            StringBuilder sb = new StringBuilder(BUILDER_CAPACITY);
+            StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
 
             // Time.
             String time = TIME_FORMATTER.format(LocalTime.ofInstant(Instant.ofEpochMilli(record.getMillis()), ZoneId.systemDefault()));
             sb.append("[").append(time).append("] ");
 
             // Log level.
-            sb.append("[").append(String.format("%-" + LEVEL_PADDING + "s", record.getLevel().getName())).append("] ");
+            sb.append("[").append(String.format("%-" + LOG_LEVEL_PADDING_WIDTH + "s", record.getLevel().getName())).append("] ");
 
             // Message.
             sb.append(formatMessage(record)).append(System.lineSeparator());
