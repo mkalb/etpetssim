@@ -100,7 +100,7 @@ public enum SimulationType {
      * <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake (video game genre)</a>
      */
     SNAKE(
-            false,
+            true,
             true,
             "simulation.snake.title",
             "simulation.snake.subtitle",
