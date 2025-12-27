@@ -145,6 +145,43 @@ public final class GridInitializers {
     }
 
     /**
+     * Returns an initializer that places all given entities onto random eligible grid positions.
+     *
+     * <p>The initializer first determines all grid cells whose current entity satisfies
+     * {@code canReplaceExisting}. From these eligible cells, a random ordering is created using
+     * {@code random}. The entities from {@code entities} are then placed sequentially (in list order)
+     * onto the first {@code entities.size()} positions of that shuffled cell list.</p>
+     *
+     * <p>The initializer performs a fail-fast capacity check before mutating the model: if fewer
+     * eligible cells exist than entities to place, an {@link IllegalStateException} is thrown and
+     * no entities are placed.</p>
+     *
+     * @param entities the entities to place; each list element is placed exactly once
+     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
+     * @param random             the random number generator
+     * @param <T> the grid entity type
+     * @return a {@link GridInitializer} that places the given entities at random eligible positions
+     * @throws IllegalStateException if the grid contains fewer eligible cells than {@code entities.size()}
+     */
+    public static <T extends GridEntity> GridInitializer<T> placeAllAtRandomPositions(List<T> entities,
+                                                                                      Predicate<T> canReplaceExisting,
+                                                                                      Random random) {
+        return model -> {
+            var freeCoordinates = new ArrayList<>(model.filteredCoordinates(canReplaceExisting));
+            if (freeCoordinates.size() < entities.size()) {
+                throw new IllegalStateException("Unable to place all entities. Needed " + entities.size() + " replaceable cells, but found " + freeCoordinates.size() + ".");
+            }
+
+            Collections.shuffle(freeCoordinates, random);
+
+            for (int i = 0; i < entities.size(); i++) {
+                GridCoordinate coordinate = freeCoordinates.get(i);
+                model.setEntity(coordinate, entities.get(i));
+            }
+        };
+    }
+
+    /**
      * Returns an initializer that places a fixed number of entities at random positions.
      * <p>
      * Placement is only performed if the {@code canReplaceExisting} predicate returns {@code true}
