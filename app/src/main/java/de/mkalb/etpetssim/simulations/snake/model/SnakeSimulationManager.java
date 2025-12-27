@@ -33,7 +33,7 @@ public final class SnakeSimulationManager
             }
             return Integer.MAX_VALUE;
         });
-        var agentStepLogic = new SnakeStepLogic();
+        var agentStepLogic = new SnakeStepLogic(structure, config, random);
         var runner = new AsynchronousStepRunner<>(model, SnakeEntity::isAgent, agentOrderingStrategy, agentStepLogic);
         var terminationCondition = new SnakeTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
@@ -55,7 +55,7 @@ public final class SnakeSimulationManager
         wallInit.initialize(model);
         // initialize GROWTH_FOOD
         GridInitializer<SnakeEntity> foodInit = GridInitializers.placeRandomCounted(
-                5,
+                20,
                 () -> SnakeConstantEntity.GROWTH_FOOD,
                 SnakeEntity::isGround,
                 random);
