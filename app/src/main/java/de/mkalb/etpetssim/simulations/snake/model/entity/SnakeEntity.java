@@ -13,4 +13,8 @@ public sealed interface SnakeEntity extends GridEntity
 
     boolean isAgent();
 
+    default boolean isGround() {
+        return descriptorId().equals(DESCRIPTOR_ID_GROUND);
+    }
+
 }
