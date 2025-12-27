@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.AgentStepLogic;
@@ -7,6 +8,7 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
@@ -38,7 +40,8 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         // 1. Find possible moves (ground or food)
         List<GridCoordinate> groundCoordinates = new ArrayList<>();
         List<GridCoordinate> foodCoordinates = new ArrayList<>();
-        for (var result : CellNeighborhoods.neighborEdgeResults(currentCoordinate, config.neighborhoodMode(), structure)) {
+        Collection<EdgeBehaviorResult> edgeBehaviorResults = CellNeighborhoods.neighborEdgeResults(currentCoordinate, config.neighborhoodMode(), structure);
+        for (var result : edgeBehaviorResults) {
             if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
                 SnakeEntity neighborEntity = model.getEntity(result.mapped());
                 if (neighborEntity.isGround()) {
@@ -70,12 +73,18 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             // Remove tail segment if not growing
             t.ifPresent(coordinate -> model.setEntity(coordinate, SnakeConstantEntity.GROUND));
         } else {
-            snakeHead.die(stepIndex);
+            AppLogger.info("Snake dies: " + agentCell);
+            // TODO: Possible improvement: Respawn a step later instead of immediately. The snake head needs a death state then. Movement is then not possible, and it should be rendered differently.
+            model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
+                    model.setEntity(freeCoordinate, snakeHead));
             model.setEntityToDefault(currentCoordinate);
-            // TODO Respawn snake head at random ground position
+            snakeHead.currentSegments().forEach(model::setEntityToDefault);
+            snakeHead.die(config.initialPendingGrowth(), stepIndex);
+            AppLogger.info("Snake respawned: " + snakeHead);
         }
         if (foodConsumed) {
-            // TODO Spawn new Food at random ground position
+            model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
+                    model.setEntity(freeCoordinate, SnakeConstantEntity.GROWTH_FOOD));
         }
         // 4. Update context/statistics
     }

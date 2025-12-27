@@ -81,9 +81,9 @@ public final class SnakeHead implements SnakeEntity {
         }
     }
 
-    public void die(int stepIndexOfRespawn) {
+    public void die(int initialPendingGrowth, int stepIndexOfRespawn) {
         snakeSegments.clear();
-        pendingGrowth = 0;
+        pendingGrowth = initialPendingGrowth;
         deaths++;
         stepIndexOfSpawn = stepIndexOfRespawn;
     }
