@@ -91,6 +91,15 @@ public final class SnakeMainView
                             Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD))
                     .forEach(coordinate ->
                             basePainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), 1.0d, StrokeType.INSIDE));
+
+        // TODO Only for debugging purposes, remove later
+        currentModel.filteredCoordinates(e ->
+                            Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT))
+                    .forEach(coordinate ->
+                            basePainter.drawCellInnerCircle(coordinate, Color.DARKBLUE, null,
+                                    0.0d,
+                                    StrokeType.INSIDE));
+
         currentModel.filteredCells(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD))
                     .forEach(cell -> {
                         if (cell.entity() instanceof SnakeHead head) {
