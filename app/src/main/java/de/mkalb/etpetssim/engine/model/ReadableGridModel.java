@@ -189,4 +189,20 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
                 .toList();
     }
 
+    /**
+     * Selects a random coordinate from the grid that contains the default entity.
+     *
+     * @param random the random number generator to use
+     * @return an Optional containing a random default coordinate, or empty if none exist
+     */
+    default Optional<GridCoordinate> randomDefaultCoordinate(Random random) {
+        List<GridCoordinate> defaults = structure().coordinatesStream()
+                                                   .filter(this::isDefaultEntity)
+                                                   .toList();
+        if (defaults.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(defaults.get(random.nextInt(defaults.size())));
+    }
+
 }
