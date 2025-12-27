@@ -42,7 +42,7 @@ public final class SnakeConfigViewModel
     );
 
     // Initialization
-    private static final int INITIAL_PENDING_GROWTH_INITIAL = 0;
+    private static final int INITIAL_PENDING_GROWTH_INITIAL = 2;
     private static final int INITIAL_PENDING_GROWTH_MIN = 0;
     private static final int INITIAL_PENDING_GROWTH_MAX = 10;
     private static final int INITIAL_PENDING_GROWTH_STEP = 1;
