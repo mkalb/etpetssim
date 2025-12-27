@@ -145,6 +145,33 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     }
 
     /**
+     * Returns a list of grid coordinates whose entities match the given predicate.
+     * This avoids creating {@link GridCell} instances.
+     *
+     * @param entityPredicate the predicate to filter entities
+     * @return a list of matching coordinates
+     */
+    default List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate) {
+        return structure().coordinatesStream()
+                          .filter(c -> entityPredicate.test(getEntity(c)))
+                          .toList();
+    }
+
+    /**
+     * Returns a list of grid cells whose entities match the given predicate.
+     * <p>
+     * This method filters all grid cells using the specified {@code entityPredicate}.
+     *
+     * @param entityPredicate the predicate to filter grid cell entities
+     * @return a list of filtered {@link GridCell} objects
+     */
+    default List<GridCell<T>> filteredCells(Predicate<T> entityPredicate) {
+        return cells()
+                .filter(cell -> entityPredicate.test(cell.entity()))
+                .toList();
+    }
+
+    /**
      * Returns a list of grid cells whose entities match the given predicate,
      * ordered according to the provided comparator.
      * <p>

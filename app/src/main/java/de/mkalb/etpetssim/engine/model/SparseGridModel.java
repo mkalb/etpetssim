@@ -106,14 +106,75 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
     }
 
     @Override
-    public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
-        List<GridCell<T>> result = new ArrayList<>();
-        for (Map.Entry<GridCoordinate, T> entry : data.entrySet()) {
-            T entity = entry.getValue();
-            if (entityPredicate.test(entity)) {
-                result.add(new GridCell<>(entry.getKey(), entity));
+    public List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate) {
+        boolean includeDefault = entityPredicate.test(defaultEntity);
+
+        // Fast path: default does NOT match -> only stored non-default entries can match.
+        if (!includeDefault) {
+            if (data.isEmpty()) {
+                return List.of();
+            }
+            List<GridCoordinate> result = new ArrayList<>(data.size());
+            for (Map.Entry<GridCoordinate, T> entry : data.entrySet()) {
+                T entity = entry.getValue();
+                if (entityPredicate.test(entity)) {
+                    result.add(entry.getKey());
+                }
+            }
+            return result;
+        }
+
+        // Default matches: scan full grid; default cells are included without extra predicate tests.
+        List<GridCoordinate> result = new ArrayList<>(structure.size().area());
+        for (GridCoordinate coordinate : structure.coordinatesList()) {
+            T entity = data.get(coordinate);
+            if (entity == null) {
+                result.add(coordinate);
+            } else if (entityPredicate.test(entity)) {
+                result.add(coordinate);
             }
         }
+        return result;
+    }
+
+    @Override
+    public List<GridCell<T>> filteredCells(Predicate<T> entityPredicate) {
+        boolean includeDefault = entityPredicate.test(defaultEntity);
+
+        // Fast path: default does NOT match -> only stored non-default entries can match.
+        if (!includeDefault) {
+            if (data.isEmpty()) {
+                return List.of();
+            }
+            List<GridCell<T>> result = new ArrayList<>(data.size());
+            for (Map.Entry<GridCoordinate, T> entry : data.entrySet()) {
+                T entity = entry.getValue();
+                if (entityPredicate.test(entity)) {
+                    result.add(new GridCell<>(entry.getKey(), entity));
+                }
+            }
+            return result;
+        }
+
+        // Default matches: all coordinates NOT present in data are included without further checks.
+        List<GridCell<T>> result = new ArrayList<>(structure.size().area());
+        for (GridCoordinate coordinate : structure.coordinatesList()) {
+            T entity = data.get(coordinate);
+            if (entity == null) {
+                result.add(new GridCell<>(coordinate, defaultEntity));
+            } else {
+                if (entityPredicate.test(entity)) {
+                    result.add(new GridCell<>(coordinate, entity));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+        List<GridCell<T>> result = filteredCells(entityPredicate);
         result.sort(cellOrdering);
         return result;
     }

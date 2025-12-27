@@ -127,18 +127,43 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
         return count;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+    public List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate) {
+        List<GridCoordinate> result = new ArrayList<>();
+        int width = structure.size().width();
+        int height = structure.size().height();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                @SuppressWarnings("unchecked")
+                T entity = (T) data[y][x];
+                if (entityPredicate.test(entity)) {
+                    result.add(new GridCoordinate(x, y));
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<GridCell<T>> filteredCells(Predicate<T> entityPredicate) {
         List<GridCell<T>> result = new ArrayList<>();
-        for (int y = 0; y < structure.size().height(); y++) {
-            for (int x = 0; x < structure.size().width(); x++) {
+        int width = structure.size().width();
+        int height = structure.size().height();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                @SuppressWarnings("unchecked")
                 T entity = (T) data[y][x];
                 if (entityPredicate.test(entity)) {
                     result.add(new GridCell<>(new GridCoordinate(x, y), entity));
                 }
             }
         }
+        return result;
+    }
+
+    @Override
+    public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+        List<GridCell<T>> result = filteredCells(entityPredicate);
         result.sort(cellOrdering);
         return result;
     }
