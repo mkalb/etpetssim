@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
@@ -10,6 +11,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
+import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
@@ -77,6 +79,31 @@ public final class SnakeMainView
         }
 
         basePainter.fillCanvasBackground(backgroundPaint);
+
+        var wallDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
+        var growthFoodDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
+
+        currentModel.filteredCoordinates(e ->
+                            Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_WALL))
+                    .forEach(coordinate ->
+                            basePainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), 1.0d));
+        currentModel.filteredCoordinates(e ->
+                            Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD))
+                    .forEach(coordinate ->
+                            basePainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), 1.0d, StrokeType.INSIDE));
+        currentModel.filteredCells(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD))
+                    .forEach(cell -> {
+                        if (cell.entity() instanceof SnakeHead head) {
+                            // TODO Choose colors based on snake ID.
+                            Color snakeHeadColor = Color.LIGHTBLUE;
+                            Color snakeSegmentColor = Color.BLUE;
+                            for (GridCoordinate coordinate : head.currentSegments()) {
+                                basePainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColor, 1.0d);
+                            }
+                            basePainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColor, 2.0d,
+                                    StrokeType.OUTSIDE);
+                        }
+                    });
     }
 
     @Override
