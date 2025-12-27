@@ -22,8 +22,27 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
 
     private final WritableGridModel<T> model;
     private final Predicate<T> agentPredicate;
-    private final Comparator<GridCell<T>> agentOrderingStrategy;
+    private final Function<C, Comparator<GridCell<T>>> agentOrderingStrategyProvider;
     private final AgentStepLogic<T, C> agentStepLogic;
+
+    /**
+     * Constructs a new {@code AsynchronousStepRunner} with the given grid model, agent predicate,
+     * agent ordering strategy, and agent step logic.
+     *
+     * @param model                 the grid model to operate on
+     * @param agentPredicate        predicate to identify agent entities in the grid
+     * @param agentOrderingStrategyProvider function providing comparator defining the order in which agent cells are processed based on the context
+     * @param agentStepLogic        logic to apply to each agent cell
+     */
+    public AsynchronousStepRunner(WritableGridModel<T> model,
+                                  Predicate<T> agentPredicate,
+                                  Function<C, Comparator<GridCell<T>>> agentOrderingStrategyProvider,
+                                  AgentStepLogic<T, C> agentStepLogic) {
+        this.model = model;
+        this.agentPredicate = agentPredicate;
+        this.agentOrderingStrategyProvider = agentOrderingStrategyProvider;
+        this.agentStepLogic = agentStepLogic;
+    }
 
     /**
      * Constructs a new {@code AsynchronousStepRunner} with the given grid model, agent predicate,
@@ -38,10 +57,7 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
                                   Predicate<T> agentPredicate,
                                   Comparator<GridCell<T>> agentOrderingStrategy,
                                   AgentStepLogic<T, C> agentStepLogic) {
-        this.model = model;
-        this.agentPredicate = agentPredicate;
-        this.agentOrderingStrategy = agentOrderingStrategy;
-        this.agentStepLogic = agentStepLogic;
+        this(model, agentPredicate, _ -> agentOrderingStrategy, agentStepLogic);
     }
 
     /**
@@ -55,6 +71,7 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      */
     @Override
     public void performStep(int stepIndex, C context) {
+        Comparator<GridCell<T>> agentOrderingStrategy = agentOrderingStrategyProvider.apply(context);
         List<GridCell<T>> orderedAgentCells = model.filteredAndSortedCells(agentPredicate, agentOrderingStrategy);
         for (GridCell<T> agentCell : orderedAgentCells) {
             agentStepLogic.performAgentStep(agentCell, model, stepIndex, context);
