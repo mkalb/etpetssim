@@ -65,14 +65,19 @@ public final class SnakeHead implements SnakeEntity {
         return ageAtStepIndex(stepCount - 1);
     }
 
-    public void move(GridCoordinate lastHeaderCoordinate, int additionalGrowth) {
-        snakeSegments.addFirst(lastHeaderCoordinate);
+    public List<GridCoordinate> currentSegments() {
+        return List.copyOf(snakeSegments);
+    }
+
+    public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate, int additionalGrowth) {
+        snakeSegments.addFirst(lastHeadCoordinate);
         pendingGrowth += additionalGrowth;
         if (pendingGrowth > 0) {
             pendingGrowth--;
+            return Optional.empty();
         } else {
-            snakeSegments.removeLast();
             pendingGrowth = 0; // Ensure non-negative
+            return Optional.of(snakeSegments.removeLast());
         }
     }
 
