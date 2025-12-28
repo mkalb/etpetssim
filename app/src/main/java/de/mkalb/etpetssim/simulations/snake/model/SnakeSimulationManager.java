@@ -42,9 +42,7 @@ public final class SnakeSimulationManager
 
         initializeGrid(config, model, random);
 
-        statistics.updateInitialCells(
-                config.initialSnakes(),
-                config.initialFoodCells());
+        updateInitialStatistics(model);
     }
 
     private void initializeGrid(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
@@ -68,9 +66,10 @@ public final class SnakeSimulationManager
         snakeInit.initialize(model);
 
         // initialize GROWTH_FOOD
-        // TODO Count free cells (ground / default) and limit initial food cells to that count
-        GridInitializer<SnakeEntity> foodInit = GridInitializers.placeRandomCounted(
-                config.initialFoodCells(),
+        int freeGroundCells = (int) model.countEntities(SnakeEntity::isGround);
+        int initialFoodCells = Math.min(config.initialFoodCells(), freeGroundCells);
+        GridInitializer<SnakeEntity> foodInit = GridInitializers.placeShuffledCounted(
+                initialFoodCells,
                 () -> SnakeConstantEntity.GROWTH_FOOD,
                 SnakeEntity::isGround,
                 random);
@@ -92,6 +91,14 @@ public final class SnakeSimulationManager
         statistics.update(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
+    }
+
+    private void updateInitialStatistics(ReadableGridModel<SnakeEntity> model) {
+        int initialSnakes = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD));
+        int initialFoodCells = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD));
+        statistics.updateInitialCells(
+                initialSnakes,
+                initialFoodCells);
     }
 
     @Override
