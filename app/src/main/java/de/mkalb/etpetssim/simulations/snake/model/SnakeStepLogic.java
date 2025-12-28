@@ -31,7 +31,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
     public void performAgentStep(GridCell<SnakeEntity> agentCell,
                                  WritableGridModel<SnakeEntity> model,
                                  int stepIndex,
-                                 SnakeStatistics context) {
+                                 SnakeStatistics statistics) {
         if (!(agentCell.entity() instanceof SnakeHead snakeHead)) {
             throw new IllegalArgumentException("Provided cell does not contain a SnakeHead entity");
         }
@@ -87,6 +87,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             }
         } else {
             snakeHead.die();
+            statistics.incrementDeaths();
         }
 
         // 4. Update context/statistics

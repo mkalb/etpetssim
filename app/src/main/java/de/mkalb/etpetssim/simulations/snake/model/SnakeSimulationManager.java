@@ -54,15 +54,17 @@ public final class SnakeSimulationManager
                 random);
         wallInit.initialize(model);
         // initialize GROWTH_FOOD
+        int initialFoodCells = 20;
         GridInitializer<SnakeEntity> foodInit = GridInitializers.placeRandomCounted(
-                20,
+                initialFoodCells,
                 () -> SnakeConstantEntity.GROWTH_FOOD,
                 SnakeEntity::isGround,
                 random);
         foodInit.initialize(model);
         // initialize SNAKE_HEAD
+        int initialSnakeHeads = 10;
         List<SnakeEntity> snakeHeads = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < initialSnakeHeads; i++) {
             snakeHeads.add(new SnakeHead(i, config.initialPendingGrowth(), -1));
         }
         GridInitializer<SnakeEntity> snakeInit = GridInitializers.placeAllAtRandomPositions(
@@ -70,6 +72,10 @@ public final class SnakeSimulationManager
                 SnakeEntity::isGround,
                 random);
         snakeInit.initialize(model);
+
+        statistics.updateInitialCells(
+                initialSnakeHeads,
+                initialFoodCells);
     }
 
     @Override

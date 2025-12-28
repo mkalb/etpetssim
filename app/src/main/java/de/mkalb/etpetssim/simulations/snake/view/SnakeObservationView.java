@@ -18,10 +18,16 @@ public final class SnakeObservationView
         extends AbstractObservationView<SnakeStatistics, DefaultObservationViewModel<SnakeEntity, SnakeStatistics>> {
 
     static final String SNAKE_OBSERVATION_TOTAL_CELLS = "snake.observation.cells.total";
+    static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
+    static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
+    static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
     static final String SNAKE_OBSERVATION_COORDINATE = "snake.observation.coordinate";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
+    private final Label snakeHeadCells = new Label();
+    private final Label foodCellsLabel = new Label();
+    private final Label deathsLabel = new Label();
     private final Label coordinateLabel = new Label();
 
     private @Nullable NumberFormat intFormat;
@@ -51,11 +57,17 @@ public final class SnakeObservationView
         String[] nameKeys = {
                 AppLocalizationKeys.OBSERVATION_STEP,
                 SNAKE_OBSERVATION_TOTAL_CELLS,
+                SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
+                SNAKE_OBSERVATION_FOOD_CELLS,
+                SNAKE_OBSERVATION_DEATHS,
                 SNAKE_OBSERVATION_COORDINATE
         };
         Label[] valueLabels = {
                 stepCountLabel,
                 totalCellsLabel,
+                snakeHeadCells,
+                foodCellsLabel,
+                deathsLabel,
                 coordinateLabel
         };
 
@@ -71,10 +83,16 @@ public final class SnakeObservationView
         if (statistics.isPresent() && (intFormat != null)) {
             stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
             totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
+            snakeHeadCells.setText(intFormat.format(statistics.get().getSnakeHeadCells()));
+            foodCellsLabel.setText(intFormat.format(statistics.get().getFoodCells()));
+            deathsLabel.setText(intFormat.format(statistics.get().getDeaths()));
         } else {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
             stepCountLabel.setText(valueUnknown);
             totalCellsLabel.setText(valueUnknown);
+            snakeHeadCells.setText(valueUnknown);
+            foodCellsLabel.setText(valueUnknown);
+            deathsLabel.setText(valueUnknown);
         }
     }
 
