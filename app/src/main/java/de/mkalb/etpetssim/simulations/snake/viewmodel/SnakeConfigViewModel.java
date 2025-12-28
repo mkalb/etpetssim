@@ -42,13 +42,13 @@ public final class SnakeConfigViewModel
     );
 
     // Initialization
-    private static final int INITIAL_FOOD_CELLS_INITIAL = 20;
+    private static final int INITIAL_FOOD_CELLS_INITIAL = 10;
     private static final int INITIAL_FOOD_CELLS_MIN = 0;
-    private static final int INITIAL_FOOD_CELLS_MAX = 10_000;
+    private static final int INITIAL_FOOD_CELLS_MAX = 100;
     private static final int INITIAL_FOOD_CELLS_STEP = 1;
-    private static final int INITIAL_SNAKES_INITIAL = 4;
+    private static final int INITIAL_SNAKES_INITIAL = 10;
     private static final int INITIAL_SNAKES_MIN = 1;
-    private static final int INITIAL_SNAKES_MAX = 16;
+    private static final int INITIAL_SNAKES_MAX = 100;
     private static final int INITIAL_SNAKES_STEP = 1;
     private static final int INITIAL_PENDING_GROWTH_INITIAL = 2;
     private static final int INITIAL_PENDING_GROWTH_MIN = 0;
