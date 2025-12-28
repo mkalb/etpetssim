@@ -105,10 +105,10 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                                                           List<GridCoordinate> foodCoordinates) {
 
         if (!foodCoordinates.isEmpty()) {
-            return Optional.of(foodCoordinates.getFirst());
+            return Optional.of(foodCoordinates.get(random.nextInt(foodCoordinates.size())));
         } else if (!groundCoordinates.isEmpty()) {
             // Choose ground
-            return Optional.of(groundCoordinates.getFirst());
+            return Optional.of(groundCoordinates.get(random.nextInt(groundCoordinates.size())));
         }
         return Optional.empty();
     }
