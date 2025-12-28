@@ -12,6 +12,7 @@ public final class SnakeHead implements SnakeEntity {
     private int pendingGrowth;
     private int deaths;
     private int stepIndexOfSpawn;
+    private boolean dead;
 
     public SnakeHead(int id,
                      int initialPendingGrowth,
@@ -24,6 +25,7 @@ public final class SnakeHead implements SnakeEntity {
         pendingGrowth = initialPendingGrowth;
         deaths = 0;
         this.stepIndexOfSpawn = stepIndexOfSpawn;
+        dead = false;
     }
 
     /**
@@ -65,6 +67,10 @@ public final class SnakeHead implements SnakeEntity {
         return ageAtStepIndex(stepCount - 1);
     }
 
+    public boolean isDead() {
+        return dead;
+    }
+
     public List<GridCoordinate> currentSegments() {
         return List.copyOf(snakeSegments);
     }
@@ -81,10 +87,15 @@ public final class SnakeHead implements SnakeEntity {
         }
     }
 
-    public void die(int initialPendingGrowth, int stepIndexOfRespawn) {
+    public void die() {
+        dead = true;
+        deaths++;
+    }
+
+    public void respawn(int initialPendingGrowth, int stepIndexOfRespawn) {
+        dead = false;
         snakeSegments.clear();
         pendingGrowth = initialPendingGrowth;
-        deaths++;
         stepIndexOfSpawn = stepIndexOfRespawn;
     }
 
@@ -95,6 +106,7 @@ public final class SnakeHead implements SnakeEntity {
                 ", pendingGrowth=" + pendingGrowth +
                 ", deaths=" + deaths +
                 ", stepIndexOfSpawn=" + stepIndexOfSpawn +
+                ", dead=" + dead +
                 ", snakeSegments=" + snakeSegments +
                 '}';
     }

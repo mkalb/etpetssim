@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
-import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.AgentStepLogic;
@@ -37,6 +36,15 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             throw new IllegalArgumentException("Provided cell does not contain a SnakeHead entity");
         }
         GridCoordinate currentCoordinate = agentCell.coordinate();
+
+        if (snakeHead.isDead()) {
+            model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
+                    model.setEntity(freeCoordinate, snakeHead));
+            model.setEntityToDefault(currentCoordinate);
+            snakeHead.currentSegments().forEach(model::setEntityToDefault);
+            snakeHead.respawn(config.initialPendingGrowth(), stepIndex);
+            return;
+        }
         // 1. Find possible moves (ground or food)
         List<GridCoordinate> groundCoordinates = new ArrayList<>();
         List<GridCoordinate> foodCoordinates = new ArrayList<>();
@@ -72,20 +80,15 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             model.setEntity(currentCoordinate, SnakeConstantEntity.SNAKE_SEGMENT);
             // Remove tail segment if not growing
             t.ifPresent(coordinate -> model.setEntity(coordinate, SnakeConstantEntity.GROUND));
+
+            if (foodConsumed) {
+                model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
+                        model.setEntity(freeCoordinate, SnakeConstantEntity.GROWTH_FOOD));
+            }
         } else {
-            AppLogger.info("Snake dies: " + agentCell);
-            // TODO: Possible improvement: Respawn a step later instead of immediately. The snake head needs a death state then. Movement is then not possible, and it should be rendered differently.
-            model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
-                    model.setEntity(freeCoordinate, snakeHead));
-            model.setEntityToDefault(currentCoordinate);
-            snakeHead.currentSegments().forEach(model::setEntityToDefault);
-            snakeHead.die(config.initialPendingGrowth(), stepIndex);
-            AppLogger.info("Snake respawned: " + snakeHead);
+            snakeHead.die();
         }
-        if (foodConsumed) {
-            model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
-                    model.setEntity(freeCoordinate, SnakeConstantEntity.GROWTH_FOOD));
-        }
+
         // 4. Update context/statistics
     }
 

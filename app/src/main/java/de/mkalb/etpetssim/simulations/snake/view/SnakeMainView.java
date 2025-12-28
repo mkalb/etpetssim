@@ -104,12 +104,12 @@ public final class SnakeMainView
                     .forEach(cell -> {
                         if (cell.entity() instanceof SnakeHead head) {
                             // TODO Choose colors based on snake ID.
-                            Color snakeHeadColor = Color.LIGHTBLUE;
-                            Color snakeSegmentColor = Color.BLUE;
+                            Color snakeHeadColor = head.isDead() ? Color.PINK : Color.LIGHTBLUE;
+                            Color snakeSegmentColor = head.isDead() ? Color.RED : Color.BLUE;
                             for (GridCoordinate coordinate : head.currentSegments()) {
                                 basePainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColor, 1.0d);
                             }
-                            basePainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColor, 2.0d,
+                            basePainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColor, 1.0d,
                                     StrokeType.OUTSIDE);
                         }
                     });
