@@ -36,6 +36,12 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         GridCoordinate currentCoordinate = agentCell.coordinate();
 
         if (snakeHead.isDead()) {
+            if (config.deathMode() == SnakeDeathMode.PERMADEATH) {
+                model.setEntityToDefault(currentCoordinate);
+                snakeHead.currentSegments().forEach(model::setEntityToDefault);
+                statistics.decreaseSnakeHeadCells();
+                return;
+            }
             Optional<GridCoordinate> freeCoordinate = model.randomDefaultCoordinate(random);
 
             model.setEntityToDefault(currentCoordinate);
