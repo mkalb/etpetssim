@@ -61,10 +61,10 @@ public final class SnakeMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<SnakeEntity> oldGridCell,
                                           @Nullable GridCell<SnakeEntity> newGridCell) {
-        if ((oldGridCell != null) && oldGridCell.entity().isAgent()) {
+        if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
-        if ((newGridCell != null) && newGridCell.entity().isAgent()) {
+        if (newGridCell != null) {
             painter.drawCellOuterCircle(newGridCell.coordinate(), null,
                     SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
                     StrokeType.OUTSIDE);
