@@ -3,9 +3,7 @@ package de.mkalb.etpetssim.simulations.snake.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
+import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
@@ -57,34 +55,40 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             return;
         }
         // 1. Find possible moves (ground or food)
-        List<GridCoordinate> groundCoordinates = new ArrayList<>();
-        List<GridCoordinate> foodCoordinates = new ArrayList<>();
-        Collection<EdgeBehaviorResult> edgeBehaviorResults = CellNeighborhoods.neighborEdgeResults(currentCoordinate, config.neighborhoodMode(), structure);
-        for (var result : edgeBehaviorResults) {
-            if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
-                SnakeEntity neighborEntity = model.getEntity(result.mapped());
-                if (neighborEntity.isGround()) {
-                    groundCoordinates.add(result.mapped());
-                } else if (Objects.equals(neighborEntity.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD)) {
-                    foodCoordinates.add(result.mapped());
+        List<CellNeighborWithEdgeBehavior> groundNeighbors = new ArrayList<>();
+        List<CellNeighborWithEdgeBehavior> foodNeighbors = new ArrayList<>();
+        Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> cellNeighborsWithEdgeBehavior = CellNeighborhoods.cellNeighborsWithEdgeBehavior(currentCoordinate, config.neighborhoodMode(), structure);
+        for (List<CellNeighborWithEdgeBehavior> cellNeighborWithEdgeBehaviorList : cellNeighborsWithEdgeBehavior.values()) {
+            if (cellNeighborWithEdgeBehaviorList.size() == 1) {
+                CellNeighborWithEdgeBehavior cellNeighborWithEdgeBehavior = cellNeighborWithEdgeBehaviorList.getFirst();
+                if ((cellNeighborWithEdgeBehavior.edgeBehaviorAction() == EdgeBehaviorAction.VALID) || (cellNeighborWithEdgeBehavior.edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED)) {
+                    SnakeEntity neighborEntity = model.getEntity(cellNeighborWithEdgeBehavior.mappedNeighborCoordinate());
+                    if (neighborEntity.isGround()) {
+                        groundNeighbors.add(cellNeighborWithEdgeBehavior);
+                    } else if (Objects.equals(neighborEntity.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD)) {
+                        foodNeighbors.add(cellNeighborWithEdgeBehavior);
+                    }
                 }
+            } else {
+                throw new IllegalStateException("Multiple edge behaviors for the same neighbor coordinate. " + cellNeighborsWithEdgeBehavior);
             }
         }
         // 2. Choose move
-        Optional<GridCoordinate> newCoordinate = chooseMoveCoordinate(snakeHead, model,
-                groundCoordinates, foodCoordinates);
+        Optional<MoveDecision> optionalMoveDecision = chooseMoveCoordinate(snakeHead, model,
+                groundNeighbors, foodNeighbors);
         // 3. Update model
-        if (newCoordinate.isPresent()) {
+        if (optionalMoveDecision.isPresent()) {
+            MoveDecision moveDecision = optionalMoveDecision.get();
             int additionalGrowth = 0;
             boolean foodConsumed = false;
 
-            if (foodCoordinates.contains(newCoordinate.get())) {
+            if (moveDecision.foodConsumed()) {
                 foodConsumed = true;
                 additionalGrowth = config.growthPerFood();
             }
             // Move the snake head to newCoordinate
-            Optional<GridCoordinate> t = snakeHead.move(currentCoordinate, additionalGrowth);
-            model.setEntity(newCoordinate.get(), snakeHead);
+            Optional<GridCoordinate> t = snakeHead.move(currentCoordinate, moveDecision.direction(), additionalGrowth);
+            model.setEntity(moveDecision.coordinate(), snakeHead);
             model.setEntity(currentCoordinate, SnakeConstantEntity.SNAKE_SEGMENT);
             // Remove tail segment if not growing
             t.ifPresent(model::setEntityToDefault);
@@ -105,18 +109,34 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         // 4. Update context/statistics
     }
 
-    private Optional<GridCoordinate> chooseMoveCoordinate(SnakeHead snakeHead,
-                                                          ReadableGridModel<SnakeEntity> model,
-                                                          List<GridCoordinate> groundCoordinates,
-                                                          List<GridCoordinate> foodCoordinates) {
+    private Optional<MoveDecision> chooseMoveCoordinate(SnakeHead snakeHead,
+                                                        ReadableGridModel<SnakeEntity> model,
+                                                        List<CellNeighborWithEdgeBehavior> groundNeighbors,
+                                                        List<CellNeighborWithEdgeBehavior> foodNeighbors) {
+        return chooseMoveCoordinateRandom(groundNeighbors, foodNeighbors);
+    }
 
-        if (!foodCoordinates.isEmpty()) {
-            return Optional.of(foodCoordinates.get(random.nextInt(foodCoordinates.size())));
-        } else if (!groundCoordinates.isEmpty()) {
-            // Choose ground
-            return Optional.of(groundCoordinates.get(random.nextInt(groundCoordinates.size())));
+    private Optional<MoveDecision> chooseMoveCoordinateRandom(List<CellNeighborWithEdgeBehavior> groundNeighbors,
+                                                              List<CellNeighborWithEdgeBehavior> foodNeighbors) {
+
+        if (!foodNeighbors.isEmpty()) {
+            var neighbor = foodNeighbors.get(random.nextInt(foodNeighbors.size()));
+            return Optional.of(new MoveDecision(
+                    neighbor.mappedNeighborCoordinate(),
+                    neighbor.direction(),
+                    true));
+        } else if (!groundNeighbors.isEmpty()) {
+            var neighbor = groundNeighbors.get(random.nextInt(groundNeighbors.size()));
+            return Optional.of(new MoveDecision(
+                    neighbor.mappedNeighborCoordinate(),
+                    neighbor.direction(),
+                    false
+            ));
         }
         return Optional.empty();
+    }
+
+    private record MoveDecision(GridCoordinate coordinate, CompassDirection direction, boolean foodConsumed) {
     }
 
 }

@@ -1,6 +1,8 @@
 package de.mkalb.etpetssim.simulations.snake.model.entity;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -13,6 +15,7 @@ public final class SnakeHead implements SnakeEntity {
     private int deaths;
     private int stepIndexOfSpawn;
     private boolean dead;
+    private @Nullable CompassDirection direction;
 
     public SnakeHead(int id,
                      int initialPendingGrowth,
@@ -26,6 +29,7 @@ public final class SnakeHead implements SnakeEntity {
         deaths = 0;
         this.stepIndexOfSpawn = stepIndexOfSpawn;
         dead = false;
+        direction = null;
     }
 
     /**
@@ -71,12 +75,17 @@ public final class SnakeHead implements SnakeEntity {
         return dead;
     }
 
+    public Optional<CompassDirection> direction() {
+        return Optional.ofNullable(direction);
+    }
+
     public List<GridCoordinate> currentSegments() {
         return List.copyOf(snakeSegments);
     }
 
-    public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate, int additionalGrowth) {
+    public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate, CompassDirection moveDirection, int additionalGrowth) {
         snakeSegments.addFirst(lastHeadCoordinate);
+        direction = moveDirection;
         pendingGrowth += additionalGrowth;
         if (pendingGrowth > 0) {
             pendingGrowth--;
@@ -97,6 +106,7 @@ public final class SnakeHead implements SnakeEntity {
         snakeSegments.clear();
         pendingGrowth = initialPendingGrowth;
         stepIndexOfSpawn = stepIndexOfRespawn;
+        direction = null;
     }
 
     @Override
@@ -107,6 +117,7 @@ public final class SnakeHead implements SnakeEntity {
                 ", deaths=" + deaths +
                 ", stepIndexOfSpawn=" + stepIndexOfSpawn +
                 ", dead=" + dead +
+                ", direction=" + direction +
                 ", snakeSegments=" + snakeSegments +
                 '}';
     }
