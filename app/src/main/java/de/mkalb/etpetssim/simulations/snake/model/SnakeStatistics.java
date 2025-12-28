@@ -28,6 +28,14 @@ public final class SnakeStatistics
         foodCells = foodCellsInitial;
     }
 
+    public void decreaseSnakeHeadCells() {
+        snakeHeadCells--;
+    }
+
+    public void decreaseFoodCells() {
+        foodCells--;
+    }
+
     void incrementDeaths() {
         deaths++;
     }

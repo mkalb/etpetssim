@@ -38,11 +38,18 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         GridCoordinate currentCoordinate = agentCell.coordinate();
 
         if (snakeHead.isDead()) {
-            model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
-                    model.setEntity(freeCoordinate, snakeHead));
+            Optional<GridCoordinate> freeCoordinate = model.randomDefaultCoordinate(random);
+
             model.setEntityToDefault(currentCoordinate);
             snakeHead.currentSegments().forEach(model::setEntityToDefault);
-            snakeHead.respawn(config.initialPendingGrowth(), stepIndex);
+
+            if (freeCoordinate.isPresent()) {
+                model.setEntity(freeCoordinate.get(), snakeHead);
+                snakeHead.respawn(config.initialPendingGrowth(), stepIndex);
+            } else {
+                statistics.decreaseSnakeHeadCells();
+            }
+
             return;
         }
         // 1. Find possible moves (ground or food)
@@ -82,8 +89,12 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             t.ifPresent(coordinate -> model.setEntity(coordinate, SnakeConstantEntity.GROUND));
 
             if (foodConsumed) {
-                model.randomDefaultCoordinate(random).ifPresent(freeCoordinate ->
-                        model.setEntity(freeCoordinate, SnakeConstantEntity.GROWTH_FOOD));
+                Optional<GridCoordinate> freeCoordinate = model.randomDefaultCoordinate(random);
+                if (freeCoordinate.isPresent()) {
+                    model.setEntity(freeCoordinate.get(), SnakeConstantEntity.GROWTH_FOOD);
+                } else {
+                    statistics.decreaseFoodCells();
+                }
             }
         } else {
             snakeHead.die();
