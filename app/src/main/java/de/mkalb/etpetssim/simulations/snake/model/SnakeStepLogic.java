@@ -2,9 +2,7 @@ package de.mkalb.etpetssim.simulations.snake.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.AgentStepLogic;
-import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
@@ -67,26 +65,23 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             }
         }
         // 2. Choose move
-        GridCoordinate newCoordinate = null;
-        int additionalGrowth = 0;
-        boolean foodConsumed = false;
-        if (!foodCoordinates.isEmpty()) {
-            // Choose food
-            newCoordinate = foodCoordinates.getFirst(); // TODO select best food coordinate
-            foodConsumed = true;
-            additionalGrowth = config.growthPerFood();
-        } else if (!groundCoordinates.isEmpty()) {
-            // Choose ground
-            newCoordinate = groundCoordinates.getFirst(); // TODO select best ground coordinate
-        }
+        Optional<GridCoordinate> newCoordinate = chooseMoveCoordinate(snakeHead, model,
+                groundCoordinates, foodCoordinates);
         // 3. Update model
-        if (newCoordinate != null) {
+        if (newCoordinate.isPresent()) {
+            int additionalGrowth = 0;
+            boolean foodConsumed = false;
+
+            if (foodCoordinates.contains(newCoordinate.get())) {
+                foodConsumed = true;
+                additionalGrowth = config.growthPerFood();
+            }
             // Move the snake head to newCoordinate
             Optional<GridCoordinate> t = snakeHead.move(currentCoordinate, additionalGrowth);
-            model.setEntity(newCoordinate, snakeHead);
+            model.setEntity(newCoordinate.get(), snakeHead);
             model.setEntity(currentCoordinate, SnakeConstantEntity.SNAKE_SEGMENT);
             // Remove tail segment if not growing
-            t.ifPresent(coordinate -> model.setEntity(coordinate, SnakeConstantEntity.GROUND));
+            t.ifPresent(model::setEntityToDefault);
 
             if (foodConsumed) {
                 Optional<GridCoordinate> freeCoordinate = model.randomDefaultCoordinate(random);
@@ -102,6 +97,20 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         }
 
         // 4. Update context/statistics
+    }
+
+    private Optional<GridCoordinate> chooseMoveCoordinate(SnakeHead snakeHead,
+                                                          ReadableGridModel<SnakeEntity> model,
+                                                          List<GridCoordinate> groundCoordinates,
+                                                          List<GridCoordinate> foodCoordinates) {
+
+        if (!foodCoordinates.isEmpty()) {
+            return Optional.of(foodCoordinates.getFirst());
+        } else if (!groundCoordinates.isEmpty()) {
+            // Choose ground
+            return Optional.of(groundCoordinates.getFirst());
+        }
+        return Optional.empty();
     }
 
 }
