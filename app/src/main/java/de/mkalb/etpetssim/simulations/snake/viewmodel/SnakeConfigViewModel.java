@@ -42,6 +42,14 @@ public final class SnakeConfigViewModel
     );
 
     // Initialization
+    private static final int INITIAL_FOOD_CELLS_INITIAL = 20;
+    private static final int INITIAL_FOOD_CELLS_MIN = 0;
+    private static final int INITIAL_FOOD_CELLS_MAX = 10_000;
+    private static final int INITIAL_FOOD_CELLS_STEP = 1;
+    private static final int INITIAL_SNAKES_INITIAL = 4;
+    private static final int INITIAL_SNAKES_MIN = 1;
+    private static final int INITIAL_SNAKES_MAX = 16;
+    private static final int INITIAL_SNAKES_STEP = 1;
     private static final int INITIAL_PENDING_GROWTH_INITIAL = 2;
     private static final int INITIAL_PENDING_GROWTH_MIN = 0;
     private static final int INITIAL_PENDING_GROWTH_MAX = 10;
@@ -55,6 +63,16 @@ public final class SnakeConfigViewModel
     private static final SnakeDeathMode SNAKE_DEATH_MODE_INITIAL = SnakeDeathMode.RESPAWN;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
     // Initialization
+    private final InputIntegerProperty initialFoodCells = InputIntegerProperty.of(
+            INITIAL_FOOD_CELLS_INITIAL,
+            INITIAL_FOOD_CELLS_MIN,
+            INITIAL_FOOD_CELLS_MAX,
+            INITIAL_FOOD_CELLS_STEP);
+    private final InputIntegerProperty initialSnakes = InputIntegerProperty.of(
+            INITIAL_SNAKES_INITIAL,
+            INITIAL_SNAKES_MIN,
+            INITIAL_SNAKES_MAX,
+            INITIAL_SNAKES_STEP);
     private final InputIntegerProperty initialPendingGrowth = InputIntegerProperty.of(
             INITIAL_PENDING_GROWTH_INITIAL,
             INITIAL_PENDING_GROWTH_MIN,
@@ -87,12 +105,22 @@ public final class SnakeConfigViewModel
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 // Initialization
+                initialFoodCells.getValue(),
+                initialSnakes.getValue(),
                 initialPendingGrowth.getValue(),
                 // Rules
                 deathMode.getValue(),
                 growthPerFood.getValue(),
                 NEIGHBORHOOD_MODE
         );
+    }
+
+    public InputIntegerProperty initialFoodCellsProperty() {
+        return initialFoodCells;
+    }
+
+    public InputIntegerProperty initialSnakesProperty() {
+        return initialSnakes;
     }
 
     public InputIntegerProperty initialPendingGrowthProperty() {

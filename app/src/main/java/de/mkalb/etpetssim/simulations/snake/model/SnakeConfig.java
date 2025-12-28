@@ -15,6 +15,8 @@ public record SnakeConfig(
         CellDisplayMode cellDisplayMode,
         long seed,
         // Initialization
+        int initialFoodCells,
+        int initialSnakes,
         int initialPendingGrowth,
         // Rules
         SnakeDeathMode deathMode,

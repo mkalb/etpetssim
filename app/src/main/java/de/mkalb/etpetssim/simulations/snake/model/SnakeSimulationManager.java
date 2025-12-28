@@ -42,29 +42,23 @@ public final class SnakeSimulationManager
 
         initializeGrid(config, model, random);
 
-        // TODO update statistics after initialization
+        statistics.updateInitialCells(
+                config.initialSnakes(),
+                config.initialFoodCells());
     }
 
     private void initializeGrid(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
-        // initialize WALL
-        GridInitializer<SnakeEntity> wallInit = GridInitializers.placeRandomPercent(
-                () -> SnakeConstantEntity.WALL,
-                SnakeEntity::isGround,
-                0.05d,
-                random);
-        wallInit.initialize(model);
-        // initialize GROWTH_FOOD
-        int initialFoodCells = 20;
-        GridInitializer<SnakeEntity> foodInit = GridInitializers.placeRandomCounted(
-                initialFoodCells,
-                () -> SnakeConstantEntity.GROWTH_FOOD,
-                SnakeEntity::isGround,
-                random);
-        foodInit.initialize(model);
+        // // initialize WALL
+        // GridInitializer<SnakeEntity> wallInit = GridInitializers.placeRandomPercent(
+        //         () -> SnakeConstantEntity.WALL,
+        //         SnakeEntity::isGround,
+        //         0.05d,
+        //         random);
+        // wallInit.initialize(model);
+
         // initialize SNAKE_HEAD
-        int initialSnakeHeads = 10;
         List<SnakeEntity> snakeHeads = new ArrayList<>();
-        for (int i = 0; i < initialSnakeHeads; i++) {
+        for (int i = 0; i < config.initialSnakes(); i++) {
             snakeHeads.add(new SnakeHead(i, config.initialPendingGrowth(), -1));
         }
         GridInitializer<SnakeEntity> snakeInit = GridInitializers.placeAllAtRandomPositions(
@@ -73,9 +67,14 @@ public final class SnakeSimulationManager
                 random);
         snakeInit.initialize(model);
 
-        statistics.updateInitialCells(
-                initialSnakeHeads,
-                initialFoodCells);
+        // initialize GROWTH_FOOD
+        // TODO Count free cells (ground / default) and limit initial food cells to that count
+        GridInitializer<SnakeEntity> foodInit = GridInitializers.placeRandomCounted(
+                config.initialFoodCells(),
+                () -> SnakeConstantEntity.GROWTH_FOOD,
+                SnakeEntity::isGround,
+                random);
+        foodInit.initialize(model);
     }
 
     @Override

@@ -15,6 +15,10 @@ public final class SnakeConfigView
         extends AbstractConfigView<SnakeConfig, SnakeConfigViewModel> {
 
     // Initialization
+    static final String SNAKE_CONFIG_INITIAL_FOOD_CELLS = "snake.config.initialfoodcells";
+    static final String SNAKE_CONFIG_INITIAL_FOOD_CELLS_TOOLTIP = "snake.config.initialfoodcells.tooltip";
+    static final String SNAKE_CONFIG_INITIAL_SNAKES = "snake.config.initialsnakes";
+    static final String SNAKE_CONFIG_INITIAL_SNAKES_TOOLTIP = "snake.config.initialsnakes.tooltip";
     static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH = "snake.config.initialpendinggrowth";
     static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP = "snake.config.initialpendinggrowth.tooltip";
 
@@ -42,6 +46,18 @@ public final class SnakeConfigView
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
                 FXStyleClasses.CONFIG_TEXTBOX
         );
+        var initialFoodCellsControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.initialFoodCellsProperty(),
+                AppLocalization.getText(SNAKE_CONFIG_INITIAL_FOOD_CELLS),
+                AppLocalization.getFormattedText(SNAKE_CONFIG_INITIAL_FOOD_CELLS_TOOLTIP, viewModel.initialFoodCellsProperty().min(), viewModel.initialFoodCellsProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
+        var initialSnakesControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.initialSnakesProperty(),
+                AppLocalization.getText(SNAKE_CONFIG_INITIAL_SNAKES),
+                AppLocalization.getFormattedText(SNAKE_CONFIG_INITIAL_SNAKES_TOOLTIP, viewModel.initialSnakesProperty().min(), viewModel.initialSnakesProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
         var initialPendingGrowthControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.initialPendingGrowthProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_INITIAL_PENDING_GROWTH),
@@ -51,7 +67,7 @@ public final class SnakeConfigView
 
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 true,
-                seedControl, initialPendingGrowthControl);
+                seedControl, initialFoodCellsControl, initialSnakesControl, initialPendingGrowthControl);
 
         // --- Rules Group ---
         var deathModeControl = FXComponentFactory.createLabeledEnumComboBox(
