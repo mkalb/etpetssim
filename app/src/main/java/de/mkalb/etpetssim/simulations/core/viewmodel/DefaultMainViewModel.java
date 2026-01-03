@@ -89,9 +89,9 @@ public final class DefaultMainViewModel<
                     try {
                         var cell = selectedGridCellProvider.apply(getCurrentModel(), newValue);
                         selectedGridCell.set(cell);
-                        AppLogger.info("Cell selected: " + cell);
+                        AppLogger.info("Cell selected: " + cell.toDisplayString());
                     } catch (NullPointerException | IndexOutOfBoundsException e) {
-                        AppLogger.error("Cannot determine selected cell! " + newValue, e);
+                        AppLogger.error("Cannot determine selected cell! " + newValue.toDisplayString(), e);
                         selectedGridCell.set(null);
                     }
                 } else {
