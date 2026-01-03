@@ -9,10 +9,10 @@ public sealed interface LangtonEntity extends GridEntity
         permits LangtonAntEntity, LangtonGroundEntity {
 
     static List<GridEntityDescribable> allEntityDescribable() {
-        List<GridEntityDescribable> describables = new ArrayList<>();
-        describables.addAll(Arrays.asList(LangtonAntEntityDescribable.values()));
-        describables.addAll(Arrays.asList(LangtonGroundEntity.values()));
-        return describables;
+        List<GridEntityDescribable> allEntityDescribable = new ArrayList<>();
+        allEntityDescribable.addAll(Arrays.asList(LangtonAntEntityDescribable.values()));
+        allEntityDescribable.addAll(Arrays.asList(LangtonGroundEntity.values()));
+        return allEntityDescribable;
     }
 
     boolean isAgent();
