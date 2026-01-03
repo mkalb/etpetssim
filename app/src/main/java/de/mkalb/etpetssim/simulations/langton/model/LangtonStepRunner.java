@@ -83,6 +83,7 @@ public final class LangtonStepRunner
         return groundEntity;
     }
 
+    @SuppressWarnings("SwitchExpressionCanBePushedDown")
     CompassDirection computeNewAntDirection(CompassDirection currentDirection, int ruleIndex) {
         LangtonMovementRules.AntTurn turn = config.langtonMovementRules().getTurnForState(ruleIndex);
 

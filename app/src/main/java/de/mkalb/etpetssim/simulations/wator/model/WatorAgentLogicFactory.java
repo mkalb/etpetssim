@@ -145,7 +145,7 @@ public final class WatorAgentLogicFactory {
         return cells.get(random.nextInt(cells.size()));
     }
 
-    @SuppressWarnings("EmptyMethod")
+    @SuppressWarnings({"EmptyMethod", "unused"})
     private void advancedLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                                WatorStatistics statistics) {
         // TODO Implement advanced agent logic here

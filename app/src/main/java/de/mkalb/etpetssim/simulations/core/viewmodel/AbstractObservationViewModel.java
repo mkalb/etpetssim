@@ -34,7 +34,6 @@ public abstract class AbstractObservationViewModel<STA extends SimulationStatist
         return statistics.getReadOnlyProperty();
     }
 
-    @SuppressWarnings("OptionalOfNullableMisuse")
     @Override
     public final Optional<STA> getStatistics() {
         return Optional.ofNullable(statistics.get());

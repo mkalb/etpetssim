@@ -45,6 +45,7 @@ public final class SnakeSimulationManager
         updateInitialStatistics(model);
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private void initializeGrid(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
         // // initialize WALL
         // GridInitializer<SnakeEntity> wallInit = GridInitializers.placeRandomPercent(
@@ -93,6 +94,7 @@ public final class SnakeSimulationManager
                 executor.stepTimingStatistics());
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private void updateInitialStatistics(ReadableGridModel<SnakeEntity> model) {
         int initialSnakes = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD));
         int initialFoodCells = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD));

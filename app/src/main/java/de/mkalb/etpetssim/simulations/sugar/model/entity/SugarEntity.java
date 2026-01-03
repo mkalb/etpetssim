@@ -11,12 +11,14 @@ public sealed interface SugarEntity extends GridEntity
     String DESCRIPTOR_ID_RESOURCE_SUGAR = "resource_sugar";
     String DESCRIPTOR_ID_TERRAIN = "terrain";
 
+    @SuppressWarnings("SameReturnValue")
     boolean isTerrain();
 
     boolean isResource();
 
     boolean isAgent();
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isNone();
 
 }

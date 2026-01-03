@@ -78,6 +78,7 @@ public final class LangtonRuleProperty {
         return rules;
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public enum LangtonRulePresetSquare {
         EMPTY,
         RL,
@@ -97,6 +98,7 @@ public final class LangtonRuleProperty {
         }
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     public enum LangtonRulePresetHexagon {
         EMPTY,
         RL,
