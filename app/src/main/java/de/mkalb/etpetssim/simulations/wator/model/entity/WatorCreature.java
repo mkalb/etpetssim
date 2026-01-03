@@ -42,15 +42,6 @@ public abstract sealed class WatorCreature implements WatorEntity, Comparable<Wa
     }
 
     @Override
-    public String toString() {
-        return "WatorCreature{" +
-                "sequenceId=" + sequenceId +
-                ", descriptorId='" + descriptorId + '\'' +
-                ", stepIndexOfBirth=" + stepIndexOfBirth +
-                '}';
-    }
-
-    @Override
     public final int compareTo(WatorCreature o) {
         return Long.compare(sequenceId(), o.sequenceId());
     }
