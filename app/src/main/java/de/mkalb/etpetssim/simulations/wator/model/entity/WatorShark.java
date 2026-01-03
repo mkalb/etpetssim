@@ -32,10 +32,17 @@ public final class WatorShark extends WatorCreature {
     }
 
     @Override
+    public String toDisplayString() {
+        return String.format("[SHARK #%d *%d E=%d]", sequenceId(), stepIndexOfBirth(), currentEnergy);
+    }
+
+    @Override
     public String toString() {
         return "WatorShark{" +
-                "currentEnergy=" + currentEnergy +
-                "} " + super.toString();
+                "sequenceId=" + sequenceId() +
+                ", stepIndexOfBirth=" + stepIndexOfBirth() +
+                ", currentEnergy=" + currentEnergy +
+                '}';
     }
 
 }

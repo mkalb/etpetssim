@@ -55,10 +55,15 @@ public final class SugarAgent implements SugarAgentEntity {
     }
 
     @Override
+    public String toDisplayString() {
+        return String.format("[AGENT *%d E=%d]", stepIndexOfSpawn, currentEnergy);
+    }
+
+    @Override
     public String toString() {
         return "SugarAgent{" +
-                "currentEnergy=" + currentEnergy +
-                ", stepIndexOfSpawn=" + stepIndexOfSpawn +
+                "stepIndexOfSpawn=" + stepIndexOfSpawn +
+                ", currentEnergy=" + currentEnergy +
                 "}";
     }
 

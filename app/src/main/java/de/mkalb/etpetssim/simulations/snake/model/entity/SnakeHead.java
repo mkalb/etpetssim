@@ -110,15 +110,36 @@ public final class SnakeHead implements SnakeEntity {
     }
 
     @Override
+    public String toDisplayString() {
+        return String.format("[SNAKE_HEAD #%d %s %s %s]",
+                id,
+                (direction == null) ? "+" : direction.arrow(),
+                dead ? ("†" + deaths) : ("*" + stepIndexOfSpawn),
+                (pendingGrowth > 0) ? (snakeSegments.size() + "+" + pendingGrowth) : String.valueOf(snakeSegments.size()));
+    }
+
+    @Override
     public String toString() {
+        int size = snakeSegments.size();
+        String segmentsStr = switch (size) {
+            case 0 -> "#0 ()";
+            case 1 -> "#1 " + snakeSegments.peekFirst().toDisplayString();
+            case 2 -> "#2 %s %s".formatted(
+                    snakeSegments.peekFirst().toDisplayString(),
+                    snakeSegments.peekLast().toDisplayString());
+            default -> "#%d %s...%s".formatted(size,
+                    snakeSegments.peekFirst().toDisplayString(),
+                    snakeSegments.peekLast().toDisplayString());
+        };
+
         return "SnakeHead{" +
                 "id=" + id +
-                ", pendingGrowth=" + pendingGrowth +
-                ", deaths=" + deaths +
                 ", stepIndexOfSpawn=" + stepIndexOfSpawn +
-                ", dead=" + dead +
                 ", direction=" + direction +
-                ", snakeSegments=" + snakeSegments +
+                ", dead=" + dead +
+                ", deaths=" + deaths +
+                ", pendingGrowth=" + pendingGrowth +
+                ", segments=" + segmentsStr +
                 '}';
     }
 

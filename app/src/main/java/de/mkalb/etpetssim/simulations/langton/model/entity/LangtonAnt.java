@@ -20,21 +20,24 @@ public final class LangtonAnt implements LangtonAntEntity {
         return DESCRIPTOR_ID_ANT;
     }
 
-    @Override
-    public String toDisplayString() {
-        return "TODO"; // TODO implement
-    }
-
-    public String toString() {
-        return "TODO"; // TODO implement
-    }
-
     public CompassDirection direction() {
         return direction;
     }
 
     public void changeDirection(CompassDirection newDirection) {
         direction = newDirection;
+    }
+
+    @Override
+    public String toDisplayString() {
+        return String.format("[ANT %s]", direction.arrow());
+    }
+
+    @Override
+    public String toString() {
+        return "LangtonAnt{" +
+                "direction=" + direction +
+                '}';
     }
 
 }

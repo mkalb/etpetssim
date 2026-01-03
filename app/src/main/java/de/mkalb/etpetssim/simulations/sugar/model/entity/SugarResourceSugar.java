@@ -47,6 +47,11 @@ public final class SugarResourceSugar implements SugarResourceEntity {
     }
 
     @Override
+    public String toDisplayString() {
+        return String.format("[SUGAR %d/%d]", currentAmount, maxAmount);
+    }
+
+    @Override
     public String toString() {
         return "SugarResourceSugar{" +
                 "maxAmount=" + maxAmount +
