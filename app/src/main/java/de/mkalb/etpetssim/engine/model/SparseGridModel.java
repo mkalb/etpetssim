@@ -144,7 +144,8 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
         // Fast path: default does NOT match -> only stored non-default entries can match.
         if (!includeDefault) {
             if (data.isEmpty()) {
-                return List.of();
+                // Return new ArrayList, because SparseGridModel#filteredAndSortedCells needs a mutable list to sort.
+                return new ArrayList<>(0);
             }
             List<GridCell<T>> result = new ArrayList<>(data.size());
             for (Map.Entry<GridCoordinate, T> entry : data.entrySet()) {
