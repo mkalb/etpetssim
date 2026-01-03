@@ -396,27 +396,27 @@ final class CellNeighborhoodsTest {
         }
     }
 
-    @Test
+    @SuppressWarnings("EmptyMethod")
     void testStaticNeighborEdgeResults() {
         // TODO implement test method
     }
 
-    @Test
+    @SuppressWarnings("EmptyMethod")
     void testStaticCellNeighborsIgnoringEdgeBehavior() {
         // TODO implement test method
     }
 
-    @Test
+    @SuppressWarnings("EmptyMethod")
     void testStaticCellNeighborWithEdgeBehavior() {
         // TODO implement test method
     }
 
-    @Test
+    @SuppressWarnings("EmptyMethod")
     void testStaticCellNeighborsWithEdgeBehavior() {
         // TODO implement test method
     }
 
-    @Test
+    @SuppressWarnings("EmptyMethod")
     void testStaticCoordinatesOfNeighbors() {
         // TODO implement test method
     }
@@ -485,7 +485,7 @@ final class CellNeighborhoodsTest {
                 CellNeighborhoods.computeCellNeighborConnections(new GridCoordinate(3, 2), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
     }
 
-    @Test
+    @SuppressWarnings("EmptyMethod")
     void testStaticComputeTriangleCellNeighborConnections() {
         // TODO implement test method
     }

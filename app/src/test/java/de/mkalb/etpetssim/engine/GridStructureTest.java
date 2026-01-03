@@ -38,7 +38,6 @@ final class GridStructureTest {
         assertTrue(ex.getMessage().contains("multiple of 2"));
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullArgumentsThrowException() {
         GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY);

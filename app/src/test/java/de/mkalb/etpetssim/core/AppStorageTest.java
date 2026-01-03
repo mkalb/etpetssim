@@ -129,7 +129,6 @@ class AppStorageTest {
     /**
      * Tests that null parameters throw NullPointerException.
      */
-    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullParametersThrowException() {
         assertThrows(NullPointerException.class, () -> AppStorage.getAppDataFile(null, OS));
