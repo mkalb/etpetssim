@@ -219,7 +219,7 @@ public final class DefaultMainViewModel<
 
             createAndInitSimulation(config.get());
         } catch (IllegalArgumentException | IllegalStateException | NullPointerException
-                 | IndexOutOfBoundsException | NoSuchElementException e) {
+                 | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
             setSimulationState(SimulationState.ERROR);
             AppLogger.error("Failed to start simulation: " + e.getMessage(), e);
             setNotificationType(SimulationNotificationType.EXCEPTION);
@@ -368,7 +368,7 @@ public final class DefaultMainViewModel<
                 }
             }
         } catch (IllegalArgumentException | IllegalStateException | NullPointerException
-                 | IndexOutOfBoundsException | NoSuchElementException e) {
+                 | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
             setNotificationType(SimulationNotificationType.EXCEPTION);
 
             setSimulationState(SimulationState.ERROR);
@@ -455,7 +455,7 @@ public final class DefaultMainViewModel<
                     }
                 });
             } catch (IllegalArgumentException | IllegalStateException | NullPointerException
-                     | IndexOutOfBoundsException | NoSuchElementException e) {
+                     | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
                 Platform.runLater(() -> {
                     setNotificationType(SimulationNotificationType.EXCEPTION);
 
