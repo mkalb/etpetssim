@@ -123,13 +123,4 @@ public enum LangtonGroundEntity implements LangtonEntity, ConstantGridEntity, Gr
         return false;
     }
 
-    @Override
-    public String toDisplayString() {
-        return "TODO"; // TODO implement
-    }
-
-    public String toString() {
-        return "TODO"; // TODO implement
-    }
-
 }
