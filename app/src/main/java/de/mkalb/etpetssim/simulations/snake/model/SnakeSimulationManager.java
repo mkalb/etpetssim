@@ -14,6 +14,15 @@ public final class SnakeSimulationManager
         extends AbstractTimedSimulationManager<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
         SnakeStatistics> {
 
+    private static final Comparator<GridCell<SnakeEntity>> AGENT_ORDERING_STRATEGY =
+            Comparator.comparingInt(cell -> {
+                SnakeEntity e = cell.entity();
+                if (e instanceof SnakeHead head) {
+                    return head.id();
+                }
+                return Integer.MAX_VALUE;
+            });
+
     private static final int WALL_MAX_WIDTH_SPACE = 2;
     private static final int WALL_MAX_HEIGHT_SPACE = 4;
 
@@ -30,15 +39,8 @@ public final class SnakeSimulationManager
         var model = new SparseGridModel<SnakeEntity>(structure, SnakeConstantEntity.GROUND);
 
         // Executor with runner and terminationCondition
-        Comparator<GridCell<SnakeEntity>> agentOrderingStrategy = Comparator.comparingInt(cell -> {
-            SnakeEntity e = cell.entity();
-            if (e instanceof SnakeHead head) {
-                return head.id();
-            }
-            return Integer.MAX_VALUE;
-        });
         var agentStepLogic = new SnakeStepLogic(structure, config, random);
-        var runner = new AsynchronousStepRunner<>(model, SnakeEntity::isAgent, agentOrderingStrategy, agentStepLogic);
+        var runner = new AsynchronousStepRunner<>(model, SnakeEntity::isAgent, AGENT_ORDERING_STRATEGY, agentStepLogic);
         var terminationCondition = new SnakeTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
