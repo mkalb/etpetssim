@@ -31,6 +31,22 @@ public final class SnakeMainView
         SnakeConfigView,
         SnakeObservationView> {
 
+    // Entity color
+    public static final Color HEAD_ALIVE_FILL = Color.web("#00BCD4");
+    public static final Color HEAD_ALIVE_BORDER = Color.web("#008BA3");
+    public static final Color HEAD_DEAD_FILL = Color.web("#A33A3A");
+    public static final Color HEAD_DEAD_BORDER = Color.web("#6E2626");
+    public static final Color SEGMENT_ALIVE_FILL = Color.web("#4CAF50");
+    public static final Color SEGMENT_ALIVE_BORDER = Color.web("#2E7D32");
+    public static final Color SEGMENT_DEAD_FILL = Color.web("#8D6E63");
+    public static final Color SEGMENT_DEAD_BORDER = Color.web("#5D4037");
+
+    // Entity stroke widths
+    private static final double WALL_STROKE_LINE_WIDTH = 0.5d;
+    private static final double FOOD_STROKE_LINE_WIDTH = 2.0d;
+    private static final double SNAKE_SEGMENT_STROKE_LINE_WIDTH = 1.0d;
+    private static final double SNAKE_HEAD_STROKE_LINE_WIDTH = 2.0d;
+
     private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
@@ -86,21 +102,22 @@ public final class SnakeMainView
         currentModel.filteredCoordinates(e ->
                             Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_WALL))
                     .forEach(coordinate ->
-                            basePainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), 1.0d));
+                            basePainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
         currentModel.filteredCoordinates(e ->
                             Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD))
                     .forEach(coordinate ->
-                            basePainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), 1.0d, StrokeType.INSIDE));
+                            basePainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
         currentModel.filteredCells(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD))
                     .forEach(cell -> {
                         if (cell.entity() instanceof SnakeHead head) {
-                            // TODO Choose colors based on snake ID.
-                            Color snakeHeadColor = head.isDead() ? Color.PINK : Color.LIGHTBLUE;
-                            Color snakeSegmentColor = head.isDead() ? Color.RED : Color.BLUE;
+                            Color snakeHeadColor = head.isDead() ? HEAD_DEAD_FILL : HEAD_ALIVE_FILL;
+                            Color snakeHeadColorBorder = head.isDead() ? HEAD_DEAD_BORDER : HEAD_ALIVE_BORDER;
+                            Color snakeSegmentColor = head.isDead() ? SEGMENT_DEAD_FILL : SEGMENT_ALIVE_FILL;
+                            Color snakeSegmentColorBorder = head.isDead() ? SEGMENT_DEAD_BORDER : SEGMENT_ALIVE_BORDER;
                             for (GridCoordinate coordinate : head.currentSegments()) {
-                                basePainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColor, 1.0d);
+                                basePainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
                             }
-                            basePainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColor, 1.0d,
+                            basePainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
                                     StrokeType.OUTSIDE);
                         }
                     });

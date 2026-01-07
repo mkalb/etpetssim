@@ -14,7 +14,7 @@ public enum SnakeEntityDescribable implements GridEntityDescribable {
             "snake.entity.ground.long",
             "snake.entity.ground.description",
             null,
-            Color.BLACK,
+            Color.web("#0b1220"),
             null,
             1
     ),
@@ -25,8 +25,8 @@ public enum SnakeEntityDescribable implements GridEntityDescribable {
             "snake.entity.wall.long",
             "snake.entity.wall.description",
             "snake.entity.wall.emoji",
-            Color.GRAY,
-            Color.LIGHTGRAY,
+            Color.web("#4a4a4a"),
+            Color.web("#7a7a7a"),
             2
     ),
     GROWTH_FOOD(
@@ -36,8 +36,8 @@ public enum SnakeEntityDescribable implements GridEntityDescribable {
             "snake.entity.growthfood.long",
             "snake.entity.growthfood.description",
             "snake.entity.growthfood.emoji",
-            Color.GREEN,
-            Color.LIGHTGREEN,
+            Color.web("#ffcc00"),
+            Color.web("#cc9900"),
             3
     ),
     SNAKE_SEGMENT(
