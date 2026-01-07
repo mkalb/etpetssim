@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
@@ -12,6 +13,9 @@ import java.util.*;
 public final class SnakeSimulationManager
         extends AbstractTimedSimulationManager<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
         SnakeStatistics> {
+
+    private static final int WALL_MAX_WIDTH_SPACE = 2;
+    private static final int WALL_MAX_HEIGHT_SPACE = 4;
 
     private final GridStructure structure;
     private final SnakeStatistics statistics;
@@ -45,36 +49,75 @@ public final class SnakeSimulationManager
         updateInitialStatistics(model);
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     private void initializeGrid(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
-        // // initialize WALL
-        // GridInitializer<SnakeEntity> wallInit = GridInitializers.placeRandomPercent(
-        //         () -> SnakeConstantEntity.WALL,
-        //         SnakeEntity::isGround,
-        //         0.05d,
-        //         random);
-        // wallInit.initialize(model);
+        wallInitializer(config, random).initialize(model);
+        snakeInitializer(config, random).initialize(model);
+        foodInitializer(config, model, random).initialize(model);
+    }
 
-        // initialize SNAKE_HEAD
-        List<SnakeEntity> snakeHeads = new ArrayList<>();
-        for (int i = 0; i < config.initialSnakes(); i++) {
-            snakeHeads.add(new SnakeHead(i, config.initialPendingGrowth(), -1));
+    private GridInitializer<SnakeEntity> wallInitializer(SnakeConfig config, Random random) {
+        int width = structure.size().width();
+        int height = structure.size().height();
+        int wallCount = config.verticalWalls();
+
+        if ((wallCount > 0)
+                && (width >= ((wallCount * (1 + WALL_MAX_WIDTH_SPACE)) + WALL_MAX_WIDTH_SPACE))
+                && (height > WALL_MAX_HEIGHT_SPACE)) {
+            // Integer division (floor), ensures that walls have equal spacing and fit within the grid
+            int distanceX = width / wallCount;
+            // Center walls within the grid. Leave additional space on the left and right.
+            int adjustment = (-1 - ((distanceX - 1) / 2)) + ((width % wallCount) / 2);
+
+            // Calculate wall x-positions
+            Set<Integer> wallXPositions = new TreeSet<>();
+            for (int i = 1; i <= wallCount; i++) {
+                int x = (i * distanceX) + adjustment;
+                wallXPositions.add(x);
+            }
+
+            // Calculate wall y-positions and create wall cells
+            List<GridCell<SnakeEntity>> cells = new ArrayList<>();
+            for (int x : wallXPositions) {
+                int yStart = random.nextInt(height);
+                int maxLength = Math.min(height - WALL_MAX_HEIGHT_SPACE, height - yStart);
+                int length = random.nextInt(maxLength);
+                int yEnd = yStart + length;
+
+                for (int y = yStart; y <= yEnd; y++) {
+                    cells.add(new GridCell<>(new GridCoordinate(x, y), SnakeConstantEntity.WALL));
+                }
+            }
+            return GridInitializers.fromList(cells);
         }
-        GridInitializer<SnakeEntity> snakeInit = GridInitializers.placeAllAtRandomPositions(
-                snakeHeads,
-                SnakeEntity::isGround,
-                random);
-        snakeInit.initialize(model);
+        return GridInitializers.identity();
+    }
 
-        // initialize GROWTH_FOOD
-        int freeGroundCells = (int) model.countEntities(SnakeEntity::isGround);
-        int initialFoodCells = Math.min(config.initialFoodCells(), freeGroundCells);
-        GridInitializer<SnakeEntity> foodInit = GridInitializers.placeShuffledCounted(
-                initialFoodCells,
-                () -> SnakeConstantEntity.GROWTH_FOOD,
-                SnakeEntity::isGround,
-                random);
-        foodInit.initialize(model);
+    private GridInitializer<SnakeEntity> snakeInitializer(SnakeConfig config, Random random) {
+        if (config.snakes() > 0) {
+            List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
+            for (int i = 0; i < config.snakes(); i++) {
+                snakeHeads.add(new SnakeHead(i, config.initialPendingGrowth(), -1));
+            }
+            return GridInitializers.placeAllAtRandomPositions(
+                    snakeHeads,
+                    SnakeEntity::isGround,
+                    random);
+        }
+        return GridInitializers.identity();
+    }
+
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private GridInitializer<SnakeEntity> foodInitializer(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
+        if (config.foodCells() > 0) {
+            int freeGroundCells = (int) model.countEntities(SnakeEntity::isGround);
+            int foodCells = Math.min(config.foodCells(), freeGroundCells);
+            return GridInitializers.placeShuffledCounted(
+                    foodCells,
+                    () -> SnakeConstantEntity.GROWTH_FOOD,
+                    SnakeEntity::isGround,
+                    random);
+        }
+        return GridInitializers.identity();
     }
 
     @Override
@@ -96,11 +139,11 @@ public final class SnakeSimulationManager
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private void updateInitialStatistics(ReadableGridModel<SnakeEntity> model) {
-        int initialSnakes = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD));
-        int initialFoodCells = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD));
+        int snakes = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD));
+        int foodCells = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD));
         statistics.updateInitialCells(
-                initialSnakes,
-                initialFoodCells);
+                snakes,
+                foodCells);
     }
 
     @Override
