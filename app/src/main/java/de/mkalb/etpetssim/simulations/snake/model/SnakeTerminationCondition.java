@@ -9,7 +9,7 @@ public final class SnakeTerminationCondition implements SimulationTerminationCon
 
     @Override
     public boolean isFinished(ReadableGridModel<SnakeEntity> model, int stepCount, SnakeStatistics statistics) {
-        return false;
+        return statistics.getSnakeHeadCells() == 0;
     }
 
 }
