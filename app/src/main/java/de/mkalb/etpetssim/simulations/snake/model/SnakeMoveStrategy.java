@@ -19,55 +19,31 @@ public interface SnakeMoveStrategy {
      */
     SnakeMoveStrategy FOOD_SEEKER = new NamedSnakeMoveStrategy(
             "FoodSeeker",
-            (snakeHead, _, _,
-             groundNeighbors, foodNeighbors,
-             _, _, random) ->
-                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead, groundNeighbors, foodNeighbors,
-                            0, 2, 0), random));
+            (context) -> simpleStrategyForConstants(context, 0, 2, 0));
     /**
      * Move randomly and prioritize ground.
      */
     SnakeMoveStrategy GROUND_WANDERER = new NamedSnakeMoveStrategy(
             "GroundWanderer",
-            (snakeHead, _, _,
-             groundNeighbors, foodNeighbors,
-             _, _, random) ->
-                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                            groundNeighbors, foodNeighbors,
-                            2, 0, 0), random));
+            (context) -> simpleStrategyForConstants(context, 2, 0, 0));
     /**
      * Prefer to continue in the same direction and prioritize food.
      */
     SnakeMoveStrategy FOOD_WITH_MOMENTUM = new NamedSnakeMoveStrategy(
             "FoodWithMomentum",
-            (snakeHead, _, _,
-             groundNeighbors, foodNeighbors,
-             _, _, random) ->
-                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                            groundNeighbors, foodNeighbors,
-                            0, 2, 1), random));
+            (context) -> simpleStrategyForConstants(context, 0, 2, 1));
     /**
      * Prefer to continue in the same direction and prioritize ground.
      */
     SnakeMoveStrategy GROUND_WITH_MOMENTUM = new NamedSnakeMoveStrategy(
             "GroundWithMomentum",
-            (snakeHead, _, _,
-             groundNeighbors, foodNeighbors,
-             _, _, random) ->
-                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                            groundNeighbors, foodNeighbors,
-                            2, 0, 1), random));
+            (context) -> simpleStrategyForConstants(context, 2, 0, 1));
     /**
      * Prefer to continue in the same direction only.
      */
     SnakeMoveStrategy MOMENTUM_ONLY = new NamedSnakeMoveStrategy(
             "MomentumOnly",
-            (snakeHead, _, _,
-             groundNeighbors, foodNeighbors,
-             _, _, random) ->
-                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                            groundNeighbors, foodNeighbors,
-                            0, 0, 2), random));
+            (context) -> simpleStrategyForConstants(context, 0, 0, 2));
 
     static Optional<ScoredMove> pickRandomTopScoredMove(List<ScoredMove> scoredMoveOptions, Random random) {
         // No scored moves available
@@ -106,34 +82,34 @@ public interface SnakeMoveStrategy {
                 isFoodTarget);
     }
 
-    static List<ScoredMove> scoreMoveOptions(SnakeHead snakeHead,
-                                             List<CellNeighborWithEdgeBehavior> groundNeighbors,
-                                             List<CellNeighborWithEdgeBehavior> foodNeighbors,
-                                             int groundWeight, int foodWeight, int sameDirectionWeight) {
-        CompassDirection snakeDirection = (sameDirectionWeight != 0) ? snakeHead.direction().orElse(null) : null;
-        List<ScoredMove> scoredMoveOptions = new ArrayList<>(groundNeighbors.size() + foodNeighbors.size());
+    private static Optional<ScoredMove> simpleStrategyForConstants(StrategyContext context,
+                                                                   int groundWeight, int foodWeight, int sameDirectionWeight) {
+        CompassDirection snakeDirection = (sameDirectionWeight != 0) ? context.snakeHead().direction().orElse(null) : null;
+        List<ScoredMove> scoredMoveOptions = new ArrayList<>(context.groundNeighbors().size() + context.foodNeighbors().size());
         // Score ground neighbors
-        for (var neighbor : groundNeighbors) {
+        for (var neighbor : context.groundNeighbors()) {
             int score = (snakeDirection == neighbor.direction()) ? (groundWeight + sameDirectionWeight) : groundWeight;
             scoredMoveOptions.add(createScoredMove(score, neighbor, false));
         }
         // Score food neighbors
-        for (var neighbor : foodNeighbors) {
+        for (var neighbor : context.foodNeighbors()) {
             int score = (snakeDirection == neighbor.direction()) ? (foodWeight + sameDirectionWeight) : foodWeight;
             scoredMoveOptions.add(createScoredMove(score, neighbor, true));
         }
-        return scoredMoveOptions;
+        return pickRandomTopScoredMove(scoredMoveOptions, context.random());
     }
 
-    Optional<ScoredMove> selectBestMove(SnakeHead snakeHead,
-                                        GridCoordinate snakeHeadCoordinate,
-                                        ReadableGridModel<SnakeEntity> model,
-                                        List<CellNeighborWithEdgeBehavior> groundNeighbors,
-                                        List<CellNeighborWithEdgeBehavior> foodNeighbors,
-                                        GridStructure structure,
-                                        SnakeConfig config,
-                                        Random random
-    );
+    Optional<ScoredMove> selectBestMove(StrategyContext context);
+
+    record StrategyContext(
+            SnakeHead snakeHead,
+            GridCoordinate snakeHeadCoordinate,
+            ReadableGridModel<SnakeEntity> model,
+            List<CellNeighborWithEdgeBehavior> groundNeighbors,
+            List<CellNeighborWithEdgeBehavior> foodNeighbors,
+            GridStructure structure,
+            SnakeConfig config,
+            Random random) {}
 
     record ScoredMove(
             int score,
@@ -147,16 +123,8 @@ public interface SnakeMoveStrategy {
             SnakeMoveStrategy strategy) implements SnakeMoveStrategy {
 
         @Override
-        public Optional<ScoredMove> selectBestMove(SnakeHead snakeHead,
-                                                   GridCoordinate snakeHeadCoordinate,
-                                                   ReadableGridModel<SnakeEntity> model,
-                                                   List<CellNeighborWithEdgeBehavior> groundNeighbors,
-                                                   List<CellNeighborWithEdgeBehavior> foodNeighbors,
-                                                   GridStructure structure,
-                                                   SnakeConfig config,
-                                                   Random random) {
-            return strategy.selectBestMove(snakeHead, snakeHeadCoordinate, model,
-                    groundNeighbors, foodNeighbors, structure, config, random);
+        public Optional<ScoredMove> selectBestMove(StrategyContext context) {
+            return strategy.selectBestMove(context);
         }
 
         @NonNull

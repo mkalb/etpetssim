@@ -40,11 +40,13 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         if (snakeHead.isDead()) {
             removeAndRespawnDeadSnake(snakeHead, snakeHeadCoordinate, model, stepIndex, statistics);
         } else {
-            findAndSelectBestMove(snakeHead, snakeHeadCoordinate, model)
-                    .ifPresentOrElse(
-                            move -> moveSnake(snakeHead, snakeHeadCoordinate, move, model, statistics),
-                            () -> killSnake(snakeHead, statistics)
-                    );
+            var context = buildStrategyContext(snakeHead, snakeHeadCoordinate, model);
+
+            // Select best move by strategy and move snake or kill if no move possible
+            snakeHead.strategy().selectBestMove(context).ifPresentOrElse(
+                    move -> moveSnake(snakeHead, snakeHeadCoordinate, move, model, statistics),
+                    () -> killSnake(snakeHead, statistics)
+            );
         }
     }
 
@@ -102,9 +104,9 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         statistics.incrementDeaths();
     }
 
-    private Optional<SnakeMoveStrategy.ScoredMove> findAndSelectBestMove(SnakeHead snakeHead,
-                                                                         GridCoordinate snakeHeadCoordinate,
-                                                                         ReadableGridModel<SnakeEntity> model) {
+    private SnakeMoveStrategy.StrategyContext buildStrategyContext(SnakeHead snakeHead,
+                                                                   GridCoordinate snakeHeadCoordinate,
+                                                                   ReadableGridModel<SnakeEntity> model) {
         // Find ground neighbors and food neighbors
         List<CellNeighborWithEdgeBehavior> groundNeighbors = new ArrayList<>(maxNeighbors);
         List<CellNeighborWithEdgeBehavior> foodNeighbors = new ArrayList<>(maxNeighbors);
@@ -126,11 +128,16 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                 throw new IllegalStateException("Multiple edge behaviors for the same neighbor coordinate. " + cellNeighborsWithEdgeBehavior);
             }
         }
-
-        // Select best move among ground and food neighbors
-        return snakeHead.strategy().selectBestMove(snakeHead, snakeHeadCoordinate, model,
-                groundNeighbors, foodNeighbors,
-                structure, config, random);
+        return new SnakeMoveStrategy.StrategyContext(
+                snakeHead,
+                snakeHeadCoordinate,
+                model,
+                groundNeighbors,
+                foodNeighbors,
+                structure,
+                config,
+                random
+        );
     }
 
 }
