@@ -7,12 +7,14 @@ public final class SnakeStatistics
         extends AbstractTimedSimulationStatistics {
 
     private int snakeHeadCells;
+    private int livingSnakeHeadCells;
     private int foodCells;
     private int deaths;
 
     public SnakeStatistics(int totalCells) {
         super(totalCells);
         snakeHeadCells = 0;
+        livingSnakeHeadCells = 0;
         foodCells = 0;
         deaths = 0;
     }
@@ -25,11 +27,20 @@ public final class SnakeStatistics
     void updateInitialCells(int snakeHeadCellsInitial,
                             int foodCellsInitial) {
         snakeHeadCells = snakeHeadCellsInitial;
+        livingSnakeHeadCells = snakeHeadCellsInitial;
         foodCells = foodCellsInitial;
     }
 
     public void decreaseSnakeHeadCells() {
         snakeHeadCells--;
+    }
+
+    public void decreaseLivingSnakeHeadCells() {
+        livingSnakeHeadCells--;
+    }
+
+    public void increaseLivingSnakeHeadCells() {
+        livingSnakeHeadCells++;
     }
 
     public void decreaseFoodCells() {
@@ -42,6 +53,10 @@ public final class SnakeStatistics
 
     public int getSnakeHeadCells() {
         return snakeHeadCells;
+    }
+
+    public int getLivingSnakeHeadCells() {
+        return livingSnakeHeadCells;
     }
 
     public int getFoodCells() {
@@ -57,6 +72,7 @@ public final class SnakeStatistics
         return "SnakeStatistics{" +
                 baseToString() +
                 ", snakeHeadCells=" + snakeHeadCells +
+                ", livingSnakeHeadCells=" + livingSnakeHeadCells +
                 ", foodCells=" + foodCells +
                 ", deaths=" + deaths +
                 '}';
