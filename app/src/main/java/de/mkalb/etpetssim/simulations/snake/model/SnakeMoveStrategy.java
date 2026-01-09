@@ -7,41 +7,67 @@ import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
 @FunctionalInterface
 public interface SnakeMoveStrategy {
 
-    SnakeMoveStrategy FOOD_SEEKER = (snakeHead, _, _,
-                                     groundNeighbors, foodNeighbors,
-                                     _, _, random) ->
-            pickRandomTopScoredMove(scoreMoveOptions(snakeHead, groundNeighbors, foodNeighbors,
-                    0, 2, 0), random);
-    SnakeMoveStrategy GROUND_WANDERER = (snakeHead, _, _,
-                                         groundNeighbors, foodNeighbors,
-                                         _, _, random) ->
-            pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                    groundNeighbors, foodNeighbors,
-                    2, 0, 0), random);
-    SnakeMoveStrategy FOOD_WITH_MOMENTUM = (snakeHead, _, _,
-                                            groundNeighbors, foodNeighbors,
-                                            _, _, random) ->
-            pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                    groundNeighbors, foodNeighbors,
-                    0, 2, 1), random);
-    SnakeMoveStrategy GROUND_WITH_MOMENTUM = (snakeHead, _, _,
-                                              groundNeighbors, foodNeighbors,
-                                              _, _, random) ->
-            pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                    groundNeighbors, foodNeighbors,
-                    2, 0, 1), random);
-    SnakeMoveStrategy MOMENTUM_ONLY = (snakeHead, _, _,
-                                       groundNeighbors, foodNeighbors,
-                                       _, _, random) ->
-            pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
-                    groundNeighbors, foodNeighbors,
-                    0, 0, 2), random);
+    /**
+     * Move randomly and prioritize food.
+     */
+    SnakeMoveStrategy FOOD_SEEKER = new NamedSnakeMoveStrategy(
+            "FoodSeeker",
+            (snakeHead, _, _,
+             groundNeighbors, foodNeighbors,
+             _, _, random) ->
+                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead, groundNeighbors, foodNeighbors,
+                            0, 2, 0), random));
+    /**
+     * Move randomly and prioritize ground.
+     */
+    SnakeMoveStrategy GROUND_WANDERER = new NamedSnakeMoveStrategy(
+            "GroundWanderer",
+            (snakeHead, _, _,
+             groundNeighbors, foodNeighbors,
+             _, _, random) ->
+                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
+                            groundNeighbors, foodNeighbors,
+                            2, 0, 0), random));
+    /**
+     * Prefer to continue in the same direction and prioritize food.
+     */
+    SnakeMoveStrategy FOOD_WITH_MOMENTUM = new NamedSnakeMoveStrategy(
+            "FoodWithMomentum",
+            (snakeHead, _, _,
+             groundNeighbors, foodNeighbors,
+             _, _, random) ->
+                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
+                            groundNeighbors, foodNeighbors,
+                            0, 2, 1), random));
+    /**
+     * Prefer to continue in the same direction and prioritize ground.
+     */
+    SnakeMoveStrategy GROUND_WITH_MOMENTUM = new NamedSnakeMoveStrategy(
+            "GroundWithMomentum",
+            (snakeHead, _, _,
+             groundNeighbors, foodNeighbors,
+             _, _, random) ->
+                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
+                            groundNeighbors, foodNeighbors,
+                            2, 0, 1), random));
+    /**
+     * Prefer to continue in the same direction only.
+     */
+    SnakeMoveStrategy MOMENTUM_ONLY = new NamedSnakeMoveStrategy(
+            "MomentumOnly",
+            (snakeHead, _, _,
+             groundNeighbors, foodNeighbors,
+             _, _, random) ->
+                    pickRandomTopScoredMove(scoreMoveOptions(snakeHead,
+                            groundNeighbors, foodNeighbors,
+                            0, 0, 2), random));
 
     static Optional<ScoredMove> pickRandomTopScoredMove(List<ScoredMove> scoredMoveOptions, Random random) {
         // No scored moves available
@@ -114,6 +140,31 @@ public interface SnakeMoveStrategy {
             GridCoordinate targetCoordinate,
             CompassDirection direction,
             boolean isFoodTarget) {
+    }
+
+    record NamedSnakeMoveStrategy(
+            String name,
+            SnakeMoveStrategy strategy) implements SnakeMoveStrategy {
+
+        @Override
+        public Optional<ScoredMove> selectBestMove(SnakeHead snakeHead,
+                                                   GridCoordinate snakeHeadCoordinate,
+                                                   ReadableGridModel<SnakeEntity> model,
+                                                   List<CellNeighborWithEdgeBehavior> groundNeighbors,
+                                                   List<CellNeighborWithEdgeBehavior> foodNeighbors,
+                                                   GridStructure structure,
+                                                   SnakeConfig config,
+                                                   Random random) {
+            return strategy.selectBestMove(snakeHead, snakeHeadCoordinate, model,
+                    groundNeighbors, foodNeighbors, structure, config, random);
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return name;
+        }
+
     }
 
 }

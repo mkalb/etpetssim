@@ -119,11 +119,12 @@ public final class SnakeHead implements SnakeEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[SNAKE_HEAD #%d %s %s %s]",
+        return String.format("[SNAKE_HEAD #%d %s %s %s %s]",
                 id,
                 (direction == null) ? "+" : direction.arrow(),
                 dead ? ("†" + deaths) : ("*" + stepIndexOfSpawn),
-                (pendingGrowth > 0) ? (snakeSegments.size() + "+" + pendingGrowth) : String.valueOf(snakeSegments.size()));
+                (pendingGrowth > 0) ? (snakeSegments.size() + "+" + pendingGrowth) : String.valueOf(snakeSegments.size()),
+                strategy.toString());
     }
 
     @Override
@@ -142,7 +143,7 @@ public final class SnakeHead implements SnakeEntity {
 
         return "SnakeHead{" +
                 "id=" + id +
-                ", strategy=" + strategy +
+                ", strategy=" + strategy.toString() +
                 ", stepIndexOfSpawn=" + stepIndexOfSpawn +
                 ", direction=" + direction +
                 ", dead=" + dead +
