@@ -96,9 +96,18 @@ public final class SnakeSimulationManager
 
     private GridInitializer<SnakeEntity> snakeInitializer(SnakeConfig config, Random random) {
         if (config.snakes() > 0) {
+            SnakeMoveStrategy[] strategies = {
+                    SnakeMoveStrategy.FOOD_SEEKER,
+                    SnakeMoveStrategy.GROUND_WANDERER,
+                    SnakeMoveStrategy.FOOD_WITH_MOMENTUM,
+                    SnakeMoveStrategy.GROUND_WITH_MOMENTUM,
+                    SnakeMoveStrategy.MOMENTUM_ONLY
+            };
+
             List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
             for (int i = 0; i < config.snakes(); i++) {
-                snakeHeads.add(new SnakeHead(i, config.initialPendingGrowth(), -1));
+                SnakeMoveStrategy strategy = strategies[i % strategies.length];
+                snakeHeads.add(new SnakeHead(i, strategy, config.initialPendingGrowth(), -1));
             }
             return GridInitializers.placeAllAtRandomPositions(
                     snakeHeads,

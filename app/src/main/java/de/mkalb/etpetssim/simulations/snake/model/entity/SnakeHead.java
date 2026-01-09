@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.snake.model.entity;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeMoveStrategy;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -9,6 +10,7 @@ import java.util.*;
 public final class SnakeHead implements SnakeEntity {
 
     private final int id;
+    private final SnakeMoveStrategy strategy;
     private final Deque<GridCoordinate> snakeSegments;
 
     private int pendingGrowth;
@@ -18,12 +20,14 @@ public final class SnakeHead implements SnakeEntity {
     private @Nullable CompassDirection direction;
 
     public SnakeHead(int id,
+                     SnakeMoveStrategy strategy,
                      int initialPendingGrowth,
                      int stepIndexOfSpawn) {
         if (initialPendingGrowth < 0) {
             throw new IllegalArgumentException("initialPendingGrowth must be non-negative");
         }
         this.id = id;
+        this.strategy = strategy;
         snakeSegments = new ArrayDeque<>();
         pendingGrowth = initialPendingGrowth;
         deaths = 0;
@@ -49,6 +53,10 @@ public final class SnakeHead implements SnakeEntity {
 
     public int id() {
         return id;
+    }
+
+    public SnakeMoveStrategy strategy() {
+        return strategy;
     }
 
     public int pendingGrowth() {
@@ -134,6 +142,7 @@ public final class SnakeHead implements SnakeEntity {
 
         return "SnakeHead{" +
                 "id=" + id +
+                ", strategy=" + strategy +
                 ", stepIndexOfSpawn=" + stepIndexOfSpawn +
                 ", direction=" + direction +
                 ", dead=" + dead +
