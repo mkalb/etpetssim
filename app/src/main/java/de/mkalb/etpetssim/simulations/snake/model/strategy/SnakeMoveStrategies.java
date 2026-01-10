@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.snake.model.strategy;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
+import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 
 import java.util.*;
 
@@ -50,6 +51,18 @@ public final class SnakeMoveStrategies {
     private SnakeMoveStrategies() {
     }
 
+    public static List<SnakeMoveStrategy> strategiesForConfig(SnakeConfig config) {
+        List<SnakeMoveStrategy> strategies = new ArrayList<>();
+        strategies.add(MOMENTUM_ONLY);
+        strategies.add(GROUND_WANDERER);
+        if (config.foodCells() > 0) {
+            strategies.add(GROUND_WITH_MOMENTUM);
+            strategies.add(FOOD_SEEKER);
+            strategies.add(FOOD_WITH_MOMENTUM);
+        }
+        return strategies;
+    }
+
     private static Optional<MoveDecision> pickRandomTopScoredMove(List<ScoredMove> moves, Random random) {
         // No scored moves available
         if (moves.isEmpty()) {
@@ -89,8 +102,12 @@ public final class SnakeMoveStrategies {
 
     private static Optional<MoveDecision> scoreAndPick(MoveContext context,
                                                        int groundWeight, int foodWeight, int momentumWeight) {
+        int movesCapacity = context.groundNeighbors().size() + context.foodNeighbors().size();
+        if (movesCapacity == 0) {
+            return Optional.empty();
+        }
         CompassDirection snakeDirection = (momentumWeight != 0) ? context.snakeHead().direction().orElse(null) : null;
-        List<ScoredMove> moves = new ArrayList<>(context.groundNeighbors().size() + context.foodNeighbors().size());
+        List<ScoredMove> moves = new ArrayList<>(movesCapacity);
         // Score ground neighbors
         for (var neighbor : context.groundNeighbors()) {
             int score = (snakeDirection == neighbor.direction()) ? (groundWeight + momentumWeight) : groundWeight;
