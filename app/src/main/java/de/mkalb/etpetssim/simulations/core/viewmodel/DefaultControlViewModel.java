@@ -38,6 +38,12 @@ public final class DefaultControlViewModel
         super(simulationState);
     }
 
+    public static DefaultControlViewModel withMinStepDuration(ReadOnlyObjectProperty<SimulationState> simulationState) {
+        DefaultControlViewModel controlViewModel = new DefaultControlViewModel(simulationState);
+        controlViewModel.stepDuration.setValue(STEP_DURATION_MIN);
+        return controlViewModel;
+    }
+
     public BooleanProperty actionButtonRequestedProperty() {
         return actionButtonRequested;
     }
