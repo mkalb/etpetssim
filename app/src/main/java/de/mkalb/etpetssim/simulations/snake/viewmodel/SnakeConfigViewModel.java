@@ -20,7 +20,7 @@ public final class SnakeConfigViewModel
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.SQUARE,
             List.of(CellShape.SQUARE, CellShape.HEXAGON),
-            GridEdgeBehavior.BLOCK_XY,
+            GridEdgeBehavior.WRAP_X_BLOCK_Y,
             List.of(GridEdgeBehavior.BLOCK_XY,
                     GridEdgeBehavior.WRAP_XY,
                     GridEdgeBehavior.BLOCK_X_WRAP_Y,
@@ -42,21 +42,21 @@ public final class SnakeConfigViewModel
     );
 
     // Initialization
-    private static final int VERTICAL_WALLS_INITIAL = 2;
+    private static final int VERTICAL_WALLS_INITIAL = 6;
     private static final int VERTICAL_WALLS_MIN = 0;
     private static final int VERTICAL_WALLS_MAX = 20;
     private static final int VERTICAL_WALLS_STEP = 1;
-    private static final int FOOD_CELLS_INITIAL = 10;
+    private static final int FOOD_CELLS_INITIAL = 100;
     private static final int FOOD_CELLS_MIN = 0;
-    private static final int FOOD_CELLS_MAX = 100;
+    private static final int FOOD_CELLS_MAX = 1_000;
     private static final int FOOD_CELLS_STEP = 1;
-    private static final int SNAKES_INITIAL = 1;
+    private static final int SNAKES_INITIAL = 8;
     private static final int SNAKES_MIN = 1;
-    private static final int SNAKES_MAX = 100;
+    private static final int SNAKES_MAX = 1_000;
     private static final int SNAKES_STEP = 1;
-    private static final int INITIAL_PENDING_GROWTH_INITIAL = 2;
+    private static final int INITIAL_PENDING_GROWTH_INITIAL = 1;
     private static final int INITIAL_PENDING_GROWTH_MIN = 0;
-    private static final int INITIAL_PENDING_GROWTH_MAX = 10;
+    private static final int INITIAL_PENDING_GROWTH_MAX = 100;
     private static final int INITIAL_PENDING_GROWTH_STEP = 1;
 
     // Rules
