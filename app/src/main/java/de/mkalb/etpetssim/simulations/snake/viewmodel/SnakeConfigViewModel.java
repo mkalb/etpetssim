@@ -61,7 +61,7 @@ public final class SnakeConfigViewModel
 
     // Rules
     private static final int GROWTH_PER_FOOD_INITIAL = 1;
-    private static final int GROWTH_PER_FOOD_MIN = 1;
+    private static final int GROWTH_PER_FOOD_MIN = 0;
     private static final int GROWTH_PER_FOOD_MAX = 10;
     private static final int GROWTH_PER_FOOD_STEP = 1;
     private static final SnakeDeathMode SNAKE_DEATH_MODE_INITIAL = SnakeDeathMode.RESPAWN;
