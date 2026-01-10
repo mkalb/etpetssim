@@ -7,6 +7,8 @@ import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 
 import java.util.*;
 
@@ -97,11 +99,11 @@ public final class SnakeSimulationManager
     private GridInitializer<SnakeEntity> snakeInitializer(SnakeConfig config, Random random) {
         if (config.snakes() > 0) {
             SnakeMoveStrategy[] strategies = {
-                    SnakeMoveStrategy.FOOD_SEEKER,
-                    SnakeMoveStrategy.GROUND_WANDERER,
-                    SnakeMoveStrategy.FOOD_WITH_MOMENTUM,
-                    SnakeMoveStrategy.GROUND_WITH_MOMENTUM,
-                    SnakeMoveStrategy.MOMENTUM_ONLY
+                    SnakeMoveStrategies.FOOD_SEEKER,
+                    SnakeMoveStrategies.GROUND_WANDERER,
+                    SnakeMoveStrategies.FOOD_WITH_MOMENTUM,
+                    SnakeMoveStrategies.GROUND_WITH_MOMENTUM,
+                    SnakeMoveStrategies.MOMENTUM_ONLY
             };
 
             List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());

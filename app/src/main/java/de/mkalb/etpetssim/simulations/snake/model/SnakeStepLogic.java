@@ -9,6 +9,8 @@ import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.MoveContext;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.MoveDecision;
 
 import java.util.*;
 
@@ -35,28 +37,28 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         if (!(agentCell.entity() instanceof SnakeHead snakeHead)) {
             throw new IllegalArgumentException("Provided cell does not contain a SnakeHead entity. Cell: " + agentCell);
         }
-        GridCoordinate snakeHeadCoordinate = agentCell.coordinate();
+        var headCoordinate = agentCell.coordinate();
 
         if (snakeHead.isDead()) {
-            removeAndRespawnDeadSnake(snakeHead, snakeHeadCoordinate, model, stepIndex, statistics);
+            removeAndRespawnDeadSnake(snakeHead, headCoordinate, model, stepIndex, statistics);
         } else {
-            var context = buildStrategyContext(snakeHead, snakeHeadCoordinate, model);
+            var context = buildStrategyContext(snakeHead, headCoordinate, model);
 
-            // Select best move by strategy and move snake or kill if no move possible
-            snakeHead.strategy().selectBestMove(context).ifPresentOrElse(
-                    move -> moveSnake(snakeHead, snakeHeadCoordinate, move, model, statistics),
+            // Decide move by strategy and act accordingly (move or die)
+            snakeHead.strategy().decideMove(context).ifPresentOrElse(
+                    move -> moveSnake(snakeHead, headCoordinate, move, model, statistics),
                     () -> killSnake(snakeHead, statistics)
             );
         }
     }
 
     private void removeAndRespawnDeadSnake(SnakeHead snakeHead,
-                                           GridCoordinate snakeHeadCoordinate,
+                                           GridCoordinate headCoordinate,
                                            WritableGridModel<SnakeEntity> model,
                                            int stepIndex,
                                            SnakeStatistics statistics) {
         // Clear the dead snake head and all its segments from the grid model
-        model.setEntityToDefault(snakeHeadCoordinate);
+        model.setEntityToDefault(headCoordinate);
         snakeHead.currentSegments().forEach(model::setEntityToDefault);
 
         switch (config.deathMode()) {
@@ -75,21 +77,21 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
     }
 
     private void moveSnake(SnakeHead snakeHead,
-                           GridCoordinate snakeHeadCoordinate,
-                           SnakeMoveStrategy.ScoredMove selectedMove,
+                           GridCoordinate headCoordinate,
+                           MoveDecision moveDecision,
                            WritableGridModel<SnakeEntity> model,
                            SnakeStatistics statistics) {
-        int additionalGrowth = selectedMove.isFoodTarget() ? config.growthPerFood() : 0;
+        int additionalGrowth = moveDecision.isFoodTarget() ? config.growthPerFood() : 0;
 
         // Move the snake head to newCoordinate
-        Optional<GridCoordinate> tailToClear = snakeHead.move(snakeHeadCoordinate, selectedMove.direction(), additionalGrowth);
-        model.setEntity(selectedMove.targetCoordinate(), snakeHead);
-        model.setEntity(snakeHeadCoordinate, SnakeConstantEntity.SNAKE_SEGMENT);
+        Optional<GridCoordinate> tailToClear = snakeHead.move(headCoordinate, moveDecision.direction(), additionalGrowth);
+        model.setEntity(moveDecision.targetCoordinate(), snakeHead);
+        model.setEntity(headCoordinate, SnakeConstantEntity.SNAKE_SEGMENT);
         // Remove tail segment if not growing
         tailToClear.ifPresent(model::setEntityToDefault);
 
         // Respawn food if eaten
-        if (selectedMove.isFoodTarget()) {
+        if (moveDecision.isFoodTarget()) {
             model.randomDefaultCoordinate(random)
                  .ifPresentOrElse(
                          freeCoordinate -> model.setEntity(freeCoordinate, SnakeConstantEntity.GROWTH_FOOD),
@@ -104,13 +106,13 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         statistics.incrementDeaths();
     }
 
-    private SnakeMoveStrategy.StrategyContext buildStrategyContext(SnakeHead snakeHead,
-                                                                   GridCoordinate snakeHeadCoordinate,
-                                                                   ReadableGridModel<SnakeEntity> model) {
+    private MoveContext buildStrategyContext(SnakeHead snakeHead,
+                                             GridCoordinate headCoordinate,
+                                             ReadableGridModel<SnakeEntity> model) {
         // Find ground neighbors and food neighbors
         List<CellNeighborWithEdgeBehavior> groundNeighbors = new ArrayList<>(maxNeighbors);
         List<CellNeighborWithEdgeBehavior> foodNeighbors = new ArrayList<>(maxNeighbors);
-        var cellNeighborsWithEdgeBehavior = CellNeighborhoods.cellNeighborsWithEdgeBehavior(snakeHeadCoordinate,
+        var cellNeighborsWithEdgeBehavior = CellNeighborhoods.cellNeighborsWithEdgeBehavior(headCoordinate,
                 config.neighborhoodMode(), structure);
         for (var cellNeighborWithEdgeBehaviorList : cellNeighborsWithEdgeBehavior.values()) {
             if (cellNeighborWithEdgeBehaviorList.size() == 1) {
@@ -128,9 +130,9 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                 throw new IllegalStateException("Multiple edge behaviors for the same neighbor coordinate. " + cellNeighborsWithEdgeBehavior);
             }
         }
-        return new SnakeMoveStrategy.StrategyContext(
+        return new MoveContext(
                 snakeHead,
-                snakeHeadCoordinate,
+                headCoordinate,
                 model,
                 groundNeighbors,
                 foodNeighbors,

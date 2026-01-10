@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.snake.model.entity;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.snake.model.SnakeMoveStrategy;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
