@@ -142,8 +142,8 @@ public final class SnakeMoveStrategies {
         }
         CompassDirection snakeDirection = ((momentumWeight != 0) || (verticalWeight != 0)) ? context.snakeHead().direction().orElse(null) : null;
         List<ScoredMove> moves = new ArrayList<>(movesCapacity);
-        scoreNeighbors(context.groundNeighbors(), false, groundWeight, momentumWeight, verticalWeight, snakeDirection, moves);
-        scoreNeighbors(context.foodNeighbors(), true, foodWeight, momentumWeight, verticalWeight, snakeDirection, moves);
+        scoreNeighbors(context.groundNeighbors(), false, groundWeight, momentumWeight, verticalWeight, snakeDirection, context.neighborDirectionRing(), moves);
+        scoreNeighbors(context.foodNeighbors(), true, foodWeight, momentumWeight, verticalWeight, snakeDirection, context.neighborDirectionRing(), moves);
         return pickRandomTopScoredMove(moves, context.random());
     }
 
@@ -151,6 +151,7 @@ public final class SnakeMoveStrategies {
                                        boolean isFoodTarget, int baseWeight,
                                        int momentumWeight, int verticalWeight,
                                        @Nullable CompassDirection snakeDirection,
+                                       List<CompassDirection> neighborDirectionRing,
                                        List<ScoredMove> moves) {
         for (var neighbor : neighbors) {
             int score = baseWeight;

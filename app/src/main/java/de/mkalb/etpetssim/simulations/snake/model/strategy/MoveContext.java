@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
@@ -17,5 +18,6 @@ public record MoveContext(
         List<CellNeighborWithEdgeBehavior> groundNeighbors,
         List<CellNeighborWithEdgeBehavior> foodNeighbors,
         GridStructure structure,
+        List<CompassDirection> neighborDirectionRing,
         SnakeConfig config,
         Random random) {}

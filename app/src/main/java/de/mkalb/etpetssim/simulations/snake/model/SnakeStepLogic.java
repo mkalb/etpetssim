@@ -1,11 +1,10 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
@@ -20,6 +19,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
     private final SnakeConfig config;
     private final Random random;
     private final int maxNeighbors;
+    private final List<CompassDirection> neighborDirectionRing;
 
     public SnakeStepLogic(GridStructure structure, SnakeConfig config, Random random) {
         this.structure = structure;
@@ -27,6 +27,15 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         this.random = random;
 
         maxNeighbors = structure.cellShape().vertexCount();
+        if (structure.cellShape() == CellShape.HEXAGON) {
+            neighborDirectionRing = CellNeighborhoods.HEXAGON_DIRECTION_RING;
+        } else if ((structure.cellShape() == CellShape.SQUARE)
+                && (config.neighborhoodMode() == NeighborhoodMode.EDGES_ONLY)) {
+            neighborDirectionRing = CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING;
+        } else {
+            throw new IllegalArgumentException("Unsupported combination of cell shape and neighborhood mode: "
+                    + structure.cellShape() + ", " + config.neighborhoodMode());
+        }
     }
 
     @Override
@@ -137,6 +146,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                 groundNeighbors,
                 foodNeighbors,
                 structure,
+                neighborDirectionRing,
                 config,
                 random
         );
