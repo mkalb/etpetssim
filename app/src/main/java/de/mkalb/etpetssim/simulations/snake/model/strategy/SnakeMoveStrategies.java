@@ -130,6 +130,15 @@ public final class SnakeMoveStrategies {
         int movesCapacity = context.groundNeighbors().size() + context.foodNeighbors().size();
         if (movesCapacity == 0) {
             return Optional.empty();
+        } else if (movesCapacity == 1) {
+            boolean isFoodTarget = context.groundNeighbors().isEmpty();
+            var onlyNeighbor = isFoodTarget
+                    ? context.foodNeighbors().getFirst()
+                    : context.groundNeighbors().getFirst();
+            return Optional.of(createScoredMove(
+                    0, // score doesn't matter with only one option
+                    onlyNeighbor,
+                    isFoodTarget));
         }
         CompassDirection snakeDirection = ((momentumWeight != 0) || (verticalWeight != 0)) ? context.snakeHead().direction().orElse(null) : null;
         List<ScoredMove> moves = new ArrayList<>(movesCapacity);
