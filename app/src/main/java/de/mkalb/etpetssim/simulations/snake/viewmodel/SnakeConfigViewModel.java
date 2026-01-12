@@ -18,7 +18,7 @@ public final class SnakeConfigViewModel
         extends AbstractConfigViewModel<SnakeConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
-            CellShape.SQUARE,
+            CellShape.HEXAGON,
             List.of(CellShape.SQUARE, CellShape.HEXAGON),
             GridEdgeBehavior.WRAP_X_BLOCK_Y,
             List.of(GridEdgeBehavior.BLOCK_XY,
@@ -54,7 +54,7 @@ public final class SnakeConfigViewModel
     private static final int SNAKES_MIN = 1;
     private static final int SNAKES_MAX = 1_000;
     private static final int SNAKES_STEP = 1;
-    private static final int INITIAL_PENDING_GROWTH_INITIAL = 1;
+    private static final int INITIAL_PENDING_GROWTH_INITIAL = 2;
     private static final int INITIAL_PENDING_GROWTH_MIN = 0;
     private static final int INITIAL_PENDING_GROWTH_MAX = 100;
     private static final int INITIAL_PENDING_GROWTH_STEP = 1;
