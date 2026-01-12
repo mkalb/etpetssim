@@ -22,6 +22,8 @@ public record SnakeConfig(
         // Rules
         SnakeDeathMode deathMode,
         int growthPerFood,
+        int basePointsPerFood,
+        double segmentLengthMultiplier,
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 }

@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeDeathMode;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -60,11 +61,18 @@ public final class SnakeConfigViewModel
     private static final int INITIAL_PENDING_GROWTH_STEP = 1;
 
     // Rules
+    private static final SnakeDeathMode SNAKE_DEATH_MODE_INITIAL = SnakeDeathMode.RESPAWN;
     private static final int GROWTH_PER_FOOD_INITIAL = 1;
     private static final int GROWTH_PER_FOOD_MIN = 0;
     private static final int GROWTH_PER_FOOD_MAX = 10;
     private static final int GROWTH_PER_FOOD_STEP = 1;
-    private static final SnakeDeathMode SNAKE_DEATH_MODE_INITIAL = SnakeDeathMode.RESPAWN;
+    private static final int BASE_POINTS_PER_FOOD_INITIAL = 10;
+    private static final int BASE_POINTS_PER_FOOD_MIN = 1;
+    private static final int BASE_POINTS_PER_FOOD_MAX = 1_000;
+    private static final int BASE_POINTS_PER_FOOD_STEP = 1;
+    private static final double SEGMENT_LENGTH_MULTIPLIER_INITIAL = 0.5;
+    private static final double SEGMENT_LENGTH_MULTIPLIER_MIN = 0.1;
+    private static final double SEGMENT_LENGTH_MULTIPLIER_MAX = 5.0;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
     // Initialization
     private final InputIntegerProperty verticalWalls = InputIntegerProperty.of(
@@ -88,15 +96,24 @@ public final class SnakeConfigViewModel
             INITIAL_PENDING_GROWTH_MAX,
             INITIAL_PENDING_GROWTH_STEP);
     // Rules
+    private final InputEnumProperty<SnakeDeathMode> deathMode = InputEnumProperty.of(
+            SNAKE_DEATH_MODE_INITIAL,
+            SnakeDeathMode.class,
+            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputIntegerProperty growthPerFood = InputIntegerProperty.of(
             GROWTH_PER_FOOD_INITIAL,
             GROWTH_PER_FOOD_MIN,
             GROWTH_PER_FOOD_MAX,
             GROWTH_PER_FOOD_STEP);
-    private final InputEnumProperty<SnakeDeathMode> deathMode = InputEnumProperty.of(
-            SNAKE_DEATH_MODE_INITIAL,
-            SnakeDeathMode.class,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+    private final InputIntegerProperty basePointsPerFood = InputIntegerProperty.of(
+            BASE_POINTS_PER_FOOD_INITIAL,
+            BASE_POINTS_PER_FOOD_MIN,
+            BASE_POINTS_PER_FOOD_MAX,
+            BASE_POINTS_PER_FOOD_STEP);
+    private final InputDoubleProperty segmentLengthMultiplier = InputDoubleProperty.of(
+            SEGMENT_LENGTH_MULTIPLIER_INITIAL,
+            SEGMENT_LENGTH_MULTIPLIER_MIN,
+            SEGMENT_LENGTH_MULTIPLIER_MAX);
 
     public SnakeConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
@@ -121,6 +138,8 @@ public final class SnakeConfigViewModel
                 // Rules
                 deathMode.getValue(),
                 growthPerFood.getValue(),
+                basePointsPerFood.getValue(),
+                segmentLengthMultiplier.getValue(),
                 NEIGHBORHOOD_MODE
         );
     }
@@ -147,6 +166,14 @@ public final class SnakeConfigViewModel
 
     public InputIntegerProperty growthPerFoodProperty() {
         return growthPerFood;
+    }
+
+    public InputIntegerProperty basePointsPerFoodProperty() {
+        return basePointsPerFood;
+    }
+
+    public InputDoubleProperty segmentLengthMultiplierProperty() {
+        return segmentLengthMultiplier;
     }
 
 }

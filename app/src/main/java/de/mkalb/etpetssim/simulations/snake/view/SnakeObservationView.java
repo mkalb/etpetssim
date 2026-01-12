@@ -27,6 +27,8 @@ public final class SnakeObservationView
     static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
     static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
     static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
+    static final String SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT = "snake.observation.snake.maxsegmentcount";
+    static final String SNAKE_OBSERVATION_SNAKE_POINTS = "snake.observation.snake.points";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -38,6 +40,8 @@ public final class SnakeObservationView
     private final Label snakeStrategyLabel = new Label();
     private final Label snakeDeathsLabel = new Label();
     private final Label snakeSegmentCountLabel = new Label();
+    private final Label snakeMaxSegmentCountLabel = new Label();
+    private final Label snakePointsLabel = new Label();
 
     private @Nullable NumberFormat intFormat;
 
@@ -59,11 +63,15 @@ public final class SnakeObservationView
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
                 snakeDeathsLabel.setText(intFormat.format(snakeHead.deaths()));
                 snakeSegmentCountLabel.setText(intFormat.format(snakeHead.segmentCount()));
+                snakeMaxSegmentCountLabel.setText(intFormat.format(snakeHead.maxSegmentCount()));
+                snakePointsLabel.setText(intFormat.format(snakeHead.points()));
             } else {
                 snakeIdLabel.setText("");
                 snakeStrategyLabel.setText("");
                 snakeDeathsLabel.setText("");
                 snakeSegmentCountLabel.setText("");
+                snakeMaxSegmentCountLabel.setText("");
+                snakePointsLabel.setText("");
             }
         } else {
             coordinateLabel.setText("");
@@ -71,6 +79,8 @@ public final class SnakeObservationView
             snakeStrategyLabel.setText("");
             snakeDeathsLabel.setText("");
             snakeSegmentCountLabel.setText("");
+            snakeMaxSegmentCountLabel.setText("");
+            snakePointsLabel.setText("");
         }
     }
 
@@ -88,7 +98,9 @@ public final class SnakeObservationView
                 SNAKE_OBSERVATION_SNAKE_ID,
                 SNAKE_OBSERVATION_SNAKE_STRATEGY,
                 SNAKE_OBSERVATION_SNAKE_DEATHS,
-                SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT
+                SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT,
+                SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT,
+                SNAKE_OBSERVATION_SNAKE_POINTS
         };
         Label[] valueLabels = {
                 stepCountLabel,
@@ -100,7 +112,9 @@ public final class SnakeObservationView
                 snakeIdLabel,
                 snakeStrategyLabel,
                 snakeDeathsLabel,
-                snakeSegmentCountLabel
+                snakeSegmentCountLabel,
+                snakeMaxSegmentCountLabel,
+                snakePointsLabel
         };
 
         intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());

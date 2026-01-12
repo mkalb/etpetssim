@@ -17,6 +17,8 @@ public final class SnakeHead implements SnakeEntity {
     private int deaths;
     private int stepIndexOfSpawn;
     private boolean dead;
+    private int points;
+    private int maxSegmentCount;
     private @Nullable CompassDirection direction;
 
     public SnakeHead(int id,
@@ -33,6 +35,8 @@ public final class SnakeHead implements SnakeEntity {
         deaths = 0;
         this.stepIndexOfSpawn = stepIndexOfSpawn;
         dead = false;
+        points = 0;
+        maxSegmentCount = 0;
         direction = null;
     }
 
@@ -67,6 +71,14 @@ public final class SnakeHead implements SnakeEntity {
         return deaths;
     }
 
+    public int points() {
+        return points;
+    }
+
+    public int maxSegmentCount() {
+        return maxSegmentCount;
+    }
+
     public int stepIndexOfSpawn() {
         return stepIndexOfSpawn;
     }
@@ -95,15 +107,18 @@ public final class SnakeHead implements SnakeEntity {
         return snakeSegments.size();
     }
 
-    public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate, CompassDirection moveDirection, int additionalGrowth) {
+    public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate, CompassDirection moveDirection, int additionalGrowth, int addedPoints) {
         snakeSegments.addFirst(lastHeadCoordinate);
         direction = moveDirection;
         pendingGrowth += additionalGrowth;
+        points += addedPoints;
         if (pendingGrowth > 0) {
             pendingGrowth--;
+            maxSegmentCount = Math.max(maxSegmentCount, segmentCount());
             return Optional.empty();
         } else {
             pendingGrowth = 0; // Ensure non-negative
+            maxSegmentCount = Math.max(maxSegmentCount, segmentCount() - 1);
             return Optional.of(snakeSegments.removeLast());
         }
     }
