@@ -91,6 +91,10 @@ public final class SnakeHead implements SnakeEntity {
         return List.copyOf(snakeSegments);
     }
 
+    public int segmentCount() {
+        return snakeSegments.size();
+    }
+
     public Optional<GridCoordinate> move(GridCoordinate lastHeadCoordinate, CompassDirection moveDirection, int additionalGrowth) {
         snakeSegments.addFirst(lastHeadCoordinate);
         direction = moveDirection;
