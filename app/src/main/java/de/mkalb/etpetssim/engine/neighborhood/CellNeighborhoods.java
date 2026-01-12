@@ -31,6 +31,39 @@ public final class CellNeighborhoods {
     public static final int MAX_RADIUS = 100;
 
     /**
+     * Direction ring for square cells when only edges are considered.
+     * <p>
+     * Clockwise order starting at North: N, E, S, W.
+     * Matches the ordering used by {@code computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_ONLY)}.
+     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, java.util.List)}.
+     */
+    public static final List<CompassDirection> SQUARE_EDGES_DIRECTION_RING =
+            List.of(CompassDirection.N, CompassDirection.E, CompassDirection.S, CompassDirection.W);
+
+    /**
+     * Direction ring for square cells when edges and vertices are considered.
+     * <p>
+     * Clockwise order starting at North: N, NE, E, SE, S, SW, W, NW.
+     * Matches the ordering used by {@code computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_AND_VERTICES)}.
+     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, java.util.List)}.
+     */
+    public static final List<CompassDirection> SQUARE_EDGES_AND_VERTICES_DIRECTION_RING =
+            List.of(
+                    CompassDirection.N, CompassDirection.NE, CompassDirection.E, CompassDirection.SE,
+                    CompassDirection.S, CompassDirection.SW, CompassDirection.W, CompassDirection.NW
+            );
+
+    /**
+     * Direction ring for hexagon cells (six neighbors).
+     * <p>
+     * Clockwise order starting at North: N, NE, SE, S, SW, NW.
+     * Matches the ordering used by {@code computeHexagonCellNeighborConnections(...)}.
+     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, java.util.List)}.
+     */
+    public static final List<CompassDirection> HEXAGON_DIRECTION_RING =
+            List.of(CompassDirection.N, CompassDirection.NE, CompassDirection.SE, CompassDirection.S, CompassDirection.SW, CompassDirection.NW);
+
+    /**
      * Internal cache for computed cell neighbor connections.
      */
     private static final Map<String, List<CellNeighborConnection>> CACHE = HashMap.newHashMap(16);
