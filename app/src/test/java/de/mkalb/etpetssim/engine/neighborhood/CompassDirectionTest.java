@@ -281,4 +281,129 @@ final class CompassDirectionTest {
         assertEquals(expectedCounterClockwiseS, actualCounterClockwiseS);
     }
 
+    @Test
+    void testDistance() {
+        // Same direction
+        assertEquals(0, CompassDirection.distance(CompassDirection.N, CompassDirection.N));
+        assertEquals(0, CompassDirection.distance(CompassDirection.E, CompassDirection.E));
+
+        // Adjacent directions
+        assertEquals(1, CompassDirection.distance(CompassDirection.N, CompassDirection.NNE));
+        assertEquals(1, CompassDirection.distance(CompassDirection.NNE, CompassDirection.N));
+        assertEquals(1, CompassDirection.distance(CompassDirection.S, CompassDirection.SSE));
+        assertEquals(1, CompassDirection.distance(CompassDirection.SSE, CompassDirection.S));
+
+        // Two steps
+        assertEquals(2, CompassDirection.distance(CompassDirection.N, CompassDirection.NE));
+        assertEquals(2, CompassDirection.distance(CompassDirection.NE, CompassDirection.N));
+        assertEquals(2, CompassDirection.distance(CompassDirection.S, CompassDirection.SW));
+        assertEquals(2, CompassDirection.distance(CompassDirection.SW, CompassDirection.S));
+
+        // Opposite directions
+        assertEquals(8, CompassDirection.distance(CompassDirection.N, CompassDirection.S));
+        assertEquals(8, CompassDirection.distance(CompassDirection.S, CompassDirection.N));
+        assertEquals(8, CompassDirection.distance(CompassDirection.E, CompassDirection.W));
+        assertEquals(8, CompassDirection.distance(CompassDirection.W, CompassDirection.E));
+        assertEquals(8, CompassDirection.distance(CompassDirection.NE, CompassDirection.SW));
+        assertEquals(8, CompassDirection.distance(CompassDirection.SW, CompassDirection.NE));
+
+        // Wrapping around (NNW to N)
+        assertEquals(1, CompassDirection.distance(CompassDirection.NNW, CompassDirection.N));
+        assertEquals(1, CompassDirection.distance(CompassDirection.N, CompassDirection.NNW));
+
+        // Wrapping around longer distance
+        assertEquals(3, CompassDirection.distance(CompassDirection.NNW, CompassDirection.NE));
+        assertEquals(3, CompassDirection.distance(CompassDirection.NE, CompassDirection.NNW));
+        assertEquals(7, CompassDirection.distance(CompassDirection.E, CompassDirection.WNW));
+        assertEquals(7, CompassDirection.distance(CompassDirection.WNW, CompassDirection.E));
+
+        // Symmetry: distance should be the same regardless of direction
+        assertEquals(
+                CompassDirection.distance(CompassDirection.N, CompassDirection.SE),
+                CompassDirection.distance(CompassDirection.SE, CompassDirection.N)
+        );
+    }
+
+    @Test
+    void testDistanceOnRing() {
+        // Test with 4-element ring (square edges only)
+        List<CompassDirection> squareRing = List.of(
+                CompassDirection.N,
+                CompassDirection.E,
+                CompassDirection.S,
+                CompassDirection.W
+        );
+
+        // Same direction
+        assertEquals(0, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.N, squareRing));
+        assertEquals(0, CompassDirection.distanceOnRing(CompassDirection.E, CompassDirection.E, squareRing));
+
+        // Adjacent in ring
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.E, squareRing));
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.E, CompassDirection.N, squareRing));
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.E, CompassDirection.S, squareRing));
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.S, CompassDirection.E, squareRing));
+
+        // Opposite in 4-ring
+        assertEquals(2, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.S, squareRing));
+        assertEquals(2, CompassDirection.distanceOnRing(CompassDirection.S, CompassDirection.N, squareRing));
+        assertEquals(2, CompassDirection.distanceOnRing(CompassDirection.E, CompassDirection.W, squareRing));
+        assertEquals(2, CompassDirection.distanceOnRing(CompassDirection.W, CompassDirection.E, squareRing));
+
+        // Wrapping around
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.W, CompassDirection.N, squareRing));
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.W, squareRing));
+
+        // Test with 6-element ring (hexagon)
+        List<CompassDirection> hexagonRing = List.of(
+                CompassDirection.N,
+                CompassDirection.NE,
+                CompassDirection.SE,
+                CompassDirection.S,
+                CompassDirection.SW,
+                CompassDirection.NW
+        );
+
+        assertEquals(0, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.N, hexagonRing));
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.NE, hexagonRing));
+        assertEquals(2, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.SE, hexagonRing));
+        assertEquals(3, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.S, hexagonRing));
+        assertEquals(2, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.SW, hexagonRing));
+        assertEquals(1, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.NW, hexagonRing));
+
+        // Test with 8-element ring (square edges and vertices)
+        List<CompassDirection> squareFullRing = List.of(
+                CompassDirection.N,
+                CompassDirection.NE,
+                CompassDirection.E,
+                CompassDirection.SE,
+                CompassDirection.S,
+                CompassDirection.SW,
+                CompassDirection.W,
+                CompassDirection.NW
+        );
+
+        assertEquals(4, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.S, squareFullRing));
+        assertEquals(2, CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.E, squareFullRing));
+    }
+
+    @Test
+    void testDistanceOnRingWithMissingDirection() {
+        List<CompassDirection> squareRing = List.of(
+                CompassDirection.N,
+                CompassDirection.E,
+                CompassDirection.S,
+                CompassDirection.W
+        );
+
+        assertThrows(IllegalArgumentException.class, () -> CompassDirection.distanceOnRing(CompassDirection.NNE, CompassDirection.N, squareRing));
+        assertThrows(IllegalArgumentException.class, () -> CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.NNE, squareRing));
+        assertThrows(IllegalArgumentException.class, () -> CompassDirection.distanceOnRing(CompassDirection.E, CompassDirection.ENE, squareRing));
+    }
+
+    @Test
+    void testDistanceOnRingWithEmptyRing() {
+        assertThrows(IllegalArgumentException.class, () -> CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.E, List.of()));
+    }
+
 }

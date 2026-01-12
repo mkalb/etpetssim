@@ -68,6 +68,54 @@ public enum CompassDirection {
     }
 
     /**
+     * Calculates the shortest distance between two compass directions.
+     * <p>
+     * The distance is determined by the minimum number of steps needed to traverse
+     * from one direction to the other, either clockwise or counterclockwise.
+     * The result is always between 0 and 8 (half the total of 16 directions).
+     * </p>
+     *
+     * @param from the starting direction
+     * @param to the target direction
+     * @return the shortest distance (0-8 steps)
+     */
+    public static int distance(CompassDirection from, CompassDirection to) {
+        int ordinalDiff = Math.abs(to.ordinal() - from.ordinal());
+        return Math.min(ordinalDiff, VALUES.length - ordinalDiff);
+    }
+
+    /**
+     * Calculates the shortest distance between two compass directions on a given direction ring.
+     * <p>
+     * The distance is determined by the minimum number of steps needed to traverse
+     * from one direction to the other, either clockwise or counterclockwise on the provided ring.
+     * The result is always between 0 and half the ring size (rounded up).
+     * </p>
+     *
+     * @param from the starting direction (must be part of the ring)
+     * @param to   the target direction (must be part of the ring)
+     * @param ring the list of directions defining the valid ring (must not be null or empty)
+     * @return the shortest distance (in steps) between the two directions on the ring
+     * @throws IllegalArgumentException if either direction is not part of the ring
+     */
+    public static int distanceOnRing(CompassDirection from,
+                                     CompassDirection to,
+                                     List<CompassDirection> ring) {
+        int fromIdx = ring.indexOf(from);
+        int toIdx = ring.indexOf(to);
+
+        if ((fromIdx < 0) || (toIdx < 0)) {
+            throw new IllegalArgumentException("Direction not available in direction ring. from=" + from
+                    + ", to=" + to + ", ring=" + ring);
+        }
+
+        int size = ring.size();
+        int forward = ((toIdx - fromIdx) + size) % size;
+        int backward = size - forward;
+        return Math.min(forward, backward);
+    }
+
+    /**
      * Returns the resource key for the abbreviation of this direction.
      *
      * @return the abbreviation resource key
