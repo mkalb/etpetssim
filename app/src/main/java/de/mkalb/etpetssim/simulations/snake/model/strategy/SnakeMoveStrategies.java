@@ -15,56 +15,56 @@ public final class SnakeMoveStrategies {
      */
     public static final SnakeMoveStrategy MOMENTUM_ONLY_STRATEGY = new NamedMoveStrategy(
             "Momentum Only",
-            (context) -> scoreAndPick(context, 0, 0, 2, 0));
+            (context) -> scoreAndPick(context, 0, 0, 0, 2, 1));
 
     /**
      * Combines directional momentum with a strong bias toward vertical directions (North/South).
      */
-    public static final SnakeMoveStrategy VERTICAL_BIAS_MOMENTUM_STRATEGY = new NamedMoveStrategy(
-            "Vertical Bias Momentum",
-            (context) -> scoreAndPick(context, 0, 0, 1, 2));
+    public static final SnakeMoveStrategy VERTICAL_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
+            "Vertical with Momentum",
+            (context) -> scoreAndPick(context, 0, 0, 2, 2, 1));
 
     /**
-     * Combines directional momentum with avoidance of vertical directions, favoring horizontal movement.
+     * Combines directional momentum with avoidance of vertical directions (North/South).
      */
-    public static final SnakeMoveStrategy AVOID_VERTICAL_BIAS_STRATEGY = new NamedMoveStrategy(
-            "Avoid Vertical Bias",
-            (context) -> scoreAndPick(context, 0, 0, 1, -2));
+    public static final SnakeMoveStrategy AVOID_VERTICAL_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
+            "Avoid Vertical with Momentum",
+            (context) -> scoreAndPick(context, 0, 0, -2, 2, 1));
 
     /**
-     * Prioritizes moving toward ground cells, selecting randomly among equal options.
+     * Prioritizes moving toward ground cells.
      */
-    public static final SnakeMoveStrategy GROUND_PRIORITIZE_STRATEGY = new NamedMoveStrategy(
-            "Ground Prioritize",
-            (context) -> scoreAndPick(context, 2, 0, 0, 0));
+    public static final SnakeMoveStrategy PRIORITIZE_GROUND_STRATEGY = new NamedMoveStrategy(
+            "Ground",
+            (context) -> scoreAndPick(context, 3, 0, 0, 1, 1));
 
     /**
-     * Prioritizes ground cells while preferring to continue in the current direction.
+     * Prioritizes ground cells while preferring straight movement and small turns.
      */
-    public static final SnakeMoveStrategy GROUND_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
+    public static final SnakeMoveStrategy PRIORITIZE_GROUND_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
             "Ground with Momentum",
-            (context) -> scoreAndPick(context, 2, 0, 1, 0));
+            (context) -> scoreAndPick(context, 3, 0, 0, 2, 1));
 
     /**
-     * Prioritizes moving toward food cells, selecting randomly among equal options.
+     * Prioritizes moving toward food cells. Direction is ignored.
      */
-    public static final SnakeMoveStrategy FOOD_PRIORITIZE_STRATEGY = new NamedMoveStrategy(
-            "Food Prioritize",
-            (context) -> scoreAndPick(context, 0, 2, 0, 0));
+    public static final SnakeMoveStrategy PRIORITIZE_FOOD_STRATEGY = new NamedMoveStrategy(
+            "Food",
+            (context) -> scoreAndPick(context, 0, 3, 0, 1, 1));
 
     /**
-     * Prioritizes food cells while preferring to continue in the current direction.
+     * Prioritizes food cells while preferring straight movement and small turns.
      */
-    public static final SnakeMoveStrategy FOOD_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
+    public static final SnakeMoveStrategy PRIORITIZE_FOOD_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
             "Food with Momentum",
-            (context) -> scoreAndPick(context, 0, 2, 1, 0));
+            (context) -> scoreAndPick(context, 0, 3, 0, 2, 1));
 
     /**
-     * Balances food targeting, directional momentum, and vertical bias equally.
+     * Balances food targeting, directional momentum, and vertical movement.
      */
-    public static final SnakeMoveStrategy FOOD_AND_MOMENTUM_BALANCED_STRATEGY = new NamedMoveStrategy(
-            "Food and Momentum Balanced",
-            (context) -> scoreAndPick(context, 0, 1, 1, 1));
+    public static final SnakeMoveStrategy BALANCED_FOOD_VERTICAL_MOMENTUM_STRATEGY = new NamedMoveStrategy(
+            "Balanced Food, Vertical and Momentum",
+            (context) -> scoreAndPick(context, 0, 2, 1, 2, 1));
 
     /**
      * Private constructor to prevent instantiation.
@@ -75,15 +75,15 @@ public final class SnakeMoveStrategies {
     public static List<SnakeMoveStrategy> strategiesForConfig(SnakeConfig config) {
         List<SnakeMoveStrategy> strategies = new ArrayList<>();
         strategies.add(MOMENTUM_ONLY_STRATEGY);
-        strategies.add(VERTICAL_BIAS_MOMENTUM_STRATEGY);
-        strategies.add(AVOID_VERTICAL_BIAS_STRATEGY);
-        strategies.add(GROUND_PRIORITIZE_STRATEGY);
+        strategies.add(VERTICAL_WITH_MOMENTUM_STRATEGY);
+        strategies.add(AVOID_VERTICAL_WITH_MOMENTUM_STRATEGY);
+        strategies.add(PRIORITIZE_GROUND_STRATEGY);
 
         if (config.foodCells() > 0) {
-            strategies.add(GROUND_WITH_MOMENTUM_STRATEGY);
-            strategies.add(FOOD_PRIORITIZE_STRATEGY);
-            strategies.add(FOOD_WITH_MOMENTUM_STRATEGY);
-            strategies.add(FOOD_AND_MOMENTUM_BALANCED_STRATEGY);
+            strategies.add(PRIORITIZE_GROUND_WITH_MOMENTUM_STRATEGY);
+            strategies.add(PRIORITIZE_FOOD_STRATEGY);
+            strategies.add(PRIORITIZE_FOOD_WITH_MOMENTUM_STRATEGY);
+            strategies.add(BALANCED_FOOD_VERTICAL_MOMENTUM_STRATEGY);
         }
         return strategies;
     }
@@ -126,7 +126,11 @@ public final class SnakeMoveStrategies {
     }
 
     private static Optional<MoveDecision> scoreAndPick(MoveContext context,
-                                                       int groundWeight, int foodWeight, int momentumWeight, int verticalWeight) {
+                                                       int groundWeight,
+                                                       int foodWeight,
+                                                       int verticalWeight,
+                                                       int straightWeight,
+                                                       int smallTurnWeight) {
         int movesCapacity = context.groundNeighbors().size() + context.foodNeighbors().size();
         if (movesCapacity == 0) {
             return Optional.empty();
@@ -140,27 +144,38 @@ public final class SnakeMoveStrategies {
                     onlyNeighbor,
                     isFoodTarget));
         }
-        CompassDirection snakeDirection = ((momentumWeight != 0) || (verticalWeight != 0)) ? context.snakeHead().direction().orElse(null) : null;
+        CompassDirection snakeDirection = ((straightWeight != 0) || (smallTurnWeight != 0) || (verticalWeight != 0)) ? context.snakeHead().direction().orElse(null) : null;
         List<ScoredMove> moves = new ArrayList<>(movesCapacity);
-        scoreNeighbors(context.groundNeighbors(), false, groundWeight, momentumWeight, verticalWeight, snakeDirection, context.neighborDirectionRing(), moves);
-        scoreNeighbors(context.foodNeighbors(), true, foodWeight, momentumWeight, verticalWeight, snakeDirection, context.neighborDirectionRing(), moves);
+        scoreNeighbors(context.groundNeighbors(), false, groundWeight, verticalWeight, straightWeight, smallTurnWeight, snakeDirection, context.neighborDirectionRing(), moves);
+        scoreNeighbors(context.foodNeighbors(), true, foodWeight, verticalWeight, straightWeight, smallTurnWeight, snakeDirection, context.neighborDirectionRing(), moves);
         return pickRandomTopScoredMove(moves, context.random());
     }
 
     private static void scoreNeighbors(List<CellNeighborWithEdgeBehavior> neighbors,
-                                       boolean isFoodTarget, int baseWeight,
-                                       int momentumWeight, int verticalWeight,
+                                       boolean isFoodTarget,
+                                       int baseWeight,
+                                       int verticalWeight,
+                                       int straightWeight,
+                                       int smallTurnWeight,
                                        @Nullable CompassDirection snakeDirection,
                                        List<CompassDirection> neighborDirectionRing,
                                        List<ScoredMove> moves) {
         for (var neighbor : neighbors) {
             int score = baseWeight;
 
-            if ((momentumWeight != 0) && (snakeDirection == neighbor.direction())) {
-                score += momentumWeight;
-            }
             if ((verticalWeight != 0) && isVertical(neighbor.direction())) {
                 score += verticalWeight;
+            }
+
+            // Bias for continuing straight or making only a small turn
+            if (snakeDirection != null) {
+                int distance = CompassDirection.distanceOnRing(snakeDirection, neighbor.direction(), neighborDirectionRing);
+                if (distance == 0) {
+                    score += straightWeight;
+                } else if (distance == 1) {
+                    score += smallTurnWeight;
+                }
+                // distance >= 2 -> no momentum bonus
             }
 
             moves.add(createScoredMove(score, neighbor, isFoodTarget));
