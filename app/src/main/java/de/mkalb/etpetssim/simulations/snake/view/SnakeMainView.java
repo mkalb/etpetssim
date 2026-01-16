@@ -81,7 +81,7 @@ public final class SnakeMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<SnakeEntity> oldGridCell,
                                           @Nullable GridCell<SnakeEntity> newGridCell) {
-        if ((oldGridCell != null) || (newGridCell != null)) {
+        if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
         if (newGridCell != null) {
