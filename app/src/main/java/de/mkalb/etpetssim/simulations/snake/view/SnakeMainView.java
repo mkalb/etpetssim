@@ -77,13 +77,24 @@ public final class SnakeMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<SnakeEntity> oldGridCell,
                                           @Nullable GridCell<SnakeEntity> newGridCell) {
-        if (oldGridCell != null) {
+        if ((oldGridCell != null) || (newGridCell != null)) {
             painter.clearCanvasBackground();
         }
         if (newGridCell != null) {
-            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
-                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
-                    StrokeType.OUTSIDE);
+            if (newGridCell.entity().isStaticTerrain()) {
+                painter.drawCell(newGridCell.coordinate(), null,
+                        SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH);
+            } else {
+                painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                        SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                        StrokeType.OUTSIDE);
+                if (newGridCell.entity() instanceof SnakeHead head) {
+                    for (GridCoordinate coordinate : head.currentSegments()) {
+                        painter.drawCell(coordinate, null,
+                                SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH);
+                    }
+                }
+            }
         }
     }
 

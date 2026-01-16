@@ -17,4 +17,9 @@ public sealed interface SnakeEntity extends GridEntity
         return descriptorId().equals(DESCRIPTOR_ID_GROUND);
     }
 
+    default boolean isStaticTerrain() {
+        return descriptorId().equals(DESCRIPTOR_ID_GROUND) ||
+                descriptorId().equals(DESCRIPTOR_ID_WALL);
+    }
+
 }
