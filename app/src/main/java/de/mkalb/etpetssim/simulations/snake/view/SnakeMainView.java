@@ -33,11 +33,15 @@ public final class SnakeMainView
 
     // Entity color
     public static final Color HEAD_ALIVE_FILL = Color.web("#00BCD4");
+    public static final Color HEAD_ALIVE_SELECTED_FILL = Color.web("#80DEEA");
     public static final Color HEAD_ALIVE_BORDER = Color.web("#008BA3");
+    public static final Color HEAD_ALIVE_SELECTED_BORDER = Color.web("#4DD0E1");
     public static final Color HEAD_DEAD_FILL = Color.web("#A33A3A");
     public static final Color HEAD_DEAD_BORDER = Color.web("#6E2626");
     public static final Color SEGMENT_ALIVE_FILL = Color.web("#4CAF50");
+    public static final Color SEGMENT_ALIVE_SELECTED_FILL = Color.web("#A5D6A7");
     public static final Color SEGMENT_ALIVE_BORDER = Color.web("#2E7D32");
+    public static final Color SEGMENT_ALIVE_SELECTED_BORDER = Color.web("#66BB6A");
     public static final Color SEGMENT_DEAD_FILL = Color.web("#8D6E63");
     public static final Color SEGMENT_DEAD_BORDER = Color.web("#5D4037");
 
@@ -121,10 +125,29 @@ public final class SnakeMainView
         currentModel.filteredCells(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD))
                     .forEach(cell -> {
                         if (cell.entity() instanceof SnakeHead head) {
-                            Color snakeHeadColor = head.isDead() ? HEAD_DEAD_FILL : HEAD_ALIVE_FILL;
-                            Color snakeHeadColorBorder = head.isDead() ? HEAD_DEAD_BORDER : HEAD_ALIVE_BORDER;
-                            Color snakeSegmentColor = head.isDead() ? SEGMENT_DEAD_FILL : SEGMENT_ALIVE_FILL;
-                            Color snakeSegmentColorBorder = head.isDead() ? SEGMENT_DEAD_BORDER : SEGMENT_ALIVE_BORDER;
+                            boolean isDead = head.isDead();
+                            // Check if last selected entity is not null and is the same instance as the current head
+                            boolean isSelected = Objects.equals(head, viewModel.lastSelectedEntityProperty().getValue());
+                            Color snakeHeadColor;
+                            Color snakeHeadColorBorder;
+                            Color snakeSegmentColor;
+                            Color snakeSegmentColorBorder;
+                            if (isDead) {
+                                snakeHeadColor = HEAD_DEAD_FILL;
+                                snakeHeadColorBorder = HEAD_DEAD_BORDER;
+                                snakeSegmentColor = SEGMENT_DEAD_FILL;
+                                snakeSegmentColorBorder = SEGMENT_DEAD_BORDER;
+                            } else if (isSelected) {
+                                snakeHeadColor = HEAD_ALIVE_SELECTED_FILL;
+                                snakeHeadColorBorder = HEAD_ALIVE_SELECTED_BORDER;
+                                snakeSegmentColor = SEGMENT_ALIVE_SELECTED_FILL;
+                                snakeSegmentColorBorder = SEGMENT_ALIVE_SELECTED_BORDER;
+                            } else {
+                                snakeHeadColor = HEAD_ALIVE_FILL;
+                                snakeHeadColorBorder = HEAD_ALIVE_BORDER;
+                                snakeSegmentColor = SEGMENT_ALIVE_FILL;
+                                snakeSegmentColorBorder = SEGMENT_ALIVE_BORDER;
+                            }
                             for (GridCoordinate coordinate : head.currentSegments()) {
                                 basePainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
                             }
