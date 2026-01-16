@@ -18,6 +18,8 @@ import java.util.*;
 public final class SnakeConfigViewModel
         extends AbstractConfigViewModel<SnakeConfig> {
 
+    public static final int SEGMENT_LENGTH_MULTIPLIER_DECIMALS = 1;
+
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CellShape.HEXAGON,
             List.of(CellShape.SQUARE, CellShape.HEXAGON),
@@ -26,54 +28,56 @@ public final class SnakeConfigViewModel
                     GridEdgeBehavior.WRAP_XY,
                     GridEdgeBehavior.BLOCK_X_WRAP_Y,
                     GridEdgeBehavior.WRAP_X_BLOCK_Y),
-            100,
+            80,
             GridSize.MIN_SIZE,
-            1_024,
-            GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE,
-            50,
+            1_000,
+            Math.max(GridTopology.SQUARE_MAX_REQUIRED_WIDTH_MULTIPLE, GridTopology.HEXAGON_MAX_REQUIRED_WIDTH_MULTIPLE),
+            40,
             GridSize.MIN_SIZE,
-            1_024,
-            GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
-            8,
-            2,
-            64,
-            CellDisplayMode.SHAPE,
-            List.of(CellDisplayMode.SHAPE),
+            1_000,
+            Math.max(GridTopology.SQUARE_MAX_REQUIRED_HEIGHT_MULTIPLE, GridTopology.HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE),
+            6,
+            4,
+            32,
+            CellDisplayMode.SHAPE_BORDERED,
+            List.of(CellDisplayMode.SHAPE_BORDERED),
             ""
     );
 
     // Initialization
     private static final int VERTICAL_WALLS_INITIAL = 6;
     private static final int VERTICAL_WALLS_MIN = 0;
-    private static final int VERTICAL_WALLS_MAX = 20;
+    private static final int VERTICAL_WALLS_MAX = 100;
     private static final int VERTICAL_WALLS_STEP = 1;
-    private static final int FOOD_CELLS_INITIAL = 100;
+    private static final int FOOD_CELLS_INITIAL = 50;
     private static final int FOOD_CELLS_MIN = 0;
-    private static final int FOOD_CELLS_MAX = 1_000;
+    private static final int FOOD_CELLS_MAX = 10_000;
     private static final int FOOD_CELLS_STEP = 1;
     private static final int SNAKES_INITIAL = 8;
-    private static final int SNAKES_MIN = 1;
+    private static final int SNAKES_MIN = 0;
     private static final int SNAKES_MAX = 1_000;
     private static final int SNAKES_STEP = 1;
     private static final int INITIAL_PENDING_GROWTH_INITIAL = 2;
     private static final int INITIAL_PENDING_GROWTH_MIN = 0;
-    private static final int INITIAL_PENDING_GROWTH_MAX = 100;
+    private static final int INITIAL_PENDING_GROWTH_MAX = 1_000;
     private static final int INITIAL_PENDING_GROWTH_STEP = 1;
 
     // Rules
     private static final SnakeDeathMode SNAKE_DEATH_MODE_INITIAL = SnakeDeathMode.RESPAWN;
     private static final int GROWTH_PER_FOOD_INITIAL = 1;
     private static final int GROWTH_PER_FOOD_MIN = 0;
-    private static final int GROWTH_PER_FOOD_MAX = 10;
+    private static final int GROWTH_PER_FOOD_MAX = 100;
     private static final int GROWTH_PER_FOOD_STEP = 1;
     private static final int BASE_POINTS_PER_FOOD_INITIAL = 10;
-    private static final int BASE_POINTS_PER_FOOD_MIN = 1;
-    private static final int BASE_POINTS_PER_FOOD_MAX = 1_000;
+    private static final int BASE_POINTS_PER_FOOD_MIN = 0;
+    private static final int BASE_POINTS_PER_FOOD_MAX = 100;
     private static final int BASE_POINTS_PER_FOOD_STEP = 1;
-    private static final double SEGMENT_LENGTH_MULTIPLIER_INITIAL = 0.5;
-    private static final double SEGMENT_LENGTH_MULTIPLIER_MIN = 0.1;
-    private static final double SEGMENT_LENGTH_MULTIPLIER_MAX = 5.0;
+    private static final double SEGMENT_LENGTH_MULTIPLIER_INITIAL = 0.5d;
+    private static final double SEGMENT_LENGTH_MULTIPLIER_MIN = 0.0d;
+    private static final double SEGMENT_LENGTH_MULTIPLIER_MAX = 5.0d;
+    // No property for NEIGHBORHOOD_MODE, because it is fixed for Snake simulation to EDGES_ONLY
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
+
     // Initialization
     private final InputIntegerProperty verticalWalls = InputIntegerProperty.of(
             VERTICAL_WALLS_INITIAL,
@@ -95,6 +99,7 @@ public final class SnakeConfigViewModel
             INITIAL_PENDING_GROWTH_MIN,
             INITIAL_PENDING_GROWTH_MAX,
             INITIAL_PENDING_GROWTH_STEP);
+
     // Rules
     private final InputEnumProperty<SnakeDeathMode> deathMode = InputEnumProperty.of(
             SNAKE_DEATH_MODE_INITIAL,

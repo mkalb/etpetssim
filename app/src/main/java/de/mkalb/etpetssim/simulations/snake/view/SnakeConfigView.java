@@ -28,6 +28,10 @@ public final class SnakeConfigView
     static final String SNAKE_CONFIG_DEATH_MODE_TOOLTIP = "snake.config.deathmode.tooltip";
     static final String SNAKE_CONFIG_GROWTH_PER_FOOD = "snake.config.growthperfood";
     static final String SNAKE_CONFIG_GROWTH_PER_FOOD_TOOLTIP = "snake.config.growthperfood.tooltip";
+    static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD = "snake.config.basepointsperfood";
+    static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD_TOOLTIP = "snake.config.basepointsperfood.tooltip";
+    static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER = "snake.config.segmentlengthmultiplier";
+    static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP = "snake.config.segmentlengthmultiplier.tooltip";
 
     public SnakeConfigView(SnakeConfigViewModel viewModel) {
         super(viewModel);
@@ -93,10 +97,23 @@ public final class SnakeConfigView
                 AppLocalization.getFormattedText(SNAKE_CONFIG_GROWTH_PER_FOOD_TOOLTIP, viewModel.growthPerFoodProperty().min(), viewModel.growthPerFoodProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER
         );
+        var basePointsPerFoodControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.basePointsPerFoodProperty(),
+                AppLocalization.getText(SNAKE_CONFIG_BASE_POINTS_PER_FOOD),
+                AppLocalization.getFormattedText(SNAKE_CONFIG_BASE_POINTS_PER_FOOD_TOOLTIP, viewModel.basePointsPerFoodProperty().min(), viewModel.basePointsPerFoodProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
+        var segmentLengthMultiplierControl = FXComponentFactory.createLabeledDoubleSlider(
+                viewModel.segmentLengthMultiplierProperty(),
+                SnakeConfigViewModel.SEGMENT_LENGTH_MULTIPLIER_DECIMALS,
+                AppLocalization.getText(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER),
+                AppLocalization.getText(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP),
+                FXStyleClasses.CONFIG_SLIDER
+        );
 
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
                 true,
-                deathModeControl, growthPerFoodControl);
+                deathModeControl, growthPerFoodControl, basePointsPerFoodControl, segmentLengthMultiplierControl);
 
         return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
     }
