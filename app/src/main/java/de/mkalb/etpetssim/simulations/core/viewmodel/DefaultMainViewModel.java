@@ -34,6 +34,8 @@ public final class DefaultMainViewModel<
     private final SimulationTimer timer;
     private final ExecutorService batchExecutor;
     private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
+    private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
+    private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
@@ -89,6 +91,8 @@ public final class DefaultMainViewModel<
                     try {
                         var cell = selectedGridCellProvider.apply(getCurrentModel(), newValue);
                         selectedGridCell.set(cell);
+                        lastSelectedCoordinate.set(cell.coordinate());
+                        lastSelectedEntity.set(cell.entity());
                         AppLogger.info("Cell selected: " + cell.toDisplayString());
                     } catch (NullPointerException | IndexOutOfBoundsException e) {
                         AppLogger.error("Cannot determine selected cell! " + newValue.toDisplayString(), e);
@@ -103,6 +107,20 @@ public final class DefaultMainViewModel<
 
     public ObjectProperty<@Nullable GridCell<ENT>> selectedGridCellProperty() {
         return selectedGridCell;
+    }
+
+    public ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinateProperty() {
+        return lastSelectedCoordinate;
+    }
+
+    public ObjectProperty<@Nullable ENT> lastSelectedEntityProperty() {
+        return lastSelectedEntity;
+    }
+
+    public void resetSelectedProperties() {
+        selectedGridCell.set(null);
+        lastSelectedCoordinate.set(null);
+        lastSelectedEntity.set(null);
     }
 
     public void setSimulationInitializedListener(Runnable listener) {
@@ -129,6 +147,8 @@ public final class DefaultMainViewModel<
     public void shutdownSimulation() {
         AppLogger.info("Shutting down simulation during state: " + getSimulationState());
         setSimulationState(SimulationState.SHUTTING_DOWN);
+        resetSelectedProperties();
+        resetClickedCoordinateProperties();
         stopTimer();
         cancelBatch();
         shutdownBatchExecutor();
@@ -206,6 +226,8 @@ public final class DefaultMainViewModel<
     private void handleStartAction() {
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
+
+        resetSelectedProperties();
 
         long start = System.currentTimeMillis();
         try {
