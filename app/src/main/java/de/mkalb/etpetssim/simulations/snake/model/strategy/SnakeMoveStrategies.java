@@ -3,84 +3,57 @@ package de.mkalb.etpetssim.simulations.snake.model.strategy;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public final class SnakeMoveStrategies {
 
-    /**
-     * Prefers to continue moving in the current direction only, ignoring cell types.
-     */
-    public static final SnakeMoveStrategy MOMENTUM_ONLY_STRATEGY = new NamedMoveStrategy(
-            "Momentum Only",
-            (context) -> scoreAndPick(context, 0, 0, 0, 2, 1, 0));
-
-    /**
-     * Combines directional momentum with a strong bias toward vertical directions (North/South).
-     */
-    public static final SnakeMoveStrategy VERTICAL_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
-            "Vertical with Momentum",
-            (context) -> scoreAndPick(context, 0, 0, 2, 2, 1, 0));
-
-    /**
-     * Combines directional momentum with avoidance of vertical directions (North/South).
-     */
-    public static final SnakeMoveStrategy AVOID_VERTICAL_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
-            "Avoid Vertical with Momentum",
-            (context) -> scoreAndPick(context, 0, 0, -2, 2, 1, 0));
-
-    /**
-     * Prioritizes moving toward ground cells.
-     */
-    public static final SnakeMoveStrategy PRIORITIZE_GROUND_STRATEGY = new NamedMoveStrategy(
-            "Ground",
+    public static final SnakeMoveStrategy MOMENTUM = new NamedMoveStrategy(
+            "M",
+            (context) -> scoreAndPick(context, 0, 1, 0, 3, 1, 0));
+    public static final SnakeMoveStrategy VERTICAL_MOMENTUM = new NamedMoveStrategy(
+            "V M",
+            (context) -> scoreAndPick(context, 0, 1, 2, 3, 1, 0));
+    public static final SnakeMoveStrategy HORIZONTAL_MOMENTUM = new NamedMoveStrategy(
+            "H M",
+            (context) -> scoreAndPick(context, 0, 1, -2, 3, 1, 0));
+    public static final SnakeMoveStrategy GROUND = new NamedMoveStrategy(
+            "G",
             (context) -> scoreAndPick(context, 3, 0, 0, 1, 1, 0));
-
-    /**
-     * Prioritizes ground cells while preferring straight movement and small turns.
-     */
-    public static final SnakeMoveStrategy PRIORITIZE_GROUND_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
-            "Ground with Momentum",
+    public static final SnakeMoveStrategy GROUND_MOMENTUM = new NamedMoveStrategy(
+            "G M",
             (context) -> scoreAndPick(context, 3, 0, 0, 2, 1, 0));
-
-    /**
-     * Prioritizes moving toward food cells. Direction is ignored.
-     */
-    public static final SnakeMoveStrategy PRIORITIZE_FOOD_STRATEGY = new NamedMoveStrategy(
-            "Food",
+    public static final SnakeMoveStrategy FOOD = new NamedMoveStrategy(
+            "F",
             (context) -> scoreAndPick(context, 0, 3, 0, 1, 1, 0));
-
-    /**
-     * Prioritizes food cells while preferring straight movement and small turns.
-     */
-    public static final SnakeMoveStrategy PRIORITIZE_FOOD_WITH_MOMENTUM_STRATEGY = new NamedMoveStrategy(
-            "Food with Momentum",
+    public static final SnakeMoveStrategy FOOD_MOMENTUM = new NamedMoveStrategy(
+            "F M",
             (context) -> scoreAndPick(context, 0, 3, 0, 2, 1, 0));
-
-    /**
-     * Balances food targeting, directional momentum, and vertical movement.
-     */
-    public static final SnakeMoveStrategy BALANCED_FOOD_VERTICAL_MOMENTUM_STRATEGY = new NamedMoveStrategy(
-            "Balanced Food, Vertical and Momentum",
-            (context) -> scoreAndPick(context, 0, 2, 1, 2, 1, 0));
-
     public static final SnakeMoveStrategy FOOD_VERTICAL_CLUSTERED = new NamedMoveStrategy(
-            "Food V+ Clustered",
-            (context) -> scoreAndPick(context, 0, 4, 1, 1, 0, 2));
-
+            "F V C+",
+            (context) -> scoreAndPick(context, 0, 3, 1, 1, 0, 2));
     public static final SnakeMoveStrategy FOOD_HORIZONTAL_CLUSTERED = new NamedMoveStrategy(
-            "Food H+ Clustered",
-            (context) -> scoreAndPick(context, 0, 4, -1, 1, 0, 2));
-
+            "F H C+",
+            (context) -> scoreAndPick(context, 0, 3, -1, 1, 0, 2));
     public static final SnakeMoveStrategy FOOD_VERTICAL_SPREAD = new NamedMoveStrategy(
-            "Food V+ Spread",
-            (context) -> scoreAndPick(context, 0, 4, 1, 1, 0, -2));
-
+            "F V C-",
+            (context) -> scoreAndPick(context, 0, 3, 1, 1, 0, -2));
     public static final SnakeMoveStrategy FOOD_HORIZONTAL_SPREAD = new NamedMoveStrategy(
-            "Food H+ Spread",
-            (context) -> scoreAndPick(context, 0, 4, -1, 1, 0, -2));
+            "F H C-",
+            (context) -> scoreAndPick(context, 0, 3, -1, 1, 0, -2));
+    public static final SnakeMoveStrategy FOOD_VERTICAL_MOMENTUM = new NamedMoveStrategy(
+            "F V M",
+            (context) -> scoreAndPick(context, 0, 3, 1, 2, 1, 0));
+    public static final SnakeMoveStrategy FOOD_HORIZONTAL_MOMENTUM = new NamedMoveStrategy(
+            "F H M",
+            (context) -> scoreAndPick(context, 0, 3, -1, 2, 1, 0));
+    public static final SnakeMoveStrategy FOOD_MOMENTUM_CLUSTERED = new NamedMoveStrategy(
+            "F M C+",
+            (context) -> scoreAndPick(context, 0, 3, 0, 2, 1, 2));
+    public static final SnakeMoveStrategy FOOD_MOMENTUM_SPREAD = new NamedMoveStrategy(
+            "F M C-",
+            (context) -> scoreAndPick(context, 0, 3, 0, 2, 1, -2));
 
     /**
      * Private constructor to prevent instantiation.
@@ -88,23 +61,23 @@ public final class SnakeMoveStrategies {
     private SnakeMoveStrategies() {
     }
 
-    public static List<SnakeMoveStrategy> strategiesForConfig(SnakeConfig config) {
+    public static List<SnakeMoveStrategy> strategiesForConfig() {
         List<SnakeMoveStrategy> strategies = new ArrayList<>();
-        strategies.add(MOMENTUM_ONLY_STRATEGY);
-        strategies.add(VERTICAL_WITH_MOMENTUM_STRATEGY);
-        strategies.add(AVOID_VERTICAL_WITH_MOMENTUM_STRATEGY);
-        strategies.add(PRIORITIZE_GROUND_STRATEGY);
-
-        if (config.foodCells() > 0) {
-            strategies.add(PRIORITIZE_GROUND_WITH_MOMENTUM_STRATEGY);
-            strategies.add(PRIORITIZE_FOOD_STRATEGY);
-            strategies.add(PRIORITIZE_FOOD_WITH_MOMENTUM_STRATEGY);
-            strategies.add(BALANCED_FOOD_VERTICAL_MOMENTUM_STRATEGY);
-            strategies.add(FOOD_VERTICAL_CLUSTERED);
-            strategies.add(FOOD_HORIZONTAL_CLUSTERED);
-            strategies.add(FOOD_VERTICAL_SPREAD);
-            strategies.add(FOOD_HORIZONTAL_SPREAD);
-        }
+        strategies.add(MOMENTUM);
+        strategies.add(VERTICAL_MOMENTUM);
+        strategies.add(HORIZONTAL_MOMENTUM);
+        strategies.add(GROUND);
+        strategies.add(GROUND_MOMENTUM);
+        strategies.add(FOOD);
+        strategies.add(FOOD_MOMENTUM);
+        strategies.add(FOOD_VERTICAL_CLUSTERED);
+        strategies.add(FOOD_HORIZONTAL_CLUSTERED);
+        strategies.add(FOOD_VERTICAL_SPREAD);
+        strategies.add(FOOD_HORIZONTAL_SPREAD);
+        strategies.add(FOOD_VERTICAL_MOMENTUM);
+        strategies.add(FOOD_HORIZONTAL_MOMENTUM);
+        strategies.add(FOOD_MOMENTUM_CLUSTERED);
+        strategies.add(FOOD_MOMENTUM_SPREAD);
         return strategies;
     }
 

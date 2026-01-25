@@ -53,7 +53,7 @@ public final class SnakeConfigViewModel
     private static final int FOOD_CELLS_MIN = 0;
     private static final int FOOD_CELLS_MAX = 10_000;
     private static final int FOOD_CELLS_STEP = 1;
-    private static final int SNAKES_INITIAL = 8;
+    private static final int SNAKES_INITIAL = 15;
     private static final int SNAKES_MIN = 0;
     private static final int SNAKES_MAX = 1_000;
     private static final int SNAKES_STEP = 1;

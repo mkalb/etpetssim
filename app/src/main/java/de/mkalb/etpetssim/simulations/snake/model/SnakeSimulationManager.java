@@ -98,7 +98,7 @@ public final class SnakeSimulationManager
 
     private GridInitializer<SnakeEntity> snakeInitializer(SnakeConfig config, Random random) {
         if (config.snakes() > 0) {
-            var strategies = SnakeMoveStrategies.strategiesForConfig(config);
+            var strategies = SnakeMoveStrategies.strategiesForConfig();
             List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
             for (int i = 0; i < config.snakes(); i++) {
                 SnakeMoveStrategy strategy = strategies.get(i % strategies.size());
