@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
@@ -28,7 +29,7 @@ public final class LabMainViewModel
     public LabMainViewModel(ObjectProperty<SimulationState> simulationState,
                             LabConfigViewModel configViewModel,
                             LabControlViewModel controlViewModel,
-                            LabObservationViewModel observationViewModel) {
+                            DefaultObservationViewModel<LabEntity, LabStatistics> observationViewModel) {
         super(simulationState, configViewModel, observationViewModel);
 
         configViewModel.configChangedRequestedProperty().addListener((_, _, newVal) -> {
@@ -55,7 +56,6 @@ public final class LabMainViewModel
                 controlViewModel.drawTestRequestedProperty().set(false); // reset
             }
         });
-        lastClickedCoordinateProperty().addListener((_, _, newVal) -> observationViewModel.lastClickedCoordinateProperty().set(newVal));
     }
 
     @Override

@@ -3,6 +3,8 @@ package de.mkalb.etpetssim.simulations.lab;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
@@ -28,7 +30,7 @@ public final class LabFactory {
         // ViewModel
         var configViewModel = new LabConfigViewModel(readOnlySimulationState);
         var controlViewModel = new LabControlViewModel(readOnlySimulationState);
-        var observationViewModel = new LabObservationViewModel(readOnlySimulationState);
+        var observationViewModel = new DefaultObservationViewModel<LabEntity, LabStatistics>(readOnlySimulationState);
         var viewModel = new LabMainViewModel(simulationState, configViewModel, controlViewModel, observationViewModel);
 
         // View

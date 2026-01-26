@@ -33,6 +33,8 @@ public abstract class AbstractMainViewModel<
         this.simulationState = simulationState;
         this.configViewModel = configViewModel;
         this.observationViewModel = observationViewModel;
+
+        observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinateProperty());
     }
 
     @Override

@@ -3,8 +3,9 @@ package de.mkalb.etpetssim.simulations.lab.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
-import de.mkalb.etpetssim.simulations.lab.viewmodel.LabObservationViewModel;
+import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -14,9 +15,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
 public final class LabObservationView
-        extends AbstractObservationView<LabStatistics, LabObservationViewModel> {
+        extends AbstractObservationView<LabStatistics, DefaultObservationViewModel<LabEntity, LabStatistics>> {
 
-    public LabObservationView(LabObservationViewModel viewModel) {
+    public LabObservationView(DefaultObservationViewModel<LabEntity, LabStatistics> viewModel) {
         super(viewModel);
     }
 
@@ -34,7 +35,7 @@ public final class LabObservationView
         Label coordinateLabel = new Label(valueUnknown);
         StringBinding coordinateDisplayBinding = Bindings.createStringBinding(
                 () -> {
-                    var coordinate = viewModel.getLastClickedCoordinate();
+                    var coordinate = viewModel.lastClickedCoordinateProperty().get();
                     return (coordinate != null) ? coordinate.toDisplayString() : valueUnknown;
                 },
                 viewModel.lastClickedCoordinateProperty()
