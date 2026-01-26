@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
@@ -34,28 +33,13 @@ public final class LabConfigView
         TitledPane layoutPane = createLayoutPane(false, colorModeControl);
 
         // --- Initialization Group ---
-        var seedControl = FXComponentFactory.createLabeledStringTextBox(
-                viewModel.seedProperty().stringProperty(),
-                viewModel.seedProperty().labelProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
-                FXStyleClasses.CONFIG_TEXTBOX
-        );
+        var seedControl = createSeedControl();
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 false,
                 seedControl);
 
         // --- Rules Group ---
-        var neighborhoodModeControl = FXComponentFactory.createLabeledEnumComboBox(
-                viewModel.neighborhoodModeProperty(),
-                viewModel.neighborhoodModeProperty().displayNameProvider(),
-                AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
-
+        var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
                 false,
                 neighborhoodModeControl);

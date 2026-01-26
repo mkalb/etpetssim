@@ -44,15 +44,7 @@ public final class SugarConfigView
         TitledPane layoutPane = createLayoutPane(true);
 
         // --- Initialization Group ---
-        var seedControl = FXComponentFactory.createLabeledStringTextBox(
-                viewModel.seedProperty().stringProperty(),
-                viewModel.seedProperty().labelProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
-                FXStyleClasses.CONFIG_TEXTBOX
-        );
+        var seedControl = createSeedControl();
         var agentPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.agentPercentProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_PERCENT),

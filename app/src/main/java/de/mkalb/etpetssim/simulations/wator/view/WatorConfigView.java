@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
@@ -55,15 +54,7 @@ public final class WatorConfigView
         TitledPane layoutPane = createLayoutPane(true);
 
         // --- Initialization Group ---
-        var seedControl = FXComponentFactory.createLabeledStringTextBox(
-                viewModel.seedProperty().stringProperty(),
-                viewModel.seedProperty().labelProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
-                FXStyleClasses.CONFIG_TEXTBOX
-        );
+        var seedControl = createSeedControl();
         var fishPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.fishPercentProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
@@ -82,14 +73,7 @@ public final class WatorConfigView
                 seedControl, fishPercentControl, sharkPercentControl);
 
         // --- Rules Group ---
-        var neighborhoodModeControl = FXComponentFactory.createLabeledEnumComboBox(
-                viewModel.neighborhoodModeProperty(),
-                viewModel.neighborhoodModeProperty().displayNameProvider(),
-                AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
-                FXStyleClasses.CONFIG_COMBOBOX
-        );
-
+        var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
         TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
                 true,
                 neighborhoodModeControl);

@@ -4,11 +4,13 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
@@ -160,6 +162,28 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_LAYOUT),
                 configControlsEnabledOnlyIfSimulationCanStart,
                 content
+        );
+    }
+
+    protected final FXComponentFactory.LabeledControl<? extends Region> createSeedControl() {
+        return FXComponentFactory.createLabeledStringTextBox(
+                viewModel.seedProperty().stringProperty(),
+                viewModel.seedProperty().labelProperty(),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
+                FXStyleClasses.CONFIG_TEXTBOX
+        );
+    }
+
+    protected final FXComponentFactory.LabeledControl<? extends Region> createNeighborhoodModeControl(InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty) {
+        return FXComponentFactory.createLabeledEnumComboBox(
+                neighborhoodModeProperty,
+                neighborhoodModeProperty.displayNameProvider(),
+                AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
         );
     }
 

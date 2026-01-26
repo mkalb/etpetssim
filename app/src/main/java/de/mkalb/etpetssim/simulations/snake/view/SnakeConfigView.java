@@ -43,15 +43,7 @@ public final class SnakeConfigView
         TitledPane layoutPane = createLayoutPane(true);
 
         // --- Initialization Group ---
-        var seedControl = FXComponentFactory.createLabeledStringTextBox(
-                viewModel.seedProperty().stringProperty(),
-                viewModel.seedProperty().labelProperty(),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
-                FXStyleClasses.CONFIG_TEXTBOX
-        );
+        var seedControl = createSeedControl();
         var verticalWallsControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.verticalWallsProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_VERTICAL_WALLS),
