@@ -7,7 +7,9 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.view.*;
-import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
+import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
