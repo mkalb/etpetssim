@@ -42,10 +42,12 @@ public final class ForestConfigViewModel
                     CellDisplayMode.CIRCLE_BORDERED),
             ""
     );
+
     // Initialization
     private static final double TREE_DENSITY_INITIAL = 0.2d;
     private static final double TREE_DENSITY_MIN = 0.0d;
     private static final double TREE_DENSITY_MAX = 1.0d;
+
     // Rules
     private static final double TREE_GROWTH_PROBABILITY_INITIAL = 0.002d;
     private static final double TREE_GROWTH_PROBABILITY_MIN = 0.00d;
@@ -55,13 +57,13 @@ public final class ForestConfigViewModel
     private static final double LIGHTNING_IGNITION_PROBABILITY_MAX = 0.02d;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
 
-    // Initialization
+    // Initialization properties
     private final InputDoubleProperty treeDensity = InputDoubleProperty.of(
             TREE_DENSITY_INITIAL,
             TREE_DENSITY_MIN,
             TREE_DENSITY_MAX);
 
-    // Rules
+    // Rules properties
     private final InputDoubleProperty treeGrowthProbability = InputDoubleProperty.of(
             TREE_GROWTH_PROBABILITY_INITIAL,
             TREE_GROWTH_PROBABILITY_MIN,

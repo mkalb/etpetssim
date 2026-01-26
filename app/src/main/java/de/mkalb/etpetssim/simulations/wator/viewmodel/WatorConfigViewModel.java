@@ -94,7 +94,7 @@ public final class WatorConfigViewModel
 
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
 
-    // Initialization
+    // Initialization properties
     private final InputDoubleProperty fishPercent = InputDoubleProperty.of(
             FISH_PERCENT_INITIAL,
             FISH_PERCENT_MIN,
@@ -104,7 +104,7 @@ public final class WatorConfigViewModel
             SHARK_PERCENT_MIN,
             SHARK_PERCENT_MAX);
 
-    // Rules
+    // Rules properties
     private final InputIntegerProperty fishMaxAge = InputIntegerProperty.of(
             FISH_MAX_AGE_INITIAL,
             FISH_MAX_AGE_MIN,

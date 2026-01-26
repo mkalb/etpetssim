@@ -37,18 +37,23 @@ public final class ConwayConfigViewModel
             List.of(CellDisplayMode.SHAPE_BORDERED),
             ""
     );
-    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
-    private static final ConwayTransitionRules DEFAULT_TRANSITION_RULES = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
 
+    // Initialization
     private static final double ALIVE_PERCENT_INITIAL = 0.1d;
-    private static final double ALIVE_PERCENT_MAX = 1.0d;
     private static final double ALIVE_PERCENT_MIN = 0.0d;
+    private static final double ALIVE_PERCENT_MAX = 1.0d;
 
+    // Rules
+    private static final ConwayTransitionRules DEFAULT_TRANSITION_RULES = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
+    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
+
+    // Initialization properties
     private final InputDoubleProperty alivePercent = InputDoubleProperty.of(
             ALIVE_PERCENT_INITIAL,
             ALIVE_PERCENT_MIN,
             ALIVE_PERCENT_MAX);
 
+    // Rules properties
     private final List<BooleanProperty> surviveProperties = new ArrayList<>();
     private final List<BooleanProperty> birthProperties = new ArrayList<>();
     private final ObjectProperty<ConwayTransitionRules> transitionRules = new SimpleObjectProperty<>(DEFAULT_TRANSITION_RULES);
@@ -122,7 +127,7 @@ public final class ConwayConfigViewModel
                 seedProperty().computeSeedAndUpdateLabel(),
                 alivePercent.getValue(),
                 NEIGHBORHOOD_MODE_INITIAL,
-                transitionRulesProperty().get()
+                transitionRulesProperty().getValue()
         );
     }
 

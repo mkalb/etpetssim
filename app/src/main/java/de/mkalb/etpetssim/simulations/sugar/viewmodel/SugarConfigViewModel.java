@@ -40,6 +40,7 @@ public final class SugarConfigViewModel
             List.of(CellDisplayMode.SHAPE),
             ""
     );
+
     // Initialization
     private static final double AGENT_PERCENT_INITIAL = 0.2d;
     private static final double AGENT_PERCENT_MIN = 0.0d;
@@ -61,6 +62,7 @@ public final class SugarConfigViewModel
     private static final int AGENT_INITIAL_ENERGY_MIN = 1;
     private static final int AGENT_INITIAL_ENERGY_MAX = 20;
     private static final int AGENT_INITIAL_ENERGY_STEP = 1;
+
     // Rules
     private static final int SUGAR_REGENERATION_RATE_INITIAL = 1;
     private static final int SUGAR_REGENERATION_RATE_MIN = 1;
@@ -80,7 +82,7 @@ public final class SugarConfigViewModel
     private static final int AGENT_MAX_AGE_STEP = 1;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
 
-    // Initialization
+    // Initialization properties
     private final InputDoubleProperty agentPercent = InputDoubleProperty.of(
             AGENT_PERCENT_INITIAL,
             AGENT_PERCENT_MIN,
@@ -105,7 +107,8 @@ public final class SugarConfigViewModel
             AGENT_INITIAL_ENERGY_MIN,
             AGENT_INITIAL_ENERGY_MAX,
             AGENT_INITIAL_ENERGY_STEP);
-    // Rules
+
+    // Rules properties
     private final InputIntegerProperty sugarRegenerationRate = InputIntegerProperty.of(
             SUGAR_REGENERATION_RATE_INITIAL,
             SUGAR_REGENERATION_RATE_MIN,

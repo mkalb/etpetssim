@@ -36,8 +36,11 @@ public final class LangtonConfigViewModel
             List.of(CellDisplayMode.SHAPE, CellDisplayMode.SHAPE_BORDERED),
             ""
     );
+
+    // Rules
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
 
+    // Rules properties
     private final LangtonRuleProperty rule = new LangtonRuleProperty();
 
     public LangtonConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {

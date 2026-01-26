@@ -42,16 +42,38 @@ public final class LabConfigViewModel
                     CellDisplayMode.CIRCLE_BORDERED),
             ""
     );
+
+    // Layout
+    private static final LabConfig.ColorMode COLOR_MODE_INITIAL = LabConfig.ColorMode.COLOR;
+
+    // Rules
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
 
-    private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(LabConfig.ColorMode.COLOR, LabConfig.ColorMode.class, Enum::toString);
+    // Layout properties
+    private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(COLOR_MODE_INITIAL, LabConfig.ColorMode.class, Enum::toString);
+
+    // Rules properties
     private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(NEIGHBORHOOD_MODE_INITIAL, NeighborhoodMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+
+    // Internal state
     private final BooleanProperty configChangedRequested = new SimpleBooleanProperty(false);
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
         setupConfigListeners();
+    }
+
+    private void setupConfigListeners() {
+        cellShapeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridEdgeBehaviorProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        cellDisplayModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
+        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
     }
 
     @Override
@@ -79,18 +101,6 @@ public final class LabConfigViewModel
 
     public BooleanProperty configChangedRequestedProperty() {
         return configChangedRequested;
-    }
-
-    private void setupConfigListeners() {
-        cellShapeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridEdgeBehaviorProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        cellDisplayModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
-        colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
     }
 
 }
