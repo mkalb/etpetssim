@@ -19,6 +19,7 @@ public final class LabControlView
 
     @Override
     protected Pane createControlButtonPane() {
+        // TODO LabControlView: add localization
         Button drawButton = createControlButton("Draw", false);
         Button drawButtonModel = createControlButton("Draw Model", true);
         Button drawButtonTest = createControlButton("Draw Test", true);
