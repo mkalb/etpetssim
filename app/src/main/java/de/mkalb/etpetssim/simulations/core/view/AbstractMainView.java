@@ -23,8 +23,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public abstract class AbstractMainView<
-        CON extends SimulationConfig,
-        STA extends SimulationStatistics,
         VM extends SimulationMainViewModel,
         CFV extends SimulationConfigView,
         CLV extends SimulationControlView,

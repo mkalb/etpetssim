@@ -27,8 +27,6 @@ import java.util.*;
 @SuppressWarnings("MagicNumber")
 public final class LabMainView
         extends AbstractMainView<
-        LabConfig,
-        LabStatistics,
         LabMainViewModel,
         LabConfigView,
         LabControlView,

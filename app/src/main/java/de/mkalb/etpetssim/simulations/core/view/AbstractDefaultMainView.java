@@ -31,8 +31,6 @@ public abstract class AbstractDefaultMainView<
         OV extends AbstractObservationView<STA, DefaultObservationViewModel<ENT, STA>>>
         extends
         AbstractMainView<
-                CON,
-                STA,
                 DefaultMainViewModel<ENT, GM, CON, STA>,
                 CFV,
                 SimulationControlView,
