@@ -21,6 +21,7 @@ public final class LabConfigView
     public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane(false);
 
+        // TODO LabConfigView: add localization
         // Layout
         var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
                 viewModel.colorModeProperty().displayNameProvider(),
