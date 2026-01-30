@@ -10,39 +10,41 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
+@SuppressWarnings("SpellCheckingInspection")
 public final class WatorConfigView
         extends AbstractConfigView<WatorConfig, WatorConfigViewModel> {
 
     // Initialization
-    static final String WATOR_CONFIG_FISH_PERCENT = "wator.config.fishpercent";
-    static final String WATOR_CONFIG_FISH_PERCENT_TOOLTIP = "wator.config.fishpercent.tooltip";
-    static final String WATOR_CONFIG_SHARK_PERCENT = "wator.config.sharkpercent";
-    static final String WATOR_CONFIG_SHARK_PERCENT_TOOLTIP = "wator.config.sharkpercent.tooltip";
+    private static final String WATOR_CONFIG_FISH_PERCENT = "wator.config.fishpercent";
+    private static final String WATOR_CONFIG_FISH_PERCENT_TOOLTIP = "wator.config.fishpercent.tooltip";
+    private static final String WATOR_CONFIG_SHARK_PERCENT = "wator.config.sharkpercent";
+    private static final String WATOR_CONFIG_SHARK_PERCENT_TOOLTIP = "wator.config.sharkpercent.tooltip";
 
     // Rules
-    static final String WATOR_CONFIG_FISH_MAX_AGE = "wator.config.fishmaxage";
-    static final String WATOR_CONFIG_FISH_MAX_AGE_TOOLTIP = "wator.config.fishmaxage.tooltip";
-    static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE = "wator.config.fishminreproductionage";
-    static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP = "wator.config.fishminreproductionage.tooltip";
-    static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL = "wator.config.fishminreproductioninterval";
-    static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP = "wator.config.fishminreproductioninterval.tooltip";
-    static final String WATOR_CONFIG_SHARK_MAX_AGE = "wator.config.sharkmaxage";
-    static final String WATOR_CONFIG_SHARK_MAX_AGE_TOOLTIP = "wator.config.sharkmaxage.tooltip";
-    static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY = "wator.config.sharkbirthenergy";
-    static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP = "wator.config.sharkbirthenergy.tooltip";
-    static final String WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP = "wator.config.sharkenergylossperstep";
-    static final String WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP = "wator.config.sharkenergylossperstep.tooltip";
-    static final String WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH = "wator.config.sharkenergygainperfish";
-    static final String WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP = "wator.config.sharkenergygainperfish.tooltip";
-    static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE = "wator.config.sharkminreproductionage";
-    static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP = "wator.config.sharkminreproductionage.tooltip";
-    static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY = "wator.config.sharkminreproductionenergy";
-    static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP = "wator.config.sharkminreproductionenergy.tooltip";
-    static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL = "wator.config.sharkminreproductioninterval";
-    static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP = "wator.config.sharkminreproductioninterval.tooltip";
+    private static final String WATOR_CONFIG_FISH_MAX_AGE = "wator.config.fishmaxage";
+    private static final String WATOR_CONFIG_FISH_MAX_AGE_TOOLTIP = "wator.config.fishmaxage.tooltip";
+    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE = "wator.config.fishminreproductionage";
+    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP = "wator.config.fishminreproductionage.tooltip";
+    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL = "wator.config.fishminreproductioninterval";
+    private static final String WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP = "wator.config.fishminreproductioninterval.tooltip";
+    private static final String WATOR_CONFIG_SHARK_MAX_AGE = "wator.config.sharkmaxage";
+    private static final String WATOR_CONFIG_SHARK_MAX_AGE_TOOLTIP = "wator.config.sharkmaxage.tooltip";
+    private static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY = "wator.config.sharkbirthenergy";
+    private static final String WATOR_CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP = "wator.config.sharkbirthenergy.tooltip";
+    private static final String WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP = "wator.config.sharkenergylossperstep";
+    private static final String WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP = "wator.config.sharkenergylossperstep.tooltip";
+    private static final String WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH = "wator.config.sharkenergygainperfish";
+    private static final String WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP = "wator.config.sharkenergygainperfish.tooltip";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE = "wator.config.sharkminreproductionage";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP = "wator.config.sharkminreproductionage.tooltip";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY = "wator.config.sharkminreproductionenergy";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP = "wator.config.sharkminreproductionenergy.tooltip";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL = "wator.config.sharkminreproductioninterval";
+    private static final String WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP = "wator.config.sharkminreproductioninterval.tooltip";
 
-    static final String WATOR_CONFIG_TITLE_FISH_RULES = "wator.config.title.fishrules";
-    static final String WATOR_CONFIG_TITLE_SHARK_RULES = "wator.config.title.sharkrules";
+    // Titles
+    private static final String WATOR_CONFIG_TITLE_FISH_RULES = "wator.config.title.fishrules";
+    private static final String WATOR_CONFIG_TITLE_SHARK_RULES = "wator.config.title.sharkrules";
 
     public WatorConfigView(WatorConfigViewModel viewModel) {
         super(viewModel);

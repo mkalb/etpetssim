@@ -11,27 +11,28 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
+@SuppressWarnings("SpellCheckingInspection")
 public final class SnakeConfigView
         extends AbstractConfigView<SnakeConfig, SnakeConfigViewModel> {
 
     // Initialization
-    static final String SNAKE_CONFIG_VERTICAL_WALLS = "snake.config.verticalwalls";
-    static final String SNAKE_CONFIG_VERTICAL_WALLS_TOOLTIP = "snake.config.verticalwalls.tooltip";
-    static final String SNAKE_CONFIG_FOOD_CELLS = "snake.config.foodcells";
-    static final String SNAKE_CONFIG_FOOD_CELLS_TOOLTIP = "snake.config.foodcells.tooltip";
-    static final String SNAKE_CONFIG_SNAKES = "snake.config.snakes";
-    static final String SNAKE_CONFIG_SNAKES_TOOLTIP = "snake.config.snakes.tooltip";
-    static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH = "snake.config.initialpendinggrowth";
-    static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP = "snake.config.initialpendinggrowth.tooltip";
+    private static final String SNAKE_CONFIG_VERTICAL_WALLS = "snake.config.verticalwalls";
+    private static final String SNAKE_CONFIG_VERTICAL_WALLS_TOOLTIP = "snake.config.verticalwalls.tooltip";
+    private static final String SNAKE_CONFIG_FOOD_CELLS = "snake.config.foodcells";
+    private static final String SNAKE_CONFIG_FOOD_CELLS_TOOLTIP = "snake.config.foodcells.tooltip";
+    private static final String SNAKE_CONFIG_SNAKES = "snake.config.snakes";
+    private static final String SNAKE_CONFIG_SNAKES_TOOLTIP = "snake.config.snakes.tooltip";
+    private static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH = "snake.config.initialpendinggrowth";
+    private static final String SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP = "snake.config.initialpendinggrowth.tooltip";
 
     // Rules
-    static final String SNAKE_CONFIG_DEATH_MODE_TOOLTIP = "snake.config.deathmode.tooltip";
-    static final String SNAKE_CONFIG_GROWTH_PER_FOOD = "snake.config.growthperfood";
-    static final String SNAKE_CONFIG_GROWTH_PER_FOOD_TOOLTIP = "snake.config.growthperfood.tooltip";
-    static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD = "snake.config.basepointsperfood";
-    static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD_TOOLTIP = "snake.config.basepointsperfood.tooltip";
-    static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER = "snake.config.segmentlengthmultiplier";
-    static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP = "snake.config.segmentlengthmultiplier.tooltip";
+    private static final String SNAKE_CONFIG_DEATH_MODE_TOOLTIP = "snake.config.deathmode.tooltip";
+    private static final String SNAKE_CONFIG_GROWTH_PER_FOOD = "snake.config.growthperfood";
+    private static final String SNAKE_CONFIG_GROWTH_PER_FOOD_TOOLTIP = "snake.config.growthperfood.tooltip";
+    private static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD = "snake.config.basepointsperfood";
+    private static final String SNAKE_CONFIG_BASE_POINTS_PER_FOOD_TOOLTIP = "snake.config.basepointsperfood.tooltip";
+    private static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER = "snake.config.segmentlengthmultiplier";
+    private static final String SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP = "snake.config.segmentlengthmultiplier.tooltip";
 
     public SnakeConfigView(SnakeConfigViewModel viewModel) {
         super(viewModel);

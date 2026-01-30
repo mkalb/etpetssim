@@ -21,24 +21,19 @@ import javafx.scene.layout.Region;
 
 import java.util.*;
 
+@SuppressWarnings("SpellCheckingInspection")
 public final class ConwayConfigView
         extends AbstractConfigView<ConwayConfig, ConwayConfigViewModel> {
 
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String CONWAY_CONFIG_ALIVE_PERCENT = "conway.config.alivepercent";
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP = "conway.config.alivepercent.tooltip";
-    static final String CONWAY_CONFIG_RULES = "conway.config.rules";
-    static final String CONWAY_CONFIG_RULES_TOOLTIP = "conway.config.rules.tooltip";
-    static final String CONWAY_CONFIG_RULES_SURVIVE = "conway.config.rules.survive";
-    static final String CONWAY_CONFIG_RULES_BIRTH = "conway.config.rules.birth";
+    // Initialization
+    private static final String CONWAY_CONFIG_ALIVE_PERCENT = "conway.config.alivepercent";
+    private static final String CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP = "conway.config.alivepercent.tooltip";
 
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String CONWAY_TRANSITIONRULES_GRIDPANE = "conway-transitionrules-gridpane";
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String CONWAY_TRANSITIONRULES_LABEL = "conway-transitionrules-label";
-    @SuppressWarnings("SpellCheckingInspection")
-    private static final String CONWAY_TRANSITIONRULES_DIGIT_LABEL = "conway-transitionrules-digit-label";
+    // Rules
+    private static final String CONWAY_CONFIG_RULES = "conway.config.rules";
+    private static final String CONWAY_CONFIG_RULES_TOOLTIP = "conway.config.rules.tooltip";
+    private static final String CONWAY_CONFIG_RULES_SURVIVE = "conway.config.rules.survive";
+    private static final String CONWAY_CONFIG_RULES_BIRTH = "conway.config.rules.birth";
 
     public ConwayConfigView(ConwayConfigViewModel viewModel) {
         super(viewModel);
@@ -105,16 +100,16 @@ public final class ConwayConfigView
         label.setTooltip(tooltip);
 
         GridPane gridPane = new GridPane();
-        gridPane.getStyleClass().add(CONWAY_TRANSITIONRULES_GRIDPANE);
+        gridPane.getStyleClass().add(ConwayStyleClasses.CONWAY_TRANSITIONRULES_GRIDPANE);
 
-        gridPane.add(createRulesLabel("", tooltip, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 0);
-        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_SURVIVE), tooltip, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 1);
-        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_BIRTH), tooltip, HPos.LEFT, CONWAY_TRANSITIONRULES_LABEL), 0, 2);
+        gridPane.add(createRulesLabel("", tooltip, HPos.LEFT, ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 0);
+        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_SURVIVE), tooltip, HPos.LEFT, ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 1);
+        gridPane.add(createRulesLabel(AppLocalization.getText(CONWAY_CONFIG_RULES_BIRTH), tooltip, HPos.LEFT, ConwayStyleClasses.CONWAY_TRANSITIONRULES_LABEL), 0, 2);
 
         // Add digit labels (row 0)
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
-            Label digitLabel = createRulesLabel(String.valueOf(i), tooltip, HPos.CENTER, CONWAY_TRANSITIONRULES_DIGIT_LABEL);
+            Label digitLabel = createRulesLabel(String.valueOf(i), tooltip, HPos.CENTER, ConwayStyleClasses.CONWAY_TRANSITIONRULES_DIGIT_LABEL);
             gridPane.add(digitLabel, 1 + index, 0);
             GridPane.setHalignment(digitLabel, HPos.CENTER);
         }

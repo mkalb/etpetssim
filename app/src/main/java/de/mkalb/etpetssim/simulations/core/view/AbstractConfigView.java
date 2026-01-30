@@ -29,9 +29,6 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         this.viewModel = viewModel;
     }
 
-    @Override
-    public abstract Region buildConfigRegion();
-
     protected final Region createConfigMainBox(TitledPane... titledPanes) {
         HBox configHBox = new HBox(titledPanes);
         configHBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);

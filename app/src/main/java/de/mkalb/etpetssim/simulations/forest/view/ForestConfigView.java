@@ -10,21 +10,19 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
+@SuppressWarnings("SpellCheckingInspection")
 public final class ForestConfigView
         extends AbstractConfigView<ForestConfig, ForestConfigViewModel> {
 
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String FOREST_CONFIG_TREE_DENSITY = "forest.config.treedensity";
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String FOREST_CONFIG_TREE_DENSITY_TOOLTIP = "forest.config.treedensity.tooltip";
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String FOREST_CONFIG_TREE_GROWTH_PROBABILITY = "forest.config.treegrowthprobability";
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP = "forest.config.treegrowthprobability.tooltip";
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY = "forest.config.lightningignitionprobability";
-    @SuppressWarnings("SpellCheckingInspection")
-    static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP = "forest.config.lightningignitionprobability.tooltip";
+    // Initialization
+    private static final String FOREST_CONFIG_TREE_DENSITY = "forest.config.treedensity";
+    private static final String FOREST_CONFIG_TREE_DENSITY_TOOLTIP = "forest.config.treedensity.tooltip";
+
+    // Rules
+    private static final String FOREST_CONFIG_TREE_GROWTH_PROBABILITY = "forest.config.treegrowthprobability";
+    private static final String FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP = "forest.config.treegrowthprobability.tooltip";
+    private static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY = "forest.config.lightningignitionprobability";
+    private static final String FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP = "forest.config.lightningignitionprobability.tooltip";
 
     public ForestConfigView(ForestConfigViewModel viewModel) {
         super(viewModel);

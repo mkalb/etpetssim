@@ -15,17 +15,17 @@ import javafx.scene.layout.Region;
 public final class LangtonConfigView
         extends AbstractConfigView<LangtonConfig, LangtonConfigViewModel> {
 
-    static final String LANGTON_CONFIG_PRESET_TRIANGLE = "langton.config.preset.triangle";
-    static final String LANGTON_CONFIG_PRESET_TRIANGLE_TOOLTIP = "langton.config.preset.triangle.tooltip";
-    static final String LANGTON_CONFIG_PRESET_SQUARE = "langton.config.preset.square";
-    static final String LANGTON_CONFIG_PRESET_SQUARE_TOOLTIP = "langton.config.preset.square.tooltip";
-    static final String LANGTON_CONFIG_PRESET_HEXAGON = "langton.config.preset.hexagon";
-    static final String LANGTON_CONFIG_PRESET_HEXAGON_TOOLTIP = "langton.config.preset.hexagon.tooltip";
-
-    static final String LANGTON_CONFIG_RULE = "langton.config.rule";
-    static final String LANGTON_CONFIG_RULE_PROMPT = "langton.config.rule.prompt";
-    static final String LANGTON_CONFIG_RULE_TOOLTIP = "langton.config.rule.tooltip";
-    static final String LANGTON_CONFIG_RULE_CLEAR_TOOLTIP = "langton.config.rule.clear.tooltip";
+    // Rules
+    private static final String LANGTON_CONFIG_PRESET_TRIANGLE = "langton.config.preset.triangle";
+    private static final String LANGTON_CONFIG_PRESET_TRIANGLE_TOOLTIP = "langton.config.preset.triangle.tooltip";
+    private static final String LANGTON_CONFIG_PRESET_SQUARE = "langton.config.preset.square";
+    private static final String LANGTON_CONFIG_PRESET_SQUARE_TOOLTIP = "langton.config.preset.square.tooltip";
+    private static final String LANGTON_CONFIG_PRESET_HEXAGON = "langton.config.preset.hexagon";
+    private static final String LANGTON_CONFIG_PRESET_HEXAGON_TOOLTIP = "langton.config.preset.hexagon.tooltip";
+    private static final String LANGTON_CONFIG_RULE = "langton.config.rule";
+    private static final String LANGTON_CONFIG_RULE_PROMPT = "langton.config.rule.prompt";
+    private static final String LANGTON_CONFIG_RULE_TOOLTIP = "langton.config.rule.tooltip";
+    private static final String LANGTON_CONFIG_RULE_CLEAR_TOOLTIP = "langton.config.rule.clear.tooltip";
 
     public LangtonConfigView(LangtonConfigViewModel viewModel) {
         super(viewModel);

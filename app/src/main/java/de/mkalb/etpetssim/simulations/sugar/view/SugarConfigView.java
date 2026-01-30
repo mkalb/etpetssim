@@ -10,29 +10,31 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
+@SuppressWarnings("SpellCheckingInspection")
 public final class SugarConfigView
         extends AbstractConfigView<SugarConfig, SugarConfigViewModel> {
 
     // Initialization
-    static final String SUGAR_CONFIG_AGENT_PERCENT = "sugar.config.agentpercent";
-    static final String SUGAR_CONFIG_AGENT_PERCENT_TOOLTIP = "sugar.config.agentpercent.tooltip";
-    static final String SUGAR_CONFIG_SUGAR_PEAKS = "sugar.config.sugarpeaks";
-    static final String SUGAR_CONFIG_SUGAR_PEAKS_TOOLTIP = "sugar.config.sugarpeaks.tooltip";
-    static final String SUGAR_CONFIG_SUGAR_RADIUS_LIMIT = "sugar.config.sugarradiuslimit";
-    static final String SUGAR_CONFIG_SUGAR_RADIUS_LIMIT_TOOLTIP = "sugar.config.sugarradiuslimit.tooltip";
-    static final String SUGAR_CONFIG_MAX_SUGAR_AMOUNT = "sugar.config.maxsugaramount";
-    static final String SUGAR_CONFIG_MAX_SUGAR_AMOUNT_TOOLTIP = "sugar.config.maxsugaramount.tooltip";
-    static final String SUGAR_CONFIG_AGENT_INITIAL_ENERGY = "sugar.config.agentinitialenergy";
-    static final String SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP = "sugar.config.agentinitialenergy.tooltip";
+    private static final String SUGAR_CONFIG_AGENT_PERCENT = "sugar.config.agentpercent";
+    private static final String SUGAR_CONFIG_AGENT_PERCENT_TOOLTIP = "sugar.config.agentpercent.tooltip";
+    private static final String SUGAR_CONFIG_SUGAR_PEAKS = "sugar.config.sugarpeaks";
+    private static final String SUGAR_CONFIG_SUGAR_PEAKS_TOOLTIP = "sugar.config.sugarpeaks.tooltip";
+    private static final String SUGAR_CONFIG_SUGAR_RADIUS_LIMIT = "sugar.config.sugarradiuslimit";
+    private static final String SUGAR_CONFIG_SUGAR_RADIUS_LIMIT_TOOLTIP = "sugar.config.sugarradiuslimit.tooltip";
+    private static final String SUGAR_CONFIG_MAX_SUGAR_AMOUNT = "sugar.config.maxsugaramount";
+    private static final String SUGAR_CONFIG_MAX_SUGAR_AMOUNT_TOOLTIP = "sugar.config.maxsugaramount.tooltip";
+    private static final String SUGAR_CONFIG_AGENT_INITIAL_ENERGY = "sugar.config.agentinitialenergy";
+    private static final String SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP = "sugar.config.agentinitialenergy.tooltip";
+
     // Rules
-    static final String SUGAR_CONFIG_SUGAR_REGENERATION_RATE = "sugar.config.sugarregenerationrate";
-    static final String SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP = "sugar.config.sugarregenerationrate.tooltip";
-    static final String SUGAR_CONFIG_AGENT_METABOLISM_RATE = "sugar.config.agentmetabolismrate";
-    static final String SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP = "sugar.config.agentmetabolismrate.tooltip";
-    static final String SUGAR_CONFIG_AGENT_VISION_RANGE = "sugar.config.agentvisionrange";
-    static final String SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP = "sugar.config.agentvisionrange.tooltip";
-    static final String SUGAR_CONFIG_AGENT_MAX_AGE = "sugar.config.agentmaxage";
-    static final String SUGAR_CONFIG_AGENT_MAX_AGE_TOOLTIP = "sugar.config.agentmaxage.tooltip";
+    private static final String SUGAR_CONFIG_SUGAR_REGENERATION_RATE = "sugar.config.sugarregenerationrate";
+    private static final String SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP = "sugar.config.sugarregenerationrate.tooltip";
+    private static final String SUGAR_CONFIG_AGENT_METABOLISM_RATE = "sugar.config.agentmetabolismrate";
+    private static final String SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP = "sugar.config.agentmetabolismrate.tooltip";
+    private static final String SUGAR_CONFIG_AGENT_VISION_RANGE = "sugar.config.agentvisionrange";
+    private static final String SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP = "sugar.config.agentvisionrange.tooltip";
+    private static final String SUGAR_CONFIG_AGENT_MAX_AGE = "sugar.config.agentmaxage";
+    private static final String SUGAR_CONFIG_AGENT_MAX_AGE_TOOLTIP = "sugar.config.agentmaxage.tooltip";
 
     public SugarConfigView(SugarConfigViewModel viewModel) {
         super(viewModel);
