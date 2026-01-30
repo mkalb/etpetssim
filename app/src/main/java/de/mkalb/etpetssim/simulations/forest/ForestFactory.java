@@ -40,6 +40,7 @@ public final class ForestFactory {
         var observationViewModel = new DefaultObservationViewModel<ForestEntity, ForestStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
                 observationViewModel, ForestSimulationManager::new, ReadableGridModel::getGridCell);
+
         // View
         var configView = new ForestConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);

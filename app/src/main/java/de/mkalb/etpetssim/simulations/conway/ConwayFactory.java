@@ -40,6 +40,7 @@ public final class ConwayFactory {
         var observationViewModel = new DefaultObservationViewModel<ConwayEntity, ConwayStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
                 observationViewModel, ConwaySimulationManager::new, ReadableGridModel::getGridCell);
+
         // View
         var configView = new ConwayConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);

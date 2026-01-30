@@ -14,9 +14,13 @@ public final class StartFactory {
     private StartFactory() {
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView(Stage stage,
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
-        return new StartMainView(stage, stageUpdater);
+        var view = new StartMainView(stage, stageUpdater);
+
+        // Return the main view
+        return view;
     }
 
 }

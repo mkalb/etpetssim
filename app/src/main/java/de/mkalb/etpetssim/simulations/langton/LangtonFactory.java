@@ -47,6 +47,7 @@ public final class LangtonFactory {
                         return new GridCell<>(selectedCoordinate, langtonGridModel.groundModel().getEntity(selectedCoordinate));
                     }
                 });
+
         // View
         var configView = new LangtonConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);

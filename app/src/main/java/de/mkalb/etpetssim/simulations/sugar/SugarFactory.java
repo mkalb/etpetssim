@@ -48,6 +48,7 @@ public final class SugarFactory {
                         return new GridCell<>(selectedCoordinate, sugarGridModel.resourceModel().getEntity(selectedCoordinate));
                     }
                 });
+
         // View
         var configView = new SugarConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
