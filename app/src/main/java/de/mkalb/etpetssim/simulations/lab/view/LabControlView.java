@@ -46,4 +46,9 @@ public final class LabControlView
         return Optional.empty();
     }
 
+    @Override
+    public void updateStepCount(int stepCount) {
+        // Do nothing
+    }
+
 }

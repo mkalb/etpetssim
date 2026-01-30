@@ -35,7 +35,7 @@ public abstract class AbstractDefaultMainView<
                 STA,
                 DefaultMainViewModel<ENT, GM, CON, STA>,
                 CFV,
-                DefaultControlView,
+                SimulationControlView,
                 OV> {
 
     private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR, 0.95);
@@ -59,7 +59,7 @@ public abstract class AbstractDefaultMainView<
     private boolean skipOverlayActive = false;
 
     protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GM, CON, STA> viewModel,
-                                      CFV configView, DefaultControlView controlView, OV observationView,
+                                      CFV configView, SimulationControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
     }

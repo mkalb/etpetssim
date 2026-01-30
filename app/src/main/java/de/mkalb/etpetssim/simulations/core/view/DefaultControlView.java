@@ -178,6 +178,7 @@ public final class DefaultControlView
         return Optional.of(observationBox);
     }
 
+    @Override
     public void updateStepCount(int stepCount) {
         stepNumberLabel.setText(AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
     }
