@@ -81,4 +81,9 @@ public final class StartMainView implements SimulationMainView, SimulationContro
         return vbox;
     }
 
+    @Override
+    public void updateStepCount(int stepCount) {
+        // Do nothing
+    }
+
 }
