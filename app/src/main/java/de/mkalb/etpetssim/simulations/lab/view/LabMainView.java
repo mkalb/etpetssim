@@ -12,7 +12,6 @@ import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
-import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.ui.*;
