@@ -116,12 +116,12 @@ final class SimulationTypeTest {
         assertEquals("", SimulationType.STARTSCREEN.cssPath());
         assertEquals("lab.css", SimulationType.SIMULATION_LAB.cssPath());
         assertEquals("", SimulationType.ET_PETS_SIM.cssPath());
-        assertEquals("wator.css", SimulationType.WATOR.cssPath());
+        assertEquals("", SimulationType.WATOR.cssPath());
         assertEquals("conway.css", SimulationType.CONWAYS_LIFE.cssPath());
-        assertEquals("sugar.css", SimulationType.SUGARSCAPE.cssPath());
+        assertEquals("", SimulationType.SUGARSCAPE.cssPath());
         assertEquals("", SimulationType.SNAKE.cssPath());
-        assertEquals("forest.css", SimulationType.FOREST_FIRE.cssPath());
-        assertEquals("langton.css", SimulationType.LANGTONS_ANT.cssPath());
+        assertEquals("", SimulationType.FOREST_FIRE.cssPath());
+        assertEquals("", SimulationType.LANGTONS_ANT.cssPath());
     }
 
     @Test

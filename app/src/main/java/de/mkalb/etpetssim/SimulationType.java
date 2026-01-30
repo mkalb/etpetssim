@@ -41,7 +41,7 @@ public enum SimulationType {
             "simulation.wator.subtitle",
             "simulation.wator.url",
             "simulation.wator.emoji",
-            "wator.css",
+            "",
             List.of("wator", "wa-tor")
     ),
     /**
@@ -67,7 +67,7 @@ public enum SimulationType {
             "simulation.langton.subtitle",
             "simulation.langton.url",
             "simulation.langton.emoji",
-            "langton.css",
+            "",
             List.of("langton", "langtonsant", "langtons-ant", "ant")
     ),
     /**
@@ -80,7 +80,7 @@ public enum SimulationType {
             "simulation.forest.subtitle",
             "simulation.forest.url",
             "simulation.forest.emoji",
-            "forest.css",
+            "",
             List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel")
     ),
     /**
@@ -93,7 +93,7 @@ public enum SimulationType {
             "simulation.sugar.subtitle",
             "simulation.sugar.url",
             "simulation.sugar.emoji",
-            "sugar.css",
+            "",
             List.of("sugarscape", "sugar")
     ),
     /**
