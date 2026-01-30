@@ -37,8 +37,8 @@ public final class SnakeConfigViewModel
             1_000,
             Math.max(GridTopology.SQUARE_MAX_REQUIRED_HEIGHT_MULTIPLE, GridTopology.HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE),
             6,
-            4,
-            32,
+            1,
+            50,
             CellDisplayMode.SHAPE_BORDERED,
             List.of(CellDisplayMode.SHAPE_BORDERED),
             ""
