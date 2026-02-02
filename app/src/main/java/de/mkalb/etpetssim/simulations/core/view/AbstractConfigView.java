@@ -140,7 +140,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                     viewModel.cellDisplayModeProperty(),
                     viewModel.cellDisplayModeProperty().displayNameProvider(),
                     AppLocalization.getText(CellDisplayMode.labelResourceKey()),
-                    AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
+                    AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_DISPLAY_MODE_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
             );
         }

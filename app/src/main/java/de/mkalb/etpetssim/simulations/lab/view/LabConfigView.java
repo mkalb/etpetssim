@@ -13,6 +13,10 @@ import javafx.scene.layout.Region;
 public final class LabConfigView
         extends AbstractConfigView<LabConfig, LabConfigViewModel> {
 
+    // Layout
+    private static final String LAB_CONFIG_COLOR = "lab.config.color";
+    private static final String LAB_CONFIG_COLOR_TOOLTIP = "lab.config.color.tooltip";
+
     public LabConfigView(LabConfigViewModel viewModel) {
         super(viewModel);
     }
@@ -21,13 +25,12 @@ public final class LabConfigView
     public Region buildConfigRegion() {
         TitledPane structurePane = createStructurePane(false);
 
-        // TODO LabConfigView: add localization
         // Layout
         var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
                 viewModel.colorModeProperty().displayNameProvider(),
                 FXComponentFactory.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
-                "Color:",
-                "Draw in color or black and white.",
+                AppLocalization.getText(LAB_CONFIG_COLOR),
+                AppLocalization.getText(LAB_CONFIG_COLOR_TOOLTIP),
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
 

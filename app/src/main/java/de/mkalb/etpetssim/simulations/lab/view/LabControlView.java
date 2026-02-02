@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.lab.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.AbstractControlView;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
@@ -13,16 +14,19 @@ import java.util.*;
 public final class LabControlView
         extends AbstractControlView<LabControlViewModel> {
 
+    private static final String LAB_CONTROL_DRAW = "lab.control.draw";
+    private static final String LAB_CONTROL_DRAW_MODEL = "lab.control.drawmodel";
+    private static final String LAB_CONTROL_DRAW_TEST = "lab.control.drawtest";
+
     public LabControlView(LabControlViewModel viewModel) {
         super(viewModel);
     }
 
     @Override
     protected Pane createControlButtonPane() {
-        // TODO LabControlView: add localization
-        Button drawButton = createControlButton("Draw", false);
-        Button drawButtonModel = createControlButton("Draw Model", true);
-        Button drawButtonTest = createControlButton("Draw Test", true);
+        Button drawButton = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW), false);
+        Button drawButtonModel = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW_MODEL), true);
+        Button drawButtonTest = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW_TEST), true);
 
         drawButton.setOnAction(_ -> viewModel.requestDraw());
         drawButtonModel.setOnAction(_ -> viewModel.requestDrawModel());
