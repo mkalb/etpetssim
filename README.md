@@ -54,6 +54,8 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 #### Simulation Lab
 ![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
+![Simulation Lab - Screenshot 02](assets/screenshots/screenshot_lab_02.png)
+![Simulation Lab - Screenshot 03](assets/screenshots/screenshot_lab_03.png)
 
 ## Goals
 
