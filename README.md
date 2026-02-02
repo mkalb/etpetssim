@@ -49,6 +49,9 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 #### Sugarscape
 ![Sugarscape - Screenshot 01](assets/screenshots/screenshot_sugar_01.png)
 
+#### Snake
+![Snake - Screenshot 01](assets/screenshots/screenshot_snake_01.png)
+
 #### Simulation Lab
 ![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
 
