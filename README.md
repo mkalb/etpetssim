@@ -99,3 +99,5 @@ Both license files are also available in the application's About dialog.
 - Name: Mathias Kalb
 - GitHub: [mkalb](https://github.com/mkalb)
 - Project: [Extraterrestrial Pets Simulation](https://github.com/mkalb/etpetssim)
+
+Copyright (c) 2025-2026 Mathias Kalb
