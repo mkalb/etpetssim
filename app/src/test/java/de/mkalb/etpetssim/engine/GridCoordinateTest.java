@@ -62,6 +62,31 @@ final class GridCoordinateTest {
     }
 
     @Test
+    void testIsXWithinAndYOutOfOriginBounds() {
+        GridCoordinate coordinate = new GridCoordinate(5, 15);
+        assertTrue(coordinate.isXWithinAndYOutOfOriginBounds(new GridCoordinate(10, 10)));
+        assertFalse(coordinate.isXWithinAndYOutOfOriginBounds(new GridCoordinate(10, 20)));
+        assertFalse(coordinate.isXWithinAndYOutOfOriginBounds(new GridCoordinate(5, 20)));
+    }
+
+    @Test
+    void testIsYWithinAndXOutOfOriginBounds() {
+        GridCoordinate coordinate = new GridCoordinate(15, 5);
+        assertTrue(coordinate.isYWithinAndXOutOfOriginBounds(new GridCoordinate(10, 10)));
+        assertFalse(coordinate.isYWithinAndXOutOfOriginBounds(new GridCoordinate(20, 10)));
+        assertFalse(coordinate.isYWithinAndXOutOfOriginBounds(new GridCoordinate(20, 5)));
+    }
+
+    @Test
+    void testIsXAndYOutOfOriginBounds() {
+        GridCoordinate coordinate = new GridCoordinate(15, 15);
+        assertTrue(coordinate.isXAndYOutOfOriginBounds(new GridCoordinate(10, 10)));
+        assertFalse(coordinate.isXAndYOutOfOriginBounds(new GridCoordinate(20, 20)));
+        assertFalse(coordinate.isXAndYOutOfOriginBounds(new GridCoordinate(20, 5)));
+        assertFalse(coordinate.isXAndYOutOfOriginBounds(new GridCoordinate(5, 20)));
+    }
+
+    @Test
     void testBooleanEvenOddChecks() {
         assertTrue(new GridCoordinate(0, 0).isEvenColumn());
         assertFalse(new GridCoordinate(0, 0).isOddColumn());

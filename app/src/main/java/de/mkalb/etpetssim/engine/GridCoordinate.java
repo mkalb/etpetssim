@@ -86,6 +86,48 @@ public record GridCoordinate(int x, int y) {
     }
 
     /**
+     * Checks if this coordinate has an x-value within origin bounds while y is out of origin bounds.
+     * Origin bounds are defined by (0, 0) inclusive and the given exclusive corner.
+     *
+     * @param exclusiveCorner the exclusive corner coordinate defining the bounds
+     * @return true if x is within origin bounds and y is out of origin bounds, false otherwise
+     * @see #ORIGIN
+     */
+    public boolean isXWithinAndYOutOfOriginBounds(GridCoordinate exclusiveCorner) {
+        boolean xWithin = (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
+        boolean yWithin = (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
+        return xWithin && !yWithin;
+    }
+
+    /**
+     * Checks if this coordinate has an x-value out of origin bounds while y is within origin bounds.
+     * Origin bounds are defined by (0, 0) inclusive and the given exclusive corner.
+     *
+     * @param exclusiveCorner the exclusive corner coordinate defining the bounds
+     * @return true if x is out of origin bounds and y is within origin bounds, false otherwise
+     * @see #ORIGIN
+     */
+    public boolean isYWithinAndXOutOfOriginBounds(GridCoordinate exclusiveCorner) {
+        boolean xWithin = (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
+        boolean yWithin = (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
+        return !xWithin && yWithin;
+    }
+
+    /**
+     * Checks if both x and y values of this coordinate are out of origin bounds.
+     * Origin bounds are defined by (0, 0) inclusive and the given exclusive corner.
+     *
+     * @param exclusiveCorner the exclusive corner coordinate defining the bounds
+     * @return true if both x and y are out of origin bounds, false otherwise
+     * @see #ORIGIN
+     */
+    public boolean isXAndYOutOfOriginBounds(GridCoordinate exclusiveCorner) {
+        boolean xWithin = (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
+        boolean yWithin = (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
+        return !xWithin && !yWithin;
+    }
+
+    /**
      * Checks if this coordinate is in an even-numbered column.
      *
      * @return {@code true} if the x-coordinate is even, {@code false} otherwise
