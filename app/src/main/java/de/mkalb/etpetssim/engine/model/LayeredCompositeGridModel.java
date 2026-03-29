@@ -15,7 +15,6 @@ import java.util.*;
  *
  * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
-@SuppressWarnings("ClassCanBeRecord")
 public final class LayeredCompositeGridModel<T extends GridEntity> implements CompositeGridModel<T> {
 
     private final List<WritableGridModel<? extends T>> layers;

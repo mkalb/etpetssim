@@ -19,9 +19,7 @@ public final class ForestObservationView
     static final String FOREST_OBSERVATION_TOTAL_CELLS = "forest.observation.cells.total";
     static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
     static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
-    @SuppressWarnings("SpellCheckingInspection")
     static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
-    @SuppressWarnings("SpellCheckingInspection")
     static final String FOREST_OBSERVATION_MAX_BURNING_CELLS = "forest.observation.cells.maxburning";
 
     private final Label stepCountLabel = new Label();

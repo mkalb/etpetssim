@@ -24,7 +24,6 @@ import java.util.function.*;
  * This class encapsulates both the view and minimal control behavior; no dedicated ViewModel is required.
  * </p>
  */
-@SuppressWarnings("ClassCanBeRecord")
 public final class StartMainView implements SimulationMainView, SimulationControlView {
 
     private final Stage stage;

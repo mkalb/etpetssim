@@ -20,7 +20,6 @@ import java.util.*;
  * within the application, ensuring consistent access and avoiding duplicate registrations.
  * </p>
  */
-@SuppressWarnings("ClassCanBeRecord")
 public final class GridEntityDescriptorRegistry {
 
     private final Map<String, GridEntityDescriptor> descriptorsById;

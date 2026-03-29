@@ -11,7 +11,6 @@ import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
 import java.util.*;
 
-@SuppressWarnings("ClassCanBeRecord")
 public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEntity, ConwayStatistics> {
 
     private final GridStructure structure;

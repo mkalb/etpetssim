@@ -11,7 +11,6 @@ import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
-@SuppressWarnings("SpellCheckingInspection")
 public final class SnakeConfigView
         extends AbstractConfigView<SnakeConfig, SnakeConfigViewModel> {
 

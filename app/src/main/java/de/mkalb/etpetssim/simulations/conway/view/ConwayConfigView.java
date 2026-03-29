@@ -21,7 +21,6 @@ import javafx.scene.layout.Region;
 
 import java.util.*;
 
-@SuppressWarnings("SpellCheckingInspection")
 public final class ConwayConfigView
         extends AbstractConfigView<ConwayConfig, ConwayConfigViewModel> {
 

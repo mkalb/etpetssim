@@ -153,7 +153,6 @@ public record GridStructure(GridTopology topology, GridSize size) {
      *
      * @return a stream of all valid grid coordinates in row-major order
      */
-    @SuppressWarnings("GrazieInspection")
     public Stream<GridCoordinate> coordinatesStream() {
         return IntStream.range(0, size.width())
                         .boxed()

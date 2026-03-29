@@ -10,7 +10,6 @@ import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 
 import java.util.*;
 
-@SuppressWarnings("ClassCanBeRecord")
 public final class WatorAgentLogicFactory {
 
     private final WatorConfig config;

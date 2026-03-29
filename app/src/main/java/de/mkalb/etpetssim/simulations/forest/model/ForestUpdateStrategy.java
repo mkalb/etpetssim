@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
 import java.util.*;
 
-@SuppressWarnings("ClassCanBeRecord")
 public final class ForestUpdateStrategy implements SynchronousStepLogic<ForestEntity, ForestStatistics> {
 
     private final GridStructure structure;

@@ -11,7 +11,6 @@ package de.mkalb.etpetssim.engine;
  * - {@code edge} (plural: {@code edges}): a straight line connecting two vertices.<br>
  * These terms are used consistently throughout the framework for clarity and precision.
  */
-@SuppressWarnings("SpellCheckingInspection")
 public enum CellShape {
 
     /**

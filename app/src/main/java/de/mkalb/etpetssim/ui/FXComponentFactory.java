@@ -252,7 +252,6 @@ public final class FXComponentFactory {
      */
     private static <E extends Enum<E>> ListCell<E> createDisplayNameListCell(Map<E, String> displayNames) {
         return new ListCell<>() {
-            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
             @Override
             protected void updateItem(@Nullable E item, boolean empty) {
                 super.updateItem(item, empty);

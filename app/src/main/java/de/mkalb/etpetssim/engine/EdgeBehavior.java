@@ -9,7 +9,6 @@ package de.mkalb.etpetssim.engine;
  *
  * @see GridEdgeBehavior
  */
-@SuppressWarnings("SpellCheckingInspection")
 public enum EdgeBehavior {
 
     /**
