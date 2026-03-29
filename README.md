@@ -18,15 +18,16 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 ### Implemented Simulations
 
-| Name (Wikipedia)                                                               | Sync / Async | Grid Model     | Default Entity    | Entities / Agents / Cells                                                      |
-|--------------------------------------------------------------------------------|--------------|----------------|-------------------|--------------------------------------------------------------------------------|
-| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | asynchronous | Array          | 🟦 Water          | Shark 🦈 (many), Fish 🐟 (many)                                                |
-| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | synchronous  | Sparse         | 🟨 Dead           | Alive 🟥 (many)                                                                |
-| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | asynchronous | Array & Sparse | ⬜ Unvisited       | Ant 🐜 (1 agent), Visited Ground (many, 16 colors)                             |
-| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | synchronous  | Array          | 🟫 Empty          | Tree 🌲 (many), Burning 🔥 (many)                                              |
-| [Sugarsacpe](https://en.wikipedia.org/wiki/Sugarscape)                         | asynchronous | Sparse         | None (🟫 Terrain) | 🟨 Sugar (many), 🟦 Agent (many)                                               |
-| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | asynchronous | Sparse         | ⬛ Ground          | 🔵 Snake Head (many), 🟩 Snake Segment (many), 🟡 Food (many), ⬜ Wall (many)   |
-| Simulation Lab                                                                 |              | Sparse         | Normal            | Highlighted                                                                    |
+| Name (Wikipedia)                                                               | Sync / Async | Grid Model     | Default Entity    | Entities / Agents / Cells                                                    |
+|--------------------------------------------------------------------------------|--------------|----------------|-------------------|------------------------------------------------------------------------------|
+| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | asynchronous | Array          | 🟦 Water          | Shark 🦈 (many), Fish 🐟 (many)                                              |
+| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | synchronous  | Sparse         | 🟨 Dead           | Alive 🟥 (many)                                                              |
+| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | asynchronous | Array & Sparse | ⬜ Unvisited       | Ant 🐜 (1 agent), Visited Ground (many, 16 colors)                           |
+| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | synchronous  | Array          | 🟫 Empty          | Tree 🌲 (many), Burning 🔥 (many)                                            |
+| [Sugarsacpe](https://en.wikipedia.org/wiki/Sugarscape)                         | asynchronous | Sparse         | None (🟫 Terrain) | 🟨 Sugar (many), 🟦 Agent (many)                                             |
+| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | asynchronous | Sparse         | ⬛ Ground          | 🔵 Snake Head (many), 🟩 Snake Segment (many), 🟡 Food (many), ⬜ Wall (many) |
+| Rebounding Entities                                                            | asynchronous | Sparse         | ⬛ Ground          | 🟨 Moving Entity (many), ⬜ Wall (many)                                       |
+| Simulation Lab                                                                 |              | Sparse         | Normal            | Highlighted                                                                  |
 
 ### Planned/Future Simulations
 
