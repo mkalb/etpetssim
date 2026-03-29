@@ -23,7 +23,6 @@ final class GridTopologyTest {
         assertEquals("[SQUARE BLOCK]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY).toDisplayString());
         assertEquals("[HEXAGON WRAP]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY).toDisplayString());
         assertEquals("[TRIANGLE ABSORB]", new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY).toDisplayString());
-        assertEquals("[SQUARE REFLECT]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.REFLECT_XY).toDisplayString());
     }
 
     @Test
@@ -71,14 +70,14 @@ final class GridTopologyTest {
     @Test
     void testEdgeBehaviorX() {
         assertEquals(EdgeBehavior.BLOCK, new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y).edgeBehaviorX());
-        assertEquals(EdgeBehavior.REFLECT, new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.REFLECT_XY).edgeBehaviorX());
+        assertEquals(EdgeBehavior.WRAP, new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY).edgeBehaviorX());
         assertEquals(EdgeBehavior.BLOCK, new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_X_WRAP_Y).edgeBehaviorX());
     }
 
     @Test
     void testEdgeBehaviorY() {
         assertEquals(EdgeBehavior.WRAP, new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y).edgeBehaviorY());
-        assertEquals(EdgeBehavior.REFLECT, new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.REFLECT_XY).edgeBehaviorY());
+        assertEquals(EdgeBehavior.WRAP, new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY).edgeBehaviorY());
         assertEquals(EdgeBehavior.WRAP, new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_X_WRAP_Y).edgeBehaviorY());
     }
 
@@ -87,10 +86,6 @@ final class GridTopologyTest {
         assertEquals(3, new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY).cellVertexCount());
         assertEquals(4, new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY).cellVertexCount());
         assertEquals(6, new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY).cellVertexCount());
-
-        assertEquals(3, new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.REFLECT_XY).cellVertexCount());
-        assertEquals(4, new GridTopology(CellShape.SQUARE, GridEdgeBehavior.REFLECT_XY).cellVertexCount());
-        assertEquals(6, new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.REFLECT_XY).cellVertexCount());
     }
 
     @Test

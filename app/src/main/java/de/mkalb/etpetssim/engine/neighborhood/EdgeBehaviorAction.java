@@ -6,8 +6,7 @@ package de.mkalb.etpetssim.engine.neighborhood;
  * <p>
  * Each constant represents a distinct action that can occur when an entity reaches
  * a grid boundary during simulation. These actions are used to determine whether
- * movement is allowed, blocked, wrapped to the opposite edge, absorbed (removed),
- * or reflected (bounced back).
+ * movement is allowed, blocked, wrapped to the opposite edge, or absorbed (removed).
  * <p>
  * This enum is used throughout the grid framework to standardize edge behavior handling.
  *
@@ -34,11 +33,6 @@ public enum EdgeBehaviorAction {
     /**
      * The entity is absorbed by the grid edge and removed from the simulation.
      */
-    ABSORBED,
-
-    /**
-     * The entity is reflected by the grid edge and bounces back.
-     */
-    REFLECTED
+    ABSORBED
 
 }

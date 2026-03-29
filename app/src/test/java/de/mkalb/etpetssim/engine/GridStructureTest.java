@@ -119,8 +119,8 @@ final class GridStructureTest {
 
     @Test
     void testCellCount() {
-        assertEquals(20 * 30, new GridStructure(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.REFLECT_XY), new GridSize(20, 30)).cellCount());
-        assertEquals(30 * 20, new GridStructure(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.REFLECT_XY), new GridSize(30, 20)).cellCount());
+        assertEquals(20 * 30, new GridStructure(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(20, 30)).cellCount());
+        assertEquals(30 * 20, new GridStructure(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(30, 20)).cellCount());
         assertEquals(12 * 16, new GridStructure(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY), new GridSize(12, 16)).cellCount());
     }
 

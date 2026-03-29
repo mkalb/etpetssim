@@ -4,9 +4,6 @@ package de.mkalb.etpetssim.engine;
  * Defines the possible behaviors for entities interacting with the edge of a simulation grid.
  * Used to specify how entities are handled when reaching a grid boundary in grid-based simulations.
  *
- * <p><b>Note:</b> {@link #WRAP} and {@link #REFLECT} must never be combined for X and Y edges
- * in a {@link GridEdgeBehavior}, as this would make grid calculations extremely complex.</p>
- *
  * @see GridEdgeBehavior
  */
 public enum EdgeBehavior {
@@ -27,13 +24,7 @@ public enum EdgeBehavior {
      * Removes entities from the simulation when they reach the grid edge.
      * Entities are absorbed and do not continue to exist beyond the boundary.
      */
-    ABSORB("edgebehavior.absorb"),
-
-    /**
-     * Reverses the direction of entities upon reaching the grid edge.
-     * Entities are reflected back into the grid, simulating a bounce effect.
-     */
-    REFLECT("edgebehavior.reflect");
+    ABSORB("edgebehavior.absorb");
 
     private final String resourceKey;
 

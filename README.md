@@ -9,7 +9,7 @@ The simulation engine organizes the grid into structured cells, each with coordi
 modeling and efficient computation.
 Each cell is a regular polygon —triangle, square, or hexagon— with equal sides and angles, ensuring consistent geometry
 and neighbor relationships throughout the grid.
-The grid supports various edge behaviors —blocking, wrapping, absorbing, or reflecting— and offers flexible modes for
+The grid supports various edge behaviors —blocking, wrapping, or absorbing— and offers flexible modes for
 calculating neighbors, either by shared edges or by both edges and vertices.
 
 **Status:** This project is currently under active development.

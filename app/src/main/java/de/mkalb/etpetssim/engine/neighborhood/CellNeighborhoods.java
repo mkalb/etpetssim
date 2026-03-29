@@ -169,14 +169,13 @@ public final class CellNeighborhoods {
      * <ol>
      *   <li>{@code BLOCKED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#BLOCK}</li>
      *   <li>{@code ABSORBED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#ABSORB}</li>
-     *   <li>{@code REFLECTED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#REFLECT}</li>
      *   <li>{@code WRAPPED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#WRAP}</li>
      * </ol>
      *
      * @param coordinate the grid coordinate to check
      * @param structure the grid structure defining bounds and edge behaviors
      * @return the resulting {@link EdgeBehaviorAction} for the coordinate
-     * @throws IllegalArgumentException if an unknown edge behavior is encountered or if WRAP and REFLECT are combined
+     * @throws IllegalArgumentException if an unknown edge behavior is encountered
      */
     public static EdgeBehaviorAction edgeActionForCoordinate(GridCoordinate coordinate, GridStructure structure) {
         if (structure.isCoordinateValid(coordinate)) {
@@ -196,21 +195,12 @@ public final class CellNeighborhoods {
         EdgeBehavior edgeBehaviorX = structure.edgeBehaviorX();
         EdgeBehavior edgeBehaviorY = structure.edgeBehaviorY();
 
-        // Check for incompatible edge behaviors
-        if (((edgeBehaviorX == EdgeBehavior.WRAP) && (edgeBehaviorY == EdgeBehavior.REFLECT))
-                || ((edgeBehaviorX == EdgeBehavior.REFLECT) && (edgeBehaviorY == EdgeBehavior.WRAP))) {
-            throw new IllegalArgumentException("WRAP and REFLECT edge behaviors cannot be combined for X and Y edges in a GridEdgeBehavior.");
-        }
-
-        // Prioritize in order: BLOCK, ABSORB, REFLECT, WRAP.
+        // Prioritize in order: BLOCK, ABSORB, WRAP.
         if ((outX && (edgeBehaviorX == EdgeBehavior.BLOCK)) || (outY && (edgeBehaviorY == EdgeBehavior.BLOCK))) {
             return EdgeBehaviorAction.BLOCKED;
         }
         if ((outX && (edgeBehaviorX == EdgeBehavior.ABSORB)) || (outY && (edgeBehaviorY == EdgeBehavior.ABSORB))) {
             return EdgeBehaviorAction.ABSORBED;
-        }
-        if ((outX && (edgeBehaviorX == EdgeBehavior.REFLECT)) || (outY && (edgeBehaviorY == EdgeBehavior.REFLECT))) {
-            return EdgeBehaviorAction.REFLECTED;
         }
         if ((outX && (edgeBehaviorX == EdgeBehavior.WRAP)) || (outY && (edgeBehaviorY == EdgeBehavior.WRAP))) {
             return EdgeBehaviorAction.WRAPPED;
@@ -223,8 +213,8 @@ public final class CellNeighborhoods {
     /**
      * Determines whether the given coordinate is valid within the grid after applying edge behavior.
      * <p>
-     * A coordinate is considered valid if the edge behavior action is {@link EdgeBehaviorAction#VALID},
-     * {@link EdgeBehaviorAction#WRAPPED}, or {@link EdgeBehaviorAction#REFLECTED}.
+     * A coordinate is considered valid if the edge behavior action is {@link EdgeBehaviorAction#VALID}
+     * or {@link EdgeBehaviorAction#WRAPPED}.
      * Coordinates resulting in {@link EdgeBehaviorAction#BLOCKED} or {@link EdgeBehaviorAction#ABSORBED}
      * are not considered valid for further simulation steps.
      *
@@ -235,8 +225,7 @@ public final class CellNeighborhoods {
     public static boolean isValidEdgeCoordinate(GridCoordinate coordinate, GridStructure structure) {
         EdgeBehaviorAction action = edgeActionForCoordinate(coordinate, structure);
         return (action == EdgeBehaviorAction.VALID)
-                || (action == EdgeBehaviorAction.WRAPPED)
-                || (action == EdgeBehaviorAction.REFLECTED);
+                || (action == EdgeBehaviorAction.WRAPPED);
     }
 
     /**
@@ -247,7 +236,6 @@ public final class CellNeighborhoods {
      * <ul>
      *   <li>{@code VALID}, {@code BLOCKED}, {@code ABSORBED}: returns the original coordinate unchanged.</li>
      *   <li>{@code WRAPPED}: wraps the coordinate to the opposite edge using modular arithmetic.</li>
-     *   <li>{@code REFLECTED}: reflects the coordinate at the grid boundary, simulating a bounce effect.</li>
      * </ul>
      *
      * @param original the original grid coordinate to process
@@ -269,28 +257,6 @@ public final class CellNeighborhoods {
                         int wrappedY = ((((original.y() - min.y()) % height) + height) % height) + min.y();
 
                         yield new GridCoordinate(wrappedX, wrappedY);
-                    }
-                    case REFLECTED -> {
-                        GridCoordinate min = structure.minCoordinateInclusive();
-                        GridCoordinate max = structure.maxCoordinateExclusive();
-                        int x = original.x();
-                        int y = original.y();
-
-                        // Reflect X if it is out of bounds.
-                        if (x < min.x()) {
-                            x = min.x() + (min.x() - x - 1);
-                        } else if (x >= max.x()) {
-                            x = max.x() - ((x - max.x()) + 1);
-                        }
-
-                        // Reflect Y if it is out of bounds.
-                        if (y < min.y()) {
-                            y = min.y() + (min.y() - y - 1);
-                        } else if (y >= max.y()) {
-                            y = max.y() - ((y - max.y()) + 1);
-                        }
-
-                        yield new GridCoordinate(x, y);
                     }
                 },
                 action);
@@ -414,7 +380,7 @@ public final class CellNeighborhoods {
      * For each theoretical neighbor (as determined by cell shape and neighborhood mode, ignoring boundaries),
      * the grid's edge behavior is applied. The resulting {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records
      * contain both the original (theoretical) and mapped neighbor coordinates, as well as the edge behavior action
-     * (e.g., VALID, WRAPPED, BLOCKED, ABSORBED, REFLECTED).
+     * (e.g., VALID, WRAPPED, BLOCKED, ABSORBED).
      * <p>
      * The returned map groups all neighbor relationships by the mapped coordinate, allowing the simulation
      * to distinguish between different edge behavior outcomes (including absorbed or blocked neighbors).

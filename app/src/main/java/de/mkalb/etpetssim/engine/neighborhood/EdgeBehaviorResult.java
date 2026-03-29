@@ -9,8 +9,8 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
  * and the resulting {@link EdgeBehaviorAction}.
  * <p>
  * For actions {@code VALID}, {@code BLOCKED}, and {@code ABSORBED}, the {@code mapped} coordinate
- * is identical to {@code original}. For actions like {@code WRAPPED} or {@code REFLECTED},
- * {@code mapped} may differ from {@code original}.
+ * is identical to {@code original}. For {@code WRAPPED}, {@code mapped} may differ from
+ * {@code original}.
  *
  * @param original the original grid coordinate before edge behavior is applied
  * @param mapped   the resulting grid coordinate after edge behavior is applied

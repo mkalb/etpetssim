@@ -11,7 +11,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
  * as well as the resulting {@link EdgeBehaviorAction}.
  * <p>
  * This is useful for simulations where it is important to know not only the geometric neighbor
- * relationship but also how the grid's edge rules affect neighbor access (e.g., wrapping, blocking, reflecting).
+ * relationship but also how the grid's edge rules affect neighbor access (e.g., wrapping, blocking).
  *
  * @param startCoordinate            the coordinate of the start (source) cell
  * @param direction                  the compass direction from the start cell to the neighbor
