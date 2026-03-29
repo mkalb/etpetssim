@@ -118,9 +118,9 @@ This project uses the latest stable versions of all technologies whenever possib
 | Technology     | Version            | URL                                                            |
 |----------------|--------------------|----------------------------------------------------------------|
 | Java (OpenJDK) | Eclipse Temurin 25 | [adoptium.net](https://adoptium.net/)                          |
-| JavaFX         | 25.0.1             | [openjfx.io](https://openjfx.io/)                              |
+| JavaFX         | 25.0.2             | [openjfx.io](https://openjfx.io/)                              |
 | Gradle         | 9.2.1              | [gradle.org](https://gradle.org/)                              |
-| IntelliJ IDEA  | 2025.2             | [www.jetbrains.com/idea](https://www.jetbrains.com/idea/)      |
+| IntelliJ IDEA  | 2025.3             | [www.jetbrains.com/idea](https://www.jetbrains.com/idea/)      |
 
 ## License
 
