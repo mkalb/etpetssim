@@ -15,6 +15,7 @@ public record ReboundingConfig(
         CellDisplayMode cellDisplayMode,
         long seed,
         // Initialization
+        int verticalWalls,
         double movingEntityPercent,
         // Rules
         NeighborhoodMode neighborhoodMode)

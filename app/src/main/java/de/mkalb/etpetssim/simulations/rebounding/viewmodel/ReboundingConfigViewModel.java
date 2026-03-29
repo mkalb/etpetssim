@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
@@ -38,6 +39,10 @@ public final class ReboundingConfigViewModel
     );
 
     // Initialization
+    private static final int VERTICAL_WALLS_INITIAL = 2;
+    private static final int VERTICAL_WALLS_MIN = 0;
+    private static final int VERTICAL_WALLS_MAX = 100;
+    private static final int VERTICAL_WALLS_STEP = 1;
     private static final double MOVING_ENTITY_PERCENT_INITIAL = 0.02d;
     private static final double MOVING_ENTITY_PERCENT_MIN = 0.0d;
     private static final double MOVING_ENTITY_PERCENT_MAX = 0.1d;
@@ -46,6 +51,11 @@ public final class ReboundingConfigViewModel
     private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
 
     // Initialization properties
+    private final InputIntegerProperty verticalWalls = InputIntegerProperty.of(
+            VERTICAL_WALLS_INITIAL,
+            VERTICAL_WALLS_MIN,
+            VERTICAL_WALLS_MAX,
+            VERTICAL_WALLS_STEP);
     private final InputDoubleProperty movingEntityPercent = InputDoubleProperty.of(
             MOVING_ENTITY_PERCENT_INITIAL,
             MOVING_ENTITY_PERCENT_MIN,
@@ -71,9 +81,14 @@ public final class ReboundingConfigViewModel
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
+                verticalWalls.getValue(),
                 movingEntityPercent.getValue(),
                 neighborhoodMode.getValue()
         );
+    }
+
+    public InputIntegerProperty verticalWallsProperty() {
+        return verticalWalls;
     }
 
     public InputDoubleProperty movingEntityPercentProperty() {

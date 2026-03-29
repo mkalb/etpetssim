@@ -14,6 +14,8 @@ public final class ReboundingConfigView
         extends AbstractConfigView<ReboundingConfig, ReboundingConfigViewModel> {
 
     // Initialization
+    private static final String REBOUNDING_CONFIG_VERTICAL_WALLS = "rebounding.config.verticalwalls";
+    private static final String REBOUNDING_CONFIG_VERTICAL_WALLS_TOOLTIP = "rebounding.config.verticalwalls.tooltip";
     private static final String REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT = "rebounding.config.movingentitypercent";
     private static final String REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP = "rebounding.config.movingentitypercent.tooltip";
 
@@ -28,6 +30,12 @@ public final class ReboundingConfigView
 
         // --- Initialization Group ---
         var seedControl = createSeedControl();
+        var verticalWallsControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.verticalWallsProperty(),
+                AppLocalization.getText(REBOUNDING_CONFIG_VERTICAL_WALLS),
+                AppLocalization.getFormattedText(REBOUNDING_CONFIG_VERTICAL_WALLS_TOOLTIP, viewModel.verticalWallsProperty().min(), viewModel.verticalWallsProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
         var movingEntityPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.movingEntityPercentProperty(),
                 AppLocalization.getText(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT),
@@ -37,7 +45,7 @@ public final class ReboundingConfigView
 
         TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 true,
-                seedControl, movingEntityPercentControl);
+                seedControl, verticalWallsControl, movingEntityPercentControl);
 
         // --- Rules Group ---
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());

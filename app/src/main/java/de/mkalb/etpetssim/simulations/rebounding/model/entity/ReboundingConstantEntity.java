@@ -24,6 +24,11 @@ public enum ReboundingConstantEntity implements ReboundingEntity, ConstantGridEn
     }
 
     @Override
+    public boolean isGround() {
+        return this == GROUND;
+    }
+
+    @Override
     public boolean isWall() {
         return this == WALL;
     }

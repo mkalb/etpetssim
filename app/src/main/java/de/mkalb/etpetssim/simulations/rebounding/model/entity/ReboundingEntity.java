@@ -9,6 +9,8 @@ public sealed interface ReboundingEntity extends GridEntity
     String DESCRIPTOR_ID_WALL = "wall";
     String DESCRIPTOR_ID_MOVING_ENTITY = "moving_entity";
 
+    boolean isGround();
+
     boolean isWall();
 
     boolean isMovingEntity();

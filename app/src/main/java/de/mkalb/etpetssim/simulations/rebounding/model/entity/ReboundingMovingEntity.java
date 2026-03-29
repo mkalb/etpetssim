@@ -16,6 +16,11 @@ public final class ReboundingMovingEntity implements ReboundingEntity {
     }
 
     @Override
+    public boolean isGround() {
+        return false;
+    }
+
+    @Override
     public boolean isWall() {
         return false;
     }
