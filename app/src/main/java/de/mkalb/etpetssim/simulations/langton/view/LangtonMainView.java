@@ -127,13 +127,13 @@ public final class LangtonMainView
             groundModel.nonDefaultCells()
                        .forEachOrdered(groundCell -> {
                            // draw ground
-                           cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.entity().descriptorId()),
+                           cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
                                    basePainter, groundCell, stepCount);
                        });
             antModel.nonDefaultCells()
                     .forEachOrdered(antCell -> {
                         // draw ant
-                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.entity().descriptorId()),
+                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
                                 overlayPainter, antCell, stepCount);
                     });
         } else {
@@ -141,10 +141,10 @@ public final class LangtonMainView
                     .forEachOrdered(antCell -> {
                         GridCell<LangtonGroundEntity> groundCell = groundModel.getGridCell(antCell.coordinate());
                         // draw ground
-                        cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.entity().descriptorId()),
+                        cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
                                 basePainter, groundCell, stepCount);
                         // draw ant
-                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.entity().descriptorId()),
+                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
                                 overlayPainter, antCell, stepCount);
                     });
         }

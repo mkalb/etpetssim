@@ -182,12 +182,12 @@ public final class SugarMainView
 
         resourceModel.nonDefaultCells()
                      .forEachOrdered(resourceCell -> cellResourceDrawer.draw(
-                             entityDescriptorRegistry.getRequiredByDescriptorId(resourceCell.entity().descriptorId()),
+                             entityDescriptorRegistry.getRequiredByDescriptorId(resourceCell.descriptorId()),
                              basePainter, resourceCell, stepCount));
 
         agentModel.nonDefaultCells()
                   .forEachOrdered(agentCell -> cellAgentDrawer.draw(
-                          entityDescriptorRegistry.getRequiredByDescriptorId(agentCell.entity().descriptorId()),
+                          entityDescriptorRegistry.getRequiredByDescriptorId(agentCell.descriptorId()),
                           basePainter, agentCell, stepCount));
     }
 

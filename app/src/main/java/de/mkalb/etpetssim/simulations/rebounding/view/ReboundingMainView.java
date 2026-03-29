@@ -80,7 +80,7 @@ public final class ReboundingMainView
 
         currentModel.nonDefaultCells().forEachOrdered(cell ->
                 basePainter.drawCell(cell.coordinate(),
-                        entityDescriptorRegistry.getRequiredByDescriptorId(cell.entity().descriptorId())
+                        entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
                                                 .colorAsOptional().orElse(FALLBACK_COLOR_CELL),
                         null, 0.0d));
     }

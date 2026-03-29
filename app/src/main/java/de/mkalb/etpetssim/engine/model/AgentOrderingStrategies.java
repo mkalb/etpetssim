@@ -61,7 +61,7 @@ public final class AgentOrderingStrategies {
      * @return a comparator for ordering grid cells by entity descriptor ID
      */
     public static <T extends GridEntity> Comparator<GridCell<T>> byDescriptorId() {
-        return Comparator.comparing(cell -> cell.entity().descriptorId());
+        return Comparator.comparing(GridCell::descriptorId);
     }
 
 }

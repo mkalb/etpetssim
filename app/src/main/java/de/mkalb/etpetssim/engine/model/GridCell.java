@@ -15,6 +15,19 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 public record GridCell<T extends GridEntity>(GridCoordinate coordinate, T entity) {
 
     /**
+     * Returns the unique descriptor ID of the entity stored in this grid cell.
+     * <p>
+     * This is a convenience shortcut for {@link GridEntity#descriptorId()} on
+     * the associated {@link #entity()}.
+     *
+     * @return the descriptor ID of the associated entity
+     * @see GridEntity#descriptorId()
+     */
+    public String descriptorId() {
+        return entity.descriptorId();
+    }
+
+    /**
      * Returns a short, human-readable string representation of this grid cell.
      * <p>
      * Format: {@code (x, y) [Entity]}

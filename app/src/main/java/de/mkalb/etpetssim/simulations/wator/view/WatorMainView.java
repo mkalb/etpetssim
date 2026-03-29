@@ -190,7 +190,7 @@ public final class WatorMainView
 
         currentModel.nonDefaultCells()
                     .forEachOrdered(cell ->
-                            cellDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(cell.entity().descriptorId()),
+                            cellDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
                                     basePainter, cell, stepCount));
     }
 
