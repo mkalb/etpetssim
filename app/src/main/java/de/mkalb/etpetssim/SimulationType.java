@@ -27,7 +27,6 @@ public enum SimulationType {
             "simulation.start.title",
             "simulation.start.subtitle",
             "simulation.start.url",
-            "simulation.start.emoji",
             "",
             List.of("startscreen", "start")
     ),
@@ -40,7 +39,6 @@ public enum SimulationType {
             "simulation.wator.title",
             "simulation.wator.subtitle",
             "simulation.wator.url",
-            "simulation.wator.emoji",
             "",
             List.of("wator", "wa-tor")
     ),
@@ -53,7 +51,6 @@ public enum SimulationType {
             "simulation.conway.title",
             "simulation.conway.subtitle",
             "simulation.conway.url",
-            "simulation.conway.emoji",
             "conway.css",
             List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol")
     ),
@@ -66,7 +63,6 @@ public enum SimulationType {
             "simulation.langton.title",
             "simulation.langton.subtitle",
             "simulation.langton.url",
-            "simulation.langton.emoji",
             "",
             List.of("langton", "langtonsant", "langtons-ant", "ant")
     ),
@@ -79,7 +75,6 @@ public enum SimulationType {
             "simulation.forest.title",
             "simulation.forest.subtitle",
             "simulation.forest.url",
-            "simulation.forest.emoji",
             "",
             List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel")
     ),
@@ -92,7 +87,6 @@ public enum SimulationType {
             "simulation.sugar.title",
             "simulation.sugar.subtitle",
             "simulation.sugar.url",
-            "simulation.sugar.emoji",
             "",
             List.of("sugarscape", "sugar")
     ),
@@ -105,7 +99,6 @@ public enum SimulationType {
             "simulation.snake.title",
             "simulation.snake.subtitle",
             "simulation.snake.url",
-            "simulation.snake.emoji",
             "",
             List.of("snake", "snakes")
     ),
@@ -118,7 +111,6 @@ public enum SimulationType {
             "simulation.rebounding.title",
             "simulation.rebounding.subtitle",
             "simulation.rebounding.url",
-            "simulation.rebounding.emoji",
             "",
             List.of("reboundingentities", "rebounding-entities", "rebounding", "rebound", "rebounders")
     ),
@@ -131,7 +123,6 @@ public enum SimulationType {
             "simulation.etpetssim.title",
             "simulation.etpetssim.subtitle",
             "simulation.etpetssim.url",
-            "simulation.etpetssim.emoji",
             "",
             List.of("etpetssim", "etpets")
     ),
@@ -144,7 +135,6 @@ public enum SimulationType {
             "simulation.lab.title",
             "simulation.lab.subtitle",
             "simulation.lab.url",
-            "simulation.lab.emoji",
             "lab.css",
             List.of("simulationlab", "lab")
     );
@@ -154,12 +144,11 @@ public enum SimulationType {
     private final String titleKey;
     private final String subtitleKey;
     private final String urlKey;
-    private final String emojiKey;
     private final String cssPath;
     private final List<String> cliArguments;
 
     SimulationType(boolean implemented, boolean showOnStartScreen,
-                   String titleKey, String subtitleKey, String urlKey, String emojiKey,
+                   String titleKey, String subtitleKey, String urlKey,
                    String cssPath,
                    List<String> cliArguments) {
         this.implemented = implemented;
@@ -167,7 +156,6 @@ public enum SimulationType {
         this.titleKey = titleKey;
         this.subtitleKey = subtitleKey;
         this.urlKey = urlKey;
-        this.emojiKey = emojiKey;
         this.cssPath = cssPath;
         this.cliArguments = cliArguments;
     }
@@ -242,15 +230,6 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the localization key for the optional emoji of this simulation type.
-     *
-     * @return the emoji resource key
-     */
-    public String emojiKey() {
-        return emojiKey;
-    }
-
-    /**
      * Returns the CSS resource relative path for this simulation type.
      *
      * @return the CSS resource relative path as a String, which may be blank if not set
@@ -293,15 +272,6 @@ public enum SimulationType {
      */
     public Optional<String> url() {
         return AppLocalization.getOptionalText(urlKey);
-    }
-
-    /**
-     * Returns the localized emoji for this simulation type.
-     *
-     * @return an Optional containing the emoji, if present
-     */
-    public Optional<String> emoji() {
-        return AppLocalization.getOptionalText(emojiKey);
     }
 
     /**

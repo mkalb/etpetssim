@@ -104,20 +104,6 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testEmojiKey() {
-        assertEquals("simulation.start.emoji", SimulationType.STARTSCREEN.emojiKey());
-        assertEquals("simulation.lab.emoji", SimulationType.SIMULATION_LAB.emojiKey());
-        assertEquals("simulation.etpetssim.emoji", SimulationType.ET_PETS_SIM.emojiKey());
-        assertEquals("simulation.wator.emoji", SimulationType.WATOR.emojiKey());
-        assertEquals("simulation.conway.emoji", SimulationType.CONWAYS_LIFE.emojiKey());
-        assertEquals("simulation.sugar.emoji", SimulationType.SUGARSCAPE.emojiKey());
-        assertEquals("simulation.snake.emoji", SimulationType.SNAKE.emojiKey());
-        assertEquals("simulation.forest.emoji", SimulationType.FOREST_FIRE.emojiKey());
-        assertEquals("simulation.langton.emoji", SimulationType.LANGTONS_ANT.emojiKey());
-        assertEquals("simulation.rebounding.emoji", SimulationType.REBOUNDING_ENTITIES.emojiKey());
-    }
-
-    @Test
     void testCssPath() {
         assertEquals("", SimulationType.STARTSCREEN.cssPath());
         assertEquals("lab.css", SimulationType.SIMULATION_LAB.cssPath());
