@@ -20,11 +20,12 @@ final class SimulationTypeTest {
         assertNotNull(SimulationType.valueOf("SNAKE"));
         assertNotNull(SimulationType.valueOf("FOREST_FIRE"));
         assertNotNull(SimulationType.valueOf("LANGTONS_ANT"));
+        assertNotNull(SimulationType.valueOf("REBOUNDING_ENTITIES"));
     }
 
     @Test
     void testEnumCount() {
-        assertEquals(9, SimulationType.values().length, "There should be exactly 9 values");
+        assertEquals(10, SimulationType.values().length, "There should be exactly 10 values");
     }
 
     @Test
@@ -36,8 +37,9 @@ final class SimulationTypeTest {
         assertEquals(4, SimulationType.FOREST_FIRE.ordinal());
         assertEquals(5, SimulationType.SUGARSCAPE.ordinal());
         assertEquals(6, SimulationType.SNAKE.ordinal());
-        assertEquals(7, SimulationType.ET_PETS_SIM.ordinal());
-        assertEquals(8, SimulationType.SIMULATION_LAB.ordinal());
+        assertEquals(7, SimulationType.REBOUNDING_ENTITIES.ordinal());
+        assertEquals(8, SimulationType.ET_PETS_SIM.ordinal());
+        assertEquals(9, SimulationType.SIMULATION_LAB.ordinal());
     }
 
     @Test
@@ -70,6 +72,7 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.title", SimulationType.SNAKE.titleKey());
         assertEquals("simulation.forest.title", SimulationType.FOREST_FIRE.titleKey());
         assertEquals("simulation.langton.title", SimulationType.LANGTONS_ANT.titleKey());
+        assertEquals("simulation.rebounding.title", SimulationType.REBOUNDING_ENTITIES.titleKey());
     }
 
     @Test
@@ -83,6 +86,7 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.subtitle", SimulationType.SNAKE.subtitleKey());
         assertEquals("simulation.forest.subtitle", SimulationType.FOREST_FIRE.subtitleKey());
         assertEquals("simulation.langton.subtitle", SimulationType.LANGTONS_ANT.subtitleKey());
+        assertEquals("simulation.rebounding.subtitle", SimulationType.REBOUNDING_ENTITIES.subtitleKey());
     }
 
     @Test
@@ -96,6 +100,7 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.url", SimulationType.SNAKE.urlKey());
         assertEquals("simulation.forest.url", SimulationType.FOREST_FIRE.urlKey());
         assertEquals("simulation.langton.url", SimulationType.LANGTONS_ANT.urlKey());
+        assertEquals("simulation.rebounding.url", SimulationType.REBOUNDING_ENTITIES.urlKey());
     }
 
     @Test
@@ -109,6 +114,7 @@ final class SimulationTypeTest {
         assertEquals("simulation.snake.emoji", SimulationType.SNAKE.emojiKey());
         assertEquals("simulation.forest.emoji", SimulationType.FOREST_FIRE.emojiKey());
         assertEquals("simulation.langton.emoji", SimulationType.LANGTONS_ANT.emojiKey());
+        assertEquals("simulation.rebounding.emoji", SimulationType.REBOUNDING_ENTITIES.emojiKey());
     }
 
     @Test
@@ -122,6 +128,7 @@ final class SimulationTypeTest {
         assertEquals("", SimulationType.SNAKE.cssPath());
         assertEquals("", SimulationType.FOREST_FIRE.cssPath());
         assertEquals("", SimulationType.LANGTONS_ANT.cssPath());
+        assertEquals("", SimulationType.REBOUNDING_ENTITIES.cssPath());
     }
 
     @Test
@@ -135,6 +142,7 @@ final class SimulationTypeTest {
         assertEquals(List.of("snake", "snakes"), SimulationType.SNAKE.cliArguments());
         assertEquals(List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel"), SimulationType.FOREST_FIRE.cliArguments());
         assertEquals(List.of("langton", "langtonsant", "langtons-ant", "ant"), SimulationType.LANGTONS_ANT.cliArguments());
+        assertEquals(List.of("reboundingentities", "rebounding-entities", "rebounding", "rebound", "rebounders"), SimulationType.REBOUNDING_ENTITIES.cliArguments());
     }
 
     @Test
