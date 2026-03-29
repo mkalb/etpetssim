@@ -103,7 +103,7 @@ public enum SimulationType {
             List.of("snake", "snakes")
     ),
     /**
-     * Rebounding Entities: a custom simulation by the author, where entities bounce off the edges of the grid.
+     * Rebounding Entities: a custom simulation where entities move through the grid and bounce off walls/obstacles.
      */
     REBOUNDING_ENTITIES(
             true,
@@ -112,7 +112,7 @@ public enum SimulationType {
             "simulation.rebounding.subtitle",
             "simulation.rebounding.url",
             "",
-            List.of("reboundingentities", "rebounding-entities", "rebounding", "rebound", "rebounders")
+            List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders")
     ),
     /**
      * Extraterrestrial Pets Simulation (ET pets): a planned custom simulation by the author.
