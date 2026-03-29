@@ -166,7 +166,7 @@ public abstract class AbstractMainView<
                 Point2D mousePoint = new Point2D(event.getX(), event.getY());
                 GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
                         overlayPainter.cellDimension(), overlayPainter.gridDimension2D(), overlayPainter.gridStructure());
-                if (!mouseCoordinate.isIllegal() && !overlayPainter.isOutsideGrid(mouseCoordinate)) {
+                if (!mouseCoordinate.isIllegal() && overlayPainter.isInsideGrid(mouseCoordinate)) {
                     handleMouseClickedCoordinate(mousePoint, mouseCoordinate, overlayPainter);
                 }
             }

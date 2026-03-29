@@ -148,7 +148,7 @@ public final class LabMainView
                 overlayPainter.drawCell(estimatedCoordinate, null, Color.RED, 1.0d);
             }
             GridCoordinate coordinate = GridGeometry.fromCanvasPosition(mousePoint, basePainter.cellDimension(), overlayPainter.gridDimension2D(), viewModel.getStructure());
-            if (!coordinate.isIllegal() && !overlayPainter.isOutsideGrid(coordinate)) {
+            if (!coordinate.isIllegal() && overlayPainter.isInsideGrid(coordinate)) {
                 overlayPainter.drawCellBoundingBox(coordinate, null, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeType.OUTSIDE);
                 if (overlayPainter.cellDimension().edgeLength() >= HOVER_MIN_EDGE_LENGTH) {
                     overlayPainter.drawCellInnerCircle(coordinate, Color.WHITE, MOUSE_HOVER_COLOR, MOUSE_HOVER_LINE_WIDTH, StrokeType.INSIDE);

@@ -143,6 +143,18 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Checks whether the given grid coordinate lies inside the drawable grid area.
+     *
+     * @param coordinate the grid coordinate to check
+     * @return true if the coordinate is inside the grid area, false otherwise
+     * @see de.mkalb.etpetssim.engine.GridStructure#isCoordinateValid(de.mkalb.etpetssim.engine.GridCoordinate)
+     * @see #isOutsideGrid(de.mkalb.etpetssim.engine.GridCoordinate)
+     */
+    public boolean isInsideGrid(GridCoordinate coordinate) {
+        return structure.isCoordinateValid(coordinate);
+    }
+
+    /**
      * Checks whether the given grid coordinate lies outside the drawable grid area.
      * If a drawing method is called with a coordinate outside the grid, the result may be invisible,
      * clipped, or cause unexpected rendering behavior depending on the canvas size and context.
@@ -150,9 +162,10 @@ public final class FXGridCanvasPainter {
      * @param coordinate the grid coordinate to check
      * @return true if the coordinate is outside the grid area, false otherwise
      * @see de.mkalb.etpetssim.engine.GridStructure#isCoordinateValid(de.mkalb.etpetssim.engine.GridCoordinate)
+     * @see #isInsideGrid(de.mkalb.etpetssim.engine.GridCoordinate)
      */
     public boolean isOutsideGrid(GridCoordinate coordinate) {
-        return !structure.isCoordinateValid(coordinate);
+        return !isInsideGrid(coordinate);
     }
 
     /**
