@@ -86,7 +86,7 @@ public final class DefaultMainViewModel<
                 if ((newValue != null)
                         && hasSimulationManager()
                         && ((getSimulationState() == SimulationState.PAUSED)
-                        || (getSimulationState() == SimulationState.CANCELLED)
+                        || (getSimulationState() == SimulationState.CANCELED)
                         || (getSimulationState() == SimulationState.FINISHED))) {
                     try {
                         var cell = selectedGridCellProvider.apply(getCurrentModel(), newValue);
@@ -210,7 +210,7 @@ public final class DefaultMainViewModel<
         resetClickedCoordinateProperties();
 
         if (getSimulationState() == SimulationState.RUNNING_TIMED) {
-            setSimulationState(SimulationState.CANCELLED);
+            setSimulationState(SimulationState.CANCELED);
             logSimulationInfo("Simulation (timer) was canceled by the user.");
 
             notifyFinalStepAndStopTimer();
@@ -218,7 +218,7 @@ public final class DefaultMainViewModel<
             setSimulationState(SimulationState.CANCELLING_BATCH);
             logSimulationInfo("Simulation (batch) was canceled by the user. Waiting for batch to finish.");
         } else if (getSimulationState() == SimulationState.PAUSED) {
-            setSimulationState(SimulationState.CANCELLED);
+            setSimulationState(SimulationState.CANCELED);
             logSimulationInfo("Simulation (paused) was canceled by the user.");
         }
     }
@@ -466,8 +466,8 @@ public final class DefaultMainViewModel<
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
                     } else if (getSimulationState() == SimulationState.CANCELLING_BATCH) {
-                        setSimulationState(SimulationState.CANCELLED);
-                        logSimulationInfo("Simulation (batch) finished. CANCELLING_BATCH -> CANCELLED count=" + count + ", executionResult=" + executionResult);
+                        setSimulationState(SimulationState.CANCELED);
+                        logSimulationInfo("Simulation (batch) finished. CANCELLING_BATCH -> CANCELED count=" + count + ", executionResult=" + executionResult);
                         updateObservationStatistics(statistics);
                         simulationStepListener.accept(stepEvent);
                     } else if (getSimulationState() == SimulationState.SHUTTING_DOWN) {

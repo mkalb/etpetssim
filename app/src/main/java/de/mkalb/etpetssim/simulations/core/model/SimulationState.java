@@ -59,11 +59,11 @@ public enum SimulationState {
     CANCELLING_BATCH,
 
     /**
-     * Simulation was cancelled by the user.
+     * Simulation was canceled by the user.
      * <p>
      * Configuration controls are enabled. Simulation can be started again.
      */
-    CANCELLED,
+    CANCELED,
 
     /**
      * Simulation completed successfully.
@@ -93,7 +93,7 @@ public enum SimulationState {
      */
     public boolean canStart() {
         return switch (this) {
-            case INITIAL, CANCELLED, FINISHED, ERROR -> true;
+            case INITIAL, CANCELED, FINISHED, ERROR -> true;
             default -> false;
         };
     }
