@@ -143,7 +143,7 @@ public final class SnakeHead implements SnakeEntity {
                 (direction == null) ? "+" : direction.arrow(),
                 dead ? ("†" + deaths) : ("*" + stepIndexOfSpawn),
                 (pendingGrowth > 0) ? (snakeSegments.size() + "+" + pendingGrowth) : String.valueOf(snakeSegments.size()),
-                strategy.toString());
+                strategy);
     }
 
     @Override
@@ -162,7 +162,7 @@ public final class SnakeHead implements SnakeEntity {
 
         return "SnakeHead{" +
                 "id=" + id +
-                ", strategy=" + strategy.toString() +
+                ", strategy=" + strategy +
                 ", stepIndexOfSpawn=" + stepIndexOfSpawn +
                 ", direction=" + direction +
                 ", dead=" + dead +
