@@ -44,11 +44,12 @@ public final class ReboundingSimulationManager
     }
 
     private void initializeGrid(ReboundingConfig config, WritableGridModel<ReboundingEntity> model, Random random) {
-        wallInitializer(config, random).initialize(model);
+        wallInitializer(config).initialize(model);
         movingEntityInitializer(config, random).initialize(model);
     }
 
-    private GridInitializer<ReboundingEntity> wallInitializer(ReboundingConfig config, Random random) {
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private GridInitializer<ReboundingEntity> wallInitializer(ReboundingConfig config) {
         int width = structure.size().width();
         int height = structure.size().height();
         int wallCount = config.verticalWalls();
