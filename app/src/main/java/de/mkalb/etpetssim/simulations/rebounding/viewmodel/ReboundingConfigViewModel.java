@@ -18,7 +18,7 @@ public final class ReboundingConfigViewModel
         extends AbstractConfigViewModel<ReboundingConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
-            CellShape.SQUARE,
+            CellShape.HEXAGON,
             List.of(CellShape.SQUARE, CellShape.HEXAGON),
             GridEdgeBehavior.BLOCK_XY,
             List.of(GridEdgeBehavior.BLOCK_XY),
