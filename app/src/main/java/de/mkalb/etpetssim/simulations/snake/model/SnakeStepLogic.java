@@ -85,6 +85,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         }
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     private void moveSnake(SnakeHead snakeHead,
                            GridCoordinate headCoordinate,
                            MoveDecision moveDecision,

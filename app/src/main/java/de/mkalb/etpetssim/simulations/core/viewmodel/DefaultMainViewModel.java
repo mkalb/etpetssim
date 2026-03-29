@@ -309,6 +309,7 @@ public final class DefaultMainViewModel<
 
     private void createAndInitSimulation(CON config) {
         simulationManager = simulationManagerFactory.apply(config);
+        Objects.requireNonNull(simulationManager);
 
         configureSimulationTimeout();
 
@@ -449,7 +450,7 @@ public final class DefaultMainViewModel<
                             if (count >= 100) {
                                 logSimulationInfo("Simulation (batch) finished. Restart new batch. RUNNING_BATCH -> RUNNING_BATCH count=" + count + ", executionResult=" + executionResult);
                             }
-                            runBatchSteps(count, checkTermination, restartBatchIfPossible);
+                            runBatchSteps(count, checkTermination, true);
                         }
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         if (executorFinished) {

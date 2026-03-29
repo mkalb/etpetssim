@@ -324,7 +324,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage stage) {
         // Initialize exception handling for uncaught exceptions
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             AppLogger.error("Uncaught exception in thread " + thread.getName(), throwable);
@@ -344,9 +344,9 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         AppLogger.info("Application: Starting with simulation type: " + type.name());
 
         // Initialize and show the primary stage with the appropriate scene
-        updateStageIcons(primaryStage);
-        switchToSimulation(primaryStage, type);
-        primaryStage.show();
+        updateStageIcons(stage);
+        switchToSimulation(stage, type);
+        stage.show();
         AppLogger.info("Application: Application started successfully. Primary stage is now visible.");
     }
 
