@@ -103,6 +103,7 @@ public interface SimulationExecutor<
         return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), false);
     }
 
+    @SuppressWarnings("InnerClassOfInterface")
     record ExecutionResult(
             int stepCount,
             int executedSteps,
