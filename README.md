@@ -4,7 +4,7 @@
 
 Welcome to the **Extraterrestrial Pets Simulation** project (_etpetssim_)!
 This open-source project aims to create various simple 2D simulations (_Toy models_, _Agent-Based Models_, _Cellular
-automaton_) with a top-down view.
+automata_) with a top-down view.
 The simulation engine organizes the grid into structured cells, each with coordinates and entities, enabling flexible
 modeling and efficient computation.
 Each cell is a regular polygon —triangle, square, or hexagon— with equal sides and angles, ensuring consistent geometry
@@ -12,7 +12,9 @@ and neighbor relationships throughout the grid.
 The grid supports various edge behaviors —blocking, wrapping, or absorbing— and offers flexible modes for
 calculating neighbors, either by shared edges or by both edges and vertices.
 
-**Status:** This project is currently under active development.
+**Status:** This project is currently under development.
+
+**Maintainer note:** This is a single-developer project maintained by me (Mathias Kalb).
 
 ## Simulations
 
@@ -27,9 +29,9 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 | [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | asynchronous | Sparse         | None (🟫 Terrain) | 🟨 Sugar (many), 🟦 Agent (many)                                             |
 | [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | asynchronous | Sparse         | ⬛ Ground          | 🔵 Snake Head (many), 🟩 Snake Segment (many), 🟡 Food (many), ⬜ Wall (many) |
 | Rebounding Entities                                                            | asynchronous | Sparse         | ⬛ Ground          | 🟨 Moving Entity (many), ⬜ Wall (many)                                       |
-| Simulation Lab                                                                 |              | Sparse         | Normal            | Highlighted                                                                  |
+| Simulation Lab                                                                 | n/a          | Sparse         | Normal            | Highlighted                                                                  |
 
-### Planned/Future Simulations
+### Planned Simulations
 
 - Extraterrestrial Pets Simulation (ET Pets)
 
@@ -45,7 +47,7 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 ![Langton's Ant - Screenshot 01](assets/screenshots/screenshot_langton_01.png)
 
 #### Forest-fire model
-![Forest-fire model - Screenshot 01](assets/screenshots/screenshot_forest_01.png) 
+![Forest-fire model - Screenshot 01](assets/screenshots/screenshot_forest_01.png)
 
 #### Sugarscape
 ![Sugarscape - Screenshot 01](assets/screenshots/screenshot_sugar_01.png)
@@ -72,6 +74,37 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 Artificial intelligence (AI) tools were used during development to enhance productivity and code quality. Specifically,
 Microsoft Copilot and GitHub Copilot assisted with code generation, documentation, optimization tasks, learning JavaFX
 and MVVM, and making design and architecture decisions.
+
+## Feedback and Issues
+
+Bug reports and improvement suggestions are very welcome.
+Please open a [GitHub Issue](https://github.com/mkalb/etpetssim/issues) if you find a problem or have an idea to improve the project.
+
+If possible, include:
+- clear steps to reproduce (for bugs),
+- expected vs. actual behavior,
+- screenshots or logs.
+
+## Run the App
+
+Use the Gradle Wrapper from the repository root. No global Gradle installation is required.
+Prerequisite: Java 25.
+
+### Windows (PowerShell)
+
+```powershell
+.\gradlew.bat :app:run
+.\gradlew.bat test
+.\gradlew.bat :app:distZip
+```
+
+### macOS / Linux
+
+```bash
+./gradlew :app:run
+./gradlew test
+./gradlew :app:distZip
+```
 
 ## Technologies Used
 
