@@ -53,6 +53,9 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 #### Snake
 ![Snake - Screenshot 01](assets/screenshots/screenshot_snake_01.png)
 
+#### Rebounding Entities
+![Rebounding Entities - Screenshot 01](assets/screenshots/screenshot_rebounding_01.png)
+
 #### Simulation Lab
 ![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
 ![Simulation Lab - Screenshot 02](assets/screenshots/screenshot_lab_02.png)
