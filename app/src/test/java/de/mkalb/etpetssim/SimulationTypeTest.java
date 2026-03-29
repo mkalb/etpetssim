@@ -128,7 +128,7 @@ final class SimulationTypeTest {
         assertEquals(List.of("snake", "snakes"), SimulationType.SNAKE.cliArguments());
         assertEquals(List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel"), SimulationType.FOREST_FIRE.cliArguments());
         assertEquals(List.of("langton", "langtonsant", "langtons-ant", "ant"), SimulationType.LANGTONS_ANT.cliArguments());
-        assertEquals(List.of("reboundingentities", "rebounding-entities", "rebounding", "rebound", "rebounders"), SimulationType.REBOUNDING_ENTITIES.cliArguments());
+        assertEquals(List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders"), SimulationType.REBOUNDING_ENTITIES.cliArguments());
     }
 
     @Test
