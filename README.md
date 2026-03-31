@@ -126,8 +126,8 @@ This project uses the latest stable versions of all technologies whenever possib
 
 This project is licensed under the [MIT License](LICENSE).
 
-This project uses several third-party libraries, each with its own license.
-For a complete list, see the [THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES) file.
+This project uses several third-party libraries and tools, each with its own license.
+For the project's third-party list, see the [THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES) file.
 
 Both license files are also available in the application's About dialog.
 
