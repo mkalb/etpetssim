@@ -1,27 +1,27 @@
 .simulation-left-borderpane {
   -fx-background-color: linear-gradient(to bottom, #ff0000, #0000ff);
-  -fx-min-width: 15px;
-  -fx-pref-width: 15px;
-  -fx-max-width: 15px;
+  -fx-min-width: 15;
+  -fx-pref-width: 15;
+  -fx-max-width: 15;
 }
 
 .simulation-right-borderpane {
   -fx-background-color: linear-gradient(to bottom, #ffff00, #00ff00);
-  -fx-min-width: 15px;
-  -fx-pref-width: 15px;
-  -fx-max-width: 15px;
+  -fx-min-width: 15;
+  -fx-pref-width: 15;
+  -fx-max-width: 15;
 }
 
 .simulation-top-borderpane {
   -fx-background-color: linear-gradient(to right, #ff0000, #ffff00);
-  -fx-min-height: 15px;
-  -fx-pref-height: 15px;
-  -fx-max-height: 15px;
+  -fx-min-height: 15;
+  -fx-pref-height: 15;
+  -fx-max-height: 15;
 }
 
 .simulation-bottom-borderpane {
   -fx-background-color: linear-gradient(to right, #0000ff, #00ff00);
-  -fx-min-height: 15px;
-  -fx-pref-height: 15px;
-  -fx-max-height: 15px;
+  -fx-min-height: 15;
+  -fx-pref-height: 15;
+  -fx-max-height: 15;
 }
