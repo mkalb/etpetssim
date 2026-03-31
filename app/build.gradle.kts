@@ -80,6 +80,7 @@ tasks.jar {
             "Implementation-Vendor" to "Mathias Kalb",
             "Implementation-URL" to "https://github.com/mkalb/etpetssim",
             "Main-Class" to application.mainClass
+            // Note: Class-Path is intentionally omitted; classpath is set by distribution start scripts
         )
     }
 }
