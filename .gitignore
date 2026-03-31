@@ -11,3 +11,9 @@ bin/
 .run/
 *.iws
 *.iml
+
+# Ignore OS/editor metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
