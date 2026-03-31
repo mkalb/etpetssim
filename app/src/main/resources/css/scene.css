@@ -504,7 +504,7 @@ ScrollPane .decrement-arrow {
   -fx-border-radius: 0;
   -fx-alignment: center-left;
   -fx-max-width: infinity;
-  -fx-pref-width: 100%;
+  -fx-pref-width: infinity;
 }
 
 .simulation-toolbar {
