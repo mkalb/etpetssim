@@ -26,32 +26,32 @@ import java.util.stream.*;
 @SuppressWarnings({"MagicNumber", "FieldNamingConvention"})
 public enum CompassDirection {
 
-    N("compass.abbr.n", "compass.name.n", 0, "↑"),
-    NNE("compass.abbr.nne", "compass.name.nne", 2, "↑↗"),
-    NE("compass.abbr.ne", "compass.name.ne", 1, "↗"),
-    ENE("compass.abbr.ene", "compass.name.ene", 2, "→↗"),
-    E("compass.abbr.e", "compass.name.e", 0, "→"),
-    ESE("compass.abbr.ese", "compass.name.ese", 2, "→↘"),
-    SE("compass.abbr.se", "compass.name.se", 1, "↘"),
-    SSE("compass.abbr.sse", "compass.name.sse", 2, "↓↘"),
-    S("compass.abbr.s", "compass.name.s", 0, "↓"),
-    SSW("compass.abbr.ssw", "compass.name.ssw", 2, "↓↙"),
-    SW("compass.abbr.sw", "compass.name.sw", 1, "↙"),
-    WSW("compass.abbr.wsw", "compass.name.wsw", 2, "←↙"),
-    W("compass.abbr.w", "compass.name.w", 0, "←"),
-    WNW("compass.abbr.wnw", "compass.name.wnw", 2, "←↖"),
-    NW("compass.abbr.nw", "compass.name.nw", 1, "↖"),
-    NNW("compass.abbr.nnw", "compass.name.nnw", 2, "↑↖");
+    N("compass.abbreviation.n", "compass.name.n", 0, "↑"),
+    NNE("compass.abbreviation.nne", "compass.name.nne", 2, "↑↗"),
+    NE("compass.abbreviation.ne", "compass.name.ne", 1, "↗"),
+    ENE("compass.abbreviation.ene", "compass.name.ene", 2, "→↗"),
+    E("compass.abbreviation.e", "compass.name.e", 0, "→"),
+    ESE("compass.abbreviation.ese", "compass.name.ese", 2, "→↘"),
+    SE("compass.abbreviation.se", "compass.name.se", 1, "↘"),
+    SSE("compass.abbreviation.sse", "compass.name.sse", 2, "↓↘"),
+    S("compass.abbreviation.s", "compass.name.s", 0, "↓"),
+    SSW("compass.abbreviation.ssw", "compass.name.ssw", 2, "↓↙"),
+    SW("compass.abbreviation.sw", "compass.name.sw", 1, "↙"),
+    WSW("compass.abbreviation.wsw", "compass.name.wsw", 2, "←↙"),
+    W("compass.abbreviation.w", "compass.name.w", 0, "←"),
+    WNW("compass.abbreviation.wnw", "compass.name.wnw", 2, "←↖"),
+    NW("compass.abbreviation.nw", "compass.name.nw", 1, "↖"),
+    NNW("compass.abbreviation.nnw", "compass.name.nnw", 2, "↑↖");
 
     private static final CompassDirection[] VALUES = values();
 
-    private final String abbrResourceKey;
+    private final String abbreviationResourceKey;
     private final String nameResourceKey;
     private final int level;
     private final String arrow;
 
-    CompassDirection(String abbrResourceKey, String nameResourceKey, int level, String arrow) {
-        this.abbrResourceKey = abbrResourceKey;
+    CompassDirection(String abbreviationResourceKey, String nameResourceKey, int level, String arrow) {
+        this.abbreviationResourceKey = abbreviationResourceKey;
         this.nameResourceKey = nameResourceKey;
         this.level = level;
         this.arrow = arrow;
@@ -120,8 +120,8 @@ public enum CompassDirection {
      *
      * @return the abbreviation resource key
      */
-    public String abbrResourceKey() {
-        return abbrResourceKey;
+    public String abbreviationResourceKey() {
+        return abbreviationResourceKey;
     }
 
     /**

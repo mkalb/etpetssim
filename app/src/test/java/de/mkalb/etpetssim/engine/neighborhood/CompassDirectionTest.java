@@ -60,23 +60,23 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testAbbrResourceKeys() {
-        assertEquals("compass.abbr.n", CompassDirection.N.abbrResourceKey());
-        assertEquals("compass.abbr.nne", CompassDirection.NNE.abbrResourceKey());
-        assertEquals("compass.abbr.ne", CompassDirection.NE.abbrResourceKey());
-        assertEquals("compass.abbr.ene", CompassDirection.ENE.abbrResourceKey());
-        assertEquals("compass.abbr.e", CompassDirection.E.abbrResourceKey());
-        assertEquals("compass.abbr.ese", CompassDirection.ESE.abbrResourceKey());
-        assertEquals("compass.abbr.se", CompassDirection.SE.abbrResourceKey());
-        assertEquals("compass.abbr.sse", CompassDirection.SSE.abbrResourceKey());
-        assertEquals("compass.abbr.s", CompassDirection.S.abbrResourceKey());
-        assertEquals("compass.abbr.ssw", CompassDirection.SSW.abbrResourceKey());
-        assertEquals("compass.abbr.sw", CompassDirection.SW.abbrResourceKey());
-        assertEquals("compass.abbr.wsw", CompassDirection.WSW.abbrResourceKey());
-        assertEquals("compass.abbr.w", CompassDirection.W.abbrResourceKey());
-        assertEquals("compass.abbr.wnw", CompassDirection.WNW.abbrResourceKey());
-        assertEquals("compass.abbr.nw", CompassDirection.NW.abbrResourceKey());
-        assertEquals("compass.abbr.nnw", CompassDirection.NNW.abbrResourceKey());
+    void testAbbreviationResourceKeys() {
+        assertEquals("compass.abbreviation.n", CompassDirection.N.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.nne", CompassDirection.NNE.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.ne", CompassDirection.NE.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.ene", CompassDirection.ENE.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.e", CompassDirection.E.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.ese", CompassDirection.ESE.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.se", CompassDirection.SE.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.sse", CompassDirection.SSE.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.s", CompassDirection.S.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.ssw", CompassDirection.SSW.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.sw", CompassDirection.SW.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.wsw", CompassDirection.WSW.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.w", CompassDirection.W.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.wnw", CompassDirection.WNW.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.nw", CompassDirection.NW.abbreviationResourceKey());
+        assertEquals("compass.abbreviation.nnw", CompassDirection.NNW.abbreviationResourceKey());
     }
 
     @Test
