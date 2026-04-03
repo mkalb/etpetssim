@@ -23,7 +23,7 @@ public final class FXPaintFactory {
     }
 
     /**
-     * Returns a map of brightness variants for a base color.
+     * Computes a map of brightness variants for a base color.
      * <p>
      * For each integer value in the range {@code [minInclusive, maxInclusive]}, assigns a color variant based on brightness adjustment.
      * All values within a group share the same color.
@@ -41,7 +41,7 @@ public final class FXPaintFactory {
      * @throws IllegalArgumentException if the range is invalid, groupCount is less than 1,
      * or maxFactorDelta is outside the range [-1.0, 10.0]
      */
-    public static Map<Integer, Color> getBrightnessVariantsMap(
+    public static Map<Integer, Color> computeBrightnessVariantsMap(
             Color baseColor,
             int minInclusive,
             int maxInclusive,

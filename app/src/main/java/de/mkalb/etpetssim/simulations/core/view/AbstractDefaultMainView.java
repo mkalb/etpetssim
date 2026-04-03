@@ -82,7 +82,7 @@ public abstract class AbstractDefaultMainView<
         if (!(descriptor.color() instanceof Color baseColor)) {
             return null;
         }
-        return FXPaintFactory.getBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
+        return FXPaintFactory.computeBrightnessVariantsMap(baseColor, min, max, groupCount, maxFactorDelta);
     }
 
     @Override
