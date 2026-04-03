@@ -13,7 +13,7 @@ final class SimulationTypeTest {
     void testEnumValues() {
         assertNotNull(SimulationType.valueOf("STARTSCREEN"));
         assertNotNull(SimulationType.valueOf("SIMULATION_LAB"));
-        assertNotNull(SimulationType.valueOf("ET_PETS_SIM"));
+        assertNotNull(SimulationType.valueOf("ET_PETS"));
         assertNotNull(SimulationType.valueOf("WATOR"));
         assertNotNull(SimulationType.valueOf("CONWAYS_LIFE"));
         assertNotNull(SimulationType.valueOf("SUGARSCAPE"));
@@ -38,7 +38,7 @@ final class SimulationTypeTest {
         assertEquals(5, SimulationType.SUGARSCAPE.ordinal());
         assertEquals(6, SimulationType.SNAKE.ordinal());
         assertEquals(7, SimulationType.REBOUNDING_ENTITIES.ordinal());
-        assertEquals(8, SimulationType.ET_PETS_SIM.ordinal());
+        assertEquals(8, SimulationType.ET_PETS.ordinal());
         assertEquals(9, SimulationType.SIMULATION_LAB.ordinal());
     }
 
@@ -65,7 +65,7 @@ final class SimulationTypeTest {
     void testTitleKey() {
         assertEquals("simulation.start.title", SimulationType.STARTSCREEN.titleKey());
         assertEquals("simulation.lab.title", SimulationType.SIMULATION_LAB.titleKey());
-        assertEquals("simulation.etpetssim.title", SimulationType.ET_PETS_SIM.titleKey());
+        assertEquals("simulation.etpets.title", SimulationType.ET_PETS.titleKey());
         assertEquals("simulation.wator.title", SimulationType.WATOR.titleKey());
         assertEquals("simulation.conway.title", SimulationType.CONWAYS_LIFE.titleKey());
         assertEquals("simulation.sugar.title", SimulationType.SUGARSCAPE.titleKey());
@@ -79,7 +79,7 @@ final class SimulationTypeTest {
     void testSubtitleKey() {
         assertEquals("simulation.start.subtitle", SimulationType.STARTSCREEN.subtitleKey());
         assertEquals("simulation.lab.subtitle", SimulationType.SIMULATION_LAB.subtitleKey());
-        assertEquals("simulation.etpetssim.subtitle", SimulationType.ET_PETS_SIM.subtitleKey());
+        assertEquals("simulation.etpets.subtitle", SimulationType.ET_PETS.subtitleKey());
         assertEquals("simulation.wator.subtitle", SimulationType.WATOR.subtitleKey());
         assertEquals("simulation.conway.subtitle", SimulationType.CONWAYS_LIFE.subtitleKey());
         assertEquals("simulation.sugar.subtitle", SimulationType.SUGARSCAPE.subtitleKey());
@@ -93,7 +93,7 @@ final class SimulationTypeTest {
     void testUrlKey() {
         assertEquals("simulation.start.url", SimulationType.STARTSCREEN.urlKey());
         assertEquals("simulation.lab.url", SimulationType.SIMULATION_LAB.urlKey());
-        assertEquals("simulation.etpetssim.url", SimulationType.ET_PETS_SIM.urlKey());
+        assertEquals("simulation.etpets.url", SimulationType.ET_PETS.urlKey());
         assertEquals("simulation.wator.url", SimulationType.WATOR.urlKey());
         assertEquals("simulation.conway.url", SimulationType.CONWAYS_LIFE.urlKey());
         assertEquals("simulation.sugar.url", SimulationType.SUGARSCAPE.urlKey());
@@ -107,7 +107,7 @@ final class SimulationTypeTest {
     void testCssPath() {
         assertEquals("", SimulationType.STARTSCREEN.cssPath());
         assertEquals("lab.css", SimulationType.SIMULATION_LAB.cssPath());
-        assertEquals("", SimulationType.ET_PETS_SIM.cssPath());
+        assertEquals("", SimulationType.ET_PETS.cssPath());
         assertEquals("", SimulationType.WATOR.cssPath());
         assertEquals("conway.css", SimulationType.CONWAYS_LIFE.cssPath());
         assertEquals("", SimulationType.SUGARSCAPE.cssPath());
@@ -121,7 +121,7 @@ final class SimulationTypeTest {
     void testCliArguments() {
         assertEquals(List.of("startscreen", "start"), SimulationType.STARTSCREEN.cliArguments());
         assertEquals(List.of("simulationlab", "lab"), SimulationType.SIMULATION_LAB.cliArguments());
-        assertEquals(List.of("etpetssim", "etpets"), SimulationType.ET_PETS_SIM.cliArguments());
+        assertEquals(List.of("etpets"), SimulationType.ET_PETS.cliArguments());
         assertEquals(List.of("wator", "wa-tor"), SimulationType.WATOR.cliArguments());
         assertEquals(List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol"), SimulationType.CONWAYS_LIFE.cliArguments());
         assertEquals(List.of("sugarscape", "sugar"), SimulationType.SUGARSCAPE.cliArguments());

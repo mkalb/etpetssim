@@ -115,16 +115,16 @@ public enum SimulationType {
             List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders")
     ),
     /**
-     * Extraterrestrial Pets Simulation (ET pets): a planned custom simulation by the author.
+     * Extraterrestrial Pets (ET pets): a planned custom simulation by the author.
      */
-    ET_PETS_SIM(
+    ET_PETS(
             false,
             true,
-            "simulation.etpetssim.title",
-            "simulation.etpetssim.subtitle",
-            "simulation.etpetssim.url",
+            "simulation.etpets.title",
+            "simulation.etpets.subtitle",
+            "simulation.etpets.url",
             "",
-            List.of("etpetssim", "etpets")
+            List.of("etpets")
     ),
     /**
      * The simulation lab is not a specific simulation but a collection of various tests during development.
