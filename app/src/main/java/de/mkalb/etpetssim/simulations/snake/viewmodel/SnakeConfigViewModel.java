@@ -77,7 +77,7 @@ public final class SnakeConfigViewModel
     private static final double SEGMENT_LENGTH_MULTIPLIER_MAX = 5.0d;
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
 
-    // Initialization properties
+    // Initialization
     private final InputIntegerProperty verticalWalls = InputIntegerProperty.of(
             VERTICAL_WALLS_INITIAL,
             VERTICAL_WALLS_MIN,
@@ -99,7 +99,7 @@ public final class SnakeConfigViewModel
             INITIAL_PENDING_GROWTH_MAX,
             INITIAL_PENDING_GROWTH_STEP);
 
-    // Rules properties
+    // Rules
     private final InputEnumProperty<SnakeDeathMode> deathMode = InputEnumProperty.of(
             SNAKE_DEATH_MODE_INITIAL,
             SnakeDeathMode.class,
