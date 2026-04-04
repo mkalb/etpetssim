@@ -346,6 +346,7 @@ encapsulates their implementation without redefining them here.
 - initial pet count (`petCount`, integer, range `0..20`)
 - resource percentages (`plantPercent`, `insectPercent`) and per-type rates
 - pet energy/reproduction/trail/mutation parameters
+- trail preference threshold (`trailPreferenceThreshold`) used by `Explore/Trail`
 - incubation settings
 - `NeighborhoodMode` - hardcoded constant `EDGES_ONLY`; not a user-configurable field
 
@@ -479,6 +480,7 @@ Logging guideline:
 ### PR-08: Pet decision logic
 
 - implement fixed priority chain
+- implement `Explore/Trail` threshold gating (`trailIntensity > trailPreferenceThreshold`) before preferring `Trail` over `Ground`
 - deterministic tie-breakers
 - random fallback only at final tie
 

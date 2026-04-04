@@ -41,6 +41,7 @@ public final class EtpetsAgentLogic {
 
     // ---- Default initial pet trait values (used by EtpetsSimulationManager) ----
     static final double TRAIL_INCREASE_PER_ENTRY = 1.0d;
+    static final double TRAIL_PREFERENCE_THRESHOLD = 3.0d;
     static final double TRAIL_MAX = 100.0d;
     static final double MUTATION_CHANCE_PER_TRAIT = 0.08d;
     static final double MUTATION_DELTA = 0.05d;
@@ -504,13 +505,16 @@ public final class EtpetsAgentLogic {
             return;
         }
 
-        // Prefer directly adjacent Trail cells (highest intensity first; coord-order as tie-break).
+        // Prefer only adjacent trails above threshold (highest intensity first; coord-order as tie-break).
         GridCoordinate bestAdjacentTrail = null;
         double bestAdjacentIntensity = -1.0d;
         for (GridCoordinate c : candidates) {
             EtpetsTerrainEntity terrain = gridModel.terrainModel().getEntity(c);
             if (terrain instanceof EtpetsTerrainTrail trail) {
                 double intensity = trail.intensity();
+                if (intensity <= TRAIL_PREFERENCE_THRESHOLD) {
+                    continue;
+                }
                 if ((intensity > bestAdjacentIntensity)
                         || ((Double.compare(intensity, bestAdjacentIntensity) == 0) && (bestAdjacentTrail != null)
                         && (EtpetsDeterminism.compareCoordinates(c, bestAdjacentTrail) < 0))) {
@@ -525,7 +529,7 @@ public final class EtpetsAgentLogic {
             return;
         }
 
-        // No adjacent trail — look within vision range for any trail cell and move toward it.
+        // No adjacent trail above threshold - look within vision range for a preferred trail.
         int visionRange = EtpetsPet.VISION_RANGE;
         Set<GridCoordinate> visibleCoords = getValidCoordinatesWithinRange(coord, structure, visionRange);
 
@@ -535,6 +539,9 @@ public final class EtpetsAgentLogic {
             EtpetsTerrainEntity terrain = gridModel.terrainModel().getEntity(c);
             if (terrain instanceof EtpetsTerrainTrail trail) {
                 double intensity = trail.intensity();
+                if (intensity <= TRAIL_PREFERENCE_THRESHOLD) {
+                    continue;
+                }
                 if ((intensity > distantTrailIntensity)
                         || ((Double.compare(intensity, distantTrailIntensity) == 0) && (distantTrail != null)
                         && (EtpetsDeterminism.compareCoordinates(c, distantTrail) < 0))) {

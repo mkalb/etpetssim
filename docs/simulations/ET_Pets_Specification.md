@@ -333,10 +333,13 @@ Fixed rules:
     4. `Reproduce-if-possible`
     5. `Move-to-enable-reproduction`
     6. `Explore/Trail`
-- In V1, `Explore/Trail` MUST prefer directly adjacent `Trail` cells over directly adjacent `Ground` cells.
-- If multiple adjacent `Trail` cells are available, the pet MUST prefer the one with the highest trail intensity.
-- If no adjacent `Trail` cell is available, the pet MUST evaluate visible walkable cells within vision range `2` and
-  prefer distant `Trail` cells over `Ground` cells.
+- In V1, `Explore/Trail` MUST prefer directly adjacent `Trail` cells over directly adjacent `Ground` cells only when
+  trail intensity is strictly greater than `trailPreferenceThreshold`.
+- If multiple adjacent `Trail` cells exceed `trailPreferenceThreshold`, the pet MUST prefer the one with the highest
+  trail intensity.
+- If no adjacent `Trail` cell exceeds `trailPreferenceThreshold`, the pet MUST evaluate visible walkable cells within
+  vision range `2` and prefer distant `Trail` cells over `Ground` cells only when the distant trail intensity is
+  strictly greater than `trailPreferenceThreshold`.
 - In V1, pet movement targets MUST be walkable `Ground`/`Trail` cells that are free of `Resource`, `Pet`, and `PetEgg`.
 - Because pet steps are processed asynchronously and applied immediately, V1 uses no separate collision-resolution phase
   for movement conflicts.
@@ -547,6 +550,7 @@ Notes:
 
 - `trailIncreasePerEntry = 1.0`
 - `trailDecayPerStep = 0.02`
+- `trailPreferenceThreshold = 3.0` (`Trail` is preferred over `Ground` only if `trailIntensity > trailPreferenceThreshold`)
 - `trailMin = 0`
 - `trailMax = 100`
 
