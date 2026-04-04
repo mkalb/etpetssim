@@ -1,4 +1,9 @@
-# ET Pets - Extraterrestrial Pets Simulation
+# ET Pets – Simulation Specification
+
+> **Purpose:** This document defines the *what* of the ET Pets simulation —
+> rules, entities, constraints, layer model, lifecycle, and balancing parameters.
+> It is the authoritative reference for correctness and completeness of V1.
+> For the implementation roadmap, class structure, and package mapping, see `ET_Pets_Implementation.md`.
 
 ## Scope
 
