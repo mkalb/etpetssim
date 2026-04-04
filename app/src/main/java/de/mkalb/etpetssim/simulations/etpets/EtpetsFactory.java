@@ -16,6 +16,7 @@ import de.mkalb.etpetssim.simulations.etpets.view.EtpetsMainView;
 import de.mkalb.etpetssim.simulations.etpets.view.EtpetsObservationView;
 import de.mkalb.etpetssim.simulations.etpets.viewmodel.EtpetsConfigViewModel;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 public final class EtpetsFactory {
@@ -23,13 +24,17 @@ public final class EtpetsFactory {
     private EtpetsFactory() {
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
+        // Common
         ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EtpetsEntityDescribable.values());
 
-        var configViewModel = new EtpetsConfigViewModel(simulationState);
-        var controlViewModel = DefaultControlViewModel.withMinStepDuration(simulationState);
-        var observationViewModel = new DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>(simulationState);
+        // ViewModel
+        var configViewModel = new EtpetsConfigViewModel(readOnlySimulationState);
+        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var observationViewModel = new DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(
                 simulationState,
                 configViewModel,
@@ -50,11 +55,14 @@ public final class EtpetsFactory {
                     return new GridCell<>(selectedCoordinate, model.terrainModel().getEntity(selectedCoordinate));
                 });
 
+        // View
         var configView = new EtpetsConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new EtpetsObservationView(observationViewModel);
+        var view = new EtpetsMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
-        return new EtpetsMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        // Return the main view
+        return view;
     }
 
 }
