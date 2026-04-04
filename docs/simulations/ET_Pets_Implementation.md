@@ -10,6 +10,7 @@ This guide is the implementation companion to `ET_Pets_Specification.md`.
 
 - `ET_Pets_Specification.md` is authoritative for behavior and correctness.
 - This guide is authoritative for code structure and delivery sequence.
+- Normative simulation rules belong only to `ET_Pets_Specification.md` and are referenced here for implementation.
 - If both documents conflict, update this guide so that it matches the specification.
 
 ### Important implementation policy for the first ET Pets delivery
@@ -212,8 +213,8 @@ Per-instance fields (both plant and insect):
 
 Per-type constants (baked into each class, not per-instance fields):
 
-- `int consumptionPerAct` - integer, matches spec values (`Plant: 2`, `Insect: 4`)
-- `int energyGainPerAct` - integer, matches spec values (`Plant: 3`, `Insect: 8`)
+- `int consumptionPerAct` - integer, per-type value; exact V1 values are defined in `ET_Pets_Specification.md`.
+- `int energyGainPerAct` - integer, per-type value; exact V1 values are defined in `ET_Pets_Specification.md`.
 
 ### 7.4 Agent entities
 
@@ -245,11 +246,8 @@ Per-type constants (baked into each class, not per-instance fields):
 
 `EtpetsPetTraits` / `EtpetsPetGenome` schema (V1 fixed):
 
-- `maxEnergy` (int, `60..140`)
-- `movementCostModifier` (double, `0.5..1.5`)
-- `reproductionMinEnergy` (int, `50..90`)
-- `reproductionCooldownMax` (int, `120..320`)
-- `visionRange` is fixed to `2` and is not an inheritable scoring trait in V1.
+- Implement exactly the V1 trait schema and bounds from `ET_Pets_Specification.md`.
+- Keep trait names and normalization inputs aligned with the specification to avoid scoring mismatches.
 
 ## 8. Grid Model and Layer Ownership
 
@@ -269,31 +267,20 @@ Rules:
 - resource default is `EtpetsResourceNone.NONE`
 - agent default is `EtpetsAgentNone.NONE`
 - mutable terrain state (trail intensity) remains in terrain entity only
-- in V1, a coordinate MUST NOT hold a resource entity (Layer 2) and an agent entity (`EtpetsPet` or `EtpetsPetEgg`) in
-  Layer 3 at the same time
+- enforce all V1 layer-occupancy constraints exactly as defined in `ET_Pets_Specification.md`
 
 ## 9. Step Execution Order (Mandatory)
 
-`EtpetsStepRunner` must execute one step in this strict order:
+`EtpetsStepRunner` executes the asynchronous per-step pipeline and applies updates immediately.
 
-1. Collect the current list of agent coordinates (Pets and Eggs) from the agent layer.
-2. For each `EtpetsPet` in the collected list, in order:
-    1. If the pet was marked dead in the **previous** step (`dead == true`), remove it from the agent layer and skip
-       further processing.
-    2. Apply the fixed priority chain from the specification: Death-check -> Eat-if-adjacent ->
-       Move-to-resource-if-hungry -> Reproduce-if-possible -> Move-to-enable-reproduction -> Explore/Trail.
-3. For each `EtpetsPetEgg` in the collected list: decrement `incubationRemaining`; if it reaches `0`, remove the egg and
-   place a new `EtpetsPet` at the same coordinate.
-4. Regenerate all resource cells (`currentAmount += regenerationPerStep`, capped at `maxAmount`).
-5. Decay all trail cells (`intensity -= trailDecayPerStep`); replace with `EtpetsTerrainConstant.GROUND` if
-   `isDepleted()`.
+Implementation sequence in code should mirror the specification:
 
-Additional mandatory V1 constraints during step execution:
+1. agent lifecycle/action pass (`EtpetsPet`, `EtpetsPetEgg`)
+2. resource regeneration pass
+3. terrain trail-decay pass
 
-- A pet may consume only from an adjacent resource cell and MUST NOT move onto the resource coordinate when eating.
-- Target coordinates for pet movement and egg placement MUST be free of Layer 2 resources and Layer 3 agents.
-- Dead-pet removal follows the spec window rule: remove pets that were already marked dead when they are reached in the
-  next iteration.
+All rule details for action priority, occupancy constraints, consumption constraints, hatch/death timing, and final
+operation order are authoritative in `ET_Pets_Specification.md` and must be implemented unchanged.
 
 Statistics are updated by `EtpetsSimulationManager.updateStatistics()` after the step runner completes - not inside the
 runner itself - following the existing `AbstractTimedSimulationManager` pattern.
@@ -318,25 +305,8 @@ Additional rules:
 - initialization order is deterministic
 - selection collections should be sorted before optional random fallback
 
-Additional deterministic tie-break requirements (V1):
-
-- Resource selection tie-break: higher `energyGainPerAct` -> higher `currentAmount` -> stable coordinate order (`x`,
-  then `y`) -> seeded random fallback.
-- Resource target selection at equal distance (`Move-to-resource-if-hungry`): same tie-break order as above.
-- Reproduction partner tie-break at equal quality score: higher `currentEnergy` -> lower `petId` -> stable coordinate
-  order (`x`, then `y`) -> seeded random fallback.
-- Egg placement tie-break: stable coordinate order (`x`, then `y`) -> seeded random fallback.
-- Explore/Trail tie-break: highest trail intensity first; if still tied, stable coordinate order (`x`, then `y`) ->
-  seeded random fallback.
-
-`genomeQualityScore` definition (V1 fixed):
-
-- Normalize each inheritable trait from `EtpetsPetGenome` to `[0, 1]` using its fixed V1 bounds.
-- Compute `genomeQualityScore` as the arithmetic mean of:
-  - normalized `maxEnergy`
-  - normalized `movementCostModifier`
-  - normalized `reproductionMinEnergy`
-  - normalized `reproductionCooldownMax`
+All concrete V1 tie-break and `genomeQualityScore` rules are defined in `ET_Pets_Specification.md`; `EtpetsDeterminism`
+encapsulates their implementation without redefining them here.
 
 ## 11. Configuration and Validation
 
@@ -345,27 +315,19 @@ Additional deterministic tie-break requirements (V1):
 - common base config values from core
 - terrain percentages (`rockPercent`, `waterPercent`)
 - initial pet count (`petCount`, integer, range `0..20`)
-- resource counts and per-type rates
+- resource percentages (`plantPercent`, `insectPercent`) and per-type rates
 - pet energy/reproduction/trail/mutation parameters
 - incubation settings
 - `NeighborhoodMode` - hardcoded constant `EDGES_ONLY`; not a user-configurable field
 
 Validation rules (fail fast):
 
-- `cellShape == HEXAGON`
-- `gridEdgeBehavior == BLOCK_XY`
-- `neighborhoodMode == EDGES_ONLY`
-- `rockPercent + waterPercent <= 50`
-- obstacle counts use deterministic floor-based formulas:
-    - `rockCount = floor(totalTerrainCells * rockPercent / 100)`
-    - `waterCount = floor(totalTerrainCells * waterPercent / 100)`
-- all min/max ranges valid
-- all rate/threshold values non-negative and internally consistent
+- Implement all V1 fail-fast validation rules from `ET_Pets_Specification.md` in `EtpetsConfig` and initialization code.
+- Keep validation messages explicit and actionable (invalid range, invalid topology, incompatible parameter combinations).
+- Ensure resource percentage validation and deterministic percent-to-count derivation are implemented exactly as specified.
 
-Additional terrain perception rule (V1):
-
-- In line-of-sight checks, adjacent `Rock` blocks visibility behind it in scan direction, while `Water` does not block
-  visibility.
+Terrain perception (for example LOS behavior) must be implemented exactly according to
+`ET_Pets_Specification.md`.
 
 ## 12. ViewModel and UI Plan
 
@@ -382,6 +344,8 @@ Common config settings:
 Expose ET Pets-specific properties for:
 
 - `petCount` - `InputIntegerProperty`, initial `5`, min `0`, max `20`, step `1`
+- `plantPercent` - `InputIntegerProperty`, min `0`, max `100`, step `1`
+- `insectPercent` - `InputIntegerProperty`, min `0`, max `100`, step `1`
 - terrain percentages
 - resource parameters
 - energy thresholds
@@ -537,10 +501,7 @@ Implementation is considered done when all points are true:
 
 There are currently no unresolved V1 questions.
 
-Resolved in V1:
-
-- `EtpetsPetTraits` / `EtpetsPetGenome` schema is fixed and complete.
-- `genomeQualityScore` input traits and normalization basis are fixed.
+All V1 rule decisions are documented exclusively in `ET_Pets_Specification.md`.
 
 ---
 

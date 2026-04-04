@@ -21,9 +21,8 @@ incrementally:
 - exactly one pet species,
 - exactly three stacked grid layers (terrain, resources, agents),
 - asynchronous step execution,
-- neighborhood mode fixed to `NeighborhoodMode.EDGES_ONLY`,
 - egg-based reproduction with delayed hatching,
-- trail mechanics on terrain using dedicated `GridEntity` state,
+- trail mechanics on terrain,
 - reproducible, seed-driven simulation behavior,
 - aggregated statistics and logging for behavior analysis.
 
@@ -37,7 +36,7 @@ Out of scope for V1:
 ## Global Constraints
 
 - Runtime model MUST be asynchronous.
-- The simulation type identifier MUST be `etpets` and MUST be used consistently in package/class/resource naming.
+- The simulation type identifier MUST be `etpets`.
 - Cell shape MUST be `CellShape.HEXAGON` only.
 - Neighborhood mode MUST be `NeighborhoodMode.EDGES_ONLY`.
 - Edge behavior MUST be `GridEdgeBehavior.BLOCK_XY` only.
@@ -46,17 +45,17 @@ Out of scope for V1:
 - Architecture SHOULD remain conceptually close to Sugarscape (stacked layered model),
   but ET Pets MUST implement significantly richer per-agent behavior.
 - Layer responsibilities MUST stay separated:
-    - terrain stores terrain-layer entities and their mutable terrain state,
+    - terrain stores terrain-layer entities and their mutable terrain state (trail),
     - resources store consumable/regenerating food state,
     - agents store lifecycle entities (`Pet`, `PetEgg`).
-- Layer data ownership MUST be strict: mutable terrain state MUST remain in terrain-layer `GridCell`/`GridEntity` data
-  and MUST NOT replace resource or agent layer data.
+- Layer data ownership MUST be strict: mutable terrain state MUST remain in terrain-layer state and MUST NOT replace
+  resource or agent layer data.
 - In V1, a grid coordinate MUST NOT simultaneously hold a resource entity (Layer 2) and a `Pet` or `PetEgg` entity (
   Layer 3).
 - The simulation MUST be extensible so additional pet types, traits, and behavior modules can be added later without
   breaking existing behavior.
 - All stochastic decisions MUST be controlled by a configured random seed.
-- All three `GridModel` layers MUST be initially populated by `SimulationManager` using configuration parameters and
+- All three `GridModel` layers MUST be initially populated during initialization using configuration parameters and
   seeded randomness.
 - Initial placement of terrain, resources, and agents MUST be deterministic under equal seed and equal configuration.
 - Under equal initial state and equal configured seed, the simulation MUST produce identical results.
@@ -74,11 +73,21 @@ Out of scope for V1:
 
 ## Layer Model (Fixed: 3 Layers)
 
-ET Pets MUST use exactly three stacked `GridModel` layers:
+ET Pets MUST use exactly the following three stacked `GridModel` layers in this order:
 
 1. Terrain Layer (base environment)
 2. Resource Layer (food sources)
 3. Agent Layer (pet lifecycle entities)
+
+All layers MUST share the same structure, size and topology (cell shape, edge behavior)
+but MUST maintain strict separation of entities and mutable state according to the rules defined below.
+
+Fixed rules:
+
+- Edge behavior MUST be `GridEdgeBehavior.BLOCK_XY` only.
+- Cell shape MUST be `CellShape.HEXAGON` only.
+- Neighborhood mode MUST be `NeighborhoodMode.EDGES_ONLY` only.
+- Size MUST be configurable and between `20x20` and `200x200` cells; all layers MUST have the same size and MUST satisfy topology validity constraints.
 
 ### Layer 1: Terrain
 
@@ -88,7 +97,6 @@ Purpose:
 
 Fixed rules:
 
-- Edge behavior MUST be `GridEdgeBehavior.BLOCK_XY` only.
 - Terrain entities on Layer 1 MUST be divided into three categories:
     - `Ground` for the single default walkable terrain entity,
     - `Trail` for worn walkable terrain with mutable state,
@@ -98,8 +106,8 @@ Fixed rules:
 
 State and properties:
 
-- In V1, the terrain layer MUST use `SparseGridModel` with `Ground` as its `defaultEntity`.
-- Terrain cell state is represented by terrain-layer `GridEntity` instances in `GridCell`.
+- In V1, the terrain layer MUST provide a default walkable state represented by `Ground`.
+- Terrain state MUST be represented directly in the terrain layer.
 
 Deferred details:
 
@@ -113,7 +121,7 @@ Purpose:
 
 Entities and semantics:
 
-- V1 MUST define exactly one `Ground` terrain `ConstantGridEntity`.
+- V1 MUST define exactly one constant `Ground` terrain.
 - `Ground` MUST be the default entity of the terrain `GridModel`.
 - `Ground` MUST be the default walkable terrain state for empty, non-blocking cells.
 - `Ground` MUST be the fallback terrain state when a `Trail` decays back to intensity `0`.
@@ -130,19 +138,16 @@ Entities and data ownership:
 
 - A dedicated mutable terrain `GridEntity` named `Trail` MUST exist.
 - `Trail` MUST store its mutable intensity counter directly in entity state.
-- All trail lifecycle/intensity data used for logic and visualization MUST be stored in terrain-layer `GridCell`/
-  `GridEntity` state.
-- Trail data MUST NOT be stored in external overlay maps or side-state structures.
 
 Lifecycle rules:
 
-- If a pet moves onto walkable ground, that terrain cell MUST become `Trail`.
-- If a pet moves onto an existing `Trail`, the trail intensity counter MUST increase.
+- If a pet moves onto walkable ground, that terrain cell MUST become `Trail` (with an initial intensity).
+- If a pet moves onto an existing `Trail`, the trail intensity counter MUST increase up to the maximum.
 - In V1, trail intensity MUST increase by the same fixed amount (`trailIncreasePerEntry`) for all pets regardless of
   individual pet properties.
 - Trail intensity MUST be capped at a configured maximum value.
 - Trail intensity MUST decay by a configured amount each simulation step.
-- If trail intensity reaches `0`, the terrain cell MUST revert to walkable ground.
+- If trail intensity reaches `0`, the terrain cell MUST revert to walkable `Ground`.
 - Trail decay MUST be executed as the final operation of each simulation step, after pet and resource simulation.
 
 Behavior and effects:
@@ -160,9 +165,8 @@ Purpose:
 
 Entities and semantics:
 
-- V1 MUST define exactly two constant blocking terrain `ConstantGridEntity` types: `Rock` and `Water`.
+- V1 MUST define exactly two constant blocking terrain types: `Rock` and `Water`.
 - Blocking obstacles MUST be non-walkable for pets.
-- Blocking obstacles MUST NOT transform into `Trail`.
 - Because pets cannot enter blocking obstacles, entering them can never create or reinforce a `Trail`.
 - Blocking obstacles MUST remain terrain-layer entities and MUST NOT be modeled as agent-layer entities.
 - Blocking obstacles MUST have no mutable properties and MUST NOT participate in per-step simulation updates.
@@ -191,6 +195,18 @@ V2 note:
 - Improved obstacle placement rules (for example cluster generation, minimum spacing, or border-distance constraints)
   are deferred to V2.
 
+### V1 Terrain Colors (Draft)
+
+- `groundColor = RGB(38, 42, 46)`
+- `rockColor = RGB(96, 102, 110)`
+- `waterColor = RGB(34, 78, 128)`
+- `trailColorDarkest = RGB(52, 66, 48)`
+
+Notes:
+
+- The values above are a first visual draft for V1 and MAY be adjusted after implementation and playtesting.
+- Only the darkest `Trail` color is fixed here; higher trail intensity uses the existing brightness adjustment logic.
+
 ### Layer 2: Resources
 
 Purpose:
@@ -201,12 +217,18 @@ Entities:
 
 - V1 MUST define exactly two resource types: `Plant` and `Insect`.
 - Both resource types are mutable entities that track current availability/amount per cell.
-- Resource entities follow the pattern of existing resource implementations (for example `SugarResourceSugar`).
 
 Fixed rules:
 
-- In V1, resource cells MUST be placed at initialization time by the `SimulationManager` using configuration parameters
-  and seeded randomness.
+- In V1, resource cells MUST be placed at initialization time using configuration parameters and seeded randomness.
+- In V1, resource distribution MUST be configured per type via percentages:
+    - `plantPercent` in range `0..100`
+    - `insectPercent` in range `0..100`
+- In V1, percentages MUST satisfy `plantPercent + insectPercent <= 100`.
+- In V1, per-type resource-cell counts MUST be derived deterministically from total terrain cells using floor-based counts:
+    - `plantCellCount = floor(totalTerrainCells * plantPercent / 100)`
+    - `insectCellCount = floor(totalTerrainCells * insectPercent / 100)`
+- If derived counts cannot be placed on valid `Ground` cells under all V1 occupancy constraints, initialization MUST fail fast.
 - Resource cells MUST be placed only on terrain cells that currently contain `Ground` entities.
 - In V1, the total count of resource cells MUST remain constant throughout the simulation.
 - In V1, individual resource cells MUST NOT be created or destroyed during simulation steps.
@@ -224,12 +246,13 @@ Fixed rules:
     1. Prefer the resource type with the higher `energyGainPerAct` (e.g., `Insect` before `Plant`).
     2. If equal `energyGainPerAct`, prefer the cell with higher `currentAmount`.
     3. If still tied, prefer the cell with stable coordinate order (x ascending, then y ascending).
-- Resources have mutable per-cell values (current amount, max amount) that are tracked in resource-layer `GridCell`
-  instances.
+- Resources have mutable per-cell values (current amount, max amount) that are tracked in the resource layer.
 - Resources MUST regenerate over time.
 - Resource regeneration MUST occur during each simulation step BEFORE trail decay as a fixed simulation step operation.
 - Regeneration rates are per-resource and are configured at initialization with a base value (depending on resource
   type) plus a per-cell variance.
+- In V1, the per-cell regeneration rate MUST be sampled once at initialization (`base + variance`) and remain constant
+  for that cell during runtime.
 - Resource amount regeneration MUST be terrain-dependent.
 - Resource cells MUST NOT be placed or maintained on incompatible terrain entities (for example not on rock).
 
@@ -242,8 +265,7 @@ State and properties:
 
 Deferred details:
 
-- Exact regeneration rates per resource type are deferred to resource-specific balancing.
-- Spawn initial amounts and per-step gain formulas are intentionally deferred.
+- Exact final balancing of regeneration/consumption values per resource type is deferred to V1 balancing iterations.
 - In V2, additional resource types and `Water`-terrain compatibility are deferred.
 
 #### V1 Resource Types (Draft)
@@ -285,7 +307,7 @@ Fixed rules:
 - Exactly one pet agent species/type is planned.
 - Individual pets MUST have multiple properties that influence movement,
   interaction, and behavior.
-- Compared to existing simulations, ET Pets SHOULD have fewer active agents,
+- Compared to existing simulations (Wa-Tor, Sugarscape), ET Pets SHOULD have fewer active agents,
   but each agent SHOULD have higher behavioral complexity.
 - `PetEgg` MUST be non-movable.
 - `PetEgg` MUST have dedicated parameters and lifecycle rules.
@@ -323,7 +345,7 @@ Pet property set (V1 fixed, can be revised later):
 - `parentBId` (nullable for initial population)
 - `stepIndexOfBirth`
 - `currentEnergy`
-- `visionRange`
+- `visionRange` (V1 fixed to `2`, can be revised later)
 - `movementCostModifier`
 - `reproductionCooldown`
 - `traits`
@@ -388,8 +410,6 @@ Pets have age, can die, and can reproduce.
 
 Death handling (V1 fixed):
 
-- V1 death handling MUST use `NoDeadPet`: no separate persistent `DeadPet` grid
-  entity is created in V1.
 - On death, a `Pet` MUST be marked as dead and store the death time
   (`stepIndexOfDeath`).
 - In V1, a pet MUST die when `currentEnergy` reaches `0`.
@@ -442,7 +462,7 @@ Reproduction rules (fixed so far):
 - At hatch time, the `PetEgg` MUST be removed and a new `Pet` MUST be created on the
   same coordinate in Layer 3.
 - The new `Pet` MUST be instantiated from `PetGenome` plus hatch-time context
-  (for example `stepIndexOfBirth` and coordinate).
+  (for example `stepIndexOfBirth`).
 - The hatched `Pet` MUST receive a new unique `petId` and MUST retain the same
   normalized parent IDs from the egg.
 
@@ -465,18 +485,6 @@ This differs from Wa-Tor by targeting lower population density and lower birth f
 
 The following defaults are accepted as a first balancing baseline and are expected
 to be adjusted after playtesting.
-
-### Terrain Colors (Draft)
-
-- `groundColor = RGB(38, 42, 46)`
-- `rockColor = RGB(96, 102, 110)`
-- `waterColor = RGB(34, 78, 128)`
-- `trailColorDarkest = RGB(52, 66, 48)`
-
-Notes:
-
-- The values above are a first visual draft for V1 and MAY be adjusted after implementation and playtesting.
-- Only the darkest `Trail` color is fixed here; higher trail intensity uses the existing brightness adjustment logic.
 
 ### Egg Lifecycle
 
@@ -503,6 +511,10 @@ Notes:
 
 - `regenerationRateVariance = 0.02` (+/-0.02 added to base regeneration rate per cell at initialization)
 - `initialCurrentAmount = maxAmount` (all resource cells start fully stocked)
+
+Notes:
+
+- The resource amount/rate values above are non-binding draft baselines for V1 balancing.
 
 ### Pet Energy (Draft, to be adjusted during V1 testing)
 
@@ -593,6 +605,8 @@ The following topics are deferred and NOT required for V1. They are collected he
   are a V2+ option.
 - **Trail intensity per pet type:** V1 applies a fixed global `trailIncreasePerEntry`; per-species or property-based
   reinforcement is a future option.
+- **Reproduction history field (`stepIndexOfReproductions`):** V1 does not require this field. A future version may add
+  an ordered reproduction-history list for analytics/debugging.
 
 ### Reproduction and Lifecycle
 
