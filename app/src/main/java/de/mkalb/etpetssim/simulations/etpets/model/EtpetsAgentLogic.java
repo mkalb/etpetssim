@@ -57,27 +57,26 @@ public final class EtpetsAgentLogic {
                                                                 .nonDefaultCells()
                                                                 .sorted(Comparator.comparing(GridCell::coordinate, EtpetsDeterminism::compareCoordinates))
                                                                 .toList();
+        // TODO Sort agents by ID (age), shuffle randomly or by position (coordinate)
 
         for (GridCell<EtpetsAgentEntity> cell : agentCells) {
-            GridCoordinate coord = cell.coordinate();
-            // Re-read from model: an earlier action this step may have moved or replaced this entity.
-            EtpetsAgentEntity entity = gridModel.agentModel().getEntity(coord);
-            if (entity.isNone()) {
-                continue;
+            GridCoordinate currentCoordinate = cell.coordinate();
+            EtpetsAgentEntity entity = cell.entity();
+
+            // Check if the entity is still at its original coordinate. It may already have been removed.
+            if (gridModel.agentModel().getEntity(currentCoordinate) != entity) {
+                return;
             }
 
             if (entity instanceof EtpetsPetEgg egg) {
                 egg.decreaseIncubation();
                 if (egg.incubationRemaining() <= 0) {
-                    hatchEgg(coord, egg, stepIndex, gridModel, idSequence);
+                    hatchEgg(currentCoordinate, egg, stepIndex, gridModel, idSequence);
                 }
-                continue;
-            }
-
-            if (entity instanceof EtpetsPet pet) {
+            } else if (entity instanceof EtpetsPet pet) {
                 // Step 1 – Death-check: remove pets already marked dead from the previous step.
                 if (pet.isDead()) {
-                    gridModel.agentModel().setEntityToDefault(coord);
+                    gridModel.agentModel().setEntityToDefault(currentCoordinate);
                     continue;
                 }
 
@@ -94,31 +93,31 @@ public final class EtpetsAgentLogic {
 
                 // Step 3 – Eat-if-adjacent (opportunistic eating even when not critically hungry).
                 if (pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD) {
-                    if (tryEat(coord, pet, gridModel, structure)) {
+                    if (tryEat(currentCoordinate, pet, gridModel, structure)) {
                         continue;
                     }
                 }
 
                 // Step 4 – Move-to-resource-if-hungry.
                 if (pet.currentEnergy() < RESOURCE_SEEKING_ENERGY_THRESHOLD) {
-                    if (tryMoveTowardResource(coord, pet, gridModel, structure)) {
+                    if (tryMoveTowardResource(currentCoordinate, pet, gridModel, structure)) {
                         continue;
                     }
                 }
 
                 // Step 5 – Reproduce-if-possible.
                 if (isReproductionEligible(pet, stepIndex)) {
-                    if (tryReproduce(coord, pet, gridModel, structure, stepIndex, random, idSequence)) {
+                    if (tryReproduce(currentCoordinate, pet, gridModel, structure, stepIndex, random, idSequence)) {
                         continue;
                     }
                     // Step 6 – Move-to-enable-reproduction (eligible but no valid partner adjacent).
-                    if (tryMoveTowardPartner(coord, pet, gridModel, structure, stepIndex)) {
+                    if (tryMoveTowardPartner(currentCoordinate, pet, gridModel, structure, stepIndex)) {
                         continue;
                     }
                 }
 
                 // Step 7 – Explore / follow trail.
-                tryExplore(coord, pet, gridModel, structure);
+                tryExplore(currentCoordinate, pet, gridModel, structure);
             }
         }
 
@@ -127,7 +126,7 @@ public final class EtpetsAgentLogic {
 
     // ========== Egg hatching ==========
 
-    private static void hatchEgg(GridCoordinate coord, EtpetsPetEgg egg, int stepIndex,
+    private static void hatchEgg(GridCoordinate currentCoordinate, EtpetsPetEgg egg, int stepIndex,
                                  EtpetsGridModel gridModel, EtpetsIdSequence idSequence) {
         EtpetsPetTraits traits = egg.petGenome().traits();
         EtpetsPet newPet = new EtpetsPet(
@@ -139,7 +138,7 @@ public final class EtpetsAgentLogic {
                 0,
                 traits
         );
-        gridModel.agentModel().setEntity(coord, newPet);
+        gridModel.agentModel().setEntity(currentCoordinate, newPet);
     }
 
     // ========== Step 3: Eat-if-adjacent ==========
