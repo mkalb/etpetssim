@@ -243,6 +243,14 @@ Per-type constants (baked into each class, not per-instance fields):
 - `int stepIndexOfLaying`
 - `int incubationRemaining`
 
+`EtpetsPetTraits` / `EtpetsPetGenome` schema (V1 fixed):
+
+- `maxEnergy` (int, `60..140`)
+- `movementCostModifier` (double, `0.5..1.5`)
+- `reproductionMinEnergy` (int, `50..90`)
+- `reproductionCooldownMax` (int, `120..320`)
+- `visionRange` is fixed to `2` and is not an inheritable scoring trait in V1.
+
 ## 8. Grid Model and Layer Ownership
 
 Implement `EtpetsGridModel` as a record similar to `SugarGridModel`, but with 3 sub-models:
@@ -320,6 +328,15 @@ Additional deterministic tie-break requirements (V1):
 - Egg placement tie-break: stable coordinate order (`x`, then `y`) -> seeded random fallback.
 - Explore/Trail tie-break: highest trail intensity first; if still tied, stable coordinate order (`x`, then `y`) ->
   seeded random fallback.
+
+`genomeQualityScore` definition (V1 fixed):
+
+- Normalize each inheritable trait from `EtpetsPetGenome` to `[0, 1]` using its fixed V1 bounds.
+- Compute `genomeQualityScore` as the arithmetic mean of:
+  - normalized `maxEnergy`
+  - normalized `movementCostModifier`
+  - normalized `reproductionMinEnergy`
+  - normalized `reproductionCooldownMax`
 
 ## 11. Configuration and Validation
 
@@ -516,25 +533,14 @@ Implementation is considered done when all points are true:
 - V2 features (extra species, additional resources, advanced genetics, obstacle clustering)
 - performance micro-optimizations before functional baseline is complete
 
-## 17. Open Questions (Deferred)
+## 17. Open Questions (V1)
 
-The following questions are not yet resolved and must be answered before the affected PR can be implemented.
+There are currently no unresolved V1 questions.
 
-### Q1 - `EtpetsPetTraits`: V1 trait list undefined
+Resolved in V1:
 
-`EtpetsPetTraits.java` and `EtpetsPetGenome.java` are listed in the package structure but their concrete fields are not
-yet defined.
-
-What needs to be decided:
-
-- Which concrete traits are inheritable in V1? (e.g., `metabolismRate`, `visionRange`, `movementCostModifier`, ...)
-- What are the per-trait min/max bounds used for normalization in `genomeQualityScore`?
-- Which fields of `EtpetsPet` are derived from traits at birth vs. independently mutable at runtime?
-
-**Blocking for:** PR-07 (pet spawn from genome), PR-08 (pet decision logic, reproduction scoring).
-
-**Resolution:** deferred. Until resolved, `EtpetsPetTraits` and `EtpetsPetGenome` are created as placeholder stubs (
-e.g., empty records or minimal interfaces) that compile without errors.
+- `EtpetsPetTraits` / `EtpetsPetGenome` schema is fixed and complete.
+- `genomeQualityScore` input traits and normalization basis are fixed.
 
 ---
 

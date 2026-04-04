@@ -340,6 +340,16 @@ Initial values (V1 fixed):
 - In V1, `visionRange` MUST be fixed to `2` for all pets.
 - Future versions MAY introduce randomized or varied starting values.
 
+Trait schema (V1 fixed):
+
+- In V1, `PetTraits` / `PetGenome` MUST include exactly these four inheritable traits:
+  - `maxEnergy` (int, range `60..140`)
+  - `movementCostModifier` (double, range `0.5..1.5`)
+  - `reproductionMinEnergy` (int, range `50..90`)
+  - `reproductionCooldownMax` (int, range `120..320`)
+- In V1, `visionRange` is fixed to `2` and is NOT part of inheritable trait scoring.
+- In V1, `genomeQualityScore` MUST be computed from the arithmetic mean of the four normalized trait values above.
+
 PetEgg property set (V1 fixed, can be revised later):
 
 - `eggId` (unique sequence-based ID)
@@ -545,12 +555,17 @@ Notes:
 
 ## Open V1 Decisions
 
-There is currently one unresolved V1 decision that must be finalized before full reproduction/genome implementation:
-
-- **Trait schema for `PetGenome` / `PetTraits`:** concrete trait list, trait bounds, and normalization inputs for
-  `genomeQualityScore` are not fixed yet.
+There are currently no unresolved V1 decision blocks.
 
 The following decision blocks are resolved:
+
+- Trait schema for `PetGenome` / `PetTraits` is fixed for V1:
+  - `maxEnergy` in `60..140`
+  - `movementCostModifier` in `0.5..1.5`
+  - `reproductionMinEnergy` in `50..90`
+  - `reproductionCooldownMax` in `120..320`
+  - `visionRange` remains fixed (`2`) and is excluded from trait scoring
+  - `genomeQualityScore` uses arithmetic mean over normalized inheritable trait values
 
 - For `Move-to-resource-if-hungry`: when multiple visible resource cells are at the same minimum hex distance, the pet
   MUST target the cell with higher `energyGainPerAct` (Insect before Plant); if still tied, prefer higher
