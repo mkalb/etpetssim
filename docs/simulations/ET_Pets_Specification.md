@@ -61,6 +61,11 @@ Out of scope for V1:
 - Under equal initial state and equal configured seed, the simulation MUST produce identical results.
 - In V1, pet decision logic MUST use deterministic rule ordering first; seeded randomness is only a fallback when
   deterministic tie-break rules cannot resolve a choice.
+- Numeric representation MUST distinguish discrete and continuous state:
+    - identifier fields (`petId`, `eggId`, `parentAId`, `parentBId`) MUST use 64-bit integer semantics,
+    - discrete counters/thresholds (for example step indices, cooldowns, energy thresholds) MUST use integer semantics,
+    - continuous per-step amounts/rates (for example trail intensity/decay, resource amounts/regeneration,
+      movement-cost modifier) MUST use floating-point semantics.
 - The simulation MUST support configurable balancing parameters (for example thresholds, cooldowns, mutation, trail
   decay) without code-structure changes.
 - The simulation MUST be designed for performance with moderate-to-growing agent counts while preserving per-agent

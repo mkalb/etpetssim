@@ -12,7 +12,8 @@ This guide is the implementation companion to `ET_Pets_Specification.md`.
 - This guide is authoritative for code structure and delivery sequence.
 - Normative simulation rules belong only to `ET_Pets_Specification.md` and are referenced here for implementation.
 - If both documents conflict, update this guide so that it matches the specification.
-
+- The naming conventions in the code must be followed. `CodingStyle.md` is a reference but not an absolute requirement; the priority is consistency with existing simulations.
+ 
 ### Important implementation policy for the first ET Pets delivery
 
 **No test classes are created in this phase.**
@@ -248,6 +249,34 @@ Per-type constants (baked into each class, not per-instance fields):
 
 - Implement exactly the V1 trait schema and bounds from `ET_Pets_Specification.md`.
 - Keep trait names and normalization inputs aligned with the specification to avoid scoring mismatches.
+
+### 7.5 Numeric type policy (`int` vs `long` vs `double`)
+
+- Keep identifier fields (`petId`, `eggId`, `parentAId`, `parentBId`) as `long`/`Long`.
+  This matches existing long-based sequence IDs in other simulations and avoids future overflow when runs are long-lived.
+- Keep discrete counters, step indices, and threshold values as `int`.
+  This includes fields such as `stepIndexOfBirth`, `stepIndexOfLaying`, `incubationRemaining`, and energy/cooldown values.
+- Keep continuous rates and amounts as `double`.
+  This is required for V1 parameters with fractional values (`trailDecayPerStep = 0.02`, regeneration base rates/variance, and `movementCostModifier` in `0.5..1.5`).
+- Do not switch continuous V1 values to `int` unless the balancing model is explicitly changed to fixed-point arithmetic in both docs.
+
+### 7.6 String representation policy (`toString` / `toDisplayString`)
+
+- For ET Pets classes that are analogous to classes in existing simulations (`wator`, `sugar`, `snake`), implement `toString()` and `toDisplayString()` where those simulations already implement them.
+- The output style MUST follow the existing simulation patterns for readability and diagnostics (field selection, ordering, and compact formatting), instead of introducing a new ET Pets-specific format.
+- If an analogous class in existing simulations intentionally does not implement one of these methods, ET Pets may omit it as well for consistency.
+
+### 7.7 Entity template references from existing simulations
+
+- `EtpetsPet`: use `WatorCreature`, `WatorShark`, `WatorFish`, `SnakeHead`, and `SugarAgent` as implementation templates
+  for field layout, method structure, helper methods, and concise comments, in addition to `toDisplayString()`/
+  `toString()`.
+- `EtpetsResourcePlant` and `EtpetsResourceInsect`: use `SugarResourceSugar` as the primary template for resource-state
+  fields, mutation/update methods, display/debug output, and related comment style.
+- Apply template matching by responsibility: lifecycle/identity concerns follow creature/agent patterns; mutable
+  amount/energy-like concerns follow resource patterns.
+- Keep ET Pets names and domain fields specific to ET Pets, but preserve the established structure and readability style
+  from the referenced classes.
 
 ## 8. Grid Model and Layer Ownership
 
