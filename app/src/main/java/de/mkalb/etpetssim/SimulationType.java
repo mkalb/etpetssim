@@ -118,7 +118,7 @@ public enum SimulationType {
      * Extraterrestrial Pets (ET pets): a planned custom simulation by the author.
      */
     ET_PETS(
-            false,
+            true,
             true,
             "simulation.etpets.title",
             "simulation.etpets.subtitle",

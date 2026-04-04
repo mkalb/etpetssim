@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.core;
 
 import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
+import de.mkalb.etpetssim.simulations.etpets.EtpetsFactory;
 import de.mkalb.etpetssim.simulations.forest.ForestFactory;
 import de.mkalb.etpetssim.simulations.lab.LabFactory;
 import de.mkalb.etpetssim.simulations.langton.LangtonFactory;
@@ -50,6 +51,7 @@ public final class SimulationFactory {
             case SUGARSCAPE -> SugarFactory.createMainView();
             case SNAKE -> SnakeFactory.createMainView();
             case REBOUNDING_ENTITIES -> ReboundingFactory.createMainView();
+            case ET_PETS -> EtpetsFactory.createMainView();
             // Add other simulation types here after implementing them
             default -> throw new IllegalArgumentException("Unsupported simulation type: " + type);
         });

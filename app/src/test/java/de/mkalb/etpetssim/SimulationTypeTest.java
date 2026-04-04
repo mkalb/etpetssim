@@ -51,6 +51,7 @@ final class SimulationTypeTest {
     void testIsImplemented() {
         assertTrue(SimulationType.STARTSCREEN.isImplemented());
         assertTrue(SimulationType.SIMULATION_LAB.isImplemented());
+        assertTrue(SimulationType.ET_PETS.isImplemented());
         // Only test mandatory simulations.
     }
 
@@ -137,7 +138,7 @@ final class SimulationTypeTest {
         assertEquals(Optional.of(SimulationType.SIMULATION_LAB), SimulationType.fromCliArgument("lab", false));
         assertEquals(Optional.empty(), SimulationType.fromCliArgument("notfound", false));
         assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("wator", true));
-        assertEquals(Optional.empty(), SimulationType.fromCliArgument("etpets", true)); // Not implemented.
+        assertEquals(Optional.of(SimulationType.ET_PETS), SimulationType.fromCliArgument("etpets", true));
     }
 
 }
