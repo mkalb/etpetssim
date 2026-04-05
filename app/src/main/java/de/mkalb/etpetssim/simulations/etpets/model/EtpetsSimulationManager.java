@@ -126,31 +126,25 @@ public final class EtpetsSimulationManager
                 EtpetsAgentLogic.DEFAULT_REPRODUCTION_COOLDOWN_MAX
         );
 
-        int placed = 0;
-        for (GridCoordinate coordinate : available) {
-            if (placed >= config().petCount()) {
-                break;
-            }
-            if (model.agentModel().isDefaultEntity(coordinate)) {
-                model.agentModel().setEntity(coordinate, new EtpetsPet(
-                        idSequence.next(),
-                        null,
-                        null,
-                        -1,
-                        EtpetsAgentLogic.DEFAULT_MAX_ENERGY,
-                        0,
-                        defaultTraits
-                ));
-                placed++;
-            }
+        for (int i = 0; i < config().petCount(); i++) {
+            model.agentModel().setEntity(available.get(i), new EtpetsPet(
+                    idSequence.next(),
+                    null,
+                    null,
+                    -1,
+                    EtpetsAgentLogic.DEFAULT_MAX_ENERGY,
+                    0,
+                    defaultTraits
+            ));
         }
     }
 
     private List<GridCoordinate> traversableCoordinates(EtpetsGridModel model, Random random) {
         List<GridCoordinate> available = new ArrayList<>();
         for (GridCoordinate coordinate : structure.coordinatesList()) {
-            EtpetsTerrainEntity terrainEntity = model.terrainModel().getEntity(coordinate);
-            if (terrainEntity == EtpetsTerrainConstant.GROUND) {
+            if (model.terrainModel().isDefaultEntity(coordinate)
+                    && model.resourceModel().isDefaultEntity(coordinate)
+                    && model.agentModel().isDefaultEntity(coordinate)) {
                 available.add(coordinate);
             }
         }
