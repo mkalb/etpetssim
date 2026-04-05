@@ -29,5 +29,17 @@ public final class EtpetsTerrainTrail implements EtpetsTerrainEntity {
         return intensity <= 0.0d;
     }
 
+    @Override
+    public String toDisplayString() {
+        return String.format("[TRAIL %.2f]", intensity);
+    }
+
+    @Override
+    public String toString() {
+        return "EtpetsTerrainTrail{" +
+                "intensity=" + intensity +
+                '}';
+    }
+
 }
 
