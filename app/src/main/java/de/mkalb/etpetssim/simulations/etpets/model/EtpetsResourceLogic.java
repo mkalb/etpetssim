@@ -7,12 +7,14 @@ public final class EtpetsResourceLogic {
     private EtpetsResourceLogic() {
     }
 
-    public static void apply(EtpetsGridModel gridModel, EtpetsConfig config, int stepIndex, EtpetsStatistics statistics) {
-        gridModel.resourceModel().nonDefaultCells().forEach(cell -> {
-            if (cell.entity() instanceof EtpetsResourceGeneric resource) {
-                resource.regenerate();
-            }
-        });
+    public static void apply(EtpetsGridModel gridModel) {
+        gridModel.resourceModel()
+                 .nonDefaultCells()
+                 .forEach(cell -> {
+                     if (cell.entity() instanceof EtpetsResourceGeneric resource) {
+                         resource.regenerate();
+                     }
+                 });
     }
 
 }

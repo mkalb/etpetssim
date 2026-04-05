@@ -49,7 +49,7 @@ public final class EtpetsAgentLogic {
     private EtpetsAgentLogic() {
     }
 
-    public static void apply(EtpetsGridModel gridModel, int stepIndex, Random random, EtpetsIdSequence idSequence, EtpetsStatistics statistics) {
+    public static void apply(Random random, EtpetsGridModel gridModel, EtpetsIdSequence idSequence, int stepIndex, EtpetsStatistics statistics) {
         int newDeadCount = 0;
         GridStructure structure = gridModel.structure();
 
