@@ -13,8 +13,6 @@ import javafx.scene.layout.Region;
 public final class EtpetsConfigView
         extends AbstractConfigView<EtpetsConfig, EtpetsConfigViewModel> {
 
-    private static final String ETPETS_CONFIG_PET_COUNT = "etpets.config.petcount";
-    private static final String ETPETS_CONFIG_PET_COUNT_TOOLTIP = "etpets.config.petcount.tooltip";
     private static final String ETPETS_CONFIG_ROCK_PERCENT = "etpets.config.rockpercent";
     private static final String ETPETS_CONFIG_ROCK_PERCENT_TOOLTIP = "etpets.config.rockpercent.tooltip";
     private static final String ETPETS_CONFIG_WATER_PERCENT = "etpets.config.waterpercent";
@@ -23,6 +21,8 @@ public final class EtpetsConfigView
     private static final String ETPETS_CONFIG_PLANT_PERCENT_TOOLTIP = "etpets.config.plantpercent.tooltip";
     private static final String ETPETS_CONFIG_INSECT_PERCENT = "etpets.config.insectpercent";
     private static final String ETPETS_CONFIG_INSECT_PERCENT_TOOLTIP = "etpets.config.insectpercent.tooltip";
+    private static final String ETPETS_CONFIG_PET_COUNT = "etpets.config.petcount";
+    private static final String ETPETS_CONFIG_PET_COUNT_TOOLTIP = "etpets.config.petcount.tooltip";
 
     public EtpetsConfigView(EtpetsConfigViewModel viewModel) {
         super(viewModel);
@@ -34,14 +34,7 @@ public final class EtpetsConfigView
         TitledPane layoutPane = createLayoutPane(true);
 
         var seedControl = createSeedControl();
-        var petCountControl = FXComponentFactory.createLabeledIntSpinner(
-                viewModel.petCountProperty(),
-                AppLocalization.getText(ETPETS_CONFIG_PET_COUNT),
-                AppLocalization.getFormattedText(ETPETS_CONFIG_PET_COUNT_TOOLTIP,
-                        viewModel.petCountProperty().min(),
-                        viewModel.petCountProperty().max()),
-                FXStyleClasses.CONFIG_SPINNER
-        );
+
         var rockPercentControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.rockPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_ROCK_PERCENT),
@@ -66,16 +59,24 @@ public final class EtpetsConfigView
                 AppLocalization.getText(ETPETS_CONFIG_INSECT_PERCENT_TOOLTIP),
                 FXStyleClasses.CONFIG_SPINNER
         );
+        var petCountControl = FXComponentFactory.createLabeledIntSpinner(
+                viewModel.petCountProperty(),
+                AppLocalization.getText(ETPETS_CONFIG_PET_COUNT),
+                AppLocalization.getFormattedText(ETPETS_CONFIG_PET_COUNT_TOOLTIP,
+                        viewModel.petCountProperty().min(),
+                        viewModel.petCountProperty().max()),
+                FXStyleClasses.CONFIG_SPINNER
+        );
 
         TitledPane initPane = createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
                 true,
                 seedControl,
-                petCountControl,
                 rockPercentControl,
                 waterPercentControl,
                 plantPercentControl,
-                insectPercentControl
+                insectPercentControl,
+                petCountControl
         );
 
         TitledPane rulesPane = createConfigTitledPane(

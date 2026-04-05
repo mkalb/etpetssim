@@ -28,7 +28,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
             20,
             200,
             GridTopology.HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE,
-            8,
+            10,
             4,
             50,
             CellDisplayMode.SHAPE,
@@ -36,7 +36,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
             ""
     );
 
-    // Initialization properties
+    // Initialization
     private static final int PET_COUNT_INITIAL = 5;
     private static final int PET_COUNT_MIN = 0;
     private static final int PET_COUNT_MAX = 20;
@@ -45,9 +45,10 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     private static final int PERCENT_MAX = 100;
     private static final int STEP = 1;
 
-    // Rules properties
+    // Rules
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
 
+    // Initialization properties
     private final InputIntegerProperty rockPercent = InputIntegerProperty.of(PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
     private final InputIntegerProperty waterPercent = InputIntegerProperty.of(PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
     private final InputIntegerProperty plantPercent = InputIntegerProperty.of(PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
@@ -70,15 +71,11 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
                 seedProperty().computeSeedAndUpdateLabel(),
                 rockPercent.getValue(),
                 waterPercent.getValue(),
-                petCount.getValue(),
                 plantPercent.getValue(),
                 insectPercent.getValue(),
+                petCount.getValue(),
                 NEIGHBORHOOD_MODE
         );
-    }
-
-    public InputIntegerProperty petCountProperty() {
-        return petCount;
     }
 
     public InputIntegerProperty rockPercentProperty() {
@@ -95,6 +92,10 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
 
     public InputIntegerProperty insectPercentProperty() {
         return insectPercent;
+    }
+
+    public InputIntegerProperty petCountProperty() {
+        return petCount;
     }
 
 }

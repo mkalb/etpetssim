@@ -17,9 +17,9 @@ public record EtpetsConfig(
         // Initialization
         int rockPercent,
         int waterPercent,
-        int petCount,
         int plantPercent,
         int insectPercent,
+        int petCount,
         // Rules
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
