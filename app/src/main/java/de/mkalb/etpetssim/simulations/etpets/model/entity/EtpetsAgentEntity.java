@@ -13,10 +13,5 @@ public sealed interface EtpetsAgentEntity extends EtpetsEntity
         return false;
     }
 
-    @Override
-    default boolean isAgent() {
-        return true;
-    }
-
 }
 

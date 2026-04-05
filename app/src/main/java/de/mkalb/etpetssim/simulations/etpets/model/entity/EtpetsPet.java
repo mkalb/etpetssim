@@ -39,6 +39,11 @@ public final class EtpetsPet implements EtpetsAgentEntity {
     }
 
     @Override
+    public boolean isAgent() {
+        return true;
+    }
+
+    @Override
     public boolean isNone() {
         return false;
     }

@@ -9,11 +9,6 @@ public sealed interface EtpetsResourceEntity extends EtpetsEntity
     }
 
     @Override
-    default boolean isResource() {
-        return true;
-    }
-
-    @Override
     default boolean isAgent() {
         return false;
     }

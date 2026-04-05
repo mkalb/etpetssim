@@ -14,6 +14,11 @@ public abstract sealed class EtpetsResourceGeneric implements EtpetsResourceEnti
     }
 
     @Override
+    public final boolean isResource() {
+        return true;
+    }
+
+    @Override
     public final boolean isNone() {
         return false;
     }
@@ -41,20 +46,6 @@ public abstract sealed class EtpetsResourceGeneric implements EtpetsResourceEnti
     protected abstract int consumptionPerAct();
 
     public abstract int energyGainPerAct();
-
-    @Override
-    public abstract String descriptorId();
-
-    @Override
-    public abstract String toDisplayString();
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "maxAmount=" + maxAmount +
-                ", currentAmount=" + currentAmount +
-                '}';
-    }
 
 }
 

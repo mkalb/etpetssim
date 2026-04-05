@@ -6,6 +6,7 @@ import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 public enum EtpetsEntityDescribable implements GridEntityDescribable {
+
     TERRAIN_GROUND(
             EtpetsEntity.DESCRIPTOR_ID_TERRAIN_GROUND,
             true,
@@ -70,7 +71,7 @@ public enum EtpetsEntityDescribable implements GridEntityDescribable {
             null,
             Color.web("#D98E04"),
             null,
-            5
+            4
     ),
     AGENT_PET(
             EtpetsEntity.DESCRIPTOR_ID_AGENT_PET,
@@ -81,7 +82,7 @@ public enum EtpetsEntityDescribable implements GridEntityDescribable {
             null,
             Color.web("#8A2BE2"),
             null,
-            6
+            5
     ),
     AGENT_PET_EGG(
             EtpetsEntity.DESCRIPTOR_ID_AGENT_PET_EGG,
@@ -92,7 +93,7 @@ public enum EtpetsEntityDescribable implements GridEntityDescribable {
             null,
             Color.web("#F0E68C"),
             null,
-            7
+            6
     );
 
     private final String descriptorId;
