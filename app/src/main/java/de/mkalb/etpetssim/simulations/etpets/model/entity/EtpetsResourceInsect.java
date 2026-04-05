@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 public final class EtpetsResourceInsect extends EtpetsResourceGeneric {
 
-    public static final int CONSUMPTION_PER_ACT = 4;
-    public static final int ENERGY_GAIN_PER_ACT = 8;
+    public static final int CONSUMPTION_PER_ACT = 3;
+    public static final int ENERGY_GAIN_PER_ACT = 9;
 
     public EtpetsResourceInsect(double currentAmount, double maxAmount, double regenerationPerStep) {
         super(currentAmount, maxAmount, regenerationPerStep);

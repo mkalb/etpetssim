@@ -14,11 +14,11 @@ public final class EtpetsSimulationManager
         extends AbstractTimedSimulationManager<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> {
 
     // Resource initialization ranges (spec V1 defaults).
-    private static final int PLANT_MAX_AMOUNT_MIN = 3;
-    private static final int PLANT_MAX_AMOUNT_MAX = 6;
+    private static final int PLANT_MAX_AMOUNT_MIN = 5;
+    private static final int PLANT_MAX_AMOUNT_MAX = 15;
     private static final double PLANT_BASE_REGEN_RATE = 0.2d;
-    private static final int INSECT_MAX_AMOUNT_MIN = 6;
-    private static final int INSECT_MAX_AMOUNT_MAX = 12;
+    private static final int INSECT_MAX_AMOUNT_MIN = 10;
+    private static final int INSECT_MAX_AMOUNT_MAX = 25;
     private static final double INSECT_BASE_REGEN_RATE = 0.05d;
     private static final double REGEN_RATE_VARIANCE = 0.02d;
     private static final double VARIANCE_SPREAD_FACTOR = 2.0d;
