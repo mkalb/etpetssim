@@ -31,6 +31,18 @@ public enum SimulationType {
             List.of("startscreen", "start")
     ),
     /**
+     * Extraterrestrial Pets (ET pets): a custom simulation where various alien creatures interact in a grid-based environment
+     */
+    ET_PETS(
+            true,
+            true,
+            "simulation.etpets.title",
+            "simulation.etpets.subtitle",
+            "simulation.etpets.url",
+            "etpets.css",
+            List.of("etpets")
+    ),
+    /**
      * <a href="https://en.wikipedia.org/wiki/Wa-Tor">Wa-Tor</a>
      */
     WATOR(
@@ -113,18 +125,6 @@ public enum SimulationType {
             "simulation.rebounding.url",
             "",
             List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders")
-    ),
-    /**
-     * Extraterrestrial Pets (ET pets): a planned custom simulation by the author.
-     */
-    ET_PETS(
-            true,
-            true,
-            "simulation.etpets.title",
-            "simulation.etpets.subtitle",
-            "simulation.etpets.url",
-            "",
-            List.of("etpets")
     ),
     /**
      * The simulation lab is not a specific simulation but a collection of various tests during development.
