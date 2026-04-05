@@ -20,12 +20,12 @@ public final class SugarObservationView
         extends
         AbstractObservationView<SugarStatistics, DefaultObservationViewModel<SugarEntity, SugarStatistics>> {
 
-    static final String SUGAR_OBSERVATION_TOTAL_CELLS = "sugar.observation.cells.total";
-    static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
-    static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
-    static final String SUGAR_OBSERVATION_COORDINATE = "sugar.observation.coordinate";
-    static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
-    static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";
+    private static final String SUGAR_OBSERVATION_TOTAL_CELLS = "sugar.observation.cells.total";
+    private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
+    private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
+    private static final String SUGAR_OBSERVATION_COORDINATE = "sugar.observation.coordinate";
+    private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
+    private static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();

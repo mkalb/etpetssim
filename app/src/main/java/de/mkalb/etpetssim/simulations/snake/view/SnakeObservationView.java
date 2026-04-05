@@ -18,17 +18,17 @@ import java.util.*;
 public final class SnakeObservationView
         extends AbstractObservationView<SnakeStatistics, DefaultObservationViewModel<SnakeEntity, SnakeStatistics>> {
 
-    static final String SNAKE_OBSERVATION_TOTAL_CELLS = "snake.observation.cells.total";
-    static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
-    static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
-    static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
-    static final String SNAKE_OBSERVATION_COORDINATE = "snake.observation.coordinate";
-    static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
-    static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
-    static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
-    static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
-    static final String SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT = "snake.observation.snake.maxsegmentcount";
-    static final String SNAKE_OBSERVATION_SNAKE_POINTS = "snake.observation.snake.points";
+    private static final String SNAKE_OBSERVATION_TOTAL_CELLS = "snake.observation.cells.total";
+    private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
+    private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
+    private static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
+    private static final String SNAKE_OBSERVATION_COORDINATE = "snake.observation.coordinate";
+    private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
+    private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
+    private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
+    private static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
+    private static final String SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT = "snake.observation.snake.maxsegmentcount";
+    private static final String SNAKE_OBSERVATION_SNAKE_POINTS = "snake.observation.snake.points";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();

@@ -16,11 +16,11 @@ import java.util.*;
 public final class ConwayObservationView
         extends AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
 
-    static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
-    static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
-    static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
-    static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
-    static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
+    private static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
+    private static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
+    private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
+    private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
+    private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();

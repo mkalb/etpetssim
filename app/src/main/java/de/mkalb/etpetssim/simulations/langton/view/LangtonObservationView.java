@@ -17,9 +17,9 @@ public final class LangtonObservationView
         extends
         AbstractObservationView<LangtonStatistics, DefaultObservationViewModel<LangtonEntity, LangtonStatistics>> {
 
-    static final String LANGTON_OBSERVATION_TOTAL_CELLS = "langton.observation.cells.total";
-    static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
-    static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
+    private static final String LANGTON_OBSERVATION_TOTAL_CELLS = "langton.observation.cells.total";
+    private static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
+    private static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();

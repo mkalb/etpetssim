@@ -18,15 +18,15 @@ import java.util.*;
 public final class WatorObservationView
         extends AbstractObservationView<WatorStatistics, DefaultObservationViewModel<WatorEntity, WatorStatistics>> {
 
-    static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
-    static final String WATOR_OBSERVATION_MAX_FISH_CELLS = "wator.observation.cells.maxfish";
-    static final String WATOR_OBSERVATION_MAX_SHARK_CELLS = "wator.observation.cells.maxshark";
-    static final String WATOR_OBSERVATION_MIN_FISH_CELLS = "wator.observation.cells.minfish";
-    static final String WATOR_OBSERVATION_MIN_SHARK_CELLS = "wator.observation.cells.minshark";
-    static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
-    static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
-    static final String WATOR_OBSERVATION_COORDINATE = "wator.observation.coordinate";
-    static final String WATOR_OBSERVATION_AGE = "wator.observation.age";
+    private static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
+    private static final String WATOR_OBSERVATION_MAX_FISH_CELLS = "wator.observation.cells.maxfish";
+    private static final String WATOR_OBSERVATION_MAX_SHARK_CELLS = "wator.observation.cells.maxshark";
+    private static final String WATOR_OBSERVATION_MIN_FISH_CELLS = "wator.observation.cells.minfish";
+    private static final String WATOR_OBSERVATION_MIN_SHARK_CELLS = "wator.observation.cells.minshark";
+    private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
+    private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
+    private static final String WATOR_OBSERVATION_COORDINATE = "wator.observation.coordinate";
+    private static final String WATOR_OBSERVATION_AGE = "wator.observation.age";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();

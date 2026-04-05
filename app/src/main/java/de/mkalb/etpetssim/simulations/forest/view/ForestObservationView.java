@@ -16,11 +16,11 @@ import java.util.*;
 public final class ForestObservationView
         extends AbstractObservationView<ForestStatistics, DefaultObservationViewModel<ForestEntity, ForestStatistics>> {
 
-    static final String FOREST_OBSERVATION_TOTAL_CELLS = "forest.observation.cells.total";
-    static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
-    static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
-    static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
-    static final String FOREST_OBSERVATION_MAX_BURNING_CELLS = "forest.observation.cells.maxburning";
+    private static final String FOREST_OBSERVATION_TOTAL_CELLS = "forest.observation.cells.total";
+    private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
+    private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
+    private static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
+    private static final String FOREST_OBSERVATION_MAX_BURNING_CELLS = "forest.observation.cells.maxburning";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();

@@ -19,10 +19,10 @@ public final class ReboundingObservationView
         extends
         AbstractObservationView<ReboundingStatistics, DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics>> {
 
-    static final String REBOUNDING_OBSERVATION_TOTAL_CELLS = "rebounding.observation.cells.total";
-    static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
-    static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
-    static final String REBOUNDING_OBSERVATION_DIRECTION = "rebounding.observation.direction";
+    private static final String REBOUNDING_OBSERVATION_TOTAL_CELLS = "rebounding.observation.cells.total";
+    private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
+    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
+    private static final String REBOUNDING_OBSERVATION_DIRECTION = "rebounding.observation.direction";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
