@@ -33,18 +33,19 @@ public final class EtpetsAgentLogic {
     public static final double DEFAULT_MOVEMENT_COST_MODIFIER = 1.0d;
     public static final int DEFAULT_REPRODUCTION_MIN_ENERGY = 70;
     public static final int DEFAULT_REPRODUCTION_COOLDOWN_MAX = 200;
-    static final int ENERGY_LOSS_PER_STEP = 1;
-    static final int EAT_IF_ADJACENT_ENERGY_THRESHOLD = 80;
-    static final int RESOURCE_SEEKING_ENERGY_THRESHOLD = 60;
-    static final int REPRODUCTION_MIN_AGE = 120;
-    static final int INCUBATION_DURATION = 10;
+
+    private static final int ENERGY_LOSS_PER_STEP = 1;
+    private static final int EAT_IF_ADJACENT_ENERGY_THRESHOLD = 80;
+    private static final int RESOURCE_SEEKING_ENERGY_THRESHOLD = 60;
+    private static final int REPRODUCTION_MIN_AGE = 120;
+    private static final int INCUBATION_DURATION = 10;
 
     // ---- Default initial pet trait values (used by EtpetsSimulationManager) ----
-    static final double TRAIL_INCREASE_PER_ENTRY = 1.0d;
-    static final double TRAIL_PREFERENCE_THRESHOLD = 3.0d;
-    static final double TRAIL_MAX = 100.0d;
-    static final double MUTATION_CHANCE_PER_TRAIT = 0.08d;
-    static final double MUTATION_DELTA = 0.05d;
+    private static final double TRAIL_INCREASE_PER_ENTRY = 1.0d;
+    private static final double TRAIL_PREFERENCE_THRESHOLD = 3.0d;
+    private static final double TRAIL_MAX = 100.0d;
+    private static final double MUTATION_CHANCE_PER_TRAIT = 0.08d;
+    private static final double MUTATION_DELTA = 0.05d;
 
     private EtpetsAgentLogic() {
     }
@@ -66,7 +67,7 @@ public final class EtpetsAgentLogic {
             GridCoordinate currentCoordinate = cell.coordinate();
             EtpetsAgentEntity entity = cell.entity();
 
-            // Check if the entity is still at its original coordinate. It may already have been removed.
+            // Check if the entity is still at its original coordinate. It may already have been removed or replaced.
             if (gridModel.agentModel().getEntity(currentCoordinate) != entity) {
                 return;
             }
@@ -74,7 +75,8 @@ public final class EtpetsAgentLogic {
             if (entity instanceof EtpetsPetEgg egg) {
                 egg.decreaseIncubation();
                 if (egg.incubationRemaining() <= 0) {
-                    hatchEgg(currentCoordinate, egg, stepIndex, gridModel, idSequence);
+                    EtpetsPet newPet = hatchEgg(egg, stepIndex, idSequence);
+                    gridModel.agentModel().setEntity(currentCoordinate, newPet);
                     eggCountChange--;
                     activePetCountChange++;
                 }
@@ -136,19 +138,17 @@ public final class EtpetsAgentLogic {
 
     // ========== Egg hatching ==========
 
-    private static void hatchEgg(GridCoordinate currentCoordinate, EtpetsPetEgg egg, int stepIndex,
-                                 EtpetsGridModel gridModel, EtpetsIdSequence idSequence) {
+    private static EtpetsPet hatchEgg(EtpetsPetEgg egg, int stepIndex,
+                                      EtpetsIdSequence idSequence) {
         EtpetsPetTraits traits = egg.petGenome().traits();
-        EtpetsPet newPet = new EtpetsPet(
+        return new EtpetsPet(
                 idSequence.next(),
                 egg.parentAId(),
                 egg.parentBId(),
                 stepIndex,
-                traits.maxEnergy(),
+                traits.maxEnergy(), // TODO calculate birth energy
                 0,
-                traits
-        );
-        gridModel.agentModel().setEntity(currentCoordinate, newPet);
+                traits);
     }
 
     // ========== Step 3: Eat-if-adjacent ==========
