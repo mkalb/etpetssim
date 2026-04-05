@@ -30,11 +30,6 @@ public final class EtpetsSimulationManager
     public EtpetsSimulationManager(EtpetsConfig config) {
         super(config);
 
-        // TODO Review isValid later
-        if (!config.isValid()) {
-            throw new IllegalArgumentException("Invalid ET Pets config: " + config);
-        }
-
         structure = config.createGridStructure();
         statistics = new EtpetsStatistics(structure.cellCount());
         var random = new Random(config.seed());
@@ -181,17 +176,13 @@ public final class EtpetsSimulationManager
     }
 
     private void updateInitialStatistics(EtpetsGridModel model) {
-        int activePetCount = Math.toIntExact(model.agentModel()
-                                                  .countEntities(entity -> (entity instanceof EtpetsPet pet) && !pet.isDead()));
-        int eggCount = Math.toIntExact(model.agentModel()
-                                            .countEntities(entity -> entity instanceof EtpetsPetEgg));
-        int cumulativeDeadPetCount = Math.toIntExact(model.agentModel()
-                                                          .countEntities(entity -> (entity instanceof EtpetsPet pet) && pet.isDead()));
-        statistics.updateInitialCells(
-                activePetCount,
-                eggCount,
-                cumulativeDeadPetCount
-        );
+        int activePetCountInitial = Math.toIntExact(model.agentModel()
+                                                         .countEntities(entity -> (entity instanceof EtpetsPet pet) && !pet.isDead()));
+        int eggCountInitial = Math.toIntExact(model.agentModel()
+                                                   .countEntities(entity -> entity instanceof EtpetsPetEgg));
+        int cumulativeDeadPetCountInitial = Math.toIntExact(model.agentModel()
+                                                                 .countEntities(entity -> (entity instanceof EtpetsPet pet) && pet.isDead()));
+        statistics.updateInitialCells(activePetCountInitial, eggCountInitial, cumulativeDeadPetCountInitial);
     }
 
     @Override

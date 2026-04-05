@@ -188,10 +188,11 @@ public final class SugarSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    @SuppressWarnings({"NumericCastThatLosesPrecision"})
     private void updateInitialStatistics(SugarGridModel model) {
-        int resourceCellsInitial = (int) model.resourceModel().countEntities(e -> !e.isNone());
-        int agentCellsInitial = (int) model.agentModel().countEntities(e -> !e.isNone());
+        int resourceCellsInitial = Math.toIntExact(model.resourceModel()
+                                                        .countEntities(e -> !e.isNone()));
+        int agentCellsInitial = Math.toIntExact(model.agentModel()
+                                                     .countEntities(e -> !e.isNone()));
         statistics.updateInitialCells(resourceCellsInitial, agentCellsInitial);
     }
 

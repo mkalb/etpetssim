@@ -61,9 +61,9 @@ public final class ForestSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     private void updateInitialStatistics(ReadableGridModel<ForestEntity> model) {
-        int treeEntities = (int) model.countEntities(ForestEntity::isTree);
+        int treeEntities = Math.toIntExact(model
+                .countEntities(ForestEntity::isTree));
         statistics.updateCells(treeEntities, 0);
     }
 

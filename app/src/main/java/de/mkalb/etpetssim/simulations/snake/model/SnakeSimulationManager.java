@@ -145,11 +145,11 @@ public final class SnakeSimulationManager
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private void updateInitialStatistics(ReadableGridModel<SnakeEntity> model) {
-        int snakes = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD));
-        int foodCells = (int) model.countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD));
-        statistics.updateInitialCells(
-                snakes,
-                foodCells);
+        int snakeHeadCellsInitial = Math.toIntExact(model
+                .countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD)));
+        int foodCellsInitial = Math.toIntExact(model
+                .countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD)));
+        statistics.updateInitialCells(snakeHeadCellsInitial, foodCellsInitial);
     }
 
     @Override

@@ -20,9 +20,9 @@ public final class ReboundingStatistics
         updateCommon(newStepCount, newStepTimingStatistics);
     }
 
-    void updateInitialCells(int initialWallCellCount, int initialMovingEntityCellCount) {
-        wallCells = initialWallCellCount;
-        movingEntityCells = initialMovingEntityCellCount;
+    void updateInitialCells(int wallCellsInitial, int movingEntityCellsInitial) {
+        wallCells = wallCellsInitial;
+        movingEntityCells = movingEntityCellsInitial;
     }
 
     public void decreaseWallCells() {

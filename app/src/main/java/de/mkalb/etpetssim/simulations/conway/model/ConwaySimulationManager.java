@@ -61,9 +61,9 @@ public final class ConwaySimulationManager
                 executor.stepTimingStatistics());
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     private void updateInitialStatistics(ReadableGridModel<ConwayEntity> model) {
-        int aliveEntities = (int) model.countEntities(ConwayEntity::isAlive);
+        int aliveEntities = Math.toIntExact(model
+                .countEntities(ConwayEntity::isAlive));
         statistics.updateCells(aliveEntities, aliveEntities);
     }
 

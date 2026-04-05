@@ -33,7 +33,7 @@ public final class LangtonSimulationManager
 
         initializeGrid(config, model);
 
-        updateInitialStatistics(config, model);
+        updateInitialStatistics(model);
     }
 
     private void initializeGrid(LangtonConfig config, LangtonGridModel model) {
@@ -65,9 +65,9 @@ public final class LangtonSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    @SuppressWarnings({"NumericCastThatLosesPrecision"})
-    private void updateInitialStatistics(LangtonConfig config, LangtonGridModel model) {
-        int newAnts = (int) model.antModel().countEntities(LangtonEntity::isAgent);
+    private void updateInitialStatistics(LangtonGridModel model) {
+        int newAnts = Math.toIntExact(model.antModel()
+                                           .countEntities(LangtonEntity::isAgent));
         statistics.updateCells(newAnts, newAnts);
     }
 

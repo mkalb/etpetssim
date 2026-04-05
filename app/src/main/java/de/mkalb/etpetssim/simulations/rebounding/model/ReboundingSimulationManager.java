@@ -126,10 +126,11 @@ public final class ReboundingSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    @SuppressWarnings({"NumericCastThatLosesPrecision"})
     private void updateInitialStatistics(WritableGridModel<ReboundingEntity> model) {
-        int wallCellsInitial = (int) model.countEntities(ReboundingEntity::isWall);
-        int movingEntityCellsInitial = (int) model.countEntities(ReboundingEntity::isMovingEntity);
+        int wallCellsInitial = Math.toIntExact(model
+                .countEntities(ReboundingEntity::isWall));
+        int movingEntityCellsInitial = Math.toIntExact(model
+                .countEntities(ReboundingEntity::isMovingEntity));
         statistics.updateInitialCells(wallCellsInitial, movingEntityCellsInitial);
     }
 
