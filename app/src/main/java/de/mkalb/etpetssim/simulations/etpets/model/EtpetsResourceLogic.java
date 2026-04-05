@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceInsect;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourcePlant;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceGeneric;
 
 public final class EtpetsResourceLogic {
 
@@ -10,10 +9,8 @@ public final class EtpetsResourceLogic {
 
     public static void apply(EtpetsGridModel gridModel, EtpetsConfig config, int stepIndex, EtpetsStatistics statistics) {
         gridModel.resourceModel().nonDefaultCells().forEach(cell -> {
-            if (cell.entity() instanceof EtpetsResourcePlant plant) {
-                plant.regenerate();
-            } else if (cell.entity() instanceof EtpetsResourceInsect insect) {
-                insect.regenerate();
+            if (cell.entity() instanceof EtpetsResourceGeneric resource) {
+                resource.regenerate();
             }
         });
     }

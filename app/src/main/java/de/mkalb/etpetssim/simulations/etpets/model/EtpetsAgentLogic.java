@@ -149,16 +149,17 @@ public final class EtpetsAgentLogic {
         List<GridCoordinate> validNeighbors = getValidNeighborCoordinates(coord, structure);
 
         GridCoordinate bestCoord = null;
-        EtpetsResourceEntity bestResource = null;
+        EtpetsResourceGeneric bestResource = null;
 
         for (GridCoordinate neighborCoord : validNeighbors) {
-            EtpetsResourceEntity resource = gridModel.resourceModel().getEntity(neighborCoord);
-            if (resource.isNone() || !canConsumeResource(resource)) {
+            Optional<EtpetsResourceGeneric> resource = asConsumableResource(gridModel.resourceModel().getEntity(neighborCoord));
+            if (resource.isEmpty()) {
                 continue;
             }
-            if ((bestCoord == null) || isResourceBetter(resource, neighborCoord, bestResource, bestCoord)) {
+            EtpetsResourceGeneric consumableResource = resource.orElseThrow();
+            if ((bestCoord == null) || isResourceBetter(consumableResource, neighborCoord, bestResource, bestCoord)) {
                 bestCoord = neighborCoord;
-                bestResource = resource;
+                bestResource = consumableResource;
             }
         }
 
@@ -166,65 +167,34 @@ public final class EtpetsAgentLogic {
             return false;
         }
 
-        int energyGain;
-        if (bestResource instanceof EtpetsResourceInsect insect) {
-            insect.consume();
-            energyGain = EtpetsResourceInsect.ENERGY_GAIN_PER_ACT;
-        } else if (bestResource instanceof EtpetsResourcePlant plant) {
-            plant.consume();
-            energyGain = EtpetsResourcePlant.ENERGY_GAIN_PER_ACT;
-        } else {
-            return false;
-        }
+        bestResource.consume();
+        int energyGain = bestResource.energyGainPerAct();
         pet.changeEnergy(energyGain);
         return true;
-    }
-
-    private static boolean canConsumeResource(EtpetsResourceEntity resource) {
-        if (resource instanceof EtpetsResourceInsect insect) {
-            return insect.canConsume();
-        }
-        if (resource instanceof EtpetsResourcePlant plant) {
-            return plant.canConsume();
-        }
-        return false;
-    }
-
-    private static int energyGainOf(EtpetsResourceEntity resource) {
-        if (resource instanceof EtpetsResourceInsect) {
-            return EtpetsResourceInsect.ENERGY_GAIN_PER_ACT;
-        }
-        if (resource instanceof EtpetsResourcePlant) {
-            return EtpetsResourcePlant.ENERGY_GAIN_PER_ACT;
-        }
-        return 0;
-    }
-
-    private static double currentAmountOf(EtpetsResourceEntity resource) {
-        if (resource instanceof EtpetsResourceInsect insect) {
-            return insect.currentAmount();
-        }
-        if (resource instanceof EtpetsResourcePlant plant) {
-            return plant.currentAmount();
-        }
-        return 0.0d;
     }
 
     /**
      * Returns {@code true} if {@code candidate} is a better resource to eat than {@code current}.
      * Ordering: 1) higher energyGainPerAct, 2) higher currentAmount, 3) coordinate order (x asc, y asc).
      */
-    private static boolean isResourceBetter(EtpetsResourceEntity candidate, GridCoordinate candidateCoord,
-                                            EtpetsResourceEntity current, GridCoordinate currentCoord) {
-        int gainCmp = Integer.compare(energyGainOf(candidate), energyGainOf(current));
+    private static boolean isResourceBetter(EtpetsResourceGeneric candidate, GridCoordinate candidateCoord,
+                                            EtpetsResourceGeneric current, GridCoordinate currentCoord) {
+        int gainCmp = Integer.compare(candidate.energyGainPerAct(), current.energyGainPerAct());
         if (gainCmp != 0) {
             return gainCmp > 0;
         }
-        int amtCmp = Double.compare(currentAmountOf(candidate), currentAmountOf(current));
+        int amtCmp = Double.compare(candidate.currentAmount(), current.currentAmount());
         if (amtCmp != 0) {
             return amtCmp > 0;
         }
         return EtpetsDeterminism.compareCoordinates(candidateCoord, currentCoord) < 0;
+    }
+
+    private static Optional<EtpetsResourceGeneric> asConsumableResource(EtpetsResourceEntity entity) {
+        if ((entity instanceof EtpetsResourceGeneric resource) && resource.canConsume()) {
+            return Optional.of(resource);
+        }
+        return Optional.empty();
     }
 
     // ========== Step 4: Move-to-resource-if-hungry ==========
@@ -236,14 +206,16 @@ public final class EtpetsAgentLogic {
 
         // Find the best consumable resource within vision range.
         GridCoordinate targetResource = null;
+        EtpetsResourceGeneric targetResourceEntity = null;
         for (GridCoordinate c : visibleCoords) {
-            EtpetsResourceEntity resource = gridModel.resourceModel().getEntity(c);
-            if (resource.isNone() || !canConsumeResource(resource)) {
+            Optional<EtpetsResourceGeneric> resource = asConsumableResource(gridModel.resourceModel().getEntity(c));
+            if (resource.isEmpty()) {
                 continue;
             }
-            if ((targetResource == null) || isResourceBetter(resource, c,
-                    gridModel.resourceModel().getEntity(targetResource), targetResource)) {
+            EtpetsResourceGeneric consumableResource = resource.orElseThrow();
+            if ((targetResource == null) || isResourceBetter(consumableResource, c, targetResourceEntity, targetResource)) {
                 targetResource = c;
+                targetResourceEntity = consumableResource;
             }
         }
         if (targetResource == null) {
@@ -268,7 +240,7 @@ public final class EtpetsAgentLogic {
         GridCoordinate moveTo;
         if (!adjacentToTarget.isEmpty()) {
             adjacentToTarget.sort(EtpetsDeterminism::compareCoordinates);
-            moveTo = adjacentToTarget.get(0);
+            moveTo = adjacentToTarget.getFirst();
         } else {
             // Move toward target: pick the candidate with the shortest BFS distance.
             candidates.sort((a, b) -> {
@@ -280,7 +252,7 @@ public final class EtpetsAgentLogic {
                 }
                 return EtpetsDeterminism.compareCoordinates(a, b);
             });
-            moveTo = candidates.get(0);
+            moveTo = candidates.getFirst();
         }
 
         movePet(coord, moveTo, pet, gridModel);
@@ -334,7 +306,7 @@ public final class EtpetsAgentLogic {
             return EtpetsDeterminism.comparePetsForReproduction(pA, cA, pB, cB);
         });
 
-        GridCoordinate partnerCoord = eligiblePartnerCoords.get(0);
+        GridCoordinate partnerCoord = eligiblePartnerCoords.getFirst();
         EtpetsPet partnerPet = (EtpetsPet) gridModel.agentModel().getEntity(partnerCoord);
 
         Optional<GridCoordinate> eggCoord = findEggPlacementCell(coordA, partnerCoord, gridModel, structure);
@@ -434,7 +406,7 @@ public final class EtpetsAgentLogic {
             return Optional.empty();
         }
         candidates.sort(EtpetsDeterminism::compareCoordinates);
-        return Optional.of(candidates.get(0));
+        return Optional.of(candidates.getFirst());
     }
 
     // ========== Step 6: Move-to-enable-reproduction ==========
@@ -492,7 +464,7 @@ public final class EtpetsAgentLogic {
             return EtpetsDeterminism.compareCoordinates(a, b);
         });
 
-        movePet(coord, candidates.get(0), pet, gridModel);
+        movePet(coord, candidates.getFirst(), pet, gridModel);
         return true;
     }
 
@@ -516,7 +488,7 @@ public final class EtpetsAgentLogic {
                     continue;
                 }
                 if ((intensity > bestAdjacentIntensity)
-                        || ((Double.compare(intensity, bestAdjacentIntensity) == 0) && (bestAdjacentTrail != null)
+                        || ((Double.compare(intensity, bestAdjacentIntensity) == 0)
                         && (EtpetsDeterminism.compareCoordinates(c, bestAdjacentTrail) < 0))) {
                     bestAdjacentIntensity = intensity;
                     bestAdjacentTrail = c;
@@ -543,7 +515,7 @@ public final class EtpetsAgentLogic {
                     continue;
                 }
                 if ((intensity > distantTrailIntensity)
-                        || ((Double.compare(intensity, distantTrailIntensity) == 0) && (distantTrail != null)
+                        || ((Double.compare(intensity, distantTrailIntensity) == 0)
                         && (EtpetsDeterminism.compareCoordinates(c, distantTrail) < 0))) {
                     distantTrailIntensity = intensity;
                     distantTrail = c;
@@ -563,11 +535,11 @@ public final class EtpetsAgentLogic {
                 }
                 return EtpetsDeterminism.compareCoordinates(a, b);
             });
-            moveTo = candidates.get(0);
+            moveTo = candidates.getFirst();
         } else {
             // No trail anywhere: pick any walkable free cell in stable coordinate order.
             candidates.sort(EtpetsDeterminism::compareCoordinates);
-            moveTo = candidates.get(0);
+            moveTo = candidates.getFirst();
         }
 
         movePet(coord, moveTo, pet, gridModel);
@@ -582,7 +554,8 @@ public final class EtpetsAgentLogic {
     private static void movePet(GridCoordinate from, GridCoordinate to,
                                 EtpetsPet pet, EtpetsGridModel gridModel) {
         // Movement energy cost (at least 1, scaled by movementCostModifier).
-        int movementCost = Math.max(1, (int) Math.round(pet.traits().movementCostModifier()));
+        long roundedMovementCost = Math.round(pet.traits().movementCostModifier());
+        int movementCost = Math.max(1, Math.toIntExact(roundedMovementCost));
         pet.changeEnergy(-movementCost);
 
         // Relocate pet.

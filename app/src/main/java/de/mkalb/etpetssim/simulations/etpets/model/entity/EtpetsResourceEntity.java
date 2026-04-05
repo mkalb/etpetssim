@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 public sealed interface EtpetsResourceEntity extends EtpetsEntity
-        permits EtpetsResourceNone, EtpetsResourcePlant, EtpetsResourceInsect {
+        permits EtpetsResourceNone, EtpetsResourceGeneric {
 
     @Override
     default boolean isTerrain() {

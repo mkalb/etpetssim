@@ -1,18 +1,12 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
-public final class EtpetsResourcePlant implements EtpetsResourceEntity {
+public final class EtpetsResourcePlant extends EtpetsResourceGeneric {
 
     public static final int CONSUMPTION_PER_ACT = 2;
     public static final int ENERGY_GAIN_PER_ACT = 3;
 
-    private final double maxAmount;
-    private final double regenerationPerStep;
-    private double currentAmount;
-
     public EtpetsResourcePlant(double currentAmount, double maxAmount, double regenerationPerStep) {
-        this.currentAmount = currentAmount;
-        this.maxAmount = maxAmount;
-        this.regenerationPerStep = regenerationPerStep;
+        super(currentAmount, maxAmount, regenerationPerStep);
     }
 
     @Override
@@ -21,41 +15,18 @@ public final class EtpetsResourcePlant implements EtpetsResourceEntity {
     }
 
     @Override
-    public boolean isNone() {
-        return false;
+    protected int consumptionPerAct() {
+        return CONSUMPTION_PER_ACT;
     }
 
-    public double currentAmount() {
-        return currentAmount;
-    }
-
-    public double maxAmount() {
-        return maxAmount;
-    }
-
-    public boolean canConsume() {
-        return currentAmount >= CONSUMPTION_PER_ACT;
-    }
-
-    public void consume() {
-        currentAmount = Math.max(0.0d, currentAmount - CONSUMPTION_PER_ACT);
-    }
-
-    public void regenerate() {
-        currentAmount = Math.min(maxAmount, currentAmount + regenerationPerStep);
+    @Override
+    public int energyGainPerAct() {
+        return ENERGY_GAIN_PER_ACT;
     }
 
     @Override
     public String toDisplayString() {
-        return String.format("[PLANT %.1f/%.1f]", currentAmount, maxAmount);
-    }
-
-    @Override
-    public String toString() {
-        return "EtpetsResourcePlant{" +
-                "maxAmount=" + maxAmount +
-                ", currentAmount=" + currentAmount +
-                '}';
+        return String.format("[PLANT %.1f/%.1f]", currentAmount(), maxAmount());
     }
 
 }
