@@ -16,15 +16,29 @@ public final class EtpetsStatistics extends AbstractTimedSimulationStatistics {
         cumulativeDeadPetCount = 0;
     }
 
-    void update(int newStepCount,
-                StepTimingStatistics newStepTimingStatistics,
-                int newActivePetCount,
-                int newEggCount,
-                int newCumulativeDeadPetCount) {
+    public void update(int newStepCount,
+                       StepTimingStatistics newStepTimingStatistics) {
         updateCommon(newStepCount, newStepTimingStatistics);
-        activePetCount = newActivePetCount;
-        eggCount = newEggCount;
-        cumulativeDeadPetCount = newCumulativeDeadPetCount;
+    }
+
+    void updateInitialCells(int activePetCountInitial,
+                            int eggCountInitial,
+                            int cumulativeDeadPetCountInitial) {
+        activePetCount = activePetCountInitial;
+        eggCount = eggCountInitial;
+        cumulativeDeadPetCount = cumulativeDeadPetCountInitial;
+    }
+
+    void updateActivePetCount(int activePetCountChange) {
+        activePetCount += activePetCountChange;
+    }
+
+    void updateEggCount(int eggCountChange) {
+        eggCount += eggCountChange;
+    }
+
+    void updateCumulativeDeadPetCount(int cumulativeDeadPetCountChange) {
+        cumulativeDeadPetCount += cumulativeDeadPetCountChange;
     }
 
     public int getActivePetCount() {

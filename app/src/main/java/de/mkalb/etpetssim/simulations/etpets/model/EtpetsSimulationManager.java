@@ -47,15 +47,17 @@ public final class EtpetsSimulationManager
 
         var idSequence = new EtpetsIdSequence(1L);
 
-        var runner = new EtpetsStepRunner(config, model, random, idSequence);
+        var runner = new EtpetsStepRunner(config, random, model, idSequence);
         var terminationCondition = new EtpetsTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
+
+        updateStatistics();
 
         initializeTerrain(model, random);
         initializeResources(model, random);
         initializePets(model, random, idSequence);
 
-        updateStatistics();
+        updateInitialStatistics(model);
     }
 
     private static int computePercentCount(int totalCells, int percent) {
@@ -173,16 +175,22 @@ public final class EtpetsSimulationManager
 
     @Override
     protected void updateStatistics() {
-        int activePetCount = Math.toIntExact(executor.currentModel().agentModel()
-                                                     .countEntities(entity -> (entity instanceof EtpetsPet pet) && !pet.isDead()));
-        int eggCount = Math.toIntExact(executor.currentModel().agentModel()
-                                               .countEntities(entity -> entity instanceof EtpetsPetEgg));
         statistics.update(
                 executor.stepCount(),
-                executor.stepTimingStatistics(),
+                executor.stepTimingStatistics());
+    }
+
+    private void updateInitialStatistics(EtpetsGridModel model) {
+        int activePetCount = Math.toIntExact(model.agentModel()
+                                                  .countEntities(entity -> (entity instanceof EtpetsPet pet) && !pet.isDead()));
+        int eggCount = Math.toIntExact(model.agentModel()
+                                            .countEntities(entity -> entity instanceof EtpetsPetEgg));
+        int cumulativeDeadPetCount = Math.toIntExact(model.agentModel()
+                                                          .countEntities(entity -> (entity instanceof EtpetsPet pet) && pet.isDead()));
+        statistics.updateInitialCells(
                 activePetCount,
                 eggCount,
-                0 // TODO Fix statistics
+                cumulativeDeadPetCount
         );
     }
 
