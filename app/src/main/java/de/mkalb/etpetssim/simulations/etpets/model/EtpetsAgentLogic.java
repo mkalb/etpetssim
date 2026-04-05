@@ -50,7 +50,9 @@ public final class EtpetsAgentLogic {
     }
 
     public static void apply(Random random, EtpetsGridModel gridModel, EtpetsIdSequence idSequence, int stepIndex, EtpetsStatistics statistics) {
-        int newDeadCount = 0;
+        int activePetCountChange = 0;
+        int eggCountChange = 0;
+        int cumulativeDeadPetCountChange = 0;
         GridStructure structure = gridModel.structure();
 
         // Snapshot of all non-default agent cells, sorted by coordinate for determinism.
@@ -73,6 +75,8 @@ public final class EtpetsAgentLogic {
                 egg.decreaseIncubation();
                 if (egg.incubationRemaining() <= 0) {
                     hatchEgg(currentCoordinate, egg, stepIndex, gridModel, idSequence);
+                    eggCountChange--;
+                    activePetCountChange++;
                 }
             } else if (entity instanceof EtpetsPet pet) {
                 // Step 1 – Death-check: remove pets already marked dead from the previous step.
@@ -88,7 +92,8 @@ public final class EtpetsAgentLogic {
                 // Step 2 – Death from energy depletion.
                 if (pet.currentEnergy() <= 0) {
                     pet.markDead(stepIndex);
-                    newDeadCount++;
+                    cumulativeDeadPetCountChange++;
+                    activePetCountChange--;
                     continue; // Stays on grid for exactly 1 visual step.
                 }
 
@@ -109,6 +114,7 @@ public final class EtpetsAgentLogic {
                 // Step 5 – Reproduce-if-possible.
                 if (isReproductionEligible(pet, stepIndex)) {
                     if (tryReproduce(currentCoordinate, pet, gridModel, structure, stepIndex, random, idSequence)) {
+                        // TODO update eggCountChange if necessary
                         continue;
                     }
                     // Step 6 – Move-to-enable-reproduction (eligible but no valid partner adjacent).
@@ -122,7 +128,10 @@ public final class EtpetsAgentLogic {
             }
         }
 
-        // TODO update statistics
+        // Update statistics after processing all agents.
+        statistics.updateActivePetCount(activePetCountChange);
+        statistics.updateEggCount(eggCountChange);
+        statistics.updateCumulativeDeadPetCount(cumulativeDeadPetCountChange);
     }
 
     // ========== Egg hatching ==========
