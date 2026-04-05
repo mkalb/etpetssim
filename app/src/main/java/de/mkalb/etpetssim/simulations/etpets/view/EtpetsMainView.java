@@ -32,7 +32,6 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private static final Color FALLBACK_COLOR_CELL = Color.GRAY;
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 2.0d;
-    private static final double AGENT_STROKE_LINE_WIDTH = 1.5d;
 
     private final Paint backgroundPaint;
 
@@ -86,15 +85,15 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
                                                 .colorAsOptional().orElse(FALLBACK_COLOR_CELL),
                         null,
-                        1.0d,
+                        0.0d,
                         StrokeType.INSIDE));
 
         currentModel.agentModel().nonDefaultCells().forEach(cell ->
-                basePainter.drawCellOuterCircle(cell.coordinate(),
+                basePainter.drawCellInnerCircle(cell.coordinate(),
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
                                                 .colorAsOptional().orElse(FALLBACK_COLOR_CELL),
                         null,
-                        AGENT_STROKE_LINE_WIDTH,
+                        0.0d,
                         StrokeType.INSIDE));
     }
 
