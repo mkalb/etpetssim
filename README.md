@@ -22,6 +22,7 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 | Name (Wikipedia)                                                               | Sync / Async | Grid Model     | Default Entity    | Entities / Agents / Cells                                                    |
 |--------------------------------------------------------------------------------|--------------|----------------|-------------------|------------------------------------------------------------------------------|
+| ET Pets                                                                        | asynchronous | Sparse         |                   |                                                                              |
 | [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | asynchronous | Array          | 🟦 Water          | Shark 🦈 (many), Fish 🐟 (many)                                              |
 | [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | synchronous  | Sparse         | 🟨 Dead           | Alive 🟥 (many)                                                              |
 | [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | asynchronous | Array & Sparse | ⬜ Unvisited       | Ant 🐜 (1 agent), Visited Ground (many, 16 colors)                           |
@@ -31,11 +32,10 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 | Rebounding Entities                                                            | asynchronous | Sparse         | ⬛ Ground          | 🟨 Moving Entity (many), ⬜ Wall (many)                                       |
 | Simulation Lab                                                                 | n/a          | Sparse         | Normal            | Highlighted                                                                  |
 
-### Planned Simulations
-
-- Extraterrestrial Pets Simulation (ET Pets)
-
 ### Screenshots
+
+#### ET Pets
+(Screenshots will be added once the simulation is fully implemented.)
 
 #### Wa-Tor
 ![Wa-Tor - Screenshot 01](assets/screenshots/screenshot_wator_01.png)
