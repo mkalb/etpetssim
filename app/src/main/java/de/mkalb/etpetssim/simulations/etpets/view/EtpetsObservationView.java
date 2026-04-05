@@ -16,11 +16,13 @@ import java.util.*;
 public final class EtpetsObservationView
         extends AbstractObservationView<EtpetsStatistics, DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>> {
 
+    private static final String ETPETS_OBSERVATION_TOTAL_CELLS = "etpets.observation.cells.total";
     private static final String ETPETS_OBSERVATION_ACTIVE_PETS = "etpets.observation.cells.pets";
     private static final String ETPETS_OBSERVATION_EGGS = "etpets.observation.cells.eggs";
     private static final String ETPETS_OBSERVATION_DEAD_PETS = "etpets.observation.pets.dead";
 
     private final Label stepCountLabel = new Label();
+    private final Label totalCellsLabel = new Label();
     private final Label activePetsLabel = new Label();
     private final Label eggsLabel = new Label();
     private final Label deadPetsLabel = new Label();
@@ -37,12 +39,14 @@ public final class EtpetsObservationView
 
         String[] nameKeys = {
                 AppLocalizationKeys.OBSERVATION_STEP,
+                ETPETS_OBSERVATION_TOTAL_CELLS,
                 ETPETS_OBSERVATION_ACTIVE_PETS,
                 ETPETS_OBSERVATION_EGGS,
                 ETPETS_OBSERVATION_DEAD_PETS
         };
         Label[] valueLabels = {
                 stepCountLabel,
+                totalCellsLabel,
                 activePetsLabel,
                 eggsLabel,
                 deadPetsLabel
@@ -60,12 +64,14 @@ public final class EtpetsObservationView
         if (statistics.isPresent() && (intFormat != null)) {
             var current = statistics.get();
             stepCountLabel.setText(intFormat.format(current.getStepCount()));
+            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
             activePetsLabel.setText(intFormat.format(current.getActivePetCount()));
             eggsLabel.setText(intFormat.format(current.getEggCount()));
             deadPetsLabel.setText(intFormat.format(current.getCumulativeDeadPetCount()));
         } else {
             String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
             stepCountLabel.setText(valueUnknown);
+            totalCellsLabel.setText(valueUnknown);
             activePetsLabel.setText(valueUnknown);
             eggsLabel.setText(valueUnknown);
             deadPetsLabel.setText(valueUnknown);
