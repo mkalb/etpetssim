@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsPet;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Pet;
 
 public final class EtpetsDeterminism {
 
@@ -22,8 +22,8 @@ public final class EtpetsDeterminism {
      * Order: highest genomeQualityScore (desc), highest currentEnergy (desc),
      * lowest petId (asc), then coordinate order (asc).
      */
-    public static int comparePetsForReproduction(EtpetsPet a, GridCoordinate aCoord,
-                                                 EtpetsPet b, GridCoordinate bCoord) {
+    public static int comparePetsForReproduction(Pet a, GridCoordinate aCoord,
+                                                 Pet b, GridCoordinate bCoord) {
         int qCmp = Double.compare(b.traits().genomeQualityScore(), a.traits().genomeQualityScore());
         if (qCmp != 0) {
             return qCmp;

@@ -10,9 +10,9 @@ import java.util.*;
 
 public record EtpetsGridModel(
         GridStructure structure,
-        WritableGridModel<EtpetsTerrainEntity> terrainModel,
-        WritableGridModel<EtpetsResourceEntity> resourceModel,
-        WritableGridModel<EtpetsAgentEntity> agentModel)
+        WritableGridModel<TerrainEntity> terrainModel,
+        WritableGridModel<ResourceEntity> resourceModel,
+        WritableGridModel<AgentEntity> agentModel)
         implements CompositeGridModel<EtpetsEntity> {
 
     public EtpetsGridModel {

@@ -64,8 +64,8 @@ public final class WatorMainView
                 .getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
                 .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
         entityColors = HashMap.newHashMap(2);
-        entityColors.put(WatorEntityDescribable.FISH.descriptorId(), null);
-        entityColors.put(WatorEntityDescribable.SHARK.descriptorId(), null);
+        entityColors.put(EntityDescriptors.FISH.descriptorId(), null);
+        entityColors.put(EntityDescriptors.SHARK.descriptorId(), null);
     }
 
     private int computeMaxColorSharkEnergy(WatorConfig config) {
@@ -83,11 +83,11 @@ public final class WatorMainView
     @Override
     protected void initSimulation(WatorConfig config, CellDimension cellDimension) {
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
-        entityColors.put(WatorEntityDescribable.FISH.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntityDescribable.FISH.descriptorId()),
+        entityColors.put(EntityDescriptors.FISH.descriptorId(),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(EntityDescriptors.FISH.descriptorId()),
                         0, config.fishMaxAge() - 1, FISH_GROUP_COUNT, FISH_MAX_FACTOR_DELTA));
-        entityColors.put(WatorEntityDescribable.SHARK.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(WatorEntityDescribable.SHARK.descriptorId()),
+        entityColors.put(EntityDescriptors.SHARK.descriptorId(),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(EntityDescriptors.SHARK.descriptorId()),
                         1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
 
         double strokeLineWidth = config.cellDisplayMode().hasBorder() ?
@@ -148,8 +148,8 @@ public final class WatorMainView
             Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
             if (colorMap != null) {
                 Integer value = switch (entity) {
-                    case WatorFish fish -> fish.ageAtStepCount(stepCount);
-                    case WatorShark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
+                    case Fish fish -> fish.ageAtStepCount(stepCount);
+                    case Shark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
                     default -> -1; // Illegal value
                 };
 

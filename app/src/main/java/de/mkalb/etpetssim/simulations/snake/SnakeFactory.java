@@ -10,8 +10,8 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeSimulationManager;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
+import de.mkalb.etpetssim.simulations.snake.model.entity.EntityDescriptors;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
-import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntityDescribable;
 import de.mkalb.etpetssim.simulations.snake.view.SnakeConfigView;
 import de.mkalb.etpetssim.simulations.snake.view.SnakeMainView;
 import de.mkalb.etpetssim.simulations.snake.view.SnakeObservationView;
@@ -33,7 +33,7 @@ public final class SnakeFactory {
         // Common
         ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(SnakeEntityDescribable.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel
         var configViewModel = new SnakeConfigViewModel(readOnlySimulationState);

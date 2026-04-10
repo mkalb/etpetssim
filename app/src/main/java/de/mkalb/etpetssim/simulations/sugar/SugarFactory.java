@@ -10,8 +10,8 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarSimulationManager;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.EntityDescriptors;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntityDescribable;
 import de.mkalb.etpetssim.simulations.sugar.view.SugarConfigView;
 import de.mkalb.etpetssim.simulations.sugar.view.SugarMainView;
 import de.mkalb.etpetssim.simulations.sugar.view.SugarObservationView;
@@ -33,7 +33,7 @@ public final class SugarFactory {
         // Common
         ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(SugarEntityDescribable.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel
         var configViewModel = new SugarConfigViewModel(readOnlySimulationState);

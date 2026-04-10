@@ -35,9 +35,9 @@ public final class EtpetsSimulationManager
         var random = new Random(config.seed());
         var model = new EtpetsGridModel(
                 structure,
-                new SparseGridModel<>(structure, EtpetsTerrainConstant.GROUND),
-                new SparseGridModel<>(structure, EtpetsResourceNone.NONE),
-                new SparseGridModel<>(structure, EtpetsAgentNone.NONE)
+                new SparseGridModel<>(structure, TerrainConstant.GROUND),
+                new SparseGridModel<>(structure, NoResource.NONE),
+                new SparseGridModel<>(structure, NoAgent.NONE)
         );
 
         var idSequence = new EtpetsIdSequence(1L);
@@ -69,11 +69,11 @@ public final class EtpetsSimulationManager
 
         int offset = 0;
         for (int i = 0; (i < rockCount) && ((offset + i) < coordinates.size()); i++) {
-            model.terrainModel().setEntity(coordinates.get(offset + i), EtpetsTerrainConstant.ROCK);
+            model.terrainModel().setEntity(coordinates.get(offset + i), TerrainConstant.ROCK);
         }
         offset += rockCount;
         for (int i = 0; (i < waterCount) && ((offset + i) < coordinates.size()); i++) {
-            model.terrainModel().setEntity(coordinates.get(offset + i), EtpetsTerrainConstant.WATER);
+            model.terrainModel().setEntity(coordinates.get(offset + i), TerrainConstant.WATER);
         }
     }
 
@@ -99,7 +99,7 @@ public final class EtpetsSimulationManager
             double regenRate = PLANT_BASE_REGEN_RATE
                     + (((random.nextDouble() * VARIANCE_SPREAD_FACTOR) - 1.0d) * REGEN_RATE_VARIANCE);
             model.resourceModel().setEntity(available.get(offset + i),
-                    new EtpetsResourcePlant(maxAmount, maxAmount, regenRate));
+                    new Plant(maxAmount, maxAmount, regenRate));
         }
         offset += plantCount;
         for (int i = 0; (i < insectCount) && ((offset + i) < available.size()); i++) {
@@ -107,7 +107,7 @@ public final class EtpetsSimulationManager
             double regenRate = INSECT_BASE_REGEN_RATE
                     + (((random.nextDouble() * VARIANCE_SPREAD_FACTOR) - 1.0d) * REGEN_RATE_VARIANCE);
             model.resourceModel().setEntity(available.get(offset + i),
-                    new EtpetsResourceInsect(maxAmount, maxAmount, regenRate));
+                    new Insect(maxAmount, maxAmount, regenRate));
         }
     }
 
@@ -119,7 +119,7 @@ public final class EtpetsSimulationManager
                     + " traversable cells are available.");
         }
 
-        EtpetsPetTraits defaultTraits = new EtpetsPetTraits(
+        PetTraits defaultTraits = new PetTraits(
                 EtpetsAgentLogic.DEFAULT_MAX_ENERGY,
                 EtpetsAgentLogic.DEFAULT_MOVEMENT_COST_MODIFIER,
                 EtpetsAgentLogic.DEFAULT_REPRODUCTION_MIN_ENERGY,
@@ -127,7 +127,7 @@ public final class EtpetsSimulationManager
         );
 
         for (int i = 0; i < config().petCount(); i++) {
-            model.agentModel().setEntity(available.get(i), new EtpetsPet(
+            model.agentModel().setEntity(available.get(i), new Pet(
                     idSequence.next(),
                     null,
                     null,
@@ -171,11 +171,11 @@ public final class EtpetsSimulationManager
 
     private void updateInitialStatistics(EtpetsGridModel model) {
         int activePetCountInitial = Math.toIntExact(model.agentModel()
-                                                         .countEntities(entity -> (entity instanceof EtpetsPet pet) && !pet.isDead()));
+                                                         .countEntities(entity -> (entity instanceof Pet pet) && !pet.isDead()));
         int eggCountInitial = Math.toIntExact(model.agentModel()
-                                                   .countEntities(entity -> entity instanceof EtpetsPetEgg));
+                                                   .countEntities(entity -> entity instanceof PetEgg));
         int cumulativeDeadPetCountInitial = Math.toIntExact(model.agentModel()
-                                                                 .countEntities(entity -> (entity instanceof EtpetsPet pet) && pet.isDead()));
+                                                                 .countEntities(entity -> (entity instanceof Pet pet) && pet.isDead()));
         statistics.updateInitialCells(activePetCountInitial, eggCountInitial, cumulativeDeadPetCountInitial);
     }
 

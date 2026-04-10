@@ -10,8 +10,8 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingSimulationManager;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.EntityDescriptors;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntityDescribable;
 import de.mkalb.etpetssim.simulations.rebounding.view.ReboundingConfigView;
 import de.mkalb.etpetssim.simulations.rebounding.view.ReboundingMainView;
 import de.mkalb.etpetssim.simulations.rebounding.view.ReboundingObservationView;
@@ -33,7 +33,7 @@ public final class ReboundingFactory {
         // Common
         ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ReboundingEntityDescribable.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel
         var configViewModel = new ReboundingConfigViewModel(readOnlySimulationState);

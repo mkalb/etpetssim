@@ -10,8 +10,8 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
+import de.mkalb.etpetssim.simulations.wator.model.entity.EntityDescriptors;
 import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
-import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntityDescribable;
 import de.mkalb.etpetssim.simulations.wator.view.WatorConfigView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorObservationView;
@@ -33,7 +33,7 @@ public final class WatorFactory {
         // Common
         ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(WatorEntityDescribable.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel
         var configViewModel = new WatorConfigViewModel(readOnlySimulationState);

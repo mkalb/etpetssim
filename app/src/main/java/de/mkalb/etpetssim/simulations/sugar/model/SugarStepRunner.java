@@ -47,18 +47,18 @@ public final class SugarStepRunner
         performResourceStep(model.resourceModel());
     }
 
-    private void performAgentStep(WritableGridModel<SugarAgentEntity> agentModel,
-                                  WritableGridModel<SugarResourceEntity> resourceModel,
+    private void performAgentStep(WritableGridModel<AgentEntity> agentModel,
+                                  WritableGridModel<ResourceEntity> resourceModel,
                                   int stepIndex,
                                   SugarStatistics statistics) {
         // 1. Agent actions
-        List<GridCell<SugarAgentEntity>> agentCells = new ArrayList<>(agentModel.nonDefaultCells().toList());
+        List<GridCell<AgentEntity>> agentCells = new ArrayList<>(agentModel.nonDefaultCells().toList());
         // Random order is important
         Collections.shuffle(agentCells, random);
         int diedAgents = 0;
-        for (GridCell<SugarAgentEntity> agentCell : agentCells) {
-            // Case to SugarAgent. All non default cells must be agents.
-            if (agentCell.entity() instanceof SugarAgent agent) {
+        for (GridCell<AgentEntity> agentCell : agentCells) {
+            // Case to Agent. All non default cells must be agents.
+            if (agentCell.entity() instanceof Agent agent) {
                 GridCoordinate originalCoordinate = agentCell.coordinate();
 
                 // 1.1 Agent sight (scan visible cells within vision range)
@@ -74,8 +74,8 @@ public final class SugarStepRunner
                 GridCoordinate finalCoordinate = attemptMove(originalCoordinate, newCoordinate, agent, agentModel);
 
                 // 1.4 Agent harvest (collect all sugar from current cell)
-                SugarResourceEntity sugarResourceEntity = resourceModel.getEntity(finalCoordinate);
-                if (sugarResourceEntity instanceof SugarResourceSugar sugar) {
+                ResourceEntity sugarResourceEntity = resourceModel.getEntity(finalCoordinate);
+                if (sugarResourceEntity instanceof Sugar sugar) {
                     int harvestedSugar = sugar.currentAmount();
                     agent.gainEnergy(harvestedSugar);
                     sugar.reduceEnergy(harvestedSugar);
@@ -95,14 +95,14 @@ public final class SugarStepRunner
             Optional<GridCoordinate> spawnCoordinate = findRandomFreeCell(agentModel);
             if (spawnCoordinate.isPresent()) {
                 // Spawn new agent
-                SugarAgent newAgent = new SugarAgent(config.agentInitialEnergy(), stepIndex);
+                Agent newAgent = new Agent(config.agentInitialEnergy(), stepIndex);
                 agentModel.setEntity(spawnCoordinate.get(), newAgent);
                 statistics.updateCells(1);
             }
         }
     }
 
-    private Optional<GridCoordinate> findRandomFreeCell(WritableGridModel<SugarAgentEntity> agentModel) {
+    private Optional<GridCoordinate> findRandomFreeCell(WritableGridModel<AgentEntity> agentModel) {
         GridCoordinate freeCoordinate = null;
 
         int attempts = 0;
@@ -120,18 +120,18 @@ public final class SugarStepRunner
         return Optional.ofNullable(freeCoordinate);
     }
 
-    private void performResourceStep(WritableGridModel<SugarResourceEntity> resourceModel) {
+    private void performResourceStep(WritableGridModel<ResourceEntity> resourceModel) {
         // 2. Sugar regeneration
         resourceModel.nonDefaultCells().forEach(cell -> {
-            if (cell.entity() instanceof SugarResourceSugar sugar) {
+            if (cell.entity() instanceof Sugar sugar) {
                 sugar.gainEnergy(config.sugarRegenerationRate());
             }
         });
     }
 
     private List<AgentMoveCandidate> collectMoveCandidates(GridCoordinate originalCoordinate,
-                                                           WritableGridModel<SugarAgentEntity> agentModel,
-                                                           WritableGridModel<SugarResourceEntity> resourceModel) {
+                                                           WritableGridModel<AgentEntity> agentModel,
+                                                           WritableGridModel<ResourceEntity> resourceModel) {
         List<AgentMoveCandidate> moveCandidates = new ArrayList<>();
 
         // Always include original cell as candidate and use NNW direction as dummy
@@ -190,8 +190,8 @@ public final class SugarStepRunner
 
     private GridCoordinate attemptMove(GridCoordinate originalCoordinate,
                                        GridCoordinate newCoordinate,
-                                       SugarAgent agent,
-                                       WritableGridModel<SugarAgentEntity> agentModel) {
+                                       Agent agent,
+                                       WritableGridModel<AgentEntity> agentModel) {
         GridCoordinate finalCoordinate = originalCoordinate;
         if (!newCoordinate.equals(originalCoordinate) && agentModel.isDefaultEntity(newCoordinate)) {
             agentModel.setEntityToDefault(originalCoordinate);
@@ -202,9 +202,9 @@ public final class SugarStepRunner
     }
 
     private int sugarAmountAtCoordinate(GridCoordinate coordinate,
-                                        WritableGridModel<SugarResourceEntity> resourceModel) {
-        SugarResourceEntity entity = resourceModel.getEntity(coordinate);
-        if (entity instanceof SugarResourceSugar sugar) {
+                                        WritableGridModel<ResourceEntity> resourceModel) {
+        ResourceEntity entity = resourceModel.getEntity(coordinate);
+        if (entity instanceof Sugar sugar) {
             return sugar.currentAmount();
         }
         return 0;

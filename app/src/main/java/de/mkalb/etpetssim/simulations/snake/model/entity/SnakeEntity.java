@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.snake.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 public sealed interface SnakeEntity extends GridEntity
-        permits SnakeConstantEntity, SnakeHead {
+        permits TerrainConstant, SnakeHead {
 
     String DESCRIPTOR_ID_GROUND = "ground";
     String DESCRIPTOR_ID_WALL = "wall";

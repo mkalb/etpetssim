@@ -14,9 +14,9 @@ public final class WatorAgentLogicFactory {
 
     private final WatorConfig config;
     private final Random random;
-    private final WatorEntityFactory entityFactory;
+    private final CreatureFactory entityFactory;
 
-    public WatorAgentLogicFactory(WatorConfig config, Random random, WatorEntityFactory entityFactory) {
+    public WatorAgentLogicFactory(WatorConfig config, Random random, CreatureFactory entityFactory) {
         this.config = config;
         this.random = random;
         this.entityFactory = entityFactory;
@@ -47,9 +47,9 @@ public final class WatorAgentLogicFactory {
             }
         }
 
-        if (entity instanceof WatorFish fish) {
+        if (entity instanceof Fish fish) {
             fishSimpleLogic(agentCell, model, stepIndex, statistics, fish, waterCells);
-        } else if (entity instanceof WatorShark shark) {
+        } else if (entity instanceof Shark shark) {
             sharkSimpleLogic(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
         }
 
@@ -58,7 +58,7 @@ public final class WatorAgentLogicFactory {
 
     private void fishSimpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                                  WatorStatistics statistics,
-                                 WatorFish fish, List<GridCell<WatorEntity>> waterCells) {
+                                 Fish fish, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate fishOriginalCoordinate = agentCell.coordinate();
         GridCoordinate fishNewCoordinate = fishOriginalCoordinate;
 
@@ -77,7 +77,7 @@ public final class WatorAgentLogicFactory {
             if (fish.ageAtStepIndex(stepIndex) >= config.fishMinReproductionAge()) {
                 if (fish.timeOfLastReproduction().isEmpty() ||
                         ((stepIndex - fish.timeOfLastReproduction().getAsInt()) >= config.fishMinReproductionInterval())) {
-                    WatorFish childFish = entityFactory.createFish(stepIndex);
+                    Fish childFish = entityFactory.createFish(stepIndex);
                     statistics.incrementFishCells();
                     fish.reproduce(childFish);
                     model.setEntity(fishOriginalCoordinate, childFish);
@@ -96,7 +96,7 @@ public final class WatorAgentLogicFactory {
 
     private void sharkSimpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
                                   WatorStatistics statistics,
-                                  WatorShark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
+                                  Shark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate sharkOriginalCoordinate = agentCell.coordinate();
         GridCoordinate sharkNewCoordinate = sharkOriginalCoordinate;
 
@@ -123,7 +123,7 @@ public final class WatorAgentLogicFactory {
                 if (shark.currentEnergy() >= config.sharkMinReproductionEnergy()) {
                     if (shark.timeOfLastReproduction().isEmpty() ||
                             ((stepIndex - shark.timeOfLastReproduction().getAsInt()) >= config.sharkMinReproductionInterval())) {
-                        WatorShark childShark = entityFactory.createShark(stepIndex, config.sharkBirthEnergy());
+                        Shark childShark = entityFactory.createShark(stepIndex, config.sharkBirthEnergy());
                         statistics.incrementSharkCells();
                         shark.reproduce(childShark);
                         model.setEntity(sharkOriginalCoordinate, childShark);

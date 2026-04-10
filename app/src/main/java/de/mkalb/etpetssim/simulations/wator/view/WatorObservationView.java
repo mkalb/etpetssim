@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
-import de.mkalb.etpetssim.simulations.wator.model.entity.WatorCreature;
+import de.mkalb.etpetssim.simulations.wator.model.entity.CreatureBase;
 import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
@@ -53,7 +53,7 @@ public final class WatorObservationView
         if (statistics.isPresent()
                 && (gridCell != null)
                 && (intFormat != null)
-                && (gridCell.entity() instanceof WatorCreature creature)) {
+                && (gridCell.entity() instanceof CreatureBase creature)) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
             ageLabel.setText(intFormat.format(creature.ageAtStepCount(statistics.get().getStepCount())));
         } else {

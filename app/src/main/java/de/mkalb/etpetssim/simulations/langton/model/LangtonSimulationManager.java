@@ -21,8 +21,8 @@ public final class LangtonSimulationManager
         structure = config.createGridStructure();
         statistics = new LangtonStatistics(structure.cellCount());
         var model = new LangtonGridModel(structure,
-                new ArrayGridModel<>(structure, LangtonGroundEntity.UNVISITED),
-                new SparseGridModel<>(structure, LangtonAntNone.NONE));
+                new ArrayGridModel<>(structure, TerrainConstant.UNVISITED),
+                new SparseGridModel<>(structure, NoAgent.NONE));
 
         // Executor with runner and terminationCondition
         var runner = new LangtonStepRunner(config, model);
@@ -37,11 +37,11 @@ public final class LangtonSimulationManager
     }
 
     private void initializeGrid(LangtonConfig config, LangtonGridModel model) {
-        LangtonAnt ant = new LangtonAnt(CompassDirection.N);
+        Ant ant = new Ant(CompassDirection.N);
         // Start at the middle of teh grid but round down to an even number. This avoids problems with TRIANGLE.
         GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
         model.antModel().setEntity(coordinate, ant);
-        model.groundModel().setEntity(coordinate, LangtonGroundEntity.COLOR_1);
+        model.groundModel().setEntity(coordinate, TerrainConstant.COLOR_1);
     }
 
     int halveToEven(int n) {

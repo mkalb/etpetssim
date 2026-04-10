@@ -1,9 +1,9 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsAgentEntity;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceEntity;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsTerrainEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
 
 /**
  * Snapshot of all ET-Pets layers for a single grid coordinate.
@@ -14,9 +14,9 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsTerrainEntity;
  * @param agentEntity agent layer entity.
  */
 public record EtpetsCell(GridCoordinate coordinate,
-                         EtpetsTerrainEntity terrainEntity,
-                         EtpetsResourceEntity resourceEntity,
-                         EtpetsAgentEntity agentEntity) {
+                         TerrainEntity terrainEntity,
+                         ResourceEntity resourceEntity,
+                         AgentEntity agentEntity) {
 
     public static EtpetsCell of(GridCoordinate coordinate, EtpetsGridModel model) {
         return new EtpetsCell(coordinate,

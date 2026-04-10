@@ -8,9 +8,9 @@ import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingConstantEntity;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingMovingEntity;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ public final class ReboundingSimulationManager
         structure = config.createGridStructure();
         statistics = new ReboundingStatistics(structure.cellCount());
         var random = new Random(config.seed());
-        var model = new SparseGridModel<ReboundingEntity>(structure, ReboundingConstantEntity.GROUND);
+        var model = new SparseGridModel<ReboundingEntity>(structure, TerrainConstant.GROUND);
 
         // Executor with runner and terminationCondition
         var agentStepLogic = new ReboundingStepLogic(structure, config);
@@ -75,7 +75,7 @@ public final class ReboundingSimulationManager
             List<GridCell<ReboundingEntity>> cells = new ArrayList<>();
             for (int x : wallXPositions) {
                 for (int y = 0; y < height; y++) {
-                    cells.add(new GridCell<>(new GridCoordinate(x, y), ReboundingConstantEntity.WALL));
+                    cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
                 }
             }
             return GridInitializers.fromList(cells);
@@ -99,7 +99,7 @@ public final class ReboundingSimulationManager
             int movingEntityCount = (int) (structure.cellCount() * config.movingEntityPercent());
             List<ReboundingEntity> movingEntities = new ArrayList<>(movingEntityCount);
             for (int i = 0; i < movingEntityCount; i++) {
-                movingEntities.add(new ReboundingMovingEntity(directionRing.get(random.nextInt(directionRing.size()))));
+                movingEntities.add(new Rebounder(directionRing.get(random.nextInt(directionRing.size()))));
             }
             return GridInitializers.placeAllAtRandomPositions(
                     movingEntities,

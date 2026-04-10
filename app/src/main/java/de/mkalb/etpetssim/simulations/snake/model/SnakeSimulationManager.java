@@ -4,9 +4,9 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
-import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 
@@ -38,7 +38,7 @@ public final class SnakeSimulationManager
         structure = config.createGridStructure();
         statistics = new SnakeStatistics(structure.cellCount());
         var random = new Random(config.seed());
-        var model = new SparseGridModel<SnakeEntity>(structure, SnakeConstantEntity.GROUND);
+        var model = new SparseGridModel<SnakeEntity>(structure, TerrainConstant.GROUND);
 
         // Executor with runner and terminationCondition
         var agentStepLogic = new SnakeStepLogic(structure, config, random);
@@ -88,7 +88,7 @@ public final class SnakeSimulationManager
                 int yEnd = yStart + length;
 
                 for (int y = yStart; y <= yEnd; y++) {
-                    cells.add(new GridCell<>(new GridCoordinate(x, y), SnakeConstantEntity.WALL));
+                    cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
                 }
             }
             return GridInitializers.fromList(cells);
@@ -119,7 +119,7 @@ public final class SnakeSimulationManager
             int foodCells = Math.min(config.foodCells(), freeGroundCells);
             return GridInitializers.placeShuffledCounted(
                     foodCells,
-                    () -> SnakeConstantEntity.GROWTH_FOOD,
+                    () -> TerrainConstant.GROWTH_FOOD,
                     SnakeEntity::isGround,
                     random);
         }

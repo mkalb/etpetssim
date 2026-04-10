@@ -57,30 +57,30 @@ public final class EtpetsAgentLogic {
         GridStructure structure = gridModel.structure();
 
         // Snapshot of all non-default agent cells, sorted by coordinate for determinism.
-        List<GridCell<EtpetsAgentEntity>> agentCells = gridModel.agentModel()
-                                                                .nonDefaultCells()
-                                                                .sorted(Comparator.comparing(GridCell::coordinate, EtpetsDeterminism::compareCoordinates))
-                                                                .toList();
+        List<GridCell<AgentEntity>> agentCells = gridModel.agentModel()
+                                                          .nonDefaultCells()
+                                                          .sorted(Comparator.comparing(GridCell::coordinate, EtpetsDeterminism::compareCoordinates))
+                                                          .toList();
         // TODO Sort agents by ID (age), shuffle randomly or by position (coordinate)
 
-        for (GridCell<EtpetsAgentEntity> cell : agentCells) {
+        for (GridCell<AgentEntity> cell : agentCells) {
             GridCoordinate currentCoordinate = cell.coordinate();
-            EtpetsAgentEntity entity = cell.entity();
+            AgentEntity entity = cell.entity();
 
             // Check if the entity is still at its original coordinate. It may already have been removed or replaced.
             if (gridModel.agentModel().getEntity(currentCoordinate) != entity) {
                 return;
             }
 
-            if (entity instanceof EtpetsPetEgg egg) {
+            if (entity instanceof PetEgg egg) {
                 egg.decreaseIncubation();
                 if (egg.incubationRemaining() <= 0) {
-                    EtpetsPet newPet = hatchEgg(egg, stepIndex, idSequence);
+                    Pet newPet = hatchEgg(egg, stepIndex, idSequence);
                     gridModel.agentModel().setEntity(currentCoordinate, newPet);
                     eggCountChange--;
                     activePetCountChange++;
                 }
-            } else if (entity instanceof EtpetsPet pet) {
+            } else if (entity instanceof Pet pet) {
                 // Step 1 – Death-check: remove pets already marked dead from the previous step.
                 if (pet.isDead()) {
                     gridModel.agentModel().setEntityToDefault(currentCoordinate);
@@ -144,10 +144,10 @@ public final class EtpetsAgentLogic {
 
     // ========== Egg hatching ==========
 
-    private static EtpetsPet hatchEgg(EtpetsPetEgg egg, int stepIndex,
-                                      EtpetsIdSequence idSequence) {
-        EtpetsPetTraits traits = egg.petGenome().traits();
-        return new EtpetsPet(
+    private static Pet hatchEgg(PetEgg egg, int stepIndex,
+                                EtpetsIdSequence idSequence) {
+        PetTraits traits = egg.petGenome().traits();
+        return new Pet(
                 idSequence.next(),
                 egg.parentAId(),
                 egg.parentBId(),
@@ -159,11 +159,11 @@ public final class EtpetsAgentLogic {
 
     // ========== Step 3: Eat-if-adjacent ==========
 
-    private static boolean tryEat(Collection<EtpetsCell> firstRingNeighborCells, EtpetsPet pet, Random random) {
+    private static boolean tryEat(Collection<EtpetsCell> firstRingNeighborCells, Pet pet, Random random) {
         Optional<EtpetsCell> bestConsumableCell = findRandomBestConsumableResourceCell(firstRingNeighborCells, random);
 
         if (bestConsumableCell.isPresent()
-                && (bestConsumableCell.get().resourceEntity() instanceof EtpetsResourceGeneric genericResource)) {
+                && (bestConsumableCell.get().resourceEntity() instanceof ResourceBase genericResource)) {
             // AppLogger.info("Consume resource " + genericResource.toDisplayString());
             genericResource.consume();
             int energyGain = genericResource.energyGainPerAct();
@@ -186,14 +186,14 @@ public final class EtpetsAgentLogic {
 
     private static List<EtpetsCell> collectBestConsumableResourceCells(Collection<EtpetsCell> cells) {
         List<EtpetsCell> bestCells = new ArrayList<>();
-        EtpetsResourceGeneric bestResource = null;
+        ResourceBase bestResource = null;
 
         for (EtpetsCell neighborCell : cells) {
-            Optional<EtpetsResourceGeneric> resource = toConsumableResource(neighborCell.resourceEntity());
+            Optional<ResourceBase> resource = toConsumableResource(neighborCell.resourceEntity());
             if (resource.isEmpty()) {
                 continue;
             }
-            EtpetsResourceGeneric consumableResource = resource.orElseThrow();
+            ResourceBase consumableResource = resource.orElseThrow();
 
             if ((bestResource == null) || isResourceBetter(consumableResource, bestResource)) {
                 // New strict best candidate: replace all previous candidates.
@@ -216,8 +216,8 @@ public final class EtpetsAgentLogic {
      * Returns {@code true} if {@code candidate} is a better resource to eat than {@code current}.
      * Ordering: 1) higher energyGainPerAct, 2) higher currentAmount, 3) coordinate order (x asc, y asc).
      */
-    private static boolean isResourceBetter(EtpetsResourceGeneric candidate, GridCoordinate candidateCoord,
-                                            EtpetsResourceGeneric current, GridCoordinate currentCoord) {
+    private static boolean isResourceBetter(ResourceBase candidate, GridCoordinate candidateCoord,
+                                            ResourceBase current, GridCoordinate currentCoord) {
         int gainCmp = Integer.compare(candidate.energyGainPerAct(), current.energyGainPerAct());
         if (gainCmp != 0) {
             return gainCmp > 0;
@@ -229,8 +229,8 @@ public final class EtpetsAgentLogic {
         return EtpetsDeterminism.compareCoordinates(candidateCoord, currentCoord) < 0;
     }
 
-    private static boolean isResourceBetter(EtpetsResourceGeneric candidate,
-                                            EtpetsResourceGeneric current) {
+    private static boolean isResourceBetter(ResourceBase candidate,
+                                            ResourceBase current) {
         int gainCmp = Integer.compare(candidate.energyGainPerAct(), current.energyGainPerAct());
         if (gainCmp != 0) {
             return gainCmp > 0;
@@ -242,14 +242,14 @@ public final class EtpetsAgentLogic {
         return false;
     }
 
-    private static boolean hasSameResourceScore(EtpetsResourceGeneric first,
-                                                EtpetsResourceGeneric second) {
+    private static boolean hasSameResourceScore(ResourceBase first,
+                                                ResourceBase second) {
         return (first.energyGainPerAct() == second.energyGainPerAct())
                 && (Double.compare(first.currentAmount(), second.currentAmount()) == 0);
     }
 
-    private static Optional<EtpetsResourceGeneric> toConsumableResource(EtpetsResourceEntity entity) {
-        if ((entity instanceof EtpetsResourceGeneric resource) && resource.canConsume()) {
+    private static Optional<ResourceBase> toConsumableResource(ResourceEntity entity) {
+        if ((entity instanceof ResourceBase resource) && resource.canConsume()) {
             return Optional.of(resource);
         }
         return Optional.empty();
@@ -257,7 +257,7 @@ public final class EtpetsAgentLogic {
 
     // ========== Step 4: Move-to-resource-if-hungry ==========
 
-    private static boolean tryMoveTowardResource(GridCoordinate coord, NeighborRings neighborRings, EtpetsPet pet,
+    private static boolean tryMoveTowardResource(GridCoordinate coord, NeighborRings neighborRings, Pet pet,
                                                  EtpetsGridModel gridModel, GridStructure structure, Random random) {
         Optional<EtpetsCell> bestConsumableCell = findRandomBestConsumableResourceCell(neighborRings.secondRing().values().stream().map(c -> c.cell).toList(), random);
         if (bestConsumableCell.isPresent()) {
@@ -276,14 +276,14 @@ public final class EtpetsAgentLogic {
 
     // ========== Step 5: Reproduce-if-possible ==========
 
-    private static boolean isReproductionEligible(EtpetsPet pet, int stepIndex) {
+    private static boolean isReproductionEligible(Pet pet, int stepIndex) {
         return !pet.isDead()
                 && (pet.ageAtStepIndex(stepIndex) >= REPRODUCTION_MIN_AGE)
                 && (pet.currentEnergy() >= pet.traits().reproductionMinEnergy())
                 && (pet.reproductionCooldownRemaining() == 0);
     }
 
-    private static boolean tryReproduce(GridCoordinate coordA, EtpetsPet petA,
+    private static boolean tryReproduce(GridCoordinate coordA, Pet petA,
                                         EtpetsGridModel gridModel, GridStructure structure,
                                         int stepIndex, Random random, EtpetsIdSequence idSequence) {
         List<GridCoordinate> adjCoords = getValidNeighborCoordinates(coordA, structure);
@@ -291,8 +291,8 @@ public final class EtpetsAgentLogic {
         // Collect eligible partner candidates.
         List<GridCoordinate> eligiblePartnerCoords = new ArrayList<>();
         for (GridCoordinate neighborCoord : adjCoords) {
-            EtpetsAgentEntity neighborEntity = gridModel.agentModel().getEntity(neighborCoord);
-            if (!(neighborEntity instanceof EtpetsPet neighborPet)) {
+            AgentEntity neighborEntity = gridModel.agentModel().getEntity(neighborCoord);
+            if (!(neighborEntity instanceof Pet neighborPet)) {
                 continue;
             }
             if (neighborPet.isDead()) {
@@ -316,13 +316,13 @@ public final class EtpetsAgentLogic {
 
         // Select the best partner using deterministic scoring.
         eligiblePartnerCoords.sort((cA, cB) -> {
-            EtpetsPet pA = (EtpetsPet) gridModel.agentModel().getEntity(cA);
-            EtpetsPet pB = (EtpetsPet) gridModel.agentModel().getEntity(cB);
+            Pet pA = (Pet) gridModel.agentModel().getEntity(cA);
+            Pet pB = (Pet) gridModel.agentModel().getEntity(cB);
             return EtpetsDeterminism.comparePetsForReproduction(pA, cA, pB, cB);
         });
 
         GridCoordinate partnerCoord = eligiblePartnerCoords.getFirst();
-        EtpetsPet partnerPet = (EtpetsPet) gridModel.agentModel().getEntity(partnerCoord);
+        Pet partnerPet = (Pet) gridModel.agentModel().getEntity(partnerCoord);
 
         Optional<GridCoordinate> eggCoord = findEggPlacementCell(coordA, partnerCoord, gridModel, structure);
         if (eggCoord.isEmpty()) {
@@ -336,16 +336,16 @@ public final class EtpetsAgentLogic {
         long parentBId = Math.max(idA, idB);
 
         // Inherit genome via trait averaging plus mutation.
-        EtpetsPetGenome genome = EtpetsPetGenome.fromParents(
-                new EtpetsPetGenome(petA.traits()),
-                new EtpetsPetGenome(partnerPet.traits()),
+        PetGenome genome = PetGenome.fromParents(
+                new PetGenome(petA.traits()),
+                new PetGenome(partnerPet.traits()),
                 random,
                 MUTATION_CHANCE_PER_TRAIT,
                 MUTATION_DELTA
         );
 
         // Place egg.
-        EtpetsPetEgg egg = new EtpetsPetEgg(
+        PetEgg egg = new PetEgg(
                 idSequence.next(),
                 parentAId,
                 parentBId,
@@ -366,7 +366,7 @@ public final class EtpetsAgentLogic {
      * Returns {@code true} if pets {@code a} and {@code b} share any non-null ID
      * among their own IDs and their parent IDs (direct relatives check).
      */
-    private static boolean areDirectRelatives(EtpetsPet a, EtpetsPet b) {
+    private static boolean areDirectRelatives(Pet a, Pet b) {
         Set<Long> idsA = new HashSet<>();
         idsA.add(a.petId());
         if (a.parentAId() != null) {
@@ -404,8 +404,8 @@ public final class EtpetsAgentLogic {
                 continue;
             }
             // Spec: egg placement cell MUST contain Ground, not Trail.
-            EtpetsTerrainEntity terrain = gridModel.terrainModel().getEntity(c);
-            if (terrain != EtpetsTerrainConstant.GROUND) {
+            TerrainEntity terrain = gridModel.terrainModel().getEntity(c);
+            if (terrain != TerrainConstant.GROUND) {
                 continue;
             }
             if (!gridModel.resourceModel().getEntity(c).isNone()) {
@@ -426,10 +426,10 @@ public final class EtpetsAgentLogic {
 
     // ========== Step 6: Move-to-enable-reproduction ==========
 
-    private static boolean tryMoveTowardPartner(GridCoordinate coord, EtpetsPet pet,
+    private static boolean tryMoveTowardPartner(GridCoordinate coord, Pet pet,
                                                 EtpetsGridModel gridModel, GridStructure structure,
                                                 int stepIndex) {
-        int visionRange = EtpetsPet.VISION_RANGE;
+        int visionRange = Pet.VISION_RANGE;
         Set<GridCoordinate> visibleCoords = getValidCoordinatesWithinRange(coord, structure, visionRange);
 
         // Find the nearest eligible, non-relative partner within vision range.
@@ -437,8 +437,8 @@ public final class EtpetsAgentLogic {
         int bestDist = Integer.MAX_VALUE;
 
         for (GridCoordinate c : visibleCoords) {
-            EtpetsAgentEntity entity = gridModel.agentModel().getEntity(c);
-            if (!(entity instanceof EtpetsPet candidate)) {
+            AgentEntity entity = gridModel.agentModel().getEntity(c);
+            if (!(entity instanceof Pet candidate)) {
                 continue;
             }
             if (candidate.isDead()) {
@@ -485,7 +485,7 @@ public final class EtpetsAgentLogic {
 
     // ========== Step 7: Explore / Trail ==========
 
-    private static void tryExplore(GridCoordinate coord, EtpetsPet pet,
+    private static void tryExplore(GridCoordinate coord, Pet pet,
                                    EtpetsGridModel gridModel, GridStructure structure) {
         List<GridCoordinate> candidates = getWalkableFreeNeighbors(coord, gridModel, structure);
         if (candidates.isEmpty()) {
@@ -496,8 +496,8 @@ public final class EtpetsAgentLogic {
         GridCoordinate bestAdjacentTrail = null;
         double bestAdjacentIntensity = -1.0d;
         for (GridCoordinate c : candidates) {
-            EtpetsTerrainEntity terrain = gridModel.terrainModel().getEntity(c);
-            if (terrain instanceof EtpetsTerrainTrail trail) {
+            TerrainEntity terrain = gridModel.terrainModel().getEntity(c);
+            if (terrain instanceof Trail trail) {
                 double intensity = trail.intensity();
                 if (intensity <= TRAIL_PREFERENCE_THRESHOLD) {
                     continue;
@@ -517,14 +517,14 @@ public final class EtpetsAgentLogic {
         }
 
         // No adjacent trail above threshold - look within vision range for a preferred trail.
-        int visionRange = EtpetsPet.VISION_RANGE;
+        int visionRange = Pet.VISION_RANGE;
         Set<GridCoordinate> visibleCoords = getValidCoordinatesWithinRange(coord, structure, visionRange);
 
         GridCoordinate distantTrail = null;
         double distantTrailIntensity = -1.0d;
         for (GridCoordinate c : visibleCoords) {
-            EtpetsTerrainEntity terrain = gridModel.terrainModel().getEntity(c);
-            if (terrain instanceof EtpetsTerrainTrail trail) {
+            TerrainEntity terrain = gridModel.terrainModel().getEntity(c);
+            if (terrain instanceof Trail trail) {
                 double intensity = trail.intensity();
                 if (intensity <= TRAIL_PREFERENCE_THRESHOLD) {
                     continue;
@@ -567,7 +567,7 @@ public final class EtpetsAgentLogic {
      * and updating the terrain trail at the destination.
      */
     private static void movePet(GridCoordinate from, GridCoordinate to,
-                                EtpetsPet pet, EtpetsGridModel gridModel) {
+                                Pet pet, EtpetsGridModel gridModel) {
         // Movement energy cost (at least 1, scaled by movementCostModifier).
         long roundedMovementCost = Math.round(pet.traits().movementCostModifier());
         int movementCost = Math.max(1, Math.toIntExact(roundedMovementCost));
@@ -578,10 +578,10 @@ public final class EtpetsAgentLogic {
         gridModel.agentModel().setEntity(to, pet);
 
         // Update terrain trail at destination.
-        EtpetsTerrainEntity terrain = gridModel.terrainModel().getEntity(to);
-        if (terrain == EtpetsTerrainConstant.GROUND) {
-            gridModel.terrainModel().setEntity(to, new EtpetsTerrainTrail(TRAIL_INCREASE_PER_ENTRY));
-        } else if (terrain instanceof EtpetsTerrainTrail trail) {
+        TerrainEntity terrain = gridModel.terrainModel().getEntity(to);
+        if (terrain == TerrainConstant.GROUND) {
+            gridModel.terrainModel().setEntity(to, new Trail(TRAIL_INCREASE_PER_ENTRY));
+        } else if (terrain instanceof Trail trail) {
             trail.increase(TRAIL_INCREASE_PER_ENTRY, TRAIL_MAX);
         }
     }
@@ -673,8 +673,8 @@ public final class EtpetsAgentLogic {
     }
 
     private static boolean isWalkable(GridCoordinate coord, EtpetsGridModel gridModel) {
-        EtpetsTerrainEntity terrain = gridModel.terrainModel().getEntity(coord);
-        return (terrain == EtpetsTerrainConstant.GROUND) || (terrain instanceof EtpetsTerrainTrail);
+        TerrainEntity terrain = gridModel.terrainModel().getEntity(coord);
+        return (terrain == TerrainConstant.GROUND) || (terrain instanceof Trail);
     }
 
     private static boolean isFreeOfAgentAndResource(GridCoordinate coord, EtpetsGridModel gridModel) {

@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceGeneric;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceBase;
 
 public final class EtpetsResourceLogic {
 
@@ -11,7 +11,7 @@ public final class EtpetsResourceLogic {
         gridModel.resourceModel()
                  .nonDefaultCells()
                  .forEach(cell -> {
-                     if (cell.entity() instanceof EtpetsResourceGeneric resource) {
+                     if (cell.entity() instanceof ResourceBase resource) {
                          resource.regenerate();
                      }
                  });

@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 public sealed interface WatorEntity extends GridEntity
-        permits WatorCreature, WatorConstantEntity {
+        permits CreatureBase, TerrainConstant {
 
     String DESCRIPTOR_ID_WATER = "water";
     String DESCRIPTOR_ID_FISH = "fish";

@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsTerrainEntity;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsTerrainTrail;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
 
 public final class EtpetsTerrainLogic {
 
@@ -15,8 +15,8 @@ public final class EtpetsTerrainLogic {
         var nonDefaultCells = gridModel.terrainModel()
                                        .nonDefaultCells()
                                        .toList();
-        for (GridCell<EtpetsTerrainEntity> cell : nonDefaultCells) {
-            if (cell.entity() instanceof EtpetsTerrainTrail trail) {
+        for (GridCell<TerrainEntity> cell : nonDefaultCells) {
+            if (cell.entity() instanceof Trail trail) {
                 trail.decay(TRAIL_DECAY_PER_STEP);
                 if (trail.isDepleted()) {
                     // Replace Trail with Ground

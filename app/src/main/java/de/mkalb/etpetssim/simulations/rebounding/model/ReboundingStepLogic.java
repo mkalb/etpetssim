@@ -8,9 +8,9 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingConstantEntity;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingMovingEntity;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant;
 
 public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntity, ReboundingStatistics> {
 
@@ -27,8 +27,8 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                                  WritableGridModel<ReboundingEntity> model,
                                  int stepIndex,
                                  ReboundingStatistics statistics) {
-        if (!(agentCell.entity() instanceof ReboundingMovingEntity movingEntity)) {
-            throw new IllegalArgumentException("Provided cell does not contain a ReboundingMovingEntity entity. Cell: " + agentCell);
+        if (!(agentCell.entity() instanceof Rebounder movingEntity)) {
+            throw new IllegalArgumentException("Provided cell does not contain a Rebounder entity. Cell: " + agentCell);
         }
         GridCoordinate currentCoordinate = agentCell.coordinate();
 
@@ -53,11 +53,11 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                     neighbor.mappedNeighborCoordinate()));
         } else { // VALID
             var neighborEntity = model.getEntity(neighbor.mappedNeighborCoordinate());
-            if (neighborEntity == ReboundingConstantEntity.GROUND) {
+            if (neighborEntity == TerrainConstant.GROUND) {
                 // Move the entity to the new empty cell
                 model.setEntity(neighbor.mappedNeighborCoordinate(), movingEntity);
                 model.setEntityToDefault(currentCoordinate);
-            } else if (neighborEntity == ReboundingConstantEntity.WALL) {
+            } else if (neighborEntity == TerrainConstant.WALL) {
                 // Change direction at WALL and remove WALL (set to GROUND)
                 movingEntity.setDirection(computeBounceDirection(
                         movingEntity.getDirection(),

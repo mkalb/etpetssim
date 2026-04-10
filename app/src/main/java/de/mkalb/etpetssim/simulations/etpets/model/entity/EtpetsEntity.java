@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 public sealed interface EtpetsEntity extends GridEntity
-        permits EtpetsTerrainEntity, EtpetsResourceEntity, EtpetsAgentEntity {
+        permits TerrainEntity, ResourceEntity, AgentEntity {
 
     String DESCRIPTOR_ID_TERRAIN_GROUND = "terrain_ground";
     String DESCRIPTOR_ID_TERRAIN_ROCK = "terrain_rock";

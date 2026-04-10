@@ -21,8 +21,8 @@ public final class WatorSimulationManager
         structure = config.createGridStructure();
         statistics = new WatorStatistics(structure.cellCount());
         var random = new Random(config.seed());
-        var model = new ArrayGridModel<WatorEntity>(structure, WatorConstantEntity.WATER);
-        var entityFactory = new WatorEntityFactory();
+        var model = new ArrayGridModel<WatorEntity>(structure, TerrainConstant.WATER);
+        var entityFactory = new CreatureFactory();
 
         // Executor with runner and terminationCondition
         var agentLogicFactory = new WatorAgentLogicFactory(config, random, entityFactory);
@@ -39,7 +39,7 @@ public final class WatorSimulationManager
         statistics.updateCells();
     }
 
-    private void initializeGrid(WritableGridModel<WatorEntity> model, Random random, WatorEntityFactory entityFactory) {
+    private void initializeGrid(WritableGridModel<WatorEntity> model, Random random, CreatureFactory entityFactory) {
         GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
                 () -> createFish(entityFactory, random),
                 WatorEntity::isWater,
@@ -55,18 +55,18 @@ public final class WatorSimulationManager
         sharkInit.initialize(model);
     }
 
-    private WatorFish createFish(WatorEntityFactory entityFactory, Random random) {
+    private Fish createFish(CreatureFactory entityFactory, Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge()); // negative age for birth time
 
-        WatorFish watorFish = entityFactory.createFish(stepIndexOfBirth);
+        Fish watorFish = entityFactory.createFish(stepIndexOfBirth);
         statistics.incrementFishCells();
         return watorFish;
     }
 
-    private WatorShark createShark(WatorEntityFactory entityFactory, Random random) {
+    private Shark createShark(CreatureFactory entityFactory, Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().sharkMaxAge()); // negative age for birth time
 
-        WatorShark watorShark = entityFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
+        Shark watorShark = entityFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
         statistics.incrementSharkCells();
         return watorShark;
     }

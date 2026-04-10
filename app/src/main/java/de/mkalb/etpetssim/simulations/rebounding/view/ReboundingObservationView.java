@@ -6,8 +6,8 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingMovingEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
@@ -40,7 +40,7 @@ public final class ReboundingObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<ReboundingEntity> gridCell) {
-        if ((gridCell != null) && (gridCell.entity() instanceof ReboundingMovingEntity entity)) {
+        if ((gridCell != null) && (gridCell.entity() instanceof Rebounder entity)) {
             directionLabel.setText(entity.getDirection().arrow());
         } else {
             directionLabel.setText("");

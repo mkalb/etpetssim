@@ -43,8 +43,8 @@ public final class SugarMainView
 
     private final Paint backgroundPaint;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
-    private @Nullable CellDrawer<SugarResourceEntity> cellResourceDrawer;
-    private @Nullable CellDrawer<SugarAgentEntity> cellAgentDrawer;
+    private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
+    private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
 
     private int maxColorAgentEnergy = 1;
 
@@ -89,7 +89,7 @@ public final class SugarMainView
 
         cellAgentDrawer = (descriptor, painter, cell, stepCount) -> {
             if ((stepCount > 0)
-                    && (cell.entity() instanceof SugarAgent agent)
+                    && (cell.entity() instanceof Agent agent)
                     && (agent.stepIndexOfSpawn() == (stepCount - 1))) {
                 // draw newly spawned agents with a white border (not for stepCount == 0, as all agents are new then)
                 painter.drawCellInnerCircle(
@@ -110,14 +110,14 @@ public final class SugarMainView
     }
 
     private Paint resolveResourceFillColor(GridEntityDescriptor entityDescriptor,
-                                           SugarResourceEntity entity) {
+                                           ResourceEntity entity) {
         Paint paint = entityDescriptor.color();
         if (paint instanceof Color baseColor) {
             Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
             if (colorMap != null) {
                 Integer value = switch (entity) {
-                    case SugarResourceSugar sugar -> sugar.currentAmount();
-                    case SugarResourceNone _ -> -1;
+                    case Sugar sugar -> sugar.currentAmount();
+                    case NoResource _ -> -1;
                 };
 
                 return colorMap.getOrDefault(value, baseColor);
@@ -129,14 +129,14 @@ public final class SugarMainView
     }
 
     private Paint resolveAgentFillColor(GridEntityDescriptor entityDescriptor,
-                                        SugarAgentEntity entity) {
+                                        AgentEntity entity) {
         Paint paint = entityDescriptor.color();
         if (paint instanceof Color baseColor) {
             Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
             if (colorMap != null) {
                 Integer value = switch (entity) {
-                    case SugarAgent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
-                    case SugarAgentNone _ -> -1;
+                    case Agent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
+                    case NoAgent _ -> -1;
                 };
 
                 return colorMap.getOrDefault(value, baseColor);
@@ -177,8 +177,8 @@ public final class SugarMainView
 
         basePainter.fillCanvasBackground(backgroundPaint);
 
-        ReadableGridModel<SugarResourceEntity> resourceModel = currentModel.resourceModel();
-        ReadableGridModel<SugarAgentEntity> agentModel = currentModel.agentModel();
+        ReadableGridModel<ResourceEntity> resourceModel = currentModel.resourceModel();
+        ReadableGridModel<AgentEntity> agentModel = currentModel.agentModel();
 
         resourceModel.nonDefaultCells()
                      .forEachOrdered(resourceCell -> cellResourceDrawer.draw(

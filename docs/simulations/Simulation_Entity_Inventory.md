@@ -1,138 +1,196 @@
-# Simulation Entity Inventory (Refactoring Baseline)
+# Simulation Entity Inventory
 
-This file inventories all Java types from each simulation's `.../model/entity` package.
+This document lists the Java types in each simulation's `.../model/entity` package.
+It serves as current project documentation and as a naming guide for future simulations.
+Update it whenever entity-package types are added, removed, renamed, or changed structurally.
 
-- Source for simulation types: `app/src/main/java/de/mkalb/etpetssim/SimulationType.java`
-- Implemented simulations according to project documentation: `README.md` (section "Implemented Simulations")
-- `STARTSCREEN` is intentionally excluded because there is no simulation `.../model/entity` package for it.
+## Scope
 
-## Naming Rules Used for `Final Name`
+- Included: Java types in simulation-specific `.../model/entity` packages
+- Excluded: `STARTSCREEN` because it does not have a simulation `.../model/entity` package
 
-Rule precedence (top to bottom):
+## References
 
-1. Keep simulation root entity contracts unchanged.
-2. Keep single enum entity types unchanged for simple simulations.
-3. Apply generic renaming rules (prefix removal, placeholder unification, `Base`, etc.).
+- Simulation types: `app/src/main/java/de/mkalb/etpetssim/SimulationType.java`
+- Implemented simulations: `README.md`, section `Implemented Simulations`
 
-Scope note: `Final Name` values are simulation-local proposal names for refactoring and are not required to be globally
-unique.
+## Table of Contents
 
-Execution scope for follow-up rename chats:
+- [Scope](#scope)
+- [References](#references)
+- [Naming Rules](#naming-rules)
+- [Maintenance Checklist](#maintenance-checklist)
+- [Ordering Conventions](#ordering-conventions)
+- [Template for New Simulations](#template-for-new-simulations)
+- [ET_PETS](#et_pets)
+- [WATOR](#wator)
+- [CONWAYS_LIFE](#conways_life)
+- [LANGTONS_ANT](#langtons_ant)
+- [FOREST_FIRE](#forest_fire)
+- [SUGARSCAPE](#sugarscape)
+- [SNAKE](#snake)
+- [REBOUNDING_ENTITIES](#rebounding_entities)
+- [SIMULATION_LAB](#simulation_lab)
 
-- In scope: Java type names from simulation `.../model/entity` packages listed in this file.
-- Out of scope for now: i18n keys/texts, UI labels, descriptor IDs, method names, and non-entity package symbols.
+## Naming Rules
 
-- Keep simulation root entity types unchanged (`EtpetsEntity`, `WatorEntity`, `LangtonEntity`, `SugarEntity`,
-  `SnakeEntity`, `ReboundingEntity`) to stay easy to find.
-- Keep single entity enums unchanged for simple simulations (`ConwayEntity`, `ForestEntity`, `LabEntity`).
-- Remove simulation prefixes from concrete/entity-role types in `.../model/entity` (for example `WatorFish` -> `Fish`).
-- Keep domain terms when they are the domain name (`Fish`, `Shark`, `Ant`, `Pet`, `Rebounder`, `SnakeHead`).
-- Use unified placeholder names: `NoAgent` and `NoResource`.
-- Use `Base` for abstract classes (for example `EtpetsResourceGeneric` -> `ResourceBase`, `WatorCreature` ->
-  `CreatureBase`).
-- Use unified constant terrain name `TerrainConstant` for constant terrain enums.
-- For descriptor enums implementing `GridEntityDescribable`, use unified role name `EntityDescriptors`
-  (for example `WatorEntityDescribable` -> `EntityDescriptors`).
-  Exception: single-entity enums for simple simulations (`ConwayEntity`, `ForestEntity`, `LabEntity`) stay unchanged.
-- For value object records, remove simulation prefixes but keep domain context
-  (for example `EtpetsPetGenome` -> `PetGenome`, `EtpetsPetTraits` -> `PetTraits`).
-- For factories, prefer domain-focused names over generic `EntityFactory`
-  (for example `WatorEntityFactory` -> `CreatureFactory`).
+Apply these rules in order:
 
-Decision note: In `REBOUNDING_ENTITIES`, `ReboundingMovingEntity` is mapped to `Rebounder` as the target type name.
-Terminology changes outside `Final Name` (for example UI/properties keys and descriptor constants) are intentionally
-deferred.
+1. Use one simulation-specific root entity contract per simulation.
+2. For simple simulations with a single entity enum, use that enum itself as the primary entity type.
+3. Use concise, role-focused names for additional entity types inside `.../model/entity`.
+
+Names in `.../model/entity` packages are local to each simulation. They do not need to be globally unique across the
+project.
+
+- Use one simulation-specific root entity contract per simulation. A common name is `<SimulationName>Entity`
+  (for example `EtpetsEntity`, `WatorEntity`, `LangtonEntity`, `SugarEntity`, `SnakeEntity`, `ReboundingEntity`).
+- Keep the root entity contract easy to find. Use it as the main entry point for entity-related logic.
+- For simple simulations with a single entity enum, prefer a direct enum name such as `ConwayEntity`, `ForestEntity`,
+  or `LabEntity`.
+- Prefer role-focused names inside `.../model/entity` packages instead of repeating the simulation prefix
+  (for example `Fish`, `Shark`, `Ant`, `Pet`, `Rebounder`).
+- Keep domain terms when they are already clear and specific (`Fish`, `Shark`, `Ant`, `Pet`, `Rebounder`,
+  `SnakeHead`).
+- Use the standard placeholder names `NoAgent` and `NoResource` when placeholder entities are needed.
+- Use the suffix `Base` for abstract base classes (for example `ResourceBase`, `CreatureBase`).
+- Use the standard name `TerrainConstant` for constant terrain enums.
+- For descriptor enums that implement `GridEntityDescribable`, use the standard name `EntityDescriptors`.
+  Exception: simple simulations whose single enum already serves as the entity type do not need a separate descriptor
+  enum.
+- For value object records, use concise domain-specific names that keep the needed context
+  (for example `PetGenome`, `PetTraits`).
+- For factories, prefer domain-specific names over overly generic names such as `EntityFactory`
+  (for example `CreatureFactory`).
+- For each new simulation, document all entity-package types with file name, FQCN, role, type kind,
+  `extends`/`implements` relations, and grid interface information.
+
+## Maintenance Checklist
+
+Use this checklist when you add or update a simulation:
+
+- Add, remove, or rename rows to match the current contents of the simulation's `.../model/entity` package.
+- Update `Java File`, `FQCN`, `Kind`, `Extends`, and `Implements` together.
+- Keep `Entity Role` terminology consistent with the existing tables.
+- Keep root entity contracts simulation-specific and easy to identify.
+- Apply the naming rules above to placeholders, abstract bases, descriptors, records, and factories.
+- Prefer documenting the current implementation over planned refactorings.
+
+## Ordering Conventions
+
+- Keep simulation sections in the same order as `README.md` under `Implemented Simulations`.
+- Within each simulation table, group related types together instead of sorting strictly alphabetically.
+- Use this row order when it fits:
+    1. root entity contract
+    2. role-specific contracts
+    3. placeholders
+    4. descriptor enums
+    5. abstract base classes and factories
+    6. concrete classes, enums, and records
+- If a different order reads better for a specific simulation, keep it stable and consistent within that table.
+
+## Template for New Simulations
+
+Use this minimal template when you add a new simulation section:
+
+```markdown
+## NEW_SIMULATION
+
+| Simulation Type | Java File            | FQCN                                                                | Entity Role          | Kind      | Extends      | Implements | Grid Interface |
+|-----------------|----------------------|---------------------------------------------------------------------|----------------------|-----------|--------------|------------|----------------|
+| NEW_SIMULATION  | `ExampleEntity.java` | `de.mkalb.etpetssim.simulations.example.model.entity.ExampleEntity` | base entity contract | interface | `GridEntity` | -          | `GridEntity`   |
+```
 
 ## ET_PETS
 
-| Simulation Type | Java File Name (Type)          | Current FQCN                                                                 | Entity Role          | Java Type Kind | Extends (`extends`)     | Implements (`implements`)                    | Grid Interface Info  | Final Name          |
-|-----------------|--------------------------------|------------------------------------------------------------------------------|----------------------|----------------|-------------------------|----------------------------------------------|----------------------|---------------------|
-| ET_PETS         | `EtpetsAgentEntity.java`       | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsAgentEntity`       | agent contract       | interface      | `EtpetsEntity`          | -                                            | `GridEntity`         | `AgentEntity`       |
-| ET_PETS         | `EtpetsAgentNone.java`         | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsAgentNone`         | agent placeholder    | enum           | -                       | `EtpetsAgentEntity`, `ConstantGridEntity`    | `ConstantGridEntity` | `NoAgent`           |
-| ET_PETS         | `EtpetsEntity.java`            | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity`            | base entity contract | interface      | `GridEntity`            | -                                            | `GridEntity`         | `EtpetsEntity`      |
-| ET_PETS         | `EtpetsEntityDescribable.java` | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntityDescribable` | descriptor           | enum           | -                       | `GridEntityDescribable`                      | none                 | `EntityDescriptors` |
-| ET_PETS         | `EtpetsPet.java`               | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsPet`               | agent                | class          | -                       | `EtpetsAgentEntity`                          | `GridEntity`         | `Pet`               |
-| ET_PETS         | `EtpetsPetEgg.java`            | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsPetEgg`            | agent                | class          | -                       | `EtpetsAgentEntity`                          | `GridEntity`         | `PetEgg`            |
-| ET_PETS         | `EtpetsPetGenome.java`         | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsPetGenome`         | value object         | record         | -                       | -                                            | none                 | `PetGenome`         |
-| ET_PETS         | `EtpetsPetTraits.java`         | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsPetTraits`         | value object         | record         | -                       | -                                            | none                 | `PetTraits`         |
-| ET_PETS         | `EtpetsResourceEntity.java`    | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceEntity`    | resource contract    | interface      | `EtpetsEntity`          | -                                            | `GridEntity`         | `ResourceEntity`    |
-| ET_PETS         | `EtpetsResourceGeneric.java`   | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceGeneric`   | abstract resource    | abstract class | -                       | `EtpetsResourceEntity`                       | `GridEntity`         | `ResourceBase`      |
-| ET_PETS         | `EtpetsResourceInsect.java`    | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceInsect`    | resource             | class          | `EtpetsResourceGeneric` | -                                            | `GridEntity`         | `Insect`            |
-| ET_PETS         | `EtpetsResourceNone.java`      | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourceNone`      | resource placeholder | enum           | -                       | `EtpetsResourceEntity`, `ConstantGridEntity` | `ConstantGridEntity` | `NoResource`        |
-| ET_PETS         | `EtpetsResourcePlant.java`     | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsResourcePlant`     | resource             | class          | `EtpetsResourceGeneric` | -                                            | `GridEntity`         | `Plant`             |
-| ET_PETS         | `EtpetsTerrainConstant.java`   | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsTerrainConstant`   | terrain constant     | enum           | -                       | `EtpetsTerrainEntity`, `ConstantGridEntity`  | `ConstantGridEntity` | `TerrainConstant`   |
-| ET_PETS         | `EtpetsTerrainEntity.java`     | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsTerrainEntity`     | terrain contract     | interface      | `EtpetsEntity`          | -                                            | `GridEntity`         | `TerrainEntity`     |
-| ET_PETS         | `EtpetsTerrainTrail.java`      | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsTerrainTrail`      | terrain              | class          | -                       | `EtpetsTerrainEntity`                        | `GridEntity`         | `Trail`             |
+| Simulation Type | Java File                | FQCN                                                                   | Entity Role          | Kind           | Extends        | Implements                             | Grid Interface       |
+|-----------------|--------------------------|------------------------------------------------------------------------|----------------------|----------------|----------------|----------------------------------------|----------------------|
+| ET_PETS         | `EtpetsEntity.java`      | `de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity`      | base entity contract | interface      | `GridEntity`   | -                                      | `GridEntity`         |
+| ET_PETS         | `AgentEntity.java`       | `de.mkalb.etpetssim.simulations.etpets.model.entity.AgentEntity`       | agent contract       | interface      | `EtpetsEntity` | -                                      | `GridEntity`         |
+| ET_PETS         | `ResourceEntity.java`    | `de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceEntity`    | resource contract    | interface      | `EtpetsEntity` | -                                      | `GridEntity`         |
+| ET_PETS         | `TerrainEntity.java`     | `de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity`     | terrain contract     | interface      | `EtpetsEntity` | -                                      | `GridEntity`         |
+| ET_PETS         | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.etpets.model.entity.NoAgent`           | agent placeholder    | enum           | -              | `AgentEntity`, `ConstantGridEntity`    | `ConstantGridEntity` |
+| ET_PETS         | `NoResource.java`        | `de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource`        | resource placeholder | enum           | -              | `ResourceEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
+| ET_PETS         | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.etpets.model.entity.EntityDescriptors` | descriptor           | enum           | -              | `GridEntityDescribable`                | `none`               |
+| ET_PETS         | `ResourceBase.java`      | `de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceBase`      | abstract resource    | abstract class | -              | `ResourceEntity`                       | `GridEntity`         |
+| ET_PETS         | `Pet.java`               | `de.mkalb.etpetssim.simulations.etpets.model.entity.Pet`               | agent                | class          | -              | `AgentEntity`                          | `GridEntity`         |
+| ET_PETS         | `PetEgg.java`            | `de.mkalb.etpetssim.simulations.etpets.model.entity.PetEgg`            | agent                | class          | -              | `AgentEntity`                          | `GridEntity`         |
+| ET_PETS         | `PetGenome.java`         | `de.mkalb.etpetssim.simulations.etpets.model.entity.PetGenome`         | value object         | record         | -              | -                                      | `none`               |
+| ET_PETS         | `PetTraits.java`         | `de.mkalb.etpetssim.simulations.etpets.model.entity.PetTraits`         | value object         | record         | -              | -                                      | `none`               |
+| ET_PETS         | `Insect.java`            | `de.mkalb.etpetssim.simulations.etpets.model.entity.Insect`            | resource             | class          | `ResourceBase` | -                                      | `GridEntity`         |
+| ET_PETS         | `Plant.java`             | `de.mkalb.etpetssim.simulations.etpets.model.entity.Plant`             | resource             | class          | `ResourceBase` | -                                      | `GridEntity`         |
+| ET_PETS         | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant`   | terrain constant     | enum           | -              | `TerrainEntity`, `ConstantGridEntity`  | `ConstantGridEntity` |
+| ET_PETS         | `Trail.java`             | `de.mkalb.etpetssim.simulations.etpets.model.entity.Trail`             | terrain              | class          | -              | `TerrainEntity`                        | `GridEntity`         |
 
 ## WATOR
 
-| Simulation Type | Java File Name (Type)         | Current FQCN                                                               | Entity Role          | Java Type Kind | Extends (`extends`) | Implements (`implements`)                  | Grid Interface Info  | Final Name          |
-|-----------------|-------------------------------|----------------------------------------------------------------------------|----------------------|----------------|---------------------|--------------------------------------------|----------------------|---------------------|
-| WATOR           | `WatorConstantEntity.java`    | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorConstantEntity`    | terrain constant     | enum           | -                   | `WatorEntity`, `ConstantGridEntity`        | `ConstantGridEntity` | `TerrainConstant`   |
-| WATOR           | `WatorCreature.java`          | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorCreature`          | abstract creature    | abstract class | -                   | `WatorEntity`, `Comparable<WatorCreature>` | `GridEntity`         | `CreatureBase`      |
-| WATOR           | `WatorEntity.java`            | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity`            | base entity contract | interface      | `GridEntity`        | -                                          | `GridEntity`         | `WatorEntity`       |
-| WATOR           | `WatorEntityDescribable.java` | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntityDescribable` | descriptor           | enum           | -                   | `GridEntityDescribable`                    | none                 | `EntityDescriptors` |
-| WATOR           | `WatorEntityFactory.java`     | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntityFactory`     | factory              | class          | -                   | -                                          | none                 | `CreatureFactory`   |
-| WATOR           | `WatorFish.java`              | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorFish`              | agent                | class          | `WatorCreature`     | -                                          | `GridEntity`         | `Fish`              |
-| WATOR           | `WatorShark.java`             | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorShark`             | agent                | class          | `WatorCreature`     | -                                          | `GridEntity`         | `Shark`             |
+| Simulation Type | Java File                | FQCN                                                                  | Entity Role          | Kind           | Extends        | Implements                                | Grid Interface       |
+|-----------------|--------------------------|-----------------------------------------------------------------------|----------------------|----------------|----------------|-------------------------------------------|----------------------|
+| WATOR           | `WatorEntity.java`       | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity`       | base entity contract | interface      | `GridEntity`   | -                                         | `GridEntity`         |
+| WATOR           | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.wator.model.entity.EntityDescriptors` | descriptor           | enum           | -              | `GridEntityDescribable`                   | `none`               |
+| WATOR           | `CreatureBase.java`      | `de.mkalb.etpetssim.simulations.wator.model.entity.CreatureBase`      | abstract creature    | abstract class | -              | `WatorEntity`, `Comparable<CreatureBase>` | `GridEntity`         |
+| WATOR           | `CreatureFactory.java`   | `de.mkalb.etpetssim.simulations.wator.model.entity.CreatureFactory`   | factory              | class          | -              | -                                         | `none`               |
+| WATOR           | `Fish.java`              | `de.mkalb.etpetssim.simulations.wator.model.entity.Fish`              | agent                | class          | `CreatureBase` | -                                         | `GridEntity`         |
+| WATOR           | `Shark.java`             | `de.mkalb.etpetssim.simulations.wator.model.entity.Shark`             | agent                | class          | `CreatureBase` | -                                         | `GridEntity`         |
+| WATOR           | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.wator.model.entity.TerrainConstant`   | terrain constant     | enum           | -              | `WatorEntity`, `ConstantGridEntity`       | `ConstantGridEntity` |
 
 ## CONWAYS_LIFE
 
-| Simulation Type | Java File Name (Type) | Current FQCN                                                      | Entity Role | Java Type Kind | Extends (`extends`) | Implements (`implements`)                     | Grid Interface Info  | Final Name     |
-|-----------------|-----------------------|-------------------------------------------------------------------|-------------|----------------|---------------------|-----------------------------------------------|----------------------|----------------|
-| CONWAYS_LIFE    | `ConwayEntity.java`   | `de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity` | cell state  | enum           | -                   | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` | `ConwayEntity` |
+| Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                                    | Grid Interface       |
+|-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|-----------------------------------------------|----------------------|
+| CONWAYS_LIFE    | `ConwayEntity.java` | `de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity` | cell state  | enum | -       | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
 
 ## LANGTONS_ANT
 
-| Simulation Type | Java File Name (Type)              | Current FQCN                                                                      | Entity Role          | Java Type Kind | Extends (`extends`) | Implements (`implements`)                                      | Grid Interface Info  | Final Name          |
-|-----------------|------------------------------------|-----------------------------------------------------------------------------------|----------------------|----------------|---------------------|----------------------------------------------------------------|----------------------|---------------------|
-| LANGTONS_ANT    | `LangtonAnt.java`                  | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonAnt`                  | agent                | class          | -                   | `LangtonAntEntity`                                             | `GridEntity`         | `Ant`               |
-| LANGTONS_ANT    | `LangtonAntEntity.java`            | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonAntEntity`            | agent contract       | interface      | `LangtonEntity`     | -                                                              | `GridEntity`         | `AntEntity`         |
-| LANGTONS_ANT    | `LangtonAntEntityDescribable.java` | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonAntEntityDescribable` | descriptor           | enum           | -                   | `GridEntityDescribable`                                        | none                 | `EntityDescriptors` |
-| LANGTONS_ANT    | `LangtonAntNone.java`              | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonAntNone`              | agent placeholder    | enum           | -                   | `LangtonAntEntity`, `ConstantGridEntity`                       | `ConstantGridEntity` | `NoAgent`           |
-| LANGTONS_ANT    | `LangtonEntity.java`               | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity`               | base entity contract | interface      | `GridEntity`        | -                                                              | `GridEntity`         | `LangtonEntity`     |
-| LANGTONS_ANT    | `LangtonGroundEntity.java`         | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonGroundEntity`         | terrain state        | enum           | -                   | `LangtonEntity`, `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` | `TerrainConstant`   |
+| Simulation Type | Java File                | FQCN                                                                    | Entity Role          | Kind      | Extends         | Implements                                                     | Grid Interface       |
+|-----------------|--------------------------|-------------------------------------------------------------------------|----------------------|-----------|-----------------|----------------------------------------------------------------|----------------------|
+| LANGTONS_ANT    | `LangtonEntity.java`     | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity`     | base entity contract | interface | `GridEntity`    | -                                                              | `GridEntity`         |
+| LANGTONS_ANT    | `AntEntity.java`         | `de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity`         | agent contract       | interface | `LangtonEntity` | -                                                              | `GridEntity`         |
+| LANGTONS_ANT    | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent`           | agent placeholder    | enum      | -               | `AntEntity`, `ConstantGridEntity`                              | `ConstantGridEntity` |
+| LANGTONS_ANT    | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.langton.model.entity.EntityDescriptors` | descriptor           | enum      | -               | `GridEntityDescribable`                                        | `none`               |
+| LANGTONS_ANT    | `Ant.java`               | `de.mkalb.etpetssim.simulations.langton.model.entity.Ant`               | agent                | class     | -               | `AntEntity`                                                    | `GridEntity`         |
+| LANGTONS_ANT    | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant`   | terrain constant     | enum      | -               | `LangtonEntity`, `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
 
 ## FOREST_FIRE
 
-| Simulation Type | Java File Name (Type) | Current FQCN                                                      | Entity Role | Java Type Kind | Extends (`extends`) | Implements (`implements`)                     | Grid Interface Info  | Final Name     |
-|-----------------|-----------------------|-------------------------------------------------------------------|-------------|----------------|---------------------|-----------------------------------------------|----------------------|----------------|
-| FOREST_FIRE     | `ForestEntity.java`   | `de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity` | cell state  | enum           | -                   | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` | `ForestEntity` |
+| Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                                    | Grid Interface       |
+|-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|-----------------------------------------------|----------------------|
+| FOREST_FIRE     | `ForestEntity.java` | `de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity` | cell state  | enum | -       | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
 
 ## SUGARSCAPE
 
-| Simulation Type | Java File Name (Type)         | Current FQCN                                                               | Entity Role          | Java Type Kind | Extends (`extends`) | Implements (`implements`)                   | Grid Interface Info  | Final Name          |
-|-----------------|-------------------------------|----------------------------------------------------------------------------|----------------------|----------------|---------------------|---------------------------------------------|----------------------|---------------------|
-| SUGARSCAPE      | `SugarAgent.java`             | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarAgent`             | agent                | class          | -                   | `SugarAgentEntity`                          | `GridEntity`         | `Agent`             |
-| SUGARSCAPE      | `SugarAgentEntity.java`       | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarAgentEntity`       | agent contract       | interface      | `SugarEntity`       | -                                           | `GridEntity`         | `AgentEntity`       |
-| SUGARSCAPE      | `SugarAgentNone.java`         | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarAgentNone`         | agent placeholder    | enum           | -                   | `SugarAgentEntity`, `ConstantGridEntity`    | `ConstantGridEntity` | `NoAgent`           |
-| SUGARSCAPE      | `SugarEntity.java`            | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity`            | base entity contract | interface      | `GridEntity`        | -                                           | `GridEntity`         | `SugarEntity`       |
-| SUGARSCAPE      | `SugarEntityDescribable.java` | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntityDescribable` | descriptor           | enum           | -                   | `GridEntityDescribable`                     | none                 | `EntityDescriptors` |
-| SUGARSCAPE      | `SugarResourceEntity.java`    | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarResourceEntity`    | resource contract    | interface      | `SugarEntity`       | -                                           | `GridEntity`         | `ResourceEntity`    |
-| SUGARSCAPE      | `SugarResourceNone.java`      | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarResourceNone`      | resource placeholder | enum           | -                   | `SugarResourceEntity`, `ConstantGridEntity` | `ConstantGridEntity` | `NoResource`        |
-| SUGARSCAPE      | `SugarResourceSugar.java`     | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarResourceSugar`     | resource             | class          | -                   | `SugarResourceEntity`                       | `GridEntity`         | `Sugar`             |
+| Simulation Type | Java File                | FQCN                                                                  | Entity Role          | Kind      | Extends       | Implements                             | Grid Interface       |
+|-----------------|--------------------------|-----------------------------------------------------------------------|----------------------|-----------|---------------|----------------------------------------|----------------------|
+| SUGARSCAPE      | `SugarEntity.java`       | `de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity`       | base entity contract | interface | `GridEntity`  | -                                      | `GridEntity`         |
+| SUGARSCAPE      | `AgentEntity.java`       | `de.mkalb.etpetssim.simulations.sugar.model.entity.AgentEntity`       | agent contract       | interface | `SugarEntity` | -                                      | `GridEntity`         |
+| SUGARSCAPE      | `ResourceEntity.java`    | `de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity`    | resource contract    | interface | `SugarEntity` | -                                      | `GridEntity`         |
+| SUGARSCAPE      | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.sugar.model.entity.NoAgent`           | agent placeholder    | enum      | -             | `AgentEntity`, `ConstantGridEntity`    | `ConstantGridEntity` |
+| SUGARSCAPE      | `NoResource.java`        | `de.mkalb.etpetssim.simulations.sugar.model.entity.NoResource`        | resource placeholder | enum      | -             | `ResourceEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
+| SUGARSCAPE      | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.sugar.model.entity.EntityDescriptors` | descriptor           | enum      | -             | `GridEntityDescribable`                | `none`               |
+| SUGARSCAPE      | `Agent.java`             | `de.mkalb.etpetssim.simulations.sugar.model.entity.Agent`             | agent                | class     | -             | `AgentEntity`                          | `GridEntity`         |
+| SUGARSCAPE      | `Sugar.java`             | `de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar`             | resource             | class     | -             | `ResourceEntity`                       | `GridEntity`         |
 
 ## SNAKE
 
-| Simulation Type | Java File Name (Type)         | Current FQCN                                                               | Entity Role          | Java Type Kind | Extends (`extends`) | Implements (`implements`)           | Grid Interface Info  | Final Name          |
-|-----------------|-------------------------------|----------------------------------------------------------------------------|----------------------|----------------|---------------------|-------------------------------------|----------------------|---------------------|
-| SNAKE           | `SnakeConstantEntity.java`    | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity`    | terrain constant     | enum           | -                   | `SnakeEntity`, `ConstantGridEntity` | `ConstantGridEntity` | `TerrainConstant`   |
-| SNAKE           | `SnakeEntity.java`            | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity`            | base entity contract | interface      | `GridEntity`        | -                                   | `GridEntity`         | `SnakeEntity`       |
-| SNAKE           | `SnakeEntityDescribable.java` | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntityDescribable` | descriptor           | enum           | -                   | `GridEntityDescribable`             | none                 | `EntityDescriptors` |
-| SNAKE           | `SnakeHead.java`              | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead`              | agent                | class          | -                   | `SnakeEntity`                       | `GridEntity`         | `SnakeHead`         |
+| Simulation Type | Java File                | FQCN                                                                  | Entity Role          | Kind      | Extends      | Implements                          | Grid Interface       |
+|-----------------|--------------------------|-----------------------------------------------------------------------|----------------------|-----------|--------------|-------------------------------------|----------------------|
+| SNAKE           | `SnakeEntity.java`       | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity`       | base entity contract | interface | `GridEntity` | -                                   | `GridEntity`         |
+| SNAKE           | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.snake.model.entity.EntityDescriptors` | descriptor           | enum      | -            | `GridEntityDescribable`             | `none`               |
+| SNAKE           | `SnakeHead.java`         | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead`         | agent                | class     | -            | `SnakeEntity`                       | `GridEntity`         |
+| SNAKE           | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant`   | terrain constant     | enum      | -            | `SnakeEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
 
 ## REBOUNDING_ENTITIES
 
-| Simulation Type     | Java File Name (Type)              | Current FQCN                                                                         | Entity Role          | Java Type Kind | Extends (`extends`) | Implements (`implements`)                | Grid Interface Info  | Final Name          |
-|---------------------|------------------------------------|--------------------------------------------------------------------------------------|----------------------|----------------|---------------------|------------------------------------------|----------------------|---------------------|
-| REBOUNDING_ENTITIES | `ReboundingConstantEntity.java`    | `de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingConstantEntity`    | terrain constant     | enum           | -                   | `ReboundingEntity`, `ConstantGridEntity` | `ConstantGridEntity` | `TerrainConstant`   |
-| REBOUNDING_ENTITIES | `ReboundingEntity.java`            | `de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity`            | base entity contract | interface      | `GridEntity`        | -                                        | `GridEntity`         | `ReboundingEntity`  |
-| REBOUNDING_ENTITIES | `ReboundingEntityDescribable.java` | `de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntityDescribable` | descriptor           | enum           | -                   | `GridEntityDescribable`                  | none                 | `EntityDescriptors` |
-| REBOUNDING_ENTITIES | `ReboundingMovingEntity.java`      | `de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingMovingEntity`      | agent                | class          | -                   | `ReboundingEntity`                       | `GridEntity`         | `Rebounder`         |
+| Simulation Type     | Java File                | FQCN                                                                       | Entity Role          | Kind      | Extends      | Implements                               | Grid Interface       |
+|---------------------|--------------------------|----------------------------------------------------------------------------|----------------------|-----------|--------------|------------------------------------------|----------------------|
+| REBOUNDING_ENTITIES | `ReboundingEntity.java`  | `de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity`  | base entity contract | interface | `GridEntity` | -                                        | `GridEntity`         |
+| REBOUNDING_ENTITIES | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.rebounding.model.entity.EntityDescriptors` | descriptor           | enum      | -            | `GridEntityDescribable`                  | `none`               |
+| REBOUNDING_ENTITIES | `Rebounder.java`         | `de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder`         | agent                | class     | -            | `ReboundingEntity`                       | `GridEntity`         |
+| REBOUNDING_ENTITIES | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant`   | terrain constant     | enum      | -            | `ReboundingEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
 
 ## SIMULATION_LAB
 
-| Simulation Type | Java File Name (Type) | Current FQCN                                                | Entity Role | Java Type Kind | Extends (`extends`) | Implements (`implements`)                     | Grid Interface Info  | Final Name  |
-|-----------------|-----------------------|-------------------------------------------------------------|-------------|----------------|---------------------|-----------------------------------------------|----------------------|-------------|
-| SIMULATION_LAB  | `LabEntity.java`      | `de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity` | cell state  | enum           | -                   | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` | `LabEntity` |
+| Simulation Type | Java File        | FQCN                                                        | Entity Role | Kind | Extends | Implements                                    | Grid Interface       |
+|-----------------|------------------|-------------------------------------------------------------|-------------|------|---------|-----------------------------------------------|----------------------|
+| SIMULATION_LAB  | `LabEntity.java` | `de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity` | cell state  | enum | -       | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
 

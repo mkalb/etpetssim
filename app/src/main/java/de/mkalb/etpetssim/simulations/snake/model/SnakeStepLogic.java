@@ -5,9 +5,9 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeConstantEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
+import de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.MoveContext;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.MoveDecision;
 
@@ -98,7 +98,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         // Move the snake head to newCoordinate
         Optional<GridCoordinate> tailToClear = snakeHead.move(headCoordinate, moveDecision.direction(), additionalGrowth, addedPoints);
         model.setEntity(moveDecision.targetCoordinate(), snakeHead);
-        model.setEntity(headCoordinate, SnakeConstantEntity.SNAKE_SEGMENT);
+        model.setEntity(headCoordinate, TerrainConstant.SNAKE_SEGMENT);
         // Remove tail segment if not growing
         tailToClear.ifPresent(model::setEntityToDefault);
 
@@ -106,7 +106,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         if (moveDecision.isFoodTarget()) {
             model.randomDefaultCoordinate(random)
                  .ifPresentOrElse(
-                         freeCoordinate -> model.setEntity(freeCoordinate, SnakeConstantEntity.GROWTH_FOOD),
+                         freeCoordinate -> model.setEntity(freeCoordinate, TerrainConstant.GROWTH_FOOD),
                          statistics::decreaseFoodCells);
         }
     }

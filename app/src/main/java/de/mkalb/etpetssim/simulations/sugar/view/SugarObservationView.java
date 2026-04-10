@@ -6,9 +6,9 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarAgent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Agent;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarResourceSugar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
@@ -49,13 +49,13 @@ public final class SugarObservationView
                 && (intFormat != null)
                 && !gridCell.entity().isNone()) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            if (gridCell.entity().isAgent() && (gridCell.entity() instanceof SugarAgent agent)) {
+            if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
                 currentEnergyLabel.setText(intFormat.format(agent.currentEnergy()));
             } else {
                 currentEnergyLabel.setText("");
             }
             if (gridCell.entity().isResource()
-                    && (gridCell.entity() instanceof SugarResourceSugar resource)) {
+                    && (gridCell.entity() instanceof Sugar resource)) {
                 currentAmountLabel.setText(intFormat.format(resource.currentAmount()));
             } else {
                 currentAmountLabel.setText("");

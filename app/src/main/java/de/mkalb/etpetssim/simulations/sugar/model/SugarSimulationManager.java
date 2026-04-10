@@ -25,8 +25,8 @@ public final class SugarSimulationManager
         statistics = new SugarStatistics(structure.cellCount());
         var random = new Random(config.seed());
         var model = new SugarGridModel(structure,
-                new SparseGridModel<>(structure, SugarResourceNone.NONE),
-                new SparseGridModel<>(structure, SugarAgentNone.NONE));
+                new SparseGridModel<>(structure, NoResource.NONE),
+                new SparseGridModel<>(structure, NoAgent.NONE));
 
         // Executor with runner and terminationCondition
         var runner = new SugarStepRunner(config, random, model);
@@ -87,7 +87,7 @@ public final class SugarSimulationManager
         List<GridCoordinate> peakCoordinates = computeSugarPeakCoordinates();
 
         Map<GridCoordinate, Integer> sugarMap = computeSugarRadiusMap(config, peakCoordinates, random);
-        sugarMap.forEach(((coordinate, amount) -> model.resourceModel().setEntity(coordinate, new SugarResourceSugar(amount, amount))));
+        sugarMap.forEach(((coordinate, amount) -> model.resourceModel().setEntity(coordinate, new Sugar(amount, amount))));
     }
 
     private Map<GridCoordinate, Integer> computeSugarRadiusMap(SugarConfig config, List<GridCoordinate> peakCoordinates, Random random) {
@@ -146,11 +146,11 @@ public final class SugarSimulationManager
 
     private void initializeGridAgent(SugarConfig config, SugarGridModel model, Random random) {
         int stepIndexOfSpawn = -1;
-        GridInitializer<SugarAgentEntity> agentGridInitializer =
+        GridInitializer<AgentEntity> agentGridInitializer =
                 GridInitializers.fillRandomPercent(
-                        () -> new SugarAgent(config.agentInitialEnergy(), stepIndexOfSpawn),
+                        () -> new Agent(config.agentInitialEnergy(), stepIndexOfSpawn),
                         config.agentPercent(),
-                        SugarAgentNone.NONE,
+                        NoAgent.NONE,
                         random);
         agentGridInitializer.initialize(model.agentModel());
     }
@@ -159,15 +159,15 @@ public final class SugarSimulationManager
     private void initializeGridTest(SugarConfig config, SugarGridModel model) {
         int stepIndexOfSpawn = -1;
         for (int i = 1; i < 30; i++) {
-            model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 10), new SugarAgent(i, stepIndexOfSpawn));
+            model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 10), new Agent(i, stepIndexOfSpawn));
         }
 
         for (int i = 1; i <= config.maxSugarAmount(); i++) {
-            model.resourceModel().setEntity(new GridCoordinate(10 + (i * 2), 20), new SugarResourceSugar(config.maxSugarAmount(), i));
+            model.resourceModel().setEntity(new GridCoordinate(10 + (i * 2), 20), new Sugar(config.maxSugarAmount(), i));
 
             model.resourceModel().setEntity(new GridCoordinate(10 + (i * 2), 30),
-                    new SugarResourceSugar(config.maxSugarAmount(), 1));
-            model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 30), new SugarAgent(i, stepIndexOfSpawn));
+                    new Sugar(config.maxSugarAmount(), 1));
+            model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 30), new Agent(i, stepIndexOfSpawn));
         }
     }
 

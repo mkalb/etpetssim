@@ -4,16 +4,16 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.CompositeGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarAgentEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.AgentEntity;
+import de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
-import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarResourceEntity;
 
 import java.util.*;
 
 public record SugarGridModel(
         GridStructure structure,
-        WritableGridModel<SugarResourceEntity> resourceModel,
-        WritableGridModel<SugarAgentEntity> agentModel)
+        WritableGridModel<ResourceEntity> resourceModel,
+        WritableGridModel<AgentEntity> agentModel)
         implements CompositeGridModel<SugarEntity> {
 
     public SugarGridModel {

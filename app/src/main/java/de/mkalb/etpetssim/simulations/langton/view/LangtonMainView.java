@@ -33,8 +33,8 @@ public final class LangtonMainView
         LangtonObservationView> {
 
     private final Paint backgroundPaint;
-    private @Nullable CellDrawer<LangtonGroundEntity> cellGroundDrawer;
-    private @Nullable CellDrawer<LangtonAntEntity> cellAntDrawer;
+    private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
+    private @Nullable CellDrawer<AntEntity> cellAntDrawer;
 
     public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonGridModel, LangtonConfig, LangtonStatistics> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -47,7 +47,7 @@ public final class LangtonMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
-                .getRequiredByDescriptorId(LangtonGroundEntity.UNVISITED.descriptorId())
+                .getRequiredByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
                 .colorAsOptional().orElse(Color.WHITE);
     }
 
@@ -81,7 +81,7 @@ public final class LangtonMainView
             if ((cellEmojiFont != null)
                     && (cellDimension.innerRadius() > 5.0d)
                     && (descriptor.borderColor() != null)
-                    && (cell.entity() instanceof LangtonAnt ant)) {
+                    && (cell.entity() instanceof Ant ant)) {
                 painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeType.INSIDE);
                 painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(), cellEmojiFont);
             } else if (cellDimension.innerRadius() > 2.0d) {
@@ -120,8 +120,8 @@ public final class LangtonMainView
 
         overlayPainter.clearCanvasBackground();
 
-        ReadableGridModel<LangtonGroundEntity> groundModel = currentModel.groundModel();
-        ReadableGridModel<LangtonAntEntity> antModel = currentModel.antModel();
+        ReadableGridModel<TerrainConstant> groundModel = currentModel.groundModel();
+        ReadableGridModel<AntEntity> antModel = currentModel.antModel();
 
         if ((lastDrawnStepCount + 1) < stepCount) {
             groundModel.nonDefaultCells()
@@ -139,7 +139,7 @@ public final class LangtonMainView
         } else {
             antModel.nonDefaultCells()
                     .forEachOrdered(antCell -> {
-                        GridCell<LangtonGroundEntity> groundCell = groundModel.getGridCell(antCell.coordinate());
+                        GridCell<TerrainConstant> groundCell = groundModel.getGridCell(antCell.coordinate());
                         // draw ground
                         cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
                                 basePainter, groundCell, stepCount);

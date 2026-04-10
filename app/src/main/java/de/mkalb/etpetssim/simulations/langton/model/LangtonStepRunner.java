@@ -29,8 +29,8 @@ public final class LangtonStepRunner
         var antModel = model.antModel();
         var groundModel = model.groundModel();
 
-        for (GridCell<LangtonAntEntity> agentCell : antModel.filteredAndSortedCells(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition())) {
-            if (!(agentCell.entity() instanceof LangtonAnt ant)) {
+        for (GridCell<AntEntity> agentCell : antModel.filteredAndSortedCells(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition())) {
+            if (!(agentCell.entity() instanceof Ant ant)) {
                 continue;
             }
 
@@ -57,27 +57,27 @@ public final class LangtonStepRunner
                 || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED);
     }
 
-    void removeAnt(GridCell<LangtonAntEntity> agentCell, WritableGridModel<LangtonAntEntity> antModel, LangtonStatistics statistics) {
+    void removeAnt(GridCell<AntEntity> agentCell, WritableGridModel<AntEntity> antModel, LangtonStatistics statistics) {
         antModel.setEntityToDefault(agentCell.coordinate());
         statistics.updateCells(-1, 0);
     }
 
-    void moveAnt(GridCell<LangtonAntEntity> agentCell, GridCoordinate newCoordinate, WritableGridModel<LangtonAntEntity> antModel, LangtonAnt ant, LangtonGroundEntity groundEntity) {
+    void moveAnt(GridCell<AntEntity> agentCell, GridCoordinate newCoordinate, WritableGridModel<AntEntity> antModel, Ant ant, TerrainConstant groundEntity) {
         antModel.setEntityToDefault(agentCell.coordinate());
         antModel.setEntity(newCoordinate, agentCell.entity());
         ant.changeDirection(computeNewAntDirection(ant.direction(), groundEntity.ruleIndex()));
     }
 
-    void switchGround(GridCoordinate coordinate, LangtonGroundEntity groundEntity, WritableGridModel<LangtonGroundEntity> groundModel) {
+    void switchGround(GridCoordinate coordinate, TerrainConstant groundEntity, WritableGridModel<TerrainConstant> groundModel) {
         int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getRuleCount();
-        groundModel.setEntity(coordinate, LangtonGroundEntity.byRuleIndex(newRuleIndex));
+        groundModel.setEntity(coordinate, TerrainConstant.byRuleIndex(newRuleIndex));
     }
 
-    LangtonGroundEntity determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {
+    TerrainConstant determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {
         var groundModel = model.groundModel();
-        LangtonGroundEntity groundEntity = groundModel.getEntity(newCoordinate);
-        if (groundEntity == LangtonGroundEntity.UNVISITED) {
-            groundEntity = LangtonGroundEntity.COLOR_0;
+        TerrainConstant groundEntity = groundModel.getEntity(newCoordinate);
+        if (groundEntity == TerrainConstant.UNVISITED) {
+            groundEntity = TerrainConstant.COLOR_0;
             statistics.updateCells(0, 1);
         }
         return groundEntity;

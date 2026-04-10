@@ -29,7 +29,7 @@ public final class EtpetsFactory {
         // Common
         ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EtpetsEntityDescribable.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel
         var configViewModel = new EtpetsConfigViewModel(readOnlySimulationState);
@@ -42,12 +42,12 @@ public final class EtpetsFactory {
                 observationViewModel,
                 EtpetsSimulationManager::new,
                 (model, selectedCoordinate) -> {
-                    EtpetsAgentEntity agentEntity = model.agentModel().getEntity(selectedCoordinate);
+                    AgentEntity agentEntity = model.agentModel().getEntity(selectedCoordinate);
                     if (!agentEntity.isNone()) {
                         return new GridCell<>(selectedCoordinate, agentEntity);
                     }
 
-                    EtpetsResourceEntity resourceEntity = model.resourceModel().getEntity(selectedCoordinate);
+                    ResourceEntity resourceEntity = model.resourceModel().getEntity(selectedCoordinate);
                     if (!resourceEntity.isNone()) {
                         return new GridCell<>(selectedCoordinate, resourceEntity);
                     }
