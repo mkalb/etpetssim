@@ -99,16 +99,22 @@ public final class EtpetsAgentLogic {
                     continue; // Stays on grid for exactly 1 visual step.
                 }
 
+                var neighborRings = computeNeighborRings(currentCoordinate, structure, gridModel);
+
+                // AppLogger.info(String.format("Processing pet %s at %s with neighbors: firstRing=%s, secondRing=%s",
+                //         pet.toDisplayString(), currentCoordinate.toDisplayString(),
+                //         neighborRings.firstRing, neighborRings.secondRing
+                // ));
                 // Step 3 – Eat-if-adjacent (opportunistic eating even when not critically hungry).
                 if (pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD) {
-                    if (tryEat(currentCoordinate, pet, gridModel, structure)) {
+                    if (tryEat(neighborRings.firstRing().values(), pet, random)) {
                         continue;
                     }
                 }
 
                 // Step 4 – Move-to-resource-if-hungry.
                 if (pet.currentEnergy() < RESOURCE_SEEKING_ENERGY_THRESHOLD) {
-                    if (tryMoveTowardResource(currentCoordinate, pet, gridModel, structure)) {
+                    if (tryMoveTowardResource(currentCoordinate, neighborRings, pet, gridModel, structure, random)) {
                         continue;
                     }
                 }
@@ -153,33 +159,57 @@ public final class EtpetsAgentLogic {
 
     // ========== Step 3: Eat-if-adjacent ==========
 
-    private static boolean tryEat(GridCoordinate coord, EtpetsPet pet,
-                                  EtpetsGridModel gridModel, GridStructure structure) {
-        List<GridCoordinate> validNeighbors = getValidNeighborCoordinates(coord, structure);
+    private static boolean tryEat(Collection<EtpetsCell> firstRingNeighborCells, EtpetsPet pet, Random random) {
+        Optional<EtpetsCell> bestConsumableCell = findRandomBestConsumableResourceCell(firstRingNeighborCells, random);
 
-        GridCoordinate bestCoord = null;
+        if (bestConsumableCell.isPresent()
+                && (bestConsumableCell.get().resourceEntity() instanceof EtpetsResourceGeneric genericResource)) {
+            // AppLogger.info("Consume resource " + genericResource.toDisplayString());
+            genericResource.consume();
+            int energyGain = genericResource.energyGainPerAct();
+            pet.changeEnergy(energyGain);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static Optional<EtpetsCell> findRandomBestConsumableResourceCell(Collection<EtpetsCell> cells,
+                                                                             Random random) {
+        List<EtpetsCell> bestConsumableCells = collectBestConsumableResourceCells(cells);
+        if (!bestConsumableCells.isEmpty()) {
+            return Optional.of(bestConsumableCells.get(random.nextInt(bestConsumableCells.size())));
+        }
+
+        return Optional.empty();
+    }
+
+    private static List<EtpetsCell> collectBestConsumableResourceCells(Collection<EtpetsCell> cells) {
+        List<EtpetsCell> bestCells = new ArrayList<>();
         EtpetsResourceGeneric bestResource = null;
 
-        for (GridCoordinate neighborCoord : validNeighbors) {
-            Optional<EtpetsResourceGeneric> resource = asConsumableResource(gridModel.resourceModel().getEntity(neighborCoord));
+        for (EtpetsCell neighborCell : cells) {
+            Optional<EtpetsResourceGeneric> resource = toConsumableResource(neighborCell.resourceEntity());
             if (resource.isEmpty()) {
                 continue;
             }
             EtpetsResourceGeneric consumableResource = resource.orElseThrow();
-            if ((bestCoord == null) || isResourceBetter(consumableResource, neighborCoord, bestResource, bestCoord)) {
-                bestCoord = neighborCoord;
+
+            if ((bestResource == null) || isResourceBetter(consumableResource, bestResource)) {
+                // New strict best candidate: replace all previous candidates.
+                bestCells.clear();
+                bestCells.add(neighborCell);
                 bestResource = consumableResource;
+                continue;
+            }
+
+            // Same score as current best: keep all equal candidates for random tie-break.
+            if (hasSameResourceScore(consumableResource, bestResource)) {
+                bestCells.add(neighborCell);
             }
         }
 
-        if (bestCoord == null) {
-            return false;
-        }
-
-        bestResource.consume();
-        int energyGain = bestResource.energyGainPerAct();
-        pet.changeEnergy(energyGain);
-        return true;
+        return bestCells;
     }
 
     /**
@@ -199,7 +229,26 @@ public final class EtpetsAgentLogic {
         return EtpetsDeterminism.compareCoordinates(candidateCoord, currentCoord) < 0;
     }
 
-    private static Optional<EtpetsResourceGeneric> asConsumableResource(EtpetsResourceEntity entity) {
+    private static boolean isResourceBetter(EtpetsResourceGeneric candidate,
+                                            EtpetsResourceGeneric current) {
+        int gainCmp = Integer.compare(candidate.energyGainPerAct(), current.energyGainPerAct());
+        if (gainCmp != 0) {
+            return gainCmp > 0;
+        }
+        int amtCmp = Double.compare(candidate.currentAmount(), current.currentAmount());
+        if (amtCmp != 0) {
+            return amtCmp > 0;
+        }
+        return false;
+    }
+
+    private static boolean hasSameResourceScore(EtpetsResourceGeneric first,
+                                                EtpetsResourceGeneric second) {
+        return (first.energyGainPerAct() == second.energyGainPerAct())
+                && (Double.compare(first.currentAmount(), second.currentAmount()) == 0);
+    }
+
+    private static Optional<EtpetsResourceGeneric> toConsumableResource(EtpetsResourceEntity entity) {
         if ((entity instanceof EtpetsResourceGeneric resource) && resource.canConsume()) {
             return Optional.of(resource);
         }
@@ -208,64 +257,21 @@ public final class EtpetsAgentLogic {
 
     // ========== Step 4: Move-to-resource-if-hungry ==========
 
-    private static boolean tryMoveTowardResource(GridCoordinate coord, EtpetsPet pet,
-                                                 EtpetsGridModel gridModel, GridStructure structure) {
-        int visionRange = EtpetsPet.VISION_RANGE;
-        Set<GridCoordinate> visibleCoords = getValidCoordinatesWithinRange(coord, structure, visionRange);
+    private static boolean tryMoveTowardResource(GridCoordinate coord, NeighborRings neighborRings, EtpetsPet pet,
+                                                 EtpetsGridModel gridModel, GridStructure structure, Random random) {
+        Optional<EtpetsCell> bestConsumableCell = findRandomBestConsumableResourceCell(neighborRings.secondRing().values().stream().map(c -> c.cell).toList(), random);
+        if (bestConsumableCell.isPresent()) {
+            SecondRingCell secondRingCell = neighborRings.secondRing().get(bestConsumableCell.get().coordinate());
+            Set<GridCoordinate> firstRingCells = secondRingCell.reachableViaFirstRing();
 
-        // Find the best consumable resource within vision range.
-        GridCoordinate targetResource = null;
-        EtpetsResourceGeneric targetResourceEntity = null;
-        for (GridCoordinate c : visibleCoords) {
-            Optional<EtpetsResourceGeneric> resource = asConsumableResource(gridModel.resourceModel().getEntity(c));
-            if (resource.isEmpty()) {
-                continue;
-            }
-            EtpetsResourceGeneric consumableResource = resource.orElseThrow();
-            if ((targetResource == null) || isResourceBetter(consumableResource, c, targetResourceEntity, targetResource)) {
-                targetResource = c;
-                targetResourceEntity = consumableResource;
-            }
+            GridCoordinate moveTo = firstRingCells.stream().findFirst().orElseThrow();
+            // TODO If multiple reachable first-ring cells, compare trail intensity and otherwise choose randomly.
+
+            movePet(coord, moveTo, pet, gridModel);
+
+            return true;
         }
-        if (targetResource == null) {
-            return false;
-        }
-
-        List<GridCoordinate> candidates = getWalkableFreeNeighbors(coord, gridModel, structure);
-        if (candidates.isEmpty()) {
-            return false;
-        }
-
-        GridCoordinate finalTarget = targetResource;
-
-        // Prefer candidates directly adjacent to the target resource.
-        List<GridCoordinate> adjacentToTarget = new ArrayList<>();
-        for (GridCoordinate c : candidates) {
-            if (isAdjacent(c, finalTarget, structure)) {
-                adjacentToTarget.add(c);
-            }
-        }
-
-        GridCoordinate moveTo;
-        if (!adjacentToTarget.isEmpty()) {
-            adjacentToTarget.sort(EtpetsDeterminism::compareCoordinates);
-            moveTo = adjacentToTarget.getFirst();
-        } else {
-            // Move toward target: pick the candidate with the shortest BFS distance.
-            candidates.sort((a, b) -> {
-                int distA = bfsDistance(a, finalTarget, structure, visionRange + 2);
-                int distB = bfsDistance(b, finalTarget, structure, visionRange + 2);
-                int cmp = Integer.compare(distA, distB);
-                if (cmp != 0) {
-                    return cmp;
-                }
-                return EtpetsDeterminism.compareCoordinates(a, b);
-            });
-            moveTo = candidates.getFirst();
-        }
-
-        movePet(coord, moveTo, pet, gridModel);
-        return true;
+        return false;
     }
 
     // ========== Step 5: Reproduce-if-possible ==========
@@ -582,6 +588,62 @@ public final class EtpetsAgentLogic {
 
     // ========== Utility helpers ==========
 
+    /**
+     * Computes two-ring neighborhood data around a center coordinate.
+     *
+     * <p><b>First ring:</b> all valid direct neighbors of {@code coordinate}, stored as a
+     * {@code coordinate -> cell snapshot} map.
+     *
+     * <p><b>Second ring:</b> all valid neighbors of walkable first-ring cells
+     * (see {@link EtpetsCell#isWalkable()}). Each second-ring entry stores the cell snapshot
+     * and the set of first-ring coordinates through which it is reachable.
+     * The center coordinate and first-ring coordinates are excluded from the second ring.
+     *
+     * @param coordinate center coordinate of the expansion.
+     * @param structure  grid structure used for neighbor lookup and bounds validation.
+     * @param gridModel  source model used to snapshot terrain, resource, and agent entities.
+     * @return two-ring neighborhood data with first-ring cell snapshots and second-ring reachability metadata.
+     */
+    private static NeighborRings computeNeighborRings(GridCoordinate coordinate,
+                                                      GridStructure structure,
+                                                      EtpetsGridModel gridModel) {
+        List<GridCoordinate> firstRingCoordinates = getValidNeighborCoordinates(coordinate, structure);
+        Map<GridCoordinate, EtpetsCell> firstRing = new HashMap<>();
+        for (GridCoordinate firstRingCoordinate : firstRingCoordinates) {
+            EtpetsCell cell = EtpetsCell.of(firstRingCoordinate, gridModel);
+            firstRing.put(firstRingCoordinate, cell);
+        }
+
+        // Accumulate reachable first-ring sources per second-ring coordinate.
+        Map<GridCoordinate, Set<GridCoordinate>> secondRingAccumulator = new HashMap<>();
+        for (GridCoordinate firstRingCoordinate : firstRingCoordinates) {
+            EtpetsCell cell = firstRing.get(firstRingCoordinate);
+            if (cell.isWalkable()) {
+                List<GridCoordinate> neighborsOfFirstRing = getValidNeighborCoordinates(firstRingCoordinate, structure);
+                for (GridCoordinate secondRingCoordinate : neighborsOfFirstRing) {
+                    if (secondRingCoordinate.equals(coordinate) || firstRing.containsKey(secondRingCoordinate)) {
+                        continue;
+                    }
+                    secondRingAccumulator
+                            .computeIfAbsent(secondRingCoordinate, k -> new HashSet<>())
+                            .add(firstRingCoordinate);
+                }
+            }
+        }
+
+        // Build SecondRingCell records with unmodifiable sets.
+        Map<GridCoordinate, SecondRingCell> secondRing = new HashMap<>();
+        for (Map.Entry<GridCoordinate, Set<GridCoordinate>> entry : secondRingAccumulator.entrySet()) {
+            GridCoordinate secondRingCoordinate = entry.getKey();
+            secondRing.put(secondRingCoordinate, new SecondRingCell(
+                    EtpetsCell.of(secondRingCoordinate, gridModel),
+                    Collections.unmodifiableSet(entry.getValue())
+            ));
+        }
+
+        return new NeighborRings(Collections.unmodifiableMap(firstRing), Collections.unmodifiableMap(secondRing));
+    }
+
     /** Returns all valid (in-bounds) neighbor coordinates of {@code coord}. */
     private static List<GridCoordinate> getValidNeighborCoordinates(GridCoordinate coord,
                                                                     GridStructure structure) {
@@ -686,5 +748,25 @@ public final class EtpetsAgentLogic {
         }
         return maxDistance + 1;
     }
+
+    /**
+     * A cell in the second neighborhood ring together with the set of first-ring coordinates
+     * through which it is reachable (i.e., via walkable first-ring cells).
+     *
+     * @param cell                  cell snapshot of the second-ring coordinate.
+     * @param reachableViaFirstRing unmodifiable set of first-ring coordinates that are walkable
+     *                              and have this cell as a neighbor.
+     */
+    private record SecondRingCell(EtpetsCell cell,
+                                  Set<GridCoordinate> reachableViaFirstRing) {}
+
+    /**
+     * Two-ring neighborhood data around a center coordinate.
+     *
+     * @param firstRing  unmodifiable map from first-ring coordinate to its cell snapshot.
+     * @param secondRing unmodifiable map from second-ring coordinate to its {@link SecondRingCell} metadata.
+     */
+    private record NeighborRings(Map<GridCoordinate, EtpetsCell> firstRing,
+                                 Map<GridCoordinate, SecondRingCell> secondRing) {}
 
 }
