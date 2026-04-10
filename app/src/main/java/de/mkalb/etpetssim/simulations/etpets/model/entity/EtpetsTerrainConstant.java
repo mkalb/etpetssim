@@ -19,5 +19,10 @@ public enum EtpetsTerrainConstant implements EtpetsTerrainEntity, ConstantGridEn
         return descriptorId;
     }
 
+    @Override
+    public boolean isWalkable() {
+        return this == GROUND;
+    }
+
 }
 

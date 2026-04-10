@@ -13,6 +13,11 @@ public final class EtpetsTerrainTrail implements EtpetsTerrainEntity {
         return EtpetsEntity.DESCRIPTOR_ID_TERRAIN_TRAIL;
     }
 
+    @Override
+    public boolean isWalkable() {
+        return true;
+    }
+
     public double intensity() {
         return intensity;
     }
