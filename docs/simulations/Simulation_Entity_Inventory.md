@@ -92,7 +92,7 @@ Use this checklist when you add or update a simulation:
 
 ## Template for New Simulations
 
-Use this minimal template when you add a new simulation section:
+Use this template when you add a new simulation section:
 
 ```markdown
 ## NEW_SIMULATION
@@ -100,7 +100,20 @@ Use this minimal template when you add a new simulation section:
 | Simulation Type | Java File            | FQCN                                                                | Entity Role          | Kind      | Extends      | Implements | Grid Interface |
 |-----------------|----------------------|---------------------------------------------------------------------|----------------------|-----------|--------------|------------|----------------|
 | NEW_SIMULATION  | `ExampleEntity.java` | `de.mkalb.etpetssim.simulations.example.model.entity.ExampleEntity` | base entity contract | interface | `GridEntity` | -          | `GridEntity`   |
+
+### NEW_SIMULATION - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key             | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------------------|-------|------------|--------------|
+| `example`     | Example Cell      | `example.entity.long`     | -     | `#112233`  | -            |
+| `example.alt` | Example Alt Cell  | `example.entity.alt.long` | `🧪`  | `#445566`  | `#223344`    |
 ```
+
+Notes:
+
+- Use one row per descriptor that contributes rendering metadata.
+- Resolve `Long Name (en_US)` from `messages_en_US.properties` via `Long Name Key`.
+- Document colors as RGB hex in the format `#RRGGBB`; use `-` when not defined.
 
 ## ET_PETS
 
@@ -123,6 +136,11 @@ Use this minimal template when you add a new simulation section:
 | ET_PETS         | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainConstant`   | terrain constant     | enum           | -              | `TerrainEntity`, `ConstantGridEntity`    | `ConstantGridEntity` |
 | ET_PETS         | `Trail.java`             | `de.mkalb.etpetssim.simulations.etpets.model.entity.Trail`             | terrain              | class          | -              | `TerrainEntity`                          | `GridEntity`         |
 
+### ET_PETS - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
+
 ## WATOR
 
 | Simulation Type | Java File                | FQCN                                                                  | Entity Role          | Kind           | Extends        | Implements                                | Grid Interface       |
@@ -135,11 +153,21 @@ Use this minimal template when you add a new simulation section:
 | WATOR           | `Shark.java`             | `de.mkalb.etpetssim.simulations.wator.model.entity.Shark`             | agent                | class          | `CreatureBase` | -                                         | `GridEntity`         |
 | WATOR           | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.wator.model.entity.TerrainConstant`   | terrain constant     | enum           | -              | `WatorEntity`, `ConstantGridEntity`       | `ConstantGridEntity` |
 
+### WATOR - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
+
 ## CONWAYS_LIFE
 
 | Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                             | Grid Interface       |
 |-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|----------------------------------------|----------------------|
 | CONWAYS_LIFE    | `ConwayEntity.java` | `de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity` | cell state  | enum | -       | `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
+
+### CONWAYS_LIFE - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
 
 ## LANGTONS_ANT
 
@@ -152,11 +180,21 @@ Use this minimal template when you add a new simulation section:
 | LANGTONS_ANT    | `Ant.java`               | `de.mkalb.etpetssim.simulations.langton.model.entity.Ant`               | agent                | class     | -               | `AntEntity`                                             | `GridEntity`         |
 | LANGTONS_ANT    | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant`   | terrain constant     | enum      | -               | `LangtonEntity`, `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
 
+### LANGTONS_ANT - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
+
 ## FOREST_FIRE
 
 | Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                             | Grid Interface       |
 |-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|----------------------------------------|----------------------|
 | FOREST_FIRE     | `ForestEntity.java` | `de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity` | cell state  | enum | -       | `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
+
+### FOREST_FIRE - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
 
 ## SUGARSCAPE
 
@@ -174,6 +212,11 @@ Use this minimal template when you add a new simulation section:
 Note: SUGARSCAPE has no terrain entity contract or terrain entities. The `TERRAIN` descriptor in EntityDescriptors is a
 logical descriptor only, not a Java type.
 
+### SUGARSCAPE - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
+
 ## SNAKE
 
 | Simulation Type | Java File                | FQCN                                                                  | Entity Role          | Kind      | Extends      | Implements                               | Grid Interface       |
@@ -182,6 +225,11 @@ logical descriptor only, not a Java type.
 | SNAKE           | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.snake.model.entity.EntityDescriptors` | descriptor           | enum      | -            | `SpecBackedGridEntityDescriptorProvider` | `none`               |
 | SNAKE           | `SnakeHead.java`         | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead`         | agent                | class     | -            | `SnakeEntity`                            | `GridEntity`         |
 | SNAKE           | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant`   | terrain constant     | enum      | -            | `SnakeEntity`, `ConstantGridEntity`      | `ConstantGridEntity` |
+
+### SNAKE - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
 
 ## REBOUNDING_ENTITIES
 
@@ -192,9 +240,19 @@ logical descriptor only, not a Java type.
 | REBOUNDING_ENTITIES | `Rebounder.java`         | `de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder`         | agent                | class     | -            | `ReboundingEntity`                       | `GridEntity`         |
 | REBOUNDING_ENTITIES | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant`   | terrain constant     | enum      | -            | `ReboundingEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
 
+### REBOUNDING_ENTITIES - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
+
 ## SIMULATION_LAB
 
 | Simulation Type | Java File        | FQCN                                                        | Entity Role | Kind | Extends | Implements                             | Grid Interface       |
 |-----------------|------------------|-------------------------------------------------------------|-------------|------|---------|----------------------------------------|----------------------|
 | SIMULATION_LAB  | `LabEntity.java` | `de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity` | cell state  | enum | -       | `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
+
+### SIMULATION_LAB - Entity Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
+|---------------|-------------------|---------------|-------|------------|--------------|
 
