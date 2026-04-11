@@ -23,8 +23,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
             "lab.entity.normal.description",
             null,
             null,
-            null,
-            0
+            null
     ),
     HIGHLIGHTED(
             "highlighted",
@@ -34,8 +33,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
             "lab.entity.highlighted.description",
             null,
             null,
-            null,
-            1
+            null
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -48,8 +46,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -59,8 +56,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

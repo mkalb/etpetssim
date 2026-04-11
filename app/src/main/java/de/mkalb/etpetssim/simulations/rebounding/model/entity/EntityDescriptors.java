@@ -16,8 +16,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "rebounding.entity.ground.description",
             null,
             Color.web("#0b1220"),
-            null,
-            1
+            null
     ),
     WALL(
             ReboundingEntity.DESCRIPTOR_ID_WALL,
@@ -27,8 +26,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "rebounding.entity.wall.description",
             null,
             Color.web("#4a4a4a"),
-            Color.web("#7a7a7a"),
-            2
+            Color.web("#7a7a7a")
     ),
     REBOUNDER(
             ReboundingEntity.DESCRIPTOR_ID_REBOUNDER,
@@ -38,8 +36,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "rebounding.entity.rebounder.description",
             null,
             Color.web("#ffcc00"),
-            Color.web("#cc9900"),
-            3
+            Color.web("#cc9900")
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -52,8 +49,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -63,8 +59,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

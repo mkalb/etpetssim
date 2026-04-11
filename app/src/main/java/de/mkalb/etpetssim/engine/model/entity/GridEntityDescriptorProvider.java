@@ -79,11 +79,4 @@ public interface GridEntityDescriptorProvider {
     @Nullable
     Color borderColor();
 
-    /**
-     * Returns the render priority for this entity. Higher values indicate higher priority.
-     *
-     * @return the render priority
-     */
-    int renderPriority();
-
 }

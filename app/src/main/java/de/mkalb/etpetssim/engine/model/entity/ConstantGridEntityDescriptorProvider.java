@@ -65,9 +65,4 @@ public interface ConstantGridEntityDescriptorProvider extends ConstantGridEntity
         return descriptorSpec().borderColor();
     }
 
-    @Override
-    default int renderPriority() {
-        return descriptorSpec().renderPriority();
-    }
-
 }

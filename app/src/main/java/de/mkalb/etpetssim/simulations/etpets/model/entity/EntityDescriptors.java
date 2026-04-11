@@ -16,8 +16,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.terrain.ground.description",
             null,
             Color.web("#2E2E2E"),
-            null,
-            1
+            null
     ),
     ROCK(
             EtpetsEntity.DESCRIPTOR_ID_ROCK,
@@ -27,8 +26,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.terrain.rock.description",
             null,
             Color.web("#737373"),
-            null,
-            2
+            null
     ),
     WATER(
             EtpetsEntity.DESCRIPTOR_ID_WATER,
@@ -38,8 +36,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.terrain.water.description",
             null,
             Color.web("#1F4FA0"),
-            null,
-            2
+            null
     ),
     TRAIL(
             EtpetsEntity.DESCRIPTOR_ID_TRAIL,
@@ -49,8 +46,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.terrain.trail.description",
             null,
             Color.web("#8E6D3A"),
-            null,
-            3
+            null
     ),
     PLANT(
             EtpetsEntity.DESCRIPTOR_ID_PLANT,
@@ -60,8 +56,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.resource.plant.description",
             null,
             Color.web("#4E9B3A"),
-            null,
-            4
+            null
     ),
     INSECT(
             EtpetsEntity.DESCRIPTOR_ID_INSECT,
@@ -71,8 +66,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.resource.insect.description",
             null,
             Color.web("#D98E04"),
-            null,
-            4
+            null
     ),
     PET(
             EtpetsEntity.DESCRIPTOR_ID_PET,
@@ -82,8 +76,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.agent.pet.description",
             null,
             Color.web("#8A2BE2"),
-            null,
-            5
+            null
     ),
     PET_EGG(
             EtpetsEntity.DESCRIPTOR_ID_PET_EGG,
@@ -93,8 +86,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.agent.petegg.description",
             null,
             Color.web("#F0E68C"),
-            null,
-            6
+            null
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -106,8 +98,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                       String descriptionKey,
                       @Nullable String emojiKey,
                       @Nullable Paint color,
-                      @Nullable Color borderColor,
-                      int renderPriority) {
+                      @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
@@ -116,8 +107,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

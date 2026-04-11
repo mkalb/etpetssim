@@ -16,8 +16,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "sugar.entity.terrain.description",
             null,
             Color.web("#453525"),
-            null,
-            1
+            null
     ),
     SUGAR(
             SugarEntity.DESCRIPTOR_ID_SUGAR,
@@ -27,8 +26,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "sugar.entity.sugar.description",
             "sugar.entity.sugar.emoji",
             Color.web("#D7BE13"),
-            null,
-            2
+            null
     ),
     AGENT(
             SugarEntity.DESCRIPTOR_ID_AGENT,
@@ -38,8 +36,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "sugar.entity.agent.description",
             "sugar.entity.agent.emoji",
             Color.web("#1B5ABA"),
-            null,
-            3
+            null
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -52,8 +49,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -63,8 +59,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

@@ -16,8 +16,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "wator.entity.water.description",
             null,
             Color.rgb(20, 25, 100),
-            null,
-            1
+            null
     ),
     FISH(
             WatorEntity.DESCRIPTOR_ID_FISH,
@@ -27,8 +26,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "wator.entity.fish.description",
             "wator.entity.fish.emoji",
             Color.rgb(0, 160, 100),
-            Color.rgb(20, 25, 100),
-            2
+            Color.rgb(20, 25, 100)
     ),
     SHARK(
             WatorEntity.DESCRIPTOR_ID_SHARK,
@@ -38,8 +36,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "wator.entity.shark.description",
             "wator.entity.shark.emoji",
             Color.rgb(115, 120, 120),
-            Color.rgb(20, 25, 100),
-            3
+            Color.rgb(20, 25, 100)
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -52,8 +49,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -63,8 +59,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

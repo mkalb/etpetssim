@@ -19,7 +19,6 @@ import org.jspecify.annotations.Nullable;
  * @param emojiKey optional localization key for the emoji
  * @param color optional fill color/paint
  * @param borderColor optional border color
- * @param renderPriority rendering order priority
  *
  * @see GridEntityDescriptorProvider
  * @see GridEntityDescriptorRegistry
@@ -33,7 +32,6 @@ public record GridEntityDescriptorSpec(
         String descriptionKey,
         @Nullable String emojiKey,
         @Nullable Paint color,
-        @Nullable Color borderColor,
-        int renderPriority
+        @Nullable Color borderColor
 ) {
 }

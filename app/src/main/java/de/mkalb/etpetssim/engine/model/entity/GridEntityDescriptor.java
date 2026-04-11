@@ -22,7 +22,6 @@ import java.util.*;
  * @param emoji optional resolved emoji representation, or {@code null} if not set
  * @param color optional fill color for rendering, or {@code null} if not set
  * @param borderColor optional border color for rendering, or {@code null} if not set
- * @param renderPriority rendering order priority (higher values are rendered above lower ones)
  *
  * @see GridEntityDescriptorProvider
  * @see GridEntityDescriptorRegistry
@@ -35,8 +34,7 @@ public record GridEntityDescriptor(
         String description,
         @Nullable String emoji,
         @Nullable Paint color,
-        @Nullable Color borderColor,
-        int renderPriority
+        @Nullable Color borderColor
 ) {
 
     /**

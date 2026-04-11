@@ -23,8 +23,7 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
             "conway.entity.dead.description",
             null,
             Color.LIGHTYELLOW,
-            null,
-            0
+            null
     ),
     ALIVE(
             "alive",
@@ -34,8 +33,7 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
             "conway.entity.alive.description",
             null,
             Color.DARKRED,
-            Color.INDIANRED,
-            1
+            Color.INDIANRED
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -48,8 +46,7 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -59,8 +56,7 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

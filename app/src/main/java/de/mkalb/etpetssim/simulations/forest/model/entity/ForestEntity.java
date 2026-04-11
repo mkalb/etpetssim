@@ -23,8 +23,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
             "forest.entity.empty.description",
             null,
             Color.rgb(45, 30, 15),
-            null,
-            0
+            null
     ),
     TREE(
             "tree",
@@ -34,8 +33,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
             "forest.entity.tree.description",
             null,
             Color.FORESTGREEN,
-            null,
-            1
+            null
     ),
     BURNING(
             "burning",
@@ -45,8 +43,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
             "forest.entity.burning.description",
             null,
             Color.ORANGERED,
-            null,
-            2
+            null
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -59,8 +56,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -70,8 +66,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

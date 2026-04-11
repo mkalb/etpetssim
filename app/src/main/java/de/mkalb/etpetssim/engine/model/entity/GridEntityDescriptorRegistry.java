@@ -64,8 +64,7 @@ public final class GridEntityDescriptorRegistry {
                     entity.descriptionKey(),
                     entity.emojiKey(),
                     entity.color(),
-                    entity.borderColor(),
-                    entity.renderPriority()
+                    entity.borderColor()
             );
         }
         return registry;
@@ -89,8 +88,7 @@ public final class GridEntityDescriptorRegistry {
                     entity.descriptionKey(),
                     entity.emojiKey(),
                     entity.color(),
-                    entity.borderColor(),
-                    entity.renderPriority()
+                    entity.borderColor()
             );
         }
         return registry;
@@ -111,7 +109,6 @@ public final class GridEntityDescriptorRegistry {
      * @param emojiKey optional localization key for the emoji, or {@code null}
      * @param color optional fill color or paint, or {@code null}
      * @param borderColor optional border color, or {@code null}
-     * @param renderPriority rendering order priority
      * @return the registered {@link GridEntityDescriptor}
      */
     @SuppressWarnings("UnusedReturnValue")
@@ -123,8 +120,7 @@ public final class GridEntityDescriptorRegistry {
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         GridEntityDescriptor descriptor = new GridEntityDescriptor(
                 descriptorId,
@@ -134,8 +130,7 @@ public final class GridEntityDescriptorRegistry {
                 AppLocalization.getText(descriptionKey),
                 (emojiKey != null) ? AppLocalization.getText(emojiKey) : null,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
         descriptorsById.put(descriptorId, descriptor);
         return descriptor;

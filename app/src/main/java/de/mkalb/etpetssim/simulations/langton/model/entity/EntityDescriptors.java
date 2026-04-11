@@ -16,8 +16,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "langton.entity.ant.description",
             null,
             Color.RED,
-            Color.BLACK,
-            1
+            Color.BLACK
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -30,8 +29,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -41,8 +39,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

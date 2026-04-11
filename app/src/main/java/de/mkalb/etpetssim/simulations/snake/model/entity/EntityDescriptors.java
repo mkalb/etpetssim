@@ -16,8 +16,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.ground.description",
             null,
             Color.web("#0b1220"),
-            null,
-            1
+            null
     ),
     WALL(
             SnakeEntity.DESCRIPTOR_ID_WALL,
@@ -27,8 +26,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.wall.description",
             "snake.entity.wall.emoji",
             Color.web("#4a4a4a"),
-            Color.web("#7a7a7a"),
-            2
+            Color.web("#7a7a7a")
     ),
     GROWTH_FOOD(
             SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD,
@@ -38,8 +36,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.growthfood.description",
             "snake.entity.growthfood.emoji",
             Color.web("#ffcc00"),
-            Color.web("#cc9900"),
-            3
+            Color.web("#cc9900")
     ),
     SNAKE_SEGMENT(
             SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT,
@@ -49,8 +46,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.snakesegment.description",
             "snake.entity.snakesegment.emoji",
             null,
-            null,
-            4
+            null
     ),
     SNAKE_HEAD(
             SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD,
@@ -60,8 +56,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.snakehead.description",
             "snake.entity.snakehead.emoji",
             null,
-            null,
-            5
+            null
     );
 
     private final GridEntityDescriptorSpec spec;
@@ -74,8 +69,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
-            @Nullable Color borderColor,
-            int renderPriority
+            @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
@@ -85,8 +79,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor,
-                renderPriority
+                borderColor
         );
     }
 

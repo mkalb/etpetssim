@@ -65,9 +65,4 @@ public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescri
         return descriptorSpec().borderColor();
     }
 
-    @Override
-    default int renderPriority() {
-        return descriptorSpec().renderPriority();
-    }
-
 }
