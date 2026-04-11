@@ -6,6 +6,23 @@ import javafx.scene.paint.Color;
 
 import java.util.*;
 
+/**
+ * Terrain cell states for the Langton's Ant simulation.
+ * <p>
+ * Each constant represents one ground cell state identified by a {@code ruleIndex}.
+ * The special value {@link #UNVISITED} (rule index {@code -1}) marks cells that have
+ * not yet been visited by any ant. Constants {@link #COLOR_0} through {@link #COLOR_15}
+ * represent the 16 color states used by Langton's Ant rule sets.
+ * </p>
+ * <p>
+ * Every constant carries a {@link de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec}
+ * for descriptor-registry registration and rendering.
+ * </p>
+ *
+ * @see LangtonEntity
+ * @see de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider
+ * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
+ */
 public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescriptorProvider {
 
     UNVISITED(-1, Color.WHITE),
@@ -53,14 +70,34 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
         );
     }
 
+    /**
+     * Returns the {@link TerrainConstant} associated with the given rule index, or {@code null} if none exists.
+     *
+     * @param ruleIndex the rule index to look up
+     * @return the matching {@link TerrainConstant}, or {@code null} if not found
+     */
     public static TerrainConstant byRuleIndex(int ruleIndex) {
         return BY_RULE_INDEX.get(ruleIndex);
     }
 
+    /**
+     * Checks if this terrain constant represents an unvisited cell.
+     *
+     * @return {@code true} if this constant is {@link #UNVISITED}, {@code false} otherwise
+     */
     public boolean isUnvisited() {
         return this == UNVISITED;
     }
 
+    /**
+     * Returns the rule index of this terrain constant.
+     * <p>
+     * The value {@code -1} is used for {@link #UNVISITED}; values {@code 0}–{@code 15}
+     * correspond to the color states used in Langton's Ant rule sets.
+     * </p>
+     *
+     * @return the rule index
+     */
     public int ruleIndex() {
         return ruleIndex;
     }
