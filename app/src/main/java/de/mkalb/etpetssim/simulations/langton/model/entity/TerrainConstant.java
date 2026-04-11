@@ -1,14 +1,12 @@
 package de.mkalb.etpetssim.simulations.langton.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescribable;
+import de.mkalb.etpetssim.engine.model.entity.ConstantDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-public enum TerrainConstant implements LangtonEntity, ConstantGridEntity, GridEntityDescribable {
+public enum TerrainConstant implements LangtonEntity, ConstantDescribableGridEntity {
 
     UNVISITED(-1, Color.WHITE),
     COLOR_0(0, Color.LIGHTGRAY),
@@ -37,28 +35,22 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntity, GridEn
     }
 
     private final int ruleIndex;
-    private final String descriptorId;
-    private final boolean visible;
-    private final String shortKey;
-    private final String longKey;
-    private final String descriptionKey;
-    private final @Nullable String emojiKey;
-    private final Paint color;
-    private final @Nullable Color borderColor;
-    private final int renderPriority;
+    private final EntityDescriptorSpec spec;
 
     TerrainConstant(int ruleIndex, Color color) {
         this.ruleIndex = ruleIndex;
         String id = (ruleIndex < 0) ? "unvisited" : String.valueOf(ruleIndex);
-        descriptorId = "ground" + id;
-        visible = true;
-        shortKey = "langton.entity.ground." + id + ".short";
-        longKey = "langton.entity.ground." + id + ".long";
-        descriptionKey = "langton.entity.ground." + id + ".description";
-        emojiKey = null;
-        this.color = color;
-        borderColor = null;
-        renderPriority = 2;
+        spec = new EntityDescriptorSpec(
+                "ground" + id,
+                true,
+                "langton.entity.ground." + id + ".short",
+                "langton.entity.ground." + id + ".long",
+                "langton.entity.ground." + id + ".description",
+                null,
+                color,
+                null,
+                2
+        );
     }
 
     public static TerrainConstant byRuleIndex(int ruleIndex) {
@@ -74,50 +66,15 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntity, GridEn
     }
 
     @Override
-    public String descriptorId() {
-        return descriptorId;
+    public EntityDescriptorSpec descriptorSpec() {
+        return spec;
     }
 
-    @Override
-    public boolean visible() {
-        return visible;
-    }
-
-    @Override
-    public String shortKey() {
-        return shortKey;
-    }
-
-    @Override
-    public String longKey() {
-        return longKey;
-    }
-
-    @Override
-    public String descriptionKey() {
-        return descriptionKey;
-    }
-
-    @Override
-    public @Nullable String emojiKey() {
-        return emojiKey;
-    }
-
-    @Override
-    public Paint color() {
-        return color;
-    }
-
-    @Override
-    public @Nullable Color borderColor() {
-        return borderColor;
-    }
-
-    @Override
-    public int renderPriority() {
-        return renderPriority;
-    }
-
+    /**
+     * Checks if this entity represents an agent.
+     *
+     * @return {@code true} if this entity is an agent, {@code false} otherwise
+     */
     @Override
     public boolean isAgent() {
         return false;

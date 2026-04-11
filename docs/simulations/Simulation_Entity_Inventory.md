@@ -142,14 +142,14 @@ Use this minimal template when you add a new simulation section:
 
 ## LANGTONS_ANT
 
-| Simulation Type | Java File                | FQCN                                                                    | Entity Role          | Kind      | Extends         | Implements                                                     | Grid Interface       |
-|-----------------|--------------------------|-------------------------------------------------------------------------|----------------------|-----------|-----------------|----------------------------------------------------------------|----------------------|
-| LANGTONS_ANT    | `LangtonEntity.java`     | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity`     | base entity contract | interface | `GridEntity`    | -                                                              | `GridEntity`         |
-| LANGTONS_ANT    | `AntEntity.java`         | `de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity`         | agent contract       | interface | `LangtonEntity` | -                                                              | `GridEntity`         |
-| LANGTONS_ANT    | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent`           | agent placeholder    | enum      | -               | `AntEntity`, `ConstantGridEntity`                              | `ConstantGridEntity` |
-| LANGTONS_ANT    | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.langton.model.entity.EntityDescriptors` | descriptor           | enum      | -               | `GridEntityDescribable`                                        | `none`               |
-| LANGTONS_ANT    | `Ant.java`               | `de.mkalb.etpetssim.simulations.langton.model.entity.Ant`               | agent                | class     | -               | `AntEntity`                                                    | `GridEntity`         |
-| LANGTONS_ANT    | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant`   | terrain constant     | enum      | -               | `LangtonEntity`, `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
+| Simulation Type | Java File                | FQCN                                                                    | Entity Role          | Kind      | Extends         | Implements                                       | Grid Interface       |
+|-----------------|--------------------------|-------------------------------------------------------------------------|----------------------|-----------|-----------------|--------------------------------------------------|----------------------|
+| LANGTONS_ANT    | `LangtonEntity.java`     | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity`     | base entity contract | interface | `GridEntity`    | -                                                | `GridEntity`         |
+| LANGTONS_ANT    | `AntEntity.java`         | `de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity`         | agent contract       | interface | `LangtonEntity` | -                                                | `GridEntity`         |
+| LANGTONS_ANT    | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent`           | agent placeholder    | enum      | -               | `AntEntity`, `ConstantGridEntity`                | `ConstantGridEntity` |
+| LANGTONS_ANT    | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.langton.model.entity.EntityDescriptors` | descriptor           | enum      | -               | `GridEntityDescribable`                          | `none`               |
+| LANGTONS_ANT    | `Ant.java`               | `de.mkalb.etpetssim.simulations.langton.model.entity.Ant`               | agent                | class     | -               | `AntEntity`                                      | `GridEntity`         |
+| LANGTONS_ANT    | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant`   | terrain constant     | enum      | -               | `LangtonEntity`, `ConstantDescribableGridEntity` | `ConstantGridEntity` |
 
 ## FOREST_FIRE
 
