@@ -58,17 +58,17 @@ public final class WatorSimulationManager
     private Fish createFish(CreatureFactory entityFactory, Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge()); // negative age for birth time
 
-        Fish watorFish = entityFactory.createFish(stepIndexOfBirth);
+        Fish fish = entityFactory.createFish(stepIndexOfBirth);
         statistics.incrementFishCells();
-        return watorFish;
+        return fish;
     }
 
     private Shark createShark(CreatureFactory entityFactory, Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().sharkMaxAge()); // negative age for birth time
 
-        Shark watorShark = entityFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
+        Shark shark = entityFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
         statistics.incrementSharkCells();
-        return watorShark;
+        return shark;
     }
 
     @Override

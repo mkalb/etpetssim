@@ -9,9 +9,9 @@ public final class CreatureFactory {
     }
 
     public Fish createFish(int stepIndexOfBirth) {
-        Fish watorFish = new Fish(sequence, stepIndexOfBirth);
+        Fish fish = new Fish(sequence, stepIndexOfBirth);
         sequence++;
-        return watorFish;
+        return fish;
     }
 
     public Shark createShark(int stepIndexOfBirth, int birthEnergy) {
