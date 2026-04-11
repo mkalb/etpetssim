@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Represents a fully resolved descriptor for a grid entity, containing display-ready values.
  * <p>
- * Instances are typically created by resolving localization keys from a {@link GridEntityDescribable}
+ * Instances are typically created by resolving localization keys from a {@link GridEntityDescriptorProvider}
  * (for example {@code shortKey} and {@code longKey}) in the context of a
  * {@link GridEntityDescriptorRegistry}.
  * </p>
@@ -24,7 +24,7 @@ import java.util.*;
  * @param borderColor optional border color for rendering, or {@code null} if not set
  * @param renderPriority rendering order priority (higher values are rendered above lower ones)
  *
- * @see GridEntityDescribable
+ * @see GridEntityDescriptorProvider
  * @see GridEntityDescriptorRegistry
  */
 public record GridEntityDescriptor(

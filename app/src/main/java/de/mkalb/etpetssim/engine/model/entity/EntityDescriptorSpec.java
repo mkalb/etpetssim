@@ -5,7 +5,7 @@ import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Immutable descriptor metadata for a {@link GridEntityDescribable} entity.
+ * Immutable descriptor metadata for a {@link GridEntityDescriptorProvider} entity.
  * <p>
  * This value object stores localization keys and rendering hints before they are
  * resolved to a {@link GridEntityDescriptor} by {@link GridEntityDescriptorRegistry}.

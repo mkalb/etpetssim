@@ -5,17 +5,17 @@ import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Convenience interface for constant entities that are also describable.
+ * Convenience interface for constant entities that are also descriptor providers.
  * <p>
  * Implementations provide one {@link EntityDescriptorSpec} and reuse the default
  * descriptor accessors from this interface.
  * </p>
  *
  * @see ConstantGridEntity
- * @see GridEntityDescribable
+ * @see GridEntityDescriptorProvider
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface ConstantDescribableGridEntity extends ConstantGridEntity, GridEntityDescribable {
+public interface ConstantDescribableGridEntity extends ConstantGridEntity, GridEntityDescriptorProvider {
 
     /**
      * Returns the immutable descriptor specification for this entity.
@@ -70,4 +70,3 @@ public interface ConstantDescribableGridEntity extends ConstantGridEntity, GridE
     }
 
 }
-

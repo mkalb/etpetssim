@@ -37,25 +37,25 @@ public final class GridEntityDescriptorRegistry {
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
-     * {@link GridEntityDescribable} entities provided as varargs.
+     * {@link GridEntityDescriptorProvider} entities provided as varargs.
      *
-     * @param entities one or more describable entities to register
+     * @param entities one or more descriptor provider entities to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry of(GridEntityDescribable... entities) {
+    public static GridEntityDescriptorRegistry of(GridEntityDescriptorProvider... entities) {
         return ofArray(entities);
     }
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
-     * array of {@link GridEntityDescribable} entities.
+     * array of {@link GridEntityDescriptorProvider} entities.
      *
-     * @param entities an array of describable entities to register
+     * @param entities an array of descriptor provider entities to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry ofArray(GridEntityDescribable[] entities) {
+    public static GridEntityDescriptorRegistry ofArray(GridEntityDescriptorProvider[] entities) {
         GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(entities.length);
-        for (GridEntityDescribable entity : entities) {
+        for (GridEntityDescriptorProvider entity : entities) {
             registry.register(
                     entity.descriptorId(),
                     entity.visible(),
@@ -73,14 +73,14 @@ public final class GridEntityDescriptorRegistry {
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
-     * {@link Collection} of {@link GridEntityDescribable} entities.
+     * {@link Collection} of {@link GridEntityDescriptorProvider} entities.
      *
-     * @param entities a collection of describable entities to register
+     * @param entities a collection of descriptor provider entities to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry fromCollection(Collection<? extends GridEntityDescribable> entities) {
+    public static GridEntityDescriptorRegistry fromCollection(Collection<? extends GridEntityDescriptorProvider> entities) {
         GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(entities.size());
-        for (GridEntityDescribable entity : entities) {
+        for (GridEntityDescriptorProvider entity : entities) {
             registry.register(
                     entity.descriptorId(),
                     entity.visible(),

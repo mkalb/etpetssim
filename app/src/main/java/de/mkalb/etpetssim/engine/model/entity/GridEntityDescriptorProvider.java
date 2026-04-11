@@ -18,7 +18,7 @@ import org.jspecify.annotations.Nullable;
  * @see GridEntityDescriptorRegistry
  * @see GridEntityDescriptor
  */
-public interface GridEntityDescribable {
+public interface GridEntityDescriptorProvider {
 
     /**
      * Returns the unique descriptor ID for this entity.

@@ -32,7 +32,7 @@ public final class LangtonFactory {
         // Common
         ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.fromCollection(LangtonEntity.allEntityDescribable());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.fromCollection(LangtonEntity.allEntityDescriptorProviders());
 
         // ViewModel
         var configViewModel = new LangtonConfigViewModel(readOnlySimulationState);
