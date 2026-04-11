@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @see ConstantGridEntity
  * @see GridEntityDescriptorProvider
+ * @see GridEntityDescriptorSpec
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface ConstantGridEntityDescriptorProvider extends ConstantGridEntity, GridEntityDescriptorProvider {
@@ -20,7 +21,7 @@ public interface ConstantGridEntityDescriptorProvider extends ConstantGridEntity
     /**
      * Returns the immutable descriptor specification for this entity.
      *
-     * @return descriptor metadata
+     * @return the {@link GridEntityDescriptorSpec} containing raw descriptor keys and rendering hints
      */
     GridEntityDescriptorSpec descriptorSpec();
 

@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
  * localized resources from a {@link java.util.ResourceBundle}.
  * </p>
  * <p>
- * This interface is intended solely for use by {@link GridEntityDescriptorRegistry}.
+ * This interface is primarily intended for use with {@link GridEntityDescriptorRegistry}.
  * </p>
  *
  * @see GridEntityDescriptorRegistry

@@ -5,13 +5,15 @@ import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Convenience interface for descriptor-provider entities backed by a descriptor spec.
+ * Convenience interface for {@link GridEntityDescriptorProvider} implementations
+ * backed by a {@link GridEntityDescriptorSpec}.
  * <p>
  * Implementations provide one {@link GridEntityDescriptorSpec} and reuse the default
  * descriptor accessors from this interface.
  * </p>
  *
  * @see GridEntityDescriptorProvider
+ * @see GridEntityDescriptorSpec
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescriptorProvider {
@@ -19,7 +21,7 @@ public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescri
     /**
      * Returns the immutable descriptor specification for this entity.
      *
-     * @return descriptor metadata
+     * @return the {@link GridEntityDescriptorSpec} containing raw descriptor keys and rendering hints
      */
     GridEntityDescriptorSpec descriptorSpec();
 

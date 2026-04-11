@@ -78,7 +78,7 @@ public final class GridEntityDescriptorRegistry {
      * @param entities a collection of descriptor provider entities to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry fromCollection(Collection<? extends GridEntityDescriptorProvider> entities) {
+    public static GridEntityDescriptorRegistry ofCollection(Collection<? extends GridEntityDescriptorProvider> entities) {
         GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(entities.size());
         for (GridEntityDescriptorProvider entity : entities) {
             registry.register(
@@ -103,15 +103,15 @@ public final class GridEntityDescriptorRegistry {
      * The descriptor is stored for lookup by its unique descriptor ID.
      * </p>
      *
-     * @param descriptorId    unique identifier for the descriptor
-     * @param visible         whether the entity should be visible in the UI
-     * @param shortKey        localization key for the short name
-     * @param longKey         localization key for the long name
-     * @param descriptionKey  localization key for the description
-     * @param emojiKey        optional localization key for the emoji, or {@code null}
-     * @param color           optional fill color or paint, or {@code null}
-     * @param borderColor     optional border color, or {@code null}
-     * @param renderPriority  rendering order priority
+     * @param descriptorId unique identifier for the descriptor
+     * @param visible whether the entity should be visible in the UI
+     * @param shortKey localization key for the short name
+     * @param longKey localization key for the long name
+     * @param descriptionKey localization key for the description
+     * @param emojiKey optional localization key for the emoji, or {@code null}
+     * @param color optional fill color or paint, or {@code null}
+     * @param borderColor optional border color, or {@code null}
+     * @param renderPriority rendering order priority
      * @return the registered {@link GridEntityDescriptor}
      */
     @SuppressWarnings("UnusedReturnValue")

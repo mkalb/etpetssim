@@ -9,9 +9,9 @@ import java.util.*;
 /**
  * Represents a fully resolved descriptor for a grid entity, containing display-ready values.
  * <p>
- * Instances are typically created by resolving localization keys from a {@link GridEntityDescriptorProvider}
- * (for example {@code shortKey} and {@code longKey}) in the context of a
- * {@link GridEntityDescriptorRegistry}.
+ * Instances are created by {@link GridEntityDescriptorRegistry}, which resolves the localization
+ * keys supplied by a {@link GridEntityDescriptorProvider} (for example {@code shortKey} and
+ * {@code longKey}) into concrete display strings via {@code AppLocalization}.
  * </p>
  *
  * @param descriptorId unique identifier for the entity descriptor
