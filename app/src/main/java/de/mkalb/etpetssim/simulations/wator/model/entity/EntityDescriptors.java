@@ -1,13 +1,13 @@
 package de.mkalb.etpetssim.simulations.wator.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
-import de.mkalb.etpetssim.engine.model.entity.SpecDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProvider;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("SameParameterValue")
-public enum EntityDescriptors implements SpecDescribableGridEntity {
+public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     WATER(
             WatorEntity.DESCRIPTOR_ID_WATER,
             true,

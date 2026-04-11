@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.ConstantDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
 import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
  */
-public enum ConwayEntity implements ConstantDescribableGridEntity {
+public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
     DEAD(
             "dead",
             true,

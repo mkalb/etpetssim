@@ -5,7 +5,7 @@ import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Convenience interface for descriptor-provider entities that are backed by a descriptor spec.
+ * Convenience interface for descriptor-provider entities backed by a descriptor spec.
  * <p>
  * Implementations provide one {@link EntityDescriptorSpec} and reuse the default
  * descriptor accessors from this interface.
@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  * @see GridEntityDescriptorProvider
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface SpecDescribableGridEntity extends GridEntityDescriptorProvider {
+public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescriptorProvider {
 
     /**
      * Returns the immutable descriptor specification for this entity.
@@ -69,3 +69,4 @@ public interface SpecDescribableGridEntity extends GridEntityDescriptorProvider 
     }
 
 }
+

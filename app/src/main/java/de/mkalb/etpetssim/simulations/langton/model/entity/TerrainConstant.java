@@ -1,12 +1,12 @@
 package de.mkalb.etpetssim.simulations.langton.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.ConstantDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
 import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
 import javafx.scene.paint.Color;
 
 import java.util.*;
 
-public enum TerrainConstant implements LangtonEntity, ConstantDescribableGridEntity {
+public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescriptorProvider {
 
     UNVISITED(-1, Color.WHITE),
     COLOR_0(0, Color.LIGHTGRAY),

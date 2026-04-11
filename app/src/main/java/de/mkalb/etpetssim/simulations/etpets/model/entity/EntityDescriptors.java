@@ -1,12 +1,12 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
-import de.mkalb.etpetssim.engine.model.entity.SpecDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProvider;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
-public enum EntityDescriptors implements SpecDescribableGridEntity {
+public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
 
     TERRAIN_GROUND(
             EtpetsEntity.DESCRIPTOR_ID_TERRAIN_GROUND,
@@ -127,4 +127,3 @@ public enum EntityDescriptors implements SpecDescribableGridEntity {
     }
 
 }
-

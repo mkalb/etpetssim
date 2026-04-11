@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.forest.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.ConstantDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
 import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
  */
-public enum ForestEntity implements ConstantDescribableGridEntity {
+public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
     EMPTY(
             "empty",
             true,

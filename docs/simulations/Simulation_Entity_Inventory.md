@@ -55,9 +55,9 @@ project.
 - Use the standard placeholder names `NoAgent` and `NoResource` when placeholder entities are needed.
 - Use the suffix `Base` for abstract base classes (for example `ResourceBase`, `CreatureBase`).
 - Use the standard name `TerrainConstant` for constant terrain enums.
-- For descriptor enums that implement `SpecDescribableGridEntity`, use the standard name `EntityDescriptors`.
+- For descriptor enums that implement `SpecBackedGridEntityDescriptorProvider`, use the standard name `EntityDescriptors`.
   Exception: simple simulations whose single enum already serves as the entity type and implements
-  `ConstantDescribableGridEntity` do not need a separate descriptor enum.
+  `ConstantGridEntityDescriptorProvider` do not need a separate descriptor enum.
 - For value object records, use concise domain-specific names that keep the needed context
   (for example `PetGenome`, `PetTraits`).
 - For factories, prefer domain-specific names over overly generic names such as `EntityFactory`
@@ -111,7 +111,7 @@ Use this minimal template when you add a new simulation section:
 | ET_PETS         | `TerrainEntity.java`     | `de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity`     | terrain contract     | interface      | `EtpetsEntity` | -                                      | `GridEntity`         |
 | ET_PETS         | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.etpets.model.entity.NoAgent`           | agent placeholder    | enum           | -              | `AgentEntity`, `ConstantGridEntity`    | `ConstantGridEntity` |
 | ET_PETS         | `NoResource.java`        | `de.mkalb.etpetssim.simulations.etpets.model.entity.NoResource`        | resource placeholder | enum           | -              | `ResourceEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
-| ET_PETS         | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.etpets.model.entity.EntityDescriptors` | descriptor           | enum           | -              | `SpecDescribableGridEntity`            | `none`               |
+| ET_PETS         | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.etpets.model.entity.EntityDescriptors` | descriptor           | enum           | -              | `SpecBackedGridEntityDescriptorProvider` | `none`             |
 | ET_PETS         | `ResourceBase.java`      | `de.mkalb.etpetssim.simulations.etpets.model.entity.ResourceBase`      | abstract resource    | abstract class | -              | `ResourceEntity`                       | `GridEntity`         |
 | ET_PETS         | `Pet.java`               | `de.mkalb.etpetssim.simulations.etpets.model.entity.Pet`               | agent                | class          | -              | `AgentEntity`                          | `GridEntity`         |
 | ET_PETS         | `PetEgg.java`            | `de.mkalb.etpetssim.simulations.etpets.model.entity.PetEgg`            | agent                | class          | -              | `AgentEntity`                          | `GridEntity`         |
@@ -127,7 +127,7 @@ Use this minimal template when you add a new simulation section:
 | Simulation Type | Java File                | FQCN                                                                  | Entity Role          | Kind           | Extends        | Implements                                | Grid Interface       |
 |-----------------|--------------------------|-----------------------------------------------------------------------|----------------------|----------------|----------------|-------------------------------------------|----------------------|
 | WATOR           | `WatorEntity.java`       | `de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity`       | base entity contract | interface      | `GridEntity`   | -                                         | `GridEntity`         |
-| WATOR           | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.wator.model.entity.EntityDescriptors` | descriptor           | enum           | -              | `SpecDescribableGridEntity`               | `none`               |
+| WATOR           | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.wator.model.entity.EntityDescriptors` | descriptor           | enum           | -              | `SpecBackedGridEntityDescriptorProvider` | `none`             |
 | WATOR           | `CreatureBase.java`      | `de.mkalb.etpetssim.simulations.wator.model.entity.CreatureBase`      | abstract creature    | abstract class | -              | `WatorEntity`, `Comparable<CreatureBase>` | `GridEntity`         |
 | WATOR           | `CreatureFactory.java`   | `de.mkalb.etpetssim.simulations.wator.model.entity.CreatureFactory`   | factory              | class          | -              | -                                         | `none`               |
 | WATOR           | `Fish.java`              | `de.mkalb.etpetssim.simulations.wator.model.entity.Fish`              | agent                | class          | `CreatureBase` | -                                         | `GridEntity`         |
@@ -138,7 +138,7 @@ Use this minimal template when you add a new simulation section:
 
 | Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                      | Grid Interface       |
 |-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|---------------------------------|----------------------|
-| CONWAYS_LIFE    | `ConwayEntity.java` | `de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity` | cell state  | enum | -       | `ConstantDescribableGridEntity` | `ConstantGridEntity` |
+| CONWAYS_LIFE    | `ConwayEntity.java` | `de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity` | cell state  | enum | -       | `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
 
 ## LANGTONS_ANT
 
@@ -147,15 +147,15 @@ Use this minimal template when you add a new simulation section:
 | LANGTONS_ANT    | `LangtonEntity.java`     | `de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity`     | base entity contract | interface | `GridEntity`    | -                                                | `GridEntity`         |
 | LANGTONS_ANT    | `AntEntity.java`         | `de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity`         | agent contract       | interface | `LangtonEntity` | -                                                | `GridEntity`         |
 | LANGTONS_ANT    | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.langton.model.entity.NoAgent`           | agent placeholder    | enum      | -               | `AntEntity`, `ConstantGridEntity`                | `ConstantGridEntity` |
-| LANGTONS_ANT    | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.langton.model.entity.EntityDescriptors` | descriptor           | enum      | -               | `SpecDescribableGridEntity`                      | `none`               |
+| LANGTONS_ANT    | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.langton.model.entity.EntityDescriptors` | descriptor           | enum      | -               | `SpecBackedGridEntityDescriptorProvider` | `none`             |
 | LANGTONS_ANT    | `Ant.java`               | `de.mkalb.etpetssim.simulations.langton.model.entity.Ant`               | agent                | class     | -               | `AntEntity`                                      | `GridEntity`         |
-| LANGTONS_ANT    | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant`   | terrain constant     | enum      | -               | `LangtonEntity`, `ConstantDescribableGridEntity` | `ConstantGridEntity` |
+| LANGTONS_ANT    | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant`   | terrain constant     | enum      | -               | `LangtonEntity`, `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
 
 ## FOREST_FIRE
 
 | Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                      | Grid Interface       |
 |-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|---------------------------------|----------------------|
-| FOREST_FIRE     | `ForestEntity.java` | `de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity` | cell state  | enum | -       | `ConstantDescribableGridEntity` | `ConstantGridEntity` |
+| FOREST_FIRE     | `ForestEntity.java` | `de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity` | cell state  | enum | -       | `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
 
 ## SUGARSCAPE
 
@@ -166,7 +166,7 @@ Use this minimal template when you add a new simulation section:
 | SUGARSCAPE      | `ResourceEntity.java`    | `de.mkalb.etpetssim.simulations.sugar.model.entity.ResourceEntity`    | resource contract    | interface | `SugarEntity` | -                                      | `GridEntity`         |
 | SUGARSCAPE      | `NoAgent.java`           | `de.mkalb.etpetssim.simulations.sugar.model.entity.NoAgent`           | agent placeholder    | enum      | -             | `AgentEntity`, `ConstantGridEntity`    | `ConstantGridEntity` |
 | SUGARSCAPE      | `NoResource.java`        | `de.mkalb.etpetssim.simulations.sugar.model.entity.NoResource`        | resource placeholder | enum      | -             | `ResourceEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
-| SUGARSCAPE      | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.sugar.model.entity.EntityDescriptors` | descriptor           | enum      | -             | `SpecDescribableGridEntity`            | `none`               |
+| SUGARSCAPE      | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.sugar.model.entity.EntityDescriptors` | descriptor           | enum      | -             | `SpecBackedGridEntityDescriptorProvider` | `none`             |
 | SUGARSCAPE      | `Agent.java`             | `de.mkalb.etpetssim.simulations.sugar.model.entity.Agent`             | agent                | class     | -             | `AgentEntity`                          | `GridEntity`         |
 | SUGARSCAPE      | `Sugar.java`             | `de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar`             | resource             | class     | -             | `ResourceEntity`                       | `GridEntity`         |
 
@@ -175,7 +175,7 @@ Use this minimal template when you add a new simulation section:
 | Simulation Type | Java File                | FQCN                                                                  | Entity Role          | Kind      | Extends      | Implements                          | Grid Interface       |
 |-----------------|--------------------------|-----------------------------------------------------------------------|----------------------|-----------|--------------|-------------------------------------|----------------------|
 | SNAKE           | `SnakeEntity.java`       | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity`       | base entity contract | interface | `GridEntity` | -                                   | `GridEntity`         |
-| SNAKE           | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.snake.model.entity.EntityDescriptors` | descriptor           | enum      | -            | `SpecDescribableGridEntity`         | `none`               |
+| SNAKE           | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.snake.model.entity.EntityDescriptors` | descriptor           | enum      | -            | `SpecBackedGridEntityDescriptorProvider` | `none`             |
 | SNAKE           | `SnakeHead.java`         | `de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead`         | agent                | class     | -            | `SnakeEntity`                       | `GridEntity`         |
 | SNAKE           | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.snake.model.entity.TerrainConstant`   | terrain constant     | enum      | -            | `SnakeEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
 
@@ -184,7 +184,7 @@ Use this minimal template when you add a new simulation section:
 | Simulation Type     | Java File                | FQCN                                                                       | Entity Role          | Kind      | Extends      | Implements                               | Grid Interface       |
 |---------------------|--------------------------|----------------------------------------------------------------------------|----------------------|-----------|--------------|------------------------------------------|----------------------|
 | REBOUNDING_ENTITIES | `ReboundingEntity.java`  | `de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity`  | base entity contract | interface | `GridEntity` | -                                        | `GridEntity`         |
-| REBOUNDING_ENTITIES | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.rebounding.model.entity.EntityDescriptors` | descriptor           | enum      | -            | `SpecDescribableGridEntity`              | `none`               |
+| REBOUNDING_ENTITIES | `EntityDescriptors.java` | `de.mkalb.etpetssim.simulations.rebounding.model.entity.EntityDescriptors` | descriptor           | enum      | -            | `SpecBackedGridEntityDescriptorProvider` | `none`             |
 | REBOUNDING_ENTITIES | `Rebounder.java`         | `de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder`         | agent                | class     | -            | `ReboundingEntity`                       | `GridEntity`         |
 | REBOUNDING_ENTITIES | `TerrainConstant.java`   | `de.mkalb.etpetssim.simulations.rebounding.model.entity.TerrainConstant`   | terrain constant     | enum      | -            | `ReboundingEntity`, `ConstantGridEntity` | `ConstantGridEntity` |
 
@@ -192,5 +192,5 @@ Use this minimal template when you add a new simulation section:
 
 | Simulation Type | Java File        | FQCN                                                        | Entity Role | Kind | Extends | Implements                      | Grid Interface       |
 |-----------------|------------------|-------------------------------------------------------------|-------------|------|---------|---------------------------------|----------------------|
-| SIMULATION_LAB  | `LabEntity.java` | `de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity` | cell state  | enum | -       | `ConstantDescribableGridEntity` | `ConstantGridEntity` |
+| SIMULATION_LAB  | `LabEntity.java` | `de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity` | cell state  | enum | -       | `ConstantGridEntityDescriptorProvider` | `ConstantGridEntity` |
 

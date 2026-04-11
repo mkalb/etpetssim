@@ -1,13 +1,13 @@
 package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
-import de.mkalb.etpetssim.engine.model.entity.SpecDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProvider;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("SameParameterValue")
-public enum EntityDescriptors implements SpecDescribableGridEntity {
+public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     ANT(
             AntEntity.DESCRIPTOR_ID_ANT,
             true,
