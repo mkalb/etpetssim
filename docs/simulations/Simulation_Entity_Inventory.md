@@ -136,9 +136,9 @@ Use this minimal template when you add a new simulation section:
 
 ## CONWAYS_LIFE
 
-| Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                                    | Grid Interface       |
-|-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|-----------------------------------------------|----------------------|
-| CONWAYS_LIFE    | `ConwayEntity.java` | `de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity` | cell state  | enum | -       | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
+| Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                      | Grid Interface       |
+|-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|---------------------------------|----------------------|
+| CONWAYS_LIFE    | `ConwayEntity.java` | `de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity` | cell state  | enum | -       | `ConstantDescribableGridEntity` | `ConstantGridEntity` |
 
 ## LANGTONS_ANT
 
@@ -153,9 +153,9 @@ Use this minimal template when you add a new simulation section:
 
 ## FOREST_FIRE
 
-| Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                                    | Grid Interface       |
-|-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|-----------------------------------------------|----------------------|
-| FOREST_FIRE     | `ForestEntity.java` | `de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity` | cell state  | enum | -       | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
+| Simulation Type | Java File           | FQCN                                                              | Entity Role | Kind | Extends | Implements                      | Grid Interface       |
+|-----------------|---------------------|-------------------------------------------------------------------|-------------|------|---------|---------------------------------|----------------------|
+| FOREST_FIRE     | `ForestEntity.java` | `de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity` | cell state  | enum | -       | `ConstantDescribableGridEntity` | `ConstantGridEntity` |
 
 ## SUGARSCAPE
 
@@ -190,7 +190,7 @@ Use this minimal template when you add a new simulation section:
 
 ## SIMULATION_LAB
 
-| Simulation Type | Java File        | FQCN                                                        | Entity Role | Kind | Extends | Implements                                    | Grid Interface       |
-|-----------------|------------------|-------------------------------------------------------------|-------------|------|---------|-----------------------------------------------|----------------------|
-| SIMULATION_LAB  | `LabEntity.java` | `de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity` | cell state  | enum | -       | `ConstantGridEntity`, `GridEntityDescribable` | `ConstantGridEntity` |
+| Simulation Type | Java File        | FQCN                                                        | Entity Role | Kind | Extends | Implements                      | Grid Interface       |
+|-----------------|------------------|-------------------------------------------------------------|-------------|------|---------|---------------------------------|----------------------|
+| SIMULATION_LAB  | `LabEntity.java` | `de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity` | cell state  | enum | -       | `ConstantDescribableGridEntity` | `ConstantGridEntity` |
 

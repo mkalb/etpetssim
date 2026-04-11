@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.forest.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescribable;
+import de.mkalb.etpetssim.engine.model.entity.ConstantDescribableGridEntity;
+import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
@@ -14,7 +14,7 @@ import org.jspecify.annotations.Nullable;
  *
  * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
  */
-public enum ForestEntity implements ConstantGridEntity, GridEntityDescribable {
+public enum ForestEntity implements ConstantDescribableGridEntity {
     EMPTY(
             "empty",
             true,
@@ -49,15 +49,7 @@ public enum ForestEntity implements ConstantGridEntity, GridEntityDescribable {
             2
     );
 
-    private final String descriptorId;
-    private final boolean visible;
-    private final String shortKey;
-    private final String longKey;
-    private final String descriptionKey;
-    private final @Nullable String emojiKey;
-    private final @Nullable Paint color;
-    private final @Nullable Color borderColor;
-    private final int renderPriority;
+    private final EntityDescriptorSpec spec;
 
     ForestEntity(
             String descriptorId,
@@ -70,60 +62,22 @@ public enum ForestEntity implements ConstantGridEntity, GridEntityDescribable {
             @Nullable Color borderColor,
             int renderPriority
     ) {
-        this.descriptorId = descriptorId;
-        this.visible = visible;
-        this.shortKey = shortKey;
-        this.longKey = longKey;
-        this.descriptionKey = descriptionKey;
-        this.emojiKey = emojiKey;
-        this.color = color;
-        this.borderColor = borderColor;
-        this.renderPriority = renderPriority;
+        spec = new EntityDescriptorSpec(
+                descriptorId,
+                visible,
+                shortKey,
+                longKey,
+                descriptionKey,
+                emojiKey,
+                color,
+                borderColor,
+                renderPriority
+        );
     }
 
     @Override
-    public String descriptorId() {
-        return descriptorId;
-    }
-
-    @Override
-    public boolean visible() {
-        return visible;
-    }
-
-    @Override
-    public String shortKey() {
-        return shortKey;
-    }
-
-    @Override
-    public String longKey() {
-        return longKey;
-    }
-
-    @Override
-    public String descriptionKey() {
-        return descriptionKey;
-    }
-
-    @Override
-    public @Nullable String emojiKey() {
-        return emojiKey;
-    }
-
-    @Override
-    public @Nullable Paint color() {
-        return color;
-    }
-
-    @Override
-    public @Nullable Color borderColor() {
-        return borderColor;
-    }
-
-    @Override
-    public int renderPriority() {
-        return renderPriority;
+    public EntityDescriptorSpec descriptorSpec() {
+        return spec;
     }
 
     /**
