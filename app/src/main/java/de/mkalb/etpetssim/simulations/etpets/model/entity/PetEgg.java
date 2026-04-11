@@ -25,7 +25,7 @@ public final class PetEgg implements AgentEntity {
 
     @Override
     public String descriptorId() {
-        return EtpetsEntity.DESCRIPTOR_ID_AGENT_PET_EGG;
+        return EtpetsEntity.DESCRIPTOR_ID_PET_EGG;
     }
 
     @Override

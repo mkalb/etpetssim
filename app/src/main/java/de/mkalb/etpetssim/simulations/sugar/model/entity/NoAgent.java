@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 public enum NoAgent implements AgentEntity, ConstantGridEntity {
 
-    NONE;
+    NO_AGENT;
 
     /**
      * Returns the unique descriptor ID for this entity.
@@ -13,7 +13,7 @@ public enum NoAgent implements AgentEntity, ConstantGridEntity {
      */
     @Override
     public String descriptorId() {
-        return DESCRIPTOR_ID_AGENT_NONE;
+        return DESCRIPTOR_ID_NO_AGENT;
     }
 
     @Override

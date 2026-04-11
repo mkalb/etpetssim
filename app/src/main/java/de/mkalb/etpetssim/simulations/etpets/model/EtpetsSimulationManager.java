@@ -36,8 +36,8 @@ public final class EtpetsSimulationManager
         var model = new EtpetsGridModel(
                 structure,
                 new SparseGridModel<>(structure, TerrainConstant.GROUND),
-                new SparseGridModel<>(structure, NoResource.NONE),
-                new SparseGridModel<>(structure, NoAgent.NONE)
+                new SparseGridModel<>(structure, NoResource.NO_RESOURCE),
+                new SparseGridModel<>(structure, NoAgent.NO_AGENT)
         );
 
         var idSequence = new EtpetsIdSequence(1L);

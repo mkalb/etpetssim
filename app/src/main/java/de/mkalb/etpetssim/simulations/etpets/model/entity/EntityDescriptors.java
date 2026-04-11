@@ -8,8 +8,8 @@ import org.jspecify.annotations.Nullable;
 
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
 
-    TERRAIN_GROUND(
-            EtpetsEntity.DESCRIPTOR_ID_TERRAIN_GROUND,
+    GROUND(
+            EtpetsEntity.DESCRIPTOR_ID_GROUND,
             true,
             "etpets.entity.terrain.ground.short",
             "etpets.entity.terrain.ground.long",
@@ -19,8 +19,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             1
     ),
-    TERRAIN_ROCK(
-            EtpetsEntity.DESCRIPTOR_ID_TERRAIN_ROCK,
+    ROCK(
+            EtpetsEntity.DESCRIPTOR_ID_ROCK,
             true,
             "etpets.entity.terrain.rock.short",
             "etpets.entity.terrain.rock.long",
@@ -30,8 +30,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             2
     ),
-    TERRAIN_WATER(
-            EtpetsEntity.DESCRIPTOR_ID_TERRAIN_WATER,
+    WATER(
+            EtpetsEntity.DESCRIPTOR_ID_WATER,
             true,
             "etpets.entity.terrain.water.short",
             "etpets.entity.terrain.water.long",
@@ -41,8 +41,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             2
     ),
-    TERRAIN_TRAIL(
-            EtpetsEntity.DESCRIPTOR_ID_TERRAIN_TRAIL,
+    TRAIL(
+            EtpetsEntity.DESCRIPTOR_ID_TRAIL,
             true,
             "etpets.entity.terrain.trail.short",
             "etpets.entity.terrain.trail.long",
@@ -52,8 +52,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             3
     ),
-    RESOURCE_PLANT(
-            EtpetsEntity.DESCRIPTOR_ID_RESOURCE_PLANT,
+    PLANT(
+            EtpetsEntity.DESCRIPTOR_ID_PLANT,
             true,
             "etpets.entity.resource.plant.short",
             "etpets.entity.resource.plant.long",
@@ -63,8 +63,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             4
     ),
-    RESOURCE_INSECT(
-            EtpetsEntity.DESCRIPTOR_ID_RESOURCE_INSECT,
+    INSECT(
+            EtpetsEntity.DESCRIPTOR_ID_INSECT,
             true,
             "etpets.entity.resource.insect.short",
             "etpets.entity.resource.insect.long",
@@ -74,8 +74,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             4
     ),
-    AGENT_PET(
-            EtpetsEntity.DESCRIPTOR_ID_AGENT_PET,
+    PET(
+            EtpetsEntity.DESCRIPTOR_ID_PET,
             true,
             "etpets.entity.agent.pet.short",
             "etpets.entity.agent.pet.long",
@@ -85,12 +85,12 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             5
     ),
-    AGENT_PET_EGG(
-            EtpetsEntity.DESCRIPTOR_ID_AGENT_PET_EGG,
+    PET_EGG(
+            EtpetsEntity.DESCRIPTOR_ID_PET_EGG,
             true,
-            "etpets.entity.agent.egg.short",
-            "etpets.entity.agent.egg.long",
-            "etpets.entity.agent.egg.description",
+            "etpets.entity.agent.petegg.short",
+            "etpets.entity.agent.petegg.long",
+            "etpets.entity.agent.petegg.description",
             null,
             Color.web("#F0E68C"),
             null,

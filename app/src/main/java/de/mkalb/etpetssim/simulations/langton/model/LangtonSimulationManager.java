@@ -22,7 +22,7 @@ public final class LangtonSimulationManager
         statistics = new LangtonStatistics(structure.cellCount());
         var model = new LangtonGridModel(structure,
                 new ArrayGridModel<>(structure, TerrainConstant.UNVISITED),
-                new SparseGridModel<>(structure, NoAgent.NONE));
+                new SparseGridModel<>(structure, NoAgent.NO_AGENT));
 
         // Executor with runner and terminationCondition
         var runner = new LangtonStepRunner(config, model);

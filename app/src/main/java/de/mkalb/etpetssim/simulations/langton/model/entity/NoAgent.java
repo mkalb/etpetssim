@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 public enum NoAgent implements AntEntity, ConstantGridEntity {
 
-    NONE;
+    NO_AGENT;
 
     @Override
     public boolean isAgent() {
@@ -13,7 +13,7 @@ public enum NoAgent implements AntEntity, ConstantGridEntity {
 
     @Override
     public String descriptorId() {
-        return AntEntity.DESCRIPTOR_ID_ANT_NONE;
+        return AntEntity.DESCRIPTOR_ID_NO_AGENT;
     }
 
 }

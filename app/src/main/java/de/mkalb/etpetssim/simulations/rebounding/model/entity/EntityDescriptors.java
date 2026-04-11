@@ -30,12 +30,12 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             Color.web("#7a7a7a"),
             2
     ),
-    MOVING_ENTITY(
-            ReboundingEntity.DESCRIPTOR_ID_MOVING_ENTITY,
+    REBOUNDER(
+            ReboundingEntity.DESCRIPTOR_ID_REBOUNDER,
             true,
-            "rebounding.entity.moving.short",
-            "rebounding.entity.moving.long",
-            "rebounding.entity.moving.description",
+            "rebounding.entity.rebounder.short",
+            "rebounding.entity.rebounder.long",
+            "rebounding.entity.rebounder.description",
             null,
             Color.web("#ffcc00"),
             Color.web("#cc9900"),

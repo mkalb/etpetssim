@@ -25,8 +25,8 @@ public final class SugarSimulationManager
         statistics = new SugarStatistics(structure.cellCount());
         var random = new Random(config.seed());
         var model = new SugarGridModel(structure,
-                new SparseGridModel<>(structure, NoResource.NONE),
-                new SparseGridModel<>(structure, NoAgent.NONE));
+                new SparseGridModel<>(structure, NoResource.NO_RESOURCE),
+                new SparseGridModel<>(structure, NoAgent.NO_AGENT));
 
         // Executor with runner and terminationCondition
         var runner = new SugarStepRunner(config, random, model);
@@ -150,7 +150,7 @@ public final class SugarSimulationManager
                 GridInitializers.fillRandomPercent(
                         () -> new Agent(config.agentInitialEnergy(), stepIndexOfSpawn),
                         config.agentPercent(),
-                        NoAgent.NONE,
+                        NoAgent.NO_AGENT,
                         random);
         agentGridInitializer.initialize(model.agentModel());
     }

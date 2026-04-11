@@ -42,7 +42,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                           EtpetsObservationView observationView) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
-                .getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TERRAIN_GROUND)
+                .getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
                 .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
     }
 

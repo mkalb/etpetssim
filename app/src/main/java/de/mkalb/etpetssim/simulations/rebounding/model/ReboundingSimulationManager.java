@@ -32,7 +32,7 @@ public final class ReboundingSimulationManager
 
         // Executor with runner and terminationCondition
         var agentStepLogic = new ReboundingStepLogic(structure, config);
-        var runner = new AsynchronousStepRunner<>(model, ReboundingEntity::isMovingEntity, AgentOrderingStrategies.byPosition(), agentStepLogic);
+        var runner = new AsynchronousStepRunner<>(model, ReboundingEntity::isRebounder, AgentOrderingStrategies.byPosition(), agentStepLogic);
         var terminationCondition = new ReboundingTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
@@ -130,7 +130,7 @@ public final class ReboundingSimulationManager
         int wallCellsInitial = Math.toIntExact(model
                 .countEntities(ReboundingEntity::isWall));
         int movingEntityCellsInitial = Math.toIntExact(model
-                .countEntities(ReboundingEntity::isMovingEntity));
+                .countEntities(ReboundingEntity::isRebounder));
         statistics.updateInitialCells(wallCellsInitial, movingEntityCellsInitial);
     }
 

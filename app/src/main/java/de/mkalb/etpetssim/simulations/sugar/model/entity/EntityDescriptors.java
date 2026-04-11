@@ -19,13 +19,13 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             null,
             1
     ),
-    RESOURCE_SUGAR(
-            SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR,
+    SUGAR(
+            SugarEntity.DESCRIPTOR_ID_SUGAR,
             true,
-            "sugar.entity.resource.short",
-            "sugar.entity.resource.long",
-            "sugar.entity.resource.description",
-            "sugar.entity.resource.emoji",
+            "sugar.entity.sugar.short",
+            "sugar.entity.sugar.long",
+            "sugar.entity.sugar.description",
+            "sugar.entity.sugar.emoji",
             Color.web("#D7BE13"),
             null,
             2

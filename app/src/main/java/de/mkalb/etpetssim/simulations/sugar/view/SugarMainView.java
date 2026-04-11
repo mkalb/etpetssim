@@ -62,7 +62,7 @@ public final class SugarMainView
                 .getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
                 .colorAsOptional().orElse(Color.BLACK);
         entityColors = HashMap.newHashMap(2);
-        entityColors.put(SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR, null);
+        entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR, null);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT, null);
     }
 
@@ -73,8 +73,8 @@ public final class SugarMainView
     @Override
     protected void initSimulation(SugarConfig config, CellDimension cellDimension) {
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
-        entityColors.put(SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR,
-                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR),
+        entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR,
+                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
                         1, config.maxSugarAmount(), config.maxSugarAmount(), SUGAR_MAX_FACTOR_DELTA));
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT,
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),

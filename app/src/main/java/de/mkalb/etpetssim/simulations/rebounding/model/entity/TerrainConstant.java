@@ -34,7 +34,7 @@ public enum TerrainConstant implements ReboundingEntity, ConstantGridEntity {
     }
 
     @Override
-    public boolean isMovingEntity() {
+    public boolean isRebounder() {
         return false;
     }
 

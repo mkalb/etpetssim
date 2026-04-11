@@ -11,7 +11,7 @@ public final class Plant extends ResourceBase {
 
     @Override
     public String descriptorId() {
-        return EtpetsEntity.DESCRIPTOR_ID_RESOURCE_PLANT;
+        return EtpetsEntity.DESCRIPTOR_ID_PLANT;
     }
 
     @Override

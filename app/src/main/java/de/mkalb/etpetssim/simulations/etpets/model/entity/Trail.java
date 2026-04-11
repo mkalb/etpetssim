@@ -10,7 +10,7 @@ public final class Trail implements TerrainEntity {
 
     @Override
     public String descriptorId() {
-        return EtpetsEntity.DESCRIPTOR_ID_TERRAIN_TRAIL;
+        return EtpetsEntity.DESCRIPTOR_ID_TRAIL;
     }
 
     @Override

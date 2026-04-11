@@ -6,9 +6,9 @@ public sealed interface SugarEntity extends GridEntity
         permits ResourceEntity, AgentEntity {
 
     String DESCRIPTOR_ID_AGENT = "agent";
-    String DESCRIPTOR_ID_AGENT_NONE = "agent_none";
-    String DESCRIPTOR_ID_RESOURCE_NONE = "resource_none";
-    String DESCRIPTOR_ID_RESOURCE_SUGAR = "resource_sugar";
+    String DESCRIPTOR_ID_NO_AGENT = "no_agent";
+    String DESCRIPTOR_ID_NO_RESOURCE = "no_resource";
+    String DESCRIPTOR_ID_SUGAR = "sugar";
     String DESCRIPTOR_ID_TERRAIN = "terrain";
 
     @SuppressWarnings("SameReturnValue")

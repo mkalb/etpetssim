@@ -12,7 +12,7 @@ public final class Rebounder implements ReboundingEntity {
 
     @Override
     public String descriptorId() {
-        return ReboundingEntity.DESCRIPTOR_ID_MOVING_ENTITY;
+        return ReboundingEntity.DESCRIPTOR_ID_REBOUNDER;
     }
 
     @Override
@@ -26,7 +26,7 @@ public final class Rebounder implements ReboundingEntity {
     }
 
     @Override
-    public boolean isMovingEntity() {
+    public boolean isRebounder() {
         return true;
     }
 

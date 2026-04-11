@@ -4,9 +4,9 @@ import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 public enum TerrainConstant implements TerrainEntity, ConstantGridEntity {
 
-    GROUND(EtpetsEntity.DESCRIPTOR_ID_TERRAIN_GROUND),
-    ROCK(EtpetsEntity.DESCRIPTOR_ID_TERRAIN_ROCK),
-    WATER(EtpetsEntity.DESCRIPTOR_ID_TERRAIN_WATER);
+    GROUND(EtpetsEntity.DESCRIPTOR_ID_GROUND),
+    ROCK(EtpetsEntity.DESCRIPTOR_ID_ROCK),
+    WATER(EtpetsEntity.DESCRIPTOR_ID_WATER);
 
     private final String descriptorId;
 

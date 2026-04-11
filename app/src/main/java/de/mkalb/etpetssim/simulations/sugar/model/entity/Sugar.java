@@ -17,7 +17,7 @@ public final class Sugar implements ResourceEntity {
      */
     @Override
     public String descriptorId() {
-        return SugarEntity.DESCRIPTOR_ID_RESOURCE_SUGAR;
+        return SugarEntity.DESCRIPTOR_ID_SUGAR;
     }
 
     public int maxAmount() {

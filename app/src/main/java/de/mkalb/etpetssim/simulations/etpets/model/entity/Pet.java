@@ -35,7 +35,7 @@ public final class Pet implements AgentEntity {
 
     @Override
     public String descriptorId() {
-        return EtpetsEntity.DESCRIPTOR_ID_AGENT_PET;
+        return EtpetsEntity.DESCRIPTOR_ID_PET;
     }
 
     @Override

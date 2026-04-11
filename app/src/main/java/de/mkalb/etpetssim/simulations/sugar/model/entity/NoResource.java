@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 public enum NoResource implements ResourceEntity, ConstantGridEntity {
 
-    NONE;
+    NO_RESOURCE;
 
     /**
      * Returns the unique descriptor ID for this entity.
@@ -13,7 +13,7 @@ public enum NoResource implements ResourceEntity, ConstantGridEntity {
      */
     @Override
     public String descriptorId() {
-        return DESCRIPTOR_ID_RESOURCE_NONE;
+        return DESCRIPTOR_ID_NO_RESOURCE;
     }
 
     @Override
