@@ -8,7 +8,7 @@ import org.jspecify.annotations.Nullable;
  * Interface for entities that provide descriptor keys for use with {@link GridEntityDescriptorRegistry}.
  * <p>
  * Unlike {@link GridEntityDescriptor}, this interface does not provide direct values (such as names or descriptions),
- * but instead supplies keys (e.g., {@code shortKey}, {@code longKey}, {@code descriptionKey}) for accessing
+ * but instead supplies keys (e.g., {@code shortNameKey}, {@code longNameKey}, {@code descriptionKey}) for accessing
  * localized resources from a {@link java.util.ResourceBundle}.
  * </p>
  * <p>
@@ -39,14 +39,14 @@ public interface GridEntityDescriptorProvider {
      *
      * @return the localization key for the short name
      */
-    String shortKey();
+    String shortNameKey();
 
     /**
      * Returns the resource bundle key for the long name of this entity.
      *
      * @return the localization key for the long name
      */
-    String longKey();
+    String longNameKey();
 
     /**
      * Returns the resource bundle key for the description of this entity.

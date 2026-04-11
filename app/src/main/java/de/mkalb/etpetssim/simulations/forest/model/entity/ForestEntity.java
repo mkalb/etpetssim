@@ -54,8 +54,8 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
     ForestEntity(
             String descriptorId,
             boolean visible,
-            String shortKey,
-            String longKey,
+            String shortNameKey,
+            String longNameKey,
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
@@ -65,8 +65,8 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
-                shortKey,
-                longKey,
+                shortNameKey,
+                longNameKey,
                 descriptionKey,
                 emojiKey,
                 color,

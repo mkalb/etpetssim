@@ -10,8 +10,8 @@ import java.util.*;
  * Represents a fully resolved descriptor for a grid entity, containing display-ready values.
  * <p>
  * Instances are created by {@link GridEntityDescriptorRegistry}, which resolves the localization
- * keys supplied by a {@link GridEntityDescriptorProvider} (for example {@code shortKey} and
- * {@code longKey}) into concrete display strings via {@code AppLocalization}.
+ * keys supplied by a {@link GridEntityDescriptorProvider} (for example {@code shortNameKey} and
+ * {@code longNameKey}) into concrete display strings via {@code AppLocalization}.
  * </p>
  *
  * @param descriptorId unique identifier for the entity descriptor

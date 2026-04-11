@@ -36,13 +36,13 @@ public interface ConstantGridEntityDescriptorProvider extends ConstantGridEntity
     }
 
     @Override
-    default String shortKey() {
-        return descriptorSpec().shortKey();
+    default String shortNameKey() {
+        return descriptorSpec().shortNameKey();
     }
 
     @Override
-    default String longKey() {
-        return descriptorSpec().longKey();
+    default String longNameKey() {
+        return descriptorSpec().longNameKey();
     }
 
     @Override

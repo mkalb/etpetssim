@@ -59,8 +59,8 @@ public final class GridEntityDescriptorRegistry {
             registry.register(
                     entity.descriptorId(),
                     entity.visible(),
-                    entity.shortKey(),
-                    entity.longKey(),
+                    entity.shortNameKey(),
+                    entity.longNameKey(),
                     entity.descriptionKey(),
                     entity.emojiKey(),
                     entity.color(),
@@ -84,8 +84,8 @@ public final class GridEntityDescriptorRegistry {
             registry.register(
                     entity.descriptorId(),
                     entity.visible(),
-                    entity.shortKey(),
-                    entity.longKey(),
+                    entity.shortNameKey(),
+                    entity.longNameKey(),
                     entity.descriptionKey(),
                     entity.emojiKey(),
                     entity.color(),
@@ -105,8 +105,8 @@ public final class GridEntityDescriptorRegistry {
      *
      * @param descriptorId unique identifier for the descriptor
      * @param visible whether the entity should be visible in the UI
-     * @param shortKey localization key for the short name
-     * @param longKey localization key for the long name
+     * @param shortNameKey localization key for the short name
+     * @param longNameKey localization key for the long name
      * @param descriptionKey localization key for the description
      * @param emojiKey optional localization key for the emoji, or {@code null}
      * @param color optional fill color or paint, or {@code null}
@@ -118,8 +118,8 @@ public final class GridEntityDescriptorRegistry {
     public GridEntityDescriptor register(
             String descriptorId,
             boolean visible,
-            String shortKey,
-            String longKey,
+            String shortNameKey,
+            String longNameKey,
             String descriptionKey,
             @Nullable String emojiKey,
             @Nullable Paint color,
@@ -129,8 +129,8 @@ public final class GridEntityDescriptorRegistry {
         GridEntityDescriptor descriptor = new GridEntityDescriptor(
                 descriptorId,
                 visible,
-                AppLocalization.getText(shortKey),
-                AppLocalization.getText(longKey),
+                AppLocalization.getText(shortNameKey),
+                AppLocalization.getText(longNameKey),
                 AppLocalization.getText(descriptionKey),
                 (emojiKey != null) ? AppLocalization.getText(emojiKey) : null,
                 color,
