@@ -13,10 +13,10 @@ import org.jspecify.annotations.Nullable;
  *
  * @param descriptorId unique descriptor identifier
  * @param visible whether this entity should be visible
- * @param shortKey localization key for short name
- * @param longKey localization key for long name
- * @param descriptionKey localization key for description
- * @param emojiKey optional localization key for emoji
+ * @param shortKey localization key for the short name
+ * @param longKey localization key for the long name
+ * @param descriptionKey localization key for the description
+ * @param emojiKey optional localization key for the emoji
  * @param color optional fill color/paint
  * @param borderColor optional border color
  * @param renderPriority rendering order priority
@@ -36,4 +36,3 @@ public record EntityDescriptorSpec(
         int renderPriority
 ) {
 }
-

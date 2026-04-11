@@ -10,8 +10,10 @@ import org.jspecify.annotations.Nullable;
  * Unlike {@link GridEntityDescriptor}, this interface does not provide direct values (such as names or descriptions),
  * but instead supplies keys (e.g., {@code shortKey}, {@code longKey}, {@code descriptionKey}) for accessing
  * localized resources from a {@link java.util.ResourceBundle}.
+ * </p>
  * <p>
  * This interface is intended solely for use by {@link GridEntityDescriptorRegistry}.
+ * </p>
  *
  * @see GridEntityDescriptorRegistry
  * @see GridEntityDescriptor
@@ -35,28 +37,28 @@ public interface GridEntityDescribable {
     /**
      * Returns the resource bundle key for the short name of this entity.
      *
-     * @return the short name key
+     * @return the localization key for the short name
      */
     String shortKey();
 
     /**
      * Returns the resource bundle key for the long name of this entity.
      *
-     * @return the long name key
+     * @return the localization key for the long name
      */
     String longKey();
 
     /**
      * Returns the resource bundle key for the description of this entity.
      *
-     * @return the description key
+     * @return the localization key for the description
      */
     String descriptionKey();
 
     /**
      * Returns the resource bundle key for the emoji representing this entity, or {@code null} if not applicable.
      *
-     * @return the emoji key, or {@code null}
+     * @return the localization key for the emoji, or {@code null}
      */
     @Nullable
     String emojiKey();
