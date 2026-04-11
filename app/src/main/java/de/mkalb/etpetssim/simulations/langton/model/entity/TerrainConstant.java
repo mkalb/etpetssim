@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
-import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -35,12 +35,12 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     }
 
     private final int ruleIndex;
-    private final EntityDescriptorSpec spec;
+    private final GridEntityDescriptorSpec spec;
 
     TerrainConstant(int ruleIndex, Color color) {
         this.ruleIndex = ruleIndex;
         String id = (ruleIndex < 0) ? "unvisited" : String.valueOf(ruleIndex);
-        spec = new EntityDescriptorSpec(
+        spec = new GridEntityDescriptorSpec(
                 "ground" + id,
                 true,
                 "langton.entity.ground." + id + ".short",
@@ -66,7 +66,7 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     }
 
     @Override
-    public EntityDescriptorSpec descriptorSpec() {
+    public GridEntityDescriptorSpec descriptorSpec() {
         return spec;
     }
 

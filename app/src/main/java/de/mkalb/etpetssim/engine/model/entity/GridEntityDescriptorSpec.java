@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
  * @see GridEntityDescriptorRegistry
  * @see GridEntityDescriptor
  */
-public record EntityDescriptorSpec(
+public record GridEntityDescriptorSpec(
         String descriptorId,
         boolean visible,
         String shortKey,

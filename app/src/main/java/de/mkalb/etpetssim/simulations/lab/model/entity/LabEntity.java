@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.lab.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
-import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
@@ -38,7 +38,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
             1
     );
 
-    private final EntityDescriptorSpec spec;
+    private final GridEntityDescriptorSpec spec;
 
     LabEntity(
             String descriptorId,
@@ -51,7 +51,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
             @Nullable Color borderColor,
             int renderPriority
     ) {
-        spec = new EntityDescriptorSpec(
+        spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
                 shortKey,
@@ -65,7 +65,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
     }
 
     @Override
-    public EntityDescriptorSpec descriptorSpec() {
+    public GridEntityDescriptorSpec descriptorSpec() {
         return spec;
     }
 

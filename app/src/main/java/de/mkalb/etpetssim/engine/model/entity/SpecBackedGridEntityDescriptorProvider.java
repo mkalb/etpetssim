@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Convenience interface for descriptor-provider entities backed by a descriptor spec.
  * <p>
- * Implementations provide one {@link EntityDescriptorSpec} and reuse the default
+ * Implementations provide one {@link GridEntityDescriptorSpec} and reuse the default
  * descriptor accessors from this interface.
  * </p>
  *
@@ -21,7 +21,7 @@ public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescri
      *
      * @return descriptor metadata
      */
-    EntityDescriptorSpec descriptorSpec();
+    GridEntityDescriptorSpec descriptorSpec();
 
     @Override
     default String descriptorId() {

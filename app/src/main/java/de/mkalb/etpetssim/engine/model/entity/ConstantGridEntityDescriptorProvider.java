@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Convenience interface for constant grid entities that provide descriptor metadata.
  * <p>
- * Implementations provide one {@link EntityDescriptorSpec} and reuse the default
+ * Implementations provide one {@link GridEntityDescriptorSpec} and reuse the default
  * descriptor accessors from this interface.
  * </p>
  *
@@ -22,7 +22,7 @@ public interface ConstantGridEntityDescriptorProvider extends ConstantGridEntity
      *
      * @return descriptor metadata
      */
-    EntityDescriptorSpec descriptorSpec();
+    GridEntityDescriptorSpec descriptorSpec();
 
     @Override
     default String descriptorId() {

@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.snake.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.EntityDescriptorSpec;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProvider;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -64,7 +64,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             5
     );
 
-    private final EntityDescriptorSpec spec;
+    private final GridEntityDescriptorSpec spec;
 
     EntityDescriptors(
             String descriptorId,
@@ -77,7 +77,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             @Nullable Color borderColor,
             int renderPriority
     ) {
-        spec = new EntityDescriptorSpec(
+        spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
                 shortKey,
@@ -91,7 +91,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
     }
 
     @Override
-    public EntityDescriptorSpec descriptorSpec() {
+    public GridEntityDescriptorSpec descriptorSpec() {
         return spec;
     }
 
