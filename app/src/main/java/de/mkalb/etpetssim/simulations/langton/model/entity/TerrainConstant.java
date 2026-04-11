@@ -65,8 +65,7 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
                 "langton.entity.ground." + id + ".description",
                 null,
                 color,
-                null,
-                2
+                null
         );
     }
 
