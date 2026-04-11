@@ -7,30 +7,12 @@ import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Defines the possible cell states for Forest-fire model simulation.
+ * Cell states for the forest-fire simulation.
  * <p>
- * Each enum constant represents a cell state in the simulation grid:
- * <ul>
- *   <li>{@link #EMPTY}: An empty cell.</li>
- *   <li>{@link #TREE}: A cell occupied by a healthy tree.</li>
- *   <li>{@link #BURNING}: A cell with a burning tree.</li>
- * </ul>
- * Provides all necessary descriptor information for registration and rendering.
- *
- * <ul>
- *   <li><b>descriptorId</b>: Unique identifier for the entity descriptor.</li>
- *   <li><b>visible</b>: Whether the entity should be visible in the UI.</li>
- *   <li><b>shortKey</b>: Resource key for the short display name.</li>
- *   <li><b>longKey</b>: Resource key for the long display name.</li>
- *   <li><b>descriptionKey</b>: Resource key for the entity description.</li>
- *   <li><b>emojiKey</b>: Optional resource key for an emoji representation.</li>
- *   <li><b>color</b>: Optional fill color for rendering the entity.</li>
- *   <li><b>borderColor</b>: Optional border color for rendering the entity.</li>
- *   <li><b>renderPriority</b>: Priority for rendering order (higher values are rendered above lower ones).</li>
- * </ul>
+ * Each enum constant represents one grid cell state and carries descriptor metadata
+ * used for descriptor registry registration and rendering.
  *
  * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
- * @see de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity
  */
 public enum ForestEntity implements ConstantGridEntity, GridEntityDescribable {
     EMPTY(
