@@ -18,7 +18,10 @@ public sealed interface SugarEntity extends GridEntity
 
     boolean isAgent();
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    boolean isNone();
+    boolean isEmpty();
+
+    default boolean isNotEmpty() {
+        return !isEmpty();
+    }
 
 }

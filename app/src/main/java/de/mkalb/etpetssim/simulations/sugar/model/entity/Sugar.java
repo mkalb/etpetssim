@@ -42,7 +42,7 @@ public final class Sugar implements ResourceEntity {
     }
 
     @Override
-    public boolean isNone() {
+    public boolean isEmpty() {
         return false;
     }
 

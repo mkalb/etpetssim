@@ -27,6 +27,10 @@ public sealed interface EtpetsEntity extends GridEntity
 
     boolean isAgent();
 
-    boolean isNone();
+    boolean isEmpty();
+
+    default boolean isNotEmpty() {
+        return !isEmpty();
+    }
 
 }

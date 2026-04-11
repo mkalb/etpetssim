@@ -22,7 +22,7 @@ public enum NoAgent implements AgentEntity, ConstantGridEntity {
     }
 
     @Override
-    public boolean isNone() {
+    public boolean isEmpty() {
         return true;
     }
 

@@ -43,12 +43,12 @@ public final class EtpetsFactory {
                 EtpetsSimulationManager::new,
                 (model, selectedCoordinate) -> {
                     AgentEntity agentEntity = model.agentModel().getEntity(selectedCoordinate);
-                    if (!agentEntity.isNone()) {
+                    if (agentEntity.isNotEmpty()) {
                         return new GridCell<>(selectedCoordinate, agentEntity);
                     }
 
                     ResourceEntity resourceEntity = model.resourceModel().getEntity(selectedCoordinate);
-                    if (!resourceEntity.isNone()) {
+                    if (resourceEntity.isNotEmpty()) {
                         return new GridCell<>(selectedCoordinate, resourceEntity);
                     }
 

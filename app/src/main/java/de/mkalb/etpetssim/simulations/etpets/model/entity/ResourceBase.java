@@ -19,7 +19,7 @@ public abstract sealed class ResourceBase implements ResourceEntity
     }
 
     @Override
-    public final boolean isNone() {
+    public final boolean isEmpty() {
         return false;
     }
 

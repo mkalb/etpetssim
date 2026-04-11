@@ -22,7 +22,7 @@ public enum NoResource implements ResourceEntity, ConstantGridEntity {
     }
 
     @Override
-    public boolean isNone() {
+    public boolean isEmpty() {
         return true;
     }
 

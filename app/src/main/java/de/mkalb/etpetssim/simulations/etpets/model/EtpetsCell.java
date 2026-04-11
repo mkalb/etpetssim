@@ -30,7 +30,7 @@ public record EtpetsCell(GridCoordinate coordinate,
      * walkable terrain, no resource, no agent.
      */
     public boolean isWalkable() {
-        return terrainEntity.isWalkable() && resourceEntity.isNone() && agentEntity.isNone();
+        return terrainEntity.isWalkable() && resourceEntity.isEmpty() && agentEntity.isEmpty();
     }
 
 }

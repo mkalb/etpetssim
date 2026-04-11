@@ -44,7 +44,7 @@ public final class Pet implements AgentEntity {
     }
 
     @Override
-    public boolean isNone() {
+    public boolean isEmpty() {
         return false;
     }
 

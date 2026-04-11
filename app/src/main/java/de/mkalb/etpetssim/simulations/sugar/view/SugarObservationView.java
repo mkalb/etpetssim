@@ -47,7 +47,7 @@ public final class SugarObservationView
     private void updateSelectedGridCell(@Nullable GridCell<SugarEntity> gridCell) {
         if ((gridCell != null)
                 && (intFormat != null)
-                && !gridCell.entity().isNone()) {
+                && gridCell.entity().isNotEmpty()) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
             if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
                 currentEnergyLabel.setText(intFormat.format(agent.currentEnergy()));

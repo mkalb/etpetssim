@@ -19,7 +19,7 @@ public sealed interface TerrainEntity extends EtpetsEntity
     }
 
     @Override
-    default boolean isNone() {
+    default boolean isEmpty() {
         return false;
     }
 

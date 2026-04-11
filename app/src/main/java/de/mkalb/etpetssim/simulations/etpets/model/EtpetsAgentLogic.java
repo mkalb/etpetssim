@@ -408,10 +408,10 @@ public final class EtpetsAgentLogic {
             if (terrain != TerrainConstant.GROUND) {
                 continue;
             }
-            if (!gridModel.resourceModel().getEntity(c).isNone()) {
+            if (gridModel.resourceModel().getEntity(c).isNotEmpty()) {
                 continue;
             }
-            if (!gridModel.agentModel().getEntity(c).isNone()) {
+            if (gridModel.agentModel().getEntity(c).isNotEmpty()) {
                 continue;
             }
             candidates.add(c);
@@ -678,8 +678,8 @@ public final class EtpetsAgentLogic {
     }
 
     private static boolean isFreeOfAgentAndResource(GridCoordinate coord, EtpetsGridModel gridModel) {
-        return gridModel.agentModel().getEntity(coord).isNone()
-                && gridModel.resourceModel().getEntity(coord).isNone();
+        return gridModel.agentModel().getEntity(coord).isEmpty()
+                && gridModel.resourceModel().getEntity(coord).isEmpty();
     }
 
     /** Returns {@code true} if coordinate {@code a} has {@code b} as a valid direct neighbor. */

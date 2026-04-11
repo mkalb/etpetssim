@@ -50,7 +50,7 @@ public final class Agent implements AgentEntity {
     }
 
     @Override
-    public boolean isNone() {
+    public boolean isEmpty() {
         return false;
     }
 
