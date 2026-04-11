@@ -47,4 +47,3 @@ public final class Trail implements TerrainEntity {
     }
 
 }
-

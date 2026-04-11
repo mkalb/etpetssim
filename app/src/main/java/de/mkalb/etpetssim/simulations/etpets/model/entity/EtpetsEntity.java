@@ -27,4 +27,3 @@ public sealed interface EtpetsEntity extends GridEntity
     boolean isNone();
 
 }
-

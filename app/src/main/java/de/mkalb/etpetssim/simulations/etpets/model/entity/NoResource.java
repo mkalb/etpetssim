@@ -22,4 +22,3 @@ public enum NoResource implements ResourceEntity, ConstantGridEntity {
     }
 
 }
-

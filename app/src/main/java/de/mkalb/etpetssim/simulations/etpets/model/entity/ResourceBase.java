@@ -48,4 +48,3 @@ public abstract sealed class ResourceBase implements ResourceEntity
     public abstract int energyGainPerAct();
 
 }
-

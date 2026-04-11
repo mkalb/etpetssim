@@ -14,4 +14,3 @@ public sealed interface AgentEntity extends EtpetsEntity
     }
 
 }
-

@@ -69,4 +69,3 @@ public interface SpecBackedGridEntityDescriptorProvider extends GridEntityDescri
     }
 
 }
-

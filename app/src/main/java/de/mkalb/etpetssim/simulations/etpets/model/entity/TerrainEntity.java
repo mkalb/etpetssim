@@ -30,4 +30,3 @@ public sealed interface TerrainEntity extends EtpetsEntity
     boolean isWalkable();
 
 }
-

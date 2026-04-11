@@ -14,4 +14,3 @@ public sealed interface ResourceEntity extends EtpetsEntity
     }
 
 }
-

@@ -22,4 +22,3 @@ public enum NoAgent implements AgentEntity, ConstantGridEntity {
     }
 
 }
-
