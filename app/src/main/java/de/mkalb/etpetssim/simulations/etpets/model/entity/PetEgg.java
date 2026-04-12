@@ -66,4 +66,21 @@ public final class PetEgg implements AgentEntity {
         incubationRemaining--;
     }
 
+    @Override
+    public String toDisplayString() {
+        return String.format("[EGG #%d *%d I=%d]", eggId, stepIndexOfLaying, incubationRemaining);
+    }
+
+    @Override
+    public String toString() {
+        return "PetEgg{" +
+                "eggId=" + eggId +
+                ", parentAId=" + parentAId +
+                ", parentBId=" + parentBId +
+                ", petGenome=" + petGenome +
+                ", stepIndexOfLaying=" + stepIndexOfLaying +
+                ", incubationRemaining=" + incubationRemaining +
+                '}';
+    }
+
 }

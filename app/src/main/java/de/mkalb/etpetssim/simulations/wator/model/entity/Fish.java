@@ -24,8 +24,11 @@ public final class Fish extends CreatureBase {
     @Override
     public String toString() {
         return "Fish{" +
-                "sequenceId=" + sequenceId() +
+                "descriptorId=" + descriptorId() +
+                ", sequenceId=" + sequenceId() +
                 ", stepIndexOfBirth=" + stepIndexOfBirth() +
+                ", numberOfReproductions=" + numberOfReproductions() +
+                ", timeOfLastReproduction=" + timeOfLastReproduction() +
                 '}';
     }
 

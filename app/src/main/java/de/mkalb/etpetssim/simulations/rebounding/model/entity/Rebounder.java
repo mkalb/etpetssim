@@ -40,7 +40,7 @@ public final class Rebounder implements ReboundingEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[MOVING_ENTITY %s]", direction);
+        return String.format("[REBOUNDER %s]", direction.arrow());
     }
 
     @Override

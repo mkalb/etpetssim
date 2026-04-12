@@ -39,8 +39,11 @@ public final class Shark extends CreatureBase {
     @Override
     public String toString() {
         return "Shark{" +
-                "sequenceId=" + sequenceId() +
+                "descriptorId=" + descriptorId() +
+                ", sequenceId=" + sequenceId() +
                 ", stepIndexOfBirth=" + stepIndexOfBirth() +
+                ", numberOfReproductions=" + numberOfReproductions() +
+                ", timeOfLastReproduction=" + timeOfLastReproduction() +
                 ", currentEnergy=" + currentEnergy +
                 '}';
     }

@@ -26,7 +26,17 @@ public final class Plant extends ResourceBase {
 
     @Override
     public String toDisplayString() {
-        return String.format("[PLANT %.1f/%.1f]", currentAmount(), maxAmount());
+        return String.format("[PLANT A=%.1f/%.1f G=%d]", currentAmount(), maxAmount(), ENERGY_GAIN_PER_ACT);
+    }
+
+    @Override
+    public String toString() {
+        return "Plant{" +
+                "currentAmount=" + currentAmount() +
+                ", maxAmount=" + maxAmount() +
+                ", consumptionPerAct=" + CONSUMPTION_PER_ACT +
+                ", energyGainPerAct=" + ENERGY_GAIN_PER_ACT +
+                '}';
     }
 
 }
