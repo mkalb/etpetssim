@@ -12,7 +12,7 @@ Update it whenever entity-package types are added, removed, renamed, or changed 
 ## References
 
 - Simulation types: `app/src/main/java/de/mkalb/etpetssim/SimulationType.java`
-- Implemented simulations: `README.md`, section `Implemented Simulations`
+- Implemented simulations: [`README.md`](../../README.md), section `Implemented Simulations`
 
 ## Table of Contents
 
@@ -79,7 +79,7 @@ Use this checklist when you add or update a simulation:
 
 ## Ordering Conventions
 
-- Keep simulation sections in the same order as `README.md` under `Implemented Simulations`.
+- Keep simulation sections in the same order as [`README.md`](../../README.md) under `Implemented Simulations`.
 - Within each simulation table, group related types together instead of sorting strictly alphabetically.
 - Use this row order when it fits:
     1. root entity contract
