@@ -103,17 +103,20 @@ Use this template when you add a new simulation section:
 
 ### NEW_SIMULATION - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key             | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------------------|-------|------------|--------------|
-| `example`     | Example Cell      | `example.entity.long`     | -     | `#112233`  | -            |
-| `example.alt` | Example Alt Cell  | `example.entity.alt.long` | `🧪`  | `#445566`  | `#223344`    |
+| Descriptor ID | Long Name (en_US) | Long Name Key             | Emoji | Fill Color                 | Border Color              | Default In Layer(s) |
+|---------------|-------------------|---------------------------|-------|----------------------------|---------------------------|---------------------|
+| `example`     | Example Cell      | `example.entity.long`     | -     | `#FFFFFF` / `Color.WHITE`  | -                         | `grid`              |
+| `example.alt` | Example Alt Cell  | `example.entity.alt.long` | `🧪`  | `#FF0000` / `Color.RED`    | `#000000` / `Color.BLACK` | -                   |
 ```
 
 Notes:
 
 - Use one row per descriptor that contributes rendering metadata.
 - Resolve `Long Name (en_US)` from `messages_en_US.properties` via `Long Name Key`.
-- Document colors as RGB hex in the format `#RRGGBB`; use `-` when not defined.
+- Document colors as RGB hex in the format `#RRGGBB`; when a JavaFX `Color.*` constant is used in code, append it as
+  `#RRGGBB` / `Color.NAME`; use `-` when not defined.
+- Use `Default In Layer(s)` to document model defaults such as `grid`, `ground`, `agent`, `resource`, or `terrain`; use
+  `-` when a descriptor is not a layer default.
 
 ## ET_PETS
 
@@ -166,8 +169,10 @@ Notes:
 
 ### CONWAYS_LIFE - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------|-------|------------|--------------|
+| Descriptor ID | Long Name (en_US) | Long Name Key              | Emoji | Fill Color                      | Border Color                  | Default In Layer(s) |
+|---------------|-------------------|----------------------------|-------|---------------------------------|-------------------------------|---------------------|
+| `dead`        | Dead Cell         | `conway.entity.dead.long`  | -     | `#FFFFE0` / `Color.LIGHTYELLOW` | -                             | `grid`              |
+| `alive`       | Living Cell       | `conway.entity.alive.long` | -     | `#8B0000` / `Color.DARKRED`     | `#CD5C5C` / `Color.INDIANRED` | -                   |
 
 ## LANGTONS_ANT
 
@@ -182,8 +187,26 @@ Notes:
 
 ### LANGTONS_ANT - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------|-------|------------|--------------|
+| Descriptor ID     | Long Name (en_US)     | Long Name Key                          | Emoji | Fill Color                    | Border Color              | Default In Layer(s) |
+|-------------------|-----------------------|----------------------------------------|-------|-------------------------------|---------------------------|---------------------|
+| `ant`             | Langton's Ant         | `langton.entity.ant.long`              | -     | `#FF0000` / `Color.RED`       | `#000000` / `Color.BLACK` | -                   |
+| `groundunvisited` | Unvisited Ground Cell | `langton.entity.ground.unvisited.long` | -     | `#FFFFFF` / `Color.WHITE`     | -                         | `ground`            |
+| `ground0`         | Ground Cell 0         | `langton.entity.ground.0.long`         | -     | `#D3D3D3` / `Color.LIGHTGRAY` | -                         | -                   |
+| `ground1`         | Ground Cell 1         | `langton.entity.ground.1.long`         | -     | `#000000` / `Color.BLACK`     | -                         | -                   |
+| `ground2`         | Ground Cell 2         | `langton.entity.ground.2.long`         | -     | `#FFA500` / `Color.ORANGE`    | -                         | -                   |
+| `ground3`         | Ground Cell 3         | `langton.entity.ground.3.long`         | -     | `#FFFF00` / `Color.YELLOW`    | -                         | -                   |
+| `ground4`         | Ground Cell 4         | `langton.entity.ground.4.long`         | -     | `#008000` / `Color.GREEN`     | -                         | -                   |
+| `ground5`         | Ground Cell 5         | `langton.entity.ground.5.long`         | -     | `#006400` / `Color.DARKGREEN` | -                         | -                   |
+| `ground6`         | Ground Cell 6         | `langton.entity.ground.6.long`         | -     | `#0000FF` / `Color.BLUE`      | -                         | -                   |
+| `ground7`         | Ground Cell 7         | `langton.entity.ground.7.long`         | -     | `#00008B` / `Color.DARKBLUE`  | -                         | -                   |
+| `ground8`         | Ground Cell 8         | `langton.entity.ground.8.long`         | -     | `#800080` / `Color.PURPLE`    | -                         | -                   |
+| `ground9`         | Ground Cell 9         | `langton.entity.ground.9.long`         | -     | `#EE82EE` / `Color.VIOLET`    | -                         | -                   |
+| `ground10`        | Ground Cell 10        | `langton.entity.ground.10.long`        | -     | `#FFC0CB` / `Color.PINK`      | -                         | -                   |
+| `ground11`        | Ground Cell 11        | `langton.entity.ground.11.long`        | -     | `#A52A2A` / `Color.BROWN`     | -                         | -                   |
+| `ground12`        | Ground Cell 12        | `langton.entity.ground.12.long`        | -     | `#00FFFF` / `Color.CYAN`      | -                         | -                   |
+| `ground13`        | Ground Cell 13        | `langton.entity.ground.13.long`        | -     | `#FF00FF` / `Color.MAGENTA`   | -                         | -                   |
+| `ground14`        | Ground Cell 14        | `langton.entity.ground.14.long`        | -     | `#FF1493` / `Color.DEEPPINK`  | -                         | -                   |
+| `ground15`        | Ground Cell 15        | `langton.entity.ground.15.long`        | -     | `#FFD700` / `Color.GOLD`      | -                         | -                   |
 
 ## FOREST_FIRE
 
