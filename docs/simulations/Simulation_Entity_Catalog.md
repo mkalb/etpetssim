@@ -141,8 +141,11 @@ Notes:
 
 ### ET_PETS - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------|-------|------------|--------------|
+Note: ET_PETS is still under active development; this table is intentionally left empty and will be filled once
+descriptor colors and emoji keys are finalized.
+
+| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color | Default In Layer(s) |
+|---------------|-------------------|---------------|-------|------------|--------------|---------------------|
 
 ## WATOR
 
@@ -158,14 +161,14 @@ Notes:
 
 ### WATOR - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key             | Emoji | Fill Color         | Border Color | Default In Layer(s) |
-|---------------|-------------------|---------------------------|-------|--------------------|--------------|---------------------|
-| `water`       | Water Cell        | `wator.entity.water.long` | -     | `#141964`          | -            | `grid`              |
-| `fish`        | Fish Cell         | `wator.entity.fish.long`  | `🐟`  | `#00A064` [^fish]  | `#141964`    | -                   |
-| `shark`       | Shark Cell        | `wator.entity.shark.long` | `🦈`  | `#737878` [^shark] | `#141964`    | -                   |
+| Descriptor ID | Long Name (en_US) | Long Name Key             | Emoji | Fill Color          | Border Color | Default In Layer(s) |
+|---------------|-------------------|---------------------------|-------|---------------------|--------------|---------------------|
+| `water`       | Water Cell        | `wator.entity.water.long` | -     | `#141964`           | -            | `grid`              |
+| `fish`        | Fish Cell         | `wator.entity.fish.long`  | `🐟`  | `#00A064` [^wfish]  | `#141964`    | -                   |
+| `shark`       | Shark Cell        | `wator.entity.shark.long` | `🦈`  | `#737878` [^wshark] | `#141964`    | -                   |
 
-[^fish]: Base color; rendered darker with increasing age — 10 brightness steps, factor range [0.0, −0.5].
-[^shark]: Base color; rendered brighter with increasing energy — 6 brightness steps, factor range [0.0, +0.7].
+[^wfish]: Base color; rendered darker with increasing age — 10 brightness steps, factor range [0.0, −0.5].
+[^wshark]: Base color; rendered brighter with increasing energy — 6 brightness steps, factor range [0.0, +0.7].
 
 ## CONWAYS_LIFE
 
@@ -193,30 +196,32 @@ Notes:
 
 ### LANGTONS_ANT - Entity Display Catalog
 
-| Descriptor ID     | Long Name (en_US)     | Long Name Key                          | Emoji    | Fill Color                    | Border Color              | Default In Layer(s) |
-|-------------------|-----------------------|----------------------------------------|----------|-------------------------------|---------------------------|---------------------|
-| `ant`             | Langton's Ant         | `langton.entity.ant.long`              | - [^ant] | `#FF0000` / `Color.RED`       | `#000000` / `Color.BLACK` | -                   |
-| `groundunvisited` | Unvisited Ground Cell | `langton.entity.ground.unvisited.long` | -        | `#FFFFFF` / `Color.WHITE`     | -                         | `ground`            |
-| `ground0`         | Ground Cell 0         | `langton.entity.ground.0.long`         | -        | `#D3D3D3` / `Color.LIGHTGRAY` | -                         | -                   |
-| `ground1`         | Ground Cell 1         | `langton.entity.ground.1.long`         | -        | `#000000` / `Color.BLACK`     | -                         | -                   |
-| `ground2`         | Ground Cell 2         | `langton.entity.ground.2.long`         | -        | `#FFA500` / `Color.ORANGE`    | -                         | -                   |
-| `ground3`         | Ground Cell 3         | `langton.entity.ground.3.long`         | -        | `#FFFF00` / `Color.YELLOW`    | -                         | -                   |
-| `ground4`         | Ground Cell 4         | `langton.entity.ground.4.long`         | -        | `#008000` / `Color.GREEN`     | -                         | -                   |
-| `ground5`         | Ground Cell 5         | `langton.entity.ground.5.long`         | -        | `#006400` / `Color.DARKGREEN` | -                         | -                   |
-| `ground6`         | Ground Cell 6         | `langton.entity.ground.6.long`         | -        | `#0000FF` / `Color.BLUE`      | -                         | -                   |
-| `ground7`         | Ground Cell 7         | `langton.entity.ground.7.long`         | -        | `#00008B` / `Color.DARKBLUE`  | -                         | -                   |
-| `ground8`         | Ground Cell 8         | `langton.entity.ground.8.long`         | -        | `#800080` / `Color.PURPLE`    | -                         | -                   |
-| `ground9`         | Ground Cell 9         | `langton.entity.ground.9.long`         | -        | `#EE82EE` / `Color.VIOLET`    | -                         | -                   |
-| `ground10`        | Ground Cell 10        | `langton.entity.ground.10.long`        | -        | `#FFC0CB` / `Color.PINK`      | -                         | -                   |
-| `ground11`        | Ground Cell 11        | `langton.entity.ground.11.long`        | -        | `#A52A2A` / `Color.BROWN`     | -                         | -                   |
-| `ground12`        | Ground Cell 12        | `langton.entity.ground.12.long`        | -        | `#00FFFF` / `Color.CYAN`      | -                         | -                   |
-| `ground13`        | Ground Cell 13        | `langton.entity.ground.13.long`        | -        | `#FF00FF` / `Color.MAGENTA`   | -                         | -                   |
-| `ground14`        | Ground Cell 14        | `langton.entity.ground.14.long`        | -        | `#FF1493` / `Color.DEEPPINK`  | -                         | -                   |
-| `ground15`        | Ground Cell 15        | `langton.entity.ground.15.long`        | -        | `#FFD700` / `Color.GOLD`      | -                         | -                   |
+| Descriptor ID     | Long Name (en_US)     | Long Name Key                          | Emoji        | Fill Color                    | Border Color              | Default In Layer(s) |
+|-------------------|-----------------------|----------------------------------------|--------------|-------------------------------|---------------------------|---------------------|
+| `ant`             | Langton's Ant         | `langton.entity.ant.long`              | - [^lantdir] | `#FF0000` / `Color.RED`       | `#000000` / `Color.BLACK` | -                   |
+| `groundunvisited` | Unvisited Ground Cell | `langton.entity.ground.unvisited.long` | -            | `#FFFFFF` / `Color.WHITE`     | -                         | `ground`            |
+| `ground0`         | Ground Cell 0         | `langton.entity.ground.0.long`         | -            | `#D3D3D3` / `Color.LIGHTGRAY` | -                         | -                   |
+| `ground1`         | Ground Cell 1         | `langton.entity.ground.1.long`         | -            | `#000000` / `Color.BLACK`     | -                         | -                   |
+| `ground2`         | Ground Cell 2         | `langton.entity.ground.2.long`         | -            | `#FFA500` / `Color.ORANGE`    | -                         | -                   |
+| `ground3`         | Ground Cell 3         | `langton.entity.ground.3.long`         | -            | `#FFFF00` / `Color.YELLOW`    | -                         | -                   |
+| `ground4`         | Ground Cell 4         | `langton.entity.ground.4.long`         | -            | `#008000` / `Color.GREEN`     | -                         | -                   |
+| `ground5`         | Ground Cell 5         | `langton.entity.ground.5.long`         | -            | `#006400` / `Color.DARKGREEN` | -                         | -                   |
+| `ground6`         | Ground Cell 6         | `langton.entity.ground.6.long`         | -            | `#0000FF` / `Color.BLUE`      | -                         | -                   |
+| `ground7`         | Ground Cell 7         | `langton.entity.ground.7.long`         | -            | `#00008B` / `Color.DARKBLUE`  | -                         | -                   |
+| `ground8`         | Ground Cell 8         | `langton.entity.ground.8.long`         | -            | `#800080` / `Color.PURPLE`    | -                         | -                   |
+| `ground9`         | Ground Cell 9         | `langton.entity.ground.9.long`         | -            | `#EE82EE` / `Color.VIOLET`    | -                         | -                   |
+| `ground10`        | Ground Cell 10        | `langton.entity.ground.10.long`        | -            | `#FFC0CB` / `Color.PINK`      | -                         | -                   |
+| `ground11`        | Ground Cell 11        | `langton.entity.ground.11.long`        | -            | `#A52A2A` / `Color.BROWN`     | -                         | -                   |
+| `ground12`        | Ground Cell 12        | `langton.entity.ground.12.long`        | -            | `#00FFFF` / `Color.CYAN`      | -                         | -                   |
+| `ground13`        | Ground Cell 13        | `langton.entity.ground.13.long`        | -            | `#FF00FF` / `Color.MAGENTA`   | -                         | -                   |
+| `ground14`        | Ground Cell 14        | `langton.entity.ground.14.long`        | -            | `#FF1493` / `Color.DEEPPINK`  | -                         | -                   |
+| `ground15`        | Ground Cell 15        | `langton.entity.ground.15.long`        | -            | `#FFD700` / `Color.GOLD`      | -                         | -                   |
 
-[^ant]: No emoji key defined. The view renders `ant.direction().arrow()` (`CompassDirection`) as centered text in the
+[^lantdir]: No emoji key defined. The view renders `ant.direction().arrow()` (`CompassDirection`) as centered text in
+the
 border color — single Unicode arrows for cardinal/intercardinal directions (↑ ↗ → ↘ ↓ ↙ ← ↖), two-character combinations
-for secondary intercardinal directions (e.g., ↑↗, →↗).
+for secondary intercardinal directions (e.g., ↑↗, →↗). Rendered only when the emoji font is loaded and
+`cellDimension.innerRadius() > 5.0`.
 
 ## FOREST_FIRE
 
@@ -250,8 +255,20 @@ logical descriptor only, not a Java type.
 
 ### SUGARSCAPE - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------|-------|------------|--------------|
+| Descriptor ID | Long Name (en_US) | Long Name Key               | Emoji            | Fill Color              | Border Color | Default In Layer(s) |
+|---------------|-------------------|-----------------------------|------------------|-------------------------|--------------|---------------------|
+| `terrain`     | Terrain Cell      | `sugar.entity.terrain.long` | -                | `#453525` [^sugterrain] | -            | -                   |
+| `sugar`       | Sugar Resource    | `sugar.entity.sugar.long`   | `🍬` [^sugemoji] | `#D7BE13` [^sugsugar]   | -            | -                   |
+| `agent`       | Agent Cell        | `sugar.entity.agent.long`   | `👤` [^sugemoji] | `#1B5ABA` [^sugagent]   | -            | -                   |
+
+[^sugterrain]: Logical descriptor only; no Java entity with this ID exists. Its color is used as canvas background
+fill (see also the note above this table).
+[^sugemoji]: Emoji key is defined in `EntityDescriptors` but `SugarMainView` does not implement emoji rendering; emojis
+are not displayed.
+[^sugsugar]: Base color; rendered brighter with increasing current sugar amount — config-dependent number of steps,
+factor range [0.0, +0.3].
+[^sugagent]: Base color; rendered brighter with increasing energy — 7 brightness steps, factor range [0.0, +0.6]. Newly
+spawned agents additionally receive a white border for one step.
 
 ## SNAKE
 
@@ -264,8 +281,21 @@ logical descriptor only, not a Java type.
 
 ### SNAKE - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------|-------|------------|--------------|
+Note: `snake.entity.*` i18n keys (long name, emoji) are not yet defined in `messages_en_US.properties`;
+Long Name (en_US) and Emoji values cannot be resolved. `SnakeMainView` does not implement emoji rendering.
+
+| Descriptor ID   | Long Name (en_US) | Long Name Key                    | Emoji | Fill Color   | Border Color | Default In Layer(s) |
+|-----------------|-------------------|----------------------------------|-------|--------------|--------------|---------------------|
+| `ground`        | -                 | `snake.entity.ground.long`       | -     | `#0B1220`    | -            | `grid`              |
+| `wall`          | -                 | `snake.entity.wall.long`         | -     | `#4A4A4A`    | `#7A7A7A`    | -                   |
+| `growth_food`   | -                 | `snake.entity.growthfood.long`   | -     | `#FFCC00`    | `#CC9900`    | -                   |
+| `snake_segment` | -                 | `snake.entity.snakesegment.long` | -     | - [^snkseg]  | - [^snkseg]  | -                   |
+| `snake_head`    | -                 | `snake.entity.snakehead.long`    | -     | - [^snkhead] | - [^snkhead] | -                   |
+
+[^snkseg]: No color defined in `EntityDescriptors`; colors are hardcoded in `SnakeMainView` (fill / border):
+alive `#4CAF50` / `#2E7D32`, alive+selected `#A5D6A7` / `#66BB6A`, dead `#8D6E63` / `#5D4037`.
+[^snkhead]: No color defined in `EntityDescriptors`; colors are hardcoded in `SnakeMainView` (fill / border):
+alive `#00BCD4` / `#008BA3`, alive+selected `#80DEEA` / `#4DD0E1`, dead `#A33A3A` / `#6E2626`.
 
 ## REBOUNDING_ENTITIES
 
@@ -278,8 +308,11 @@ logical descriptor only, not a Java type.
 
 ### REBOUNDING_ENTITIES - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------|-------|------------|--------------|
+| Descriptor ID | Long Name (en_US) | Long Name Key                      | Emoji | Fill Color | Border Color | Default In Layer(s) |
+|---------------|-------------------|------------------------------------|-------|------------|--------------|---------------------|
+| `ground`      | Ground Cell       | `rebounding.entity.ground.long`    | -     | `#0B1220`  | -            | `grid`              |
+| `wall`        | Wall Cell         | `rebounding.entity.wall.long`      | -     | `#4A4A4A`  | `#7A7A7A`    | -                   |
+| `rebounder`   | Moving Entity     | `rebounding.entity.rebounder.long` | -     | `#FFCC00`  | `#CC9900`    | -                   |
 
 ## SIMULATION_LAB
 
@@ -289,6 +322,18 @@ logical descriptor only, not a Java type.
 
 ### SIMULATION_LAB - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key | Emoji | Fill Color | Border Color |
-|---------------|-------------------|---------------|-------|------------|--------------|
+Note: `SIMULATION_LAB` is a development sandbox. No colors are defined in `LabEntity`; rendering colors are determined
+entirely by `LabMainView` independent of entity type.
+
+| Descriptor ID | Long Name (en_US) | Long Name Key                 | Emoji | Fill Color   | Border Color | Default In Layer(s) |
+|---------------|-------------------|-------------------------------|-------|--------------|--------------|---------------------|
+| `normal`      | Normal Cell       | `lab.entity.normal.long`      | -     | - [^labview] | -            | `grid`              |
+| `highlighted` | Highlighted Cell  | `lab.entity.highlighted.long` | -     | - [^labhigh] | -            | -                   |
+
+[^labview]: No color defined in `LabEntity`. The base canvas renders all cells with coordinate-based colors independent
+of entity type (`x % 2`, `y % 2`) — color mode: `#87CEFA` / `Color.LIGHTSKYBLUE`, `#B0C4DE` / `Color.LIGHTSTEELBLUE`,
+`#98FB98` / `Color.PALEGREEN`, `#66CDAA` / `Color.MEDIUMAQUAMARINE`; grayscale mode: `#FFFFFF` / `Color.WHITE`,
+`#D3D3D3` / `Color.LIGHTGRAY`, `#A9A9A9` / `Color.DARKGRAY`, `#808080` / `Color.GRAY`.
+[^labhigh]: Same coordinate-based base color as `normal`. Additionally overlaid with translucent red
+(`Color.RED` at α 0.5) via `drawModel()`.
 
