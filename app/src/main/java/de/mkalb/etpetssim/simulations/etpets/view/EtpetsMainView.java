@@ -31,7 +31,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
     private static final Color FALLBACK_COLOR_CELL = Color.GRAY;
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
-    private static final double SELECTED_STROKE_LINE_WIDTH = 2.0d;
+    private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
     private final Paint backgroundPaint;
 
@@ -54,10 +54,10 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<EtpetsEntity> oldGridCell,
                                           @Nullable GridCell<EtpetsEntity> newGridCell) {
-        if (oldGridCell != null) {
+        if ((oldGridCell != null) && !oldGridCell.entity().isTerrain()) {
             painter.clearCanvasBackground();
         }
-        if (newGridCell != null) {
+        if ((newGridCell != null) && !newGridCell.entity().isTerrain()) {
             painter.drawCellOuterCircle(newGridCell.coordinate(), null,
                     SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
                     StrokeType.OUTSIDE);

@@ -32,7 +32,7 @@ public final class ReboundingMainView
     private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
     private static final Color FALLBACK_COLOR_CELL = Color.GRAY;
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
-    private static final double SELECTED_STROKE_LINE_WIDTH = 2.0d;
+    private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
     private final Paint backgroundPaint;
 

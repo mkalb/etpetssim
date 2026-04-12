@@ -91,22 +91,17 @@ public final class SnakeMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<SnakeEntity> oldGridCell,
                                           @Nullable GridCell<SnakeEntity> newGridCell) {
-        if (oldGridCell != null) {
+        if ((oldGridCell != null) && oldGridCell.entity().isAgent()) {
             painter.clearCanvasBackground();
         }
-        if (newGridCell != null) {
-            if (newGridCell.entity().isStaticTerrain()) {
-                painter.drawCell(newGridCell.coordinate(), null,
-                        SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH);
-            } else {
-                painter.drawCellOuterCircle(newGridCell.coordinate(), null,
-                        SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
-                        StrokeType.OUTSIDE);
-                if (newGridCell.entity() instanceof SnakeHead head) {
-                    for (GridCoordinate coordinate : head.currentSegments()) {
-                        painter.drawCell(coordinate, null,
-                                SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH);
-                    }
+        if ((newGridCell != null) && newGridCell.entity().isAgent()) {
+            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                    StrokeType.OUTSIDE);
+            if (newGridCell.entity() instanceof SnakeHead head) {
+                for (GridCoordinate coordinate : head.currentSegments()) {
+                    painter.drawCell(coordinate, null,
+                            SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH);
                 }
             }
         }
