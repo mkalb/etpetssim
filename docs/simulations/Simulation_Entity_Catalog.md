@@ -281,16 +281,13 @@ spawned agents additionally receive a white border for one step.
 
 ### SNAKE - Entity Display Catalog
 
-Note: `snake.entity.*` i18n keys (long name, emoji) are not yet defined in `messages_en_US.properties`;
-Long Name (en_US) and Emoji values cannot be resolved. `SnakeMainView` does not implement emoji rendering.
-
 | Descriptor ID   | Long Name (en_US) | Long Name Key                    | Emoji | Fill Color   | Border Color | Default In Layer(s) |
 |-----------------|-------------------|----------------------------------|-------|--------------|--------------|---------------------|
-| `ground`        | -                 | `snake.entity.ground.long`       | -     | `#0B1220`    | -            | `grid`              |
-| `wall`          | -                 | `snake.entity.wall.long`         | -     | `#4A4A4A`    | `#7A7A7A`    | -                   |
-| `growth_food`   | -                 | `snake.entity.growthfood.long`   | -     | `#FFCC00`    | `#CC9900`    | -                   |
-| `snake_segment` | -                 | `snake.entity.snakesegment.long` | -     | - [^snkseg]  | - [^snkseg]  | -                   |
-| `snake_head`    | -                 | `snake.entity.snakehead.long`    | -     | - [^snkhead] | - [^snkhead] | -                   |
+| `ground`        | Ground Cell       | `snake.entity.ground.long`       | -     | `#0B1220`    | -            | `grid`              |
+| `wall`          | Wall Cell         | `snake.entity.wall.long`         | -     | `#4A4A4A`    | `#7A7A7A`    | -                   |
+| `growth_food`   | Growth Food       | `snake.entity.growthfood.long`   | -     | `#FFCC00`    | `#CC9900`    | -                   |
+| `snake_segment` | Snake Segment     | `snake.entity.snakesegment.long` | -     | - [^snkseg]  | - [^snkseg]  | -                   |
+| `snake_head`    | Snake Head        | `snake.entity.snakehead.long`    | -     | - [^snkhead] | - [^snkhead] | -                   |
 
 [^snkseg]: No color defined in `EntityDescriptors`; colors are hardcoded in `SnakeMainView` (fill / border):
 alive `#4CAF50` / `#2E7D32`, alive+selected `#A5D6A7` / `#66BB6A`, dead `#8D6E63` / `#5D4037`.

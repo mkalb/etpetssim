@@ -24,7 +24,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.wall.short",
             "snake.entity.wall.long",
             "snake.entity.wall.description",
-            "snake.entity.wall.emoji",
+            null,
             Color.web("#4a4a4a"),
             Color.web("#7a7a7a")
     ),
@@ -34,7 +34,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.growthfood.short",
             "snake.entity.growthfood.long",
             "snake.entity.growthfood.description",
-            "snake.entity.growthfood.emoji",
+            null,
             Color.web("#ffcc00"),
             Color.web("#cc9900")
     ),
@@ -44,7 +44,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.snakesegment.short",
             "snake.entity.snakesegment.long",
             "snake.entity.snakesegment.description",
-            "snake.entity.snakesegment.emoji",
+            null,
             null,
             null
     ),
@@ -54,7 +54,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.snakehead.short",
             "snake.entity.snakehead.long",
             "snake.entity.snakehead.description",
-            "snake.entity.snakehead.emoji",
+            null,
             null,
             null
     );
