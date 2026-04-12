@@ -24,7 +24,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "sugar.entity.sugar.short",
             "sugar.entity.sugar.long",
             "sugar.entity.sugar.description",
-            "sugar.entity.sugar.emoji",
+            null,
             Color.web("#D7BE13"),
             null
     ),
@@ -34,7 +34,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "sugar.entity.agent.short",
             "sugar.entity.agent.long",
             "sugar.entity.agent.description",
-            "sugar.entity.agent.emoji",
+            null,
             Color.web("#1B5ABA"),
             null
     );

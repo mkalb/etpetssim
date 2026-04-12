@@ -255,16 +255,14 @@ logical descriptor only, not a Java type.
 
 ### SUGARSCAPE - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key               | Emoji            | Fill Color              | Border Color | Default In Layer(s) |
-|---------------|-------------------|-----------------------------|------------------|-------------------------|--------------|---------------------|
-| `terrain`     | Terrain Cell      | `sugar.entity.terrain.long` | -                | `#453525` [^sugterrain] | -            | -                   |
-| `sugar`       | Sugar Resource    | `sugar.entity.sugar.long`   | `🍬` [^sugemoji] | `#D7BE13` [^sugsugar]   | -            | -                   |
-| `agent`       | Agent Cell        | `sugar.entity.agent.long`   | `👤` [^sugemoji] | `#1B5ABA` [^sugagent]   | -            | -                   |
+| Descriptor ID | Long Name (en_US) | Long Name Key               | Emoji | Fill Color              | Border Color | Default In Layer(s) |
+|---------------|-------------------|-----------------------------|-------|-------------------------|--------------|---------------------|
+| `terrain`     | Terrain Cell      | `sugar.entity.terrain.long` | -     | `#453525` [^sugterrain] | -            | -                   |
+| `sugar`       | Sugar Resource    | `sugar.entity.sugar.long`   | -     | `#D7BE13` [^sugsugar]   | -            | -                   |
+| `agent`       | Agent Cell        | `sugar.entity.agent.long`   | -     | `#1B5ABA` [^sugagent]   | -            | -                   |
 
 [^sugterrain]: Logical descriptor only; no Java entity with this ID exists. Its color is used as canvas background
 fill (see also the note above this table).
-[^sugemoji]: Emoji key is defined in `EntityDescriptors` but `SugarMainView` does not implement emoji rendering; emojis
-are not displayed.
 [^sugsugar]: Base color; rendered brighter with increasing current sugar amount — config-dependent number of steps,
 factor range [0.0, +0.3].
 [^sugagent]: Base color; rendered brighter with increasing energy — 7 brightness steps, factor range [0.0, +0.6]. Newly
