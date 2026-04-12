@@ -12,8 +12,9 @@ This guide is the implementation companion to `ET_Pets_Specification.md`.
 - This guide is authoritative for code structure and delivery sequence.
 - Normative simulation rules belong only to `ET_Pets_Specification.md` and are referenced here for implementation.
 - If both documents conflict, update this guide so that it matches the specification.
-- The naming conventions in the code must be followed. `CodingStyle.md` is a reference but not an absolute requirement; the priority is consistency with existing simulations.
- 
+- The naming conventions in the code must be followed. `CodingStyle.md` is a reference but not an absolute requirement;
+  the priority is consistency with existing simulations.
+
 ### Important implementation policy for the first ET Pets delivery
 
 **No test classes are created in this phase.**
@@ -253,18 +254,25 @@ Per-type constants (baked into each class, not per-instance fields):
 ### 7.5 Numeric type policy (`int` vs `long` vs `double`)
 
 - Keep identifier fields (`petId`, `eggId`, `parentAId`, `parentBId`) as `long`/`Long`.
-  This matches existing long-based sequence IDs in other simulations and avoids future overflow when runs are long-lived.
+  This matches existing long-based sequence IDs in other simulations and avoids future overflow when runs are
+  long-lived.
 - Keep discrete counters, step indices, and threshold values as `int`.
-  This includes fields such as `stepIndexOfBirth`, `stepIndexOfLaying`, `incubationRemaining`, and energy/cooldown values.
+  This includes fields such as `stepIndexOfBirth`, `stepIndexOfLaying`, `incubationRemaining`, and energy/cooldown
+  values.
 - Keep continuous rates and amounts as `double`.
-  This is required for V1 parameters with fractional values (`trailDecayPerStep = 0.02`, regeneration base rates/variance, and `movementCostModifier` in `0.5..1.5`).
-- Do not switch continuous V1 values to `int` unless the balancing model is explicitly changed to fixed-point arithmetic in both docs.
+  This is required for V1 parameters with fractional values (`trailDecayPerStep = 0.02`, regeneration base
+  rates/variance, and `movementCostModifier` in `0.5..1.5`).
+- Do not switch continuous V1 values to `int` unless the balancing model is explicitly changed to fixed-point arithmetic
+  in both docs.
 
 ### 7.6 String representation policy (`toString` / `toDisplayString`)
 
-- For ET Pets classes that are analogous to classes in existing simulations (`wator`, `sugar`, `snake`), implement `toString()` and `toDisplayString()` where those simulations already implement them.
-- The output style MUST follow the existing simulation patterns for readability and diagnostics (field selection, ordering, and compact formatting), instead of introducing a new ET Pets-specific format.
-- If an analogous class in existing simulations intentionally does not implement one of these methods, ET Pets may omit it as well for consistency.
+- For ET Pets classes that are analogous to classes in existing simulations (`wator`, `sugar`, `snake`), implement
+  `toString()` and `toDisplayString()` where those simulations already implement them.
+- The output style MUST follow the existing simulation patterns for readability and diagnostics (field selection,
+  ordering, and compact formatting), instead of introducing a new ET Pets-specific format.
+- If an analogous class in existing simulations intentionally does not implement one of these methods, ET Pets may omit
+  it as well for consistency.
 
 ### 7.7 Entity template references from existing simulations
 
@@ -353,8 +361,10 @@ encapsulates their implementation without redefining them here.
 Validation rules (fail fast):
 
 - Implement all V1 fail-fast validation rules from `ET_Pets_Specification.md` in `EtpetsConfig` and initialization code.
-- Keep validation messages explicit and actionable (invalid range, invalid topology, incompatible parameter combinations).
-- Ensure resource percentage validation and deterministic percent-to-count derivation are implemented exactly as specified.
+- Keep validation messages explicit and actionable (invalid range, invalid topology, incompatible parameter
+  combinations).
+- Ensure resource percentage validation and deterministic percent-to-count derivation are implemented exactly as
+  specified.
 
 Terrain perception (for example LOS behavior) must be implemented exactly according to
 `ET_Pets_Specification.md`.
@@ -480,7 +490,8 @@ Logging guideline:
 ### PR-08: Pet decision logic
 
 - implement fixed priority chain
-- implement `Explore/Trail` threshold gating (`trailIntensity > trailPreferenceThreshold`) before preferring `Trail` over `Ground`
+- implement `Explore/Trail` threshold gating (`trailIntensity > trailPreferenceThreshold`) before preferring `Trail`
+  over `Ground`
 - deterministic tie-breakers
 - random fallback only at final tie
 

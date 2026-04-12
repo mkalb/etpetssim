@@ -92,7 +92,8 @@ Fixed rules:
 - Edge behavior MUST be `GridEdgeBehavior.BLOCK_XY` only.
 - Cell shape MUST be `CellShape.HEXAGON` only.
 - Neighborhood mode MUST be `NeighborhoodMode.EDGES_ONLY` only.
-- Size MUST be configurable and between `20x20` and `200x200` cells; all layers MUST have the same size and MUST satisfy topology validity constraints.
+- Size MUST be configurable and between `20x20` and `200x200` cells; all layers MUST have the same size and MUST satisfy
+  topology validity constraints.
 
 ### Layer 1: Terrain
 
@@ -230,10 +231,12 @@ Fixed rules:
     - `plantPercent` in range `0..100`
     - `insectPercent` in range `0..100`
 - In V1, percentages MUST satisfy `plantPercent + insectPercent <= 100`.
-- In V1, per-type resource-cell counts MUST be derived deterministically from total terrain cells using floor-based counts:
+- In V1, per-type resource-cell counts MUST be derived deterministically from total terrain cells using floor-based
+  counts:
     - `plantCellCount = floor(totalTerrainCells * plantPercent / 100)`
     - `insectCellCount = floor(totalTerrainCells * insectPercent / 100)`
-- If derived counts cannot be placed on valid `Ground` cells under all V1 occupancy constraints, initialization MUST fail fast.
+- If derived counts cannot be placed on valid `Ground` cells under all V1 occupancy constraints, initialization MUST
+  fail fast.
 - Resource cells MUST be placed only on terrain cells that currently contain `Ground` entities.
 - In V1, the total count of resource cells MUST remain constant throughout the simulation.
 - In V1, individual resource cells MUST NOT be created or destroyed during simulation steps.
@@ -373,10 +376,10 @@ Initial values (V1 fixed):
 Trait schema (V1 fixed):
 
 - In V1, `PetTraits` / `PetGenome` MUST include exactly these four inheritable traits:
-  - `maxEnergy` (int, range `60..140`)
-  - `movementCostModifier` (double, range `0.5..1.5`)
-  - `reproductionMinEnergy` (int, range `50..90`)
-  - `reproductionCooldownMax` (int, range `120..320`)
+    - `maxEnergy` (int, range `60..140`)
+    - `movementCostModifier` (double, range `0.5..1.5`)
+    - `reproductionMinEnergy` (int, range `50..90`)
+    - `reproductionCooldownMax` (int, range `120..320`)
 - In V1, `visionRange` is fixed to `2` and is NOT part of inheritable trait scoring.
 - In V1, `genomeQualityScore` MUST be computed from the arithmetic mean of the four normalized trait values above.
 
@@ -550,7 +553,8 @@ Notes:
 
 - `trailIncreasePerEntry = 1.0`
 - `trailDecayPerStep = 0.02`
-- `trailPreferenceThreshold = 3.0` (`Trail` is preferred over `Ground` only if `trailIntensity > trailPreferenceThreshold`)
+- `trailPreferenceThreshold = 3.0` (`Trail` is preferred over `Ground` only if
+  `trailIntensity > trailPreferenceThreshold`)
 - `trailMin = 0`
 - `trailMax = 100`
 
@@ -581,12 +585,12 @@ There are currently no unresolved V1 decision blocks.
 The following decision blocks are resolved:
 
 - Trait schema for `PetGenome` / `PetTraits` is fixed for V1:
-  - `maxEnergy` in `60..140`
-  - `movementCostModifier` in `0.5..1.5`
-  - `reproductionMinEnergy` in `50..90`
-  - `reproductionCooldownMax` in `120..320`
-  - `visionRange` remains fixed (`2`) and is excluded from trait scoring
-  - `genomeQualityScore` uses arithmetic mean over normalized inheritable trait values
+    - `maxEnergy` in `60..140`
+    - `movementCostModifier` in `0.5..1.5`
+    - `reproductionMinEnergy` in `50..90`
+    - `reproductionCooldownMax` in `120..320`
+    - `visionRange` remains fixed (`2`) and is excluded from trait scoring
+    - `genomeQualityScore` uses arithmetic mean over normalized inheritable trait values
 
 - For `Move-to-resource-if-hungry`: when multiple visible resource cells are at the same minimum hex distance, the pet
   MUST target the cell with higher `energyGainPerAct` (Insect before Plant); if still tied, prefer higher
