@@ -31,25 +31,19 @@ public final class SnakeMainView
         SnakeConfigView,
         SnakeObservationView> {
 
-    // Entity color
-    public static final Color HEAD_ALIVE_FILL = Color.web("#00BCD4");
-    public static final Color HEAD_ALIVE_SELECTED_FILL = Color.web("#80DEEA");
-    public static final Color HEAD_ALIVE_BORDER = Color.web("#008BA3");
-    public static final Color HEAD_ALIVE_SELECTED_BORDER = Color.web("#4DD0E1");
-    public static final Color HEAD_DEAD_FILL = Color.web("#A33A3A");
-    public static final Color HEAD_DEAD_BORDER = Color.web("#6E2626");
-    public static final Color SEGMENT_ALIVE_FILL = Color.web("#4CAF50");
-    public static final Color SEGMENT_ALIVE_SELECTED_FILL = Color.web("#A5D6A7");
-    public static final Color SEGMENT_ALIVE_BORDER = Color.web("#2E7D32");
-    public static final Color SEGMENT_ALIVE_SELECTED_BORDER = Color.web("#66BB6A");
-    public static final Color SEGMENT_DEAD_FILL = Color.web("#8D6E63");
-    public static final Color SEGMENT_DEAD_BORDER = Color.web("#5D4037");
+    // Entity dead colors are derived from the alive colors using two warm dead hues.
+    private static final double DEAD_HEAD_HUE = 4.0d;
+    private static final double DEAD_SEGMENT_HUE = 22.0d;
+    private static final double DEAD_SATURATION = 0.45d;
+    private static final double DEAD_FILL_BRIGHTNESS_FACTOR = 0.75d;
+    private static final double DEAD_BORDER_BRIGHTNESS_FACTOR = 0.55d;
 
     // Entity stroke widths
     private static final double WALL_STROKE_LINE_WIDTH = 0.5d;
     private static final double FOOD_STROKE_LINE_WIDTH = 2.0d;
     private static final double SNAKE_SEGMENT_STROKE_LINE_WIDTH = 1.0d;
     private static final double SNAKE_HEAD_STROKE_LINE_WIDTH = 2.0d;
+    private static final double ALIVE_SELECTED_WHITE_BLEND_FACTOR = 0.3d;
 
     private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
@@ -71,6 +65,22 @@ public final class SnakeMainView
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
                 .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
+    }
+
+    private static Color toSelectedColor(Color aliveColor) {
+        return aliveColor.interpolate(Color.WHITE, ALIVE_SELECTED_WHITE_BLEND_FACTOR);
+    }
+
+    private static Color toDeadFillColor(Color aliveColor, double deadHue) {
+        return toDeadColor(aliveColor, deadHue, DEAD_FILL_BRIGHTNESS_FACTOR);
+    }
+
+    private static Color toDeadBorderColor(Color aliveColor, double deadHue) {
+        return toDeadColor(aliveColor, deadHue, DEAD_BORDER_BRIGHTNESS_FACTOR);
+    }
+
+    private static Color toDeadColor(Color aliveColor, double deadHue, double brightnessFactor) {
+        return Color.hsb(deadHue, DEAD_SATURATION, aliveColor.getBrightness() * brightnessFactor);
     }
 
     @Override
@@ -113,6 +123,26 @@ public final class SnakeMainView
 
         var wallDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
         var growthFoodDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
+        var snakeSegmentDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
+        var snakeHeadDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
+
+        // Alive colors are defined in EntityDescriptors; the cast to Color is safe because
+        // EntityDescriptors stores them as Color.web(...) values.
+        Color segmentAliveColor = (Color) Objects.requireNonNull(snakeSegmentDescriptor.color());
+        Color segmentAliveBorderColor = Objects.requireNonNull(snakeSegmentDescriptor.borderColor());
+        Color headAliveColor = (Color) Objects.requireNonNull(snakeHeadDescriptor.color());
+        Color headAliveBorderColor = Objects.requireNonNull(snakeHeadDescriptor.borderColor());
+
+        // Alive+selected colors are computed as a white-blend of the alive colors.
+        Color segmentAliveSelectedColor = toSelectedColor(segmentAliveColor);
+        Color segmentAliveSelectedBorderColor = toSelectedColor(segmentAliveBorderColor);
+        Color headAliveSelectedColor = toSelectedColor(headAliveColor);
+        Color headAliveSelectedBorderColor = toSelectedColor(headAliveBorderColor);
+
+        Color segmentDeadColor = toDeadFillColor(segmentAliveColor, DEAD_SEGMENT_HUE);
+        Color segmentDeadBorderColor = toDeadBorderColor(segmentAliveBorderColor, DEAD_SEGMENT_HUE);
+        Color headDeadColor = toDeadFillColor(headAliveColor, DEAD_HEAD_HUE);
+        Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
         currentModel.filteredCoordinates(e ->
                             Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_WALL))
@@ -127,26 +157,26 @@ public final class SnakeMainView
                         if (cell.entity() instanceof SnakeHead head) {
                             boolean isDead = head.isDead();
                             // Check if last selected entity is not null and is the same instance as the current head
-                            boolean isSelected = Objects.equals(head, viewModel.lastSelectedEntityProperty().getValue());
+                            boolean isSelected = isSelected(head);
                             Color snakeHeadColor;
                             Color snakeHeadColorBorder;
                             Color snakeSegmentColor;
                             Color snakeSegmentColorBorder;
                             if (isDead) {
-                                snakeHeadColor = HEAD_DEAD_FILL;
-                                snakeHeadColorBorder = HEAD_DEAD_BORDER;
-                                snakeSegmentColor = SEGMENT_DEAD_FILL;
-                                snakeSegmentColorBorder = SEGMENT_DEAD_BORDER;
+                                snakeHeadColor = headDeadColor;
+                                snakeHeadColorBorder = headDeadBorderColor;
+                                snakeSegmentColor = segmentDeadColor;
+                                snakeSegmentColorBorder = segmentDeadBorderColor;
                             } else if (isSelected) {
-                                snakeHeadColor = HEAD_ALIVE_SELECTED_FILL;
-                                snakeHeadColorBorder = HEAD_ALIVE_SELECTED_BORDER;
-                                snakeSegmentColor = SEGMENT_ALIVE_SELECTED_FILL;
-                                snakeSegmentColorBorder = SEGMENT_ALIVE_SELECTED_BORDER;
+                                snakeHeadColor = headAliveSelectedColor;
+                                snakeHeadColorBorder = headAliveSelectedBorderColor;
+                                snakeSegmentColor = segmentAliveSelectedColor;
+                                snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
                             } else {
-                                snakeHeadColor = HEAD_ALIVE_FILL;
-                                snakeHeadColorBorder = HEAD_ALIVE_BORDER;
-                                snakeSegmentColor = SEGMENT_ALIVE_FILL;
-                                snakeSegmentColorBorder = SEGMENT_ALIVE_BORDER;
+                                snakeHeadColor = headAliveColor;
+                                snakeHeadColorBorder = headAliveBorderColor;
+                                snakeSegmentColor = segmentAliveColor;
+                                snakeSegmentColorBorder = segmentAliveBorderColor;
                             }
                             for (GridCoordinate coordinate : head.currentSegments()) {
                                 basePainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
@@ -160,6 +190,10 @@ public final class SnakeMainView
     @Override
     protected List<Node> createModificationToolbarNodes() {
         return List.of();
+    }
+
+    private boolean isSelected(SnakeHead head) {
+        return Objects.equals(head, viewModel.lastSelectedEntityProperty().getValue());
     }
 
 }

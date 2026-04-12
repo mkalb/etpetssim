@@ -45,8 +45,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.snakesegment.long",
             "snake.entity.snakesegment.description",
             null,
-            null,
-            null
+            Color.web("#4caf50"),
+            Color.web("#2e7d32")
     ),
     SNAKE_HEAD(
             SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD,
@@ -55,8 +55,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "snake.entity.snakehead.long",
             "snake.entity.snakehead.description",
             null,
-            null,
-            null
+            Color.web("#00bcd4"),
+            Color.web("#008ba3")
     );
 
     private final GridEntityDescriptorSpec spec;

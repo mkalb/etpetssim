@@ -281,18 +281,22 @@ spawned agents additionally receive a white border for one step.
 
 ### SNAKE - Entity Display Catalog
 
-| Descriptor ID   | Long Name (en_US) | Long Name Key                    | Emoji | Fill Color   | Border Color | Default In Layer(s) |
-|-----------------|-------------------|----------------------------------|-------|--------------|--------------|---------------------|
-| `ground`        | Ground Cell       | `snake.entity.ground.long`       | -     | `#0B1220`    | -            | `grid`              |
-| `wall`          | Wall Cell         | `snake.entity.wall.long`         | -     | `#4A4A4A`    | `#7A7A7A`    | -                   |
-| `growth_food`   | Growth Food       | `snake.entity.growthfood.long`   | -     | `#FFCC00`    | `#CC9900`    | -                   |
-| `snake_segment` | Snake Segment     | `snake.entity.snakesegment.long` | -     | - [^snkseg]  | - [^snkseg]  | -                   |
-| `snake_head`    | Snake Head        | `snake.entity.snakehead.long`    | -     | - [^snkhead] | - [^snkhead] | -                   |
+| Descriptor ID   | Long Name (en_US) | Long Name Key                    | Emoji | Fill Color           | Border Color         | Default In Layer(s) |
+|-----------------|-------------------|----------------------------------|-------|----------------------|----------------------|---------------------|
+| `ground`        | Ground Cell       | `snake.entity.ground.long`       | -     | `#0B1220`            | -                    | `grid`              |
+| `wall`          | Wall Cell         | `snake.entity.wall.long`         | -     | `#4A4A4A`            | `#7A7A7A`            | -                   |
+| `growth_food`   | Growth Food       | `snake.entity.growthfood.long`   | -     | `#FFCC00`            | `#CC9900`            | -                   |
+| `snake_segment` | Snake Segment     | `snake.entity.snakesegment.long` | -     | `#4CAF50` [^snkseg]  | `#2E7D32` [^snkseg]  | -                   |
+| `snake_head`    | Snake Head        | `snake.entity.snakehead.long`    | -     | `#00BCD4` [^snkhead] | `#008BA3` [^snkhead] | -                   |
 
-[^snkseg]: No color defined in `EntityDescriptors`; colors are hardcoded in `SnakeMainView` (fill / border):
-alive `#4CAF50` / `#2E7D32`, alive+selected `#A5D6A7` / `#66BB6A`, dead `#8D6E63` / `#5D4037`.
-[^snkhead]: No color defined in `EntityDescriptors`; colors are hardcoded in `SnakeMainView` (fill / border):
-alive `#00BCD4` / `#008BA3`, alive+selected `#80DEEA` / `#4DD0E1`, dead `#A33A3A` / `#6E2626`.
+[^snkseg]: alive color defined in `EntityDescriptors`. alive+selected computed in `SnakeMainView` via
+`aliveColor.interpolate(Color.WHITE, 0.3)` (fill `#82C784`, border `#6DA470`). dead colors computed in
+`SnakeMainView` via `Color.hsb(22.0, 0.45, aliveColor.getBrightness() * factor)` with factor `0.75` for fill and
+`0.55` for border (fill `#835E48`, border `#453126`).
+[^snkhead]: alive color defined in `EntityDescriptors`. alive+selected computed in `SnakeMainView` via
+`aliveColor.interpolate(Color.WHITE, 0.3)` (fill `#4CD0E1`, border `#4CAEBF`). dead colors computed in
+`SnakeMainView` via `Color.hsb(4.0, 0.45, aliveColor.getBrightness() * factor)` with factor `0.75` for fill and
+`0.55` for border (fill `#9F5C57`, border `#5A3431`).
 
 ## REBOUNDING_ENTITIES
 
