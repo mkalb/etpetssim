@@ -32,33 +32,45 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 | Rebounding Entities                                                            | asynchronous | Sparse         | ⬛ Ground          | 🟨 Moving Entity (many), ⬜ Wall (many)                                       |
 | Simulation Lab                                                                 | n/a          | Sparse         | Normal            | Highlighted                                                                  |
 
+For a detailed inventory of simulation entity types, see
+the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
+
 ### Screenshots
 
 #### ET Pets
+
 (Screenshots will be added once the simulation is fully implemented.)
 
 #### Wa-Tor
+
 ![Wa-Tor - Screenshot 01](assets/screenshots/screenshot_wator_01.png)
 
 #### Conway's Game of Life
+
 ![Conway's Game of Life - Screenshot 01](assets/screenshots/screenshot_conway_01.png)
 
 #### Langton's Ant
+
 ![Langton's Ant - Screenshot 01](assets/screenshots/screenshot_langton_01.png)
 
 #### Forest-fire model
+
 ![Forest-fire model - Screenshot 01](assets/screenshots/screenshot_forest_01.png)
 
 #### Sugarscape
+
 ![Sugarscape - Screenshot 01](assets/screenshots/screenshot_sugar_01.png)
 
 #### Snake
+
 ![Snake - Screenshot 01](assets/screenshots/screenshot_snake_01.png)
 
 #### Rebounding Entities
+
 ![Rebounding Entities - Screenshot 01](assets/screenshots/screenshot_rebounding_01.png)
 
 #### Simulation Lab
+
 ![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
 ![Simulation Lab - Screenshot 02](assets/screenshots/screenshot_lab_02.png)
 ![Simulation Lab - Screenshot 03](assets/screenshots/screenshot_lab_03.png)
@@ -78,9 +90,11 @@ and MVVM, and making design and architecture decisions.
 ## Feedback and Issues
 
 Bug reports and improvement suggestions are very welcome.
-Please open a [GitHub Issue](https://github.com/mkalb/etpetssim/issues) if you find a problem or have an idea to improve the project.
+Please open a [GitHub Issue](https://github.com/mkalb/etpetssim/issues) if you find a problem or have an idea to improve
+the project.
 
 If possible, include:
+
 - clear steps to reproduce (for bugs),
 - expected vs. actual behavior,
 - screenshots or logs.
@@ -115,12 +129,12 @@ Prerequisite: Java 25.
 
 This project uses the latest stable versions of all technologies whenever possible.
 
-| Technology     | Version            | URL                                                            |
-|----------------|--------------------|----------------------------------------------------------------|
-| Java (OpenJDK) | Eclipse Temurin 25 | [adoptium.net](https://adoptium.net/)                          |
-| JavaFX         | 25.0.2             | [openjfx.io](https://openjfx.io/)                              |
-| Gradle         | 9.4.1              | [gradle.org](https://gradle.org/)                              |
-| IntelliJ IDEA  | 2025.3             | [www.jetbrains.com/idea](https://www.jetbrains.com/idea/)      |
+| Technology     | Version            | URL                                                       |
+|----------------|--------------------|-----------------------------------------------------------|
+| Java (OpenJDK) | Eclipse Temurin 25 | [adoptium.net](https://adoptium.net/)                     |
+| JavaFX         | 25.0.2             | [openjfx.io](https://openjfx.io/)                         |
+| Gradle         | 9.4.1              | [gradle.org](https://gradle.org/)                         |
+| IntelliJ IDEA  | 2025.3             | [www.jetbrains.com/idea](https://www.jetbrains.com/idea/) |
 
 ## License
 
