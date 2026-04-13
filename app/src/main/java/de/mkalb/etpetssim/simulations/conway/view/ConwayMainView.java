@@ -15,7 +15,6 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -31,11 +30,7 @@ public final class ConwayMainView
         ConwayConfigView,
         ConwayObservationView> {
 
-    private static final Color FALLBACK_COLOR = Color.BLACK;
-    private static final double ALIVE_BORDER_WIDTH = 1.0d;
-
     private final Paint backgroundPaint;
-
     private @Nullable CoordinateDrawer coordinateDrawer;
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
@@ -60,34 +55,36 @@ public final class ConwayMainView
         var alivePaint = descriptor.colorOrFallback();
         var aliveBorderColor = descriptor.borderColorOrFallback();
 
+        double strokeLineWidth = computeStrokeLineWidth(cellDimension);
+
         coordinateDrawer = switch (config.cellDisplayMode()) {
             case SHAPE -> (painter, coordinate, _) ->
                     painter.drawCell(
                             coordinate,
                             alivePaint,
                             null,
-                            ALIVE_BORDER_WIDTH);
+                            NO_STROKE_LINE_WIDTH);
             case SHAPE_BORDERED -> (painter, coordinate, _) ->
                     painter.drawCell(
                             coordinate,
                             alivePaint,
                             aliveBorderColor,
-                            ALIVE_BORDER_WIDTH);
+                            strokeLineWidth);
             case CIRCLE -> (painter, coordinate, _) ->
                     painter.drawCellInnerCircle(
                             coordinate,
                             alivePaint,
                             null,
-                            ALIVE_BORDER_WIDTH,
+                            NO_STROKE_LINE_WIDTH,
                             StrokeType.INSIDE);
             case CIRCLE_BORDERED -> (painter, coordinate, _) ->
                     painter.drawCellInnerCircle(
                             coordinate,
                             alivePaint,
                             aliveBorderColor,
-                            ALIVE_BORDER_WIDTH,
+                            strokeLineWidth,
                             StrokeType.INSIDE);
-            case CellDisplayMode.EMOJI -> (_, _, _) -> {}; // Not supported
+            case CellDisplayMode.EMOJI -> throw new IllegalArgumentException("CellDisplayMode not supported!");
         };
     }
 
@@ -111,9 +108,9 @@ public final class ConwayMainView
 
         basePainter.fillCanvasBackground(backgroundPaint);
 
-        // draw alive cells
         currentModel.nonDefaultCoordinates()
-                    .forEach(coordinate -> coordinateDrawer.draw(basePainter, coordinate, stepCount));
+                    .forEach(coordinate -> coordinateDrawer.draw(
+                            basePainter, coordinate, stepCount));
     }
 
     @Override

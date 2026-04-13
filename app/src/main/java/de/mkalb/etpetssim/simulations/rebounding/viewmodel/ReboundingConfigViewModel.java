@@ -34,7 +34,8 @@ public final class ReboundingConfigViewModel
             1,
             50,
             CellDisplayMode.SHAPE,
-            List.of(CellDisplayMode.SHAPE),
+            List.of(CellDisplayMode.SHAPE,
+                    CellDisplayMode.SHAPE_BORDERED),
             ""
     );
 

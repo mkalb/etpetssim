@@ -59,7 +59,7 @@ public final class LangtonMainView
         }
         basePainter.fillCanvasBackground(backgroundPaint);
 
-        double strokeLineWidth = (cellDimension.innerRadius() < 2.0d) ? 0.0d : 1.0d;
+        double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
         cellGroundDrawer = switch (config.cellDisplayMode()) {
             case CellDisplayMode.SHAPE -> (descriptor, painter, cell, _) ->
@@ -67,14 +67,14 @@ public final class LangtonMainView
                             cell.coordinate(),
                             descriptor.color(),
                             null,
-                            0.0d);
+                            NO_STROKE_LINE_WIDTH);
             case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, _) ->
                     painter.drawCell(
                             cell.coordinate(),
                             descriptor.color(),
                             backgroundPaint,
                             strokeLineWidth);
-            default -> null;
+            default -> throw new IllegalArgumentException("CellDisplayMode not supported!");
         };
         cellAntDrawer = (descriptor, painter, cell, _) -> {
             if ((cellEmojiFont != null)
@@ -84,9 +84,9 @@ public final class LangtonMainView
                 painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), descriptor.borderColor(), 1.0d, StrokeType.INSIDE);
                 painter.drawCenteredTextInCell(cell.coordinate(), ant.direction().arrow(), descriptor.borderColor(), cellEmojiFont);
             } else if (cellDimension.innerRadius() > 2.0d) {
-                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, 0.0d, StrokeType.INSIDE);
+                painter.drawCellInnerCircle(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH, StrokeType.INSIDE);
             } else {
-                painter.drawCell(cell.coordinate(), descriptor.color(), null, 0.0d);
+                painter.drawCell(cell.coordinate(), descriptor.color(), null, NO_STROKE_LINE_WIDTH);
             }
         };
     }
@@ -123,27 +123,27 @@ public final class LangtonMainView
         ReadableGridModel<AntEntity> antModel = currentModel.antModel();
 
         if ((lastDrawnStepCount + 1) < stepCount) {
+            // draw ground
             groundModel.nonDefaultCells()
-                       .forEachOrdered(groundCell -> {
-                           // draw ground
-                           cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
-                                   basePainter, groundCell, stepCount);
-                       });
+                       .forEachOrdered(groundCell -> cellGroundDrawer.draw(
+                               entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
+                               basePainter, groundCell, stepCount));
+            // draw ant
             antModel.nonDefaultCells()
-                    .forEachOrdered(antCell -> {
-                        // draw ant
-                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
-                                overlayPainter, antCell, stepCount);
-                    });
+                    .forEachOrdered(antCell -> cellAntDrawer.draw(
+                            entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
+                            overlayPainter, antCell, stepCount));
         } else {
             antModel.nonDefaultCells()
                     .forEachOrdered(antCell -> {
                         GridCell<TerrainConstant> groundCell = groundModel.getGridCell(antCell.coordinate());
                         // draw ground
-                        cellGroundDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
+                        cellGroundDrawer.draw(
+                                entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
                                 basePainter, groundCell, stepCount);
                         // draw ant
-                        cellAntDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
+                        cellAntDrawer.draw(
+                                entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
                                 overlayPainter, antCell, stepCount);
                     });
         }

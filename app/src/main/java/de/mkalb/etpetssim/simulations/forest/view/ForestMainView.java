@@ -30,8 +30,6 @@ public final class ForestMainView
         ForestConfigView,
         ForestObservationView> {
 
-    private static final double BORDER_WIDTH = 1.0d;
-
     private final Paint backgroundPaint;
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
@@ -53,7 +51,7 @@ public final class ForestMainView
 
     @Override
     protected void initSimulation(ForestConfig config, CellDimension cellDimension) {
-        double strokeLineWidth = config.cellDisplayMode().hasBorder() ? BORDER_WIDTH : 0.0d;
+        double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
         cellDrawer = switch (config.cellDisplayMode()) {
             case CellDisplayMode.SHAPE -> (descriptor, painter, cell, _) ->
@@ -61,7 +59,7 @@ public final class ForestMainView
                             cell.coordinate(),
                             descriptor.color(),
                             null,
-                            strokeLineWidth);
+                            NO_STROKE_LINE_WIDTH);
             case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, _) ->
                     painter.drawCell(
                             cell.coordinate(),
@@ -73,7 +71,7 @@ public final class ForestMainView
                             cell.coordinate(),
                             descriptor.color(),
                             null,
-                            strokeLineWidth,
+                            NO_STROKE_LINE_WIDTH,
                             StrokeType.INSIDE);
             case CellDisplayMode.CIRCLE_BORDERED -> (descriptor, painter, cell, _) ->
                     painter.drawCellInnerCircle(
@@ -82,8 +80,7 @@ public final class ForestMainView
                             backgroundPaint,
                             strokeLineWidth,
                             StrokeType.INSIDE);
-            case CellDisplayMode.EMOJI ->
-                    throw new IllegalArgumentException("EMOJI cell display mode is not supported in Forest simulation.");
+            case CellDisplayMode.EMOJI -> throw new IllegalArgumentException("CellDisplayMode not supported!");
         };
     }
 
@@ -108,9 +105,9 @@ public final class ForestMainView
         basePainter.fillCanvasBackground(backgroundPaint);
 
         currentModel.nonDefaultCells()
-                    .forEachOrdered(cell ->
-                            cellDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
-                                    basePainter, cell, stepCount));
+                    .forEachOrdered(cell -> cellDrawer.draw(
+                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            basePainter, cell, stepCount));
     }
 
     @Override

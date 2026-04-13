@@ -4,7 +4,9 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
@@ -33,6 +35,7 @@ public final class ReboundingMainView
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
     private final Paint backgroundPaint;
+    private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
     public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics> viewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -51,6 +54,23 @@ public final class ReboundingMainView
 
     @Override
     protected void initSimulation(ReboundingConfig config, CellDimension cellDimension) {
+        double strokeLineWidth = computeStrokeLineWidth(cellDimension);
+
+        cellDrawer = switch (config.cellDisplayMode()) {
+            case CellDisplayMode.SHAPE -> (descriptor, painter, cell, _) ->
+                    painter.drawCell(
+                            cell.coordinate(),
+                            descriptor.colorOrFallback(),
+                            null,
+                            NO_STROKE_LINE_WIDTH);
+            case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, _) ->
+                    painter.drawCell(
+                            cell.coordinate(),
+                            descriptor.colorOrFallback(),
+                            backgroundPaint,
+                            strokeLineWidth);
+            default -> throw new IllegalArgumentException("CellDisplayMode not supported!");
+        };
     }
 
     @Override
@@ -73,14 +93,17 @@ public final class ReboundingMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        if (cellDrawer == null) {
+            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            return;
+        }
 
         basePainter.fillCanvasBackground(backgroundPaint);
 
-        currentModel.nonDefaultCells().forEachOrdered(cell ->
-                basePainter.drawCell(cell.coordinate(),
-                        entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
-                                                .colorOrFallback(),
-                        null, 0.0d));
+        currentModel.nonDefaultCells()
+                    .forEachOrdered(cell -> cellDrawer.draw(
+                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            basePainter, cell, stepCount));
     }
 
     @Override

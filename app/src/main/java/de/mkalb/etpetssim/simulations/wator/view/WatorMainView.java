@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
@@ -71,14 +70,6 @@ public final class WatorMainView
         return Math.max(config.sharkBirthEnergy(), config.sharkMinReproductionEnergy()) * MAX_COLOR_SHARK_ENERGY_FACTOR;
     }
 
-    @SuppressWarnings({"MagicNumber", "unused"})
-    private double computeStrokeLineWidth(CellShape cellShape, CellDimension cellDimension) {
-        if (cellDimension.innerRadius() < 2.0d) {
-            return 0.0d;
-        }
-        return Math.log(cellDimension.innerRadius());
-    }
-
     @Override
     protected void initSimulation(WatorConfig config, CellDimension cellDimension) {
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
@@ -89,8 +80,7 @@ public final class WatorMainView
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(EntityDescriptors.SHARK.descriptorId()),
                         1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
 
-        double strokeLineWidth = config.cellDisplayMode().hasBorder() ?
-                computeStrokeLineWidth(config.cellShape(), cellDimension) : 0.0d;
+        double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
         cellDrawer = switch (config.cellDisplayMode()) {
             case CellDisplayMode.SHAPE -> (descriptor, painter, cell, stepCount) ->
@@ -98,7 +88,7 @@ public final class WatorMainView
                             cell.coordinate(),
                             resolveEntityFillColor(descriptor, cell.entity(), stepCount),
                             null,
-                            strokeLineWidth);
+                            NO_STROKE_LINE_WIDTH);
             case CellDisplayMode.SHAPE_BORDERED -> (descriptor, painter, cell, stepCount) ->
                     painter.drawCell(
                             cell.coordinate(),
@@ -110,7 +100,7 @@ public final class WatorMainView
                             cell.coordinate(),
                             resolveEntityFillColor(descriptor, cell.entity(), stepCount),
                             null,
-                            strokeLineWidth,
+                            NO_STROKE_LINE_WIDTH,
                             StrokeType.INSIDE);
             case CellDisplayMode.CIRCLE_BORDERED -> (descriptor, painter, cell, stepCount) ->
                     painter.drawCellInnerCircle(
@@ -126,7 +116,7 @@ public final class WatorMainView
                                     cell.coordinate(),
                                     resolveEntityFillColor(descriptor, cell.entity(), stepCount),
                                     null,
-                                    strokeLineWidth,
+                                    NO_STROKE_LINE_WIDTH,
                                     StrokeType.INSIDE);
                 }
                 yield (descriptor, painter, cell, stepCount) ->
@@ -188,9 +178,9 @@ public final class WatorMainView
         basePainter.fillCanvasBackground(backgroundPaint);
 
         currentModel.nonDefaultCells()
-                    .forEachOrdered(cell ->
-                            cellDrawer.draw(entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
-                                    basePainter, cell, stepCount));
+                    .forEachOrdered(cell -> cellDrawer.draw(
+                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            basePainter, cell, stepCount));
     }
 
     @Override

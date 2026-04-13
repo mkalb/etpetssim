@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.sugar.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
@@ -45,7 +44,6 @@ public final class SugarMainView
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
-
     private int maxColorAgentEnergy = 1;
 
     public SugarMainView(DefaultMainViewModel<SugarEntity, SugarGridModel, SugarConfig, SugarStatistics> viewModel,
@@ -80,12 +78,14 @@ public final class SugarMainView
                 computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
                         1, maxColorAgentEnergy, AGENT_GROUP_COUNT, AGENT_MAX_FACTOR_DELTA));
 
+        double strokeLineWidth = computeStrokeLineWidth(cellDimension);
+
         cellResourceDrawer = (descriptor, painter, cell, _) ->
                 painter.drawCell(
                         cell.coordinate(),
                         resolveResourceFillColor(descriptor, cell.entity()),
                         null,
-                        0.0d);
+                        NO_STROKE_LINE_WIDTH);
 
         cellAgentDrawer = (descriptor, painter, cell, stepCount) -> {
             if ((stepCount > 0)
@@ -96,14 +96,14 @@ public final class SugarMainView
                         cell.coordinate(),
                         resolveAgentFillColor(descriptor, cell.entity()),
                         Color.WHITE,
-                        1.0d,
+                        strokeLineWidth,
                         StrokeType.CENTERED);
             } else {
                 painter.drawCellInnerCircle(
                         cell.coordinate(),
                         resolveAgentFillColor(descriptor, cell.entity()),
                         null,
-                        0.0d,
+                        NO_STROKE_LINE_WIDTH,
                         StrokeType.CENTERED);
             }
         };
@@ -177,18 +177,15 @@ public final class SugarMainView
 
         basePainter.fillCanvasBackground(backgroundPaint);
 
-        ReadableGridModel<ResourceEntity> resourceModel = currentModel.resourceModel();
-        ReadableGridModel<AgentEntity> agentModel = currentModel.agentModel();
+        currentModel.resourceModel().nonDefaultCells()
+                    .forEachOrdered(resourceCell -> cellResourceDrawer.draw(
+                            entityDescriptorRegistry.getRequiredByDescriptorId(resourceCell.descriptorId()),
+                            basePainter, resourceCell, stepCount));
 
-        resourceModel.nonDefaultCells()
-                     .forEachOrdered(resourceCell -> cellResourceDrawer.draw(
-                             entityDescriptorRegistry.getRequiredByDescriptorId(resourceCell.descriptorId()),
-                             basePainter, resourceCell, stepCount));
-
-        agentModel.nonDefaultCells()
-                  .forEachOrdered(agentCell -> cellAgentDrawer.draw(
-                          entityDescriptorRegistry.getRequiredByDescriptorId(agentCell.descriptorId()),
-                          basePainter, agentCell, stepCount));
+        currentModel.agentModel().nonDefaultCells()
+                    .forEachOrdered(agentCell -> cellAgentDrawer.draw(
+                            entityDescriptorRegistry.getRequiredByDescriptorId(agentCell.descriptorId()),
+                            basePainter, agentCell, stepCount));
     }
 
     @Override

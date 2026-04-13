@@ -78,14 +78,14 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
                                                 .colorOrFallback(),
                         null,
-                        0.0d));
+                        NO_STROKE_LINE_WIDTH));
 
         currentModel.resourceModel().nonDefaultCells().forEach(cell ->
                 basePainter.drawCellInnerCircle(cell.coordinate(),
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
                                                 .colorOrFallback(),
                         null,
-                        0.0d,
+                        NO_STROKE_LINE_WIDTH,
                         StrokeType.INSIDE));
 
         currentModel.agentModel().nonDefaultCells().forEach(cell ->
@@ -93,7 +93,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
                                                 .colorOrFallback(),
                         null,
-                        0.0d,
+                        NO_STROKE_LINE_WIDTH,
                         StrokeType.INSIDE));
     }
 

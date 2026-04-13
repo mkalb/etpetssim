@@ -36,6 +36,8 @@ public abstract class AbstractDefaultMainView<
                 SimulationControlView,
                 OV> {
 
+    protected static final double NO_STROKE_LINE_WIDTH = 0.0d;
+
     private static final Color SKIP_OVERLAY_TEXT_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BORDER_COLOR, 0.95);
     private static final Color SKIP_OVERLAY_BACKGROUND_COLOR = FXPaintFactory.adjustColorAlpha(FXPaintFactory.BACKGROUND_COLOR, 0.95);
     private static final String SKIP_OVERLAY_SYMBOL = "⏳"; // Hourglass Not Done
@@ -71,6 +73,13 @@ public abstract class AbstractDefaultMainView<
                 handleGridCellSelected(overlayPainter, oldGridCell, newGridCell);
             }
         });
+    }
+
+    protected final double computeStrokeLineWidth(CellDimension cellDimension) {
+        if (cellDimension.innerRadius() < 2.0d) {
+            return 0.0d;
+        }
+        return Math.log(cellDimension.innerRadius());
     }
 
     @Nullable
