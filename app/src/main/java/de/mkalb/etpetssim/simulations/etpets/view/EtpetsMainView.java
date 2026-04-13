@@ -43,7 +43,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
-                .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
+                .colorOrFallback();
     }
 
     @Override
@@ -76,14 +76,14 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         currentModel.terrainModel().nonDefaultCells().forEach(cell ->
                 basePainter.drawCell(cell.coordinate(),
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
-                                                .colorAsOptional().orElse(FALLBACK_COLOR_CELL),
+                                                .colorOrFallback(),
                         null,
                         0.0d));
 
         currentModel.resourceModel().nonDefaultCells().forEach(cell ->
                 basePainter.drawCellInnerCircle(cell.coordinate(),
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
-                                                .colorAsOptional().orElse(FALLBACK_COLOR_CELL),
+                                                .colorOrFallback(),
                         null,
                         0.0d,
                         StrokeType.INSIDE));
@@ -91,7 +91,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         currentModel.agentModel().nonDefaultCells().forEach(cell ->
                 basePainter.drawCellInnerCircle(cell.coordinate(),
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
-                                                .colorAsOptional().orElse(FALLBACK_COLOR_CELL),
+                                                .colorOrFallback(),
                         null,
                         0.0d,
                         StrokeType.INSIDE));

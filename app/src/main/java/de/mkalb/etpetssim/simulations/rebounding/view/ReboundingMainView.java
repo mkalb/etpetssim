@@ -29,8 +29,6 @@ public final class ReboundingMainView
         ReboundingConfigView,
         ReboundingObservationView> {
 
-    private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
-    private static final Color FALLBACK_COLOR_CELL = Color.GRAY;
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
@@ -48,7 +46,7 @@ public final class ReboundingMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
-                .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
+                .colorOrFallback();
     }
 
     @Override
@@ -81,7 +79,7 @@ public final class ReboundingMainView
         currentModel.nonDefaultCells().forEachOrdered(cell ->
                 basePainter.drawCell(cell.coordinate(),
                         entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId())
-                                                .colorAsOptional().orElse(FALLBACK_COLOR_CELL),
+                                                .colorOrFallback(),
                         null, 0.0d));
     }
 

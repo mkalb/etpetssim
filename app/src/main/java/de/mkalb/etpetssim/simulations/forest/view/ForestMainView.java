@@ -15,7 +15,6 @@ import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -49,7 +48,7 @@ public final class ForestMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ForestEntity.EMPTY.descriptorId())
-                .colorAsOptional().orElse(Color.BLACK);
+                .colorOrFallback();
     }
 
     @Override

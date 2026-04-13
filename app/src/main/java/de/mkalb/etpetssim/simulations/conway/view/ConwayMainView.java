@@ -51,14 +51,14 @@ public final class ConwayMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ConwayEntity.DEAD.descriptorId())
-                .colorAsOptional().orElse(FALLBACK_COLOR);
+                .colorOrFallback();
     }
 
     @Override
     protected void initSimulation(ConwayConfig config, CellDimension cellDimension) {
         var descriptor = entityDescriptorRegistry.getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId());
-        var alivePaint = descriptor.colorAsOptional().orElse(FALLBACK_COLOR);
-        var aliveBorderColor = descriptor.borderColorAsOptional().orElse(FALLBACK_COLOR);
+        var alivePaint = descriptor.colorOrFallback();
+        var aliveBorderColor = descriptor.borderColorOrFallback();
 
         coordinateDrawer = switch (config.cellDisplayMode()) {
             case SHAPE -> (painter, coordinate, _) ->

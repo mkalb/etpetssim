@@ -60,7 +60,7 @@ public final class SugarMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
-                .colorAsOptional().orElse(Color.BLACK);
+                .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR, null);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT, null);

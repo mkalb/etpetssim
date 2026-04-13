@@ -45,7 +45,6 @@ public final class SnakeMainView
     private static final double SNAKE_HEAD_STROKE_LINE_WIDTH = 2.0d;
     private static final double ALIVE_SELECTED_WHITE_BLEND_FACTOR = 0.3d;
 
-    private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
@@ -64,7 +63,7 @@ public final class SnakeMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
-                .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
+                .colorOrFallback();
     }
 
     private static Color toSelectedColor(Color aliveColor) {

@@ -34,7 +34,6 @@ public final class WatorMainView
         WatorObservationView> {
 
     private static final Color FALLBACK_COLOR_AGENT = Color.WHITE;
-    private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
     private static final double FISH_MAX_FACTOR_DELTA = -0.5d;
     private static final double SHARK_MAX_FACTOR_DELTA = 0.7d;
     private static final int FISH_GROUP_COUNT = 10;
@@ -62,7 +61,7 @@ public final class WatorMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
-                .colorAsOptional().orElse(FALLBACK_COLOR_BACKGROUND);
+                .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
         entityColors.put(EntityDescriptors.FISH.descriptorId(), null);
         entityColors.put(EntityDescriptors.SHARK.descriptorId(), null);

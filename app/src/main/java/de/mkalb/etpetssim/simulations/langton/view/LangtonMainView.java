@@ -16,7 +16,6 @@ import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -48,7 +47,7 @@ public final class LangtonMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
-                .colorAsOptional().orElse(Color.WHITE);
+                .colorOrFallback();
     }
 
     @SuppressWarnings("MagicNumber")
