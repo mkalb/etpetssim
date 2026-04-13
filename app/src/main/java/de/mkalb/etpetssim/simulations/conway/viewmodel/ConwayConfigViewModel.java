@@ -34,7 +34,10 @@ public final class ConwayConfigViewModel
             1,
             50,
             CellDisplayMode.SHAPE_BORDERED,
-            List.of(CellDisplayMode.SHAPE_BORDERED),
+            List.of(CellDisplayMode.SHAPE,
+                    CellDisplayMode.SHAPE_BORDERED,
+                    CellDisplayMode.CIRCLE,
+                    CellDisplayMode.CIRCLE_BORDERED),
             ""
     );
 

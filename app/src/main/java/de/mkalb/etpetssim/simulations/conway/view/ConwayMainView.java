@@ -7,7 +7,9 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
+import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
+import de.mkalb.etpetssim.simulations.core.view.CoordinateDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
@@ -15,6 +17,7 @@ import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -28,11 +31,12 @@ public final class ConwayMainView
         ConwayConfigView,
         ConwayObservationView> {
 
+    private static final Color FALLBACK_COLOR = Color.BLACK;
     private static final double ALIVE_BORDER_WIDTH = 1.0d;
 
     private final Paint backgroundPaint;
-    private final Paint alivePaint;
-    private final Color aliveBorderColor;
+
+    private @Nullable CoordinateDrawer coordinateDrawer;
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
                                   ConwayStatistics> viewModel,
@@ -47,18 +51,44 @@ public final class ConwayMainView
                 entityDescriptorRegistry);
         backgroundPaint = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ConwayEntity.DEAD.descriptorId())
-                .colorAsOptional().orElse(Color.BLACK);
-        alivePaint = entityDescriptorRegistry
-                .getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId())
-                .colorAsOptional().orElse(Color.WHITE);
-        aliveBorderColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId())
-                .borderColorAsOptional().orElse(Color.GRAY);
+                .colorAsOptional().orElse(FALLBACK_COLOR);
     }
 
     @Override
     protected void initSimulation(ConwayConfig config, CellDimension cellDimension) {
-        // Do nothing
+        var descriptor = entityDescriptorRegistry.getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId());
+        var alivePaint = descriptor.colorAsOptional().orElse(FALLBACK_COLOR);
+        var aliveBorderColor = descriptor.borderColorAsOptional().orElse(FALLBACK_COLOR);
+
+        coordinateDrawer = switch (config.cellDisplayMode()) {
+            case SHAPE -> (painter, coordinate, _) ->
+                    painter.drawCell(
+                            coordinate,
+                            alivePaint,
+                            null,
+                            ALIVE_BORDER_WIDTH);
+            case SHAPE_BORDERED -> (painter, coordinate, _) ->
+                    painter.drawCell(
+                            coordinate,
+                            alivePaint,
+                            aliveBorderColor,
+                            ALIVE_BORDER_WIDTH);
+            case CIRCLE -> (painter, coordinate, _) ->
+                    painter.drawCellInnerCircle(
+                            coordinate,
+                            alivePaint,
+                            null,
+                            ALIVE_BORDER_WIDTH,
+                            StrokeType.INSIDE);
+            case CIRCLE_BORDERED -> (painter, coordinate, _) ->
+                    painter.drawCellInnerCircle(
+                            coordinate,
+                            alivePaint,
+                            aliveBorderColor,
+                            ALIVE_BORDER_WIDTH,
+                            StrokeType.INSIDE);
+            case CellDisplayMode.EMOJI -> (_, _, _) -> {}; // Not supported
+        };
     }
 
     @Override
@@ -74,16 +104,16 @@ public final class ConwayMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        if (coordinateDrawer == null) {
+            AppLogger.warn("CoordinateDrawer is not initialized, cannot draw canvas.");
+            return;
+        }
 
         basePainter.fillCanvasBackground(backgroundPaint);
 
+        // draw alive cells
         currentModel.nonDefaultCoordinates()
-                    .forEach(coordinate ->
-                            basePainter.drawCell(
-                                    coordinate,
-                                    alivePaint,
-                                    aliveBorderColor,
-                                    ALIVE_BORDER_WIDTH));
+                    .forEach(coordinate -> coordinateDrawer.draw(basePainter, coordinate, stepCount));
     }
 
     @Override
