@@ -56,12 +56,38 @@ public record GridEntityDescriptor(
     }
 
     /**
+     * Returns the configured fill paint, or a default of {@link Color#BLACK} if none is set.
+     * <p>
+     * This method guarantees a non-null value and is intended for rendering code that
+     * requires a concrete {@link Paint} without optional handling.
+     * </p>
+     *
+     * @return the configured fill paint, or {@link Color#BLACK} as fallback
+     */
+    public Paint colorOrFallback() {
+        return (color != null) ? color : Color.BLACK;
+    }
+
+    /**
      * Returns the border color for this entity as an {@link Optional}.
      *
      * @return an {@link Optional} containing the border color, or empty if not set
      */
     public Optional<Color> borderColorAsOptional() {
         return Optional.ofNullable(borderColor);
+    }
+
+    /**
+     * Returns the configured border color, or a default of {@link Color#BLACK} if none is set.
+     * <p>
+     * This method guarantees a non-null {@link Color} for callers that always need a border
+     * color value during rendering.
+     * </p>
+     *
+     * @return the configured border color, or {@link Color#BLACK} as fallback
+     */
+    public Color borderColorOrFallback() {
+        return (borderColor != null) ? borderColor : Color.BLACK;
     }
 
     /**
