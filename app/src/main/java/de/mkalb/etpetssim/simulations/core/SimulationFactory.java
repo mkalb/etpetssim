@@ -43,7 +43,7 @@ public final class SimulationFactory {
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
         return SimulationInstance.of(type, switch (type) {
             case STARTSCREEN -> StartFactory.createMainView(stage, stageUpdater);
-            case SIMULATION_LAB -> LabFactory.createMainView();
+            case ET_PETS -> EtpetsFactory.createMainView();
             case WATOR -> WatorFactory.createMainView();
             case CONWAYS_LIFE -> ConwayFactory.createMainView();
             case LANGTONS_ANT -> LangtonFactory.createMainView();
@@ -51,9 +51,7 @@ public final class SimulationFactory {
             case SUGARSCAPE -> SugarFactory.createMainView();
             case SNAKE -> SnakeFactory.createMainView();
             case REBOUNDING_ENTITIES -> ReboundingFactory.createMainView();
-            case ET_PETS -> EtpetsFactory.createMainView();
-            // Add other simulation types here after implementing them
-            default -> throw new IllegalArgumentException("Unsupported simulation type: " + type);
+            case SIMULATION_LAB -> LabFactory.createMainView();
         });
     }
 

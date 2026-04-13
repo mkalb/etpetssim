@@ -190,9 +190,9 @@ public final class SugarSimulationManager
 
     private void updateInitialStatistics(SugarGridModel model) {
         int resourceCellsInitial = Math.toIntExact(model.resourceModel()
-                                                        .countEntities(e -> e.isNotEmpty()));
+                                                        .countEntities(SugarEntity::isNotEmpty));
         int agentCellsInitial = Math.toIntExact(model.agentModel()
-                                                     .countEntities(e -> e.isNotEmpty()));
+                                                     .countEntities(SugarEntity::isNotEmpty));
         statistics.updateInitialCells(resourceCellsInitial, agentCellsInitial);
     }
 

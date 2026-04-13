@@ -143,7 +143,6 @@ public final class SnakeSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     private void updateInitialStatistics(ReadableGridModel<SnakeEntity> model) {
         int snakeHeadCellsInitial = Math.toIntExact(model
                 .countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD)));

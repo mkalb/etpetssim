@@ -16,7 +16,7 @@ public final class DefaultObservationViewModel<
         implements SimulationObservationViewModel<STA> {
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
-    private final ReadOnlyObjectWrapper<STA> statistics;
+    private final ReadOnlyObjectWrapper<@Nullable STA> statistics;
 
     private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
@@ -37,7 +37,7 @@ public final class DefaultObservationViewModel<
     }
 
     @Override
-    public ReadOnlyObjectProperty<STA> statisticsProperty() {
+    public ReadOnlyObjectProperty<@Nullable STA> statisticsProperty() {
         return statistics.getReadOnlyProperty();
     }
 

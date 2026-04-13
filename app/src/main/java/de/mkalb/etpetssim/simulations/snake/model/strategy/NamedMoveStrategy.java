@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.simulations.snake.model.strategy;
 
-import org.jspecify.annotations.NonNull;
-
 import java.util.*;
 
 record NamedMoveStrategy(
@@ -13,7 +11,6 @@ record NamedMoveStrategy(
         return strategy.decideMove(context);
     }
 
-    @NonNull
     @Override
     public String toString() {
         return name;
