@@ -21,7 +21,7 @@ public record GridCoordinate(int x, int y) {
 
     /**
      * A constant for the minimum valid coordinate value.
-     * Only positive coordinates are valid in the grid.
+     * Only non-negative coordinates are valid in the grid.
      */
     public static final int MIN_VALID_COORDINATE = 0;
 

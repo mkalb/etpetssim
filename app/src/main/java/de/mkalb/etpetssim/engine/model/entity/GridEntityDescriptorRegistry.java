@@ -36,9 +36,9 @@ public final class GridEntityDescriptorRegistry {
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
-     * {@link GridEntityDescriptorProvider} entities provided as varargs.
+     * {@link GridEntityDescriptorProvider} providers supplied as varargs.
      *
-     * @param entities one or more descriptor provider entities to register
+     * @param entities one or more descriptor providers to register
      * @return a populated registry instance
      */
     public static GridEntityDescriptorRegistry of(GridEntityDescriptorProvider... entities) {
@@ -47,9 +47,9 @@ public final class GridEntityDescriptorRegistry {
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
-     * array of {@link GridEntityDescriptorProvider} entities.
+     * array of {@link GridEntityDescriptorProvider} providers.
      *
-     * @param entities an array of descriptor provider entities to register
+     * @param entities an array of descriptor providers to register
      * @return a populated registry instance
      */
     public static GridEntityDescriptorRegistry ofArray(GridEntityDescriptorProvider[] entities) {
@@ -71,9 +71,9 @@ public final class GridEntityDescriptorRegistry {
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
-     * {@link Collection} of {@link GridEntityDescriptorProvider} entities.
+     * {@link Collection} of {@link GridEntityDescriptorProvider} providers.
      *
-     * @param entities a collection of descriptor provider entities to register
+     * @param entities a collection of descriptor providers to register
      * @return a populated registry instance
      */
     public static GridEntityDescriptorRegistry ofCollection(Collection<? extends GridEntityDescriptorProvider> entities) {
@@ -108,7 +108,8 @@ public final class GridEntityDescriptorRegistry {
      * @param emojiKey optional localization key for the emoji, or {@code null}
      * @param color optional fill color, or {@code null}
      * @param borderColor optional border color, or {@code null}
-     * @return the registered {@link GridEntityDescriptor}
+     * @return the registered {@link GridEntityDescriptor}; an existing descriptor with the same
+     * descriptor ID is replaced
      */
     @SuppressWarnings("UnusedReturnValue")
     public GridEntityDescriptor register(

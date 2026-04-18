@@ -25,12 +25,12 @@ public record GridSize(int width, int height) {
 
     /**
      * The minimum valid size for grid dimensions.
-     * This is set to 8 (2^3), which is the smallest even number allowed.
+     * This is set to 8 (2^3), which is the lower bound for width and height.
      */
     public static final int MIN_SIZE = 8;
     /**
      * The maximum valid size for grid dimensions.
-     * This is set to 16384 (2^14), which is the largest even number allowed.
+     * This is set to 16384 (2^14), which is the upper bound for width and height.
      */
     public static final int MAX_SIZE = 16_384; // equals 2^14.
 

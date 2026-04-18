@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Interface for entities that provide descriptor keys for use with {@link GridEntityDescriptorRegistry}.
+ * Provider interface for descriptor keys used by {@link GridEntityDescriptorRegistry}.
  * <p>
  * Unlike {@link GridEntityDescriptor}, this interface does not provide direct values (such as names or descriptions),
  * but instead supplies keys (e.g., {@code shortNameKey}, {@code longNameKey}, {@code descriptionKey}) for accessing
