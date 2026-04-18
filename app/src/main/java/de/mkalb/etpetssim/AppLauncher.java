@@ -8,18 +8,11 @@ import java.nio.file.Path;
 import java.util.*;
 
 /**
- * The launcher class for the Extraterrestrial Pets Simulation application.
+ * Application launcher and bootstrap entry point.
  * <p>
- * Responsible for parsing command-line arguments, initializing logging and localization,
- * and starting the JavaFX application. This class does not extend {@link javafx.application.Application}
- * and serves as the main entry point for the application.
- * </p>
- * <p>
- * The JavaFX application is started via {@link ExtraterrestrialPetsSimulation}.
- * </p>
- * <p>
- * Use the {@code --help} flag to display usage information and exit.
- * </p>
+ * This class parses command-line arguments, initializes logging and localization,
+ * and launches {@link ExtraterrestrialPetsSimulation}. It is intentionally separate
+ * from the JavaFX {@link Application} subclass.
  */
 public final class AppLauncher {
 
@@ -30,13 +23,13 @@ public final class AppLauncher {
     }
 
     /**
-     * Parses command-line arguments and terminates the application if the help flag is present.
+     * Parses command-line arguments and handles the help flag.
+     * <p>
+     * If {@link AppArgs.Key#HELP} is active, usage information is written to
+     * {@link System#out} and the process exits with status code {@code 0}.
      *
-     * <p>When {@link AppArgs.Key#HELP} is active, this method prints usage information
-     * to {@link System#out} and calls {@link System#exit(int)} with code 0.</p>
-     *
-     * @param args the command-line arguments to parse; must not be {@code null}. Can be empty.
-     * @return the parsed {@link AppArgs} instance
+     * @param args command-line arguments; may be empty
+     * @return parsed {@link AppArgs} instance
      * @see AppArgs.Key#printHelp(Appendable)
      */
     @SuppressWarnings("CallToSystemExit")
@@ -52,8 +45,9 @@ public final class AppLauncher {
     }
 
     /**
-     * Initializes the application logger based on command-line arguments.
-     * @param arguments the parsed command-line arguments
+     * Initializes application logging from parsed arguments.
+     *
+     * @param arguments parsed command-line arguments
      */
     private static void initAppLogger(AppArgs arguments) {
         var logLevel = arguments.getValue(AppArgs.Key.LOG_LEVEL)
@@ -74,10 +68,9 @@ public final class AppLauncher {
     }
 
     /**
-     * Initializes the application localization based on command-line arguments.
-     * Set the default locale for the application.
+     * Initializes localization from parsed arguments and updates the JVM default locale.
      *
-     * @param arguments the parsed command-line arguments
+     * @param arguments parsed command-line arguments
      */
     private static void initAppLocalization(AppArgs arguments) {
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
@@ -85,13 +78,12 @@ public final class AppLauncher {
     }
 
     /**
-     * The main entry point for the Extraterrestrial Pets Simulation application.
+     * Application entry point.
      * <p>
-     * It is not the JavaFX Application class itself.
-     * The command-line arguments are parsed with AppArgs.
-     * Use "--help" to display the help message and exit the application.
+     * Arguments are parsed first, then logging and localization are initialized,
+     * and finally the JavaFX application is launched.
      *
-     * @param args the command-line arguments passed to the application
+     * @param args command-line arguments passed to the application
      */
     static void main(String[] args) {
         var arguments = parseArgumentsAndHandleHelp(args);

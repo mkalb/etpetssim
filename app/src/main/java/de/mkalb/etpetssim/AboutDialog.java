@@ -14,8 +14,10 @@ import java.util.*;
 import java.util.jar.*;
 
 /**
- * Displays an "About" dialog for the Extraterrestrial Pets Simulation application.
- * Shows version, readme, license, and third-party license information in tabs.
+ * Displays the application's About dialog.
+ * <p>
+ * The dialog presents build metadata, the README, the project license, and
+ * third-party license information in separate tabs.
  */
 public final class AboutDialog {
 
@@ -26,9 +28,9 @@ public final class AboutDialog {
     private final Font monospacedFont;
 
     /**
-     * Constructs an AboutDialog with the specified application icons.
+     * Creates a new About dialog helper.
      *
-     * @param icons the list of images to use as window icons
+     * @param icons window icons to apply to the dialog stage
      */
     public AboutDialog(List<Image> icons) {
         this.icons = icons;
@@ -36,8 +38,10 @@ public final class AboutDialog {
     }
 
     /**
-     * Shows the About dialog with application information.
-     * The dialog contains tabs for version, readme, license, and third-party licenses.
+     * Shows the About dialog.
+     * <p>
+     * The dialog contains tabs for version information, the README, the project
+     * license, and third-party licenses.
      */
     public void showAboutDialog() {
         Tab tabManifest = createTextAreaTab(
@@ -68,11 +72,11 @@ public final class AboutDialog {
     }
 
     /**
-     * Creates a tab containing a non-editable, monospaced text area with the given content.
+     * Creates a tab containing a read-only monospaced text area.
      *
-     * @param tabTitle the title of the tab
-     * @param text the text to display in the tab
-     * @return a Tab containing the text area
+     * @param tabTitle title shown on the tab
+     * @param text text displayed inside the tab content area
+     * @return configured tab instance
      */
     private Tab createTextAreaTab(String tabTitle, String text) {
         TextArea textArea = new TextArea(text);
@@ -90,9 +94,9 @@ public final class AboutDialog {
     }
 
     /**
-     * Builds a string containing manifest information such as title, version, build timestamp, JDK, and builder.
+     * Builds a textual summary of selected manifest attributes.
      *
-     * @return a formatted string with manifest details
+     * @return formatted manifest summary text
      */
     @SuppressWarnings("HardcodedLineSeparator")
     private String buildManifestSummary() {
@@ -105,9 +109,9 @@ public final class AboutDialog {
     }
 
     /**
-     * Reads manifest information from the application's MANIFEST.MF file.
+     * Reads selected attributes from {@code META-INF/MANIFEST.MF}.
      *
-     * @return a map containing manifest attributes, or an empty map if not found or on error
+     * @return map of manifest attribute names to values, or an empty map if unavailable
      */
     private Map<String, String> readManifestInfo() {
         Optional<InputStream> resource = AppResources.getResourceAsStream("META-INF/MANIFEST.MF");
@@ -137,10 +141,10 @@ public final class AboutDialog {
     }
 
     /**
-     * Loads the content of a resource file as a string using UTF-8 encoding.
+     * Loads a text resource using UTF-8.
      *
-     * @param resourceRelativePath the relative path to the resource
-     * @return the content of the resource, or an error message if not found
+     * @param resourceRelativePath classpath-relative resource path
+     * @return resource content, or a fallback message if the resource cannot be read
      */
     private String getResourceAsString(String resourceRelativePath) {
         return AppResources.getResourceAsString(resourceRelativePath, StandardCharsets.UTF_8)

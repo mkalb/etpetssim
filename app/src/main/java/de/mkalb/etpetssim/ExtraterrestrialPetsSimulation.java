@@ -21,12 +21,11 @@ import javafx.stage.Stage;
 import java.util.*;
 
 /**
- * The main JavaFX {@link Application} class for the Extraterrestrial Pets Simulation.
+ * Main JavaFX {@link Application} implementation.
  * <p>
- * Responsible for setting up the user interface, handling simulation selection,
- * and managing the application lifecycle events such as startup and shutdown.
- * Command-line argument parsing, logging, and localization are initialized in {@link AppLauncher}.
- * </p>
+ * This class creates the primary stage content, switches between simulations,
+ * and coordinates startup and shutdown behavior. Command-line parsing, logging,
+ * and localization are initialized by {@link AppLauncher} before launch.
  */
 public final class ExtraterrestrialPetsSimulation extends Application {
 
@@ -46,11 +45,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
 
     /**
-     * Determines the simulation type based on the command-line arguments.
+     * Determines the initial simulation type from parsed arguments.
      *
-     * @param arguments the parsed application arguments
-     * @param onlyImplemented if true, only implemented simulations are considered
-     * @return an Optional containing the matching SimulationType, or empty if none found
+     * @param arguments parsed application arguments
+     * @param onlyImplemented whether to restrict matching to implemented simulations
+     * @return an {@link Optional} containing the matching simulation type, or empty if none matches
+     * @throws NullPointerException if {@code arguments} is {@code null}
      */
     @SuppressWarnings("SameParameterValue")
     private Optional<SimulationType> determineSimulationType(AppArgs arguments, boolean onlyImplemented) {
@@ -59,9 +59,9 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Updates the JavaFX stage with the application icons.
+     * Loads and applies application icons to a stage.
      *
-     * @param stage the JavaFX stage to update with icons
+     * @param stage stage to update
      */
     private void updateStageIcons(Stage stage) {
         List<Image> icons = AppResources.getImages(APP_ICON_PATHS);
@@ -73,11 +73,14 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Updates the JavaFX stage with a new scene based on the specified simulation type.
-     * It is passed as a method reference to the SimulationFactory and the StartMainView.
+     * Switches the primary stage to a simulation.
+     * <p>
+     * A new simulation instance is created, the scene content is replaced, and the
+     * stage title, stylesheets, shutdown handling, and layout are updated.
      *
-     * @param stage the JavaFX stage to update
-     * @param simulationType the type of simulation to display in the new scene
+     * @param stage primary application stage
+     * @param simulationType simulation type to display
+     * @throws NullPointerException if {@code stage} or {@code simulationType} is {@code null}
      * @see de.mkalb.etpetssim.simulations.core.SimulationFactory
      * @see de.mkalb.etpetssim.simulations.start.StartMainView
      */
@@ -130,11 +133,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Finds the screen that contains the center point of the given stage.
+     * Finds the screen containing the stage center point.
      *
-     * @param stage the stage to find the screen for
-     * @return the screen containing the center of the stage, or the primary screen if none found
-     * @see Screen#getScreens()
+     * @param stage stage to evaluate
+     * @return matching screen, or the primary screen if none matches
      */
     @SuppressWarnings("MagicNumber")
     private Screen findScreenContainingStage(Stage stage) {
@@ -152,23 +154,18 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Adjusts the stage size and position to fit within the visual bounds of the screen.
+     * Adjusts stage size and position to fit the current screen's visual bounds.
      * <p>
-     * Handles three distinct stage states:
-     * <ul>
-     *   <li><b>Iconified:</b> No adjustments are made</li>
-     *   <li><b>Fullscreen:</b> Sets root max dimensions to screen bounds</li>
-     *   <li><b>Maximized/Normal:</b> Resizes and repositions the stage within visual bounds,
-     *       accounting for window decorations and margins</li>
-     * </ul>
-     * </p>
+     * Iconified stages are left unchanged, full-screen stages adopt the visual bounds,
+     * and maximized or normal stages are resized and repositioned with decoration and
+     * margin handling.
      * <p>
-     * <b>Important:</b> Must be invoked via {@link Platform#runLater(Runnable)} to ensure
-     * layout calculations are complete before adjustments.
-     * </p>
+     * This method is intended to run from {@link Platform#runLater(Runnable)} after
+     * JavaFX has completed the initial layout pass.
      *
-     * @param stage the JavaFX stage to adjust; must not be {@code null}
-     * @param root the root region of the stage's scene; must not be {@code null}
+     * @param stage stage to adjust
+     * @param root scene root associated with the stage
+     * throws NullPointerException if {@code stage} or {@code root} is {@code null}
      */
     private void adjustStageLayoutToScreen(Stage stage, Region root) {
         Objects.requireNonNull(stage, "Stage must not be null");
@@ -270,11 +267,11 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Builds the header node for the simulation, which includes the title, subtitle, and links.
+     * Builds the simulation header shown above the main simulation region.
      *
-     * @param stage the JavaFX stage
-     * @param instance the simulation instance
-     * @return a Node representing the header of the simulation
+     * @param stage primary stage
+     * @param instance active simulation instance
+     * @return header node containing titles and navigation links
      */
     private Node buildSimulationHeaderNode(Stage stage, SimulationInstance instance) {
         SimulationType simulationType = instance.simulationType();
@@ -323,6 +320,14 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         return simulationHeaderBox;
     }
 
+    /**
+     * Starts the JavaFX application.
+     * <p>
+     * This method installs uncaught-exception handling, resolves the requested
+     * simulation type, and shows the primary stage.
+     *
+     * @param stage primary stage created by JavaFX
+     */
     @Override
     public void start(Stage stage) {
         // Initialize exception handling for uncaught exceptions
@@ -350,6 +355,9 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         AppLogger.info("Application: Application started successfully. Primary stage is now visible.");
     }
 
+    /**
+     * Stops the application and shuts down logging.
+     */
     @Override
     public void stop() {
         AppLogger.info("Application: Shutting down.");

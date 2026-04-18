@@ -8,18 +8,15 @@ import java.net.URI;
 import java.util.*;
 
 /**
- * Represents the types of simulations available in the Extraterrestrial Pets Simulation application.
+ * Available simulation types.
  * <p>
- * Each simulation type declares whether it is implemented, whether it should be shown on the
- * start screen, and provides localization keys, a CSS path, and CLI argument aliases.
- * </p>
+ * Each constant describes availability, start-screen visibility, localization keys,
+ * an optional CSS resource, and accepted command-line aliases.
  */
 @SuppressWarnings("SpellCheckingInspection")
 public enum SimulationType {
     /**
-     * Represents the start screen of the application.
-     * It is the default entry point for users and the fallback if no other simulation is specified.
-     * It is not a simulation in the traditional sense but serves as a menu to select other simulations.
+     * Application start screen used as the default entry view.
      */
     STARTSCREEN(
             true,
@@ -31,7 +28,7 @@ public enum SimulationType {
             List.of("startscreen", "start")
     ),
     /**
-     * Extraterrestrial Pets (ET pets): a custom simulation where various alien creatures interact in a grid-based environment
+     * Custom extraterrestrial pets simulation.
      */
     ET_PETS(
             true,
@@ -43,7 +40,7 @@ public enum SimulationType {
             List.of("etpets")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Wa-Tor">Wa-Tor</a>
+     * <a href="https://en.wikipedia.org/wiki/Wa-Tor">Wa-Tor</a> predator-prey simulation.
      */
     WATOR(
             true,
@@ -55,7 +52,7 @@ public enum SimulationType {
             List.of("wator", "wa-tor")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>
+     * <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>.
      */
     CONWAYS_LIFE(
             true,
@@ -67,7 +64,7 @@ public enum SimulationType {
             List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>
+     * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>.
      */
     LANGTONS_ANT(
             true,
@@ -79,7 +76,7 @@ public enum SimulationType {
             List.of("langton", "langtonsant", "langtons-ant", "ant")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>
+     * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>.
      */
     FOREST_FIRE(
             true,
@@ -91,7 +88,7 @@ public enum SimulationType {
             List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>
+     * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>.
      */
     SUGARSCAPE(
             true,
@@ -103,7 +100,7 @@ public enum SimulationType {
             List.of("sugarscape", "sugar")
     ),
     /**
-     * <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake (video game genre)</a>
+     * <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake</a> simulation.
      */
     SNAKE(
             true,
@@ -115,7 +112,7 @@ public enum SimulationType {
             List.of("snake", "snakes")
     ),
     /**
-     * Rebounding Entities: a custom simulation where entities move through the grid and bounce off walls/obstacles.
+     * Custom rebounding-entities simulation.
      */
     REBOUNDING_ENTITIES(
             true,
@@ -127,7 +124,7 @@ public enum SimulationType {
             List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders")
     ),
     /**
-     * The simulation lab is not a specific simulation but a collection of various tests during development.
+     * Development-oriented simulation laboratory.
      */
     SIMULATION_LAB(
             true,
@@ -161,11 +158,11 @@ public enum SimulationType {
     }
 
     /**
-     * Finds a simulation type by a CLI argument, case-insensitively.
+     * Resolves a simulation type from a command-line alias.
      *
-     * @param arg the CLI argument alias to match
-     * @param onlyImplemented if {@code true}, only consider simulations marked as implemented
-     * @return an Optional containing the matching type, or empty if none matches
+     * @param arg alias to match, case-insensitively
+     * @param onlyImplemented whether to restrict matching to implemented simulations
+     * @return an {@link Optional} containing the matching type, or empty if unmatched
      */
     public static Optional<SimulationType> fromCliArgument(String arg, boolean onlyImplemented) {
         return Arrays.stream(values())
@@ -175,9 +172,9 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the resource key for the localized label (title) of the enum SimulationType.
+     * Returns the localization key for the simulation-type field label.
      *
-     * @return the resource key identifier
+     * @return localization key identifier
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -185,99 +182,99 @@ public enum SimulationType {
     }
 
     /**
-     * Indicates whether this simulation type is implemented and usable.
+     * Returns whether this simulation is implemented.
      *
-     * @return {@code true} if implemented; {@code false} otherwise
+     * @return {@code true} if implemented, otherwise {@code false}
      */
     public boolean isImplemented() {
         return implemented;
     }
 
     /**
-     * Indicates whether this simulation type should be shown on the start screen.
+     * Returns whether this simulation should appear on the start screen.
      *
-     * @return {@code true} if it should be displayed on the start screen; {@code false} otherwise
+     * @return {@code true} if shown on the start screen, otherwise {@code false}
      */
     public boolean isShownOnStartScreen() {
         return showOnStartScreen;
     }
 
     /**
-     * Returns the localization key for the title of this simulation type.
+     * Returns the localization key for the title.
      *
-     * @return the title resource key
+     * @return title resource key
      */
     public String titleKey() {
         return titleKey;
     }
 
     /**
-     * Returns the localization key for the optional subtitle of this simulation type.
+     * Returns the localization key for the subtitle.
      *
-     * @return the subtitle resource key
+     * @return subtitle resource key
      */
     public String subtitleKey() {
         return subtitleKey;
     }
 
     /**
-     * Returns the localization key for the optional URL of this simulation type.
+     * Returns the localization key for the external URL.
      *
-     * @return the URL resource key
+     * @return URL resource key
      */
     public String urlKey() {
         return urlKey;
     }
 
     /**
-     * Returns the CSS resource relative path for this simulation type.
+     * Returns the simulation-specific CSS resource path.
      *
-     * @return the CSS resource relative path as a String, which may be blank if not set
+     * @return CSS path relative to the CSS resource folder, or blank if none is configured
      */
     public String cssPath() {
         return cssPath;
     }
 
     /**
-     * Returns all CLI argument aliases that can be used to select this simulation from the command line.
+     * Returns all accepted command-line aliases.
      *
-     * @return an immutable list of CLI argument aliases
+     * @return immutable list of aliases
      */
     public List<String> cliArguments() {
         return cliArguments;
     }
 
     /**
-     * Returns the localized title for this simulation type.
+     * Returns the localized title.
      *
-     * @return the localized title text
+     * @return localized title text
      */
     public String title() {
         return AppLocalization.getText(titleKey);
     }
 
     /**
-     * Returns the localized subtitle for this simulation type.
+     * Returns the localized subtitle, if available.
      *
-     * @return an Optional containing the subtitle text, if present
+     * @return an {@link Optional} containing non-blank subtitle text
      */
     public Optional<String> subtitle() {
         return AppLocalization.getOptionalText(subtitleKey);
     }
 
     /**
-     * Returns the localized URL for this simulation type.
+     * Returns the localized external URL, if available.
      *
-     * @return an Optional containing the URL text, if present
+     * @return an {@link Optional} containing non-blank URL text
      */
     public Optional<String> url() {
         return AppLocalization.getOptionalText(urlKey);
     }
 
     /**
-     * Converts the localized URL of this simulation type to a {@link URI}.
+     * Converts the localized URL to a {@link URI}.
      *
-     * @return an Optional containing the URI, or empty if the URL is missing or invalid
+     * @return an {@link Optional} containing the parsed URI, or empty if missing or invalid
      */
     public Optional<URI> urlAsURI() {
         return url().flatMap(text -> {
@@ -291,11 +288,10 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the full URL to the CSS resource for this simulation type.
+     * Resolves the simulation-specific CSS resource to an external URL string.
      *
-     * @return an Optional containing the CSS URL, or empty if no CSS is set
+     * @return an {@link Optional} containing the CSS URL, or empty if no CSS is configured or found
      * @see AppResources#getCssUrl(String)
-     * @see java.net.URL#toExternalForm()
      */
     public Optional<String> cssUrl() {
         if (cssPath.isBlank()) {
