@@ -3,7 +3,6 @@ package de.mkalb.etpetssim.simulations.langton.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProvider;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("SameParameterValue")
@@ -28,7 +27,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             String longNameKey,
             String descriptionKey,
             @Nullable String emojiKey,
-            @Nullable Paint color,
+            @Nullable Color color,
             @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(

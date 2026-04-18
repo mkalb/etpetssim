@@ -15,7 +15,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public final class ConwayMainView
         ConwayConfigView,
         ConwayObservationView> {
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
     private @Nullable CoordinateDrawer coordinateDrawer;
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
@@ -44,7 +44,7 @@ public final class ConwayMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ConwayEntity.DEAD.descriptorId())
                 .colorOrFallback();
     }
@@ -52,7 +52,7 @@ public final class ConwayMainView
     @Override
     protected void initSimulation(ConwayConfig config, CellDimension cellDimension) {
         var descriptor = entityDescriptorRegistry.getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId());
-        var alivePaint = descriptor.colorOrFallback();
+        var aliveColor = descriptor.colorOrFallback();
         var aliveBorderColor = descriptor.borderColorOrFallback();
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
@@ -61,26 +61,26 @@ public final class ConwayMainView
             case SHAPE -> (painter, coordinate, _) ->
                     painter.drawCell(
                             coordinate,
-                            alivePaint,
+                            aliveColor,
                             null,
                             NO_STROKE_LINE_WIDTH);
             case SHAPE_BORDERED -> (painter, coordinate, _) ->
                     painter.drawCell(
                             coordinate,
-                            alivePaint,
+                            aliveColor,
                             aliveBorderColor,
                             strokeLineWidth);
             case CIRCLE -> (painter, coordinate, _) ->
                     painter.drawCellInnerCircle(
                             coordinate,
-                            alivePaint,
+                            aliveColor,
                             null,
                             NO_STROKE_LINE_WIDTH,
                             StrokeType.INSIDE);
             case CIRCLE_BORDERED -> (painter, coordinate, _) ->
                     painter.drawCellInnerCircle(
                             coordinate,
-                            alivePaint,
+                            aliveColor,
                             aliveBorderColor,
                             strokeLineWidth,
                             StrokeType.INSIDE);
@@ -106,7 +106,7 @@ public final class ConwayMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.nonDefaultCoordinates()
                     .forEach(coordinate -> coordinateDrawer.draw(

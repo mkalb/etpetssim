@@ -16,7 +16,6 @@ import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -34,7 +33,7 @@ public final class ReboundingMainView
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
     public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics> viewModel,
@@ -47,7 +46,7 @@ public final class ReboundingMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
     }
@@ -67,7 +66,7 @@ public final class ReboundingMainView
                     painter.drawCell(
                             cell.coordinate(),
                             descriptor.colorOrFallback(),
-                            backgroundPaint,
+                            backgroundColor,
                             strokeLineWidth);
             default -> throw new IllegalArgumentException("CellDisplayMode not supported!");
         };
@@ -98,7 +97,7 @@ public final class ReboundingMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.nonDefaultCells()
                     .forEachOrdered(cell -> cellDrawer.draw(

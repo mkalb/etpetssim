@@ -16,7 +16,7 @@ import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public final class LangtonMainView
         LangtonConfigView,
         LangtonObservationView> {
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
     private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
 
@@ -45,7 +45,7 @@ public final class LangtonMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
                 .colorOrFallback();
     }
@@ -57,7 +57,7 @@ public final class LangtonMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -72,7 +72,7 @@ public final class LangtonMainView
                     painter.drawCell(
                             cell.coordinate(),
                             descriptor.color(),
-                            backgroundPaint,
+                            backgroundColor,
                             strokeLineWidth);
             default -> throw new IllegalArgumentException("CellDisplayMode not supported!");
         };

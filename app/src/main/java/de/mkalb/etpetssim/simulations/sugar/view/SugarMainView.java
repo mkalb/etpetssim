@@ -16,7 +16,6 @@ import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -40,7 +39,7 @@ public final class SugarMainView
     private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 120, 120);
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
@@ -56,7 +55,7 @@ public final class SugarMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
                 .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
@@ -109,42 +108,34 @@ public final class SugarMainView
         };
     }
 
-    private Paint resolveResourceFillColor(GridEntityDescriptor entityDescriptor,
+    private Color resolveResourceFillColor(GridEntityDescriptor entityDescriptor,
                                            ResourceEntity entity) {
-        Paint paint = entityDescriptor.color();
-        if (paint instanceof Color baseColor) {
-            Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-            if (colorMap != null) {
-                Integer value = switch (entity) {
-                    case Sugar sugar -> sugar.currentAmount();
-                    case NoResource _ -> -1;
-                };
+        Color baseColor = entityDescriptor.colorOrFallback();
+        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
+        if (colorMap != null) {
+            Integer value = switch (entity) {
+                case Sugar sugar -> sugar.currentAmount();
+                case NoResource _ -> -1;
+            };
 
-                return colorMap.getOrDefault(value, baseColor);
-            }
-        } else if (paint == null) {
-            paint = FALLBACK_COLOR_SUGAR;
+            return colorMap.getOrDefault(value, baseColor);
         }
-        return paint;
+        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_SUGAR;
     }
 
-    private Paint resolveAgentFillColor(GridEntityDescriptor entityDescriptor,
+    private Color resolveAgentFillColor(GridEntityDescriptor entityDescriptor,
                                         AgentEntity entity) {
-        Paint paint = entityDescriptor.color();
-        if (paint instanceof Color baseColor) {
-            Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-            if (colorMap != null) {
-                Integer value = switch (entity) {
-                    case Agent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
-                    case NoAgent _ -> -1;
-                };
+        Color baseColor = entityDescriptor.colorOrFallback();
+        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
+        if (colorMap != null) {
+            Integer value = switch (entity) {
+                case Agent agent -> Math.min(maxColorAgentEnergy, agent.currentEnergy());
+                case NoAgent _ -> -1;
+            };
 
-                return colorMap.getOrDefault(value, baseColor);
-            }
-        } else if (paint == null) {
-            paint = FALLBACK_COLOR_AGENT;
+            return colorMap.getOrDefault(value, baseColor);
         }
-        return paint;
+        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
     }
 
     @Override
@@ -175,7 +166,7 @@ public final class SugarMainView
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
         }
 
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.resourceModel().nonDefaultCells()
                     .forEachOrdered(resourceCell -> cellResourceDrawer.draw(

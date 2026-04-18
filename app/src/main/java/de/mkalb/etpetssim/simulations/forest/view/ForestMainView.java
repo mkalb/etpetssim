@@ -15,7 +15,7 @@ import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public final class ForestMainView
         ForestConfigView,
         ForestObservationView> {
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
     public ForestMainView(DefaultMainViewModel<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig,
@@ -45,7 +45,7 @@ public final class ForestMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(ForestEntity.EMPTY.descriptorId())
                 .colorOrFallback();
     }
@@ -65,7 +65,7 @@ public final class ForestMainView
                     painter.drawCell(
                             cell.coordinate(),
                             descriptor.color(),
-                            descriptor.borderColorAsOptional().map(c -> (Paint) c).orElse(backgroundPaint),
+                            descriptor.borderColorAsOptional().orElse(backgroundColor),
                             strokeLineWidth);
             case CellDisplayMode.CIRCLE -> (descriptor, painter, cell, _) ->
                     painter.drawCellInnerCircle(
@@ -78,7 +78,7 @@ public final class ForestMainView
                     painter.drawCellInnerCircle(
                             cell.coordinate(),
                             descriptor.color(),
-                            descriptor.borderColorAsOptional().map(c -> (Paint) c).orElse(backgroundPaint),
+                            descriptor.borderColorAsOptional().orElse(backgroundColor),
                             strokeLineWidth,
                             StrokeType.INSIDE);
             case CellDisplayMode.EMOJI -> {
@@ -119,7 +119,7 @@ public final class ForestMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         // small helper lambda to avoid code duplication when drawing different entity types
         Consumer<GridCell<ForestEntity>> drawCell = cell -> cellDrawer.draw(

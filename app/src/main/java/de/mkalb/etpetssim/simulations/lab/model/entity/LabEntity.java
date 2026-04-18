@@ -3,7 +3,6 @@ package de.mkalb.etpetssim.simulations.lab.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -45,7 +44,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
             String longNameKey,
             String descriptionKey,
             @Nullable String emojiKey,
-            @Nullable Paint color,
+            @Nullable Color color,
             @Nullable Color borderColor
     ) {
         spec = new GridEntityDescriptorSpec(

@@ -16,7 +16,6 @@ import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -48,7 +47,7 @@ public final class SnakeMainView
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
 
     public SnakeMainView(DefaultMainViewModel<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
                                  SnakeStatistics> viewModel,
@@ -61,7 +60,7 @@ public final class SnakeMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
     }
@@ -113,18 +112,17 @@ public final class SnakeMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         var wallDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
         var growthFoodDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
         var snakeSegmentDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
         var snakeHeadDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
 
-        // Alive colors are defined in EntityDescriptors; the cast to Color is safe because
-        // EntityDescriptors stores them as Color.web(...) values.
-        Color segmentAliveColor = (Color) Objects.requireNonNull(snakeSegmentDescriptor.color());
+        // Alive colors are defined in EntityDescriptors.
+        Color segmentAliveColor = Objects.requireNonNull(snakeSegmentDescriptor.color());
         Color segmentAliveBorderColor = Objects.requireNonNull(snakeSegmentDescriptor.borderColor());
-        Color headAliveColor = (Color) Objects.requireNonNull(snakeHeadDescriptor.color());
+        Color headAliveColor = Objects.requireNonNull(snakeHeadDescriptor.color());
         Color headAliveBorderColor = Objects.requireNonNull(snakeHeadDescriptor.borderColor());
 
         // Alive+selected colors are computed as a white-blend of the alive colors.

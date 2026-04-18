@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.model.entity;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -33,7 +32,7 @@ public record GridEntityDescriptor(
         String longName,
         String description,
         @Nullable String emoji,
-        @Nullable Paint color,
+        @Nullable Color color,
         @Nullable Color borderColor
 ) {
 
@@ -47,24 +46,24 @@ public record GridEntityDescriptor(
     }
 
     /**
-     * Returns the fill color or paint for this entity as an {@link Optional}.
+     * Returns the fill color for this entity as an {@link Optional}.
      *
-     * @return an {@link Optional} containing the fill color or paint, or empty if not set
+     * @return an {@link Optional} containing the fill color, or empty if not set
      */
-    public Optional<Paint> colorAsOptional() {
+    public Optional<Color> colorAsOptional() {
         return Optional.ofNullable(color);
     }
 
     /**
-     * Returns the configured fill paint, or a default of {@link Color#BLACK} if none is set.
+     * Returns the configured fill color, or a default of {@link Color#BLACK} if none is set.
      * <p>
      * This method guarantees a non-null value and is intended for rendering code that
-     * requires a concrete {@link Paint} without optional handling.
+     * requires a concrete {@link Color} without optional handling.
      * </p>
      *
-     * @return the configured fill paint, or {@link Color#BLACK} as fallback
+     * @return the configured fill color, or {@link Color#BLACK} as fallback
      */
-    public Paint colorOrFallback() {
+    public Color colorOrFallback() {
         return (color != null) ? color : Color.BLACK;
     }
 

@@ -17,7 +17,6 @@ import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -41,7 +40,7 @@ public final class WatorMainView
     private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 255, 120);
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private @Nullable CellDrawer<WatorEntity> cellDrawer;
 
@@ -58,7 +57,7 @@ public final class WatorMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
                 .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
@@ -93,7 +92,7 @@ public final class WatorMainView
                     painter.drawCell(
                             cell.coordinate(),
                             resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                            backgroundPaint,
+                            backgroundColor,
                             strokeLineWidth);
             case CellDisplayMode.CIRCLE -> (descriptor, painter, cell, stepCount) ->
                     painter.drawCellInnerCircle(
@@ -106,7 +105,7 @@ public final class WatorMainView
                     painter.drawCellInnerCircle(
                             cell.coordinate(),
                             resolveEntityFillColor(descriptor, cell.entity(), stepCount),
-                            backgroundPaint,
+                            backgroundColor,
                             strokeLineWidth,
                             StrokeType.INSIDE);
             case CellDisplayMode.EMOJI -> {
@@ -129,25 +128,21 @@ public final class WatorMainView
         };
     }
 
-    private Paint resolveEntityFillColor(GridEntityDescriptor entityDescriptor,
+    private Color resolveEntityFillColor(GridEntityDescriptor entityDescriptor,
                                          WatorEntity entity,
                                          int stepCount) {
-        Paint paint = entityDescriptor.color();
-        if (paint instanceof Color baseColor) {
-            Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
-            if (colorMap != null) {
-                Integer value = switch (entity) {
-                    case Fish fish -> fish.ageAtStepCount(stepCount);
-                    case Shark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
-                    default -> -1; // Illegal value
-                };
+        Color baseColor = entityDescriptor.colorOrFallback();
+        Map<Integer, Color> colorMap = entityColors.get(entityDescriptor.descriptorId());
+        if (colorMap != null) {
+            Integer value = switch (entity) {
+                case Fish fish -> fish.ageAtStepCount(stepCount);
+                case Shark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
+                default -> -1; // Illegal value
+            };
 
-                return colorMap.getOrDefault(value, baseColor);
-            }
-        } else if (paint == null) {
-            paint = FALLBACK_COLOR_AGENT;
+            return colorMap.getOrDefault(value, baseColor);
         }
-        return paint;
+        return (entityDescriptor.color() != null) ? entityDescriptor.color() : FALLBACK_COLOR_AGENT;
     }
 
     @Override
@@ -175,7 +170,7 @@ public final class WatorMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.nonDefaultCells()
                     .forEachOrdered(cell -> cellDrawer.draw(

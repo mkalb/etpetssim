@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.model.entity;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -17,7 +16,7 @@ import org.jspecify.annotations.Nullable;
  * @param longNameKey localization key for the long name
  * @param descriptionKey localization key for the description
  * @param emojiKey optional localization key for the emoji
- * @param color optional fill color/paint
+ * @param color optional fill color
  * @param borderColor optional border color
  *
  * @see GridEntityDescriptorProvider
@@ -31,7 +30,7 @@ public record GridEntityDescriptorSpec(
         String longNameKey,
         String descriptionKey,
         @Nullable String emojiKey,
-        @Nullable Paint color,
+        @Nullable Color color,
         @Nullable Color borderColor
 ) {
 }

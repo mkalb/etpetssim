@@ -14,7 +14,6 @@ import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
@@ -28,12 +27,10 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsConfigView,
         EtpetsObservationView> {
 
-    private static final Color FALLBACK_COLOR_BACKGROUND = Color.BLACK;
-    private static final Color FALLBACK_COLOR_CELL = Color.GRAY;
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Paint backgroundPaint;
+    private final Color backgroundColor;
 
     public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -41,7 +38,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                           DefaultControlView controlView,
                           EtpetsObservationView observationView) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
-        backgroundPaint = entityDescriptorRegistry
+        backgroundColor = entityDescriptorRegistry
                 .getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
     }
@@ -71,7 +68,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundPaint);
+        basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.terrainModel().nonDefaultCells().forEach(cell ->
                 basePainter.drawCell(cell.coordinate(),

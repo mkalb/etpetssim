@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.model.entity;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -69,7 +68,7 @@ public interface GridEntityDescriptorProvider {
      * @return the color, or {@code null}
      */
     @Nullable
-    Paint color();
+    Color color();
 
     /**
      * Returns the border color for this entity, or {@code null} if not specified.

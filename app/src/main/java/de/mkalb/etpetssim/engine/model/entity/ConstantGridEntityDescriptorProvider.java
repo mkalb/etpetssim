@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.model.entity;
 
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -56,7 +55,7 @@ public interface ConstantGridEntityDescriptorProvider extends ConstantGridEntity
     }
 
     @Override
-    default @Nullable Paint color() {
+    default @Nullable Color color() {
         return descriptorSpec().color();
     }
 
