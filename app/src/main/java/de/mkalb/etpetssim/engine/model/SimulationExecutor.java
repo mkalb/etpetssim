@@ -62,13 +62,14 @@ public interface SimulationExecutor<
     void executeStep();
 
     /**
-     * Executes up to the specified number of simulation steps, or until the simulation is finished or the thread is interrupted.
+     * Executes up to the specified number of simulation steps.
+     * <p>
+     * Execution can terminate early if the thread is interrupted, if the executor reaches
+     * its technical limit ({@link #isExecutorFinished()}), or (optionally) if
+     * {@code checkTermination} is {@code true} and {@link #isFinished()} becomes {@code true}.
      * <p>
      * After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track progress,
      * update the UI, or perform other actions after each step.
-     * <p>
-     * The method will terminate early if {@code checkTermination} is {@code true} and the simulation has reached its termination condition
-     * (as determined by {@link #isFinished()}), or if the current thread is interrupted.
      *
      * @param count the maximum number of steps to execute
      * @param checkTermination if {@code true}, the method will terminate early when the simulation is finished
@@ -77,7 +78,7 @@ public interface SimulationExecutor<
      * <ul>
      *   <li>the current step count</li>
      *   <li>the number of steps executed in this call</li>
-     *   <li>whether the simulation has reached its termination condition</li>
+     *   <li>whether execution finished due to reaching a finished state (logical or technical)</li>
      *   <li>whether the thread was interrupted</li>
      * </ul>
      */
@@ -103,6 +104,15 @@ public interface SimulationExecutor<
         return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), false);
     }
 
+    /**
+     * Result object returned by {@link #executeSteps(int, boolean, Runnable)}.
+     *
+     * @param stepCount the step counter after execution
+     * @param executedSteps the number of steps executed in this call
+     * @param isFinished whether execution ended in a finished state (logical via {@link #isFinished()} when checked,
+     *                   or technical via {@link #isExecutorFinished()})
+     * @param isInterrupted whether execution ended because the current thread was interrupted
+     */
     @SuppressWarnings("InnerClassOfInterface")
     record ExecutionResult(
             int stepCount,

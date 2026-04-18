@@ -17,7 +17,10 @@ import java.util.function.*;
 public non-sealed interface WritableGridModel<T extends GridEntity> extends ReadableGridModel<T> {
 
     /**
-     * Creates a deep copy of this grid model, including all entities.
+     * Creates a copy of this grid model, including the current grid state.
+     * <p>
+     * The returned model has independent internal storage, but entity instances may be shared,
+     * depending on the concrete model and entity type.
      *
      * @return a copy of this grid model
      */
