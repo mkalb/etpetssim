@@ -20,6 +20,7 @@ import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.*;
 
 public final class ForestMainView
         extends AbstractDefaultMainView<
@@ -120,10 +121,18 @@ public final class ForestMainView
 
         basePainter.fillCanvasBackground(backgroundPaint);
 
-        currentModel.nonDefaultCells()
-                    .forEachOrdered(cell -> cellDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
-                            basePainter, cell, stepCount));
+        // small helper lambda to avoid code duplication when drawing different entity types
+        Consumer<GridCell<ForestEntity>> drawCell = cell -> cellDrawer.draw(
+                entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                basePainter, cell, stepCount);
+
+        // draw tree cells first
+        currentModel.filteredCells(ForestEntity::isTree)
+                    .forEach(drawCell);
+
+        // then draw burning cells on top for better visibility
+        currentModel.filteredCells(ForestEntity::isBurning)
+                    .forEach(drawCell);
     }
 
     @Override
@@ -132,4 +141,3 @@ public final class ForestMainView
     }
 
 }
-
