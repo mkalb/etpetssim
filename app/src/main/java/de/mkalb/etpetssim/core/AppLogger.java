@@ -142,6 +142,18 @@ public final class AppLogger {
     }
 
     /**
+     * Logs a formatted debug message.
+     *
+     * @param format format string compatible with {@link String#format(String, Object...)}
+     * @param args format arguments
+     * @throws NullPointerException if {@code format} is {@code null}
+     */
+    public static void debugf(String format, Object... args) {
+        Objects.requireNonNull(format, "Format string must not be null");
+        APP_LOGGER.logger.log(Level.FINE, () -> String.format(Locale.ROOT, format, args));
+    }
+
+    /**
      * Logs an informational message.
      *
      * @param message message text, may be {@code null}
@@ -159,6 +171,18 @@ public final class AppLogger {
     public static void info(Supplier<String> messageSupplier) {
         Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
         APP_LOGGER.logger.info(messageSupplier);
+    }
+
+    /**
+     * Logs a formatted informational message.
+     *
+     * @param format format string compatible with {@link String#format(String, Object...)}
+     * @param args format arguments
+     * @throws NullPointerException if {@code format} is {@code null}
+     */
+    public static void infof(String format, Object... args) {
+        Objects.requireNonNull(format, "Format string must not be null");
+        APP_LOGGER.logger.log(Level.INFO, () -> String.format(Locale.ROOT, format, args));
     }
 
     /**
@@ -182,6 +206,18 @@ public final class AppLogger {
     }
 
     /**
+     * Logs a formatted warning message.
+     *
+     * @param format format string compatible with {@link String#format(String, Object...)}
+     * @param args format arguments
+     * @throws NullPointerException if {@code format} is {@code null}
+     */
+    public static void warnf(String format, Object... args) {
+        Objects.requireNonNull(format, "Format string must not be null");
+        APP_LOGGER.logger.log(Level.WARNING, () -> String.format(Locale.ROOT, format, args));
+    }
+
+    /**
      * Logs an error message.
      *
      * @param message message text, may be {@code null}
@@ -199,6 +235,18 @@ public final class AppLogger {
     public static void error(Supplier<String> messageSupplier) {
         Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
         APP_LOGGER.logger.severe(messageSupplier);
+    }
+
+    /**
+     * Logs a formatted error message.
+     *
+     * @param format format string compatible with {@link String#format(String, Object...)}
+     * @param args format arguments
+     * @throws NullPointerException if {@code format} is {@code null}
+     */
+    public static void errorf(String format, Object... args) {
+        Objects.requireNonNull(format, "Format string must not be null");
+        APP_LOGGER.logger.log(Level.SEVERE, () -> String.format(Locale.ROOT, format, args));
     }
 
     /**

@@ -62,9 +62,21 @@ class AppLoggerTest {
     }
 
     @Test
+    void testDebugfLogging() {
+        AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
+        assertDoesNotThrow(() -> AppLogger.debugf("Debug %s %d", "message", 1));
+    }
+
+    @Test
     void testInfoLogging() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertDoesNotThrow(() -> AppLogger.info("Info message"));
+    }
+
+    @Test
+    void testInfofLogging() {
+        AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
+        assertDoesNotThrow(() -> AppLogger.infof("Info %s %d", "message", 2));
     }
 
     @Test
@@ -74,9 +86,21 @@ class AppLoggerTest {
     }
 
     @Test
+    void testWarnfLogging() {
+        AppLogger.initialize(AppLogger.LogLevel.WARN, true, null);
+        assertDoesNotThrow(() -> AppLogger.warnf("Warn %s %d", "message", 3));
+    }
+
+    @Test
     void testErrorLogging() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         assertDoesNotThrow(() -> AppLogger.error("Error message"));
+    }
+
+    @Test
+    void testErrorfLogging() {
+        AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
+        assertDoesNotThrow(() -> AppLogger.errorf("Error %s %d", "message", 4));
     }
 
     @Test
@@ -129,6 +153,17 @@ class AppLoggerTest {
                 () -> assertThrows(NullPointerException.class, () -> AppLogger.info((Supplier<String>) null)),
                 () -> assertThrows(NullPointerException.class, () -> AppLogger.warn((Supplier<String>) null)),
                 () -> assertThrows(NullPointerException.class, () -> AppLogger.error((Supplier<String>) null))
+        );
+    }
+
+    @Test
+    void testNullFormatThrowsException() {
+        AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.debugf(null, "x")),
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.infof(null, "x")),
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.warnf(null, "x")),
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf(null, "x"))
         );
     }
 
