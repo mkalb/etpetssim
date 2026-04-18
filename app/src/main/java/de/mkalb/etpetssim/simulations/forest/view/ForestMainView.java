@@ -64,7 +64,7 @@ public final class ForestMainView
                     painter.drawCell(
                             cell.coordinate(),
                             descriptor.color(),
-                            backgroundPaint,
+                            descriptor.borderColorAsOptional().map(c -> (Paint) c).orElse(backgroundPaint),
                             strokeLineWidth);
             case CellDisplayMode.CIRCLE -> (descriptor, painter, cell, _) ->
                     painter.drawCellInnerCircle(
@@ -77,10 +77,26 @@ public final class ForestMainView
                     painter.drawCellInnerCircle(
                             cell.coordinate(),
                             descriptor.color(),
-                            backgroundPaint,
+                            descriptor.borderColorAsOptional().map(c -> (Paint) c).orElse(backgroundPaint),
                             strokeLineWidth,
                             StrokeType.INSIDE);
-            case CellDisplayMode.EMOJI -> throw new IllegalArgumentException("CellDisplayMode not supported!");
+            case CellDisplayMode.EMOJI -> {
+                if (cellEmojiFont == null) {
+                    yield (descriptor, painter, cell, _) ->
+                            painter.drawCellInnerCircle(
+                                    cell.coordinate(),
+                                    descriptor.color(),
+                                    null,
+                                    NO_STROKE_LINE_WIDTH,
+                                    StrokeType.INSIDE);
+                }
+                yield (descriptor, painter, cell, _) ->
+                        painter.drawCenteredTextInCell(
+                                cell.coordinate(),
+                                descriptor.emojiAsOptional().orElse("#"),
+                                descriptor.colorOrFallback(),
+                                cellEmojiFont);
+            }
         };
     }
 

@@ -39,7 +39,8 @@ public final class ForestConfigViewModel
             List.of(CellDisplayMode.SHAPE,
                     CellDisplayMode.SHAPE_BORDERED,
                     CellDisplayMode.CIRCLE,
-                    CellDisplayMode.CIRCLE_BORDERED),
+                    CellDisplayMode.CIRCLE_BORDERED,
+                    CellDisplayMode.EMOJI),
             ""
     );
 

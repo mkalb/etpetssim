@@ -231,11 +231,11 @@ for secondary intercardinal directions (e.g., ↑↗, →↗). Rendered only whe
 
 ### FOREST_FIRE - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key                | Emoji | Fill Color                      | Border Color | Default In Layer(s) |
-|---------------|-------------------|------------------------------|-------|---------------------------------|--------------|---------------------|
-| `empty`       | Empty Cell        | `forest.entity.empty.long`   | -     | `#2D1E0F`                       | -            | `grid`              |
-| `tree`        | Tree Cell         | `forest.entity.tree.long`    | -     | `#228B22` / `Color.FORESTGREEN` | -            | -                   |
-| `burning`     | Burning Tree      | `forest.entity.burning.long` | -     | `#FF4500` / `Color.ORANGERED`   | -            | -                   |
+| Descriptor ID | Long Name (en_US) | Long Name Key                | Emoji | Fill Color                    | Border Color               | Default In Layer(s) |
+|---------------|-------------------|------------------------------|-------|-------------------------------|----------------------------|---------------------|
+| `empty`       | Empty Cell        | `forest.entity.empty.long`   | -     | `#1E140A`                     | -                          | `grid`              |
+| `tree`        | Tree Cell         | `forest.entity.tree.long`    | `🌲`  | `#2E8B57` / `Color.SEAGREEN`  | -                          | -                   |
+| `burning`     | Burning Tree      | `forest.entity.burning.long` | `🔥`  | `#FF4500` / `Color.ORANGERED` | `#FFA500` / `Color.ORANGE` | -                   |
 
 ## SUGARSCAPE
 
