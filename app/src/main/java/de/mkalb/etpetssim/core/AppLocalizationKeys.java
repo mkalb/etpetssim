@@ -1,17 +1,10 @@
 package de.mkalb.etpetssim.core;
 
 /**
- * Contains string constants for localization resource keys used in the application.
+ * Localization key constants used with {@link AppLocalization}.
  * <p>
- * This class provides a central place for referencing keys in resource bundles,
- * ensuring consistency and reducing the risk of typos throughout the codebase.
- * <p>
- * The constants are generally sorted alphabetically and start with a prefix indicating their
- * usage context, followed by a descriptive name. However, this sorting is not enforced programmatically.
- * <p>
- * The keys correspond to entries in the localization resource files located at {@code i18n/messages_*.properties}.
- * <p>
- * This class is not intended to be instantiated.
+ * Keeping keys in one place avoids duplicated string literals and reduces typo risk.
+ * Keys map to entries in {@code i18n/messages_*.properties}.
  */
 @SuppressWarnings("SpellCheckingInspection")
 public final class AppLocalizationKeys {

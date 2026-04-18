@@ -5,12 +5,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 /**
- * Manages localization and internationalization for the application.
+ * Provides application-wide localization services.
  * <p>
- * It must be initialized exactly once at the beginning of the application.
- *
- * @see java.util.Locale
- * @see java.util.ResourceBundle
+ * This class manages the active {@link Locale} and its corresponding
+ * {@link ResourceBundle}. It must be initialized exactly once during startup.
  */
 public final class AppLocalization {
 
@@ -36,9 +34,7 @@ public final class AppLocalization {
     }
 
     /**
-     * ONLY for testing purposes.
-     * Resets the AppLocalization for testing purposes.
-     * This method clears the locale and bundle, allowing for re-initialization in tests.
+     * Resets the localization state for tests.
      */
     static void resetForTesting() {
         locale = null;
@@ -46,36 +42,33 @@ public final class AppLocalization {
     }
 
     /**
-     * Returns a list of all supported country locales.
+     * Returns all supported locales.
      *
-     * @return a list of CountryLocale enums representing all supported locales
+     * @return an immutable list containing all supported locale descriptors
      */
     public static List<CountryLocale> supportedLocales() {
         return List.of(CountryLocale.values());
     }
 
     /**
-     * Checks if the AppLocalization has been initialized.
+     * Returns whether localization has been initialized.
      *
-     * @return true if the AppLocalization is initialized, false otherwise
+     * @return {@code true} when both locale and bundle are available
      */
     public static synchronized boolean isInitialized() {
         return (locale != null) && (bundle != null);
     }
 
     /**
-     * Initializes the AppLocalization with the specified locale argument and a default locale.
-     * The AppLocalization must be initialized exactly once at the beginning.
+     * Initializes localization using a user argument and fallback locale.
+     * <p>
+     * Resolution order is: locale argument, {@code defaultLocale}, then
+     * {@link #DEFAULT_LOCALE}. The first matching supported locale is selected.
      *
-     * @param localeArgument the locale argument provided by the user, can be null or empty
-     *                       if null or empty, the default locale will be used to determine the locale
-     *                       if not null, it should match one of the supported locales or their language codes
-     * @param defaultLocale  the default locale to use if the locale argument does not match any supported locale
-     *                       if the default locale is null, an IllegalArgumentException will be thrown
-     *                       if the default locale does not match any of the supported locales,
-     *                       the default locale will be set to DEFAULT_LOCALE (US English)
-     * @throws IllegalStateException if the AppLocalization is already initialized or
-     *                               if the resource bundle for the locale cannot be loaded
+     * @param localeArgument optional user-provided locale code (for example {@code en_US} or {@code en})
+     * @param defaultLocale fallback locale used when {@code localeArgument} does not resolve
+     * @throws NullPointerException if {@code defaultLocale} is {@code null}
+     * @throws IllegalStateException if already initialized or no bundle can be loaded for the resolved locale
      */
     public static synchronized void initialize(@Nullable String localeArgument, Locale defaultLocale) {
         if (isInitialized()) {
@@ -92,13 +85,11 @@ public final class AppLocalization {
     }
 
     /**
-     * Initializes the AppLocalization with the specified language argument and the JVM default locale.
-     * The AppLocalization must be initialized exactly once at the beginning.
+     * Initializes localization using a user argument and {@link Locale#getDefault()}.
      *
-     * @param localeArgument the locale argument provided by the user, can be null or empty
-     * @throws IllegalStateException if the AppLocalization is already initialized
+     * @param localeArgument optional user-provided locale code
+     * @throws IllegalStateException if already initialized
      * @see #initialize(String, Locale)
-     * @see java.util.Locale#getDefault()
      */
     public static synchronized void initialize(@Nullable String localeArgument) {
         if (isInitialized()) {
@@ -108,10 +99,13 @@ public final class AppLocalization {
     }
 
     /**
-     * Resolves the locale from the provided locale argument.
+     * Resolves a supported locale from a locale argument.
+     * <p>
+     * Matching is attempted first by full locale code ({@code language_COUNTRY}),
+     * then by language code only.
      *
-     * @param localeArgument the locale argument provided by the user, can be null or empty
-     * @return an Optional containing the resolved Locale if found, or an empty Optional if not found
+     * @param localeArgument optional locale argument
+     * @return an {@link Optional} containing the resolved locale, or empty if unmatched
      */
     static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
         Locale resolvedLocale = null;
@@ -138,10 +132,13 @@ public final class AppLocalization {
     }
 
     /**
-     * Resolves the locale from the default locale.
+     * Resolves a supported locale from a default locale.
+     * <p>
+     * Matching is attempted first by exact locale, then by language code.
      *
-     * @param defaultLocale the default locale
-     * @return an Optional containing the resolved Locale if found, or an empty Optional if not found
+     * @param defaultLocale the default locale to evaluate
+     * @return an {@link Optional} containing the resolved locale, or empty if unmatched
+     * @throws NullPointerException if {@code defaultLocale} is {@code null}
      */
     static Optional<Locale> resolveLocaleFromDefault(Locale defaultLocale) {
         Objects.requireNonNull(defaultLocale, "Default locale must not be null");
@@ -167,10 +164,10 @@ public final class AppLocalization {
     }
 
     /**
-     * Returns the locale currently used by the application.
+     * Returns the active locale.
      *
-     * @return the current locale
-     * @throws IllegalStateException if the AppLocalization has not been initialized
+     * @return the active locale
+     * @throws IllegalStateException if localization has not been initialized
      */
     public static Locale locale() {
         if (locale == null) {
@@ -180,10 +177,10 @@ public final class AppLocalization {
     }
 
     /**
-     * Returns the ResourceBundle currently used by the application.
+     * Returns the active resource bundle.
      *
-     * @return the current ResourceBundle
-     * @throws IllegalStateException if the AppLocalization has not been initialized
+     * @return the active bundle
+     * @throws IllegalStateException if localization has not been initialized
      */
     public static ResourceBundle bundle() {
         if (bundle == null) {
@@ -193,11 +190,12 @@ public final class AppLocalization {
     }
 
     /**
-     * Returns the text for the given key from the ResourceBundle.
+     * Returns localized text for a key.
      *
-     * @param key the key for the desired text
-     * @return the text associated with the key, or a placeholder if the key is not found
-     * @throws IllegalStateException if the AppLocalization has not been initialized
+     * @param key the resource key
+     * @return the localized text, or {@link #PLACEHOLDER_FOR_EXCEPTIONS} if the key is missing
+     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalStateException if localization has not been initialized
      */
     public static String getText(String key) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -213,12 +211,12 @@ public final class AppLocalization {
     }
 
     /**
-     * Returns an Optional containing the text for the given key from the ResourceBundle.
+     * Returns localized text for a key if present and non-blank.
      *
-     * @param key the key for the desired text
-     * @return an Optional containing the text associated with the key if found,
-     * or an empty Optional if the key is not found or if the text is empty or blank
-     * @throws IllegalStateException if the AppLocalization has not been initialized
+     * @param key the resource key
+     * @return an {@link Optional} containing non-blank localized text, or empty otherwise
+     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalStateException if localization has not been initialized
      */
     public static Optional<String> getOptionalText(String key) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -239,12 +237,13 @@ public final class AppLocalization {
     }
 
     /**
-     * Returns the formatted text for the given key from the ResourceBundle.
+     * Returns localized text for a key formatted with the active locale.
      *
-     * @param key  the key for the desired text
-     * @param args the arguments to format the text with
-     * @return the formatted text associated with the key, or a placeholder if the key is not found or if formatting fails
-     * @throws IllegalStateException if the AppLocalization has not been initialized
+     * @param key the resource key
+     * @param args formatting arguments passed to {@link String#format(Locale, String, Object...)}
+     * @return the formatted localized text, or {@link #PLACEHOLDER_FOR_EXCEPTIONS} on lookup/format errors
+     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalStateException if localization has not been initialized
      */
     public static String getFormattedText(String key, Object... args) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -266,9 +265,9 @@ public final class AppLocalization {
     }
 
     /**
-     * Enum representing supported country locales with their display names.
-     * The order of the enum constants is important as it determines the precedence when matching locales.
-     * EN_US has the highest precedence.
+     * Supported locales with display labels.
+     * <p>
+     * Declaration order defines matching precedence.
      */
     public enum CountryLocale {
         EN_US(Locale.US, "English (US)"),
@@ -278,11 +277,12 @@ public final class AppLocalization {
         private final String displayName;
 
         /**
-         * Constructs a CountryLocale with the provided locale and display name.
+         * Creates a locale descriptor.
          *
-         * @param countryLocale the Locale containing non-empty language and country codes
-         * @param displayName the human-readable display name for the locale
-         * @throws IllegalArgumentException if the locale lacks a valid language or country code
+         * @param countryLocale locale with non-empty language and country codes
+         * @param displayName human-readable display name
+         * @throws NullPointerException if {@code countryLocale} or {@code displayName} is {@code null}
+         * @throws IllegalArgumentException if {@code countryLocale} has an empty language or country code
          */
         CountryLocale(Locale countryLocale, String displayName) {
             Objects.requireNonNull(countryLocale, "Country locale must not be null");
@@ -298,50 +298,45 @@ public final class AppLocalization {
         }
 
         /**
-         * Returns the Locale object representing the country locale.
-         * Example: "Locale.US" for "EN_US" or "Locale.GERMANY" for "DE_DE".
+         * Returns the locale value.
          *
-         * @return the Locale object with language and country codes
+         * @return the locale including language and country
          */
         public Locale countryLocale() {
             return countryLocale;
         }
 
         /**
-         * Returns the display name of the country locale.
-         * Example: "English (US)" for "EN_US" or "Deutsch (Deutschland)" for "DE_DE".
+         * Returns the display name.
          *
-         * @return the display name as a string
+         * @return the localized display label
          */
         public String displayName() {
             return displayName;
         }
 
         /**
-         * Returns the language code of the country locale.
-         * Example: "en" for "EN_US" or "de" for "DE_DE".
+         * Returns the ISO language code.
          *
-         * @return the language code as a string
+         * @return the language code, for example {@code en}
          */
         public String languageCode() {
             return countryLocale.getLanguage();
         }
 
         /**
-         * Returns the country code of the country locale.
-         * Example: "US" for "EN_US" or "DE" for "DE_DE".
+         * Returns the ISO country code.
          *
-         * @return the country code as a string
+         * @return the country code, for example {@code US}
          */
         public String countryCode() {
             return countryLocale.getCountry();
         }
 
         /**
-         * Returns the locale code of the country locale in the format "language_COUNTRY".
-         * Example: "en_US" for "EN_US" or "de_DE" for "DE_DE".
+         * Returns the locale code in {@code language_COUNTRY} format.
          *
-         * @return the locale code as a string
+         * @return the locale code, for example {@code en_US}
          */
         public String localeCode() {
             return countryLocale.getLanguage() + "_" + countryLocale.getCountry();

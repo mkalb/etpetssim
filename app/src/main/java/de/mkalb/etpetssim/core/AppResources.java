@@ -8,11 +8,10 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 /**
- * Utility class for loading various types of resources such as property bundles,
- * CSS files, and images from the classpath.
+ * Utility methods for loading classpath resources.
  * <p>
- * Resources are expected to be located under the standard Maven/Gradle directory:
- * {@code src/main/resources/}, organized by type (e.g., {@code /css/}, {@code /images/}, {@code /i18n/}).
+ * Supported resource types include bundles, CSS files, images, streams, strings,
+ * and URLs.
  */
 public final class AppResources {
 
@@ -36,10 +35,11 @@ public final class AppResources {
     }
 
     /**
-     * Loads the default resource bundle for the given locale.
+     * Loads the default localization bundle for a locale.
      *
-     * @param locale the locale to use for loading the bundle
-     * @return an Optional containing the ResourceBundle if found
+     * @param locale bundle locale
+     * @return an {@link Optional} containing the bundle, or empty if unavailable
+     * @throws NullPointerException if {@code locale} is {@code null}
      */
     public static Optional<ResourceBundle> getBundle(Locale locale) {
         Objects.requireNonNull(locale, "locale must not be null");
@@ -47,11 +47,12 @@ public final class AppResources {
     }
 
     /**
-     * Loads a resource bundle from a specific base name and locale.
+     * Loads a resource bundle for a base name and locale.
      *
-     * @param baseName the base name of the resource bundle
-     * @param locale   the locale to use for loading the bundle
-     * @return an Optional containing the ResourceBundle if found
+     * @param baseName bundle base name
+     * @param locale bundle locale
+     * @return an {@link Optional} containing the bundle, or empty if unavailable
+     * @throws NullPointerException if {@code baseName} or {@code locale} is {@code null}
      */
     public static Optional<ResourceBundle> getBundle(String baseName, Locale locale) {
         Objects.requireNonNull(baseName, "baseName must not be null");
@@ -65,12 +66,12 @@ public final class AppResources {
     }
 
     /**
-     * Loads a CSS file as a URL string.
+     * Resolves a CSS resource to its external URL string.
      *
-     * @param relativePath the relative path to the CSS file under "/css/", without leading slash
-     * @return an Optional containing the external form of the URL
+     * @param relativePath path below {@code /css/} without a leading slash
+     * @return an {@link Optional} containing the external URL string, or empty if missing
+     * @throws NullPointerException if {@code relativePath} is {@code null}
      * @see #FOLDER_CSS
-     * @see java.net.URL#toExternalForm()
      */
     public static Optional<String> getCssUrl(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
@@ -84,12 +85,11 @@ public final class AppResources {
     }
 
     /**
-     * Loads an image from the /images/ directory.
-     * <p>
-     * If the URL is not found or the image cannot be decoded, an empty Optional is returned.
+     * Loads an image from {@code /images/}.
      *
-     * @param relativePath the relative path to the image file, without leading slash
-     * @return an Optional containing the loaded Image
+     * @param relativePath path below {@code /images/} without a leading slash
+     * @return an {@link Optional} containing the decoded image, or empty on lookup/decode errors
+     * @throws NullPointerException if {@code relativePath} is {@code null}
      * @see #FOLDER_IMAGES
      */
     public static Optional<Image> getImage(String relativePath) {
@@ -112,12 +112,11 @@ public final class AppResources {
     }
 
     /**
-     * Loads multiple images from the /images/ directory.
-     * <p>
-     * Images that cannot be found are skipped.
+     * Loads multiple images from {@code /images/}.
      *
-     * @param relativePaths the relative paths to the image files, without leading slash
-     * @return a List of loaded Images
+     * @param relativePaths image paths without leading slashes
+     * @return list of successfully loaded images; missing/invalid entries are skipped
+     * @throws NullPointerException if {@code relativePaths} is {@code null}
      * @see #FOLDER_IMAGES
      */
     public static List<Image> getImages(String... relativePaths) {
@@ -130,10 +129,11 @@ public final class AppResources {
     }
 
     /**
-     * Loads any resource as an InputStream.
+     * Opens a classpath resource as stream.
      *
-     * @param relativePath the relative path to the resource, without leading slash
-     * @return an Optional containing the InputStream
+     * @param relativePath resource path without leading slash
+     * @return an {@link Optional} containing the stream, or empty if missing
+     * @throws NullPointerException if {@code relativePath} is {@code null}
      */
     public static Optional<InputStream> getResourceAsStream(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
@@ -146,11 +146,12 @@ public final class AppResources {
     }
 
     /**
-     * Loads a resource from the classpath as a String using the specified charset.
+     * Loads a classpath resource as text.
      *
-     * @param relativePath the relative path to the resource, without leading slash
-     * @param charset the charset to use for decoding the resource bytes
-     * @return an Optional containing the resource content as a String, or Optional.empty() if not found or an error occurs
+     * @param relativePath resource path without leading slash
+     * @param charset charset used to decode bytes
+     * @return an {@link Optional} containing resource text, or empty on lookup/read errors
+     * @throws NullPointerException if {@code relativePath} or {@code charset} is {@code null}
      */
     public static Optional<String> getResourceAsString(String relativePath, Charset charset) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");
@@ -168,10 +169,11 @@ public final class AppResources {
     }
 
     /**
-     * Loads any resource as a URL.
+     * Resolves a classpath resource to a URL.
      *
-     * @param relativePath the relative path to the resource, without leading slash
-     * @return an Optional containing the URL
+     * @param relativePath resource path without leading slash
+     * @return an {@link Optional} containing the URL, or empty if missing
+     * @throws NullPointerException if {@code relativePath} is {@code null}
      */
     public static Optional<URL> getResourceAsUrl(String relativePath) {
         Objects.requireNonNull(relativePath, "relativePath must not be null");

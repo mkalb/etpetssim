@@ -17,8 +17,10 @@ import java.util.logging.*;
 import java.util.logging.Formatter;
 
 /**
- * The AppLogger class is a singleton logger utility for the application.
- * It allows logging messages at different levels (debug, info, warn, error) and can log to both console and a file.
+ * Application-wide logging facade built on {@link java.util.logging}.
+ * <p>
+ * Configure once via {@link #initialize(LogLevel, boolean, Path)} and then use the
+ * static logging methods throughout the application.
  */
 public final class AppLogger {
 
@@ -49,13 +51,13 @@ public final class AppLogger {
     }
 
     /**
-     * Initializes the AppLogger singleton instance with the specified log level, console output, and log file path.
-     * This method must be called exactly once before any logging methods are used.
+     * Initializes logging.
      *
-     * @param logLevel   the log level to set for the logger
-     * @param useConsole if true, logs will also be printed to the console
-     * @param logPath    the path to the log file; if null, no file logging will be done
-     * @throws IllegalStateException if the logger is already initialized.
+     * @param logLevel the minimum enabled log level
+     * @param useConsole whether to attach a console handler
+     * @param logPath optional file path for file logging; {@code null} disables file logging
+     * @throws NullPointerException if {@code logLevel} is {@code null}
+     * @throws IllegalStateException if logging is already initialized
      */
     public static synchronized void initialize(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
         APP_LOGGER.initializeLogger(logLevel, useConsole, logPath);
@@ -65,18 +67,16 @@ public final class AppLogger {
     }
 
     /**
-     * Checks if the AppLogger singleton instance has been initialized.
-     * @return true if the logger is initialized, false otherwise
+     * Returns whether logging has been initialized.
+     *
+     * @return {@code true} if initialized
      */
     public static synchronized boolean isInitialized() {
         return APP_LOGGER.initialized;
     }
 
     /**
-     * Initializes the AppLogger for testing purposes.
-     * This method sets the log level to DEBUG and enables console output.
-     * It initializes the logger only if it has not been initialized yet.
-     * It can be called multiple times without throwing an exception.
+     * Initializes logging for tests if not already initialized.
      */
     public static synchronized void initializeForTesting() {
         if (!isInitialized()) {
@@ -86,10 +86,7 @@ public final class AppLogger {
     }
 
     /**
-     * ONLY for testing purposes.
-     * Resets the AppLogger singleton instance for testing purposes.
-     * This method sets the logger to its default state, allowing for re-initialization in tests.
-     * It resets the logger only if it has been initialized.
+     * Resets logger state for tests.
      */
     static synchronized void resetForTesting() {
         if (isInitialized()) {
@@ -104,8 +101,7 @@ public final class AppLogger {
     }
 
     /**
-     * Shuts down the AppLogger singleton instance.
-     * This method closes all handlers and removes them from the logger.
+     * Shuts down logging and releases all handlers.
      */
     public static synchronized void shutdown() {
         debug("AppLogger: Shutting down logger.");
@@ -117,8 +113,9 @@ public final class AppLogger {
     }
 
     /**
-     * Returns the number of handlers currently attached to the AppLogger for testing purposes.
-     * @return the number of handlers attached to the logger
+     * Returns the number of attached handlers (test utility).
+     *
+     * @return number of active handlers
      */
     static synchronized int numberOfHandlersForTesting() {
         return APP_LOGGER.logger.getHandlers().length;
@@ -126,19 +123,18 @@ public final class AppLogger {
 
     /**
      * Logs a debug message.
-     * If the logger has not been initialized, the default root logger configuration is used.
      *
-     * @param message the message to log, can be null
+     * @param message message text, may be {@code null}
      */
     public static void debug(@Nullable String message) {
         APP_LOGGER.logger.fine(message);
     }
 
     /**
-     * Logs a debug message using a Supplier.
-     * If the logger has not been initialized, the default root logger configuration is used.
+     * Logs a lazily-evaluated debug message.
      *
-     * @param messageSupplier a Supplier that provides the message to log
+     * @param messageSupplier supplier producing the message text
+     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void debug(Supplier<String> messageSupplier) {
         Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
@@ -147,19 +143,18 @@ public final class AppLogger {
 
     /**
      * Logs an informational message.
-     * If the logger has not been initialized, the default root logger configuration is used.
      *
-     * @param message the message to log, can be null
+     * @param message message text, may be {@code null}
      */
     public static void info(@Nullable String message) {
         APP_LOGGER.logger.info(message);
     }
 
     /**
-     * Logs an informational message using a Supplier.
-     * If the logger has not been initialized, the default root logger configuration is used.
+     * Logs a lazily-evaluated informational message.
      *
-     * @param messageSupplier a Supplier that provides the message to log
+     * @param messageSupplier supplier producing the message text
+     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void info(Supplier<String> messageSupplier) {
         Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
@@ -167,20 +162,19 @@ public final class AppLogger {
     }
 
     /**
-     * Logs a warn message.
-     * If the logger has not been initialized, the default root logger configuration is used.
+     * Logs a warning message.
      *
-     * @param message the message to log, can be null
+     * @param message message text, may be {@code null}
      */
     public static void warn(@Nullable String message) {
         APP_LOGGER.logger.warning(message);
     }
 
     /**
-     * Logs a warn message using a Supplier.
-     * If the logger has not been initialized, the default root logger configuration is used.
+     * Logs a lazily-evaluated warning message.
      *
-     * @param messageSupplier a Supplier that provides the message to log
+     * @param messageSupplier supplier producing the message text
+     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void warn(Supplier<String> messageSupplier) {
         Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
@@ -189,19 +183,18 @@ public final class AppLogger {
 
     /**
      * Logs an error message.
-     * If the logger has not been initialized, the default root logger configuration is used.
      *
-     * @param message the message to log, can be null
+     * @param message message text, may be {@code null}
      */
     public static void error(@Nullable String message) {
         APP_LOGGER.logger.severe(message);
     }
 
     /**
-     * Logs an error message using a Supplier.
-     * If the logger has not been initialized, the default root logger configuration is used.
+     * Logs a lazily-evaluated error message.
      *
-     * @param messageSupplier a Supplier that provides the message to log
+     * @param messageSupplier supplier producing the message text
+     * @throws NullPointerException if {@code messageSupplier} is {@code null}
      */
     public static void error(Supplier<String> messageSupplier) {
         Objects.requireNonNull(messageSupplier, "Message supplier must not be null");
@@ -209,11 +202,11 @@ public final class AppLogger {
     }
 
     /**
-     * Logs an error message with an associated Throwable.
-     * If the logger has not been initialized, the default root logger configuration is used.
+     * Logs an error message with an exception.
      *
-     * @param message   the message to log, can be null
-     * @param throwable the Throwable to log
+     * @param message message text, may be {@code null}
+     * @param throwable exception to attach
+     * @throws NullPointerException if {@code throwable} is {@code null}
      */
     public static void error(@Nullable String message, Throwable throwable) {
         Objects.requireNonNull(throwable, "Throwable must not be null");
@@ -221,13 +214,13 @@ public final class AppLogger {
     }
 
     /**
-     * Initializes the AppLogger with the specified log level, console output, and log file path.
-     * This method must be called exactly once before any logging methods are used.
+     * Internal initialization implementation.
      *
-     * @param logLevel   the log level to set for the logger
-     * @param useConsole if true, logs will also be printed to the console
-     * @param logPath    the path to the log file; if null, no file logging will be done
-     * @throws IllegalStateException if the logger is already initialized.
+     * @param logLevel the minimum enabled log level
+     * @param useConsole whether to attach a console handler
+     * @param logPath optional file path for file logging
+     * @throws NullPointerException if {@code logLevel} is {@code null}
+     * @throws IllegalStateException if logging is already initialized
      */
     private synchronized void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
         if (initialized) {
@@ -302,15 +295,17 @@ public final class AppLogger {
     }
 
     /**
-     * Enum representing the log levels supported by the AppLogger.
+     * Log levels supported by {@link AppLogger}.
      */
     public enum LogLevel {
         DEBUG, INFO, WARN, ERROR;
 
         /**
-         * Converts a string representation of a log level to the corresponding LogLevel enum.
-         * @param level the string representation of the log level, case-insensitive
-         * @return an Optional containing the LogLevel if the string is valid, or an empty Optional if not
+         * Parses a log level name.
+         *
+         * @param level level name (case-insensitive)
+         * @return an {@link Optional} with the parsed level, or empty if invalid
+         * @throws NullPointerException if {@code level} is {@code null}
          */
         public static Optional<LogLevel> fromString(String level) {
             try {
@@ -321,8 +316,9 @@ public final class AppLogger {
         }
 
         /**
-         * Converts this LogLevel to the corresponding java.util.logging.Level.
-         * @return the java.util.logging.Level corresponding to this LogLevel
+         * Converts this level to {@link java.util.logging.Level}.
+         *
+         * @return mapped JUL level
          */
         Level toJavaLogLevel() {
             return switch (this) {

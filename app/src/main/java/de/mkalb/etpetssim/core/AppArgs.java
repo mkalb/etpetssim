@@ -4,7 +4,10 @@ import java.util.*;
 import java.util.regex.*;
 
 /**
- * Parses and stores command-line arguments in the format --key=value or --flag.
+ * Parses and stores command-line arguments.
+ * <p>
+ * Supported formats are {@code --key=value} and {@code --flag}. Unknown keys and
+ * malformed arguments are ignored and reported through {@link AppLogger}.
  */
 public final class AppArgs {
 
@@ -20,9 +23,10 @@ public final class AppArgs {
     private final EnumMap<Key, String> arguments = new EnumMap<>(Key.class);
 
     /**
-     * Constructs a new AppArgs instance and parses the given arguments.
+     * Creates a new instance and parses the provided command-line arguments.
      *
-     * @param args the command-line arguments to parse. Must not be null. Can be empty.
+     * @param args the arguments to parse; may be empty
+     * @throws NullPointerException if {@code args} is {@code null}
      */
     public AppArgs(String[] args) {
         Objects.requireNonNull(args, "Arguments must not be null");
@@ -58,12 +62,16 @@ public final class AppArgs {
     }
 
     /**
-     * Parses a boolean value from the given string.
-     * Boolean values can be represented as "true", "false", "1", "0", "yes", "no", "on", or "off".
+     * Parses a boolean value from text.
+     * <p>
+     * Accepted true values are {@code true}, {@code 1}, {@code yes}, and {@code on}.
+     * Accepted false values are {@code false}, {@code 0}, {@code no}, and {@code off}.
+     * For all other inputs, {@code defaultValue} is returned.
      *
-     * @param value        the string to parse
-     * @param defaultValue the default value to return if the string is not a valid boolean
-     * @return the parsed boolean value or the defaultValue
+     * @param value the text to parse
+     * @param defaultValue the fallback value for unsupported inputs
+     * @return the parsed boolean value or {@code defaultValue}
+     * @throws NullPointerException if {@code value} is {@code null}
      */
     static boolean parseBooleanValue(String value, boolean defaultValue) {
         Objects.requireNonNull(value, "Value must not be null");
@@ -75,10 +83,11 @@ public final class AppArgs {
     }
 
     /**
-     * Returns the value associated with the given key.
+     * Returns the raw string value for a key.
      *
-     * @param key the key to look up
-     * @return an Optional containing the value if present, or an empty Optional if the key is not found
+     * @param key the key to resolve
+     * @return an {@link Optional} with the stored value, or empty if the key is absent
+     * @throws NullPointerException if {@code key} is {@code null}
      */
     public Optional<String> getValue(Key key) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -86,12 +95,12 @@ public final class AppArgs {
     }
 
     /**
-     * Returns the boolean value of the given key.
-     * If the key is not present or the value is not a valid boolean, the default is returned.
+     * Returns the value for a key as a boolean.
      *
-     * @param key          the key to look up
-     * @param defaultValue the value to return if the key is missing or invalid
-     * @return the parsed boolean value or the default
+     * @param key the key to resolve
+     * @param defaultValue the fallback value when the key is missing or cannot be parsed
+     * @return the parsed value, or {@code defaultValue}
+     * @throws NullPointerException if {@code key} is {@code null}
      */
     public boolean getBoolean(Key key, boolean defaultValue) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -103,12 +112,12 @@ public final class AppArgs {
     }
 
     /**
-     * Returns the integer value of the given key.
-     * If the key is not present, the value is blank or the value is not a valid integer, the default is returned.
+     * Returns the value for a key as an integer.
      *
-     * @param key          the key to look up
-     * @param defaultValue the value to return if the key is missing or invalid
-     * @return the parsed integer value or the default
+     * @param key the key to resolve
+     * @param defaultValue the fallback value when the key is missing, blank, or invalid
+     * @return the parsed value, or {@code defaultValue}
+     * @throws NullPointerException if {@code key} is {@code null}
      */
     public int getInt(Key key, int defaultValue) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -125,11 +134,12 @@ public final class AppArgs {
     }
 
     /**
-     * Checks if the given key is a flag and returns its active state.
+     * Returns whether a flag key is active.
      *
-     * @param key the key to check
-     * @return true if the flag is active, false otherwise
-     * @throws IllegalArgumentException if the key is not a flag
+     * @param key the key to inspect
+     * @return {@code true} if the flag is active, otherwise {@code false}
+     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws IllegalArgumentException if {@code key} is not a flag key
      */
     public boolean isFlagActive(Key key) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -140,10 +150,11 @@ public final class AppArgs {
     }
 
     /**
-     * Checks if the given key exists in the command-line arguments.
+     * Returns whether a key was present in the parsed arguments.
      *
      * @param key the key to check
-     * @return true if the key exists, false otherwise
+     * @return {@code true} if the key is present, otherwise {@code false}
+     * @throws NullPointerException if {@code key} is {@code null}
      */
     public boolean hasKey(Key key) {
         Objects.requireNonNull(key, "Key must not be null");
@@ -151,18 +162,18 @@ public final class AppArgs {
     }
 
     /**
-     * Returns an unmodifiable set of all keys present in the command-line arguments.
+     * Returns an unmodifiable view of all present keys.
      *
-     * @return an unmodifiable set of keys
+     * @return an unmodifiable set of parsed keys
      */
     public Set<Key> keys() {
         return Collections.unmodifiableSet(arguments.keySet());
     }
 
     /**
-     * Returns a string representation of all command-line arguments.
+     * Serializes parsed arguments back into command-line form.
      *
-     * @return a string containing all arguments in the format --key=value or --flag
+     * @return arguments formatted as {@code --key=value} or {@code --flag}
      */
     public String argumentsAsString() {
         StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
@@ -208,10 +219,11 @@ public final class AppArgs {
         }
 
         /**
-         * Returns the Key enum constant corresponding to the given string, ignoring case.
+         * Resolves a key identifier to an enum constant.
          *
-         * @param key the string representation of the key
-         * @return an Optional containing the Key if found, or an empty Optional if not found
+         * @param key the key name to resolve (case-insensitive)
+         * @return an {@link Optional} containing the matching key, or empty if unknown
+         * @throws NullPointerException if {@code key} is {@code null}
          */
         public static Optional<Key> fromString(String key) {
             Objects.requireNonNull(key, "Key must not be null");
@@ -221,9 +233,10 @@ public final class AppArgs {
         }
 
         /**
-         * Prints a help message listing all available command-line arguments and their descriptions.
+         * Writes a help text containing all available command-line keys.
          *
-         * @param appendable the Appendable to which the help message will be written
+         * @param appendable the output target for the generated help text
+         * @throws NullPointerException if {@code appendable} is {@code null}
          */
         @SuppressWarnings("HardcodedLineSeparator")
         public static void printHelp(Appendable appendable) {
@@ -242,27 +255,27 @@ public final class AppArgs {
         }
 
         /**
-         * Returns the key as a string.
+         * Returns the command-line key name.
          *
-         * @return the key string
+         * @return the key name without the leading {@code --}
          */
         public String key() {
             return key;
         }
 
         /**
-         * Returns the description of the key.
+         * Returns the help description.
          *
-         * @return the description string
+         * @return the key description shown in help output
          */
         public String description() {
             return description;
         }
 
         /**
-         * Returns whether this key is a flag (i.e., does not require a value).
+         * Returns whether this key represents a flag.
          *
-         * @return true if this key is a flag, false otherwise
+         * @return {@code true} if the key is a flag, otherwise {@code false}
          */
         public boolean isFlag() {
             return flag;

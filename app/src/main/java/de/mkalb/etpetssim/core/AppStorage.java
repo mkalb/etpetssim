@@ -9,9 +9,9 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * AppStorage is a utility class for managing application-specific directories and files.
- * It provides methods to create, access, and delete files in the application data, log, and cache directories.
- * The directories are created based on the operating system and the application name.
+ * File-system storage utilities for application data, logs, and cache files.
+ * <p>
+ * Directory locations are selected per operating system and created on demand.
  */
 public final class AppStorage {
 
@@ -27,11 +27,12 @@ public final class AppStorage {
     }
 
     /**
-     * Creates a directory and checks if it is a directory and if it is writable.
+     * Creates a directory (if needed) and validates accessibility.
      *
-     * @param path the path to the directory
-     * @return the path to the created directory
-     * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
+     * @param path directory path to validate
+     * @return the validated directory path
+     * @throws NullPointerException if {@code path} is {@code null}
+     * @throws IOException if creation fails, path is not a directory, or directory is not writable
      */
     private static Path createAndCheckDirectory(Path path) throws IOException {
         Objects.requireNonNull(path, "Path must not be null");
@@ -48,12 +49,12 @@ public final class AppStorage {
     }
 
     /**
-     * Gets the application data directory based on the operating system.
-     * This method creates the directory if it does not exist and checks if it is writable.
+     * Returns the application data directory for the given OS.
      *
-     * @param os the name of the operating system
-     * @return the path to the application data directory
-     * @throws IOException if the directory cannot be created or is not writable
+     * @param os operating system
+     * @return writable data directory path
+     * @throws NullPointerException if {@code os} is {@code null}
+     * @throws IOException if the directory cannot be created or validated
      */
     private static Path getOrCreateAppDataDir(OperatingSystem os) throws IOException {
         Objects.requireNonNull(os, "Operating system must not be null");
@@ -66,12 +67,12 @@ public final class AppStorage {
     }
 
     /**
-     * Gets the application log directory based on the operating system.
-     * This method creates the directory if it does not exist and checks if it is writable.
+     * Returns the log directory for the given OS.
      *
-     * @param os the name of the operating system
-     * @return the path to the log directory
-     * @throws IOException if the directory cannot be created or is not writable
+     * @param os operating system
+     * @return writable log directory path
+     * @throws NullPointerException if {@code os} is {@code null}
+     * @throws IOException if the directory cannot be created or validated
      */
     private static Path getOrCreateLogDir(OperatingSystem os) throws IOException {
         Objects.requireNonNull(os, "Operating system must not be null");
@@ -83,12 +84,12 @@ public final class AppStorage {
     }
 
     /**
-     * Gets the application cache directory based on the operating system.
-     * This method creates the directory if it does not exist and checks if it is writable.
+     * Returns the cache directory for the given OS.
      *
-     * @param os the name of the operating system
-     * @return the path to the cache directory
-     * @throws IOException if the directory cannot be created or is not writable
+     * @param os operating system
+     * @return writable cache directory path
+     * @throws NullPointerException if {@code os} is {@code null}
+     * @throws IOException if the directory cannot be created or validated
      */
     private static Path getOrCreateCacheDir(OperatingSystem os) throws IOException {
         Objects.requireNonNull(os, "Operating system must not be null");
@@ -101,12 +102,13 @@ public final class AppStorage {
     }
 
     /**
-     * Gets the application data file path based on the operating system.
+     * Resolves a file path inside the application data directory.
      *
-     * @param fileName the name of the file to be created or accessed in the app data directory
-     * @param os       the operating system
-     * @return the path to the application data file
-     * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
+     * @param fileName file name relative to the data directory
+     * @param os operating system
+     * @return resolved file path
+     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
+     * @throws IOException if the data directory cannot be created or validated
      */
     public static Path getAppDataFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
@@ -115,12 +117,13 @@ public final class AppStorage {
     }
 
     /**
-     * Creates a new application data file with the specified name.
+     * Creates a new file in the application data directory.
      *
-     * @param fileName the name of the file to be created in the app data directory
-     * @param os       the operating system
-     * @return the path to the newly created application data file
-     * @throws IOException if an I/O error occurs or if the path is not a directory or not writable or if the file already exists
+     * @param fileName file name relative to the data directory
+     * @param os operating system
+     * @return path to the created file
+     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
+     * @throws IOException if directory validation fails, file creation fails, or the file already exists
      */
     public static Path createAppDataFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
@@ -129,12 +132,13 @@ public final class AppStorage {
     }
 
     /**
-     * Deletes an application data file with the specified name.
+     * Deletes a file from the application data directory.
      *
-     * @param fileName the name of the file to be deleted from the app data directory
-     * @param os       the operating system
-     * @return true if the file was successfully deleted, false if it did not exist
-     * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
+     * @param fileName file name relative to the data directory
+     * @param os operating system
+     * @return {@code true} if a regular file existed and was deleted; otherwise {@code false}
+     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
+     * @throws IOException if directory validation fails or deletion fails
      */
     public static boolean deleteAppDataFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
@@ -147,12 +151,13 @@ public final class AppStorage {
     }
 
     /**
-     * Gets the log file path based on the operating system.
+     * Resolves a file path inside the log directory.
      *
-     * @param fileName the name of the log file to be created or accessed in the log directory
-     * @param os       the operating system
-     * @return the path to the log file
-     * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
+     * @param fileName file name relative to the log directory
+     * @param os operating system
+     * @return resolved log file path
+     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
+     * @throws IOException if the log directory cannot be created or validated
      */
     public static Path getLogFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
@@ -161,13 +166,14 @@ public final class AppStorage {
     }
 
     /**
-     * Creates a new temporary log file at the cache directory with the specified prefix and suffix.
+     * Creates a temporary file in the cache directory.
      *
-     * @param prefix the prefix for the temporary log file
-     * @param suffix the suffix for the temporary log file, can be null
-     * @param os     the operating system
-     * @return the path to the newly created temporary log file
-     * @throws IOException if an I/O error occurs or if the path is not a directory or not writable
+     * @param prefix required prefix string
+     * @param suffix optional suffix string, may be {@code null}
+     * @param os operating system
+     * @return path to the created temporary file
+     * @throws NullPointerException if {@code prefix} or {@code os} is {@code null}
+     * @throws IOException if cache directory validation or temp-file creation fails
      */
     public static Path createTempCacheFile(String prefix, @Nullable String suffix, OperatingSystem os) throws IOException {
         Objects.requireNonNull(prefix, "Prefix must not be null");
@@ -176,20 +182,20 @@ public final class AppStorage {
     }
 
     /**
-     * Enum representing the operating systems supported by the application.
+     * Operating systems supported by storage path resolution.
      */
     public enum OperatingSystem {
         WINDOWS, MAC, LINUX;
 
         /**
-         * Detects the operating system based on the system property ("os.name").
+         * Detects the current operating system from {@code os.name}.
          * <ul>
-         *    <li>Returns {@link #WINDOWS} for Windows operating systems containing "win".</li>
-         *    <li>Returns {@link #MAC} for macOS operating systems containing "mac".</li>
-         *    <li>Returns {@link #LINUX} for all other operating systems.</li>
+         *   <li>{@link #WINDOWS} if the lower-case name contains {@code "win"}</li>
+         *   <li>{@link #MAC} if the lower-case name contains {@code "mac"}</li>
+         *   <li>{@link #LINUX} otherwise</li>
          * </ul>
          *
-         * @return the detected operating system
+         * @return detected operating system
          */
         public static OperatingSystem detect() {
             String osName = System.getProperty("os.name").toLowerCase();
