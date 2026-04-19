@@ -10,6 +10,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings({"MagicNumber", "DuplicateExpressions"})
 final class CellNeighborhoodsTest {
 
+    private static void tryPutOuterRadiusRing(SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>>> radiusRings) {
+        radiusRings.put(1, new TreeMap<>());
+    }
+
+    private static void tryPutInnerRadiusRing(SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>> ring,
+                                              GridCoordinate coordinate,
+                                              RadiusRingCell<GridCoordinate> ringCell) {
+        ring.put(coordinate, ringCell);
+    }
+
+    private static void tryAddReachedFromPreviousRing(SortedSet<GridCoordinate> reachedFromPreviousRing,
+                                                      GridCoordinate coordinate) {
+        reachedFromPreviousRing.add(coordinate);
+    }
+
     @Test
     void testStaticMaxNeighborCount() {
         assertEquals(3, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY));
@@ -370,6 +385,167 @@ final class CellNeighborhoodsTest {
             assertEquals(new EdgeBehaviorResult(new GridCoordinate(5, 15), new GridCoordinate(5, 5), EdgeBehaviorAction.WRAPPED),
                     CellNeighborhoods.applyEdgeBehaviorToCoordinate(new GridCoordinate(5, 15), structure));
         }
+    }
+
+    @Test
+    void testStaticCellsByRadiusRingsRadius0AndUnmodifiable() {
+        GridStructure structure = new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
+                GridSize.EXTRA_SMALL_SQUARE);
+        GridCoordinate startCoordinate = new GridCoordinate(1, 1);
+
+        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>>> radiusRings =
+                CellNeighborhoods.cellsByRadiusRings(
+                        startCoordinate,
+                        NeighborhoodMode.EDGES_ONLY,
+                        structure,
+                        0,
+                        coordinate -> coordinate);
+
+        assertEquals(Set.of(0), radiusRings.keySet());
+        assertEquals(Set.of(startCoordinate), radiusRings.get(0).keySet());
+
+        RadiusRingCell<GridCoordinate> ringCell = radiusRings.get(0).get(startCoordinate);
+        assertEquals(0, ringCell.ring());
+        assertEquals(startCoordinate, ringCell.coordinate());
+        assertEquals(startCoordinate, ringCell.cell());
+        assertTrue(ringCell.reachedFromPreviousRing().isEmpty());
+
+        assertThrows(UnsupportedOperationException.class, () -> tryPutOuterRadiusRing(radiusRings));
+        assertThrows(UnsupportedOperationException.class, () -> tryPutInnerRadiusRing(radiusRings.get(0), startCoordinate, ringCell));
+        assertThrows(UnsupportedOperationException.class, () -> tryAddReachedFromPreviousRing(ringCell.reachedFromPreviousRing(), startCoordinate));
+    }
+
+    @Test
+    void testStaticCellsByRadiusRingsInvalidRadiusOrInvalidCoordinate() {
+        GridStructure structure = new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
+                GridSize.EXTRA_SMALL_SQUARE);
+
+        assertThrows(IllegalArgumentException.class, () -> CellNeighborhoods.cellsByRadiusRings(
+                new GridCoordinate(1, 1),
+                NeighborhoodMode.EDGES_ONLY,
+                structure,
+                -1,
+                coordinate -> coordinate));
+        assertThrows(IllegalArgumentException.class, () -> CellNeighborhoods.cellsByRadiusRings(
+                new GridCoordinate(1, 1),
+                NeighborhoodMode.EDGES_ONLY,
+                structure,
+                CellNeighborhoods.MAX_RING_RADIUS + 1,
+                coordinate -> coordinate));
+        assertThrows(IllegalArgumentException.class, () -> CellNeighborhoods.cellsByRadiusRings(
+                new GridCoordinate(8, 1),
+                NeighborhoodMode.EDGES_ONLY,
+                structure,
+                1,
+                coordinate -> coordinate));
+    }
+
+    @Test
+    void testStaticCellsByRadiusRingsWrapBehaviorAndUniqueness() {
+        GridStructure structure = new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
+                GridSize.EXTRA_SMALL_SQUARE);
+        GridCoordinate startCoordinate = new GridCoordinate(0, 0);
+
+        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>>> radiusRings =
+                CellNeighborhoods.cellsByRadiusRings(
+                        startCoordinate,
+                        NeighborhoodMode.EDGES_ONLY,
+                        structure,
+                        2,
+                        coordinate -> coordinate);
+
+        assertEquals(Set.of(0, 1, 2), radiusRings.keySet());
+        assertEquals(Set.of(startCoordinate), radiusRings.get(0).keySet());
+        assertEquals(Set.of(
+                        new GridCoordinate(0, 7),
+                        new GridCoordinate(1, 0),
+                        new GridCoordinate(0, 1),
+                        new GridCoordinate(7, 0)),
+                radiusRings.get(1).keySet());
+        assertEquals(Set.of(
+                        new GridCoordinate(0, 6),
+                        new GridCoordinate(1, 7),
+                        new GridCoordinate(7, 7),
+                        new GridCoordinate(2, 0),
+                        new GridCoordinate(1, 1),
+                        new GridCoordinate(0, 2),
+                        new GridCoordinate(7, 1),
+                        new GridCoordinate(6, 0)),
+                radiusRings.get(2).keySet());
+
+        for (Map.Entry<GridCoordinate, RadiusRingCell<GridCoordinate>> entry : radiusRings.get(1).entrySet()) {
+            assertEquals(1, entry.getValue().ring());
+            assertEquals(entry.getKey(), entry.getValue().coordinate());
+            assertEquals(entry.getKey(), entry.getValue().cell());
+            assertEquals(Set.of(startCoordinate), entry.getValue().reachedFromPreviousRing());
+        }
+
+        assertEquals(Set.of(new GridCoordinate(0, 7)),
+                radiusRings.get(2).get(new GridCoordinate(0, 6)).reachedFromPreviousRing());
+        assertEquals(Set.of(new GridCoordinate(0, 7), new GridCoordinate(1, 0)),
+                radiusRings.get(2).get(new GridCoordinate(1, 7)).reachedFromPreviousRing());
+        assertEquals(Set.of(new GridCoordinate(0, 7), new GridCoordinate(7, 0)),
+                radiusRings.get(2).get(new GridCoordinate(7, 7)).reachedFromPreviousRing());
+        assertEquals(Set.of(new GridCoordinate(1, 0)),
+                radiusRings.get(2).get(new GridCoordinate(2, 0)).reachedFromPreviousRing());
+        assertEquals(Set.of(new GridCoordinate(1, 0), new GridCoordinate(0, 1)),
+                radiusRings.get(2).get(new GridCoordinate(1, 1)).reachedFromPreviousRing());
+        assertEquals(Set.of(new GridCoordinate(0, 1)),
+                radiusRings.get(2).get(new GridCoordinate(0, 2)).reachedFromPreviousRing());
+        assertEquals(Set.of(new GridCoordinate(0, 1), new GridCoordinate(7, 0)),
+                radiusRings.get(2).get(new GridCoordinate(7, 1)).reachedFromPreviousRing());
+        assertEquals(Set.of(new GridCoordinate(7, 0)),
+                radiusRings.get(2).get(new GridCoordinate(6, 0)).reachedFromPreviousRing());
+
+        List<GridCoordinate> allCoordinates = new ArrayList<>();
+        for (SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>> ring : radiusRings.values()) {
+            allCoordinates.addAll(ring.keySet());
+        }
+        assertEquals(13, allCoordinates.size());
+        assertEquals(13, new HashSet<>(allCoordinates).size());
+    }
+
+    @Test
+    void testStaticCellsByRadiusRingsFiltersBlockedAndAbsorbedNeighbors() {
+        GridCoordinate startCoordinate = new GridCoordinate(0, 0);
+
+        for (GridEdgeBehavior edgeBehavior : List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.ABSORB_XY)) {
+            GridStructure structure = new GridStructure(
+                    new GridTopology(CellShape.SQUARE, edgeBehavior),
+                    GridSize.EXTRA_SMALL_SQUARE);
+
+            SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>>> radiusRings =
+                    CellNeighborhoods.cellsByRadiusRings(
+                            startCoordinate,
+                            NeighborhoodMode.EDGES_ONLY,
+                            structure,
+                            1,
+                            coordinate -> coordinate);
+
+            assertEquals(Set.of(
+                            new GridCoordinate(1, 0),
+                            new GridCoordinate(0, 1)),
+                    radiusRings.get(1).keySet());
+            assertFalse(radiusRings.get(1).containsKey(new GridCoordinate(-1, 0)));
+            assertFalse(radiusRings.get(1).containsKey(new GridCoordinate(0, -1)));
+        }
+    }
+
+    @Test
+    void testRadiusRingCellEqualsAndHashCodeUseCoordinateOnly() {
+        GridCoordinate coordinate = new GridCoordinate(1, 1);
+
+        RadiusRingCell<String> cellA = new RadiusRingCell<>(0, coordinate, "A", new TreeSet<>());
+        RadiusRingCell<String> cellB = new RadiusRingCell<>(2, coordinate, "B",
+                new TreeSet<>(Set.of(new GridCoordinate(1, 0))));
+        RadiusRingCell<String> cellC = new RadiusRingCell<>(2, new GridCoordinate(1, 2), "B", new TreeSet<>());
+
+        assertEquals(cellA, cellB);
+        assertEquals(cellA.hashCode(), cellB.hashCode());
+        assertNotEquals(cellA, cellC);
     }
 
     @SuppressWarnings("EmptyMethod")

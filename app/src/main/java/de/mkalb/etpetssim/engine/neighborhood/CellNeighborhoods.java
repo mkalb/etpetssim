@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.engine.neighborhood;
 import de.mkalb.etpetssim.engine.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 /**
@@ -29,6 +30,14 @@ public final class CellNeighborhoods {
      * will throw an {@link IllegalArgumentException} if the provided value exceeds this limit.
      */
     public static final int MAX_RADIUS = 100;
+
+    /**
+     * The maximum allowed radius for {@link #cellsByRadiusRings(GridCoordinate, NeighborhoodMode, GridStructure, int, Function)}.
+     * <p>
+     * This stricter upper bound is intended for generic multi-ring cell snapshot calculations,
+     * where larger radii would quickly increase both object allocation and traversal cost.
+     */
+    public static final int MAX_RING_RADIUS = 4;
 
     /**
      * Direction ring for square cells when only edges are considered.
@@ -408,6 +417,101 @@ public final class CellNeighborhoods {
                     return CellNeighborWithEdgeBehavior.of(neighbor, result);
                 })
                 .collect(Collectors.groupingBy(CellNeighborWithEdgeBehavior::mappedNeighborCoordinate));
+    }
+
+    /**
+     * Returns all cells grouped by radius rings around a start coordinate, applying the grid's edge behavior
+     * during each ring expansion and storing the result in unmodifiable sorted maps.
+     * <p>
+     * Ring {@code 0} always contains the start coordinate itself. Each following ring contains only coordinates
+     * that are first reached in that exact radius, so no coordinate appears in more than one ring.
+     * For each cell in ring {@code r > 0}, the returned {@link RadiusRingCell} stores the sorted set of
+     * coordinates from ring {@code r - 1} through which it was reached.
+     * <p>
+     * Only neighbors with edge behavior action {@link EdgeBehaviorAction#VALID} or
+     * {@link EdgeBehaviorAction#WRAPPED} are included. Neighbors resulting in
+     * {@link EdgeBehaviorAction#BLOCKED} or {@link EdgeBehaviorAction#ABSORBED} are ignored and are not
+     * used for subsequent ring expansion.
+     * <p>
+     * The returned outer map always contains all radius keys from {@code 0} up to and including {@code radius},
+     * even if some higher rings are empty.
+     *
+     * @param <C> the generic cell value type created for each coordinate
+     * @param startCoordinate the coordinate of the center cell whose radius rings are to be determined
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param structure the grid structure defining size, cell shape, and edge behavior
+     * @param radius the maximum radius ring to compute (non-negative and less than or equal to {@link #MAX_RING_RADIUS})
+     * @param cellFactory function creating the generic cell value for a coordinate
+     * @return an unmodifiable sorted map from radius ring to an unmodifiable sorted map of coordinates and their cell metadata
+     * @throws IllegalArgumentException if the radius is negative, greater than {@link #MAX_RING_RADIUS},
+     *         or if the start coordinate is not valid within the grid structure
+     */
+    public static <C> SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<C>>> cellsByRadiusRings(
+            GridCoordinate startCoordinate,
+            NeighborhoodMode neighborhoodMode,
+            GridStructure structure,
+            int radius,
+            Function<GridCoordinate, C> cellFactory) {
+        if (radius < 0) {
+            throw new IllegalArgumentException("Radius must be greater than or equal to 0, but was: " + radius);
+        }
+        if (radius > MAX_RING_RADIUS) {
+            throw new IllegalArgumentException("Radius must be less than or equal to " + MAX_RING_RADIUS + ", but was: " + radius);
+        }
+        if (!structure.isCoordinateValid(startCoordinate)) {
+            throw new IllegalArgumentException("Start coordinate must be valid within the grid structure, but was: "
+                    + startCoordinate.toDisplayString());
+        }
+
+        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<C>>> radiusRings = new TreeMap<>();
+        Set<GridCoordinate> visitedCoordinates = HashSet.newHashSet(1 + maxNeighborCount(structure.cellShape(), neighborhoodMode, radius));
+        Set<GridCoordinate> currentRingCoordinates = HashSet.newHashSet(1);
+
+        visitedCoordinates.add(startCoordinate);
+        currentRingCoordinates.add(startCoordinate);
+
+        SortedMap<GridCoordinate, RadiusRingCell<C>> ring0 = new TreeMap<>();
+        ring0.put(startCoordinate, new RadiusRingCell<>(0, startCoordinate, cellFactory.apply(startCoordinate), new TreeSet<>()));
+        radiusRings.put(0, Collections.unmodifiableSortedMap(ring0));
+
+        for (int currentRadius = 1; currentRadius <= radius; currentRadius++) {
+            SortedMap<GridCoordinate, SortedSet<GridCoordinate>> nextRingAccumulator = new TreeMap<>();
+
+            for (GridCoordinate currentCoordinate : currentRingCoordinates) {
+                for (EdgeBehaviorResult edgeBehaviorResult : neighborEdgeResults(currentCoordinate, neighborhoodMode, structure)) {
+                    if ((edgeBehaviorResult.action() != EdgeBehaviorAction.VALID)
+                            && (edgeBehaviorResult.action() != EdgeBehaviorAction.WRAPPED)) {
+                        continue;
+                    }
+
+                    GridCoordinate mappedCoordinate = edgeBehaviorResult.mapped();
+                    if (visitedCoordinates.contains(mappedCoordinate)) {
+                        continue;
+                    }
+
+                    nextRingAccumulator
+                            .computeIfAbsent(mappedCoordinate, _ -> new TreeSet<>())
+                            .add(currentCoordinate);
+                }
+            }
+
+            SortedMap<GridCoordinate, RadiusRingCell<C>> currentRing = new TreeMap<>();
+            for (Map.Entry<GridCoordinate, SortedSet<GridCoordinate>> entry : nextRingAccumulator.entrySet()) {
+                GridCoordinate ringCoordinate = entry.getKey();
+                currentRing.put(ringCoordinate, new RadiusRingCell<>(
+                        currentRadius, ringCoordinate,
+                        cellFactory.apply(ringCoordinate),
+                        entry.getValue()));
+            }
+
+            visitedCoordinates.addAll(currentRing.keySet());
+            currentRingCoordinates = HashSet.newHashSet(currentRing.size());
+            currentRingCoordinates.addAll(currentRing.keySet());
+
+            radiusRings.put(currentRadius, Collections.unmodifiableSortedMap(currentRing));
+        }
+
+        return Collections.unmodifiableSortedMap(radiusRings);
     }
 
     /**
