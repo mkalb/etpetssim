@@ -18,6 +18,17 @@ final class GridCoordinateTest {
     }
 
     @Test
+    void testCompareTo() {
+        assertEquals(0, new GridCoordinate(5, 10).compareTo(new GridCoordinate(5, 10)));
+
+        assertTrue(new GridCoordinate(4, 100).compareTo(new GridCoordinate(5, 0)) < 0);
+        assertTrue(new GridCoordinate(6, 0).compareTo(new GridCoordinate(5, 100)) > 0);
+
+        assertTrue(new GridCoordinate(5, 9).compareTo(new GridCoordinate(5, 10)) < 0);
+        assertTrue(new GridCoordinate(5, 11).compareTo(new GridCoordinate(5, 10)) > 0);
+    }
+
+    @Test
     void testConstants() {
         assertEquals(0, GridCoordinate.ORIGIN.x());
         assertEquals(0, GridCoordinate.ORIGIN.y());

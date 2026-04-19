@@ -8,6 +8,8 @@ package de.mkalb.etpetssim.engine;
  * <p>
  * This record provides utility methods for bounds checking, coordinate arithmetic, and
  * grid-specific queries (such as cell orientation and offset for different cell shapes).
+ * <p>
+ * The natural ordering of this type is lexicographic: first by {@code x}, then by {@code y}.
  *
  * @param x the x-coordinate (horizontal position, must be non-negative for valid coordinates)
  * @param y the y-coordinate (vertical position, must be non-negative for valid coordinates)
@@ -15,9 +17,10 @@ package de.mkalb.etpetssim.engine;
  * @see #isIllegal()
  * @see #isWithinBounds(int, int, int, int)
  * @see #clampToBounds(int, int, int, int)
+ * @see #compareTo(GridCoordinate)
  * @see CellShape
  */
-public record GridCoordinate(int x, int y) {
+public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate> {
 
     /**
      * A constant for the minimum valid coordinate value.
@@ -281,6 +284,23 @@ public record GridCoordinate(int x, int y) {
      */
     public GridOffset offsetTo(GridCoordinate target) {
         return GridOffset.between(this, target);
+    }
+
+    /**
+     * Compares this coordinate with another coordinate using lexicographic order:
+     * first by {@code x}, then by {@code y}.
+     *
+     * @param other the coordinate to compare against
+     * @return a negative value if this coordinate is smaller, {@code 0} if equal,
+     *         or a positive value if this coordinate is greater
+     */
+    @Override
+    public int compareTo(GridCoordinate other) {
+        int xCompare = Integer.compare(x, other.x);
+        if (xCompare != 0) {
+            return xCompare;
+        }
+        return Integer.compare(y, other.y);
     }
 
     /**
