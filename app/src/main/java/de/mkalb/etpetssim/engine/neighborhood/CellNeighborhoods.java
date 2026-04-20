@@ -32,14 +32,6 @@ public final class CellNeighborhoods {
     public static final int MAX_RADIUS = 100;
 
     /**
-     * The maximum allowed radius for {@link #cellsByRadiusRings(GridCoordinate, NeighborhoodMode, GridStructure, int, Function)}.
-     * <p>
-     * This stricter upper bound is intended for generic multi-ring cell snapshot calculations,
-     * where larger radii would quickly increase both object allocation and traversal cost.
-     */
-    public static final int MAX_RING_RADIUS = 4;
-
-    /**
      * Direction ring for square cells when only edges are considered.
      * <p>
      * Clockwise order starting at North: N, E, S, W.
@@ -440,10 +432,10 @@ public final class CellNeighborhoods {
      * @param startCoordinate the coordinate of the center cell whose radius rings are to be determined
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param structure the grid structure defining size, cell shape, and edge behavior
-     * @param radius the maximum radius ring to compute (non-negative and less than or equal to {@link #MAX_RING_RADIUS})
+     * @param radius the maximum radius ring to compute (non-negative and less than or equal to {@link #MAX_RADIUS})
      * @param cellFactory function creating the generic cell value for a coordinate
      * @return an unmodifiable sorted map from radius ring to an unmodifiable sorted map of coordinates and their cell metadata
-     * @throws IllegalArgumentException if the radius is negative, greater than {@link #MAX_RING_RADIUS},
+     * @throws IllegalArgumentException if the radius is negative, greater than {@link #MAX_RADIUS},
      *         or if the start coordinate is not valid within the grid structure
      */
     public static <C> SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<C>>> cellsByRadiusRings(
@@ -455,8 +447,8 @@ public final class CellNeighborhoods {
         if (radius < 0) {
             throw new IllegalArgumentException("Radius must be greater than or equal to 0, but was: " + radius);
         }
-        if (radius > MAX_RING_RADIUS) {
-            throw new IllegalArgumentException("Radius must be less than or equal to " + MAX_RING_RADIUS + ", but was: " + radius);
+        if (radius > MAX_RADIUS) {
+            throw new IllegalArgumentException("Radius must be less than or equal to " + MAX_RADIUS + ", but was: " + radius);
         }
         if (!structure.isCoordinateValid(startCoordinate)) {
             throw new IllegalArgumentException("Start coordinate must be valid within the grid structure, but was: "
