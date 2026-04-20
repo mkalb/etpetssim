@@ -1,30 +1,15 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
-/**
- * V1 agent logic for ET Pets simulation.
- * <p>
- * Processes all agent entities each step in deterministic coordinate order.
- * Each living pet executes the following priority chain:
- * <ol>
- *   <li>Death-check (remove pets marked dead last step)</li>
- *   <li>Passive energy loss + cooldown decrement</li>
- *   <li>Death from energy depletion</li>
- *   <li>Eat-if-adjacent (if energy &lt; {@link #EAT_IF_ADJACENT_ENERGY_THRESHOLD})</li>
- *   <li>Move-to-resource-if-hungry (if energy &lt; {@link #RESOURCE_SEEKING_ENERGY_THRESHOLD})</li>
- *   <li>Reproduce-if-possible</li>
- *   <li>Move-to-enable-reproduction</li>
- *   <li>Explore/Trail</li>
- * </ol>
- * Eggs are incubated each step and hatch when {@code incubationRemaining} reaches zero.
- */
 public final class EtpetsAgentLogic {
 
     // ---- V1 balancing constants ----
@@ -36,13 +21,27 @@ public final class EtpetsAgentLogic {
 
     private static final int ENERGY_LOSS_PER_STEP = 1;
     private static final int EAT_IF_ADJACENT_ENERGY_THRESHOLD = 80;
-    private static final int RESOURCE_SEEKING_ENERGY_THRESHOLD = 60;
     private static final int REPRODUCTION_MIN_AGE = 120;
     private static final int INCUBATION_DURATION = 10;
 
+    // ---- V1 action scoring constants ----
+    private static final int SCORE_REPRODUCE_BASE = 80;
+    private static final int SCORE_REPRODUCE_PARTNER_BONUS = 5;
+
+    private static final int SCORE_EAT_BASE = 30;
+    private static final int SCORE_EAT_HUNGER_BONUS = 6;
+    private static final int SCORE_EAT_ENERGY_GAIN_WEIGHT = 2;
+    private static final int SCORE_EAT_AMOUNT_WEIGHT = 1;
+
+    private static final int SCORE_MOVE_BASE = 10;
+    private static final int SCORE_MOVE_RING2_RESOURCE_BONUS = 8;
+    private static final int SCORE_MOVE_RING2_PARTNER_BONUS = 6;
+    private static final int SCORE_MOVE_TRAIL_WEAK_BONUS = 2;
+    private static final int SCORE_MOVE_COST_PENALTY = 2;
+
     // ---- Default initial pet trait values (used by EtpetsSimulationManager) ----
     private static final double TRAIL_INCREASE_PER_ENTRY = 1.0d;
-    private static final double TRAIL_PREFERENCE_THRESHOLD = 3.0d;
+    private static final double TRAIL_PREFERENCE_THRESHOLD = 10.0d;
     private static final double TRAIL_MAX = 100.0d;
     private static final double MUTATION_CHANCE_PER_TRAIT = 0.08d;
     private static final double MUTATION_DELTA = 0.05d;
@@ -69,7 +68,7 @@ public final class EtpetsAgentLogic {
 
             // Check if the entity is still at its original coordinate. It may already have been removed or replaced.
             if (gridModel.agentModel().getEntity(currentCoordinate) != entity) {
-                return;
+                continue;
             }
 
             if (entity instanceof PetEgg egg) {
@@ -99,40 +98,35 @@ public final class EtpetsAgentLogic {
                     continue; // Stays on grid for exactly 1 visual step.
                 }
 
-                var neighborRings = computeNeighborRings(currentCoordinate, structure, gridModel);
+                List<ActionCandidate> actionCandidates = collectActionCandidates(
+                        currentCoordinate,
+                        pet,
+                        gridModel,
+                        structure,
+                        stepIndex
+                );
+                AppLogger.info(() -> String.format(Locale.ROOT,
+                        "PET #%d @%s candidates: %s",
+                        pet.petId(),
+                        currentCoordinate.toDisplayString(),
+                        toDisplayString(actionCandidates)));
 
-                // AppLogger.info(String.format("Processing pet %s at %s with neighbors: firstRing=%s, secondRing=%s",
-                //         pet.toDisplayString(), currentCoordinate.toDisplayString(),
-                //         neighborRings.firstRing, neighborRings.secondRing
-                // ));
-                // Step 3 – Eat-if-adjacent (opportunistic eating even when not critically hungry).
-                if (pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD) {
-                    if (tryEat(neighborRings.firstRing().values(), pet, random)) {
-                        continue;
-                    }
-                }
+                ActionCandidate selectedAction = pickBestCandidate(actionCandidates, random);
+                AppLogger.info(() -> String.format(Locale.ROOT,
+                        "PET #%d selected action: %s",
+                        pet.petId(),
+                        toDisplayString(selectedAction)));
 
-                // Step 4 – Move-to-resource-if-hungry.
-                if (pet.currentEnergy() < RESOURCE_SEEKING_ENERGY_THRESHOLD) {
-                    if (tryMoveTowardResource(currentCoordinate, neighborRings, pet, gridModel, structure, random)) {
-                        continue;
-                    }
-                }
-
-                // Step 5 – Reproduce-if-possible.
-                if (isReproductionEligible(pet, stepIndex)) {
-                    if (tryReproduce(currentCoordinate, pet, gridModel, structure, stepIndex, random, idSequence)) {
-                        // TODO update eggCountChange if necessary
-                        continue;
-                    }
-                    // Step 6 – Move-to-enable-reproduction (eligible but no valid partner adjacent).
-                    if (tryMoveTowardPartner(currentCoordinate, pet, gridModel, structure, stepIndex)) {
-                        continue;
-                    }
-                }
-
-                // Step 7 – Explore / follow trail.
-                tryExplore(currentCoordinate, pet, gridModel, structure);
+                ActionEffect effect = executeActionCandidate(
+                        selectedAction,
+                        currentCoordinate,
+                        pet,
+                        random,
+                        gridModel,
+                        stepIndex,
+                        idSequence
+                );
+                eggCountChange += effect.eggCountDelta();
             }
         }
 
@@ -142,7 +136,227 @@ public final class EtpetsAgentLogic {
         statistics.updateCumulativeDeadPetCount(cumulativeDeadPetCountChange);
     }
 
-    // ========== Egg hatching ==========
+    private static List<ActionCandidate> collectActionCandidates(
+            GridCoordinate currentCoordinate,
+            Pet pet,
+            EtpetsGridModel gridModel,
+            GridStructure structure,
+            int stepIndex) {
+        SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>>> ringCells = CellNeighborhoods.cellsByRadiusRings(currentCoordinate,
+                NeighborhoodMode.EDGES_ONLY,
+                structure,
+                2,
+                c -> EtpetsCell.of(c, gridModel));
+        SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring0 = ringCells.getOrDefault(0, new TreeMap<>());
+        SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring1 = ringCells.getOrDefault(1, new TreeMap<>());
+        SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring2 = ringCells.getOrDefault(2, new TreeMap<>());
+
+        Map<GridCoordinate, EtpetsCell> snapshotCellsByCoordinate = new HashMap<>();
+        ring0.forEach((coordinate, ringCell) -> snapshotCellsByCoordinate.put(coordinate, ringCell.cell()));
+        ring1.forEach((coordinate, ringCell) -> snapshotCellsByCoordinate.put(coordinate, ringCell.cell()));
+        ring2.forEach((coordinate, ringCell) -> snapshotCellsByCoordinate.put(coordinate, ringCell.cell()));
+
+        List<GridCoordinate> candidateTargets = new ArrayList<>();
+        candidateTargets.add(currentCoordinate);
+        for (Map.Entry<GridCoordinate, RadiusRingCell<EtpetsCell>> ring1Entry : ring1.entrySet()) {
+            if (ring1Entry.getValue().cell().isWalkable()) {
+                candidateTargets.add(ring1Entry.getKey());
+            }
+        }
+
+        boolean selfReproductionEligible = isReproductionEligible(pet, stepIndex);
+        boolean hungry = pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD;
+
+        Map<GridCoordinate, Integer> positionScores = new HashMap<>();
+        Map<GridCoordinate, List<EtpetsCell>> consumablesByTarget = new HashMap<>();
+        Map<GridCoordinate, List<ReproductionOption>> reproductionByTarget = new HashMap<>();
+
+        for (GridCoordinate targetCoordinate : candidateTargets) {
+            int positionScore = 0;
+
+            EtpetsCell targetCellSnapshot = snapshotCellsByCoordinate.get(targetCoordinate);
+            if (targetCellSnapshot == null) {
+                AppLogger.warn("Missing cell snapshot for coordinate " + targetCoordinate);
+                continue;
+            }
+
+            if (!targetCoordinate.equals(currentCoordinate)) {
+                positionScore -= SCORE_MOVE_COST_PENALTY;
+
+                if ((targetCellSnapshot.terrainEntity() instanceof Trail trail) && (trail.intensity() > TRAIL_PREFERENCE_THRESHOLD)) {
+                    positionScore += SCORE_MOVE_TRAIL_WEAK_BONUS;
+                }
+            }
+
+            List<EtpetsCell> consumableCells = new ArrayList<>();
+            List<ReproductionOption> reproductionOptions = new ArrayList<>();
+
+            for (GridCoordinate neighborCoordinate : getValidNeighborCoordinates(targetCoordinate, structure)) {
+                EtpetsCell neighborCellSnapshot = snapshotCellsByCoordinate.get(neighborCoordinate);
+                if (neighborCellSnapshot == null) {
+                    continue;
+                }
+
+                if (toConsumableResource(neighborCellSnapshot.resourceEntity()).isPresent()) {
+                    consumableCells.add(neighborCellSnapshot);
+                }
+
+                if (!selfReproductionEligible) {
+                    continue;
+                }
+
+                AgentEntity neighborEntity = neighborCellSnapshot.agentEntity();
+                if (!(neighborEntity instanceof Pet partnerPet)
+                        || partnerPet.isDead()
+                        || !isReproductionEligible(partnerPet, stepIndex)
+                        || areDirectRelatives(pet, partnerPet)) {
+                    continue;
+                }
+
+                Optional<GridCoordinate> eggCoordinate = findEggPlacementCellFromSnapshots(
+                        targetCoordinate,
+                        neighborCoordinate,
+                        structure,
+                        snapshotCellsByCoordinate);
+                eggCoordinate.ifPresent(gridCoordinate ->
+                        reproductionOptions.add(new ReproductionOption(neighborCoordinate, gridCoordinate)));
+            }
+
+            if (!consumableCells.isEmpty()) {
+                positionScore += SCORE_MOVE_RING2_RESOURCE_BONUS;
+                if (hungry) {
+                    positionScore += SCORE_EAT_HUNGER_BONUS;
+                }
+            }
+
+            if (!reproductionOptions.isEmpty()) {
+                positionScore += SCORE_MOVE_RING2_PARTNER_BONUS;
+            }
+
+            positionScores.put(targetCoordinate, positionScore);
+            consumablesByTarget.put(targetCoordinate, consumableCells);
+            reproductionByTarget.put(targetCoordinate, reproductionOptions);
+        }
+
+        List<ActionCandidate> candidates = new ArrayList<>();
+
+        int currentPositionScore = positionScores.getOrDefault(currentCoordinate, 0);
+        for (ReproductionOption reproductionOption : reproductionByTarget.getOrDefault(currentCoordinate, Collections.emptyList())) {
+            int score = currentPositionScore + SCORE_REPRODUCE_BASE + SCORE_REPRODUCE_PARTNER_BONUS;
+            candidates.add(new ActionCandidate(
+                    ActionType.REPRODUCE,
+                    score,
+                    currentCoordinate,
+                    reproductionOption.partnerCoordinate(),
+                    reproductionOption.eggCoordinate()));
+        }
+
+        for (EtpetsCell resourceCell : consumablesByTarget.getOrDefault(currentCoordinate, Collections.emptyList())) {
+            Optional<ResourceBase> resourceOptional = toConsumableResource(resourceCell.resourceEntity());
+            if (resourceOptional.isEmpty()) {
+                continue;
+            }
+            ResourceBase resource = resourceOptional.orElseThrow();
+            int score = currentPositionScore
+                    + SCORE_EAT_BASE
+                    + (resource.energyGainPerAct() * SCORE_EAT_ENERGY_GAIN_WEIGHT)
+                    + ((int) Math.floor(resource.currentAmount()) * SCORE_EAT_AMOUNT_WEIGHT);
+            candidates.add(new ActionCandidate(ActionType.EAT, score, currentCoordinate, resourceCell.coordinate(), null));
+        }
+
+        // WAIT is valid at current coordinate and is dominated by EAT/REPRODUCE via action weights.
+        candidates.add(new ActionCandidate(ActionType.WAIT, currentPositionScore, currentCoordinate, currentCoordinate, null));
+
+        for (GridCoordinate targetCoordinate : candidateTargets) {
+            if (targetCoordinate.equals(currentCoordinate)) {
+                continue;
+            }
+            int score = positionScores.getOrDefault(targetCoordinate, 0) + SCORE_MOVE_BASE;
+            candidates.add(new ActionCandidate(ActionType.MOVE, score, targetCoordinate, targetCoordinate, null));
+        }
+
+        return candidates;
+    }
+
+    private static ActionCandidate pickBestCandidate(List<ActionCandidate> candidates, Random random) {
+        int maxScore = candidates.stream().mapToInt(ActionCandidate::score).max().orElseThrow();
+        List<ActionCandidate> topCandidates = candidates.stream()
+                                                        .filter(candidate -> candidate.score() == maxScore)
+                                                        .toList();
+
+        if (topCandidates.size() == 1) {
+            return topCandidates.getFirst();
+        }
+
+        return topCandidates.get(random.nextInt(topCandidates.size()));
+    }
+
+    private static ActionEffect executeActionCandidate(
+            ActionCandidate candidate,
+            GridCoordinate currentCoordinate,
+            Pet pet,
+            Random random,
+            EtpetsGridModel gridModel,
+            int stepIndex,
+            EtpetsIdSequence idSequence) {
+        return switch (candidate.type()) {
+            case WAIT -> ActionEffect.none();
+            case MOVE -> {
+                movePet(currentCoordinate, candidate.moveTarget(), pet, gridModel);
+                yield ActionEffect.none();
+            }
+            case EAT -> {
+                ResourceEntity resourceEntity = gridModel.resourceModel().getEntity(candidate.interactionTarget());
+                if ((resourceEntity instanceof ResourceBase resource) && resource.canConsume()) {
+                    resource.consume();
+                    pet.changeEnergy(resource.energyGainPerAct());
+                } else {
+                    AppLogger.warn("Failed to execute EAT action due to failed preconditions: " + candidate);
+                }
+                yield ActionEffect.none();
+            }
+            case REPRODUCE -> {
+                AgentEntity partnerEntity = gridModel.agentModel().getEntity(candidate.interactionTarget());
+                if (!(partnerEntity instanceof Pet partnerPet)
+                        || partnerPet.isDead()
+                        || !isReproductionEligible(partnerPet, stepIndex)
+                        || areDirectRelatives(pet, partnerPet)
+                        || (candidate.eggTarget() == null)
+                        || gridModel.agentModel().getEntity(candidate.eggTarget()).isNotEmpty()
+                        || gridModel.resourceModel().getEntity(candidate.eggTarget()).isNotEmpty()
+                        || (gridModel.terrainModel().getEntity(candidate.eggTarget()) != TerrainConstant.GROUND)) {
+                    AppLogger.warn("Failed to execute REPRODUCE action due to failed preconditions: " + candidate);
+                    yield ActionEffect.none();
+                }
+
+                long parentAId = Math.min(pet.petId(), partnerPet.petId());
+                long parentBId = Math.max(pet.petId(), partnerPet.petId());
+
+                PetGenome genome = PetGenome.fromParents(
+                        new PetGenome(pet.traits()),
+                        new PetGenome(partnerPet.traits()),
+                        random,
+                        MUTATION_CHANCE_PER_TRAIT,
+                        MUTATION_DELTA
+                );
+
+                PetEgg egg = new PetEgg(
+                        idSequence.next(),
+                        parentAId,
+                        parentBId,
+                        genome,
+                        stepIndex,
+                        INCUBATION_DURATION
+                );
+                gridModel.agentModel().setEntity(candidate.eggTarget(), egg);
+
+                pet.setReproductionCooldownRemaining(pet.traits().reproductionCooldownMax());
+                partnerPet.setReproductionCooldownRemaining(partnerPet.traits().reproductionCooldownMax());
+
+                yield new ActionEffect(1);
+            }
+        };
+    }
 
     private static Pet hatchEgg(PetEgg egg, int stepIndex,
                                 EtpetsIdSequence idSequence) {
@@ -157,97 +371,6 @@ public final class EtpetsAgentLogic {
                 traits);
     }
 
-    // ========== Step 3: Eat-if-adjacent ==========
-
-    private static boolean tryEat(Collection<EtpetsCell> firstRingNeighborCells, Pet pet, Random random) {
-        Optional<EtpetsCell> bestConsumableCell = findRandomBestConsumableResourceCell(firstRingNeighborCells, random);
-
-        if (bestConsumableCell.isPresent()
-                && (bestConsumableCell.get().resourceEntity() instanceof ResourceBase genericResource)) {
-            // AppLogger.info("Consume resource " + genericResource.toDisplayString());
-            genericResource.consume();
-            int energyGain = genericResource.energyGainPerAct();
-            pet.changeEnergy(energyGain);
-            return true;
-        }
-
-        return false;
-    }
-
-    private static Optional<EtpetsCell> findRandomBestConsumableResourceCell(Collection<EtpetsCell> cells,
-                                                                             Random random) {
-        List<EtpetsCell> bestConsumableCells = collectBestConsumableResourceCells(cells);
-        if (!bestConsumableCells.isEmpty()) {
-            return Optional.of(bestConsumableCells.get(random.nextInt(bestConsumableCells.size())));
-        }
-
-        return Optional.empty();
-    }
-
-    private static List<EtpetsCell> collectBestConsumableResourceCells(Collection<EtpetsCell> cells) {
-        List<EtpetsCell> bestCells = new ArrayList<>();
-        ResourceBase bestResource = null;
-
-        for (EtpetsCell neighborCell : cells) {
-            Optional<ResourceBase> resource = toConsumableResource(neighborCell.resourceEntity());
-            if (resource.isEmpty()) {
-                continue;
-            }
-            ResourceBase consumableResource = resource.orElseThrow();
-
-            if ((bestResource == null) || isResourceBetter(consumableResource, bestResource)) {
-                // New strict best candidate: replace all previous candidates.
-                bestCells.clear();
-                bestCells.add(neighborCell);
-                bestResource = consumableResource;
-                continue;
-            }
-
-            // Same score as current best: keep all equal candidates for random tie-break.
-            if (hasSameResourceScore(consumableResource, bestResource)) {
-                bestCells.add(neighborCell);
-            }
-        }
-
-        return bestCells;
-    }
-
-    /**
-     * Returns {@code true} if {@code candidate} is a better resource to eat than {@code current}.
-     * Ordering: 1) higher energyGainPerAct, 2) higher currentAmount, 3) coordinate order (x asc, y asc).
-     */
-    private static boolean isResourceBetter(ResourceBase candidate, GridCoordinate candidateCoord,
-                                            ResourceBase current, GridCoordinate currentCoord) {
-        int gainCmp = Integer.compare(candidate.energyGainPerAct(), current.energyGainPerAct());
-        if (gainCmp != 0) {
-            return gainCmp > 0;
-        }
-        int amtCmp = Double.compare(candidate.currentAmount(), current.currentAmount());
-        if (amtCmp != 0) {
-            return amtCmp > 0;
-        }
-        return EtpetsDeterminism.compareCoordinates(candidateCoord, currentCoord) < 0;
-    }
-
-    private static boolean isResourceBetter(ResourceBase candidate,
-                                            ResourceBase current) {
-        int gainCmp = Integer.compare(candidate.energyGainPerAct(), current.energyGainPerAct());
-        if (gainCmp != 0) {
-            return gainCmp > 0;
-        }
-        int amtCmp = Double.compare(candidate.currentAmount(), current.currentAmount());
-        if (amtCmp != 0) {
-            return amtCmp > 0;
-        }
-        return false;
-    }
-
-    private static boolean hasSameResourceScore(ResourceBase first,
-                                                ResourceBase second) {
-        return (first.energyGainPerAct() == second.energyGainPerAct())
-                && (Double.compare(first.currentAmount(), second.currentAmount()) == 0);
-    }
-
     private static Optional<ResourceBase> toConsumableResource(ResourceEntity entity) {
         if ((entity instanceof ResourceBase resource) && resource.canConsume()) {
             return Optional.of(resource);
@@ -255,111 +378,11 @@ public final class EtpetsAgentLogic {
         return Optional.empty();
     }
 
-    // ========== Step 4: Move-to-resource-if-hungry ==========
-
-    private static boolean tryMoveTowardResource(GridCoordinate coord, NeighborRings neighborRings, Pet pet,
-                                                 EtpetsGridModel gridModel, GridStructure structure, Random random) {
-        Optional<EtpetsCell> bestConsumableCell = findRandomBestConsumableResourceCell(neighborRings.secondRing().values().stream().map(c -> c.cell).toList(), random);
-        if (bestConsumableCell.isPresent()) {
-            SecondRingCell secondRingCell = neighborRings.secondRing().get(bestConsumableCell.get().coordinate());
-            Set<GridCoordinate> firstRingCells = secondRingCell.reachableViaFirstRing();
-
-            GridCoordinate moveTo = firstRingCells.stream().findFirst().orElseThrow();
-            // TODO If multiple reachable first-ring cells, compare trail intensity and otherwise choose randomly.
-
-            movePet(coord, moveTo, pet, gridModel);
-
-            return true;
-        }
-        return false;
-    }
-
-    // ========== Step 5: Reproduce-if-possible ==========
-
     private static boolean isReproductionEligible(Pet pet, int stepIndex) {
         return !pet.isDead()
                 && (pet.ageAtStepIndex(stepIndex) >= REPRODUCTION_MIN_AGE)
                 && (pet.currentEnergy() >= pet.traits().reproductionMinEnergy())
                 && (pet.reproductionCooldownRemaining() == 0);
-    }
-
-    private static boolean tryReproduce(GridCoordinate coordA, Pet petA,
-                                        EtpetsGridModel gridModel, GridStructure structure,
-                                        int stepIndex, Random random, EtpetsIdSequence idSequence) {
-        List<GridCoordinate> adjCoords = getValidNeighborCoordinates(coordA, structure);
-
-        // Collect eligible partner candidates.
-        List<GridCoordinate> eligiblePartnerCoords = new ArrayList<>();
-        for (GridCoordinate neighborCoord : adjCoords) {
-            AgentEntity neighborEntity = gridModel.agentModel().getEntity(neighborCoord);
-            if (!(neighborEntity instanceof Pet neighborPet)) {
-                continue;
-            }
-            if (neighborPet.isDead()) {
-                continue;
-            }
-            if (!isReproductionEligible(neighborPet, stepIndex)) {
-                continue;
-            }
-            if (areDirectRelatives(petA, neighborPet)) {
-                continue;
-            }
-            if (findEggPlacementCell(coordA, neighborCoord, gridModel, structure).isEmpty()) {
-                continue;
-            }
-            eligiblePartnerCoords.add(neighborCoord);
-        }
-
-        if (eligiblePartnerCoords.isEmpty()) {
-            return false;
-        }
-
-        // Select the best partner using deterministic scoring.
-        eligiblePartnerCoords.sort((cA, cB) -> {
-            Pet pA = (Pet) gridModel.agentModel().getEntity(cA);
-            Pet pB = (Pet) gridModel.agentModel().getEntity(cB);
-            return EtpetsDeterminism.comparePetsForReproduction(pA, cA, pB, cB);
-        });
-
-        GridCoordinate partnerCoord = eligiblePartnerCoords.getFirst();
-        Pet partnerPet = (Pet) gridModel.agentModel().getEntity(partnerCoord);
-
-        Optional<GridCoordinate> eggCoord = findEggPlacementCell(coordA, partnerCoord, gridModel, structure);
-        if (eggCoord.isEmpty()) {
-            return false;
-        }
-
-        // Normalize parent IDs: parentAId < parentBId.
-        long idA = petA.petId();
-        long idB = partnerPet.petId();
-        long parentAId = Math.min(idA, idB);
-        long parentBId = Math.max(idA, idB);
-
-        // Inherit genome via trait averaging plus mutation.
-        PetGenome genome = PetGenome.fromParents(
-                new PetGenome(petA.traits()),
-                new PetGenome(partnerPet.traits()),
-                random,
-                MUTATION_CHANCE_PER_TRAIT,
-                MUTATION_DELTA
-        );
-
-        // Place egg.
-        PetEgg egg = new PetEgg(
-                idSequence.next(),
-                parentAId,
-                parentBId,
-                genome,
-                stepIndex,
-                INCUBATION_DURATION
-        );
-        gridModel.agentModel().setEntity(eggCoord.orElseThrow(), egg);
-
-        // Reset reproduction cooldown for both parents.
-        petA.setReproductionCooldownRemaining(petA.traits().reproductionCooldownMax());
-        partnerPet.setReproductionCooldownRemaining(partnerPet.traits().reproductionCooldownMax());
-
-        return true;
     }
 
     /**
@@ -384,37 +407,35 @@ public final class EtpetsAgentLogic {
         return (b.parentBId() != null) && idsA.contains(b.parentBId());
     }
 
-    /**
-     * Finds the best valid egg placement cell shared by both parent coordinates.
-     * Requirements: terrain = GROUND (not Trail), no resource, no agent.
-     * Returns the coordinate with the lowest (x, y) sort order, or {@code null} if none found.
-     */
-    private static Optional<GridCoordinate> findEggPlacementCell(GridCoordinate coordA, GridCoordinate coordB,
-                                                                 EtpetsGridModel gridModel, GridStructure structure) {
+    private static Optional<GridCoordinate> findEggPlacementCellFromSnapshots(
+            GridCoordinate coordA,
+            GridCoordinate coordB,
+            GridStructure structure,
+            Map<GridCoordinate, EtpetsCell> snapshotCellsByCoordinate) {
         List<GridCoordinate> neighborsA = getValidNeighborCoordinates(coordA, structure);
         Set<GridCoordinate> neighborsASet = new HashSet<>(neighborsA);
         List<GridCoordinate> neighborsB = getValidNeighborCoordinates(coordB, structure);
 
         List<GridCoordinate> candidates = new ArrayList<>();
-        for (GridCoordinate c : neighborsB) {
-            if (!neighborsASet.contains(c)) {
+        for (GridCoordinate coordinate : neighborsB) {
+            if (!neighborsASet.contains(coordinate) || coordinate.equals(coordA) || coordinate.equals(coordB)) {
                 continue;
             }
-            if (c.equals(coordA) || c.equals(coordB)) {
+
+            EtpetsCell cellSnapshot = snapshotCellsByCoordinate.get(coordinate);
+            if (cellSnapshot == null) {
                 continue;
             }
-            // Spec: egg placement cell MUST contain Ground, not Trail.
-            TerrainEntity terrain = gridModel.terrainModel().getEntity(c);
-            if (terrain != TerrainConstant.GROUND) {
+            if (cellSnapshot.terrainEntity() != TerrainConstant.GROUND) {
                 continue;
             }
-            if (gridModel.resourceModel().getEntity(c).isNotEmpty()) {
+            if (cellSnapshot.resourceEntity().isNotEmpty()) {
                 continue;
             }
-            if (gridModel.agentModel().getEntity(c).isNotEmpty()) {
+            if (cellSnapshot.agentEntity().isNotEmpty()) {
                 continue;
             }
-            candidates.add(c);
+            candidates.add(coordinate);
         }
 
         if (candidates.isEmpty()) {
@@ -423,144 +444,6 @@ public final class EtpetsAgentLogic {
         candidates.sort(EtpetsDeterminism::compareCoordinates);
         return Optional.of(candidates.getFirst());
     }
-
-    // ========== Step 6: Move-to-enable-reproduction ==========
-
-    private static boolean tryMoveTowardPartner(GridCoordinate coord, Pet pet,
-                                                EtpetsGridModel gridModel, GridStructure structure,
-                                                int stepIndex) {
-        int visionRange = Pet.VISION_RANGE;
-        Set<GridCoordinate> visibleCoords = getValidCoordinatesWithinRange(coord, structure, visionRange);
-
-        // Find the nearest eligible, non-relative partner within vision range.
-        GridCoordinate targetPartner = null;
-        int bestDist = Integer.MAX_VALUE;
-
-        for (GridCoordinate c : visibleCoords) {
-            AgentEntity entity = gridModel.agentModel().getEntity(c);
-            if (!(entity instanceof Pet candidate)) {
-                continue;
-            }
-            if (candidate.isDead()) {
-                continue;
-            }
-            if (!isReproductionEligible(candidate, stepIndex)) {
-                continue;
-            }
-            if (areDirectRelatives(pet, candidate)) {
-                continue;
-            }
-            int dist = bfsDistance(coord, c, structure, visionRange + 1);
-            if ((dist < bestDist)
-                    || ((dist == bestDist) && ((targetPartner == null)
-                    || (EtpetsDeterminism.compareCoordinates(c, targetPartner) < 0)))) {
-                bestDist = dist;
-                targetPartner = c;
-            }
-        }
-
-        if (targetPartner == null) {
-            return false;
-        }
-
-        List<GridCoordinate> candidates = getWalkableFreeNeighbors(coord, gridModel, structure);
-        if (candidates.isEmpty()) {
-            return false;
-        }
-
-        GridCoordinate finalTarget = targetPartner;
-        candidates.sort((a, b) -> {
-            int distA = bfsDistance(a, finalTarget, structure, visionRange + 2);
-            int distB = bfsDistance(b, finalTarget, structure, visionRange + 2);
-            int cmp = Integer.compare(distA, distB);
-            if (cmp != 0) {
-                return cmp;
-            }
-            return EtpetsDeterminism.compareCoordinates(a, b);
-        });
-
-        movePet(coord, candidates.getFirst(), pet, gridModel);
-        return true;
-    }
-
-    // ========== Step 7: Explore / Trail ==========
-
-    private static void tryExplore(GridCoordinate coord, Pet pet,
-                                   EtpetsGridModel gridModel, GridStructure structure) {
-        List<GridCoordinate> candidates = getWalkableFreeNeighbors(coord, gridModel, structure);
-        if (candidates.isEmpty()) {
-            return;
-        }
-
-        // Prefer only adjacent trails above threshold (highest intensity first; coord-order as tie-break).
-        GridCoordinate bestAdjacentTrail = null;
-        double bestAdjacentIntensity = -1.0d;
-        for (GridCoordinate c : candidates) {
-            TerrainEntity terrain = gridModel.terrainModel().getEntity(c);
-            if (terrain instanceof Trail trail) {
-                double intensity = trail.intensity();
-                if (intensity <= TRAIL_PREFERENCE_THRESHOLD) {
-                    continue;
-                }
-                if ((intensity > bestAdjacentIntensity)
-                        || ((Double.compare(intensity, bestAdjacentIntensity) == 0)
-                        && (EtpetsDeterminism.compareCoordinates(c, bestAdjacentTrail) < 0))) {
-                    bestAdjacentIntensity = intensity;
-                    bestAdjacentTrail = c;
-                }
-            }
-        }
-
-        if (bestAdjacentTrail != null) {
-            movePet(coord, bestAdjacentTrail, pet, gridModel);
-            return;
-        }
-
-        // No adjacent trail above threshold - look within vision range for a preferred trail.
-        int visionRange = Pet.VISION_RANGE;
-        Set<GridCoordinate> visibleCoords = getValidCoordinatesWithinRange(coord, structure, visionRange);
-
-        GridCoordinate distantTrail = null;
-        double distantTrailIntensity = -1.0d;
-        for (GridCoordinate c : visibleCoords) {
-            TerrainEntity terrain = gridModel.terrainModel().getEntity(c);
-            if (terrain instanceof Trail trail) {
-                double intensity = trail.intensity();
-                if (intensity <= TRAIL_PREFERENCE_THRESHOLD) {
-                    continue;
-                }
-                if ((intensity > distantTrailIntensity)
-                        || ((Double.compare(intensity, distantTrailIntensity) == 0)
-                        && (EtpetsDeterminism.compareCoordinates(c, distantTrail) < 0))) {
-                    distantTrailIntensity = intensity;
-                    distantTrail = c;
-                }
-            }
-        }
-
-        GridCoordinate moveTo;
-        if (distantTrail != null) {
-            GridCoordinate finalTrail = distantTrail;
-            candidates.sort((a, b) -> {
-                int distA = bfsDistance(a, finalTrail, structure, visionRange + 2);
-                int distB = bfsDistance(b, finalTrail, structure, visionRange + 2);
-                int cmp = Integer.compare(distA, distB);
-                if (cmp != 0) {
-                    return cmp;
-                }
-                return EtpetsDeterminism.compareCoordinates(a, b);
-            });
-            moveTo = candidates.getFirst();
-        } else {
-            // No trail anywhere: pick any walkable free cell in stable coordinate order.
-            candidates.sort(EtpetsDeterminism::compareCoordinates);
-            moveTo = candidates.getFirst();
-        }
-
-        movePet(coord, moveTo, pet, gridModel);
-    }
-
-    // ========== Movement ==========
 
     /**
      * Moves {@code pet} from {@code from} to {@code to}, applying movement energy cost
@@ -586,64 +469,6 @@ public final class EtpetsAgentLogic {
         }
     }
 
-    // ========== Utility helpers ==========
-
-    /**
-     * Computes two-ring neighborhood data around a center coordinate.
-     *
-     * <p><b>First ring:</b> all valid direct neighbors of {@code coordinate}, stored as a
-     * {@code coordinate -> cell snapshot} map.
-     *
-     * <p><b>Second ring:</b> all valid neighbors of walkable first-ring cells
-     * (see {@link EtpetsCell#isWalkable()}). Each second-ring entry stores the cell snapshot
-     * and the set of first-ring coordinates through which it is reachable.
-     * The center coordinate and first-ring coordinates are excluded from the second ring.
-     *
-     * @param coordinate center coordinate of the expansion.
-     * @param structure  grid structure used for neighbor lookup and bounds validation.
-     * @param gridModel  source model used to snapshot terrain, resource, and agent entities.
-     * @return two-ring neighborhood data with first-ring cell snapshots and second-ring reachability metadata.
-     */
-    private static NeighborRings computeNeighborRings(GridCoordinate coordinate,
-                                                      GridStructure structure,
-                                                      EtpetsGridModel gridModel) {
-        List<GridCoordinate> firstRingCoordinates = getValidNeighborCoordinates(coordinate, structure);
-        Map<GridCoordinate, EtpetsCell> firstRing = new HashMap<>();
-        for (GridCoordinate firstRingCoordinate : firstRingCoordinates) {
-            EtpetsCell cell = EtpetsCell.of(firstRingCoordinate, gridModel);
-            firstRing.put(firstRingCoordinate, cell);
-        }
-
-        // Accumulate reachable first-ring sources per second-ring coordinate.
-        Map<GridCoordinate, Set<GridCoordinate>> secondRingAccumulator = new HashMap<>();
-        for (GridCoordinate firstRingCoordinate : firstRingCoordinates) {
-            EtpetsCell cell = firstRing.get(firstRingCoordinate);
-            if (cell.isWalkable()) {
-                List<GridCoordinate> neighborsOfFirstRing = getValidNeighborCoordinates(firstRingCoordinate, structure);
-                for (GridCoordinate secondRingCoordinate : neighborsOfFirstRing) {
-                    if (secondRingCoordinate.equals(coordinate) || firstRing.containsKey(secondRingCoordinate)) {
-                        continue;
-                    }
-                    secondRingAccumulator
-                            .computeIfAbsent(secondRingCoordinate, k -> new HashSet<>())
-                            .add(firstRingCoordinate);
-                }
-            }
-        }
-
-        // Build SecondRingCell records with unmodifiable sets.
-        Map<GridCoordinate, SecondRingCell> secondRing = new HashMap<>();
-        for (Map.Entry<GridCoordinate, Set<GridCoordinate>> entry : secondRingAccumulator.entrySet()) {
-            GridCoordinate secondRingCoordinate = entry.getKey();
-            secondRing.put(secondRingCoordinate, new SecondRingCell(
-                    EtpetsCell.of(secondRingCoordinate, gridModel),
-                    Collections.unmodifiableSet(entry.getValue())
-            ));
-        }
-
-        return new NeighborRings(Collections.unmodifiableMap(firstRing), Collections.unmodifiableMap(secondRing));
-    }
-
     /** Returns all valid (in-bounds) neighbor coordinates of {@code coord}. */
     private static List<GridCoordinate> getValidNeighborCoordinates(GridCoordinate coord,
                                                                     GridStructure structure) {
@@ -658,115 +483,50 @@ public final class EtpetsAgentLogic {
         return valid;
     }
 
-    /** Returns all walkable (Ground or Trail), resource-free, agent-free neighbor coordinates. */
-    private static List<GridCoordinate> getWalkableFreeNeighbors(GridCoordinate coord,
-                                                                 EtpetsGridModel gridModel,
-                                                                 GridStructure structure) {
-        List<GridCoordinate> neighbors = getValidNeighborCoordinates(coord, structure);
-        List<GridCoordinate> result = new ArrayList<>();
-        for (GridCoordinate c : neighbors) {
-            if (isWalkable(c, gridModel) && isFreeOfAgentAndResource(c, gridModel)) {
-                result.add(c);
+    private static String toDisplayString(List<ActionCandidate> candidates) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < candidates.size(); i++) {
+            if (i > 0) {
+                sb.append(" | ");
             }
+            sb.append(toDisplayString(candidates.get(i)));
         }
-        return result;
+        return sb.toString();
     }
 
-    private static boolean isWalkable(GridCoordinate coord, EtpetsGridModel gridModel) {
-        TerrainEntity terrain = gridModel.terrainModel().getEntity(coord);
-        return (terrain == TerrainConstant.GROUND) || (terrain instanceof Trail);
+    private static String toDisplayString(ActionCandidate candidate) {
+        String egg = (candidate.eggTarget() != null) ? candidate.eggTarget().toDisplayString() : "-";
+        return String.format(Locale.ROOT,
+                "%s(score=%d, move=%s, target=%s, egg=%s)",
+                candidate.type(),
+                candidate.score(),
+                candidate.moveTarget().toDisplayString(),
+                candidate.interactionTarget().toDisplayString(),
+                egg);
     }
 
-    private static boolean isFreeOfAgentAndResource(GridCoordinate coord, EtpetsGridModel gridModel) {
-        return gridModel.agentModel().getEntity(coord).isEmpty()
-                && gridModel.resourceModel().getEntity(coord).isEmpty();
+    private enum ActionType {
+        EAT,
+        REPRODUCE,
+        MOVE,
+        WAIT
     }
 
-    /** Returns {@code true} if coordinate {@code a} has {@code b} as a valid direct neighbor. */
-    private static boolean isAdjacent(GridCoordinate a, GridCoordinate b, GridStructure structure) {
-        Collection<EdgeBehaviorResult> results =
-                CellNeighborhoods.neighborEdgeResults(a, NeighborhoodMode.EDGES_ONLY, structure);
-        for (EdgeBehaviorResult r : results) {
-            if ((r.action() == EdgeBehaviorAction.VALID) && r.mapped().equals(b)) {
-                return true;
-            }
+    private record ActionCandidate(ActionType type,
+                                   int score,
+                                   GridCoordinate moveTarget,
+                                   GridCoordinate interactionTarget,
+                                   @Nullable GridCoordinate eggTarget) {}
+
+    private record ReproductionOption(GridCoordinate partnerCoordinate,
+                                      GridCoordinate eggCoordinate) {}
+
+    private record ActionEffect(int eggCountDelta) {
+
+        private static ActionEffect none() {
+            return new ActionEffect(0);
         }
-        return false;
+
     }
-
-    /** Returns all valid (in-bounds) grid coordinates within {@code range} steps of {@code coord}. */
-    private static Set<GridCoordinate> getValidCoordinatesWithinRange(GridCoordinate coord,
-                                                                      GridStructure structure,
-                                                                      int range) {
-        Set<GridCoordinate> all = CellNeighborhoods.coordinatesOfNeighbors(
-                coord, NeighborhoodMode.EDGES_ONLY, structure.cellShape(), range);
-        Set<GridCoordinate> valid = new HashSet<>();
-        for (GridCoordinate c : all) {
-            if (structure.isCoordinateValid(c)) {
-                valid.add(c);
-            }
-        }
-        return valid;
-    }
-
-    /**
-     * BFS distance from {@code from} to {@code to} within the grid (ignoring terrain/agent obstacles).
-     * Returns {@code maxDistance + 1} if {@code to} is not reachable within {@code maxDistance} steps.
-     */
-    private static int bfsDistance(GridCoordinate from, GridCoordinate to,
-                                   GridStructure structure, int maxDistance) {
-        if (from.equals(to)) {
-            return 0;
-        }
-        if (maxDistance <= 0) {
-            return maxDistance + 1;
-        }
-        Set<GridCoordinate> visited = new HashSet<>();
-        Queue<GridCoordinate> queue = new ArrayDeque<>();
-        visited.add(from);
-        queue.add(from);
-        int dist = 0;
-        while (!queue.isEmpty() && (dist < maxDistance)) {
-            int levelSize = queue.size();
-            dist++;
-            for (int i = 0; i < levelSize; i++) {
-                GridCoordinate current = queue.remove();
-                for (EdgeBehaviorResult r : CellNeighborhoods.neighborEdgeResults(
-                        current, NeighborhoodMode.EDGES_ONLY, structure)) {
-                    if (r.action() != EdgeBehaviorAction.VALID) {
-                        continue;
-                    }
-                    GridCoordinate next = r.mapped();
-                    if (next.equals(to)) {
-                        return dist;
-                    }
-                    if (visited.add(next)) {
-                        queue.add(next);
-                    }
-                }
-            }
-        }
-        return maxDistance + 1;
-    }
-
-    /**
-     * A cell in the second neighborhood ring together with the set of first-ring coordinates
-     * through which it is reachable (i.e., via walkable first-ring cells).
-     *
-     * @param cell                  cell snapshot of the second-ring coordinate.
-     * @param reachableViaFirstRing unmodifiable set of first-ring coordinates that are walkable
-     *                              and have this cell as a neighbor.
-     */
-    private record SecondRingCell(EtpetsCell cell,
-                                  Set<GridCoordinate> reachableViaFirstRing) {}
-
-    /**
-     * Two-ring neighborhood data around a center coordinate.
-     *
-     * @param firstRing  unmodifiable map from first-ring coordinate to its cell snapshot.
-     * @param secondRing unmodifiable map from second-ring coordinate to its {@link SecondRingCell} metadata.
-     */
-    private record NeighborRings(Map<GridCoordinate, EtpetsCell> firstRing,
-                                 Map<GridCoordinate, SecondRingCell> secondRing) {}
 
 }
