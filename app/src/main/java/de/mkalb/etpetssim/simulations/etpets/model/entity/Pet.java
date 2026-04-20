@@ -117,8 +117,9 @@ public final class Pet implements AgentEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[PET #%d E=%d C=%d %s]",
+        return String.format("[PET #%d *%d E=%d C=%d %s]",
                 petId,
+                stepIndexOfBirth,
                 currentEnergy,
                 reproductionCooldownRemaining,
                 dead ? "DEAD" : "alive");
