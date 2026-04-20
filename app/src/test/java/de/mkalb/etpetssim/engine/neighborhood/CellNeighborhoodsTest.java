@@ -432,7 +432,7 @@ final class CellNeighborhoodsTest {
                 new GridCoordinate(1, 1),
                 NeighborhoodMode.EDGES_ONLY,
                 structure,
-                CellNeighborhoods.MAX_RING_RADIUS + 1,
+                CellNeighborhoods.MAX_RADIUS + 1,
                 coordinate -> coordinate));
         assertThrows(IllegalArgumentException.class, () -> CellNeighborhoods.cellsByRadiusRings(
                 new GridCoordinate(8, 1),
