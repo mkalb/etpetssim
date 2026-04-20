@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.engine.model.GridEntityUtils;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
+import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
@@ -80,7 +81,33 @@ public final class LabMainView
             painter.drawCellOuterCircle(mouseCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeType.OUTSIDE);
 
             GridStructure gridStructure = painter.gridStructure();
-            CellNeighborhoods.cellNeighborsWithEdgeBehavior(mouseCoordinate, neighborhoodMode,
+
+            // ring/radius 3 and 5 with cellsByRadiusRings (with WRAP)
+            SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCells =
+                    CellNeighborhoods.cellsByRadiusRings(mouseCoordinate,
+                            neighborhoodMode,
+                            gridStructure,
+                            5,
+                            c -> new GridCell<>(c, viewModel.getCurrentModel().getEntity(c)));
+            ringCells.get(5).values().forEach(rrc -> painter.drawCellInnerCircle(rrc.coordinate(),
+                    null, Color.GOLD, 2 * rrc.reachedFromPreviousRing().size(), StrokeType.INSIDE));
+            ringCells.get(3).values().forEach(rrc -> painter.drawCellInnerCircle(rrc.coordinate(),
+                    null, Color.TOMATO, 2 * rrc.reachedFromPreviousRing().size(), StrokeType.INSIDE));
+
+            // ring/radius 2 with coordinatesOfNeighbors (without WRAP)
+            CellNeighborhoods.coordinatesOfNeighbors(mouseCoordinate,
+                                     neighborhoodMode,
+                                     gridStructure.cellShape(),
+                                     2)
+                             .forEach(neighborCoordinate -> {
+                                 if (gridStructure.isCoordinateValid(neighborCoordinate)) {
+                                     painter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.0d);
+                                 }
+                             });
+
+            // ring/radius 2 with cellNeighborsWithEdgeBehavior
+            CellNeighborhoods.cellNeighborsWithEdgeBehavior(mouseCoordinate,
+                                     neighborhoodMode,
                                      gridStructure)
                              .forEach((neighborCoordinate, neighborCells) -> {
                                  if (gridStructure.isCoordinateValid(neighborCoordinate)) {
@@ -97,15 +124,8 @@ public final class LabMainView
                                      }
                                  }
                              });
-            CellNeighborhoods.coordinatesOfNeighbors(mouseCoordinate,
-                                     neighborhoodMode,
-                                     gridStructure.cellShape(),
-                                     2)
-                             .forEach(neighborCoordinate -> {
-                                 if (gridStructure.isCoordinateValid(neighborCoordinate)) {
-                                     painter.drawCell(neighborCoordinate, null, Color.ORANGE, 2.0d);
-                                 }
-                             });
+
+            // ring/radius 2 with neighborEdgeResults
             CellNeighborhoods.neighborEdgeResults(mouseCoordinate,
                                      neighborhoodMode,
                                      gridStructure)
@@ -175,7 +195,7 @@ public final class LabMainView
         overlayPainter = null;
     }
 
-    private void resetCanvasAndPainter(LabConfig config) {
+    private void resetCanvasAndPainter() {
         viewModel.resetClickedCoordinateProperties();
 
         double cellEdgeLength = viewModel.getCellEdgeLength();
@@ -197,7 +217,7 @@ public final class LabMainView
 
         LabConfig config = viewModel.getCurrentConfig();
 
-        resetCanvasAndPainter(config);
+        resetCanvasAndPainter();
 
         boolean colorModeGrayscale = (config.colorMode() == LabConfig.ColorMode.GRAYSCALE);
         boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE) || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
@@ -227,6 +247,7 @@ public final class LabMainView
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void drawCoordinateAtBaseCanvas(GridCoordinate coordinate,
                                             boolean colorModeGrayscale, boolean renderingModeCircle,
                                             @Nullable Color strokeColor, double strokeLineWidth,
