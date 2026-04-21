@@ -156,104 +156,90 @@ public final class EtpetsAgentLogic {
                         2,
                         c -> EtpetsCell.of(c, gridModel));
 
+        // Flat map used by egg-placement search (needs all rings merged).
         SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate = new TreeMap<>();
         for (SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ringCells : neighborhoodCellsByRing.values()) {
             snapshotCellsByCoordinate.putAll(ringCells);
         }
 
         boolean canSelfReproduce = isReproductionEligible(pet, stepIndex);
+
+        // Pass 1: Ring 2 → determine which ring-1 cells gain look-ahead score bonuses.
+        Set<GridCoordinate> ring1HasResourceBonus = new HashSet<>();
+        Set<GridCoordinate> ring1HasPartnerBonus = new HashSet<>();
+        SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring2Cells =
+                neighborhoodCellsByRing.getOrDefault(2, Collections.emptySortedMap());
+        for (RadiusRingCell<EtpetsCell> ring2Cell : ring2Cells.values()) {
+            EtpetsCell cell = ring2Cell.cell();
+            if (toConsumableResource(cell.resourceEntity()).isPresent()) {
+                ring1HasResourceBonus.addAll(ring2Cell.reachedFromPreviousRing());
+            }
+            if (canSelfReproduce && isValidReproductionPartner(pet, cell, stepIndex)) {
+                ring1HasPartnerBonus.addAll(ring2Cell.reachedFromPreviousRing());
+            }
+        }
+
+        // Pass 2: Ring 1 → build MOVE PositionAnalysis with bonuses;
+        //         collect EAT/REPRODUCE candidates visible from ring 0.
         SortedMap<GridCoordinate, PositionAnalysis> analysesByCoordinate = new TreeMap<>();
-        for (RadiusRingCell<EtpetsCell> candidateCell : snapshotCellsByCoordinate.values()) {
-            boolean isCurrentCell = candidateCell.ring() == 0;
-            boolean isAdjacentWalkableCell = (candidateCell.ring() == 1) && candidateCell.cell().isWalkable();
-            if (!isCurrentCell && !isAdjacentWalkableCell) {
-                continue;
+        List<EtpetsCell> ring0Consumables = new ArrayList<>();
+        List<ReproductionOption> ring0ReproductionOptions = new ArrayList<>();
+        SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring1Cells =
+                neighborhoodCellsByRing.getOrDefault(1, Collections.emptySortedMap());
+        for (RadiusRingCell<EtpetsCell> ring1Cell : ring1Cells.values()) {
+            EtpetsCell cell = ring1Cell.cell();
+            GridCoordinate coord = ring1Cell.coordinate();
+
+            // EAT candidates adjacent to the current position (ring 0).
+            if (toConsumableResource(cell.resourceEntity()).isPresent()) {
+                ring0Consumables.add(cell);
             }
 
-            analysesByCoordinate.put(
-                    candidateCell.coordinate(),
-                    analyzePosition(
-                            candidateCell,
-                            currentCoordinate,
-                            snapshotCellsByCoordinate,
-                            structure,
-                            pet,
-                            canSelfReproduce,
-                            stepIndex));
+            // REPRODUCE candidates adjacent to the current position (ring 0).
+            if (canSelfReproduce && isValidReproductionPartner(pet, cell, stepIndex)) {
+                findEggPlacementCellFromSnapshots(currentCoordinate, coord, structure, snapshotCellsByCoordinate)
+                        .ifPresent(eggCoord -> ring0ReproductionOptions.add(new ReproductionOption(coord, eggCoord)));
+            }
+
+            // MOVE candidates: only walkable ring-1 cells.
+            if (cell.isWalkable()) {
+                int moveScore = -SCORE_MOVE_COST_PENALTY;
+                if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > TRAIL_PREFERENCE_THRESHOLD)) {
+                    moveScore += SCORE_MOVE_TRAIL_WEAK_BONUS;
+                }
+                if (ring1HasResourceBonus.contains(coord)) {
+                    moveScore += SCORE_MOVE_RING2_RESOURCE_BONUS;
+                }
+                if (ring1HasPartnerBonus.contains(coord)) {
+                    moveScore += SCORE_MOVE_RING2_PARTNER_BONUS;
+                }
+                analysesByCoordinate.put(coord, new PositionAnalysis(moveScore, List.of(), List.of()));
+            }
         }
+
+        // Pass 3: Ring 0 (current position) → WAIT / EAT / REPRODUCE.
+        analysesByCoordinate.put(currentCoordinate,
+                new PositionAnalysis(0, ring0Consumables, ring0ReproductionOptions));
 
         boolean isHungry = pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD;
         return buildActionCandidates(currentCoordinate, analysesByCoordinate, isHungry);
     }
 
-    private static PositionAnalysis analyzePosition(
-            RadiusRingCell<EtpetsCell> targetRingCell,
-            GridCoordinate currentCoordinate,
-            Map<GridCoordinate, RadiusRingCell<EtpetsCell>> cellSnapshots,
-            GridStructure structure,
-            Pet pet,
-            boolean selfCanReproduce,
-            int stepIndex) {
-        GridCoordinate targetCoordinate = targetRingCell.coordinate();
-        EtpetsCell targetCell = targetRingCell.cell();
-
-        int positionScore = 0;
-        if (!targetCoordinate.equals(currentCoordinate)) {
-            positionScore -= SCORE_MOVE_COST_PENALTY;
-            if ((targetCell.terrainEntity() instanceof Trail trail) && (trail.intensity() > TRAIL_PREFERENCE_THRESHOLD)) {
-                positionScore += SCORE_MOVE_TRAIL_WEAK_BONUS;
-            }
-        }
-
-        List<EtpetsCell> consumables = new ArrayList<>();
-        List<ReproductionOption> reproductionOptions = new ArrayList<>();
-
-        // for (GridCoordinate neighborCoord : getValidNeighborCoordinates(targetCoordinate, structure)) {
-        //     EtpetsCell neighborCell = cellSnapshots.get(neighborCoord);
-        //     if (neighborCell == null) {
-        //         continue;
-        //     }
-        //
-        //     if (toConsumableResource(neighborCell.resourceEntity()).isPresent()) {
-        //         consumables.add(neighborCell);
-        //     }
-        //
-        //     if (selfCanReproduce && isValidReproductionPartner(pet, neighborCell, stepIndex, cellSnapshots, targetCoordinate, neighborCoord, structure)) {
-        //         Optional<GridCoordinate> eggCoord = findEggPlacementCellFromSnapshots(
-        //                 targetCoordinate, neighborCoord, structure, cellSnapshots);
-        //         eggCoord.ifPresent(coord -> reproductionOptions.add(new ReproductionOption(neighborCoord, coord)));
-        //     }
-        // }
-
-        // Apply position score adjustments
-        if (!consumables.isEmpty()) {
-            positionScore += SCORE_MOVE_RING2_RESOURCE_BONUS;
-        }
-        if (!reproductionOptions.isEmpty()) {
-            positionScore += SCORE_MOVE_RING2_PARTNER_BONUS;
-        }
-
-        return new PositionAnalysis(positionScore, consumables, reproductionOptions);
-    }
-
-    private static boolean isValidReproductionPartner(
-            Pet pet,
-            EtpetsCell partnerCell,
-            int stepIndex,
-            Map<GridCoordinate, EtpetsCell> cellSnapshots,
-            GridCoordinate targetCoordinate,
-            GridCoordinate partnerCoordinate,
-            GridStructure structure) {
-        AgentEntity agentEntity = partnerCell.agentEntity();
-        if (!(agentEntity instanceof Pet partnerPet)) {
+    /**
+     * Returns {@code true} if {@code partnerCell} contains a pet that is eligible
+     * to reproduce with {@code pet}: alive, reproduction-eligible, and not a direct relative.
+     * <p>
+     * Egg-placement availability is intentionally <em>not</em> checked here so that
+     * this method can be used as a lightweight look-ahead filter (ring-2 partner bonus)
+     * as well as a full ring-1 partner check (egg placement is verified separately).
+     */
+    private static boolean isValidReproductionPartner(Pet pet, EtpetsCell partnerCell, int stepIndex) {
+        if (!(partnerCell.agentEntity() instanceof Pet partnerPet)) {
             return false;
         }
-
-        if (partnerPet.isDead() || !isReproductionEligible(partnerPet, stepIndex) || areDirectRelatives(pet, partnerPet)) {
-            return false;
-        }
-
-        return findEggPlacementCellFromSnapshots(targetCoordinate, partnerCoordinate, structure, cellSnapshots).isPresent();
+        return !partnerPet.isDead()
+                && isReproductionEligible(partnerPet, stepIndex)
+                && !areDirectRelatives(pet, partnerPet);
     }
 
     private static List<ActionCandidate> buildActionCandidates(
@@ -492,7 +478,7 @@ public final class EtpetsAgentLogic {
             GridCoordinate coordA,
             GridCoordinate coordB,
             GridStructure structure,
-            Map<GridCoordinate, EtpetsCell> snapshotCellsByCoordinate) {
+            Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
         List<GridCoordinate> neighborsA = getValidNeighborCoordinates(coordA, structure);
         Set<GridCoordinate> neighborsASet = new HashSet<>(neighborsA);
         List<GridCoordinate> neighborsB = getValidNeighborCoordinates(coordB, structure);
@@ -503,10 +489,11 @@ public final class EtpetsAgentLogic {
                 continue;
             }
 
-            EtpetsCell cellSnapshot = snapshotCellsByCoordinate.get(coordinate);
-            if (cellSnapshot == null) {
+            RadiusRingCell<EtpetsCell> ringCellSnapshot = snapshotCellsByCoordinate.get(coordinate);
+            if (ringCellSnapshot == null) {
                 continue;
             }
+            EtpetsCell cellSnapshot = ringCellSnapshot.cell();
             if (cellSnapshot.terrainEntity() != TerrainConstant.GROUND) {
                 continue;
             }
