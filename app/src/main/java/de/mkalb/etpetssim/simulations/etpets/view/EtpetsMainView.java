@@ -51,10 +51,10 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<EtpetsEntity> oldGridCell,
                                           @Nullable GridCell<EtpetsEntity> newGridCell) {
-        if ((oldGridCell != null) && !oldGridCell.entity().isTerrain()) {
+        if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
-        if ((newGridCell != null) && !newGridCell.entity().isTerrain()) {
+        if (newGridCell != null) {
             painter.drawCellOuterCircle(newGridCell.coordinate(), null,
                     SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
                     StrokeType.OUTSIDE);
