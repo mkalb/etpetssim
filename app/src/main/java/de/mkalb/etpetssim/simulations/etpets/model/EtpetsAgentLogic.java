@@ -163,6 +163,7 @@ public final class EtpetsAgentLogic {
         }
 
         boolean canSelfReproduce = isReproductionEligible(pet, stepIndex);
+        boolean isHungry = pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD;
 
         // Pass 1: Ring 2 → determine which ring-1 cells gain look-ahead score bonuses.
         Set<GridCoordinate> ring1HasResourceBonus = new HashSet<>();
@@ -179,9 +180,10 @@ public final class EtpetsAgentLogic {
             }
         }
 
-        // Pass 2: Ring 1 → build MOVE PositionAnalysis with bonuses;
-        //         collect EAT/REPRODUCE candidates visible from ring 0.
-        SortedMap<GridCoordinate, PositionAnalysis> analysesByCoordinate = new TreeMap<>();
+        List<ActionCandidate> candidates = new ArrayList<>();
+
+        // Pass 2: Ring 1 → score and create MOVE candidates;
+        //         collect EAT/REPRODUCE data for ring 0.
         List<EtpetsCell> ring0Consumables = new ArrayList<>();
         List<ReproductionOption> ring0ReproductionOptions = new ArrayList<>();
         SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring1Cells =
@@ -203,7 +205,7 @@ public final class EtpetsAgentLogic {
 
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
-                int moveScore = -SCORE_MOVE_COST_PENALTY;
+                int moveScore = SCORE_MOVE_BASE - SCORE_MOVE_COST_PENALTY;
                 if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > TRAIL_PREFERENCE_THRESHOLD)) {
                     moveScore += SCORE_MOVE_TRAIL_WEAK_BONUS;
                 }
@@ -213,16 +215,39 @@ public final class EtpetsAgentLogic {
                 if (ring1HasPartnerBonus.contains(coord)) {
                     moveScore += SCORE_MOVE_RING2_PARTNER_BONUS;
                 }
-                analysesByCoordinate.put(coord, new PositionAnalysis(moveScore, List.of(), List.of()));
+                candidates.add(new ActionCandidate(ActionType.MOVE, moveScore, coord, coord, null));
             }
         }
 
-        // Pass 3: Ring 0 (current position) → WAIT / EAT / REPRODUCE.
-        analysesByCoordinate.put(currentCoordinate,
-                new PositionAnalysis(0, ring0Consumables, ring0ReproductionOptions));
+        // Pass 3: Ring 0 (current position) → score and create WAIT / EAT / REPRODUCE candidates.
 
-        boolean isHungry = pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD;
-        return buildActionCandidates(currentCoordinate, analysesByCoordinate, isHungry);
+        // WAIT
+        candidates.add(new ActionCandidate(ActionType.WAIT, 0, currentCoordinate, currentCoordinate, null));
+
+        // REPRODUCE
+        for (ReproductionOption option : ring0ReproductionOptions) {
+            int reproduceScore = SCORE_REPRODUCE_BASE + SCORE_REPRODUCE_PARTNER_BONUS;
+            candidates.add(new ActionCandidate(ActionType.REPRODUCE, reproduceScore, currentCoordinate,
+                    option.partnerCoordinate(), option.eggCoordinate()));
+        }
+
+        // EAT
+        for (EtpetsCell resourceCell : ring0Consumables) {
+            ResourceEntity resourceEntity = resourceCell.resourceEntity();
+            if (!(resourceEntity instanceof ResourceBase resource) || !resource.canConsume()) {
+                continue;
+            }
+            @SuppressWarnings("NumericCastThatLosesPrecision")
+            int resourceAmount = Math.min(Integer.MAX_VALUE, (int) resource.currentAmount());
+            int hungerBonus = isHungry ? SCORE_EAT_HUNGER_BONUS : 0;
+            int eatScore = SCORE_EAT_BASE + hungerBonus
+                    + (resource.energyGainPerAct() * SCORE_EAT_ENERGY_GAIN_WEIGHT)
+                    + (resourceAmount * SCORE_EAT_AMOUNT_WEIGHT);
+            candidates.add(new ActionCandidate(ActionType.EAT, eatScore, currentCoordinate,
+                    resourceCell.coordinate(), null));
+        }
+
+        return candidates;
     }
 
     /**
@@ -240,57 +265,6 @@ public final class EtpetsAgentLogic {
         return !partnerPet.isDead()
                 && isReproductionEligible(partnerPet, stepIndex)
                 && !areDirectRelatives(pet, partnerPet);
-    }
-
-    private static List<ActionCandidate> buildActionCandidates(
-            GridCoordinate currentCoordinate,
-            Map<GridCoordinate, PositionAnalysis> positionAnalyses,
-            boolean isHungry) {
-        List<ActionCandidate> candidates = new ArrayList<>();
-        for (Map.Entry<GridCoordinate, PositionAnalysis> entry : positionAnalyses.entrySet()) {
-            GridCoordinate targetCoordinate = entry.getKey();
-            PositionAnalysis analysis = entry.getValue();
-
-            if (targetCoordinate.equals(currentCoordinate)) {
-                int currentScore = analysis.positionScore();
-
-                // WAIT
-                candidates.add(new ActionCandidate(
-                        ActionType.WAIT, currentScore, currentCoordinate, currentCoordinate, null));
-
-                // REPRODUCE
-                for (ReproductionOption option : analysis.reproductionOptions()) {
-                    int reproduceScore = currentScore + SCORE_REPRODUCE_BASE + SCORE_REPRODUCE_PARTNER_BONUS;
-                    candidates.add(new ActionCandidate(
-                            ActionType.REPRODUCE, reproduceScore, currentCoordinate,
-                            option.partnerCoordinate(), option.eggCoordinate()));
-                }
-
-                // EAT
-                for (EtpetsCell resourceCell : analysis.consumables()) {
-                    ResourceEntity resourceEntity = resourceCell.resourceEntity();
-                    if (!(resourceEntity instanceof ResourceBase resource) || !resource.canConsume()) {
-                        continue;
-                    }
-
-                    @SuppressWarnings("NumericCastThatLosesPrecision")
-                    int resourceAmount = Math.min(Integer.MAX_VALUE, (int) resource.currentAmount());
-                    int hungerBonus = isHungry ? SCORE_EAT_HUNGER_BONUS : 0;
-                    int eatScore = currentScore + SCORE_EAT_BASE + hungerBonus
-                            + (resource.energyGainPerAct() * SCORE_EAT_ENERGY_GAIN_WEIGHT)
-                            + (resourceAmount * SCORE_EAT_AMOUNT_WEIGHT);
-
-                    candidates.add(new ActionCandidate(
-                            ActionType.EAT, eatScore, currentCoordinate, resourceCell.coordinate(), null));
-                }
-            } else {
-                // MOVE
-                int moveScore = analysis.positionScore() + SCORE_MOVE_BASE;
-                candidates.add(new ActionCandidate(
-                        ActionType.MOVE, moveScore, targetCoordinate, targetCoordinate, null));
-            }
-        }
-        return candidates;
     }
 
     private static ActionCandidate pickBestCandidate(Collection<ActionCandidate> candidates, Random random) {
@@ -555,12 +529,6 @@ public final class EtpetsAgentLogic {
         MOVE,
         WAIT
     }
-
-    /** Immutable analysis result for a candidate position. */
-    private record PositionAnalysis(
-            int positionScore,
-            List<EtpetsCell> consumables,
-            List<ReproductionOption> reproductionOptions) {}
 
     private record ActionCandidate(ActionType type,
                                    int score,
