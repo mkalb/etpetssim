@@ -156,15 +156,12 @@ public final class EtpetsAgentLogic {
                         2,
                         c -> EtpetsCell.of(c, gridModel));
 
-        // Coordinate-indexed snapshots allow deterministic position analysis and simple lookups.
         SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate = new TreeMap<>();
         for (SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ringCells : neighborhoodCellsByRing.values()) {
             snapshotCellsByCoordinate.putAll(ringCells);
         }
 
         boolean canSelfReproduce = isReproductionEligible(pet, stepIndex);
-        boolean isHungry = pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD;
-
         SortedMap<GridCoordinate, PositionAnalysis> analysesByCoordinate = new TreeMap<>();
         for (RadiusRingCell<EtpetsCell> candidateCell : snapshotCellsByCoordinate.values()) {
             boolean isCurrentCell = candidateCell.ring() == 0;
@@ -185,6 +182,7 @@ public final class EtpetsAgentLogic {
                             stepIndex));
         }
 
+        boolean isHungry = pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD;
         return buildActionCandidates(currentCoordinate, analysesByCoordinate, isHungry);
     }
 
@@ -261,58 +259,55 @@ public final class EtpetsAgentLogic {
     private static List<ActionCandidate> buildActionCandidates(
             GridCoordinate currentCoordinate,
             Map<GridCoordinate, PositionAnalysis> positionAnalyses,
-            boolean hungry) {
+            boolean isHungry) {
         List<ActionCandidate> candidates = new ArrayList<>();
-        PositionAnalysis currentAnalysis = positionAnalyses.get(currentCoordinate);
-        int currentScore = (currentAnalysis != null) ? currentAnalysis.positionScore() : 0;
+        for (Map.Entry<GridCoordinate, PositionAnalysis> entry : positionAnalyses.entrySet()) {
+            GridCoordinate targetCoordinate = entry.getKey();
+            PositionAnalysis analysis = entry.getValue();
 
-        // Reproduction actions
-        if (currentAnalysis != null) {
-            for (ReproductionOption option : currentAnalysis.reproductionOptions()) {
-                int score = currentScore + SCORE_REPRODUCE_BASE + SCORE_REPRODUCE_PARTNER_BONUS;
+            if (targetCoordinate.equals(currentCoordinate)) {
+                int currentScore = analysis.positionScore();
+
+                // WAIT
                 candidates.add(new ActionCandidate(
-                        ActionType.REPRODUCE, score, currentCoordinate,
-                        option.partnerCoordinate(), option.eggCoordinate()));
-            }
+                        ActionType.WAIT, currentScore, currentCoordinate, currentCoordinate, null));
 
-            // Eat actions
-            for (EtpetsCell resourceCell : currentAnalysis.consumables()) {
-                Optional<ResourceBase> resourceOpt = toConsumableResource(resourceCell.resourceEntity());
-                if (resourceOpt.isEmpty()) {
-                    continue;
+                // REPRODUCE
+                for (ReproductionOption option : analysis.reproductionOptions()) {
+                    int reproduceScore = currentScore + SCORE_REPRODUCE_BASE + SCORE_REPRODUCE_PARTNER_BONUS;
+                    candidates.add(new ActionCandidate(
+                            ActionType.REPRODUCE, reproduceScore, currentCoordinate,
+                            option.partnerCoordinate(), option.eggCoordinate()));
                 }
 
-                ResourceBase resource = resourceOpt.orElseThrow();
-                @SuppressWarnings("NumericCastThatLosesPrecision")
-                int resourceAmount = Math.min(Integer.MAX_VALUE, (int) resource.currentAmount());
-                int hungerBonus = hungry ? SCORE_EAT_HUNGER_BONUS : 0;
-                int score = currentScore + SCORE_EAT_BASE + hungerBonus
-                        + (resource.energyGainPerAct() * SCORE_EAT_ENERGY_GAIN_WEIGHT)
-                        + (resourceAmount * SCORE_EAT_AMOUNT_WEIGHT);
+                // EAT
+                for (EtpetsCell resourceCell : analysis.consumables()) {
+                    ResourceEntity resourceEntity = resourceCell.resourceEntity();
+                    if (!(resourceEntity instanceof ResourceBase resource) || !resource.canConsume()) {
+                        continue;
+                    }
 
+                    @SuppressWarnings("NumericCastThatLosesPrecision")
+                    int resourceAmount = Math.min(Integer.MAX_VALUE, (int) resource.currentAmount());
+                    int hungerBonus = isHungry ? SCORE_EAT_HUNGER_BONUS : 0;
+                    int eatScore = currentScore + SCORE_EAT_BASE + hungerBonus
+                            + (resource.energyGainPerAct() * SCORE_EAT_ENERGY_GAIN_WEIGHT)
+                            + (resourceAmount * SCORE_EAT_AMOUNT_WEIGHT);
+
+                    candidates.add(new ActionCandidate(
+                            ActionType.EAT, eatScore, currentCoordinate, resourceCell.coordinate(), null));
+                }
+            } else {
+                // MOVE
+                int moveScore = analysis.positionScore() + SCORE_MOVE_BASE;
                 candidates.add(new ActionCandidate(
-                        ActionType.EAT, score, currentCoordinate, resourceCell.coordinate(), null));
+                        ActionType.MOVE, moveScore, targetCoordinate, targetCoordinate, null));
             }
         }
-
-        // Wait action
-        candidates.add(new ActionCandidate(
-                ActionType.WAIT, currentScore, currentCoordinate, currentCoordinate, null));
-
-        // Move actions
-        for (Map.Entry<GridCoordinate, PositionAnalysis> entry : positionAnalyses.entrySet()) {
-            GridCoordinate targetCoord = entry.getKey();
-            if (!targetCoord.equals(currentCoordinate)) {
-                int score = entry.getValue().positionScore() + SCORE_MOVE_BASE;
-                candidates.add(new ActionCandidate(
-                        ActionType.MOVE, score, targetCoord, targetCoord, null));
-            }
-        }
-
         return candidates;
     }
 
-    private static ActionCandidate pickBestCandidate(List<ActionCandidate> candidates, Random random) {
+    private static ActionCandidate pickBestCandidate(Collection<ActionCandidate> candidates, Random random) {
         int maxScore = candidates.stream()
                                  .mapToInt(ActionCandidate::score)
                                  .max()
