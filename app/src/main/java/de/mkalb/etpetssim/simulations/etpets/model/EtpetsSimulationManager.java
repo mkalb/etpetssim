@@ -13,12 +13,12 @@ import java.util.*;
 public final class EtpetsSimulationManager
         extends AbstractTimedSimulationManager<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> {
 
+    public static final int PLANT_MAX_AMOUNT_MAX = 15;
+    public static final int INSECT_MAX_AMOUNT_MAX = 25;
     // Resource initialization ranges (spec V1 defaults).
     private static final int PLANT_MAX_AMOUNT_MIN = 5;
-    private static final int PLANT_MAX_AMOUNT_MAX = 15;
     private static final double PLANT_BASE_REGEN_RATE = 0.2d;
     private static final int INSECT_MAX_AMOUNT_MIN = 10;
-    private static final int INSECT_MAX_AMOUNT_MAX = 25;
     private static final double INSECT_BASE_REGEN_RATE = 0.05d;
     private static final double REGEN_RATE_VARIANCE = 0.02d;
     private static final double VARIANCE_SPREAD_FACTOR = 2.0d;
@@ -64,6 +64,11 @@ public final class EtpetsSimulationManager
         int rockCount = computePercentCount(totalCells, config().rockPercent());
         int waterCount = computePercentCount(totalCells, config().waterPercent());
 
+        // Only for testing / debugging
+        // for (int i = 0; i <= 100; i++) {
+        //     model.terrainModel().setEntity(new GridCoordinate(i, 1), new Trail(i));
+        // }
+
         List<GridCoordinate> coordinates = new ArrayList<>(structure.coordinatesList());
         Collections.shuffle(coordinates, random);
 
@@ -81,6 +86,14 @@ public final class EtpetsSimulationManager
         int totalCells = structure.cellCount();
         int plantCount = computePercentCount(totalCells, config().plantPercent());
         int insectCount = computePercentCount(totalCells, config().insectPercent());
+
+        // Only for testing / debugging
+        // for (int i = 0; i <= PLANT_MAX_AMOUNT_MAX; i++) {
+        //     model.resourceModel().setEntity(new GridCoordinate(i, 3), new Plant(i, i, 10));
+        // }
+        // for (int i = 0; i <= INSECT_MAX_AMOUNT_MAX; i++) {
+        //     model.resourceModel().setEntity(new GridCoordinate(i, 5), new Insect(i, i, 10));
+        // }
 
         List<GridCoordinate> available = traversableCoordinates(model, random);
         int requestedResources = plantCount + insectCount;

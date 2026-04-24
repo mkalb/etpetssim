@@ -19,31 +19,26 @@ public final class EtpetsAgentLogic {
     public static final double DEFAULT_MOVEMENT_COST_MODIFIER = 1.0d;
     public static final int DEFAULT_REPRODUCTION_MIN_ENERGY = 70;
     public static final int DEFAULT_REPRODUCTION_COOLDOWN_MAX = 200;
-
+    public static final int INCUBATION_DURATION = 10;
+    public static final double TRAIL_MAX = 100.0d;
     private static final int ENERGY_LOSS_PER_STEP = 1;
     private static final int EAT_IF_ADJACENT_ENERGY_THRESHOLD = 80;
     private static final int REPRODUCTION_MIN_AGE = 120;
-    private static final int INCUBATION_DURATION = 10;
-
     // ---- V1 action scoring constants ----
     private static final int SCORE_REPRODUCE_BASE = 80;
     private static final int SCORE_REPRODUCE_PARTNER_BONUS = 5;
-
     private static final int SCORE_EAT_BASE = 30;
     private static final int SCORE_EAT_HUNGER_BONUS = 6;
     private static final int SCORE_EAT_ENERGY_GAIN_WEIGHT = 2;
     private static final int SCORE_EAT_AMOUNT_WEIGHT = 1;
-
     private static final int SCORE_MOVE_BASE = 10;
     private static final int SCORE_MOVE_RING2_RESOURCE_BONUS = 8;
     private static final int SCORE_MOVE_RING2_PARTNER_BONUS = 6;
     private static final int SCORE_MOVE_TRAIL_WEAK_BONUS = 2;
     private static final int SCORE_MOVE_COST_PENALTY = 2;
-
     // ---- Default initial pet trait values (used by EtpetsSimulationManager) ----
     private static final double TRAIL_INCREASE_PER_ENTRY = 1.0d;
     private static final double TRAIL_PREFERENCE_THRESHOLD = 10.0d;
-    private static final double TRAIL_MAX = 100.0d;
     private static final double MUTATION_CHANCE_PER_TRAIT = 0.08d;
     private static final double MUTATION_DELTA = 0.05d;
     private static final int DISPLAY_STRING_CAPACITY_HINT = 80;
