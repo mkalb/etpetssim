@@ -1,19 +1,12 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
+
 public record PetTraits(
         int maxEnergy,
         double movementCostModifier,
         int reproductionMinEnergy,
         int reproductionCooldownMax) {
-
-    public static final int MAX_ENERGY_MIN = 60;
-    public static final int MAX_ENERGY_MAX = 140;
-    public static final double MOVEMENT_COST_MIN = 0.5d;
-    public static final double MOVEMENT_COST_MAX = 1.5d;
-    public static final int REPRO_ENERGY_MIN = 50;
-    public static final int REPRO_ENERGY_MAX = 90;
-    public static final int REPRO_COOLDOWN_MIN = 120;
-    public static final int REPRO_COOLDOWN_MAX = 320;
 
     private static double normalize(double value, double min, double max) {
         return (value - min) / (max - min);
@@ -21,10 +14,18 @@ public record PetTraits(
 
     @SuppressWarnings("MagicNumber")
     public double genomeQualityScore() {
-        double normMax = normalize(maxEnergy, MAX_ENERGY_MIN, MAX_ENERGY_MAX);
-        double normCost = normalize(movementCostModifier, MOVEMENT_COST_MIN, MOVEMENT_COST_MAX);
-        double normRepE = normalize(reproductionMinEnergy, REPRO_ENERGY_MIN, REPRO_ENERGY_MAX);
-        double normRepC = normalize(reproductionCooldownMax, REPRO_COOLDOWN_MIN, REPRO_COOLDOWN_MAX);
+        double normMax = normalize(maxEnergy,
+                EtpetsBalance.PET_TRAIT_MAX_ENERGY_MIN,
+                EtpetsBalance.PET_TRAIT_MAX_ENERGY_MAX);
+        double normCost = normalize(movementCostModifier,
+                EtpetsBalance.PET_TRAIT_MOVEMENT_COST_MODIFIER_MIN,
+                EtpetsBalance.PET_TRAIT_MOVEMENT_COST_MODIFIER_MAX);
+        double normRepE = normalize(reproductionMinEnergy,
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MIN,
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MAX);
+        double normRepC = normalize(reproductionCooldownMax,
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_COOLDOWN_MIN,
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_COOLDOWN_MAX);
         return (normMax + normCost + normRepE + normRepC) / 4.0d;
     }
 

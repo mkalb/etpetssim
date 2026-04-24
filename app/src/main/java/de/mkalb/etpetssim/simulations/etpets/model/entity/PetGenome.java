@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
+
 import java.util.*;
 
 public record PetGenome(PetTraits traits) {
@@ -14,22 +16,25 @@ public record PetGenome(PetTraits traits) {
         double avgMaxEnergy = (ta.maxEnergy() + tb.maxEnergy()) / 2.0d;
         int maxEnergy = clampInt(
                 mutate(avgMaxEnergy, random, mutationChancePerTrait, mutationDelta),
-                PetTraits.MAX_ENERGY_MIN, PetTraits.MAX_ENERGY_MAX);
+                EtpetsBalance.PET_TRAIT_MAX_ENERGY_MIN, EtpetsBalance.PET_TRAIT_MAX_ENERGY_MAX);
 
         double avgMovCost = (ta.movementCostModifier() + tb.movementCostModifier()) / 2.0d;
         double movCost = clampDouble(
                 mutate(avgMovCost, random, mutationChancePerTrait, mutationDelta),
-                PetTraits.MOVEMENT_COST_MIN, PetTraits.MOVEMENT_COST_MAX);
+                EtpetsBalance.PET_TRAIT_MOVEMENT_COST_MODIFIER_MIN,
+                EtpetsBalance.PET_TRAIT_MOVEMENT_COST_MODIFIER_MAX);
 
         double avgReproEnergy = (ta.reproductionMinEnergy() + tb.reproductionMinEnergy()) / 2.0d;
         int reproEnergy = clampInt(
                 mutate(avgReproEnergy, random, mutationChancePerTrait, mutationDelta),
-                PetTraits.REPRO_ENERGY_MIN, PetTraits.REPRO_ENERGY_MAX);
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MIN,
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MAX);
 
         double avgReproCooldown = (ta.reproductionCooldownMax() + tb.reproductionCooldownMax()) / 2.0d;
         int reproCooldown = clampInt(
                 mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta),
-                PetTraits.REPRO_COOLDOWN_MIN, PetTraits.REPRO_COOLDOWN_MAX);
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_COOLDOWN_MIN,
+                EtpetsBalance.PET_TRAIT_REPRODUCTION_COOLDOWN_MAX);
 
         return new PetGenome(new PetTraits(maxEnergy, movCost, reproEnergy, reproCooldown));
     }
