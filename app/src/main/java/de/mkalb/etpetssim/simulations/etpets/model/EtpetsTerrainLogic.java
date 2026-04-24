@@ -6,8 +6,6 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
 
 public final class EtpetsTerrainLogic {
 
-    private static final double TRAIL_DECAY_PER_STEP = 0.02d;
-
     private EtpetsTerrainLogic() {
     }
 
@@ -17,7 +15,7 @@ public final class EtpetsTerrainLogic {
                                        .toList();
         for (GridCell<TerrainEntity> cell : nonDefaultCells) {
             if (cell.entity() instanceof Trail trail) {
-                trail.decay(TRAIL_DECAY_PER_STEP);
+                trail.decay(EtpetsBalance.PET_TRAIL_DECAY_PER_STEP);
                 if (trail.isDepleted()) {
                     // Replace Trail with Ground
                     gridModel.terrainModel().setEntityToDefault(cell.coordinate());

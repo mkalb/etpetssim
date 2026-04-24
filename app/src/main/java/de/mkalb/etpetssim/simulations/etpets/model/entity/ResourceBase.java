@@ -31,6 +31,10 @@ public abstract sealed class ResourceBase implements ResourceEntity
         return maxAmount;
     }
 
+    public final double regenerationPerStep() {
+        return regenerationPerStep;
+    }
+
     public final boolean canConsume() {
         return currentAmount >= consumptionPerAct();
     }

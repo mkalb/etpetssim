@@ -177,11 +177,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
     private int maxAmountByDescriptorId(String descriptorId) {
         return switch (descriptorId) {
-            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> (int) EtpetsAgentLogic.TRAIL_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsSimulationManager.PLANT_MAX_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsSimulationManager.INSECT_MAX_AMOUNT_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> (int) EtpetsBalance.PET_TRAIL_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_MAX_AMOUNT_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_MAX_AMOUNT_MAX;
             case EtpetsEntity.DESCRIPTOR_ID_PET -> PetTraits.MAX_ENERGY_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsAgentLogic.INCUBATION_DURATION;
+            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_DURATION;
             default -> throw new IllegalArgumentException("No max amount defined for descriptorId: " + descriptorId);
         };
     }
@@ -215,7 +215,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                         1,
                         maxAmountByDescriptorId(descriptorId));
                 case PetEgg egg -> normalizeValueForMapRange(
-                        (EtpetsAgentLogic.INCUBATION_DURATION - egg.incubationRemaining()) + 1,
+                        (EtpetsBalance.PET_EGG_INCUBATION_DURATION - egg.incubationRemaining()) + 1,
                         1,
                         maxAmountByDescriptorId(descriptorId));
                 case NoAgent ignoredAgent -> -1;

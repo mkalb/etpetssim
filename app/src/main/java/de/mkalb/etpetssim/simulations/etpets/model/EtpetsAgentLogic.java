@@ -13,34 +13,7 @@ import java.util.*;
 
 public final class EtpetsAgentLogic {
 
-    // ---- V1 balancing constants ----
-
-    public static final int DEFAULT_MAX_ENERGY = 100;
-    public static final double DEFAULT_MOVEMENT_COST_MODIFIER = 1.0d;
-    public static final int DEFAULT_REPRODUCTION_MIN_ENERGY = 70;
-    public static final int DEFAULT_REPRODUCTION_COOLDOWN_MAX = 200;
-    public static final int INCUBATION_DURATION = 10;
-    public static final double TRAIL_MAX = 100.0d;
-    private static final int ENERGY_LOSS_PER_STEP = 1;
-    private static final int EAT_IF_ADJACENT_ENERGY_THRESHOLD = 80;
-    private static final int REPRODUCTION_MIN_AGE = 120;
-    // ---- V1 action scoring constants ----
-    private static final int SCORE_REPRODUCE_BASE = 80;
-    private static final int SCORE_REPRODUCE_PARTNER_BONUS = 5;
-    private static final int SCORE_EAT_BASE = 30;
-    private static final int SCORE_EAT_HUNGER_BONUS = 6;
-    private static final int SCORE_EAT_ENERGY_GAIN_WEIGHT = 2;
-    private static final int SCORE_EAT_AMOUNT_WEIGHT = 1;
-    private static final int SCORE_MOVE_BASE = 10;
-    private static final int SCORE_MOVE_RING2_RESOURCE_BONUS = 8;
-    private static final int SCORE_MOVE_RING2_PARTNER_BONUS = 6;
-    private static final int SCORE_MOVE_TRAIL_WEAK_BONUS = 2;
-    private static final int SCORE_MOVE_COST_PENALTY = 2;
-    // ---- Default initial pet trait values (used by EtpetsSimulationManager) ----
-    private static final double TRAIL_INCREASE_PER_ENTRY = 1.0d;
-    private static final double TRAIL_PREFERENCE_THRESHOLD = 10.0d;
-    private static final double MUTATION_CHANCE_PER_TRAIT = 0.08d;
-    private static final double MUTATION_DELTA = 0.05d;
+    // Debug/log formatting
     private static final int DISPLAY_STRING_CAPACITY_HINT = 80;
 
     private EtpetsAgentLogic() {
@@ -91,7 +64,7 @@ public final class EtpetsAgentLogic {
                 }
 
                 // Passive energy loss and reproduction cooldown decrement.
-                pet.changeEnergy(-ENERGY_LOSS_PER_STEP);
+                pet.changeEnergy(-EtpetsBalance.PET_ENERGY_LOSS_PER_STEP);
                 pet.decrementReproductionCooldown();
 
                 // Death from energy depletion.
@@ -158,7 +131,7 @@ public final class EtpetsAgentLogic {
         }
 
         boolean canSelfReproduce = isReproductionEligible(pet, stepIndex);
-        boolean isHungry = pet.currentEnergy() < EAT_IF_ADJACENT_ENERGY_THRESHOLD;
+        boolean isHungry = pet.currentEnergy() < EtpetsBalance.PET_EAT_IF_ADJACENT_ENERGY_THRESHOLD;
 
         // Pass 1: Ring 2 → determine which ring-1 cells gain look-ahead score bonuses.
         Set<GridCoordinate> ring1HasResourceBonus = new HashSet<>();
@@ -200,15 +173,15 @@ public final class EtpetsAgentLogic {
 
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
-                int moveScore = SCORE_MOVE_BASE - SCORE_MOVE_COST_PENALTY;
-                if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > TRAIL_PREFERENCE_THRESHOLD)) {
-                    moveScore += SCORE_MOVE_TRAIL_WEAK_BONUS;
+                int moveScore = EtpetsBalance.PET_SCORE_MOVE_BASE - EtpetsBalance.PET_SCORE_MOVE_COST_PENALTY;
+                if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > EtpetsBalance.PET_TRAIL_PREFERENCE_THRESHOLD)) {
+                    moveScore += EtpetsBalance.PET_SCORE_MOVE_TRAIL_WEAK_BONUS;
                 }
                 if (ring1HasResourceBonus.contains(coord)) {
-                    moveScore += SCORE_MOVE_RING2_RESOURCE_BONUS;
+                    moveScore += EtpetsBalance.PET_SCORE_MOVE_RING2_RESOURCE_BONUS;
                 }
                 if (ring1HasPartnerBonus.contains(coord)) {
-                    moveScore += SCORE_MOVE_RING2_PARTNER_BONUS;
+                    moveScore += EtpetsBalance.PET_SCORE_MOVE_RING2_PARTNER_BONUS;
                 }
                 candidates.add(new ActionCandidate(ActionType.MOVE, moveScore, coord, coord, null));
             }
@@ -221,7 +194,7 @@ public final class EtpetsAgentLogic {
 
         // REPRODUCE
         for (ReproductionOption option : ring0ReproductionOptions) {
-            int reproduceScore = SCORE_REPRODUCE_BASE + SCORE_REPRODUCE_PARTNER_BONUS;
+            int reproduceScore = EtpetsBalance.PET_SCORE_REPRODUCE_BASE + EtpetsBalance.PET_SCORE_REPRODUCE_PARTNER_BONUS;
             candidates.add(new ActionCandidate(ActionType.REPRODUCE, reproduceScore, currentCoordinate,
                     option.partnerCoordinate(), option.eggCoordinate()));
         }
@@ -234,10 +207,10 @@ public final class EtpetsAgentLogic {
             }
             @SuppressWarnings("NumericCastThatLosesPrecision")
             int resourceAmount = Math.min(Integer.MAX_VALUE, (int) resource.currentAmount());
-            int hungerBonus = isHungry ? SCORE_EAT_HUNGER_BONUS : 0;
-            int eatScore = SCORE_EAT_BASE + hungerBonus
-                    + (resource.energyGainPerAct() * SCORE_EAT_ENERGY_GAIN_WEIGHT)
-                    + (resourceAmount * SCORE_EAT_AMOUNT_WEIGHT);
+            int hungerBonus = isHungry ? EtpetsBalance.PET_SCORE_EAT_HUNGER_BONUS : 0;
+            int eatScore = EtpetsBalance.PET_SCORE_EAT_BASE + hungerBonus
+                    + (resource.energyGainPerAct() * EtpetsBalance.PET_SCORE_EAT_ENERGY_GAIN_WEIGHT)
+                    + (resourceAmount * EtpetsBalance.PET_SCORE_EAT_AMOUNT_WEIGHT);
             candidates.add(new ActionCandidate(ActionType.EAT, eatScore, currentCoordinate,
                     resourceCell.coordinate(), null));
         }
@@ -308,9 +281,9 @@ public final class EtpetsAgentLogic {
         // Update terrain trail at destination.
         TerrainEntity terrain = gridModel.terrainModel().getEntity(to);
         if (terrain == TerrainConstant.GROUND) {
-            gridModel.terrainModel().setEntity(to, new Trail(TRAIL_INCREASE_PER_ENTRY));
+            gridModel.terrainModel().setEntity(to, new Trail(EtpetsBalance.PET_TRAIL_INCREASE_PER_ENTRY));
         } else if (terrain instanceof Trail trail) {
-            trail.increase(TRAIL_INCREASE_PER_ENTRY, TRAIL_MAX);
+            trail.increase(EtpetsBalance.PET_TRAIL_INCREASE_PER_ENTRY, EtpetsBalance.PET_TRAIL_MAX);
         }
 
         return ActionEffect.none();
@@ -352,8 +325,8 @@ public final class EtpetsAgentLogic {
                 new PetGenome(pet.traits()),
                 new PetGenome(partnerPet.traits()),
                 random,
-                MUTATION_CHANCE_PER_TRAIT,
-                MUTATION_DELTA
+                EtpetsBalance.PET_MUTATION_CHANCE_PER_TRAIT,
+                EtpetsBalance.PET_MUTATION_DELTA
         );
 
         long parentAId = Math.min(pet.petId(), partnerPet.petId());
@@ -365,7 +338,7 @@ public final class EtpetsAgentLogic {
                 parentBId,
                 genome,
                 stepIndex,
-                INCUBATION_DURATION
+                EtpetsBalance.PET_EGG_INCUBATION_DURATION
         );
         gridModel.agentModel().setEntity(candidate.eggTarget(), egg);
 
@@ -406,7 +379,7 @@ public final class EtpetsAgentLogic {
 
     private static boolean isReproductionEligible(Pet pet, int stepIndex) {
         return !pet.isDead()
-                && (pet.ageAtStepIndex(stepIndex) >= REPRODUCTION_MIN_AGE)
+                && (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_REPRODUCTION_MIN_AGE)
                 && (pet.currentEnergy() >= pet.traits().reproductionMinEnergy())
                 && (pet.reproductionCooldownRemaining() == 0);
     }
