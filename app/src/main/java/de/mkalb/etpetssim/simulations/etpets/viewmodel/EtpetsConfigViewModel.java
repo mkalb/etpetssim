@@ -37,22 +37,26 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     );
 
     // Initialization
-    private static final int PET_COUNT_INITIAL = 5;
+    private static final int PET_COUNT_INITIAL = 10;
     private static final int PET_COUNT_MIN = 0;
     private static final int PET_COUNT_MAX = 20;
-    private static final int PERCENT_INITIAL = 1;
     private static final int PERCENT_MIN = 0;
     private static final int PERCENT_MAX = 100;
     private static final int STEP = 1;
+
+    private static final int ROCK_PERCENT_INITIAL = 1;
+    private static final int WATER_PERCENT_INITIAL = 3;
+    private static final int PLANT_PERCENT_INITIAL = 8;
+    private static final int INSECT_PERCENT_INITIAL = 2;
 
     // Rules
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
 
     // Initialization properties
-    private final InputIntegerProperty rockPercent = InputIntegerProperty.of(PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
-    private final InputIntegerProperty waterPercent = InputIntegerProperty.of(PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
-    private final InputIntegerProperty plantPercent = InputIntegerProperty.of(PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
-    private final InputIntegerProperty insectPercent = InputIntegerProperty.of(PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
+    private final InputIntegerProperty rockPercent = InputIntegerProperty.of(ROCK_PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
+    private final InputIntegerProperty waterPercent = InputIntegerProperty.of(WATER_PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
+    private final InputIntegerProperty plantPercent = InputIntegerProperty.of(PLANT_PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
+    private final InputIntegerProperty insectPercent = InputIntegerProperty.of(INSECT_PERCENT_INITIAL, PERCENT_MIN, PERCENT_MAX, STEP);
     private final InputIntegerProperty petCount = InputIntegerProperty.of(PET_COUNT_INITIAL, PET_COUNT_MIN, PET_COUNT_MAX, STEP);
 
     public EtpetsConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
