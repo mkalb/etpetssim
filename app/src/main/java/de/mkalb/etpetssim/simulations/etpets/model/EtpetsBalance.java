@@ -9,21 +9,21 @@ public final class EtpetsBalance {
     public static final double PET_MOVEMENT_COST_MODIFIER_DEFAULT = 1.0d;
     public static final double PET_MOVEMENT_COST_MODIFIER_MIN = 0.5d;
     public static final double PET_MOVEMENT_COST_MODIFIER_MAX = 1.5d;
-    public static final int PET_REPRODUCTION_MIN_ENERGY_DEFAULT = 70;
+    public static final int PET_REPRODUCTION_MIN_ENERGY_DEFAULT = 60;
     public static final int PET_REPRODUCTION_MIN_ENERGY_MIN = 50;
-    public static final int PET_REPRODUCTION_MIN_ENERGY_MAX = 90;
+    public static final int PET_REPRODUCTION_MIN_ENERGY_MAX = 80;
     public static final int PET_REPRODUCTION_COOLDOWN_DEFAULT = 200;
     public static final int PET_REPRODUCTION_COOLDOWN_MIN = 120;
     public static final int PET_REPRODUCTION_COOLDOWN_MAX = 320;
 
     // Agent behavior
     public static final int PET_ENERGY_LOSS_PER_STEP = 1;
-    public static final int PET_EAT_IF_ADJACENT_ENERGY_THRESHOLD = 80;
-    public static final int PET_REPRODUCTION_MIN_AGE = 120;
-    public static final int PET_EGG_INCUBATION_DURATION = 10;
+    public static final int PET_EAT_IF_ADJACENT_ENERGY_THRESHOLD = 70;
+    public static final int PET_REPRODUCTION_MIN_AGE = 100;
+    public static final int PET_EGG_INCUBATION_DURATION = 15;
     public static final double PET_TRAIL_MAX = 100.0d;
     public static final double PET_TRAIL_INCREASE_PER_ENTRY = 1.0d;
-    public static final double PET_TRAIL_DECAY_PER_STEP = 0.02d;
+    public static final double PET_TRAIL_DECAY_PER_STEP = 0.01d;
     public static final double PET_TRAIL_PREFERENCE_THRESHOLD = 10.0d;
     public static final double PET_MUTATION_CHANCE_PER_TRAIT = 0.08d;
     public static final double PET_MUTATION_DELTA = 0.05d;
@@ -53,9 +53,9 @@ public final class EtpetsBalance {
 
     // Resource consumption and energy gain per act
     public static final int PLANT_CONSUMPTION_PER_ACT = 2;
-    public static final int PLANT_ENERGY_GAIN_PER_ACT = 3;
+    public static final int PLANT_ENERGY_GAIN_PER_ACT = 4;
     public static final int INSECT_CONSUMPTION_PER_ACT = 3;
-    public static final int INSECT_ENERGY_GAIN_PER_ACT = 9;
+    public static final int INSECT_ENERGY_GAIN_PER_ACT = 11;
 
     /**
      * Private constructor to prevent instantiation.
