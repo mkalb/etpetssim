@@ -2,21 +2,19 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 
 public final class EtpetsBalance {
 
-    // Agent defaults
+    // Agent defaults and limits
     public static final int PET_MAX_ENERGY_DEFAULT = 100;
+    public static final int PET_MAX_ENERGY_MIN = 60;
+    public static final int PET_MAX_ENERGY_MAX = 140;
     public static final double PET_MOVEMENT_COST_MODIFIER_DEFAULT = 1.0d;
+    public static final double PET_MOVEMENT_COST_MODIFIER_MIN = 0.5d;
+    public static final double PET_MOVEMENT_COST_MODIFIER_MAX = 1.5d;
     public static final int PET_REPRODUCTION_MIN_ENERGY_DEFAULT = 70;
-    public static final int PET_REPRODUCTION_COOLDOWN_MAX_DEFAULT = 200;
-
-    // Agent trait ranges (genome bounds)
-    public static final int PET_TRAIT_MAX_ENERGY_MIN = 60;
-    public static final int PET_TRAIT_MAX_ENERGY_MAX = 140;
-    public static final double PET_TRAIT_MOVEMENT_COST_MODIFIER_MIN = 0.5d;
-    public static final double PET_TRAIT_MOVEMENT_COST_MODIFIER_MAX = 1.5d;
-    public static final int PET_TRAIT_REPRODUCTION_MIN_ENERGY_MIN = 50;
-    public static final int PET_TRAIT_REPRODUCTION_MIN_ENERGY_MAX = 90;
-    public static final int PET_TRAIT_REPRODUCTION_COOLDOWN_MIN = 120;
-    public static final int PET_TRAIT_REPRODUCTION_COOLDOWN_MAX = 320;
+    public static final int PET_REPRODUCTION_MIN_ENERGY_MIN = 50;
+    public static final int PET_REPRODUCTION_MIN_ENERGY_MAX = 90;
+    public static final int PET_REPRODUCTION_COOLDOWN_DEFAULT = 200;
+    public static final int PET_REPRODUCTION_COOLDOWN_MIN = 120;
+    public static final int PET_REPRODUCTION_COOLDOWN_MAX = 320;
 
     // Agent behavior
     public static final int PET_ENERGY_LOSS_PER_STEP = 1;

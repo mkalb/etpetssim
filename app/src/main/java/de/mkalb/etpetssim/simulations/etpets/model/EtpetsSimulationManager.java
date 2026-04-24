@@ -126,7 +126,7 @@ public final class EtpetsSimulationManager
                 EtpetsBalance.PET_MAX_ENERGY_DEFAULT,
                 EtpetsBalance.PET_MOVEMENT_COST_MODIFIER_DEFAULT,
                 EtpetsBalance.PET_REPRODUCTION_MIN_ENERGY_DEFAULT,
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_MAX_DEFAULT
+                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_DEFAULT
         );
 
         for (int i = 0; i < config().petCount(); i++) {

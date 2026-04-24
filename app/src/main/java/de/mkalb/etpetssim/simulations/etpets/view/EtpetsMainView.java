@@ -180,7 +180,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> (int) EtpetsBalance.PET_TRAIL_MAX;
             case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_MAX_AMOUNT_MAX;
             case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_MAX_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_TRAIT_MAX_ENERGY_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_MAX_ENERGY_MAX;
             case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_DURATION;
             default -> throw new IllegalArgumentException("No max amount defined for descriptorId: " + descriptorId);
         };
