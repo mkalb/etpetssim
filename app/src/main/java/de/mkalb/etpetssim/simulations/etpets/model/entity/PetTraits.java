@@ -6,7 +6,7 @@ public record PetTraits(
         int maxEnergy,
         double movementCostModifier,
         int reproductionMinEnergy,
-        int reproductionCooldownMax) {
+        int reproductionCooldown) {
 
     private static double normalize(double value, double min, double max) {
         return (value - min) / (max - min);
@@ -23,7 +23,7 @@ public record PetTraits(
         double normRepE = normalize(reproductionMinEnergy,
                 EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MIN,
                 EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MAX);
-        double normRepC = normalize(reproductionCooldownMax,
+        double normRepC = normalize(reproductionCooldown,
                 EtpetsBalance.PET_TRAIT_REPRODUCTION_COOLDOWN_MIN,
                 EtpetsBalance.PET_TRAIT_REPRODUCTION_COOLDOWN_MAX);
         return (normMax + normCost + normRepE + normRepC) / 4.0d;

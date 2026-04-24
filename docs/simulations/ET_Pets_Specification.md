@@ -379,7 +379,7 @@ Trait schema (V1 fixed):
     - `maxEnergy` (int, range `60..140`)
     - `movementCostModifier` (double, range `0.5..1.5`)
     - `reproductionMinEnergy` (int, range `50..90`)
-    - `reproductionCooldownMax` (int, range `120..320`)
+    - `reproductionCooldown` (int, range `120..320`)
 - In V1, `visionRange` is fixed to `2` and is NOT part of inheritable trait scoring.
 - In V1, `genomeQualityScore` MUST be computed from the arithmetic mean of the four normalized trait values above.
 
@@ -588,7 +588,7 @@ The following decision blocks are resolved:
     - `maxEnergy` in `60..140`
     - `movementCostModifier` in `0.5..1.5`
     - `reproductionMinEnergy` in `50..90`
-    - `reproductionCooldownMax` in `120..320`
+    - `reproductionCooldown` in `120..320`
     - `visionRange` remains fixed (`2`) and is excluded from trait scoring
     - `genomeQualityScore` uses arithmetic mean over normalized inheritable trait values
 

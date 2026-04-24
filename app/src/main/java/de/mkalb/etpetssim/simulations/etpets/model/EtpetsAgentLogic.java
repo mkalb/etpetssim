@@ -342,8 +342,8 @@ public final class EtpetsAgentLogic {
         );
         gridModel.agentModel().setEntity(candidate.eggTarget(), egg);
 
-        pet.setReproductionCooldownRemaining(pet.traits().reproductionCooldownMax());
-        partnerPet.setReproductionCooldownRemaining(partnerPet.traits().reproductionCooldownMax());
+        pet.setReproductionCooldownRemaining(pet.traits().reproductionCooldown());
+        partnerPet.setReproductionCooldownRemaining(partnerPet.traits().reproductionCooldown());
 
         return new ActionEffect(1);
     }

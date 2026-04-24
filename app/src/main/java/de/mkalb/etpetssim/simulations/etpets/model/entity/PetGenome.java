@@ -30,7 +30,7 @@ public record PetGenome(PetTraits traits) {
                 EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MIN,
                 EtpetsBalance.PET_TRAIT_REPRODUCTION_MIN_ENERGY_MAX);
 
-        double avgReproCooldown = (ta.reproductionCooldownMax() + tb.reproductionCooldownMax()) / 2.0d;
+        double avgReproCooldown = (ta.reproductionCooldown() + tb.reproductionCooldown()) / 2.0d;
         int reproCooldown = clampInt(
                 mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta),
                 EtpetsBalance.PET_TRAIT_REPRODUCTION_COOLDOWN_MIN,
