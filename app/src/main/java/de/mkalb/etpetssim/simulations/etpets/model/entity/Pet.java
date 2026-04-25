@@ -97,8 +97,8 @@ public final class Pet implements AgentEntity {
         }
     }
 
-    public void setReproductionCooldownRemaining(int reproductionCooldownRemaining) {
-        this.reproductionCooldownRemaining = reproductionCooldownRemaining;
+    public void resetReproductionCooldown() {
+        reproductionCooldownRemaining = traits.reproductionCooldown();
     }
 
     public boolean isDead() {
