@@ -49,6 +49,7 @@ public final class EtpetsAgentLogic {
                 if (egg.incubationRemaining() < EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN) {
                     Pet newPet = hatchEgg(egg, stepIndex, idSequence);
                     agentModel.setEntity(currentCoordinate, newPet);
+                    updateTrailAtCoordinate(currentCoordinate, gridModel);
                     eggCountChange--;
                     activePetCountChange++;
                     AppLogger.infof("Egg %s hatched into Pet %s at %s",
@@ -286,15 +287,19 @@ public final class EtpetsAgentLogic {
         gridModel.agentModel().setEntityToDefault(from);
         gridModel.agentModel().setEntity(to, pet);
 
-        // Update terrain trail at destination.
-        TerrainEntity terrain = gridModel.terrainModel().getEntity(to);
+        updateTrailAtCoordinate(to, gridModel);
+
+        return ActionEffect.none();
+    }
+
+    private static void updateTrailAtCoordinate(GridCoordinate coordinate, EtpetsGridModel gridModel) {
+        // Add a fresh trail on ground, otherwise reinforce existing trail intensity.
+        TerrainEntity terrain = gridModel.terrainModel().getEntity(coordinate);
         if (terrain == TerrainConstant.GROUND) {
-            gridModel.terrainModel().setEntity(to, new Trail(EtpetsBalance.TRAIL_INTENSITY_INITIAL));
+            gridModel.terrainModel().setEntity(coordinate, new Trail(EtpetsBalance.TRAIL_INTENSITY_INITIAL));
         } else if (terrain instanceof Trail trail) {
             trail.incrementIntensity(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
         }
-
-        return ActionEffect.none();
     }
 
     private static ActionEffect executeEatAction(ActionCandidate candidate, EtpetsGridModel gridModel, Pet pet) {
