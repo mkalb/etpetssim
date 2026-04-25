@@ -371,12 +371,13 @@ public final class EtpetsAgentLogic {
     private static Pet hatchEgg(PetEgg egg, int stepIndex,
                                 EtpetsIdSequence idSequence) {
         PetTraits traits = egg.petGenome().traits();
+        int birthEnergy = Math.toIntExact(Math.round(traits.maxEnergy() * EtpetsBalance.PET_BIRTH_ENERGY_FACTOR));
         return new Pet(
-                idSequence.next(), // TODO Should I reuse the Id of the PetEgg?
+                idSequence.next(),
                 egg.parentAId(),
                 egg.parentBId(),
                 stepIndex,
-                traits.maxEnergy(), // TODO calculate pet birth energy
+                birthEnergy,
                 0, // TODO Use constant
                 traits);
     }

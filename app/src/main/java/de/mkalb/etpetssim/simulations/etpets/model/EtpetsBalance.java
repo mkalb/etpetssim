@@ -57,6 +57,7 @@ public final class EtpetsBalance {
     public static final int PET_TRAIL_PREFERENCE_THRESHOLD = 500;
     public static final double PET_MUTATION_CHANCE_PER_TRAIT = 0.08d;
     public static final double PET_MUTATION_DELTA = 0.05d;
+    public static final double PET_BIRTH_ENERGY_FACTOR = 0.5d;
 
     // PET action scoring
     public static final int PET_SCORE_REPRODUCE_BASE = 80;
