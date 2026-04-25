@@ -70,6 +70,8 @@ public final class EtpetsBalance {
     public static final int PET_SCORE_MOVE_RING2_PARTNER_BONUS = 6;
     public static final int PET_SCORE_MOVE_TRAIL_WEAK_BONUS = 2;
     public static final int PET_SCORE_MOVE_COST_PENALTY = 2;
+    public static final int PET_SCORE_MOVE_PREVIOUS_COORDINATE_PENALTY = 6;
+    public static final int PET_SCORE_MOVE_PREVIOUS_PREVIOUS_COORDINATE_PENALTY = 3;
 
     /**
      * Private constructor to prevent instantiation.

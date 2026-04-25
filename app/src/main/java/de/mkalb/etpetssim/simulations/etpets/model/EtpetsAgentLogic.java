@@ -183,6 +183,11 @@ public final class EtpetsAgentLogic {
                 if (ring1HasPartnerBonus.contains(coord)) {
                     moveScore += EtpetsBalance.PET_SCORE_MOVE_RING2_PARTNER_BONUS;
                 }
+                if (coord.equals(pet.previousCoordinate())) {
+                    moveScore -= EtpetsBalance.PET_SCORE_MOVE_PREVIOUS_COORDINATE_PENALTY;
+                } else if (coord.equals(pet.previousPreviousCoordinate())) {
+                    moveScore -= EtpetsBalance.PET_SCORE_MOVE_PREVIOUS_PREVIOUS_COORDINATE_PENALTY;
+                }
                 candidates.add(new ActionCandidate(ActionType.MOVE, moveScore, coord, coord, null));
             }
         }
@@ -275,6 +280,7 @@ public final class EtpetsAgentLogic {
         pet.changeEnergy(-movementCost);
 
         // Relocate pet.
+        pet.recordMoveFrom(from);
         gridModel.agentModel().setEntityToDefault(from);
         gridModel.agentModel().setEntity(to, pet);
 

@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -13,6 +14,8 @@ public final class Pet implements AgentEntity {
     private final PetTraits traits;
     private int currentEnergy;
     private int reproductionCooldownRemaining;
+    private @Nullable GridCoordinate previousCoordinate;
+    private @Nullable GridCoordinate previousPreviousCoordinate;
     private boolean dead;
     private int stepIndexOfDeath;
 
@@ -91,6 +94,19 @@ public final class Pet implements AgentEntity {
         return reproductionCooldownRemaining;
     }
 
+    public @Nullable GridCoordinate previousCoordinate() {
+        return previousCoordinate;
+    }
+
+    public @Nullable GridCoordinate previousPreviousCoordinate() {
+        return previousPreviousCoordinate;
+    }
+
+    public void recordMoveFrom(GridCoordinate fromCoordinate) {
+        previousPreviousCoordinate = previousCoordinate;
+        previousCoordinate = fromCoordinate;
+    }
+
     public void decrementReproductionCooldownRemaining() {
         if (reproductionCooldownRemaining > 0) {
             reproductionCooldownRemaining--;
@@ -135,6 +151,8 @@ public final class Pet implements AgentEntity {
                 ", traits=" + traits +
                 ", currentEnergy=" + currentEnergy +
                 ", reproductionCooldownRemaining=" + reproductionCooldownRemaining +
+                ", previousCoordinate=" + previousCoordinate +
+                ", previousPreviousCoordinate=" + previousPreviousCoordinate +
                 ", dead=" + dead +
                 ", stepIndexOfDeath=" + stepIndexOfDeath +
                 '}';
