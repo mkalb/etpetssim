@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.AgentOrderingStrategies;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.*;
@@ -26,11 +27,10 @@ public final class EtpetsAgentLogic {
         GridStructure structure = gridModel.structure();
         WritableGridModel<AgentEntity> agentModel = gridModel.agentModel();
 
-        // Snapshot of all non-default agent cells, sorted by coordinate for determinism.
+        // Snapshot of all non-default agent cells, sorted by position to ensure deterministic processing order.
         List<GridCell<AgentEntity>> agentCells = agentModel.nonDefaultCells()
-                                                           .sorted(Comparator.comparing(GridCell::coordinate, EtpetsDeterminism::compareCoordinates))
+                                                           .sorted(AgentOrderingStrategies.byPosition())
                                                            .toList();
-        // TODO Sort agents by ID (age), shuffle randomly or by position (coordinate)
 
         for (GridCell<AgentEntity> cell : agentCells) {
             GridCoordinate currentCoordinate = cell.coordinate();
@@ -69,7 +69,7 @@ public final class EtpetsAgentLogic {
 
                 // Death from energy depletion.
                 if (pet.currentEnergy() < EtpetsBalance.PET_CURRENT_ENERGY_MIN) {
-                    pet.markDead(stepIndex);
+                    pet.markDead();
                     cumulativeDeadPetCountChange++;
                     activePetCountChange--;
                     AppLogger.infof("Pet %s died at %s from energy depletion.",
@@ -250,9 +250,11 @@ public final class EtpetsAgentLogic {
                                                         .toList();
 
         if (topCandidates.size() == 1) {
+            // Use the only top candidate
             return topCandidates.getFirst();
         }
 
+        // Select randomly among tied top candidates.
         return topCandidates.get(random.nextInt(topCandidates.size()));
     }
 
@@ -354,25 +356,23 @@ public final class EtpetsAgentLogic {
         return new ActionEffect(1);
     }
 
-    private static boolean isEggPlacementValid(@Nullable GridCoordinate eggCoord, EtpetsGridModel gridModel) {
-        if (eggCoord == null) {
+    private static boolean isEggPlacementValid(@Nullable GridCoordinate eggCoordinate, EtpetsGridModel gridModel) {
+        if (eggCoordinate == null) {
             return false;
         }
-        return gridModel.agentModel().getEntity(eggCoord).isEmpty()
-                && gridModel.resourceModel().getEntity(eggCoord).isEmpty()
-                && (gridModel.terrainModel().getEntity(eggCoord) == TerrainConstant.GROUND);
+        return EtpetsCell.of(eggCoordinate, gridModel).isWalkable();
     }
 
     private static Pet hatchEgg(PetEgg egg, int stepIndex,
                                 EtpetsIdSequence idSequence) {
         PetTraits traits = egg.petGenome().traits();
         return new Pet(
-                idSequence.next(),
+                idSequence.next(), // TODO Should I reuse the Id of the PetEgg?
                 egg.parentAId(),
                 egg.parentBId(),
                 stepIndex,
-                traits.maxEnergy(), // TODO calculate birth energy
-                0,
+                traits.maxEnergy(), // TODO calculate pet birth energy
+                0, // TODO Use constant
                 traits);
     }
 
@@ -384,6 +384,7 @@ public final class EtpetsAgentLogic {
     }
 
     private static boolean isReproductionEligible(Pet pet, int stepIndex) {
+        // TODO move some of this logic into Pet
         return !pet.isDead()
                 && (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_REPRODUCTION_MIN_AGE)
                 && (pet.currentEnergy() >= pet.traits().reproductionMinEnergy())

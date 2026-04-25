@@ -17,7 +17,6 @@ public final class Pet implements AgentEntity {
     private @Nullable GridCoordinate previousCoordinate;
     private @Nullable GridCoordinate previousPreviousCoordinate;
     private boolean dead;
-    private int stepIndexOfDeath;
 
     public Pet(long petId,
                @Nullable Long parentAId,
@@ -33,7 +32,6 @@ public final class Pet implements AgentEntity {
         this.currentEnergy = currentEnergy;
         this.reproductionCooldownRemaining = reproductionCooldownRemaining;
         this.traits = traits;
-        stepIndexOfDeath = -1;
     }
 
     @Override
@@ -108,7 +106,7 @@ public final class Pet implements AgentEntity {
     }
 
     public void decrementReproductionCooldownRemaining() {
-        if (reproductionCooldownRemaining > 0) {
+        if (reproductionCooldownRemaining > 0) { // TODO introduce constant
             reproductionCooldownRemaining--;
         }
     }
@@ -121,14 +119,9 @@ public final class Pet implements AgentEntity {
         return dead;
     }
 
-    public int stepIndexOfDeath() {
-        return stepIndexOfDeath;
-    }
-
-    @SuppressWarnings("ParameterHidesMemberVariable")
-    public void markDead(int stepIndexOfDeath) {
+    // TODO Is the name markDead() a good name?
+    public void markDead() {
         dead = true;
-        this.stepIndexOfDeath = stepIndexOfDeath;
     }
 
     @Override
@@ -154,7 +147,6 @@ public final class Pet implements AgentEntity {
                 ", previousCoordinate=" + previousCoordinate +
                 ", previousPreviousCoordinate=" + previousPreviousCoordinate +
                 ", dead=" + dead +
-                ", stepIndexOfDeath=" + stepIndexOfDeath +
                 '}';
     }
 
