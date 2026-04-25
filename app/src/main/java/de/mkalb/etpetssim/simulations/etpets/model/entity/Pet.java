@@ -2,9 +2,9 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import org.jspecify.annotations.Nullable;
 
-public final class Pet implements AgentEntity {
+import java.util.*;
 
-    public static final int VISION_RANGE = 2;
+public final class Pet implements AgentEntity {
 
     private final long petId;
     private final @Nullable Long parentAId;
@@ -117,12 +117,12 @@ public final class Pet implements AgentEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[PET #%d *%d E=%d C=%d %s]",
+        return String.format(Locale.ROOT, "[PET #%d *%d E=%d C=%d S=%s]",
                 petId,
                 stepIndexOfBirth,
                 currentEnergy,
                 reproductionCooldownRemaining,
-                dead ? "DEAD" : "alive");
+                dead ? "DEAD" : "ALIVE");
     }
 
     @Override

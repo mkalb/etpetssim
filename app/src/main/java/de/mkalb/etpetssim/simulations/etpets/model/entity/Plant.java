@@ -2,6 +2,8 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
+import java.util.*;
+
 public final class Plant extends ResourceBase {
 
     public Plant(double currentAmount, double maxAmount, double regenerationPerStep) {
@@ -30,7 +32,11 @@ public final class Plant extends ResourceBase {
 
     @Override
     public String toDisplayString() {
-        return String.format("[PLANT A=%.1f/%.1f R=%f]", currentAmount(), maxAmount(), regenerationPerStep());
+        return String.format(Locale.ROOT,
+                "[PLANT A=%.1f/%.1f R=%.2f]",
+                currentAmount(),
+                maxAmount(),
+                regenerationPerStep());
     }
 
     @Override

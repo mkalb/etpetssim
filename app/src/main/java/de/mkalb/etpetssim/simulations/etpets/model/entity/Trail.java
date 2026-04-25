@@ -2,6 +2,8 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
+import java.util.*;
+
 public final class Trail implements TerrainEntity {
 
     private int intensity;
@@ -34,7 +36,8 @@ public final class Trail implements TerrainEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[TRAIL %d]", intensity);
+        return String.format(Locale.ROOT, "[TRAIL I=%d]",
+                intensity);
     }
 
     @Override

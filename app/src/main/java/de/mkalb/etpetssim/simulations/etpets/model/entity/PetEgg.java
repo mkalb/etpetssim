@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
+import java.util.*;
+
 public final class PetEgg implements AgentEntity {
 
     private final long eggId;
@@ -68,7 +70,11 @@ public final class PetEgg implements AgentEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[EGG #%d *%d I=%d]", eggId, stepIndexOfLaying, incubationRemaining);
+        return String.format(Locale.ROOT,
+                "[PET_EGG #%d *%d I=%d]",
+                eggId,
+                stepIndexOfLaying,
+                incubationRemaining);
     }
 
     @Override
