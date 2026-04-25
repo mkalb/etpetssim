@@ -23,10 +23,6 @@ public sealed interface TerrainEntity extends EtpetsEntity
         return false;
     }
 
-    default boolean isBlockingLineOfSight() {
-        return this == TerrainConstant.ROCK;
-    }
-
     boolean isWalkable();
 
 }
