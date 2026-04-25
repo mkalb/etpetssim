@@ -91,7 +91,7 @@ public final class Pet implements AgentEntity {
         return reproductionCooldownRemaining;
     }
 
-    public void decrementReproductionCooldown() {
+    public void decrementReproductionCooldownRemaining() {
         if (reproductionCooldownRemaining > 0) {
             reproductionCooldownRemaining--;
         }

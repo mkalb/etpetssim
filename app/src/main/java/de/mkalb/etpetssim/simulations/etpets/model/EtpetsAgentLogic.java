@@ -45,7 +45,7 @@ public final class EtpetsAgentLogic {
             }
 
             if (entity instanceof PetEgg egg) {
-                egg.decreaseIncubation();
+                egg.decrementIncubationRemaining();
                 if (egg.incubationRemaining() < EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN) {
                     Pet newPet = hatchEgg(egg, stepIndex, idSequence);
                     agentModel.setEntity(currentCoordinate, newPet);
@@ -65,7 +65,7 @@ public final class EtpetsAgentLogic {
 
                 // Passive energy loss and reproduction cooldown decrement.
                 pet.changeEnergy(-EtpetsBalance.PET_ENERGY_LOSS_PER_STEP);
-                pet.decrementReproductionCooldown();
+                pet.decrementReproductionCooldownRemaining();
 
                 // Death from energy depletion.
                 if (pet.currentEnergy() < EtpetsBalance.PET_CURRENT_ENERGY_MIN) {
@@ -283,7 +283,7 @@ public final class EtpetsAgentLogic {
         if (terrain == TerrainConstant.GROUND) {
             gridModel.terrainModel().setEntity(to, new Trail(EtpetsBalance.TRAIL_INTENSITY_INITIAL));
         } else if (terrain instanceof Trail trail) {
-            trail.increase(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
+            trail.incrementIntensity(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
         }
 
         return ActionEffect.none();

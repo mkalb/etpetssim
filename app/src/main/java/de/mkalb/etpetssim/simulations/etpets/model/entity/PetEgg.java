@@ -62,7 +62,7 @@ public final class PetEgg implements AgentEntity {
         return incubationRemaining;
     }
 
-    public void decreaseIncubation() {
+    public void decrementIncubationRemaining() {
         incubationRemaining--;
     }
 
