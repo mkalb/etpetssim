@@ -10,13 +10,14 @@ public final class EtpetsTerrainLogic {
     }
 
     public static void apply(EtpetsGridModel gridModel) {
+        // List is needed, because we will modify the terrainModel while iterating over the cells
         var nonDefaultCells = gridModel.terrainModel()
                                        .nonDefaultCells()
                                        .toList();
         for (GridCell<TerrainEntity> cell : nonDefaultCells) {
             if (cell.entity() instanceof Trail trail) {
-                trail.decay(EtpetsBalance.PET_TRAIL_DECAY_PER_STEP);
-                if (trail.isDepleted()) {
+                trail.decay(EtpetsBalance.TRAIL_INTENSITY_DECAY_PER_STEP);
+                if (trail.intensity() < EtpetsBalance.TRAIL_INTENSITY_MIN) {
                     // Replace Trail with Ground
                     gridModel.terrainModel().setEntityToDefault(cell.coordinate());
                 }

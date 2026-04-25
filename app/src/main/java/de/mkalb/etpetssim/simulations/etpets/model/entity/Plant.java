@@ -24,6 +24,11 @@ public final class Plant extends ResourceBase {
     }
 
     @Override
+    public double minAmount() {
+        return EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN;
+    }
+
+    @Override
     public String toDisplayString() {
         return String.format("[PLANT A=%.1f/%.1f R=%f]", currentAmount(), maxAmount(), regenerationPerStep());
     }

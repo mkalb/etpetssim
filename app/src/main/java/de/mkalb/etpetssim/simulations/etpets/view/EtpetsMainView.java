@@ -28,18 +28,22 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsConfigView,
         EtpetsObservationView> {
 
-    private static final int TRAIL_LEVEL_COUNT = 10;
+    private static final int TRAIL_GROUP_COUNT = 5;
     private static final double TRAIL_MAX_FACTOR_DELTA = 0.65d;
-    private static final int RESOURCE_LEVEL_COUNT = 10;
-    private static final double RESOURCE_MAX_FACTOR_DELTA = 0.50d;
-    private static final int PET_ENERGY_LEVEL_COUNT = 10;
-    private static final double PET_ENERGY_MAX_FACTOR_DELTA = 0.65d;
-    private static final int EGG_INCUBATION_GROUP_COUNT = 5;
-    private static final double EGG_MAX_FACTOR_DELTA = 0.55d;
-    private static final double DEAD_PET_BRIGHTNESS_FACTOR = 0.30d;
-    private static final double DEAD_PET_ALPHA = 0.70d;
+    private static final int PLANT_GROUP_COUNT = 5;
+    private static final double PLANT_MAX_FACTOR_DELTA = 0.55d;
+    private static final int INSECT_GROUP_COUNT = 5;
+    private static final double INSECT_MAX_FACTOR_DELTA = 0.55d;
+    private static final int PET_GROUP_COUNT = 5;
+    private static final double PET_MAX_FACTOR_DELTA = 0.65d;
+    private static final int PET_EGG_GROUP_COUNT = 5;
+    private static final double PET_EGG_MAX_FACTOR_DELTA = 0.30d;
+
+    private static final double DEAD_PET_BRIGHTNESS_FACTOR = 0.20d;
+
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+    private static final double PET_EGG_STROKE_LINE_WIDTH = 1.0d;
 
     private final Color backgroundColor;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
@@ -69,38 +73,38 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
                 computeBrightnessVariantsMap(
                         entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
-                        1,
-                        maxAmountByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
-                        TRAIL_LEVEL_COUNT,
+                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
+                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
+                        TRAIL_GROUP_COUNT,
                         TRAIL_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PLANT,
                 computeBrightnessVariantsMap(
                         entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
-                        0,
-                        maxAmountByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
-                        RESOURCE_LEVEL_COUNT,
-                        RESOURCE_MAX_FACTOR_DELTA));
+                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
+                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
+                        PLANT_GROUP_COUNT,
+                        PLANT_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_INSECT,
                 computeBrightnessVariantsMap(
                         entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
-                        0,
-                        maxAmountByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
-                        RESOURCE_LEVEL_COUNT,
-                        RESOURCE_MAX_FACTOR_DELTA));
+                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
+                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
+                        INSECT_GROUP_COUNT,
+                        INSECT_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET,
                 computeBrightnessVariantsMap(
                         entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
-                        1,
-                        maxAmountByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
-                        PET_ENERGY_LEVEL_COUNT,
-                        PET_ENERGY_MAX_FACTOR_DELTA));
+                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
+                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
+                        PET_GROUP_COUNT,
+                        PET_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET_EGG,
                 computeBrightnessVariantsMap(
                         entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
-                        1,
-                        maxAmountByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
-                        EGG_INCUBATION_GROUP_COUNT,
-                        EGG_MAX_FACTOR_DELTA));
+                        minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
+                        maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
+                        PET_EGG_GROUP_COUNT,
+                        PET_EGG_MAX_FACTOR_DELTA));
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
@@ -120,23 +124,73 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                         StrokeType.INSIDE);
 
         cellAgentDrawer = (descriptor, painter, cell, _) -> {
-            Color fillColor = resolveAgentFillColor(descriptor, cell.entity());
             if ((cell.entity() instanceof Pet pet) && pet.isDead()) {
-                painter.drawCellInnerCircle(
-                        cell.coordinate(),
-                        fillColor,
-                        backgroundColor,
-                        strokeLineWidth,
-                        StrokeType.CENTERED);
-            } else {
+                Color baseColor = descriptor.colorOrFallback();
+                Color fillColor = FXPaintFactory.adjustBrightness(baseColor, DEAD_PET_BRIGHTNESS_FACTOR);
                 painter.drawCellInnerCircle(
                         cell.coordinate(),
                         fillColor,
                         null,
                         NO_STROKE_LINE_WIDTH,
                         StrokeType.INSIDE);
+            } else if (cell.entity() instanceof PetEgg) {
+                painter.drawCellInnerCircle(
+                        cell.coordinate(),
+                        resolveAgentFillColor(descriptor, cell.entity()),
+                        descriptor.borderColorOrFallback(),
+                        PET_EGG_STROKE_LINE_WIDTH,
+                        StrokeType.INSIDE);
+            } else {
+                painter.drawCellInnerCircle(
+                        cell.coordinate(),
+                        resolveAgentFillColor(descriptor, cell.entity()),
+                        null,
+                        NO_STROKE_LINE_WIDTH,
+                        StrokeType.INSIDE);
             }
         };
+    }
+
+    private int minByDescriptorId(String descriptorId) {
+        return switch (descriptorId) {
+            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN;
+            default -> throw new IllegalArgumentException("No min defined for descriptorId: " + descriptorId);
+        };
+    }
+
+    private int maxByDescriptorId(String descriptorId) {
+        return switch (descriptorId) {
+            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX;
+            default -> throw new IllegalArgumentException("No max defined for descriptorId: " + descriptorId);
+        };
+    }
+
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private int normalizeDoubleValueForMapRange(double value,
+                                                int min,
+                                                int max) {
+        if ((max < min) || Double.isNaN(value)) {
+            return min;
+        }
+        int roundedValue = (int) Math.round(value);
+        return Math.max(min, Math.min(max, roundedValue));
+    }
+
+    private int normalizeIntValueForMapRange(int value,
+                                             int min,
+                                             int max) {
+        if (max < min) {
+            return min;
+        }
+        return Math.max(min, Math.min(max, value));
     }
 
     private Color resolveTerrainFillColor(GridEntityDescriptor descriptor,
@@ -146,10 +200,10 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case Trail trail -> normalizeValueForMapRange(
+                case Trail trail -> normalizeIntValueForMapRange(
                         trail.intensity(),
-                        1,
-                        maxAmountByDescriptorId(descriptorId));
+                        minByDescriptorId(descriptorId),
+                        maxByDescriptorId(descriptorId));
                 case TerrainConstant ignoredTerrain -> -1;
             };
             return colorMap.getOrDefault(value, baseColor);
@@ -164,10 +218,10 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case ResourceBase resource -> normalizeValueForMapRange(
+                case ResourceBase resource -> normalizeDoubleValueForMapRange(
                         resource.currentAmount(),
-                        0,
-                        maxAmountByDescriptorId(descriptorId));
+                        minByDescriptorId(descriptorId),
+                        maxByDescriptorId(descriptorId));
                 case NoResource ignoredResource -> -1;
             };
             return colorMap.getOrDefault(value, baseColor);
@@ -175,49 +229,21 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         return baseColor;
     }
 
-    private int maxAmountByDescriptorId(String descriptorId) {
-        return switch (descriptorId) {
-            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> (int) EtpetsBalance.PET_TRAIL_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_MAX_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_MAX_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_MAX_ENERGY_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_DURATION;
-            default -> throw new IllegalArgumentException("No max amount defined for descriptorId: " + descriptorId);
-        };
-    }
-
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    private int normalizeValueForMapRange(double value,
-                                          int min,
-                                          int max) {
-        if ((max < min) || Double.isNaN(value)) {
-            return min;
-        }
-        int roundedValue = (int) Math.round(value);
-        return Math.max(min, Math.min(max, roundedValue));
-    }
-
     private Color resolveAgentFillColor(GridEntityDescriptor descriptor,
                                         AgentEntity entity) {
         String descriptorId = descriptor.descriptorId();
         Color baseColor = descriptor.colorOrFallback();
-        if ((entity instanceof Pet pet) && pet.isDead()) {
-            return FXPaintFactory.adjustColorAlpha(
-                    FXPaintFactory.adjustBrightness(baseColor, DEAD_PET_BRIGHTNESS_FACTOR),
-                    DEAD_PET_ALPHA);
-        }
-
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case Pet pet -> normalizeValueForMapRange(
+                case Pet pet -> normalizeIntValueForMapRange(
                         pet.currentEnergy(),
-                        1,
-                        maxAmountByDescriptorId(descriptorId));
-                case PetEgg egg -> normalizeValueForMapRange(
-                        (EtpetsBalance.PET_EGG_INCUBATION_DURATION - egg.incubationRemaining()) + 1,
-                        1,
-                        maxAmountByDescriptorId(descriptorId));
+                        minByDescriptorId(descriptorId),
+                        maxByDescriptorId(descriptorId));
+                case PetEgg egg -> normalizeIntValueForMapRange(
+                        egg.incubationRemaining(),
+                        minByDescriptorId(descriptorId),
+                        maxByDescriptorId(descriptorId));
                 case NoAgent ignoredAgent -> -1;
             };
             return colorMap.getOrDefault(value, baseColor);

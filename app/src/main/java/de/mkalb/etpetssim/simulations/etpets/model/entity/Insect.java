@@ -24,6 +24,11 @@ public final class Insect extends ResourceBase {
     }
 
     @Override
+    public double minAmount() {
+        return EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
+    }
+
+    @Override
     public String toDisplayString() {
         return String.format("[INSECT A=%.1f/%.1f R=%f]", currentAmount(), maxAmount(), regenerationPerStep());
     }

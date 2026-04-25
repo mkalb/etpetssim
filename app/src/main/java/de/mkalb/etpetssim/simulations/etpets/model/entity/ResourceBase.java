@@ -40,7 +40,7 @@ public abstract sealed class ResourceBase implements ResourceEntity
     }
 
     public final void consume() {
-        currentAmount = Math.max(0.0d, currentAmount - consumptionPerAct());
+        currentAmount = Math.max(minAmount(), currentAmount - consumptionPerAct());
     }
 
     public final void regenerate() {
@@ -50,5 +50,7 @@ public abstract sealed class ResourceBase implements ResourceEntity
     protected abstract int consumptionPerAct();
 
     public abstract int energyGainPerAct();
+
+    public abstract double minAmount();
 
 }

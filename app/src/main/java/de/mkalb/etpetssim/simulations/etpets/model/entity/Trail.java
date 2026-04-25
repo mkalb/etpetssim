@@ -1,11 +1,13 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
+
 public final class Trail implements TerrainEntity {
 
-    private double intensity;
+    private int intensity;
 
-    public Trail(double intensity) {
-        this.intensity = Math.max(0.0d, intensity);
+    public Trail(int intensity) {
+        this.intensity = intensity;
     }
 
     @Override
@@ -18,25 +20,21 @@ public final class Trail implements TerrainEntity {
         return true;
     }
 
-    public double intensity() {
+    public int intensity() {
         return intensity;
     }
 
-    public void increase(double amount, double max) {
-        intensity = Math.min(Math.max(0.0d, max), intensity + amount);
+    public void increase(int amount) {
+        intensity = Math.min(intensity + amount, EtpetsBalance.TRAIL_INTENSITY_MAX);
     }
 
-    public void decay(double amount) {
-        intensity = Math.max(0.0d, intensity - amount);
-    }
-
-    public boolean isDepleted() {
-        return intensity <= 0.0d;
+    public void decay(int amount) {
+        intensity = intensity - amount; // Can be lower than MIN, but will be removed in that case
     }
 
     @Override
     public String toDisplayString() {
-        return String.format("[TRAIL %.2f]", intensity);
+        return String.format("[TRAIL %d]", intensity);
     }
 
     @Override

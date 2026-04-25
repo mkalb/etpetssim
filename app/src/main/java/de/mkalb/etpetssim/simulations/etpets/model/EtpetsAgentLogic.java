@@ -46,7 +46,7 @@ public final class EtpetsAgentLogic {
 
             if (entity instanceof PetEgg egg) {
                 egg.decreaseIncubation();
-                if (egg.incubationRemaining() <= 0) {
+                if (egg.incubationRemaining() < EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN) {
                     Pet newPet = hatchEgg(egg, stepIndex, idSequence);
                     agentModel.setEntity(currentCoordinate, newPet);
                     eggCountChange--;
@@ -68,7 +68,7 @@ public final class EtpetsAgentLogic {
                 pet.decrementReproductionCooldown();
 
                 // Death from energy depletion.
-                if (pet.currentEnergy() <= 0) {
+                if (pet.currentEnergy() < EtpetsBalance.PET_CURRENT_ENERGY_MIN) {
                     pet.markDead(stepIndex);
                     cumulativeDeadPetCountChange++;
                     activePetCountChange--;
@@ -281,9 +281,9 @@ public final class EtpetsAgentLogic {
         // Update terrain trail at destination.
         TerrainEntity terrain = gridModel.terrainModel().getEntity(to);
         if (terrain == TerrainConstant.GROUND) {
-            gridModel.terrainModel().setEntity(to, new Trail(EtpetsBalance.PET_TRAIL_INCREASE_PER_ENTRY));
+            gridModel.terrainModel().setEntity(to, new Trail(EtpetsBalance.TRAIL_INTENSITY_INITIAL));
         } else if (terrain instanceof Trail trail) {
-            trail.increase(EtpetsBalance.PET_TRAIL_INCREASE_PER_ENTRY, EtpetsBalance.PET_TRAIL_MAX);
+            trail.increase(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
         }
 
         return ActionEffect.none();
@@ -338,7 +338,7 @@ public final class EtpetsAgentLogic {
                 parentBId,
                 genome,
                 stepIndex,
-                EtpetsBalance.PET_EGG_INCUBATION_DURATION
+                EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX
         );
         gridModel.agentModel().setEntity(candidate.eggTarget(), egg);
 

@@ -84,8 +84,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.agent.petegg.long",
             "etpets.entity.agent.petegg.description",
             null,
-            Color.web("#A88C1A"),
-            null
+            Color.web("#D8B6CC"),
+            Color.web("#4B3A66")
     );
 
     private final GridEntityDescriptorSpec spec;
