@@ -70,7 +70,7 @@ public final class EtpetsAgentLogic {
 
                 // Death from energy depletion.
                 if (pet.currentEnergy() < EtpetsBalance.PET_CURRENT_ENERGY_MIN) {
-                    pet.markDead();
+                    pet.die();
                     cumulativeDeadPetCountChange++;
                     activePetCountChange--;
                     AppLogger.infof("Pet %s died at %s from energy depletion.",

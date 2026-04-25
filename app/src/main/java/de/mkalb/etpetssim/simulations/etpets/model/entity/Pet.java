@@ -119,8 +119,7 @@ public final class Pet implements AgentEntity {
         return dead;
     }
 
-    // TODO Is the name markDead() a good name?
-    public void markDead() {
+    public void die() {
         dead = true;
     }
 
