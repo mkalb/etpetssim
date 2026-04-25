@@ -106,7 +106,7 @@ public final class Pet implements AgentEntity {
     }
 
     public void decrementReproductionCooldownRemaining() {
-        if (reproductionCooldownRemaining > 0) { // TODO introduce constant
+        if (reproductionCooldownRemaining > 0) { // TODO introduce constant for minimum
             reproductionCooldownRemaining--;
         }
     }
