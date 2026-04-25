@@ -141,22 +141,38 @@ Notes:
 
 ### ET_PETS - Entity Display Catalog
 
-| Descriptor ID | Long Name (en_US) | Long Name Key                            | Emoji | Fill Color            | Border Color | Default In Layer(s) |
-|---------------|-------------------|------------------------------------------|-------|-----------------------|--------------|---------------------|
-| `ground`      | Ground Terrain    | `etpets.entity.terrain.ground.long`      | -     | `#2E2E2E`             | -            | `terrain`           |
-| `rock`        | Rock Terrain      | `etpets.entity.terrain.rock.long`        | -     | `#737373`             | -            | -                   |
-| `water`       | Water Terrain     | `etpets.entity.terrain.water.long`       | -     | `#1F4FA0`             | -            | -                   |
-| `trail`       | Trail Terrain     | `etpets.entity.terrain.trail.long`       | -     | `#6E4E18` [^ettrail]  | -            | -                   |
-| `plant`       | Plant Resource    | `etpets.entity.resource.plant.long`      | -     | `#3A8020` [^etplant]  | -            | -                   |
-| `insect`      | Insect Resource   | `etpets.entity.resource.insect.long`     | -     | `#B07000` [^etinsect] | -            | -                   |
-| `pet`         | ET Pet            | `etpets.entity.agent.pet.long`           | -     | `#7820CC` [^etpet]    | -            | -                   |
-| `pet_egg`     | ET Pet Egg        | `etpets.entity.agent.petegg.long`        | -     | `#A88C1A` [^etegg]    | -            | -                   |
+| Descriptor ID | Long Name (en_US) | Long Name Key                        | Emoji | Fill Color            | Border Color | Default In Layer(s) |
+|---------------|-------------------|--------------------------------------|-------|-----------------------|--------------|---------------------|
+| `ground`      | Ground Terrain    | `etpets.entity.terrain.ground.long`  | -     | `#2E2E2E`             | -            | `terrain`           |
+| `rock`        | Rock Terrain      | `etpets.entity.terrain.rock.long`    | -     | `#737373`             | -            | -                   |
+| `water`       | Water Terrain     | `etpets.entity.terrain.water.long`   | -     | `#1F4FA0`             | -            | -                   |
+| `trail`       | Trail Terrain     | `etpets.entity.terrain.trail.long`   | -     | `#6E4E18` [^ettrail]  | -            | -                   |
+| `plant`       | Plant Resource    | `etpets.entity.resource.plant.long`  | -     | `#3A8020` [^etplant]  | -            | -                   |
+| `insect`      | Insect Resource   | `etpets.entity.resource.insect.long` | -     | `#B07000` [^etinsect] | -            | -                   |
+| `pet`         | ET Pet            | `etpets.entity.agent.pet.long`       | -     | `#7820CC` [^etpet]    | -            | -                   |
+| `pet_egg`     | ET Pet Egg        | `etpets.entity.agent.petegg.long`    | -     | `#D8B6CC` [^etegg]    | `#4B3A66`    | -                   |
 
-[^ettrail]: Base color; rendered brighter with increasing trail intensity — 10 brightness levels, factor range [0.0, +0.65]. Low-intensity trails (#6E4E18) appear as dark amber; high-intensity trails (#B68128) glow warm golden. Intensity is normalized against `EtpetsAgentLogic.TRAIL_MAX` (100.0). Rendered as a full terrain hexagon replacing ground.
-[^etplant]: Base color; rendered brighter with increasing current resource amount — 10 brightness levels, factor range [0.0, +0.50]. Amount is mapped against `EtpetsSimulationManager.PLANT_MAX_AMOUNT_MAX` (15). Nearly depleted plants (#3A8020) appear dark forest green; full plants (#57C030) appear vivid bright green. Rendered as an inner circle on top of the terrain layer.
-[^etinsect]: Base color; rendered brighter with increasing current resource amount — 10 brightness levels, factor range [0.0, +0.50]. Amount is mapped against `EtpetsSimulationManager.INSECT_MAX_AMOUNT_MAX` (25). Nearly depleted insects (#B07000) appear deep amber; full insects (#FFA800) appear bright orange-yellow. Rendered as an inner circle on top of the terrain layer.
-[^etpet]: Base color; rendered brighter with increasing energy — 10 brightness levels, factor range [0.0, +0.65]. Energy is mapped against `PetTraits.MAX_ENERGY_MAX` (140). Low-energy pets (#7820CC) appear deep violet; high-energy pets (#C635FF) appear vivid bright violet. Dead pets are rendered at 30% brightness and 70% alpha (#240A3D at α 0.70) with a background-colored border for one simulation step. Rendered as an inner circle on top of the terrain layer.
-[^etegg]: Base color; rendered brighter with increasing incubation progress — 5 brightness groups over 10 incubation steps, factor range [0.0, +0.55]. Freshly laid eggs (#A88C1A) appear dull golden-olive; eggs about to hatch (#FFD928) glow bright yellow-gold. Progress is derived from `EtpetsAgentLogic.INCUBATION_DURATION - egg.incubationRemaining()`. Rendered as an inner circle on top of the terrain layer.
+[^ettrail]: Base color; rendered brighter with increasing trail intensity — 5 brightness levels, factor
+range [0.0, +0.65]. Low-intensity trails (#6E4E18) appear dark amber; high-intensity trails glow brighter golden-brown.
+Intensity is mapped against `EtpetsBalance.TRAIL_INTENSITY_MAX` (10,000). Rendered as a full terrain hexagon replacing
+ground.
+[^etplant]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
+range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX` (15). Nearly depleted plants (
+#3A8020) appear dark forest green; maximum plants appear brighter vivid green. Rendered as an inner circle on top of the
+terrain layer.
+[^etinsect]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
+range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX` (25). Nearly depleted insects (
+#B07000) appear deep amber; maximum insects appear brighter orange-yellow. Rendered as an inner circle on top of the
+terrain layer.
+[^etpet]: Base color; rendered brighter with increasing energy — 5 brightness levels, factor range [0.0, +0.65]. Energy
+is mapped against `EtpetsBalance.PET_CURRENT_ENERGY_MAX` (140). Low-energy pets (#7820CC) appear deep violet;
+high-energy pets appear vivid bright violet. Dead pets are rendered at 30% brightness and 70% alpha with a
+background-colored border for one simulation step. Rendered as an inner circle on top of the terrain layer.
+[^etegg]: Base color; rendered brighter with increasing incubation remaining time — 5 brightness groups over 15
+incubation steps (remaining range [1, 15]), factor range [0.0, +0.30]. Freshly laid eggs (incubationRemaining=15,
+maximum brightness) appear as lighter mauve-rose; eggs about to hatch (incubationRemaining=1, minimal brightness) appear
+dull mauve. Rendered as an inner circle with dark purple border (`#4B3A66`, stroke width 1.0) on top of the terrain
+layer.
 
 ## WATOR
 
