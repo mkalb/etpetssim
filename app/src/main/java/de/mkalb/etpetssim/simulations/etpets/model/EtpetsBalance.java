@@ -5,8 +5,8 @@ public final class EtpetsBalance {
     // Trail
     public static final int TRAIL_INTENSITY_RANGE_MIN = 1;
     public static final int TRAIL_INTENSITY_RANGE_MAX = 10_000;
-    public static final int TRAIL_INTENSITY_DEFAULT = 50; // First entry (lower than TRAIL_INTENSITY_INCREASE_PER_ENTRY)
-    public static final int TRAIL_INTENSITY_INCREASE_PER_ENTRY = 100;
+    public static final int TRAIL_INTENSITY_DEFAULT = 20; // First entry (lower than TRAIL_INTENSITY_INCREASE_PER_ENTRY)
+    public static final int TRAIL_INTENSITY_INCREASE_PER_ENTRY = 40;
     public static final int TRAIL_INTENSITY_DECAY_PER_STEP = 1;
 
     // Plant
@@ -54,14 +54,14 @@ public final class EtpetsBalance {
     // Pet
     public static final int PET_CURRENT_ENERGY_RANGE_MIN = 1;
     public static final int PET_CURRENT_ENERGY_RANGE_MAX = PET_TRAITS_MAX_ENERGY_RANGE_MAX;
-    public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.5d;
+    public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.2d;
     public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN = 0;
 
     // Pet behavior (EtpetsAgentLogic)
     public static final int PET_BEHAVIOR_ENERGY_LOSS_PER_STEP = 1;
     public static final int PET_BEHAVIOR_ENERGY_HUNGRY_THRESHOLD = 70;
-    public static final int PET_BEHAVIOR_REPRODUCTION_MIN_AGE = 100;
-    public static final int PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD = 500;
+    public static final int PET_BEHAVIOR_REPRODUCTION_MIN_AGE = 400;
+    public static final int PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD = 100;
 
     // Pet score (EtpetsAgentLogic)
     public static final int SCORE_REPRODUCE_BASE = 80;
