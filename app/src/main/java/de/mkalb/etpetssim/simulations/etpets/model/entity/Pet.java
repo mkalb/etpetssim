@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -106,9 +107,15 @@ public final class Pet implements AgentEntity {
     }
 
     public void decrementReproductionCooldownRemaining() {
-        if (reproductionCooldownRemaining > 0) { // TODO introduce constant for minimum
+        if (reproductionCooldownRemaining > EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN) {
             reproductionCooldownRemaining--;
         }
+    }
+
+    public boolean isReproductionEligibleByState() {
+        return !dead
+                && (currentEnergy >= traits.reproductionMinEnergy())
+                && (reproductionCooldownRemaining == EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN);
     }
 
     public void resetReproductionCooldown() {

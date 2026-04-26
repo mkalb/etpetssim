@@ -49,6 +49,7 @@ public final class EtpetsBalance {
     public static final int PET_REPRODUCTION_COOLDOWN_DEFAULT = 200;
     public static final int PET_REPRODUCTION_COOLDOWN_MIN = 100;
     public static final int PET_REPRODUCTION_COOLDOWN_MAX = 300;
+    public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_MIN = 0;
 
     // PET behavior
     public static final int PET_ENERGY_LOSS_PER_STEP = 1;

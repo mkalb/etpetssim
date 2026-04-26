@@ -378,7 +378,7 @@ public final class EtpetsAgentLogic {
                 egg.parentBId(),
                 stepIndex,
                 birthEnergy,
-                0, // TODO Use constant for minimum
+                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN,
                 traits);
     }
 
@@ -390,11 +390,8 @@ public final class EtpetsAgentLogic {
     }
 
     private static boolean isReproductionEligible(Pet pet, int stepIndex) {
-        // TODO move some of this logic into Pet: !pet.isDead()  && (pet.currentEnergy() >= pet.traits().reproductionMinEnergy()) && (pet.reproductionCooldownRemaining() == 0);
-        return !pet.isDead()
-                && (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_REPRODUCTION_MIN_AGE)
-                && (pet.currentEnergy() >= pet.traits().reproductionMinEnergy())
-                && (pet.reproductionCooldownRemaining() == 0);
+        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_REPRODUCTION_MIN_AGE)
+                && pet.isReproductionEligibleByState();
     }
 
     /**
