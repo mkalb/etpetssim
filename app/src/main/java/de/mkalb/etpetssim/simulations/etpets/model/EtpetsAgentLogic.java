@@ -270,44 +270,41 @@ public final class EtpetsAgentLogic {
         return switch (candidate.type()) {
             case WAIT -> ActionEffect.none();
             case MOVE -> executeMoveAction(currentCoordinate, candidate.moveTarget(), pet, gridModel);
-            case EAT -> executeEatAction(candidate, gridModel, pet);
+            case EAT -> executeEatAction(currentCoordinate, candidate.interactionTarget(), candidate, pet, gridModel);
             case REPRODUCE -> executeReproduceAction(candidate, pet, random, gridModel, stepIndex, idSequence);
         };
     }
 
-    private static ActionEffect executeMoveAction(GridCoordinate from, GridCoordinate to,
-                                                  Pet pet, EtpetsGridModel gridModel) {
+    private static ActionEffect executeMoveAction(GridCoordinate fromCoordinate,
+                                                  GridCoordinate toCoordinate,
+                                                  Pet pet,
+                                                  EtpetsGridModel gridModel) {
         // Movement energy cost (at least 1, scaled by movementCostModifier).
         long roundedMovementCost = Math.round(pet.traits().movementCostModifier());
         int movementCost = Math.max(1, Math.toIntExact(roundedMovementCost));
         pet.changeEnergy(-movementCost);
 
         // Relocate pet.
-        pet.recordMoveFrom(from);
-        gridModel.agentModel().setEntityToDefault(from);
-        gridModel.agentModel().setEntity(to, pet);
+        pet.recordMoveFrom(fromCoordinate);
+        gridModel.agentModel().setEntityToDefault(fromCoordinate);
+        gridModel.agentModel().setEntity(toCoordinate, pet);
 
-        updateTrailAtCoordinate(to, gridModel);
+        updateTrailAtCoordinate(toCoordinate, gridModel);
 
         return ActionEffect.none();
     }
 
-    private static void updateTrailAtCoordinate(GridCoordinate coordinate, EtpetsGridModel gridModel) {
-        // Add a fresh trail on ground, otherwise reinforce existing trail intensity.
-        TerrainEntity terrain = gridModel.terrainModel().getEntity(coordinate);
-        if (terrain == TerrainConstant.GROUND) {
-            gridModel.terrainModel().setEntity(coordinate, new Trail(EtpetsBalance.TRAIL_INTENSITY_DEFAULT));
-        } else if (terrain instanceof Trail trail) {
-            trail.incrementIntensity(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
-        }
-    }
-
-    private static ActionEffect executeEatAction(ActionCandidate candidate, EtpetsGridModel gridModel, Pet pet) {
-        ResourceEntity resourceEntity = gridModel.resourceModel().getEntity(candidate.interactionTarget());
+    private static ActionEffect executeEatAction(GridCoordinate petCoordinate,
+                                                 GridCoordinate resourceCoordinate,
+                                                 ActionCandidate candidate,
+                                                 Pet pet,
+                                                 EtpetsGridModel gridModel) {
+        ResourceEntity resourceEntity = gridModel.resourceModel().getEntity(resourceCoordinate);
         if ((resourceEntity instanceof ResourceBase resource) && resource.canConsume()) {
-            // Consume the resource and gain energy.
+            // Consume the resource, gain energy and update trail.
             resource.consume();
             pet.changeEnergy(resource.energyGainPerAct());
+            updateTrailAtCoordinate(petCoordinate, gridModel);
         } else {
             AppLogger.warnf("Failed to execute EAT action due to failed preconditions: %s. Actual resource entity: %s",
                     candidate, resourceEntity.toDisplayString());
@@ -316,13 +313,12 @@ public final class EtpetsAgentLogic {
         return ActionEffect.none();
     }
 
-    private static ActionEffect executeReproduceAction(
-            ActionCandidate candidate,
-            Pet pet,
-            Random random,
-            EtpetsGridModel gridModel,
-            int stepIndex,
-            EtpetsIdSequence idSequence) {
+    private static ActionEffect executeReproduceAction(ActionCandidate candidate,
+                                                       Pet pet,
+                                                       Random random,
+                                                       EtpetsGridModel gridModel,
+                                                       int stepIndex,
+                                                       EtpetsIdSequence idSequence) {
         AgentEntity partnerEntity = gridModel.agentModel().getEntity(candidate.interactionTarget());
         if (!(partnerEntity instanceof Pet partnerPet) || !canReproduce(pet, partnerPet, stepIndex)) {
             AppLogger.warn("Failed to execute REPRODUCE action due to failed preconditions: " + candidate);
@@ -359,6 +355,16 @@ public final class EtpetsAgentLogic {
         partnerPet.resetReproductionCooldown();
 
         return new ActionEffect(1);
+    }
+
+    private static void updateTrailAtCoordinate(GridCoordinate coordinate, EtpetsGridModel gridModel) {
+        // Add a fresh trail on ground, otherwise reinforce existing trail intensity.
+        TerrainEntity terrain = gridModel.terrainModel().getEntity(coordinate);
+        if (terrain == TerrainConstant.GROUND) {
+            gridModel.terrainModel().setEntity(coordinate, new Trail(EtpetsBalance.TRAIL_INTENSITY_DEFAULT));
+        } else if (terrain instanceof Trail trail) {
+            trail.incrementIntensity(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
+        }
     }
 
     private static boolean isEggPlacementValid(@Nullable GridCoordinate eggCoordinate, EtpetsGridModel gridModel) {
