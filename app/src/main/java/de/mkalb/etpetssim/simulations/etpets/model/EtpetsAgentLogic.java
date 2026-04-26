@@ -65,7 +65,7 @@ public final class EtpetsAgentLogic {
                 }
 
                 // Passive energy loss and reproduction cooldown decrement.
-                pet.changeEnergy(-EtpetsBalance.PET_ENERGY_LOSS_PER_STEP);
+                pet.changeEnergy(-EtpetsBalance.PET_BEHAVIOR_ENERGY_LOSS_PER_STEP);
                 pet.decrementReproductionCooldownRemaining();
 
                 // Death from energy depletion.
@@ -132,7 +132,7 @@ public final class EtpetsAgentLogic {
         }
 
         boolean canSelfReproduce = isReproductionEligible(pet, stepIndex);
-        boolean isHungry = pet.currentEnergy() < EtpetsBalance.PET_EAT_IF_ADJACENT_ENERGY_THRESHOLD;
+        boolean isHungry = pet.currentEnergy() < EtpetsBalance.PET_BEHAVIOR_ENERGY_HUNGRY_THRESHOLD;
 
         // Pass 1: Ring 2 → determine which ring-1 cells gain look-ahead score bonuses.
         Set<GridCoordinate> ring1HasResourceBonus = new HashSet<>();
@@ -175,7 +175,7 @@ public final class EtpetsAgentLogic {
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
                 int moveScore = EtpetsBalance.SCORE_MOVE_BASE - EtpetsBalance.SCORE_MOVE_COST_PENALTY;
-                if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > EtpetsBalance.PET_TRAIL_PREFERENCE_THRESHOLD)) {
+                if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > EtpetsBalance.PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD)) {
                     moveScore += EtpetsBalance.SCORE_MOVE_TRAIL_WEAK_BONUS;
                 }
                 if (ring1HasResourceBonus.contains(coord)) {
@@ -338,8 +338,8 @@ public final class EtpetsAgentLogic {
                 new PetGenome(pet.traits()),
                 new PetGenome(partnerPet.traits()),
                 random,
-                EtpetsBalance.PET_MUTATION_CHANCE_PER_TRAIT,
-                EtpetsBalance.PET_MUTATION_DELTA
+                EtpetsBalance.PET_GENOME_MUTATION_CHANCE_PER_TRAIT,
+                EtpetsBalance.PET_GENOME_MUTATION_DELTA
         );
 
         long parentAId = Math.min(pet.petId(), partnerPet.petId());
@@ -371,7 +371,7 @@ public final class EtpetsAgentLogic {
     private static Pet hatchEgg(PetEgg egg, int stepIndex,
                                 EtpetsIdSequence idSequence) {
         PetTraits traits = egg.petGenome().traits();
-        int birthEnergy = Math.toIntExact(Math.round(traits.maxEnergy() * EtpetsBalance.PET_BIRTH_ENERGY_FACTOR));
+        int birthEnergy = Math.toIntExact(Math.round(traits.maxEnergy() * EtpetsBalance.PET_CURRENT_ENERGY_BIRTH_FACTOR));
         return new Pet(
                 idSequence.next(),
                 egg.parentAId(),
@@ -390,7 +390,7 @@ public final class EtpetsAgentLogic {
     }
 
     private static boolean isReproductionEligible(Pet pet, int stepIndex) {
-        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_REPRODUCTION_MIN_AGE)
+        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_BEHAVIOR_REPRODUCTION_MIN_AGE)
                 && pet.isReproductionEligibleByState();
     }
 

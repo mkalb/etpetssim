@@ -47,19 +47,21 @@ public final class EtpetsBalance {
     public static final int PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN = 100;
     public static final int PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX = 300;
 
+    // PetGenome
+    public static final double PET_GENOME_MUTATION_CHANCE_PER_TRAIT = 0.08d;
+    public static final double PET_GENOME_MUTATION_DELTA = 0.05d;
+
     // Pet
     public static final int PET_CURRENT_ENERGY_RANGE_MIN = 1;
     public static final int PET_CURRENT_ENERGY_RANGE_MAX = PET_TRAITS_MAX_ENERGY_RANGE_MAX;
+    public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.5d;
     public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN = 0;
 
     // Pet behavior (EtpetsAgentLogic)
-    public static final int PET_ENERGY_LOSS_PER_STEP = 1;
-    public static final int PET_EAT_IF_ADJACENT_ENERGY_THRESHOLD = 70;
-    public static final int PET_REPRODUCTION_MIN_AGE = 100;
-    public static final int PET_TRAIL_PREFERENCE_THRESHOLD = 500;
-    public static final double PET_MUTATION_CHANCE_PER_TRAIT = 0.08d;
-    public static final double PET_MUTATION_DELTA = 0.05d;
-    public static final double PET_BIRTH_ENERGY_FACTOR = 0.5d;
+    public static final int PET_BEHAVIOR_ENERGY_LOSS_PER_STEP = 1;
+    public static final int PET_BEHAVIOR_ENERGY_HUNGRY_THRESHOLD = 70;
+    public static final int PET_BEHAVIOR_REPRODUCTION_MIN_AGE = 100;
+    public static final int PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD = 500;
 
     // Pet score (EtpetsAgentLogic)
     public static final int SCORE_REPRODUCE_BASE = 80;
