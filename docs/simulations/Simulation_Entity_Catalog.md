@@ -154,22 +154,22 @@ Notes:
 
 [^ettrail]: Base color; rendered brighter with increasing trail intensity — 5 brightness levels, factor
 range [0.0, +0.65]. Low-intensity trails (#6E4E18) appear dark amber; high-intensity trails glow brighter golden-brown.
-Intensity is mapped against `EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX` (10,000). Rendered as a full terrain hexagon replacing
-ground.
+Intensity is mapped against `EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX` (10,000). Rendered as a full terrain hexagon
+replacing ground.
 [^etplant]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
-range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MAX` (15). Nearly depleted plants (
-#3A8020) appear dark forest green; maximum plants appear brighter vivid green. Rendered as an inner circle on top of the
-terrain layer.
+range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MAX` (15). Nearly depleted
+plants (#3A8020) appear dark forest green; maximum plants appear brighter vivid green. Rendered as an inner circle on
+top of the terrain layer.
 [^etinsect]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
-range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MAX` (25). Nearly depleted insects (
-#B07000) appear deep amber; maximum insects appear brighter orange-yellow. Rendered as an inner circle on top of the
-terrain layer.
+range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MAX` (30). Nearly depleted
+insects (#B07000) appear deep amber; maximum insects appear brighter orange-yellow. Rendered as an inner circle on top
+of the terrain layer.
 [^etpet]: Base color; rendered brighter with increasing energy — 5 brightness levels, factor range [0.0, +0.65]. Energy
-is mapped against `EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MAX` (140). Low-energy pets (#7820CC) appear deep violet;
+is mapped against `EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MAX` (150). Low-energy pets (#7820CC) appear deep violet;
 high-energy pets appear vivid bright violet. Dead pets are rendered at 30% brightness and 70% alpha with a
 background-colored border for one simulation step. Rendered as an inner circle on top of the terrain layer.
-[^etegg]: Base color; rendered brighter with increasing incubation remaining time — 5 brightness groups over 15
-incubation steps (remaining range [1, 15]), factor range [0.0, +0.30]. Freshly laid eggs (incubationRemaining=15,
+[^etegg]: Base color; rendered brighter with increasing incubation remaining time — 5 brightness groups over 20
+incubation steps (remaining range [1, 20]), factor range [0.0, +0.30]. Freshly laid eggs (incubationRemaining=20,
 maximum brightness) appear as lighter mauve-rose; eggs about to hatch (incubationRemaining=1, minimal brightness) appear
 dull mauve. Rendered as an inner circle with dark purple border (`#4B3A66`, stroke width 1.0) on top of the terrain
 layer.
