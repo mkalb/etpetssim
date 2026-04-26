@@ -55,7 +55,7 @@ public final class EtpetsSimulationManager
         int waterCount = computePercentCount(totalCells, config().waterPercent());
 
         // Only for testing / debugging
-        // model.terrainModel().setEntity(new GridCoordinate(0, 1), new Trail(EtpetsBalance.TRAIL_INTENSITY_MIN));
+        // model.terrainModel().setEntity(new GridCoordinate(0, 1), new Trail(EtpetsBalance.TRAIL_INTENSITY_RANGE_MIN));
         // model.terrainModel().setEntity(new GridCoordinate(1, 1), new Trail(1_000));
         // model.terrainModel().setEntity(new GridCoordinate(2, 1), new Trail(2_000));
         // model.terrainModel().setEntity(new GridCoordinate(3, 1), new Trail(3_000));
@@ -65,7 +65,7 @@ public final class EtpetsSimulationManager
         // model.terrainModel().setEntity(new GridCoordinate(7, 1), new Trail(7_000));
         // model.terrainModel().setEntity(new GridCoordinate(8, 1), new Trail(8_000));
         // model.terrainModel().setEntity(new GridCoordinate(9, 1), new Trail(9_000));
-        // model.terrainModel().setEntity(new GridCoordinate(10, 1), new Trail(EtpetsBalance.TRAIL_INTENSITY_MAX));
+        // model.terrainModel().setEntity(new GridCoordinate(10, 1), new Trail(EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX));
 
         List<GridCoordinate> coordinates = new ArrayList<>(structure.coordinatesList());
         Collections.shuffle(coordinates, random);
@@ -86,10 +86,10 @@ public final class EtpetsSimulationManager
         int insectCount = computePercentCount(totalCells, config().insectPercent());
 
         // Only for testing / debugging
-        // for (int i = EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN; i <= EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX; i++) {
+        // for (int i = EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MIN; i <= EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MAX; i++) {
         //     model.resourceModel().setEntity(new GridCoordinate(i, 3), new Plant(i, i, 100));
         // }
-        // for (int i = EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN; i <= EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX; i++) {
+        // for (int i = EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MIN; i <= EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MAX; i++) {
         //     model.resourceModel().setEntity(new GridCoordinate(i, 5), new Insect(i, i, 100));
         // }
 
@@ -101,36 +101,36 @@ public final class EtpetsSimulationManager
                     + " traversable cells are available.");
         }
 
-        int plantRange = (EtpetsBalance.PLANT_MAX_AMOUNT_MAX - EtpetsBalance.PLANT_MAX_AMOUNT_MIN) + 1;
-        int insectRange = (EtpetsBalance.INSECT_MAX_AMOUNT_MAX - EtpetsBalance.INSECT_MAX_AMOUNT_MIN) + 1;
+        int plantRange = (EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX - EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MIN) + 1;
+        int insectRange = (EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX - EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MIN) + 1;
 
         int offset = 0;
         for (int i = 0; (i < plantCount) && ((offset + i) < available.size()); i++) {
-            double maxAmount = EtpetsBalance.PLANT_MAX_AMOUNT_MIN + random.nextInt(plantRange);
-            double regenRate = EtpetsBalance.PLANT_BASE_REGEN_RATE
-                    + (((random.nextDouble() * EtpetsBalance.PLANT_REGEN_VARIANCE_SPREAD_FACTOR) - 1.0d) * EtpetsBalance.PLANT_REGEN_RATE_VARIANCE);
+            double maxAmount = EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MIN + random.nextInt(plantRange);
+            double regenerationPerStep = EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE
+                    + random.nextDouble(-EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA, EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA);
             model.resourceModel().setEntity(available.get(offset + i),
-                    new Plant(maxAmount, maxAmount, regenRate));
+                    new Plant(maxAmount, maxAmount, regenerationPerStep));
         }
         offset += plantCount;
         for (int i = 0; (i < insectCount) && ((offset + i) < available.size()); i++) {
-            double maxAmount = EtpetsBalance.INSECT_MAX_AMOUNT_MIN + random.nextInt(insectRange);
-            double regenRate = EtpetsBalance.INSECT_BASE_REGEN_RATE
-                    + (((random.nextDouble() * EtpetsBalance.INSECT_REGEN_VARIANCE_SPREAD_FACTOR) - 1.0d) * EtpetsBalance.INSECT_REGEN_RATE_VARIANCE);
+            double maxAmount = EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MIN + random.nextInt(insectRange);
+            double regenerationPerStep = EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE
+                    + random.nextDouble(-EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA, EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA);
             model.resourceModel().setEntity(available.get(offset + i),
-                    new Insect(maxAmount, maxAmount, regenRate));
+                    new Insect(maxAmount, maxAmount, regenerationPerStep));
         }
     }
 
     private void initializePets(EtpetsGridModel model, Random random, EtpetsIdSequence idSequence) {
         // Only for testing / debugging
-        // for (int i = EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN; i <= EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX; i++) {
+        // for (int i = EtpetsBalance.PET_EGG_INCUBATION_REMAINING_RANGE_MIN; i <= EtpetsBalance.PET_EGG_INCUBATION_REMAINING_RANGE_MAX; i++) {
         //     model.agentModel().setEntity(new GridCoordinate(i, 7), new PetEgg(
         //             idSequence.next(),
         //             -1,
         //             -2,
         //             new PetGenome(new PetTraits(
-        //                     EtpetsBalance.PET_MAX_ENERGY_MAX,
+        //                     EtpetsBalance.PET_MAX_ENERGY_RANGE_MAX,
         //                     EtpetsBalance.PET_MOVEMENT_COST_MODIFIER_DEFAULT,
         //                     EtpetsBalance.PET_REPRODUCTION_MIN_ENERGY_DEFAULT,
         //                     EtpetsBalance.PET_REPRODUCTION_COOLDOWN_DEFAULT)),
@@ -146,16 +146,16 @@ public final class EtpetsSimulationManager
                     + " traversable cells are available.");
         }
 
-        int maxEnergyRange = (EtpetsBalance.PET_MAX_ENERGY_MAX - EtpetsBalance.PET_MAX_ENERGY_MIN) + 1;
+        int maxEnergyRange = (EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX - EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN) + 1;
 
         for (int i = 0; i < config().petCount(); i++) {
-            int maxEnergy = EtpetsBalance.PET_MAX_ENERGY_MIN + random.nextInt(maxEnergyRange);
+            int maxEnergy = EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN + random.nextInt(maxEnergyRange);
 
             PetTraits trait = new PetTraits(
                     maxEnergy,
-                    EtpetsBalance.PET_MOVEMENT_COST_MODIFIER_DEFAULT,
-                    EtpetsBalance.PET_REPRODUCTION_MIN_ENERGY_DEFAULT,
-                    EtpetsBalance.PET_REPRODUCTION_COOLDOWN_DEFAULT
+                    EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_DEFAULT,
+                    EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_DEFAULT,
+                    EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_DEFAULT
             );
 
             model.agentModel().setEntity(available.get(i), new Pet(
@@ -164,7 +164,7 @@ public final class EtpetsSimulationManager
                     null,// Initial pets have no parents
                     -1,
                     maxEnergy, // Use maxEnergy as initial energy (currentEnergy) for better starting conditions
-                    0, // No cooldown at start
+                    EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN, // No cooldown at start
                     trait
             ));
         }

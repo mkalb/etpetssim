@@ -27,7 +27,7 @@ public final class Insect extends ResourceBase {
 
     @Override
     public double minAmount() {
-        return EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
+        return EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MIN;
     }
 
     @Override

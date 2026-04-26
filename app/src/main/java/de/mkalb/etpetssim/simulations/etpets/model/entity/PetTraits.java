@@ -15,17 +15,17 @@ public record PetTraits(
     @SuppressWarnings("MagicNumber")
     public double genomeQualityScore() {
         double normMax = normalize(maxEnergy,
-                EtpetsBalance.PET_MAX_ENERGY_MIN,
-                EtpetsBalance.PET_MAX_ENERGY_MAX);
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX);
         double normCost = normalize(movementCostModifier,
-                EtpetsBalance.PET_MOVEMENT_COST_MODIFIER_MIN,
-                EtpetsBalance.PET_MOVEMENT_COST_MODIFIER_MAX);
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX);
         double normRepE = normalize(reproductionMinEnergy,
-                EtpetsBalance.PET_REPRODUCTION_MIN_ENERGY_MIN,
-                EtpetsBalance.PET_REPRODUCTION_MIN_ENERGY_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX);
         double normRepC = normalize(reproductionCooldown,
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_MIN,
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX);
         return (normMax + normCost + normRepE + normRepC) / 4.0d;
     }
 

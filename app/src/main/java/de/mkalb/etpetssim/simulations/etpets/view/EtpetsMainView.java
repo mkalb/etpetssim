@@ -153,22 +153,22 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
     private int minByDescriptorId(String descriptorId) {
         return switch (descriptorId) {
-            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MIN;
-            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_RANGE_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MIN;
+            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_RANGE_MIN;
             default -> throw new IllegalArgumentException("No min defined for descriptorId: " + descriptorId);
         };
     }
 
     private int maxByDescriptorId(String descriptorId) {
         return switch (descriptorId) {
-            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_MAX;
-            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_TRAIL -> EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PLANT -> EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_INSECT -> EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PET -> EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MAX;
+            case EtpetsEntity.DESCRIPTOR_ID_PET_EGG -> EtpetsBalance.PET_EGG_INCUBATION_REMAINING_RANGE_MAX;
             default -> throw new IllegalArgumentException("No max defined for descriptorId: " + descriptorId);
         };
     }

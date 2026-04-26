@@ -18,7 +18,7 @@ public final class EtpetsTerrainLogic {
             if (cell.entity() instanceof Trail trail) {
                 if (gridModel.agentModel().getEntity(cell.coordinate()).isEmpty()) {
                     trail.decrementIntensity(EtpetsBalance.TRAIL_INTENSITY_DECAY_PER_STEP);
-                    if (trail.intensity() < EtpetsBalance.TRAIL_INTENSITY_MIN) {
+                    if (trail.intensity() < EtpetsBalance.TRAIL_INTENSITY_RANGE_MIN) {
                         // Replace Trail with Ground
                         gridModel.terrainModel().setEntityToDefault(cell.coordinate());
                     }

@@ -27,7 +27,7 @@ public final class Plant extends ResourceBase {
 
     @Override
     public double minAmount() {
-        return EtpetsBalance.PLANT_CURRENT_AMOUNT_MIN;
+        return EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MIN;
     }
 
     @Override

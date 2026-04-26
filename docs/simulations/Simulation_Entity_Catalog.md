@@ -154,18 +154,18 @@ Notes:
 
 [^ettrail]: Base color; rendered brighter with increasing trail intensity — 5 brightness levels, factor
 range [0.0, +0.65]. Low-intensity trails (#6E4E18) appear dark amber; high-intensity trails glow brighter golden-brown.
-Intensity is mapped against `EtpetsBalance.TRAIL_INTENSITY_MAX` (10,000). Rendered as a full terrain hexagon replacing
+Intensity is mapped against `EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX` (10,000). Rendered as a full terrain hexagon replacing
 ground.
 [^etplant]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
-range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.PLANT_CURRENT_AMOUNT_MAX` (15). Nearly depleted plants (
+range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MAX` (15). Nearly depleted plants (
 #3A8020) appear dark forest green; maximum plants appear brighter vivid green. Rendered as an inner circle on top of the
 terrain layer.
 [^etinsect]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
-range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.INSECT_CURRENT_AMOUNT_MAX` (25). Nearly depleted insects (
+range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MAX` (25). Nearly depleted insects (
 #B07000) appear deep amber; maximum insects appear brighter orange-yellow. Rendered as an inner circle on top of the
 terrain layer.
 [^etpet]: Base color; rendered brighter with increasing energy — 5 brightness levels, factor range [0.0, +0.65]. Energy
-is mapped against `EtpetsBalance.PET_CURRENT_ENERGY_MAX` (140). Low-energy pets (#7820CC) appear deep violet;
+is mapped against `EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MAX` (140). Low-energy pets (#7820CC) appear deep violet;
 high-energy pets appear vivid bright violet. Dead pets are rendered at 30% brightness and 70% alpha with a
 background-colored border for one simulation step. Rendered as an inner circle on top of the terrain layer.
 [^etegg]: Base color; rendered brighter with increasing incubation remaining time — 5 brightness groups over 15

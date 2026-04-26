@@ -16,25 +16,26 @@ public record PetGenome(PetTraits traits) {
         double avgMaxEnergy = (ta.maxEnergy() + tb.maxEnergy()) / 2.0d;
         int maxEnergy = clampInt(
                 mutate(avgMaxEnergy, random, mutationChancePerTrait, mutationDelta),
-                EtpetsBalance.PET_MAX_ENERGY_MIN, EtpetsBalance.PET_MAX_ENERGY_MAX);
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX);
 
         double avgMovCost = (ta.movementCostModifier() + tb.movementCostModifier()) / 2.0d;
         double movCost = clampDouble(
                 mutate(avgMovCost, random, mutationChancePerTrait, mutationDelta),
-                EtpetsBalance.PET_MOVEMENT_COST_MODIFIER_MIN,
-                EtpetsBalance.PET_MOVEMENT_COST_MODIFIER_MAX);
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX);
 
         double avgReproEnergy = (ta.reproductionMinEnergy() + tb.reproductionMinEnergy()) / 2.0d;
         int reproEnergy = clampInt(
                 mutate(avgReproEnergy, random, mutationChancePerTrait, mutationDelta),
-                EtpetsBalance.PET_REPRODUCTION_MIN_ENERGY_MIN,
-                EtpetsBalance.PET_REPRODUCTION_MIN_ENERGY_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX);
 
         double avgReproCooldown = (ta.reproductionCooldown() + tb.reproductionCooldown()) / 2.0d;
         int reproCooldown = clampInt(
                 mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta),
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_MIN,
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX);
 
         return new PetGenome(new PetTraits(maxEnergy, movCost, reproEnergy, reproCooldown));
     }
