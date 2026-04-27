@@ -10,24 +10,24 @@ public final class EtpetsBalance {
     public static final int TRAIL_INTENSITY_DECAY_PER_STEP = 1;
 
     // Plant
-    public static final int PLANT_MAX_AMOUNT_RANGE_MIN = 5;
-    public static final int PLANT_MAX_AMOUNT_RANGE_MAX = 15;
+    public static final int PLANT_MAX_AMOUNT_RANGE_MIN = 12;
+    public static final int PLANT_MAX_AMOUNT_RANGE_MAX = 30;
     public static final int PLANT_CURRENT_AMOUNT_RANGE_MIN = 0;
     public static final int PLANT_CURRENT_AMOUNT_RANGE_MAX = PLANT_MAX_AMOUNT_RANGE_MAX;
-    public static final double PLANT_REGENERATION_PER_STEP_BASE = 0.2d;
-    public static final double PLANT_REGENERATION_PER_STEP_DELTA = 0.02d; // Must not be 0.0d
-    public static final int PLANT_CONSUMPTION_PER_ACT = 2;
+    public static final double PLANT_REGENERATION_PER_STEP_BASE = 0.30d;
+    public static final double PLANT_REGENERATION_PER_STEP_DELTA = 0.08d; // Must not be 0.0d
+    public static final int PLANT_CONSUMPTION_PER_ACT = 1;
     public static final int PLANT_ENERGY_GAIN_PER_ACT = 4;
 
     // Insect
-    public static final int INSECT_MAX_AMOUNT_RANGE_MIN = 10;
-    public static final int INSECT_MAX_AMOUNT_RANGE_MAX = 30;
+    public static final int INSECT_MAX_AMOUNT_RANGE_MIN = 4;
+    public static final int INSECT_MAX_AMOUNT_RANGE_MAX = 10;
     public static final int INSECT_CURRENT_AMOUNT_RANGE_MIN = 0;
     public static final int INSECT_CURRENT_AMOUNT_RANGE_MAX = INSECT_MAX_AMOUNT_RANGE_MAX;
-    public static final double INSECT_REGENERATION_PER_STEP_BASE = 0.05d;
+    public static final double INSECT_REGENERATION_PER_STEP_BASE = 0.04d;
     public static final double INSECT_REGENERATION_PER_STEP_DELTA = 0.02d; // Must not be 0.0d
-    public static final int INSECT_CONSUMPTION_PER_ACT = 4;
-    public static final int INSECT_ENERGY_GAIN_PER_ACT = 12;
+    public static final int INSECT_CONSUMPTION_PER_ACT = 3;
+    public static final int INSECT_ENERGY_GAIN_PER_ACT = 20;
 
     // PetEgg
     public static final int PET_EGG_INCUBATION_REMAINING_RANGE_MIN = 1;

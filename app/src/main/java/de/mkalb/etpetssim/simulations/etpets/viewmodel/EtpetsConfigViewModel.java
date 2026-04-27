@@ -45,9 +45,9 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     private static final int STEP = 1;
 
     private static final int ROCK_PERCENT_INITIAL = 1;
-    private static final int WATER_PERCENT_INITIAL = 3;
-    private static final int PLANT_PERCENT_INITIAL = 8;
-    private static final int INSECT_PERCENT_INITIAL = 2;
+    private static final int WATER_PERCENT_INITIAL = 2;
+    private static final int PLANT_PERCENT_INITIAL = 5;
+    private static final int INSECT_PERCENT_INITIAL = 1;
 
     // Rules
     private static final NeighborhoodMode NEIGHBORHOOD_MODE = NeighborhoodMode.EDGES_ONLY;
