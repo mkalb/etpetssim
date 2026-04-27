@@ -29,11 +29,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsObservationView> {
 
     private static final int TRAIL_GROUP_COUNT = 5;
-    private static final double TRAIL_MAX_FACTOR_DELTA = 0.65d;
-    private static final int PLANT_GROUP_COUNT = 5;
+    private static final double TRAIL_MAX_FACTOR_DELTA = 0.50d;
+    private static final int PLANT_GROUP_COUNT = 6;
     private static final double PLANT_MAX_FACTOR_DELTA = 0.55d;
-    private static final int INSECT_GROUP_COUNT = 5;
-    private static final double INSECT_MAX_FACTOR_DELTA = 0.55d;
+    private static final int INSECT_GROUP_COUNT = 7;
+    private static final double INSECT_MAX_FACTOR_DELTA = 0.40d;
     private static final int PET_GROUP_COUNT = 5;
     private static final double PET_MAX_FACTOR_DELTA = 0.65d;
     private static final int PET_EGG_GROUP_COUNT = 5;
@@ -119,9 +119,9 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 painter.drawCellInnerCircle(
                         cell.coordinate(),
                         resolveResourceFillColor(descriptor, cell.entity()),
-                        null,
-                        NO_STROKE_LINE_WIDTH,
-                        StrokeType.INSIDE);
+                        descriptor.borderColorOrFallback(),
+                        strokeLineWidth,
+                        StrokeType.CENTERED);
 
         cellAgentDrawer = (descriptor, painter, cell, _) -> {
             if ((cell.entity() instanceof Pet pet) && pet.isDead()) {

@@ -146,33 +146,27 @@ Notes:
 | `ground`      | Ground Terrain    | `etpets.entity.terrain.ground.long`  | -     | `#2E2E2E`             | -            | `terrain`           |
 | `rock`        | Rock Terrain      | `etpets.entity.terrain.rock.long`    | -     | `#737373`             | -            | -                   |
 | `water`       | Water Terrain     | `etpets.entity.terrain.water.long`   | -     | `#1F4FA0`             | -            | -                   |
-| `trail`       | Trail Terrain     | `etpets.entity.terrain.trail.long`   | -     | `#6E4E18` [^ettrail]  | -            | -                   |
-| `plant`       | Plant Resource    | `etpets.entity.resource.plant.long`  | -     | `#3A8020` [^etplant]  | -            | -                   |
-| `insect`      | Insect Resource   | `etpets.entity.resource.insect.long` | -     | `#B07000` [^etinsect] | -            | -                   |
+| `trail`       | Trail Terrain     | `etpets.entity.terrain.trail.long`   | -     | `#503812` [^ettrail]  | -            | -                   |
+| `plant`       | Plant Resource    | `etpets.entity.resource.plant.long`  | -     | `#3A8020` [^etplant]  | `#3A8020`    | -                   |
+| `insect`      | Insect Resource   | `etpets.entity.resource.insect.long` | -     | `#B8A000` [^etinsect] | `#B8A000`    | -                   |
 | `pet`         | ET Pet            | `etpets.entity.agent.pet.long`       | -     | `#7820CC` [^etpet]    | -            | -                   |
 | `pet_egg`     | ET Pet Egg        | `etpets.entity.agent.petegg.long`    | -     | `#D8B6CC` [^etegg]    | `#4B3A66`    | -                   |
 
 [^ettrail]: Base color; rendered brighter with increasing trail intensity — 5 brightness levels, factor
-range [0.0, +0.65]. Low-intensity trails (#6E4E18) appear dark amber; high-intensity trails glow brighter golden-brown.
-Intensity is mapped against `EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX` (10,000). Rendered as a full terrain hexagon
+range [0.0, +0.50]. Rendered as a full terrain hexagon
 replacing ground.
-[^etplant]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
-range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.PLANT_CURRENT_AMOUNT_RANGE_MAX` (15). Nearly depleted
-plants (#3A8020) appear dark forest green; maximum plants appear brighter vivid green. Rendered as an inner circle on
+[^etplant]: Base color; rendered brighter with increasing current resource amount — 6 brightness levels, factor
+range [0.0, +0.55]. Rendered as an inner circle on
 top of the terrain layer.
-[^etinsect]: Base color; rendered brighter with increasing current resource amount — 5 brightness levels, factor
-range [0.0, +0.55]. Amount is mapped against `EtpetsBalance.INSECT_CURRENT_AMOUNT_RANGE_MAX` (30). Nearly depleted
-insects (#B07000) appear deep amber; maximum insects appear brighter orange-yellow. Rendered as an inner circle on top
+[^etinsect]: Base color; rendered brighter with increasing current resource amount — 7 brightness levels, factor
+range [0.0, +0.40]. Rendered as an inner circle on top
 of the terrain layer.
-[^etpet]: Base color; rendered brighter with increasing energy — 5 brightness levels, factor range [0.0, +0.65]. Energy
-is mapped against `EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MAX` (150). Low-energy pets (#7820CC) appear deep violet;
-high-energy pets appear vivid bright violet. Dead pets are rendered at 30% brightness and 70% alpha with a
-background-colored border for one simulation step. Rendered as an inner circle on top of the terrain layer.
+[^etpet]: Base color; rendered brighter with increasing energy — 5 brightness levels, factor range [0.0, +0.65].
+Dead pets are rendered at 30% brightness and 70% alpha with a background-colored border for one simulation step.
+Rendered as an inner circle on top of the terrain layer.
 [^etegg]: Base color; rendered brighter with increasing incubation remaining time — 5 brightness groups over 20
-incubation steps (remaining range [1, 20]), factor range [0.0, +0.30]. Freshly laid eggs (incubationRemaining=20,
-maximum brightness) appear as lighter mauve-rose; eggs about to hatch (incubationRemaining=1, minimal brightness) appear
-dull mauve. Rendered as an inner circle with dark purple border (`#4B3A66`, stroke width 1.0) on top of the terrain
-layer.
+incubation steps (remaining range [1, 20]), factor range [0.0, +0.30]. Rendered as an inner circle with dark purple
+border (`#4B3A66`, stroke width 1.0) on top of the terrain layer.
 
 ## WATOR
 

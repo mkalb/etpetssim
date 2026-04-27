@@ -44,7 +44,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.terrain.trail.long",
             "etpets.entity.terrain.trail.description",
             null,
-            Color.web("#6E4E18"),
+            Color.web("#503812"),
             null
     ),
     PLANT(
@@ -55,7 +55,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.resource.plant.description",
             null,
             Color.web("#3A8020"),
-            null
+            Color.web("#3A8020", 0.5d)
     ),
     INSECT(
             EtpetsEntity.DESCRIPTOR_ID_INSECT,
@@ -64,8 +64,8 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
             "etpets.entity.resource.insect.long",
             "etpets.entity.resource.insect.description",
             null,
-            Color.web("#B07000"),
-            null
+            Color.web("#B8A000"),
+            Color.web("#B8A000", 0.5d)
     ),
     PET(
             EtpetsEntity.DESCRIPTOR_ID_PET,
