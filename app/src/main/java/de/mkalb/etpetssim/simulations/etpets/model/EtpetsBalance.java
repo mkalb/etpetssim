@@ -59,7 +59,7 @@ public final class EtpetsBalance {
 
     // Pet behavior (EtpetsAgentLogic)
     public static final int PET_BEHAVIOR_ENERGY_LOSS_PER_STEP = 1;
-    public static final int PET_BEHAVIOR_ENERGY_HUNGRY_THRESHOLD = 70;
+    public static final int PET_BEHAVIOR_ENERGY_HUNGRY_THRESHOLD = 30;
     public static final int PET_BEHAVIOR_REPRODUCTION_MIN_AGE = 400;
     public static final int PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD = 100;
 
@@ -70,11 +70,10 @@ public final class EtpetsBalance {
     public static final int SCORE_EAT_HUNGER_BONUS = 6;
     public static final int SCORE_EAT_ENERGY_GAIN_WEIGHT = 2;
     public static final int SCORE_EAT_AMOUNT_WEIGHT = 1;
-    public static final int SCORE_MOVE_BASE = 10;
+    public static final int SCORE_MOVE_BASE = 8;
     public static final int SCORE_MOVE_RING2_RESOURCE_BONUS = 8;
     public static final int SCORE_MOVE_RING2_PARTNER_BONUS = 6;
     public static final int SCORE_MOVE_TRAIL_WEAK_BONUS = 2;
-    public static final int SCORE_MOVE_COST_PENALTY = 2;
     public static final int SCORE_MOVE_PREVIOUS_COORDINATE_PENALTY = 6;
     public static final int SCORE_MOVE_PREVIOUS_PREVIOUS_COORDINATE_PENALTY = 3;
 

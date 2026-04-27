@@ -88,12 +88,12 @@ public final class EtpetsAgentLogic {
 
                 ActionCandidate selectedAction = pickBestCandidate(actionCandidates, random);
 
-                AppLogger.infof("Pet %s at %s has %d action candidates: %s. Selected: %s",
-                        pet.toDisplayString(),
-                        currentCoordinate.toDisplayString(),
-                        actionCandidates.size(),
-                        toDisplayString(actionCandidates),
-                        toDisplayString(selectedAction));
+                // AppLogger.infof("Pet %s at %s has %d action candidates: %s. Selected: %s",
+                //         pet.toDisplayString(),
+                //         currentCoordinate.toDisplayString(),
+                //         actionCandidates.size(),
+                //         toDisplayString(actionCandidates),
+                //         toDisplayString(selectedAction));
 
                 ActionEffect effect = executeActionCandidate(
                         selectedAction,
@@ -159,7 +159,7 @@ public final class EtpetsAgentLogic {
                 neighborhoodCellsByRing.getOrDefault(1, Collections.emptySortedMap());
         for (RadiusRingCell<EtpetsCell> ring1Cell : ring1Cells.values()) {
             EtpetsCell cell = ring1Cell.cell();
-            GridCoordinate coord = ring1Cell.coordinate();
+            GridCoordinate coordinate = ring1Cell.coordinate();
 
             // EAT candidates adjacent to the current position (ring 0).
             if (toConsumableResource(cell.resourceEntity()).isPresent()) {
@@ -168,28 +168,28 @@ public final class EtpetsAgentLogic {
 
             // REPRODUCE candidates adjacent to the current position (ring 0).
             if (canSelfReproduce && isValidReproductionPartner(pet, cell, stepIndex)) {
-                findEggPlacementCellFromSnapshots(currentCoordinate, coord, structure, snapshotCellsByCoordinate)
-                        .ifPresent(eggCoord -> ring0ReproductionOptions.add(new ReproductionOption(coord, eggCoord)));
+                findEggPlacementCellFromSnapshots(currentCoordinate, coordinate, structure, snapshotCellsByCoordinate)
+                        .ifPresent(eggCoord -> ring0ReproductionOptions.add(new ReproductionOption(coordinate, eggCoord)));
             }
 
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
-                int moveScore = EtpetsBalance.SCORE_MOVE_BASE - EtpetsBalance.SCORE_MOVE_COST_PENALTY;
+                int moveScore = EtpetsBalance.SCORE_MOVE_BASE;
                 if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > EtpetsBalance.PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD)) {
                     moveScore += EtpetsBalance.SCORE_MOVE_TRAIL_WEAK_BONUS;
                 }
-                if (ring1HasResourceBonus.contains(coord)) {
+                if (ring1HasResourceBonus.contains(coordinate)) {
                     moveScore += EtpetsBalance.SCORE_MOVE_RING2_RESOURCE_BONUS;
                 }
-                if (ring1HasPartnerBonus.contains(coord)) {
+                if (ring1HasPartnerBonus.contains(coordinate)) {
                     moveScore += EtpetsBalance.SCORE_MOVE_RING2_PARTNER_BONUS;
                 }
-                if (coord.equals(pet.previousCoordinate())) {
+                if (coordinate.equals(pet.previousCoordinate())) {
                     moveScore -= EtpetsBalance.SCORE_MOVE_PREVIOUS_COORDINATE_PENALTY;
-                } else if (coord.equals(pet.previousPreviousCoordinate())) {
+                } else if (coordinate.equals(pet.previousPreviousCoordinate())) {
                     moveScore -= EtpetsBalance.SCORE_MOVE_PREVIOUS_PREVIOUS_COORDINATE_PENALTY;
                 }
-                candidates.add(new ActionCandidate(ActionType.MOVE, moveScore, coord, coord, null));
+                candidates.add(new ActionCandidate(ActionType.MOVE, moveScore, coordinate, coordinate, null));
             }
         }
 
