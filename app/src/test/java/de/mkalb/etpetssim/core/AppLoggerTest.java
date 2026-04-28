@@ -11,7 +11,7 @@ import java.util.function.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.SAME_THREAD)
-class AppLoggerTest {
+final class AppLoggerTest {
 
     @BeforeAll
     static void setUpBeforeAll() {

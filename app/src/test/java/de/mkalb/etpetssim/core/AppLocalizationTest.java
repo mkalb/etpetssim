@@ -8,7 +8,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AppLocalizationTest {
+final class AppLocalizationTest {
 
     @BeforeAll
     static void setUpBeforeAll() {

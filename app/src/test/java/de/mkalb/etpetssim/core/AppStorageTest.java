@@ -9,10 +9,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Unit tests for the AppStorage utility class.
- */
-class AppStorageTest {
+final class AppStorageTest {
 
     private static final String FILE_PREFIX = "AppStorageTest_";
     private static final String APP_FILE_SUFFIX = ".txt";
@@ -29,9 +26,6 @@ class AppStorageTest {
         AppLogger.initializeForTesting();
     }
 
-    /**
-     * Sets up the test environment before each test.
-     */
     @BeforeEach
     void setUpBeforeEach() {
         createdFile = null;
@@ -60,9 +54,6 @@ class AppStorageTest {
         return FILE_PREFIX + UUID.randomUUID() + APP_FILE_SUFFIX;
     }
 
-    /**
-     * Tests creation and deletion of an application data file.
-     */
     @Test
     void testCreateAndDeleteAppDataFile() throws IOException {
         String uniqueAppFileName = createUniqueAppFileName();
@@ -77,9 +68,6 @@ class AppStorageTest {
         assertFalse(Files.exists(createdFile), "File should no longer exist");
     }
 
-    /**
-     * Tests retrieval of the application data file path.
-     */
     @Test
     void testGetAppDataFilePath() throws IOException {
         String uniqueAppFileName = createUniqueAppFileName();
@@ -89,9 +77,6 @@ class AppStorageTest {
         assertTrue(path.toString().endsWith(uniqueAppFileName));
     }
 
-    /**
-     * Tests deletion of a non-existent file.
-     */
     @Test
     void testDeleteNonExistentFileReturnsFalse() throws IOException {
         assertFalse(Files.exists(AppStorage.getAppDataFile("nonexistent.txt", OS)));
@@ -99,9 +84,6 @@ class AppStorageTest {
         assertFalse(deleted, "Deleting a non-existent file should return false");
     }
 
-    /**
-     * Tests retrieval of the log file path.
-     */
     @Test
     void testGetLogFilePath() throws IOException {
         Path path = AppStorage.getLogFile(LOG_FILE_NAME, OS);
@@ -109,9 +91,6 @@ class AppStorageTest {
         assertTrue(path.toString().endsWith(LOG_FILE_NAME));
     }
 
-    /**
-     * Tests creation of a temporary cache file.
-     */
     @Test
     void testCreateTempCacheFile() throws IOException {
         String uniqueFilePrefix = FILE_PREFIX + UUID.randomUUID();
@@ -126,9 +105,6 @@ class AppStorageTest {
         assertTrue(Files.deleteIfExists(tempFile));
     }
 
-    /**
-     * Tests that null parameters throw NullPointerException.
-     */
     @Test
     void testNullParametersThrowException() {
         assertThrows(NullPointerException.class, () -> AppStorage.getAppDataFile(null, OS));

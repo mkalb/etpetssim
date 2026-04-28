@@ -8,7 +8,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
-class AppArgsTest {
+final class AppArgsTest {
 
     @BeforeAll
     static void setUpBeforeAll() {

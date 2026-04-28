@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.engine.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -400,7 +401,7 @@ final class CellNeighborhoodsTest {
                         NeighborhoodMode.EDGES_ONLY,
                         structure,
                         0,
-                        coordinate -> coordinate);
+                        Function.identity());
 
         assertEquals(Set.of(0), radiusRings.keySet());
         assertEquals(Set.of(startCoordinate), radiusRings.get(0).keySet());
@@ -427,19 +428,19 @@ final class CellNeighborhoodsTest {
                 NeighborhoodMode.EDGES_ONLY,
                 structure,
                 -1,
-                coordinate -> coordinate));
+                Function.identity()));
         assertThrows(IllegalArgumentException.class, () -> CellNeighborhoods.cellsByRadiusRings(
                 new GridCoordinate(1, 1),
                 NeighborhoodMode.EDGES_ONLY,
                 structure,
                 CellNeighborhoods.MAX_RADIUS + 1,
-                coordinate -> coordinate));
+                Function.identity()));
         assertThrows(IllegalArgumentException.class, () -> CellNeighborhoods.cellsByRadiusRings(
                 new GridCoordinate(8, 1),
                 NeighborhoodMode.EDGES_ONLY,
                 structure,
                 1,
-                coordinate -> coordinate));
+                Function.identity()));
     }
 
     @Test
@@ -455,7 +456,7 @@ final class CellNeighborhoodsTest {
                         NeighborhoodMode.EDGES_ONLY,
                         structure,
                         2,
-                        coordinate -> coordinate);
+                        Function.identity());
 
         assertEquals(Set.of(0, 1, 2), radiusRings.keySet());
         assertEquals(Set.of(startCoordinate), radiusRings.get(0).keySet());
@@ -523,7 +524,7 @@ final class CellNeighborhoodsTest {
                             NeighborhoodMode.EDGES_ONLY,
                             structure,
                             1,
-                            coordinate -> coordinate);
+                            Function.identity());
 
             assertEquals(Set.of(
                             new GridCoordinate(1, 0),

@@ -12,7 +12,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AppResourcesTest {
+final class AppResourcesTest {
 
     private static final Locale TEST_LOCALE = Locale.GERMANY;
 
