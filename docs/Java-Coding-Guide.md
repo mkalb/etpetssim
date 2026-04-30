@@ -14,6 +14,7 @@ It is optimized for both humans and GitHub Copilot context prompts.
 - **MUST**: mandatory requirement.
 - **MUST NOT**: prohibited behavior.
 - **SHOULD**: default recommendation; deviate only with a clear reason.
+- **SHOULD NOT**: discouraged behavior; deviate only with a clear reason.
 - **MAY**: optional behavior.
 
 ## Rule Priority
@@ -28,16 +29,24 @@ Apply rules in this order (highest first):
 
 ## Project Baseline
 
+### Platform and Build
+
 - [MUST] Use **Java 25** language level.
 - [MUST] Use **JavaFX** for the UI layer.
 - [MUST] Use **Gradle wrapper** from the repository root.
+- [SHOULD] Assume Windows 11 as primary dev/test platform; verify UI behavior on other OSes when relevant.
+
+### Encoding and File Conventions
+
 - [MUST] Use UTF-8 for `.java`, `.md`, and `.properties` files.
+- [MUST] Keep Java properties files sorted alphabetically by key.
 - [MUST] Write repository Markdown in standard GitHub Markdown.
+
+### Language and Localization
+
 - [MUST] Write Java comments, Javadoc, and repository Markdown in English (`Locale.en_US`).
 - [MUST] Use consistent US English spelling in developer-facing text.
 - [MUST NOT] Mix German or other languages in code comments, Javadoc, or Markdown, except direct external quotes.
-- [MUST] Keep Java properties files sorted alphabetically by key.
-- [SHOULD] Assume Windows 11 as primary dev/test platform; verify UI behavior on other OSes when relevant.
 
 ## Core Engineering Rules
 
@@ -60,7 +69,15 @@ Apply rules in this order (highest first):
 - [SHOULD] Prefer readability over cleverness.
 - [MUST] Remove dead code and outdated comments.
 
-## Code Organization and Style
+## Architecture: MVVM
+
+- [MUST] Keep **Model** responsible for domain state and business rules.
+- [MUST] Keep **View** responsible for JavaFX UI components only.
+- [MUST] Keep **ViewModel** responsible for UI state, formatting, and interaction logic.
+- [MUST NOT] Place domain/business logic in View classes.
+- [MUST] Keep Model code independent from JavaFX UI classes.
+
+## Code Style
 
 ### General Java Style
 
@@ -93,27 +110,68 @@ Apply rules in this order (highest first):
 - [MUST] Use explicit stable codes/keys for external representations.
 - [MUST] Document declaration-order semantics in type Javadoc when order matters.
 
-### IntelliJ IDEA and Warnings
+### Naming Conventions
 
-- [MUST] Run and address relevant inspections before commit.
-- [MUST] Format with project IntelliJ settings before commit.
-- [MUST] Keep each `@SuppressWarnings` scope as narrow as possible.
-- [MUST NOT] Add explanatory comments to `@SuppressWarnings`.
-- [MUST NOT] Add or remove `@SuppressWarnings` automatically via AI/Copilot.
-- [MUST] Add `@SuppressWarnings` only after human review and trade-off evaluation.
-- [SHOULD] Prefer improving inspections/rules over adding suppressions when practical.
+Use these method naming patterns across the codebase.
 
-## Architecture: MVVM
+#### Construction and Factories
 
-- [MUST] Keep **Model** responsible for domain state and business rules.
-- [MUST] Keep **View** responsible for JavaFX UI components only.
-- [MUST] Keep **ViewModel** responsible for UI state, formatting, and interaction logic.
-- [MUST NOT] Place domain/business logic in View classes.
-- [MUST] Keep Model code independent from JavaFX UI classes.
+- [SHOULD] `create...`: instantiate and configure one object/control/view.
+  Example: `createLabel()`, `createVBox()`, `createSimulationRegion()`
+- [SHOULD] `of...`: validating static factory.
+  Example: `InputDoubleProperty.of(...)`, `InputEnumProperty.of(...)`
+- [SHOULD] `with...`: static factory-style configured variant.
+  Example: `withMinStepDuration(...)`
 
-## Nullability and Documentation
+#### UI Composition and Rendering
 
-### Nullability (JSpecify)
+- [SHOULD] `build...`: assemble multiple UI parts into one region/container.
+  Example: `buildMainRegion()`, `buildConfigRegion()`
+- [SHOULD] `draw...`: rendering on a canvas/graphics context.
+  Example: `drawCell()`, `drawCenteredTextInCell()`
+
+#### Computation and Conversion
+
+- [SHOULD] `compute...`: deterministic calculation from input/state.
+  Example: `computeCellDimension()`, `computeCellFontSize()`
+- [SHOULD] `to...`/`from...`: deterministic value/coordinate conversion.
+  Example: `toCanvasPosition()`, `fromCanvasPosition()`
+- [SHOULD] `as...`: conversion or alternative view accessor.
+  Example: `asStringBinding()`, `asObjectProperty()`
+
+#### Queries
+
+- [SHOULD] `is...`: boolean state/validity/mode query.
+  Example: `isIllegal()`, `isWithinBounds()`, `isModeTimed()`
+- [SHOULD] `has...`: presence/availability query.
+  Example: `hasKey()`, `hasEqualEdgeBehaviors()`
+
+#### Accessors
+
+- [SHOULD] `get...`/`set...`: standard mutable property accessors.
+  Example: `getValue()`, `setValue()`, `setDirection()`
+- [SHOULD] `...Property`: JavaFX property accessor naming.
+  Example: `actionButtonRequestedProperty()`, `stepDurationProperty()`
+
+#### Lifecycle and Actions
+
+- [SHOULD] `initialize...`/`reset...`/`shutdown...`: lifecycle operations.
+  Example: `initialize(...)`, `resetForTesting()`, `shutdown()`
+- [SHOULD] `request...`: user-intent action trigger/flag.
+  Example: `requestActionButton()`, `requestCancelButton()`
+
+#### Accepted Compact Names
+
+- [MAY] Utility/value APIs use concise noun-style accessors.
+  Example: `locale()`, `bundle()`, `keys()`, `supportedLocales()`
+- [MAY] Immutable domain types use concise derived-operation names.
+  Example: `area()`, `perimeter()`, `aspectRatio()`, `opposite()`, `nextClockwise()`
+- [MAY] Functional combinators use short composition names.
+  Example: `and(...)`, `or(...)`, `negate()`, `compose(...)`, `identity()`
+- [MUST] Java records keep generated accessor names.
+  Example: `x()`, `y()`
+
+## Nullability (JSpecify)
 
 - [MUST] Use JSpecify as the repository nullness contract.
 - [MUST] Set package defaults in `package-info.java` with `@org.jspecify.annotations.NullMarked`.
@@ -121,7 +179,7 @@ Apply rules in this order (highest first):
 - [MUST] Use `org.jspecify.annotations.Nullable` only for intentional nullable contracts.
 - [MUST NOT] Add `@Nullable` defensively or "just in case".
 
-### Javadoc
+## Javadoc
 
 - [MUST] Document public types at API/module boundaries and public types with non-obvious responsibilities.
 - [MUST] Document public methods at API boundaries and non-obvious behavior.
@@ -134,50 +192,6 @@ Apply rules in this order (highest first):
 - [MUST NOT] Add routine `NullPointerException` notes for non-null-by-default contracts.
 - [MAY] Add Javadoc to `private` members when it adds important context.
 - [MUST] Keep Javadoc short, factual, and current.
-
-## Java Naming Conventions
-
-Use these method naming patterns across the codebase.
-
-- [SHOULD] `build...`: assemble multiple UI parts into one region/container.
-  Example: `buildMainRegion()`, `buildConfigRegion()`
-- [SHOULD] `create...`: instantiate and configure one object/control/view.
-  Example: `createLabel()`, `createVBox()`, `createSimulationRegion()`
-- [SHOULD] `compute...`: deterministic calculation from input/state.
-  Example: `computeCellDimension()`, `computeCellFontSize()`
-- [SHOULD] `draw...`: rendering on a canvas/graphics context.
-  Example: `drawCell()`, `drawCenteredTextInCell()`
-- [SHOULD] `is...`: boolean state/validity/mode query.
-  Example: `isIllegal()`, `isWithinBounds()`, `isModeTimed()`
-- [SHOULD] `has...`: presence/availability query.
-  Example: `hasKey()`, `hasEqualEdgeBehaviors()`
-- [SHOULD] `get...`/`set...`: standard mutable property accessors.
-  Example: `getValue()`, `setValue()`, `setDirection()`
-- [SHOULD] `...Property`: JavaFX property accessor naming.
-  Example: `actionButtonRequestedProperty()`, `stepDurationProperty()`
-- [SHOULD] `as...`: conversion or alternative view accessor.
-  Example: `asStringBinding()`, `asObjectProperty()`
-- [SHOULD] `to...`/`from...`: deterministic value/coordinate conversion.
-  Example: `toCanvasPosition()`, `fromCanvasPosition()`
-- [SHOULD] `request...`: user-intent action trigger/flag.
-  Example: `requestActionButton()`, `requestCancelButton()`
-- [SHOULD] `of...`: validating static factory.
-  Example: `InputDoubleProperty.of(...)`, `InputEnumProperty.of(...)`
-- [SHOULD] `with...`: static factory-style configured variant.
-  Example: `withMinStepDuration(...)`
-- [SHOULD] `initialize...`/`reset...`/`shutdown...`: lifecycle operations.
-  Example: `initialize(...)`, `resetForTesting()`, `shutdown()`
-
-### Accepted Compact Names
-
-- [MAY] Utility/value APIs use concise noun-style accessors.
-  Example: `locale()`, `bundle()`, `keys()`, `supportedLocales()`
-- [MAY] Immutable domain types use concise derived-operation names.
-  Example: `area()`, `perimeter()`, `aspectRatio()`, `opposite()`, `nextClockwise()`
-- [MAY] Functional combinators use short composition names.
-  Example: `and(...)`, `or(...)`, `negate()`, `compose(...)`, `identity()`
-- [MUST] Java records keep generated accessor names.
-  Example: `x()`, `y()`
 
 ## Testing
 
@@ -195,7 +209,7 @@ Use these method naming patterns across the codebase.
 
 - [SHOULD] Use `assertAll(...)` for grouped checks of a single behavior.
 - [MUST] Use `assertThrows(...)` for contract/error-path checks.
-- [MUST] Follow `@SuppressWarnings` rules from the IntelliJ section.
+- [MUST] Follow `@SuppressWarnings` rules from the Tooling section.
 - [MUST NOT] Commit empty TODO test methods.
 - [MUST] Use `@Disabled("reason")` with a clear reason for temporary test disabling.
 
@@ -205,6 +219,18 @@ Use these method naming patterns across the codebase.
 - [MUST] Continue with the behavior or scenario under test.
 - [MUST] Keep names specific and readable.
 - [SHOULD NOT] Add Javadoc to test classes/methods unless genuinely needed.
+
+## Tooling
+
+### IntelliJ IDEA and Warnings
+
+- [MUST] Run and address relevant inspections before commit.
+- [MUST] Format with project IntelliJ settings before commit.
+- [MUST] Keep each `@SuppressWarnings` scope as narrow as possible.
+- [MUST NOT] Add explanatory comments to `@SuppressWarnings`.
+- [MUST NOT] Add or remove `@SuppressWarnings` automatically via AI/Copilot.
+- [MUST] Add `@SuppressWarnings` only after human review and trade-off evaluation.
+- [SHOULD] Prefer improving inspections/rules over adding suppressions when practical.
 
 ## Copilot Prompting Notes (Non-Normative)
 
