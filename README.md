@@ -83,9 +83,16 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 
 ## Development Approach
 
-Artificial intelligence (AI) tools were used during development to enhance productivity and code quality. Specifically,
-Microsoft Copilot and GitHub Copilot assisted with code generation, documentation, optimization tasks, learning JavaFX
-and MVVM, and making design and architecture decisions.
+Artificial intelligence (AI) tools are used during development to improve productivity and support code quality. In
+particular, Microsoft Copilot and GitHub Copilot are used for code generation, documentation support, refactoring and
+optimization tasks, and as a practical aid while learning and applying JavaFX and MVVM concepts. These tools also help
+accelerate exploration of implementation variants and architecture options during day-to-day development.
+
+At the same time, all generated content is reviewed and adapted in the context of the project goals, codebase
+consistency, and long-term maintainability. AI support is therefore treated as development assistance, while final
+technical decisions remain project-driven and under maintainer control.
+
+For coding conventions and detailed project rules, see the [Java Coding Guide](docs/Java-Coding-Guide.md).
 
 ## Feedback and Issues
 
