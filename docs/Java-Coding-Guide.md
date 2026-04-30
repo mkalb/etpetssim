@@ -1,160 +1,216 @@
 # Java Coding Guide
 
-This document is the coding reference for this repository.
-It is written in simple English for people and for GitHub Copilot prompts.
+This document is the authoritative coding guide for this repository.
+It is optimized for both humans and GitHub Copilot context prompts.
+
+## How to Use This Guide
+
+- Read this file as a ruleset, not as prose.
+- Treat each bullet as one atomic rule.
+- Follow rule priority when rules appear to conflict.
+
+## Normative Keywords
+
+- **MUST**: mandatory requirement.
+- **MUST NOT**: prohibited behavior.
+- **SHOULD**: default recommendation; deviate only with a clear reason.
+- **MAY**: optional behavior.
+
+## Rule Priority
+
+Apply rules in this order (highest first):
+
+1. Correctness and API contracts
+2. Nullability contracts (JSpecify)
+3. Architecture boundaries (MVVM)
+4. Repository style and naming rules
+5. Local readability preferences
 
 ## Project Baseline
 
-- Language level: **Java 25**
-- Main UI stack: **JavaFX**
-- Build tool: **Gradle** (wrapper from repository root)
-- Project type: **Open-source** on GitHub
-- Primary development and test platform: **Windows 11** (UI behavior can differ by OS)
-- File format: GitHub Markdown (`.md`), UTF-8
+- [MUST] Use **Java 25** language level.
+- [MUST] Use **JavaFX** for the UI layer.
+- [MUST] Use **Gradle wrapper** from the repository root.
+- [MUST] Use UTF-8 for `.java`, `.md`, and `.properties` files.
+- [MUST] Write repository Markdown in standard GitHub Markdown.
+- [MUST] Write Java comments, Javadoc, and repository Markdown in English (`Locale.en_US`).
+- [MUST] Use consistent US English spelling in developer-facing text.
+- [MUST NOT] Mix German or other languages in code comments, Javadoc, or Markdown, except direct external quotes.
+- [MUST] Keep Java properties files sorted alphabetically by key.
+- [SHOULD] Assume Windows 11 as primary dev/test platform; verify UI behavior on other OSes when relevant.
 
-## Goals of This Guide
-
-- Keep naming and code style consistent.
-- Make code easier to read, review, and maintain.
-- Provide clear conventions for GitHub Copilot code generation.
-- Provide a quick lookup for daily development.
-
-## General Engineering Principles
+## Core Engineering Rules
 
 ### DRY
 
-- Do not repeat logic in many places.
-- Extract shared logic into focused methods or classes.
-- Avoid copy/paste implementations.
+- [MUST NOT] Duplicate business logic across multiple locations.
+- [SHOULD] Extract shared logic into focused methods or classes.
+- [MUST NOT] Keep copy-paste implementations when a shared abstraction is practical.
 
 ### KISS
 
-- Prefer simple solutions first.
-- Keep methods small and single-purpose.
-- Avoid complex abstractions without clear value.
+- [SHOULD] Prefer the simplest solution that fully satisfies requirements.
+- [SHOULD] Keep methods small and single-purpose.
+- [MUST NOT] Introduce complex abstractions without clear ongoing value.
 
 ### Clean Code
 
-- Use meaningful names.
-- Keep classes cohesive.
-- Prefer readability over clever shortcuts.
-- Remove dead code and outdated comments.
+- [MUST] Use meaningful domain names.
+- [MUST] Keep classes cohesive.
+- [SHOULD] Prefer readability over cleverness.
+- [MUST] Remove dead code and outdated comments.
 
 ## Code Organization and Style
 
-### General Formatting
+### General Java Style
 
-- Use lowerCamelCase for methods and parameters.
-- Prefer clear domain terms over abbreviations.
-- Keep comments useful; do not restate obvious code.
+- [MUST] Use lowerCamelCase for method and parameter names.
+- [SHOULD] Prefer clear domain terms over abbreviations.
+- [MUST NOT] Add comments that only restate obvious code.
+- [MUST] Annotate lambda-oriented single-abstract-method interfaces with `@FunctionalInterface`.
+- [SHOULD] Prefer modern Java APIs/features when they improve clarity and are compatible with Java 25.
+- [MUST] Use locale-stable normalization for technical text (for example, `toLowerCase(Locale.ROOT)`).
 
-### IntelliJ IDEA Usage
+### Java Records
 
-- Run and fix relevant inspections before commit.
-- Use `@SuppressWarnings` only when necessary.
-- Keep suppression narrow (smallest scope possible).
-- Add a short reason when suppression is not obvious.
-- Use IntelliJ formatter with project settings before commit.
+- [SHOULD] Use records for small immutable value carriers.
+- [MUST] Keep record components limited to essential stored state.
+- [SHOULD] Move derived/convenience behavior to small methods.
+- [MUST] Use canonical/compact constructors to enforce invariants when needed.
+- [MUST] Defensively copy mutable inputs (collections, maps, arrays) before storing.
+- [SHOULD] Add static factories only when they provide clear value (validation, parsing, defaults).
+- [SHOULD] Keep generated members (`equals`, `hashCode`, `toString`, accessors) unless semantics require override.
 
-## Architecture Pattern: MVVM
+### Enums
 
-- Use **Model** for domain state and business rules.
-- Use **View** for JavaFX UI components only.
-- Use **ViewModel** for UI state, formatting, and interaction logic.
-- Keep View free from domain/business logic.
-- Keep Model independent of JavaFX UI code.
+- [MUST] Use enums only for fixed, closed domain sets.
+- [MUST] Keep enum constants uppercase and domain-specific.
+- [MUST NOT] Use unclear abbreviations.
+- [SHOULD] Place enum behavior/metadata on the enum type itself.
+- [SHOULD] Use exhaustive `switch` expressions for enum branching.
+- [SHOULD NOT] Use a `default` branch when all constants are known.
+- [MUST NOT] Persist or exchange `ordinal()`.
+- [MUST] Use explicit stable codes/keys for external representations.
+- [MUST] Document declaration-order semantics in type Javadoc when order matters.
 
-## Nullability and Code Documentation
+### IntelliJ IDEA and Warnings
 
-### Nullability and JSpecify
+- [MUST] Run and address relevant inspections before commit.
+- [MUST] Format with project IntelliJ settings before commit.
+- [MUST] Keep each `@SuppressWarnings` scope as narrow as possible.
+- [MUST NOT] Add explanatory comments to `@SuppressWarnings`.
+- [MUST NOT] Add or remove `@SuppressWarnings` automatically via AI/Copilot.
+- [MUST] Add `@SuppressWarnings` only after human review and trade-off evaluation.
+- [SHOULD] Prefer improving inspections/rules over adding suppressions when practical.
 
-- Use JSpecify as the nullness contract for all Java code in this repository.
-- Set package defaults in `package-info.java` with `@org.jspecify.annotations.NullMarked`.
-- Under that default, treat all types as non-null unless explicitly annotated.
-- Use `org.jspecify.annotations.Nullable` only for real nullable contracts (for example, optional return values,
-  optional parameters, or nullable fields required by an API).
-- Do not add `@Nullable` "just in case"; add it only when null is an intentional and supported value.
+## Architecture: MVVM
 
-### JavaDoc Rules
+- [MUST] Keep **Model** responsible for domain state and business rules.
+- [MUST] Keep **View** responsible for JavaFX UI components only.
+- [MUST] Keep **ViewModel** responsible for UI state, formatting, and interaction logic.
+- [MUST NOT] Place domain/business logic in View classes.
+- [MUST] Keep Model code independent from JavaFX UI classes.
 
-- Write JavaDoc for public types and public methods.
-- Document intent, inputs, outputs, and side effects.
-- In normal cases, explain what the code does, not how it is implemented.
-- Use `@param`, `@return`, and `@throws` when applicable.
-- Follow the nullability rules from `Nullability and JSpecify` above.
-- Because non-null is the default, do not add routine `NullPointerException` notes in JavaDoc.
-- If a name is not self-explanatory, or behavior is surprising, document it explicitly.
-- Always document important side effects that are not obvious from the API name/signature.
-- Use modern JavaDoc style for Java 25.
-- Add JavaDoc to `private` classes or methods when it provides important extra context.
-- Keep JavaDoc short, factual, and up to date.
+## Nullability and Documentation
+
+### Nullability (JSpecify)
+
+- [MUST] Use JSpecify as the repository nullness contract.
+- [MUST] Set package defaults in `package-info.java` with `@org.jspecify.annotations.NullMarked`.
+- [MUST] Treat unannotated types as non-null under `@NullMarked`.
+- [MUST] Use `org.jspecify.annotations.Nullable` only for intentional nullable contracts.
+- [MUST NOT] Add `@Nullable` defensively or "just in case".
+
+### Javadoc
+
+- [MUST] Document public types at API/module boundaries and public types with non-obvious responsibilities.
+- [MUST] Document public methods at API boundaries and non-obvious behavior.
+- [MAY] Use concise type-level Javadoc for small internal contracts when method naming is already clear.
+- [MUST] Document intent, inputs, outputs, and significant side effects.
+- [SHOULD] Describe behavior; avoid implementation detail unless it is contract-relevant.
+- [MUST] Use `@param`, `@return`, and `@throws` when applicable.
+- [SHOULD NOT] Add Javadoc to pure `@Override` methods when inherited docs already fully define the contract.
+- [MUST] Add override Javadoc when the override adds constraints, side effects, or surprising semantics.
+- [MUST NOT] Add routine `NullPointerException` notes for non-null-by-default contracts.
+- [MAY] Add Javadoc to `private` members when it adds important context.
+- [MUST] Keep Javadoc short, factual, and current.
 
 ## Java Naming Conventions
 
-These method naming patterns are used across the codebase.
+Use these method naming patterns across the codebase.
 
-- **build**: Assemble multiple UI parts into one composed region/container.
-    - Example: `buildMainRegion()`, `buildConfigRegion()`
-- **create**: Instantiate and configure one object/control/view.
-    - Example: `createLabel()`, `createVBox()`, `createSimulationRegion()`
-- **compute**: Deterministic calculation from input or current state.
-    - Example: `computeCellDimension()`, `computeCellFontSize()`
-- **draw**: Rendering logic on canvas/graphics context.
-    - Example: `drawCell()`, `drawCenteredTextInCell()`
-- **is**: Boolean state/validity/mode query.
-    - Example: `isIllegal()`, `isWithinBounds()`, `isModeTimed()`
-- **has**: Boolean presence/availability query.
-    - Example: `hasKey()`, `hasEqualEdgeBehaviors()`
-- **get / set**: Standard mutable property accessors.
-    - Example: `getValue()`, `setValue()`, `setDirection()`
-- **Property** suffix: JavaFX property accessor naming.
-    - Example: `actionButtonRequestedProperty()`, `stepDurationProperty()`
-- **as**: Conversion or alternative view accessor.
-    - Example: `asStringBinding()`, `asObjectProperty()`
-- **to / from**: Deterministic value/coordinate conversion.
-    - Example: `toCanvasPosition()`, `fromCanvasPosition()`
-- **request**: User-intent action trigger or flag.
-    - Example: `requestActionButton()`, `requestCancelButton()`
-- **of**: Validating static factory method.
-    - Example: `InputDoubleProperty.of(...)`, `InputEnumProperty.of(...)`
-- **with**: Static factory-style configured variant.
-    - Example: `withMinStepDuration(...)`
-- **initialize / reset / shutdown**: Lifecycle operations.
-    - Example: `initialize(...)`, `resetForTesting()`, `shutdown()`
+- [SHOULD] `build...`: assemble multiple UI parts into one region/container.
+  Example: `buildMainRegion()`, `buildConfigRegion()`
+- [SHOULD] `create...`: instantiate and configure one object/control/view.
+  Example: `createLabel()`, `createVBox()`, `createSimulationRegion()`
+- [SHOULD] `compute...`: deterministic calculation from input/state.
+  Example: `computeCellDimension()`, `computeCellFontSize()`
+- [SHOULD] `draw...`: rendering on a canvas/graphics context.
+  Example: `drawCell()`, `drawCenteredTextInCell()`
+- [SHOULD] `is...`: boolean state/validity/mode query.
+  Example: `isIllegal()`, `isWithinBounds()`, `isModeTimed()`
+- [SHOULD] `has...`: presence/availability query.
+  Example: `hasKey()`, `hasEqualEdgeBehaviors()`
+- [SHOULD] `get...`/`set...`: standard mutable property accessors.
+  Example: `getValue()`, `setValue()`, `setDirection()`
+- [SHOULD] `...Property`: JavaFX property accessor naming.
+  Example: `actionButtonRequestedProperty()`, `stepDurationProperty()`
+- [SHOULD] `as...`: conversion or alternative view accessor.
+  Example: `asStringBinding()`, `asObjectProperty()`
+- [SHOULD] `to...`/`from...`: deterministic value/coordinate conversion.
+  Example: `toCanvasPosition()`, `fromCanvasPosition()`
+- [SHOULD] `request...`: user-intent action trigger/flag.
+  Example: `requestActionButton()`, `requestCancelButton()`
+- [SHOULD] `of...`: validating static factory.
+  Example: `InputDoubleProperty.of(...)`, `InputEnumProperty.of(...)`
+- [SHOULD] `with...`: static factory-style configured variant.
+  Example: `withMinStepDuration(...)`
+- [SHOULD] `initialize...`/`reset...`/`shutdown...`: lifecycle operations.
+  Example: `initialize(...)`, `resetForTesting()`, `shutdown()`
 
-### Accepted Compact Names in Specific Cases
+### Accepted Compact Names
 
-- Utility/value APIs may use concise noun-style accessors.
-    - Example: `locale()`, `bundle()`, `keys()`, `supportedLocales()`
-- Immutable domain types may use concise derived-operation names.
-    - Example: `area()`, `perimeter()`, `aspectRatio()`, `opposite()`, `nextClockwise()`
-- Functional combinators may use short composition names.
-    - Example: `and(...)`, `or(...)`, `negate()`, `compose(...)`, `identity()`
-- Java records keep generated accessor names.
-    - Example: `x()`, `y()`
+- [MAY] Utility/value APIs use concise noun-style accessors.
+  Example: `locale()`, `bundle()`, `keys()`, `supportedLocales()`
+- [MAY] Immutable domain types use concise derived-operation names.
+  Example: `area()`, `perimeter()`, `aspectRatio()`, `opposite()`, `nextClockwise()`
+- [MAY] Functional combinators use short composition names.
+  Example: `and(...)`, `or(...)`, `negate()`, `compose(...)`, `identity()`
+- [MUST] Java records keep generated accessor names.
+  Example: `x()`, `y()`
 
 ## Testing
 
-### Test Organization and Structure
+### Test Structure
 
-- Prefer package-private test classes and test methods.
-- Prefer `final` for test classes unless extension is required.
-- Use consistent lifecycle method names such as `setUpBeforeAll`, `setUpBeforeEach`, and `tearDownAfterEach`.
-- If tests use shared static/global state, reset state in `@BeforeEach` and use same-thread execution when needed.
-- For JavaFX tests, initialize JavaFX once in `@BeforeAll` via `FxTestSupport.ensureStarted()`.
-- Test packages are `@NullMarked`; test null contracts explicitly with assertions instead of JavaDoc notes.
+- [SHOULD] Prefer package-private test classes and methods.
+- [SHOULD] Prefer `final` for test classes unless extension is required.
+- [MUST] Use consistent lifecycle names such as `setUpBeforeAll`, `setUpBeforeEach`, `tearDownAfterEach`.
+- [MUST] Reset shared static/global state in `@BeforeEach` when used.
+- [SHOULD] Use same-thread execution when shared state requires deterministic ordering.
+- [MUST] Initialize JavaFX once in `@BeforeAll` via `FxTestSupport.ensureStarted()` for JavaFX tests.
+- [MUST] Keep test packages `@NullMarked`; test null contracts with assertions.
 
-### Test Assertions and Semantics
+### Assertions and Semantics
 
-- Prefer `assertAll(...)` for grouped checks of one behavior.
-- Use `assertThrows(...)` for contract and error-path checks.
-- Keep `@SuppressWarnings` as narrow as possible; add a short reason if not obvious.
-- Do not keep empty TODO test methods in committed code; use `@Disabled("reason")` with a clear note if temporary.
+- [SHOULD] Use `assertAll(...)` for grouped checks of a single behavior.
+- [MUST] Use `assertThrows(...)` for contract/error-path checks.
+- [MUST] Follow `@SuppressWarnings` rules from the IntelliJ section.
+- [MUST NOT] Commit empty TODO test methods.
+- [MUST] Use `@Disabled("reason")` with a clear reason for temporary test disabling.
 
 ### Test Naming
 
-- Start test method names with `test`.
-- Continue with behavior or scenario under test.
-- Keep names specific and readable.
-    - Example: `testEnumValues()`, `testNullArgumentsThrowsException()`
-- Normally, do not use JavaDoc in test classes and test methods.
+- [MUST] Start test method names with `test`.
+- [MUST] Continue with the behavior or scenario under test.
+- [MUST] Keep names specific and readable.
+- [SHOULD NOT] Add Javadoc to test classes/methods unless genuinely needed.
+
+## Copilot Prompting Notes (Non-Normative)
+
+These notes improve consistency when this file is used as prompt context.
+
+- Prefer requests that mention target layer (`Model`, `View`, or `ViewModel`).
+- Mention whether the change affects API contracts, nullability, or tests.
+- Ask for deterministic outputs: exact file paths, minimal diffs, and short rationale.
+- When rules conflict, cite `Rule Priority` and choose the highest-priority compliant solution.
