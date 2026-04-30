@@ -84,8 +84,8 @@ Apply rules in this order (highest first):
   `InputDoubleProperty`/`InputIntegerProperty`/`InputEnumProperty` that encapsulate one underlying property.
 - [SHOULD] Drive View updates through JavaFX bindings/property listeners; for fire-and-forget action triggers (for
   example "draw requested", "config changed"), `Runnable`/callback setters on the ViewModel are also acceptable.
-- [SHOULD] Marshal Model/background updates back to the JavaFX Application Thread inside the ViewModel (see JavaFX →
-  Threading), so Views can rely on FX-thread callbacks.
+- [SHOULD] Marshal Model/background updates back to the JavaFX Application Thread inside the ViewModel
+  (see [Threading](#threading)), so Views can rely on FX-thread callbacks.
 - [MAY] Omit a dedicated ViewModel for trivial screens with no observable state (for example a static start screen); the
   View class may then implement the relevant View interfaces directly.
 
@@ -104,7 +104,7 @@ Apply rules in this order (highest first):
 
 ### Threading
 
-- [MUST] Mutate the JavaFX scene graph and JavaFX `Property` instances only on the JavaFX Application Thread.
+- [MUST] Mutate the JavaFX scene graph and JavaFX `Property` values only on the JavaFX Application Thread.
 - [MUST] Use `Platform.runLater(...)` to marshal updates from background threads to the FX thread.
 - [SHOULD] Re-check relevant state (for example simulation state) inside the `Platform.runLater(...)` body before
   applying updates, because state may have changed in the meantime.
@@ -123,7 +123,8 @@ Apply rules in this order (highest first):
   property type.
 - [MAY] Expose ordered groups of related properties via a `getXProperties()` accessor returning
   `List<? extends Property<?>>` or similar; document the index meaning.
-- [MUST] Keep property field types consistent with their public accessor return types.
+- [MUST] Keep property field declared types compatible with their public accessor return types (for example, do not
+  expose a `SimpleStringProperty` field as `ObjectProperty<String>`).
 - [SHOULD] Unbind explicit bindings and remove explicit listeners when their owner is shut down (for example in
   `shutdownSimulation()`); listeners attached for the lifetime of the scene graph are exempt.
 - [MUST NOT] Mutate a bound property directly; update its source instead.
@@ -152,8 +153,8 @@ Apply rules in this order (highest first):
 
 - [MUST] Load images, CSS, and other UI resources from the classpath via `AppResources` (which wraps
   `getClass().getResource(...)`).
-- [MUST] Centralize user-facing text in `ResourceBundle` properties files under `i18n.messages` and access them via
-  `AppLocalization`.
+- [MUST] Centralize user-facing text in `ResourceBundle` properties files using base name `i18n.messages` and access
+  them via `AppLocalization`.
 - [MUST] Reference resource bundle keys via constants; do not pass string literals to `AppLocalization`.
 - [MUST] Define cross-cutting keys (used from multiple simulations or from shared infrastructure) in
   `AppLocalizationKeys`.
@@ -277,13 +278,43 @@ Use these method naming patterns across the codebase.
 - [MAY] Add Javadoc to `private` members when it adds important context.
 - [MUST] Keep Javadoc short, factual, and current.
 
+## Logging
+
+The repository uses the `AppLogger` facade (built on `java.util.logging`) as the single logging entry point.
+
+- [MUST] Use `de.mkalb.etpetssim.core.AppLogger` for all application logging; do not call `java.util.logging`,
+  `System.out`, or `System.err` directly for diagnostic output.
+- [MUST NOT] Add other logging frameworks (SLF4J, Log4j, Logback, …) to the project.
+- [MUST] Initialize logging exactly once at application startup via `AppLogger.initialize(...)`; use
+  `AppLogger.initializeForTesting()` in tests that require logging.
+- [MUST] Shut down logging via `AppLogger.shutdown()` during orderly application termination.
+- [MUST] Choose log levels by intent:
+    - `debug` for developer diagnostics and verbose traces.
+    - `info` for lifecycle and high-level state transitions.
+    - `warn` for recoverable anomalies and unexpected but non-fatal conditions.
+    - `error` for failures and exceptions that affect functionality.
+- [MUST] Log exceptions via `AppLogger.error(message, throwable)`; do not concatenate stack traces into the message
+  manually.
+- [SHOULD] Use the `Supplier<String>` overloads (`debug(() -> ...)`, `info(() -> ...)`, …) when message construction is
+  non-trivial, to avoid unnecessary string building when the level is disabled.
+- [SHOULD] Use the `*f` formatting overloads (`debugf`, `infof`, `warnf`, `errorf`) for parameterized messages instead
+  of manual `String.format(...)` at the call site.
+- [MUST] Use `Locale.ROOT` semantics for log message formatting; the `*f` overloads already do so. Do not introduce
+  locale-dependent formatting in log messages.
+- [MUST NOT] Log secrets, credentials, tokens, or personally identifying information.
+- [SHOULD] Prefix log messages with a short, stable component tag when helpful (for example
+  `"AppLogger: ..."`, `"SimulationTimer: ..."`) to aid log filtering.
+- [SHOULD NOT] Log inside tight rendering or simulation step loops at `info` or higher; use `debug` and guard expensive
+  message construction with the `Supplier` overloads.
+- [MUST NOT] Use logging as a control-flow mechanism or as a substitute for thrown exceptions.
+
 ## Testing
 
 ### Test Framework
 
 - [MUST] Use **JUnit 5** (JUnit Jupiter) executed via the **JUnit Platform**.
-- [MUST] Declare test dependencies through the `libs.versions.toml` version catalog (`libs.junit.jupiter`,
-  `org.junit.platform:junit-platform-launcher`).
+- [MUST] Declare test dependencies through the `libs.versions.toml` version catalog (for example
+  `libs.junit.jupiter`, `libs.junit.platform.launcher`).
 - [MUST] Run tests with `useJUnitPlatform()` in Gradle.
 - [MUST] Use only `org.junit.jupiter.api.*` / `org.junit.jupiter.params.*` APIs; do not add JUnit 4 (`org.junit.*`)
   tests.
@@ -296,7 +327,7 @@ Use these method naming patterns across the codebase.
 - [SHOULD] Prefer package-private test classes and methods.
 - [SHOULD] Prefer `final` for test classes unless extension is required.
 - [MUST] Use consistent lifecycle names such as `setUpBeforeAll`, `setUpBeforeEach`, `tearDownAfterEach`.
-- [MUST] Reset shared static/global state in `@BeforeEach` when used.
+- [MUST] Reset shared static or global state in `@BeforeEach` whenever such state exists.
 - [SHOULD] Use same-thread execution when shared state requires deterministic ordering.
 - [MUST] Initialize JavaFX once in `@BeforeAll` via `FxTestSupport.ensureStarted()` for JavaFX tests.
 - [MUST] Keep test packages `@NullMarked`; test null contracts with assertions.
@@ -335,4 +366,12 @@ These notes improve consistency when this file is used as prompt context.
 - Prefer requests that mention target layer (`Model`, `View`, or `ViewModel`).
 - Mention whether the change affects API contracts, nullability, or tests.
 - Ask for deterministic outputs: exact file paths, minimal diffs, and short rationale.
-- When rules conflict, cite `Rule Priority` and choose the highest-priority compliant solution.
+- When rules conflict, cite [Rule Priority](#rule-priority) and choose the highest-priority compliant solution.
+- Prefer minimal diffs; do not reformat or restructure unrelated code.
+- Do not invent file paths, class names, package names, or APIs; verify them via the workspace before referencing them.
+- If a rule conflict or ambiguity cannot be resolved from the available context, ask before guessing.
+- Preserve existing public API signatures unless the request explicitly asks to change them.
+- When adding new code, follow the conventions of the closest existing peer file (naming, layering, style class usage,
+  logging) rather than introducing new patterns.
+- For UI changes, state explicitly which layer is touched and which CSS file (if any) is affected.
+- For logging changes, reference the `AppLogger` facade and the level semantics from the [Logging](#logging) section.
