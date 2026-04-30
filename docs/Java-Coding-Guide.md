@@ -32,7 +32,7 @@ Apply rules in this order (highest first):
 ### Platform and Build
 
 - [MUST] Use **Java 25** language level.
-- [MUST] Use **JavaFX** for the UI layer.
+- [MUST] Use **JavaFX 25** for the UI layer.
 - [MUST] Use **Gradle wrapper** from the repository root.
 - [SHOULD] Assume Windows 11 as primary dev/test platform; verify UI behavior on other OSes when relevant.
 
@@ -75,7 +75,91 @@ Apply rules in this order (highest first):
 - [MUST] Keep **View** responsible for JavaFX UI components only.
 - [MUST] Keep **ViewModel** responsible for UI state, formatting, and interaction logic.
 - [MUST NOT] Place domain/business logic in View classes.
-- [MUST] Keep Model code independent from JavaFX UI classes.
+- [MUST NOT] Let the Model depend on the ViewModel or View.
+- [MUST NOT] Import JavaFX scene-graph, control, property, or binding types (`javafx.scene.*`, `javafx.beans.*`,
+  `javafx.stage.*`, `javafx.animation.*`) from Model packages.
+- [MAY] Use neutral JavaFX value types (for example `javafx.scene.paint.Color`, `javafx.scene.image.Image`,
+  `javafx.util.Duration`) inside the Model when they act as plain value carriers without UI behavior.
+- [SHOULD] Expose ViewModel state as JavaFX `Property`/`ObservableValue`, or as repository wrapper types such as
+  `InputDoubleProperty`/`InputIntegerProperty`/`InputEnumProperty` that encapsulate one underlying property.
+- [SHOULD] Drive View updates through JavaFX bindings/property listeners; for fire-and-forget action triggers (for
+  example "draw requested", "config changed"), `Runnable`/callback setters on the ViewModel are also acceptable.
+- [SHOULD] Marshal Model/background updates back to the JavaFX Application Thread inside the ViewModel (see JavaFX →
+  Threading), so Views can rely on FX-thread callbacks.
+- [MAY] Omit a dedicated ViewModel for trivial screens with no observable state (for example a static start screen); the
+  View class may then implement the relevant View interfaces directly.
+
+## JavaFX UI
+
+### UI Construction
+
+- [MUST] Build the scene graph programmatically in Java; do not use FXML.
+- [MUST NOT] Add `.fxml` files or `FXMLLoader` usage to the project.
+- [SHOULD] Compose UIs from small, focused factory/builder methods (`createX`, `buildX`).
+- [SHOULD] Use `FXComponentFactory` for standard styled controls instead of instantiating and styling them ad hoc;
+  direct instantiation is acceptable for one-off layouts that the factory does not cover.
+- [SHOULD] Keep `Scene`, `Stage`, and root container wiring in dedicated entry-point/View classes.
+- [SHOULD] Prefer standard controls from `javafx.controls`; introduce custom controls only when standard controls are
+  insufficient.
+
+### Threading
+
+- [MUST] Mutate the JavaFX scene graph and JavaFX `Property` instances only on the JavaFX Application Thread.
+- [MUST] Use `Platform.runLater(...)` to marshal updates from background threads to the FX thread.
+- [SHOULD] Re-check relevant state (for example simulation state) inside the `Platform.runLater(...)` body before
+  applying updates, because state may have changed in the meantime.
+- [SHOULD] Use `javafx.concurrent.Task`/`Service` or a dedicated executor for long-running background work that updates
+  the UI.
+- [MUST NOT] Block the JavaFX Application Thread with long-running computation or I/O.
+- [SHOULD] Use `Timeline`/`AnimationTimer` for periodic UI ticks and frame-driven rendering; encapsulate periodic
+  simulation drivers (for example `SimulationTimer`) instead of using `Timeline` directly in Views.
+
+### Properties and Bindings
+
+- [SHOULD] Prefer JavaFX `Property`/`Binding` APIs over manual listener wiring for derived UI state.
+- [SHOULD] Expose ViewModel state via accessor methods named `xProperty()`; the return type may be a JavaFX `Property`/
+  `ObservableValue` or a repository wrapper such as `InputDoubleProperty`.
+- [SHOULD] When exposing a plain JavaFX property, also provide `getX()`/`setX(...)` accessors consistent with the
+  property type.
+- [MAY] Expose ordered groups of related properties via a `getXProperties()` accessor returning
+  `List<? extends Property<?>>` or similar; document the index meaning.
+- [MUST] Keep property field types consistent with their public accessor return types.
+- [SHOULD] Unbind explicit bindings and remove explicit listeners when their owner is shut down (for example in
+  `shutdownSimulation()`); listeners attached for the lifetime of the scene graph are exempt.
+- [MUST NOT] Mutate a bound property directly; update its source instead.
+
+### CSS and Styling
+
+- [MUST] Define visual styling in CSS files under `app/src/main/resources/css/` (for example `scene.css`, `conway.css`,
+  `etpets.css`, `lab.css`).
+- [MUST] Attach stylesheets via `Scene.getStylesheets()` or `Parent.getStylesheets()` using classpath URLs.
+- [MUST] Resolve CSS resources through `AppResources.getCssUrl(...)` rather than calling `getClass().getResource(...)`
+  ad hoc.
+- [MUST] Use a shared `scene.css` for global rules.
+- [SHOULD] Add a dedicated CSS file per simulation/feature when it needs visual rules beyond `scene.css`.
+- [MUST NOT] Hardcode colors, fonts, or sizing in Java when an equivalent CSS rule is practical; values used only for
+  `Canvas` rendering or other non-CSS-styleable APIs are exempt.
+- [MUST NOT] Use inline `setStyle(...)` for styling; use style classes instead.
+- [MUST] Reference CSS style classes via constants (no string literals at call sites).
+- [MUST] Use `FXStyleClasses` for cross-cutting style classes; use a simulation-local `XStyleClasses` class (for example
+  `ConwayStyleClasses`) for style classes that exist only inside one simulation package.
+- [SHOULD] Apply style classes via `getStyleClass().add(...)` (or via factory methods that do so).
+- [SHOULD] Use lower-kebab-case for CSS style class names (for example `simulation-canvas`, `config-vbox`,
+  `conway-transitionrules-gridpane`).
+- [SHOULD] Use JavaFX CSS variables (`-fx-*` looked-up colors) for shared theme values.
+
+### Resources and Internationalization
+
+- [MUST] Load images, CSS, and other UI resources from the classpath via `AppResources` (which wraps
+  `getClass().getResource(...)`).
+- [MUST] Centralize user-facing text in `ResourceBundle` properties files under `i18n.messages` and access them via
+  `AppLocalization`.
+- [MUST] Reference resource bundle keys via constants; do not pass string literals to `AppLocalization`.
+- [MUST] Define cross-cutting keys (used from multiple simulations or from shared infrastructure) in
+  `AppLocalizationKeys`.
+- [MAY] Define simulation-local keys (used only inside one simulation package) as `private static final String`
+  constants in the consuming View class.
+- [MUST] Keep resource bundle keys sorted alphabetically (see Encoding and File Conventions).
 
 ## Code Style
 
@@ -194,6 +278,18 @@ Use these method naming patterns across the codebase.
 - [MUST] Keep Javadoc short, factual, and current.
 
 ## Testing
+
+### Test Framework
+
+- [MUST] Use **JUnit 5** (JUnit Jupiter) executed via the **JUnit Platform**.
+- [MUST] Declare test dependencies through the `libs.versions.toml` version catalog (`libs.junit.jupiter`,
+  `org.junit.platform:junit-platform-launcher`).
+- [MUST] Run tests with `useJUnitPlatform()` in Gradle.
+- [MUST] Use only `org.junit.jupiter.api.*` / `org.junit.jupiter.params.*` APIs; do not add JUnit 4 (`org.junit.*`)
+  tests.
+- [SHOULD] Run JavaFX-touching tests with the project's headless JVM args (`-Djavafx.headless=true`, `-Dprism.order=sw`,
+  `--enable-native-access=ALL-UNNAMED`) configured in `app/build.gradle.kts`.
+- [MUST NOT] Add additional test runners or frameworks (TestNG, Spock, AssertJ, Mockito, …) without prior agreement.
 
 ### Test Structure
 
