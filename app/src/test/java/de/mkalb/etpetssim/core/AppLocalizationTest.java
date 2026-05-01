@@ -98,6 +98,7 @@ final class AppLocalizationTest {
         assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromArgument("de"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testResolveLocaleFromDefault() {
         assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.US));
@@ -123,6 +124,7 @@ final class AppLocalizationTest {
      *
      * <p>If these keys are missing or incorrect, the test will fail or return the placeholder string.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetText() {
         AppLocalization.initialize("en_US");
@@ -136,6 +138,7 @@ final class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getText(null));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetOptionalText() {
         AppLocalization.initialize("en_US");
@@ -165,7 +168,7 @@ final class AppLocalizationTest {
      *
      * <p>If these keys are missing or incorrect, the test will fail or return the placeholder string.</p>
      */
-    @SuppressWarnings({"SpellCheckingInspection"})
+    @SuppressWarnings({"SpellCheckingInspection", "DataFlowIssue", "GrazieInspectionRunner"})
     @Test
     void testGetFormattedText() {
         AppLocalization.initialize("en_US");
