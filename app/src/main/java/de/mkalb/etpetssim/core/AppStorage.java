@@ -102,18 +102,33 @@ public final class AppStorage {
     }
 
     /**
+     * Resolves a file name against a directory and enforces that the normalized result stays within that directory.
+     */
+    private static Path resolveFileInDirectory(Path directory, String fileName) throws IOException {
+        Objects.requireNonNull(directory, "Directory must not be null");
+        Objects.requireNonNull(fileName, "File name must not be null");
+
+        Path normalizedDirectory = directory.toAbsolutePath().normalize();
+        Path resolvedPath = normalizedDirectory.resolve(fileName).toAbsolutePath().normalize();
+        if (!resolvedPath.startsWith(normalizedDirectory)) {
+            throw new IOException("File name resolves outside of target directory: " + fileName);
+        }
+        return resolvedPath;
+    }
+
+    /**
      * Resolves a file path inside the application data directory.
      *
      * @param fileName file name relative to the data directory
      * @param os operating system
      * @return resolved file path
      * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
-     * @throws IOException if the data directory cannot be created or validated
+     * @throws IOException if the data directory cannot be created/validated or {@code fileName} escapes that directory
      */
     public static Path getAppDataFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
         Objects.requireNonNull(os, "Operating system must not be null");
-        return getOrCreateAppDataDir(os).resolve(fileName);
+        return resolveFileInDirectory(getOrCreateAppDataDir(os), fileName);
     }
 
     /**
@@ -157,12 +172,12 @@ public final class AppStorage {
      * @param os operating system
      * @return resolved log file path
      * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
-     * @throws IOException if the log directory cannot be created or validated
+     * @throws IOException if the log directory cannot be created/validated or {@code fileName} escapes that directory
      */
     public static Path getLogFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
         Objects.requireNonNull(os, "Operating system must not be null");
-        return getOrCreateLogDir(os).resolve(fileName);
+        return resolveFileInDirectory(getOrCreateLogDir(os), fileName);
     }
 
     /**
@@ -198,7 +213,7 @@ public final class AppStorage {
          * @return detected operating system
          */
         public static OperatingSystem detect() {
-            String osName = System.getProperty("os.name").toLowerCase();
+            String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
             if (osName.contains("win")) {
                 return OperatingSystem.WINDOWS;
             } else if (osName.contains("mac")) {

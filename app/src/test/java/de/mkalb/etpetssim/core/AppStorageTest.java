@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.core;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -18,8 +19,8 @@ final class AppStorageTest {
 
     private static final AppStorage.OperatingSystem OS = AppStorage.OperatingSystem.detect();
 
-    private Path createdFile;
-    private Path tempFile;
+    private @Nullable Path createdFile;
+    private @Nullable Path tempFile;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -105,6 +106,7 @@ final class AppStorageTest {
         assertTrue(Files.deleteIfExists(tempFile));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullParametersThrowException() {
         assertThrows(NullPointerException.class, () -> AppStorage.getAppDataFile(null, OS));
@@ -112,6 +114,20 @@ final class AppStorageTest {
         assertThrows(NullPointerException.class, () -> AppStorage.deleteAppDataFile(null, OS));
         assertThrows(NullPointerException.class, () -> AppStorage.getLogFile(null, OS));
         assertThrows(NullPointerException.class, () -> AppStorage.createTempCacheFile(null, TEMP_SUFFIX, OS));
+    }
+
+    @Test
+    void testAppDataFileRejectsPathTraversal() {
+        String pathTraversalName = Path.of("..", "outside.txt").toString();
+        assertThrows(IOException.class, () -> AppStorage.getAppDataFile(pathTraversalName, OS));
+        assertThrows(IOException.class, () -> AppStorage.createAppDataFile(pathTraversalName, OS));
+        assertThrows(IOException.class, () -> AppStorage.deleteAppDataFile(pathTraversalName, OS));
+    }
+
+    @Test
+    void testLogFileRejectsAbsolutePath() {
+        String absolutePathName = Path.of(System.getProperty("java.io.tmpdir"), "outside.log").toString();
+        assertThrows(IOException.class, () -> AppStorage.getLogFile(absolutePathName, OS));
     }
 
 }
