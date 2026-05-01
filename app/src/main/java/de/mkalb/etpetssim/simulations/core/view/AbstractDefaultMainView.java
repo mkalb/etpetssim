@@ -21,6 +21,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Default main view base with drawing and throttling support.
+ */
 @SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
@@ -149,16 +152,16 @@ public abstract class AbstractDefaultMainView<
                                                    @Nullable GridCell<ENT> newGridCell);
 
     private void drawAndMeasureSimulationStep(int stepCount) {
-        long start = System.currentTimeMillis();
+        long startNanos = System.nanoTime();
         drawSimulation(viewModel.getCurrentModel(), stepCount, lastDrawnStepCount);
-        long duration = System.currentTimeMillis() - start;
-        drawThrottler.recordDuration(duration);
+        long durationMillis = java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+        drawThrottler.recordDuration(durationMillis);
 
         lastDrawnStepCount = stepCount;
 
         if (DEBUG_MODE) {
             AppLogger.info("MainView: Drawn step " + stepCount +
-                    " in " + duration + "ms. Average draw time: " + drawThrottler.getAverageDuration() + "ms");
+                    " in " + durationMillis + "ms. Average draw time: " + drawThrottler.getAverageDuration() + "ms");
         }
     }
 
