@@ -95,6 +95,7 @@ public final class AppLogger {
             APP_LOGGER.logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
             APP_LOGGER.logger.setUseParentHandlers(true);
             for (Handler handler : APP_LOGGER.logger.getHandlers()) {
+                handler.close();
                 APP_LOGGER.logger.removeHandler(handler);
             }
         }
@@ -356,8 +357,9 @@ public final class AppLogger {
          * @throws NullPointerException if {@code level} is {@code null}
          */
         public static Optional<LogLevel> fromString(String level) {
+            Objects.requireNonNull(level, "Level must not be null");
             try {
-                return Optional.of(LogLevel.valueOf(level.toUpperCase()));
+                return Optional.of(LogLevel.valueOf(level.toUpperCase(Locale.ROOT)));
             } catch (IllegalArgumentException e) {
                 return Optional.empty();
             }

@@ -145,6 +145,7 @@ final class AppLoggerTest {
                 AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullSupplierThrowsException() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
@@ -156,6 +157,7 @@ final class AppLoggerTest {
         );
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullFormatThrowsException() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
@@ -167,6 +169,7 @@ final class AppLoggerTest {
         );
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullThrowableThrowsException() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
