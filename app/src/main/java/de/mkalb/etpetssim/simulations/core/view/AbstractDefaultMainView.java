@@ -20,6 +20,7 @@ import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Default main view base with drawing and throttling support.
@@ -154,8 +155,8 @@ public abstract class AbstractDefaultMainView<
     private void drawAndMeasureSimulationStep(int stepCount) {
         long startNanos = System.nanoTime();
         drawSimulation(viewModel.getCurrentModel(), stepCount, lastDrawnStepCount);
-        long durationMillis = java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
-        drawThrottler.recordDuration(durationMillis);
+        long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+        drawThrottler.recordDurationMillis(durationMillis);
 
         lastDrawnStepCount = stepCount;
 

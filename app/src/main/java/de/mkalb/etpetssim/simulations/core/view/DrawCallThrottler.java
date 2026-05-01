@@ -36,7 +36,7 @@ final class DrawCallThrottler {
         return false;
     }
 
-    void recordDuration(long durationMillis) {
+    void recordDurationMillis(long durationMillis) {
         if (durationsMillis.size() >= historySize) {
             Long removedMillis = durationsMillis.poll();
             if (removedMillis != null) {
