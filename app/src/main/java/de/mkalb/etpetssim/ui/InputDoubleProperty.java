@@ -34,7 +34,7 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
-        if (!isValidValue(property.getValue(), min, max)) {
+        if (!isValidValue(property.get(), min, max)) {
             throw new IllegalArgumentException("Initial value is not valid: " + property.getValue());
         }
     }
@@ -65,6 +65,7 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
                     AppLogger.error("InputDoubleProperty: Invalid value set: " + newValue +
                             " (min=" + min + ", max=" + max + ")");
                 }
+                // The value is set even if it is invalid.
                 super.set(newValue);
             }
         };
@@ -80,7 +81,7 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
      * @return the adjusted value
      */
     static double adjustValue(double newValue, double min, double max) {
-        return Math.max(min, Math.min(max, newValue));
+        return Math.clamp(newValue, min, max);
     }
 
     /**
