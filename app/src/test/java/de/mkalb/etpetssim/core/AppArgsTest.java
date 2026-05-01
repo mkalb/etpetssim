@@ -15,6 +15,7 @@ final class AppArgsTest {
         AppLogger.initializeForTesting();
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullArgumentsThrowsException() {
         assertThrows(NullPointerException.class, () -> new AppArgs(null));
@@ -256,6 +257,7 @@ final class AppArgsTest {
         assertFalse(AppArgs.Key.fromString("").isPresent());
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testParseBooleanValue() {
         assertTrue(AppArgs.parseBooleanValue("true", false));

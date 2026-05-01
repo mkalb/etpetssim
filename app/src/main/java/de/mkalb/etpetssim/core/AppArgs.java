@@ -14,7 +14,7 @@ public final class AppArgs {
     /**
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
      */
-    private static final String ARGUMENT_PATTERN = "--([a-zA-Z0-9\\-]+)(=(\\S+))?";
+    private static final Pattern ARGUMENT_PATTERN = Pattern.compile("--([a-zA-Z0-9\\-]+)(=(\\S+))?");
     private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used to build the arguments string
 
     /**
@@ -30,33 +30,30 @@ public final class AppArgs {
      */
     public AppArgs(String[] args) {
         Objects.requireNonNull(args, "Arguments must not be null");
-        if (args.length > 0) {
-            Pattern pattern = Pattern.compile(ARGUMENT_PATTERN);
-            for (String arg : args) {
-                Matcher matcher = pattern.matcher(arg);
-                if (matcher.matches()) {
-                    Optional<Key> key = Key.fromString(matcher.group(1));
-                    if (key.isPresent()) {
-                        if (arguments.containsKey(key.get())) {
-                            AppLogger.warn("AppArgs: Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
-                        }
-                        Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
-                        if (key.get().isFlag()) {
-                            // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
-                            arguments.put(key.get(),
-                                    value.map(v -> parseBooleanValue(v, Boolean.TRUE))
-                                         .orElse(Boolean.TRUE)
-                                         .toString());
-                        } else {
-                            // For non-flag keys, we put the value only if it is present.
-                            value.ifPresent(v -> arguments.put(key.get(), v));
-                        }
+        for (String arg : args) {
+            Matcher matcher = ARGUMENT_PATTERN.matcher(arg);
+            if (matcher.matches()) {
+                Optional<Key> key = Key.fromString(matcher.group(1));
+                if (key.isPresent()) {
+                    if (arguments.containsKey(key.get())) {
+                        AppLogger.warn("AppArgs: Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
+                    }
+                    Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
+                    if (key.get().isFlag()) {
+                        // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
+                        arguments.put(key.get(),
+                                value.map(v -> parseBooleanValue(v, Boolean.TRUE))
+                                     .orElse(Boolean.TRUE)
+                                     .toString());
                     } else {
-                        AppLogger.warn("AppArgs: Unknown argument: '" + matcher.group(1) + "'. Please check the command-line arguments.");
+                        // For non-flag keys, we put the value only if it is present.
+                        value.ifPresent(v -> arguments.put(key.get(), v));
                     }
                 } else {
-                    AppLogger.warn("AppArgs: Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
+                    AppLogger.warn("AppArgs: Unknown argument: '" + matcher.group(1) + "'. Please check the command-line arguments.");
                 }
+            } else {
+                AppLogger.warn("AppArgs: Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
             }
         }
     }
@@ -75,7 +72,7 @@ public final class AppArgs {
      */
     static boolean parseBooleanValue(String value, boolean defaultValue) {
         Objects.requireNonNull(value, "Value must not be null");
-        return switch (value.toLowerCase()) {
+        return switch (value.toLowerCase(Locale.ROOT)) {
             case "true", "1", "yes", "on" -> Boolean.TRUE;
             case "false", "0", "no", "off" -> Boolean.FALSE;
             default -> defaultValue;
@@ -238,11 +235,11 @@ public final class AppArgs {
          * @param appendable the output target for the generated help text
          * @throws NullPointerException if {@code appendable} is {@code null}
          */
-        @SuppressWarnings("HardcodedLineSeparator")
         public static void printHelp(Appendable appendable) {
             Objects.requireNonNull(appendable, "Appendable must not be null");
             try {
-                appendable.append("List of available command-line arguments:\n");
+                appendable.append("List of available command-line arguments:")
+                          .append(System.lineSeparator());
                 for (Key key : values()) {
                     appendable.append(String.format("--%s: %s%s%n",
                             key.key(),
