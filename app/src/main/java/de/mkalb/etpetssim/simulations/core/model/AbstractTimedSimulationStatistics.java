@@ -2,6 +2,9 @@ package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
 
+/**
+ * Shared base for statistics that also track step timing metrics.
+ */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class AbstractTimedSimulationStatistics
         implements TimedSimulationStatistics {

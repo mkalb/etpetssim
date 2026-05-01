@@ -3,6 +3,9 @@ package de.mkalb.etpetssim.simulations.core.model;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
+/**
+ * Base implementation for managers backed by a timed simulation executor.
+ */
 public abstract class AbstractTimedSimulationManager<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,

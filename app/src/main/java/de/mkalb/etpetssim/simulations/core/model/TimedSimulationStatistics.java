@@ -10,7 +10,7 @@ public interface TimedSimulationStatistics extends SimulationStatistics {
     /**
      * Returns timing statistics for simulation steps.
      *
-     * @return a {@link de.mkalb.etpetssim.engine.model.StepTimingStatistics} record with timing statistics
+     * @return timing statistics snapshot
      */
     StepTimingStatistics stepTimingStatistics();
 

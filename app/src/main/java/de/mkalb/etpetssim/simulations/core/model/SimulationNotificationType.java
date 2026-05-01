@@ -19,7 +19,7 @@ public enum SimulationNotificationType {
     NONE("notification.none"),
 
     /**
-     *An exception occurred during the simulation.
+     * An exception occurred during the simulation.
      */
     EXCEPTION("notification.exception"),
 
