@@ -17,6 +17,8 @@ public final class TimedSimulationExecutor<
         GM extends GridModel<ENT>>
         implements SimulationExecutor<ENT, GM> {
 
+    private static final long NANOS_PER_MILLISECOND = 1_000_000L;
+
     private final SimulationExecutor<ENT, GM> delegate;
 
     private long currentStepMillis = Long.MIN_VALUE;
@@ -59,9 +61,10 @@ public final class TimedSimulationExecutor<
      */
     @Override
     public void executeStep() {
-        long start = System.currentTimeMillis();
+        long startNanos = System.nanoTime();
         delegate.executeStep();
-        currentStepMillis = System.currentTimeMillis() - start;
+        long elapsedNanos = System.nanoTime() - startNanos;
+        currentStepMillis = elapsedNanos / NANOS_PER_MILLISECOND;
 
         // Update min/max.
         if (currentStepMillis < minStepMillis) {
