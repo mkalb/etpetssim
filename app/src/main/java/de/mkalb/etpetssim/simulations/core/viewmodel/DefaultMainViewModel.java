@@ -232,7 +232,7 @@ public final class DefaultMainViewModel<
 
         resetSelectedProperties();
 
-        long start = System.currentTimeMillis(); // TODO use nanoTime
+        long startNanos = System.nanoTime();
         try {
             Optional<CON> config = createValidConfig();
             if (config.isEmpty()) {
@@ -250,19 +250,19 @@ public final class DefaultMainViewModel<
             setNotificationType(SimulationNotificationType.EXCEPTION);
             return;
         }
-        long duration = System.currentTimeMillis() - start; // TODO use nanoTime
+        long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
 
         if (controlViewModel.isStartPaused()) {
             setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation was started in paused state by the user. duration=" + duration);
+            logSimulationInfo("Simulation was started in paused state by the user. duration=" + durationMillis);
         } else if (controlViewModel.isModeTimed()) {
             setSimulationState(SimulationState.RUNNING_TIMED);
-            logSimulationInfo("Simulation (timer) was started by the user. duration=" + duration);
+            logSimulationInfo("Simulation (timer) was started by the user. duration=" + durationMillis);
 
             startTimer();
         } else if (controlViewModel.isModeBatch()) {
             setSimulationState(SimulationState.RUNNING_BATCH);
-            logSimulationInfo("Simulation (batch) was started by the user. duration=" + duration);
+            logSimulationInfo("Simulation (batch) was started by the user. duration=" + durationMillis);
 
             runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
                     controlViewModel.isModeBatchContinuous());
@@ -366,11 +366,11 @@ public final class DefaultMainViewModel<
             }
 
             // Notify view about the step and measure duration
-            long startView = System.currentTimeMillis(); // TODO use nanoTime
+            long startViewNanos = System.nanoTime();
             simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
-            long durationView = System.currentTimeMillis() - startView; // TODO use nanoTime
+            long durationViewMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startViewNanos);
 
-            AppLogger.debug(() -> "Simulation (timer) has informed step listener. duration=" + durationView);
+            AppLogger.debug(() -> "Simulation (timer) has informed step listener. duration=" + durationViewMillis);
 
             // Check timeout if still running (not finished) and not the first step
             if ((getSimulationState() == SimulationState.RUNNING_TIMED) && (simulationManager.stepCount() > 1)) {
@@ -385,12 +385,12 @@ public final class DefaultMainViewModel<
                 }
 
                 // Check for view timeout
-                if (durationView > timeoutViewMillis) {
+                if (durationViewMillis > timeoutViewMillis) {
                     setNotificationType(SimulationNotificationType.TIMEOUT);
 
                     setSimulationState(SimulationState.PAUSED);
                     logSimulationInfo("Simulation (timer) has been paused because the view took too long to process. " +
-                            "duration=" + durationView + " " +
+                            "duration=" + durationViewMillis + " " +
                             "timeoutViewMillis=" + timeoutViewMillis);
                 }
             }
@@ -413,14 +413,15 @@ public final class DefaultMainViewModel<
         batchFuture = batchExecutor.submit(() -> {
             batchThread = Thread.currentThread();
             try {
-                if (simulationManager == null) {
+                var manager = simulationManager;
+                if (manager == null) {
                     AppLogger.error("Simulation manager is not initialized, cannot execute steps.");
                     return;
                 }
 
-                var executionResult = simulationManager.executeSteps(count, checkTermination, () -> {
+                var executionResult = manager.executeSteps(count, checkTermination, () -> {
                     // Create the event before the "runLater".
-                    var stepEvent = new SimulationStepEvent(true, simulationManager.stepCount(), false);
+                    var stepEvent = new SimulationStepEvent(true, manager.stepCount(), false);
                     Platform.runLater(() -> {
                         // Check at JavaFX-Thread if it is still running.
                         if (getSimulationState() == SimulationState.RUNNING_BATCH) {
@@ -430,9 +431,9 @@ public final class DefaultMainViewModel<
                 });
 
                 // Create the event and statistics before the "runLater".
-                var stepEvent = new SimulationStepEvent(false, simulationManager.stepCount(), true);
-                var statistics = simulationManager.statistics();
-                boolean executorFinished = executionResult.isFinished() && simulationManager.isExecutorFinished();
+                var stepEvent = new SimulationStepEvent(false, manager.stepCount(), true);
+                var statistics = manager.statistics();
+                boolean executorFinished = executionResult.isFinished() && manager.isExecutorFinished();
 
                 Platform.runLater(() -> {
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
