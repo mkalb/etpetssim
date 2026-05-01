@@ -200,8 +200,8 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * @return a new GridCoordinate clamped to the specified bounds
      */
     public GridCoordinate clampToBounds(int minX, int minY, int maxX, int maxY) {
-        int clampedX = Math.max(minX, Math.min(x, maxX - 1));
-        int clampedY = Math.max(minY, Math.min(y, maxY - 1));
+        int clampedX = Math.clamp(x, minX, maxX - 1);
+        int clampedY = Math.clamp(y, minY, maxY - 1);
         return new GridCoordinate(clampedX, clampedY);
     }
 
