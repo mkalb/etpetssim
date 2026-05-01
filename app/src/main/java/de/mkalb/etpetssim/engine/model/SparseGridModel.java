@@ -77,7 +77,7 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
 
     @Override
     public Set<GridCoordinate> nonDefaultCoordinates() {
-        return Collections.unmodifiableSet(data.keySet());
+        return Set.copyOf(data.keySet());
     }
 
     @Override
