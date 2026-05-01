@@ -10,6 +10,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
+/**
+ * Base class for simulation observation views.
+ */
 public abstract class AbstractObservationView<STA extends SimulationStatistics, VM extends SimulationObservationViewModel<STA>>
         implements SimulationObservationView {
 

@@ -10,6 +10,9 @@ import javafx.scene.layout.Region;
 
 import java.util.*;
 
+/**
+ * Base class for building the control section of a simulation UI.
+ */
 public abstract class AbstractControlView<VM extends SimulationControlViewModel>
         implements SimulationControlView {
 

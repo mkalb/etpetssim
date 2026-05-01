@@ -20,6 +20,9 @@ import javafx.scene.layout.VBox;
 
 import java.util.*;
 
+/**
+ * Base class for building simulation configuration views.
+ */
 public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>>
         implements SimulationConfigView {
 

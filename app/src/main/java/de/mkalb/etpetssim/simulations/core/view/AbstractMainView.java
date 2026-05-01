@@ -23,6 +23,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Generic base view that composes config, control and observation regions.
+ */
 public abstract class AbstractMainView<
         VM extends SimulationMainViewModel,
         CFV extends SimulationConfigView,

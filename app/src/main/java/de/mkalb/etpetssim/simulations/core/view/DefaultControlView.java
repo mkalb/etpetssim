@@ -15,6 +15,9 @@ import javafx.scene.layout.*;
 
 import java.util.*;
 
+/**
+ * Default JavaFX implementation of the simulation control view.
+ */
 public final class DefaultControlView
         extends AbstractControlView<DefaultControlViewModel> {
 
