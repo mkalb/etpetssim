@@ -79,6 +79,7 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
                     AppLogger.error("InputEnumProperty: Invalid value set: " + newValue +
                             ". Valid values are: " + copiedValidValues);
                 }
+                // The value is set even if it is invalid.
                 super.set(newValue);
             }
         };
