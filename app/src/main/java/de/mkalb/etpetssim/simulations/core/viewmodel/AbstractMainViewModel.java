@@ -11,6 +11,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Base class for main view models that coordinate config, observation and selection state.
+ */
 public abstract class AbstractMainViewModel<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,

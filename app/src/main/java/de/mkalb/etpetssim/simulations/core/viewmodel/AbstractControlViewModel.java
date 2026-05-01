@@ -3,6 +3,9 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
+/**
+ * Base implementation for control view models with shared state wiring.
+ */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class AbstractControlViewModel
         implements SimulationControlViewModel {

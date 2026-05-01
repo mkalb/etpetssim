@@ -9,6 +9,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
+/**
+ * Default implementation of control view-model state and user requests.
+ */
 public final class DefaultControlViewModel
         extends AbstractControlViewModel {
 
