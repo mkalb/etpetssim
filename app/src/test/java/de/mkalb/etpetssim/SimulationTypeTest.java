@@ -29,17 +29,27 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, SimulationType.STARTSCREEN.ordinal());
-        assertEquals(1, SimulationType.ET_PETS.ordinal());
-        assertEquals(2, SimulationType.WATOR.ordinal());
-        assertEquals(3, SimulationType.CONWAYS_LIFE.ordinal());
-        assertEquals(4, SimulationType.LANGTONS_ANT.ordinal());
-        assertEquals(5, SimulationType.FOREST_FIRE.ordinal());
-        assertEquals(6, SimulationType.SUGARSCAPE.ordinal());
-        assertEquals(7, SimulationType.SNAKE.ordinal());
-        assertEquals(8, SimulationType.REBOUNDING_ENTITIES.ordinal());
-        assertEquals(9, SimulationType.SIMULATION_LAB.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new SimulationType[]{
+                        SimulationType.STARTSCREEN,
+                        SimulationType.ET_PETS,
+                        SimulationType.WATOR,
+                        SimulationType.CONWAYS_LIFE,
+                        SimulationType.LANGTONS_ANT,
+                        SimulationType.FOREST_FIRE,
+                        SimulationType.SUGARSCAPE,
+                        SimulationType.SNAKE,
+                        SimulationType.REBOUNDING_ENTITIES,
+                        SimulationType.SIMULATION_LAB
+                },
+                SimulationType.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> SimulationType.valueOf("INVALID"));
     }
 
     @Test
@@ -148,8 +158,10 @@ final class SimulationTypeTest {
     @Test
     void testFromCliArgument() {
         assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("start", false));
+        assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("START", false));
         assertEquals(Optional.of(SimulationType.ET_PETS), SimulationType.fromCliArgument("etpets", true));
         assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("wator", true));
+        assertEquals(Optional.of(SimulationType.WATOR), SimulationType.fromCliArgument("WA-TOR", true));
         assertEquals(Optional.of(SimulationType.CONWAYS_LIFE), SimulationType.fromCliArgument("conway", true));
         assertEquals(Optional.of(SimulationType.SIMULATION_LAB), SimulationType.fromCliArgument("lab", false));
 

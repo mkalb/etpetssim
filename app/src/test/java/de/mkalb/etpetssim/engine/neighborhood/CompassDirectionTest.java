@@ -35,23 +35,33 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, CompassDirection.N.ordinal());
-        assertEquals(1, CompassDirection.NNE.ordinal());
-        assertEquals(2, CompassDirection.NE.ordinal());
-        assertEquals(3, CompassDirection.ENE.ordinal());
-        assertEquals(4, CompassDirection.E.ordinal());
-        assertEquals(5, CompassDirection.ESE.ordinal());
-        assertEquals(6, CompassDirection.SE.ordinal());
-        assertEquals(7, CompassDirection.SSE.ordinal());
-        assertEquals(8, CompassDirection.S.ordinal());
-        assertEquals(9, CompassDirection.SSW.ordinal());
-        assertEquals(10, CompassDirection.SW.ordinal());
-        assertEquals(11, CompassDirection.WSW.ordinal());
-        assertEquals(12, CompassDirection.W.ordinal());
-        assertEquals(13, CompassDirection.WNW.ordinal());
-        assertEquals(14, CompassDirection.NW.ordinal());
-        assertEquals(15, CompassDirection.NNW.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new CompassDirection[]{
+                        CompassDirection.N,
+                        CompassDirection.NNE,
+                        CompassDirection.NE,
+                        CompassDirection.ENE,
+                        CompassDirection.E,
+                        CompassDirection.ESE,
+                        CompassDirection.SE,
+                        CompassDirection.SSE,
+                        CompassDirection.S,
+                        CompassDirection.SSW,
+                        CompassDirection.SW,
+                        CompassDirection.WSW,
+                        CompassDirection.W,
+                        CompassDirection.WNW,
+                        CompassDirection.NW,
+                        CompassDirection.NNW
+                },
+                CompassDirection.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> CompassDirection.valueOf("INVALID"));
     }
 
     @Test
@@ -60,7 +70,7 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testAbbreviationResourceKeys() {
+    void testAbbreviationResourceKey() {
         assertEquals("compass.abbreviation.n", CompassDirection.N.abbreviationResourceKey());
         assertEquals("compass.abbreviation.nne", CompassDirection.NNE.abbreviationResourceKey());
         assertEquals("compass.abbreviation.ne", CompassDirection.NE.abbreviationResourceKey());
@@ -239,7 +249,7 @@ final class CompassDirectionTest {
 
     @Test
     void testStreamClockwise() {
-        var expectedCounterClockwiseN = List.of(
+        var expectedClockwiseN = List.of(
                 CompassDirection.N, CompassDirection.NNE, CompassDirection.NE, CompassDirection.ENE,
                 CompassDirection.E, CompassDirection.ESE, CompassDirection.SE, CompassDirection.SSE,
                 CompassDirection.S, CompassDirection.SSW, CompassDirection.SW, CompassDirection.WSW,
@@ -247,7 +257,7 @@ final class CompassDirectionTest {
         );
 
         var actualClockwiseN = CompassDirection.N.streamClockwise().toList();
-        assertEquals(expectedCounterClockwiseN, actualClockwiseN);
+        assertEquals(expectedClockwiseN, actualClockwiseN);
 
         var expectedClockwiseS = List.of(
                 CompassDirection.S, CompassDirection.SSW, CompassDirection.SW, CompassDirection.WSW,

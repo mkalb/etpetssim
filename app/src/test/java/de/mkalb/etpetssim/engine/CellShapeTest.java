@@ -19,10 +19,16 @@ final class CellShapeTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, CellShape.TRIANGLE.ordinal());
-        assertEquals(1, CellShape.SQUARE.ordinal());
-        assertEquals(2, CellShape.HEXAGON.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new CellShape[]{CellShape.TRIANGLE, CellShape.SQUARE, CellShape.HEXAGON},
+                CellShape.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> CellShape.valueOf("INVALID"));
     }
 
     @Test

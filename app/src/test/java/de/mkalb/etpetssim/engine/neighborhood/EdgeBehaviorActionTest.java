@@ -20,11 +20,21 @@ final class EdgeBehaviorActionTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, EdgeBehaviorAction.VALID.ordinal());
-        assertEquals(1, EdgeBehaviorAction.BLOCKED.ordinal());
-        assertEquals(2, EdgeBehaviorAction.WRAPPED.ordinal());
-        assertEquals(3, EdgeBehaviorAction.ABSORBED.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new EdgeBehaviorAction[]{
+                        EdgeBehaviorAction.VALID,
+                        EdgeBehaviorAction.BLOCKED,
+                        EdgeBehaviorAction.WRAPPED,
+                        EdgeBehaviorAction.ABSORBED
+                },
+                EdgeBehaviorAction.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> EdgeBehaviorAction.valueOf("INVALID"));
     }
 
 }

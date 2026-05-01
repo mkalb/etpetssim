@@ -18,9 +18,16 @@ final class CellConnectionTypeTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, CellConnectionType.EDGE.ordinal());
-        assertEquals(1, CellConnectionType.VERTEX.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new CellConnectionType[]{CellConnectionType.EDGE, CellConnectionType.VERTEX},
+                CellConnectionType.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> CellConnectionType.valueOf("INVALID"));
     }
 
     @Test

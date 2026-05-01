@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class EdgeBehaviorTest {
 
     @Test
-    public void testEnumValues() {
+    void testEnumValues() {
         assertNotNull(EdgeBehavior.valueOf("BLOCK"));
         assertNotNull(EdgeBehavior.valueOf("WRAP"));
         assertNotNull(EdgeBehavior.valueOf("ABSORB"));
@@ -19,10 +19,16 @@ final class EdgeBehaviorTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, EdgeBehavior.BLOCK.ordinal());
-        assertEquals(1, EdgeBehavior.WRAP.ordinal());
-        assertEquals(2, EdgeBehavior.ABSORB.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new EdgeBehavior[]{EdgeBehavior.BLOCK, EdgeBehavior.WRAP, EdgeBehavior.ABSORB},
+                EdgeBehavior.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> EdgeBehavior.valueOf("INVALID"));
     }
 
     @Test

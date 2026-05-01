@@ -18,9 +18,16 @@ final class NeighborhoodModeTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, NeighborhoodMode.EDGES_ONLY.ordinal());
-        assertEquals(1, NeighborhoodMode.EDGES_AND_VERTICES.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new NeighborhoodMode[]{NeighborhoodMode.EDGES_ONLY, NeighborhoodMode.EDGES_AND_VERTICES},
+                NeighborhoodMode.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> NeighborhoodMode.valueOf("INVALID"));
     }
 
     @Test

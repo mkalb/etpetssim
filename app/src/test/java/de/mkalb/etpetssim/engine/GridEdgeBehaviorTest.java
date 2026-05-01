@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class GridEdgeBehaviorTest {
 
     @Test
-    public void testEnumValues() {
+    void testEnumValues() {
         assertNotNull(GridEdgeBehavior.valueOf("BLOCK_XY"));
         assertNotNull(GridEdgeBehavior.valueOf("WRAP_XY"));
         assertNotNull(GridEdgeBehavior.valueOf("ABSORB_XY"));
@@ -21,12 +21,22 @@ final class GridEdgeBehaviorTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, GridEdgeBehavior.BLOCK_XY.ordinal());
-        assertEquals(1, GridEdgeBehavior.WRAP_XY.ordinal());
-        assertEquals(2, GridEdgeBehavior.ABSORB_XY.ordinal());
-        assertEquals(3, GridEdgeBehavior.BLOCK_X_WRAP_Y.ordinal());
-        assertEquals(4, GridEdgeBehavior.WRAP_X_BLOCK_Y.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new GridEdgeBehavior[]{
+                        GridEdgeBehavior.BLOCK_XY,
+                        GridEdgeBehavior.WRAP_XY,
+                        GridEdgeBehavior.ABSORB_XY,
+                        GridEdgeBehavior.BLOCK_X_WRAP_Y,
+                        GridEdgeBehavior.WRAP_X_BLOCK_Y
+                },
+                GridEdgeBehavior.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> GridEdgeBehavior.valueOf("INVALID"));
     }
 
     @Test
@@ -35,7 +45,7 @@ final class GridEdgeBehaviorTest {
     }
 
     @Test
-    public void testEdgeBehaviorX() {
+    void testEdgeBehaviorX() {
         assertEquals(EdgeBehavior.BLOCK, GridEdgeBehavior.BLOCK_XY.edgeBehaviorX());
         assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.WRAP_XY.edgeBehaviorX());
         assertEquals(EdgeBehavior.ABSORB, GridEdgeBehavior.ABSORB_XY.edgeBehaviorX());
@@ -44,7 +54,7 @@ final class GridEdgeBehaviorTest {
     }
 
     @Test
-    public void testEdgeBehaviorY() {
+    void testEdgeBehaviorY() {
         assertEquals(EdgeBehavior.BLOCK, GridEdgeBehavior.BLOCK_XY.edgeBehaviorY());
         assertEquals(EdgeBehavior.WRAP, GridEdgeBehavior.WRAP_XY.edgeBehaviorY());
         assertEquals(EdgeBehavior.ABSORB, GridEdgeBehavior.ABSORB_XY.edgeBehaviorY());
@@ -53,7 +63,7 @@ final class GridEdgeBehaviorTest {
     }
 
     @Test
-    public void testHasEqualEdgeBehaviors() {
+    void testHasEqualEdgeBehaviors() {
         assertTrue(GridEdgeBehavior.BLOCK_XY.hasEqualEdgeBehaviors());
         assertTrue(GridEdgeBehavior.WRAP_XY.hasEqualEdgeBehaviors());
         assertTrue(GridEdgeBehavior.ABSORB_XY.hasEqualEdgeBehaviors());
