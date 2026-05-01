@@ -4,6 +4,10 @@ import de.mkalb.etpetssim.engine.*;
 
 /**
  * Describes the immutable configuration values required to create a simulation grid.
+ * <p>
+ * Implementations are typically Java records that provide these shared core settings and
+ * add simulation-specific configuration parameters as additional record components.
+ * </p>
  */
 public interface SimulationConfig {
 
@@ -94,6 +98,11 @@ public interface SimulationConfig {
 
     /**
      * Validates whether this configuration can be used to construct a simulation grid.
+     * <p>
+     * Implementations should override this method when additional simulation-specific
+     * validation is required. Such overrides should call {@code SimulationConfig.super.isValid()}
+     * first and then apply their own constraints.
+     * </p>
      *
      * @return {@code true} if all configuration values are valid
      */
