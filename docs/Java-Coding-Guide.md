@@ -50,23 +50,10 @@ Apply rules in this order (highest first):
 
 ## Core Engineering Rules
 
-### DRY
-
-- [MUST NOT] Duplicate business logic across multiple locations.
-- [SHOULD] Extract shared logic into focused methods or classes.
-- [MUST NOT] Keep copy-paste implementations when a shared abstraction is practical.
-
-### KISS
-
-- [SHOULD] Prefer the simplest solution that fully satisfies requirements.
-- [SHOULD] Keep methods small and single-purpose.
-- [MUST NOT] Introduce complex abstractions without clear ongoing value.
-
-### Clean Code
-
-- [MUST] Use meaningful domain names.
-- [MUST] Keep classes cohesive.
-- [SHOULD] Prefer readability over cleverness.
+- [MUST NOT] Duplicate business logic; extract shared logic into focused methods or classes (DRY).
+- [SHOULD] Prefer the simplest solution that fully satisfies requirements; keep methods small and single-purpose (KISS).
+- [MUST NOT] Introduce abstractions without clear ongoing value.
+- [MUST] Use meaningful domain names and keep classes cohesive.
 - [MUST] Remove dead code and outdated comments.
 
 ## Architecture: MVVM
@@ -166,10 +153,8 @@ Apply rules in this order (highest first):
 
 ### General Java Style
 
-- [MUST] Use lowerCamelCase for method and parameter names.
 - [SHOULD] Prefer clear domain terms over abbreviations.
 - [MUST NOT] Add comments that only restate obvious code.
-- [MUST] Annotate lambda-oriented single-abstract-method interfaces with `@FunctionalInterface`.
 - [SHOULD] Prefer modern Java APIs/features when they improve clarity and are compatible with Java 25.
 - [MUST] Use locale-stable normalization for technical text (for example, `toLowerCase(Locale.ROOT)`).
 
@@ -181,13 +166,10 @@ Apply rules in this order (highest first):
 - [MUST] Use canonical/compact constructors to enforce invariants when needed.
 - [MUST] Defensively copy mutable inputs (collections, maps, arrays) before storing.
 - [SHOULD] Add static factories only when they provide clear value (validation, parsing, defaults).
-- [SHOULD] Keep generated members (`equals`, `hashCode`, `toString`, accessors) unless semantics require override.
 
 ### Enums
 
 - [MUST] Use enums only for fixed, closed domain sets.
-- [MUST] Keep enum constants uppercase and domain-specific.
-- [MUST NOT] Use unclear abbreviations.
 - [SHOULD] Place enum behavior/metadata on the enum type itself.
 - [SHOULD] Use exhaustive `switch` expressions for enum branching.
 - [SHOULD NOT] Use a `default` branch when all constants are known.
