@@ -98,14 +98,24 @@ public final class AboutDialog {
      *
      * @return formatted manifest summary text
      */
-    @SuppressWarnings("HardcodedLineSeparator")
     private String buildManifestSummary() {
         Map<String, String> mf = readManifestInfo();
-        return "Title: " + mf.getOrDefault("Implementation-Title", "") + "\n" +
-                "Version: " + mf.getOrDefault("Implementation-Version", "") + "\n" +
-                "Build Timestamp: " + mf.getOrDefault("Build-Timestamp", "") + "\n" +
-                "Build JDK: " + mf.getOrDefault("Build-Jdk", "") + "\n" +
-                "Built by: " + mf.getOrDefault("Built-By", "") + "\n";
+        String lineSeparator = System.lineSeparator();
+        return AppLocalization.getFormattedText(
+                AppLocalizationKeys.ABOUT_MANIFEST_TITLE,
+                mf.getOrDefault("Implementation-Title", "")) + lineSeparator +
+                AppLocalization.getFormattedText(
+                        AppLocalizationKeys.ABOUT_MANIFEST_VERSION,
+                        mf.getOrDefault("Implementation-Version", "")) + lineSeparator +
+                AppLocalization.getFormattedText(
+                        AppLocalizationKeys.ABOUT_MANIFEST_BUILD_TIMESTAMP,
+                        mf.getOrDefault("Build-Timestamp", "")) + lineSeparator +
+                AppLocalization.getFormattedText(
+                        AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK,
+                        mf.getOrDefault("Build-Jdk", "")) + lineSeparator +
+                AppLocalization.getFormattedText(
+                        AppLocalizationKeys.ABOUT_MANIFEST_BUILT_BY,
+                        mf.getOrDefault("Built-By", "")) + lineSeparator;
     }
 
     /**
@@ -148,7 +158,9 @@ public final class AboutDialog {
      */
     private String getResourceAsString(String resourceRelativePath) {
         return AppResources.getResourceAsString(resourceRelativePath, StandardCharsets.UTF_8)
-                           .orElse("Resource not found: %1$s".formatted(resourceRelativePath));
+                           .orElse(AppLocalization.getFormattedText(
+                                   AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND,
+                                   resourceRelativePath));
     }
 
 }

@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.core.AppResources;
+import de.mkalb.etpetssim.core.*;
 
 import java.net.URI;
 import java.util.*;
@@ -178,7 +176,7 @@ public enum SimulationType {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return "simulationtype.label";
+        return AppLocalizationKeys.ENUM_LABEL_SIMULATIONTYPE;
     }
 
     /**

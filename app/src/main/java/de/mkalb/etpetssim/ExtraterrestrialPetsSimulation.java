@@ -50,7 +50,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @param arguments parsed application arguments
      * @param onlyImplemented whether to restrict matching to implemented simulations
      * @return an {@link Optional} containing the matching simulation type, or empty if none matches
-     * @throws NullPointerException if {@code arguments} is {@code null}
      */
     @SuppressWarnings("SameParameterValue")
     private Optional<SimulationType> determineSimulationType(AppArgs arguments, boolean onlyImplemented) {
@@ -80,7 +79,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      *
      * @param stage primary application stage
      * @param simulationType simulation type to display
-     * @throws NullPointerException if {@code stage} or {@code simulationType} is {@code null}
      * @see de.mkalb.etpetssim.simulations.core.SimulationFactory
      * @see de.mkalb.etpetssim.simulations.start.StartMainView
      */
@@ -165,7 +163,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      *
      * @param stage stage to adjust
      * @param root scene root associated with the stage
-     * throws NullPointerException if {@code stage} or {@code root} is {@code null}
      */
     private void adjustStageLayoutToScreen(Stage stage, Region root) {
         Objects.requireNonNull(stage, "Stage must not be null");
@@ -260,9 +257,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
             root.setDisable(false); // Enable now after all adjustments are done
 
-            // noinspection StringConcatenationMissingWhitespace
-            AppLogger.info("Application: Stage adjusted to size: " + stage.getWidth() + "x" + stage.getHeight() +
-                    " at position: (" + stage.getX() + ", " + stage.getY() + ")");
+            AppLogger.infof(
+                    "Application: Stage adjusted to size: %.1fx%.1f at position: (%.1f, %.1f)",
+                    stage.getWidth(),
+                    stage.getHeight(),
+                    stage.getX(),
+                    stage.getY());
         }
     }
 
@@ -335,8 +335,8 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             AppLogger.error("Uncaught exception in thread " + thread.getName(), throwable);
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Unexpected Error");
-                alert.setHeaderText("An unexpected error occurred.");
+                alert.setTitle(AppLocalization.getText(AppLocalizationKeys.ALERT_TITLE_UNEXPECTED_ERROR));
+                alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_HEADER_UNEXPECTED_ERROR));
                 alert.setContentText(throwable.getMessage());
                 alert.showAndWait();
             });

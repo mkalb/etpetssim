@@ -90,7 +90,7 @@ public final class AppLauncher {
         initAppLogger(arguments);
         initAppLocalization(arguments);
 
-        AppLogger.info("AppLauncher: Launching application with arguments: " + arguments.argumentsAsString());
+        AppLogger.infof("AppLauncher: Launching application with arguments: %s", arguments.argumentsAsString());
         Application.launch(ExtraterrestrialPetsSimulation.class, args);
     }
 

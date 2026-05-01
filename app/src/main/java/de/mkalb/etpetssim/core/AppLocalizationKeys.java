@@ -9,11 +9,19 @@ package de.mkalb.etpetssim.core;
 @SuppressWarnings("SpellCheckingInspection")
 public final class AppLocalizationKeys {
 
+    public static final String ABOUT_MANIFEST_BUILD_JDK = "about.manifest.buildjdk";
+    public static final String ABOUT_MANIFEST_BUILD_TIMESTAMP = "about.manifest.buildtimestamp";
+    public static final String ABOUT_MANIFEST_BUILT_BY = "about.manifest.builtby";
+    public static final String ABOUT_MANIFEST_TITLE = "about.manifest.title";
+    public static final String ABOUT_MANIFEST_VERSION = "about.manifest.version";
+    public static final String ABOUT_RESOURCE_NOT_FOUND = "about.resource.notfound";
     public static final String ABOUT_TAB_LICENSE = "about.tab.license";
     public static final String ABOUT_TAB_README = "about.tab.readme";
     public static final String ABOUT_TAB_THIRD_PARTY_LICENSES = "about.tab.thirdpartylicenses";
     public static final String ABOUT_TAB_VERSION = "about.tab.version";
     public static final String ABOUT_TITLE = "about.title";
+    public static final String ALERT_HEADER_UNEXPECTED_ERROR = "alert.unexpected.error.header";
+    public static final String ALERT_TITLE_UNEXPECTED_ERROR = "alert.unexpected.error.title";
     public static final String CONFIG_CELL_DISPLAY_MODE_TOOLTIP = "config.celldisplaymode.tooltip";
     public static final String CONFIG_CELL_EDGE_LENGTH = "config.celledgelength";
     public static final String CONFIG_CELL_EDGE_LENGTH_TOOLTIP = "config.celledgelength.tooltip";
@@ -47,6 +55,7 @@ public final class AppLocalizationKeys {
     public static final String CONTROL_STEP_TITLE = "control.step.title";
     public static final String CONTROL_TERMINATION_CHECK = "control.terminationcheck";
     public static final String CONTROL_TERMINATION_CHECK_TOOLTIP = "control.terminationcheck.tooltip";
+    public static final String ENUM_LABEL_SIMULATIONTYPE = "simulationtype.label";
     public static final String HEADER_ABOUT_LINK = "header.about.link";
     public static final String HEADER_STARTSCREEN_LINK = "header.startscreen.link";
     public static final String OBSERVATION_STEP = "observation.step";
