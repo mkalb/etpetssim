@@ -43,9 +43,13 @@ public final class SimulationTimer {
      * without creating a new instance.
      * </p>
      *
-     * @param interval the interval between executions
+     * @param interval the interval between executions; must be finite and greater than 0 ms
+     * @throws IllegalArgumentException if {@code interval} is unknown, indefinite, or not greater than 0 ms
      */
     public void start(Duration interval) {
+        if (interval.isUnknown() || interval.isIndefinite() || (interval.toMillis() <= 0.0d)) {
+            throw new IllegalArgumentException("interval must be a finite duration greater than 0 ms");
+        }
         stop();
         timeline = new Timeline(new KeyFrame(interval, _ -> simulationStep.run()));
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -68,7 +72,7 @@ public final class SimulationTimer {
      * @return true if running, false otherwise
      */
     public boolean isRunning() {
-        return timeline != null;
+        return (timeline != null) && (timeline.getStatus() == Animation.Status.RUNNING);
     }
 
 }
