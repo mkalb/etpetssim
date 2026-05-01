@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.core;
 
 import de.mkalb.FxTestSupport;
 import javafx.scene.image.Image;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,7 @@ final class AppResourcesTest {
      *
      * <p>If the resource bundle is not present or does not contain the expected key, the test will fail.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetBundleDefaultWithLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(TEST_LOCALE);
@@ -53,6 +55,7 @@ final class AppResourcesTest {
      *
      * <p>If the resource bundle is not present or does not contain the expected key, the test will fail.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetBundleWithBaseNameAndLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, TEST_LOCALE);
@@ -79,6 +82,7 @@ final class AppResourcesTest {
      *
      * <p>If this CSS file is not present, the test will fail.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetCssUrl() {
         Optional<String> cssUrlOpt = AppResources.getCssUrl("etpetssim.css");
@@ -104,6 +108,7 @@ final class AppResourcesTest {
      *
      * <p>If this image is not present, the test will fail.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImage() {
         Optional<Image> imageOpt = AppResources.getImage("etpetssim16.png");
@@ -123,9 +128,10 @@ final class AppResourcesTest {
      *
      * <p>If these images are not present, the test will fail.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImages() {
-        List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
+        List<@Nullable Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
                 "etpetssim32.png");
         assertEquals(3, images.size(), "Number of images should be 3");
         assertTrue(images.stream().allMatch(Objects::nonNull), "All images should be non-null");
@@ -155,6 +161,7 @@ final class AppResourcesTest {
      *
      * <p>If this resource is not present, the test will fail.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsStream() {
         Optional<InputStream> streamOpt = AppResources.getResourceAsStream("css/etpetssim.css");
@@ -169,6 +176,7 @@ final class AppResourcesTest {
         assertFalse(streamOpt.isPresent(), "Missing resource stream should not be present");
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsString() {
         Optional<String> resOpt = AppResources.getResourceAsString("LICENSE", StandardCharsets.UTF_8);
@@ -194,6 +202,7 @@ final class AppResourcesTest {
      *
      * <p>If this resource is not present, the test will fail.</p>
      */
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsUrl() {
         Optional<URL> urlOpt = AppResources.getResourceAsUrl("css/etpetssim.css");
