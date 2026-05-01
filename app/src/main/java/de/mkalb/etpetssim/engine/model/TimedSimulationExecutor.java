@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 /**
  * Decorator for {@link SimulationExecutor} that measures the execution time of each simulation step.
  * <p>
- * This executor tracks the minimum, maximum, and most recent step durations (in milliseconds).
+ * This executor tracks the minimum, maximum, and most recent step durations in nanoseconds.
  * <p>
  * Timing statistics are accessible via getter methods.
  *
@@ -17,14 +17,12 @@ public final class TimedSimulationExecutor<
         GM extends GridModel<ENT>>
         implements SimulationExecutor<ENT, GM> {
 
-    private static final long NANOS_PER_MILLISECOND = 1_000_000L;
-
     private final SimulationExecutor<ENT, GM> delegate;
 
-    private long currentStepMillis = Long.MIN_VALUE;
-    private long minStepMillis = Long.MAX_VALUE;
-    private long maxStepMillis = Long.MIN_VALUE;
-    private long sumStepMillis = 0;
+    private long currentStepNanos = Long.MIN_VALUE;
+    private long minStepNanos = Long.MAX_VALUE;
+    private long maxStepNanos = Long.MIN_VALUE;
+    private long sumStepNanos = 0;
 
     /**
      * Creates a new {@code TimedSimulationExecutor}.
@@ -63,24 +61,23 @@ public final class TimedSimulationExecutor<
     public void executeStep() {
         long startNanos = System.nanoTime();
         delegate.executeStep();
-        long elapsedNanos = System.nanoTime() - startNanos;
-        currentStepMillis = elapsedNanos / NANOS_PER_MILLISECOND;
+        currentStepNanos = System.nanoTime() - startNanos;
 
-        // Update min/max.
-        if (currentStepMillis < minStepMillis) {
-            minStepMillis = currentStepMillis;
+        // Update timing statistics
+        if (currentStepNanos < minStepNanos) {
+            minStepNanos = currentStepNanos;
         }
-        if (currentStepMillis > maxStepMillis) {
-            maxStepMillis = currentStepMillis;
+        if (currentStepNanos > maxStepNanos) {
+            maxStepNanos = currentStepNanos;
         }
-        sumStepMillis += currentStepMillis;
+        sumStepNanos += currentStepNanos;
     }
 
     /**
      * Returns an immutable record containing timing statistics for simulation steps.
      * <p>
      * The statistics include the minimum, maximum, and most recent step durations,
-     * as well as the sum and average of all step durations (in milliseconds).
+     * as well as the sum and average of all step durations in nanoseconds.
      * <p>
      * If no steps have been executed yet, all values in the returned record are {@code 0}.
      *
@@ -90,23 +87,23 @@ public final class TimedSimulationExecutor<
         int steps = stepCount();
         if (steps > 0) {
             return new StepTimingStatistics(
-                    currentStepMillis,
-                    minStepMillis,
-                    maxStepMillis,
-                    sumStepMillis,
-                    (sumStepMillis / steps)
+                    currentStepNanos,
+                    minStepNanos,
+                    maxStepNanos,
+                    sumStepNanos,
+                    (sumStepNanos / steps)
             );
         }
         return StepTimingStatistics.empty();
     }
 
     /**
-     * Returns the duration (ms) of the most recently executed simulation step.
+     * Returns the duration of the most recently executed simulation step in nanoseconds.
      *
-     * @return the last step duration in milliseconds, or {@link Long#MIN_VALUE} if no steps have been executed
+     * @return the last step duration in nanoseconds, or {@link Long#MIN_VALUE} if no steps have been executed
      */
-    public long currentStepMillis() {
-        return currentStepMillis;
+    public long currentStepNanos() {
+        return currentStepNanos;
     }
 
 }

@@ -18,6 +18,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+/**
+ * Default main view-model implementation that orchestrates timed and batch execution.
+ */
 public final class DefaultMainViewModel<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
@@ -39,7 +42,7 @@ public final class DefaultMainViewModel<
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
-    private long timeoutExecuteMillis = Long.MAX_VALUE;
+    private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
 
@@ -229,7 +232,7 @@ public final class DefaultMainViewModel<
 
         resetSelectedProperties();
 
-        long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis(); // TODO use nanoTime
         try {
             Optional<CON> config = createValidConfig();
             if (config.isEmpty()) {
@@ -247,7 +250,7 @@ public final class DefaultMainViewModel<
             setNotificationType(SimulationNotificationType.EXCEPTION);
             return;
         }
-        long duration = System.currentTimeMillis() - start;
+        long duration = System.currentTimeMillis() - start; // TODO use nanoTime
 
         if (controlViewModel.isStartPaused()) {
             setSimulationState(SimulationState.PAUSED);
@@ -322,7 +325,8 @@ public final class DefaultMainViewModel<
     private void configureSimulationTimeout() {
         if (controlViewModel.isModeTimed()) {
             double stepDuration = controlViewModel.stepDurationProperty().getValue();
-            timeoutExecuteMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR));
+            long timeoutExecuteMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR));
+            timeoutExecuteNanos = TimeUnit.MILLISECONDS.toNanos(timeoutExecuteMillis);
             timeoutViewMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_VIEW_FACTOR));
             throttleDrawMillis = Math.max(1L, (long) (stepDuration * THROTTLE_DRAW_FACTOR));
         }
@@ -345,7 +349,7 @@ public final class DefaultMainViewModel<
             // Execute simulation step
             simulationManager.executeStep();
 
-            AppLogger.debug(() -> "Simulation (timer) has executed step. duration=" + simulationManager.stepTimingStatistics().current());
+            AppLogger.debug(() -> "Simulation (timer) has executed step. durationNanos=" + simulationManager.stepTimingStatistics().currentNanos());
 
             // Update statistics
             updateObservationStatistics(simulationManager.statistics());
@@ -362,22 +366,22 @@ public final class DefaultMainViewModel<
             }
 
             // Notify view about the step and measure duration
-            long startView = System.currentTimeMillis();
+            long startView = System.currentTimeMillis(); // TODO use nanoTime
             simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
-            long durationView = System.currentTimeMillis() - startView;
+            long durationView = System.currentTimeMillis() - startView; // TODO use nanoTime
 
             AppLogger.debug(() -> "Simulation (timer) has informed step listener. duration=" + durationView);
 
             // Check timeout if still running (not finished) and not the first step
             if ((getSimulationState() == SimulationState.RUNNING_TIMED) && (simulationManager.stepCount() > 1)) {
                 // Check for calculation timeout
-                if (simulationManager.stepTimingStatistics().current() > timeoutExecuteMillis) {
+                if (simulationManager.stepTimingStatistics().currentNanos() > timeoutExecuteNanos) {
                     setNotificationType(SimulationNotificationType.TIMEOUT);
 
                     setSimulationState(SimulationState.PAUSED);
                     logSimulationInfo("Simulation (timer) has been paused because the simulation step took too long to " +
-                            "calculate. duration=" + simulationManager.stepTimingStatistics().current() + " " +
-                            "timeoutExecuteMillis=" + timeoutExecuteMillis);
+                            "calculate. durationNanos=" + simulationManager.stepTimingStatistics().currentNanos() + " " +
+                            "timeoutExecuteNanos=" + timeoutExecuteNanos);
                 }
 
                 // Check for view timeout
