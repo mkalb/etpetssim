@@ -254,15 +254,15 @@ public final class DefaultMainViewModel<
 
         if (controlViewModel.isStartPaused()) {
             setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation was started in paused state by the user. duration=" + durationMillis);
+            logSimulationInfo("Simulation was started in paused state by the user. durationMillis=" + durationMillis);
         } else if (controlViewModel.isModeTimed()) {
             setSimulationState(SimulationState.RUNNING_TIMED);
-            logSimulationInfo("Simulation (timer) was started by the user. duration=" + durationMillis);
+            logSimulationInfo("Simulation (timer) was started by the user. durationMillis=" + durationMillis);
 
             startTimer();
         } else if (controlViewModel.isModeBatch()) {
             setSimulationState(SimulationState.RUNNING_BATCH);
-            logSimulationInfo("Simulation (batch) was started by the user. duration=" + durationMillis);
+            logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
 
             runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
                     controlViewModel.isModeBatchContinuous());
@@ -324,11 +324,11 @@ public final class DefaultMainViewModel<
     @SuppressWarnings("NumericCastThatLosesPrecision")
     private void configureSimulationTimeout() {
         if (controlViewModel.isModeTimed()) {
-            double stepDuration = controlViewModel.stepDurationProperty().getValue();
-            long timeoutExecuteMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_EXECUTE_FACTOR));
+            double stepDurationMillis = controlViewModel.stepDurationProperty().getValue();
+            long timeoutExecuteMillis = Math.max(1L, (long) (stepDurationMillis * TIMEOUT_EXECUTE_FACTOR));
             timeoutExecuteNanos = TimeUnit.MILLISECONDS.toNanos(timeoutExecuteMillis);
-            timeoutViewMillis = Math.max(1L, (long) (stepDuration * TIMEOUT_VIEW_FACTOR));
-            throttleDrawMillis = Math.max(1L, (long) (stepDuration * THROTTLE_DRAW_FACTOR));
+            timeoutViewMillis = Math.max(1L, (long) (stepDurationMillis * TIMEOUT_VIEW_FACTOR));
+            throttleDrawMillis = Math.max(1L, (long) (stepDurationMillis * THROTTLE_DRAW_FACTOR));
         }
     }
 
@@ -370,7 +370,7 @@ public final class DefaultMainViewModel<
             simulationStepListener.accept(new SimulationStepEvent(false, simulationManager.stepCount(), false));
             long durationViewMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startViewNanos);
 
-            AppLogger.debug(() -> "Simulation (timer) has informed step listener. duration=" + durationViewMillis);
+            AppLogger.debug(() -> "Simulation (timer) has informed step listener. durationViewMillis=" + durationViewMillis);
 
             // Check timeout if still running (not finished) and not the first step
             if ((getSimulationState() == SimulationState.RUNNING_TIMED) && (simulationManager.stepCount() > 1)) {
@@ -390,7 +390,7 @@ public final class DefaultMainViewModel<
 
                     setSimulationState(SimulationState.PAUSED);
                     logSimulationInfo("Simulation (timer) has been paused because the view took too long to process. " +
-                            "duration=" + durationViewMillis + " " +
+                            "durationViewMillis=" + durationViewMillis + " " +
                             "timeoutViewMillis=" + timeoutViewMillis);
                 }
             }
