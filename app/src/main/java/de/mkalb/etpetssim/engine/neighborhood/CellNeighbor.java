@@ -2,6 +2,8 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 
+import java.util.*;
+
 /**
  * Represents the relationship between a cell and one of its neighbors in a two-dimensional grid.
  * <p>
@@ -55,7 +57,7 @@ public record CellNeighbor(
                 startCoordinate.toDisplayString(),
                 direction.arrow(),
                 neighborCoordinate.toDisplayString(),
-                connection.name().toLowerCase()
+                connection.name().toLowerCase(Locale.ROOT)
         );
     }
 
