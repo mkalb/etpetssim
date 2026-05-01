@@ -3,6 +3,15 @@
 This document is the authoritative coding guide for this repository.
 It is optimized for both humans and GitHub Copilot context prompts.
 
+## Copilot Operating Rules
+
+- Prefer minimal diffs; do not reformat or restructure unrelated code.
+- Do not invent file paths, class names, package names, or APIs; verify them via the workspace before referencing them.
+- If a rule conflict or ambiguity cannot be resolved from the available context, ask before guessing.
+- Preserve existing public API signatures unless the request explicitly asks to change them.
+- When adding new code, follow the conventions of the closest existing peer file rather than introducing new patterns.
+- When rules conflict, cite [Rule Priority](#rule-priority) and choose the highest-priority compliant solution.
+
 ## Normative Keywords
 
 - **MUST**: mandatory requirement.
@@ -273,31 +282,10 @@ The repository uses the `AppLogger` facade (built on `java.util.logging`) as the
 - [MUST] Start test method names with `test`, followed by the behavior or scenario under test.
 - [SHOULD NOT] Add Javadoc to test classes/methods unless genuinely needed.
 
-## Tooling
+## Suppressions
 
-### IntelliJ IDEA and Warnings
-
-- [MUST] Run and address relevant inspections before commit.
-- [MUST] Format with project IntelliJ settings before commit.
 - [MUST] Keep each `@SuppressWarnings` scope as narrow as possible.
 - [MUST NOT] Add explanatory comments to `@SuppressWarnings`.
-- [MUST NOT] Add or remove `@SuppressWarnings` automatically via AI/Copilot.
-- [MUST] Add `@SuppressWarnings` only after human review and trade-off evaluation.
+- [MUST NOT] Add or remove `@SuppressWarnings` automatically via AI/Copilot; add them only after human review and
+  trade-off evaluation.
 - [SHOULD] Prefer improving inspections/rules over adding suppressions when practical.
-
-## Copilot Prompting Notes (Non-Normative)
-
-These notes improve consistency when this file is used as prompt context.
-
-- Prefer requests that mention target layer (`Model`, `View`, or `ViewModel`).
-- Mention whether the change affects API contracts, nullability, or tests.
-- Ask for deterministic outputs: exact file paths, minimal diffs, and short rationale.
-- When rules conflict, cite [Rule Priority](#rule-priority) and choose the highest-priority compliant solution.
-- Prefer minimal diffs; do not reformat or restructure unrelated code.
-- Do not invent file paths, class names, package names, or APIs; verify them via the workspace before referencing them.
-- If a rule conflict or ambiguity cannot be resolved from the available context, ask before guessing.
-- Preserve existing public API signatures unless the request explicitly asks to change them.
-- When adding new code, follow the conventions of the closest existing peer file (naming, layering, style class usage,
-  logging) rather than introducing new patterns.
-- For UI changes, state explicitly which layer is touched and which CSS file (if any) is affected.
-- For logging changes, reference the `AppLogger` facade and the level semantics from the [Logging](#logging) section.
