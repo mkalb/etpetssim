@@ -10,6 +10,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Default implementation of observation-related view-model state.
+ */
 public final class DefaultObservationViewModel<
         ENT extends GridEntity,
         STA extends SimulationStatistics>
@@ -52,24 +55,30 @@ public final class DefaultObservationViewModel<
     }
 
     /**
-     * Bind property from MainViewModel to observation ViewModel
-     * @param property the property to bind to
+     * Binds the selected-cell property from the main view model.
+     *
+     * @param property source property to bind from
      */
     public void bindSelectedGridCellProperty(ObjectProperty<@Nullable GridCell<ENT>> property) {
+        if (selectedGridCell.isBound()) {
+            selectedGridCell.unbind();
+        }
         selectedGridCell.bind(property);
     }
 
     /**
-     * Getter used by Observation View.
-     * @return the selected grid cell property
+     * Exposes the currently selected grid cell.
+     *
+     * @return selected grid cell property
      */
     public ObjectProperty<@Nullable GridCell<ENT>> selectedGridCellProperty() {
         return selectedGridCell;
     }
 
     /**
-     * Getter used by Observation View.
-     * @return the last clicked coordinate property
+     * Exposes the last clicked grid coordinate.
+     *
+     * @return last clicked coordinate property
      */
     @Override
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
