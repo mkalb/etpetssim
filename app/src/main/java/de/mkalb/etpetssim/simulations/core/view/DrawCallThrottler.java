@@ -6,10 +6,10 @@ final class DrawCallThrottler {
 
     private final int historySize;
     private final int maxSkips;
-    private final Queue<Long> durations;
+    private final Queue<Long> durationsMillis;
     private int skipCounter = 0;
-    private long durationSum = 0;
-    private long averageDuration = 0;
+    private long durationSumMillis = 0;
+    private long averageDurationMillis = 0;
 
     DrawCallThrottler(int historySize, int maxSkips) {
         if (historySize <= 0) {
@@ -20,12 +20,12 @@ final class DrawCallThrottler {
         }
         this.historySize = historySize;
         this.maxSkips = maxSkips;
-        durations = new ArrayDeque<>(historySize);
+        durationsMillis = new ArrayDeque<>(historySize);
     }
 
     boolean shouldSkip(long thresholdMillis) {
-        if ((averageDuration > thresholdMillis)
-                && (durations.size() >= historySize)) {
+        if ((averageDurationMillis > thresholdMillis)
+                && (durationsMillis.size() >= historySize)) {
             skipCounter++;
             if (skipCounter <= maxSkips) {
                 return true;
@@ -37,19 +37,19 @@ final class DrawCallThrottler {
     }
 
     void recordDuration(long durationMillis) {
-        if (durations.size() >= historySize) {
-            Long removed = durations.poll();
-            if (removed != null) {
-                durationSum -= removed;
+        if (durationsMillis.size() >= historySize) {
+            Long removedMillis = durationsMillis.poll();
+            if (removedMillis != null) {
+                durationSumMillis -= removedMillis;
             }
         }
-        durations.offer(durationMillis);
-        durationSum += durationMillis;
-        averageDuration = durationSum / durations.size();
+        durationsMillis.offer(durationMillis);
+        durationSumMillis += durationMillis;
+        averageDurationMillis = durationSumMillis / durationsMillis.size();
     }
 
-    long getAverageDuration() {
-        return averageDuration;
+    long getAverageDurationMillis() {
+        return averageDurationMillis;
     }
 
 }

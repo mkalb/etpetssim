@@ -161,7 +161,7 @@ public abstract class AbstractDefaultMainView<
 
         if (DEBUG_MODE) {
             AppLogger.info("MainView: Drawn step " + stepCount +
-                    " in " + durationMillis + "ms. Average draw time: " + drawThrottler.getAverageDuration() + "ms");
+                    " in " + durationMillis + "ms. Average draw time: " + drawThrottler.getAverageDurationMillis() + "ms");
         }
     }
 
@@ -173,7 +173,7 @@ public abstract class AbstractDefaultMainView<
             showSkipOverlay();
             if (DEBUG_MODE) {
                 AppLogger.warn("MainView: Skipping draw for step " + stepCount +
-                        " due to high average draw time. Average: " + drawThrottler.getAverageDuration() +
+                        " due to high average draw time. Average: " + drawThrottler.getAverageDurationMillis() +
                         "ms, Threshold: " + throttleDrawMillis + "ms");
             }
         }
