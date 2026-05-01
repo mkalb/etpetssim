@@ -82,6 +82,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
                     AppLogger.error("InputIntegerProperty: Invalid value set: " + newValue +
                             " (min=" + min + ", max=" + max + ", step=" + step + ")");
                 }
+                // The value is set even if it is invalid.
                 super.set(newValue);
             }
         };
@@ -98,8 +99,15 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      * @return the adjusted value
      */
     static int adjustValue(int newValue, int min, int max, int step) {
-        int clamped = Math.max(min, Math.min(max, newValue));
-        return min + (Math.round((float) (clamped - min) / step) * step);
+        int clamped = Math.clamp(newValue, min, max);
+        int delta = clamped - min;
+        int lowerOffset = (delta / step) * step;
+        int upperOffset = Math.min(lowerOffset + step, max - min);
+
+        if ((delta - lowerOffset) <= (upperOffset - delta)) {
+            return min + lowerOffset;
+        }
+        return min + upperOffset;
     }
 
     /**
