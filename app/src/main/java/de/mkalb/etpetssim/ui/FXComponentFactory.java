@@ -252,8 +252,10 @@ public final class FXComponentFactory {
      */
     private static <E extends Enum<E>> ListCell<E> createDisplayNameListCell(Map<E, String> displayNames) {
         return new ListCell<>() {
+            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
             @Override
             protected void updateItem(@Nullable E item, boolean empty) {
+                // Follow the JavaFX Cell#updateItem(...) contract: call super first and clear the cell for empty or null items.
                 super.updateItem(item, empty);
                 if (empty || (item == null)) {
                     setText(null);
@@ -455,7 +457,7 @@ public final class FXComponentFactory {
         int range = ((int) (maxRounded * 100)) - ((int) (minRounded * 100));
         int minorTickCount = computeMinorTickCountForPercentSlider(range);
 
-        double value = Math.max(minRounded, Math.min(maxRounded, valueRounded));
+        double value = Math.clamp(valueRounded, minRounded, maxRounded);
         inputDoubleProperty.setValue(value);
 
         Slider slider = new Slider(minRounded, maxRounded, value);
@@ -536,7 +538,7 @@ public final class FXComponentFactory {
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        int decimals = Math.max(0, Math.min(9, decimalPlaces)); // clamp to [0,9]
+        int decimals = Math.clamp(decimalPlaces, 0, 9);
         double factor = Math.pow(10.0d, decimals);
         double blockIncrement = 1.0d / factor;
 
@@ -547,7 +549,7 @@ public final class FXComponentFactory {
         double majorTickUnit = (max - min);
         int minorTickCount = 0; // No minor ticks for general double sliders.
 
-        double value = Math.max(min, Math.min(max, valueRounded));
+        double value = Math.clamp(valueRounded, min, max);
         inputDoubleProperty.setValue(value);
 
         Slider slider = new Slider(min, max, value);
