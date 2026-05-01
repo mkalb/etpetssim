@@ -38,6 +38,7 @@ final class GridStructureTest {
         assertTrue(ex.getMessage().contains("multiple of 2"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testNullArgumentsThrowException() {
         GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY);
@@ -189,6 +190,9 @@ final class GridStructureTest {
         assertEquals(20 * 30, coordinates.size());
         assertTrue(coordinates.contains(new GridCoordinate(10, 15)));
         assertEquals(new GridCoordinate(0, 0), coordinates.getFirst());
+        assertEquals(new GridCoordinate(1, 0), coordinates.get(1));
+        assertEquals(new GridCoordinate(19, 0), coordinates.get(19));
+        assertEquals(new GridCoordinate(0, 1), coordinates.get(20));
         assertEquals(new GridCoordinate(19, 29), coordinates.getLast());
 
         // Check that all coordinates are valid and unique.
@@ -209,6 +213,9 @@ final class GridStructureTest {
         assertEquals(20 * 30, coordinates.size());
         assertTrue(coordinates.contains(new GridCoordinate(10, 15)));
         assertEquals(new GridCoordinate(0, 0), coordinates.getFirst());
+        assertEquals(new GridCoordinate(1, 0), coordinates.get(1));
+        assertEquals(new GridCoordinate(19, 0), coordinates.get(19));
+        assertEquals(new GridCoordinate(0, 1), coordinates.get(20));
         assertEquals(new GridCoordinate(19, 29), coordinates.getLast());
 
         // Check that all coordinates are valid and unique.

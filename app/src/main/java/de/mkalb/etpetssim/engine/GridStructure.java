@@ -154,10 +154,10 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * @return a stream of all valid grid coordinates in row-major order
      */
     public Stream<GridCoordinate> coordinatesStream() {
-        return IntStream.range(0, size.width())
+        return IntStream.range(0, size.height())
                         .boxed()
-                        .flatMap(x -> IntStream.range(0, size.height())
-                                               .mapToObj(y -> new GridCoordinate(x, y)));
+                        .flatMap(y -> IntStream.range(0, size.width())
+                                               .mapToObj(x -> new GridCoordinate(x, y)));
     }
 
     /**
