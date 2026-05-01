@@ -113,7 +113,6 @@ public interface SimulationExecutor<
      *                   or technical via {@link #isExecutorFinished()})
      * @param isInterrupted whether execution ended because the current thread was interrupted
      */
-    @SuppressWarnings("InnerClassOfInterface")
     record ExecutionResult(
             int stepCount,
             int executedSteps,
