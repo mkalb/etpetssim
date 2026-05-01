@@ -20,11 +20,16 @@ final class CellShapeSideTest {
     }
 
     @Test
-    void testEnumOrdinal() {
-        assertEquals(0, CellShapeSide.TOP.ordinal());
-        assertEquals(1, CellShapeSide.BOTTOM.ordinal());
-        assertEquals(2, CellShapeSide.LEFT.ordinal());
-        assertEquals(3, CellShapeSide.RIGHT.ordinal());
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new CellShapeSide[]{CellShapeSide.TOP, CellShapeSide.BOTTOM, CellShapeSide.LEFT, CellShapeSide.RIGHT},
+                CellShapeSide.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> CellShapeSide.valueOf("INVALID"));
     }
 
 }
