@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.engine.neighborhood;
 import de.mkalb.etpetssim.engine.*;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -64,10 +65,12 @@ public final class CellNeighborhoods {
     public static final List<CompassDirection> HEXAGON_DIRECTION_RING =
             List.of(CompassDirection.N, CompassDirection.NE, CompassDirection.SE, CompassDirection.S, CompassDirection.SW, CompassDirection.NW);
 
+    private static final int INITIAL_CACHE_CAPACITY = 32;
+
     /**
      * Internal cache for computed cell neighbor connections.
      */
-    private static final Map<String, List<CellNeighborConnection>> CACHE = HashMap.newHashMap(16);
+    private static final Map<String, List<CellNeighborConnection>> CACHE = new ConcurrentHashMap<>(INITIAL_CACHE_CAPACITY);
 
     /**
      * Private constructor to prevent instantiation.
