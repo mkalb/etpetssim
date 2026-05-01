@@ -49,7 +49,7 @@ public interface GridEntity {
      * @return a concise display string for this grid entity
      */
     default String toDisplayString() {
-        return String.format("[%s]", this);
+        return "[" + this + "]";
     }
 
 }
