@@ -35,7 +35,7 @@ public record SugarGridModel(
     }
 
     @Override
-    public int subModelCount() {
+    public int layerCount() {
         return 2;
     }
 

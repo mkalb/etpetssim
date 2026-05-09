@@ -35,7 +35,7 @@ public record LangtonGridModel(
     }
 
     @Override
-    public int subModelCount() {
+    public int layerCount() {
         return 2;
     }
 

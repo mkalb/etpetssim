@@ -41,7 +41,7 @@ public record EtpetsGridModel(
     }
 
     @Override
-    public int subModelCount() {
+    public int layerCount() {
         return 3;
     }
 
