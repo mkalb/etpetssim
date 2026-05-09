@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.engine.executor.SimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.GridModel;
@@ -39,7 +39,7 @@ public abstract class AbstractTimedSimulationManager<
     }
 
     @Override
-    public final SimulationExecutor.ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
+    public final StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         var result = executor().executeSteps(count, checkTermination, () -> {
             updateStatistics();
             onStep.run();
@@ -54,7 +54,7 @@ public abstract class AbstractTimedSimulationManager<
     }
 
     @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass", "unused"})
-    protected void afterStepsExecuted(SimulationExecutor.ExecutionResult result) {
+    protected void afterStepsExecuted(StepExecutionResult result) {
         // Do nothing. Can be overridden by subclasses.
     }
 

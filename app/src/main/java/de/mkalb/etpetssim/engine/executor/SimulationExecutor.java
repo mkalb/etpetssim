@@ -75,7 +75,7 @@ public interface SimulationExecutor<
      * @param count the maximum number of steps to execute
      * @param checkTermination if {@code true}, the method will terminate early when the simulation is finished
      * @param onStep a {@link Runnable} to be called after each executed step
-     * @return an {@link ExecutionResult} containing:
+     * @return a {@link StepExecutionResult} containing:
      * <ul>
      *   <li>the current step count</li>
      *   <li>the number of steps executed in this call</li>
@@ -83,42 +83,26 @@ public interface SimulationExecutor<
      *   <li>whether the thread was interrupted</li>
      * </ul>
      */
-    default ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
+    default StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         int stepBefore = stepCount();
         for (int i = 0; i < count; i++) {
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
+                return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
             }
             executeStep();
             onStep.run();
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
+                return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
             }
             if ((checkTermination && isFinished()) || isExecutorFinished()) {
                 int stepAfter = stepCount();
-                return new ExecutionResult(stepAfter, stepAfter - stepBefore, true, false);
+                return new StepExecutionResult(stepAfter, stepAfter - stepBefore, true, false);
             }
         }
         int stepAfter = stepCount();
-        return new ExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), false);
+        return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), false);
     }
-
-    /**
-     * Result object returned by {@link #executeSteps(int, boolean, Runnable)}.
-     *
-     * @param stepCount the step counter after execution
-     * @param executedSteps the number of steps executed in this call
-     * @param isFinished whether execution ended in a finished state (logical via {@link #isFinished()} when checked,
-     *                   or technical via {@link #isExecutorFinished()})
-     * @param isInterrupted whether execution ended because the current thread was interrupted
-     */
-    record ExecutionResult(
-            int stepCount,
-            int executedSteps,
-            boolean isFinished,
-            boolean isInterrupted
-    ) {}
 
 }

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.SimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
@@ -53,7 +53,7 @@ public interface SimulationManager<
      * @param onStep callback invoked after each executed step
      * @return aggregated execution result
      */
-    SimulationExecutor.ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep);
+    StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep);
 
     /**
      * Indicates whether the simulation reached its logical termination condition.

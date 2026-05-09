@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.lab.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.SimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.GridEntityUtils;
@@ -67,9 +67,9 @@ public final class LabSimulationManager
     }
 
     @Override
-    public SimulationExecutor.ExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
+    public StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         // Do nothing
-        return new SimulationExecutor.ExecutionResult(stepCount(), 0, true, false);
+        return new StepExecutionResult(stepCount(), 0, true, false);
     }
 
     @Override
