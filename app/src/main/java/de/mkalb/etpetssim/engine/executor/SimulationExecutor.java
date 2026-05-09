@@ -88,12 +88,14 @@ public interface SimulationExecutor<
         for (int i = 0; i < count; i++) {
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
+                // isFinished is not evaluated when interrupted; the caller handles interruption independently.
                 return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
             }
             executeStep();
             onStep.run();
             if (Thread.currentThread().isInterrupted()) {
                 int stepAfter = stepCount();
+                // isFinished is not evaluated when interrupted; the caller handles interruption independently.
                 return new StepExecutionResult(stepAfter, stepAfter - stepBefore, isExecutorFinished(), true);
             }
             if ((checkTermination && isFinished()) || isExecutorFinished()) {
