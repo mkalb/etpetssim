@@ -109,7 +109,7 @@ final class WritableGridModelDefaultMethodsTest {
         }
 
         @Override
-        public boolean isModelSparse() {
+        public boolean isSparse() {
             return true;
         }
 

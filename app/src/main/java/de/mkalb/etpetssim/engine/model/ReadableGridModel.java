@@ -67,7 +67,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @return true if the grid is sparse, false otherwise
      */
-    boolean isModelSparse();
+    boolean isSparse();
 
     /**
      * Returns the entity at the specified coordinate as an {@link Optional}.

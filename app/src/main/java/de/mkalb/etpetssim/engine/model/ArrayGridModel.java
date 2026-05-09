@@ -67,7 +67,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public boolean isModelSparse() {
+    public boolean isSparse() {
         return false;
     }
 

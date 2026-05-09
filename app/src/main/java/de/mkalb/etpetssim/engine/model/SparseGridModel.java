@@ -65,7 +65,7 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
     }
 
     @Override
-    public boolean isModelSparse() {
+    public boolean isSparse() {
         return true;
     }
 
