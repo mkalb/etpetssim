@@ -5,6 +5,11 @@ import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProv
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Entity descriptors for the Wa-Tor predator-prey simulation.
+ * <p>
+ * Provides visual and metadata specifications for water, fish, and shark entities.
+ */
 @SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     WATER(
