@@ -230,6 +230,7 @@ Use these method naming patterns across the codebase.
 - [MUST] Treat unannotated types as non-null under `@NullMarked`.
 - [MUST] Use `org.jspecify.annotations.Nullable` only for intentional nullable contracts.
 - [MUST NOT] Add `@Nullable` defensively or "just in case".
+- [SHOULD NOT] Add `Objects.requireNonNull(...)` guards at the start of methods for non-null parameters.
 
 ## Javadoc
 
