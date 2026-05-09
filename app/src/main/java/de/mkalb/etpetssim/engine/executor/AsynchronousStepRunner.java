@@ -1,12 +1,14 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.executor;
 
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 import java.util.function.*;
 
 /**
- * Executes asynchronous simulation steps on a {@link WritableGridModel}.
+ * Executes asynchronous simulation steps on a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}.
  * <p>
  * This runner applies agent-specific logic to all entities in the grid model
  * that satisfy the given {@code agentPredicate}. The agent logic is applied to each

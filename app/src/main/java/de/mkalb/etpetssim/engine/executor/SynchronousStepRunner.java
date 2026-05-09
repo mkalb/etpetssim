@@ -1,12 +1,13 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.executor;
 
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * Executes synchronous simulation steps on a {@link WritableGridModel}.
+ * Executes synchronous simulation steps on a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}.
  * <p>
  * This runner applies a synchronous update strategy to the simulation model:
- * it reads from the current model (as a {@link ReadableGridModel}) and writes results
+ * it reads from the current model (as a {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}) and writes results
  * to the next model. After each step, the models are swapped, and the next model is cleared
  * for the following step.
  *

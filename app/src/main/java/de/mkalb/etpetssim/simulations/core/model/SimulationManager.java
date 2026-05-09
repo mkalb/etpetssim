@@ -1,8 +1,8 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.SimulationExecutor;
 import de.mkalb.etpetssim.engine.model.GridModel;
-import de.mkalb.etpetssim.engine.model.SimulationExecutor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**

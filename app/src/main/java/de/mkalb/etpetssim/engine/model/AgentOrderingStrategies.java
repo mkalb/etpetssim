@@ -12,12 +12,12 @@ import java.util.*;
  * These strategies can be used to control the order in which agents are processed
  * during simulation steps.
  * <p>
- * It is used by {@link AsynchronousStepRunner} to determine the order in which
+ * It is used by {@link de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner} to determine the order in which
  * agents are processed in the grid model.
  *
  * @see GridCell
  * @see de.mkalb.etpetssim.engine.model.entity.GridEntity
- * @see AsynchronousStepRunner
+ * @see de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner
  */
 public final class AgentOrderingStrategies {
 

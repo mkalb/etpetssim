@@ -1,5 +1,6 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.executor;
 
+import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
@@ -10,7 +11,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * and the simulation step count.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM> the type of {@link GridModel} in the simulation
+ * @param <GM> the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
  */
 public interface SimulationExecutor<
         ENT extends GridEntity,

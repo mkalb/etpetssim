@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.model.SimulationStepRunner;
+import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
 
 import java.util.*;
 

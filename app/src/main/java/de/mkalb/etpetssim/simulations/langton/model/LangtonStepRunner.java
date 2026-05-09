@@ -2,7 +2,10 @@ package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.executor.SimulationStepRunner;
+import de.mkalb.etpetssim.engine.model.AgentOrderingStrategies;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 

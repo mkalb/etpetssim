@@ -1,16 +1,18 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.executor;
 
+import de.mkalb.etpetssim.engine.model.GridModel;
+import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * Decorator for {@link SimulationExecutor} that measures the execution time of each simulation step.
+ * Decorator for {@link de.mkalb.etpetssim.engine.executor.SimulationExecutor} that measures the execution time of each simulation step.
  * <p>
  * This executor tracks the minimum, maximum, and most recent step durations in nanoseconds.
  * <p>
  * Timing statistics are accessible via getter methods.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM> the type of {@link GridModel} in the simulation
+ * @param <GM> the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
  */
 public final class TimedSimulationExecutor<
         ENT extends GridEntity,
@@ -81,7 +83,7 @@ public final class TimedSimulationExecutor<
      * <p>
      * If no steps have been executed yet, all values in the returned record are {@code 0}.
      *
-     * @return a {@link StepTimingStatistics} record with the current timing statistics
+     * @return a {@link de.mkalb.etpetssim.engine.model.StepTimingStatistics} record with the current timing statistics
      */
     public StepTimingStatistics stepTimingStatistics() {
         int steps = stepCount();

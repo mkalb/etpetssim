@@ -4,7 +4,6 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorProvider;
 
 import java.util.*;
-import java.util.stream.*;
 
 /**
  * Common contract for all entities in the Langton simulation.

@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.lab.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.SimulationExecutor;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.core.model.SimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;

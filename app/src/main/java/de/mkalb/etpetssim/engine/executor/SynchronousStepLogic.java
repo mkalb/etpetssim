@@ -1,18 +1,20 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.executor;
 
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Functional interface defining the logic for a synchronous simulation step on a grid model.
  * <p>
  * Implementations specify how the simulation state should be updated in a synchronous manner:
- * reading from the current model (as {@link ReadableGridModel}) and writing results to the next model.
+ * reading from the current model (as {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}) and writing results to the next model.
  * The method receives the current model, the next model, the simulation step index, and a context object
  * for sharing or accumulating state across steps.
  *
  * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each simulation step
- * @see de.mkalb.etpetssim.engine.model.SynchronousStepRunner
+ * @see de.mkalb.etpetssim.engine.executor.SynchronousStepRunner
  */
 @FunctionalInterface
 public interface SynchronousStepLogic<T extends GridEntity, C> {
