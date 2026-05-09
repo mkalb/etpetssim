@@ -10,6 +10,13 @@ import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
 
 import java.util.*;
 
+/**
+ * Composite grid model for Langton's Ant with separate ground and ant layers.
+ *
+ * @param structure the shared grid structure of all sub-models
+ * @param groundModel the terrain/state layer
+ * @param antModel the ant layer
+ */
 public record LangtonGridModel(
         GridStructure structure,
         WritableGridModel<TerrainConstant> groundModel,

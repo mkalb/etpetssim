@@ -1,10 +1,14 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.CellShape;
 
 import java.util.*;
 
+/**
+ * Describes the cyclic turn sequence used by Langton-style ant simulations.
+ *
+ * @param turns the ordered turn sequence applied to successive cell states
+ */
 public record LangtonMovementRules(
         List<AntTurn> turns) {
 
@@ -23,8 +27,14 @@ public record LangtonMovementRules(
         this.turns = List.copyOf(turns);
     }
 
+    /**
+     * Parses a compact turn string such as {@code LR}, {@code L2R2}, or {@code LRU}.
+     *
+     * @param ruleString the compact rule string to parse
+     * @return the parsed movement rules
+     */
     public static LangtonMovementRules fromString(String ruleString) {
-        String preparedString = ruleString.trim().toUpperCase(AppLocalization.locale());
+        String preparedString = ruleString.trim().toUpperCase(Locale.ROOT);
         List<AntTurn> result = new ArrayList<>();
         for (int i = 0; i < preparedString.length(); ) {
             char c = preparedString.charAt(i);
@@ -67,14 +77,31 @@ public record LangtonMovementRules(
         return new LangtonMovementRules(result);
     }
 
+    /**
+     * Returns the turn for the given state index, wrapping around the configured rule list.
+     *
+     * @param state the visited-state index
+     * @return the turn to apply for that state
+     */
     public AntTurn getTurnForState(int state) {
         return turns.get(state % turns.size());
     }
 
+    /**
+     * Returns the number of configured movement rules.
+     *
+     * @return the rule count
+     */
     public int getRuleCount() {
         return turns.size();
     }
 
+    /**
+     * Checks whether all configured turns are valid for the given cell shape.
+     *
+     * @param cellShape the cell shape to validate against
+     * @return {@code true} if the rules can be used with the shape, otherwise {@code false}
+     */
     public boolean isValidForCellShape(CellShape cellShape) {
         if (cellShape == CellShape.TRIANGLE) {
             for (AntTurn turn : turns) {
@@ -86,6 +113,11 @@ public record LangtonMovementRules(
         return true;
     }
 
+    /**
+     * Returns the compact rule string representation.
+     *
+     * @return the compact rule string
+     */
     public String toDisplayString() {
         StringBuilder sb = new StringBuilder(INITIAL_CAPACITY_DISPLAY_STRING);
         for (AntTurn turn : turns) {

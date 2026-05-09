@@ -1,7 +1,8 @@
-package de.mkalb.etpetssim.simulations.langton.model;
+package de.mkalb.etpetssim.simulations.langton.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonMovementRules;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -135,3 +136,4 @@ public final class LangtonRuleProperty {
     }
 
 }
+

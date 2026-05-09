@@ -8,7 +8,6 @@ import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
-import de.mkalb.etpetssim.simulations.langton.model.LangtonRuleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import java.util.*;
