@@ -37,7 +37,7 @@ public record GridEntityDescriptor(
 ) {
 
     /**
-     * Returns the emoji for this entity as an {@link Optional}.
+     * Returns the emoji for this entity as an {@link Optional} view.
      *
      * @return an {@link Optional} containing the emoji, or empty if not set
      */
@@ -46,7 +46,7 @@ public record GridEntityDescriptor(
     }
 
     /**
-     * Returns the fill color for this entity as an {@link Optional}.
+     * Returns the fill color for this entity as an {@link Optional} view.
      *
      * @return an {@link Optional} containing the fill color, or empty if not set
      */
@@ -57,8 +57,8 @@ public record GridEntityDescriptor(
     /**
      * Returns the configured fill color, or a default of {@link Color#BLACK} if none is set.
      * <p>
-     * This method guarantees a non-null value and is intended for rendering code that
-     * requires a concrete {@link Color} without optional handling.
+     * This method guarantees a non-null value for rendering code that requires a
+     * concrete {@link Color} without optional handling.
      * </p>
      *
      * @return the configured fill color, or {@link Color#BLACK} as fallback
@@ -68,7 +68,7 @@ public record GridEntityDescriptor(
     }
 
     /**
-     * Returns the border color for this entity as an {@link Optional}.
+     * Returns the border color for this entity as an {@link Optional} view.
      *
      * @return an {@link Optional} containing the border color, or empty if not set
      */
@@ -79,8 +79,8 @@ public record GridEntityDescriptor(
     /**
      * Returns the configured border color, or a default of {@link Color#BLACK} if none is set.
      * <p>
-     * This method guarantees a non-null {@link Color} for callers that always need a border
-     * color value during rendering.
+     * This method guarantees a non-null {@link Color} for callers that always need a
+     * border color value during rendering.
      * </p>
      *
      * @return the configured border color, or {@link Color#BLACK} as fallback
