@@ -46,7 +46,7 @@ public final class ForestMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(ForestEntity.EMPTY.descriptorId())
+                .requireByDescriptorId(ForestEntity.EMPTY.descriptorId())
                 .colorOrFallback();
     }
 
@@ -123,7 +123,7 @@ public final class ForestMainView
 
         // small helper lambda to avoid code duplication when drawing different entity types
         Consumer<GridCell<ForestEntity>> drawCell = cell -> cellDrawer.draw(
-                entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                 basePainter, cell, stepCount);
 
         // draw tree cells first

@@ -134,27 +134,27 @@ public final class GridEntityDescriptorRegistry {
     }
 
     /**
-     * Retrieves a {@link GridEntityDescriptor} by its unique descriptor ID.
+     * Finds the {@link GridEntityDescriptor} for the given descriptor ID.
      *
-     * @param descriptorId the unique identifier of the descriptor
-     * @return an {@link Optional} containing the descriptor if found, or empty if not present
+     * @param descriptorId the unique descriptor identifier
+     * @return an {@link Optional} containing the descriptor if present; otherwise {@link Optional#empty()}
      */
-    public Optional<GridEntityDescriptor> getByDescriptorId(String descriptorId) {
+    public Optional<GridEntityDescriptor> findByDescriptorId(String descriptorId) {
         return Optional.ofNullable(descriptorsById.get(descriptorId));
     }
 
     /**
-     * Retrieves the {@link GridEntityDescriptor} for the given descriptor ID.
+     * Returns the {@link GridEntityDescriptor} for the given descriptor ID.
      * <p>
+     * This is the required-lookup variant of {@link #findByDescriptorId(String)}.
      * If no descriptor is registered for the specified ID, a {@link NoSuchElementException} is thrown.
-     * This method is intended for use cases where the presence of the descriptor is guaranteed.
      * </p>
      *
-     * @param descriptorId the unique identifier of the descriptor
+     * @param descriptorId the unique descriptor identifier
      * @return the {@link GridEntityDescriptor} associated with the given ID
      * @throws NoSuchElementException if no descriptor is found for the specified ID
      */
-    public GridEntityDescriptor getRequiredByDescriptorId(String descriptorId) {
+    public GridEntityDescriptor requireByDescriptorId(String descriptorId) {
         GridEntityDescriptor descriptor = descriptorsById.get(descriptorId);
         if (descriptor == null) {
             throw new NoSuchElementException("No GridEntityDescriptor found for id: " + descriptorId);

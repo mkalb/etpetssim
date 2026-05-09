@@ -45,13 +45,13 @@ public final class ConwayMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(ConwayEntity.DEAD.descriptorId())
+                .requireByDescriptorId(ConwayEntity.DEAD.descriptorId())
                 .colorOrFallback();
     }
 
     @Override
     protected void initSimulation(ConwayConfig config, CellDimension cellDimension) {
-        var descriptor = entityDescriptorRegistry.getRequiredByDescriptorId(ConwayEntity.ALIVE.descriptorId());
+        var descriptor = entityDescriptorRegistry.requireByDescriptorId(ConwayEntity.ALIVE.descriptorId());
         var aliveColor = descriptor.colorOrFallback();
         var aliveBorderColor = descriptor.borderColorOrFallback();
 

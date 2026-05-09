@@ -38,7 +38,7 @@ public final class GridEntityUtils {
             ReadableGridModel<T> model,
             GridEntityDescriptorRegistry entityDescriptorRegistry) {
         if (model.isCoordinateValid(coordinate)) {
-            return entityDescriptorRegistry.getByDescriptorId(model.getEntity(coordinate).descriptorId());
+            return entityDescriptorRegistry.findByDescriptorId(model.getEntity(coordinate).descriptorId());
         }
         return Optional.empty();
     }

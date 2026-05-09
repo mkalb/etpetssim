@@ -58,7 +58,7 @@ public final class WatorMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
+                .requireByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
                 .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
         entityColors.put(EntityDescriptors.FISH.descriptorId(), null);
@@ -73,10 +73,10 @@ public final class WatorMainView
     protected void initSimulation(WatorConfig config, CellDimension cellDimension) {
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
         entityColors.put(EntityDescriptors.FISH.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(EntityDescriptors.FISH.descriptorId()),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(EntityDescriptors.FISH.descriptorId()),
                         0, config.fishMaxAge() - 1, FISH_GROUP_COUNT, FISH_MAX_FACTOR_DELTA));
         entityColors.put(EntityDescriptors.SHARK.descriptorId(),
-                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(EntityDescriptors.SHARK.descriptorId()),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(EntityDescriptors.SHARK.descriptorId()),
                         1, maxColorSharkEnergy, SHARK_GROUP_COUNT, SHARK_MAX_FACTOR_DELTA));
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
@@ -174,7 +174,7 @@ public final class WatorMainView
 
         currentModel.nonDefaultCells()
                     .forEachOrdered(cell -> cellDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter, cell, stepCount));
     }
 

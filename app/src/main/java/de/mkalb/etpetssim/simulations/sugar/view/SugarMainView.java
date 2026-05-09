@@ -56,7 +56,7 @@ public final class SugarMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
+                .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
                 .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR, null);
@@ -71,10 +71,10 @@ public final class SugarMainView
     protected void initSimulation(SugarConfig config, CellDimension cellDimension) {
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR,
-                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
                         1, config.maxSugarAmount(), config.maxSugarAmount(), SUGAR_MAX_FACTOR_DELTA));
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT,
-                computeBrightnessVariantsMap(entityDescriptorRegistry.getRequiredByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
+                computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_AGENT),
                         1, maxColorAgentEnergy, AGENT_GROUP_COUNT, AGENT_MAX_FACTOR_DELTA));
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
@@ -170,12 +170,12 @@ public final class SugarMainView
 
         currentModel.resourceModel().nonDefaultCells()
                     .forEachOrdered(resourceCell -> cellResourceDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(resourceCell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(resourceCell.descriptorId()),
                             basePainter, resourceCell, stepCount));
 
         currentModel.agentModel().nonDefaultCells()
                     .forEachOrdered(agentCell -> cellAgentDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(agentCell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
                             basePainter, agentCell, stepCount));
     }
 

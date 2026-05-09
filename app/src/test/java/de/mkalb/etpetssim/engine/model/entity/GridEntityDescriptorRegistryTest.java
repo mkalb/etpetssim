@@ -22,7 +22,7 @@ final class GridEntityDescriptorRegistryTest {
     }
 
     private static void assertRegisteredDescriptor(GridEntityDescriptorRegistry registry, GridEntityDescriptorProvider provider) {
-        GridEntityDescriptor descriptor = registry.getRequiredByDescriptorId(provider.descriptorId());
+        GridEntityDescriptor descriptor = registry.requireByDescriptorId(provider.descriptorId());
         String expectedEmoji = java.util.Optional.ofNullable(provider.emojiKey())
                                                  .map(AppLocalization::getText)
                                                  .orElse(null);
@@ -99,7 +99,7 @@ final class GridEntityDescriptorRegistryTest {
                 Color.WHITE
         );
 
-        GridEntityDescriptor actual = registry.getRequiredByDescriptorId("entity-id");
+        GridEntityDescriptor actual = registry.requireByDescriptorId("entity-id");
         assertEquals(replaced, actual);
         assertEquals(AppLocalization.getText("conway.entity.dead.short"), actual.shortName());
         assertFalse(actual.visible());
@@ -110,8 +110,8 @@ final class GridEntityDescriptorRegistryTest {
     void testGetRequiredThrowsForUnknownDescriptorId() {
         GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(1);
 
-        assertThrows(NoSuchElementException.class, () -> registry.getRequiredByDescriptorId("missing"));
-        assertTrue(registry.getByDescriptorId("missing").isEmpty());
+        assertThrows(NoSuchElementException.class, () -> registry.requireByDescriptorId("missing"));
+        assertTrue(registry.findByDescriptorId("missing").isEmpty());
     }
 
     private record TestDescriptorProvider(

@@ -61,7 +61,7 @@ public final class SnakeMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
+                .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
     }
 
@@ -114,10 +114,10 @@ public final class SnakeMainView
 
         basePainter.fillCanvasBackground(backgroundColor);
 
-        var wallDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
-        var growthFoodDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
-        var snakeSegmentDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
-        var snakeHeadDescriptor = entityDescriptorRegistry.getRequiredByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
+        var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
+        var growthFoodDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
+        var snakeSegmentDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
+        var snakeHeadDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
 
         // Alive colors are defined in EntityDescriptors.
         Color segmentAliveColor = Objects.requireNonNull(snakeSegmentDescriptor.color());

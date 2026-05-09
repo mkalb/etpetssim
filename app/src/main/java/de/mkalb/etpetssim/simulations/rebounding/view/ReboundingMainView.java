@@ -47,7 +47,7 @@ public final class ReboundingMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
+                .requireByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
     }
 
@@ -101,7 +101,7 @@ public final class ReboundingMainView
 
         currentModel.nonDefaultCells()
                     .forEachOrdered(cell -> cellDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter, cell, stepCount));
     }
 

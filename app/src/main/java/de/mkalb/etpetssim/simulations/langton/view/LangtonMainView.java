@@ -46,7 +46,7 @@ public final class LangtonMainView
                 observationView,
                 entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
+                .requireByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
                 .colorOrFallback();
     }
 
@@ -126,12 +126,12 @@ public final class LangtonMainView
             // draw ground
             groundModel.nonDefaultCells()
                        .forEachOrdered(groundCell -> cellGroundDrawer.draw(
-                               entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
+                               entityDescriptorRegistry.requireByDescriptorId(groundCell.descriptorId()),
                                basePainter, groundCell, stepCount));
             // draw ant
             antModel.nonDefaultCells()
                     .forEachOrdered(antCell -> cellAntDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
                             overlayPainter, antCell, stepCount));
         } else {
             antModel.nonDefaultCells()
@@ -139,11 +139,11 @@ public final class LangtonMainView
                         GridCell<TerrainConstant> groundCell = groundModel.getGridCell(antCell.coordinate());
                         // draw ground
                         cellGroundDrawer.draw(
-                                entityDescriptorRegistry.getRequiredByDescriptorId(groundCell.descriptorId()),
+                                entityDescriptorRegistry.requireByDescriptorId(groundCell.descriptorId()),
                                 basePainter, groundCell, stepCount);
                         // draw ant
                         cellAntDrawer.draw(
-                                entityDescriptorRegistry.getRequiredByDescriptorId(antCell.descriptorId()),
+                                entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
                                 overlayPainter, antCell, stepCount);
                     });
         }

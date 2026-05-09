@@ -58,7 +58,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                           EtpetsObservationView observationView) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
         backgroundColor = entityDescriptorRegistry
-                .getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
+                .requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
         entityColors = HashMap.newHashMap(5);
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL, null);
@@ -72,35 +72,35 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     protected void initSimulation(EtpetsConfig config, CellDimension cellDimension) {
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
                 computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
+                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
                         minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
                         maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
                         TRAIL_GROUP_COUNT,
                         TRAIL_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PLANT,
                 computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
+                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
                         minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
                         maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PLANT),
                         PLANT_GROUP_COUNT,
                         PLANT_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_INSECT,
                 computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
+                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
                         minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
                         maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_INSECT),
                         INSECT_GROUP_COUNT,
                         INSECT_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET,
                 computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
+                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
                         minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
                         maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET),
                         PET_GROUP_COUNT,
                         PET_MAX_FACTOR_DELTA));
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PET_EGG,
                 computeBrightnessVariantsMap(
-                        entityDescriptorRegistry.getRequiredByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
+                        entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
                         minByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
                         maxByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_PET_EGG),
                         PET_EGG_GROUP_COUNT,
@@ -288,21 +288,21 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
         currentModel.terrainModel().nonDefaultCells()
                     .forEachOrdered(cell -> cellTerrainDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter,
                             cell,
                             stepCount));
 
         currentModel.resourceModel().nonDefaultCells()
                     .forEachOrdered(cell -> cellResourceDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter,
                             cell,
                             stepCount));
 
         currentModel.agentModel().nonDefaultCells()
                     .forEachOrdered(cell -> cellAgentDrawer.draw(
-                            entityDescriptorRegistry.getRequiredByDescriptorId(cell.descriptorId()),
+                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter,
                             cell,
                             stepCount));
