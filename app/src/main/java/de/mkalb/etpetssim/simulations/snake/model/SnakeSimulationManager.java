@@ -122,7 +122,7 @@ public final class SnakeSimulationManager
         if (config.foodCells() > 0) {
             int freeGroundCells = (int) model.countEntities(SnakeEntity::isGround);
             int foodCells = Math.min(config.foodCells(), freeGroundCells);
-            return GridInitializers.placeShuffledCounted(
+            return GridInitializers.placeShuffledCount(
                     foodCells,
                     () -> TerrainConstant.GROWTH_FOOD,
                     SnakeEntity::isGround,

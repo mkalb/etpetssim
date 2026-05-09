@@ -30,7 +30,7 @@ public final class LabSimulationManager
         statistics = new LabStatistics(structure.cellCount());
 
         model = new SparseGridModel<>(structure, LabEntity.NORMAL);
-        GridInitializers.placeRandomCounted(3,
+        GridInitializers.placeRandomCount(3,
                                 () -> LabEntity.HIGHLIGHTED,
                                 e -> e == LabEntity.NORMAL,
                                 new Random(config.seed()))
