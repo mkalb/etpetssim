@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.support;
 
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;

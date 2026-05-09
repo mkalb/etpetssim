@@ -1,6 +1,8 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.support;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.ReadableGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
@@ -10,8 +12,8 @@ import java.util.function.*;
 
 /**
  * Utility class with static helper methods for working with {@link GridEntity},
- * {@link GridCell}, {@link ReadableGridModel}, {@link WritableGridModel},
- * {@link GridPattern}, {@link GridEntityDescriptor}, and {@link GridEntityDescriptorRegistry}.
+ * {@link de.mkalb.etpetssim.engine.model.GridCell}, {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}, {@link de.mkalb.etpetssim.engine.model.WritableGridModel},
+ * {@link de.mkalb.etpetssim.engine.support.GridPattern}, {@link GridEntityDescriptor}, and {@link GridEntityDescriptorRegistry}.
  */
 public final class GridEntityUtils {
 
@@ -60,7 +62,7 @@ public final class GridEntityUtils {
     }
 
     /**
-     * Places all entities from the given {@link GridPattern} into the specified {@link WritableGridModel},
+     * Places all entities from the given {@link de.mkalb.etpetssim.engine.support.GridPattern} into the specified {@link de.mkalb.etpetssim.engine.model.WritableGridModel},
      * offsetting each entity's position by the provided anchor coordinate.
      * <p>
      * For each entry in the pattern, the entity is placed at the coordinate computed by adding

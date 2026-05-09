@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
+import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 
 /**
  * Extension of {@link SimulationStatistics} that adds timing-related statistics.

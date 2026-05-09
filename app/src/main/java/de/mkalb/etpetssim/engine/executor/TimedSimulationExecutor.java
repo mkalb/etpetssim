@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.executor;
 
 import de.mkalb.etpetssim.engine.model.GridModel;
-import de.mkalb.etpetssim.engine.model.StepTimingStatistics;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
@@ -83,7 +82,7 @@ public final class TimedSimulationExecutor<
      * <p>
      * If no steps have been executed yet, all values in the returned record are {@code 0}.
      *
-     * @return a {@link de.mkalb.etpetssim.engine.model.StepTimingStatistics} record with the current timing statistics
+     * @return a {@link StepTimingStatistics} record with the current timing statistics
      */
     public StepTimingStatistics stepTimingStatistics() {
         int steps = stepCount();

@@ -1,13 +1,14 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.support;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 import java.util.function.*;
 
 /**
- * Functional interface for modifying a {@link WritableGridModel} during runtime or in response to events.
+ * Functional interface for modifying a {@link de.mkalb.etpetssim.engine.model.WritableGridModel} during runtime or in response to events.
  * <p>
  * Implementations can perform targeted or rule-based changes to the grid model.
  *

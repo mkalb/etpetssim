@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridOffset;
-import de.mkalb.etpetssim.engine.model.GridPattern;
+import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import java.util.*;
  * <p>
  * This class cannot be instantiated.
  *
- * @see de.mkalb.etpetssim.engine.model.GridPattern
+ * @see de.mkalb.etpetssim.engine.support.GridPattern
  * @see de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity
  */
 @SuppressWarnings("MagicNumber")

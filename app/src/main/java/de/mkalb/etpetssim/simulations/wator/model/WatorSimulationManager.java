@@ -4,7 +4,11 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner;
 import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
 import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.ArrayGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
+import de.mkalb.etpetssim.engine.support.GridInitializer;
+import de.mkalb.etpetssim.engine.support.GridInitializers;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 

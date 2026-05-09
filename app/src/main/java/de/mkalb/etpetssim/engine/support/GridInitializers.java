@@ -1,7 +1,9 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.support;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
@@ -10,7 +12,7 @@ import java.util.function.*;
 /**
  * Utility class providing various static factory methods for creating {@link GridInitializer} instances.
  * <p>
- * These initializers can be used to set up or modify the contents of a {@link WritableGridModel}
+ * These initializers can be used to set up or modify the contents of a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}
  * in different ways, such as filling, mapping, or placing entities with specific patterns or randomness.
  * </p>
  */

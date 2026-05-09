@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.executor;
 
 import de.mkalb.etpetssim.engine.model.GridModel;
-import de.mkalb.etpetssim.engine.model.SimulationTerminationCondition;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.function.*;

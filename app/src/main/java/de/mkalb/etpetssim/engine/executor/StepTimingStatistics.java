@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.executor;
 
 /**
  * Immutable timing statistics for simulation steps (in nanoseconds).

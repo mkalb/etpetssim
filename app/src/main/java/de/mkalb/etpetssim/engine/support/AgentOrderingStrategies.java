@@ -1,5 +1,6 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.support;
 
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
@@ -8,14 +9,14 @@ import java.util.*;
  * Provides common strategies for ordering agent grid cells in a simulation.
  * <p>
  * This utility class offers reusable {@link Comparator} implementations for
- * sorting {@link GridCell} instances by position, entity class, or descriptor ID.
+ * sorting {@link de.mkalb.etpetssim.engine.model.GridCell} instances by position, entity class, or descriptor ID.
  * These strategies can be used to control the order in which agents are processed
  * during simulation steps.
  * <p>
  * It is used by {@link de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner} to determine the order in which
  * agents are processed in the grid model.
  *
- * @see GridCell
+ * @see de.mkalb.etpetssim.engine.model.GridCell
  * @see de.mkalb.etpetssim.engine.model.entity.GridEntity
  * @see de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner
  */

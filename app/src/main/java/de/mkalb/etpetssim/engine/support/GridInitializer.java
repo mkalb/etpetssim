@@ -1,9 +1,10 @@
-package de.mkalb.etpetssim.engine.model;
+package de.mkalb.etpetssim.engine.support;
 
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * Functional interface for initializing a {@link WritableGridModel} with entities before starting a simulation.
+ * Functional interface for initializing a {@link de.mkalb.etpetssim.engine.model.WritableGridModel} with entities before starting a simulation.
  * <p>
  * Implementations of this interface can be used to populate or modify a grid model with entities of type {@code T}.
  * This interface supports composition via the {@link #andThen(GridInitializer)} method, allowing multiple initializers
@@ -16,7 +17,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 public interface GridInitializer<T extends GridEntity> {
 
     /**
-     * Initializes the given {@link WritableGridModel} with entities or modifies its state.
+     * Initializes the given {@link de.mkalb.etpetssim.engine.model.WritableGridModel} with entities or modifies its state.
      *
      * @param model the grid model to initialize
      */

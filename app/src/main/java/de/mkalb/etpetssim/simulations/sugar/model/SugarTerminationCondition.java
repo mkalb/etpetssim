@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
-import de.mkalb.etpetssim.engine.model.SimulationTerminationCondition;
+import de.mkalb.etpetssim.engine.executor.SimulationTerminationCondition;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
 
 public final class SugarTerminationCondition

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
+import de.mkalb.etpetssim.engine.executor.SimulationTerminationCondition;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.engine.model.SimulationTerminationCondition;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 
 public final class ReboundingTerminationCondition implements SimulationTerminationCondition<ReboundingEntity,

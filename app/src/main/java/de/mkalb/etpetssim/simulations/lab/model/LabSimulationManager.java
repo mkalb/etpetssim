@@ -4,7 +4,11 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridOffset;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.SimulationExecutor;
-import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.SparseGridModel;
+import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.support.GridEntityUtils;
+import de.mkalb.etpetssim.engine.support.GridInitializers;
+import de.mkalb.etpetssim.engine.support.GridPatterns;
 import de.mkalb.etpetssim.simulations.core.model.SimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 

@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.model.SimulationTerminationCondition;
+import de.mkalb.etpetssim.engine.executor.SimulationTerminationCondition;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 
 public final class EtpetsTerminationCondition
