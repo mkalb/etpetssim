@@ -13,9 +13,9 @@ public enum SnakeDeathMode {
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum NeighborhoodMode.
+     * Returns the resource key for the label (title) of the enum SnakeDeathMode.
      *
-     * @return the resource key for the label of the enum NeighborhoodMode
+     * @return the resource key for the label of the enum SnakeDeathMode
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -23,11 +23,11 @@ public enum SnakeDeathMode {
     }
 
     /**
-     * Returns the resource key associated with this neighborhood mode.
+     * Returns the resource key associated with this death mode.
      * <p>
      * The resource key can be used for resource lookup purposes.
      *
-     * @return the resource key for this neighborhood mode
+     * @return the resource key for this death mode
      */
     public String resourceKey() {
         return resourceKey;

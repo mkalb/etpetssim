@@ -2,6 +2,11 @@ package de.mkalb.etpetssim.simulations.snake.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
+/**
+ * Terrain cell states for the Snake simulation.
+ * <p>
+ * Represents static and consumable terrain elements: ground, walls, growth food, and snake segments.
+ */
 public enum TerrainConstant implements SnakeEntity, ConstantGridEntity {
 
     GROUND(SnakeEntity.DESCRIPTOR_ID_GROUND),

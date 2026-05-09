@@ -1,5 +1,8 @@
 package de.mkalb.etpetssim.simulations.snake.model.strategy;
 
+/**
+ * Helper contract for anonymous functional snake move strategies.
+ */
 @FunctionalInterface
 interface AnonymousMoveStrategy extends SnakeMoveStrategy {
 

@@ -5,6 +5,11 @@ import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProv
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Entity descriptors for the Snake simulation.
+ * <p>
+ * Provides visual and metadata specifications for ground, walls, food, snake heads, and snake segments.
+ */
 @SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     GROUND(
