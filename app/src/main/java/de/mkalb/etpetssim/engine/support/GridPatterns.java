@@ -46,7 +46,8 @@ public final class GridPatterns {
      * @return a pattern containing the specified mapping
      */
     public static <T extends GridEntity> GridPattern<T> of(Map<GridOffset, T> map) {
-        return () -> new HashMap<>(map);
+        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        return () -> mapCopy;
     }
 
     /**
@@ -67,7 +68,8 @@ public final class GridPatterns {
         for (GridOffset offset : offsets) {
             map.put(offset, entity);
         }
-        return () -> map;
+        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        return () -> mapCopy;
     }
 
     /**
@@ -103,7 +105,8 @@ public final class GridPatterns {
         for (GridPattern<T> pattern : patterns) {
             combined.putAll(pattern.offsetMap());
         }
-        return () -> combined;
+        Map<GridOffset, T> mapCopy = Map.copyOf(combined);
+        return () -> mapCopy;
     }
 
     /**
@@ -123,7 +126,8 @@ public final class GridPatterns {
         for (int x = 0; x < length; x++) {
             map.put(new GridOffset(x, 0), entity);
         }
-        return () -> map;
+        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        return () -> mapCopy;
     }
 
     /**
@@ -143,7 +147,8 @@ public final class GridPatterns {
         for (int y = 0; y < length; y++) {
             map.put(new GridOffset(0, y), entity);
         }
-        return () -> map;
+        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        return () -> mapCopy;
     }
 
     /**
@@ -169,7 +174,8 @@ public final class GridPatterns {
                 }
             }
         }
-        return () -> map;
+        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        return () -> mapCopy;
     }
 
     /**
@@ -217,7 +223,8 @@ public final class GridPatterns {
         for (GridOffset o : offsets) {
             map.put(new GridOffset(o.dx() - minDx, o.dy() - minDy), stroke);
         }
-        return () -> map;
+        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        return () -> mapCopy;
     }
 
 }

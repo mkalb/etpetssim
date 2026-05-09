@@ -55,13 +55,12 @@ public interface GridPattern<T extends GridEntity> {
      * @return the width of the pattern
      */
     default int width() {
-        return (offsetMap().keySet().stream()
-                           .mapToInt(GridOffset::dx)
-                           .max()
-                           .orElse(0) - offsetMap().keySet().stream()
-                                                   .mapToInt(GridOffset::dx)
-                                                   .min()
-                                                   .orElse(0)) + 1;
+        Map<GridOffset, T> map = offsetMap();
+        if (map.isEmpty()) {
+            return 0;
+        }
+        return (map.keySet().stream().mapToInt(GridOffset::dx).max().orElse(0)
+                - map.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0)) + 1;
     }
 
     /**
@@ -70,13 +69,12 @@ public interface GridPattern<T extends GridEntity> {
      * @return the height of the pattern
      */
     default int height() {
-        return (offsetMap().keySet().stream()
-                           .mapToInt(GridOffset::dy)
-                           .max()
-                           .orElse(0) - offsetMap().keySet().stream()
-                                                   .mapToInt(GridOffset::dy)
-                                                   .min()
-                                                   .orElse(0)) + 1;
+        Map<GridOffset, T> map = offsetMap();
+        if (map.isEmpty()) {
+            return 0;
+        }
+        return (map.keySet().stream().mapToInt(GridOffset::dy).max().orElse(0)
+                - map.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0)) + 1;
     }
 
     /**
@@ -87,8 +85,9 @@ public interface GridPattern<T extends GridEntity> {
      */
     default GridPattern<T> shifted(GridOffset offset) {
         return () -> {
+            Map<GridOffset, T> original = offsetMap();
             Map<GridOffset, T> shifted = new HashMap<>();
-            for (var entry : offsetMap().entrySet()) {
+            for (var entry : original.entrySet()) {
                 GridOffset o = entry.getKey();
                 shifted.put(new GridOffset(o.dx() + offset.dx(), o.dy() + offset.dy()), entry.getValue());
             }
@@ -102,7 +101,8 @@ public interface GridPattern<T extends GridEntity> {
      * @return {@code true} if the pattern is normalized, {@code false} otherwise
      */
     default boolean isTopLeftAtOrigin() {
-        var keys = offsetMap().keySet();
+        Map<GridOffset, T> map = offsetMap();
+        var keys = map.keySet();
         int minDx = keys.stream().mapToInt(GridOffset::dx).min().orElse(0);
         int minDy = keys.stream().mapToInt(GridOffset::dy).min().orElse(0);
         return (minDx == 0) && (minDy == 0);
@@ -115,7 +115,8 @@ public interface GridPattern<T extends GridEntity> {
      * @return a normalized pattern
      */
     default GridPattern<T> normalized() {
-        var keys = offsetMap().keySet();
+        Map<GridOffset, T> map = offsetMap();
+        var keys = map.keySet();
         int minDx = keys.stream().mapToInt(GridOffset::dx).min().orElse(0);
         int minDy = keys.stream().mapToInt(GridOffset::dy).min().orElse(0);
         if ((minDx == 0) && (minDy == 0)) {
@@ -173,7 +174,9 @@ public interface GridPattern<T extends GridEntity> {
      */
     default GridPattern<T> rotate90() {
         Map<GridOffset, T> original = offsetMap();
-        int height = height();
+        int minSourceDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
+        int maxSourceDy = original.keySet().stream().mapToInt(GridOffset::dy).max().orElse(0);
+        int sourceHeight = (maxSourceDy - minSourceDy) + 1;
         int minDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
         int minDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
         Map<GridOffset, T> rotated = new HashMap<>();
@@ -181,7 +184,7 @@ public interface GridPattern<T extends GridEntity> {
             int x = entry.getKey().dx() - minDx;
             int y = entry.getKey().dy() - minDy;
             // (x, y) -> (height - 1 - y, x).
-            rotated.put(new GridOffset(height - 1 - y, x), entry.getValue());
+            rotated.put(new GridOffset(sourceHeight - 1 - y, x), entry.getValue());
         }
         return () -> rotated;
     }
@@ -195,8 +198,12 @@ public interface GridPattern<T extends GridEntity> {
      */
     default GridPattern<T> rotate180() {
         Map<GridOffset, T> original = offsetMap();
-        int width = width();
-        int height = height();
+        int minSourceDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
+        int maxSourceDx = original.keySet().stream().mapToInt(GridOffset::dx).max().orElse(0);
+        int sourceWidth = (maxSourceDx - minSourceDx) + 1;
+        int minSourceDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
+        int maxSourceDy = original.keySet().stream().mapToInt(GridOffset::dy).max().orElse(0);
+        int sourceHeight = (maxSourceDy - minSourceDy) + 1;
         int minDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
         int minDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
         Map<GridOffset, T> rotated = new HashMap<>();
@@ -204,7 +211,7 @@ public interface GridPattern<T extends GridEntity> {
             int x = entry.getKey().dx() - minDx;
             int y = entry.getKey().dy() - minDy;
             // (x, y) -> (width - 1 - x, height - 1 - y).
-            rotated.put(new GridOffset(width - 1 - x, height - 1 - y), entry.getValue());
+            rotated.put(new GridOffset(sourceWidth - 1 - x, sourceHeight - 1 - y), entry.getValue());
         }
         return () -> rotated;
     }
@@ -218,7 +225,9 @@ public interface GridPattern<T extends GridEntity> {
      */
     default GridPattern<T> rotate270() {
         Map<GridOffset, T> original = offsetMap();
-        int width = width();
+        int minSourceDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
+        int maxSourceDx = original.keySet().stream().mapToInt(GridOffset::dx).max().orElse(0);
+        int sourceWidth = (maxSourceDx - minSourceDx) + 1;
         int minDx = original.keySet().stream().mapToInt(GridOffset::dx).min().orElse(0);
         int minDy = original.keySet().stream().mapToInt(GridOffset::dy).min().orElse(0);
         Map<GridOffset, T> rotated = new HashMap<>();
@@ -226,7 +235,7 @@ public interface GridPattern<T extends GridEntity> {
             int x = entry.getKey().dx() - minDx;
             int y = entry.getKey().dy() - minDy;
             // (x, y) -> (y, width - 1 - x).
-            rotated.put(new GridOffset(y, width - 1 - x), entry.getValue());
+            rotated.put(new GridOffset(y, sourceWidth - 1 - x), entry.getValue());
         }
         return () -> rotated;
     }
@@ -243,8 +252,9 @@ public interface GridPattern<T extends GridEntity> {
      */
     default <R extends GridEntity> GridPattern<R> mapValues(Function<T, R> mapper) {
         return () -> {
+            Map<GridOffset, T> original = offsetMap();
             Map<GridOffset, R> mapped = new HashMap<>();
-            for (var entry : offsetMap().entrySet()) {
+            for (var entry : original.entrySet()) {
                 mapped.put(entry.getKey(), mapper.apply(entry.getValue()));
             }
             return mapped;
