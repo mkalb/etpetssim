@@ -5,6 +5,11 @@ import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProv
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Entity descriptor for the Langton's Ant simulation.
+ * <p>
+ * Provides visual and metadata specifications for the ant entity.
+ */
 @SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     ANT(
