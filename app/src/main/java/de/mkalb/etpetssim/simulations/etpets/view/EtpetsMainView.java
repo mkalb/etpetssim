@@ -181,7 +181,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             return min;
         }
         int roundedValue = (int) Math.round(value);
-        return Math.max(min, Math.min(max, roundedValue));
+        return Math.clamp(max, min, roundedValue);
     }
 
     private int normalizeIntValueForMapRange(int value,
@@ -190,7 +190,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         if (max < min) {
             return min;
         }
-        return Math.max(min, Math.min(max, value));
+        return Math.clamp(max, min, value);
     }
 
     private Color resolveTerrainFillColor(GridEntityDescriptor descriptor,

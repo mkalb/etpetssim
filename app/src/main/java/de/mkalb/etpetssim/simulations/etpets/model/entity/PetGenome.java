@@ -4,8 +4,23 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
 import java.util.*;
 
+/**
+ * Immutable genome wrapper for ET Pets.
+ *
+ * @param traits the encoded pet traits used for gameplay behavior
+ */
 public record PetGenome(PetTraits traits) {
 
+    /**
+     * Creates a child genome by averaging the parent traits and applying optional mutation.
+     *
+     * @param parentA the first parent genome
+     * @param parentB the second parent genome
+     * @param random the random source used for mutation
+     * @param mutationChancePerTrait the mutation probability per trait
+     * @param mutationDelta the relative mutation strength
+     * @return the derived child genome
+     */
     @SuppressWarnings("MagicNumber")
     public static PetGenome fromParents(PetGenome parentA, PetGenome parentB,
                                         Random random,
@@ -14,26 +29,26 @@ public record PetGenome(PetTraits traits) {
         PetTraits tb = parentB.traits();
 
         double avgMaxEnergy = (ta.maxEnergy() + tb.maxEnergy()) / 2.0d;
-        int maxEnergy = clampInt(
-                mutate(avgMaxEnergy, random, mutationChancePerTrait, mutationDelta),
+        int maxEnergy = Math.clamp(
+                (int) Math.round(mutate(avgMaxEnergy, random, mutationChancePerTrait, mutationDelta)),
                 EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN,
                 EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX);
 
         double avgMovCost = (ta.movementCostModifier() + tb.movementCostModifier()) / 2.0d;
-        double movCost = clampDouble(
+        double movCost = Math.clamp(
                 mutate(avgMovCost, random, mutationChancePerTrait, mutationDelta),
                 EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN,
                 EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX);
 
         double avgReproEnergy = (ta.reproductionMinEnergy() + tb.reproductionMinEnergy()) / 2.0d;
-        int reproEnergy = clampInt(
-                mutate(avgReproEnergy, random, mutationChancePerTrait, mutationDelta),
+        int reproEnergy = Math.clamp(
+                (int) Math.round(mutate(avgReproEnergy, random, mutationChancePerTrait, mutationDelta)),
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX);
 
         double avgReproCooldown = (ta.reproductionCooldown() + tb.reproductionCooldown()) / 2.0d;
-        int reproCooldown = clampInt(
-                mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta),
+        int reproCooldown = Math.clamp(
+                (int) Math.round(mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta)),
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX);
 
@@ -46,14 +61,6 @@ public record PetGenome(PetTraits traits) {
             return avg + (sign * delta * avg);
         }
         return avg;
-    }
-
-    private static int clampInt(double value, int min, int max) {
-        return (int) Math.max(min, Math.min(max, Math.round(value)));
-    }
-
-    private static double clampDouble(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
     }
 
 }
