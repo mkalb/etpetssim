@@ -57,7 +57,7 @@ public final class SugarSimulationManager
     @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
     private int percentToClampedIndex(int size, double percent) {
         int count = (int) ((percent < 0.5d) ? Math.floor(size * percent) : Math.ceil(size * percent));
-        return Math.max(0, Math.min(count, size - 1));
+        return Math.clamp(count, 0, size - 1);
     }
 
     @SuppressWarnings("MagicNumber")

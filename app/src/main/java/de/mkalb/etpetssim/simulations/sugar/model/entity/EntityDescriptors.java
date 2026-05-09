@@ -5,6 +5,11 @@ import de.mkalb.etpetssim.engine.model.entity.SpecBackedGridEntityDescriptorProv
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Entity descriptors for the Sugarscape simulation.
+ * <p>
+ * Provides visual and metadata specifications for terrain, sugar resources, and agents.
+ */
 @SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     TERRAIN(

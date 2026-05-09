@@ -10,6 +10,13 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
 
 import java.util.*;
 
+/**
+ * Composite grid model for Sugarscape with resource and agent layers.
+ *
+ * @param structure the shared grid structure of all sub-models
+ * @param resourceModel the terrain/resource layer
+ * @param agentModel the agent layer
+ */
 public record SugarGridModel(
         GridStructure structure,
         WritableGridModel<ResourceEntity> resourceModel,
