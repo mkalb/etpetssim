@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * <p>
  * This executor tracks the minimum, maximum, and most recent step durations in nanoseconds.
  * <p>
- * Timing statistics are accessible via getter methods.
+ * Timing statistics are accessible via {@link #stepTimingStatistics()} and {@link #currentStepNanos()}.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
  * @param <GM> the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
@@ -55,8 +55,8 @@ public final class TimedSimulationExecutor<
     }
 
     /**
-     * Executes a single simulation step, increments the step counter,
-     * measures its duration, and updates timing statistics.
+     * Executes a single simulation step via the delegate and measures its duration,
+     * updating the timing statistics accordingly.
      */
     @Override
     public void executeStep() {
@@ -64,7 +64,6 @@ public final class TimedSimulationExecutor<
         delegate.executeStep();
         currentStepNanos = System.nanoTime() - startNanos;
 
-        // Update timing statistics
         if (currentStepNanos < minStepNanos) {
             minStepNanos = currentStepNanos;
         }
