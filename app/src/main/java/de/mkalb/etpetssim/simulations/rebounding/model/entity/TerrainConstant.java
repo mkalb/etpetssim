@@ -2,6 +2,11 @@ package de.mkalb.etpetssim.simulations.rebounding.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
+/**
+ * Terrain cell states for the Rebounding Entities simulation.
+ * <p>
+ * Represents static terrain elements: ground cells and wall cells.
+ */
 public enum TerrainConstant implements ReboundingEntity, ConstantGridEntity {
 
     GROUND(ReboundingEntity.DESCRIPTOR_ID_GROUND),
