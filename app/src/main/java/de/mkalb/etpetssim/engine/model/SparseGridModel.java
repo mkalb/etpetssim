@@ -144,7 +144,7 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
         // Fast path: default does NOT match -> only stored non-default entries can match.
         if (!includeDefault) {
             if (data.isEmpty()) {
-                // Return new ArrayList, because SparseGridModel#filteredAndSortedCells needs a mutable list to sort.
+                // Return new ArrayList, because SparseGridModel#filteredCellsSortedBy needs a mutable list to sort.
                 return new ArrayList<>(0);
             }
             List<GridCell<T>> result = new ArrayList<>(data.size());
@@ -174,7 +174,7 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
     }
 
     @Override
-    public List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+    public List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
         List<GridCell<T>> result = filteredCells(entityPredicate);
         result.sort(cellOrdering);
         return result;

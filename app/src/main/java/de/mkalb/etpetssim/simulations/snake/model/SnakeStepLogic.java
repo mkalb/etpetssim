@@ -75,7 +75,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
 
         switch (config.deathMode()) {
             case PERMADEATH -> statistics.decreaseSnakeHeadCells();
-            case RESPAWN -> model.randomDefaultCoordinate(random)
+            case RESPAWN -> model.findRandomDefaultCoordinate(random)
                                  .ifPresentOrElse(
                                          // Respawn snake head as new living snake head at free cell
                                          freeCoordinate -> {
@@ -107,7 +107,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
 
         // Respawn food if eaten
         if (moveDecision.isFoodTarget()) {
-            model.randomDefaultCoordinate(random)
+            model.findRandomDefaultCoordinate(random)
                  .ifPresentOrElse(
                          freeCoordinate -> model.setEntity(freeCoordinate, TerrainConstant.GROWTH_FOOD),
                          statistics::decreaseFoodCells);

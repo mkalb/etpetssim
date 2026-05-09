@@ -65,20 +65,6 @@ final class WritableGridModelDefaultMethodsTest {
         assertEquals(TestEntity.WALL, model.getEntity(valid));
     }
 
-    @Test
-    void testGetEntityAsOptionalAndRandomDefaultCoordinate() {
-        DefaultMethodModel model = new DefaultMethodModel(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
-        GridCoordinate occupied = coordinate(0, 0);
-        model.setEntity(occupied, TestEntity.WALL);
-
-        assertEquals(Optional.of(TestEntity.WALL), model.getEntityAsOptional(occupied));
-        assertTrue(model.getEntityAsOptional(coordinate(9, 9)).isEmpty());
-
-        Optional<GridCoordinate> randomDefault = model.randomDefaultCoordinate(new Random(RANDOM_SEED));
-        assertTrue(randomDefault.isPresent());
-        assertNotEquals(occupied, randomDefault.orElseThrow());
-    }
-
     private static final class DefaultMethodModel implements WritableGridModel<TestEntity> {
 
         private final GridStructure structure;

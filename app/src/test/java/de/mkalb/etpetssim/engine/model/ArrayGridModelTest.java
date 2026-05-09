@@ -48,12 +48,12 @@ final class ArrayGridModelTest {
     }
 
     @Test
-    void testFilteredAndSortedCells() {
+    void testFilteredCellsSortedBy() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(2, 1), TestEntity.WALL);
         model.setEntity(coordinate(0, 0), TestEntity.WALL);
 
-        List<GridCell<TestEntity>> cells = model.filteredAndSortedCells(
+        List<GridCell<TestEntity>> cells = model.filteredCellsSortedBy(
                 entity -> entity == TestEntity.WALL,
                 Comparator.comparing(GridCell::coordinate));
 

@@ -32,7 +32,7 @@ public final class LangtonStepRunner
         var antModel = model.antModel();
         var groundModel = model.groundModel();
 
-        for (GridCell<AntEntity> agentCell : antModel.filteredAndSortedCells(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition())) {
+        for (GridCell<AntEntity> agentCell : antModel.filteredCellsSortedBy(LangtonEntity::isAgent, AgentOrderingStrategies.byPosition())) {
             if (!(agentCell.entity() instanceof Ant ant)) {
                 continue;
             }

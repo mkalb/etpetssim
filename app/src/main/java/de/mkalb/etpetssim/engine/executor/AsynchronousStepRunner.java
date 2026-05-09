@@ -73,7 +73,7 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
     @Override
     public void performStep(int stepIndex, C context) {
         Comparator<GridCell<T>> agentOrderingStrategy = agentOrderingStrategyProvider.apply(context);
-        List<GridCell<T>> orderedAgentCells = model.filteredAndSortedCells(agentPredicate, agentOrderingStrategy);
+        List<GridCell<T>> orderedAgentCells = model.filteredCellsSortedBy(agentPredicate, agentOrderingStrategy);
         for (GridCell<T> agentCell : orderedAgentCells) {
             agentStepLogic.performAgentStep(agentCell, model, stepIndex, context);
         }

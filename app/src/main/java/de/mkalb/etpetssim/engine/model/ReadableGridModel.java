@@ -70,21 +70,6 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     boolean isSparse();
 
     /**
-     * Returns the entity at the specified coordinate as an {@link Optional}.
-     * Returns {@code Optional.empty()} if the coordinate is invalid.
-     *
-     * @param coordinate the grid coordinate
-     * @return an Optional containing the entity, or empty if invalid
-     */
-    default Optional<T> getEntityAsOptional(GridCoordinate coordinate) {
-        if (isCoordinateValid(coordinate)) {
-            return Optional.of(getEntity(coordinate));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    /**
      * Returns a stream of all grid cells (coordinate and entity).
      *
      * @return a stream of GridCell
@@ -182,7 +167,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @param cellOrdering the comparator to define the order of the resulting grid cells
      * @return a list of filtered and sorted {@link GridCell} objects
      */
-    default List<GridCell<T>> filteredAndSortedCells(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
+    default List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
         return cells()
                 .filter(cell -> entityPredicate.test(cell.entity()))
                 .sorted(cellOrdering)
@@ -195,7 +180,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @param random the random number generator to use
      * @return an Optional containing a random default coordinate, or empty if none exist
      */
-    default Optional<GridCoordinate> randomDefaultCoordinate(Random random) {
+    default Optional<GridCoordinate> findRandomDefaultCoordinate(Random random) {
         List<GridCoordinate> defaults = structure().coordinatesStream()
                                                    .filter(this::isDefaultEntity)
                                                    .toList();
