@@ -38,7 +38,7 @@ public record ConwayTransitionRules(
     /**
      * Constructs a new {@code ConwayTransitionRules} record with the specified survival and birth neighbor counts.
      * <p>
-     * Both sets must be non-empty and all values must be within the allowed range from
+     * Both sets may be empty, but all values must be within the allowed range from
      * {@link #MIN_NEIGHBOR_COUNT} to {@link #MAX_NEIGHBOR_COUNT}.
      *
      * @param surviveCounts the sorted set of neighbor counts for cell survival
@@ -57,8 +57,8 @@ public record ConwayTransitionRules(
                 throw new IllegalArgumentException("birthCounts value out of range: " + n);
             }
         }
-        this.surviveCounts = Collections.unmodifiableSortedSet(surviveCounts);
-        this.birthCounts = Collections.unmodifiableSortedSet(birthCounts);
+        this.surviveCounts = Collections.unmodifiableSortedSet(new TreeSet<>(surviveCounts));
+        this.birthCounts = Collections.unmodifiableSortedSet(new TreeSet<>(birthCounts));
     }
 
     /**
