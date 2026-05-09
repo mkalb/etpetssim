@@ -231,7 +231,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
+    public void swapInputCellEntities(GridCell<T> cellA, GridCell<T> cellB) {
         GridCoordinate coordinateA = cellA.coordinate();
         GridCoordinate coordinateB = cellB.coordinate();
         if (!structure.isCoordinateValid(coordinateA)) {
@@ -240,13 +240,8 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
         if (!structure.isCoordinateValid(coordinateB)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure);
         }
-        int xA = coordinateA.x();
-        int yA = coordinateA.y();
-        int xB = coordinateB.x();
-        int yB = coordinateB.y();
-        Object temp = data[yA][xA];
-        data[yA][xA] = data[yB][xB];
-        data[yB][xB] = temp;
+        data[coordinateA.y()][coordinateA.x()] = cellB.entity();
+        data[coordinateB.y()][coordinateB.x()] = cellA.entity();
     }
 
     @Override

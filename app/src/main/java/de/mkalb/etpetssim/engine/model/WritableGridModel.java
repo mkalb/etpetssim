@@ -104,19 +104,30 @@ public non-sealed interface WritableGridModel<T extends GridEntity> extends Read
     }
 
     /**
-     * Swaps the entities at the coordinates of the two given {@link GridCell} objects.
+     * Writes swapped entity values from the two given {@link GridCell} objects.
      * <p>
-     * Should be overwritten by subclasses to optimize performance.
+     * Uses {@code cellA.entity()} and {@code cellB.entity()} as input values and writes them to the
+     * opposite coordinates ({@code cellA.coordinate()} receives {@code cellB.entity()}, and vice versa).
+     * Both coordinates are validated before any write is performed.
+     * The current model state at those coordinates is not read.
+     * <p>
+     * Should be overridden by subclasses to optimize performance.
      *
-     * @param cellA the first grid cell whose entity and coordinate are involved in the swap
-     * @param cellB the second grid cell whose entity and coordinate are involved in the swap
+     * @param cellA the first input cell providing one coordinate and one entity value
+     * @param cellB the second input cell providing one coordinate and one entity value
      * @throws IndexOutOfBoundsException if either coordinate is not valid
      */
-    default void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
-        T entityA = cellA.entity();
-        T entityB = cellB.entity();
-        setEntity(cellA.coordinate(), entityB);
-        setEntity(cellB.coordinate(), entityA);
+    default void swapInputCellEntities(GridCell<T> cellA, GridCell<T> cellB) {
+        GridCoordinate coordinateA = cellA.coordinate();
+        GridCoordinate coordinateB = cellB.coordinate();
+        if (!isCoordinateValid(coordinateA)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateA + " for structure: " + structure());
+        }
+        if (!isCoordinateValid(coordinateB)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure());
+        }
+        setEntity(coordinateA, cellB.entity());
+        setEntity(coordinateB, cellA.entity());
     }
 
 }

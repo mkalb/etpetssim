@@ -70,7 +70,7 @@ public final class WatorAgentLogicFactory {
         // Move fish, if possible
         if (!waterCells.isEmpty()) {
             GridCell<WatorEntity> waterCell = chooseRandomCell(waterCells);
-            model.swapEntities(agentCell, waterCell);
+            model.swapInputCellEntities(agentCell, waterCell);
             fishNewCoordinate = waterCell.coordinate();
 
             // Reproduce, if conditions are met
@@ -113,7 +113,7 @@ public final class WatorAgentLogicFactory {
             // AppLogger.info("WatorAgentLogicFactory - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
         } else if (!waterCells.isEmpty()) {
             GridCell<WatorEntity> waterCell = chooseRandomCell(waterCells);
-            model.swapEntities(agentCell, waterCell);
+            model.swapInputCellEntities(agentCell, waterCell);
             sharkNewCoordinate = waterCell.coordinate();
             //    // AppLogger.info("WatorAgentLogicFactory - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
         }

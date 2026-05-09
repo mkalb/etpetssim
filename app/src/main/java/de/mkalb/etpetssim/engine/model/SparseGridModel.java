@@ -248,7 +248,7 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
     }
 
     @Override
-    public void swapEntities(GridCell<T> cellA, GridCell<T> cellB) {
+    public void swapInputCellEntities(GridCell<T> cellA, GridCell<T> cellB) {
         GridCoordinate coordinateA = cellA.coordinate();
         GridCoordinate coordinateB = cellB.coordinate();
         if (!structure.isCoordinateValid(coordinateA)) {
@@ -257,8 +257,8 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
         if (!structure.isCoordinateValid(coordinateB)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure);
         }
-        T entityA = data.getOrDefault(coordinateA, defaultEntity);
-        T entityB = data.getOrDefault(coordinateB, defaultEntity);
+        T entityA = cellA.entity();
+        T entityB = cellB.entity();
 
         if (entityB.equals(defaultEntity)) {
             data.remove(coordinateA);
