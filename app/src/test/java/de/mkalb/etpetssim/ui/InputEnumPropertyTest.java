@@ -8,12 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class InputEnumPropertyTest {
 
-    private enum TestMode {
-        MODE_ALPHA,
-        MODE_BETA,
-        MODE_GAMMA
-    }
-
     @Test
     void testSetInvalidValueUpdatesPropertyAndSetsInvalidState() {
         InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA,
@@ -64,6 +58,12 @@ final class InputEnumPropertyTest {
                         Enum::name));
 
         assertTrue(exception.getMessage().contains("Initial value must be in validValues"));
+    }
+
+    private enum TestMode {
+        MODE_ALPHA,
+        MODE_BETA,
+        MODE_GAMMA
     }
 
 }
