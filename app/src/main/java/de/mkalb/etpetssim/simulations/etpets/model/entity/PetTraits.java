@@ -2,6 +2,14 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 
+/**
+ * Immutable trait bundle describing a pet genome.
+ *
+ * @param maxEnergy the maximum energy capacity
+ * @param movementCostModifier the movement energy cost modifier
+ * @param reproductionMinEnergy the minimum energy required for reproduction
+ * @param reproductionCooldown the cooldown between reproduction attempts
+ */
 public record PetTraits(
         int maxEnergy,
         double movementCostModifier,
@@ -12,6 +20,11 @@ public record PetTraits(
         return (value - min) / (max - min);
     }
 
+    /**
+     * Computes a normalized aggregate quality score across all trait dimensions.
+     *
+     * @return the average normalized trait score
+     */
     @SuppressWarnings("MagicNumber")
     public double genomeQualityScore() {
         double normMax = normalize(maxEnergy,

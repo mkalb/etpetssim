@@ -8,6 +8,14 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 
 import java.util.*;
 
+/**
+ * Composite grid model for ET Pets with terrain, resource, and agent layers.
+ *
+ * @param structure the shared grid structure of all sub-models
+ * @param terrainModel the terrain layer
+ * @param resourceModel the resource layer
+ * @param agentModel the agent layer
+ */
 public record EtpetsGridModel(
         GridStructure structure,
         WritableGridModel<TerrainEntity> terrainModel,

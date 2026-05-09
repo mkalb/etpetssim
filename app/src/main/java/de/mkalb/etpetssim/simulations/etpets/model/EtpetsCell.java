@@ -18,6 +18,13 @@ public record EtpetsCell(GridCoordinate coordinate,
                          ResourceEntity resourceEntity,
                          AgentEntity agentEntity) {
 
+    /**
+     * Creates a layered ET-Pets cell snapshot from the given grid model.
+     *
+     * @param coordinate the coordinate to read
+     * @param model the ET-Pets grid model providing all layers
+     * @return the composed cell snapshot for the coordinate
+     */
     public static EtpetsCell of(GridCoordinate coordinate, EtpetsGridModel model) {
         return new EtpetsCell(coordinate,
                 model.terrainModel().getEntity(coordinate),
