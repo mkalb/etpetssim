@@ -27,45 +27,34 @@ public final class GridEntityDescriptorRegistry {
      * Creates a new, empty {@link GridEntityDescriptorRegistry} with an initial capacity
      * for the expected number of entity descriptors.
      *
-     * @param expectedEntities the anticipated number of descriptors to be registered,
-     *                        used to set the initial capacity of the internal map
+     * @param expectedDescriptorCount the anticipated number of descriptors to be registered,
+     *                               used to set the initial capacity of the internal map
      */
-    public GridEntityDescriptorRegistry(int expectedEntities) {
-        descriptorsById = HashMap.newHashMap(expectedEntities);
+    public GridEntityDescriptorRegistry(int expectedDescriptorCount) {
+        descriptorsById = HashMap.newHashMap(expectedDescriptorCount);
     }
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
      * {@link GridEntityDescriptorProvider} providers supplied as varargs.
      *
-     * @param entities one or more descriptor providers to register
+     * @param providers one or more descriptor providers to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry of(GridEntityDescriptorProvider... entities) {
-        return ofArray(entities);
+    public static GridEntityDescriptorRegistry of(GridEntityDescriptorProvider... providers) {
+        return ofArray(providers);
     }
 
     /**
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
      * array of {@link GridEntityDescriptorProvider} providers.
      *
-     * @param entities an array of descriptor providers to register
+     * @param providers an array of descriptor providers to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry ofArray(GridEntityDescriptorProvider[] entities) {
-        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(entities.length);
-        for (GridEntityDescriptorProvider entity : entities) {
-            registry.register(
-                    entity.descriptorId(),
-                    entity.visible(),
-                    entity.shortNameKey(),
-                    entity.longNameKey(),
-                    entity.descriptionKey(),
-                    entity.emojiKey(),
-                    entity.color(),
-                    entity.borderColor()
-            );
-        }
+    public static GridEntityDescriptorRegistry ofArray(GridEntityDescriptorProvider[] providers) {
+        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(providers.length);
+        registry.registerProviders(Arrays.asList(providers));
         return registry;
     }
 
@@ -73,24 +62,32 @@ public final class GridEntityDescriptorRegistry {
      * Returns a new {@link GridEntityDescriptorRegistry} populated with the given
      * {@link Collection} of {@link GridEntityDescriptorProvider} providers.
      *
-     * @param entities a collection of descriptor providers to register
+     * @param providers a collection of descriptor providers to register
      * @return a populated registry instance
      */
-    public static GridEntityDescriptorRegistry ofCollection(Collection<? extends GridEntityDescriptorProvider> entities) {
-        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(entities.size());
-        for (GridEntityDescriptorProvider entity : entities) {
-            registry.register(
-                    entity.descriptorId(),
-                    entity.visible(),
-                    entity.shortNameKey(),
-                    entity.longNameKey(),
-                    entity.descriptionKey(),
-                    entity.emojiKey(),
-                    entity.color(),
-                    entity.borderColor()
-            );
-        }
+    public static GridEntityDescriptorRegistry ofCollection(Collection<? extends GridEntityDescriptorProvider> providers) {
+        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(providers.size());
+        registry.registerProviders(providers);
         return registry;
+    }
+
+    private void registerProviders(Iterable<? extends GridEntityDescriptorProvider> providers) {
+        for (GridEntityDescriptorProvider provider : providers) {
+            registerProvider(provider);
+        }
+    }
+
+    private void registerProvider(GridEntityDescriptorProvider provider) {
+        register(
+                provider.descriptorId(),
+                provider.visible(),
+                provider.shortNameKey(),
+                provider.longNameKey(),
+                provider.descriptionKey(),
+                provider.emojiKey(),
+                provider.color(),
+                provider.borderColor()
+        );
     }
 
     /**
