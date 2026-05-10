@@ -16,6 +16,8 @@ import java.util.stream.*;
  */
 public final class SparseGridModel<T extends GridEntity> implements WritableGridModel<T> {
 
+    private static final int MAX_RANDOM_DEFAULT_SAMPLING_ATTEMPTS = 64;
+
     /** The structure describing the grid's dimensions and valid coordinates. */
     private final GridStructure structure;
 
@@ -178,6 +180,38 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
         List<GridCell<T>> result = filteredCells(entityPredicate);
         result.sort(cellOrdering);
         return result;
+    }
+
+    @Override
+    public Optional<GridCoordinate> findRandomDefaultCoordinate(Random random) {
+        int width = structure.size().width();
+        int height = structure.size().height();
+        int area = structure.size().area();
+        int defaultCount = area - data.size();
+        if (defaultCount <= 0) {
+            return Optional.empty();
+        }
+
+        int maxAttempts = Math.min(area, MAX_RANDOM_DEFAULT_SAMPLING_ATTEMPTS);
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            GridCoordinate coordinate = new GridCoordinate(random.nextInt(width), random.nextInt(height));
+            if (!data.containsKey(coordinate)) {
+                return Optional.of(coordinate);
+            }
+        }
+
+        int startIndex = random.nextInt(area);
+        for (int offset = 0; offset < area; offset++) {
+            int index = (startIndex + offset) % area;
+            int y = index / width;
+            int x = index % width;
+            GridCoordinate coordinate = new GridCoordinate(x, y);
+            if (!data.containsKey(coordinate)) {
+                return Optional.of(coordinate);
+            }
+        }
+
+        return Optional.empty();
     }
 
     @Override

@@ -61,6 +61,32 @@ final class SparseGridModelTest {
     }
 
     @Test
+    void testFindRandomDefaultCoordinateReturnsEmpty() {
+        SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.fill(TestEntity.WALL);
+
+        Optional<GridCoordinate> result = model.findRandomDefaultCoordinate(new Random(7L));
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testFindRandomDefaultCoordinateReturnsOnlyDefaultCells() {
+        SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.fill(TestEntity.WALL);
+        GridCoordinate onlyDefaultCoordinate = coordinate(3, 5);
+        model.setEntityToDefault(onlyDefaultCoordinate);
+
+        Optional<GridCoordinate> result = model.findRandomDefaultCoordinate(new Random(13L));
+
+        assertAll(
+                () -> assertTrue(result.isPresent()),
+                () -> assertEquals(onlyDefaultCoordinate, result.orElseThrow()),
+                () -> assertTrue(model.isDefaultEntity(result.orElseThrow()))
+        );
+    }
+
+    @Test
     void testSwapInputCellEntitiesWritesInputEntityValues() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate coordinateA = coordinate(0, 0);
