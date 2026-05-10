@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +18,27 @@ final class InputIntegerPropertyTest {
     private static final int EXPECTED_STEP_MID = 15;
     private static final int ABOVE_MAX = 25;
     private static final int BELOW_MIN = -5;
+
+    @Test
+    void testConstructorAcceptsValidInitialValueAndAccessors() {
+        InputIntegerProperty property = new InputIntegerProperty(
+                new SimpleIntegerProperty(INITIAL_VALUE),
+                MIN_VALUE,
+                MAX_VALUE,
+                STEP);
+
+        assertAll(
+                () -> assertEquals(INITIAL_VALUE, property.getValue()),
+                () -> assertTrue(property.isValid()),
+                () -> assertFalse(property.isMin()),
+                () -> assertFalse(property.isMax()),
+                () -> assertFalse(property.isStepOne()),
+                () -> assertEquals(2, property.getIndex()),
+                () -> assertEquals(4, property.getMaxIndex()),
+                () -> assertEquals(INITIAL_VALUE, property.asObjectProperty().get()),
+                () -> assertEquals("10", property.asStringBinding("%d").get())
+        );
+    }
 
     @Test
     void testAdjustValueKeepsAlreadyValidValues() {
@@ -44,6 +66,20 @@ final class InputIntegerPropertyTest {
     }
 
     @Test
+    void testSetValueOnStepUpdatesPropertyAndKeepsValidState() {
+        InputIntegerProperty property = InputIntegerProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE, STEP);
+
+        property.setValue(MAX_VALUE);
+        assertAll(
+                () -> assertEquals(MAX_VALUE, property.getValue()),
+                () -> assertTrue(property.isValid()),
+                () -> assertFalse(property.isMin()),
+                () -> assertTrue(property.isMax()),
+                () -> assertEquals(4, property.getIndex())
+        );
+    }
+
+    @Test
     void testSetValueOutsideRangeUpdatesPropertyAndSetsInvalidState() {
         InputIntegerProperty property = InputIntegerProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE, STEP);
 
@@ -67,6 +103,64 @@ final class InputIntegerPropertyTest {
         property.setValue(OFF_STEP_HIGHER);
         assertEquals(OFF_STEP_HIGHER, property.getValue());
         assertFalse(property.isValid());
+    }
+
+    @Test
+    void testOfWithStepOneReportsStepOne() {
+        InputIntegerProperty property = InputIntegerProperty.of(3, MIN_VALUE, 4, 1);
+
+        assertAll(
+                () -> assertEquals(3, property.getValue()),
+                () -> assertTrue(property.isStepOne()),
+                () -> assertEquals(3, property.getIndex()),
+                () -> assertEquals(4, property.getMaxIndex())
+        );
+    }
+
+    @Test
+    void testConstructorRejectsInvalidConfigurationOrInitialValue() {
+        assertAll(
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new InputIntegerProperty(
+                                    new SimpleIntegerProperty(INITIAL_VALUE),
+                                    MIN_VALUE,
+                                    MIN_VALUE,
+                                    STEP));
+
+                    assertTrue(exception.getMessage().contains("min must be less than max"));
+                },
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new InputIntegerProperty(
+                                    new SimpleIntegerProperty(INITIAL_VALUE),
+                                    MIN_VALUE,
+                                    MAX_VALUE,
+                                    0));
+
+                    assertTrue(exception.getMessage().contains("step must be positive"));
+                },
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new InputIntegerProperty(
+                                    new SimpleIntegerProperty(INITIAL_VALUE),
+                                    MIN_VALUE,
+                                    OFF_STEP_HIGH,
+                                    STEP));
+
+                    assertTrue(exception.getMessage().contains("must be divisible by step"));
+                },
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new InputIntegerProperty(
+                                    new SimpleIntegerProperty(OFF_STEP_MID),
+                                    MIN_VALUE,
+                                    MAX_VALUE,
+                                    STEP));
+
+                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                }
+        );
     }
 
     @Test

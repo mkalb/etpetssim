@@ -30,6 +30,7 @@ final class CellShapeSideTest {
     @Test
     void testValueOfInvalidThrows() {
         assertThrows(IllegalArgumentException.class, () -> CellShapeSide.valueOf("INVALID"));
+        assertThrows(IllegalArgumentException.class, () -> CellShapeSide.valueOf("top"));
     }
 
     @Test

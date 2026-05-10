@@ -15,6 +15,20 @@ final class InputDoublePropertyTest {
     private static final double BELOW_MIN = -99.0d;
 
     @Test
+    void testConstructorAcceptsValidInitialValueAndExposesAccessors() {
+        InputDoubleProperty property = new InputDoubleProperty(new SimpleDoubleProperty(INITIAL_VALUE), MIN_VALUE, MAX_VALUE);
+
+        assertAll(
+                () -> assertEquals(INITIAL_VALUE, property.getValue()),
+                () -> assertTrue(property.isValid()),
+                () -> assertFalse(property.isMin()),
+                () -> assertFalse(property.isMax()),
+                () -> assertEquals(INITIAL_VALUE, property.asObjectProperty().get()),
+                () -> assertEquals(String.format("%.1f", INITIAL_VALUE), property.asStringBinding("%.1f").get())
+        );
+    }
+
+    @Test
     void testAdjustValueKeepsAlreadyValidValues() {
         InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
 
@@ -62,6 +76,27 @@ final class InputDoublePropertyTest {
     }
 
     @Test
+    void testSetValueAtRangeBoundariesUpdatesDerivedState() {
+        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+
+        property.setValue(MIN_VALUE);
+        assertAll(
+                () -> assertEquals(MIN_VALUE, property.getValue()),
+                () -> assertTrue(property.isValid()),
+                () -> assertTrue(property.isMin()),
+                () -> assertFalse(property.isMax())
+        );
+
+        property.setValue(MAX_VALUE);
+        assertAll(
+                () -> assertEquals(MAX_VALUE, property.getValue()),
+                () -> assertTrue(property.isValid()),
+                () -> assertFalse(property.isMin()),
+                () -> assertTrue(property.isMax())
+        );
+    }
+
+    @Test
     void testConstructorRejectsMinGreaterThanOrEqualToMax() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new InputDoubleProperty(new SimpleDoubleProperty(INITIAL_VALUE), MIN_VALUE, MIN_VALUE));
@@ -71,10 +106,20 @@ final class InputDoublePropertyTest {
 
     @Test
     void testConstructorRejectsInitialValueOutsideRange() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new InputDoubleProperty(new SimpleDoubleProperty(ABOVE_MAX), MIN_VALUE, MAX_VALUE));
+        assertAll(
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new InputDoubleProperty(new SimpleDoubleProperty(ABOVE_MAX), MIN_VALUE, MAX_VALUE));
 
-        assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                },
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> new InputDoubleProperty(new SimpleDoubleProperty(BELOW_MIN), MIN_VALUE, MAX_VALUE));
+
+                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                }
+        );
     }
 
     @Test
@@ -87,10 +132,20 @@ final class InputDoublePropertyTest {
 
     @Test
     void testOfRejectsInitialValueOutsideRange() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputDoubleProperty.of(ABOVE_MAX, MIN_VALUE, MAX_VALUE));
+        assertAll(
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> InputDoubleProperty.of(ABOVE_MAX, MIN_VALUE, MAX_VALUE));
 
-        assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                },
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> InputDoubleProperty.of(BELOW_MIN, MIN_VALUE, MAX_VALUE));
+
+                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                }
+        );
     }
 
 }

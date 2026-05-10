@@ -25,7 +25,11 @@ final class InputDoublePropertyIntRangeTest {
 
         assertAll(
                 () -> assertEquals(NON_INTEGER_INITIAL_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid())
+                () -> assertTrue(property.isValid()),
+                () -> assertFalse(property.isMin()),
+                () -> assertFalse(property.isMax()),
+                () -> assertEquals(NON_INTEGER_INITIAL_VALUE, property.asObjectProperty().get()),
+                () -> assertEquals(String.format("%.1f", NON_INTEGER_INITIAL_VALUE), property.asStringBinding("%.1f").get())
         );
     }
 
@@ -38,6 +42,27 @@ final class InputDoublePropertyIntRangeTest {
                 () -> assertEquals(EXPECTED_ROUND_LOW, property.adjustValue(FRACTIONAL_LOW)),
                 () -> assertEquals(MAX_VALUE, property.adjustValue(ABOVE_MAX)),
                 () -> assertEquals(MIN_VALUE, property.adjustValue(BELOW_MIN))
+        );
+    }
+
+    @Test
+    void testSetValueAtRangeBoundariesUpdatesDerivedState() {
+        InputDoublePropertyIntRange property = InputDoublePropertyIntRange.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+
+        property.setValue(MIN_VALUE);
+        assertAll(
+                () -> assertEquals(MIN_VALUE, property.getValue()),
+                () -> assertTrue(property.isValid()),
+                () -> assertTrue(property.isMin()),
+                () -> assertFalse(property.isMax())
+        );
+
+        property.setValue(MAX_VALUE);
+        assertAll(
+                () -> assertEquals(MAX_VALUE, property.getValue()),
+                () -> assertTrue(property.isValid()),
+                () -> assertFalse(property.isMin()),
+                () -> assertTrue(property.isMax())
         );
     }
 
@@ -59,8 +84,44 @@ final class InputDoublePropertyIntRangeTest {
         InputDoublePropertyIntRange property = InputDoublePropertyIntRange.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
 
         property.setValue(FRACTIONAL_HIGH);
-        assertEquals(FRACTIONAL_HIGH, property.getValue());
-        assertTrue(property.isValid());
+        assertAll(
+                () -> assertEquals(FRACTIONAL_HIGH, property.getValue()),
+                () -> assertTrue(property.isValid())
+        );
+    }
+
+    @Test
+    void testConstructorRejectsMinGreaterThanOrEqualToMax() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> new InputDoublePropertyIntRange(new SimpleDoubleProperty(INITIAL_VALUE), MIN_VALUE, MIN_VALUE));
+
+        assertTrue(exception.getMessage().contains("min must be less than max"));
+    }
+
+    @Test
+    void testOfRejectsMinGreaterThanOrEqualToMax() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> InputDoublePropertyIntRange.of(INITIAL_VALUE, MIN_VALUE, MIN_VALUE));
+
+        assertTrue(exception.getMessage().contains("min must be less than max"));
+    }
+
+    @Test
+    void testOfRejectsInitialValueOutsideRange() {
+        assertAll(
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> InputDoublePropertyIntRange.of((int) ABOVE_MAX, MIN_VALUE, MAX_VALUE));
+
+                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                },
+                () -> {
+                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                            () -> InputDoublePropertyIntRange.of((int) BELOW_MIN, MIN_VALUE, MAX_VALUE));
+
+                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
+                }
+        );
     }
 
 }

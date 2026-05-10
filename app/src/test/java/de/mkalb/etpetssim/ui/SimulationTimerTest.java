@@ -5,11 +5,14 @@ import javafx.util.Duration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 final class SimulationTimerTest {
+
+    private static final double STEP_INTERVAL_MILLIS = 20.0d;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -30,6 +33,16 @@ final class SimulationTimerTest {
     }
 
     @Test
+    void testStopWithoutStartKeepsStoppedState() {
+        SimulationTimer timer = new SimulationTimer(() -> {
+        });
+
+        FxTestSupport.runAndWait(timer::stop);
+
+        assertFalse(timer.isRunning());
+    }
+
+    @Test
     void testStartAndStopUpdatesRunningState() {
         SimulationTimer timer = new SimulationTimer(() -> {
         });
@@ -46,6 +59,28 @@ final class SimulationTimerTest {
         assertAll(
                 () -> assertTrue(runningAfterStart.get()),
                 () -> assertFalse(runningAfterStop.get())
+        );
+    }
+
+    @Test
+    void testStartExecutesSimulationStep() throws InterruptedException {
+        CountDownLatch stepLatch = new CountDownLatch(2);
+        AtomicInteger stepCount = new AtomicInteger();
+        SimulationTimer timer = new SimulationTimer(() -> {
+            stepCount.incrementAndGet();
+            stepLatch.countDown();
+        });
+
+        try {
+            FxTestSupport.runAndWait(() -> timer.start(Duration.millis(STEP_INTERVAL_MILLIS)));
+            assertTrue(stepLatch.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        } finally {
+            FxTestSupport.runAndWait(timer::stop);
+        }
+
+        assertAll(
+                () -> assertTrue(stepCount.get() >= 2),
+                () -> assertFalse(timer.isRunning())
         );
     }
 
