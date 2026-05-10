@@ -2,10 +2,21 @@ package de.mkalb.etpetssim.simulations.snake.model;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 
+/**
+ * Defines the death behavior modes for the snake in the Snake simulation.
+ * <p>
+ * Each mode determines how the snake reacts after a death.
+ */
 public enum SnakeDeathMode {
 
+    /**
+     * The snake is permanently removed from the simulation after death.
+     */
     PERMADEATH("snakedeathmode.permadeath"),
 
+    /**
+     * The snake respawns at a new position after death and continues the simulation.
+     */
     RESPAWN("snakedeathmode.respawn");
 
     private final String resourceKey;

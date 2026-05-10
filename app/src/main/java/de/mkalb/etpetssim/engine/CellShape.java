@@ -7,6 +7,8 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
  * <p>
  * Each shape is a regular polygon, meaning it is convex, symmetrical, and all edges (sides) and angles are equal.
  * The number of {@code vertices} (corner points) is always equal to the number of {@code edges} (sides).
+ * Constants are ordered by increasing vertex count (TRIANGLE=3, SQUARE=4, HEXAGON=6);
+ * this order is not semantically significant for external contracts.
  * <p>
  * <strong>Terminology:</strong><br>
  * - {@code vertex} (plural: {@code vertices}): a corner point of the polygon.<br>
@@ -45,7 +47,7 @@ public enum CellShape {
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum CellShape
+     * Returns the resource key for the label (title) of the enum CellShape.
      *
      * @return the resource key for the label of the enum CellShape
      */

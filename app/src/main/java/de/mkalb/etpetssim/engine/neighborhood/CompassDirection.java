@@ -28,21 +28,52 @@ import java.util.stream.*;
 @SuppressWarnings({"MagicNumber", "FieldNamingConvention"})
 public enum CompassDirection {
 
+    /** North – main direction (level 0). */
     N("compass.abbreviation.n", "compass.name.n", 0, "↑"),
+
+    /** North-northeast – secondary intercardinal direction (level 2). */
     NNE("compass.abbreviation.nne", "compass.name.nne", 2, "↑↗"),
+
+    /** Northeast – intercardinal direction (level 1). */
     NE("compass.abbreviation.ne", "compass.name.ne", 1, "↗"),
+
+    /** East-northeast – secondary intercardinal direction (level 2). */
     ENE("compass.abbreviation.ene", "compass.name.ene", 2, "→↗"),
+
+    /** East – main direction (level 0). */
     E("compass.abbreviation.e", "compass.name.e", 0, "→"),
+
+    /** East-southeast – secondary intercardinal direction (level 2). */
     ESE("compass.abbreviation.ese", "compass.name.ese", 2, "→↘"),
+
+    /** Southeast – intercardinal direction (level 1). */
     SE("compass.abbreviation.se", "compass.name.se", 1, "↘"),
+
+    /** South-southeast – secondary intercardinal direction (level 2). */
     SSE("compass.abbreviation.sse", "compass.name.sse", 2, "↓↘"),
+
+    /** South – main direction (level 0). */
     S("compass.abbreviation.s", "compass.name.s", 0, "↓"),
+
+    /** South-southwest – secondary intercardinal direction (level 2). */
     SSW("compass.abbreviation.ssw", "compass.name.ssw", 2, "↓↙"),
+
+    /** Southwest – intercardinal direction (level 1). */
     SW("compass.abbreviation.sw", "compass.name.sw", 1, "↙"),
+
+    /** West-southwest – secondary intercardinal direction (level 2). */
     WSW("compass.abbreviation.wsw", "compass.name.wsw", 2, "←↙"),
+
+    /** West – main direction (level 0). */
     W("compass.abbreviation.w", "compass.name.w", 0, "←"),
+
+    /** West-northwest – secondary intercardinal direction (level 2). */
     WNW("compass.abbreviation.wnw", "compass.name.wnw", 2, "←↖"),
+
+    /** Northwest – intercardinal direction (level 1). */
     NW("compass.abbreviation.nw", "compass.name.nw", 1, "↖"),
+
+    /** North-northwest – secondary intercardinal direction (level 2). */
     NNW("compass.abbreviation.nnw", "compass.name.nnw", 2, "↑↖");
 
     private static final CompassDirection[] VALUES = values();
