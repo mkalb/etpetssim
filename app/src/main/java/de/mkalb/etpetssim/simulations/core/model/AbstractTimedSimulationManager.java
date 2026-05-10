@@ -8,6 +8,16 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Base implementation for managers backed by a timed simulation executor.
+ *
+ * <p>Subclasses must supply the concrete {@link TimedSimulationExecutor} via {@link #executor()}
+ * and update the statistics snapshot after each step via {@link #updateStatistics()}.
+ * Optional hook methods allow subclasses to react after step execution without overriding
+ * the final step-dispatch methods.
+ *
+ * @param <ENT> entity type used by the simulation model
+ * @param <GM>  model type used for simulation execution
+ * @param <CON> immutable configuration type
+ * @param <STA> timing-aware statistics snapshot type
  */
 public abstract class AbstractTimedSimulationManager<
         ENT extends GridEntity,
@@ -18,12 +28,26 @@ public abstract class AbstractTimedSimulationManager<
 
     private final CON config;
 
+    /**
+     * Initializes the base manager with the given immutable configuration.
+     *
+     * @param config the immutable simulation configuration
+     */
     protected AbstractTimedSimulationManager(CON config) {
         this.config = config;
     }
 
+    /**
+     * Updates the statistics snapshot after each simulation step.
+     * Called by {@link #executeStep()} and within the per-step callback of {@link #executeSteps}.
+     */
     protected abstract void updateStatistics();
 
+    /**
+     * Returns the timed simulation executor backing this manager.
+     *
+     * @return the executor used for simulation step execution
+     */
     protected abstract TimedSimulationExecutor<ENT, GM> executor();
 
     @Override
@@ -48,14 +72,26 @@ public abstract class AbstractTimedSimulationManager<
         return result;
     }
 
+    /**
+     * Hook invoked after a single step has been executed and statistics updated.
+     *
+     * <p>The default implementation does nothing. Subclasses may override this method
+     * to perform additional processing after each individual step.
+     */
     @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass"})
     protected void afterStepExecuted() {
-        // Do nothing. Can be overridden by subclasses.
     }
 
+    /**
+     * Hook invoked after a multistep batch has been executed.
+     *
+     * <p>The default implementation does nothing. Subclasses may override this method
+     * to react to the aggregated {@link StepExecutionResult} of the completed batch.
+     *
+     * @param result the aggregated execution result of the completed batch
+     */
     @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass", "unused"})
     protected void afterStepsExecuted(StepExecutionResult result) {
-        // Do nothing. Can be overridden by subclasses.
     }
 
     @Override
@@ -78,6 +114,11 @@ public abstract class AbstractTimedSimulationManager<
         return executor().currentModel();
     }
 
+    /**
+     * Returns the current step timing statistics from the executor.
+     *
+     * @return timing statistics for the most recently executed step or batch
+     */
     public final StepTimingStatistics stepTimingStatistics() {
         return executor().stepTimingStatistics();
     }

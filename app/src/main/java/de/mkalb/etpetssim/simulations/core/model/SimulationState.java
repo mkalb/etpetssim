@@ -89,7 +89,7 @@ public enum SimulationState {
     /**
      * Checks if the simulation can be started from the current state.
      *
-     * @return true if simulation can be started, false otherwise
+     * @return {@code true} if the simulation can be started, {@code false} otherwise
      */
     public boolean canStart() {
         return switch (this) {
@@ -101,7 +101,7 @@ public enum SimulationState {
     /**
      * Checks if the simulation cannot be started from the current state.
      *
-     * @return true if simulation cannot be started, false otherwise
+     * @return {@code true} if the simulation cannot be started, {@code false} otherwise
      */
     public boolean cannotStart() {
         return !canStart();
@@ -110,7 +110,7 @@ public enum SimulationState {
     /**
      * Checks if configuration controls should be disabled in the UI for the current state.
      *
-     * @return true if configuration controls are disabled, false otherwise
+     * @return {@code true} if configuration controls are disabled, {@code false} otherwise
      */
     public boolean isControlConfigDisabled() {
         return !(canStart() || isPaused());
@@ -119,7 +119,7 @@ public enum SimulationState {
     /**
      * Checks if the simulation is currently running (timed or batch mode).
      *
-     * @return true if simulation is running, false otherwise
+     * @return {@code true} if the simulation is running, {@code false} otherwise
      */
     public boolean isRunning() {
         return (this == RUNNING_TIMED) || (this == RUNNING_BATCH);
@@ -128,7 +128,7 @@ public enum SimulationState {
     /**
      * Checks if the simulation is currently paused.
      *
-     * @return true if simulation is paused, false otherwise
+     * @return {@code true} if the simulation is paused, {@code false} otherwise
      */
     public boolean isPaused() {
         return this == PAUSED;
