@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.model;
+package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
