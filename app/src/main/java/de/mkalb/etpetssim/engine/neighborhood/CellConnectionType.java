@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.neighborhood;
 
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+
 /**
  * Specifies how two cells in a grid are connected:
  * either via a shared edge ({@link #EDGE}) or only via a shared vertex ({@link #VERTEX}).
@@ -34,7 +36,7 @@ public enum CellConnectionType {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return "cellconnectiontype.label";
+        return AppLocalizationKeys.ENUM_LABEL_CELLCONNECTIONTYPE;
     }
 
     /**

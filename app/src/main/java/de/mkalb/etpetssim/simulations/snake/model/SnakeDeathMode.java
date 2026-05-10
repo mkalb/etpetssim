@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+
 public enum SnakeDeathMode {
 
     PERMADEATH("snakedeathmode.permadeath"),
@@ -19,7 +21,7 @@ public enum SnakeDeathMode {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return "snakedeathmode.label";
+        return AppLocalizationKeys.ENUM_LABEL_SNAKEDEATHMODE;
     }
 
     /**

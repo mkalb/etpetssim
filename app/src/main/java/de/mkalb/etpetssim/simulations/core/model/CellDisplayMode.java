@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+
 /**
  * Defines the available display modes for drawing a grid cell on the canvas.
  * <p>
@@ -58,7 +60,7 @@ public enum CellDisplayMode {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return "celldisplaymode.label";
+        return AppLocalizationKeys.ENUM_LABEL_CELLDISPLAYMODE;
     }
 
     /**

@@ -55,7 +55,16 @@ public final class AppLocalizationKeys {
     public static final String CONTROL_STEP_TITLE = "control.step.title";
     public static final String CONTROL_TERMINATION_CHECK = "control.terminationcheck";
     public static final String CONTROL_TERMINATION_CHECK_TOOLTIP = "control.terminationcheck.tooltip";
+    public static final String ENUM_LABEL_CELLCONNECTIONTYPE = "cellconnectiontype.label";
+    public static final String ENUM_LABEL_CELLDISPLAYMODE = "celldisplaymode.label";
+    public static final String ENUM_LABEL_CELLSHAPE = "cellshape.label";
+    public static final String ENUM_LABEL_COMPASS = "compass.label";
+    public static final String ENUM_LABEL_EDGEBEHAVIOR = "edgebehavior.label";
+    public static final String ENUM_LABEL_GRIDEDGEBEHAVIOR = "gridedgebehavior.label";
+    public static final String ENUM_LABEL_NEIGHBORHOODMODE = "neighborhoodmode.label";
+    public static final String ENUM_LABEL_SIMULATIONMODE = "simulationmode.label";
     public static final String ENUM_LABEL_SIMULATIONTYPE = "simulationtype.label";
+    public static final String ENUM_LABEL_SNAKEDEATHMODE = "snakedeathmode.label";
     public static final String HEADER_ABOUT_LINK = "header.about.link";
     public static final String HEADER_STARTSCREEN_LINK = "header.startscreen.link";
     public static final String OBSERVATION_STEP = "observation.step";

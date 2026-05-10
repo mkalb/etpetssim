@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine;
 
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+
 /**
  * Defines the possible behaviors for entities interacting with the edge of a simulation grid.
  * Used to specify how entities are handled when reaching a grid boundary in grid-based simulations.
@@ -44,7 +46,7 @@ public enum EdgeBehavior {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return "edgebehavior.label";
+        return AppLocalizationKeys.ENUM_LABEL_EDGEBEHAVIOR;
     }
 
     /**

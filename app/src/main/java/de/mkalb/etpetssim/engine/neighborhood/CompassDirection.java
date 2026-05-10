@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.engine.neighborhood;
 
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
+
 import java.util.*;
 import java.util.stream.*;
 
@@ -64,7 +66,7 @@ public enum CompassDirection {
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
-        return "compass.label";
+        return AppLocalizationKeys.ENUM_LABEL_COMPASS;
     }
 
     /**
