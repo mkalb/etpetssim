@@ -11,10 +11,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.*;
 
 /**
- * Encapsulates a string-based seed for simulations, supporting random, numeric, and hash-based seed generation.
+ * Encapsulates user seed input and derived seed preview for simulations.
  * <p>
- * The seed can be set as a string, interpreted as a random value (if blank or null), a numeric value, or a hash of the string.
- * This class provides helper methods for seed type detection and conversion, and exposes JavaFX properties for UI binding.
+ * Interpretation rules are deterministic:
+ * blank input yields a random seed, numeric input yields its parsed {@code long} value,
+ * and all other input is converted into a stable hash-based {@code long}.
  * <p>
  * Note: The {@code labelProperty} is only updated when {@link #computeSeedAndUpdateLabel()} is called.
  */

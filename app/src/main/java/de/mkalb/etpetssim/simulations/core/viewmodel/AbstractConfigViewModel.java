@@ -72,30 +72,65 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         return simulationState.get();
     }
 
+    /**
+     * Exposes the editable cell-shape input.
+     *
+     * @return cell-shape input property wrapper
+     */
     public final InputEnumProperty<CellShape> cellShapeProperty() {
         return cellShape;
     }
 
+    /**
+     * Exposes the editable grid-edge behavior input.
+     *
+     * @return grid-edge behavior input property wrapper
+     */
     public final InputEnumProperty<GridEdgeBehavior> gridEdgeBehaviorProperty() {
         return gridEdgeBehavior;
     }
 
+    /**
+     * Exposes the editable grid width input.
+     *
+     * @return grid-width input property wrapper
+     */
     public final InputIntegerProperty gridWidthProperty() {
         return gridWidth;
     }
 
+    /**
+     * Exposes the editable grid height input.
+     *
+     * @return grid-height input property wrapper
+     */
     public final InputIntegerProperty gridHeightProperty() {
         return gridHeight;
     }
 
+    /**
+     * Exposes the editable cell edge length input.
+     *
+     * @return cell-edge-length input property wrapper
+     */
     public final InputDoublePropertyIntRange cellEdgeLengthProperty() {
         return cellEdgeLength;
     }
 
+    /**
+     * Exposes the editable cell display mode input.
+     *
+     * @return cell-display-mode input property wrapper
+     */
     public final InputEnumProperty<CellDisplayMode> cellDisplayModeProperty() {
         return cellDisplayMode;
     }
 
+    /**
+     * Exposes the editable simulation-seed input and computed label.
+     *
+     * @return seed input wrapper
+     */
     public final SeedProperty seedProperty() {
         return seed;
     }
@@ -141,6 +176,14 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
             CellDisplayMode cellDisplayModeInitial,
             List<CellDisplayMode> cellDisplayModeValues,
             String seedInitial
-    ) {}
+    ) {
+
+        public CommonConfigSettings {
+            cellShapeValues = List.copyOf(cellShapeValues);
+            gridEdgeBehaviorValues = List.copyOf(gridEdgeBehaviorValues);
+            cellDisplayModeValues = List.copyOf(cellDisplayModeValues);
+        }
+
+    }
 
 }

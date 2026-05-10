@@ -13,6 +13,11 @@ import java.util.*;
 
 /**
  * Base class for main view models that coordinate config, observation and selection state.
+ *
+ * @param <ENT> entity type stored in grid cells
+ * @param <GM> grid model type exposed by the simulation
+ * @param <CON> config type provided by the config view model
+ * @param <STA> statistics type exposed through observation state
  */
 public abstract class AbstractMainViewModel<
         ENT extends GridEntity,
@@ -50,6 +55,11 @@ public abstract class AbstractMainViewModel<
         return simulationState.get();
     }
 
+    /**
+     * Updates the current simulation state.
+     *
+     * @param state next simulation state
+     */
     protected final void setSimulationState(SimulationState state) {
         simulationState.set(state);
     }
@@ -64,33 +74,76 @@ public abstract class AbstractMainViewModel<
         notificationTypeProperty.set(notificationType);
     }
 
+    /**
+     * Returns the currently active configuration object.
+     *
+     * @return current immutable config
+     */
     protected abstract CON getCurrentConfig();
 
+    /**
+     * Checks whether a simulation manager is currently available.
+     *
+     * @return {@code true} when a manager exists
+     */
     public abstract boolean hasSimulationManager();
 
+    /**
+     * Returns the current simulation model.
+     *
+     * @return current model snapshot
+     */
     public abstract GM getCurrentModel();
 
+    /**
+     * Exposes the most recently clicked coordinate.
+     *
+     * @return mutable coordinate property
+     */
     public final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
         return lastClickedCoordinate;
     }
 
+    /**
+     * Exposes the coordinate that was clicked before the last click.
+     *
+     * @return mutable coordinate property
+     */
     public final ObjectProperty<@Nullable GridCoordinate> previousClickedCoordinateProperty() {
         return previousClickedCoordinate;
     }
 
+    /**
+     * Returns the most recently clicked coordinate.
+     *
+     * @return optional coordinate
+     */
     public Optional<GridCoordinate> getLastClickedCoordinate() {
         return Optional.ofNullable(lastClickedCoordinate.get());
     }
 
+    /**
+     * Returns the coordinate clicked before the most recent click.
+     *
+     * @return optional coordinate
+     */
     public Optional<GridCoordinate> getPreviousClickedCoordinate() {
         return Optional.ofNullable(previousClickedCoordinate.get());
     }
 
+    /**
+     * Shifts click history and stores a new last-clicked coordinate.
+     *
+     * @param coordinate new coordinate, or {@code null} to clear the current click
+     */
     public final void updateClickedCoordinateProperties(@Nullable GridCoordinate coordinate) {
         previousClickedCoordinate.set(lastClickedCoordinate.get());
         lastClickedCoordinate.set(coordinate);
     }
 
+    /**
+     * Clears current and previous click coordinates.
+     */
     public final void resetClickedCoordinateProperties() {
         previousClickedCoordinate.set(null);
         lastClickedCoordinate.set(null);
