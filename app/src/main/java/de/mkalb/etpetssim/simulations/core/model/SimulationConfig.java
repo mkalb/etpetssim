@@ -88,11 +88,11 @@ public interface SimulationConfig {
     }
 
     /**
-     * Calculates the total number of cells based on configured width and height.
+     * Computes the total number of cells based on configured width and height.
      *
      * @return cell count of the configured grid
      */
-    default int calculateCellCount() {
+    default int computeCellCount() {
         return gridWidth() * gridHeight();
     }
 
