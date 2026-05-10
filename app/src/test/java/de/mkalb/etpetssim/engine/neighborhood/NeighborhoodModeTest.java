@@ -31,6 +31,11 @@ final class NeighborhoodModeTest {
     }
 
     @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> NeighborhoodMode.valueOf(null));
+    }
+
+    @Test
     void testStaticLabelResourceKey() {
         assertEquals("neighborhoodmode.label", NeighborhoodMode.labelResourceKey());
     }

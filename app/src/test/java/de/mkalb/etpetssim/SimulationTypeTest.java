@@ -1,13 +1,21 @@
 package de.mkalb.etpetssim;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("SpellCheckingInspection")
 final class SimulationTypeTest {
+
+    private static synchronized void ensureLocalizationInitialized() {
+        if (!AppLocalization.isInitialized()) {
+            AppLocalization.initialize("en_US", Locale.US);
+        }
+    }
 
     @Test
     void testEnumValues() {
@@ -50,6 +58,11 @@ final class SimulationTypeTest {
     @Test
     void testValueOfInvalidThrows() {
         assertThrows(IllegalArgumentException.class, () -> SimulationType.valueOf("INVALID"));
+    }
+
+    @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> SimulationType.valueOf(null));
     }
 
     @Test
@@ -156,6 +169,11 @@ final class SimulationTypeTest {
     }
 
     @Test
+    void testCliArgumentsAreImmutable() {
+        assertThrows(UnsupportedOperationException.class, () -> SimulationType.STARTSCREEN.cliArguments().add("other"));
+    }
+
+    @Test
     void testFromCliArgument() {
         assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("start", false));
         assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("START", false));
@@ -166,6 +184,64 @@ final class SimulationTypeTest {
         assertEquals(Optional.of(SimulationType.SIMULATION_LAB), SimulationType.fromCliArgument("lab", false));
 
         assertEquals(Optional.empty(), SimulationType.fromCliArgument("notfound", false));
+    }
+
+    @Test
+    void testTitle() {
+        ensureLocalizationInitialized();
+
+        for (SimulationType simulationType : SimulationType.values()) {
+            assertEquals(AppLocalization.getText(simulationType.titleKey()), simulationType.title());
+        }
+    }
+
+    @Test
+    void testSubtitle() {
+        ensureLocalizationInitialized();
+
+        for (SimulationType simulationType : SimulationType.values()) {
+            assertEquals(AppLocalization.getOptionalText(simulationType.subtitleKey()), simulationType.subtitle());
+        }
+    }
+
+    @Test
+    void testUrl() {
+        ensureLocalizationInitialized();
+
+        for (SimulationType simulationType : SimulationType.values()) {
+            assertEquals(AppLocalization.getOptionalText(simulationType.urlKey()), simulationType.url());
+        }
+    }
+
+    @Test
+    void testUrlAsURI() {
+        ensureLocalizationInitialized();
+
+        for (SimulationType simulationType : SimulationType.values()) {
+            Optional<URI> expected = simulationType.url().flatMap(text -> {
+                try {
+                    return Optional.of(URI.create(text));
+                } catch (IllegalArgumentException ignored) {
+                    return Optional.empty();
+                }
+            });
+            assertEquals(expected, simulationType.urlAsURI());
+        }
+    }
+
+    @Test
+    void testCssUrl() {
+        assertTrue(SimulationType.ET_PETS.cssUrl().isPresent());
+        assertTrue(SimulationType.CONWAYS_LIFE.cssUrl().isPresent());
+        assertTrue(SimulationType.SIMULATION_LAB.cssUrl().isPresent());
+
+        assertTrue(SimulationType.STARTSCREEN.cssUrl().isEmpty());
+        assertTrue(SimulationType.WATOR.cssUrl().isEmpty());
+        assertTrue(SimulationType.LANGTONS_ANT.cssUrl().isEmpty());
+        assertTrue(SimulationType.FOREST_FIRE.cssUrl().isEmpty());
+        assertTrue(SimulationType.SUGARSCAPE.cssUrl().isEmpty());
+        assertTrue(SimulationType.SNAKE.cssUrl().isEmpty());
+        assertTrue(SimulationType.REBOUNDING_ENTITIES.cssUrl().isEmpty());
     }
 
 }

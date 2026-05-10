@@ -40,6 +40,11 @@ final class GridEdgeBehaviorTest {
     }
 
     @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> GridEdgeBehavior.valueOf(null));
+    }
+
+    @Test
     void testStaticLabelResourceKey() {
         assertEquals("gridedgebehavior.label", GridEdgeBehavior.labelResourceKey(), "GridEdgeBehavior should have the correct resource key");
     }

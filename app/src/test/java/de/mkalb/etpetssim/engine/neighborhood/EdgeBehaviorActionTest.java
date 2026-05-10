@@ -37,4 +37,9 @@ final class EdgeBehaviorActionTest {
         assertThrows(IllegalArgumentException.class, () -> EdgeBehaviorAction.valueOf("INVALID"));
     }
 
+    @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> EdgeBehaviorAction.valueOf(null));
+    }
+
 }

@@ -31,6 +31,11 @@ final class CellConnectionTypeTest {
     }
 
     @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> CellConnectionType.valueOf(null));
+    }
+
+    @Test
     void testStaticLabelResourceKey() {
         assertEquals("cellconnectiontype.label", CellConnectionType.labelResourceKey());
     }

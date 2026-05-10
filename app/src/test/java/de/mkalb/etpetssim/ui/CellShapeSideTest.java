@@ -32,4 +32,9 @@ final class CellShapeSideTest {
         assertThrows(IllegalArgumentException.class, () -> CellShapeSide.valueOf("INVALID"));
     }
 
+    @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> CellShapeSide.valueOf(null));
+    }
+
 }

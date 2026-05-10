@@ -32,6 +32,11 @@ final class EdgeBehaviorTest {
     }
 
     @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> EdgeBehavior.valueOf(null));
+    }
+
+    @Test
     void testStaticLabelResourceKey() {
         assertEquals("edgebehavior.label", EdgeBehavior.labelResourceKey(), "EdgeBehavior should have the correct resource key");
     }

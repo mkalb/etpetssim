@@ -32,6 +32,11 @@ final class CellShapeTest {
     }
 
     @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> CellShape.valueOf(null));
+    }
+
+    @Test
     void testStaticLabelResourceKey() {
         assertEquals("cellshape.label", CellShape.labelResourceKey(), "CellShape should have the correct resource key");
     }

@@ -65,6 +65,11 @@ final class CompassDirectionTest {
     }
 
     @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> CompassDirection.valueOf(null));
+    }
+
+    @Test
     void testStaticLabelResourceKey() {
         assertEquals("compass.label", CompassDirection.labelResourceKey());
     }
