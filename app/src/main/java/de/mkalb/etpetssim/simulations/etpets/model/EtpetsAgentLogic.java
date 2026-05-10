@@ -132,7 +132,6 @@ public final class EtpetsAgentLogic {
         }
 
         boolean canSelfReproduce = isReproductionEligible(pet, stepIndex);
-        boolean isHungry = pet.currentEnergy() < EtpetsBalance.PET_BEHAVIOR_ENERGY_HUNGRY_THRESHOLD;
 
         // Pass 1: Ring 2 → determine which ring-1 cells gain look-ahead score bonuses.
         Set<GridCoordinate> ring1HasResourceBonus = new HashSet<>();
@@ -175,8 +174,8 @@ public final class EtpetsAgentLogic {
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
                 int moveScore = EtpetsBalance.SCORE_MOVE_BASE;
-                if ((cell.terrainEntity() instanceof Trail trail) && (trail.intensity() > EtpetsBalance.PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD)) {
-                    moveScore += EtpetsBalance.SCORE_MOVE_TRAIL_WEAK_BONUS;
+                if (cell.terrainEntity() instanceof Trail trail) {
+                    moveScore += calculateTrailBonusSaturating(trail.intensity());
                 }
                 if (ring1HasResourceBonus.contains(coordinate)) {
                     moveScore += EtpetsBalance.SCORE_MOVE_RING2_RESOURCE_BONUS;
@@ -200,7 +199,7 @@ public final class EtpetsAgentLogic {
 
         // REPRODUCE
         for (ReproductionOption option : ring0ReproductionOptions) {
-            int reproduceScore = EtpetsBalance.SCORE_REPRODUCE_BASE + EtpetsBalance.SCORE_REPRODUCE_PARTNER_BONUS;
+            int reproduceScore = EtpetsBalance.SCORE_REPRODUCE_BASE;
             candidates.add(new ActionCandidate(ActionType.REPRODUCE, reproduceScore, currentCoordinate,
                     option.partnerCoordinate(), option.eggCoordinate()));
         }
@@ -211,17 +210,69 @@ public final class EtpetsAgentLogic {
             if (!(resourceEntity instanceof ResourceBase resource) || !resource.canConsume()) {
                 continue;
             }
-            @SuppressWarnings("NumericCastThatLosesPrecision")
-            int resourceAmount = Math.min(Integer.MAX_VALUE, (int) resource.currentAmount());
-            int hungerBonus = isHungry ? EtpetsBalance.SCORE_EAT_HUNGER_BONUS : 0;
-            int eatScore = EtpetsBalance.SCORE_EAT_BASE + hungerBonus
-                    + (resource.energyGainPerAct() * EtpetsBalance.SCORE_EAT_ENERGY_GAIN_WEIGHT)
-                    + (resourceAmount * EtpetsBalance.SCORE_EAT_AMOUNT_WEIGHT);
+
+            double resourceAmount = resource.currentAmount();
+            int hungerBonus = calculateHungerBonus(pet);
+            int energyGainBonus = calculateEnergyGainBonus(resource.energyGainPerAct());
+            int resourceAmountBonus = calculateResourceAmountBonusSaturating((int) Math.max(0, Math.round(resourceAmount)));
+
+            int eatScore = EtpetsBalance.SCORE_EAT_BASE
+                    + hungerBonus
+                    + energyGainBonus
+                    + resourceAmountBonus;
+
             candidates.add(new ActionCandidate(ActionType.EAT, eatScore, currentCoordinate,
                     resourceCell.coordinate(), null));
         }
 
         return candidates;
+    }
+
+    private static int calculateTrailBonusSaturating(int intensity) {
+        if (intensity <= EtpetsBalance.TRAIL_INTENSITY_RANGE_MIN) {
+            return EtpetsBalance.SCORE_TRAIL_BONUS_MIN;
+        }
+        if (intensity >= EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX) {
+            return EtpetsBalance.SCORE_TRAIL_BONUS_MAX;
+        }
+
+        double k = Math.log(2.0d) / EtpetsBalance.SCORE_TRAIL_BONUS_HALF_SATURATION;
+        double raw = EtpetsBalance.SCORE_TRAIL_BONUS_MAX * (1.0d - Math.exp(-k * intensity));
+        int bonus = Math.toIntExact(Math.round(raw));
+        return Math.max(EtpetsBalance.SCORE_TRAIL_BONUS_MIN, Math.min(bonus, EtpetsBalance.SCORE_TRAIL_BONUS_MAX));
+    }
+
+    private static int calculateHungerBonus(Pet pet) {
+        int maxEnergy = pet.traits().maxEnergy();
+        int currentEnergy = pet.currentEnergy();
+        double normalizedHunger = ((double) maxEnergy - currentEnergy) / maxEnergy;
+        double raw = normalizedHunger * EtpetsBalance.SCORE_EAT_HUNGER_MAX_BONUS;
+        int bonus = (int) Math.round(raw);
+        return Math.max(0, Math.min(bonus, EtpetsBalance.SCORE_EAT_HUNGER_MAX_BONUS));
+    }
+
+    private static int calculateEnergyGainBonus(int energyGainPerAct) {
+        if (energyGainPerAct <= 0) {
+            return 0;
+        }
+        double raw = energyGainPerAct * EtpetsBalance.SCORE_EAT_ENERGY_GAIN_WEIGHT;
+        int bonus = (int) Math.round(raw);
+        return Math.max(0, Math.min(bonus, EtpetsBalance.SCORE_EAT_ENERGY_MAX_BONUS));
+    }
+
+    private static int calculateResourceAmountBonusSaturating(int amount) {
+        if (amount <= 0) {
+            return 0;
+        }
+        // clamp early to avoid huge exponent arguments (defensive)
+        int amountClamped = Math.min(amount, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX);
+
+        double maxBonus = EtpetsBalance.SCORE_EAT_RESOURCE_MAX_BONUS;
+        double halfSat = EtpetsBalance.SCORE_EAT_RESOURCE_HALF_SATURATION; // e.g. 400.0
+        double k = Math.log(2.0d) / Math.max(1.0d, halfSat);
+        double raw = maxBonus * (1.0d - Math.exp(-k * amountClamped));
+        int bonus = (int) Math.round(raw);
+        return Math.max(0, Math.min(bonus, (int) maxBonus));
     }
 
     /**
