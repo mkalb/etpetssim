@@ -146,6 +146,8 @@ Apply rules in this order (highest first):
 ### General Java Style
 
 - [MUST NOT] Add comments that only restate obvious code.
+- [SHOULD NOT] Change existing imports without a concrete reason; in particular, keep existing wildcard imports unless a
+  specific change requires otherwise.
 - [SHOULD] Prefer modern Java APIs/features when they improve clarity and are compatible with Java 25.
 - [MUST] Use locale-stable normalization for technical text (for example, `toLowerCase(Locale.ROOT)`).
 
