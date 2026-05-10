@@ -10,8 +10,8 @@ package de.mkalb.etpetssim.engine;
  * - {@link CellShape#HEXAGON} is always rendered with a <strong>flat-top</strong> orientation,
  *   meaning one of its edges is aligned horizontally at the top.<br>
  * - {@link CellShape#SQUARE} is axis-aligned and does not require orientation logic.<br>
- * - {@link CellShape#TRIANGLE} alternates orientation by row: the top row (y = 0) is flat-top,
- *   and each subsequent row flips the triangle vertically. This creates a zigzag pattern
+ * - {@link CellShape#TRIANGLE} alternates orientation by coordinate parity
+ *   ({@code x + y} even/odd), creating a checkerboard-style up/down pattern
  *   that supports consistent neighbor relationships and visual symmetry.
  * <p>
  * This orientation design simplifies rendering logic and ensures a uniform appearance across different grid types,
