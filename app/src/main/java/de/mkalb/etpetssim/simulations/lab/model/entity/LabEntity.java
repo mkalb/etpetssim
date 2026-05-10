@@ -37,16 +37,14 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
 
     private final GridEntityDescriptorSpec spec;
 
-    LabEntity(
-            String descriptorId,
-            boolean visible,
-            String shortNameKey,
-            String longNameKey,
-            String descriptionKey,
-            @Nullable String emojiKey,
-            @Nullable Color color,
-            @Nullable Color borderColor
-    ) {
+    LabEntity(String descriptorId,
+              boolean visible,
+              String shortNameKey,
+              String longNameKey,
+              String descriptionKey,
+              @Nullable String emojiKey,
+              @Nullable Color color,
+              @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
@@ -55,8 +53,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor
-        );
+                borderColor);
     }
 
     @Override

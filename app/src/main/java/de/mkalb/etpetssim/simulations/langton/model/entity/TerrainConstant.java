@@ -54,7 +54,8 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     private final int ruleIndex;
     private final GridEntityDescriptorSpec spec;
 
-    TerrainConstant(int ruleIndex, Color color) {
+    TerrainConstant(int ruleIndex,
+                    Color color) {
         this.ruleIndex = ruleIndex;
         String id = (ruleIndex < 0) ? "unvisited" : String.valueOf(ruleIndex);
         spec = new GridEntityDescriptorSpec(
@@ -65,8 +66,7 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
                 "langton.entity.ground." + id + ".description",
                 null,
                 color,
-                null
-        );
+                null);
     }
 
     /**

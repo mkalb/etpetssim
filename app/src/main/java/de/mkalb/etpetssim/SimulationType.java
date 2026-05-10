@@ -13,6 +13,7 @@ import java.util.*;
  */
 @SuppressWarnings("SpellCheckingInspection")
 public enum SimulationType {
+
     /**
      * Application start screen used as the default entry view.
      */
@@ -142,8 +143,12 @@ public enum SimulationType {
     private final String cssPath;
     private final List<String> cliArguments;
 
-    SimulationType(boolean implemented, boolean showOnStartScreen,
-                   String titleKey, String subtitleKey, String urlKey,
+    @SuppressWarnings("SameParameterValue")
+    SimulationType(boolean implemented,
+                   boolean showOnStartScreen,
+                   String titleKey,
+                   String subtitleKey,
+                   String urlKey,
                    String cssPath,
                    List<String> cliArguments) {
         this.implemented = implemented;
@@ -170,9 +175,12 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the localization key for the simulation-type field label.
+     * Returns the resource-bundle key for the display label of this enum type.
      *
-     * @return localization key identifier
+     * <p>The returned key is intended for localized lookup of the enum type name
+     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
+     *
+     * @return the resource bundle key for this enum type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {

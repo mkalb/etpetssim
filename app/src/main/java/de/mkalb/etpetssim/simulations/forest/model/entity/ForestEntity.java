@@ -47,16 +47,14 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
 
     private final GridEntityDescriptorSpec spec;
 
-    ForestEntity(
-            String descriptorId,
-            boolean visible,
-            String shortNameKey,
-            String longNameKey,
-            String descriptionKey,
-            @Nullable String emojiKey,
-            @Nullable Color color,
-            @Nullable Color borderColor
-    ) {
+    ForestEntity(String descriptorId,
+                 boolean visible,
+                 String shortNameKey,
+                 String longNameKey,
+                 String descriptionKey,
+                 @Nullable String emojiKey,
+                 @Nullable Color color,
+                 @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
@@ -65,8 +63,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor
-        );
+                borderColor);
     }
 
     @Override

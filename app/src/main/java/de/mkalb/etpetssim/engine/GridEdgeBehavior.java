@@ -40,23 +40,21 @@ public enum GridEdgeBehavior {
     private final EdgeBehavior edgeBehaviorY;
     private final String resourceKey;
 
-    /**
-     * Constructs a grid edge behavior with specified behaviors for the X and Y axes and a resource key.
-     *
-     * @param edgeBehaviorX the behavior for the X edge (horizontal)
-     * @param edgeBehaviorY the behavior for the Y edge (vertical)
-     * @param resourceKey the resource key for this grid edge behavior
-     */
-    GridEdgeBehavior(EdgeBehavior edgeBehaviorX, EdgeBehavior edgeBehaviorY, String resourceKey) {
+    GridEdgeBehavior(EdgeBehavior edgeBehaviorX,
+                     EdgeBehavior edgeBehaviorY,
+                     String resourceKey) {
         this.edgeBehaviorX = edgeBehaviorX;
         this.edgeBehaviorY = edgeBehaviorY;
         this.resourceKey = resourceKey;
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum GridEdgeBehavior.
+     * Returns the resource-bundle key for the display label of this enum type.
      *
-     * @return the resource key for the label of the enum GridEdgeBehavior
+     * <p>The returned key is intended for localized lookup of the enum type name
+     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
+     *
+     * @return the resource bundle key for this enum type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {

@@ -44,19 +44,17 @@ public enum CellDisplayMode {
 
     private final String resourceKey;
 
-    /**
-     * Constructs a cell display mode with the specified resource key.
-     *
-     * @param resourceKey the resource key for this cell display mode
-     */
     CellDisplayMode(String resourceKey) {
         this.resourceKey = resourceKey;
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum CellDisplayMode.
+     * Returns the resource-bundle key for the display label of this enum type.
      *
-     * @return the resource key for the label of the enum CellDisplayMode
+     * <p>The returned key is intended for localized lookup of the enum type name
+     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
+     *
+     * @return the resource bundle key for this enum type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {

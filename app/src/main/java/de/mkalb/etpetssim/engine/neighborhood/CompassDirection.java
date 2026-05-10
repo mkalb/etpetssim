@@ -83,7 +83,10 @@ public enum CompassDirection {
     private final int level;
     private final String arrow;
 
-    CompassDirection(String abbreviationResourceKey, String nameResourceKey, int level, String arrow) {
+    CompassDirection(String abbreviationResourceKey,
+                     String nameResourceKey,
+                     int level,
+                     String arrow) {
         this.abbreviationResourceKey = abbreviationResourceKey;
         this.nameResourceKey = nameResourceKey;
         this.level = level;
@@ -91,9 +94,12 @@ public enum CompassDirection {
     }
 
     /**
-     * Returns the resource key for the compass label.
+     * Returns the resource-bundle key for the display label of this enum type.
      *
-     * @return the label resource key
+     * <p>The returned key is intended for localized lookup of the enum type name
+     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
+     *
+     * @return the resource bundle key for this enum type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {

@@ -35,21 +35,19 @@ public enum CellShape {
     private final int vertexCount;
     private final String resourceKey;
 
-    /**
-     * Constructs a cell shape with the specified number of vertices (and edges) and a resource key.
-     *
-     * @param vertexCount the number of vertices (and edges) for this shape
-     * @param resourceKey the resource key for this shape
-     */
-    CellShape(int vertexCount, String resourceKey) {
+    CellShape(int vertexCount,
+              String resourceKey) {
         this.vertexCount = vertexCount;
         this.resourceKey = resourceKey;
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum CellShape.
+     * Returns the resource-bundle key for the display label of this enum type.
      *
-     * @return the resource key for the label of the enum CellShape
+     * <p>The returned key is intended for localized lookup of the enum type name
+     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
+     *
+     * @return the resource bundle key for this enum type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {

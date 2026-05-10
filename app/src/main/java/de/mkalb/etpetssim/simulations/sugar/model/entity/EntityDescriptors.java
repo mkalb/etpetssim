@@ -45,16 +45,14 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
-    EntityDescriptors(
-            String descriptorId,
-            boolean visible,
-            String shortNameKey,
-            String longNameKey,
-            String descriptionKey,
-            @Nullable String emojiKey,
-            @Nullable Color color,
-            @Nullable Color borderColor
-    ) {
+    EntityDescriptors(String descriptorId,
+                      boolean visible,
+                      String shortNameKey,
+                      String longNameKey,
+                      String descriptionKey,
+                      @Nullable String emojiKey,
+                      @Nullable Color color,
+                      @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
@@ -63,8 +61,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor
-        );
+                borderColor);
     }
 
     @Override

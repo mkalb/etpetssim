@@ -30,19 +30,17 @@ public enum EdgeBehavior {
 
     private final String resourceKey;
 
-    /**
-     * Constructs an edge behavior with the specified resource key.
-     *
-     * @param resourceKey the resource key for this edge behavior
-     */
     EdgeBehavior(String resourceKey) {
         this.resourceKey = resourceKey;
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum EdgeBehavior.
+     * Returns the resource-bundle key for the display label of this enum type.
      *
-     * @return the resource key for the label of the enum EdgeBehavior
+     * <p>The returned key is intended for localized lookup of the enum type name
+     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
+     *
+     * @return the resource bundle key for this enum type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {

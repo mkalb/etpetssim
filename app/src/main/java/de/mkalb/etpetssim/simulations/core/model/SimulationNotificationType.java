@@ -28,11 +28,6 @@ public enum SimulationNotificationType {
 
     private final String resourceKey;
 
-    /**
-     * Constructs a notification type with the specified resource key.
-     *
-     * @param resourceKey the resource bundle key for this notification type
-     */
     SimulationNotificationType(String resourceKey) {
         this.resourceKey = resourceKey;
     }

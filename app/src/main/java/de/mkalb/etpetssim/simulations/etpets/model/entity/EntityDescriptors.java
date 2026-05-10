@@ -106,8 +106,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor
-        );
+                borderColor);
     }
 
     @Override

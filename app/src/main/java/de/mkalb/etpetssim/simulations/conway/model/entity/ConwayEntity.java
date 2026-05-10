@@ -37,16 +37,14 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
 
     private final GridEntityDescriptorSpec spec;
 
-    ConwayEntity(
-            String descriptorId,
-            boolean visible,
-            String shortNameKey,
-            String longNameKey,
-            String descriptionKey,
-            @Nullable String emojiKey,
-            @Nullable Color color,
-            @Nullable Color borderColor
-    ) {
+    ConwayEntity(String descriptorId,
+                 boolean visible,
+                 String shortNameKey,
+                 String longNameKey,
+                 String descriptionKey,
+                 @Nullable String emojiKey,
+                 @Nullable Color color,
+                 @Nullable Color borderColor) {
         spec = new GridEntityDescriptorSpec(
                 descriptorId,
                 visible,
@@ -55,8 +53,7 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
                 descriptionKey,
                 emojiKey,
                 color,
-                borderColor
-        );
+                borderColor);
     }
 
     @Override

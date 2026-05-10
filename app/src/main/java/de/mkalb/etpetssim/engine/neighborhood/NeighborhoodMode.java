@@ -23,19 +23,17 @@ public enum NeighborhoodMode {
 
     private final String resourceKey;
 
-    /**
-     * Constructs a neighborhood mode with the specified resource key.
-     *
-     * @param resourceKey the resource key for this neighborhood mode
-     */
     NeighborhoodMode(String resourceKey) {
         this.resourceKey = resourceKey;
     }
 
     /**
-     * Returns the resource key for the label (title) of the enum NeighborhoodMode.
+     * Returns the resource-bundle key for the display label of this enum type.
      *
-     * @return the resource key for the label of the enum NeighborhoodMode
+     * <p>The returned key is intended for localized lookup of the enum type name
+     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
+     *
+     * @return the resource bundle key for this enum type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
