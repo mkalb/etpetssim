@@ -41,16 +41,32 @@ public final class DefaultControlViewModel
         super(simulationState);
     }
 
+    /**
+     * Creates a control view model preconfigured with the minimum timed-step duration.
+     *
+     * @param simulationState shared simulation state
+     * @return configured control view model
+     */
     public static DefaultControlViewModel withMinStepDuration(ReadOnlyObjectProperty<SimulationState> simulationState) {
         DefaultControlViewModel controlViewModel = new DefaultControlViewModel(simulationState);
         controlViewModel.stepDuration.setValue(STEP_DURATION_MIN);
         return controlViewModel;
     }
 
+    /**
+     * Exposes the action-button trigger flag.
+     *
+     * @return action trigger property
+     */
     public BooleanProperty actionButtonRequestedProperty() {
         return actionButtonRequested;
     }
 
+    /**
+     * Exposes the cancel-button trigger flag.
+     *
+     * @return cancel trigger property
+     */
     public BooleanProperty cancelButtonRequestedProperty() {
         return cancelButtonRequested;
     }

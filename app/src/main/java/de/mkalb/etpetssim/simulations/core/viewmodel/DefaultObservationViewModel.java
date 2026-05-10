@@ -24,6 +24,11 @@ public final class DefaultObservationViewModel<
     private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
 
+    /**
+     * Creates observation state bound to a shared simulation-state property.
+     *
+     * @param simulationState shared simulation state property
+     */
     public DefaultObservationViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
         statistics = new ReadOnlyObjectWrapper<>();
