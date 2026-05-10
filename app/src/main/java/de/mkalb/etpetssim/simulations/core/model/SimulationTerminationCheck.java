@@ -1,23 +1,18 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 /**
- * Defines whether the simulation termination condition should be checked during execution.
- * <p>
- * This enum allows configuration of whether the simulation should actively check
- * its termination condition or skip this check.
- * <p>
- * Use {@code CHECKED} to enable termination checking, or {@code UNCHECKED} to disable it.
+ * Controls whether the simulation termination condition is evaluated during execution.
+ *
+ * <p>Use {@code CHECKED} when the simulation should evaluate its termination condition
+ * every step (or at configured intervals). Use {@code UNCHECKED} to skip termination
+ * checks for runs where termination is managed externally or not required.
  */
 public enum SimulationTerminationCheck {
 
-    /**
-     * The termination condition is checked during simulation execution.
-     */
+    /** Termination condition is evaluated during simulation execution. */
     CHECKED,
 
-    /**
-     * The termination condition is not checked during simulation execution.
-     */
+    /** Termination condition is not evaluated during simulation execution. */
     UNCHECKED
 
 }

@@ -1,41 +1,29 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 /**
- * Defines the possible notification types that can occur during the lifecycle of a simulation.
- * <p>
- * Each constant represents a distinct notification or error state, used to inform the user
- * about important events or issues in the simulation process.
- * <p>
- * The {@code resourceKey} field allows for resource lookup, such as internationalized messages.
+ * Notification categories emitted during a simulation lifecycle.
+ *
+ * <p>Each constant maps to a resource bundle key usable for localized user messages.
+ * The string value held by each enum constant is the lookup key.
  *
  * @see de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel
  * @see de.mkalb.etpetssim.simulations.core.view.AbstractMainView
  */
 public enum SimulationNotificationType {
 
-    /**
-     * No notification; the simulation is running normally.
-     */
+    /** No notification; simulation is running normally. */
     NONE("notification.none"),
 
-    /**
-     * An exception occurred during the simulation.
-     */
+    /** An exception occurred during the simulation. */
     EXCEPTION("notification.exception"),
 
-    /**
-     * The simulation was stopped due to a timeout.
-     */
+    /** The simulation was stopped due to a timeout. */
     TIMEOUT("notification.timeout"),
 
-    /**
-     * The simulation configuration is invalid and cannot be started.
-     */
+    /** The simulation configuration is invalid and cannot be started. */
     INVALID_CONFIG("notification.invalidconfig"),
 
-    /**
-     * The canvas size exceeds the allowed limit for the simulation.
-     */
+    /** The canvas size exceeds the allowed limit for the simulation. */
     CANVAS_SIZE_LIMIT("notification.canvassizelimit");
 
     private final String resourceKey;
@@ -43,18 +31,18 @@ public enum SimulationNotificationType {
     /**
      * Constructs a notification type with the specified resource key.
      *
-     * @param resourceKey the resource key for this notification type
+     * @param resourceKey the resource bundle key for this notification type
      */
     SimulationNotificationType(String resourceKey) {
         this.resourceKey = resourceKey;
     }
 
     /**
-     * Returns the resource key associated with this notification type.
+     * Returns the resource bundle key associated with this enum constant.
      * <p>
-     * The resource key can be used for resource lookup purposes.
+     * The resource key can be used for localized message lookup via {@code AppLocalization}.
      *
-     * @return the resource key for this notification type
+     * @return the resource bundle key for this enum constant
      */
     public String resourceKey() {
         return resourceKey;

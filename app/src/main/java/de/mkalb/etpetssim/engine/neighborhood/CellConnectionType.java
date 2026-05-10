@@ -40,9 +40,11 @@ public enum CellConnectionType {
     }
 
     /**
-     * Returns the resource key associated with this connection type.
+     * Returns the resource bundle key associated with this enum constant.
+     * <p>
+     * The resource key can be used for localized message lookup via {@code AppLocalization}.
      *
-     * @return the resource key for this connection type
+     * @return the resource bundle key for this enum constant
      */
     public String resourceKey() {
         return resourceKey;

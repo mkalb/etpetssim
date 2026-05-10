@@ -1,31 +1,21 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 /**
- * Defines the available start modes for initializing a simulation.
- * <p>
- * Each mode determines whether the simulation begins execution immediately
- * or is initialized in a paused state, allowing for manual intervention before running.
- * <p>
- * The start mode is selected by the user in the control panel and affects the initial
- * {@link SimulationState} after simulation initialization.
+ * Available start modes for simulation initialization.
+ *
+ * <p>{@code START_IMMEDIATELY} begins execution right after initialization. {@code START_PAUSED}
+ * initializes the simulation but leaves it paused so the user may inspect or modify state
+ * before starting.
  *
  * @see SimulationState
  * @see de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel
  */
 public enum SimulationStartMode {
 
-    /**
-     * The simulation starts running immediately after initialization.
-     * <p>
-     * No manual intervention is possible before the first step.
-     */
+    /** Start running immediately after initialization. */
     START_IMMEDIATELY,
 
-    /**
-     * The simulation is initialized in a paused state.
-     * <p>
-     * Manual editing and intervention are possible before starting execution.
-     */
+    /** Initialize in a paused state so manual intervention is possible before running. */
     START_PAUSED
 
 }

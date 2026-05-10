@@ -1,38 +1,27 @@
 package de.mkalb.etpetssim.engine.neighborhood;
 
 /**
- * Specifies the possible outcomes of an entity's interaction with a grid edge,
- * based on the configured {@link de.mkalb.etpetssim.engine.EdgeBehavior}.
- * <p>
- * Each constant represents a distinct action that can occur when an entity reaches
- * a grid boundary during simulation. These actions are used to determine whether
- * movement is allowed, blocked, wrapped to the opposite edge, or absorbed (removed).
- * <p>
- * This enum is used throughout the grid framework to standardize edge behavior handling.
+ * Outcome of an entity's interaction with a grid boundary.
+ *
+ * <p>Each constant represents a deterministic action taken when an entity
+ * reaches the grid edge according to the configured {@link de.mkalb.etpetssim.engine.EdgeBehavior}.
+ * Use these values to drive movement resolution logic in the grid engine.
  *
  * @see de.mkalb.etpetssim.engine.EdgeBehavior
  * @see de.mkalb.etpetssim.engine.GridEdgeBehavior
  */
 public enum EdgeBehaviorAction {
 
-    /**
-     * The entity's movement is valid and allowed; no special edge behavior is triggered.
-     */
+    /** Movement is valid and allowed; no special edge handling applies. */
     VALID,
 
-    /**
-     * The entity's movement is blocked by the grid edge; it cannot cross the boundary.
-     */
+    /** Movement is blocked by the grid boundary; the entity cannot cross. */
     BLOCKED,
 
-    /**
-     * The entity is wrapped to the opposite edge of the grid.
-     */
+    /** The entity is wrapped to the opposite side of the grid. */
     WRAPPED,
 
-    /**
-     * The entity is absorbed by the grid edge and removed from the simulation.
-     */
+    /** The entity is absorbed by the boundary and removed from the simulation. */
     ABSORBED
 
 }

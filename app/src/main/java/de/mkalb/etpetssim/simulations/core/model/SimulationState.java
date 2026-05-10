@@ -94,7 +94,7 @@ public enum SimulationState {
     public boolean canStart() {
         return switch (this) {
             case INITIAL, CANCELED, FINISHED, ERROR -> true;
-            default -> false;
+            case RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, PAUSED, CANCELLING_BATCH, SHUTTING_DOWN -> false;
         };
     }
 
