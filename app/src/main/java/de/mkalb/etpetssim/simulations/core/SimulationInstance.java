@@ -20,6 +20,10 @@ public record SimulationInstance(
     /**
      * Creates a new {@code SimulationInstance} for the given type and main view.
      * The region is built via {@link SimulationMainView#buildMainRegion()}.
+     * <p>
+     * This method is package-private; callers must ensure that the provided type and view are compatible.
+     * Intended for use by {@code SimulationFactory}.
+     * </p>
      *
      * @param type the simulation type
      * @param simulationMainView the main view responsible for building the UI
@@ -30,11 +34,12 @@ public record SimulationInstance(
     }
 
     /**
-     * Returns a concise string representation of this simulation instance.
+     * Returns a concise string representation of this simulation instance for display purposes.
      * <p>
-     * Format: {@code [SIMULATION_TYPE, VIEW_CLASS]}
+     * Format: {@code [SIMULATION_TYPE, VIEW_CLASS_NAME]}
      * <br>
      * Example: {@code [CONWAYS_LIFE, ConwayMainView]}
+     * </p>
      *
      * @return a concise display string for this simulation instance
      */
