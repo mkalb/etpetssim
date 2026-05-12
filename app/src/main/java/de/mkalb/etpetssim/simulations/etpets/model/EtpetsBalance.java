@@ -61,6 +61,24 @@ public final class EtpetsBalance {
     public static final int PET_STEP_ENERGY_LOSS = 1;
     public static final int PET_REPRODUCTION_MIN_AGE = 400;
 
+    // Pet move score model
+    public static final int PET_MOVE_SCORE_RANGE_MIN = -1;
+    public static final int PET_MOVE_SCORE_RANGE_MAX = 40;
+    public static final double PET_MOVE_SCORE_BASE = 2.0d;
+    public static final double PET_MOVE_SURVIVAL_PRESSURE_EXPONENT = 2.0d;
+    public static final double PET_MOVE_RESOURCE_WEIGHT_BASE = 4.0d;
+    public static final double PET_MOVE_RESOURCE_WEIGHT_SURVIVAL = 12.0d;
+    public static final double PET_MOVE_PARTNER_WEIGHT = 7.5d;
+    public static final int PET_MOVE_TRAIL_BONUS_START_INTENSITY = 120;
+    public static final double PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE = 2_200.0d;
+    public static final double PET_MOVE_TRAIL_BONUS_MAX = 12.0d;
+    public static final double PET_MOVE_TRAIL_BONUS_CURVE_K = 3.5d;
+    public static final double PET_MOVE_EXPLORATION_WEIGHT = 8.0d;
+    public static final double PET_MOVE_EXPLORATION_ENERGY_EXPONENT = 1.4d;
+    public static final double PET_MOVE_EXPLORATION_COST_EXPONENT = 1.3d;
+    public static final double PET_MOVE_OSCILLATION_PREVIOUS_PENALTY = 15.0d;
+    public static final double PET_MOVE_OSCILLATION_PREVIOUS_PREVIOUS_PENALTY = 9.0d;
+
     // Pet reproduction score model
     public static final int PET_REPRODUCTION_SCORE_RANGE_MIN = 40;
     public static final int PET_REPRODUCTION_SCORE_RANGE_MAX = 100;

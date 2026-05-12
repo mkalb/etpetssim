@@ -178,8 +178,7 @@ public final class EtpetsAgentLogic {
                         cell,
                         coordinate,
                         ring1HasResourceBonus,
-                        ring1HasPartnerBonus,
-                        stepIndex);
+                        ring1HasPartnerBonus);
                 candidates.add(new ActionCandidate(ActionType.MOVE, moveScore,
                         coordinate, coordinate, null));
             }
@@ -222,41 +221,92 @@ public final class EtpetsAgentLogic {
         return candidates;
     }
 
+    private static double computeRawMoveScore(double energyRatio,
+                                              double movementCostModifier,
+                                              boolean hasResourceLookAhead,
+                                              boolean hasPartnerLookAhead,
+                                              boolean isGroundWithoutTrail,
+                                              int trailIntensity,
+                                              boolean isPreviousCoordinate,
+                                              boolean isPreviousPreviousCoordinate) {
+        double hunger = clampToUnitRange(1.0d - energyRatio);
+        double survivalPressure = Math.pow(hunger, EtpetsBalance.PET_MOVE_SURVIVAL_PRESSURE_EXPONENT);
+
+        double resourceBonus = 0.0d;
+        if (hasResourceLookAhead) {
+            resourceBonus = EtpetsBalance.PET_MOVE_RESOURCE_WEIGHT_BASE
+                    + (EtpetsBalance.PET_MOVE_RESOURCE_WEIGHT_SURVIVAL * survivalPressure);
+        }
+
+        double partnerBonus = hasPartnerLookAhead
+                ? EtpetsBalance.PET_MOVE_PARTNER_WEIGHT
+                : 0.0d;
+
+        double trailBonus = 0.0d;
+        if (trailIntensity >= EtpetsBalance.PET_MOVE_TRAIL_BONUS_START_INTENSITY) {
+            int effectiveTrailIntensity = trailIntensity - EtpetsBalance.PET_MOVE_TRAIL_BONUS_START_INTENSITY;
+            double scale = EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE;
+            if (scale > 0.0d) {
+                double normalizedTrailIntensity = 1.0d - Math.exp(-(effectiveTrailIntensity / scale));
+                double curveNumerator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K * normalizedTrailIntensity);
+                double curveDenominator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K);
+                if (curveDenominator > 0.0d) {
+                    trailBonus = EtpetsBalance.PET_MOVE_TRAIL_BONUS_MAX * (curveNumerator / curveDenominator);
+                }
+            }
+        }
+
+        double moveCostSpan = EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX
+                - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN;
+        double moveCostNormalized = (moveCostSpan > 0.0d)
+                ? clampToUnitRange((movementCostModifier - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN) / moveCostSpan)
+                : 0.0d;
+        double moveCostEfficiency = clampToUnitRange(1.0d - moveCostNormalized);
+        double explorationDrive = Math.pow(energyRatio, EtpetsBalance.PET_MOVE_EXPLORATION_ENERGY_EXPONENT)
+                * Math.pow(moveCostEfficiency, EtpetsBalance.PET_MOVE_EXPLORATION_COST_EXPONENT);
+        double explorationBonus = isGroundWithoutTrail
+                ? (EtpetsBalance.PET_MOVE_EXPLORATION_WEIGHT * explorationDrive)
+                : 0.0d;
+
+        double oscillationPenalty = 0.0d;
+        if (isPreviousCoordinate) {
+            oscillationPenalty += EtpetsBalance.PET_MOVE_OSCILLATION_PREVIOUS_PENALTY;
+        }
+        if (isPreviousPreviousCoordinate) {
+            oscillationPenalty += EtpetsBalance.PET_MOVE_OSCILLATION_PREVIOUS_PREVIOUS_PENALTY;
+        }
+
+        double positiveTerms = resourceBonus + partnerBonus + trailBonus + explorationBonus;
+        return (EtpetsBalance.PET_MOVE_SCORE_BASE + positiveTerms) - oscillationPenalty;
+    }
+
     private static int computeMoveScore(Pet pet,
                                         EtpetsCell cell,
                                         GridCoordinate coordinate,
                                         Set<GridCoordinate> ring1HasResourceBonus,
-                                        Set<GridCoordinate> ring1HasPartnerBonus,
-                                        int stepIndex) {
-        int petAgeAtStepIndex = pet.ageAtStepIndex(stepIndex);
-        // TODO Altersträgheit einbauen
+                                        Set<GridCoordinate> ring1HasPartnerBonus) {
+        int trailIntensity = 0;
+        boolean isGroundWithoutTrail = false;
+        TerrainEntity terrain = cell.terrainEntity();
+        if (terrain instanceof Trail trail) {
+            trailIntensity = trail.intensity();
+        } else if (terrain == TerrainConstant.GROUND) {
+            isGroundWithoutTrail = true;
+        }
 
-        int moveScore = 10;
-        if (cell.terrainEntity() instanceof Trail trail) {
-            if (trail.intensity() <= EtpetsBalance.TRAIL_INTENSITY_RANGE_MIN) {
-                moveScore = 0;
-            } else if (trail.intensity() >= EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX) {
-                moveScore = 7;
-            } else {
-                double k = Math.log(2.0d) / 2_000.0d;
-                double raw = 7 * (1.0d - Math.exp(-k * trail.intensity()));
-                int bonus = Math.toIntExact(Math.round(raw));
-                moveScore = Math.clamp(bonus, 0, 7);
-            }
-
-        }
-        if (ring1HasResourceBonus.contains(coordinate)) {
-            moveScore += 8;
-        }
-        if (ring1HasPartnerBonus.contains(coordinate)) {
-            moveScore += 6;
-        }
-        if (coordinate.equals(pet.previousCoordinate())) {
-            moveScore -= 8;
-        } else if (coordinate.equals(pet.previousPreviousCoordinate())) {
-            moveScore -= 6;
-        }
-        return moveScore;
+        double rawScore = computeRawMoveScore(
+                clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy()),
+                pet.traits().movementCostModifier(),
+                ring1HasResourceBonus.contains(coordinate),
+                ring1HasPartnerBonus.contains(coordinate),
+                isGroundWithoutTrail,
+                trailIntensity,
+                coordinate.equals(pet.previousCoordinate()),
+                coordinate.equals(pet.previousPreviousCoordinate()));
+        int roundedScore = Math.toIntExact(Math.round(rawScore));
+        return Math.clamp(roundedScore,
+                EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN,
+                EtpetsBalance.PET_MOVE_SCORE_RANGE_MAX);
     }
 
     private static int computeReproduceScore(Pet pet,
