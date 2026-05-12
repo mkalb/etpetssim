@@ -57,35 +57,31 @@ public final class EtpetsBalance {
     public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.2d;
     public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN = 0;
 
-    // Pet behavior (EtpetsAgentLogic)
-    public static final int PET_BEHAVIOR_ENERGY_LOSS_PER_STEP = 1;
-    public static final int PET_BEHAVIOR_ENERGY_HUNGRY_THRESHOLD = 30;
-    public static final int PET_BEHAVIOR_REPRODUCTION_MIN_AGE = 400;
-    public static final int PET_BEHAVIOR_TRAIL_INTENSITY_THRESHOLD = 100;
+    // Pet lifecycle (EtpetsAgentLogic)
+    public static final int PET_STEP_ENERGY_LOSS = 1;
+    public static final int PET_REPRODUCTION_MIN_AGE = 400;
 
-    // Pet score (EtpetsAgentLogic)
-    public static final int SCORE_REPRODUCE_BASE = 100;
-    // public static final int SCORE_EAT_BASE = 30;
-    public static final int SCORE_EAT_HUNGER_BONUS = 6;
-    // public static final int SCORE_EAT_ENERGY_GAIN_WEIGHT = 2;
-    public static final int SCORE_EAT_AMOUNT_WEIGHT = 1;
-    public static final int SCORE_MOVE_BASE = 10;
-    public static final int SCORE_MOVE_RING2_RESOURCE_BONUS = 8;
-    public static final int SCORE_MOVE_RING2_PARTNER_BONUS = 6;
-    public static final int SCORE_MOVE_PREVIOUS_COORDINATE_PENALTY = 8;
-    public static final int SCORE_MOVE_PREVIOUS_PREVIOUS_COORDINATE_PENALTY = 6;
-    public static final int SCORE_TRAIL_BONUS_MIN = 0;
-    public static final int SCORE_TRAIL_BONUS_MAX = 7;
-    public static final double SCORE_TRAIL_BONUS_HALF_SATURATION = 2_000.0d;
+    // Pet reproduction score model
+    public static final int PET_REPRODUCTION_SCORE_RANGE_MIN = 40;
+    public static final int PET_REPRODUCTION_SCORE_RANGE_MAX = 100;
+    public static final double PET_REPRODUCTION_SCORE_WEIGHT_AVG_QUALITY = 0.65d;
+    public static final double PET_REPRODUCTION_SCORE_WEIGHT_MIN_QUALITY = 0.35d;
+    public static final double PET_REPRODUCTION_PARTNER_QUALITY_RANGE_MIN = 0.20d;
 
-    public static final int SCORE_EAT_BASE = 0;
-
-    public static final int SCORE_EAT_HUNGER_MAX_BONUS = 3;
-    public static final int SCORE_EAT_ENERGY_MAX_BONUS = 3;
-    public static final int SCORE_EAT_RESOURCE_MAX_BONUS = 6;
-
-    public static final double SCORE_EAT_ENERGY_GAIN_WEIGHT = 1.0d;
-    public static final double SCORE_EAT_RESOURCE_HALF_SATURATION = 400.0d;
+    // Pet eat score model
+    public static final int PET_EAT_SCORE_RANGE_MIN = 1;
+    public static final int PET_EAT_SCORE_RANGE_MAX = 100;
+    public static final double PET_EAT_SCORE_HUNGER_WEIGHT = 35.0d;
+    public static final double PET_EAT_SCORE_HUNGER_EXPONENT = 1.6d;
+    public static final double PET_EAT_SCORE_PANIC_WEIGHT = 40.0d;
+    public static final double PET_EAT_SCORE_PANIC_THRESHOLD = 50.0d;
+    public static final double PET_EAT_SCORE_PANIC_EXPONENT = 2.4d;
+    public static final double PET_EAT_SCORE_GAIN_WEIGHT = 18.0d;
+    public static final double PET_EAT_SCORE_GAIN_EXPONENT = 1.0d;
+    public static final double PET_EAT_SCORE_WASTE_WEIGHT = 70.0d;
+    public static final double PET_EAT_SCORE_WASTE_EXPONENT = 3.0d;
+    public static final double PET_EAT_SCORE_AGE_WEIGHT = 6.0d;
+    public static final double PET_EAT_SCORE_AGE_DECAY = 120.0d;
 
     /**
      * Private constructor to prevent instantiation.

@@ -65,7 +65,7 @@ public final class EtpetsAgentLogic {
                 }
 
                 // Passive energy loss and reproduction cooldown decrement.
-                pet.changeEnergy(-EtpetsBalance.PET_BEHAVIOR_ENERGY_LOSS_PER_STEP);
+                pet.changeEnergy(-EtpetsBalance.PET_STEP_ENERGY_LOSS);
                 pet.decrementReproductionCooldownRemaining();
 
                 // Death from energy depletion.
@@ -168,111 +168,192 @@ public final class EtpetsAgentLogic {
             // REPRODUCE candidates adjacent to the current position (ring 0).
             if (canSelfReproduce && isValidReproductionPartner(pet, cell, stepIndex)) {
                 findEggPlacementCellFromSnapshots(currentCoordinate, coordinate, structure, snapshotCellsByCoordinate)
-                        .ifPresent(eggCoord -> ring0ReproductionOptions.add(new ReproductionOption(coordinate, eggCoord)));
+                        .ifPresent(eggCoord -> ring0ReproductionOptions.add(new ReproductionOption(cell, eggCoord)));
             }
 
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
-                int moveScore = EtpetsBalance.SCORE_MOVE_BASE;
-                if (cell.terrainEntity() instanceof Trail trail) {
-                    moveScore += calculateTrailBonusSaturating(trail.intensity());
-                }
-                if (ring1HasResourceBonus.contains(coordinate)) {
-                    moveScore += EtpetsBalance.SCORE_MOVE_RING2_RESOURCE_BONUS;
-                }
-                if (ring1HasPartnerBonus.contains(coordinate)) {
-                    moveScore += EtpetsBalance.SCORE_MOVE_RING2_PARTNER_BONUS;
-                }
-                if (coordinate.equals(pet.previousCoordinate())) {
-                    moveScore -= EtpetsBalance.SCORE_MOVE_PREVIOUS_COORDINATE_PENALTY;
-                } else if (coordinate.equals(pet.previousPreviousCoordinate())) {
-                    moveScore -= EtpetsBalance.SCORE_MOVE_PREVIOUS_PREVIOUS_COORDINATE_PENALTY;
-                }
-                candidates.add(new ActionCandidate(ActionType.MOVE, moveScore, coordinate, coordinate, null));
+                int moveScore = computeMoveScore(
+                        pet,
+                        cell,
+                        coordinate,
+                        ring1HasResourceBonus,
+                        ring1HasPartnerBonus,
+                        stepIndex);
+                candidates.add(new ActionCandidate(ActionType.MOVE, moveScore,
+                        coordinate, coordinate, null));
             }
         }
 
         // Pass 3: Ring 0 (current position) → score and create WAIT / EAT / REPRODUCE candidates.
 
-        // WAIT
-        candidates.add(new ActionCandidate(ActionType.WAIT, 0, currentCoordinate, currentCoordinate, null));
+        // WAIT (always score 0 as fallback)
+        candidates.add(new ActionCandidate(ActionType.WAIT, 0,
+                currentCoordinate, currentCoordinate, null));
 
         // REPRODUCE
-        for (ReproductionOption option : ring0ReproductionOptions) {
-            int reproduceScore = EtpetsBalance.SCORE_REPRODUCE_BASE;
-            candidates.add(new ActionCandidate(ActionType.REPRODUCE, reproduceScore, currentCoordinate,
-                    option.partnerCoordinate(), option.eggCoordinate()));
+        if (canSelfReproduce && !ring0ReproductionOptions.isEmpty()) {
+            for (ReproductionOption option : ring0ReproductionOptions) {
+                int reproduceScore = computeReproduceScore(
+                        pet,
+                        option.partnerCell);
+                candidates.add(new ActionCandidate(ActionType.REPRODUCE, reproduceScore,
+                        currentCoordinate, option.partnerCell.coordinate(), option.eggCoordinate()));
+            }
         }
 
         // EAT
-        for (EtpetsCell resourceCell : ring0Consumables) {
-            ResourceEntity resourceEntity = resourceCell.resourceEntity();
-            if (!(resourceEntity instanceof ResourceBase resource) || !resource.canConsume()) {
-                continue;
+        if (pet.canEat() && !ring0Consumables.isEmpty()) {
+            for (EtpetsCell resourceCell : ring0Consumables) {
+                ResourceEntity resourceEntity = resourceCell.resourceEntity();
+                if (!(resourceEntity instanceof ResourceBase resource) || !resource.canConsume()) {
+                    continue;
+                }
+
+                int eatScore = computeEatScore(
+                        pet,
+                        resource,
+                        stepIndex);
+                candidates.add(new ActionCandidate(ActionType.EAT, eatScore,
+                        currentCoordinate, resourceCell.coordinate(), null));
             }
-
-            double resourceAmount = resource.currentAmount();
-            int hungerBonus = calculateHungerBonus(pet);
-            int energyGainBonus = calculateEnergyGainBonus(resource.energyGainPerAct());
-            int resourceAmountBonus = calculateResourceAmountBonusSaturating((int) Math.max(0, Math.round(resourceAmount)));
-
-            int eatScore = EtpetsBalance.SCORE_EAT_BASE
-                    + hungerBonus
-                    + energyGainBonus
-                    + resourceAmountBonus;
-
-            candidates.add(new ActionCandidate(ActionType.EAT, eatScore, currentCoordinate,
-                    resourceCell.coordinate(), null));
         }
 
         return candidates;
     }
 
-    private static int calculateTrailBonusSaturating(int intensity) {
-        if (intensity <= EtpetsBalance.TRAIL_INTENSITY_RANGE_MIN) {
-            return EtpetsBalance.SCORE_TRAIL_BONUS_MIN;
-        }
-        if (intensity >= EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX) {
-            return EtpetsBalance.SCORE_TRAIL_BONUS_MAX;
-        }
+    private static int computeMoveScore(Pet pet,
+                                        EtpetsCell cell,
+                                        GridCoordinate coordinate,
+                                        Set<GridCoordinate> ring1HasResourceBonus,
+                                        Set<GridCoordinate> ring1HasPartnerBonus,
+                                        int stepIndex) {
+        int petAgeAtStepIndex = pet.ageAtStepIndex(stepIndex);
+        // TODO Altersträgheit einbauen
 
-        double k = Math.log(2.0d) / EtpetsBalance.SCORE_TRAIL_BONUS_HALF_SATURATION;
-        double raw = EtpetsBalance.SCORE_TRAIL_BONUS_MAX * (1.0d - Math.exp(-k * intensity));
-        int bonus = Math.toIntExact(Math.round(raw));
-        return Math.max(EtpetsBalance.SCORE_TRAIL_BONUS_MIN, Math.min(bonus, EtpetsBalance.SCORE_TRAIL_BONUS_MAX));
+        int moveScore = 10;
+        if (cell.terrainEntity() instanceof Trail trail) {
+            if (trail.intensity() <= EtpetsBalance.TRAIL_INTENSITY_RANGE_MIN) {
+                moveScore = 0;
+            } else if (trail.intensity() >= EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX) {
+                moveScore = 7;
+            } else {
+                double k = Math.log(2.0d) / 2_000.0d;
+                double raw = 7 * (1.0d - Math.exp(-k * trail.intensity()));
+                int bonus = Math.toIntExact(Math.round(raw));
+                moveScore = Math.clamp(bonus, 0, 7);
+            }
+
+        }
+        if (ring1HasResourceBonus.contains(coordinate)) {
+            moveScore += 8;
+        }
+        if (ring1HasPartnerBonus.contains(coordinate)) {
+            moveScore += 6;
+        }
+        if (coordinate.equals(pet.previousCoordinate())) {
+            moveScore -= 8;
+        } else if (coordinate.equals(pet.previousPreviousCoordinate())) {
+            moveScore -= 6;
+        }
+        return moveScore;
     }
 
-    private static int calculateHungerBonus(Pet pet) {
-        int maxEnergy = pet.traits().maxEnergy();
+    private static int computeReproduceScore(Pet pet,
+                                             EtpetsCell partnerCell) {
+        if (!(partnerCell.agentEntity() instanceof Pet partnerPet)) {
+            throw new IllegalStateException("Expected partner cell agent entity to be a Pet. Actual: " + partnerCell.agentEntity().toDisplayString());
+        }
+
+        double quality = computeReproduceQuality(
+                pet.traits().genomeQualityScore(),
+                partnerPet.traits().genomeQualityScore());
+        if (quality <= 0.0d) {
+            return 0;
+        }
+
+        int minScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN;
+        int maxScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MAX;
+        int scoreSpan = maxScore - minScore;
+        double scaledScore = minScore + (quality * scoreSpan);
+        int roundedScore = Math.toIntExact(Math.round(scaledScore));
+        return Math.clamp(roundedScore, minScore, maxScore);
+    }
+
+    private static double computeReproduceQuality(double petQualityScore,
+                                                  double partnerQualityScore) {
+        // Hard gate: partner quality score below threshold blocks reproduction entirely.
+        if (partnerQualityScore < EtpetsBalance.PET_REPRODUCTION_PARTNER_QUALITY_RANGE_MIN) {
+            return 0.0d;
+        }
+
+        double petQuality = clampToUnitRange(petQualityScore);
+        double partnerQuality = clampToUnitRange(partnerQualityScore);
+        double averageQuality = (petQuality + partnerQuality) / 2.0d;
+        double minimumQuality = Math.min(petQuality, partnerQuality);
+        double weightedQuality = (EtpetsBalance.PET_REPRODUCTION_SCORE_WEIGHT_AVG_QUALITY * averageQuality)
+                + (EtpetsBalance.PET_REPRODUCTION_SCORE_WEIGHT_MIN_QUALITY * minimumQuality);
+
+        return clampToUnitRange(weightedQuality);
+    }
+
+    private static double computeRawEatScore(int currentEnergy,
+                                             int maxEnergy,
+                                             int resourceEnergyGain,
+                                             int age) {
+        // Relative hunger term: lower fill ratio increases eat pressure.
+        double saturation = (double) currentEnergy / maxEnergy;
+        double hunger = clampToUnitRange(1.0d - saturation);
+        double hungerScore = EtpetsBalance.PET_EAT_SCORE_HUNGER_WEIGHT
+                * Math.pow(hunger, EtpetsBalance.PET_EAT_SCORE_HUNGER_EXPONENT);
+
+        // Panic term based on absolute energy threshold.
+        double panicNormalized = clampToUnitRange(
+                (EtpetsBalance.PET_EAT_SCORE_PANIC_THRESHOLD - currentEnergy)
+                        / EtpetsBalance.PET_EAT_SCORE_PANIC_THRESHOLD);
+        double panicScore = EtpetsBalance.PET_EAT_SCORE_PANIC_WEIGHT
+                * Math.pow(panicNormalized, EtpetsBalance.PET_EAT_SCORE_PANIC_EXPONENT);
+
+        // Resource gain term (uses existing resource gain constants indirectly via resourceEnergyGain values).
+        int maxGainReference = EtpetsBalance.INSECT_ENERGY_GAIN_PER_ACT;
+        double gainNormalized = clampToUnitRange((double) resourceEnergyGain / maxGainReference);
+        double gainScore = EtpetsBalance.PET_EAT_SCORE_GAIN_WEIGHT
+                * Math.pow(gainNormalized, EtpetsBalance.PET_EAT_SCORE_GAIN_EXPONENT);
+
+        // Strong waste damping: overfilling available capacity is heavily penalized.
+        int missingEnergy = maxEnergy - currentEnergy;
+        int wasteEnergy = Math.max(0, resourceEnergyGain - missingEnergy);
+        // Defensive guard for invalid/degenerate resource values.
+        double wasteRatio = (resourceEnergyGain > 0)
+                ? ((double) wasteEnergy / resourceEnergyGain)
+                : 0.0d;
+        double wastePenalty = EtpetsBalance.PET_EAT_SCORE_WASTE_WEIGHT
+                * Math.pow(wasteRatio, EtpetsBalance.PET_EAT_SCORE_WASTE_EXPONENT);
+
+        // Small age bonus that decays quickly.
+        double ageBonus = EtpetsBalance.PET_EAT_SCORE_AGE_WEIGHT
+                * Math.exp(-(double) age / EtpetsBalance.PET_EAT_SCORE_AGE_DECAY);
+
+        double positiveTerms = hungerScore + panicScore + gainScore + ageBonus;
+        return positiveTerms - wastePenalty;
+    }
+
+    private static int computeEatScore(Pet pet,
+                                       ResourceBase resource,
+                                       int stepIndex) {
         int currentEnergy = pet.currentEnergy();
-        double normalizedHunger = ((double) maxEnergy - currentEnergy) / maxEnergy;
-        double raw = normalizedHunger * EtpetsBalance.SCORE_EAT_HUNGER_MAX_BONUS;
-        int bonus = (int) Math.round(raw);
-        return Math.max(0, Math.min(bonus, EtpetsBalance.SCORE_EAT_HUNGER_MAX_BONUS));
-    }
+        int maxEnergy = pet.traits().maxEnergy();
+        int resourceGain = resource.energyGainPerAct();
+        int age = pet.ageAtStepIndex(stepIndex);
 
-    private static int calculateEnergyGainBonus(int energyGainPerAct) {
-        if (energyGainPerAct <= 0) {
-            return 0;
-        }
-        double raw = energyGainPerAct * EtpetsBalance.SCORE_EAT_ENERGY_GAIN_WEIGHT;
-        int bonus = (int) Math.round(raw);
-        return Math.max(0, Math.min(bonus, EtpetsBalance.SCORE_EAT_ENERGY_MAX_BONUS));
-    }
-
-    private static int calculateResourceAmountBonusSaturating(int amount) {
-        if (amount <= 0) {
-            return 0;
-        }
-        // clamp early to avoid huge exponent arguments (defensive)
-        int amountClamped = Math.min(amount, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX);
-
-        double maxBonus = EtpetsBalance.SCORE_EAT_RESOURCE_MAX_BONUS;
-        double halfSat = EtpetsBalance.SCORE_EAT_RESOURCE_HALF_SATURATION; // e.g. 400.0
-        double k = Math.log(2.0d) / Math.max(1.0d, halfSat);
-        double raw = maxBonus * (1.0d - Math.exp(-k * amountClamped));
-        int bonus = (int) Math.round(raw);
-        return Math.max(0, Math.min(bonus, (int) maxBonus));
+        double rawScore = computeRawEatScore(
+                currentEnergy,
+                maxEnergy,
+                resourceGain,
+                age);
+        int roundedScore = Math.toIntExact(Math.round(rawScore));
+        return Math.clamp(roundedScore,
+                EtpetsBalance.PET_EAT_SCORE_RANGE_MIN, EtpetsBalance.PET_EAT_SCORE_RANGE_MAX);
     }
 
     /**
@@ -447,7 +528,7 @@ public final class EtpetsAgentLogic {
     }
 
     private static boolean isReproductionEligible(Pet pet, int stepIndex) {
-        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_BEHAVIOR_REPRODUCTION_MIN_AGE)
+        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_REPRODUCTION_MIN_AGE)
                 && pet.isReproductionEligibleByState();
     }
 
@@ -518,7 +599,7 @@ public final class EtpetsAgentLogic {
         if (candidates.isEmpty()) {
             return Optional.empty();
         }
-        candidates.sort(EtpetsDeterminism::compareCoordinates);
+        candidates.sort(EtpetsDeterminism::compareCoordinates); // TODO replace compareCoordinates with random or better solution
         return Optional.of(candidates.getFirst());
     }
 
@@ -534,6 +615,10 @@ public final class EtpetsAgentLogic {
             }
         }
         return valid;
+    }
+
+    private static double clampToUnitRange(double value) {
+        return Math.clamp(value, 0.0d, 1.0d);
     }
 
     private static String toDisplayString(List<ActionCandidate> candidates) {
@@ -571,8 +656,7 @@ public final class EtpetsAgentLogic {
                                    GridCoordinate interactionTarget,
                                    @Nullable GridCoordinate eggTarget) {}
 
-    private record ReproductionOption(GridCoordinate partnerCoordinate,
-                                      GridCoordinate eggCoordinate) {}
+    private record ReproductionOption(EtpetsCell partnerCell, GridCoordinate eggCoordinate) {}
 
     private record ActionEffect(int eggCountDelta) {
 
