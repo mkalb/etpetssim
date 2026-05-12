@@ -173,24 +173,23 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         };
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     private int normalizeDoubleValueForMapRange(double value,
                                                 int min,
                                                 int max) {
-        if ((max < min) || Double.isNaN(value)) {
+        if (Double.isNaN(value)) {
             return min;
         }
-        int roundedValue = (int) Math.round(value);
-        return Math.clamp(max, min, roundedValue);
+        if (Double.isInfinite(value)) {
+            return max;
+        }
+
+        return Math.clamp(Math.round(value), min, max);
     }
 
     private int normalizeIntValueForMapRange(int value,
                                              int min,
                                              int max) {
-        if (max < min) {
-            return min;
-        }
-        return Math.clamp(max, min, value);
+        return Math.clamp(value, min, max);
     }
 
     private Color resolveTerrainFillColor(GridEntityDescriptor descriptor,
