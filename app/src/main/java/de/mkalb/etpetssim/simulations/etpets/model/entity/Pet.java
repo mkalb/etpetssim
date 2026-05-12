@@ -74,6 +74,10 @@ public final class Pet implements AgentEntity {
         return currentEnergy;
     }
 
+    public boolean canEat() {
+        return currentEnergy < traits.maxEnergy();
+    }
+
     public int ageAtStepIndex(int stepIndex) {
         return stepIndex - stepIndexOfBirth;
     }
