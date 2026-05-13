@@ -2,7 +2,21 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 
 import java.util.*;
 
+/**
+ * Manual tuner for score calculation formulas and balance constants.
+ * Generates tabular output of raw scores for various input combinations
+ * to support iterative refinement of {@code EtpetsScoreMath} calculations
+ * and {@code EtpetsBalance} configuration values.
+ */
+@SuppressWarnings("MagicNumber")
 public final class EtpetsScoreTuningRunner {
+
+    private static final String HEADER_MOVE_SCORE = "=== MOVE SCORE (RAW) ===";
+    private static final String HEADER_REPRODUCE_SCORE = "=== REPRODUCE SCORE (RAW) ===";
+    private static final String HEADER_EAT_SCORE = "=== EAT SCORE (RAW) ===";
+    private static final String COLUMNS_MOVE = "energyRatio, trailIntensity, result,  rawResult";
+    private static final String COLUMNS_REPRODUCE = "petQuality, partnerQuality, result,  rawResult";
+    private static final String COLUMNS_EAT = "currentEnergy, maxEnergy, resourceGain,   age, result,  rawResult";
 
     private EtpetsScoreTuningRunner() {
     }
@@ -15,9 +29,13 @@ public final class EtpetsScoreTuningRunner {
         runEatScoreSamples();
     }
 
+    private static int clampToIntScore(double rawScore, int minScore) {
+        return (rawScore < minScore) ? minScore : Math.toIntExact(Math.round(rawScore));
+    }
+
     private static void runMoveScoreSamples() {
-        System.out.println("=== MOVE SCORE (RAW) ===");
-        System.out.println("energyRatio, trailIntensity, result,  rawResult");
+        System.out.println(HEADER_MOVE_SCORE);
+        System.out.println(COLUMNS_MOVE);
 
         for (double energyRatio : List.of(0.15d, 0.50d, 0.85d)) {
             for (int trailIntensity : List.of(0, 50, 200, 2_000, 9_000)) {
@@ -36,7 +54,7 @@ public final class EtpetsScoreTuningRunner {
                         "%11.2f, %14d, %6d, %10.3f%n",
                         energyRatio,
                         trailIntensity,
-                        (result < EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN) ? EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN : Math.toIntExact(Math.round(result)),
+                        clampToIntScore(result, EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN),
                         result);
             }
         }
@@ -45,8 +63,8 @@ public final class EtpetsScoreTuningRunner {
     }
 
     private static void runReproduceScoreSamples() {
-        System.out.println("=== REPRODUCE SCORE (RAW) ===");
-        System.out.println("petQuality, partnerQuality, result,  rawResult");
+        System.out.println(HEADER_REPRODUCE_SCORE);
+        System.out.println(COLUMNS_REPRODUCE);
 
         for (double petQuality : List.of(0.20d, 0.45d, 0.70d, 0.80d, 0.95d)) {
             for (double partnerQuality : List.of(0.20d, 0.45d, 0.70d, 0.95d)) {
@@ -55,7 +73,7 @@ public final class EtpetsScoreTuningRunner {
                         "%10.2f, %14.2f, %6d, %10.3f%n",
                         petQuality,
                         partnerQuality,
-                        (result < EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN) ? EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN : Math.toIntExact(Math.round(result)),
+                        clampToIntScore(result, EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN),
                         result);
             }
         }
@@ -64,8 +82,8 @@ public final class EtpetsScoreTuningRunner {
     }
 
     private static void runEatScoreSamples() {
-        System.out.println("=== EAT SCORE (RAW) ===");
-        System.out.println("currentEnergy, maxEnergy, resourceGain,   age, result,  rawResult");
+        System.out.println(HEADER_EAT_SCORE);
+        System.out.println(COLUMNS_EAT);
         for (int age : List.of(0, 10, 100, 1_000)) {
             for (int resourceEnergyGain : List.of(4, 20)) {
                 for (int maxEnergy : List.of(75, 100, 145)) {
@@ -81,7 +99,7 @@ public final class EtpetsScoreTuningRunner {
                                 maxEnergy,
                                 resourceEnergyGain,
                                 age,
-                                (result < EtpetsBalance.PET_EAT_SCORE_RANGE_MIN) ? EtpetsBalance.PET_EAT_SCORE_RANGE_MIN : Math.toIntExact(Math.round(result)),
+                                clampToIntScore(result, EtpetsBalance.PET_EAT_SCORE_RANGE_MIN),
                                 result);
                     }
                 }
