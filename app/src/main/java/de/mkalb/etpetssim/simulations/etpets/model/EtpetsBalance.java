@@ -85,7 +85,7 @@ public final class EtpetsBalance {
     public static final double PET_MOVE_CROWDING_PENALTY = 3.0d;
 
     // Pet reproduction score model
-    public static final int PET_REPRODUCTION_SCORE_RANGE_MIN = 40;
+    public static final int PET_REPRODUCTION_SCORE_RANGE_MIN = 30;
     public static final int PET_REPRODUCTION_SCORE_RANGE_MAX = 100;
     public static final double PET_REPRODUCTION_SCORE_WEIGHT_AVG_QUALITY = 0.65d;
     public static final double PET_REPRODUCTION_SCORE_WEIGHT_MIN_QUALITY = 0.35d;
@@ -102,8 +102,8 @@ public final class EtpetsBalance {
     public static final double PET_EAT_SCORE_GAIN_EXPONENT = 1.0d;
     public static final double PET_EAT_SCORE_WASTE_WEIGHT = 70.0d;
     public static final double PET_EAT_SCORE_WASTE_EXPONENT = 3.0d;
-    public static final double PET_EAT_SCORE_AGE_WEIGHT = 6.0d;
-    public static final double PET_EAT_SCORE_AGE_DECAY = 120.0d;
+    public static final double PET_EAT_SCORE_AGE_WEIGHT = 10.0d;
+    public static final double PET_EAT_SCORE_AGE_DECAY = 200.0d;
 
     /**
      * Private constructor to prevent instantiation.

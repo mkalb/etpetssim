@@ -1,7 +1,5 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.core.AppLogger;
-
 final class EtpetsScoreMath {
 
     private EtpetsScoreMath() {
@@ -34,21 +32,15 @@ final class EtpetsScoreMath {
         if (trailIntensity >= EtpetsBalance.PET_MOVE_TRAIL_BONUS_START_INTENSITY) {
             int effectiveTrailIntensity = trailIntensity - EtpetsBalance.PET_MOVE_TRAIL_BONUS_START_INTENSITY;
             double scale = EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE;
-            if (scale > 0.0d) {
-                double normalizedTrailIntensity = 1.0d - Math.exp(-(effectiveTrailIntensity / scale));
-                double curveNumerator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K * normalizedTrailIntensity);
-                double curveDenominator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K);
-                if (curveDenominator > 0.0d) {
-                    trailBonus = EtpetsBalance.PET_MOVE_TRAIL_BONUS_MAX * (curveNumerator / curveDenominator);
-                }
-            }
+            double normalizedTrailIntensity = 1.0d - Math.exp(-(effectiveTrailIntensity / scale));
+            double curveNumerator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K * normalizedTrailIntensity);
+            double curveDenominator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K);
+            trailBonus = EtpetsBalance.PET_MOVE_TRAIL_BONUS_MAX * (curveNumerator / curveDenominator);
         }
 
         double moveCostSpan = EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX
                 - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN;
-        double moveCostNormalized = (moveCostSpan > 0.0d)
-                ? clampToUnitRange((movementCostModifier - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN) / moveCostSpan)
-                : 0.0d;
+        double moveCostNormalized = clampToUnitRange((movementCostModifier - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN) / moveCostSpan);
         double moveCostEfficiency = clampToUnitRange(1.0d - moveCostNormalized);
         double explorationDrive = Math.pow(energyRatio, EtpetsBalance.PET_MOVE_EXPLORATION_ENERGY_EXPONENT)
                 * Math.pow(moveCostEfficiency, EtpetsBalance.PET_MOVE_EXPLORATION_COST_EXPONENT);
@@ -80,10 +72,10 @@ final class EtpetsScoreMath {
             crowdingPenalty = EtpetsBalance.PET_MOVE_CROWDING_PENALTY;
         }
 
-        if (lowMobilityPenalty > 0) {
-            AppLogger.infof("Applying low mobility penalty: hasLowMobilityPenalty=%s, survivalPressure=%.3f, hasResourceLookAhead=%s, calculatedPenalty=%.1f, trailBonus=%.1f, explorationBonus=%.1f",
-                    hasLowMobilityPenalty, survivalPressure, hasResourceLookAhead, lowMobilityPenalty, trailBonus, explorationBonus);
-        }
+        // if (lowMobilityPenalty > 0) {
+        //     AppLogger.infof("Applying low mobility penalty: hasLowMobilityPenalty=%s, survivalPressure=%.3f, hasResourceLookAhead=%s, calculatedPenalty=%.1f, trailBonus=%.1f, explorationBonus=%.1f",
+        //             hasLowMobilityPenalty, survivalPressure, hasResourceLookAhead, lowMobilityPenalty, trailBonus, explorationBonus);
+        // }
         double positiveTerms = resourceBonus + partnerBonus + trailBonus + explorationBonus;
         return (EtpetsBalance.PET_MOVE_SCORE_BASE + positiveTerms) - oscillationPenalty - lowMobilityPenalty - crowdingPenalty;
     }
