@@ -487,7 +487,7 @@ public final class EtpetsAgentLogic {
     }
 
     private static boolean isReproductionEligible(Pet pet, int stepIndex) {
-        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_REPRODUCTION_MIN_AGE)
+        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_FERTILITY_AGE_RANGE_MIN)
                 && pet.isReproductionEligibleByState();
     }
 

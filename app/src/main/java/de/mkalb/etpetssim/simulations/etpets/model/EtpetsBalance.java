@@ -59,25 +59,25 @@ public final class EtpetsBalance {
 
     // Pet lifecycle (EtpetsAgentLogic)
     public static final int PET_STEP_ENERGY_LOSS = 1;
-    public static final int PET_REPRODUCTION_MIN_AGE = 400;
+    public static final int PET_FERTILITY_AGE_RANGE_MIN = 400;
 
     // Pet move score model
     public static final int PET_MOVE_SCORE_RANGE_MIN = 1;
     public static final int PET_MOVE_SCORE_RANGE_MAX = 40;
     public static final double PET_MOVE_SCORE_BASE = 4.0d;
     public static final double PET_MOVE_SURVIVAL_PRESSURE_EXPONENT = 2.0d;
-    public static final double PET_MOVE_RESOURCE_WEIGHT_BASE = 4.0d;
-    public static final double PET_MOVE_RESOURCE_WEIGHT_SURVIVAL = 12.0d;
+    public static final double PET_MOVE_RESOURCE_BASE_WEIGHT = 4.0d;
+    public static final double PET_MOVE_RESOURCE_SURVIVAL_PRESSURE_WEIGHT = 12.0d;
     public static final double PET_MOVE_PARTNER_WEIGHT = 7.5d;
-    public static final int PET_MOVE_TRAIL_BONUS_START_INTENSITY = 120;
+    public static final int PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD = 120;
     public static final double PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE = 2_200.0d;
     public static final double PET_MOVE_TRAIL_BONUS_MAX = 12.0d;
-    public static final double PET_MOVE_TRAIL_BONUS_CURVE_K = 3.5d;
+    public static final double PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS = 3.5d;
     public static final double PET_MOVE_EXPLORATION_WEIGHT = 8.0d;
     public static final double PET_MOVE_EXPLORATION_ENERGY_EXPONENT = 1.4d;
     public static final double PET_MOVE_EXPLORATION_COST_EXPONENT = 1.3d;
-    public static final double PET_MOVE_OSCILLATION_PREVIOUS_PENALTY = 8.0d;
-    public static final double PET_MOVE_OSCILLATION_PREVIOUS_PREVIOUS_PENALTY = 4.0d;
+    public static final double PET_MOVE_OSCILLATION_ONE_STEP_BACK_PENALTY = 8.0d;
+    public static final double PET_MOVE_OSCILLATION_TWO_STEPS_BACK_PENALTY = 4.0d;
     public static final int PET_MOVE_LOW_MOBILITY_THRESHOLD = 3;
     public static final double PET_MOVE_LOW_MOBILITY_PENALTY = 5.0d;
     public static final double PET_MOVE_SURVIVAL_PRESSURE_HIGH_THRESHOLD = 0.7d;
@@ -87,8 +87,8 @@ public final class EtpetsBalance {
     // Pet reproduction score model
     public static final int PET_REPRODUCTION_SCORE_RANGE_MIN = 30;
     public static final int PET_REPRODUCTION_SCORE_RANGE_MAX = 100;
-    public static final double PET_REPRODUCTION_SCORE_WEIGHT_AVG_QUALITY = 0.65d;
-    public static final double PET_REPRODUCTION_SCORE_WEIGHT_MIN_QUALITY = 0.35d;
+    public static final double PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT = 0.65d;
+    public static final double PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT = 0.35d;
 
     // Pet eat score model
     public static final int PET_EAT_SCORE_RANGE_MIN = 1;
@@ -96,14 +96,14 @@ public final class EtpetsBalance {
     public static final double PET_EAT_SCORE_HUNGER_WEIGHT = 35.0d;
     public static final double PET_EAT_SCORE_HUNGER_EXPONENT = 1.6d;
     public static final double PET_EAT_SCORE_PANIC_WEIGHT = 40.0d;
-    public static final double PET_EAT_SCORE_PANIC_THRESHOLD = 50.0d;
+    public static final double PET_EAT_SCORE_PANIC_ENERGY_THRESHOLD = 50.0d;
     public static final double PET_EAT_SCORE_PANIC_EXPONENT = 2.4d;
-    public static final double PET_EAT_SCORE_GAIN_WEIGHT = 18.0d;
-    public static final double PET_EAT_SCORE_GAIN_EXPONENT = 1.0d;
-    public static final double PET_EAT_SCORE_WASTE_WEIGHT = 70.0d;
-    public static final double PET_EAT_SCORE_WASTE_EXPONENT = 3.0d;
+    public static final double PET_EAT_SCORE_RESOURCE_GAIN_WEIGHT = 18.0d;
+    public static final double PET_EAT_SCORE_RESOURCE_GAIN_EXPONENT = 1.0d;
+    public static final double PET_EAT_SCORE_OVERFILL_PENALTY_WEIGHT = 70.0d;
+    public static final double PET_EAT_SCORE_OVERFILL_PENALTY_EXPONENT = 3.0d;
     public static final double PET_EAT_SCORE_AGE_WEIGHT = 10.0d;
-    public static final double PET_EAT_SCORE_AGE_DECAY = 200.0d;
+    public static final double PET_EAT_SCORE_AGE_DECAY_STEPS = 200.0d;
 
     /**
      * Private constructor to prevent instantiation.

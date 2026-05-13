@@ -20,8 +20,8 @@ final class EtpetsScoreMath {
 
         double resourceBonus = 0.0d;
         if (hasResourceLookAhead) {
-            resourceBonus = EtpetsBalance.PET_MOVE_RESOURCE_WEIGHT_BASE
-                    + (EtpetsBalance.PET_MOVE_RESOURCE_WEIGHT_SURVIVAL * survivalPressure);
+            resourceBonus = EtpetsBalance.PET_MOVE_RESOURCE_BASE_WEIGHT
+                    + (EtpetsBalance.PET_MOVE_RESOURCE_SURVIVAL_PRESSURE_WEIGHT * survivalPressure);
         }
 
         double partnerBonus = hasPartnerLookAhead
@@ -29,31 +29,31 @@ final class EtpetsScoreMath {
                 : 0.0d;
 
         double trailBonus = 0.0d;
-        if (trailIntensity >= EtpetsBalance.PET_MOVE_TRAIL_BONUS_START_INTENSITY) {
-            int effectiveTrailIntensity = trailIntensity - EtpetsBalance.PET_MOVE_TRAIL_BONUS_START_INTENSITY;
-            double scale = EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE;
-            double normalizedTrailIntensity = 1.0d - Math.exp(-(effectiveTrailIntensity / scale));
-            double curveNumerator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K * normalizedTrailIntensity);
-            double curveDenominator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_K);
-            trailBonus = EtpetsBalance.PET_MOVE_TRAIL_BONUS_MAX * (curveNumerator / curveDenominator);
+        if (trailIntensity >= EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD) {
+            int trailIntensityAboveThreshold = trailIntensity - EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD;
+            double trailBonusIntensityScale = EtpetsBalance.PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE;
+            double normalizedTrailIntensity = 1.0d - Math.exp(-(trailIntensityAboveThreshold / trailBonusIntensityScale));
+            double trailBonusCurveNumerator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS * normalizedTrailIntensity);
+            double trailBonusCurveDenominator = 1.0d - Math.exp(-EtpetsBalance.PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS);
+            trailBonus = EtpetsBalance.PET_MOVE_TRAIL_BONUS_MAX * (trailBonusCurveNumerator / trailBonusCurveDenominator);
         }
 
-        double moveCostSpan = EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX
+        double movementCostModifierSpan = EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX
                 - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN;
-        double moveCostNormalized = clampToUnitRange((movementCostModifier - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN) / moveCostSpan);
-        double moveCostEfficiency = clampToUnitRange(1.0d - moveCostNormalized);
+        double movementCostModifierNormalized = clampToUnitRange((movementCostModifier - EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN) / movementCostModifierSpan);
+        double movementEfficiency = clampToUnitRange(1.0d - movementCostModifierNormalized);
         double explorationDrive = Math.pow(energyRatio, EtpetsBalance.PET_MOVE_EXPLORATION_ENERGY_EXPONENT)
-                * Math.pow(moveCostEfficiency, EtpetsBalance.PET_MOVE_EXPLORATION_COST_EXPONENT);
+                * Math.pow(movementEfficiency, EtpetsBalance.PET_MOVE_EXPLORATION_COST_EXPONENT);
         double explorationBonus = isGroundWithoutTrail
                 ? (EtpetsBalance.PET_MOVE_EXPLORATION_WEIGHT * explorationDrive)
                 : 0.0d;
 
         double oscillationPenalty = 0.0d;
         if (isPreviousCoordinate) {
-            oscillationPenalty += EtpetsBalance.PET_MOVE_OSCILLATION_PREVIOUS_PENALTY;
+            oscillationPenalty += EtpetsBalance.PET_MOVE_OSCILLATION_ONE_STEP_BACK_PENALTY;
         }
         if (isPreviousPreviousCoordinate) {
-            oscillationPenalty += EtpetsBalance.PET_MOVE_OSCILLATION_PREVIOUS_PREVIOUS_PENALTY;
+            oscillationPenalty += EtpetsBalance.PET_MOVE_OSCILLATION_TWO_STEPS_BACK_PENALTY;
         }
 
         // Low mobility penalty: no penalty if high survival pressure AND resource nearby.
@@ -76,27 +76,27 @@ final class EtpetsScoreMath {
         //     AppLogger.infof("Applying low mobility penalty: hasLowMobilityPenalty=%s, survivalPressure=%.3f, hasResourceLookAhead=%s, calculatedPenalty=%.1f, trailBonus=%.1f, explorationBonus=%.1f",
         //             hasLowMobilityPenalty, survivalPressure, hasResourceLookAhead, lowMobilityPenalty, trailBonus, explorationBonus);
         // }
-        double positiveTerms = resourceBonus + partnerBonus + trailBonus + explorationBonus;
-        return (EtpetsBalance.PET_MOVE_SCORE_BASE + positiveTerms) - oscillationPenalty - lowMobilityPenalty - crowdingPenalty;
+        double positiveScoreTerms = resourceBonus + partnerBonus + trailBonus + explorationBonus;
+        return (EtpetsBalance.PET_MOVE_SCORE_BASE + positiveScoreTerms) - oscillationPenalty - lowMobilityPenalty - crowdingPenalty;
     }
 
     @SuppressWarnings("MagicNumber")
     static double computeRawReproduceScore(double petQualityScore,
                                            double partnerQualityScore) {
-        double petQuality = clampToUnitRange(petQualityScore);
-        double partnerQuality = clampToUnitRange(partnerQualityScore);
-        double averageQuality = (petQuality + partnerQuality) / 2.0d;
-        double minimumQuality = Math.min(petQuality, partnerQuality);
-        double weightedQuality = (EtpetsBalance.PET_REPRODUCTION_SCORE_WEIGHT_AVG_QUALITY * averageQuality)
-                + (EtpetsBalance.PET_REPRODUCTION_SCORE_WEIGHT_MIN_QUALITY * minimumQuality);
+        double normalizedPetQuality = clampToUnitRange(petQualityScore);
+        double normalizedPartnerQuality = clampToUnitRange(partnerQualityScore);
+        double averageQuality = (normalizedPetQuality + normalizedPartnerQuality) / 2.0d;
+        double minimumQuality = Math.min(normalizedPetQuality, normalizedPartnerQuality);
+        double weightedQualityScore = (EtpetsBalance.PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT * averageQuality)
+                + (EtpetsBalance.PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT * minimumQuality);
 
-        double normalizedQuality = clampToUnitRange(weightedQuality);
+        double normalizedWeightedQuality = clampToUnitRange(weightedQualityScore);
 
         int minScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN;
         int maxScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MAX;
         int scoreSpan = maxScore - minScore;
 
-        return minScore + (normalizedQuality * scoreSpan);
+        return minScore + (normalizedWeightedQuality * scoreSpan);
     }
 
     static double computeRawEatScore(int currentEnergy,
@@ -104,40 +104,40 @@ final class EtpetsScoreMath {
                                      int resourceEnergyGain,
                                      int age) {
         // Relative hunger term: lower fill ratio increases eat pressure.
-        double saturation = (double) currentEnergy / maxEnergy;
-        double hunger = clampToUnitRange(1.0d - saturation);
+        double energyFillRatio = (double) currentEnergy / maxEnergy;
+        double hunger = clampToUnitRange(1.0d - energyFillRatio);
         double hungerScore = EtpetsBalance.PET_EAT_SCORE_HUNGER_WEIGHT
                 * Math.pow(hunger, EtpetsBalance.PET_EAT_SCORE_HUNGER_EXPONENT);
 
         // Panic term based on absolute energy threshold.
-        double panicNormalized = clampToUnitRange(
-                (EtpetsBalance.PET_EAT_SCORE_PANIC_THRESHOLD - currentEnergy)
-                        / EtpetsBalance.PET_EAT_SCORE_PANIC_THRESHOLD);
+        double panicPressureNormalized = clampToUnitRange(
+                (EtpetsBalance.PET_EAT_SCORE_PANIC_ENERGY_THRESHOLD - currentEnergy)
+                        / EtpetsBalance.PET_EAT_SCORE_PANIC_ENERGY_THRESHOLD);
         double panicScore = EtpetsBalance.PET_EAT_SCORE_PANIC_WEIGHT
-                * Math.pow(panicNormalized, EtpetsBalance.PET_EAT_SCORE_PANIC_EXPONENT);
+                * Math.pow(panicPressureNormalized, EtpetsBalance.PET_EAT_SCORE_PANIC_EXPONENT);
 
         // Resource gain term (uses existing resource gain constants indirectly via resourceEnergyGain values).
-        int maxGainReference = EtpetsBalance.INSECT_ENERGY_GAIN_PER_ACT;
-        double gainNormalized = clampToUnitRange((double) resourceEnergyGain / maxGainReference);
-        double gainScore = EtpetsBalance.PET_EAT_SCORE_GAIN_WEIGHT
-                * Math.pow(gainNormalized, EtpetsBalance.PET_EAT_SCORE_GAIN_EXPONENT);
+        int maxResourceEnergyGainReference = EtpetsBalance.INSECT_ENERGY_GAIN_PER_ACT;
+        double resourceGainNormalized = clampToUnitRange((double) resourceEnergyGain / maxResourceEnergyGainReference);
+        double resourceGainScore = EtpetsBalance.PET_EAT_SCORE_RESOURCE_GAIN_WEIGHT
+                * Math.pow(resourceGainNormalized, EtpetsBalance.PET_EAT_SCORE_RESOURCE_GAIN_EXPONENT);
 
         // Strong waste damping: overfilling available capacity is heavily penalized.
-        int missingEnergy = maxEnergy - currentEnergy;
-        int wasteEnergy = Math.max(0, resourceEnergyGain - missingEnergy);
+        int remainingEnergyCapacity = maxEnergy - currentEnergy;
+        int overfillEnergy = Math.max(0, resourceEnergyGain - remainingEnergyCapacity);
         // Defensive guard for invalid/degenerate resource values.
-        double wasteRatio = (resourceEnergyGain > 0)
-                ? ((double) wasteEnergy / resourceEnergyGain)
+        double overfillRatio = (resourceEnergyGain > 0)
+                ? ((double) overfillEnergy / resourceEnergyGain)
                 : 0.0d;
-        double wastePenalty = EtpetsBalance.PET_EAT_SCORE_WASTE_WEIGHT
-                * Math.pow(wasteRatio, EtpetsBalance.PET_EAT_SCORE_WASTE_EXPONENT);
+        double wastePenalty = EtpetsBalance.PET_EAT_SCORE_OVERFILL_PENALTY_WEIGHT
+                * Math.pow(overfillRatio, EtpetsBalance.PET_EAT_SCORE_OVERFILL_PENALTY_EXPONENT);
 
         // Small age bonus that decays quickly.
         double ageBonus = EtpetsBalance.PET_EAT_SCORE_AGE_WEIGHT
-                * Math.exp(-(double) age / EtpetsBalance.PET_EAT_SCORE_AGE_DECAY);
+                * Math.exp(-(double) age / EtpetsBalance.PET_EAT_SCORE_AGE_DECAY_STEPS);
 
-        double positiveTerms = hungerScore + panicScore + gainScore + ageBonus;
-        return positiveTerms - wastePenalty;
+        double positiveScoreTerms = hungerScore + panicScore + resourceGainScore + ageBonus;
+        return positiveScoreTerms - wastePenalty;
     }
 
     static double clampToUnitRange(double value) {
@@ -145,4 +145,3 @@ final class EtpetsScoreMath {
     }
 
 }
-
