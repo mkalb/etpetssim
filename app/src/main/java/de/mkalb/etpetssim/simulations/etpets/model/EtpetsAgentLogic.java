@@ -154,6 +154,8 @@ public final class EtpetsAgentLogic {
         //         collect EAT/REPRODUCE data for ring 0.
         List<EtpetsCell> ring0Consumables = new ArrayList<>();
         List<ReproductionOption> ring0ReproductionOptions = new ArrayList<>();
+        Set<GridCoordinate> ring1HasLowMobilityPenalty = new HashSet<>();
+        Set<GridCoordinate> ring1HasCrowdingPenalty = new HashSet<>();
         SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> ring1Cells =
                 neighborhoodCellsByRing.getOrDefault(1, Collections.emptySortedMap());
         for (RadiusRingCell<EtpetsCell> ring1Cell : ring1Cells.values()) {
@@ -173,12 +175,22 @@ public final class EtpetsAgentLogic {
 
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
+                List<GridCoordinate> neighborCoordinates = getValidNeighborCoordinates(coordinate, structure);
+                if (calculateHasLowMobilityPenalty(neighborCoordinates, gridModel)) {
+                    ring1HasLowMobilityPenalty.add(coordinate);
+                }
+                if (calculateHasCrowdingPenalty(neighborCoordinates, gridModel)) {
+                    ring1HasCrowdingPenalty.add(coordinate);
+                }
+
                 int moveScore = computeMoveScore(
                         pet,
                         cell,
                         coordinate,
                         ring1HasResourceBonus,
-                        ring1HasPartnerBonus);
+                        ring1HasPartnerBonus,
+                        ring1HasLowMobilityPenalty,
+                        ring1HasCrowdingPenalty);
                 candidates.add(new ActionCandidate(ActionType.MOVE, moveScore,
                         coordinate, coordinate, null));
             }
@@ -221,10 +233,45 @@ public final class EtpetsAgentLogic {
         return candidates;
     }
 
+    private static int computeMoveScore(Pet pet,
+                                        EtpetsCell cell,
+                                        GridCoordinate coordinate,
+                                        Set<GridCoordinate> ring1HasResourceBonus,
+                                        Set<GridCoordinate> ring1HasPartnerBonus,
+                                        Set<GridCoordinate> ring1HasLowMobilityPenalty,
+                                        Set<GridCoordinate> ring1HasCrowdingPenalty) {
+        int trailIntensity = 0;
+        boolean isGroundWithoutTrail = false;
+        TerrainEntity terrain = cell.terrainEntity();
+        if (terrain instanceof Trail trail) {
+            trailIntensity = trail.intensity();
+        } else if (terrain == TerrainConstant.GROUND) {
+            isGroundWithoutTrail = true;
+        }
+
+        double rawScore = computeRawMoveScore(
+                clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy()),
+                pet.traits().movementCostModifier(),
+                ring1HasResourceBonus.contains(coordinate),
+                ring1HasPartnerBonus.contains(coordinate),
+                ring1HasLowMobilityPenalty.contains(coordinate),
+                ring1HasCrowdingPenalty.contains(coordinate),
+                isGroundWithoutTrail,
+                trailIntensity,
+                coordinate.equals(pet.previousCoordinate()),
+                coordinate.equals(pet.previousPreviousCoordinate()));
+        int roundedScore = Math.toIntExact(Math.round(rawScore));
+        return Math.clamp(roundedScore,
+                EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN,
+                EtpetsBalance.PET_MOVE_SCORE_RANGE_MAX);
+    }
+
     private static double computeRawMoveScore(double energyRatio,
                                               double movementCostModifier,
                                               boolean hasResourceLookAhead,
                                               boolean hasPartnerLookAhead,
+                                              boolean hasLowMobilityPenalty,
+                                              boolean hasCrowdingPenalty,
                                               boolean isGroundWithoutTrail,
                                               int trailIntensity,
                                               boolean isPreviousCoordinate,
@@ -276,38 +323,32 @@ public final class EtpetsAgentLogic {
             oscillationPenalty += EtpetsBalance.PET_MOVE_OSCILLATION_PREVIOUS_PREVIOUS_PENALTY;
         }
 
-        double positiveTerms = resourceBonus + partnerBonus + trailBonus + explorationBonus;
-        return (EtpetsBalance.PET_MOVE_SCORE_BASE + positiveTerms) - oscillationPenalty;
-    }
-
-    private static int computeMoveScore(Pet pet,
-                                        EtpetsCell cell,
-                                        GridCoordinate coordinate,
-                                        Set<GridCoordinate> ring1HasResourceBonus,
-                                        Set<GridCoordinate> ring1HasPartnerBonus) {
-        int trailIntensity = 0;
-        boolean isGroundWithoutTrail = false;
-        TerrainEntity terrain = cell.terrainEntity();
-        if (terrain instanceof Trail trail) {
-            trailIntensity = trail.intensity();
-        } else if (terrain == TerrainConstant.GROUND) {
-            isGroundWithoutTrail = true;
+        // Low mobility penalty: no penalty if high survival pressure AND resource nearby.
+        double lowMobilityPenalty = 0.0d;
+        if (hasLowMobilityPenalty) {
+            boolean skipLowMobilityPenalty = (survivalPressure >= EtpetsBalance.PET_MOVE_SURVIVAL_PRESSURE_HIGH_THRESHOLD)
+                    && hasResourceLookAhead;
+            if (!skipLowMobilityPenalty) {
+                lowMobilityPenalty = EtpetsBalance.PET_MOVE_LOW_MOBILITY_PENALTY;
+            }
         }
 
-        double rawScore = computeRawMoveScore(
-                clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy()),
-                pet.traits().movementCostModifier(),
-                ring1HasResourceBonus.contains(coordinate),
-                ring1HasPartnerBonus.contains(coordinate),
-                isGroundWithoutTrail,
-                trailIntensity,
-                coordinate.equals(pet.previousCoordinate()),
-                coordinate.equals(pet.previousPreviousCoordinate()));
-        int roundedScore = Math.toIntExact(Math.round(rawScore));
-        return Math.clamp(roundedScore,
-                EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN,
-                EtpetsBalance.PET_MOVE_SCORE_RANGE_MAX);
+        // Crowding penalty: no penalty if reproduction bonus available.
+        double crowdingPenalty = 0.0d;
+        if (hasCrowdingPenalty && !hasPartnerLookAhead) {
+            crowdingPenalty = EtpetsBalance.PET_MOVE_CROWDING_PENALTY;
+        }
+
+        if (lowMobilityPenalty > 0) {
+            // Keep for current debugging!!!
+            AppLogger.infof("Applying low mobility penalty: hasLowMobilityPenalty=%s, survivalPressure=%.3f, hasResourceLookAhead=%s, calculatedPenalty=%.1f, trailBonus=%.1f, explorationBonus=%.1f",
+                    hasLowMobilityPenalty, survivalPressure, hasResourceLookAhead, lowMobilityPenalty, trailBonus, explorationBonus);
+        }
+        double positiveTerms = resourceBonus + partnerBonus + trailBonus + explorationBonus;
+        return (EtpetsBalance.PET_MOVE_SCORE_BASE + positiveTerms) - oscillationPenalty - lowMobilityPenalty - crowdingPenalty;
     }
+
+
 
     private static int computeReproduceScore(Pet pet,
                                              EtpetsCell partnerCell) {
@@ -315,23 +356,17 @@ public final class EtpetsAgentLogic {
             throw new IllegalStateException("Expected partner cell agent entity to be a Pet. Actual: " + partnerCell.agentEntity().toDisplayString());
         }
 
-        double quality = computeReproduceQuality(
+        double rawScore = computeRawReproduceScore(
                 pet.traits().genomeQualityScore(),
                 partnerPet.traits().genomeQualityScore());
-        if (quality <= 0.0d) {
-            return 0;
-        }
-
-        int minScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN;
-        int maxScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MAX;
-        int scoreSpan = maxScore - minScore;
-        double scaledScore = minScore + (quality * scoreSpan);
-        int roundedScore = Math.toIntExact(Math.round(scaledScore));
-        return Math.clamp(roundedScore, minScore, maxScore);
+        int roundedScore = Math.toIntExact(Math.round(rawScore));
+        return Math.clamp(roundedScore,
+                EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN,
+                EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MAX);
     }
 
-    private static double computeReproduceQuality(double petQualityScore,
-                                                  double partnerQualityScore) {
+    private static double computeRawReproduceScore(double petQualityScore,
+                                                   double partnerQualityScore) {
         // Hard gate: partner quality score below threshold blocks reproduction entirely.
         if (partnerQualityScore < EtpetsBalance.PET_REPRODUCTION_PARTNER_QUALITY_RANGE_MIN) {
             return 0.0d;
@@ -344,7 +379,31 @@ public final class EtpetsAgentLogic {
         double weightedQuality = (EtpetsBalance.PET_REPRODUCTION_SCORE_WEIGHT_AVG_QUALITY * averageQuality)
                 + (EtpetsBalance.PET_REPRODUCTION_SCORE_WEIGHT_MIN_QUALITY * minimumQuality);
 
-        return clampToUnitRange(weightedQuality);
+        double normalizedQuality = clampToUnitRange(weightedQuality);
+
+        int minScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN;
+        int maxScore = EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MAX;
+        int scoreSpan = maxScore - minScore;
+
+        return minScore + (normalizedQuality * scoreSpan);
+    }
+
+    private static int computeEatScore(Pet pet,
+                                       ResourceBase resource,
+                                       int stepIndex) {
+        int currentEnergy = pet.currentEnergy();
+        int maxEnergy = pet.traits().maxEnergy();
+        int resourceGain = resource.energyGainPerAct();
+        int age = pet.ageAtStepIndex(stepIndex);
+
+        double rawScore = computeRawEatScore(
+                currentEnergy,
+                maxEnergy,
+                resourceGain,
+                age);
+        int roundedScore = Math.toIntExact(Math.round(rawScore));
+        return Math.clamp(roundedScore,
+                EtpetsBalance.PET_EAT_SCORE_RANGE_MIN, EtpetsBalance.PET_EAT_SCORE_RANGE_MAX);
     }
 
     private static double computeRawEatScore(int currentEnergy,
@@ -388,23 +447,7 @@ public final class EtpetsAgentLogic {
         return positiveTerms - wastePenalty;
     }
 
-    private static int computeEatScore(Pet pet,
-                                       ResourceBase resource,
-                                       int stepIndex) {
-        int currentEnergy = pet.currentEnergy();
-        int maxEnergy = pet.traits().maxEnergy();
-        int resourceGain = resource.energyGainPerAct();
-        int age = pet.ageAtStepIndex(stepIndex);
 
-        double rawScore = computeRawEatScore(
-                currentEnergy,
-                maxEnergy,
-                resourceGain,
-                age);
-        int roundedScore = Math.toIntExact(Math.round(rawScore));
-        return Math.clamp(roundedScore,
-                EtpetsBalance.PET_EAT_SCORE_RANGE_MIN, EtpetsBalance.PET_EAT_SCORE_RANGE_MAX);
-    }
 
     /**
      * Returns {@code true} if {@code partnerCell} contains a pet that is eligible
@@ -665,6 +708,37 @@ public final class EtpetsAgentLogic {
             }
         }
         return valid;
+    }
+
+    /**
+     * Returns {@code true} if the target coordinate has low mobility (fewer than
+     * {@code PET_MOVE_LOW_MOBILITY_THRESHOLD} walkable neighbor cells).
+     */
+    private static boolean calculateHasLowMobilityPenalty(List<GridCoordinate> neighborCoordinates,
+                                                          EtpetsGridModel gridModel) {
+        int walkableCount = 0;
+        for (GridCoordinate neighbor : neighborCoordinates) {
+            if (EtpetsCell.of(neighbor, gridModel).isWalkable()) {
+                walkableCount++;
+            }
+        }
+        return walkableCount < EtpetsBalance.PET_MOVE_LOW_MOBILITY_THRESHOLD;
+    }
+
+    /**
+     * Returns {@code true} if the target coordinate has high crowding (>=
+     * {@code PET_MOVE_CROWDING_THRESHOLD} pet neighbors).
+     */
+    private static boolean calculateHasCrowdingPenalty(List<GridCoordinate> neighborCoordinates,
+                                                       EtpetsGridModel gridModel) {
+        int petCount = 0;
+        for (GridCoordinate neighbor : neighborCoordinates) {
+            AgentEntity agent = gridModel.agentModel().getEntity(neighbor);
+            if ((agent instanceof Pet pet) && !pet.isDead()) {
+                petCount++;
+            }
+        }
+        return petCount >= EtpetsBalance.PET_MOVE_CROWDING_THRESHOLD;
     }
 
     private static double clampToUnitRange(double value) {
