@@ -89,7 +89,6 @@ public final class EtpetsBalance {
     public static final int PET_REPRODUCTION_SCORE_RANGE_MAX = 100;
     public static final double PET_REPRODUCTION_SCORE_WEIGHT_AVG_QUALITY = 0.65d;
     public static final double PET_REPRODUCTION_SCORE_WEIGHT_MIN_QUALITY = 0.35d;
-    public static final double PET_REPRODUCTION_PARTNER_QUALITY_RANGE_MIN = 0.20d;
 
     // Pet eat score model
     public static final int PET_EAT_SCORE_RANGE_MIN = 1;

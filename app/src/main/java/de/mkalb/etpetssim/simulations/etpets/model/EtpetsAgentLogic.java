@@ -369,11 +369,6 @@ public final class EtpetsAgentLogic {
 
     private static double computeRawReproduceScore(double petQualityScore,
                                                    double partnerQualityScore) {
-        // Hard gate: partner quality score below threshold blocks reproduction entirely.
-        if (partnerQualityScore < EtpetsBalance.PET_REPRODUCTION_PARTNER_QUALITY_RANGE_MIN) {
-            return 0.0d;
-        }
-
         double petQuality = clampToUnitRange(petQualityScore);
         double partnerQuality = clampToUnitRange(partnerQualityScore);
         double averageQuality = (petQuality + partnerQuality) / 2.0d;
