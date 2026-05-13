@@ -240,8 +240,9 @@ public final class EtpetsAgentLogic {
                                         Set<GridCoordinate> ring1HasPartnerBonus,
                                         Set<GridCoordinate> ring1HasLowMobilityPenalty,
                                         Set<GridCoordinate> ring1HasCrowdingPenalty) {
-        int trailIntensity = 0;
+        double energyRatio = clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy());
         boolean isGroundWithoutTrail = false;
+        int trailIntensity = 0;
         TerrainEntity terrain = cell.terrainEntity();
         if (terrain instanceof Trail trail) {
             trailIntensity = trail.intensity();
@@ -250,7 +251,7 @@ public final class EtpetsAgentLogic {
         }
 
         double rawScore = computeRawMoveScore(
-                clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy()),
+                energyRatio,
                 pet.traits().movementCostModifier(),
                 ring1HasResourceBonus.contains(coordinate),
                 ring1HasPartnerBonus.contains(coordinate),
@@ -348,17 +349,18 @@ public final class EtpetsAgentLogic {
         return (EtpetsBalance.PET_MOVE_SCORE_BASE + positiveTerms) - oscillationPenalty - lowMobilityPenalty - crowdingPenalty;
     }
 
-
-
     private static int computeReproduceScore(Pet pet,
                                              EtpetsCell partnerCell) {
         if (!(partnerCell.agentEntity() instanceof Pet partnerPet)) {
             throw new IllegalStateException("Expected partner cell agent entity to be a Pet. Actual: " + partnerCell.agentEntity().toDisplayString());
         }
 
+        double petQualityScore = pet.traits().genomeQualityScore();
+        double partnerQualityScore = partnerPet.traits().genomeQualityScore();
+
         double rawScore = computeRawReproduceScore(
-                pet.traits().genomeQualityScore(),
-                partnerPet.traits().genomeQualityScore());
+                petQualityScore,
+                partnerQualityScore);
         int roundedScore = Math.toIntExact(Math.round(rawScore));
         return Math.clamp(roundedScore,
                 EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN,
@@ -403,7 +405,8 @@ public final class EtpetsAgentLogic {
                 age);
         int roundedScore = Math.toIntExact(Math.round(rawScore));
         return Math.clamp(roundedScore,
-                EtpetsBalance.PET_EAT_SCORE_RANGE_MIN, EtpetsBalance.PET_EAT_SCORE_RANGE_MAX);
+                EtpetsBalance.PET_EAT_SCORE_RANGE_MIN,
+                EtpetsBalance.PET_EAT_SCORE_RANGE_MAX);
     }
 
     private static double computeRawEatScore(int currentEnergy,
@@ -446,8 +449,6 @@ public final class EtpetsAgentLogic {
         double positiveTerms = hungerScore + panicScore + gainScore + ageBonus;
         return positiveTerms - wastePenalty;
     }
-
-
 
     /**
      * Returns {@code true} if {@code partnerCell} contains a pet that is eligible
