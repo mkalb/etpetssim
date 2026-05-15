@@ -192,7 +192,8 @@ public final class EtpetsAgentLogic {
                         ring1HasResourceBonus,
                         ring1HasPartnerBonus,
                         ring1HasLowMobilityPenalty,
-                        ring1HasCrowdingPenalty);
+                        ring1HasCrowdingPenalty,
+                        random);
                 candidates.add(new ActionCandidate(ActionType.MOVE, moveScore,
                         coordinate, coordinate, null));
             }
@@ -242,7 +243,8 @@ public final class EtpetsAgentLogic {
                                         Set<GridCoordinate> ring1HasResourceBonus,
                                         Set<GridCoordinate> ring1HasPartnerBonus,
                                         Set<GridCoordinate> ring1HasLowMobilityPenalty,
-                                        Set<GridCoordinate> ring1HasCrowdingPenalty) {
+                                        Set<GridCoordinate> ring1HasCrowdingPenalty,
+                                        Random random) {
         double energyRatio = clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy());
         boolean isGroundWithoutTrail = false;
         int trailIntensity = 0;
@@ -264,6 +266,14 @@ public final class EtpetsAgentLogic {
                 trailIntensity,
                 coordinate.equals(pet.previousCoordinate()),
                 coordinate.equals(pet.previousPreviousCoordinate()));
+
+        // Rare exploration spike on fresh ground to help break local movement loops.
+        if (isGroundWithoutTrail
+                && (rawScore > EtpetsBalance.PET_MOVE_SCORE_BASE)
+                && (random.nextDouble() < EtpetsBalance.PET_MOVE_EXPLORATION_SPIKE_CHANCE)) {
+            rawScore *= EtpetsBalance.PET_MOVE_EXPLORATION_SPIKE_MULTIPLIER;
+        }
+
         int roundedScore = Math.toIntExact(Math.round(rawScore));
         return Math.clamp(roundedScore,
                 EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN,
