@@ -133,7 +133,7 @@ public final class EtpetsAgentLogic {
             snapshotCellsByCoordinate.putAll(ringCells);
         }
 
-        boolean canSelfReproduce = isReproductionEligible(pet, stepIndex);
+        boolean canSelfReproduce = pet.isReproductionEligibleByState(stepIndex);
 
         // Pass 1: Ring 2 → determine which ring-1 cells gain look-ahead score bonuses.
         Set<GridCoordinate> ring1HasResourceBonus = new HashSet<>();
@@ -325,21 +325,11 @@ public final class EtpetsAgentLogic {
                 EtpetsBalance.PET_EAT_SCORE_RANGE_MAX);
     }
 
-    /**
-     * Returns {@code true} if {@code partnerCell} contains a pet that is eligible
-     * to reproduce with {@code pet}: alive, reproduction-eligible, and not a direct relative.
-     * <p>
-     * Egg-placement availability is intentionally <em>not</em> checked here so that
-     * this method can be used as a lightweight look-ahead filter (ring-2 partner bonus)
-     * as well as a full ring-1 partner check (egg placement is verified separately).
-     */
     private static boolean isValidReproductionPartner(Pet pet, EtpetsCell partnerCell, int stepIndex) {
         if (!(partnerCell.agentEntity() instanceof Pet partnerPet)) {
             return false;
         }
-        return !partnerPet.isDead()
-                && isReproductionEligible(partnerPet, stepIndex)
-                && !areDirectRelatives(pet, partnerPet);
+        return canReproduce(pet, partnerPet, stepIndex);
     }
 
     private static ActionCandidate pickBestCandidate(Collection<ActionCandidate> candidates, Random random) {
@@ -496,18 +486,13 @@ public final class EtpetsAgentLogic {
         return Optional.empty();
     }
 
-    private static boolean isReproductionEligible(Pet pet, int stepIndex) {
-        return (pet.ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_FERTILITY_AGE_RANGE_MIN)
-                && pet.isReproductionEligibleByState();
-    }
-
     /**
      * Returns {@code true} if both pets can reproduce together:
      * - Both must be eligible to reproduce
      * - They must not be direct relatives</     */
     private static boolean canReproduce(Pet petA, Pet petB, int stepIndex) {
-        return isReproductionEligible(petA, stepIndex)
-                && isReproductionEligible(petB, stepIndex)
+        return petA.isReproductionEligibleByState(stepIndex)
+                && petB.isReproductionEligibleByState(stepIndex)
                 && !areDirectRelatives(petA, petB);
     }
 
