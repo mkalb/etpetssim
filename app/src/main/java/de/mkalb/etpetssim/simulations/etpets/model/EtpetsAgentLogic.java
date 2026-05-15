@@ -296,9 +296,20 @@ public final class EtpetsAgentLogic {
     private static int computeWaitScore(Pet pet,
                                         Random random,
                                         int stepIndex) {
-        // TODO Implement special WAIT score later. Use age and random for frailty.
-        // Normal value should be 0.
-        return 0;
+        if (!pet.hasReachedAgeingEffectsAge(stepIndex)) {
+            return 0;
+        }
+
+        int ageingSteps = pet.ageingStepsAtStepIndex(stepIndex);
+        double rawWaitChance = EtpetsBalance.PET_AGEING_WAIT_CHANCE_BASE
+                + (ageingSteps * EtpetsBalance.PET_AGEING_WAIT_CHANCE_INCREASE_PER_STEP);
+        double waitChance = Math.clamp(rawWaitChance, 0.0d, EtpetsBalance.PET_AGEING_WAIT_CHANCE_MAX);
+        if (random.nextDouble() >= waitChance) {
+            return 0;
+        }
+
+        int rawWaitScore = 1 + (ageingSteps / EtpetsBalance.PET_AGEING_WAIT_SCORE_INCREASE_STEP_SPAN);
+        return Math.clamp(rawWaitScore, 1, EtpetsBalance.PET_AGEING_WAIT_SCORE_MAX);
     }
 
     private static double computeAgeMortalityChance(Pet pet, int stepIndex) {
