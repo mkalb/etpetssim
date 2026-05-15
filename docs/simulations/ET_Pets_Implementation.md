@@ -333,7 +333,8 @@ Created via `EtpetsCell.of(coordinate, model)`, it includes helper methods:
 
 `EtpetsStepRunner` executes the asynchronous per-step pipeline and applies updates immediately in strict order:
 
-1. **Agent logic** (`EtpetsAgentLogic.apply`) - pet lifecycle, decision-making, reproduction, movement
+1. **Agent logic** (`EtpetsAgentLogic.apply`) - pet lifecycle, age-related mortality, age-aware wait scoring,
+   decision-making, reproduction, movement
 2. **Resource regeneration** (`EtpetsResourceLogic.apply`) - per-step regeneration for plant and insect
 3. **Terrain trail decay** (`EtpetsTerrainLogic.apply`) - decay trail intensity
 
@@ -353,7 +354,9 @@ Key constants include:
 - **Plant**: max amount range, regeneration base and variance, consumption and energy gain
 - **Insect**: max amount range, regeneration base and variance, consumption and energy gain
 - **Pet traits**: energy range, movement cost modifier range, reproduction thresholds, cooldown range
-- **Pet lifecycle**: step energy loss, fertility age minimum, birth energy factor
+- **Pet lifecycle**: step energy loss, fertility age minimum, birth energy factor, ageing-effect age threshold
+- **Ageing behavior**: age-related mortality chance (base, slope, cap), age-aware WAIT chance (base, slope, cap), WAIT
+  score growth and cap
 - **Pet decision scoring**: all weights, exponents, penalties, and thresholds for move/eat/reproduce scoring
 - **Genome and mutation**: mutation chance per trait, mutation delta
 
@@ -371,6 +374,7 @@ Scoring methods compute raw scores for:
   crowding penalties
 - **Eat score** - hunger weight, panic threshold, resource gain weight, overfill penalty, age decay
 - **Reproduce score** - genome quality average, quality floor, clamped range
+- **Wait score** - age-aware probabilistic activation and age-based growth with cap
 
 Scoring uses survival pressure and other derived quantities computed from pet energy state and trait values.
 

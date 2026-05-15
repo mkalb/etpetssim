@@ -193,6 +193,8 @@ This order MUST remain stable for deterministic behavior.
 
 - Pets lose passive energy each step.
 - A pet dies when energy drops below minimum threshold.
+- Starting at `PET_AGEING_EFFECTS_AGE_MIN`, pets MAY also die from age-related mortality.
+- Age-related mortality chance increases with age and is capped by a maximum probability.
 - Dead pet remains visible for exactly one step, then is removed.
 - Death events update cumulative dead count statistics.
 
@@ -286,6 +288,15 @@ Reproduce score combines:
 - weighted minimum quality floor,
 - clamped final score range.
 
+### 9.4 WAIT score
+
+Wait score behavior:
+
+- Before `PET_AGEING_EFFECTS_AGE_MIN`, `WAIT` score is always `0`.
+- At and after `PET_AGEING_EFFECTS_AGE_MIN`, a non-zero `WAIT` score is sampled probabilistically.
+- The chance of obtaining a non-zero `WAIT` score increases with age and is capped.
+- If triggered, the `WAIT` score starts at `1`, increases with age, and is capped by `PET_AGEING_WAIT_SCORE_MAX`.
+
 ## 10) Initialization Rules
 
 ### 10.1 Percent-based placement
@@ -371,6 +382,18 @@ These values are critical for stable V1 behavior.
 - multiplier: `3.0`
 - status: `[DRAFT]` (subject to future balancing)
 
+### 12.7 Ageing behavior
+
+- `ageingEffectsAgeMin = 4000`
+- mortality chance base: `0.0002`
+- mortality chance increase per ageing step: `0.00001`
+- mortality chance max: `0.08`
+- wait chance base: `0.002`
+- wait chance increase per ageing step: `0.00002`
+- wait chance max: `0.25`
+- wait score increase step span: `10`
+- wait score max: `50`
+
 ## 13) JavaFX / UI Notes (V1)
 
 UI-exposed config parameters:
@@ -442,7 +465,6 @@ A change is V1-safe only if all checks pass:
 
 ### P1 - low complexity
 
-- Implement age-aware `WAIT` scoring.
 - Add reproduction history tracking.
 - Add terrain compatibility per resource type.
 - Add per-trait mutation rates.
