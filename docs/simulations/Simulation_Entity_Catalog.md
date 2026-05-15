@@ -153,16 +153,16 @@ Notes:
 | `pet_egg`     | ET Pet Egg        | `etpets.entity.agent.petegg.long`    | -     | `#D8B6CC` [^etegg]    | `#4B3A66`    | -                   |
 
 [^ettrail]: Base color; rendered brighter with increasing trail intensity — 5 brightness levels, factor
-range [0.0, +0.50]. Rendered as a full terrain hexagon
-replacing ground.
+range [0.0, +0.50].
+Rendered as a full terrain hexagon replacing ground.
 [^etplant]: Base color; rendered brighter with increasing current resource amount — 6 brightness levels, factor
-range [0.0, +0.55]. Rendered as an inner circle on
-top of the terrain layer.
+range [0.0, +0.55]. Border uses the same RGB color with 50% alpha (`Color.web("#3A8020", 0.5d)`).
+Rendered as an inner circle on top of the terrain layer.
 [^etinsect]: Base color; rendered brighter with increasing current resource amount — 7 brightness levels, factor
-range [0.0, +0.40]. Rendered as an inner circle on top
-of the terrain layer.
+range [0.0, +0.40]. Border uses the same RGB color with 50% alpha (`Color.web("#B8A000", 0.5d)`).
+Rendered as an inner circle on top of the terrain layer.
 [^etpet]: Base color; rendered brighter with increasing energy — 5 brightness levels, factor range [0.0, +0.65].
-Dead pets are rendered at 30% brightness and 70% alpha with a background-colored border for one simulation step.
+Dead pets are rendered at 20% brightness with no border for one simulation step.
 Rendered as an inner circle on top of the terrain layer.
 [^etegg]: Base color; rendered brighter with increasing incubation remaining time — 5 brightness groups over 20
 incubation steps (remaining range [1, 20]), factor range [0.0, +0.30]. Rendered as an inner circle with dark purple

@@ -1,27 +1,23 @@
 ﻿# ET Pets - Implementation Guide
 
-> **Purpose:** This document defines the *how* of the ET Pets simulation -
-> package structure, class mapping, implementation order, and references to existing patterns.
+> **Purpose:** Document the current ET Pets V1 codebase structure, entity model, and key design patterns.
 > For simulation rules, entities, constraints, and balancing parameters, see `ET_Pets_Specification.md`.
 
-## 1. Document Scope and Working Mode
+## 1. Document Scope and Authority
 
-This guide is the implementation companion to `ET_Pets_Specification.md`.
+This guide documents the **actual V1 implementation**, not a planning template.
 
-- `ET_Pets_Specification.md` is authoritative for behavior and correctness.
-- This guide is authoritative for code structure and delivery sequence.
-- Normative simulation rules belong only to `ET_Pets_Specification.md` and are referenced here for implementation.
-- If both documents conflict, update this guide so that it matches the specification.
-- The naming conventions in the code must be followed. `CodingStyle.md` is a reference but not an absolute requirement;
-  the priority is consistency with existing simulations.
+- `ET_Pets_Specification.md` is authoritative for **behavior and runtime correctness**.
+- This guide is authoritative for **code structure, class mapping, and design patterns**.
+- Normative simulation rules belong only to `ET_Pets_Specification.md`; this guide references them.
+- If code and spec conflict, the specification is the source of truth; identify discrepancies for correction.
+- Naming conventions follow existing simulations (`wator`, `sugar`, `snake`) for consistency.
 
-### Important implementation policy for the first ET Pets delivery
+### V1 Delivery Status
 
-**No test classes are created in this phase.**
-
-- Intentionally do **not** add files under `app/src/test/...` for ET Pets yet.
-- Focus on production code structure, deterministic behavior, and integration wiring.
-- Test coverage is planned as a dedicated follow-up phase after V1 stabilization.
+- Production code is complete and integrated.
+- No test classes exist for ET Pets (intentional; testing is a future phase).
+- Code structure is aligned with this guide.
 
 ## 2. Architecture Baseline (Aligned with Existing Simulations)
 
@@ -40,50 +36,54 @@ The simulation is asynchronous and uses a **3-layer composite model**:
 2. resource layer
 3. agent layer
 
-## 3. Target Package Structure
+## 3. Actual Package Structure (V1)
 
-Create the following package tree under `app/src/main/java/de/mkalb/etpetssim/simulations/etpets`:
+The implemented package tree under `app/src/main/java/de/mkalb/etpetssim/simulations/etpets`:
 
 ```text
 simulations/etpets/
   EtpetsFactory.java
   package-info.java
   model/
+    EtpetsBalance.java                   <- balance constants and parameters
+    EtpetsCell.java                      <- record snapshot of all 3 layers at one coordinate
     EtpetsConfig.java
-    EtpetsGridModel.java
-    EtpetsSimulationManager.java
-    EtpetsStepRunner.java
-    EtpetsTerminationCondition.java
-    EtpetsStatistics.java
-    EtpetsAgentLogic.java
-    EtpetsResourceLogic.java
-    EtpetsTerrainLogic.java
+    EtpetsConfigBuilder.java
     EtpetsDeterminism.java
+    EtpetsGridModel.java
     EtpetsIdSequence.java
+    EtpetsResourceLogic.java
+    EtpetsScoreMath.java                 <- agent decision scoring math
+    EtpetsSimulationManager.java
+    EtpetsStatistics.java
+    EtpetsStepRunner.java
+    EtpetsTerrainLogic.java
+    EtpetsTerminationCondition.java
     package-info.java
     entity/
-      EtpetsEntity.java
-      EtpetsEntityDescribable.java
-      EtpetsTerrainEntity.java
-      EtpetsTerrainConstant.java         <- enum: GROUND, ROCK, WATER
-      EtpetsTerrainTrail.java            <- mutable class
-      EtpetsResourceEntity.java
-      EtpetsResourceNone.java            <- single-value enum: NONE
-      EtpetsResourcePlant.java
-      EtpetsResourceInsect.java
-      EtpetsAgentEntity.java
-      EtpetsAgentNone.java               <- single-value enum: NONE
-      EtpetsPet.java
-      EtpetsPetEgg.java
-      EtpetsPetGenome.java
-      EtpetsPetTraits.java
+      AgentEntity.java                   <- sealed interface for pet/egg
+      EtpetsEntity.java                  <- root sealed interface
+      EntityDescriptors.java             <- enum providing all descriptor specs
+      NoAgent.java                       <- single-value enum: NONE
+      NoResource.java                    <- single-value enum: NONE
+      Pet.java                           <- final class
+      PetEgg.java                        <- final class
+      PetGenome.java
+      PetTraits.java
+      Plant.java                         <- final class
+      ResourceBase.java                  <- abstract base for mutable resources
+      ResourceEntity.java                <- sealed interface for plant/insect
+      TerrainConstant.java               <- enum: GROUND, ROCK, WATER
+      TerrainEntity.java                 <- sealed interface for terrain types
+      Trail.java                         <- final class for mutable trail
+      Insect.java                        <- final class
       package-info.java
   viewmodel/
     EtpetsConfigViewModel.java
     package-info.java
   view/
-    EtpetsMainView.java
     EtpetsConfigView.java
+    EtpetsMainView.java
     EtpetsObservationView.java
     package-info.java
 ```
@@ -107,19 +107,22 @@ Packages that require this file:
 
 ## 5. Core Type Mapping (Specification -> Code)
 
-| Specification Concept                    | Code Artifact                                                                        |
-|------------------------------------------|--------------------------------------------------------------------------------------|
-| simulation type `etpets`                 | `SimulationType.ET_PETS` aliases, i18n keys, `SimulationFactory` switch case         |
-| fixed shape/edge constraints             | `EtpetsConfig` validation (`HEXAGON`, `EDGES_ONLY`, `BLOCK_XY`)                      |
-| layered model (terrain/resources/agents) | `EtpetsGridModel` as `CompositeGridModel<EtpetsEntity>` with 3 writable sub-models   |
-| terrain default ground                   | terrain `SparseGridModel` with default `EtpetsTerrainConstant.GROUND`                |
-| obstacles rock/water                     | constant terrain entities (`ConstantGridEntity`)                                     |
-| trail mutable intensity                  | `EtpetsTerrainTrail` mutable entity with bounded `double intensity`                  |
-| resources plant/insect                   | mutable resource entities with `currentAmount`, `maxAmount`, `regenRate`, act values |
-| pet lifecycle                            | `EtpetsPet`, `EtpetsPetEgg`, `EtpetsPetGenome`, `EtpetsPetTraits`                    |
-| async step sequence                      | `EtpetsStepRunner` invoked by `DefaultSimulationExecutor`                            |
-| deterministic seeded behavior            | `Random` seeded from config + deterministic tie-break ordering                       |
-| aggregated metrics                       | `EtpetsStatistics`                                                                   |
+| Specification Concept                    | Code Artifact                                                                    |
+|------------------------------------------|----------------------------------------------------------------------------------|
+| simulation type `etpets`                 | `SimulationType.ET_PETS` (implemented, aliases registered)                       |
+| fixed shape/edge constraints             | `EtpetsConfig` hardcoded to `HEXAGON`, `EDGES_ONLY`, `BLOCK_XY`                  |
+| layered model (terrain/resources/agents) | `EtpetsGridModel` as composite with 3 `WritableGridModel` sub-models             |
+| all balance parameters and constants     | `EtpetsBalance` - centralized final constants for all simulation values          |
+| terrain default ground                   | `TerrainConstant.GROUND` placed as default in terrain layer initialization       |
+| obstacles rock/water                     | `TerrainConstant.ROCK` and `TerrainConstant.WATER`                               |
+| trail mutable intensity                  | `Trail` entity with bounded `int intensity` field                                |
+| resources plant/insect                   | `Plant` and `Insect` extending `ResourceBase` with regeneration and consumption  |
+| pet lifecycle                            | `Pet`, `PetEgg`, `PetGenome`, `PetTraits`                                        |
+| async step sequence                      | `EtpetsStepRunner` invoked per step; order is strict: agent → resource → terrain |
+| deterministic seeded behavior            | `EtpetsDeterminism` utility; seeded `Random` from config; tie-break ordering     |
+| aggregated metrics                       | `EtpetsStatistics`; `EtpetsSimulationManager.updateStatistics()` after each step |
+| scoring model for decisions              | `EtpetsScoreMath` - centralized scoring math for move/eat/reproduce/wait         |
+| cell snapshot helper                     | `EtpetsCell` record - convenient 3-layer snapshot for a coordinate               |
 
 ## 6. Integration Points in Existing Application
 
@@ -158,394 +161,420 @@ Add ET Pets sections following existing naming pattern:
 - **do NOT add `simulation.etpets.url`**: ET Pets is not an officially documented simulation; the key must remain absent
   so `AppLocalization.getOptionalText()` returns `Optional.empty()`.
 
-## 7. Entity Model Design
+## 7. Entity Model Design (Actual V1)
 
-### 7.1 Root entity interface
+### 7.1 Root entity interface and descriptor IDs
 
-Create `EtpetsEntity` as sealed interface extending `GridEntity`, with descriptor IDs for all renderable classes.
+`EtpetsEntity` is the sealed root interface extending `GridEntity`, with static descriptor ID constants for all entity
+types:
 
-Fixed descriptor IDs (must match exactly across `EtpetsEntity`, `EtpetsEntityDescribable`, and all rendering/lookup
-code):
+- terrain: `DESCRIPTOR_ID_GROUND`, `DESCRIPTOR_ID_ROCK`, `DESCRIPTOR_ID_WATER`, `DESCRIPTOR_ID_TRAIL`
+- resources: `DESCRIPTOR_ID_NO_RESOURCE`, `DESCRIPTOR_ID_PLANT`, `DESCRIPTOR_ID_INSECT`
+- agents: `DESCRIPTOR_ID_NO_AGENT`, `DESCRIPTOR_ID_PET`, `DESCRIPTOR_ID_PET_EGG`
 
-- terrain: `terrain_ground`, `terrain_rock`, `terrain_water`, `terrain_trail`
-- resources: `resource_none`, `resource_plant`, `resource_insect`
-- agents: `agent_none`, `agent_pet`, `agent_pet_egg`
+All descriptor specs are centralized in the `EntityDescriptors` enum (which implements
+`SpecBackedGridEntityDescriptorProvider`), providing:
 
-Constant entity pattern:
+- localization keys
+- colors and optional border colors for rendering
+- visibility state
 
-- All `ConstantGridEntity` implementations MUST use the **enum pattern**, following `SnakeConstantEntity` as a
-  reference.
-- Terrain constants (Ground, Rock, Water) are grouped in one enum `EtpetsTerrainConstant`.
-- Each of the layer-default "None" entities (`EtpetsResourceNone`, `EtpetsAgentNone`) is a separate single-value enum.
-- Mutable entities (`EtpetsTerrainTrail`, `EtpetsResourcePlant`, `EtpetsResourceInsect`, `EtpetsPet`, `EtpetsPetEgg`)
-  are regular classes.
+### 7.2 Sealed interface hierarchy
 
-Sealed interface hierarchy:
+```
+EtpetsEntity (sealed)
+├── TerrainEntity (sealed)
+│   ├── TerrainConstant (enum: GROUND, ROCK, WATER)
+│   └── Trail (final class)
+├── ResourceEntity (sealed)
+│   ├── NoResource (single-value enum: NONE)
+│   ├── Plant (final class extends ResourceBase)
+│   └── Insect (final class extends ResourceBase)
+└── AgentEntity (sealed)
+    ├── NoAgent (single-value enum: NONE)
+    ├── Pet (final class)
+    └── PetEgg (final class)
+```
 
-- `EtpetsEntity` permits `EtpetsTerrainEntity`, `EtpetsResourceEntity`, `EtpetsAgentEntity`
-- `EtpetsTerrainEntity` permits `EtpetsTerrainConstant`, `EtpetsTerrainTrail`
-- `EtpetsResourceEntity` permits `EtpetsResourceNone`, `EtpetsResourcePlant`, `EtpetsResourceInsect`
-- `EtpetsAgentEntity` permits `EtpetsAgentNone`, `EtpetsPet`, `EtpetsPetEgg`
+### 7.3 Terrain entities
 
-### 7.2 Terrain entities
-
-- `EtpetsTerrainConstant` is a **single enum** implementing `EtpetsTerrainEntity`, `ConstantGridEntity`, with values:
+- `TerrainConstant` is a **single enum** implementing `TerrainEntity`, `ConstantGridEntity`, with values:
   `GROUND`, `ROCK`, `WATER`.
-- `EtpetsTerrainTrail` implements `EtpetsTerrainEntity` as a **mutable class** (not a record, not an enum).
+- `Trail` is a **final class** (not record, not enum) implementing `TerrainEntity`.
 
-`EtpetsTerrainTrail` state and behavior:
+`Trail` state and behavior:
 
-- `double intensity` - mutable internal field
-- Clamp range `[trailMin, trailMax]` enforced at mutation time
-- `void increase(double amount, double max)` - adds `amount` to `intensity` in-place, clamped to `max`
-- `void decay(double amount)` - subtracts `amount` from `intensity` in-place, floor at `0`
+- `int intensity` - mutable internal field
+- Clamp range `[TRAIL_INTENSITY_RANGE_MIN, TRAIL_INTENSITY_RANGE_MAX]` from `EtpetsBalance`
+- `void increase(int amount)` - adds `amount` to `intensity` in-place, clamped
+- `void decay(int amount)` - subtracts `amount` from `intensity` in-place, floor at `0`
 - `boolean isDepleted()` - returns `true` when `intensity <= 0`
 
-### 7.3 Resource entities
+### 7.4 Resource entities
 
-- `EtpetsResourceNone` is a **single-value enum** (`NONE`) implementing `EtpetsResourceEntity`, `ConstantGridEntity` -
-  used as the layer default.
-- `EtpetsResourcePlant` and `EtpetsResourceInsect` are **mutable classes**.
+- `NoResource` is a **single-value enum** (`NONE`) implementing `ResourceEntity`, `ConstantGridEntity` - used as layer
+  default.
+- `ResourceBase` is the **abstract mutable base class** for resource implementations.
+- `Plant` and `Insect` are **final classes** extending `ResourceBase`.
 
-Per-instance fields (both plant and insect):
+Per-instance fields (both plant and insect, inherited from `ResourceBase`):
 
-- `double currentAmount`
-- `double maxAmount`
+- `int currentAmount`
+- `int maxAmount`
 - `double regenerationPerStep`
 
-Per-type constants (baked into each class, not per-instance fields):
+Per-type constants (static finals in each class):
 
-- `int consumptionPerAct` - integer, per-type value; exact V1 values are defined in `ET_Pets_Specification.md`.
-- `int energyGainPerAct` - integer, per-type value; exact V1 values are defined in `ET_Pets_Specification.md`.
+- `CONSUMPTION_PER_ACT` - integer from `EtpetsBalance`
+- `ENERGY_GAIN_PER_ACT` - integer from `EtpetsBalance`
 
-### 7.4 Agent entities
+### 7.5 Agent entities
 
-- `EtpetsAgentNone` is a **single-value enum** (`NONE`) implementing `EtpetsAgentEntity`, `ConstantGridEntity` - used as
-  the layer default.
-- `EtpetsPet` is a **mutable class** representing a movable agent.
-- `EtpetsPetEgg` is a **mutable class** representing an immobile lifecycle entity.
+- `NoAgent` is a **single-value enum** (`NONE`) implementing `AgentEntity`, `ConstantGridEntity` - used as layer
+  default.
+- `Pet` is a **final class** representing a movable mobile agent.
+- `PetEgg` is a **final class** representing an immobile lifecycle entity.
 
-`EtpetsPet` minimum fields (V1):
+`Pet` fields:
 
 - `long petId`
-- `Long parentAId`, `Long parentBId`
+- `Long parentAId`, `Long parentBId` (nullable)
 - `int stepIndexOfBirth`
-- `int currentEnergy`
-- `int visionRange`
-- `double movementCostModifier`
-- `int reproductionCooldownRemaining`
-- `EtpetsPetTraits traits`
-- `boolean dead`
-- `int stepIndexOfDeath` (`-1` when alive)
+- `int currentEnergy` (mutable)
+- `int reproductionCooldownRemaining` (mutable)
+- `GridCoordinate previousCoordinate`, `GridCoordinate previousPreviousCoordinate` (nullable, mutable)
+- `boolean dead` (mutable)
+- `PetTraits traits` (immutable)
 
-`EtpetsPetEgg` minimum fields (V1):
+`PetEgg` fields:
 
 - `long eggId`
 - `long parentAId`, `long parentBId`
-- `EtpetsPetGenome petGenome`
+- `PetGenome petGenome`
 - `int stepIndexOfLaying`
-- `int incubationRemaining`
+- `int incubationRemaining` (mutable)
 
-`EtpetsPetTraits` / `EtpetsPetGenome` schema (V1 fixed):
+`PetTraits` schema (V1 fixed):
 
-- Implement exactly the V1 trait schema and bounds from `ET_Pets_Specification.md`.
-- Keep trait names and normalization inputs aligned with the specification to avoid scoring mismatches.
+- `int maxEnergy`
+- `double movementCostModifier`
+- `int reproductionMinEnergy`
+- `int reproductionCooldown`
 
-### 7.5 Numeric type policy (`int` vs `long` vs `double`)
+All trait bounds are defined in `EtpetsBalance` and must match `ET_Pets_Specification.md`.
 
-- Keep identifier fields (`petId`, `eggId`, `parentAId`, `parentBId`) as `long`/`Long`.
-  This matches existing long-based sequence IDs in other simulations and avoids future overflow when runs are
-  long-lived.
-- Keep discrete counters, step indices, and threshold values as `int`.
-  This includes fields such as `stepIndexOfBirth`, `stepIndexOfLaying`, `incubationRemaining`, and energy/cooldown
-  values.
-- Keep continuous rates and amounts as `double`.
-  This is required for V1 parameters with fractional values (`trailDecayPerStep = 0.02`, regeneration base
-  rates/variance, and `movementCostModifier` in `0.5..1.5`).
-- Do not switch continuous V1 values to `int` unless the balancing model is explicitly changed to fixed-point arithmetic
-  in both docs.
+### 7.6 Numeric types
 
-### 7.6 String representation policy (`toString` / `toDisplayString`)
+- Identifier fields (`petId`, `eggId`, `parentAId`, `parentBId`) are `long` / `Long`.
+- Counters, step indices, energy, and intensity values are `int`.
+- Regeneration rates and modifiers that require fractional precision are `double`.
 
-- For ET Pets classes that are analogous to classes in existing simulations (`wator`, `sugar`, `snake`), implement
-  `toString()` and `toDisplayString()` where those simulations already implement them.
-- The output style MUST follow the existing simulation patterns for readability and diagnostics (field selection,
-  ordering, and compact formatting), instead of introducing a new ET Pets-specific format.
-- If an analogous class in existing simulations intentionally does not implement one of these methods, ET Pets may omit
-  it as well for consistency.
+### 7.7 String representation (`toString` / `toDisplayString`)
 
-### 7.7 Entity template references from existing simulations
+Implementation follows existing simulation patterns:
 
-- `EtpetsPet`: use `WatorCreature`, `WatorShark`, `WatorFish`, `SnakeHead`, and `SugarAgent` as implementation templates
-  for field layout, method structure, helper methods, and concise comments, in addition to `toDisplayString()`/
-  `toString()`.
-- `EtpetsResourcePlant` and `EtpetsResourceInsect`: use `SugarResourceSugar` as the primary template for resource-state
-  fields, mutation/update methods, display/debug output, and related comment style.
-- Apply template matching by responsibility: lifecycle/identity concerns follow creature/agent patterns; mutable
-  amount/energy-like concerns follow resource patterns.
-- Keep ET Pets names and domain fields specific to ET Pets, but preserve the established structure and readability style
-  from the referenced classes.
+- Entities analogous to existing simulations (`wator`, `sugar`, `snake`) implement `toString()` and `toDisplayString()`
+  where those simulations do.
+- Output style is compact and diagnostic, following established patterns rather than ET Pets-specific formats.
 
-## 8. Grid Model and Layer Ownership
+### 7.8 Helper methods and patterns
 
-Implement `EtpetsGridModel` as a record similar to `SugarGridModel`, but with 3 sub-models:
+`Pet` and `PetEgg` follow method structure from `WatorCreature`, `SnakeHead`, `SugarAgent`:
 
-- `WritableGridModel<EtpetsTerrainEntity> terrainModel`
-- `WritableGridModel<EtpetsResourceEntity> resourceModel`
-- `WritableGridModel<EtpetsAgentEntity> agentModel`
+- getters for immutable and mutable state
+- helper methods for lifecycle checks (`canReproduceWith`, etc.)
+- mutation methods for internal state updates
 
-`getEntities(GridCoordinate coordinate)` must return all three layer entities in order:
-`List.of(terrainModel.getEntity(coordinate), resourceModel.getEntity(coordinate), agentModel.getEntity(coordinate))`
+`Plant` and `Insect` follow `ResourceBase` / `SugarResourceSugar` patterns:
 
-Rules:
+- regeneration update logic
+- consumption preconditions
+- immutable per-type constants alongside mutable per-instance state
 
-- all submodels must share the same `GridStructure`
-- terrain default is `EtpetsTerrainConstant.GROUND`
-- resource default is `EtpetsResourceNone.NONE`
-- agent default is `EtpetsAgentNone.NONE`
-- mutable terrain state (trail intensity) remains in terrain entity only
-- enforce all V1 layer-occupancy constraints exactly as defined in `ET_Pets_Specification.md`
+## 8. Grid Model and Layer Ownership (Actual V1)
+
+`EtpetsGridModel` is a record with three sub-models:
+
+- `WritableGridModel<TerrainEntity> terrainModel`
+- `WritableGridModel<ResourceEntity> resourceModel`
+- `WritableGridModel<AgentEntity> agentModel`
+
+### Layer defaults:
+
+- terrain default: `TerrainConstant.GROUND`
+- resource default: `NoResource.NONE`
+- agent default: `NoAgent.NONE`
+
+### Layer rules (enforced):
+
+- all sub-models share the same `GridStructure`
+- mutable terrain state (trail intensity) is stored in `Trail` entity only
+- per-coordinate collocation: a coordinate MUST NOT contain both a resource and an agent in V1
+- all V1 layer-occupancy constraints from `ET_Pets_Specification.md` are enforced at runtime
+
+### Helper: EtpetsCell
+
+The `EtpetsCell` record provides a convenient 3-layer snapshot:
+
+```java
+public record EtpetsCell(
+        GridCoordinate coordinate,
+        TerrainEntity terrainEntity,
+        ResourceEntity resourceEntity,
+        AgentEntity agentEntity) { ...
+}
+```
+
+Created via `EtpetsCell.of(coordinate, model)`, it includes helper methods:
+
+- `isWalkable()` returns `true` if terrain is walkable, resource is empty, and agent is empty
 
 ## 9. Step Execution Order (Mandatory)
 
-`EtpetsStepRunner` executes the asynchronous per-step pipeline and applies updates immediately.
+`EtpetsStepRunner` executes the asynchronous per-step pipeline and applies updates immediately in strict order:
 
-Implementation sequence in code should mirror the specification:
+1. **Agent logic** (`EtpetsAgentLogic.apply`) - pet lifecycle, decision-making, reproduction, movement
+2. **Resource regeneration** (`EtpetsResourceLogic.apply`) - per-step regeneration for plant and insect
+3. **Terrain trail decay** (`EtpetsTerrainLogic.apply`) - decay trail intensity
 
-1. agent lifecycle/action pass (`EtpetsPet`, `EtpetsPetEgg`)
-2. resource regeneration pass
-3. terrain trail-decay pass
+Statistics are updated by `EtpetsSimulationManager.updateStatistics()` **after** the step runner completes, following
+the `AbstractTimedSimulationManager` pattern.
 
-All rule details for action priority, occupancy constraints, consumption constraints, hatch/death timing, and final
-operation order are authoritative in `ET_Pets_Specification.md` and must be implemented unchanged.
+All rule details - action priority, occupancy constraints, consumption constraints, hatch/death timing, and operation
+order - are authoritative in `ET_Pets_Specification.md`.
 
-Statistics are updated by `EtpetsSimulationManager.updateStatistics()` after the step runner completes - not inside the
-runner itself - following the existing `AbstractTimedSimulationManager` pattern.
+## 10. Balance Constants (`EtpetsBalance`)
 
-No separate collision-resolution phase is introduced in V1.
+All numerical parameters, thresholds, and ranges are centralized in the static final class `EtpetsBalance`.
 
-## 10. Determinism Strategy
+Key constants include:
 
-Create `EtpetsDeterminism` utility methods to keep all tie-breaks centralized.
+- **Trail**: intensity bounds, increase-per-entry, decay-per-step
+- **Plant**: max amount range, regeneration base and variance, consumption and energy gain
+- **Insect**: max amount range, regeneration base and variance, consumption and energy gain
+- **Pet traits**: energy range, movement cost modifier range, reproduction thresholds, cooldown range
+- **Pet lifecycle**: step energy loss, fertility age minimum, birth energy factor
+- **Pet decision scoring**: all weights, exponents, penalties, and thresholds for move/eat/reproduce scoring
+- **Genome and mutation**: mutation chance per trait, mutation delta
 
-Required deterministic order before random fallback:
+Changes to balance constants MUST be synchronized with updates to `ET_Pets_Specification.md` to maintain specification
+alignment.
 
-- primary rule-specific scoring
-- energy
-- id
-- coordinate (`x asc`, `y asc`)
-- only then seeded random
+## 11. Decision Scoring (`EtpetsScoreMath`)
 
-Additional rules:
+The utility class `EtpetsScoreMath` encapsulates all agent decision-making math, supporting the unified action-scoring
+model described in the specification.
 
-- all stochastic operations use one seeded `Random` from `EtpetsConfig.seed`
-- initialization order is deterministic
-- selection collections should be sorted before optional random fallback
+Scoring methods compute raw scores for:
 
-All concrete V1 tie-break and `genomeQualityScore` rules are defined in `ET_Pets_Specification.md`; `EtpetsDeterminism`
-encapsulates their implementation without redefining them here.
+- **Move score** - resource bonuses, trail bonuses, exploration bonuses, oscillation penalties, low-mobility penalties,
+  crowding penalties
+- **Eat score** - hunger weight, panic threshold, resource gain weight, overfill penalty, age decay
+- **Reproduce score** - genome quality average, quality floor, clamped range
 
-## 11. Configuration and Validation
+Scoring uses survival pressure and other derived quantities computed from pet energy state and trait values.
+
+The specification defines all scoring weights and exponents (in the **V1 Parameter Baseline** section);
+`EtpetsScoreMath` implements these formulas without redefining them.
+
+## 12. Determinism Strategy (`EtpetsDeterminism`)
+
+The utility class `EtpetsDeterminism` centralizes all tie-break logic to ensure deterministic, reproducible behavior
+under fixed seed.
+
+Key rules:
+
+- All stochastic operations use one seeded `Random` from `EtpetsConfig.seed`
+- Tie-breaking order (when multiple candidates score equally):
+    1. Primary rule-specific scoring
+    2. Energy level
+    3. Pet ID
+    4. Coordinate (x ascending, then y ascending)
+    5. Only as last resort: seeded random
+
+Additional practices:
+
+- Initialization order is always deterministic (shuffled collections use seeded random)
+- Selection collections are sorted by deterministic criteria before optional random fallback
+- No uncontrolled external random state leaks into simulation
+
+## 13. Configuration and Validation (`EtpetsConfig`)
 
 `EtpetsConfig` (record implementing `SimulationConfig`) includes:
 
-- common base config values from core
-- terrain percentages (`rockPercent`, `waterPercent`)
-- initial pet count (`petCount`, integer, range `0..20`)
-- resource percentages (`plantPercent`, `insectPercent`) and per-type rates
-- pet energy/reproduction/trail/mutation parameters
-- trail preference threshold (`trailPreferenceThreshold`) used by `Explore/Trail`
-- incubation settings
-- `NeighborhoodMode` - hardcoded constant `EDGES_ONLY`; not a user-configurable field
+- **Grid**: width, height, cell edge length
+- **Seed**: random seed for reproducibility
+- **Terrain**: rock percentage, water percentage
+- **Resources**: plant percentage, insect percentage
+- **Pets**: initial pet count (range 0–20)
+- **Pet traits and energy**: energy range, movement cost range, reproduction thresholds, cooldown range, birth energy
+  factor
+- **Regeneration and consumption**: plant and insect per-step rates, consumption and energy gain
+- **Trail and movement**: trail intensity bounds, increase and decay, trail preference threshold for decision-making
+- **Mutation**: mutation chance and delta per trait
+- **Incubation**: egg incubation duration
 
-Validation rules (fail fast):
+### Fixed constraints (not configurable in V1):
 
-- Implement all V1 fail-fast validation rules from `ET_Pets_Specification.md` in `EtpetsConfig` and initialization code.
-- Keep validation messages explicit and actionable (invalid range, invalid topology, incompatible parameter
-  combinations).
-- Ensure resource percentage validation and deterministic percent-to-count derivation are implemented exactly as
-  specified.
+- Shape: `HEXAGON`
+- Neighborhood: `EDGES_ONLY`
+- Edge behavior: `BLOCK_XY`
 
-Terrain perception (for example LOS behavior) must be implemented exactly according to
-`ET_Pets_Specification.md`.
+### Validation (fail-fast):
 
-## 12. ViewModel and UI Plan
+Fail-fast validation in `EtpetsConfig` and initialization code enforces:
 
-### 12.1 Config ViewModel
+- Terrain percentages: `rockPercent + waterPercent <= 50`
+- Resource percentages: `plantPercent + insectPercent <= 100`
+- Pet count in range `[0, 20]`
+- All trait bounds respected (ranges from `EtpetsBalance`)
+- Deterministic percent-to-count derivation using floor integer math
+
+`EtpetsConfigBuilder` provides fluent configuration with sensible defaults.
+
+## 14. ViewModel and UI
+
+## 14. ViewModel and UI
+
+### 14.1 Config ViewModel
 
 `EtpetsConfigViewModel` extends `AbstractConfigViewModel<EtpetsConfig>`.
 
-Common config settings:
+Configuration options exposed in UI:
 
-- fixed shape list containing only `HEXAGON`
-- fixed edge behavior list containing only `BLOCK_XY`
-- cell display mode initially `SHAPE` (adjust later if required)
+- **Grid structure**: fixed shape `HEXAGON`, fixed edge behavior `BLOCK_XY`
+- **Size**: width and height (range 20–200)
+- **Terrain**: rock percentage, water percentage
+- **Resources**: plant percentage, insect percentage
+- **Pets**: initial count (range 0–20)
+- **Pet traits**: energy range, movement cost modifier range, reproduction energy threshold, reproduction cooldown
+- **Regeneration**: plant and insect per-step base rate and variance
+- **Trail**: intensity bounds, preference threshold
+- **Mutation**: chance and delta per trait
+- **Incubation**: egg incubation duration
+- **Seed**: for reproducible runs
 
-Expose ET Pets-specific properties for:
+### 14.2 Config View
 
-- `petCount` - `InputIntegerProperty`, initial `5`, min `0`, max `20`, step `1`
-- `plantPercent` - `InputIntegerProperty`, min `0`, max `100`, step `1`
-- `insectPercent` - `InputIntegerProperty`, min `0`, max `100`, step `1`
-- terrain percentages
-- resource parameters
-- energy thresholds
-- reproduction thresholds/cooldown
-- trail settings
-- mutation settings
-- incubation duration
+`EtpetsConfigView` follows patterns from existing simulations (`SugarConfigView`, `SnakeConfigView`):
 
-### 12.2 Config View
+- Grouped sections: structure, initialization, resources, pet lifecycle, mutation, trail
+- All labels and tooltips via i18n keys (e.g., `etpets.config.*`)
+- No hardcoded text
 
-`EtpetsConfigView` follows patterns from `SugarConfigView`/`SnakeConfigView`:
+### 14.3 Main View
 
-- grouped sections: structure, initialization, rules
-- localized labels/tooltips only via i18n keys
-- no hidden hardcoded text
+`EtpetsMainView` extends `AbstractDefaultMainView` and renders layers in order:
 
-### 12.3 Main View
+1. Terrain layer (ground, rock, water, trail with intensity-based brightness)
+2. Resource layer (plant, insect)
+3. Agent layer (egg, pet)
 
-`EtpetsMainView` extends `AbstractDefaultMainView` and renders by layer priority:
+Trail rendering maps intensity to brightness variants of the trail base color.
 
-1. terrain background (ground/rock/water/trail)
-2. resources (plant/insect)
-3. agents (egg/pet)
+### 14.4 Observation View
 
-Trail rendering:
+`EtpetsObservationView` displays minimum statistics:
 
-- map intensity to brightness variants of trail base color
-- intensity must be clamped before color lookup
+- Step count
+- Active pet count
+- Egg count
+- Cumulative dead pet count
+- Optional: selected-cell detail panel with entity info and runtime values
 
-### 12.4 Observation View
+## 15. Statistics and Logging (`EtpetsStatistics`)
 
-`EtpetsObservationView` minimum labels:
+`EtpetsStatistics` extends the timed statistics pattern used in other simulations.
 
-- step
-- active pets
-- eggs
-- cumulative dead pets
-- optional selected-cell detail (entity + key runtime values)
+Must track at minimum:
 
-## 13. Statistics and Logging
+- Total cells
+- Step count
+- Active pet count
+- Egg count
+- Cumulative dead pets
 
-`EtpetsStatistics` extends timed statistics style used in other simulations.
+Updated after each step completes (in `EtpetsSimulationManager.updateStatistics()`), not during step execution.
 
-Must include at least:
+Updated after each step completes (in `EtpetsSimulationManager.updateStatistics()`), not during step execution.
 
-- total cells
-- step count
-- active pet count
-- egg count
-- cumulative dead pets
+## 16. Integration Points
 
-Logging guideline:
+### 16.1 `SimulationType`
 
-- keep structured and sparse at info level
-- use debug-level details for per-agent decisions where available
-- avoid noisy per-cell logs by default
+`SimulationType.ET_PETS` is registered with:
 
-## 14. Incremental Delivery Plan (Small PRs)
+- CLI alias: `etpets`
+- Localization keys:
+    - `simulation.etpets.title`
+    - `simulation.etpets.subtitle`
+    - `simulation.etpets.url` (no value in V1; ET Pets has no official external documentation)
 
-### PR-01: Skeleton and wiring prep
+The enum constant marks `ET_PETS` as implemented for discovery and UI registration.
 
-- create all ET Pets packages + `package-info.java`
-- add placeholder classes/interfaces with compile-safe stubs
-- no behavior yet
+### 16.2 `SimulationFactory`
 
-### PR-02: Type registration and descriptors
+Switch case in `SimulationFactory.createMainView()`:
 
-- implement `EtpetsEntity` hierarchy
-- implement `EtpetsEntityDescribable`
-- register descriptor registry in `EtpetsFactory`
+```java
+case ET_PETS ->EtpetsFactory.
 
-### PR-03: Config + ViewModel + ConfigView baseline
+createMainView();
+```
 
-- implement `EtpetsConfig`
-- implement `EtpetsConfigViewModel`
-- implement basic `EtpetsConfigView`
+### 16.3 Internationalization (i18n)
 
-### PR-04: Grid model + simulation manager scaffold
+`messages_en_US.properties` must include ET Pets sections:
 
-- implement `EtpetsGridModel` with 3 layers
-- implement `EtpetsSimulationManager` constructor, initialization hooks
-- integrate seeded random
+- `etpets.config.*` - configuration labels and tooltips
+- `etpets.entity.*` - entity short/long/description names
+- `etpets.observation.*` - observation view labels
+- Optional emoji keys only if rendering actually uses them
 
-### PR-05: Terrain initialization
+## 17. Definition of Done (V1 Implementation)
 
-- deterministic obstacle placement
-- fail-fast validation for percentages
-- default ground and initial trail handling
+V1 implementation is complete when:
 
-### PR-06: Resource initialization/regeneration
+✓ ET Pets launches from start screen with CLI alias `etpets`
+✓ Simulation runs asynchronously and reproducibly under fixed seed
+✓ All V1 constraints from specification are implemented exactly
+✓ Three-layer ownership rules are strictly enforced
+✓ Deterministic tie-break policy is operationalized via `EtpetsDeterminism`
+✓ Statistics contract is satisfied
+✓ All balance values are centralized in `EtpetsBalance` with specification alignment
+✓ Scoring model is implemented via `EtpetsScoreMath`
+✓ Package structure matches this guide
+✓ All ET Pets packages include `package-info.java`
+✓ **No test classes were added (intentional; testing is a future phase)**
 
-- place `Plant` and `Insect` on valid terrain only
-- implement per-cell regen variance
-- implement consumption preconditions and update functions
+## 18. Key Design Decisions
 
-### PR-07: Pet and egg lifecycle core
+- **Centralized balance parameters**: All numerical values live in `EtpetsBalance`, making them easy to adjust and
+  verify against the specification.
+- **Scoring math isolation**: `EtpetsScoreMath` encapsulates decision-making formulas, separating concerns from agent
+  logic.
+- **Cell snapshots**: `EtpetsCell` record provides convenient way to work with 3-layer state within logical unit.
+- **Enum-based constants**: Terrain and "No" entities use enum pattern for type safety and immutability.
+- **Descriptor centralization**: `EntityDescriptors` enum standardizes descriptor specs, colors, and i18n keys in one
+  place.
 
-- spawn initial pets
-- egg incubation and hatching
-- death marking/removal with one-step dead visualization
+## 19. Maintenance and Future Changes
 
-### PR-08: Pet decision logic
+When modifying ET Pets code:
 
-- implement fixed priority chain
-- implement `Explore/Trail` threshold gating (`trailIntensity > trailPreferenceThreshold`) before preferring `Trail`
-  over `Ground`
-- deterministic tie-breakers
-- random fallback only at final tie
+1. **Change balance parameters?** Update `EtpetsBalance` AND `ET_Pets_Specification.md` in the same change.
+2. **Change scoring math?** Update `EtpetsScoreMath` and reference the specification section for the formula basis.
+3. **Add a new entity type?** Add to `EtpetsEntity`, create sealed subtypes if needed, and update `EntityDescriptors`.
+4. **Change step order?** Update both `EtpetsStepRunner` AND `ET_Pets_Specification.md` section 6.
+5. **Change entity state?** Verify no assumptions in `EtpetsCell`, scoring math, or statistics are broken.
 
-### PR-09: Trail dynamics
+## 20. Out-of-Scope for V1
 
-- reinforce trail on movement
-- global decay at end of step
-- revert to ground at zero intensity
-
-### PR-10: Statistics and observation UI
-
-- wire `EtpetsStatistics`
-- implement `EtpetsObservationView`
-- selected-cell details in observation panel
-
-### PR-11: Main rendering polish
-
-- terrain/resource/agent drawing pass
-- trail intensity color scaling
-- dead-pet visualization window
-
-### PR-12: App integration switch-on
-
-- wire `SimulationFactory` case
-- complete i18n keys
-- mark `SimulationType.ET_PETS` as implemented
-
-## 15. Definition of Done (V1 Implementation)
-
-Implementation is considered done when all points are true:
-
-- ET Pets launches from start screen and CLI alias `etpets`
-- simulation runs asynchronously and reproducibly with identical seed
-- all fixed V1 constraints from specification are implemented
-- three-layer ownership rules are respected
-- deterministic tie-break policy is implemented
-- statistics show required aggregated counters
-- package structure and naming are consistent with project conventions
-- all ET Pets packages include `package-info.java`
-- **no ET Pets test classes were added in this phase (intentional)**
-
-## 16. Explicit Out-of-Scope for This Guide Revision
-
-- writing ET Pets unit/integration/UI tests
-- V2 features (extra species, additional resources, advanced genetics, obstacle clustering)
-- performance micro-optimizations before functional baseline is complete
-
-## 17. Open Questions (V1)
-
-There are currently no unresolved V1 questions.
-
-All V1 rule decisions are documented exclusively in `ET_Pets_Specification.md`.
+- Unit, integration, and UI testing (planned follow-up phase)
+- V2 features (multiple species, advanced genetics, ecosystem balancing)
+- Performance micro-optimizations
+- Custom replay or time-travel mechanics
 
 ---
 
-*This implementation guide is a living plan. Update it after each delivered PR so it remains an accurate map of the
-current ET Pets codebase.*
+*This guide documents the finalized V1 implementation. Update it whenever the codebase significantly changes.*
