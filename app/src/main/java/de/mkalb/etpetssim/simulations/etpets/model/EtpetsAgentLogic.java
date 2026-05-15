@@ -66,7 +66,7 @@ public final class EtpetsAgentLogic {
 
                 // Passive energy loss and reproduction cooldown decrement.
                 pet.changeEnergy(-EtpetsBalance.PET_STEP_ENERGY_LOSS);
-                pet.decrementReproductionCooldownRemaining();
+                pet.tickReproductionCooldown();
 
                 // Death from energy depletion.
                 if (pet.currentEnergy() < EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MIN) {

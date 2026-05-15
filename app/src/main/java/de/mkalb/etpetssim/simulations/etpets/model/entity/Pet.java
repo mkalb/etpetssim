@@ -110,8 +110,11 @@ public final class Pet implements AgentEntity {
         previousCoordinate = fromCoordinate;
     }
 
-    public void decrementReproductionCooldownRemaining() {
-        reproductionCooldownRemaining--;  // Can be lower than MIN, but that is handled in isReproductionEligibleByState()
+    public void tickReproductionCooldown() {
+        reproductionCooldownRemaining = Math.max(
+                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN,
+                reproductionCooldownRemaining - 1
+        );
     }
 
     public boolean isReproductionEligibleByState(int stepIndex) {
