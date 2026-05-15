@@ -86,6 +86,14 @@ public final class Pet implements AgentEntity {
         return ageAtStepIndex(stepCount - 1);
     }
 
+    public boolean hasReachedAgeingEffectsAge(int stepIndex) {
+        return ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_AGEING_EFFECTS_AGE_MIN;
+    }
+
+    public int ageingStepsAtStepIndex(int stepIndex) {
+        return Math.max(0, ageAtStepIndex(stepIndex) - EtpetsBalance.PET_AGEING_EFFECTS_AGE_MIN);
+    }
+
     public void changeEnergy(int delta) {
         currentEnergy += delta;
         if (currentEnergy > traits.maxEnergy()) {

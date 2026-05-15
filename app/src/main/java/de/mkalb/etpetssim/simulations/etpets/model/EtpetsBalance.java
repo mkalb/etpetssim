@@ -60,6 +60,10 @@ public final class EtpetsBalance {
     // Pet lifecycle (EtpetsAgentLogic)
     public static final int PET_STEP_ENERGY_LOSS = 1;
     public static final int PET_FERTILITY_AGE_RANGE_MIN = 400;
+    public static final int PET_AGEING_EFFECTS_AGE_MIN = 4_000;
+    public static final double PET_AGEING_MORTALITY_CHANCE_BASE = 0.0002d;
+    public static final double PET_AGEING_MORTALITY_CHANCE_INCREASE_PER_STEP = 0.00001d;
+    public static final double PET_AGEING_MORTALITY_CHANCE_MAX = 0.08d;
 
     // Pet move score model
     public static final int PET_MOVE_SCORE_RANGE_MIN = 1;

@@ -79,6 +79,19 @@ public final class EtpetsAgentLogic {
                     continue; // Stays on grid for exactly 1 visual step.
                 }
 
+                // Death from age-related mortality.
+                double ageMortalityChance = computeAgeMortalityChance(pet, stepIndex);
+                if ((ageMortalityChance > 0.0d) && (random.nextDouble() < ageMortalityChance)) {
+                    pet.die();
+                    cumulativeDeadPetCountChange++;
+                    activePetCountChange--;
+                    AppLogger.infof("Pet %s died at %s from age-related mortality (chance=%.6f).",
+                            pet.toDisplayString(),
+                            currentCoordinate.toDisplayString(),
+                            ageMortalityChance);
+                    continue; // Stays on grid for exactly 1 visual step.
+                }
+
                 List<ActionCandidate> actionCandidates = collectActionCandidates(
                         currentCoordinate,
                         pet,
@@ -286,6 +299,17 @@ public final class EtpetsAgentLogic {
         // TODO Implement special WAIT score later. Use age and random for frailty.
         // Normal value should be 0.
         return 0;
+    }
+
+    private static double computeAgeMortalityChance(Pet pet, int stepIndex) {
+        if (!pet.hasReachedAgeingEffectsAge(stepIndex)) {
+            return 0.0d;
+        }
+
+        int ageingSteps = pet.ageingStepsAtStepIndex(stepIndex);
+        double rawChance = EtpetsBalance.PET_AGEING_MORTALITY_CHANCE_BASE
+                + (ageingSteps * EtpetsBalance.PET_AGEING_MORTALITY_CHANCE_INCREASE_PER_STEP);
+        return Math.clamp(rawChance, 0.0d, EtpetsBalance.PET_AGEING_MORTALITY_CHANCE_MAX);
     }
 
     private static int computeReproduceScore(Pet pet,
