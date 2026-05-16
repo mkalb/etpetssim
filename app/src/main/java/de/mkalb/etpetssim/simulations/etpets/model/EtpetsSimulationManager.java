@@ -147,9 +147,17 @@ public final class EtpetsSimulationManager
         }
 
         int maxEnergyRange = (EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX - EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN) + 1;
+        int initialAgeRange = (EtpetsBalance.PET_INITIAL_AGE_RANGE_MAX - EtpetsBalance.PET_INITIAL_AGE_RANGE_MIN) + 1;
+        int initialEnergyReductionDelta = Math.max(0, EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA);
 
         for (int i = 0; i < config().petCount(); i++) {
             int maxEnergy = EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN + random.nextInt(maxEnergyRange);
+            int initialAge = EtpetsBalance.PET_INITIAL_AGE_RANGE_MIN + random.nextInt(initialAgeRange);
+            int stepIndexOfBirth = -1 - initialAge;
+
+            int maxReductionByEnergy = Math.max(0, maxEnergy - EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MIN);
+            int appliedEnergyReduction = random.nextInt(Math.min(initialEnergyReductionDelta, maxReductionByEnergy) + 1);
+            int currentEnergy = maxEnergy - appliedEnergyReduction;
 
             PetTraits trait = new PetTraits(
                     maxEnergy,
@@ -162,8 +170,8 @@ public final class EtpetsSimulationManager
                     idSequence.next(),
                     null, // Initial pets have no parents
                     null,// Initial pets have no parents
-                    -1,
-                    maxEnergy, // Use maxEnergy as initial energy (currentEnergy) for better starting conditions
+                    stepIndexOfBirth,
+                    currentEnergy,
                     EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN, // No cooldown at start
                     trait
             ));
@@ -216,4 +224,3 @@ public final class EtpetsSimulationManager
     }
 
 }
-

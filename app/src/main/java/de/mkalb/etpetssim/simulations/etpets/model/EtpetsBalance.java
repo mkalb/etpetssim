@@ -56,6 +56,9 @@ public final class EtpetsBalance {
     public static final int PET_CURRENT_ENERGY_RANGE_MAX = PET_TRAITS_MAX_ENERGY_RANGE_MAX;
     public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.2d;
     public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN = 0;
+    public static final int PET_INITIAL_AGE_RANGE_MIN = 0;
+    public static final int PET_INITIAL_AGE_RANGE_MAX = 100;
+    public static final int PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA = 10;
 
     // Pet lifecycle (EtpetsAgentLogic)
     public static final int PET_STEP_ENERGY_LOSS = 1;
