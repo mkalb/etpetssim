@@ -384,15 +384,22 @@ These values are critical for stable V1 behavior.
 
 ### 12.7 Ageing behavior
 
+Pets exhibit age-related effects (mortality and behavioral changes) starting at `PET_AGEING_EFFECTS_AGE_MIN`.
+
+**Age-related mortality:**
+
 - `ageingEffectsAgeMin = 4000`
-- mortality chance base: `0.0002`
-- mortality chance increase per ageing step: `0.00001`
-- mortality chance max: `0.08`
-- wait chance base: `0.002`
-- wait chance increase per ageing step: `0.00002`
-- wait chance max: `0.25`
-- wait score increase step span: `10`
-- wait score max: `50`
+- mortality chance base: `0.0d` (no mortality below age min)
+- mortality chance increase per ageing step: `0.000001d`
+- mortality chance max: `0.005d` (0.5% cap per step)
+
+**Age-aware WAIT scoring:**
+
+- wait chance base: `0.015d` (1.5% baseline at age min)
+- wait chance increase per ageing step: `0.00005d`
+- wait chance max: `0.40d` (40% cap per step)
+- wait score increase step span: `50` (score grows by 1 every 50 ageing steps)
+- wait score max: `60` (capped at 60 when triggered)
 
 ## 13) JavaFX / UI Notes (V1)
 

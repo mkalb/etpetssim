@@ -333,10 +333,19 @@ Created via `EtpetsCell.of(coordinate, model)`, it includes helper methods:
 
 `EtpetsStepRunner` executes the asynchronous per-step pipeline and applies updates immediately in strict order:
 
-1. **Agent logic** (`EtpetsAgentLogic.apply`) - pet lifecycle, age-related mortality, age-aware wait scoring,
-   decision-making, reproduction, movement
+1. **Agent logic** (`EtpetsAgentLogic.apply`) - pet lifecycle, energy loss, death checks (energy and age-related
+   mortality),
+   decision-making with age-aware WAIT scoring, reproduction, and movement
 2. **Resource regeneration** (`EtpetsResourceLogic.apply`) - per-step regeneration for plant and insect
 3. **Terrain trail decay** (`EtpetsTerrainLogic.apply`) - decay trail intensity
+
+**Key methods in `EtpetsAgentLogic`:**
+
+- `computeAgeMortalityChance(Pet, int stepIndex)` - calculates age-related mortality probability; returns 0 before
+  `PET_AGEING_EFFECTS_AGE_MIN`, otherwise linearly increasing chance capped at max
+- `computeWaitScore(Pet, Random, int stepIndex)` - returns 0 before `PET_AGEING_EFFECTS_AGE_MIN`, otherwise
+  probabilistically
+  returns a wait score (1 to max, growing with age)
 
 Statistics are updated by `EtpetsSimulationManager.updateStatistics()` **after** the step runner completes, following
 the `AbstractTimedSimulationManager` pattern.
@@ -354,11 +363,20 @@ Key constants include:
 - **Plant**: max amount range, regeneration base and variance, consumption and energy gain
 - **Insect**: max amount range, regeneration base and variance, consumption and energy gain
 - **Pet traits**: energy range, movement cost modifier range, reproduction thresholds, cooldown range
-- **Pet lifecycle**: step energy loss, fertility age minimum, birth energy factor, ageing-effect age threshold
-- **Ageing behavior**: age-related mortality chance (base, slope, cap), age-aware WAIT chance (base, slope, cap), WAIT
-  score growth and cap
-- **Pet decision scoring**: all weights, exponents, penalties, and thresholds for move/eat/reproduce scoring
+- **Pet lifecycle**: step energy loss, fertility age minimum, birth energy factor
+- **Ageing behavior** (`PET_AGEING_*`):
+    - `PET_AGEING_EFFECTS_AGE_MIN = 4_000` - age threshold for all ageing effects
+    - **Mortality**: `PET_AGEING_MORTALITY_CHANCE_BASE`, `PET_AGEING_MORTALITY_CHANCE_INCREASE_PER_STEP`,
+      `PET_AGEING_MORTALITY_CHANCE_MAX`
+    - **WAIT behavior**: `PET_AGEING_WAIT_CHANCE_BASE`, `PET_AGEING_WAIT_CHANCE_INCREASE_PER_STEP`,
+      `PET_AGEING_WAIT_CHANCE_MAX`, `PET_AGEING_WAIT_SCORE_INCREASE_STEP_SPAN`, `PET_AGEING_WAIT_SCORE_MAX`
+- **Pet decision scoring**: all weights, exponents, penalties, and thresholds for move/eat/reproduce/wait scoring
 - **Genome and mutation**: mutation chance per trait, mutation delta
+
+**Helper methods in `Pet`:**
+
+- `hasReachedAgeingEffectsAge(int stepIndex)` - returns `true` if `age >= PET_AGEING_EFFECTS_AGE_MIN`
+- `ageingStepsAtStepIndex(int stepIndex)` - returns `age - PET_AGEING_EFFECTS_AGE_MIN` (clamped at 0)
 
 Changes to balance constants MUST be synchronized with updates to `ET_Pets_Specification.md` to maintain specification
 alignment.
@@ -374,7 +392,8 @@ Scoring methods compute raw scores for:
   crowding penalties
 - **Eat score** - hunger weight, panic threshold, resource gain weight, overfill penalty, age decay
 - **Reproduce score** - genome quality average, quality floor, clamped range
-- **Wait score** - age-aware probabilistic activation and age-based growth with cap
+- **Wait score** - age-aware probabilistic activation (at and after `PET_AGEING_EFFECTS_AGE_MIN`) and age-based score
+  growth with cap
 
 Scoring uses survival pressure and other derived quantities computed from pet energy state and trait values.
 
