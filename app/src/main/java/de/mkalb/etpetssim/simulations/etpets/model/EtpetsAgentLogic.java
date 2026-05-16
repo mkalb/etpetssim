@@ -207,7 +207,7 @@ public final class EtpetsAgentLogic {
                         ring1HasLowMobilityPenalty,
                         ring1HasCrowdingPenalty,
                         random);
-                candidates.add(new ActionCandidate(ActionType.MOVE, moveScore,
+                candidates.add(new ActionCandidate(PetActionType.MOVE, moveScore,
                         coordinate, coordinate, null));
             }
         }
@@ -216,7 +216,7 @@ public final class EtpetsAgentLogic {
 
         // WAIT (always available as fallback)
         int waitScore = computeWaitScore(pet, random, stepIndex);
-        candidates.add(new ActionCandidate(ActionType.WAIT, waitScore,
+        candidates.add(new ActionCandidate(PetActionType.WAIT, waitScore,
                 currentCoordinate, currentCoordinate, null));
 
         // REPRODUCE
@@ -225,7 +225,7 @@ public final class EtpetsAgentLogic {
                 int reproduceScore = computeReproduceScore(
                         pet,
                         option.partnerCell);
-                candidates.add(new ActionCandidate(ActionType.REPRODUCE, reproduceScore,
+                candidates.add(new ActionCandidate(PetActionType.REPRODUCE, reproduceScore,
                         currentCoordinate, option.partnerCell.coordinate(), option.eggCoordinate()));
             }
         }
@@ -242,7 +242,7 @@ public final class EtpetsAgentLogic {
                         pet,
                         resource,
                         stepIndex);
-                candidates.add(new ActionCandidate(ActionType.EAT, eatScore,
+                candidates.add(new ActionCandidate(PetActionType.EAT, eatScore,
                         currentCoordinate, resourceCell.coordinate(), null));
             }
         }
@@ -393,6 +393,7 @@ public final class EtpetsAgentLogic {
             EtpetsGridModel gridModel,
             int stepIndex,
             EtpetsIdSequence idSequence) {
+        pet.recordLastAction(candidate.type(), candidate.score());
         return switch (candidate.type()) {
             case WAIT -> ActionEffect.none();
             case MOVE -> executeMoveAction(currentCoordinate, candidate.moveTarget(), pet, gridModel);
@@ -432,8 +433,7 @@ public final class EtpetsAgentLogic {
             pet.changeEnergy(resource.energyGainPerAct());
             updateTrailAtCoordinate(petCoordinate, gridModel);
         } else {
-            AppLogger.warnf("Failed to execute EAT action due to failed preconditions: %s. Actual resource entity: %s",
-                    candidate, resourceEntity.toDisplayString());
+            throw new IllegalStateException("Failed to execute EAT action due to failed preconditions: " + candidate + ". Actual resource entity: " + resourceEntity);
         }
 
         return ActionEffect.none();
@@ -447,13 +447,11 @@ public final class EtpetsAgentLogic {
                                                        EtpetsIdSequence idSequence) {
         AgentEntity partnerEntity = gridModel.agentModel().getEntity(candidate.interactionTarget());
         if (!(partnerEntity instanceof Pet partnerPet) || !canReproduce(pet, partnerPet, stepIndex)) {
-            AppLogger.warn("Failed to execute REPRODUCE action due to failed preconditions: " + candidate);
-            return ActionEffect.none();
+            throw new IllegalStateException("Failed to execute REPRODUCE action due to failed preconditions: " + candidate + ". Actual partner entity: " + partnerEntity);
         }
 
         if (!isEggPlacementValid(candidate.eggTarget(), gridModel)) {
-            AppLogger.warn("Failed to execute REPRODUCE action: invalid egg placement at " + candidate.eggTarget());
-            return ActionEffect.none();
+            throw new IllegalStateException("Failed to execute REPRODUCE action due to invalid egg placement: " + candidate.eggTarget());
         }
 
         PetGenome genome = PetGenome.fromParents(
@@ -663,14 +661,7 @@ public final class EtpetsAgentLogic {
                 egg);
     }
 
-    private enum ActionType {
-        EAT,
-        REPRODUCE,
-        MOVE,
-        WAIT
-    }
-
-    private record ActionCandidate(ActionType type,
+    private record ActionCandidate(PetActionType type,
                                    int score,
                                    GridCoordinate moveTarget,
                                    GridCoordinate interactionTarget,

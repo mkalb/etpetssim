@@ -17,6 +17,7 @@ public final class Pet implements AgentEntity {
     private int reproductionCooldownRemaining;
     private @Nullable GridCoordinate previousCoordinate;
     private @Nullable GridCoordinate previousPreviousCoordinate;
+    private @Nullable PetLastAction lastAction;
     private boolean dead;
 
     public Pet(long petId,
@@ -113,6 +114,14 @@ public final class Pet implements AgentEntity {
         return previousPreviousCoordinate;
     }
 
+    public @Nullable PetLastAction lastAction() {
+        return lastAction;
+    }
+
+    public void recordLastAction(PetActionType type, int score) {
+        lastAction = new PetLastAction(type, score);
+    }
+
     public void recordMoveFrom(GridCoordinate fromCoordinate) {
         previousPreviousCoordinate = previousCoordinate;
         previousCoordinate = fromCoordinate;
@@ -146,11 +155,15 @@ public final class Pet implements AgentEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format(Locale.ROOT, "[PET #%d *%d E=%d C=%d S=%s]",
+        String lastActionDisplay = (lastAction != null)
+                ? (lastAction.type() + "@" + lastAction.score())
+                : "-";
+        return String.format(Locale.ROOT, "[PET #%d *%d E=%d C=%d A=%s S=%s]",
                 petId,
                 stepIndexOfBirth,
                 currentEnergy,
                 reproductionCooldownRemaining,
+                lastActionDisplay,
                 dead ? "DEAD" : "ALIVE");
     }
 
@@ -166,8 +179,12 @@ public final class Pet implements AgentEntity {
                 ", reproductionCooldownRemaining=" + reproductionCooldownRemaining +
                 ", previousCoordinate=" + previousCoordinate +
                 ", previousPreviousCoordinate=" + previousPreviousCoordinate +
+                ", lastAction=" + lastAction +
                 ", dead=" + dead +
                 '}';
+    }
+
+    public record PetLastAction(PetActionType type, int score) {
     }
 
 }
