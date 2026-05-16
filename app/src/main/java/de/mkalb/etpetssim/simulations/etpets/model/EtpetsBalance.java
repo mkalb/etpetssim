@@ -4,9 +4,9 @@ public final class EtpetsBalance {
 
     // Trail
     public static final int TRAIL_INTENSITY_RANGE_MIN = 1;
-    public static final int TRAIL_INTENSITY_RANGE_MAX = 10_000;
-    public static final int TRAIL_INTENSITY_DEFAULT = 20; // First entry (lower than TRAIL_INTENSITY_INCREASE_PER_ENTRY)
-    public static final int TRAIL_INTENSITY_INCREASE_PER_ENTRY = 40;
+    public static final int TRAIL_INTENSITY_RANGE_MAX = 3_000;
+    public static final int TRAIL_INTENSITY_DEFAULT = 50;
+    public static final int TRAIL_INTENSITY_INCREASE_PER_ENTRY = 30;
     public static final int TRAIL_INTENSITY_DECAY_PER_STEP = 1;
 
     // Plant
@@ -82,8 +82,8 @@ public final class EtpetsBalance {
     public static final double PET_MOVE_RESOURCE_BASE_WEIGHT = 4.0d;
     public static final double PET_MOVE_RESOURCE_SURVIVAL_PRESSURE_WEIGHT = 12.0d;
     public static final double PET_MOVE_PARTNER_WEIGHT = 7.5d;
-    public static final int PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD = 120;
-    public static final double PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE = 2_200.0d;
+    public static final int PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD = TRAIL_INTENSITY_DEFAULT;
+    public static final double PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE = TRAIL_INTENSITY_RANGE_MAX / 2.0d;
     public static final double PET_MOVE_TRAIL_BONUS_MAX = 12.0d;
     public static final double PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS = 3.5d;
     public static final double PET_MOVE_EXPLORATION_WEIGHT = 8.0d;
