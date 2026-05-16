@@ -38,7 +38,8 @@ public final class EtpetsScoreTuningRunner {
         System.out.println(COLUMNS_MOVE);
 
         for (double energyRatio : List.of(0.15d, 0.50d, 0.85d)) {
-            for (int trailIntensity : List.of(0, 50, 200, 2_000, 9_000)) {
+            for (int trailIntensity : List.of(0, 1, EtpetsBalance.TRAIL_INTENSITY_DEFAULT, 100, 200, 600, 1_000, 2_000,
+                    EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX - 10, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX)) {
                 double result = EtpetsScoreMath.computeRawMoveScore(
                         energyRatio,
                         1.0d,
