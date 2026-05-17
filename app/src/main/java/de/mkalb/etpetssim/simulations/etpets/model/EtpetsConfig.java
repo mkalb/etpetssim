@@ -45,7 +45,7 @@ public record EtpetsConfig(
     private static final int PERCENT_MAX = 100;
     private static final int OBSTACLE_PERCENT_MAX = 50;
     private static final int PET_COUNT_MIN = 0;
-    private static final int PET_COUNT_MAX = 20;
+    private static final int PET_COUNT_MAX = 100;
 
     private static boolean isOutOfRange(int value, int min, int max) {
         return (value < min) || (value > max);

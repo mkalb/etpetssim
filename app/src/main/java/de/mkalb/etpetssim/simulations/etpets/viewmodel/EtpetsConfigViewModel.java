@@ -39,7 +39,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     // Initialization
     private static final int PET_COUNT_INITIAL = 10;
     private static final int PET_COUNT_MIN = 0;
-    private static final int PET_COUNT_MAX = 20;
+    private static final int PET_COUNT_MAX = 100;
     private static final int PERCENT_MIN = 0;
     private static final int PERCENT_MAX = 100;
     private static final int STEP = 1;
