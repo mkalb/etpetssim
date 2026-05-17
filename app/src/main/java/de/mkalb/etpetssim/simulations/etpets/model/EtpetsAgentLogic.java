@@ -267,6 +267,7 @@ public final class EtpetsAgentLogic {
         } else if (terrain == TerrainConstant.GROUND) {
             isGroundWithoutTrail = true;
         }
+        boolean hasOscillationHistoryMatch = pet.hasCoordinateInMovementHistory(coordinate);
 
         double rawScore = EtpetsScoreMath.computeRawMoveScore(
                 energyRatio,
@@ -277,8 +278,7 @@ public final class EtpetsAgentLogic {
                 ring1HasCrowdingPenalty.contains(coordinate),
                 isGroundWithoutTrail,
                 trailIntensity,
-                coordinate.equals(pet.previousCoordinate()),
-                coordinate.equals(pet.previousPreviousCoordinate()));
+                hasOscillationHistoryMatch);
 
         // Rare exploration spike on fresh ground to help break local movement loops.
         if (isGroundWithoutTrail

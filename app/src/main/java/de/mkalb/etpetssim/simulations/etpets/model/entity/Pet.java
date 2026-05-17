@@ -13,10 +13,9 @@ public final class Pet implements AgentEntity {
     private final @Nullable Long parentBId;
     private final int stepIndexOfBirth;
     private final PetTraits traits;
+    private final Deque<GridCoordinate> movementHistory;
     private int currentEnergy;
     private int reproductionCooldownRemaining;
-    private @Nullable GridCoordinate previousCoordinate;
-    private @Nullable GridCoordinate previousPreviousCoordinate;
     private @Nullable PetLastAction lastAction;
     private boolean dead;
 
@@ -34,6 +33,7 @@ public final class Pet implements AgentEntity {
         this.currentEnergy = currentEnergy;
         this.reproductionCooldownRemaining = reproductionCooldownRemaining;
         this.traits = traits;
+        movementHistory = new LinkedList<>();
     }
 
     @Override
@@ -106,12 +106,8 @@ public final class Pet implements AgentEntity {
         return reproductionCooldownRemaining;
     }
 
-    public @Nullable GridCoordinate previousCoordinate() {
-        return previousCoordinate;
-    }
-
-    public @Nullable GridCoordinate previousPreviousCoordinate() {
-        return previousPreviousCoordinate;
+    public boolean hasCoordinateInMovementHistory(GridCoordinate coordinate) {
+        return movementHistory.contains(coordinate);
     }
 
     public @Nullable PetLastAction lastAction() {
@@ -123,8 +119,10 @@ public final class Pet implements AgentEntity {
     }
 
     public void recordMoveFrom(GridCoordinate fromCoordinate) {
-        previousPreviousCoordinate = previousCoordinate;
-        previousCoordinate = fromCoordinate;
+        movementHistory.addFirst(fromCoordinate);
+        if (movementHistory.size() > EtpetsBalance.PET_MOVE_HISTORY_LENGTH) {
+            movementHistory.removeLast();
+        }
     }
 
     public void tickReproductionCooldown() {
@@ -177,8 +175,7 @@ public final class Pet implements AgentEntity {
                 ", traits=" + traits +
                 ", currentEnergy=" + currentEnergy +
                 ", reproductionCooldownRemaining=" + reproductionCooldownRemaining +
-                ", previousCoordinate=" + previousCoordinate +
-                ", previousPreviousCoordinate=" + previousPreviousCoordinate +
+                ", movementHistory=" + movementHistory +
                 ", lastAction=" + lastAction +
                 ", dead=" + dead +
                 '}';

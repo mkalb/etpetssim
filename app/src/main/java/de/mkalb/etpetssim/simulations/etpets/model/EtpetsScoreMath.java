@@ -15,8 +15,7 @@ final class EtpetsScoreMath {
                                       boolean hasCrowdingPenalty,
                                       boolean isGroundWithoutTrail,
                                       int trailIntensity,
-                                      boolean isPreviousCoordinate,
-                                      boolean isPreviousPreviousCoordinate) {
+                                      boolean hasOscillationHistoryMatch) {
         double survivalPressure = computeSurvivalPressure(energyRatio);
 
         double resourceBonus = 0.0d;
@@ -32,7 +31,7 @@ final class EtpetsScoreMath {
                         + computeTrailBonus(trailIntensity)
                         + computeExplorationBonus(energyRatio, movementCostModifier, isGroundWithoutTrail);
         double negativeScoreTerms =
-                computeOscillationPenalty(isPreviousCoordinate, isPreviousPreviousCoordinate)
+                computeOscillationPenalty(hasOscillationHistoryMatch)
                         + computeLowMobilityPenalty(hasLowMobilityPenalty, survivalPressure, hasResourceLookAhead)
                         + computeCrowdingPenalty(hasCrowdingPenalty, hasPartnerLookAhead);
         return (PET_MOVE_SCORE_BASE + positiveScoreTerms) - negativeScoreTerms;
@@ -67,15 +66,8 @@ final class EtpetsScoreMath {
         return PET_MOVE_EXPLORATION_WEIGHT * explorationDrive;
     }
 
-    private static double computeOscillationPenalty(boolean isPreviousCoordinate, boolean isPreviousPreviousCoordinate) {
-        double penalty = 0.0d;
-        if (isPreviousCoordinate) {
-            penalty += PET_MOVE_OSCILLATION_ONE_STEP_BACK_PENALTY;
-        }
-        if (isPreviousPreviousCoordinate) {
-            penalty += PET_MOVE_OSCILLATION_TWO_STEPS_BACK_PENALTY;
-        }
-        return penalty;
+    private static double computeOscillationPenalty(boolean hasOscillationHistoryMatch) {
+        return hasOscillationHistoryMatch ? PET_MOVE_OSCILLATION_HISTORY_MATCH_PENALTY : 0.0d;
     }
 
     private static double computeLowMobilityPenalty(boolean hasLowMobilityPenalty, double survivalPressure, boolean hasResourceLookAhead) {

@@ -91,8 +91,8 @@ public final class EtpetsBalance {
     public static final double PET_MOVE_EXPLORATION_COST_EXPONENT = 1.3d;
     public static final double PET_MOVE_EXPLORATION_SPIKE_CHANCE = 0.005d;
     public static final double PET_MOVE_EXPLORATION_SPIKE_MULTIPLIER = 3.0d;
-    public static final double PET_MOVE_OSCILLATION_ONE_STEP_BACK_PENALTY = 14.0d;
-    public static final double PET_MOVE_OSCILLATION_TWO_STEPS_BACK_PENALTY = 10.0d;
+    public static final double PET_MOVE_OSCILLATION_HISTORY_MATCH_PENALTY = 12.0d;
+    public static final int PET_MOVE_HISTORY_LENGTH = 5;
     public static final int PET_MOVE_LOW_MOBILITY_THRESHOLD = 3;
     public static final double PET_MOVE_LOW_MOBILITY_PENALTY = 5.0d;
     public static final double PET_MOVE_SURVIVAL_PRESSURE_HIGH_THRESHOLD = 0.7d;
