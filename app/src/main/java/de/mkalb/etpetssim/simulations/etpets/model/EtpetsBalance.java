@@ -54,7 +54,7 @@ public final class EtpetsBalance {
     // Pet
     public static final int PET_CURRENT_ENERGY_RANGE_MIN = 1;
     public static final int PET_CURRENT_ENERGY_RANGE_MAX = PET_TRAITS_MAX_ENERGY_RANGE_MAX;
-    public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.2d;
+    public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.3d;
     public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN = 0;
     public static final int PET_INITIAL_AGE_RANGE_MIN = 0;
     public static final int PET_INITIAL_AGE_RANGE_MAX = 100;
@@ -91,7 +91,7 @@ public final class EtpetsBalance {
     public static final double PET_MOVE_EXPLORATION_COST_EXPONENT = 1.3d;
     public static final double PET_MOVE_EXPLORATION_SPIKE_CHANCE = 0.01d;
     public static final double PET_MOVE_EXPLORATION_SPIKE_MULTIPLIER = 3.0d;
-    public static final double PET_MOVE_OSCILLATION_HISTORY_MATCH_PENALTY = 8.0d;
+    public static final double PET_MOVE_OSCILLATION_HISTORY_MATCH_PENALTY = 9.0d;
     public static final int PET_MOVE_HISTORY_LENGTH = 5;
     public static final int PET_MOVE_LOW_MOBILITY_THRESHOLD = 3;
     public static final double PET_MOVE_LOW_MOBILITY_PENALTY = 5.0d;
