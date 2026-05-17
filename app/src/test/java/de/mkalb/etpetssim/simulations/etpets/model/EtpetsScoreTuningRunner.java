@@ -14,7 +14,7 @@ public final class EtpetsScoreTuningRunner {
     private static final String HEADER_MOVE_SCORE = "=== MOVE SCORE (RAW) ===";
     private static final String HEADER_REPRODUCE_SCORE = "=== REPRODUCE SCORE (RAW) ===";
     private static final String HEADER_EAT_SCORE = "=== EAT SCORE (RAW) ===";
-    private static final String COLUMNS_MOVE = "energyRatio, trailIntensity, oscillationMatch, result,  rawResult";
+    private static final String COLUMNS_MOVE = "energyRatio, trailIntensity, resource, oscillationMatch, result,  rawResult";
     private static final String COLUMNS_REPRODUCE = "petQuality, partnerQuality, result,  rawResult";
     private static final String COLUMNS_EAT = "currentEnergy, maxEnergy, resourceGain,   age, result,  rawResult";
 
@@ -38,26 +38,28 @@ public final class EtpetsScoreTuningRunner {
         System.out.println(COLUMNS_MOVE);
 
         for (double energyRatio : List.of(0.15d, 0.50d, 0.85d)) {
-            for (int trailIntensity : List.of(0, 1, EtpetsBalance.TRAIL_INTENSITY_DEFAULT, 100, 200, 600, 1_000, 2_000,
-                    EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX - 10, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX)) {
-                for (boolean hasOscillationHistoryMatch : List.of(false, true)) {
-                    double result = EtpetsScoreMath.computeRawMoveScore(
-                            energyRatio,
-                            1.0d,
-                            true,
-                            true,
-                            false,
-                            false,
-                            trailIntensity == 0,
-                            trailIntensity,
-                            hasOscillationHistoryMatch);
-                    System.out.printf(Locale.ROOT,
-                            "%11.2f, %14d, %16s, %6d, %10.3f%n",
-                            energyRatio,
-                            trailIntensity,
-                            hasOscillationHistoryMatch,
-                            clampToIntScore(result, EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN),
-                            result);
+            for (int trailIntensity : List.of(0, 1, 30, 50, 100, 200, 600, 800, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX - 10, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX)) {
+                for (boolean hasResourceLookAhead : List.of(false, true)) {
+                    for (boolean hasOscillationHistoryMatch : List.of(false, true)) {
+                        double result = EtpetsScoreMath.computeRawMoveScore(
+                                energyRatio,
+                                1.0d,
+                                hasResourceLookAhead,
+                                false,
+                                false,
+                                false,
+                                trailIntensity == 0,
+                                trailIntensity,
+                                hasOscillationHistoryMatch);
+                        System.out.printf(Locale.ROOT,
+                                "%11.2f, %14d, %8s, %16s, %6d, %10.3f%n",
+                                energyRatio,
+                                trailIntensity,
+                                hasResourceLookAhead,
+                                hasOscillationHistoryMatch,
+                                clampToIntScore(result, EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN),
+                                result);
+                    }
                 }
             }
         }
