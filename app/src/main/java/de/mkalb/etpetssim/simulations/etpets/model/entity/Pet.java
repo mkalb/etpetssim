@@ -71,6 +71,10 @@ public final class Pet implements AgentEntity {
         return traits;
     }
 
+    public PetGenome traitsGenome() {
+        return new PetGenome(traits);
+    }
+
     public int currentEnergy() {
         return currentEnergy;
     }

@@ -36,12 +36,11 @@ public final class EtpetsAgentLogic {
             GridCoordinate currentCoordinate = cell.coordinate();
             AgentEntity entity = cell.entity();
 
-            // Check if the entity is still at its original coordinate. It may already have been removed or replaced.
+            // Check if the entity is still at its original coordinate.
             if (agentModel.getEntity(currentCoordinate) != entity) {
-                AppLogger.warnf("Entity at %s changed during processing. Expected: %s, actual: %s. Skipping.",
-                        currentCoordinate.toDisplayString(), entity.toDisplayString(),
-                        agentModel.getEntity(currentCoordinate).toDisplayString());
-                continue;
+                throw new IllegalStateException("Entity at coordinate " + currentCoordinate.toDisplayString()
+                        + " has changed since snapshot was taken. Expected: " + entity.toDisplayString()
+                        + ", actual: " + agentModel.getEntity(currentCoordinate).toDisplayString());
             }
 
             if (entity instanceof PetEgg egg) {
@@ -68,53 +67,36 @@ public final class EtpetsAgentLogic {
                 pet.changeEnergy(-EtpetsBalance.PET_STEP_ENERGY_LOSS);
                 pet.tickReproductionCooldown();
 
-                // Death from energy depletion.
+                // Check death conditions.
+                boolean petDied = false;
                 if (pet.currentEnergy() < EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MIN) {
-                    pet.die();
-                    cumulativeDeadPetCountChange++;
-                    activePetCountChange--;
                     AppLogger.infof("Pet %s died at %s from energy depletion.",
                             pet.toDisplayString(),
                             currentCoordinate.toDisplayString());
-                    continue; // Stays on grid for exactly 1 visual step.
+                    petDied = true;
+                } else {
+                    double ageMortalityChance = computeAgeMortalityChance(pet, stepIndex);
+                    if ((ageMortalityChance > 0.0d) && (random.nextDouble() < ageMortalityChance)) {
+                        AppLogger.infof("Pet %s died at %s from age-related mortality (chance=%.6f).",
+                                pet.toDisplayString(),
+                                currentCoordinate.toDisplayString(),
+                                ageMortalityChance);
+                        petDied = true;
+                    }
                 }
-
-                // Death from age-related mortality.
-                double ageMortalityChance = computeAgeMortalityChance(pet, stepIndex);
-                if ((ageMortalityChance > 0.0d) && (random.nextDouble() < ageMortalityChance)) {
+                if (petDied) {
                     pet.die();
                     cumulativeDeadPetCountChange++;
                     activePetCountChange--;
-                    AppLogger.infof("Pet %s died at %s from age-related mortality (chance=%.6f).",
-                            pet.toDisplayString(),
-                            currentCoordinate.toDisplayString(),
-                            ageMortalityChance);
                     continue; // Stays on grid for exactly 1 visual step.
                 }
 
-                List<ActionCandidate> actionCandidates = collectActionCandidates(
+                ActionEffect effect = selectAndExecuteAction(
                         currentCoordinate,
                         pet,
                         gridModel,
                         structure,
                         random,
-                        stepIndex);
-
-                ActionCandidate selectedAction = pickBestCandidate(actionCandidates, random);
-
-                // AppLogger.infof("Pet %s at %s has %d action candidates: %s. Selected: %s",
-                //         pet.toDisplayString(),
-                //         currentCoordinate.toDisplayString(),
-                //         actionCandidates.size(),
-                //         toDisplayString(actionCandidates),
-                //         toDisplayString(selectedAction));
-
-                ActionEffect effect = executeActionCandidate(
-                        selectedAction,
-                        currentCoordinate,
-                        pet,
-                        random,
-                        gridModel,
                         stepIndex,
                         idSequence);
                 eggCountChange += effect.eggCountDelta();
@@ -250,6 +232,40 @@ public final class EtpetsAgentLogic {
         return candidates;
     }
 
+    private static ActionEffect selectAndExecuteAction(GridCoordinate currentCoordinate,
+                                                       Pet pet,
+                                                       EtpetsGridModel gridModel,
+                                                       GridStructure structure,
+                                                       Random random,
+                                                       int stepIndex,
+                                                       EtpetsIdSequence idSequence) {
+        List<ActionCandidate> actionCandidates = collectActionCandidates(
+                currentCoordinate,
+                pet,
+                gridModel,
+                structure,
+                random,
+                stepIndex);
+
+        ActionCandidate selectedAction = pickBestCandidate(actionCandidates, random);
+
+        // AppLogger.infof("Pet %s at %s has %d action candidates: %s. Selected: %s",
+        //         pet.toDisplayString(),
+        //         currentCoordinate.toDisplayString(),
+        //         actionCandidates.size(),
+        //         toDisplayString(actionCandidates),
+        //         toDisplayString(selectedAction));
+
+        return executeActionCandidate(
+                selectedAction,
+                currentCoordinate,
+                pet,
+                random,
+                gridModel,
+                stepIndex,
+                idSequence);
+    }
+
     private static int computeMoveScore(Pet pet,
                                         EtpetsCell cell,
                                         GridCoordinate coordinate,
@@ -367,6 +383,30 @@ public final class EtpetsAgentLogic {
         return canReproduce(pet, partnerPet, stepIndex);
     }
 
+    private static boolean canReproduce(Pet petA, Pet petB, int stepIndex) {
+        return petA.isReproductionEligibleByState(stepIndex)
+                && petB.isReproductionEligibleByState(stepIndex)
+                && !areDirectRelatives(petA, petB);
+    }
+
+    private static boolean areDirectRelatives(Pet petA, Pet petB) {
+        Set<Long> idsA = new HashSet<>();
+        idsA.add(petA.petId());
+        if (petA.parentAId() != null) {
+            idsA.add(petA.parentAId());
+        }
+        if (petA.parentBId() != null) {
+            idsA.add(petA.parentBId());
+        }
+        if (idsA.contains(petB.petId())) {
+            return true;
+        }
+        if ((petB.parentAId() != null) && idsA.contains(petB.parentAId())) {
+            return true;
+        }
+        return (petB.parentBId() != null) && idsA.contains(petB.parentBId());
+    }
+
     private static ActionCandidate pickBestCandidate(Collection<ActionCandidate> candidates, Random random) {
         int maxScore = candidates.stream()
                                  .mapToInt(ActionCandidate::score)
@@ -395,11 +435,18 @@ public final class EtpetsAgentLogic {
             EtpetsIdSequence idSequence) {
         pet.recordLastAction(candidate.type(), candidate.score());
         return switch (candidate.type()) {
-            case WAIT -> ActionEffect.none();
+            case WAIT -> executeWaitAction(currentCoordinate, gridModel);
             case MOVE -> executeMoveAction(currentCoordinate, candidate.moveTarget(), pet, gridModel);
             case EAT -> executeEatAction(currentCoordinate, candidate.interactionTarget(), candidate, pet, gridModel);
             case REPRODUCE -> executeReproduceAction(candidate, pet, random, gridModel, stepIndex, idSequence);
         };
+    }
+
+    private static ActionEffect executeWaitAction(GridCoordinate petCoordinate,
+                                                  EtpetsGridModel gridModel) {
+        updateTrailAtCoordinate(petCoordinate, gridModel);
+
+        return ActionEffect.none();
     }
 
     private static ActionEffect executeMoveAction(GridCoordinate fromCoordinate,
@@ -426,15 +473,15 @@ public final class EtpetsAgentLogic {
                                                  ActionCandidate candidate,
                                                  Pet pet,
                                                  EtpetsGridModel gridModel) {
-        ResourceEntity resourceEntity = gridModel.resourceModel().getEntity(resourceCoordinate);
-        if ((resourceEntity instanceof ResourceBase resource) && resource.canConsume()) {
-            // Consume the resource, gain energy and update trail.
-            resource.consume();
-            pet.changeEnergy(resource.energyGainPerAct());
-            updateTrailAtCoordinate(petCoordinate, gridModel);
-        } else {
-            throw new IllegalStateException("Failed to execute EAT action due to failed preconditions: " + candidate + ". Actual resource entity: " + resourceEntity);
+        if (!(gridModel.resourceModel().getEntity(resourceCoordinate) instanceof ResourceBase resource)
+                || !resource.canConsume()) {
+            throw new IllegalStateException("Failed to execute EAT action due to failed preconditions: " + candidate);
         }
+
+        // Consume the resource, gain energy and update trail.
+        resource.consume();
+        pet.changeEnergy(resource.energyGainPerAct());
+        updateTrailAtCoordinate(petCoordinate, gridModel);
 
         return ActionEffect.none();
     }
@@ -445,18 +492,19 @@ public final class EtpetsAgentLogic {
                                                        EtpetsGridModel gridModel,
                                                        int stepIndex,
                                                        EtpetsIdSequence idSequence) {
-        AgentEntity partnerEntity = gridModel.agentModel().getEntity(candidate.interactionTarget());
-        if (!(partnerEntity instanceof Pet partnerPet) || !canReproduce(pet, partnerPet, stepIndex)) {
-            throw new IllegalStateException("Failed to execute REPRODUCE action due to failed preconditions: " + candidate + ". Actual partner entity: " + partnerEntity);
+        if (!(gridModel.agentModel().getEntity(candidate.interactionTarget()) instanceof Pet partnerPet)
+                || !canReproduce(pet, partnerPet, stepIndex)) {
+            throw new IllegalStateException("Failed to execute REPRODUCE action due to failed preconditions: " + candidate);
         }
 
-        if (!isEggPlacementValid(candidate.eggTarget(), gridModel)) {
-            throw new IllegalStateException("Failed to execute REPRODUCE action due to invalid egg placement: " + candidate.eggTarget());
+        if (!(candidate.eggTarget() instanceof GridCoordinate eggCoordinate)
+                || !EtpetsCell.of(eggCoordinate, gridModel).isWalkable()) {
+            throw new IllegalStateException("Failed to execute REPRODUCE action due to invalid egg placement: " + candidate);
         }
 
         PetGenome genome = PetGenome.fromParents(
-                new PetGenome(pet.traits()),
-                new PetGenome(partnerPet.traits()),
+                pet.traitsGenome(),
+                partnerPet.traitsGenome(),
                 random,
                 EtpetsBalance.PET_GENOME_MUTATION_CHANCE_PER_TRAIT,
                 EtpetsBalance.PET_GENOME_MUTATION_DELTA
@@ -473,7 +521,7 @@ public final class EtpetsAgentLogic {
                 stepIndex,
                 EtpetsBalance.PET_EGG_INCUBATION_REMAINING_DEFAULT
         );
-        gridModel.agentModel().setEntity(candidate.eggTarget(), egg);
+        gridModel.agentModel().setEntity(eggCoordinate, egg);
 
         pet.resetReproductionCooldown();
         partnerPet.resetReproductionCooldown();
@@ -489,13 +537,6 @@ public final class EtpetsAgentLogic {
         } else if (terrain instanceof Trail trail) {
             trail.incrementIntensity(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
         }
-    }
-
-    private static boolean isEggPlacementValid(@Nullable GridCoordinate eggCoordinate, EtpetsGridModel gridModel) {
-        if (eggCoordinate == null) {
-            return false;
-        }
-        return EtpetsCell.of(eggCoordinate, gridModel).isWalkable();
     }
 
     private static Pet hatchEgg(PetEgg egg, int stepIndex,
@@ -519,43 +560,12 @@ public final class EtpetsAgentLogic {
         return Optional.empty();
     }
 
-    /**
-     * Returns {@code true} if both pets can reproduce together:
-     * - Both must be eligible to reproduce
-     * - They must not be direct relatives</     */
-    private static boolean canReproduce(Pet petA, Pet petB, int stepIndex) {
-        return petA.isReproductionEligibleByState(stepIndex)
-                && petB.isReproductionEligibleByState(stepIndex)
-                && !areDirectRelatives(petA, petB);
-    }
-
-    /**
-     * Returns {@code true} if pets {@code a} and {@code b} share any non-null ID
-     * among their own IDs and their parent IDs (direct relatives check).
-     */
-    private static boolean areDirectRelatives(Pet a, Pet b) {
-        Set<Long> idsA = new HashSet<>();
-        idsA.add(a.petId());
-        if (a.parentAId() != null) {
-            idsA.add(a.parentAId());
-        }
-        if (a.parentBId() != null) {
-            idsA.add(a.parentBId());
-        }
-        if (idsA.contains(b.petId())) {
-            return true;
-        }
-        if ((b.parentAId() != null) && idsA.contains(b.parentAId())) {
-            return true;
-        }
-        return (b.parentBId() != null) && idsA.contains(b.parentBId());
-    }
-
     private static Optional<GridCoordinate> findEggPlacementCellFromSnapshots(
             GridCoordinate coordA,
             GridCoordinate coordB,
             GridStructure structure,
             Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
+        // TODO Optimize methode and parameter
         List<GridCoordinate> neighborsA = getValidNeighborCoordinates(coordA, structure);
         Set<GridCoordinate> neighborsASet = new HashSet<>(neighborsA);
         List<GridCoordinate> neighborsB = getValidNeighborCoordinates(coordB, structure);
@@ -590,7 +600,6 @@ public final class EtpetsAgentLogic {
         return Optional.of(candidates.getFirst());
     }
 
-    /** Returns all valid (in-bounds) neighbor coordinates of {@code coord}. */
     private static List<GridCoordinate> getValidNeighborCoordinates(GridCoordinate coord,
                                                                     GridStructure structure) {
         Collection<EdgeBehaviorResult> results =
@@ -604,10 +613,6 @@ public final class EtpetsAgentLogic {
         return valid;
     }
 
-    /**
-     * Returns {@code true} if the target coordinate has low mobility (fewer than
-     * {@code PET_MOVE_LOW_MOBILITY_THRESHOLD} walkable neighbor cells).
-     */
     private static boolean calculateHasLowMobilityPenalty(List<GridCoordinate> neighborCoordinates,
                                                           EtpetsGridModel gridModel) {
         int walkableCount = 0;
@@ -619,10 +624,6 @@ public final class EtpetsAgentLogic {
         return walkableCount < EtpetsBalance.PET_MOVE_LOW_MOBILITY_THRESHOLD;
     }
 
-    /**
-     * Returns {@code true} if the target coordinate has high crowding (>=
-     * {@code PET_MOVE_CROWDING_THRESHOLD} pet neighbors).
-     */
     private static boolean calculateHasCrowdingPenalty(List<GridCoordinate> neighborCoordinates,
                                                        EtpetsGridModel gridModel) {
         int petCount = 0;
