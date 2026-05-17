@@ -16,6 +16,7 @@ public final class EtpetsAgentLogic {
 
     // Debug/log formatting
     private static final int DISPLAY_STRING_CAPACITY_HINT = 80;
+    private static final String LOG_COMPONENT = "EtpetsAgentLogic";
 
     private EtpetsAgentLogic() {
     }
@@ -52,10 +53,7 @@ public final class EtpetsAgentLogic {
                     updateTrailAtCoordinate(currentCoordinate, gridModel);
                     eggCountChange--;
                     activePetCountChange++;
-                    AppLogger.infof("Egg %s hatched into Pet %s at %s",
-                            egg.toDisplayString(),
-                            newPet.toDisplayString(),
-                            currentCoordinate.toDisplayString());
+                    logEggHatched(egg, newPet, currentCoordinate);
                 }
             } else if (entity instanceof Pet pet) {
                 // Death-check: remove pets already marked dead from the previous step.
@@ -71,17 +69,12 @@ public final class EtpetsAgentLogic {
                 // Check death conditions.
                 boolean petDied = false;
                 if (pet.currentEnergy() < EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MIN) {
-                    AppLogger.infof("Pet %s died at %s from energy depletion.",
-                            pet.toDisplayString(),
-                            currentCoordinate.toDisplayString());
+                    logPetDiedFromEnergyDepletion(pet, currentCoordinate);
                     petDied = true;
                 } else {
                     double ageMortalityChance = computeAgeMortalityChance(pet, stepIndex);
                     if ((ageMortalityChance > 0.0d) && (random.nextDouble() < ageMortalityChance)) {
-                        AppLogger.infof("Pet %s died at %s from age-related mortality (chance=%.6f).",
-                                pet.toDisplayString(),
-                                currentCoordinate.toDisplayString(),
-                                ageMortalityChance);
+                        logPetDiedFromAgeMortality(pet, currentCoordinate, ageMortalityChance);
                         petDied = true;
                     }
                 }
@@ -637,6 +630,29 @@ public final class EtpetsAgentLogic {
             return Optional.of(resource);
         }
         return Optional.empty();
+    }
+
+    private static void logEggHatched(PetEgg egg, Pet newPet, GridCoordinate coordinate) {
+        AppLogger.infof("%s: Egg %s hatched into Pet %s at %s.",
+                LOG_COMPONENT,
+                egg.toDisplayString(),
+                newPet.toDisplayString(),
+                coordinate.toDisplayString());
+    }
+
+    private static void logPetDiedFromEnergyDepletion(Pet pet, GridCoordinate coordinate) {
+        AppLogger.infof("%s: Pet %s died at %s (reason=energy-depletion).",
+                LOG_COMPONENT,
+                pet.toDisplayString(),
+                coordinate.toDisplayString());
+    }
+
+    private static void logPetDiedFromAgeMortality(Pet pet, GridCoordinate coordinate, double mortalityChance) {
+        AppLogger.infof("%s: Pet %s died at %s (reason=age-mortality, chance=%.6f).",
+                LOG_COMPONENT,
+                pet.toDisplayString(),
+                coordinate.toDisplayString(),
+                mortalityChance);
     }
 
     private static double clampToUnitRange(double value) {
