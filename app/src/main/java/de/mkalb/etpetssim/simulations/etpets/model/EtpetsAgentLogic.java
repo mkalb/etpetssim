@@ -166,17 +166,17 @@ public final class EtpetsAgentLogic {
 
             // REPRODUCE candidates adjacent to the current position (ring 0).
             if (canSelfReproduce && isValidReproductionPartner(pet, cell, stepIndex)) {
-                findEggPlacementCellFromSnapshots(currentCoordinate, coordinate, structure, snapshotCellsByCoordinate)
+                computeEggPlacementCoordinate(currentCoordinate, coordinate, structure, snapshotCellsByCoordinate)
                         .ifPresent(eggCoord -> ring0ReproductionOptions.add(new ReproductionOption(cell, eggCoord)));
             }
 
             // MOVE candidates: only walkable ring-1 cells.
             if (cell.isWalkable()) {
-                List<GridCoordinate> neighborCoordinates = getValidNeighborCoordinates(coordinate, structure);
-                if (calculateHasLowMobilityPenalty(neighborCoordinates, gridModel)) {
+                List<GridCoordinate> neighborCoordinates = computeValidNeighborCoordinates(coordinate, structure);
+                if (hasLowMobilityPenalty(neighborCoordinates, gridModel)) {
                     ring1HasLowMobilityPenalty.add(coordinate);
                 }
-                if (calculateHasCrowdingPenalty(neighborCoordinates, gridModel)) {
+                if (hasCrowdingPenalty(neighborCoordinates, gridModel)) {
                     ring1HasCrowdingPenalty.add(coordinate);
                 }
 
@@ -383,38 +383,38 @@ public final class EtpetsAgentLogic {
         return canReproduce(pet, partnerPet, stepIndex);
     }
 
-    private static boolean canReproduce(Pet petA, Pet petB, int stepIndex) {
-        return petA.isReproductionEligibleByState(stepIndex)
-                && petB.isReproductionEligibleByState(stepIndex)
-                && !areDirectRelatives(petA, petB);
+    private static boolean canReproduce(Pet firstPet, Pet secondPet, int stepIndex) {
+        return firstPet.isReproductionEligibleByState(stepIndex)
+                && secondPet.isReproductionEligibleByState(stepIndex)
+                && !areDirectRelatives(firstPet, secondPet);
     }
 
-    private static boolean areDirectRelatives(Pet petA, Pet petB) {
+    private static boolean areDirectRelatives(Pet firstPet, Pet secondPet) {
         Set<Long> idsA = new HashSet<>();
-        idsA.add(petA.petId());
-        if (petA.parentAId() != null) {
-            idsA.add(petA.parentAId());
+        idsA.add(firstPet.petId());
+        if (firstPet.parentAId() != null) {
+            idsA.add(firstPet.parentAId());
         }
-        if (petA.parentBId() != null) {
-            idsA.add(petA.parentBId());
+        if (firstPet.parentBId() != null) {
+            idsA.add(firstPet.parentBId());
         }
-        if (idsA.contains(petB.petId())) {
+        if (idsA.contains(secondPet.petId())) {
             return true;
         }
-        if ((petB.parentAId() != null) && idsA.contains(petB.parentAId())) {
+        if ((secondPet.parentAId() != null) && idsA.contains(secondPet.parentAId())) {
             return true;
         }
-        return (petB.parentBId() != null) && idsA.contains(petB.parentBId());
+        return (secondPet.parentBId() != null) && idsA.contains(secondPet.parentBId());
     }
 
-    private static ActionCandidate pickBestCandidate(Collection<ActionCandidate> candidates, Random random) {
-        int maxScore = candidates.stream()
-                                 .mapToInt(ActionCandidate::score)
-                                 .max()
-                                 .orElseThrow();
-        List<ActionCandidate> topCandidates = candidates.stream()
-                                                        .filter(candidate -> candidate.score() == maxScore)
-                                                        .toList();
+    private static ActionCandidate pickBestCandidate(Collection<ActionCandidate> actionCandidates, Random random) {
+        int maxScore = actionCandidates.stream()
+                                       .mapToInt(ActionCandidate::score)
+                                       .max()
+                                       .orElseThrow();
+        List<ActionCandidate> topCandidates = actionCandidates.stream()
+                                                              .filter(candidate -> candidate.score() == maxScore)
+                                                              .toList();
 
         if (topCandidates.size() == 1) {
             // Use the only top candidate
@@ -426,19 +426,20 @@ public final class EtpetsAgentLogic {
     }
 
     private static ActionEffect executeActionCandidate(
-            ActionCandidate candidate,
+            ActionCandidate actionCandidate,
             GridCoordinate currentCoordinate,
             Pet pet,
             Random random,
             EtpetsGridModel gridModel,
             int stepIndex,
             EtpetsIdSequence idSequence) {
-        pet.recordLastAction(candidate.type(), candidate.score());
-        return switch (candidate.type()) {
+        pet.recordLastAction(actionCandidate.type(), actionCandidate.score());
+        return switch (actionCandidate.type()) {
             case WAIT -> executeWaitAction(currentCoordinate, gridModel);
-            case MOVE -> executeMoveAction(currentCoordinate, candidate.moveTarget(), pet, gridModel);
-            case EAT -> executeEatAction(currentCoordinate, candidate.interactionTarget(), candidate, pet, gridModel);
-            case REPRODUCE -> executeReproduceAction(candidate, pet, random, gridModel, stepIndex, idSequence);
+            case MOVE -> executeMoveAction(currentCoordinate, actionCandidate.moveTarget(), pet, gridModel);
+            case EAT ->
+                    executeEatAction(currentCoordinate, actionCandidate.interactionTarget(), actionCandidate, pet, gridModel);
+            case REPRODUCE -> executeReproduceAction(actionCandidate, pet, random, gridModel, stepIndex, idSequence);
         };
     }
 
@@ -470,12 +471,12 @@ public final class EtpetsAgentLogic {
 
     private static ActionEffect executeEatAction(GridCoordinate petCoordinate,
                                                  GridCoordinate resourceCoordinate,
-                                                 ActionCandidate candidate,
+                                                 ActionCandidate actionCandidate,
                                                  Pet pet,
                                                  EtpetsGridModel gridModel) {
         if (!(gridModel.resourceModel().getEntity(resourceCoordinate) instanceof ResourceBase resource)
                 || !resource.canConsume()) {
-            throw new IllegalStateException("Failed to execute EAT action due to failed preconditions: " + candidate);
+            throw new IllegalStateException("Failed to execute EAT action due to failed preconditions: " + actionCandidate);
         }
 
         // Consume the resource, gain energy and update trail.
@@ -486,20 +487,20 @@ public final class EtpetsAgentLogic {
         return ActionEffect.none();
     }
 
-    private static ActionEffect executeReproduceAction(ActionCandidate candidate,
+    private static ActionEffect executeReproduceAction(ActionCandidate actionCandidate,
                                                        Pet pet,
                                                        Random random,
                                                        EtpetsGridModel gridModel,
                                                        int stepIndex,
                                                        EtpetsIdSequence idSequence) {
-        if (!(gridModel.agentModel().getEntity(candidate.interactionTarget()) instanceof Pet partnerPet)
+        if (!(gridModel.agentModel().getEntity(actionCandidate.interactionTarget()) instanceof Pet partnerPet)
                 || !canReproduce(pet, partnerPet, stepIndex)) {
-            throw new IllegalStateException("Failed to execute REPRODUCE action due to failed preconditions: " + candidate);
+            throw new IllegalStateException("Failed to execute REPRODUCE action due to failed preconditions: " + actionCandidate);
         }
 
-        if (!(candidate.eggTarget() instanceof GridCoordinate eggCoordinate)
+        if (!(actionCandidate.eggTarget() instanceof GridCoordinate eggCoordinate)
                 || !EtpetsCell.of(eggCoordinate, gridModel).isWalkable()) {
-            throw new IllegalStateException("Failed to execute REPRODUCE action due to invalid egg placement: " + candidate);
+            throw new IllegalStateException("Failed to execute REPRODUCE action due to invalid egg placement: " + actionCandidate);
         }
 
         PetGenome genome = PetGenome.fromParents(
@@ -553,26 +554,26 @@ public final class EtpetsAgentLogic {
                 traits);
     }
 
-    private static Optional<ResourceBase> toConsumableResource(ResourceEntity entity) {
-        if ((entity instanceof ResourceBase resource) && resource.canConsume()) {
+    private static Optional<ResourceBase> toConsumableResource(ResourceEntity resourceEntity) {
+        if ((resourceEntity instanceof ResourceBase resource) && resource.canConsume()) {
             return Optional.of(resource);
         }
         return Optional.empty();
     }
 
-    private static Optional<GridCoordinate> findEggPlacementCellFromSnapshots(
-            GridCoordinate coordA,
-            GridCoordinate coordB,
-            GridStructure structure,
+    private static Optional<GridCoordinate> computeEggPlacementCoordinate(
+            GridCoordinate sourceCoordinate,
+            GridCoordinate partnerCoordinate,
+            GridStructure gridStructure,
             Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
         // TODO Optimize methode and parameter
-        List<GridCoordinate> neighborsA = getValidNeighborCoordinates(coordA, structure);
-        Set<GridCoordinate> neighborsASet = new HashSet<>(neighborsA);
-        List<GridCoordinate> neighborsB = getValidNeighborCoordinates(coordB, structure);
+        List<GridCoordinate> sourceNeighbors = computeValidNeighborCoordinates(sourceCoordinate, gridStructure);
+        Set<GridCoordinate> sourceNeighborSet = new HashSet<>(sourceNeighbors);
+        List<GridCoordinate> partnerNeighbors = computeValidNeighborCoordinates(partnerCoordinate, gridStructure);
 
         List<GridCoordinate> candidates = new ArrayList<>();
-        for (GridCoordinate coordinate : neighborsB) {
-            if (!neighborsASet.contains(coordinate) || coordinate.equals(coordA) || coordinate.equals(coordB)) {
+        for (GridCoordinate coordinate : partnerNeighbors) {
+            if (!sourceNeighborSet.contains(coordinate) || coordinate.equals(sourceCoordinate) || coordinate.equals(partnerCoordinate)) {
                 continue;
             }
 
@@ -600,10 +601,10 @@ public final class EtpetsAgentLogic {
         return Optional.of(candidates.getFirst());
     }
 
-    private static List<GridCoordinate> getValidNeighborCoordinates(GridCoordinate coord,
-                                                                    GridStructure structure) {
+    private static List<GridCoordinate> computeValidNeighborCoordinates(GridCoordinate originCoordinate,
+                                                                        GridStructure gridStructure) {
         Collection<EdgeBehaviorResult> results =
-                CellNeighborhoods.neighborEdgeResults(coord, NeighborhoodMode.EDGES_ONLY, structure);
+                CellNeighborhoods.neighborEdgeResults(originCoordinate, NeighborhoodMode.EDGES_ONLY, gridStructure);
         List<GridCoordinate> valid = new ArrayList<>(results.size());
         for (EdgeBehaviorResult r : results) {
             if (r.action() == EdgeBehaviorAction.VALID) {
@@ -613,8 +614,8 @@ public final class EtpetsAgentLogic {
         return valid;
     }
 
-    private static boolean calculateHasLowMobilityPenalty(List<GridCoordinate> neighborCoordinates,
-                                                          EtpetsGridModel gridModel) {
+    private static boolean hasLowMobilityPenalty(List<GridCoordinate> neighborCoordinates,
+                                                 EtpetsGridModel gridModel) {
         int walkableCount = 0;
         for (GridCoordinate neighbor : neighborCoordinates) {
             if (EtpetsCell.of(neighbor, gridModel).isWalkable()) {
@@ -624,8 +625,8 @@ public final class EtpetsAgentLogic {
         return walkableCount < EtpetsBalance.PET_MOVE_LOW_MOBILITY_THRESHOLD;
     }
 
-    private static boolean calculateHasCrowdingPenalty(List<GridCoordinate> neighborCoordinates,
-                                                       EtpetsGridModel gridModel) {
+    private static boolean hasCrowdingPenalty(List<GridCoordinate> neighborCoordinates,
+                                              EtpetsGridModel gridModel) {
         int petCount = 0;
         for (GridCoordinate neighbor : neighborCoordinates) {
             AgentEntity agent = gridModel.agentModel().getEntity(neighbor);
@@ -666,11 +667,45 @@ public final class EtpetsAgentLogic {
                                    int score,
                                    GridCoordinate moveTarget,
                                    GridCoordinate interactionTarget,
-                                   @Nullable GridCoordinate eggTarget) {}
+                                   @Nullable GridCoordinate eggTarget) {
 
-    private record ReproductionOption(EtpetsCell partnerCell, GridCoordinate eggCoordinate) {}
+        private ActionCandidate {
+            if (score < 0) {
+                throw new IllegalArgumentException("Action score must not be negative: " + score);
+            }
+            switch (type) {
+                case WAIT, MOVE, EAT -> {
+                    if (eggTarget != null) {
+                        throw new IllegalArgumentException("Egg target must be null for action type " + type);
+                    }
+                }
+                case REPRODUCE -> {
+                    if (eggTarget == null) {
+                        throw new IllegalArgumentException("Egg target is required for REPRODUCE actions.");
+                    }
+                }
+            }
+        }
+
+    }
+
+    private record ReproductionOption(EtpetsCell partnerCell, GridCoordinate eggCoordinate) {
+
+        private ReproductionOption {
+            if (!(partnerCell.agentEntity() instanceof Pet)) {
+                throw new IllegalArgumentException("Reproduction partner cell must contain a Pet.");
+            }
+        }
+
+    }
 
     private record ActionEffect(int eggCountDelta) {
+
+        private ActionEffect {
+            if (eggCountDelta < 0) {
+                throw new IllegalArgumentException("Egg count delta must not be negative: " + eggCountDelta);
+            }
+        }
 
         private static ActionEffect none() {
             return new ActionEffect(0);
