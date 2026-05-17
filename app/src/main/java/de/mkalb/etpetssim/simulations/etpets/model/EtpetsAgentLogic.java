@@ -38,9 +38,10 @@ public final class EtpetsAgentLogic {
 
             // Check if the entity is still at its original coordinate.
             if (agentModel.getEntity(currentCoordinate) != entity) {
-                throw new IllegalStateException("Entity at coordinate " + currentCoordinate.toDisplayString()
-                        + " has changed since snapshot was taken. Expected: " + entity.toDisplayString()
-                        + ", actual: " + agentModel.getEntity(currentCoordinate).toDisplayString());
+                throw new IllegalStateException("EtpetsAgentLogic: Snapshot entity mismatch at "
+                        + currentCoordinate.toDisplayString()
+                        + " (expected=" + entity.toDisplayString()
+                        + ", actual=" + agentModel.getEntity(currentCoordinate).toDisplayString() + ").");
             }
 
             if (entity instanceof PetEgg egg) {
@@ -335,7 +336,7 @@ public final class EtpetsAgentLogic {
                                                  EtpetsGridModel gridModel) {
         if (!(gridModel.resourceModel().getEntity(resourceCoordinate) instanceof ResourceBase resource)
                 || !resource.canConsume()) {
-            throw new IllegalStateException("Failed to execute EAT action due to failed preconditions: " + actionCandidate);
+            throw new IllegalStateException("EtpetsAgentLogic: EAT precondition failed for action " + actionCandidate + ".");
         }
 
         // Consume the resource, gain energy and update trail.
@@ -354,12 +355,12 @@ public final class EtpetsAgentLogic {
                                                        EtpetsIdSequence idSequence) {
         if (!(gridModel.agentModel().getEntity(actionCandidate.interactionTarget()) instanceof Pet partnerPet)
                 || !canReproduce(pet, partnerPet, stepIndex)) {
-            throw new IllegalStateException("Failed to execute REPRODUCE action due to failed preconditions: " + actionCandidate);
+            throw new IllegalStateException("EtpetsAgentLogic: REPRODUCE precondition failed for action " + actionCandidate + ".");
         }
 
         if (!(actionCandidate.eggTarget() instanceof GridCoordinate eggCoordinate)
                 || !EtpetsCell.of(eggCoordinate, gridModel).isWalkable()) {
-            throw new IllegalStateException("Failed to execute REPRODUCE action due to invalid egg placement: " + actionCandidate);
+            throw new IllegalStateException("EtpetsAgentLogic: REPRODUCE egg placement invalid for action " + actionCandidate + ".");
         }
 
         PetGenome genome = PetGenome.fromParents(
@@ -454,7 +455,8 @@ public final class EtpetsAgentLogic {
     private static int computeReproduceScore(Pet pet,
                                              EtpetsCell partnerCell) {
         if (!(partnerCell.agentEntity() instanceof Pet partnerPet)) {
-            throw new IllegalStateException("Expected partner cell agent entity to be a Pet. Actual: " + partnerCell.agentEntity().toDisplayString());
+            throw new IllegalStateException("EtpetsAgentLogic: Invalid reproduction partner cell: expected agent Pet, actual="
+                    + partnerCell.agentEntity().toDisplayString() + ".");
         }
 
         double petQualityScore = pet.traits().genomeQualityScore();
@@ -671,17 +673,17 @@ public final class EtpetsAgentLogic {
 
         private ActionCandidate {
             if (score < 0) {
-                throw new IllegalArgumentException("Action score must not be negative: " + score);
+                throw new IllegalArgumentException("EtpetsAgentLogic: ActionCandidate score must be >= 0 (actual=" + score + ").");
             }
             switch (type) {
                 case WAIT, MOVE, EAT -> {
                     if (eggTarget != null) {
-                        throw new IllegalArgumentException("Egg target must be null for action type " + type);
+                        throw new IllegalArgumentException("EtpetsAgentLogic: ActionCandidate eggTarget must be null for type " + type + ".");
                     }
                 }
                 case REPRODUCE -> {
                     if (eggTarget == null) {
-                        throw new IllegalArgumentException("Egg target is required for REPRODUCE actions.");
+                        throw new IllegalArgumentException("EtpetsAgentLogic: ActionCandidate eggTarget is required for type REPRODUCE.");
                     }
                 }
             }
@@ -693,7 +695,7 @@ public final class EtpetsAgentLogic {
 
         private ReproductionOption {
             if (!(partnerCell.agentEntity() instanceof Pet)) {
-                throw new IllegalArgumentException("Reproduction partner cell must contain a Pet.");
+                throw new IllegalArgumentException("EtpetsAgentLogic: ReproductionOption partnerCell must contain a Pet agent.");
             }
         }
 
@@ -703,7 +705,7 @@ public final class EtpetsAgentLogic {
 
         private ActionEffect {
             if (eggCountDelta < 0) {
-                throw new IllegalArgumentException("Egg count delta must not be negative: " + eggCountDelta);
+                throw new IllegalArgumentException("EtpetsAgentLogic: ActionEffect eggCountDelta must be >= 0 (actual=" + eggCountDelta + ").");
             }
         }
 
