@@ -13,11 +13,11 @@ import java.util.concurrent.*;
 /**
  * Encapsulates user seed input and derived seed preview for simulations.
  * <p>
- * Interpretation rules are deterministic:
- * blank input yields a random seed, numeric input yields its parsed {@code long} value,
+ * Interpretation rules:
+ * blank input yields a random seed, numeric input yields the parsed {@code long} value,
  * and all other input is converted into a stable hash-based {@code long}.
  * <p>
- * Note: The {@code labelProperty} is only updated when {@link #computeSeedAndUpdateLabel()} is called.
+ * The {@code labelProperty} is updated only by {@link #computeSeedAndUpdateLabel()}.
  */
 public final class SeedProperty {
 
@@ -30,8 +30,6 @@ public final class SeedProperty {
 
     /**
      * Constructs a SeedProperty with the given initial value.
-     * <p>
-     * The labelProperty is initialized as an empty string. It is updated only when {@link #computeSeedAndUpdateLabel()} is called.
      *
      * @param initialValue the initial seed value as a string (may be blank or null for random)
      */
@@ -44,7 +42,7 @@ public final class SeedProperty {
      * Checks if the given text represents a random seed (null or blank).
      *
      * @param text the seed string to check (may be null)
-     * @return true if the text is null or blank, false otherwise
+     * @return {@code true} if the text is null or blank
      */
     static boolean isRandomSeed(@Nullable String text) {
         return (text == null) || text.isBlank();
@@ -54,14 +52,14 @@ public final class SeedProperty {
      * Checks if the given text can be parsed as a numeric seed (long).
      *
      * @param text the seed string to check (may be null)
-     * @return true if the text can be parsed as a long, false otherwise
+     * @return {@code true} if the text can be parsed as a long
      */
     static boolean isNumericSeed(@Nullable String text) {
-        if ((text == null) || text.isBlank()) {
+        if (isRandomSeed(text)) {
             return false;
         }
         try {
-            Long.parseLong(text.trim());
+            parseNumericSeed(text);
             return true;
         } catch (NumberFormatException e) {
             return false;
@@ -90,8 +88,7 @@ public final class SeedProperty {
         // Hash the string using SHA-256 and use the first 8 bytes as a long seed
         MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
         byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
-        ByteBuffer buffer = ByteBuffer.wrap(hash);
-        return buffer.getLong();
+        return ByteBuffer.wrap(hash).getLong();
     }
 
     /**
@@ -102,9 +99,9 @@ public final class SeedProperty {
      * @return a long value derived from the hashCode
      */
     static long fallbackHashSeed(String text) {
-        int h = text.hashCode();
+        int hashCode = text.hashCode();
         // Combine hashCode into a long by shifting and masking
-        return ((long) h << LONG_SHIFT) | (h & LONG_MASK);
+        return ((long) hashCode << LONG_SHIFT) | (hashCode & LONG_MASK);
     }
 
     /**
@@ -136,7 +133,7 @@ public final class SeedProperty {
     /**
      * Returns the JavaFX StringProperty representing the seed value.
      *
-     * @return the StringProperty for the seed value
+     * @return seed input property
      */
     public StringProperty stringProperty() {
         return stringProperty;
@@ -145,7 +142,7 @@ public final class SeedProperty {
     /**
      * Returns the JavaFX StringProperty representing the seed label (typically the computed seed as a string).
      *
-     * @return the StringProperty for the label
+     * @return computed-seed label property
      */
     public StringProperty labelProperty() {
         return labelProperty;
@@ -158,9 +155,9 @@ public final class SeedProperty {
      * @return the computed seed as a long
      */
     public long computeSeedAndUpdateLabel() {
-        long seed = computeSeed(stringProperty.get());
-        labelProperty.set(String.valueOf(seed));
-        return seed;
+        long computedSeed = computeSeed(stringProperty.get());
+        labelProperty.set(Long.toString(computedSeed));
+        return computedSeed;
     }
 
 }
