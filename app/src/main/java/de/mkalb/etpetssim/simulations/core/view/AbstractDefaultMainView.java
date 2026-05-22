@@ -25,7 +25,6 @@ import java.util.concurrent.*;
 /**
  * Default main view base with drawing and throttling support.
  */
-@SuppressWarnings("StringConcatenationMissingWhitespace")
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
@@ -52,6 +51,7 @@ public abstract class AbstractDefaultMainView<
      * Only used for debugging purposes to log draw calls and performance.
      */
     private static final boolean DEBUG_MODE = false;
+    private static final String LOG_COMPONENT = "MainView";
 
     private static final int DRAW_THROTTLER_HISTORY_SIZE = 3;
     private static final int DRAW_THROTTLER_MAX_SKIPS = 4;
@@ -118,7 +118,7 @@ public abstract class AbstractDefaultMainView<
         drawAndMeasureSimulationStep(stepCount);
 
         if (DEBUG_MODE) {
-            AppLogger.info("MainView: Simulation initialized and drawn in the view. step=" + stepCount);
+            AppLogger.infof("%s: Simulation initialized and drawn in the view. step=%d", LOG_COMPONENT, stepCount);
         }
     }
 
@@ -126,13 +126,13 @@ public abstract class AbstractDefaultMainView<
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             if (DEBUG_MODE) {
-                AppLogger.info("MainView: Handle simulation step at view for running batch mode. " + simulationStepEvent);
+                AppLogger.infof("%s: Handle simulation step in view for batch mode. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
             controlView.updateStepCount(stepCount);
         } else {
             if (DEBUG_MODE) {
-                AppLogger.info("MainView: Handle simulation step at view. " + simulationStepEvent);
+                AppLogger.infof("%s: Handle simulation step in view. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
             controlView.updateStepCount(stepCount);
@@ -143,7 +143,7 @@ public abstract class AbstractDefaultMainView<
             if (lastDrawnStepCount != stepCount) {
                 throttleAndDrawSimulationStep(stepCount, simulationStepEvent.finalStep(), viewModel.getThrottleDrawMillis());
             } else if (DEBUG_MODE) {
-                AppLogger.info("MainView: Skipping draw for step because it was already drawn. " + simulationStepEvent);
+                AppLogger.infof("%s: Skipping draw because step was already drawn. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
         }
     }
@@ -161,8 +161,11 @@ public abstract class AbstractDefaultMainView<
         lastDrawnStepCount = stepCount;
 
         if (DEBUG_MODE) {
-            AppLogger.info("MainView: Drawn step " + stepCount +
-                    " in " + durationMillis + "ms. Average draw time: " + drawThrottler.getAverageDurationMillis() + "ms");
+            AppLogger.infof("%s: Drawn step %d in %dms. averageDrawMillis=%d",
+                    LOG_COMPONENT,
+                    stepCount,
+                    durationMillis,
+                    drawThrottler.getAverageDurationMillis());
         }
     }
 
@@ -173,9 +176,11 @@ public abstract class AbstractDefaultMainView<
         } else {
             showSkipOverlay();
             if (DEBUG_MODE) {
-                AppLogger.warn("MainView: Skipping draw for step " + stepCount +
-                        " due to high average draw time. Average: " + drawThrottler.getAverageDurationMillis() +
-                        "ms, Threshold: " + throttleDrawMillis + "ms");
+                AppLogger.warnf("%s: Skipping draw for step %d due to high average draw time. averageMillis=%d, thresholdMillis=%d",
+                        LOG_COMPONENT,
+                        stepCount,
+                        drawThrottler.getAverageDurationMillis(),
+                        throttleDrawMillis);
             }
         }
     }

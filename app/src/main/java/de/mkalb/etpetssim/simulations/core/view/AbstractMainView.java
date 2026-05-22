@@ -42,6 +42,7 @@ public abstract class AbstractMainView<
     private static final double MIN_CELL_FONT_SIZE = 7.0d;
     private static final double MIN_EMOJI_FONT_SIZE = 3.0d;
     private static final double CENTER_SPLIT_PANE_DIVIDER_POSITION = 0.75d;
+    private static final String LOG_COMPONENT = "MainView";
 
     protected final VM viewModel;
     protected final CFV configView;
@@ -254,10 +255,10 @@ public abstract class AbstractMainView<
 
         CellDimension cellDimension = basePainter.cellDimension();
 
-        AppLogger.info("MainView: Canvas painter created: " + basePainter);
+        AppLogger.infof("%s: Canvas painter created. painter=%s", LOG_COMPONENT, basePainter);
         if ((baseCanvas.getWidth() < basePainter.gridDimension2D().getWidth()) ||
                 (baseCanvas.getHeight() < basePainter.gridDimension2D().getHeight())) {
-            AppLogger.warn("MainView: Canvas size is smaller than the grid dimension.");
+            AppLogger.warnf("%s: Canvas size is smaller than the grid dimension.", LOG_COMPONENT);
             viewModel.setNotificationType(SimulationNotificationType.CANVAS_SIZE_LIMIT);
         }
 
@@ -265,18 +266,18 @@ public abstract class AbstractMainView<
         double fontSize = computeCellFontSize(cellDimension, structure.cellShape());
         if (fontSize >= MIN_CELL_FONT_SIZE) {
             cellFont = getPreferredFont(fontSize);
-            AppLogger.info("MainView: Cell font created: " + cellFont);
+            AppLogger.infof("%s: Cell font created. font=%s", LOG_COMPONENT, cellFont);
         } else {
             cellFont = null;
-            AppLogger.info("MainView: Cell font not created, because font size is too small: " + fontSize);
+            AppLogger.infof("%s: Cell font not created because font size is too small. fontSize=%.1f", LOG_COMPONENT, fontSize);
         }
         double fontSizeEmoji = computeCellEmojiFontSize(cellDimension, structure.cellShape());
         if (fontSizeEmoji >= MIN_EMOJI_FONT_SIZE) {
             cellEmojiFont = getPreferredFont(fontSizeEmoji);
-            AppLogger.info("MainView: Cell emoji font created: " + cellEmojiFont);
+            AppLogger.infof("%s: Cell emoji font created. font=%s", LOG_COMPONENT, cellEmojiFont);
         } else {
             cellEmojiFont = null;
-            AppLogger.info("MainView: Cell emoji font not created, because font size is too small: " + fontSizeEmoji);
+            AppLogger.infof("%s: Cell emoji font not created because font size is too small. fontSize=%.1f", LOG_COMPONENT, fontSizeEmoji);
         }
 
         return cellDimension;

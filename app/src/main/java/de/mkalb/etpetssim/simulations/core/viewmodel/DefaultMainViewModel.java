@@ -133,7 +133,7 @@ public final class DefaultMainViewModel<
                         lastSelectedEntity.set(cell.entity());
                         AppLogger.infof("%s: Cell selected: %s", LOG_COMPONENT, cell.toDisplayString());
                     } catch (RuntimeException e) {
-                        AppLogger.error(e, LOG_COMPONENT + ": Cannot determine selected cell for coordinate=" + newValue.toDisplayString());
+                        AppLogger.errorf(e, "%s: Cannot determine selected cell for coordinate=%s", LOG_COMPONENT, newValue.toDisplayString());
                         selectedGridCell.set(null);
                         lastSelectedCoordinate.set(null);
                         lastSelectedEntity.set(null);
@@ -339,7 +339,7 @@ public final class DefaultMainViewModel<
         } catch (IllegalArgumentException | IllegalStateException | NullPointerException
                  | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
             setSimulationState(SimulationState.ERROR);
-            AppLogger.error(e, LOG_COMPONENT + ": Failed to start simulation.");
+            AppLogger.errorf(e, "%s: Failed to start simulation.", LOG_COMPONENT);
             setNotificationType(SimulationNotificationType.EXCEPTION);
             return;
         }
@@ -493,7 +493,7 @@ public final class DefaultMainViewModel<
             setNotificationType(SimulationNotificationType.EXCEPTION);
 
             setSimulationState(SimulationState.ERROR);
-            AppLogger.error(e, LOG_COMPONENT + ": Simulation (timer) encountered an error and was stopped.");
+            AppLogger.errorf(e, "%s: Simulation (timer) encountered an error and was stopped.", LOG_COMPONENT);
         }
 
         // If simulation is paused, finished or caught an error,
@@ -585,7 +585,7 @@ public final class DefaultMainViewModel<
                     setNotificationType(SimulationNotificationType.EXCEPTION);
 
                     setSimulationState(SimulationState.ERROR);
-                    AppLogger.error(e, LOG_COMPONENT + ": Simulation (batch) encountered an error and was stopped.");
+                    AppLogger.errorf(e, "%s: Simulation (batch) encountered an error and was stopped.", LOG_COMPONENT);
                 });
             } finally {
                 batchThread = null;
