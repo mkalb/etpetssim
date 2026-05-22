@@ -137,7 +137,8 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         );
 
         // Only add cellDisplayModeControl if there are multiple valid values
-        FXComponentFactory.LabeledControl<? extends Region> cellDisplayModeControl = null;
+        int baseControls = 1;
+        FXComponentFactory.LabeledControl<? extends Region> cellDisplayModeControl;
         if (viewModel.cellDisplayModeProperty().hasMultipleValidValues()) {
             cellDisplayModeControl = FXComponentFactory.createLabeledEnumComboBox(
                     viewModel.cellDisplayModeProperty(),
@@ -146,9 +147,11 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                     AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_DISPLAY_MODE_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
             );
+            baseControls = 2;
+        } else {
+            cellDisplayModeControl = null;
         }
 
-        int baseControls = (cellDisplayModeControl != null) ? 2 : 1;
         var content = new FXComponentFactory.LabeledControl[baseControls + additionalContent.length];
         content[0] = cellEdgeLengthControl;
         if (cellDisplayModeControl != null) {

@@ -79,9 +79,10 @@ public abstract class AbstractDefaultMainView<
         });
     }
 
+    @SuppressWarnings("MagicNumber")
     protected final double computeStrokeLineWidth(CellDimension cellDimension) {
         if (cellDimension.innerRadius() < 2.0d) {
-            return 0.0d;
+            return NO_STROKE_LINE_WIDTH;
         }
         return Math.log(cellDimension.innerRadius());
     }
@@ -186,7 +187,7 @@ public abstract class AbstractDefaultMainView<
     }
 
     private void showSkipOverlay() {
-        if (!skipOverlayActive && (overlayPainter != null)) {
+        if ((overlayPainter != null) && !skipOverlayActive) {
             overlayPainter.clearCanvasBackground();
 
             Point2D center = computeVisibleCanvasCenter(overlayCanvas);
@@ -199,8 +200,8 @@ public abstract class AbstractDefaultMainView<
                     SKIP_OVERLAY_BACKGROUND_COLOR,
                     SKIP_PADDING
             );
+            skipOverlayActive = true;
         }
-        skipOverlayActive = true;
     }
 
     private void clearSkipOverlay() {

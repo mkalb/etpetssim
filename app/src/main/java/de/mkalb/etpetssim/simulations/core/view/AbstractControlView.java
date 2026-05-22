@@ -4,9 +4,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 
 import java.util.*;
 
@@ -35,13 +33,12 @@ public abstract class AbstractControlView<VM extends SimulationControlViewModel>
         createControlConfigPane().ifPresent(configRegion -> controlHBox.getChildren().add(configRegion));
 
         // Spacer before observation section (if present)
-        Optional<Pane> observationRegion = createControlObservationPane();
-        if (observationRegion.isPresent()) {
+        createControlObservationPane().ifPresent(observationRegion -> {
             Region spacer = new Region();
-            HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+            HBox.setHgrow(spacer, Priority.ALWAYS);
             controlHBox.getChildren().add(spacer);
-            controlHBox.getChildren().add(observationRegion.get());
-        }
+            controlHBox.getChildren().add(observationRegion);
+        });
 
         ScrollPane controlScrollPane = new ScrollPane();
         controlScrollPane.getStyleClass().add(FXStyleClasses.CONTROL_SCROLLPANE);

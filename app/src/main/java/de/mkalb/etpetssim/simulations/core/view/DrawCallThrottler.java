@@ -2,6 +2,9 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import java.util.*;
 
+/**
+ * Tracks recent draw durations and decides whether intermediate draws should be skipped.
+ */
 final class DrawCallThrottler {
 
     private final int historySize;
@@ -23,6 +26,9 @@ final class DrawCallThrottler {
         durationsMillis = new ArrayDeque<>(historySize);
     }
 
+    /**
+     * Returns whether a draw call should be skipped for the current step.
+     */
     boolean shouldSkip(long thresholdMillis) {
         if ((averageDurationMillis > thresholdMillis)
                 && (durationsMillis.size() >= historySize)) {
@@ -36,6 +42,9 @@ final class DrawCallThrottler {
         return false;
     }
 
+    /**
+     * Records one draw duration and refreshes the moving average.
+     */
     void recordDurationMillis(long durationMillis) {
         if (durationsMillis.size() >= historySize) {
             Long removedMillis = durationsMillis.poll();
@@ -48,6 +57,9 @@ final class DrawCallThrottler {
         averageDurationMillis = durationSumMillis / durationsMillis.size();
     }
 
+    /**
+     * Returns the current moving average over the configured history window.
+     */
     long getAverageDurationMillis() {
         return averageDurationMillis;
     }

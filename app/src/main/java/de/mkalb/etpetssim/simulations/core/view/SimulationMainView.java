@@ -3,33 +3,19 @@ package de.mkalb.etpetssim.simulations.core.view;
 import javafx.scene.layout.Region;
 
 /**
- * The SimulationMainView interface represents a contract for all simulation views
- * in the application.
+ * Contract for building and shutting down a simulation main view.
  */
 public interface SimulationMainView {
 
     /**
-     * Builds the main view region for the simulation.
-     * <p>
-     * This method is responsible for constructing and returning the primary
-     * UI component (a {@link Region}) for the simulation. Each implementation
-     * of this interface should provide its own specific view region.
+     * Builds the root region for a simulation screen.
      *
-     * @return the main view region for the simulation
+     * @return root region for the simulation view
      */
     Region buildMainRegion();
 
     /**
-     * Shuts down the simulation and releases all associated resources.
-     * <p>
-     * This method should be called when the simulation is no longer needed,
-     * for example, when the user closes the simulation window. It is responsible
-     * for stopping background tasks, terminating executors, and performing any
-     * necessary cleanup to prevent resource leaks.
-     * </p>
-     * <p>
-     * After calling this method, the simulation instance should not be used again.
-     * </p>
+     * Stops active simulation-related work and releases view-side resources.
      */
     void shutdownSimulation();
 
