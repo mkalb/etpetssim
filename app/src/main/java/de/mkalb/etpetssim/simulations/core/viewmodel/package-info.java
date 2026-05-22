@@ -1,8 +1,8 @@
 /**
- * Core view-model contracts and default implementations shared by concrete simulations.
+ * Core view-model contracts and base implementations shared by concrete simulations.
  *
- * <p>This package defines MVVM-facing interfaces and base classes for simulation orchestration,
- * control state, configuration state, and observation state used by simulation-specific views.
+ * <p>This package defines MVVM-facing interfaces and base classes for orchestration,
+ * control state, configuration state, and observation state.
  */
 @org.jspecify.annotations.NullMarked
 package de.mkalb.etpetssim.simulations.core.viewmodel;
