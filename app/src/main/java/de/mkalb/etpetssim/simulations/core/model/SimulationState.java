@@ -113,7 +113,10 @@ public enum SimulationState {
      * @return {@code true} if configuration controls are disabled, {@code false} otherwise
      */
     public boolean isControlConfigDisabled() {
-        return !(canStart() || isPaused());
+        return switch (this) {
+            case INITIAL, PAUSED, CANCELED, FINISHED, ERROR -> false;
+            case RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, SHUTTING_DOWN -> true;
+        };
     }
 
     /**
@@ -122,7 +125,10 @@ public enum SimulationState {
      * @return {@code true} if the simulation is running, {@code false} otherwise
      */
     public boolean isRunning() {
-        return (this == RUNNING_TIMED) || (this == RUNNING_BATCH);
+        return switch (this) {
+            case RUNNING_TIMED, RUNNING_BATCH -> true;
+            case INITIAL, PAUSING_BATCH, PAUSED, CANCELLING_BATCH, CANCELED, FINISHED, ERROR, SHUTTING_DOWN -> false;
+        };
     }
 
     /**

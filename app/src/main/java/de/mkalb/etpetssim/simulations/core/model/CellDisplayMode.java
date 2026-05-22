@@ -78,7 +78,10 @@ public enum CellDisplayMode {
      * @return true if the mode includes a border, false otherwise
      */
     public boolean hasBorder() {
-        return (this == SHAPE_BORDERED) || (this == CIRCLE_BORDERED);
+        return switch (this) {
+            case SHAPE_BORDERED, CIRCLE_BORDERED -> true;
+            case SHAPE, CIRCLE, EMOJI -> false;
+        };
     }
 
 }

@@ -7,4 +7,12 @@ package de.mkalb.etpetssim.simulations.core.model;
  * @param stepCount the total step count after processing
  * @param finalStep whether this event represents the final step before stopping
  */
-public record SimulationStepEvent(boolean batchModeRunning, int stepCount, boolean finalStep) {}
+public record SimulationStepEvent(boolean batchModeRunning, int stepCount, boolean finalStep) {
+
+    public SimulationStepEvent {
+        if (stepCount < 0) {
+            throw new IllegalArgumentException("stepCount must be >= 0");
+        }
+    }
+
+}

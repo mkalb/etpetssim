@@ -57,17 +57,21 @@ public abstract class AbstractTimedSimulationManager<
 
     @Override
     public final void executeStep() {
-        executor().executeStep();
+        var timedExecutor = executor();
+        timedExecutor.executeStep();
         updateStatistics();
         afterStepExecuted();
     }
 
     @Override
     public final StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
-        var result = executor().executeSteps(count, checkTermination, () -> {
+        var timedExecutor = executor();
+        var result = timedExecutor.executeSteps(count, checkTermination, () -> {
             updateStatistics();
             onStep.run();
         });
+        // Keep snapshots synchronized even when no per-step callback is triggered.
+        updateStatistics();
         afterStepsExecuted(result);
         return result;
     }

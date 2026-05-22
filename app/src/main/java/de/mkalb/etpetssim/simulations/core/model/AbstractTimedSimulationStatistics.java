@@ -21,6 +21,9 @@ public abstract class AbstractTimedSimulationStatistics
      * @param totalCells total number of cells in the simulation grid
      */
     protected AbstractTimedSimulationStatistics(int totalCells) {
+        if (totalCells < 0) {
+            throw new IllegalArgumentException("totalCells must be >= 0");
+        }
         this.totalCells = totalCells;
         stepCount = 0;
         stepTimingStatistics = StepTimingStatistics.empty();
@@ -51,6 +54,9 @@ public abstract class AbstractTimedSimulationStatistics
      */
     protected final void updateCommon(int newStepCount,
                                       StepTimingStatistics newStepTimingStatistics) {
+        if (newStepCount < 0) {
+            throw new IllegalArgumentException("newStepCount must be >= 0");
+        }
         stepCount = newStepCount;
         stepTimingStatistics = newStepTimingStatistics;
     }

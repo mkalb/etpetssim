@@ -93,7 +93,7 @@ public interface SimulationConfig {
      * @return cell count of the configured grid
      */
     default int computeCellCount() {
-        return gridWidth() * gridHeight();
+        return Math.multiplyExact(gridWidth(), gridHeight());
     }
 
     /**
@@ -110,7 +110,7 @@ public interface SimulationConfig {
         return !GridSize.isInvalidSize(gridWidth())
                 && !GridSize.isInvalidSize(gridHeight())
                 && GridStructure.isValid(createGridTopology(), createGridSize())
-                && (cellEdgeLength() > 0);
+                && (cellEdgeLength() > 0.0d);
     }
 
 }
