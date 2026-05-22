@@ -63,7 +63,7 @@ public final class AppLauncher {
         } catch (IOException e) {
             // Initialize the AppLogger with the specified log level, console usage and null log file path
             AppLogger.initialize(logLevel, useConsole, null);
-            AppLogger.error("AppLauncher: Failed to initialize log file.", e);
+            AppLogger.error(e, "AppLauncher: Failed to initialize log file.");
         }
     }
 

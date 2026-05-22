@@ -251,13 +251,27 @@ public final class AppLogger {
     }
 
     /**
+     * Logs a formatted error message with an exception.
+     *
+     * @param throwable exception to attach
+     * @param format format string compatible with {@link String#format(String, Object...)}
+     * @param args format arguments
+     * @throws NullPointerException if {@code throwable} or {@code format} is {@code null}
+     */
+    public static void errorf(Throwable throwable, String format, Object... args) {
+        Objects.requireNonNull(throwable, "Throwable must not be null");
+        Objects.requireNonNull(format, "Format string must not be null");
+        APP_LOGGER.logger.log(Level.SEVERE, throwable, () -> String.format(Locale.ROOT, format, args));
+    }
+
+    /**
      * Logs an error message with an exception.
      *
-     * @param message message text, may be {@code null}
      * @param throwable exception to attach
+     * @param message   message text, may be {@code null}
      * @throws NullPointerException if {@code throwable} is {@code null}
      */
-    public static void error(@Nullable String message, Throwable throwable) {
+    public static void error(Throwable throwable, @Nullable String message) {
         Objects.requireNonNull(throwable, "Throwable must not be null");
         APP_LOGGER.logger.log(Level.SEVERE, message, throwable);
     }

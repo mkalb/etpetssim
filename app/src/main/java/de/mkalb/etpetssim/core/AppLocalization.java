@@ -205,7 +205,7 @@ public final class AppLocalization {
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
-            AppLogger.error("AppLocalization: Key not found in ResourceBundle: " + key, e);
+            AppLogger.error(e, "AppLocalization: Key not found in ResourceBundle: " + key);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
     }
@@ -256,10 +256,10 @@ public final class AppLocalization {
         try {
             return String.format(locale, bundle.getString(key), args);
         } catch (MissingResourceException e) {
-            AppLogger.error("AppLocalization: Key not found in ResourceBundle: " + key, e);
+            AppLogger.error(e, "AppLocalization: Key not found in ResourceBundle: " + key);
             return PLACEHOLDER_FOR_EXCEPTIONS;
         } catch (IllegalFormatException e) {
-            AppLogger.error("AppLocalization: Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args), e);
+            AppLogger.error(e, "AppLocalization: Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args));
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
     }

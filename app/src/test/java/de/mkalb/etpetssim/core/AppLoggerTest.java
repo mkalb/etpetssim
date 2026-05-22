@@ -104,6 +104,13 @@ final class AppLoggerTest {
     }
 
     @Test
+    void testErrorfWithThrowableLogging() {
+        AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
+        Throwable t = new RuntimeException("Test exception");
+        assertDoesNotThrow(() -> AppLogger.errorf(t, "Error %s %d", "message", 5));
+    }
+
+    @Test
     void testDebugSupplierLogging() {
         AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
         Supplier<String> supplier = () -> "Debug from supplier";
@@ -135,7 +142,7 @@ final class AppLoggerTest {
     void testErrorWithThrowable() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         Throwable t = new RuntimeException("Test exception");
-        assertDoesNotThrow(() -> AppLogger.error("Error with throwable", t));
+        assertDoesNotThrow(() -> AppLogger.error(t, "Error with throwable"));
     }
 
     @Test
@@ -165,7 +172,8 @@ final class AppLoggerTest {
                 () -> assertThrows(NullPointerException.class, () -> AppLogger.debugf(null, "x")),
                 () -> assertThrows(NullPointerException.class, () -> AppLogger.infof(null, "x")),
                 () -> assertThrows(NullPointerException.class, () -> AppLogger.warnf(null, "x")),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf(null, "x"))
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf((String) null, "x")),
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf(new RuntimeException("x"), null, "x"))
         );
     }
 
@@ -173,7 +181,10 @@ final class AppLoggerTest {
     @Test
     void testNullThrowableThrowsException() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
-        assertThrows(NullPointerException.class, () -> AppLogger.error("msg", null));
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.error(null, "msg")),
+                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf((Throwable) null, "msg %s", "x"))
+        );
     }
 
 }

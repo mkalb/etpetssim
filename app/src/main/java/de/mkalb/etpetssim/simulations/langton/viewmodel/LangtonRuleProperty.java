@@ -70,7 +70,7 @@ public final class LangtonRuleProperty {
                 throw new IllegalArgumentException("Rule not valid for cell shape! cellShape=" + cellShape + ", input=" + stringProperty.get());
             }
         } catch (IllegalArgumentException e) {
-            AppLogger.error("Invalid Langton rule string: " + stringProperty.get() + ", using initial value: " + PRESET_SQUARE_INITIAL, e);
+            AppLogger.error(e, "Invalid Langton rule string: " + stringProperty.get() + ", using initial value: " + PRESET_SQUARE_INITIAL);
             rules = LangtonMovementRules.fromString(PRESET_SQUARE_INITIAL.toString());
         }
         String rulesDisplayString = rules.toDisplayString();

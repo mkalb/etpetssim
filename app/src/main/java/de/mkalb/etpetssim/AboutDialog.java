@@ -145,7 +145,7 @@ public final class AboutDialog {
             }
             return manifestInfo;
         } catch (IOException e) {
-            AppLogger.error("AboutDialog: Failed to read MANIFEST.MF", e);
+            AppLogger.error(e, "AboutDialog: Failed to read MANIFEST.MF");
             return Collections.emptyMap();
         }
     }

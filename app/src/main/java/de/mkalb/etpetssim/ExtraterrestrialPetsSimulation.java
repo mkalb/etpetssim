@@ -122,7 +122,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
                 simulationMainRegion.setDisable(true);
                 simulationInstance.simulationMainView().shutdownSimulation();
             } catch (Exception e) {
-                AppLogger.error("Application: Error during simulation shutdown: " + simulationInstance.simulationType(), e);
+                AppLogger.error(e, "Application: Error during simulation shutdown: " + simulationInstance.simulationType());
             }
         });
 
@@ -332,7 +332,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     public void start(Stage stage) {
         // Initialize exception handling for uncaught exceptions
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            AppLogger.error("Uncaught exception in thread " + thread.getName(), throwable);
+            AppLogger.error(throwable, "Uncaught exception in thread " + thread.getName());
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle(AppLocalization.getText(AppLocalizationKeys.ALERT_TITLE_UNEXPECTED_ERROR));

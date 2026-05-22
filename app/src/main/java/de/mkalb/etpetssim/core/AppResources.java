@@ -60,7 +60,7 @@ public final class AppResources {
         try {
             return Optional.of(ResourceBundle.getBundle(baseName, locale));
         } catch (MissingResourceException e) {
-            AppLogger.error("Resource bundle not found: " + baseName + " for locale " + locale, e);
+            AppLogger.error(e, "Resource bundle not found: " + baseName + " for locale " + locale);
             return Optional.empty();
         }
     }
@@ -105,7 +105,7 @@ public final class AppResources {
                 true, true,
                 false);
         if (image.isError()) {
-            AppLogger.error("Failed to decode image: " + name, image.getException());
+            AppLogger.error(image.getException(), "Failed to decode image: " + name);
             return Optional.empty();
         }
         return Optional.of(image);
@@ -163,7 +163,7 @@ public final class AppResources {
             }
             return Optional.of(new String(stream.readAllBytes(), charset));
         } catch (Exception e) {
-            AppLogger.error("Failed to read resource as string: /" + relativePath, e);
+            AppLogger.error(e, "Failed to read resource as string: /" + relativePath);
             return Optional.empty();
         }
     }
