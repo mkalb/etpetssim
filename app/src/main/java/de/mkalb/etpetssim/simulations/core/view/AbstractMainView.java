@@ -8,8 +8,6 @@ import de.mkalb.etpetssim.simulations.core.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.ui.*;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -131,7 +129,7 @@ public abstract class AbstractMainView<
 
         registerViewModelListeners();
         registerNotificationListener();
-        registerOverlayPrimaryMouseEvents();
+        registerOverlayPrimaryClickHandler();
 
         return borderPane;
     }
@@ -147,31 +145,18 @@ public abstract class AbstractMainView<
 
     protected abstract void registerViewModelListeners();
 
-    private void registerOverlayPrimaryMouseEvents() {
-        BooleanProperty isDragging = new SimpleBooleanProperty(false);
-
-        overlayCanvas.setOnMousePressed(event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                isDragging.set(false);
-            }
-        });
-
-        overlayCanvas.setOnMouseDragged(event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                isDragging.set(true);
-            }
-        });
-
+    private void registerOverlayPrimaryClickHandler() {
         overlayCanvas.setOnMouseReleased(event -> {
-            if ((overlayPainter != null)
+            FXGridCanvasPainter painter = overlayPainter;
+            if ((painter != null)
                     && (event.getButton() == MouseButton.PRIMARY)
-                    && !isDragging.get()
+                    && event.isStillSincePress()
                     && (event.getClickCount() == 1)) {
                 Point2D mousePoint = new Point2D(event.getX(), event.getY());
                 GridCoordinate mouseCoordinate = GridGeometry.fromCanvasPosition(mousePoint,
-                        overlayPainter.cellDimension(), overlayPainter.gridDimension2D(), overlayPainter.gridStructure());
-                if (!mouseCoordinate.isIllegal() && overlayPainter.isInsideGrid(mouseCoordinate)) {
-                    handleMouseClickedCoordinate(mousePoint, mouseCoordinate, overlayPainter);
+                        painter.cellDimension(), painter.gridDimension2D(), painter.gridStructure());
+                if (!mouseCoordinate.isIllegal() && painter.isInsideGrid(mouseCoordinate)) {
+                    handleMouseClickedCoordinate(mousePoint, mouseCoordinate, painter);
                 }
             }
         });
