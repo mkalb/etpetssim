@@ -36,6 +36,7 @@ public final class EtpetsConfigView
 
         // Initialization
         var seedControl = createSeedControl();
+        // TODO Try InputDoubleProperty and createLabeledPercentSlider
         var rockPercentControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.rockPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_ROCK_PERCENT),
