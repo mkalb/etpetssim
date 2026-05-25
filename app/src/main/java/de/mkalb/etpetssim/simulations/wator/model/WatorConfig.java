@@ -57,6 +57,12 @@ public record WatorConfig(
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
+    private boolean hasAllowedSelections() {
+        return CELL_SHAPE_VALUES.contains(cellShape)
+                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
+                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode);
+    }
+
     private boolean hasExpectedRules() {
         return neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT;
     }
@@ -88,6 +94,7 @@ public record WatorConfig(
     @Override
     public boolean isValid() {
         return SimulationConfig.super.isValid()
+                && hasAllowedSelections()
                 && hasExpectedRules()
                 && hasValidRanges()
                 && hasValidCombinedPopulationShare();

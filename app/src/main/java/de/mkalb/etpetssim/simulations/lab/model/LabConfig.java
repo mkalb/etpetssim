@@ -6,6 +6,8 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
+
 /**
  * Immutable configuration for the simulation lab view.
  *
@@ -30,6 +32,25 @@ public record LabConfig(
         ColorMode colorMode,
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
+
+    private boolean hasAllowedSelections() {
+        return CELL_SHAPE_VALUES.contains(cellShape)
+                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
+                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode)
+                && COLOR_MODE_VALUES.contains(colorMode)
+                && NEIGHBORHOOD_MODE_VALUES.contains(neighborhoodMode);
+    }
+
+    /**
+     * Validates the common simulation settings and the lab-specific selectable inspection settings.
+     *
+     * @return {@code true} if this configuration is valid, otherwise {@code false}
+     */
+    @Override
+    public boolean isValid() {
+        return SimulationConfig.super.isValid()
+                && hasAllowedSelections();
+    }
 
     public enum ColorMode {
         COLOR, GRAYSCALE

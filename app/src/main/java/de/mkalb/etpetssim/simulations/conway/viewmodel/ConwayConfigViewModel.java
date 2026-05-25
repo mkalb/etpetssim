@@ -1,11 +1,8 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
-import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayTransitionRules;
-import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
@@ -14,60 +11,50 @@ import javafx.beans.value.ChangeListener;
 
 import java.util.*;
 
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
+
 public final class ConwayConfigViewModel
         extends AbstractConfigViewModel<ConwayConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
-            CellShape.SQUARE,
-            Arrays.asList(CellShape.values()),
-            GridEdgeBehavior.WRAP_XY,
-            List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
-            200,
-            GridSize.MIN_SIZE,
-            1_000,
-            GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE,
-            100,
-            GridSize.MIN_SIZE,
-            1_000,
-            GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
-            4,
-            1,
-            50,
-            CellDisplayMode.SHAPE_BORDERED,
-            List.of(CellDisplayMode.SHAPE,
-                    CellDisplayMode.SHAPE_BORDERED,
-                    CellDisplayMode.CIRCLE,
-                    CellDisplayMode.CIRCLE_BORDERED),
-            ""
+            CELL_SHAPE_DEFAULT,
+            CELL_SHAPE_VALUES,
+            GRID_EDGE_BEHAVIOR_DEFAULT,
+            GRID_EDGE_BEHAVIOR_VALUES,
+            GRID_WIDTH_DEFAULT,
+            GRID_WIDTH_MIN,
+            GRID_WIDTH_MAX,
+            GRID_WIDTH_STEP,
+            GRID_HEIGHT_DEFAULT,
+            GRID_HEIGHT_MIN,
+            GRID_HEIGHT_MAX,
+            GRID_HEIGHT_STEP,
+            CELL_EDGE_LENGTH_DEFAULT,
+            CELL_EDGE_LENGTH_MIN,
+            CELL_EDGE_LENGTH_MAX,
+            CELL_DISPLAY_MODE_DEFAULT,
+            CELL_DISPLAY_MODE_VALUES,
+            SEED_INITIAL
     );
-
-    // Initialization
-    private static final double ALIVE_PERCENT_INITIAL = 0.1d;
-    private static final double ALIVE_PERCENT_MIN = 0.0d;
-    private static final double ALIVE_PERCENT_MAX = 1.0d;
-
-    // Rules
-    private static final ConwayTransitionRules DEFAULT_TRANSITION_RULES = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
-    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
 
     // Initialization properties
     private final InputDoubleProperty alivePercent = InputDoubleProperty.of(
-            ALIVE_PERCENT_INITIAL,
+            ALIVE_PERCENT_DEFAULT,
             ALIVE_PERCENT_MIN,
             ALIVE_PERCENT_MAX);
 
     // Rules properties
     private final List<BooleanProperty> surviveProperties = new ArrayList<>();
     private final List<BooleanProperty> birthProperties = new ArrayList<>();
-    private final ObjectProperty<ConwayTransitionRules> transitionRules = new SimpleObjectProperty<>(DEFAULT_TRANSITION_RULES);
+    private final ObjectProperty<ConwayTransitionRules> transitionRules = new SimpleObjectProperty<>(TRANSITION_RULES_DEFAULT);
     private final IntegerProperty maxNeighborCount = new SimpleIntegerProperty(0);
 
     public ConwayConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
 
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
-            surviveProperties.add(new SimpleBooleanProperty(DEFAULT_TRANSITION_RULES.surviveCounts().contains(i)));
-            birthProperties.add(new SimpleBooleanProperty(DEFAULT_TRANSITION_RULES.birthCounts().contains(i)));
+            surviveProperties.add(new SimpleBooleanProperty(TRANSITION_RULES_DEFAULT.surviveCounts().contains(i)));
+            birthProperties.add(new SimpleBooleanProperty(TRANSITION_RULES_DEFAULT.birthCounts().contains(i)));
         }
 
         ChangeListener<Boolean> updateListener = (_, _, _) -> updateTransitionRules();
@@ -89,7 +76,7 @@ public final class ConwayConfigViewModel
         int maxNeighbors = Math.min(ConwayTransitionRules.MAX_NEIGHBOR_COUNT,
                 CellNeighborhoods.maxNeighborCount(
                         cellShapeProperty().property().getValue(),
-                        NEIGHBORHOOD_MODE_INITIAL
+                        NEIGHBORHOOD_MODE_DEFAULT
                 ));
         maxNeighborCount.set(maxNeighbors);
     }
@@ -129,7 +116,7 @@ public final class ConwayConfigViewModel
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 alivePercent.getValue(),
-                NEIGHBORHOOD_MODE_INITIAL,
+                NEIGHBORHOOD_MODE_DEFAULT,
                 transitionRulesProperty().getValue()
         );
     }

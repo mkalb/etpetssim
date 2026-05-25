@@ -1,9 +1,7 @@
 package de.mkalb.etpetssim.simulations.forest.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
@@ -11,7 +9,7 @@ import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-import java.util.*;
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
 
 public final class ForestConfigViewModel
         extends AbstractConfigViewModel<ForestConfig> {
@@ -20,62 +18,44 @@ public final class ForestConfigViewModel
     public static final int LIGHTNING_IGNITION_DECIMALS = 4;
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
-            CellShape.HEXAGON,
-            Arrays.asList(CellShape.values()),
-            GridEdgeBehavior.BLOCK_XY,
-            List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.WRAP_XY),
-            200,
-            GridSize.MIN_SIZE,
-            1_000,
-            GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE,
-            100,
-            GridSize.MIN_SIZE,
-            1_000,
-            GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
-            2,
-            1,
-            50,
-            CellDisplayMode.CIRCLE_BORDERED,
-            List.of(CellDisplayMode.SHAPE,
-                    CellDisplayMode.SHAPE_BORDERED,
-                    CellDisplayMode.CIRCLE,
-                    CellDisplayMode.CIRCLE_BORDERED,
-                    CellDisplayMode.EMOJI),
-            ""
+            CELL_SHAPE_DEFAULT,
+            CELL_SHAPE_VALUES,
+            GRID_EDGE_BEHAVIOR_DEFAULT,
+            GRID_EDGE_BEHAVIOR_VALUES,
+            GRID_WIDTH_DEFAULT,
+            GRID_WIDTH_MIN,
+            GRID_WIDTH_MAX,
+            GRID_WIDTH_STEP,
+            GRID_HEIGHT_DEFAULT,
+            GRID_HEIGHT_MIN,
+            GRID_HEIGHT_MAX,
+            GRID_HEIGHT_STEP,
+            CELL_EDGE_LENGTH_DEFAULT,
+            CELL_EDGE_LENGTH_MIN,
+            CELL_EDGE_LENGTH_MAX,
+            CELL_DISPLAY_MODE_DEFAULT,
+            CELL_DISPLAY_MODE_VALUES,
+            SEED_INITIAL
     );
-
-    // Initialization
-    private static final double TREE_DENSITY_INITIAL = 0.2d;
-    private static final double TREE_DENSITY_MIN = 0.0d;
-    private static final double TREE_DENSITY_MAX = 1.0d;
-
-    // Rules
-    private static final double TREE_GROWTH_PROBABILITY_INITIAL = 0.002d;
-    private static final double TREE_GROWTH_PROBABILITY_MIN = 0.00d;
-    private static final double TREE_GROWTH_PROBABILITY_MAX = 0.20d;
-    private static final double LIGHTNING_IGNITION_PROBABILITY_INITIAL = 0.001d;
-    private static final double LIGHTNING_IGNITION_PROBABILITY_MIN = 0.00d;
-    private static final double LIGHTNING_IGNITION_PROBABILITY_MAX = 0.02d;
-    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
 
     // Initialization properties
     private final InputDoubleProperty treeDensity = InputDoubleProperty.of(
-            TREE_DENSITY_INITIAL,
+            TREE_DENSITY_DEFAULT,
             TREE_DENSITY_MIN,
             TREE_DENSITY_MAX);
 
     // Rules properties
     private final InputDoubleProperty treeGrowthProbability = InputDoubleProperty.of(
-            TREE_GROWTH_PROBABILITY_INITIAL,
+            TREE_GROWTH_PROBABILITY_DEFAULT,
             TREE_GROWTH_PROBABILITY_MIN,
             TREE_GROWTH_PROBABILITY_MAX);
     private final InputDoubleProperty lightningIgnitionProbability = InputDoubleProperty.of(
-            LIGHTNING_IGNITION_PROBABILITY_INITIAL,
+            LIGHTNING_IGNITION_PROBABILITY_DEFAULT,
             LIGHTNING_IGNITION_PROBABILITY_MIN,
             LIGHTNING_IGNITION_PROBABILITY_MAX);
     private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
-            NEIGHBORHOOD_MODE_INITIAL,
-            NeighborhoodMode.class,
+            NEIGHBORHOOD_MODE_DEFAULT,
+            NEIGHBORHOOD_MODE_VALUES,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public ForestConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {

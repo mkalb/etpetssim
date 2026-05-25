@@ -6,6 +6,8 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
+
 /**
  * Immutable configuration for the Langton's Ant simulation.
  *
@@ -29,4 +31,33 @@ public record LangtonConfig(
         long seed,
         NeighborhoodMode neighborhoodMode,
         LangtonMovementRules langtonMovementRules)
-        implements SimulationConfig {}
+        implements SimulationConfig {
+
+    private boolean hasAllowedSelections() {
+        return CELL_SHAPE_VALUES.contains(cellShape)
+                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
+                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode);
+    }
+
+    private boolean hasExpectedRules() {
+        return neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT;
+    }
+
+    private boolean hasValidMovementRules() {
+        return langtonMovementRules.isValidForCellShape(cellShape);
+    }
+
+    /**
+     * Validates the common simulation settings and the Langton-specific supported selections and movement rules.
+     *
+     * @return {@code true} if this configuration is valid, otherwise {@code false}
+     */
+    @Override
+    public boolean isValid() {
+        return SimulationConfig.super.isValid()
+                && hasAllowedSelections()
+                && hasExpectedRules()
+                && hasValidMovementRules();
+    }
+
+}

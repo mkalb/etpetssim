@@ -1,43 +1,35 @@
 package de.mkalb.etpetssim.simulations.langton.viewmodel;
 
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridEdgeBehavior;
-import de.mkalb.etpetssim.engine.GridTopology;
-import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
-import java.util.*;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
 
 public final class LangtonConfigViewModel
         extends AbstractConfigViewModel<LangtonConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
-            CellShape.SQUARE,
-            Arrays.asList(CellShape.values()),
-            GridEdgeBehavior.WRAP_XY,
-            List.of(GridEdgeBehavior.WRAP_XY, GridEdgeBehavior.ABSORB_XY),
-            100,
-            50,
-            5_000,
-            GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE,
-            100,
-            50,
-            5_000,
-            GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE,
-            4,
-            1,
-            50,
-            CellDisplayMode.SHAPE,
-            List.of(CellDisplayMode.SHAPE, CellDisplayMode.SHAPE_BORDERED),
-            ""
+            CELL_SHAPE_DEFAULT,
+            CELL_SHAPE_VALUES,
+            GRID_EDGE_BEHAVIOR_DEFAULT,
+            GRID_EDGE_BEHAVIOR_VALUES,
+            GRID_WIDTH_DEFAULT,
+            GRID_WIDTH_MIN,
+            GRID_WIDTH_MAX,
+            GRID_WIDTH_STEP,
+            GRID_HEIGHT_DEFAULT,
+            GRID_HEIGHT_MIN,
+            GRID_HEIGHT_MAX,
+            GRID_HEIGHT_STEP,
+            CELL_EDGE_LENGTH_DEFAULT,
+            CELL_EDGE_LENGTH_MIN,
+            CELL_EDGE_LENGTH_MAX,
+            CELL_DISPLAY_MODE_DEFAULT,
+            CELL_DISPLAY_MODE_VALUES,
+            SEED_INITIAL
     );
-
-    // Rules
-    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_ONLY;
 
     // Rules properties
     private final LangtonRuleProperty rule = new LangtonRuleProperty();
@@ -56,7 +48,7 @@ public final class LangtonConfigViewModel
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
-                NEIGHBORHOOD_MODE_INITIAL,
+                NEIGHBORHOOD_MODE_DEFAULT,
                 ruleProperty().computeRuleAndUpdateProperties(cellShapeProperty().property().getValue())
         );
     }

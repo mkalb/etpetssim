@@ -1,11 +1,7 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridEdgeBehavior;
-import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
@@ -14,46 +10,37 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-import java.util.*;
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
 
 public final class LabConfigViewModel
         extends AbstractConfigViewModel<LabConfig> {
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
-            CellShape.HEXAGON,
-            Arrays.asList(CellShape.values()),
-            GridEdgeBehavior.WRAP_XY,
-            List.of(GridEdgeBehavior.values()),
-            16,
-            GridSize.MIN_SIZE,
-            50,
-            1,
-            8,
-            GridSize.MIN_SIZE,
-            50,
-            1,
-            30,
-            1,
-            500,
-            CellDisplayMode.SHAPE_BORDERED,
-            List.of(CellDisplayMode.SHAPE,
-                    CellDisplayMode.SHAPE_BORDERED,
-                    CellDisplayMode.CIRCLE,
-                    CellDisplayMode.CIRCLE_BORDERED),
-            ""
+            CELL_SHAPE_DEFAULT,
+            CELL_SHAPE_VALUES,
+            GRID_EDGE_BEHAVIOR_DEFAULT,
+            GRID_EDGE_BEHAVIOR_VALUES,
+            GRID_WIDTH_DEFAULT,
+            GRID_WIDTH_MIN,
+            GRID_WIDTH_MAX,
+            GRID_WIDTH_STEP,
+            GRID_HEIGHT_DEFAULT,
+            GRID_HEIGHT_MIN,
+            GRID_HEIGHT_MAX,
+            GRID_HEIGHT_STEP,
+            CELL_EDGE_LENGTH_DEFAULT,
+            CELL_EDGE_LENGTH_MIN,
+            CELL_EDGE_LENGTH_MAX,
+            CELL_DISPLAY_MODE_DEFAULT,
+            CELL_DISPLAY_MODE_VALUES,
+            SEED_INITIAL
     );
 
-    // Layout
-    private static final LabConfig.ColorMode COLOR_MODE_INITIAL = LabConfig.ColorMode.COLOR;
-
-    // Rules
-    private static final NeighborhoodMode NEIGHBORHOOD_MODE_INITIAL = NeighborhoodMode.EDGES_AND_VERTICES;
-
     // Layout properties
-    private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(COLOR_MODE_INITIAL, LabConfig.ColorMode.class, Enum::toString);
+    private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(COLOR_MODE_DEFAULT, COLOR_MODE_VALUES, Enum::toString);
 
     // Rules properties
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(NEIGHBORHOOD_MODE_INITIAL, NeighborhoodMode.class,
+    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(NEIGHBORHOOD_MODE_DEFAULT, NEIGHBORHOOD_MODE_VALUES,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     // Internal state

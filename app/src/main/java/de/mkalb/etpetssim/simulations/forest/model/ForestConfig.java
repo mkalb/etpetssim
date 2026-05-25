@@ -6,6 +6,8 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 
+import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
+
 /**
  * Immutable configuration for the forest-fire simulation.
  *
@@ -33,4 +35,31 @@ public record ForestConfig(
         double treeGrowthProbability,
         double lightningIgnitionProbability,
         NeighborhoodMode neighborhoodMode)
-        implements SimulationConfig {}
+        implements SimulationConfig {
+
+    private boolean hasAllowedSelections() {
+        return CELL_SHAPE_VALUES.contains(cellShape)
+                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
+                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode)
+                && NEIGHBORHOOD_MODE_VALUES.contains(neighborhoodMode);
+    }
+
+    private boolean hasValidRanges() {
+        return isInRange(treeDensity, TREE_DENSITY_MIN, TREE_DENSITY_MAX)
+                && isInRange(treeGrowthProbability, TREE_GROWTH_PROBABILITY_MIN, TREE_GROWTH_PROBABILITY_MAX)
+                && isInRange(lightningIgnitionProbability, LIGHTNING_IGNITION_PROBABILITY_MIN, LIGHTNING_IGNITION_PROBABILITY_MAX);
+    }
+
+    /**
+     * Validates the common simulation settings and the forest-specific supported selections and probability ranges.
+     *
+     * @return {@code true} if this configuration is valid, otherwise {@code false}
+     */
+    @Override
+    public boolean isValid() {
+        return SimulationConfig.super.isValid()
+                && hasAllowedSelections()
+                && hasValidRanges();
+    }
+
+}

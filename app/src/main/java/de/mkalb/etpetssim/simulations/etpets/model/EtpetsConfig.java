@@ -46,6 +46,7 @@ public record EtpetsConfig(
     private boolean hasExpectedTopologyRules() {
         return (cellShape == CELL_SHAPE_DEFAULT)
                 && (gridEdgeBehavior == GRID_EDGE_BEHAVIOR_DEFAULT)
+                && (cellDisplayMode == CELL_DISPLAY_MODE_DEFAULT)
                 && (neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT);
     }
 
