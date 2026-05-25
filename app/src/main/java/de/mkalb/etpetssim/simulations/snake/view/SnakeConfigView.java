@@ -8,7 +8,6 @@ import de.mkalb.etpetssim.simulations.snake.model.SnakeDeathMode;
 import de.mkalb.etpetssim.simulations.snake.viewmodel.SnakeConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
 public final class SnakeConfigView
@@ -39,10 +38,12 @@ public final class SnakeConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
-        // --- Initialization Group ---
+        // Initialization
         var seedControl = createSeedControl();
         var verticalWallsControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.verticalWallsProperty(),
@@ -69,13 +70,11 @@ public final class SnakeConfigView
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true,
-                seedControl,
-                verticalWallsControl, foodCellsControl, snakesControl,
-                initialPendingGrowthControl);
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                seedControl, verticalWallsControl, foodCellsControl, snakesControl, initialPendingGrowthControl);
 
-        // --- Rules Group ---
+        // Rules
         var deathModeControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.deathModeProperty(),
                 viewModel.deathModeProperty().displayNameProvider(),
@@ -103,11 +102,11 @@ public final class SnakeConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true,
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
                 deathModeControl, growthPerFoodControl, basePointsPerFoodControl, segmentLengthMultiplierControl);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
 }

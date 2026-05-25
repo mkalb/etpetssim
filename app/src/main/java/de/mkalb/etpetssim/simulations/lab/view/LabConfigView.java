@@ -7,7 +7,6 @@ import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
 public final class LabConfigView
@@ -23,7 +22,8 @@ public final class LabConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(false);
+        // Structure
+        var structurePane = createStructurePane(false);
 
         // Layout
         var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
@@ -34,21 +34,23 @@ public final class LabConfigView
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
-        TitledPane layoutPane = createLayoutPane(false, colorModeControl);
+        var layoutPane = createLayoutPane(false, colorModeControl);
 
-        // --- Initialization Group ---
+        // Initialization
         var seedControl = createSeedControl();
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                false,
+
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), false,
                 seedControl);
 
-        // --- Rules Group ---
+        // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                false,
+
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), false,
                 neighborhoodModeControl);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
 }

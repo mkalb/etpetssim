@@ -7,7 +7,6 @@ import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
 import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
 public final class SugarConfigView
@@ -41,10 +40,12 @@ public final class SugarConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
-        // --- Initialization Group ---
+        // Initialization
         var seedControl = createSeedControl();
         var agentPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.agentPercentProperty(),
@@ -77,11 +78,11 @@ public final class SugarConfigView
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true,
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, agentPercentControl, sugarPeaksControl, sugarRadiusLimitControl, maxSugarAmountControl, agentInitialEnergyControl);
 
-        // --- Rules Group ---
+        // Rules
         var sugarRegenerationRateControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sugarRegenerationRateProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_SUGAR_REGENERATION_RATE),
@@ -107,11 +108,11 @@ public final class SugarConfigView
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true,
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
                 sugarRegenerationRateControl, agentMetabolismRateControl, agentVisionRangeControl, agentMaxAgeControl);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
 }

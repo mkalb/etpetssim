@@ -7,7 +7,6 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
 import de.mkalb.etpetssim.simulations.forest.viewmodel.ForestConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
 public final class ForestConfigView
@@ -29,10 +28,12 @@ public final class ForestConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
-        // --- Initialization Group ---
+        // Initialization
         var seedControl = createSeedControl();
         var treeDensityControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.treeDensityProperty(),
@@ -41,10 +42,11 @@ public final class ForestConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true, seedControl, treeDensityControl);
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                seedControl, treeDensityControl);
 
-        // --- Rules Group ---
+        // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
         var treeGrowthProbabilityControl = FXComponentFactory.createLabeledDoubleSlider(
                 viewModel.treeGrowthProbabilityProperty(),
@@ -61,13 +63,11 @@ public final class ForestConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true,
-                neighborhoodModeControl,
-                treeGrowthProbabilityControl,
-                lightningIgnitionProbabilityControl);
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                neighborhoodModeControl, treeGrowthProbabilityControl, lightningIgnitionProbabilityControl);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
 }

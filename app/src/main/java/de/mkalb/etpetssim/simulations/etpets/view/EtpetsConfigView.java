@@ -7,7 +7,6 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
 import de.mkalb.etpetssim.simulations.etpets.viewmodel.EtpetsConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
 public final class EtpetsConfigView
@@ -30,11 +29,13 @@ public final class EtpetsConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
+        // Initialization
         var seedControl = createSeedControl();
-
         var rockPercentControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.rockPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_ROCK_PERCENT),
@@ -68,24 +69,15 @@ public final class EtpetsConfigView
                 FXStyleClasses.CONFIG_SPINNER
         );
 
-        TitledPane initPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true,
-                seedControl,
-                rockPercentControl,
-                waterPercentControl,
-                plantPercentControl,
-                insectPercentControl,
-                petCountControl
-        );
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                seedControl, rockPercentControl, waterPercentControl, plantPercentControl, insectPercentControl, petCountControl);
 
-        TitledPane rulesPane = createConfigTitledPane(
-                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true
-        );
+        // Rules
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
 }
-

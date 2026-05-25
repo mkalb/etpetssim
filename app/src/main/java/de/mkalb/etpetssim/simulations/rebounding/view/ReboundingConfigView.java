@@ -7,7 +7,6 @@ import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConfig;
 import de.mkalb.etpetssim.simulations.rebounding.viewmodel.ReboundingConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
 public final class ReboundingConfigView
@@ -25,10 +24,12 @@ public final class ReboundingConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
-        // --- Initialization Group ---
+        // Initialization
         var seedControl = createSeedControl();
         var verticalWallsControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.verticalWallsProperty(),
@@ -43,17 +44,18 @@ public final class ReboundingConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true,
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, verticalWallsControl, movingEntityPercentControl);
 
-        // --- Rules Group ---
+        // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true,
+
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
                 neighborhoodModeControl);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
 }

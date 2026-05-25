@@ -14,7 +14,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.HPos;
 import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -40,10 +39,12 @@ public final class ConwayConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
-        // --- Initialization Group ---
+        // Initialization
         var seedControl = createSeedControl();
         var alivePercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.alivePercentProperty(),
@@ -52,10 +53,11 @@ public final class ConwayConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true, seedControl, alivePercentControl);
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
+                seedControl, alivePercentControl);
 
-        // --- Rules Group ---
+        // Rules
         var rulesControl = createTransitionRulesControl(viewModel.getSurviveProperties(),
                 viewModel.getBirthProperties(),
                 viewModel.transitionRulesProperty(),
@@ -63,10 +65,11 @@ public final class ConwayConfigView
                 AppLocalization.getText(CONWAY_CONFIG_RULES),
                 AppLocalization.getText(CONWAY_CONFIG_RULES_TOOLTIP));
 
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true, rulesControl);
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                rulesControl);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
     private Label createRulesLabel(String text, Tooltip tooltipValue, HPos pos, String styleClass) {

@@ -52,10 +52,12 @@ public final class WatorConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
-        // --- Initialization Group ---
+        // Initialization
         var seedControl = createSeedControl();
         var fishPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.fishPercentProperty(),
@@ -70,22 +72,23 @@ public final class WatorConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        TitledPane initPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION),
-                true,
+        var initializationPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
                 seedControl, fishPercentControl, sharkPercentControl);
 
-        // --- Rules Group ---
+        // Rules
         var neighborhoodModeControl = createNeighborhoodModeControl(viewModel.neighborhoodModeProperty());
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true,
+
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
                 neighborhoodModeControl);
 
-        TitledPane fishRulesPane = createFishRulesPane();
+        var fishRulesPane = createFishRulesPane();
         fishRulesPane.setExpanded(false);
-        TitledPane sharkRulesPane = createSharkRulesPane();
+        var sharkRulesPane = createSharkRulesPane();
         sharkRulesPane.setExpanded(false);
 
-        return createConfigMainBox(structurePane, layoutPane, initPane, rulesPane, fishRulesPane, sharkRulesPane);
+        return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane, fishRulesPane, sharkRulesPane);
     }
 
     private TitledPane createFishRulesPane() {

@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Region;
 
 public final class LangtonConfigView
@@ -33,10 +32,12 @@ public final class LangtonConfigView
 
     @Override
     public Region buildConfigRegion() {
-        TitledPane structurePane = createStructurePane(true);
-        TitledPane layoutPane = createLayoutPane(true);
+        // Structure
+        var structurePane = createStructurePane(true);
+        // Layout
+        var layoutPane = createLayoutPane(true);
 
-        // --- Rules Group ---
+        // Rules
         var presetTriangleControl = FXComponentFactory.createLabeledEnumComboBox(
                 viewModel.ruleProperty().presetTriangleProperty(),
                 viewModel.ruleProperty().presetTriangleProperty().displayNameProvider(),
@@ -73,10 +74,9 @@ public final class LangtonConfigView
                 FXStyleClasses.CONFIG_TEXTBOX
         );
 
-        TitledPane rulesPane = createConfigTitledPane(AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES),
-                true,
-                presetTriangleControl, presetSquareControl, presetHexagonControl,
-                ruleControl);
+        var rulesPane = createConfigTitledPane(
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
+                presetTriangleControl, presetSquareControl, presetHexagonControl, ruleControl);
 
         return createConfigMainBox(structurePane, layoutPane, rulesPane);
     }
