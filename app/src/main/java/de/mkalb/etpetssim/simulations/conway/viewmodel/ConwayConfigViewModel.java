@@ -37,13 +37,13 @@ public final class ConwayConfigViewModel
             SEED_INITIAL
     );
 
-    // Initialization properties
+    // Initialization
     private final InputDoubleProperty alivePercent = InputDoubleProperty.of(
             ALIVE_PERCENT_DEFAULT,
             ALIVE_PERCENT_MIN,
             ALIVE_PERCENT_MAX);
 
-    // Rules properties
+    // Rules
     private final List<BooleanProperty> surviveProperties = new ArrayList<>();
     private final List<BooleanProperty> birthProperties = new ArrayList<>();
     private final ObjectProperty<ConwayTransitionRules> transitionRules = new SimpleObjectProperty<>(TRANSITION_RULES_DEFAULT);

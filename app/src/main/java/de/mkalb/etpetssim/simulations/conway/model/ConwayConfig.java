@@ -24,14 +24,18 @@ import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
  * @param transitionRules the survive/birth rule set
  */
 public record ConwayConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
+        // Initialization
         long seed,
         double alivePercent,
+        // Rules
         NeighborhoodMode neighborhoodMode,
         ConwayTransitionRules transitionRules)
         implements SimulationConfig {

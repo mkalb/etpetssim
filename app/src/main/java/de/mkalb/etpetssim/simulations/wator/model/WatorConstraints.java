@@ -53,6 +53,9 @@ public final class WatorConstraints {
     public static final double SHARK_PERCENT_MAX = 1.0d;
     public static final double POPULATION_SHARE_SUM_MAX_EXCLUSIVE = 1.0d;
 
+    // Rules - NeighborhoodMode
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+
     // Rules
     public static final int FISH_MAX_AGE_DEFAULT = 20;
     public static final int FISH_MAX_AGE_MIN = 1;
@@ -94,7 +97,6 @@ public final class WatorConstraints {
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_STEP = RULE_STEP;
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
     /**
      * Private constructor to prevent instantiation.

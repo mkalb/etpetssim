@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 
 /**
  * Describes the immutable configuration values required to create a simulation grid.
@@ -59,6 +60,13 @@ public interface SimulationConfig {
      * @return random seed
      */
     long seed();
+
+    /**
+     * Returns the configured neighborhood mode used for movement and interaction rules.
+     *
+     * @return neighborhood mode used for movement and interaction rules
+     */
+    NeighborhoodMode neighborhoodMode();
 
     /**
      * Creates the effective grid topology from the configured shape and edge behavior.

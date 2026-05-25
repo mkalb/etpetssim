@@ -26,9 +26,9 @@ final class ForestConfigTest {
                 cellDisplayMode,
                 1L,
                 treeDensity,
+                neighborhoodMode,
                 treeGrowthProbability,
-                lightningIgnitionProbability,
-                neighborhoodMode
+                lightningIgnitionProbability
         );
     }
 

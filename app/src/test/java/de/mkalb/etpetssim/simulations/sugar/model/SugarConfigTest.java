@@ -38,11 +38,11 @@ final class SugarConfigTest {
                 minSugarAmount,
                 maxSugarAmount,
                 agentInitialEnergy,
+                neighborhoodMode,
                 sugarRegenerationRate,
                 agentMetabolismRate,
                 agentVisionRange,
-                agentMaxAge,
-                neighborhoodMode
+                agentMaxAge
         );
     }
 

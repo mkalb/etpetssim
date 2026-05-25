@@ -11,34 +11,36 @@ import static de.mkalb.etpetssim.simulations.sugar.model.SugarConstraints.*;
 /**
  * Immutable configuration for the Sugarscape simulation.
  *
- * @param cellShape the configured cell shape
- * @param gridEdgeBehavior the configured grid edge behavior
- * @param gridWidth the grid width in cells
- * @param gridHeight the grid height in cells
- * @param cellEdgeLength the rendered cell edge length in pixels
- * @param cellDisplayMode the cell display mode used by the UI
- * @param seed the random seed used for initialization
- * @param agentPercent the initial percentage of agent cells
- * @param sugarPeaks the number of sugar peaks to generate
- * @param sugarRadiusLimit the maximum spread radius of a sugar peak
- * @param minSugarAmount the minimum sugar amount per cell
- * @param maxSugarAmount the maximum sugar amount per cell
- * @param agentInitialEnergy the initial energy assigned to new agents
+ * @param cellShape             the configured cell shape
+ * @param gridEdgeBehavior      the configured grid edge behavior
+ * @param gridWidth             the grid width in cells
+ * @param gridHeight            the grid height in cells
+ * @param cellEdgeLength        the rendered cell edge length in pixels
+ * @param cellDisplayMode       the cell display mode used by the UI
+ * @param seed                  the random seed used for initialization
+ * @param agentPercent          the initial percentage of agent cells
+ * @param sugarPeaks            the number of sugar peaks to generate
+ * @param sugarRadiusLimit      the maximum spread radius of a sugar peak
+ * @param minSugarAmount        the minimum sugar amount per cell
+ * @param maxSugarAmount        the maximum sugar amount per cell
+ * @param agentInitialEnergy    the initial energy assigned to new agents
+ * @param neighborhoodMode      the neighborhood mode used for movement and search
  * @param sugarRegenerationRate the sugar amount regenerated per step
- * @param agentMetabolismRate the energy consumed by an agent per step
- * @param agentVisionRange the agent vision range
- * @param agentMaxAge the maximum agent age
- * @param neighborhoodMode the neighborhood mode used for movement and search
+ * @param agentMetabolismRate   the energy consumed by an agent per step
+ * @param agentVisionRange      the agent vision range
+ * @param agentMaxAge           the maximum agent age
  */
 public record SugarConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
-        long seed,
         // Initialization
+        long seed,
         double agentPercent,
         int sugarPeaks,
         int sugarRadiusLimit,
@@ -46,11 +48,11 @@ public record SugarConfig(
         int maxSugarAmount,
         int agentInitialEnergy,
         // Rules
+        NeighborhoodMode neighborhoodMode,
         int sugarRegenerationRate,
         int agentMetabolismRate,
         int agentVisionRange,
-        int agentMaxAge,
-        NeighborhoodMode neighborhoodMode)
+        int agentMaxAge)
         implements SimulationConfig {
 
     private boolean hasAllowedSelections() {

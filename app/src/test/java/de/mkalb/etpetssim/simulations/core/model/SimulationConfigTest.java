@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +24,8 @@ final class SimulationConfigTest {
                 gridHeight,
                 cellEdgeLength,
                 CellDisplayMode.SHAPE,
-                1L);
+                1L,
+                NeighborhoodMode.EDGES_ONLY);
     }
 
     @Test
@@ -87,7 +89,8 @@ final class SimulationConfigTest {
             int gridHeight,
             double cellEdgeLength,
             CellDisplayMode cellDisplayMode,
-            long seed)
+            long seed,
+            NeighborhoodMode neighborhoodMode)
             implements SimulationConfig {
     }
 

@@ -26,14 +26,16 @@ import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
  * @param neighborhoodMode the neighborhood mode used for movement and interaction
  */
 public record EtpetsConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
-        long seed,
         // Initialization
+        long seed,
         int rockPercent,
         int waterPercent,
         int plantPercent,
@@ -78,4 +80,3 @@ public record EtpetsConfig(
     }
 
 }
-

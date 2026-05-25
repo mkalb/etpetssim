@@ -11,30 +11,34 @@ import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
 /**
  * Immutable configuration for the forest-fire simulation.
  *
- * @param cellShape the configured cell shape
- * @param gridEdgeBehavior the configured grid edge behavior
- * @param gridWidth the grid width in cells
- * @param gridHeight the grid height in cells
- * @param cellEdgeLength the rendered cell edge length in pixels
- * @param cellDisplayMode the cell display mode used by the UI
- * @param seed the random seed used for initialization
- * @param treeDensity the initial tree density
- * @param treeGrowthProbability the probability that an empty cell grows a tree
+ * @param cellShape                    the configured cell shape
+ * @param gridEdgeBehavior             the configured grid edge behavior
+ * @param gridWidth                    the grid width in cells
+ * @param gridHeight                   the grid height in cells
+ * @param cellEdgeLength               the rendered cell edge length in pixels
+ * @param cellDisplayMode              the cell display mode used by the UI
+ * @param seed                         the random seed used for initialization
+ * @param treeDensity                  the initial tree density
+ * @param neighborhoodMode             the neighborhood mode used during updates
+ * @param treeGrowthProbability        the probability that an empty cell grows a tree
  * @param lightningIgnitionProbability the probability that a tree ignites spontaneously
- * @param neighborhoodMode the neighborhood mode used during updates
  */
 public record ForestConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
+        // Initialization
         long seed,
         double treeDensity,
+        // Rules
+        NeighborhoodMode neighborhoodMode,
         double treeGrowthProbability,
-        double lightningIgnitionProbability,
-        NeighborhoodMode neighborhoodMode)
+        double lightningIgnitionProbability)
         implements SimulationConfig {
 
     private boolean hasAllowedSelections() {

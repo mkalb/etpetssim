@@ -41,7 +41,7 @@ public final class SnakeConfigViewModel
             SEED_INITIAL
     );
 
-    // Initialization properties
+    // Initialization
     private final InputIntegerProperty verticalWalls = InputIntegerProperty.of(
             VERTICAL_WALLS_DEFAULT,
             VERTICAL_WALLS_MIN,
@@ -63,7 +63,7 @@ public final class SnakeConfigViewModel
             INITIAL_PENDING_GROWTH_MAX,
             INITIAL_PENDING_GROWTH_STEP);
 
-    // Rules properties
+    // Rules
     private final InputEnumProperty<SnakeDeathMode> deathMode = InputEnumProperty.of(
             SNAKE_DEATH_MODE_DEFAULT,
             SNAKE_DEATH_MODE_VALUES,
@@ -104,11 +104,11 @@ public final class SnakeConfigViewModel
                 snakes.getValue(),
                 initialPendingGrowth.getValue(),
                 // Rules
+                NEIGHBORHOOD_MODE_DEFAULT,
                 deathMode.getValue(),
                 growthPerFood.getValue(),
                 basePointsPerFood.getValue(),
-                segmentLengthMultiplier.getValue(),
-                NEIGHBORHOOD_MODE_DEFAULT
+                segmentLengthMultiplier.getValue()
         );
     }
 

@@ -67,6 +67,9 @@ public final class SugarConstraints {
     public static final int AGENT_INITIAL_ENERGY_MAX = 20;
     public static final int AGENT_INITIAL_ENERGY_STEP = RULE_STEP;
 
+    // Rules - NeighborhoodMode
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+
     // Rules
     public static final int SUGAR_REGENERATION_RATE_DEFAULT = 1;
     public static final int SUGAR_REGENERATION_RATE_MIN = 1;
@@ -84,7 +87,6 @@ public final class SugarConstraints {
     public static final int AGENT_MAX_AGE_MIN = 1;
     public static final int AGENT_MAX_AGE_MAX = 1_000;
     public static final int AGENT_MAX_AGE_STEP = RULE_STEP;
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
     /**
      * Private constructor to prevent instantiation.

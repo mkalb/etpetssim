@@ -11,25 +11,29 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
 /**
  * Immutable configuration for the simulation lab view.
  *
- * @param cellShape the configured cell shape
+ * @param cellShape        the configured cell shape
  * @param gridEdgeBehavior the configured grid edge behavior
- * @param gridWidth the grid width in cells
- * @param gridHeight the grid height in cells
- * @param cellEdgeLength the rendered cell edge length in pixels
- * @param cellDisplayMode the cell display mode used by the UI
- * @param seed the random seed used for initialization
- * @param colorMode the color rendering mode
+ * @param gridWidth        the grid width in cells
+ * @param gridHeight       the grid height in cells
+ * @param cellEdgeLength   the rendered cell edge length in pixels
+ * @param cellDisplayMode  the cell display mode used by the UI
+ * @param colorMode        the color rendering mode
+ * @param seed             the random seed used for initialization
  * @param neighborhoodMode the neighborhood mode used for highlighting and inspection
  */
 public record LabConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
-        long seed,
         ColorMode colorMode,
+        // Initialization
+        long seed,
+        // Rules
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 

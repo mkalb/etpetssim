@@ -36,6 +36,7 @@ final class WatorConfigTest {
                 1L,
                 fishPercent,
                 sharkPercent,
+                neighborhoodMode,
                 fishMaxAge,
                 fishMinReproductionAge,
                 fishMinReproductionInterval,
@@ -45,8 +46,7 @@ final class WatorConfigTest {
                 sharkEnergyGainPerFish,
                 sharkMinReproductionAge,
                 sharkMinReproductionEnergy,
-                sharkMinReproductionInterval,
-                neighborhoodMode
+                sharkMinReproductionInterval
         );
     }
 

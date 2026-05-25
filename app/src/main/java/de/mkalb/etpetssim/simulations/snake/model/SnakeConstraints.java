@@ -61,6 +61,9 @@ public final class SnakeConstraints {
     public static final int INITIAL_PENDING_GROWTH_MAX = 1_000;
     public static final int INITIAL_PENDING_GROWTH_STEP = RULE_STEP;
 
+    // Rules - NeighborhoodMode
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+
     // Rules
     public static final SnakeDeathMode SNAKE_DEATH_MODE_DEFAULT = SnakeDeathMode.RESPAWN;
     public static final List<SnakeDeathMode> SNAKE_DEATH_MODE_VALUES = List.of(
@@ -76,7 +79,6 @@ public final class SnakeConstraints {
     public static final double SEGMENT_LENGTH_MULTIPLIER_DEFAULT = 0.5d;
     public static final double SEGMENT_LENGTH_MULTIPLIER_MIN = 0.0d;
     public static final double SEGMENT_LENGTH_MULTIPLIER_MAX = 5.0d;
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
     /**
      * Private constructor to prevent instantiation.

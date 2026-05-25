@@ -31,7 +31,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
             SEED_INITIAL
     );
 
-    // Initialization properties
+    // Initialization
     private final InputIntegerProperty rockPercent = InputIntegerProperty.of(
             ROCK_PERCENT_DEFAULT,
             PERCENT_MIN,

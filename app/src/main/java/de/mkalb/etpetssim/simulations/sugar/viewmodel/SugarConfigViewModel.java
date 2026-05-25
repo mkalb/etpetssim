@@ -33,7 +33,7 @@ public final class SugarConfigViewModel
             SEED_INITIAL
     );
 
-    // Initialization properties
+    // Initialization
     private final InputDoubleProperty agentPercent = InputDoubleProperty.of(
             AGENT_PERCENT_DEFAULT,
             AGENT_PERCENT_MIN,
@@ -59,7 +59,7 @@ public final class SugarConfigViewModel
             AGENT_INITIAL_ENERGY_MAX,
             AGENT_INITIAL_ENERGY_STEP);
 
-    // Rules properties
+    // Rules
     private final InputIntegerProperty sugarRegenerationRate = InputIntegerProperty.of(
             SUGAR_REGENERATION_RATE_DEFAULT,
             SUGAR_REGENERATION_RATE_MIN,
@@ -101,11 +101,11 @@ public final class SugarConfigViewModel
                 MIN_SUGAR_AMOUNT_DEFAULT,
                 maxSugarAmount.getValue(),
                 agentInitialEnergy.getValue(),
+                NEIGHBORHOOD_MODE_DEFAULT,
                 sugarRegenerationRate.getValue(),
                 agentMetabolismRate.getValue(),
                 agentVisionRange.getValue(),
-                agentMaxAge.getValue(),
-                NEIGHBORHOOD_MODE_DEFAULT
+                agentMaxAge.getValue()
         );
     }
 

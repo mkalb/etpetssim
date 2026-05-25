@@ -49,7 +49,7 @@ public final class ReboundingConstraints {
     public static final double MOVING_ENTITY_PERCENT_MIN = 0.0d;
     public static final double MOVING_ENTITY_PERCENT_MAX = 0.1d;
 
-    // Rules
+    // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
     public static final List<NeighborhoodMode> NEIGHBORHOOD_MODE_VALUES = List.of(
             NeighborhoodMode.values());

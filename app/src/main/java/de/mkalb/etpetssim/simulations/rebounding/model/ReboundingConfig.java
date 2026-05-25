@@ -23,14 +23,16 @@ import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstrai
  * @param neighborhoodMode the neighborhood mode used for motion and collisions
  */
 public record ReboundingConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
-        long seed,
         // Initialization
+        long seed,
         int verticalWalls,
         double movingEntityPercent,
         // Rules
@@ -62,4 +64,3 @@ public record ReboundingConfig(
     }
 
 }
-

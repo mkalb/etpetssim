@@ -54,7 +54,7 @@ public final class EtpetsConstraints {
     public static final int PET_COUNT_MAX = 100;
     public static final int PET_COUNT_STEP = 1;
 
-    // Rules
+    // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
     /**

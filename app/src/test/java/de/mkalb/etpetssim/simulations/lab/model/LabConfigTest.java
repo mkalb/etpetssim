@@ -22,8 +22,8 @@ final class LabConfigTest {
                 LabConstraints.GRID_HEIGHT_DEFAULT,
                 LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 cellDisplayMode,
-                1L,
                 colorMode,
+                1L,
                 neighborhoodMode
         );
     }

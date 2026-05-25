@@ -48,6 +48,11 @@ public final class ForestConstraints {
     public static final double TREE_DENSITY_MIN = 0.0d;
     public static final double TREE_DENSITY_MAX = 1.0d;
 
+    // Rules - NeighborhoodMode
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+    public static final List<NeighborhoodMode> NEIGHBORHOOD_MODE_VALUES = List.of(
+            NeighborhoodMode.values());
+
     // Rules
     public static final double TREE_GROWTH_PROBABILITY_DEFAULT = 0.002d;
     public static final double TREE_GROWTH_PROBABILITY_MIN = 0.00d;
@@ -55,9 +60,6 @@ public final class ForestConstraints {
     public static final double LIGHTNING_IGNITION_PROBABILITY_DEFAULT = 0.001d;
     public static final double LIGHTNING_IGNITION_PROBABILITY_MIN = 0.00d;
     public static final double LIGHTNING_IGNITION_PROBABILITY_MAX = 0.02d;
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
-    public static final List<NeighborhoodMode> NEIGHBORHOOD_MODE_VALUES = List.of(
-            NeighborhoodMode.values());
 
     /**
      * Private constructor to prevent instantiation.

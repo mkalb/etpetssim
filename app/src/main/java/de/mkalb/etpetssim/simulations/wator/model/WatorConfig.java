@@ -11,39 +11,42 @@ import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.*;
 /**
  * Immutable configuration for the Wa-Tor simulation.
  *
- * @param cellShape the configured cell shape
- * @param gridEdgeBehavior the configured grid edge behavior
- * @param gridWidth the grid width in cells
- * @param gridHeight the grid height in cells
- * @param cellEdgeLength the rendered cell edge length in pixels
- * @param cellDisplayMode the cell display mode used by the UI
- * @param seed the random seed used for initialization
- * @param fishPercent the initial fish population share
- * @param sharkPercent the initial shark population share
- * @param fishMaxAge the maximum fish age
- * @param fishMinReproductionAge the minimum fish age for reproduction
- * @param fishMinReproductionInterval the minimum number of steps between fish reproductions
- * @param sharkMaxAge the maximum shark age
- * @param sharkBirthEnergy the initial shark energy
- * @param sharkEnergyLossPerStep the shark energy loss per step
- * @param sharkEnergyGainPerFish the shark energy gained by eating one fish
- * @param sharkMinReproductionAge the minimum shark age for reproduction
- * @param sharkMinReproductionEnergy the minimum shark energy for reproduction
+ * @param cellShape                    the configured cell shape
+ * @param gridEdgeBehavior             the configured grid edge behavior
+ * @param gridWidth                    the grid width in cells
+ * @param gridHeight                   the grid height in cells
+ * @param cellEdgeLength               the rendered cell edge length in pixels
+ * @param cellDisplayMode              the cell display mode used by the UI
+ * @param seed                         the random seed used for initialization
+ * @param fishPercent                  the initial fish population share
+ * @param sharkPercent                 the initial shark population share
+ * @param neighborhoodMode             the neighborhood mode used for movement and interaction
+ * @param fishMaxAge                   the maximum fish age
+ * @param fishMinReproductionAge       the minimum fish age for reproduction
+ * @param fishMinReproductionInterval  the minimum number of steps between fish reproductions
+ * @param sharkMaxAge                  the maximum shark age
+ * @param sharkBirthEnergy             the initial shark energy
+ * @param sharkEnergyLossPerStep       the shark energy loss per step
+ * @param sharkEnergyGainPerFish       the shark energy gained by eating one fish
+ * @param sharkMinReproductionAge      the minimum shark age for reproduction
+ * @param sharkMinReproductionEnergy   the minimum shark energy for reproduction
  * @param sharkMinReproductionInterval the minimum number of steps between shark reproductions
- * @param neighborhoodMode the neighborhood mode used for movement and interaction
  */
 public record WatorConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
-        long seed,
         // Initialization
+        long seed,
         double fishPercent,
         double sharkPercent,
         // Rules
+        NeighborhoodMode neighborhoodMode,
         int fishMaxAge,
         int fishMinReproductionAge,
         int fishMinReproductionInterval,
@@ -53,8 +56,7 @@ public record WatorConfig(
         int sharkEnergyGainPerFish,
         int sharkMinReproductionAge,
         int sharkMinReproductionEnergy,
-        int sharkMinReproductionInterval,
-        NeighborhoodMode neighborhoodMode)
+        int sharkMinReproductionInterval)
         implements SimulationConfig {
 
     private boolean hasAllowedSelections() {
@@ -101,4 +103,3 @@ public record WatorConfig(
     }
 
 }
-

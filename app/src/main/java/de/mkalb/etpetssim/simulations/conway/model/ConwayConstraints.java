@@ -47,10 +47,12 @@ public final class ConwayConstraints {
     public static final double ALIVE_PERCENT_MIN = 0.0d;
     public static final double ALIVE_PERCENT_MAX = 1.0d;
 
+    // Rules - NeighborhoodMode
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
+
     // Rules
     public static final ConwayTransitionRules TRANSITION_RULES_DEFAULT = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
     public static final int BIRTH_NEIGHBOR_COUNT_MIN = 1;
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
 
     /**
      * Private constructor to prevent instantiation.

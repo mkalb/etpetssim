@@ -42,7 +42,7 @@ public final class LangtonConstraints {
     // Initialization - Seed
     public static final String SEED_INITIAL = "";
 
-    // Rules
+    // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
     /**

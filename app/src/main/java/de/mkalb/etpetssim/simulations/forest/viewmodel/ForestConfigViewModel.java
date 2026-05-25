@@ -45,13 +45,19 @@ public final class ForestConfigViewModel
             SEED_INITIAL
     );
 
-    // Initialization properties
+    // Initialization
     private final InputDoubleProperty treeDensity = InputDoubleProperty.of(
             TREE_DENSITY_DEFAULT,
             TREE_DENSITY_MIN,
             TREE_DENSITY_MAX);
 
-    // Rules properties
+    // Rules - NeighborhoodMode
+    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
+            NEIGHBORHOOD_MODE_DEFAULT,
+            NEIGHBORHOOD_MODE_VALUES,
+            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+
+    // Rules
     private final InputDoubleProperty treeGrowthProbability = InputDoubleProperty.of(
             TREE_GROWTH_PROBABILITY_DEFAULT,
             TREE_GROWTH_PROBABILITY_MIN,
@@ -60,10 +66,6 @@ public final class ForestConfigViewModel
             LIGHTNING_IGNITION_PROBABILITY_DEFAULT,
             LIGHTNING_IGNITION_PROBABILITY_MIN,
             LIGHTNING_IGNITION_PROBABILITY_MAX);
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
-            NEIGHBORHOOD_MODE_DEFAULT,
-            NEIGHBORHOOD_MODE_VALUES,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public ForestConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
@@ -80,14 +82,18 @@ public final class ForestConfigViewModel
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
                 treeDensity.getValue(),
+                neighborhoodMode.getValue(),
                 treeGrowthProbability.getValue(),
-                lightningIgnitionProbability.getValue(),
-                neighborhoodMode.getValue()
+                lightningIgnitionProbability.getValue()
         );
     }
 
     public InputDoubleProperty treeDensityProperty() {
         return treeDensity;
+    }
+
+    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
+        return neighborhoodMode;
     }
 
     public InputDoubleProperty treeGrowthProbabilityProperty() {
@@ -96,10 +102,6 @@ public final class ForestConfigViewModel
 
     public InputDoubleProperty lightningIgnitionProbabilityProperty() {
         return lightningIgnitionProbability;
-    }
-
-    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
-        return neighborhoodMode;
     }
 
 }

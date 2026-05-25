@@ -36,7 +36,7 @@ public final class ReboundingConfigViewModel
             SEED_INITIAL
     );
 
-    // Initialization properties
+    // Initialization
     private final InputIntegerProperty verticalWalls = InputIntegerProperty.of(
             VERTICAL_WALLS_DEFAULT,
             VERTICAL_WALLS_MIN,
@@ -47,7 +47,7 @@ public final class ReboundingConfigViewModel
             MOVING_ENTITY_PERCENT_MIN,
             MOVING_ENTITY_PERCENT_MAX);
 
-    // Rules properties
+    // Rules - NeighborhoodMode
     private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
             NEIGHBORHOOD_MODE_DEFAULT,
             NEIGHBORHOOD_MODE_VALUES,

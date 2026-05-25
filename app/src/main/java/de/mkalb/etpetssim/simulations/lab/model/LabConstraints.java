@@ -46,7 +46,7 @@ public final class LabConstraints {
     // Initialization - Seed
     public static final String SEED_INITIAL = "";
 
-    // Rules
+    // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
     public static final List<NeighborhoodMode> NEIGHBORHOOD_MODE_VALUES = List.of(
             NeighborhoodMode.values());

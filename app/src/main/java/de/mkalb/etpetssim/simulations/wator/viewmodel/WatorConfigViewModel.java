@@ -36,7 +36,7 @@ public final class WatorConfigViewModel
             SEED_INITIAL
     );
 
-    // Initialization properties
+    // Initialization
     private final InputDoubleProperty fishPercent = InputDoubleProperty.of(
             FISH_PERCENT_DEFAULT,
             FISH_PERCENT_MIN,
@@ -46,7 +46,13 @@ public final class WatorConfigViewModel
             SHARK_PERCENT_MIN,
             SHARK_PERCENT_MAX);
 
-    // Rules properties
+    // Rules - NeighborhoodMode
+    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
+            NEIGHBORHOOD_MODE_DEFAULT,
+            NeighborhoodMode.class,
+            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
+
+    // Rules
     private final InputIntegerProperty fishMaxAge = InputIntegerProperty.of(
             FISH_MAX_AGE_DEFAULT,
             FISH_MAX_AGE_MIN,
@@ -97,10 +103,6 @@ public final class WatorConfigViewModel
             SHARK_MIN_REPRODUCTION_INTERVAL_MIN,
             SHARK_MIN_REPRODUCTION_INTERVAL_MAX,
             SHARK_MIN_REPRODUCTION_INTERVAL_STEP);
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
-            NEIGHBORHOOD_MODE_DEFAULT,
-            NeighborhoodMode.class,
-            e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
@@ -109,7 +111,6 @@ public final class WatorConfigViewModel
     @Override
     public WatorConfig getConfig() {
         return new WatorConfig(
-                // Structure
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),
                 gridWidthProperty().property().getValue(),
@@ -117,10 +118,9 @@ public final class WatorConfigViewModel
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
                 seedProperty().computeSeedAndUpdateLabel(),
-                // Initialization
                 fishPercent.getValue(),
                 sharkPercent.getValue(),
-                // Rules
+                neighborhoodMode.getValue(),
                 fishMaxAge.getValue(),
                 fishMinReproductionAge.getValue(),
                 fishMinReproductionInterval.getValue(),
@@ -130,8 +130,7 @@ public final class WatorConfigViewModel
                 sharkEnergyGainPerFish.getValue(),
                 sharkMinReproductionAge.getValue(),
                 sharkMinReproductionEnergy.getValue(),
-                sharkMinReproductionInterval.getValue(),
-                neighborhoodMode.getValue()
+                sharkMinReproductionInterval.getValue()
         );
     }
 
@@ -141,6 +140,10 @@ public final class WatorConfigViewModel
 
     public InputDoubleProperty sharkPercentProperty() {
         return sharkPercent;
+    }
+
+    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
+        return neighborhoodMode;
     }
 
     public InputIntegerProperty fishMaxAgeProperty() {
@@ -181,10 +184,6 @@ public final class WatorConfigViewModel
 
     public InputIntegerProperty sharkMinReproductionIntervalProperty() {
         return sharkMinReproductionInterval;
-    }
-
-    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
-        return neighborhoodMode;
     }
 
 }

@@ -31,7 +31,7 @@ public final class LangtonConfigViewModel
             SEED_INITIAL
     );
 
-    // Rules properties
+    // Rules
     private final LangtonRuleProperty rule = new LangtonRuleProperty();
 
     public LangtonConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {

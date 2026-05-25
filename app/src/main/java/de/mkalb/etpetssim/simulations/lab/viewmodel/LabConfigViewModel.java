@@ -36,10 +36,10 @@ public final class LabConfigViewModel
             SEED_INITIAL
     );
 
-    // Layout properties
+    // Layout
     private final InputEnumProperty<LabConfig.ColorMode> colorMode = InputEnumProperty.of(COLOR_MODE_DEFAULT, COLOR_MODE_VALUES, Enum::toString);
 
-    // Rules properties
+    // Rules - NeighborhoodMode
     private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(NEIGHBORHOOD_MODE_DEFAULT, NEIGHBORHOOD_MODE_VALUES,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
@@ -58,8 +58,8 @@ public final class LabConfigViewModel
         gridHeightProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         cellEdgeLengthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         cellDisplayModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
-        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
         colorModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
+        seedProperty().stringProperty().addListener((_, _, _) -> configChangedRequested.set(true));
         neighborhoodModeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
     }
 
@@ -72,8 +72,8 @@ public final class LabConfigViewModel
                 gridHeightProperty().property().getValue(),
                 cellEdgeLengthProperty().property().getValue(),
                 cellDisplayModeProperty().property().getValue(),
-                seedProperty().computeSeedAndUpdateLabel(),
                 colorMode.getValue(),
+                seedProperty().computeSeedAndUpdateLabel(),
                 neighborhoodMode.getValue()
         );
     }

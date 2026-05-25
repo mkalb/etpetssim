@@ -22,13 +22,17 @@ import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
  * @param langtonMovementRules the cyclic movement rule set for visited states
  */
 public record LangtonConfig(
+        // Structure
         CellShape cellShape,
         GridEdgeBehavior gridEdgeBehavior,
         int gridWidth,
         int gridHeight,
+        // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
+        // Initialization
         long seed,
+        // Rules
         NeighborhoodMode neighborhoodMode,
         LangtonMovementRules langtonMovementRules)
         implements SimulationConfig {

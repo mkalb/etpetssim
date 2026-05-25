@@ -34,11 +34,11 @@ final class SnakeConfigTest {
                 foodCells,
                 snakes,
                 initialPendingGrowth,
+                neighborhoodMode,
                 deathMode,
                 growthPerFood,
                 basePointsPerFood,
-                segmentLengthMultiplier,
-                neighborhoodMode
+                segmentLengthMultiplier
         );
     }
 
