@@ -6,6 +6,8 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 
+import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.*;
+
 /**
  * Immutable configuration for the Wa-Tor simulation.
  *
@@ -55,6 +57,29 @@ public record WatorConfig(
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
+    private boolean hasExpectedRules() {
+        return neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT;
+    }
+
+    private boolean hasValidRanges() {
+        return isInRange(fishPercent, FISH_PERCENT_MIN, FISH_PERCENT_MAX)
+                && isInRange(sharkPercent, SHARK_PERCENT_MIN, SHARK_PERCENT_MAX)
+                && isInRange(fishMaxAge, FISH_MAX_AGE_MIN, FISH_MAX_AGE_MAX)
+                && isInRange(fishMinReproductionAge, FISH_MIN_REPRODUCTION_AGE_MIN, FISH_MIN_REPRODUCTION_AGE_MAX)
+                && isInRange(fishMinReproductionInterval, FISH_MIN_REPRODUCTION_INTERVAL_MIN, FISH_MIN_REPRODUCTION_INTERVAL_MAX)
+                && isInRange(sharkMaxAge, SHARK_MAX_AGE_MIN, SHARK_MAX_AGE_MAX)
+                && isInRange(sharkBirthEnergy, SHARK_BIRTH_ENERGY_MIN, SHARK_BIRTH_ENERGY_MAX)
+                && isInRange(sharkEnergyLossPerStep, SHARK_ENERGY_LOSS_PER_STEP_MIN, SHARK_ENERGY_LOSS_PER_STEP_MAX)
+                && isInRange(sharkEnergyGainPerFish, SHARK_ENERGY_GAIN_PER_FISH_MIN, SHARK_ENERGY_GAIN_PER_FISH_MAX)
+                && isInRange(sharkMinReproductionAge, SHARK_MIN_REPRODUCTION_AGE_MIN, SHARK_MIN_REPRODUCTION_AGE_MAX)
+                && isInRange(sharkMinReproductionEnergy, SHARK_MIN_REPRODUCTION_ENERGY_MIN, SHARK_MIN_REPRODUCTION_ENERGY_MAX)
+                && isInRange(sharkMinReproductionInterval, SHARK_MIN_REPRODUCTION_INTERVAL_MIN, SHARK_MIN_REPRODUCTION_INTERVAL_MAX);
+    }
+
+    private boolean hasValidCombinedPopulationShare() {
+        return (fishPercent + sharkPercent) < POPULATION_SHARE_SUM_MAX_EXCLUSIVE;
+    }
+
     /**
      * Validates the common simulation settings and ensures that fish and shark shares fit into the grid.
      *
@@ -62,9 +87,10 @@ public record WatorConfig(
      */
     @Override
     public boolean isValid() {
-        boolean baseValid = SimulationConfig.super.isValid();
-        boolean watorValid = (fishPercent + sharkPercent) < 1.0d;
-        return baseValid && watorValid;
+        return SimulationConfig.super.isValid()
+                && hasExpectedRules()
+                && hasValidRanges()
+                && hasValidCombinedPopulationShare();
     }
 
 }

@@ -97,6 +97,18 @@ public interface SimulationConfig {
     }
 
     /**
+     * Returns whether the given floating-point value is inside the inclusive range.
+     *
+     * @param value the value to test
+     * @param min the inclusive minimum
+     * @param max the inclusive maximum
+     * @return {@code true} if the value is inside the range, otherwise {@code false}
+     */
+    default boolean isInRange(double value, double min, double max) {
+        return (value >= min) && (value <= max);
+    }
+
+    /**
      * Validates whether this configuration can be used to construct a simulation grid.
      * <p>
      * Implementations should override this method when additional simulation-specific
