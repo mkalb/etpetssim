@@ -41,20 +41,20 @@ public final class EtpetsConstraints {
     public static final String SEED_INITIAL = "";
 
     // Initialization
-    public static final int RULE_STEP = 1;
     public static final int ROCK_PERCENT_DEFAULT = 1;
     public static final int WATER_PERCENT_DEFAULT = 2;
     public static final int PLANT_PERCENT_DEFAULT = 5;
     public static final int INSECT_PERCENT_DEFAULT = 1;
     public static final int PERCENT_MIN = 0;
     public static final int PERCENT_MAX = 100;
+    public static final int PERCENT_STEP = 1;
+    public static final int OBSTACLE_PERCENT_MAX = 50;
     public static final int PET_COUNT_DEFAULT = 10;
     public static final int PET_COUNT_MIN = 0;
     public static final int PET_COUNT_MAX = 100;
+    public static final int PET_COUNT_STEP = 1;
 
     // Rules
-    public static final int PET_COUNT_STEP = RULE_STEP;
-    public static final int OBSTACLE_PERCENT_MAX = 50;
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
     /**

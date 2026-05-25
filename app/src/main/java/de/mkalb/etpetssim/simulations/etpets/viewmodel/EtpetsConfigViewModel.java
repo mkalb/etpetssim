@@ -36,22 +36,22 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
             ROCK_PERCENT_DEFAULT,
             PERCENT_MIN,
             PERCENT_MAX,
-            RULE_STEP);
+            PERCENT_STEP);
     private final InputIntegerProperty waterPercent = InputIntegerProperty.of(
             WATER_PERCENT_DEFAULT,
             PERCENT_MIN,
             PERCENT_MAX,
-            RULE_STEP);
+            PERCENT_STEP);
     private final InputIntegerProperty plantPercent = InputIntegerProperty.of(
             PLANT_PERCENT_DEFAULT,
             PERCENT_MIN,
             PERCENT_MAX,
-            RULE_STEP);
+            PERCENT_STEP);
     private final InputIntegerProperty insectPercent = InputIntegerProperty.of(
             INSECT_PERCENT_DEFAULT,
             PERCENT_MIN,
             PERCENT_MAX,
-            RULE_STEP);
+            PERCENT_STEP);
     private final InputIntegerProperty petCount = InputIntegerProperty.of(
             PET_COUNT_DEFAULT,
             PET_COUNT_MIN,

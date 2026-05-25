@@ -168,7 +168,7 @@ final class EtpetsConfigTest {
                 EtpetsConstraints.CELL_SHAPE_DEFAULT,
                 EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 EtpetsConstraints.OBSTACLE_PERCENT_MAX,
-                EtpetsConstraints.RULE_STEP,
+                EtpetsConstraints.PERCENT_STEP,
                 EtpetsConstraints.PLANT_PERCENT_DEFAULT,
                 EtpetsConstraints.INSECT_PERCENT_DEFAULT,
                 EtpetsConstraints.PET_COUNT_DEFAULT,
@@ -185,7 +185,7 @@ final class EtpetsConfigTest {
                 EtpetsConstraints.ROCK_PERCENT_DEFAULT,
                 EtpetsConstraints.WATER_PERCENT_DEFAULT,
                 EtpetsConstraints.PERCENT_MAX,
-                EtpetsConstraints.RULE_STEP,
+                EtpetsConstraints.PERCENT_STEP,
                 EtpetsConstraints.PET_COUNT_DEFAULT,
                 EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT);
 
