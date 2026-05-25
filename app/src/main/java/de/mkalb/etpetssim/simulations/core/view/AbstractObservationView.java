@@ -33,6 +33,10 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
     }
 
     protected final GridPane createObservationGrid(String[] nameKeys, Label[] valueLabels) {
+        if (nameKeys.length != valueLabels.length) {
+            throw new IllegalArgumentException("nameKeys and valueLabels must have the same length.");
+        }
+
         GridPane grid = new GridPane();
         grid.getStyleClass().add(FXStyleClasses.OBSERVATION_GRID);
 
