@@ -50,19 +50,8 @@ public final class DefaultControlView
                     }
                 }, viewModel.simulationStateProperty())
         );
-        actionButton.disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().canStart()
-                                && !viewModel.getSimulationState().isRunning()
-                                && !viewModel.getSimulationState().isPaused(),
-                        viewModel.simulationStateProperty()
-                )
-        );
-        cancelButton.disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> !viewModel.getSimulationState().isRunning()
-                                && !viewModel.getSimulationState().isPaused(),
-                        viewModel.simulationStateProperty()
-                )
-        );
+        bindActionButtonDisabled(actionButton);
+        bindCancelButtonDisabled(cancelButton);
 
         actionButton.setOnAction(_ -> viewModel.requestActionButton());
         cancelButton.setOnAction(_ -> viewModel.requestCancelButton());
@@ -82,11 +71,7 @@ public final class DefaultControlView
                 FXStyleClasses.CONFIG_RADIOBUTTON
         );
 
-        simulationModeControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
-                        viewModel.simulationStateProperty()
-                )
-        );
+        bindControlConfigDisabled(simulationModeControl.controlRegion());
 
         var stepDurationControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.stepDurationProperty(),
@@ -97,11 +82,7 @@ public final class DefaultControlView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
-        stepDurationControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
-                        viewModel.simulationStateProperty()
-                )
-        );
+        bindControlConfigDisabled(stepDurationControl.controlRegion());
 
         var stepCountControl = FXComponentFactory.createLabeledIntSpinner(viewModel.stepCountProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_STEP_COUNT),
@@ -110,11 +91,7 @@ public final class DefaultControlView
                         viewModel.stepCountProperty().max()),
                 FXStyleClasses.CONFIG_SPINNER);
 
-        stepCountControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
-                        viewModel.simulationStateProperty()
-                )
-        );
+        bindControlConfigDisabled(stepCountControl.controlRegion());
 
         var startModeControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.startModeProperty(),
                 SimulationStartMode.START_PAUSED,
@@ -124,11 +101,7 @@ public final class DefaultControlView
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 
-        startModeControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> viewModel.getSimulationState().cannotStart(),
-                        viewModel.simulationStateProperty()
-                )
-        );
+        bindCannotStartDisabled(startModeControl.controlRegion());
 
         var terminationCheckControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.terminationCheckProperty(),
                 SimulationTerminationCheck.CHECKED,
@@ -138,11 +111,7 @@ public final class DefaultControlView
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 
-        terminationCheckControl.controlRegion().disableProperty().bind(Bindings.createBooleanBinding(
-                        () -> viewModel.getSimulationState().isControlConfigDisabled(),
-                        viewModel.simulationStateProperty()
-                )
-        );
+        bindControlConfigDisabled(terminationCheckControl.controlRegion());
 
         VBox simulationModeBox = new VBox(simulationModeControl.label(), simulationModeControl.controlRegion());
         simulationModeBox.getStyleClass().add(FXStyleClasses.CONTROL_CONFIG_VBOX);
@@ -184,6 +153,37 @@ public final class DefaultControlView
     @Override
     public void updateStepCount(int stepCount) {
         stepNumberLabel.setText(AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
+    }
+
+    private void bindActionButtonDisabled(Button actionButton) {
+        actionButton.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> !viewModel.getSimulationState().canStart()
+                        && !viewModel.getSimulationState().isRunning()
+                        && !viewModel.getSimulationState().isPaused(),
+                viewModel.simulationStateProperty()
+        ));
+    }
+
+    private void bindCancelButtonDisabled(Button cancelButton) {
+        cancelButton.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> !viewModel.getSimulationState().isRunning()
+                        && !viewModel.getSimulationState().isPaused(),
+                viewModel.simulationStateProperty()
+        ));
+    }
+
+    private void bindControlConfigDisabled(Region region) {
+        region.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> viewModel.getSimulationState().isControlConfigDisabled(),
+                viewModel.simulationStateProperty()
+        ));
+    }
+
+    private void bindCannotStartDisabled(Region region) {
+        region.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> viewModel.getSimulationState().cannotStart(),
+                viewModel.simulationStateProperty()
+        ));
     }
 
 }
