@@ -14,7 +14,14 @@ import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
 public final class ForestConfigViewModel
         extends AbstractConfigViewModel<ForestConfig> {
 
+    /**
+     * Number of fractional digits shown for tree growth probability inputs in the forest view.
+     */
     public static final int TREE_GROWTH_DECIMALS = 3;
+
+    /**
+     * Number of fractional digits shown for lightning ignition probability inputs in the forest view.
+     */
     public static final int LIGHTNING_IGNITION_DECIMALS = 4;
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(

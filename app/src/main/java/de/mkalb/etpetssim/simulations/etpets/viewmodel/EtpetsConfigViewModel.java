@@ -102,4 +102,3 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     }
 
 }
-

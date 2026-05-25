@@ -15,6 +15,9 @@ import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.*;
 public final class SnakeConfigViewModel
         extends AbstractConfigViewModel<SnakeConfig> {
 
+    /**
+     * Number of fractional digits shown for segment-length multiplier inputs in the snake view.
+     */
     public static final int SEGMENT_LENGTH_MULTIPLIER_DECIMALS = 1;
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(

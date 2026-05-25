@@ -48,10 +48,10 @@ public final class LabConfigViewModel
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
-        setupConfigListeners();
+        initializeConfigListeners();
     }
 
-    private void setupConfigListeners() {
+    private void initializeConfigListeners() {
         cellShapeProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         gridEdgeBehaviorProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
         gridWidthProperty().property().addListener((_, _, _) -> configChangedRequested.set(true));
