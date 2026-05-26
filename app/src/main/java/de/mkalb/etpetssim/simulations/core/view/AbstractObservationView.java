@@ -71,6 +71,12 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         valueLabel.setText(integerFormat().format(value));
     }
 
+    protected final void clearValues(Label... valueLabels) {
+        for (Label valueLabel : valueLabels) {
+            valueLabel.setText("");
+        }
+    }
+
     protected final void setUnknownValues(Label... valueLabels) {
         String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
         for (Label valueLabel : valueLabels) {

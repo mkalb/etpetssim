@@ -61,21 +61,12 @@ public final class SnakeObservationView
                 setFormattedIntegerValue(snakeMaxSegmentCountLabel, snakeHead.maxSegmentCount());
                 setFormattedIntegerValue(snakePointsLabel, snakeHead.points());
             } else {
-                snakeIdLabel.setText("");
-                snakeStrategyLabel.setText("");
-                snakeDeathsLabel.setText("");
-                snakeSegmentCountLabel.setText("");
-                snakeMaxSegmentCountLabel.setText("");
-                snakePointsLabel.setText("");
+                clearValues(snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
+                        snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
             }
         } else {
-            coordinateLabel.setText("");
-            snakeIdLabel.setText("");
-            snakeStrategyLabel.setText("");
-            snakeDeathsLabel.setText("");
-            snakeSegmentCountLabel.setText("");
-            snakeMaxSegmentCountLabel.setText("");
-            snakePointsLabel.setText("");
+            clearValues(coordinateLabel, snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
+                    snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
         }
     }
 

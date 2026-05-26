@@ -39,7 +39,7 @@ public final class ReboundingObservationView
         if ((gridCell != null) && (gridCell.entity() instanceof Rebounder entity)) {
             directionLabel.setText(entity.getDirection().arrow());
         } else {
-            directionLabel.setText("");
+            clearValues(directionLabel);
         }
     }
 

@@ -46,18 +46,16 @@ public final class SugarObservationView
             if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
                 setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
             } else {
-                currentEnergyLabel.setText("");
+                clearValues(currentEnergyLabel);
             }
             if (gridCell.entity().isResource()
                     && (gridCell.entity() instanceof Sugar resource)) {
                 setFormattedIntegerValue(currentAmountLabel, resource.currentAmount());
             } else {
-                currentAmountLabel.setText("");
+                clearValues(currentAmountLabel);
             }
         } else {
-            coordinateLabel.setText("");
-            currentEnergyLabel.setText("");
-            currentAmountLabel.setText("");
+            clearValues(coordinateLabel, currentEnergyLabel, currentAmountLabel);
         }
     }
 

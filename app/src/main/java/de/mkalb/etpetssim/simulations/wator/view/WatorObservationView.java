@@ -51,8 +51,7 @@ public final class WatorObservationView
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
             setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
         } else {
-            coordinateLabel.setText("");
-            ageLabel.setText("");
+            clearValues(coordinateLabel, ageLabel);
         }
     }
 
