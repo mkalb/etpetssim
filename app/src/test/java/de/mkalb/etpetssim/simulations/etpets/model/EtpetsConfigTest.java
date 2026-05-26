@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("MagicNumber")
 final class EtpetsConfigTest {
 
     private static EtpetsConfig createConfig(CellShape cellShape,
@@ -163,14 +164,14 @@ final class EtpetsConfigTest {
     }
 
     @Test
-    void testIsValidRejectsObstaclePercentAboveLimit() {
+    void testIsValidRejectsTotalPercentAboveLimit() {
         EtpetsConfig config = createConfig(
                 EtpetsConstraints.CELL_SHAPE_DEFAULT,
                 EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                EtpetsConstraints.OBSTACLE_PERCENT_MAX,
+                0.20d,
+                0.20d,
+                0.10d,
                 0.01d,
-                EtpetsConstraints.PLANT_PERCENT_DEFAULT,
-                EtpetsConstraints.INSECT_PERCENT_DEFAULT,
                 EtpetsConstraints.PET_COUNT_DEFAULT,
                 EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT);
 
@@ -178,29 +179,29 @@ final class EtpetsConfigTest {
     }
 
     @Test
-    void testIsValidRejectsResourcePercentAboveLimit() {
+    void testIsValidAcceptsTotalPercentAtLimit() {
+        EtpetsConfig config = createConfig(
+                EtpetsConstraints.CELL_SHAPE_DEFAULT,
+                EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
+                0.20d,
+                0.20d,
+                0.05d,
+                0.05d,
+                EtpetsConstraints.PET_COUNT_DEFAULT,
+                EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT);
+
+        assertTrue(config.isValid());
+    }
+
+    @Test
+    void testIsValidAcceptsTotalPercentBelowLimit() {
         EtpetsConfig config = createConfig(
                 EtpetsConstraints.CELL_SHAPE_DEFAULT,
                 EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 EtpetsConstraints.ROCK_PERCENT_DEFAULT,
                 EtpetsConstraints.WATER_PERCENT_DEFAULT,
-                EtpetsConstraints.PERCENT_MAX,
-                0.01d,
-                EtpetsConstraints.PET_COUNT_DEFAULT,
-                EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidAcceptsCombinedBoundaryValues() {
-        EtpetsConfig config = createConfig(
-                EtpetsConstraints.CELL_SHAPE_DEFAULT,
-                EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                EtpetsConstraints.OBSTACLE_PERCENT_MAX,
-                EtpetsConstraints.PERCENT_MIN,
-                EtpetsConstraints.PERCENT_MAX,
-                EtpetsConstraints.PERCENT_MIN,
+                EtpetsConstraints.PLANT_PERCENT_DEFAULT,
+                EtpetsConstraints.INSECT_PERCENT_DEFAULT,
                 EtpetsConstraints.PET_COUNT_DEFAULT,
                 EtpetsConstraints.NEIGHBORHOOD_MODE_DEFAULT);
 

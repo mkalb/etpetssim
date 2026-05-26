@@ -47,7 +47,7 @@ public final class EtpetsConstraints {
     public static final double INSECT_PERCENT_DEFAULT = 0.01d;
     public static final double PERCENT_MIN = 0.0d;
     public static final double PERCENT_MAX = 1.0d;
-    public static final double OBSTACLE_PERCENT_MAX = 0.5d;
+    public static final double TOTAL_PERCENT_MAX = 0.5d;
     public static final int PET_COUNT_DEFAULT = 10;
     public static final int PET_COUNT_MIN = 0;
     public static final int PET_COUNT_MAX = 100;

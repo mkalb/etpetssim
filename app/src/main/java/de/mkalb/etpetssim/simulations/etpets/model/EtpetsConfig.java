@@ -54,8 +54,7 @@ public record EtpetsConfig(
     }
 
     private boolean hasValidCombinedPercents() {
-        return ((rockPercent + waterPercent) <= OBSTACLE_PERCENT_MAX)
-                && ((plantPercent + insectPercent) <= PERCENT_MAX);
+        return (rockPercent + waterPercent + plantPercent + insectPercent) <= TOTAL_PERCENT_MAX;
     }
 
     /**
@@ -69,7 +68,6 @@ public record EtpetsConfig(
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
                 && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidRanges()
-                // Spec: rockPercent + waterPercent MUST NOT exceed 50%.
                 && hasValidCombinedPercents();
     }
 
