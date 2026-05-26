@@ -36,30 +36,29 @@ public final class EtpetsConfigView
 
         // Initialization
         var seedControl = createSeedControl();
-        // TODO Try InputDoubleProperty and createLabeledPercentSlider
-        var rockPercentControl = FXComponentFactory.createLabeledIntSpinner(
+        var rockPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.rockPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_ROCK_PERCENT),
                 AppLocalization.getText(ETPETS_CONFIG_ROCK_PERCENT_TOOLTIP),
-                FXStyleClasses.CONFIG_SPINNER
+                FXStyleClasses.CONFIG_SLIDER
         );
-        var waterPercentControl = FXComponentFactory.createLabeledIntSpinner(
+        var waterPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.waterPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_WATER_PERCENT),
                 AppLocalization.getText(ETPETS_CONFIG_WATER_PERCENT_TOOLTIP),
-                FXStyleClasses.CONFIG_SPINNER
+                FXStyleClasses.CONFIG_SLIDER
         );
-        var plantPercentControl = FXComponentFactory.createLabeledIntSpinner(
+        var plantPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.plantPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_PLANT_PERCENT),
                 AppLocalization.getText(ETPETS_CONFIG_PLANT_PERCENT_TOOLTIP),
-                FXStyleClasses.CONFIG_SPINNER
+                FXStyleClasses.CONFIG_SLIDER
         );
-        var insectPercentControl = FXComponentFactory.createLabeledIntSpinner(
+        var insectPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.insectPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_INSECT_PERCENT),
                 AppLocalization.getText(ETPETS_CONFIG_INSECT_PERCENT_TOOLTIP),
-                FXStyleClasses.CONFIG_SPINNER
+                FXStyleClasses.CONFIG_SLIDER
         );
         var petCountControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.petCountProperty(),

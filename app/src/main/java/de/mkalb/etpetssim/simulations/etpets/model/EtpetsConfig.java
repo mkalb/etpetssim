@@ -36,20 +36,20 @@ public record EtpetsConfig(
         CellDisplayMode cellDisplayMode,
         // Initialization
         long seed,
-        int rockPercent,
-        int waterPercent,
-        int plantPercent,
-        int insectPercent,
+        double rockPercent,
+        double waterPercent,
+        double plantPercent,
+        double insectPercent,
         int petCount,
         // Rules
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
     private boolean hasValidRanges() {
-        return isInRangeInt(rockPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeInt(waterPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeInt(plantPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRangeInt(insectPercent, PERCENT_MIN, PERCENT_MAX)
+        return isInRangeDouble(rockPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeDouble(waterPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeDouble(plantPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeDouble(insectPercent, PERCENT_MIN, PERCENT_MAX)
                 && isInRangeInt(petCount, PET_COUNT_MIN, PET_COUNT_MAX);
     }
 

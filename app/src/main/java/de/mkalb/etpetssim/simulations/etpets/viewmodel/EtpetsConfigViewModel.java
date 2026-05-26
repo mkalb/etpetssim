@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.etpets.viewmodel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
+import de.mkalb.etpetssim.ui.InputDoubleProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
@@ -32,26 +33,22 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     );
 
     // Initialization
-    private final InputIntegerProperty rockPercent = InputIntegerProperty.of(
+    private final InputDoubleProperty rockPercent = InputDoubleProperty.of(
             ROCK_PERCENT_DEFAULT,
             PERCENT_MIN,
-            PERCENT_MAX,
-            PERCENT_STEP);
-    private final InputIntegerProperty waterPercent = InputIntegerProperty.of(
+            PERCENT_MAX);
+    private final InputDoubleProperty waterPercent = InputDoubleProperty.of(
             WATER_PERCENT_DEFAULT,
             PERCENT_MIN,
-            PERCENT_MAX,
-            PERCENT_STEP);
-    private final InputIntegerProperty plantPercent = InputIntegerProperty.of(
+            PERCENT_MAX);
+    private final InputDoubleProperty plantPercent = InputDoubleProperty.of(
             PLANT_PERCENT_DEFAULT,
             PERCENT_MIN,
-            PERCENT_MAX,
-            PERCENT_STEP);
-    private final InputIntegerProperty insectPercent = InputIntegerProperty.of(
+            PERCENT_MAX);
+    private final InputDoubleProperty insectPercent = InputDoubleProperty.of(
             INSECT_PERCENT_DEFAULT,
             PERCENT_MIN,
-            PERCENT_MAX,
-            PERCENT_STEP);
+            PERCENT_MAX);
     private final InputIntegerProperty petCount = InputIntegerProperty.of(
             PET_COUNT_DEFAULT,
             PET_COUNT_MIN,
@@ -81,19 +78,19 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
         );
     }
 
-    public InputIntegerProperty rockPercentProperty() {
+    public InputDoubleProperty rockPercentProperty() {
         return rockPercent;
     }
 
-    public InputIntegerProperty waterPercentProperty() {
+    public InputDoubleProperty waterPercentProperty() {
         return waterPercent;
     }
 
-    public InputIntegerProperty plantPercentProperty() {
+    public InputDoubleProperty plantPercentProperty() {
         return plantPercent;
     }
 
-    public InputIntegerProperty insectPercentProperty() {
+    public InputDoubleProperty insectPercentProperty() {
         return insectPercent;
     }
 

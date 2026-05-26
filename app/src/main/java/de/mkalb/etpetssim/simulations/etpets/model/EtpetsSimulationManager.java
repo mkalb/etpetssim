@@ -45,8 +45,8 @@ public final class EtpetsSimulationManager
         updateInitialStatistics(model);
     }
 
-    private static int computePercentCount(int totalCells, int percent) {
-        return Math.max(0, (totalCells * percent) / 100);
+    private static int computePercentCount(int totalCells, double percentDecimal) {
+        return Math.clamp(Math.round((totalCells * percentDecimal)), 0, totalCells);
     }
 
     private void initializeTerrain(EtpetsGridModel model, Random random) {
