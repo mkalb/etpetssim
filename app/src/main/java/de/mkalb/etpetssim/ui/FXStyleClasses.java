@@ -16,6 +16,7 @@ public final class FXStyleClasses {
     public static final String CENTER_SPLITPANE = "center-splitpane";
     public static final String CONFIG_CHECKBOX = "config-checkbox";
     public static final String CONFIG_COMBOBOX = "config-combobox";
+    public static final String CONFIG_CONTENT_VBOX = "config-content-vbox";
     public static final String CONFIG_HBOX = "config-hbox";
     public static final String CONFIG_RADIOBUTTON = "config-radiobutton";
     public static final String CONFIG_RADIOBUTTON_BOX = "config-radiobutton-box";
@@ -24,6 +25,7 @@ public final class FXStyleClasses {
     public static final String CONFIG_SPINNER = "config-spinner";
     public static final String CONFIG_TEXTBOX = "config-textbox";
     public static final String CONFIG_TITLEDPANE = "config-titledpane";
+    public static final String CONFIG_VALIDATION_LABEL = "config-validation-label";
     public static final String CONFIG_VBOX = "config-vbox";
     public static final String CONTROL_BUTTON = "control-button";
     public static final String CONTROL_BUTTON_HBOX = "control-button-hbox";

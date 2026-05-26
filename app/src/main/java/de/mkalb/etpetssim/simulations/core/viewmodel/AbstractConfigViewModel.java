@@ -9,15 +9,21 @@ import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.*;
+import javafx.beans.value.ObservableBooleanValue;
 
 import java.util.*;
+import java.util.function.*;
 
 /**
  * Base implementation for configuration view models.
  */
 public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         implements SimulationConfigViewModel<CON> {
+
+    private final List<ConfigValidationRule> configValidationRules = new ArrayList<>();
+    private final ReadOnlyBooleanWrapper hasConfigValidationIssues = new ReadOnlyBooleanWrapper(false);
+    private final ReadOnlyStringWrapper configValidationMessage = new ReadOnlyStringWrapper("");
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
@@ -133,6 +139,48 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
      */
     public final SeedProperty seedProperty() {
         return seed;
+    }
+
+    /**
+     * Registers a UI-facing configuration validation rule.
+     *
+     * @param violatedCondition condition that evaluates to {@code true} when the rule is violated
+     * @param messageProvider   provider for the localized violation message
+     */
+    protected final void addConfigValidationRule(ObservableBooleanValue violatedCondition,
+                                                 Supplier<String> messageProvider) {
+        configValidationRules.add(new ConfigValidationRule(violatedCondition, messageProvider));
+        violatedCondition.addListener((_, _, _) -> updateConfigValidationState());
+        updateConfigValidationState();
+    }
+
+    public final ReadOnlyBooleanProperty hasConfigValidationIssuesProperty() {
+        return hasConfigValidationIssues.getReadOnlyProperty();
+    }
+
+    public final boolean hasConfigValidationIssues() {
+        return hasConfigValidationIssues.get();
+    }
+
+    public final ReadOnlyStringProperty configValidationMessageProperty() {
+        return configValidationMessage.getReadOnlyProperty();
+    }
+
+    public final String getConfigValidationMessage() {
+        return configValidationMessage.get();
+    }
+
+    private void updateConfigValidationState() {
+        List<String> messages = configValidationRules.stream()
+                                                     .filter(rule -> rule.violatedCondition().get())
+                                                     .map(rule -> rule.messageProvider().get())
+                                                     .toList();
+        hasConfigValidationIssues.set(!messages.isEmpty());
+        configValidationMessage.set(String.join(System.lineSeparator(), messages));
+    }
+
+    private record ConfigValidationRule(ObservableBooleanValue violatedCondition,
+                                        Supplier<String> messageProvider) {
     }
 
     /**

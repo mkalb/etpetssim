@@ -12,6 +12,7 @@ import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.binding.Bindings;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
@@ -36,9 +37,18 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         HBox configHBox = new HBox(titledPanes);
         configHBox.getStyleClass().add(FXStyleClasses.CONFIG_HBOX);
 
+        Label configValidationLabel = FXComponentFactory.createLabel("", FXStyleClasses.CONFIG_VALIDATION_LABEL);
+        configValidationLabel.textProperty().bind(viewModel.configValidationMessageProperty());
+        configValidationLabel.visibleProperty().bind(viewModel.hasConfigValidationIssuesProperty());
+        configValidationLabel.managedProperty().bind(configValidationLabel.visibleProperty());
+        configValidationLabel.setWrapText(true);
+
+        VBox configContentVBox = FXComponentFactory.createVBox(FXStyleClasses.CONFIG_CONTENT_VBOX);
+        configContentVBox.getChildren().addAll(configHBox, configValidationLabel);
+
         ScrollPane configScrollPane = new ScrollPane();
         configScrollPane.getStyleClass().add(FXStyleClasses.CONFIG_SCROLLPANE);
-        configScrollPane.setContent(configHBox);
+        configScrollPane.setContent(configContentVBox);
         configScrollPane.setFitToHeight(false);
         configScrollPane.setFitToWidth(false);
         configScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);

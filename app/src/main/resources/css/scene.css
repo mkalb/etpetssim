@@ -182,6 +182,22 @@ ScrollPane .decrement-arrow {
   -fx-alignment: top-left;
 }
 
+.config-content-vbox {
+  -fx-padding: 0;
+  -fx-spacing: 0;
+  -fx-background-color: transparent;
+  -fx-alignment: top-left;
+}
+
+.config-validation-label {
+  -fx-font-family: 'Verdana';
+  -fx-font-size: 14;
+  -fx-font-weight: normal;
+  -fx-padding: 0 10 10 10;
+  -fx-text-fill: #ffd27f;
+  -fx-background-color: transparent;
+}
+
 .config-checkbox {
   -fx-background-color: #2e3b50;
   -fx-background-insets: 0;
