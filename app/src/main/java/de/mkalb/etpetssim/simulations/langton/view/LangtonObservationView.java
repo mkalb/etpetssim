@@ -51,10 +51,10 @@ public final class LangtonObservationView
 
         if (statistics.isPresent()) {
             LangtonStatistics current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            antCellsLabel.setText(integerFormat().format(current.getAntCells()));
-            visitedCellsLabel.setText(integerFormat().format(current.getVisitedCells()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(antCellsLabel, current.getAntCells());
+            setFormattedIntegerValue(visitedCellsLabel, current.getVisitedCells());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, antCellsLabel, visitedCellsLabel);
         }

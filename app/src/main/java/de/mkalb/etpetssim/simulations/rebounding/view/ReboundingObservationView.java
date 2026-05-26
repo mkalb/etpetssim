@@ -71,10 +71,10 @@ public final class ReboundingObservationView
 
         if (statistics.isPresent()) {
             ReboundingStatistics current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            wallCellsLabel.setText(integerFormat().format(current.getWallCells()));
-            movingEntityCellsLabel.setText(integerFormat().format(current.getMovingEntityCells()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(wallCellsLabel, current.getWallCells());
+            setFormattedIntegerValue(movingEntityCellsLabel, current.getMovingEntityCells());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, wallCellsLabel, movingEntityCellsLabel);
         }

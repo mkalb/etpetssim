@@ -49,7 +49,7 @@ public final class WatorObservationView
                 && (gridCell != null)
                 && (gridCell.entity() instanceof CreatureBase creature)) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            ageLabel.setText(integerFormat().format(creature.ageAtStepCount(statistics.get().getStepCount())));
+            setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
         } else {
             coordinateLabel.setText("");
             ageLabel.setText("");
@@ -94,14 +94,14 @@ public final class WatorObservationView
 
         if (statistics.isPresent()) {
             WatorStatistics current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            maxFishCellsLabel.setText(integerFormat().format(current.getMaxFishCells()));
-            maxSharkCellsLabel.setText(integerFormat().format(current.getMaxSharkCells()));
-            minFishCellsLabel.setText(integerFormat().format(current.getMinFishCells()));
-            minSharkCellsLabel.setText(integerFormat().format(current.getMinSharkCells()));
-            fishCellsLabel.setText(integerFormat().format(current.getFishCells()));
-            sharkCellsLabel.setText(integerFormat().format(current.getSharkCells()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(maxFishCellsLabel, current.getMaxFishCells());
+            setFormattedIntegerValue(maxSharkCellsLabel, current.getMaxSharkCells());
+            setFormattedIntegerValue(minFishCellsLabel, current.getMinFishCells());
+            setFormattedIntegerValue(minSharkCellsLabel, current.getMinSharkCells());
+            setFormattedIntegerValue(fishCellsLabel, current.getFishCells());
+            setFormattedIntegerValue(sharkCellsLabel, current.getSharkCells());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, maxFishCellsLabel, maxSharkCellsLabel,
                     minFishCellsLabel, minSharkCellsLabel, fishCellsLabel, sharkCellsLabel);

@@ -58,12 +58,12 @@ public final class ForestObservationView
 
         if (statistics.isPresent()) {
             ForestStatistics current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            treeCellsLabel.setText(integerFormat().format(current.getTreeCells()));
-            burningCellsLabel.setText(integerFormat().format(current.getBurningCells()));
-            maxTreeCellsLabel.setText(integerFormat().format(current.getMaxTreeCells()));
-            maxBurningCellsLabel.setText(integerFormat().format(current.getMaxBurningCells()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(treeCellsLabel, current.getTreeCells());
+            setFormattedIntegerValue(burningCellsLabel, current.getBurningCells());
+            setFormattedIntegerValue(maxTreeCellsLabel, current.getMaxTreeCells());
+            setFormattedIntegerValue(maxBurningCellsLabel, current.getMaxBurningCells());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
         }

@@ -58,12 +58,12 @@ public final class ConwayObservationView
 
         if (statistics.isPresent()) {
             ConwayStatistics current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            maxAliveCellsLabel.setText(integerFormat().format(current.getMaxAliveCells()));
-            aliveCellsLabel.setText(integerFormat().format(current.getAliveCells()));
-            deadCellsLabel.setText(integerFormat().format(current.getDeadCells()));
-            changedCellsLabel.setText(integerFormat().format(current.getChangedCells()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(maxAliveCellsLabel, current.getMaxAliveCells());
+            setFormattedIntegerValue(aliveCellsLabel, current.getAliveCells());
+            setFormattedIntegerValue(deadCellsLabel, current.getDeadCells());
+            setFormattedIntegerValue(changedCellsLabel, current.getChangedCells());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, maxAliveCellsLabel, aliveCellsLabel, deadCellsLabel, changedCellsLabel);
         }

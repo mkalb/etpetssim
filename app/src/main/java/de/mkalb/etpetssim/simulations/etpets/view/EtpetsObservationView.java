@@ -56,11 +56,11 @@ public final class EtpetsObservationView
 
         if (statistics.isPresent()) {
             var current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            activePetsLabel.setText(integerFormat().format(current.getActivePetCount()));
-            eggsLabel.setText(integerFormat().format(current.getEggCount()));
-            deadPetsLabel.setText(integerFormat().format(current.getCumulativeDeadPetCount()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(activePetsLabel, current.getActivePetCount());
+            setFormattedIntegerValue(eggsLabel, current.getEggCount());
+            setFormattedIntegerValue(deadPetsLabel, current.getCumulativeDeadPetCount());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, activePetsLabel, eggsLabel, deadPetsLabel);
         }

@@ -56,10 +56,10 @@ public final class SnakeObservationView
             if (gridCell.entity() instanceof SnakeHead snakeHead) {
                 snakeIdLabel.setText("#" + snakeHead.id());
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
-                snakeDeathsLabel.setText(integerFormat().format(snakeHead.deaths()));
-                snakeSegmentCountLabel.setText(integerFormat().format(snakeHead.segmentCount()));
-                snakeMaxSegmentCountLabel.setText(integerFormat().format(snakeHead.maxSegmentCount()));
-                snakePointsLabel.setText(integerFormat().format(snakeHead.points()));
+                setFormattedIntegerValue(snakeDeathsLabel, snakeHead.deaths());
+                setFormattedIntegerValue(snakeSegmentCountLabel, snakeHead.segmentCount());
+                setFormattedIntegerValue(snakeMaxSegmentCountLabel, snakeHead.maxSegmentCount());
+                setFormattedIntegerValue(snakePointsLabel, snakeHead.points());
             } else {
                 snakeIdLabel.setText("");
                 snakeStrategyLabel.setText("");
@@ -121,11 +121,11 @@ public final class SnakeObservationView
 
         if (statistics.isPresent()) {
             SnakeStatistics current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            snakeHeadCells.setText(integerFormat().format(current.getSnakeHeadCells()));
-            foodCellsLabel.setText(integerFormat().format(current.getFoodCells()));
-            deathsLabel.setText(integerFormat().format(current.getDeaths()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(snakeHeadCells, current.getSnakeHeadCells());
+            setFormattedIntegerValue(foodCellsLabel, current.getFoodCells());
+            setFormattedIntegerValue(deathsLabel, current.getDeaths());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, snakeHeadCells, foodCellsLabel, deathsLabel);
         }

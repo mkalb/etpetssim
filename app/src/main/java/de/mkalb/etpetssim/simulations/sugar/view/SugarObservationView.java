@@ -44,13 +44,13 @@ public final class SugarObservationView
                 && gridCell.entity().isNotEmpty()) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
             if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
-                currentEnergyLabel.setText(integerFormat().format(agent.currentEnergy()));
+                setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
             } else {
                 currentEnergyLabel.setText("");
             }
             if (gridCell.entity().isResource()
                     && (gridCell.entity() instanceof Sugar resource)) {
-                currentAmountLabel.setText(integerFormat().format(resource.currentAmount()));
+                setFormattedIntegerValue(currentAmountLabel, resource.currentAmount());
             } else {
                 currentAmountLabel.setText("");
             }
@@ -93,10 +93,10 @@ public final class SugarObservationView
 
         if (statistics.isPresent()) {
             SugarStatistics current = statistics.get();
-            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
-            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
-            resourceCellsLabel.setText(integerFormat().format(current.getResourceCells()));
-            agentCellsLabel.setText(integerFormat().format(current.getAgentCells()));
+            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
+            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
+            setFormattedIntegerValue(resourceCellsLabel, current.getResourceCells());
+            setFormattedIntegerValue(agentCellsLabel, current.getAgentCells());
         } else {
             setUnknownValues(stepCountLabel, totalCellsLabel, resourceCellsLabel, agentCellsLabel);
         }
