@@ -22,11 +22,8 @@ public final class WatorAgentLogicFactory {
         this.entityFactory = entityFactory;
     }
 
-    public AgentStepLogic<WatorEntity, WatorStatistics> createAgentLogic(WatorLogicType type) {
-        return switch (type) {
-            case SIMPLE -> this::simpleLogic;
-            case ADVANCED -> this::advancedLogic;
-        };
+    public AgentStepLogic<WatorEntity, WatorStatistics> createAgentLogic() {
+        return this::simpleLogic;
     }
 
     private void simpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
@@ -142,16 +139,6 @@ public final class WatorAgentLogicFactory {
 
     private GridCell<WatorEntity> chooseRandomCell(List<GridCell<WatorEntity>> cells) {
         return cells.get(random.nextInt(cells.size()));
-    }
-
-    @SuppressWarnings({"EmptyMethod", "unused"})
-    private void advancedLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
-                               WatorStatistics statistics) {
-        // TODO Implement advanced agent logic here
-    }
-
-    public enum WatorLogicType {
-        SIMPLE, ADVANCED
     }
 
 }
