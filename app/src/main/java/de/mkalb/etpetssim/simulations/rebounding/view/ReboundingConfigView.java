@@ -34,7 +34,7 @@ public final class ReboundingConfigView
         var verticalWallsControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.verticalWallsProperty(),
                 AppLocalization.getText(REBOUNDING_CONFIG_VERTICAL_WALLS),
-                AppLocalization.getFormattedText(REBOUNDING_CONFIG_VERTICAL_WALLS_TOOLTIP, viewModel.verticalWallsProperty().min(), viewModel.verticalWallsProperty().max()),
+                formatIntRangeTooltip(REBOUNDING_CONFIG_VERTICAL_WALLS_TOOLTIP, viewModel.verticalWallsProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var movingEntityPercentControl = FXComponentFactory.createLabeledPercentSlider(

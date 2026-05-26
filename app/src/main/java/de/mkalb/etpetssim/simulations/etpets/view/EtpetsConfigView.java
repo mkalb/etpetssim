@@ -63,9 +63,7 @@ public final class EtpetsConfigView
         var petCountControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.petCountProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_PET_COUNT),
-                AppLocalization.getFormattedText(ETPETS_CONFIG_PET_COUNT_TOOLTIP,
-                        viewModel.petCountProperty().min(),
-                        viewModel.petCountProperty().max()),
+                formatIntRangeTooltip(ETPETS_CONFIG_PET_COUNT_TOOLTIP, viewModel.petCountProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 

@@ -56,25 +56,25 @@ public final class SugarConfigView
         var sugarPeaksControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sugarPeaksProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_SUGAR_PEAKS),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_SUGAR_PEAKS_TOOLTIP, viewModel.sugarPeaksProperty().min(), viewModel.sugarPeaksProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_SUGAR_PEAKS_TOOLTIP, viewModel.sugarPeaksProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var sugarRadiusLimitControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sugarRadiusLimitProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_SUGAR_RADIUS_LIMIT),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_SUGAR_RADIUS_LIMIT_TOOLTIP, viewModel.sugarRadiusLimitProperty().min(), viewModel.sugarRadiusLimitProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_SUGAR_RADIUS_LIMIT_TOOLTIP, viewModel.sugarRadiusLimitProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var maxSugarAmountControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.maxSugarAmountProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_MAX_SUGAR_AMOUNT),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_MAX_SUGAR_AMOUNT_TOOLTIP, viewModel.maxSugarAmountProperty().min(), viewModel.maxSugarAmountProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_MAX_SUGAR_AMOUNT_TOOLTIP, viewModel.maxSugarAmountProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var agentInitialEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentInitialEnergyProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_INITIAL_ENERGY),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP, viewModel.agentInitialEnergyProperty().min(), viewModel.agentInitialEnergyProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_INITIAL_ENERGY_TOOLTIP, viewModel.agentInitialEnergyProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
@@ -86,25 +86,25 @@ public final class SugarConfigView
         var sugarRegenerationRateControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sugarRegenerationRateProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_SUGAR_REGENERATION_RATE),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP, viewModel.sugarRegenerationRateProperty().min(), viewModel.sugarRegenerationRateProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_SUGAR_REGENERATION_RATE_TOOLTIP, viewModel.sugarRegenerationRateProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var agentMetabolismRateControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentMetabolismRateProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_METABOLISM_RATE),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP, viewModel.agentMetabolismRateProperty().min(), viewModel.agentMetabolismRateProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_METABOLISM_RATE_TOOLTIP, viewModel.agentMetabolismRateProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var agentVisionRangeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentVisionRangeProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_VISION_RANGE),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP, viewModel.agentVisionRangeProperty().min(), viewModel.agentVisionRangeProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_VISION_RANGE_TOOLTIP, viewModel.agentVisionRangeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var agentMaxAgeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.agentMaxAgeProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_MAX_AGE),
-                AppLocalization.getFormattedText(SUGAR_CONFIG_AGENT_MAX_AGE_TOOLTIP, viewModel.agentMaxAgeProperty().min(), viewModel.agentMaxAgeProperty().max()),
+                formatIntRangeTooltip(SUGAR_CONFIG_AGENT_MAX_AGE_TOOLTIP, viewModel.agentMaxAgeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 

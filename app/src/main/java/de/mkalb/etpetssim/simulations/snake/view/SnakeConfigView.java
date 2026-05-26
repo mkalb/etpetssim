@@ -48,25 +48,25 @@ public final class SnakeConfigView
         var verticalWallsControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.verticalWallsProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_VERTICAL_WALLS),
-                AppLocalization.getFormattedText(SNAKE_CONFIG_VERTICAL_WALLS_TOOLTIP, viewModel.verticalWallsProperty().min(), viewModel.verticalWallsProperty().max()),
+                formatIntRangeTooltip(SNAKE_CONFIG_VERTICAL_WALLS_TOOLTIP, viewModel.verticalWallsProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var foodCellsControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.foodCellsProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_FOOD_CELLS),
-                AppLocalization.getFormattedText(SNAKE_CONFIG_FOOD_CELLS_TOOLTIP, viewModel.foodCellsProperty().min(), viewModel.foodCellsProperty().max()),
+                formatIntRangeTooltip(SNAKE_CONFIG_FOOD_CELLS_TOOLTIP, viewModel.foodCellsProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var snakesControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.snakesProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_SNAKES),
-                AppLocalization.getFormattedText(SNAKE_CONFIG_SNAKES_TOOLTIP, viewModel.snakesProperty().min(), viewModel.snakesProperty().max()),
+                formatIntRangeTooltip(SNAKE_CONFIG_SNAKES_TOOLTIP, viewModel.snakesProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var initialPendingGrowthControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.initialPendingGrowthProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_INITIAL_PENDING_GROWTH),
-                AppLocalization.getFormattedText(SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP, viewModel.initialPendingGrowthProperty().min(), viewModel.initialPendingGrowthProperty().max()),
+                formatIntRangeTooltip(SNAKE_CONFIG_INITIAL_PENDING_GROWTH_TOOLTIP, viewModel.initialPendingGrowthProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
@@ -85,13 +85,13 @@ public final class SnakeConfigView
         var growthPerFoodControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.growthPerFoodProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_GROWTH_PER_FOOD),
-                AppLocalization.getFormattedText(SNAKE_CONFIG_GROWTH_PER_FOOD_TOOLTIP, viewModel.growthPerFoodProperty().min(), viewModel.growthPerFoodProperty().max()),
+                formatIntRangeTooltip(SNAKE_CONFIG_GROWTH_PER_FOOD_TOOLTIP, viewModel.growthPerFoodProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var basePointsPerFoodControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.basePointsPerFoodProperty(),
                 AppLocalization.getText(SNAKE_CONFIG_BASE_POINTS_PER_FOOD),
-                AppLocalization.getFormattedText(SNAKE_CONFIG_BASE_POINTS_PER_FOOD_TOOLTIP, viewModel.basePointsPerFoodProperty().min(), viewModel.basePointsPerFoodProperty().max()),
+                formatIntRangeTooltip(SNAKE_CONFIG_BASE_POINTS_PER_FOOD_TOOLTIP, viewModel.basePointsPerFoodProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
         var segmentLengthMultiplierControl = FXComponentFactory.createLabeledDoubleSlider(

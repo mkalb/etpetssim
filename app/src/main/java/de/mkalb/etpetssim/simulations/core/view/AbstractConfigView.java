@@ -116,7 +116,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridWidthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_WIDTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty().min(), viewModel.gridWidthProperty().max()),
+                formatIntRangeTooltip(AppLocalizationKeys.CONFIG_GRID_WIDTH_TOOLTIP, viewModel.gridWidthProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         ));
 
@@ -124,7 +124,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         content.add(FXComponentFactory.createLabeledIntSpinner(
                 viewModel.gridHeightProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_HEIGHT),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty().min(), viewModel.gridHeightProperty().max()),
+                formatIntRangeTooltip(AppLocalizationKeys.CONFIG_GRID_HEIGHT_TOOLTIP, viewModel.gridHeightProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         ));
 
@@ -201,11 +201,14 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
     }
 
     protected final String formatPercentRangeTooltip(String key, InputDoubleProperty property) {
-        return AppLocalization.getFormattedText(
-                key,
-                property.min() * PERCENT_SCALE,
-                property.max() * PERCENT_SCALE
+        return AppLocalization.getFormattedText(key,
+                property.min() * PERCENT_SCALE, property.max() * PERCENT_SCALE
         );
+    }
+
+    protected final String formatIntRangeTooltip(String key, InputIntegerProperty property) {
+        return AppLocalization.getFormattedText(key,
+                property.min(), property.max());
     }
 
 }

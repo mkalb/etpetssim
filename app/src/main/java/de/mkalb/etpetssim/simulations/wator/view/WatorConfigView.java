@@ -95,21 +95,21 @@ public final class WatorConfigView
         var fishMaxAgeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.fishMaxAgeProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_MAX_AGE),
-                AppLocalization.getFormattedText(WATOR_CONFIG_FISH_MAX_AGE_TOOLTIP, viewModel.fishMaxAgeProperty().min(), viewModel.fishMaxAgeProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_FISH_MAX_AGE_TOOLTIP, viewModel.fishMaxAgeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var fishMinReproductionAgeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.fishMinReproductionAgeProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE),
-                AppLocalization.getFormattedText(WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP, viewModel.fishMinReproductionAgeProperty().min(), viewModel.fishMinReproductionAgeProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_FISH_MIN_REPRODUCTION_AGE_TOOLTIP, viewModel.fishMinReproductionAgeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var fishMinReproductionIntervalControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.fishMinReproductionIntervalProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL),
-                AppLocalization.getFormattedText(WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP, viewModel.fishMinReproductionIntervalProperty().min(), viewModel.fishMinReproductionIntervalProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_FISH_MIN_REPRODUCTION_INTERVAL_TOOLTIP, viewModel.fishMinReproductionIntervalProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
@@ -124,49 +124,49 @@ public final class WatorConfigView
         var sharkMaxAgeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkMaxAgeProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_MAX_AGE),
-                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_MAX_AGE_TOOLTIP, viewModel.sharkMaxAgeProperty().min(), viewModel.sharkMaxAgeProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MAX_AGE_TOOLTIP, viewModel.sharkMaxAgeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkBirthEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkBirthEnergyProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_BIRTH_ENERGY),
-                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP, viewModel.sharkBirthEnergyProperty().min(), viewModel.sharkBirthEnergyProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_BIRTH_ENERGY_TOOLTIP, viewModel.sharkBirthEnergyProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkEnergyLossPerStepControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkEnergyLossPerStepProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP),
-                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP, viewModel.sharkEnergyLossPerStepProperty().min(), viewModel.sharkEnergyLossPerStepProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_ENERGY_LOSS_PER_STEP_TOOLTIP, viewModel.sharkEnergyLossPerStepProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkEnergyGainPerFishControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkEnergyGainPerFishProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH),
-                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP, viewModel.sharkEnergyGainPerFishProperty().min(), viewModel.sharkEnergyGainPerFishProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_ENERGY_GAIN_PER_FISH_TOOLTIP, viewModel.sharkEnergyGainPerFishProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkMinReproductionAgeControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkMinReproductionAgeProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE),
-                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP, viewModel.sharkMinReproductionAgeProperty().min(), viewModel.sharkMinReproductionAgeProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_AGE_TOOLTIP, viewModel.sharkMinReproductionAgeProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkMinReproductionEnergyControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkMinReproductionEnergyProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY),
-                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP, viewModel.sharkMinReproductionEnergyProperty().min(), viewModel.sharkMinReproductionEnergyProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_ENERGY_TOOLTIP, viewModel.sharkMinReproductionEnergyProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
         var sharkMinReproductionIntervalControl = FXComponentFactory.createLabeledIntSpinner(
                 viewModel.sharkMinReproductionIntervalProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL),
-                AppLocalization.getFormattedText(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP, viewModel.sharkMinReproductionIntervalProperty().min(), viewModel.sharkMinReproductionIntervalProperty().max()),
+                formatIntRangeTooltip(WATOR_CONFIG_SHARK_MIN_REPRODUCTION_INTERVAL_TOOLTIP, viewModel.sharkMinReproductionIntervalProperty()),
                 FXStyleClasses.CONFIG_SPINNER
         );
 
