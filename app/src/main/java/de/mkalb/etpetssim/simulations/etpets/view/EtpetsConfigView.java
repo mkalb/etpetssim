@@ -39,25 +39,25 @@ public final class EtpetsConfigView
         var rockPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.rockPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_ROCK_PERCENT),
-                AppLocalization.getText(ETPETS_CONFIG_ROCK_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(ETPETS_CONFIG_ROCK_PERCENT_TOOLTIP, viewModel.rockPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var waterPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.waterPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_WATER_PERCENT),
-                AppLocalization.getText(ETPETS_CONFIG_WATER_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(ETPETS_CONFIG_WATER_PERCENT_TOOLTIP, viewModel.waterPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var plantPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.plantPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_PLANT_PERCENT),
-                AppLocalization.getText(ETPETS_CONFIG_PLANT_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(ETPETS_CONFIG_PLANT_PERCENT_TOOLTIP, viewModel.plantPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var insectPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.insectPercentProperty(),
                 AppLocalization.getText(ETPETS_CONFIG_INSECT_PERCENT),
-                AppLocalization.getText(ETPETS_CONFIG_INSECT_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(ETPETS_CONFIG_INSECT_PERCENT_TOOLTIP, viewModel.insectPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var petCountControl = FXComponentFactory.createLabeledIntSpinner(

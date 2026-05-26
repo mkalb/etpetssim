@@ -8,9 +8,7 @@ import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
-import de.mkalb.etpetssim.ui.FXComponentFactory;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.*;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -26,6 +24,8 @@ import java.util.*;
  */
 public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>>
         implements SimulationConfigView {
+
+    protected static final double PERCENT_SCALE = 100.0d;
 
     protected final VM viewModel;
 
@@ -197,6 +197,14 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
+        );
+    }
+
+    protected final String formatPercentRangeTooltip(String key, InputDoubleProperty property) {
+        return AppLocalization.getFormattedText(
+                key,
+                property.min() * PERCENT_SCALE,
+                property.max() * PERCENT_SCALE
         );
     }
 
