@@ -98,7 +98,7 @@ public final class SnakeConfigView
                 viewModel.segmentLengthMultiplierProperty(),
                 SnakeConfigViewModel.SEGMENT_LENGTH_MULTIPLIER_DECIMALS,
                 AppLocalization.getText(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER),
-                AppLocalization.getText(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP),
+                formatDoubleRangeTooltip(SNAKE_CONFIG_SEGMENT_LENGTH_MULTIPLIER_TOOLTIP, viewModel.segmentLengthMultiplierProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

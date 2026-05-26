@@ -142,7 +142,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         var cellEdgeLengthControl = FXComponentFactory.createLabeledIntSlider(
                 viewModel.cellEdgeLengthProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH),
-                AppLocalization.getFormattedText(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.cellEdgeLengthProperty().min(), viewModel.cellEdgeLengthProperty().max()),
+                formatDoubleRangeTooltip(AppLocalizationKeys.CONFIG_CELL_EDGE_LENGTH_TOOLTIP, viewModel.cellEdgeLengthProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
@@ -204,6 +204,16 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         return AppLocalization.getFormattedText(key,
                 property.min() * PERCENT_SCALE, property.max() * PERCENT_SCALE
         );
+    }
+
+    protected final String formatDoubleRangeTooltip(String key, InputDoubleProperty property) {
+        return AppLocalization.getFormattedText(key,
+                property.min(), property.max());
+    }
+
+    protected final String formatDoubleRangeTooltip(String key, InputDoublePropertyIntRange property) {
+        return AppLocalization.getFormattedText(key,
+                property.min(), property.max());
     }
 
     protected final String formatIntRangeTooltip(String key, InputIntegerProperty property) {

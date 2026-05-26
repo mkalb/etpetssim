@@ -52,14 +52,14 @@ public final class ForestConfigView
                 viewModel.treeGrowthProbabilityProperty(),
                 ForestConfigViewModel.TREE_GROWTH_DECIMALS,
                 AppLocalization.getText(FOREST_CONFIG_TREE_GROWTH_PROBABILITY),
-                AppLocalization.getText(FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP),
+                formatDoubleRangeTooltip(FOREST_CONFIG_TREE_GROWTH_PROBABILITY_TOOLTIP, viewModel.treeGrowthProbabilityProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var lightningIgnitionProbabilityControl = FXComponentFactory.createLabeledDoubleSlider(
                 viewModel.lightningIgnitionProbabilityProperty(),
                 ForestConfigViewModel.LIGHTNING_IGNITION_DECIMALS,
                 AppLocalization.getText(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY),
-                AppLocalization.getText(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP),
+                formatDoubleRangeTooltip(FOREST_CONFIG_LIGHTNING_IGNITION_PROBABILITY_TOOLTIP, viewModel.lightningIgnitionProbabilityProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
