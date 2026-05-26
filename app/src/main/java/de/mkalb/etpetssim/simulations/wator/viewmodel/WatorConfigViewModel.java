@@ -15,6 +15,8 @@ import static de.mkalb.etpetssim.simulations.wator.model.WatorConstraints.*;
 public final class WatorConfigViewModel
         extends AbstractConfigViewModel<WatorConfig> {
 
+    private static final String WATOR_CONFIG_VALIDATION_POPULATION_SHARE = "wator.config.validation.populationshare";
+
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,
             CELL_SHAPE_VALUES,
@@ -106,6 +108,10 @@ public final class WatorConfigViewModel
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
+        addConfigValidationRule(
+                fishPercent.property().add(sharkPercent.property()).greaterThan(POPULATION_SHARE_SUM_MAX_INCLUSIVE),
+                () -> AppLocalization.getText(WATOR_CONFIG_VALIDATION_POPULATION_SHARE)
+        );
     }
 
     @Override

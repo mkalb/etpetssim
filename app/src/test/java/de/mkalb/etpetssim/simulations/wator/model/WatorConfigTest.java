@@ -232,9 +232,9 @@ final class WatorConfigTest {
     }
 
     @Test
-    void testIsValidRejectsPopulationShareSumAtOne() {
+    void testIsValidAcceptsPopulationShareSumAtOne() {
         WatorConfig config = createConfig(
-                WatorConstraints.POPULATION_SHARE_SUM_MAX_EXCLUSIVE - WatorConstraints.SHARK_PERCENT_DEFAULT,
+                WatorConstraints.POPULATION_SHARE_SUM_MAX_INCLUSIVE - WatorConstraints.SHARK_PERCENT_DEFAULT,
                 WatorConstraints.SHARK_PERCENT_DEFAULT,
                 WatorConstraints.FISH_MAX_AGE_DEFAULT,
                 WatorConstraints.FISH_MIN_REPRODUCTION_AGE_DEFAULT,
@@ -248,7 +248,7 @@ final class WatorConfigTest {
                 WatorConstraints.SHARK_MIN_REPRODUCTION_INTERVAL_DEFAULT,
                 WatorConstraints.NEIGHBORHOOD_MODE_DEFAULT);
 
-        assertFalse(config.isValid());
+        assertTrue(config.isValid());
     }
 
     @Test

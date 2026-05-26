@@ -51,7 +51,7 @@ public final class WatorConstraints {
     public static final double SHARK_PERCENT_DEFAULT = 0.05d;
     public static final double SHARK_PERCENT_MIN = 0.0d;
     public static final double SHARK_PERCENT_MAX = 1.0d;
-    public static final double POPULATION_SHARE_SUM_MAX_EXCLUSIVE = 1.0d;
+    public static final double POPULATION_SHARE_SUM_MAX_INCLUSIVE = 1.0d;
 
     // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
