@@ -12,6 +12,7 @@ import javafx.scene.layout.Region;
 public final class EtpetsConfigView
         extends AbstractConfigView<EtpetsConfig, EtpetsConfigViewModel> {
 
+    // Initialization
     private static final String ETPETS_CONFIG_ROCK_PERCENT = "etpets.config.rockpercent";
     private static final String ETPETS_CONFIG_ROCK_PERCENT_TOOLTIP = "etpets.config.rockpercent.tooltip";
     private static final String ETPETS_CONFIG_WATER_PERCENT = "etpets.config.waterpercent";
