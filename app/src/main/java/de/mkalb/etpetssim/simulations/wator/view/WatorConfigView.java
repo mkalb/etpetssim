@@ -62,13 +62,13 @@ public final class WatorConfigView
         var fishPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.fishPercentProperty(),
                 AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT),
-                AppLocalization.getText(WATOR_CONFIG_FISH_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(WATOR_CONFIG_FISH_PERCENT_TOOLTIP, viewModel.fishPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var sharkPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.sharkPercentProperty(),
                 AppLocalization.getText(WATOR_CONFIG_SHARK_PERCENT),
-                AppLocalization.getText(WATOR_CONFIG_SHARK_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(WATOR_CONFIG_SHARK_PERCENT_TOOLTIP, viewModel.sharkPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

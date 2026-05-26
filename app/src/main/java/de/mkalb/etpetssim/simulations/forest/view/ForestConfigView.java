@@ -38,7 +38,7 @@ public final class ForestConfigView
         var treeDensityControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.treeDensityProperty(),
                 AppLocalization.getText(FOREST_CONFIG_TREE_DENSITY),
-                AppLocalization.getText(FOREST_CONFIG_TREE_DENSITY_TOOLTIP),
+                formatPercentRangeTooltip(FOREST_CONFIG_TREE_DENSITY_TOOLTIP, viewModel.treeDensityProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

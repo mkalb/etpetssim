@@ -40,7 +40,7 @@ public final class ReboundingConfigView
         var movingEntityPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.movingEntityPercentProperty(),
                 AppLocalization.getText(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT),
-                AppLocalization.getText(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(REBOUNDING_CONFIG_MOVING_ENTITY_PERCENT_TOOLTIP, viewModel.movingEntityPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 

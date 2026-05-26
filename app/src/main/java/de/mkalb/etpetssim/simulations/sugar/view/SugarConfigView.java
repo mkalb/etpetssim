@@ -50,7 +50,7 @@ public final class SugarConfigView
         var agentPercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.agentPercentProperty(),
                 AppLocalization.getText(SUGAR_CONFIG_AGENT_PERCENT),
-                AppLocalization.getText(SUGAR_CONFIG_AGENT_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(SUGAR_CONFIG_AGENT_PERCENT_TOOLTIP, viewModel.agentPercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
         var sugarPeaksControl = FXComponentFactory.createLabeledIntSpinner(

@@ -49,7 +49,7 @@ public final class ConwayConfigView
         var alivePercentControl = FXComponentFactory.createLabeledPercentSlider(
                 viewModel.alivePercentProperty(),
                 AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT),
-                AppLocalization.getText(CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP),
+                formatPercentRangeTooltip(CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP, viewModel.alivePercentProperty()),
                 FXStyleClasses.CONFIG_SLIDER
         );
 
