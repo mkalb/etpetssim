@@ -22,17 +22,17 @@ public final class LabConstraints {
             GridEdgeBehavior.values());
     public static final int GRID_WIDTH_DEFAULT = 16;
     public static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
-    public static final int GRID_WIDTH_MAX = 50;
+    public static final int GRID_WIDTH_MAX = 100;
     public static final int GRID_WIDTH_STEP = 1;
     public static final int GRID_HEIGHT_DEFAULT = 8;
     public static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
-    public static final int GRID_HEIGHT_MAX = 50;
+    public static final int GRID_HEIGHT_MAX = 100;
     public static final int GRID_HEIGHT_STEP = 1;
 
     // Layout
-    public static final int CELL_EDGE_LENGTH_DEFAULT = 30;
+    public static final int CELL_EDGE_LENGTH_DEFAULT = 40;
     public static final int CELL_EDGE_LENGTH_MIN = 1;
-    public static final int CELL_EDGE_LENGTH_MAX = 500;
+    public static final int CELL_EDGE_LENGTH_MAX = 1_000;
     public static final CellDisplayMode CELL_DISPLAY_MODE_DEFAULT = CellDisplayMode.SHAPE_BORDERED;
     public static final List<CellDisplayMode> CELL_DISPLAY_MODE_VALUES = List.of(
             CellDisplayMode.SHAPE,

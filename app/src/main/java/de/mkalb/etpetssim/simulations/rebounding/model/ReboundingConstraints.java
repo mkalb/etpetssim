@@ -21,11 +21,11 @@ public final class ReboundingConstraints {
             GridEdgeBehavior.BLOCK_XY);
     public static final int GRID_WIDTH_DEFAULT = 70;
     public static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
-    public static final int GRID_WIDTH_MAX = 500;
+    public static final int GRID_WIDTH_MAX = 1_000;
     public static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
     public static final int GRID_HEIGHT_DEFAULT = 30;
     public static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
-    public static final int GRID_HEIGHT_MAX = 500;
+    public static final int GRID_HEIGHT_MAX = 1_000;
     public static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
 
     // Layout

@@ -19,17 +19,17 @@ public final class ForestConstraints {
     public static final List<GridEdgeBehavior> GRID_EDGE_BEHAVIOR_VALUES = List.of(
             GridEdgeBehavior.BLOCK_XY,
             GridEdgeBehavior.WRAP_XY);
-    public static final int GRID_WIDTH_DEFAULT = 200;
+    public static final int GRID_WIDTH_DEFAULT = 100;
     public static final int GRID_WIDTH_MIN = GridSize.MIN_SIZE;
     public static final int GRID_WIDTH_MAX = 1_000;
     public static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
-    public static final int GRID_HEIGHT_DEFAULT = 100;
+    public static final int GRID_HEIGHT_DEFAULT = 50;
     public static final int GRID_HEIGHT_MIN = GridSize.MIN_SIZE;
     public static final int GRID_HEIGHT_MAX = 1_000;
     public static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
 
     // Layout
-    public static final int CELL_EDGE_LENGTH_DEFAULT = 2;
+    public static final int CELL_EDGE_LENGTH_DEFAULT = 4;
     public static final int CELL_EDGE_LENGTH_MIN = 1;
     public static final int CELL_EDGE_LENGTH_MAX = 50;
     public static final CellDisplayMode CELL_DISPLAY_MODE_DEFAULT = CellDisplayMode.CIRCLE_BORDERED;

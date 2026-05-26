@@ -21,13 +21,13 @@ public final class LangtonConstraints {
     public static final List<GridEdgeBehavior> GRID_EDGE_BEHAVIOR_VALUES = List.of(
             GridEdgeBehavior.WRAP_XY,
             GridEdgeBehavior.ABSORB_XY);
-    public static final int GRID_WIDTH_DEFAULT = 100;
-    public static final int GRID_WIDTH_MIN = 50;
-    public static final int GRID_WIDTH_MAX = 5_000;
+    public static final int GRID_WIDTH_DEFAULT = 200;
+    public static final int GRID_WIDTH_MIN = 100;
+    public static final int GRID_WIDTH_MAX = 2_000;
     public static final int GRID_WIDTH_STEP = GridTopology.MAX_REQUIRED_WIDTH_MULTIPLE;
-    public static final int GRID_HEIGHT_DEFAULT = 100;
-    public static final int GRID_HEIGHT_MIN = 50;
-    public static final int GRID_HEIGHT_MAX = 5_000;
+    public static final int GRID_HEIGHT_DEFAULT = 200;
+    public static final int GRID_HEIGHT_MIN = 100;
+    public static final int GRID_HEIGHT_MAX = 2_000;
     public static final int GRID_HEIGHT_STEP = GridTopology.MAX_REQUIRED_HEIGHT_MULTIPLE;
 
     // Layout
