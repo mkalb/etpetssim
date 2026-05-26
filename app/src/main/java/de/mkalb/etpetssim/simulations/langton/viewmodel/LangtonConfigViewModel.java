@@ -1,14 +1,19 @@
 package de.mkalb.etpetssim.simulations.langton.viewmodel;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonMovementRules;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
 
 public final class LangtonConfigViewModel
         extends AbstractConfigViewModel<LangtonConfig> {
+
+    private static final String LANGTON_CONFIG_VALIDATION_MOVEMENT_RULES = "langton.config.validation.movementrules";
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,
@@ -36,6 +41,25 @@ public final class LangtonConfigViewModel
 
     public LangtonConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
+        addConfigValidationRule(
+                Bindings.createBooleanBinding(
+                        () -> {
+                            try {
+                                String ruleString = rule.stringProperty().get();
+                                if ((ruleString == null) || ruleString.trim().isEmpty()) {
+                                    return false;
+                                }
+                                LangtonMovementRules rules = LangtonMovementRules.fromString(ruleString);
+                                return !rules.isValidForCellShape(cellShapeProperty().getValue());
+                            } catch (Exception e) {
+                                return true;
+                            }
+                        },
+                        rule.stringProperty(),
+                        cellShapeProperty().property()
+                ),
+                () -> AppLocalization.getText(LANGTON_CONFIG_VALIDATION_MOVEMENT_RULES)
+        );
     }
 
     @Override
