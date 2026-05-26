@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.viewmodel;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
@@ -10,6 +11,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
 
 public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsConfig> {
+
+    private static final String ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS = "etpets.config.validation.combinedpercents";
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,
@@ -57,6 +60,14 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
 
     public EtpetsConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
+        addConfigValidationRule(
+                rockPercent.property()
+                           .add(waterPercent.property())
+                           .add(plantPercent.property())
+                           .add(insectPercent.property())
+                           .greaterThan(TOTAL_PERCENT_MAX),
+                () -> AppLocalization.getText(ETPETS_CONFIG_VALIDATION_COMBINED_PERCENTS)
+        );
     }
 
     @Override
