@@ -7,7 +7,6 @@ import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
 import de.mkalb.etpetssim.engine.model.ArrayGridModel;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
-import de.mkalb.etpetssim.engine.support.GridInitializer;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.wator.model.entity.*;
@@ -47,19 +46,24 @@ public final class WatorSimulationManager
     }
 
     private void initializeGrid(WritableGridModel<WatorEntity> model, Random random, CreatureFactory entityFactory) {
-        GridInitializer<WatorEntity> fishInit = GridInitializers.placeRandomPercent(
-                () -> createFish(entityFactory, random),
-                WatorEntity::isWater,
-                config().fishPercent(),
-                random);
-        GridInitializer<WatorEntity> sharkInit = GridInitializers.placeRandomPercent(
-                () -> createShark(entityFactory, random),
-                WatorEntity::isWater,
-                config().sharkPercent(),
-                random);
+        var fishCount = Math.clamp(
+                Math.toIntExact(Math.round(config().fishPercent() * structure.cellCount())),
+                0, structure.cellCount());
+        var fish = new ArrayList<WatorEntity>(fishCount);
+        for (int i = 0; i < fishCount; i++) {
+            fish.add(createFish(entityFactory, random));
+        }
 
-        fishInit.initialize(model);
-        sharkInit.initialize(model);
+        var sharkCount = Math.clamp(
+                Math.toIntExact(Math.round(config().sharkPercent() * structure.cellCount())),
+                0, structure.cellCount() - fishCount);
+        var sharks = new ArrayList<WatorEntity>(sharkCount);
+        for (int i = 0; i < sharkCount; i++) {
+            sharks.add(createShark(entityFactory, random));
+        }
+
+        GridInitializers.placeAllAtRandomPositions(fish, WatorEntity::isWater, random).initialize(model);
+        GridInitializers.placeAllAtRandomPositions(sharks, WatorEntity::isWater, random).initialize(model);
     }
 
     private Fish createFish(CreatureFactory entityFactory, Random random) {
