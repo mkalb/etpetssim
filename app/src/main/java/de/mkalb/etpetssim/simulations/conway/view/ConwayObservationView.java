@@ -36,22 +36,53 @@ public final class ConwayObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                CONWAY_OBSERVATION_TOTAL_CELLS,
-                CONWAY_OBSERVATION_MAX_ALIVE_CELLS,
-                CONWAY_OBSERVATION_ALIVE_CELLS,
-                CONWAY_OBSERVATION_DEAD_CELLS,
-                CONWAY_OBSERVATION_CHANGED_CELLS};
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                maxAliveCellsLabel,
-                aliveCellsLabel,
-                deadCellsLabel,
-                changedCellsLabel};
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        CONWAY_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        CONWAY_OBSERVATION_ALIVE_CELLS,
+                        CONWAY_OBSERVATION_DEAD_CELLS,
+                        CONWAY_OBSERVATION_CHANGED_CELLS
+                },
+                new Label[]{
+                        aliveCellsLabel,
+                        deadCellsLabel,
+                        changedCellsLabel
+                }
+        );
+        Region statisticsSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATISTICS,
+                new String[]{
+                        CONWAY_OBSERVATION_MAX_ALIVE_CELLS
+                },
+                new Label[]{
+                        maxAliveCellsLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection,
+                statisticsSection
+        );
     }
 
     @Override

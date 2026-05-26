@@ -11,6 +11,7 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -32,6 +33,7 @@ public final class SugarObservationView
     private final Label coordinateLabel = new Label();
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
+    private @Nullable VBox selectedCellSection;
 
     public SugarObservationView(DefaultObservationViewModel<SugarEntity, SugarStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -42,6 +44,9 @@ public final class SugarObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<SugarEntity> gridCell) {
+        updateSelectedCellSectionVisibility((gridCell != null)
+                && gridCell.entity().isNotEmpty());
+
         if ((gridCell != null)
                 && gridCell.entity().isNotEmpty()) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
@@ -61,30 +66,68 @@ public final class SugarObservationView
         }
     }
 
+    private void updateSelectedCellSectionVisibility(boolean visible) {
+        if (selectedCellSection != null) {
+            selectedCellSection.setManaged(visible);
+            selectedCellSection.setVisible(visible);
+        }
+    }
+
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                SUGAR_OBSERVATION_TOTAL_CELLS,
-                SUGAR_OBSERVATION_RESOURCE_CELLS,
-                SUGAR_OBSERVATION_AGENT_CELLS,
-                AppLocalizationKeys.OBSERVATION_COORDINATE,
-                SUGAR_OBSERVATION_CURRENT_ENERGY,
-                SUGAR_OBSERVATION_CURRENT_AMOUNT
-        };
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                resourceCellsLabel,
-                agentCellsLabel,
-                coordinateLabel,
-                currentEnergyLabel,
-                currentAmountLabel
-        };
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        SUGAR_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        SUGAR_OBSERVATION_RESOURCE_CELLS,
+                        SUGAR_OBSERVATION_AGENT_CELLS
+                },
+                new Label[]{
+                        resourceCellsLabel,
+                        agentCellsLabel
+                }
+        );
+        selectedCellSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_COORDINATE,
+                        SUGAR_OBSERVATION_CURRENT_ENERGY,
+                        SUGAR_OBSERVATION_CURRENT_AMOUNT
+                },
+                new Label[]{
+                        coordinateLabel,
+                        currentEnergyLabel,
+                        currentAmountLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection,
+                selectedCellSection
+        );
     }
 
     @Override

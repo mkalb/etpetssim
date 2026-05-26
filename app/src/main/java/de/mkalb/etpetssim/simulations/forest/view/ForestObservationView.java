@@ -36,22 +36,53 @@ public final class ForestObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                FOREST_OBSERVATION_TOTAL_CELLS,
-                FOREST_OBSERVATION_TREE_CELLS,
-                FOREST_OBSERVATION_BURNING_CELLS,
-                FOREST_OBSERVATION_MAX_TREE_CELLS,
-                FOREST_OBSERVATION_MAX_BURNING_CELLS};
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                treeCellsLabel,
-                burningCellsLabel,
-                maxTreeCellsLabel,
-                maxBurningCellsLabel};
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        FOREST_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        FOREST_OBSERVATION_TREE_CELLS,
+                        FOREST_OBSERVATION_BURNING_CELLS
+                },
+                new Label[]{
+                        treeCellsLabel,
+                        burningCellsLabel
+                }
+        );
+        Region statisticsSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATISTICS,
+                new String[]{
+                        FOREST_OBSERVATION_MAX_TREE_CELLS,
+                        FOREST_OBSERVATION_MAX_BURNING_CELLS
+                },
+                new Label[]{
+                        maxTreeCellsLabel,
+                        maxBurningCellsLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection,
+                statisticsSection
+        );
     }
 
     @Override

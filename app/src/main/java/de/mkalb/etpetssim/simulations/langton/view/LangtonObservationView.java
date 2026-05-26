@@ -33,18 +33,41 @@ public final class LangtonObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                LANGTON_OBSERVATION_TOTAL_CELLS,
-                LANGTON_OBSERVATION_ANT_CELLS,
-                LANGTON_OBSERVATION_VISITED_CELLS};
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                antCellsLabel,
-                visitedCellsLabel};
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        LANGTON_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        LANGTON_OBSERVATION_ANT_CELLS,
+                        LANGTON_OBSERVATION_VISITED_CELLS
+                },
+                new Label[]{
+                        antCellsLabel,
+                        visitedCellsLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection
+        );
     }
 
     @Override

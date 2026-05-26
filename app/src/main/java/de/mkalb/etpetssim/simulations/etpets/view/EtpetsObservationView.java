@@ -34,22 +34,43 @@ public final class EtpetsObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                ETPETS_OBSERVATION_TOTAL_CELLS,
-                ETPETS_OBSERVATION_ACTIVE_PETS,
-                ETPETS_OBSERVATION_EGGS,
-                ETPETS_OBSERVATION_DEAD_PETS
-        };
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                activePetsLabel,
-                eggsLabel,
-                deadPetsLabel
-        };
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        ETPETS_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        ETPETS_OBSERVATION_ACTIVE_PETS,
+                        ETPETS_OBSERVATION_EGGS,
+                        ETPETS_OBSERVATION_DEAD_PETS
+                },
+                new Label[]{
+                        activePetsLabel,
+                        eggsLabel,
+                        deadPetsLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection
+        );
     }
 
     @Override

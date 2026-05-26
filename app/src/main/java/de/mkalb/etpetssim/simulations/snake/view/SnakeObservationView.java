@@ -10,6 +10,7 @@ import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -40,6 +41,7 @@ public final class SnakeObservationView
     private final Label snakeSegmentCountLabel = new Label();
     private final Label snakeMaxSegmentCountLabel = new Label();
     private final Label snakePointsLabel = new Label();
+    private @Nullable VBox selectedCellSection;
 
     public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, SnakeStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -51,6 +53,8 @@ public final class SnakeObservationView
 
     private void updateSelectedGridCell(@Nullable GridCell<SnakeEntity> gridCell) {
         Optional<SnakeStatistics> statistics = viewModel.getStatistics();
+        updateSelectedCellSectionVisibility(gridCell != null);
+
         if (statistics.isPresent()
                 && (gridCell != null)
         ) {
@@ -72,40 +76,78 @@ public final class SnakeObservationView
         }
     }
 
+    private void updateSelectedCellSectionVisibility(boolean visible) {
+        if (selectedCellSection != null) {
+            selectedCellSection.setManaged(visible);
+            selectedCellSection.setVisible(visible);
+        }
+    }
+
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                SNAKE_OBSERVATION_TOTAL_CELLS,
-                SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
-                SNAKE_OBSERVATION_FOOD_CELLS,
-                SNAKE_OBSERVATION_DEATHS,
-                AppLocalizationKeys.OBSERVATION_COORDINATE,
-                SNAKE_OBSERVATION_SNAKE_ID,
-                SNAKE_OBSERVATION_SNAKE_STRATEGY,
-                SNAKE_OBSERVATION_SNAKE_DEATHS,
-                SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT,
-                SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT,
-                SNAKE_OBSERVATION_SNAKE_POINTS
-        };
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                snakeHeadCells,
-                foodCellsLabel,
-                deathsLabel,
-                coordinateLabel,
-                snakeIdLabel,
-                snakeStrategyLabel,
-                snakeDeathsLabel,
-                snakeSegmentCountLabel,
-                snakeMaxSegmentCountLabel,
-                snakePointsLabel
-        };
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        SNAKE_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
+                        SNAKE_OBSERVATION_FOOD_CELLS,
+                        SNAKE_OBSERVATION_DEATHS
+                },
+                new Label[]{
+                        snakeHeadCells,
+                        foodCellsLabel,
+                        deathsLabel
+                }
+        );
+        selectedCellSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_COORDINATE,
+                        SNAKE_OBSERVATION_SNAKE_ID,
+                        SNAKE_OBSERVATION_SNAKE_STRATEGY,
+                        SNAKE_OBSERVATION_SNAKE_DEATHS,
+                        SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT,
+                        SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT,
+                        SNAKE_OBSERVATION_SNAKE_POINTS
+                },
+                new Label[]{
+                        coordinateLabel,
+                        snakeIdLabel,
+                        snakeStrategyLabel,
+                        snakeDeathsLabel,
+                        snakeSegmentCountLabel,
+                        snakeMaxSegmentCountLabel,
+                        snakePointsLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection,
+                selectedCellSection
+        );
     }
 
     @Override

@@ -11,13 +11,26 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import org.jspecify.annotations.Nullable;
 
 public final class LabObservationView
         extends AbstractObservationView<LabStatistics, DefaultObservationViewModel<LabEntity, LabStatistics>> {
 
+    private @Nullable Region selectedCellRegion;
+
     public LabObservationView(DefaultObservationViewModel<LabEntity, LabStatistics> viewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
+
+        viewModel.lastClickedCoordinateProperty().addListener((_, _, newCoordinate) ->
+                updateSelectedCellSectionVisibility(newCoordinate != null));
+    }
+
+    private void updateSelectedCellSectionVisibility(boolean visible) {
+        if (selectedCellRegion != null) {
+            selectedCellRegion.setManaged(visible);
+            selectedCellRegion.setVisible(visible);
+        }
     }
 
     @Override
@@ -34,9 +47,16 @@ public final class LabObservationView
         );
         coordinateLabel.textProperty().bind(coordinateDisplayBinding);
 
-        String[] nameKeys = {AppLocalizationKeys.OBSERVATION_COORDINATE};
-        Label[] valueLabels = {coordinateLabel};
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        selectedCellRegion = createObservationGrid(
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_COORDINATE
+                },
+                new Label[]{
+                        coordinateLabel
+                }
+        );
+        updateSelectedCellSectionVisibility(viewModel.lastClickedCoordinateProperty().get() != null);
+        return createObservationScrollPane(selectedCellRegion);
     }
 
     @Override

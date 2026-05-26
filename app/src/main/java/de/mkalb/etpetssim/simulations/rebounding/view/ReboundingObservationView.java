@@ -10,6 +10,7 @@ import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -28,6 +29,7 @@ public final class ReboundingObservationView
     private final Label wallCellsLabel = new Label();
     private final Label movingEntityCellsLabel = new Label();
     private final Label directionLabel = new Label();
+    private @Nullable VBox selectedCellSection;
 
     public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics> viewModel,
                                      GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -38,6 +40,8 @@ public final class ReboundingObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<ReboundingEntity> gridCell) {
+        updateSelectedCellSectionVisibility(gridCell != null);
+
         if ((gridCell != null) && (gridCell.entity() instanceof Rebounder entity)) {
             directionLabel.setText(entity.getDirection().arrow());
         } else {
@@ -45,26 +49,64 @@ public final class ReboundingObservationView
         }
     }
 
+    private void updateSelectedCellSectionVisibility(boolean visible) {
+        if (selectedCellSection != null) {
+            selectedCellSection.setManaged(visible);
+            selectedCellSection.setVisible(visible);
+        }
+    }
+
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                REBOUNDING_OBSERVATION_TOTAL_CELLS,
-                REBOUNDING_OBSERVATION_WALL_CELLS,
-                REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
-                REBOUNDING_OBSERVATION_DIRECTION
-        };
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                wallCellsLabel,
-                movingEntityCellsLabel,
-                directionLabel
-        };
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        REBOUNDING_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        REBOUNDING_OBSERVATION_WALL_CELLS,
+                        REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS
+                },
+                new Label[]{
+                        wallCellsLabel,
+                        movingEntityCellsLabel
+                }
+        );
+        selectedCellSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                new String[]{
+                        REBOUNDING_OBSERVATION_DIRECTION
+                },
+                new Label[]{
+                        directionLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection,
+                selectedCellSection
+        );
     }
 
     @Override
