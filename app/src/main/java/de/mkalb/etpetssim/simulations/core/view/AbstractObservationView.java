@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -9,6 +10,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
+import org.jspecify.annotations.Nullable;
+
+import java.text.NumberFormat;
 
 /**
  * Base class for simulation observation views.
@@ -17,6 +21,7 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         implements SimulationObservationView {
 
     protected final VM viewModel;
+    private @Nullable NumberFormat integerFormat;
 
     protected AbstractObservationView(VM viewModel) {
         this.viewModel = viewModel;
@@ -53,6 +58,20 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         }
 
         return grid;
+    }
+
+    protected final NumberFormat integerFormat() {
+        if (integerFormat == null) {
+            integerFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
+        }
+        return integerFormat;
+    }
+
+    protected final void setUnknownValues(Label... valueLabels) {
+        String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
+        for (Label valueLabel : valueLabels) {
+            valueLabel.setText(unknown);
+        }
     }
 
     protected abstract void updateObservationLabels();

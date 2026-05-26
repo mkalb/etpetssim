@@ -67,6 +67,7 @@ public final class AppLocalizationKeys {
     public static final String ENUM_LABEL_SNAKEDEATHMODE = "snakedeathmode.label";
     public static final String HEADER_ABOUT_LINK = "header.about.link";
     public static final String HEADER_STARTSCREEN_LINK = "header.startscreen.link";
+    public static final String OBSERVATION_COORDINATE = "observation.coordinate";
     public static final String OBSERVATION_STEP = "observation.step";
     public static final String OBSERVATION_VALUE_UNKNOWN = "observation.valueunknown";
     public static final String WINDOW_TITLE = "window.title";

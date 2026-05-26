@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -8,9 +7,7 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class EtpetsObservationView
@@ -26,8 +23,6 @@ public final class EtpetsObservationView
     private final Label activePetsLabel = new Label();
     private final Label eggsLabel = new Label();
     private final Label deadPetsLabel = new Label();
-
-    private @Nullable NumberFormat intFormat;
 
     public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics> viewModel) {
         super(viewModel);
@@ -52,8 +47,6 @@ public final class EtpetsObservationView
                 deadPetsLabel
         };
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -61,20 +54,15 @@ public final class EtpetsObservationView
     protected void updateObservationLabels() {
         Optional<EtpetsStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
+        if (statistics.isPresent()) {
             var current = statistics.get();
-            stepCountLabel.setText(intFormat.format(current.getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            activePetsLabel.setText(intFormat.format(current.getActivePetCount()));
-            eggsLabel.setText(intFormat.format(current.getEggCount()));
-            deadPetsLabel.setText(intFormat.format(current.getCumulativeDeadPetCount()));
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            activePetsLabel.setText(integerFormat().format(current.getActivePetCount()));
+            eggsLabel.setText(integerFormat().format(current.getEggCount()));
+            deadPetsLabel.setText(integerFormat().format(current.getCumulativeDeadPetCount()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            activePetsLabel.setText(valueUnknown);
-            eggsLabel.setText(valueUnknown);
-            deadPetsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, activePetsLabel, eggsLabel, deadPetsLabel);
         }
     }
 

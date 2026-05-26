@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -8,9 +7,7 @@ import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class LangtonObservationView
@@ -25,8 +22,6 @@ public final class LangtonObservationView
     private final Label totalCellsLabel = new Label();
     private final Label antCellsLabel = new Label();
     private final Label visitedCellsLabel = new Label();
-
-    private @Nullable NumberFormat intFormat;
 
     public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonStatistics> viewModel) {
         super(viewModel);
@@ -47,8 +42,6 @@ public final class LangtonObservationView
                 antCellsLabel,
                 visitedCellsLabel};
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -56,17 +49,14 @@ public final class LangtonObservationView
     protected void updateObservationLabels() {
         Optional<LangtonStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
-            stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            antCellsLabel.setText(intFormat.format(statistics.get().getAntCells()));
-            visitedCellsLabel.setText(intFormat.format(statistics.get().getVisitedCells()));
+        if (statistics.isPresent()) {
+            LangtonStatistics current = statistics.get();
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            antCellsLabel.setText(integerFormat().format(current.getAntCells()));
+            visitedCellsLabel.setText(integerFormat().format(current.getVisitedCells()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            antCellsLabel.setText(valueUnknown);
-            visitedCellsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, antCellsLabel, visitedCellsLabel);
         }
     }
 

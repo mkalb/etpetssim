@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
@@ -8,9 +7,7 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class ConwayObservationView
@@ -28,8 +25,6 @@ public final class ConwayObservationView
     private final Label aliveCellsLabel = new Label();
     private final Label deadCellsLabel = new Label();
     private final Label changedCellsLabel = new Label();
-
-    private @Nullable NumberFormat intFormat;
 
     public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel) {
         super(viewModel);
@@ -54,8 +49,6 @@ public final class ConwayObservationView
                 deadCellsLabel,
                 changedCellsLabel};
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -63,21 +56,16 @@ public final class ConwayObservationView
     protected void updateObservationLabels() {
         Optional<ConwayStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
-            stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            maxAliveCellsLabel.setText(intFormat.format(statistics.get().getMaxAliveCells()));
-            aliveCellsLabel.setText(intFormat.format(statistics.get().getAliveCells()));
-            deadCellsLabel.setText(intFormat.format(statistics.get().getDeadCells()));
-            changedCellsLabel.setText(intFormat.format(statistics.get().getChangedCells()));
+        if (statistics.isPresent()) {
+            ConwayStatistics current = statistics.get();
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            maxAliveCellsLabel.setText(integerFormat().format(current.getMaxAliveCells()));
+            aliveCellsLabel.setText(integerFormat().format(current.getAliveCells()));
+            deadCellsLabel.setText(integerFormat().format(current.getDeadCells()));
+            changedCellsLabel.setText(integerFormat().format(current.getChangedCells()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            maxAliveCellsLabel.setText(valueUnknown);
-            aliveCellsLabel.setText(valueUnknown);
-            deadCellsLabel.setText(valueUnknown);
-            changedCellsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, maxAliveCellsLabel, aliveCellsLabel, deadCellsLabel, changedCellsLabel);
         }
     }
 

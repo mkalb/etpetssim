@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
@@ -12,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class WatorObservationView
@@ -39,8 +37,6 @@ public final class WatorObservationView
     private final Label coordinateLabel = new Label();
     private final Label ageLabel = new Label();
 
-    private @Nullable NumberFormat intFormat;
-
     public WatorObservationView(DefaultObservationViewModel<WatorEntity, WatorStatistics> viewModel) {
         super(viewModel);
 
@@ -52,10 +48,9 @@ public final class WatorObservationView
         Optional<WatorStatistics> statistics = viewModel.getStatistics();
         if (statistics.isPresent()
                 && (gridCell != null)
-                && (intFormat != null)
                 && (gridCell.entity() instanceof CreatureBase creature)) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            ageLabel.setText(intFormat.format(creature.ageAtStepCount(statistics.get().getStepCount())));
+            ageLabel.setText(integerFormat().format(creature.ageAtStepCount(statistics.get().getStepCount())));
         } else {
             coordinateLabel.setText("");
             ageLabel.setText("");
@@ -91,8 +86,6 @@ public final class WatorObservationView
                 ageLabel
         };
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -100,25 +93,19 @@ public final class WatorObservationView
     protected void updateObservationLabels() {
         Optional<WatorStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
-            stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            maxFishCellsLabel.setText(intFormat.format(statistics.get().getMaxFishCells()));
-            maxSharkCellsLabel.setText(intFormat.format(statistics.get().getMaxSharkCells()));
-            minFishCellsLabel.setText(intFormat.format(statistics.get().getMinFishCells()));
-            minSharkCellsLabel.setText(intFormat.format(statistics.get().getMinSharkCells()));
-            fishCellsLabel.setText(intFormat.format(statistics.get().getFishCells()));
-            sharkCellsLabel.setText(intFormat.format(statistics.get().getSharkCells()));
+        if (statistics.isPresent()) {
+            WatorStatistics current = statistics.get();
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            maxFishCellsLabel.setText(integerFormat().format(current.getMaxFishCells()));
+            maxSharkCellsLabel.setText(integerFormat().format(current.getMaxSharkCells()));
+            minFishCellsLabel.setText(integerFormat().format(current.getMinFishCells()));
+            minSharkCellsLabel.setText(integerFormat().format(current.getMinSharkCells()));
+            fishCellsLabel.setText(integerFormat().format(current.getFishCells()));
+            sharkCellsLabel.setText(integerFormat().format(current.getSharkCells()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            maxFishCellsLabel.setText(valueUnknown);
-            maxSharkCellsLabel.setText(valueUnknown);
-            minFishCellsLabel.setText(valueUnknown);
-            minSharkCellsLabel.setText(valueUnknown);
-            fishCellsLabel.setText(valueUnknown);
-            sharkCellsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, maxFishCellsLabel, maxSharkCellsLabel,
+                    minFishCellsLabel, minSharkCellsLabel, fishCellsLabel, sharkCellsLabel);
         }
     }
 

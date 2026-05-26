@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.rebounding.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
@@ -12,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class ReboundingObservationView
@@ -29,8 +27,6 @@ public final class ReboundingObservationView
     private final Label wallCellsLabel = new Label();
     private final Label movingEntityCellsLabel = new Label();
     private final Label directionLabel = new Label();
-
-    private @Nullable NumberFormat intFormat;
 
     public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics> viewModel) {
         super(viewModel);
@@ -66,8 +62,6 @@ public final class ReboundingObservationView
                 directionLabel
         };
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -75,17 +69,14 @@ public final class ReboundingObservationView
     protected void updateObservationLabels() {
         Optional<ReboundingStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
-            stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            wallCellsLabel.setText(intFormat.format(statistics.get().getWallCells()));
-            movingEntityCellsLabel.setText(intFormat.format(statistics.get().getMovingEntityCells()));
+        if (statistics.isPresent()) {
+            ReboundingStatistics current = statistics.get();
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            wallCellsLabel.setText(integerFormat().format(current.getWallCells()));
+            movingEntityCellsLabel.setText(integerFormat().format(current.getMovingEntityCells()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            wallCellsLabel.setText(valueUnknown);
-            movingEntityCellsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, wallCellsLabel, movingEntityCellsLabel);
         }
     }
 

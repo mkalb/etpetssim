@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.forest.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -8,9 +7,7 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class ForestObservationView
@@ -28,8 +25,6 @@ public final class ForestObservationView
     private final Label burningCellsLabel = new Label();
     private final Label maxTreeCellsLabel = new Label();
     private final Label maxBurningCellsLabel = new Label();
-
-    private @Nullable NumberFormat intFormat;
 
     public ForestObservationView(DefaultObservationViewModel<ForestEntity, ForestStatistics> viewModel) {
         super(viewModel);
@@ -54,8 +49,6 @@ public final class ForestObservationView
                 maxTreeCellsLabel,
                 maxBurningCellsLabel};
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -63,21 +56,16 @@ public final class ForestObservationView
     protected void updateObservationLabels() {
         Optional<ForestStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
-            stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            treeCellsLabel.setText(intFormat.format(statistics.get().getTreeCells()));
-            burningCellsLabel.setText(intFormat.format(statistics.get().getBurningCells()));
-            maxTreeCellsLabel.setText(intFormat.format(statistics.get().getMaxTreeCells()));
-            maxBurningCellsLabel.setText(intFormat.format(statistics.get().getMaxBurningCells()));
+        if (statistics.isPresent()) {
+            ForestStatistics current = statistics.get();
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            treeCellsLabel.setText(integerFormat().format(current.getTreeCells()));
+            burningCellsLabel.setText(integerFormat().format(current.getBurningCells()));
+            maxTreeCellsLabel.setText(integerFormat().format(current.getMaxTreeCells()));
+            maxBurningCellsLabel.setText(integerFormat().format(current.getMaxBurningCells()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            treeCellsLabel.setText(valueUnknown);
-            burningCellsLabel.setText(valueUnknown);
-            maxTreeCellsLabel.setText(valueUnknown);
-            maxBurningCellsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
         }
     }
 

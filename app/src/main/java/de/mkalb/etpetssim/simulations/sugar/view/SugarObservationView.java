@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
@@ -13,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class SugarObservationView
@@ -35,8 +33,6 @@ public final class SugarObservationView
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
 
-    private @Nullable NumberFormat intFormat;
-
     public SugarObservationView(DefaultObservationViewModel<SugarEntity, SugarStatistics> viewModel) {
         super(viewModel);
 
@@ -46,17 +42,16 @@ public final class SugarObservationView
 
     private void updateSelectedGridCell(@Nullable GridCell<SugarEntity> gridCell) {
         if ((gridCell != null)
-                && (intFormat != null)
                 && gridCell.entity().isNotEmpty()) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
             if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
-                currentEnergyLabel.setText(intFormat.format(agent.currentEnergy()));
+                currentEnergyLabel.setText(integerFormat().format(agent.currentEnergy()));
             } else {
                 currentEnergyLabel.setText("");
             }
             if (gridCell.entity().isResource()
                     && (gridCell.entity() instanceof Sugar resource)) {
-                currentAmountLabel.setText(intFormat.format(resource.currentAmount()));
+                currentAmountLabel.setText(integerFormat().format(resource.currentAmount()));
             } else {
                 currentAmountLabel.setText("");
             }
@@ -90,8 +85,6 @@ public final class SugarObservationView
                 currentAmountLabel
         };
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -99,17 +92,14 @@ public final class SugarObservationView
     protected void updateObservationLabels() {
         Optional<SugarStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
-            stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            resourceCellsLabel.setText(intFormat.format(statistics.get().getResourceCells()));
-            agentCellsLabel.setText(intFormat.format(statistics.get().getAgentCells()));
+        if (statistics.isPresent()) {
+            SugarStatistics current = statistics.get();
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            resourceCellsLabel.setText(integerFormat().format(current.getResourceCells()));
+            agentCellsLabel.setText(integerFormat().format(current.getAgentCells()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            resourceCellsLabel.setText(valueUnknown);
-            agentCellsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, resourceCellsLabel, agentCellsLabel);
         }
     }
 

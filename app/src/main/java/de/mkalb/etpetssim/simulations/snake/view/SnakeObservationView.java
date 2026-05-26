@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
@@ -12,7 +11,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 public final class SnakeObservationView
@@ -43,8 +41,6 @@ public final class SnakeObservationView
     private final Label snakeMaxSegmentCountLabel = new Label();
     private final Label snakePointsLabel = new Label();
 
-    private @Nullable NumberFormat intFormat;
-
     public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, SnakeStatistics> viewModel) {
         super(viewModel);
 
@@ -56,15 +52,15 @@ public final class SnakeObservationView
         Optional<SnakeStatistics> statistics = viewModel.getStatistics();
         if (statistics.isPresent()
                 && (gridCell != null)
-                && (intFormat != null)) {
+        ) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
             if (gridCell.entity() instanceof SnakeHead snakeHead) {
                 snakeIdLabel.setText("#" + snakeHead.id());
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
-                snakeDeathsLabel.setText(intFormat.format(snakeHead.deaths()));
-                snakeSegmentCountLabel.setText(intFormat.format(snakeHead.segmentCount()));
-                snakeMaxSegmentCountLabel.setText(intFormat.format(snakeHead.maxSegmentCount()));
-                snakePointsLabel.setText(intFormat.format(snakeHead.points()));
+                snakeDeathsLabel.setText(integerFormat().format(snakeHead.deaths()));
+                snakeSegmentCountLabel.setText(integerFormat().format(snakeHead.segmentCount()));
+                snakeMaxSegmentCountLabel.setText(integerFormat().format(snakeHead.maxSegmentCount()));
+                snakePointsLabel.setText(integerFormat().format(snakeHead.points()));
             } else {
                 snakeIdLabel.setText("");
                 snakeStrategyLabel.setText("");
@@ -117,8 +113,6 @@ public final class SnakeObservationView
                 snakePointsLabel
         };
 
-        intFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
-
         return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
     }
 
@@ -126,19 +120,15 @@ public final class SnakeObservationView
     protected void updateObservationLabels() {
         Optional<SnakeStatistics> statistics = viewModel.getStatistics();
 
-        if (statistics.isPresent() && (intFormat != null)) {
-            stepCountLabel.setText(intFormat.format(statistics.get().getStepCount()));
-            totalCellsLabel.setText(intFormat.format(statistics.get().getTotalCells()));
-            snakeHeadCells.setText(intFormat.format(statistics.get().getSnakeHeadCells()));
-            foodCellsLabel.setText(intFormat.format(statistics.get().getFoodCells()));
-            deathsLabel.setText(intFormat.format(statistics.get().getDeaths()));
+        if (statistics.isPresent()) {
+            SnakeStatistics current = statistics.get();
+            stepCountLabel.setText(integerFormat().format(current.getStepCount()));
+            totalCellsLabel.setText(integerFormat().format(current.getTotalCells()));
+            snakeHeadCells.setText(integerFormat().format(current.getSnakeHeadCells()));
+            foodCellsLabel.setText(integerFormat().format(current.getFoodCells()));
+            deathsLabel.setText(integerFormat().format(current.getDeaths()));
         } else {
-            String valueUnknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
-            stepCountLabel.setText(valueUnknown);
-            totalCellsLabel.setText(valueUnknown);
-            snakeHeadCells.setText(valueUnknown);
-            foodCellsLabel.setText(valueUnknown);
-            deathsLabel.setText(valueUnknown);
+            setUnknownValues(stepCountLabel, totalCellsLabel, snakeHeadCells, foodCellsLabel, deathsLabel);
         }
     }
 
