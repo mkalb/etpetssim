@@ -1,11 +1,15 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.GridTopology;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -14,6 +18,8 @@ import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
 
 public final class LabConfigViewModel
         extends AbstractConfigViewModel<LabConfig> {
+
+    private static final String LAB_CONFIG_VALIDATION_GRID_STRUCTURE = "lab.config.validation.gridstructure";
 
     private static final CommonConfigSettings COMMON_SETTINGS = new CommonConfigSettings(
             CELL_SHAPE_DEFAULT,
@@ -48,6 +54,19 @@ public final class LabConfigViewModel
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
+        addConfigValidationRule(
+                Bindings.createBooleanBinding(
+                        () -> !GridStructure.isValid(
+                                new GridTopology(cellShapeProperty().getValue(), gridEdgeBehaviorProperty().getValue()),
+                                new GridSize(gridWidthProperty().getValue(), gridHeightProperty().getValue())
+                        ),
+                        cellShapeProperty().property(),
+                        gridEdgeBehaviorProperty().property(),
+                        gridWidthProperty().property(),
+                        gridHeightProperty().property()
+                ),
+                () -> AppLocalization.getText(LAB_CONFIG_VALIDATION_GRID_STRUCTURE)
+        );
         initializeConfigListeners();
     }
 
