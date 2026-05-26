@@ -51,25 +51,14 @@ public record SnakeConfig(
         double segmentLengthMultiplier)
         implements SimulationConfig {
 
-    private boolean hasAllowedSelections() {
-        return CELL_SHAPE_VALUES.contains(cellShape)
-                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
-                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode)
-                && SNAKE_DEATH_MODE_VALUES.contains(deathMode);
-    }
-
-    private boolean hasExpectedRules() {
-        return neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT;
-    }
-
     private boolean hasValidRanges() {
-        return isInRange(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
-                && isInRange(foodCells, FOOD_CELLS_MIN, FOOD_CELLS_MAX)
-                && isInRange(snakes, SNAKES_MIN, SNAKES_MAX)
-                && isInRange(initialPendingGrowth, INITIAL_PENDING_GROWTH_MIN, INITIAL_PENDING_GROWTH_MAX)
-                && isInRange(growthPerFood, GROWTH_PER_FOOD_MIN, GROWTH_PER_FOOD_MAX)
-                && isInRange(basePointsPerFood, BASE_POINTS_PER_FOOD_MIN, BASE_POINTS_PER_FOOD_MAX)
-                && isInRange(segmentLengthMultiplier, SEGMENT_LENGTH_MULTIPLIER_MIN, SEGMENT_LENGTH_MULTIPLIER_MAX);
+        return isInRangeInt(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
+                && isInRangeInt(foodCells, FOOD_CELLS_MIN, FOOD_CELLS_MAX)
+                && isInRangeInt(snakes, SNAKES_MIN, SNAKES_MAX)
+                && isInRangeInt(initialPendingGrowth, INITIAL_PENDING_GROWTH_MIN, INITIAL_PENDING_GROWTH_MAX)
+                && isInRangeInt(growthPerFood, GROWTH_PER_FOOD_MIN, GROWTH_PER_FOOD_MAX)
+                && isInRangeInt(basePointsPerFood, BASE_POINTS_PER_FOOD_MIN, BASE_POINTS_PER_FOOD_MAX)
+                && isInRangeDouble(segmentLengthMultiplier, SEGMENT_LENGTH_MULTIPLIER_MIN, SEGMENT_LENGTH_MULTIPLIER_MAX);
     }
 
     /**
@@ -79,9 +68,10 @@ public record SnakeConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasAllowedSelections()
-                && hasExpectedRules()
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
+                && isAllowedSelection(deathMode, SNAKE_DEATH_MODE_VALUES)
                 && hasValidRanges();
     }
 

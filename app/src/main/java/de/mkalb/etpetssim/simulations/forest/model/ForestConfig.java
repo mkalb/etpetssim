@@ -41,17 +41,10 @@ public record ForestConfig(
         double lightningIgnitionProbability)
         implements SimulationConfig {
 
-    private boolean hasAllowedSelections() {
-        return CELL_SHAPE_VALUES.contains(cellShape)
-                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
-                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode)
-                && NEIGHBORHOOD_MODE_VALUES.contains(neighborhoodMode);
-    }
-
     private boolean hasValidRanges() {
-        return isInRange(treeDensity, TREE_DENSITY_MIN, TREE_DENSITY_MAX)
-                && isInRange(treeGrowthProbability, TREE_GROWTH_PROBABILITY_MIN, TREE_GROWTH_PROBABILITY_MAX)
-                && isInRange(lightningIgnitionProbability, LIGHTNING_IGNITION_PROBABILITY_MIN, LIGHTNING_IGNITION_PROBABILITY_MAX);
+        return isInRangeDouble(treeDensity, TREE_DENSITY_MIN, TREE_DENSITY_MAX)
+                && isInRangeDouble(treeGrowthProbability, TREE_GROWTH_PROBABILITY_MIN, TREE_GROWTH_PROBABILITY_MAX)
+                && isInRangeDouble(lightningIgnitionProbability, LIGHTNING_IGNITION_PROBABILITY_MIN, LIGHTNING_IGNITION_PROBABILITY_MAX);
     }
 
     /**
@@ -61,8 +54,9 @@ public record ForestConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasAllowedSelections()
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && isAllowedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_VALUES)
                 && hasValidRanges();
     }
 

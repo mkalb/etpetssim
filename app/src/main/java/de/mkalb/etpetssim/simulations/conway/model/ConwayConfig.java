@@ -40,18 +40,8 @@ public record ConwayConfig(
         ConwayTransitionRules transitionRules)
         implements SimulationConfig {
 
-    private boolean hasAllowedSelections() {
-        return CELL_SHAPE_VALUES.contains(cellShape)
-                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
-                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode);
-    }
-
-    private boolean hasExpectedRules() {
-        return neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT;
-    }
-
     private boolean hasValidRanges() {
-        return isInRange(alivePercent, ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
+        return isInRangeDouble(alivePercent, ALIVE_PERCENT_MIN, ALIVE_PERCENT_MAX);
     }
 
     private boolean hasValidTransitionRules() {
@@ -68,9 +58,9 @@ public record ConwayConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasAllowedSelections()
-                && hasExpectedRules()
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidRanges()
                 && hasValidTransitionRules();
     }

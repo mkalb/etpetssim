@@ -39,16 +39,9 @@ public record ReboundingConfig(
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
-    private boolean hasAllowedSelections() {
-        return CELL_SHAPE_VALUES.contains(cellShape)
-                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
-                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode)
-                && NEIGHBORHOOD_MODE_VALUES.contains(neighborhoodMode);
-    }
-
     private boolean hasValidRanges() {
-        return isInRange(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
-                && isInRange(movingEntityPercent, MOVING_ENTITY_PERCENT_MIN, MOVING_ENTITY_PERCENT_MAX);
+        return isInRangeInt(verticalWalls, VERTICAL_WALLS_MIN, VERTICAL_WALLS_MAX)
+                && isInRangeDouble(movingEntityPercent, MOVING_ENTITY_PERCENT_MIN, MOVING_ENTITY_PERCENT_MAX);
     }
 
     /**
@@ -58,8 +51,9 @@ public record ReboundingConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasAllowedSelections()
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && isAllowedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_VALUES)
                 && hasValidRanges();
     }
 

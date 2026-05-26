@@ -45,19 +45,12 @@ public record EtpetsConfig(
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
-    private boolean hasExpectedTopologyRules() {
-        return (cellShape == CELL_SHAPE_DEFAULT)
-                && (gridEdgeBehavior == GRID_EDGE_BEHAVIOR_DEFAULT)
-                && (cellDisplayMode == CELL_DISPLAY_MODE_DEFAULT)
-                && (neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT);
-    }
-
     private boolean hasValidRanges() {
-        return isInRange(rockPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRange(waterPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRange(plantPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRange(insectPercent, PERCENT_MIN, PERCENT_MAX)
-                && isInRange(petCount, PET_COUNT_MIN, PET_COUNT_MAX);
+        return isInRangeInt(rockPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeInt(waterPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeInt(plantPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeInt(insectPercent, PERCENT_MIN, PERCENT_MAX)
+                && isInRangeInt(petCount, PET_COUNT_MIN, PET_COUNT_MAX);
     }
 
     private boolean hasValidCombinedPercents() {
@@ -72,8 +65,9 @@ public record EtpetsConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasExpectedTopologyRules()
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidRanges()
                 // Spec: rockPercent + waterPercent MUST NOT exceed 50%.
                 && hasValidCombinedPercents();

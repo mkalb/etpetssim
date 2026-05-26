@@ -37,16 +37,6 @@ public record LangtonConfig(
         LangtonMovementRules langtonMovementRules)
         implements SimulationConfig {
 
-    private boolean hasAllowedSelections() {
-        return CELL_SHAPE_VALUES.contains(cellShape)
-                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
-                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode);
-    }
-
-    private boolean hasExpectedRules() {
-        return neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT;
-    }
-
     private boolean hasValidMovementRules() {
         return langtonMovementRules.isValidForCellShape(cellShape);
     }
@@ -58,9 +48,9 @@ public record LangtonConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasAllowedSelections()
-                && hasExpectedRules()
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidMovementRules();
     }
 

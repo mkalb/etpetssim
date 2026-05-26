@@ -37,14 +37,6 @@ public record LabConfig(
         NeighborhoodMode neighborhoodMode)
         implements SimulationConfig {
 
-    private boolean hasAllowedSelections() {
-        return CELL_SHAPE_VALUES.contains(cellShape)
-                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
-                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode)
-                && COLOR_MODE_VALUES.contains(colorMode)
-                && NEIGHBORHOOD_MODE_VALUES.contains(neighborhoodMode);
-    }
-
     /**
      * Validates the common simulation settings and the lab-specific selectable inspection settings.
      *
@@ -52,8 +44,10 @@ public record LabConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasAllowedSelections();
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && isAllowedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_VALUES)
+                && isAllowedSelection(colorMode, COLOR_MODE_VALUES);
     }
 
     public enum ColorMode {

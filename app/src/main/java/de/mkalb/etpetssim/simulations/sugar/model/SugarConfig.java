@@ -55,31 +55,20 @@ public record SugarConfig(
         int agentMaxAge)
         implements SimulationConfig {
 
-    private boolean hasAllowedSelections() {
-        return CELL_SHAPE_VALUES.contains(cellShape)
-                && GRID_EDGE_BEHAVIOR_VALUES.contains(gridEdgeBehavior)
-                && CELL_DISPLAY_MODE_VALUES.contains(cellDisplayMode);
-    }
-
-    private boolean hasExpectedRules() {
-        return neighborhoodMode == NEIGHBORHOOD_MODE_DEFAULT;
-    }
-
     private boolean hasExpectedInitializationRules() {
-        return minSugarAmount == MIN_SUGAR_AMOUNT_DEFAULT;
+        return hasExpectedSelection(minSugarAmount, MIN_SUGAR_AMOUNT_DEFAULT);
     }
 
     private boolean hasValidRanges() {
-        return isInRange(agentPercent, AGENT_PERCENT_MIN, AGENT_PERCENT_MAX)
-                && isInRange(sugarPeaks, SUGAR_PEAKS_MIN, SUGAR_PEAKS_MAX)
-                && isInRange(sugarRadiusLimit, SUGAR_RADIUS_LIMIT_MIN, SUGAR_RADIUS_LIMIT_MAX)
-                && isInRange(minSugarAmount, MIN_SUGAR_AMOUNT_DEFAULT, MIN_SUGAR_AMOUNT_DEFAULT)
-                && isInRange(maxSugarAmount, MAX_SUGAR_AMOUNT_MIN, MAX_SUGAR_AMOUNT_MAX)
-                && isInRange(agentInitialEnergy, AGENT_INITIAL_ENERGY_MIN, AGENT_INITIAL_ENERGY_MAX)
-                && isInRange(sugarRegenerationRate, SUGAR_REGENERATION_RATE_MIN, SUGAR_REGENERATION_RATE_MAX)
-                && isInRange(agentMetabolismRate, AGENT_METABOLISM_RATE_MIN, AGENT_METABOLISM_RATE_MAX)
-                && isInRange(agentVisionRange, AGENT_VISION_RANGE_MIN, AGENT_VISION_RANGE_MAX)
-                && isInRange(agentMaxAge, AGENT_MAX_AGE_MIN, AGENT_MAX_AGE_MAX);
+        return isInRangeDouble(agentPercent, AGENT_PERCENT_MIN, AGENT_PERCENT_MAX)
+                && isInRangeInt(sugarPeaks, SUGAR_PEAKS_MIN, SUGAR_PEAKS_MAX)
+                && isInRangeInt(sugarRadiusLimit, SUGAR_RADIUS_LIMIT_MIN, SUGAR_RADIUS_LIMIT_MAX)
+                && isInRangeInt(maxSugarAmount, MAX_SUGAR_AMOUNT_MIN, MAX_SUGAR_AMOUNT_MAX)
+                && isInRangeInt(agentInitialEnergy, AGENT_INITIAL_ENERGY_MIN, AGENT_INITIAL_ENERGY_MAX)
+                && isInRangeInt(sugarRegenerationRate, SUGAR_REGENERATION_RATE_MIN, SUGAR_REGENERATION_RATE_MAX)
+                && isInRangeInt(agentMetabolismRate, AGENT_METABOLISM_RATE_MIN, AGENT_METABOLISM_RATE_MAX)
+                && isInRangeInt(agentVisionRange, AGENT_VISION_RANGE_MIN, AGENT_VISION_RANGE_MAX)
+                && isInRangeInt(agentMaxAge, AGENT_MAX_AGE_MIN, AGENT_MAX_AGE_MAX);
     }
 
     private boolean hasValidCombinedRanges() {
@@ -93,9 +82,9 @@ public record SugarConfig(
      */
     @Override
     public boolean isValid() {
-        return SimulationConfig.super.isValid()
-                && hasAllowedSelections()
-                && hasExpectedRules()
+        return isBaseValid()
+                && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
+                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasExpectedInitializationRules()
                 && hasValidRanges()
                 && hasValidCombinedRanges();
