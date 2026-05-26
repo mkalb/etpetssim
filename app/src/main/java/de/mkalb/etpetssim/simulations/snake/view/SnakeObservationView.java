@@ -20,7 +20,6 @@ public final class SnakeObservationView
     private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
     private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
     private static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
-    private static final String SNAKE_OBSERVATION_COORDINATE = "snake.observation.coordinate";
     private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
     private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
     private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
@@ -90,7 +89,7 @@ public final class SnakeObservationView
                 SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
                 SNAKE_OBSERVATION_FOOD_CELLS,
                 SNAKE_OBSERVATION_DEATHS,
-                SNAKE_OBSERVATION_COORDINATE,
+                AppLocalizationKeys.OBSERVATION_COORDINATE,
                 SNAKE_OBSERVATION_SNAKE_ID,
                 SNAKE_OBSERVATION_SNAKE_STRATEGY,
                 SNAKE_OBSERVATION_SNAKE_DEATHS,

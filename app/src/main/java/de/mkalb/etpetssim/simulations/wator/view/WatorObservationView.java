@@ -23,7 +23,6 @@ public final class WatorObservationView
     private static final String WATOR_OBSERVATION_MIN_SHARK_CELLS = "wator.observation.cells.minshark";
     private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
-    private static final String WATOR_OBSERVATION_COORDINATE = "wator.observation.coordinate";
     private static final String WATOR_OBSERVATION_AGE = "wator.observation.age";
 
     private final Label stepCountLabel = new Label();
@@ -70,7 +69,7 @@ public final class WatorObservationView
                 WATOR_OBSERVATION_MIN_SHARK_CELLS,
                 WATOR_OBSERVATION_FISH_CELLS,
                 WATOR_OBSERVATION_SHARK_CELLS,
-                WATOR_OBSERVATION_COORDINATE,
+                AppLocalizationKeys.OBSERVATION_COORDINATE,
                 WATOR_OBSERVATION_AGE
         };
         Label[] valueLabels = {

@@ -21,7 +21,6 @@ public final class SugarObservationView
     private static final String SUGAR_OBSERVATION_TOTAL_CELLS = "sugar.observation.cells.total";
     private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
     private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
-    private static final String SUGAR_OBSERVATION_COORDINATE = "sugar.observation.coordinate";
     private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
     private static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";
 
@@ -71,7 +70,7 @@ public final class SugarObservationView
                 SUGAR_OBSERVATION_TOTAL_CELLS,
                 SUGAR_OBSERVATION_RESOURCE_CELLS,
                 SUGAR_OBSERVATION_AGENT_CELLS,
-                SUGAR_OBSERVATION_COORDINATE,
+                AppLocalizationKeys.OBSERVATION_COORDINATE,
                 SUGAR_OBSERVATION_CURRENT_ENERGY,
                 SUGAR_OBSERVATION_CURRENT_AMOUNT
         };
