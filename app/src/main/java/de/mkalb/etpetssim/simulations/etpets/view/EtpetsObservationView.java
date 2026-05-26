@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
@@ -24,8 +25,9 @@ public final class EtpetsObservationView
     private final Label eggsLabel = new Label();
     private final Label deadPetsLabel = new Label();
 
-    public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics> viewModel) {
-        super(viewModel);
+    public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics> viewModel,
+                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
+        super(viewModel, entityDescriptorRegistry);
     }
 
     @Override

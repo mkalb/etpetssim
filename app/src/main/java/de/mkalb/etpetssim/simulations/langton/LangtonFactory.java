@@ -51,7 +51,7 @@ public final class LangtonFactory {
         // View
         var configView = new LangtonConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new LangtonObservationView(observationViewModel);
+        var observationView = new LangtonObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new LangtonMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

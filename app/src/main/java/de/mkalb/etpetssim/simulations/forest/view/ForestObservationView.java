@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.forest.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
@@ -26,8 +27,9 @@ public final class ForestObservationView
     private final Label maxTreeCellsLabel = new Label();
     private final Label maxBurningCellsLabel = new Label();
 
-    public ForestObservationView(DefaultObservationViewModel<ForestEntity, ForestStatistics> viewModel) {
-        super(viewModel);
+    public ForestObservationView(DefaultObservationViewModel<ForestEntity, ForestStatistics> viewModel,
+                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
+        super(viewModel, entityDescriptorRegistry);
     }
 
     @Override

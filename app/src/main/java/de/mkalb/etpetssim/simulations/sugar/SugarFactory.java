@@ -52,7 +52,7 @@ public final class SugarFactory {
         // View
         var configView = new SugarConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new SugarObservationView(observationViewModel);
+        var observationView = new SugarObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new SugarMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

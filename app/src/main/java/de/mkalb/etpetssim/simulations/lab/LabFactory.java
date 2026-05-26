@@ -38,7 +38,7 @@ public final class LabFactory {
         // View
         var configView = new LabConfigView(configViewModel);
         var controlView = new LabControlView(controlViewModel);
-        var observationView = new LabObservationView(observationViewModel);
+        var observationView = new LabObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new LabMainView(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
 
         // Return the main view

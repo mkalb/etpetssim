@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
@@ -9,6 +10,7 @@ import de.mkalb.etpetssim.simulations.wator.model.entity.CreatureBase;
 import de.mkalb.etpetssim.simulations.wator.model.entity.WatorEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -24,7 +26,6 @@ public final class WatorObservationView
     private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
     private static final String WATOR_OBSERVATION_AGE = "wator.observation.age";
-
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
     private final Label maxFishCellsLabel = new Label();
@@ -34,10 +35,13 @@ public final class WatorObservationView
     private final Label fishCellsLabel = new Label();
     private final Label sharkCellsLabel = new Label();
     private final Label coordinateLabel = new Label();
+    private final Label cellTypeLabel = new Label();
     private final Label ageLabel = new Label();
+    private @Nullable VBox selectedCellSection;
 
-    public WatorObservationView(DefaultObservationViewModel<WatorEntity, WatorStatistics> viewModel) {
-        super(viewModel);
+    public WatorObservationView(DefaultObservationViewModel<WatorEntity, WatorStatistics> viewModel,
+                                GridEntityDescriptorRegistry entityDescriptorRegistry) {
+        super(viewModel, entityDescriptorRegistry);
 
         viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
                 updateSelectedGridCell(newCell));
@@ -45,13 +49,27 @@ public final class WatorObservationView
 
     private void updateSelectedGridCell(@Nullable GridCell<WatorEntity> gridCell) {
         Optional<WatorStatistics> statistics = viewModel.getStatistics();
-        if (statistics.isPresent()
-                && (gridCell != null)
-                && (gridCell.entity() instanceof CreatureBase creature)) {
+
+        updateSelectedCellSectionVisibility(gridCell != null);
+
+        if (gridCell != null) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
+            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
+            if (statistics.isPresent()
+                    && (gridCell.entity() instanceof CreatureBase creature)) {
+                setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
+            } else {
+                clearValues(ageLabel);
+            }
         } else {
-            clearValues(coordinateLabel, ageLabel);
+            clearValues(coordinateLabel, cellTypeLabel, ageLabel);
+        }
+    }
+
+    private void updateSelectedCellSectionVisibility(boolean visible) {
+        if (selectedCellSection != null) {
+            selectedCellSection.setManaged(visible);
+            selectedCellSection.setVisible(visible);
         }
     }
 
@@ -59,32 +77,73 @@ public final class WatorObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        String[] nameKeys = {
-                AppLocalizationKeys.OBSERVATION_STEP,
-                WATOR_OBSERVATION_TOTAL_CELLS,
-                WATOR_OBSERVATION_MAX_FISH_CELLS,
-                WATOR_OBSERVATION_MAX_SHARK_CELLS,
-                WATOR_OBSERVATION_MIN_FISH_CELLS,
-                WATOR_OBSERVATION_MIN_SHARK_CELLS,
-                WATOR_OBSERVATION_FISH_CELLS,
-                WATOR_OBSERVATION_SHARK_CELLS,
-                AppLocalizationKeys.OBSERVATION_COORDINATE,
-                WATOR_OBSERVATION_AGE
-        };
-        Label[] valueLabels = {
-                stepCountLabel,
-                totalCellsLabel,
-                maxFishCellsLabel,
-                maxSharkCellsLabel,
-                minFishCellsLabel,
-                minSharkCellsLabel,
-                fishCellsLabel,
-                sharkCellsLabel,
-                coordinateLabel,
-                ageLabel
-        };
+        Region statusSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+        Region gridSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        WATOR_OBSERVATION_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+        Region currentSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
+                new String[]{
+                        WATOR_OBSERVATION_FISH_CELLS,
+                        WATOR_OBSERVATION_SHARK_CELLS
+                },
+                new Label[]{
+                        fishCellsLabel,
+                        sharkCellsLabel
+                }
+        );
+        Region statisticsSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATISTICS,
+                new String[]{
+                        WATOR_OBSERVATION_MIN_FISH_CELLS,
+                        WATOR_OBSERVATION_MAX_FISH_CELLS,
+                        WATOR_OBSERVATION_MIN_SHARK_CELLS,
+                        WATOR_OBSERVATION_MAX_SHARK_CELLS
+                },
+                new Label[]{
+                        minFishCellsLabel,
+                        maxFishCellsLabel,
+                        minSharkCellsLabel,
+                        maxSharkCellsLabel
+                }
+        );
+        selectedCellSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_COORDINATE,
+                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
+                        WATOR_OBSERVATION_AGE
+                },
+                new Label[]{
+                        coordinateLabel,
+                        cellTypeLabel,
+                        ageLabel
+                }
+        );
 
-        return createObservationScrollPane(createObservationGrid(nameKeys, valueLabels));
+        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+
+        return createObservationScrollPane(
+                statusSection,
+                gridSection,
+                currentSection,
+                statisticsSection,
+                selectedCellSection
+        );
     }
 
     @Override
@@ -105,6 +164,8 @@ public final class WatorObservationView
             setUnknownValues(stepCountLabel, totalCellsLabel, maxFishCellsLabel, maxSharkCellsLabel,
                     minFishCellsLabel, minSharkCellsLabel, fishCellsLabel, sharkCellsLabel);
         }
+
+        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
     }
 
 }

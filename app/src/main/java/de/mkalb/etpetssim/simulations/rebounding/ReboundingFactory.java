@@ -45,7 +45,7 @@ public final class ReboundingFactory {
         // View
         var configView = new ReboundingConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new ReboundingObservationView(observationViewModel);
+        var observationView = new ReboundingObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new ReboundingMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

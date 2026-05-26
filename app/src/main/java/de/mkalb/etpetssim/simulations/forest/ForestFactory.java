@@ -44,7 +44,7 @@ public final class ForestFactory {
         // View
         var configView = new ForestConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new ForestObservationView(observationViewModel);
+        var observationView = new ForestObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new ForestMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

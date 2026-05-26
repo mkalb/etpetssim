@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
@@ -26,8 +27,9 @@ public final class ConwayObservationView
     private final Label deadCellsLabel = new Label();
     private final Label changedCellsLabel = new Label();
 
-    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel) {
-        super(viewModel);
+    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel,
+                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
+        super(viewModel, entityDescriptorRegistry);
     }
 
     @Override

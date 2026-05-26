@@ -44,7 +44,7 @@ public final class ConwayFactory {
         // View
         var configView = new ConwayConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new ConwayObservationView(observationViewModel);
+        var observationView = new ConwayObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new ConwayMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

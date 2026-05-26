@@ -58,7 +58,7 @@ public final class EtpetsFactory {
         // View
         var configView = new EtpetsConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new EtpetsObservationView(observationViewModel);
+        var observationView = new EtpetsObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new EtpetsMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

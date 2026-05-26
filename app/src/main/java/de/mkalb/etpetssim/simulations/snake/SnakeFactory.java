@@ -45,7 +45,7 @@ public final class SnakeFactory {
         // View
         var configView = new SnakeConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new SnakeObservationView(observationViewModel);
+        var observationView = new SnakeObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new SnakeMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

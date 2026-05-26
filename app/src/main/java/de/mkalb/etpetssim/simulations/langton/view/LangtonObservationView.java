@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
@@ -23,8 +24,9 @@ public final class LangtonObservationView
     private final Label antCellsLabel = new Label();
     private final Label visitedCellsLabel = new Label();
 
-    public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonStatistics> viewModel) {
-        super(viewModel);
+    public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonStatistics> viewModel,
+                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
+        super(viewModel, entityDescriptorRegistry);
     }
 
     @Override

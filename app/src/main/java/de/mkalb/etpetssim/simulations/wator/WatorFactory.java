@@ -45,7 +45,7 @@ public final class WatorFactory {
         // View
         var configView = new WatorConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
-        var observationView = new WatorObservationView(observationViewModel);
+        var observationView = new WatorObservationView(observationViewModel, entityDescriptorRegistry);
         var view = new WatorMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view

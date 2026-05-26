@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.sugar.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
@@ -32,8 +33,9 @@ public final class SugarObservationView
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
 
-    public SugarObservationView(DefaultObservationViewModel<SugarEntity, SugarStatistics> viewModel) {
-        super(viewModel);
+    public SugarObservationView(DefaultObservationViewModel<SugarEntity, SugarStatistics> viewModel,
+                                GridEntityDescriptorRegistry entityDescriptorRegistry) {
+        super(viewModel, entityDescriptorRegistry);
 
         viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
                 updateSelectedGridCell(newCell));
