@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -24,7 +23,6 @@ public final class EtpetsObservationView
     private final Label activePetsLabel = new Label();
     private final Label eggsLabel = new Label();
     private final Label deadPetsLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -35,7 +33,7 @@ public final class EtpetsObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<EtpetsEntity> gridCell) {
-        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
+        updateSelectedCellSectionVisibility(gridCell != null);
 
         updateSelectedCellBasicLabels(gridCell);
     }
@@ -59,7 +57,7 @@ public final class EtpetsObservationView
                         deadPetsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection();
+        Region selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -86,4 +84,3 @@ public final class EtpetsObservationView
     }
 
 }
-

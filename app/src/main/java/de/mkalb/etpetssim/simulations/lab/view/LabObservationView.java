@@ -23,10 +23,10 @@ public final class LabObservationView
         super(viewModel, entityDescriptorRegistry);
 
         viewModel.lastClickedCoordinateProperty().addListener((_, _, newCoordinate) ->
-                updateSelectedCellSectionVisibility(newCoordinate != null));
+                updateCoordinateSectionVisibility(newCoordinate != null));
     }
 
-    private void updateSelectedCellSectionVisibility(boolean visible) {
+    private void updateCoordinateSectionVisibility(boolean visible) {
         if (selectedCellRegion != null) {
             selectedCellRegion.setManaged(visible);
             selectedCellRegion.setVisible(visible);
@@ -55,7 +55,7 @@ public final class LabObservationView
                         coordinateLabel
                 }
         );
-        updateSelectedCellSectionVisibility(viewModel.lastClickedCoordinateProperty().get() != null);
+        updateCoordinateSectionVisibility(viewModel.lastClickedCoordinateProperty().get() != null);
         return createObservationScrollPane(selectedCellRegion);
     }
 

@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -26,7 +25,6 @@ public final class ForestObservationView
     private final Label burningCellsLabel = new Label();
     private final Label maxTreeCellsLabel = new Label();
     private final Label maxBurningCellsLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public ForestObservationView(DefaultObservationViewModel<ForestEntity, ForestStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -37,7 +35,7 @@ public final class ForestObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<ForestEntity> gridCell) {
-        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
+        updateSelectedCellSectionVisibility(gridCell != null);
 
         updateSelectedCellBasicLabels(gridCell);
     }
@@ -70,7 +68,7 @@ public final class ForestObservationView
                         maxBurningCellsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection();
+        Region selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(

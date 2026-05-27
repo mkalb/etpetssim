@@ -26,7 +26,6 @@ public final class ReboundingObservationView
     private final Label wallCellsLabel = new Label();
     private final Label movingEntityCellsLabel = new Label();
     private final Label directionLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics> viewModel,
                                      GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -37,7 +36,7 @@ public final class ReboundingObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<ReboundingEntity> gridCell) {
-        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
+        updateSelectedCellSectionVisibility(gridCell != null);
 
         if (gridCell != null) {
             updateSelectedCellBasicLabels(gridCell);
@@ -69,16 +68,11 @@ public final class ReboundingObservationView
                         movingEntityCellsLabel
                 }
         );
-        selectedCellSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+        VBox selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
-                        AppLocalizationKeys.OBSERVATION_COORDINATE,
-                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
                         REBOUNDING_OBSERVATION_DIRECTION
                 },
                 new Label[]{
-                        selectedCellCoordinateLabel(),
-                        selectedCellTypeLabel(),
                         directionLabel
                 }
         );

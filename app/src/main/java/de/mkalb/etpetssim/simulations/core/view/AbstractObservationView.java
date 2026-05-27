@@ -30,6 +30,7 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
+    private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
 
     protected AbstractObservationView(VM viewModel, GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -102,11 +103,6 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         );
     }
 
-    /**
-     * Updates the total cells label with the current statistics value.
-     * Call this from {@link #initializeObservationLabels()} when the simulation becomes available.
-     *
-     */
     private void updateGridSectionLabel() {
         Optional<STA> statistics = viewModel.getStatistics();
         if (statistics.isPresent()) {
@@ -221,13 +217,14 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
      * Creates a standard selected cell section displaying coordinate and cell type.
      * The standard coordinate and cell type labels are managed by this base class and updated via
      * {@link #updateSelectedCellBasicLabels(de.mkalb.etpetssim.engine.model.GridCell)}.
+     * The returned section is stored internally for use by {@link #updateSelectedCellSectionVisibility(boolean)}.
      *
      * @return a VBox region containing the selected cell section with the standard labels
      */
     protected final VBox createSelectedCellSection() {
         clearValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
 
-        return createObservationSection(
+        selectedCellSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 new String[]{
                         AppLocalizationKeys.OBSERVATION_COORDINATE,
@@ -238,34 +235,46 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
                         selectedCellTypeLabel
                 }
         );
+        return selectedCellSection;
     }
 
     /**
-     * Returns the standard coordinate label used in selected-cell sections.
+     * Creates an extended selected cell section with coordinate and cell type as the first two rows,
+     * followed by the provided simulation-specific extra rows.
+     * The returned section is stored internally for use by {@link #updateSelectedCellSectionVisibility(boolean)}.
      *
-     * @return label displaying the selected cell coordinate
+     * @param extraNameKeys   additional localization keys for the extra rows
+     * @param extraValueLabels additional labels for the extra rows
+     * @return a VBox region containing the extended selected cell section
      */
-    protected final Label selectedCellCoordinateLabel() {
-        return selectedCellCoordinateLabel;
+    protected final VBox createExtendedSelectedCellSection(String[] extraNameKeys, Label[] extraValueLabels) {
+        clearValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
+
+        String[] allNameKeys = new String[2 + extraNameKeys.length];
+        allNameKeys[0] = AppLocalizationKeys.OBSERVATION_COORDINATE;
+        allNameKeys[1] = AppLocalizationKeys.OBSERVATION_CELL_TYPE;
+        System.arraycopy(extraNameKeys, 0, allNameKeys, 2, extraNameKeys.length);
+
+        Label[] allValueLabels = new Label[2 + extraValueLabels.length];
+        allValueLabels[0] = selectedCellCoordinateLabel;
+        allValueLabels[1] = selectedCellTypeLabel;
+        System.arraycopy(extraValueLabels, 0, allValueLabels, 2, extraValueLabels.length);
+
+        selectedCellSection = createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                allNameKeys,
+                allValueLabels
+        );
+        return selectedCellSection;
     }
 
     /**
-     * Returns the standard cell-type label used in selected-cell sections.
-     *
-     * @return label displaying the selected cell type
-     */
-    protected final Label selectedCellTypeLabel() {
-        return selectedCellTypeLabel;
-    }
-
-    /**
-     * Updates the visibility of a selected cell section based on whether a cell is selected.
+     * Updates the visibility of the selected cell section.
      * Call this from a grid cell change listener to show/hide the section.
      *
-     * @param selectedCellSection the section VBox to control visibility for
      * @param isVisible whether the section should be visible
      */
-    protected final void updateSelectedCellSectionVisibility(@Nullable VBox selectedCellSection, boolean isVisible) {
+    protected final void updateSelectedCellSectionVisibility(boolean isVisible) {
         if (selectedCellSection != null) {
             selectedCellSection.setManaged(isVisible);
             selectedCellSection.setVisible(isVisible);

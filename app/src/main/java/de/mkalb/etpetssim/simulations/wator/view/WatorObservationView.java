@@ -32,7 +32,6 @@ public final class WatorObservationView
     private final Label fishCellsLabel = new Label();
     private final Label sharkCellsLabel = new Label();
     private final Label ageLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public WatorObservationView(DefaultObservationViewModel<WatorEntity, WatorStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -46,7 +45,7 @@ public final class WatorObservationView
         Optional<WatorStatistics> statistics = viewModel.getStatistics();
         boolean hasValidCell = gridCell != null;
 
-        updateSelectedCellSectionVisibility(selectedCellSection, hasValidCell);
+        updateSelectedCellSectionVisibility(hasValidCell);
 
         if (gridCell != null) {
             updateSelectedCellBasicLabels(gridCell);
@@ -93,16 +92,11 @@ public final class WatorObservationView
                         maxSharkCellsLabel
                 }
         );
-        selectedCellSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+        VBox selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
-                        AppLocalizationKeys.OBSERVATION_COORDINATE,
-                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
                         WATOR_OBSERVATION_AGE
                 },
                 new Label[]{
-                        selectedCellCoordinateLabel(),
-                        selectedCellTypeLabel(),
                         ageLabel
                 }
         );

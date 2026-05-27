@@ -29,7 +29,6 @@ public final class SugarObservationView
     private final Label agentCellsLabel = new Label();
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public SugarObservationView(DefaultObservationViewModel<SugarEntity, SugarStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -41,7 +40,7 @@ public final class SugarObservationView
 
     private void updateSelectedGridCell(@Nullable GridCell<SugarEntity> gridCell) {
         boolean hasValidCell = (gridCell != null) && gridCell.entity().isNotEmpty();
-        updateSelectedCellSectionVisibility(selectedCellSection, hasValidCell);
+        updateSelectedCellSectionVisibility(hasValidCell);
 
         if ((gridCell != null) && gridCell.entity().isNotEmpty()) {
             updateSelectedCellBasicLabels(gridCell);
@@ -78,17 +77,12 @@ public final class SugarObservationView
                         agentCellsLabel
                 }
         );
-        selectedCellSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+        VBox selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
-                        AppLocalizationKeys.OBSERVATION_COORDINATE,
-                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
                         SUGAR_OBSERVATION_CURRENT_ENERGY,
                         SUGAR_OBSERVATION_CURRENT_AMOUNT
                 },
                 new Label[]{
-                        selectedCellCoordinateLabel(),
-                        selectedCellTypeLabel(),
                         currentEnergyLabel,
                         currentAmountLabel
                 }

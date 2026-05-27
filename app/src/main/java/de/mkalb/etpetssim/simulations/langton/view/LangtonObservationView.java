@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -23,7 +22,6 @@ public final class LangtonObservationView
 
     private final Label antCellsLabel = new Label();
     private final Label visitedCellsLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonStatistics> viewModel,
                                   GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -34,7 +32,7 @@ public final class LangtonObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<LangtonEntity> gridCell) {
-        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
+        updateSelectedCellSectionVisibility(gridCell != null);
 
         updateSelectedCellBasicLabels(gridCell);
     }
@@ -56,7 +54,7 @@ public final class LangtonObservationView
                         visitedCellsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection();
+        Region selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(

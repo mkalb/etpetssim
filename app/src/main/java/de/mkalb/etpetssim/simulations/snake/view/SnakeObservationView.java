@@ -37,7 +37,6 @@ public final class SnakeObservationView
     private final Label snakeSegmentCountLabel = new Label();
     private final Label snakeMaxSegmentCountLabel = new Label();
     private final Label snakePointsLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, SnakeStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -48,7 +47,7 @@ public final class SnakeObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<SnakeEntity> gridCell) {
-        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
+        updateSelectedCellSectionVisibility(gridCell != null);
 
         if (gridCell != null) {
             updateSelectedCellBasicLabels(gridCell);
@@ -89,11 +88,8 @@ public final class SnakeObservationView
                         deathsLabel
                 }
         );
-        selectedCellSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+        VBox selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
-                        AppLocalizationKeys.OBSERVATION_COORDINATE,
-                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
                         SNAKE_OBSERVATION_SNAKE_ID,
                         SNAKE_OBSERVATION_SNAKE_STRATEGY,
                         SNAKE_OBSERVATION_SNAKE_DEATHS,
@@ -102,8 +98,6 @@ public final class SnakeObservationView
                         SNAKE_OBSERVATION_SNAKE_POINTS
                 },
                 new Label[]{
-                        selectedCellCoordinateLabel(),
-                        selectedCellTypeLabel(),
                         snakeIdLabel,
                         snakeStrategyLabel,
                         snakeDeathsLabel,

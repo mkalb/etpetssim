@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -26,7 +25,6 @@ public final class ConwayObservationView
     private final Label aliveCellsLabel = new Label();
     private final Label deadCellsLabel = new Label();
     private final Label changedCellsLabel = new Label();
-    private @Nullable VBox selectedCellSection;
 
     public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -37,7 +35,7 @@ public final class ConwayObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<ConwayEntity> gridCell) {
-        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
+        updateSelectedCellSectionVisibility(gridCell != null);
 
         updateSelectedCellBasicLabels(gridCell);
     }
@@ -70,7 +68,7 @@ public final class ConwayObservationView
                         maxAliveCellsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection();
+        Region selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
