@@ -10,7 +10,6 @@ import de.mkalb.etpetssim.simulations.rebounding.model.entity.Rebounder;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -19,9 +18,9 @@ public final class ReboundingObservationView
         extends
         AbstractObservationView<ReboundingStatistics, DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics>> {
 
-    private static final String REBOUNDING_OBSERVATION_DIRECTION = "rebounding.observation.direction";
-    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
     private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
+    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
+    private static final String REBOUNDING_OBSERVATION_DIRECTION = "rebounding.observation.direction";
 
     private final Label wallCellsLabel = new Label();
     private final Label movingEntityCellsLabel = new Label();
@@ -68,7 +67,7 @@ public final class ReboundingObservationView
                         movingEntityCellsLabel
                 }
         );
-        VBox selectedCellSection = createExtendedSelectedCellSection(
+        Region selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
                         REBOUNDING_OBSERVATION_DIRECTION
                 },
@@ -76,7 +75,6 @@ public final class ReboundingObservationView
                         directionLabel
                 }
         );
-
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -93,11 +91,13 @@ public final class ReboundingObservationView
         updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
-            ReboundingStatistics current = statistics.get();
+            var current = statistics.get();
             setFormattedIntegerValue(wallCellsLabel, current.getWallCells());
             setFormattedIntegerValue(movingEntityCellsLabel, current.getMovingEntityCells());
         } else {
-            setUnknownValues(wallCellsLabel, movingEntityCellsLabel);
+            setUnknownValues(
+                    wallCellsLabel,
+                    movingEntityCellsLabel);
         }
     }
 

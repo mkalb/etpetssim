@@ -14,12 +14,13 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class ForestObservationView
-        extends AbstractObservationView<ForestStatistics, DefaultObservationViewModel<ForestEntity, ForestStatistics>> {
+        extends
+        AbstractObservationView<ForestStatistics, DefaultObservationViewModel<ForestEntity, ForestStatistics>> {
 
-    private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
-    private static final String FOREST_OBSERVATION_MAX_BURNING_CELLS = "forest.observation.cells.maxburning";
-    private static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
     private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
+    private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
+    private static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
+    private static final String FOREST_OBSERVATION_MAX_BURNING_CELLS = "forest.observation.cells.maxburning";
 
     private final Label treeCellsLabel = new Label();
     private final Label burningCellsLabel = new Label();
@@ -86,13 +87,17 @@ public final class ForestObservationView
         updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
-            ForestStatistics current = statistics.get();
+            var current = statistics.get();
             setFormattedIntegerValue(treeCellsLabel, current.getTreeCells());
             setFormattedIntegerValue(burningCellsLabel, current.getBurningCells());
             setFormattedIntegerValue(maxTreeCellsLabel, current.getMaxTreeCells());
             setFormattedIntegerValue(maxBurningCellsLabel, current.getMaxBurningCells());
         } else {
-            setUnknownValues(treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
+            setUnknownValues(
+                    treeCellsLabel,
+                    burningCellsLabel,
+                    maxTreeCellsLabel,
+                    maxBurningCellsLabel);
         }
     }
 

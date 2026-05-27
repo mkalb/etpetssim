@@ -14,11 +14,12 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class EtpetsObservationView
-        extends AbstractObservationView<EtpetsStatistics, DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>> {
+        extends
+        AbstractObservationView<EtpetsStatistics, DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>> {
 
     private static final String ETPETS_OBSERVATION_ACTIVE_PETS = "etpets.observation.cells.pets";
-    private static final String ETPETS_OBSERVATION_DEAD_PETS = "etpets.observation.pets.dead";
     private static final String ETPETS_OBSERVATION_EGGS = "etpets.observation.cells.eggs";
+    private static final String ETPETS_OBSERVATION_DEAD_PETS = "etpets.observation.pets.dead";
 
     private final Label activePetsLabel = new Label();
     private final Label eggsLabel = new Label();
@@ -79,7 +80,10 @@ public final class EtpetsObservationView
             setFormattedIntegerValue(eggsLabel, current.getEggCount());
             setFormattedIntegerValue(deadPetsLabel, current.getCumulativeDeadPetCount());
         } else {
-            setUnknownValues(activePetsLabel, eggsLabel, deadPetsLabel);
+            setUnknownValues(
+                    activePetsLabel,
+                    eggsLabel,
+                    deadPetsLabel);
         }
     }
 

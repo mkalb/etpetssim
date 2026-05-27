@@ -10,25 +10,25 @@ import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeEntity;
 import de.mkalb.etpetssim.simulations.snake.model.entity.SnakeHead;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public final class SnakeObservationView
-        extends AbstractObservationView<SnakeStatistics, DefaultObservationViewModel<SnakeEntity, SnakeStatistics>> {
+        extends
+        AbstractObservationView<SnakeStatistics, DefaultObservationViewModel<SnakeEntity, SnakeStatistics>> {
 
-    private static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
+    private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
     private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
-    private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
+    private static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
     private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
+    private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
+    private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
+    private static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
     private static final String SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT = "snake.observation.snake.maxsegmentcount";
     private static final String SNAKE_OBSERVATION_SNAKE_POINTS = "snake.observation.snake.points";
-    private static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
-    private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
-    private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
 
-    private final Label snakeHeadCells = new Label();
+    private final Label snakeHeadCellsLabel = new Label();
     private final Label foodCellsLabel = new Label();
     private final Label deathsLabel = new Label();
     private final Label snakeIdLabel = new Label();
@@ -83,12 +83,12 @@ public final class SnakeObservationView
                         SNAKE_OBSERVATION_DEATHS
                 },
                 new Label[]{
-                        snakeHeadCells,
+                        snakeHeadCellsLabel,
                         foodCellsLabel,
                         deathsLabel
                 }
         );
-        VBox selectedCellSection = createExtendedSelectedCellSection(
+        Region selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
                         SNAKE_OBSERVATION_SNAKE_ID,
                         SNAKE_OBSERVATION_SNAKE_STRATEGY,
@@ -106,7 +106,6 @@ public final class SnakeObservationView
                         snakePointsLabel
                 }
         );
-
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -123,12 +122,15 @@ public final class SnakeObservationView
         updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
-            SnakeStatistics current = statistics.get();
-            setFormattedIntegerValue(snakeHeadCells, current.getSnakeHeadCells());
+            var current = statistics.get();
+            setFormattedIntegerValue(snakeHeadCellsLabel, current.getSnakeHeadCells());
             setFormattedIntegerValue(foodCellsLabel, current.getFoodCells());
             setFormattedIntegerValue(deathsLabel, current.getDeaths());
         } else {
-            setUnknownValues(snakeHeadCells, foodCellsLabel, deathsLabel);
+            setUnknownValues(
+                    snakeHeadCellsLabel,
+                    foodCellsLabel,
+                    deathsLabel);
         }
     }
 

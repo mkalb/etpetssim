@@ -14,17 +14,18 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class ConwayObservationView
-        extends AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
+        extends
+        AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
 
     private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
-    private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
     private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
+    private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
     private static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
 
-    private final Label maxAliveCellsLabel = new Label();
     private final Label aliveCellsLabel = new Label();
     private final Label deadCellsLabel = new Label();
     private final Label changedCellsLabel = new Label();
+    private final Label maxAliveCellsLabel = new Label();
 
     public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -86,13 +87,17 @@ public final class ConwayObservationView
         updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
-            ConwayStatistics current = statistics.get();
+            var current = statistics.get();
             setFormattedIntegerValue(aliveCellsLabel, current.getAliveCells());
             setFormattedIntegerValue(deadCellsLabel, current.getDeadCells());
             setFormattedIntegerValue(changedCellsLabel, current.getChangedCells());
             setFormattedIntegerValue(maxAliveCellsLabel, current.getMaxAliveCells());
         } else {
-            setUnknownValues(aliveCellsLabel, deadCellsLabel, changedCellsLabel, maxAliveCellsLabel);
+            setUnknownValues(
+                    aliveCellsLabel,
+                    deadCellsLabel,
+                    changedCellsLabel,
+                    maxAliveCellsLabel);
         }
     }
 

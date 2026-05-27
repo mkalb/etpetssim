@@ -11,7 +11,6 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.Sugar;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.SugarEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -20,10 +19,10 @@ public final class SugarObservationView
         extends
         AbstractObservationView<SugarStatistics, DefaultObservationViewModel<SugarEntity, SugarStatistics>> {
 
-    private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
-    private static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";
-    private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
     private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
+    private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
+    private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
+    private static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";
 
     private final Label resourceCellsLabel = new Label();
     private final Label agentCellsLabel = new Label();
@@ -77,7 +76,7 @@ public final class SugarObservationView
                         agentCellsLabel
                 }
         );
-        VBox selectedCellSection = createExtendedSelectedCellSection(
+        Region selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
                         SUGAR_OBSERVATION_CURRENT_ENERGY,
                         SUGAR_OBSERVATION_CURRENT_AMOUNT
@@ -87,7 +86,6 @@ public final class SugarObservationView
                         currentAmountLabel
                 }
         );
-
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -104,11 +102,13 @@ public final class SugarObservationView
         updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
-            SugarStatistics current = statistics.get();
+            var current = statistics.get();
             setFormattedIntegerValue(resourceCellsLabel, current.getResourceCells());
             setFormattedIntegerValue(agentCellsLabel, current.getAgentCells());
         } else {
-            setUnknownValues(resourceCellsLabel, agentCellsLabel);
+            setUnknownValues(
+                    resourceCellsLabel,
+                    agentCellsLabel);
         }
     }
 

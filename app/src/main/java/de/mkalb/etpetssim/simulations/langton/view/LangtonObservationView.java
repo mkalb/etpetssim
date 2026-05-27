@@ -71,11 +71,13 @@ public final class LangtonObservationView
         updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
-            LangtonStatistics current = statistics.get();
+            var current = statistics.get();
             setFormattedIntegerValue(antCellsLabel, current.getAntCells());
             setFormattedIntegerValue(visitedCellsLabel, current.getVisitedCells());
         } else {
-            setUnknownValues(antCellsLabel, visitedCellsLabel);
+            setUnknownValues(
+                    antCellsLabel,
+                    visitedCellsLabel);
         }
     }
 
