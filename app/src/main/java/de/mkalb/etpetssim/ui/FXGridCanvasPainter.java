@@ -90,7 +90,7 @@ public final class FXGridCanvasPainter {
     @Override
     public String toString() {
         return "FXGridCanvasPainter{" +
-                "structure=" + structure +
+                "structure=" + structure.toDisplayString() +
                 ", gridDimension2D=[" + gridDimension2D.getWidth() + ", " + gridDimension2D.getHeight() + "]" +
                 ", canvas=[" + canvas.getWidth() + ", " + canvas.getHeight() + "]" +
                 ", cellDimension=" + cellDimension +
