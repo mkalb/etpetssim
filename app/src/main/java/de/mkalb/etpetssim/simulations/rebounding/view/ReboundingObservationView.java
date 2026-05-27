@@ -23,12 +23,8 @@ public final class ReboundingObservationView
     private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
     private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
 
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label wallCellsLabel = new Label();
     private final Label movingEntityCellsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private final Label directionLabel = new Label();
     private @Nullable VBox selectedCellSection;
 
@@ -44,14 +40,14 @@ public final class ReboundingObservationView
         updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
         if (gridCell != null) {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+            updateSelectedCellBasicLabels(gridCell);
             if (gridCell.entity() instanceof Rebounder entity) {
                 directionLabel.setText(entity.getDirection().arrow());
             } else {
                 clearValues(directionLabel);
             }
         } else {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            updateSelectedCellBasicLabels(null);
             clearValues(directionLabel);
         }
     }
@@ -60,16 +56,8 @@ public final class ReboundingObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -89,8 +77,8 @@ public final class ReboundingObservationView
                         REBOUNDING_OBSERVATION_DIRECTION
                 },
                 new Label[]{
-                        coordinateLabel,
-                        cellTypeLabel,
+                        selectedCellCoordinateLabel(),
+                        selectedCellTypeLabel(),
                         directionLabel
                 }
         );
@@ -106,22 +94,16 @@ public final class ReboundingObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<ReboundingStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             ReboundingStatistics current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(wallCellsLabel, current.getWallCells());
             setFormattedIntegerValue(movingEntityCellsLabel, current.getMovingEntityCells());
         } else {
-            setUnknownValues(stepCountLabel, wallCellsLabel, movingEntityCellsLabel);
+            setUnknownValues(wallCellsLabel, movingEntityCellsLabel);
         }
     }
 

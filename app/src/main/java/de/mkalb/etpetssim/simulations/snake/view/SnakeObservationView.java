@@ -28,13 +28,9 @@ public final class SnakeObservationView
     private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
     private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
 
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label snakeHeadCells = new Label();
     private final Label foodCellsLabel = new Label();
     private final Label deathsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private final Label snakeIdLabel = new Label();
     private final Label snakeStrategyLabel = new Label();
     private final Label snakeDeathsLabel = new Label();
@@ -55,7 +51,7 @@ public final class SnakeObservationView
         updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
         if (gridCell != null) {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+            updateSelectedCellBasicLabels(gridCell);
             if (gridCell.entity() instanceof SnakeHead snakeHead) {
                 snakeIdLabel.setText("#" + snakeHead.id());
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
@@ -68,7 +64,7 @@ public final class SnakeObservationView
                         snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
             }
         } else {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            updateSelectedCellBasicLabels(null);
             clearValues(snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
                     snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
         }
@@ -78,16 +74,8 @@ public final class SnakeObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -114,8 +102,8 @@ public final class SnakeObservationView
                         SNAKE_OBSERVATION_SNAKE_POINTS
                 },
                 new Label[]{
-                        coordinateLabel,
-                        cellTypeLabel,
+                        selectedCellCoordinateLabel(),
+                        selectedCellTypeLabel(),
                         snakeIdLabel,
                         snakeStrategyLabel,
                         snakeDeathsLabel,
@@ -136,23 +124,17 @@ public final class SnakeObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<SnakeStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             SnakeStatistics current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(snakeHeadCells, current.getSnakeHeadCells());
             setFormattedIntegerValue(foodCellsLabel, current.getFoodCells());
             setFormattedIntegerValue(deathsLabel, current.getDeaths());
         } else {
-            setUnknownValues(stepCountLabel, snakeHeadCells, foodCellsLabel, deathsLabel);
+            setUnknownValues(snakeHeadCells, foodCellsLabel, deathsLabel);
         }
     }
 

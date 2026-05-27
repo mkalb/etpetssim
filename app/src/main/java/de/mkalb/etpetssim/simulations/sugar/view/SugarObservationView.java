@@ -25,12 +25,8 @@ public final class SugarObservationView
     private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
     private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
 
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label resourceCellsLabel = new Label();
     private final Label agentCellsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
     private @Nullable VBox selectedCellSection;
@@ -48,7 +44,7 @@ public final class SugarObservationView
         updateSelectedCellSectionVisibility(selectedCellSection, hasValidCell);
 
         if ((gridCell != null) && gridCell.entity().isNotEmpty()) {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+            updateSelectedCellBasicLabels(gridCell);
             if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
                 setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
             } else {
@@ -60,7 +56,7 @@ public final class SugarObservationView
                 clearValues(currentAmountLabel);
             }
         } else {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            updateSelectedCellBasicLabels(null);
             clearValues(currentEnergyLabel, currentAmountLabel);
         }
     }
@@ -69,16 +65,8 @@ public final class SugarObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -99,8 +87,8 @@ public final class SugarObservationView
                         SUGAR_OBSERVATION_CURRENT_AMOUNT
                 },
                 new Label[]{
-                        coordinateLabel,
-                        cellTypeLabel,
+                        selectedCellCoordinateLabel(),
+                        selectedCellTypeLabel(),
                         currentEnergyLabel,
                         currentAmountLabel
                 }
@@ -117,22 +105,16 @@ public final class SugarObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<SugarStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             SugarStatistics current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(resourceCellsLabel, current.getResourceCells());
             setFormattedIntegerValue(agentCellsLabel, current.getAgentCells());
         } else {
-            setUnknownValues(stepCountLabel, resourceCellsLabel, agentCellsLabel);
+            setUnknownValues(resourceCellsLabel, agentCellsLabel);
         }
     }
 

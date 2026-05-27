@@ -21,13 +21,9 @@ public final class EtpetsObservationView
     private static final String ETPETS_OBSERVATION_DEAD_PETS = "etpets.observation.pets.dead";
     private static final String ETPETS_OBSERVATION_EGGS = "etpets.observation.cells.eggs";
 
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label activePetsLabel = new Label();
     private final Label eggsLabel = new Label();
     private final Label deadPetsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private @Nullable VBox selectedCellSection;
 
     public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics> viewModel,
@@ -41,23 +37,15 @@ public final class EtpetsObservationView
     private void updateSelectedGridCell(@Nullable GridCell<EtpetsEntity> gridCell) {
         updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
-        updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+        updateSelectedCellBasicLabels(gridCell);
     }
 
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -71,7 +59,7 @@ public final class EtpetsObservationView
                         deadPetsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection(coordinateLabel, cellTypeLabel);
+        selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -83,23 +71,17 @@ public final class EtpetsObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<EtpetsStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             var current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(activePetsLabel, current.getActivePetCount());
             setFormattedIntegerValue(eggsLabel, current.getEggCount());
             setFormattedIntegerValue(deadPetsLabel, current.getCumulativeDeadPetCount());
         } else {
-            setUnknownValues(stepCountLabel, activePetsLabel, eggsLabel, deadPetsLabel);
+            setUnknownValues(activePetsLabel, eggsLabel, deadPetsLabel);
         }
     }
 

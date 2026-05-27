@@ -22,14 +22,10 @@ public final class ConwayObservationView
     private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
     private static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
 
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label maxAliveCellsLabel = new Label();
     private final Label aliveCellsLabel = new Label();
     private final Label deadCellsLabel = new Label();
     private final Label changedCellsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private @Nullable VBox selectedCellSection;
 
     public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel,
@@ -43,23 +39,15 @@ public final class ConwayObservationView
     private void updateSelectedGridCell(@Nullable GridCell<ConwayEntity> gridCell) {
         updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
-        updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+        updateSelectedCellBasicLabels(gridCell);
     }
 
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -82,7 +70,7 @@ public final class ConwayObservationView
                         maxAliveCellsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection(coordinateLabel, cellTypeLabel);
+        selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -95,24 +83,18 @@ public final class ConwayObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<ConwayStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             ConwayStatistics current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(aliveCellsLabel, current.getAliveCells());
             setFormattedIntegerValue(deadCellsLabel, current.getDeadCells());
             setFormattedIntegerValue(changedCellsLabel, current.getChangedCells());
             setFormattedIntegerValue(maxAliveCellsLabel, current.getMaxAliveCells());
         } else {
-            setUnknownValues(stepCountLabel, aliveCellsLabel, deadCellsLabel, changedCellsLabel, maxAliveCellsLabel);
+            setUnknownValues(aliveCellsLabel, deadCellsLabel, changedCellsLabel, maxAliveCellsLabel);
         }
     }
 

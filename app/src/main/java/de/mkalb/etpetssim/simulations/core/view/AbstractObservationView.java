@@ -26,6 +26,10 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
 
     protected final VM viewModel;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
+    private final Label stepCountLabel = new Label();
+    private final Label totalCellsLabel = new Label();
+    private final Label selectedCellCoordinateLabel = new Label();
+    private final Label selectedCellTypeLabel = new Label();
     private @Nullable NumberFormat integerFormat;
 
     protected AbstractObservationView(VM viewModel, GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -63,10 +67,9 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
      * This section displays the total number of cells in the simulation grid.
      * The provided label is initialized with the unknown placeholder and populated during simulation initialization.
      *
-     * @param totalCellsLabel the label that will display the total cell count
      * @return a VBox region containing the grid section with the provided label
      */
-    protected final VBox createGridSection(Label totalCellsLabel) {
+    protected final VBox createGridSection() {
         setUnknownValues(totalCellsLabel);
 
         return createObservationSection(
@@ -81,12 +84,30 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
     }
 
     /**
+     * Creates the standard status section displaying the current step count.
+     *
+     * @return a VBox region containing the status section
+     */
+    protected final VBox createStatusSection() {
+        setUnknownValues(stepCountLabel);
+
+        return createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_STEP
+                },
+                new Label[]{
+                        stepCountLabel
+                }
+        );
+    }
+
+    /**
      * Updates the total cells label with the current statistics value.
      * Call this from {@link #initializeObservationLabels()} when the simulation becomes available.
      *
-     * @param totalCellsLabel the label to update
      */
-    protected final void updateGridSectionLabel(Label totalCellsLabel) {
+    private void updateGridSectionLabel() {
         Optional<STA> statistics = viewModel.getStatistics();
         if (statistics.isPresent()) {
             setFormattedIntegerValue(totalCellsLabel, statistics.get().getTotalCells());
@@ -97,10 +118,23 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
 
     /**
      * Initializes observation labels when the simulation has been created.
-     * Subclasses may override this to populate values that stay constant during the simulation run.
      */
-    protected void initializeObservationLabels() {
+    protected final void initializeObservationLabels() {
+        updateGridSectionLabel();
         updateObservationLabels();
+    }
+
+    /**
+     * Updates the standard status section label with the current step count.
+     *
+     * @param statistics current statistics snapshot
+     */
+    protected final void updateStatusSectionLabel(Optional<STA> statistics) {
+        if (statistics.isPresent()) {
+            setFormattedIntegerValue(stepCountLabel, statistics.get().getStepCount());
+        } else {
+            setUnknownValues(stepCountLabel);
+        }
     }
 
     protected final VBox createObservationSection(String titleKey, String[] nameKeys, Label[] valueLabels) {
@@ -185,14 +219,14 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
 
     /**
      * Creates a standard selected cell section displaying coordinate and cell type.
-     * The provided labels will be managed by the caller and updated via
-     * {@link #updateSelectedCellBasicLabels(Label, Label, de.mkalb.etpetssim.engine.model.GridCell)}.
+     * The standard coordinate and cell type labels are managed by this base class and updated via
+     * {@link #updateSelectedCellBasicLabels(de.mkalb.etpetssim.engine.model.GridCell)}.
      *
-     * @param coordinateLabel the label that will display the cell coordinate
-     * @param cellTypeLabel the label that will display the cell type
-     * @return a VBox region containing the selected cell section with the provided labels
+     * @return a VBox region containing the selected cell section with the standard labels
      */
-    protected final VBox createSelectedCellSection(Label coordinateLabel, Label cellTypeLabel) {
+    protected final VBox createSelectedCellSection() {
+        clearValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
+
         return createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 new String[]{
@@ -200,10 +234,28 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
                         AppLocalizationKeys.OBSERVATION_CELL_TYPE
                 },
                 new Label[]{
-                        coordinateLabel,
-                        cellTypeLabel
+                        selectedCellCoordinateLabel,
+                        selectedCellTypeLabel
                 }
         );
+    }
+
+    /**
+     * Returns the standard coordinate label used in selected-cell sections.
+     *
+     * @return label displaying the selected cell coordinate
+     */
+    protected final Label selectedCellCoordinateLabel() {
+        return selectedCellCoordinateLabel;
+    }
+
+    /**
+     * Returns the standard cell-type label used in selected-cell sections.
+     *
+     * @return label displaying the selected cell type
+     */
+    protected final Label selectedCellTypeLabel() {
+        return selectedCellTypeLabel;
     }
 
     /**
@@ -224,17 +276,14 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
      * Updates the standard coordinate and cell type labels in a selected cell section.
      * Call this from a grid cell change listener to populate the basic selected cell info.
      *
-     * @param coordinateLabel the label to update with coordinate
-     * @param cellTypeLabel the label to update with cell type
      * @param gridCell the currently selected grid cell, or null if no cell is selected
      */
-    protected final void updateSelectedCellBasicLabels(Label coordinateLabel, Label cellTypeLabel,
-                                                       @Nullable GridCell<?> gridCell) {
+    protected final void updateSelectedCellBasicLabels(@Nullable GridCell<?> gridCell) {
         if (gridCell != null) {
-            coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
+            selectedCellCoordinateLabel.setText(gridCell.coordinate().toDisplayString());
+            selectedCellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
         } else {
-            clearValues(coordinateLabel, cellTypeLabel);
+            clearValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
         }
     }
 

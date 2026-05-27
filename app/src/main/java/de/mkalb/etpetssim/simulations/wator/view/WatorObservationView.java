@@ -25,16 +25,12 @@ public final class WatorObservationView
     private static final String WATOR_OBSERVATION_MIN_FISH_CELLS = "wator.observation.cells.minfish";
     private static final String WATOR_OBSERVATION_MIN_SHARK_CELLS = "wator.observation.cells.minshark";
     private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label maxFishCellsLabel = new Label();
     private final Label maxSharkCellsLabel = new Label();
     private final Label minFishCellsLabel = new Label();
     private final Label minSharkCellsLabel = new Label();
     private final Label fishCellsLabel = new Label();
     private final Label sharkCellsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private final Label ageLabel = new Label();
     private @Nullable VBox selectedCellSection;
 
@@ -53,14 +49,14 @@ public final class WatorObservationView
         updateSelectedCellSectionVisibility(selectedCellSection, hasValidCell);
 
         if (gridCell != null) {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+            updateSelectedCellBasicLabels(gridCell);
             if (statistics.isPresent() && (gridCell.entity() instanceof CreatureBase creature)) {
                 setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
             } else {
                 clearValues(ageLabel);
             }
         } else {
-            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            updateSelectedCellBasicLabels(null);
             clearValues(ageLabel);
         }
     }
@@ -69,16 +65,8 @@ public final class WatorObservationView
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -113,8 +101,8 @@ public final class WatorObservationView
                         WATOR_OBSERVATION_AGE
                 },
                 new Label[]{
-                        coordinateLabel,
-                        cellTypeLabel,
+                        selectedCellCoordinateLabel(),
+                        selectedCellTypeLabel(),
                         ageLabel
                 }
         );
@@ -131,18 +119,12 @@ public final class WatorObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<WatorStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             WatorStatistics current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(maxFishCellsLabel, current.getMaxFishCells());
             setFormattedIntegerValue(maxSharkCellsLabel, current.getMaxSharkCells());
             setFormattedIntegerValue(minFishCellsLabel, current.getMinFishCells());
@@ -150,7 +132,7 @@ public final class WatorObservationView
             setFormattedIntegerValue(fishCellsLabel, current.getFishCells());
             setFormattedIntegerValue(sharkCellsLabel, current.getSharkCells());
         } else {
-            setUnknownValues(stepCountLabel, maxFishCellsLabel, maxSharkCellsLabel,
+            setUnknownValues(maxFishCellsLabel, maxSharkCellsLabel,
                     minFishCellsLabel, minSharkCellsLabel, fishCellsLabel, sharkCellsLabel);
         }
 

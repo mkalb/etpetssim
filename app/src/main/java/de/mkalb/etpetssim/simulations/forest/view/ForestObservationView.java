@@ -22,14 +22,10 @@ public final class ForestObservationView
     private static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
     private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
 
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label treeCellsLabel = new Label();
     private final Label burningCellsLabel = new Label();
     private final Label maxTreeCellsLabel = new Label();
     private final Label maxBurningCellsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private @Nullable VBox selectedCellSection;
 
     public ForestObservationView(DefaultObservationViewModel<ForestEntity, ForestStatistics> viewModel,
@@ -43,23 +39,15 @@ public final class ForestObservationView
     private void updateSelectedGridCell(@Nullable GridCell<ForestEntity> gridCell) {
         updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
-        updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+        updateSelectedCellBasicLabels(gridCell);
     }
 
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -82,7 +70,7 @@ public final class ForestObservationView
                         maxBurningCellsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection(coordinateLabel, cellTypeLabel);
+        selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -95,24 +83,18 @@ public final class ForestObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<ForestStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             ForestStatistics current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(treeCellsLabel, current.getTreeCells());
             setFormattedIntegerValue(burningCellsLabel, current.getBurningCells());
             setFormattedIntegerValue(maxTreeCellsLabel, current.getMaxTreeCells());
             setFormattedIntegerValue(maxBurningCellsLabel, current.getMaxBurningCells());
         } else {
-            setUnknownValues(stepCountLabel, treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
+            setUnknownValues(treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
         }
     }
 

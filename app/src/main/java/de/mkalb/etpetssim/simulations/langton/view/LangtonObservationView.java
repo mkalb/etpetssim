@@ -21,12 +21,8 @@ public final class LangtonObservationView
     private static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
     private static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
 
-    private final Label stepCountLabel = new Label();
-    private final Label totalCellsLabel = new Label();
     private final Label antCellsLabel = new Label();
     private final Label visitedCellsLabel = new Label();
-    private final Label coordinateLabel = new Label();
-    private final Label cellTypeLabel = new Label();
     private @Nullable VBox selectedCellSection;
 
     public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonStatistics> viewModel,
@@ -40,23 +36,15 @@ public final class LangtonObservationView
     private void updateSelectedGridCell(@Nullable GridCell<LangtonEntity> gridCell) {
         updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
-        updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+        updateSelectedCellBasicLabels(gridCell);
     }
 
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
 
-        Region statusSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_STATUS,
-                new String[]{
-                        AppLocalizationKeys.OBSERVATION_STEP
-                },
-                new Label[]{
-                        stepCountLabel
-                }
-        );
-        Region gridSection = createGridSection(totalCellsLabel);
+        Region statusSection = createStatusSection();
+        Region gridSection = createGridSection();
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -68,7 +56,7 @@ public final class LangtonObservationView
                         visitedCellsLabel
                 }
         );
-        selectedCellSection = createSelectedCellSection(coordinateLabel, cellTypeLabel);
+        selectedCellSection = createSelectedCellSection();
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
@@ -80,22 +68,16 @@ public final class LangtonObservationView
     }
 
     @Override
-    protected void initializeObservationLabels() {
-        updateGridSectionLabel(totalCellsLabel);
-        updateObservationLabels();
-    }
-
-    @Override
     protected void updateObservationLabels() {
         Optional<LangtonStatistics> statistics = viewModel.getStatistics();
+        updateStatusSectionLabel(statistics);
 
         if (statistics.isPresent()) {
             LangtonStatistics current = statistics.get();
-            setFormattedIntegerValue(stepCountLabel, current.getStepCount());
             setFormattedIntegerValue(antCellsLabel, current.getAntCells());
             setFormattedIntegerValue(visitedCellsLabel, current.getVisitedCells());
         } else {
-            setUnknownValues(stepCountLabel, antCellsLabel, visitedCellsLabel);
+            setUnknownValues(antCellsLabel, visitedCellsLabel);
         }
     }
 
