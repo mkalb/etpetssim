@@ -56,13 +56,6 @@ public final class ReboundingObservationView
         }
     }
 
-    private void updateSelectedCellSectionVisibility(boolean visible) {
-        if (selectedCellSection != null) {
-            selectedCellSection.setManaged(visible);
-            selectedCellSection.setVisible(visible);
-        }
-    }
-
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
@@ -113,6 +106,12 @@ public final class ReboundingObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<ReboundingStatistics> statistics = viewModel.getStatistics();
 
@@ -124,7 +123,6 @@ public final class ReboundingObservationView
         } else {
             setUnknownValues(stepCountLabel, wallCellsLabel, movingEntityCellsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

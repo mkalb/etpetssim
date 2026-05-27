@@ -80,6 +80,12 @@ public final class LangtonObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<LangtonStatistics> statistics = viewModel.getStatistics();
 
@@ -91,7 +97,6 @@ public final class LangtonObservationView
         } else {
             setUnknownValues(stepCountLabel, antCellsLabel, visitedCellsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

@@ -65,13 +65,6 @@ public final class WatorObservationView
         }
     }
 
-    private void updateSelectedCellSectionVisibility(boolean visible) {
-        if (selectedCellSection != null) {
-            selectedCellSection.setManaged(visible);
-            selectedCellSection.setVisible(visible);
-        }
-    }
-
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
@@ -138,6 +131,12 @@ public final class WatorObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<WatorStatistics> statistics = viewModel.getStatistics();
 
@@ -154,7 +153,6 @@ public final class WatorObservationView
             setUnknownValues(stepCountLabel, maxFishCellsLabel, maxSharkCellsLabel,
                     minFishCellsLabel, minSharkCellsLabel, fishCellsLabel, sharkCellsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
 
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
     }

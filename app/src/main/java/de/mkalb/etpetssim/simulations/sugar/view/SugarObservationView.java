@@ -117,6 +117,12 @@ public final class SugarObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<SugarStatistics> statistics = viewModel.getStatistics();
 
@@ -128,7 +134,6 @@ public final class SugarObservationView
         } else {
             setUnknownValues(stepCountLabel, resourceCellsLabel, agentCellsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

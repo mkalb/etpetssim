@@ -95,6 +95,12 @@ public final class ForestObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<ForestStatistics> statistics = viewModel.getStatistics();
 
@@ -108,7 +114,6 @@ public final class ForestObservationView
         } else {
             setUnknownValues(stepCountLabel, treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

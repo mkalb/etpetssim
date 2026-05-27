@@ -95,6 +95,12 @@ public final class ConwayObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<ConwayStatistics> statistics = viewModel.getStatistics();
 
@@ -108,7 +114,6 @@ public final class ConwayObservationView
         } else {
             setUnknownValues(stepCountLabel, aliveCellsLabel, deadCellsLabel, changedCellsLabel, maxAliveCellsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

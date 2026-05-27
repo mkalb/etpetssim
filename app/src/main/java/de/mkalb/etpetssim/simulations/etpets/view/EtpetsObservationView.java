@@ -83,6 +83,12 @@ public final class EtpetsObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<EtpetsStatistics> statistics = viewModel.getStatistics();
 
@@ -95,7 +101,6 @@ public final class EtpetsObservationView
         } else {
             setUnknownValues(stepCountLabel, activePetsLabel, eggsLabel, deadPetsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

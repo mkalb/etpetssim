@@ -61,12 +61,14 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
     /**
      * Creates a standard grid section displaying the total cell count.
      * This section displays the total number of cells in the simulation grid.
-     * The provided label will be managed by the caller and updated in {@link #updateObservationLabels()}.
+     * The provided label is initialized with the unknown placeholder and populated during simulation initialization.
      *
      * @param totalCellsLabel the label that will display the total cell count
      * @return a VBox region containing the grid section with the provided label
      */
     protected final VBox createGridSection(Label totalCellsLabel) {
+        setUnknownValues(totalCellsLabel);
+
         return createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_GRID,
                 new String[]{
@@ -80,7 +82,7 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
 
     /**
      * Updates the total cells label with the current statistics value.
-     * Call this from {@link #updateObservationLabels()} to update the grid section.
+     * Call this from {@link #initializeObservationLabels()} when the simulation becomes available.
      *
      * @param totalCellsLabel the label to update
      */
@@ -91,6 +93,14 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         } else {
             setUnknownValues(totalCellsLabel);
         }
+    }
+
+    /**
+     * Initializes observation labels when the simulation has been created.
+     * Subclasses may override this to populate values that stay constant during the simulation run.
+     */
+    protected void initializeObservationLabels() {
+        updateObservationLabels();
     }
 
     protected final VBox createObservationSection(String titleKey, String[] nameKeys, Label[] valueLabels) {

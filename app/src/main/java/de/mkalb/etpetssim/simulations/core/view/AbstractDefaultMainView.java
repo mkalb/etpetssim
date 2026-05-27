@@ -112,7 +112,7 @@ public abstract class AbstractDefaultMainView<
         updateCanvasBorderPane(viewModel.getStructure());
 
         controlView.updateStepCount(stepCount);
-        observationView.updateObservationLabels();
+        observationView.initializeObservationLabels();
 
         initSimulation(viewModel.getCurrentConfig(), cellDimension);
 

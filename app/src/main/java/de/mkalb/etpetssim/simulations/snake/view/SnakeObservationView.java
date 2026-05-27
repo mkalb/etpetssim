@@ -74,13 +74,6 @@ public final class SnakeObservationView
         }
     }
 
-    private void updateSelectedCellSectionVisibility(boolean visible) {
-        if (selectedCellSection != null) {
-            selectedCellSection.setManaged(visible);
-            selectedCellSection.setVisible(visible);
-        }
-    }
-
     @Override
     public Region buildObservationRegion() {
         updateObservationLabels();
@@ -143,6 +136,12 @@ public final class SnakeObservationView
     }
 
     @Override
+    protected void initializeObservationLabels() {
+        updateGridSectionLabel(totalCellsLabel);
+        updateObservationLabels();
+    }
+
+    @Override
     protected void updateObservationLabels() {
         Optional<SnakeStatistics> statistics = viewModel.getStatistics();
 
@@ -155,7 +154,6 @@ public final class SnakeObservationView
         } else {
             setUnknownValues(stepCountLabel, snakeHeadCells, foodCellsLabel, deathsLabel);
         }
-        updateGridSectionLabel(totalCellsLabel);
     }
 
 }
