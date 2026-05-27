@@ -25,7 +25,7 @@ public final class ForestSimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new ForestStatistics(structure.cellCount());
+        statistics = new ForestStatistics(structure);
         var random = new Random(config.seed());
         var model = new ArrayGridModel<>(structure, ForestEntity.EMPTY);
 

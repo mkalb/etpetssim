@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
@@ -13,12 +14,12 @@ public final class WatorStatistics
     private int fishCells;
     private int sharkCells;
 
-    public WatorStatistics(int totalCells) {
-        super(totalCells);
+    public WatorStatistics(GridStructure gridStructure) {
+        super(gridStructure);
         maxFishCells = 0;
         maxSharkCells = 0;
-        minFishCells = totalCells;
-        minSharkCells = totalCells;
+        minFishCells = getTotalCells();
+        minSharkCells = getTotalCells();
         fishCells = 0;
         sharkCells = 0;
     }

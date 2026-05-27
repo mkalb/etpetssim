@@ -34,7 +34,7 @@ public final class ReboundingSimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new ReboundingStatistics(structure.cellCount());
+        statistics = new ReboundingStatistics(structure);
         var random = new Random(config.seed());
         var model = new SparseGridModel<ReboundingEntity>(structure, TerrainConstant.GROUND);
 

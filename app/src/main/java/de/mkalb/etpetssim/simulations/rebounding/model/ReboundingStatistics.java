@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
@@ -9,8 +10,8 @@ public final class ReboundingStatistics
     private int wallCells;
     private int movingEntityCells;
 
-    public ReboundingStatistics(int totalCells) {
-        super(totalCells);
+    public ReboundingStatistics(GridStructure gridStructure) {
+        super(gridStructure);
         wallCells = 0;
         movingEntityCells = 0;
     }

@@ -26,7 +26,7 @@ public final class SugarSimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new SugarStatistics(structure.cellCount());
+        statistics = new SugarStatistics(structure);
         var random = new Random(config.seed());
         var model = new SugarGridModel(structure,
                 new SparseGridModel<>(structure, NoResource.NO_RESOURCE),

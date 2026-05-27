@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
@@ -14,11 +15,11 @@ public final class ConwayStatistics
     private int deadCells;
     private int changedCells;
 
-    public ConwayStatistics(int totalCells) {
-        super(totalCells);
+    public ConwayStatistics(GridStructure gridStructure) {
+        super(gridStructure);
         maxAliveCells = 0;
         aliveCells = 0;
-        deadCells = totalCells;
+        deadCells = getTotalCells();
         changedCells = 0;
     }
 

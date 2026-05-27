@@ -27,7 +27,7 @@ public final class LabSimulationManager
         this.config = config;
 
         structure = config.createGridStructure();
-        statistics = new LabStatistics(structure.cellCount());
+        statistics = new LabStatistics(structure);
 
         model = new SparseGridModel<>(structure, LabEntity.NORMAL);
         GridInitializers.placeRandomCount(3,

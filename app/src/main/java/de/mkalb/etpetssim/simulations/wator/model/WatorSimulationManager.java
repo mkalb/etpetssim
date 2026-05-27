@@ -25,7 +25,7 @@ public final class WatorSimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new WatorStatistics(structure.cellCount());
+        statistics = new WatorStatistics(structure);
         var random = new Random(config.seed());
         var model = new ArrayGridModel<WatorEntity>(structure, TerrainConstant.WATER);
         var entityFactory = new CreatureFactory();

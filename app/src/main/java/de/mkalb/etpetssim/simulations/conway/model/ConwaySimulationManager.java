@@ -25,7 +25,7 @@ public final class ConwaySimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new ConwayStatistics(structure.cellCount());
+        statistics = new ConwayStatistics(structure);
         var random = new Random(config.seed());
         var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
 

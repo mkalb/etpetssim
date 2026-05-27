@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 
 /**
@@ -9,22 +10,23 @@ import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 public abstract class AbstractTimedSimulationStatistics
         implements TimedSimulationStatistics {
 
-    private final int totalCells;
+    private final GridStructure gridStructure;
 
     private int stepCount;
     private StepTimingStatistics stepTimingStatistics;
 
     /**
-     * Initializes the statistics with the given total cell count.
+     * Initializes the statistics with the given grid structure.
      * Step count and timing statistics are set to their initial values.
      *
-     * @param totalCells total number of cells in the simulation grid
+     * @param gridStructure grid structure used by the simulation
      */
-    protected AbstractTimedSimulationStatistics(int totalCells) {
+    protected AbstractTimedSimulationStatistics(GridStructure gridStructure) {
+        int totalCells = gridStructure.cellCount();
         if (totalCells < 0) {
             throw new IllegalArgumentException("totalCells must be >= 0");
         }
-        this.totalCells = totalCells;
+        this.gridStructure = gridStructure;
         stepCount = 0;
         stepTimingStatistics = StepTimingStatistics.empty();
     }
@@ -35,8 +37,8 @@ public abstract class AbstractTimedSimulationStatistics
     }
 
     @Override
-    public final int getTotalCells() {
-        return totalCells;
+    public final GridStructure getGridStructure() {
+        return gridStructure;
     }
 
     @Override
@@ -68,7 +70,7 @@ public abstract class AbstractTimedSimulationStatistics
      * @return comma-separated key-value pairs for the shared statistics fields
      */
     protected final String baseToString() {
-        return "totalCells=" + totalCells +
+        return "gridStructure=" + gridStructure +
                 ", stepCount=" + stepCount +
                 ", stepTimingStatistics=" + stepTimingStatistics;
     }

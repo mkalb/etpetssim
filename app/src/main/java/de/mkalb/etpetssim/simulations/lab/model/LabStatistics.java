@@ -1,15 +1,16 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 
 public final class LabStatistics implements SimulationStatistics {
 
-    private final int totalCells;
+    private final GridStructure gridStructure;
 
     private final int stepCount;
 
-    public LabStatistics(int totalCells) {
-        this.totalCells = totalCells;
+    public LabStatistics(GridStructure gridStructure) {
+        this.gridStructure = gridStructure;
         stepCount = 0;
     }
 
@@ -19,14 +20,14 @@ public final class LabStatistics implements SimulationStatistics {
     }
 
     @Override
-    public int getTotalCells() {
-        return totalCells;
+    public GridStructure getGridStructure() {
+        return gridStructure;
     }
 
     @Override
     public String toString() {
         return "LabStatistics{" +
-                "totalCells=" + totalCells +
+                "gridStructure=" + gridStructure +
                 ", stepCount=" + stepCount +
                 '}';
     }

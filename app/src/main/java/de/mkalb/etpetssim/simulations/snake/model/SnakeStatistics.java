@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
@@ -11,8 +12,8 @@ public final class SnakeStatistics
     private int foodCells;
     private int deaths;
 
-    public SnakeStatistics(int totalCells) {
-        super(totalCells);
+    public SnakeStatistics(GridStructure gridStructure) {
+        super(gridStructure);
         snakeHeadCells = 0;
         livingSnakeHeadCells = 0;
         foodCells = 0;

@@ -21,7 +21,7 @@ public final class EtpetsSimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new EtpetsStatistics(structure.cellCount());
+        statistics = new EtpetsStatistics(structure);
         var random = new Random(config.seed());
         var model = new EtpetsGridModel(
                 structure,

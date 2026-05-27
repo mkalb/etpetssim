@@ -22,7 +22,7 @@ public final class LangtonSimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new LangtonStatistics(structure.cellCount());
+        statistics = new LangtonStatistics(structure);
         var model = new LangtonGridModel(structure,
                 new ArrayGridModel<>(structure, TerrainConstant.UNVISITED),
                 new SparseGridModel<>(structure, NoAgent.NO_AGENT));

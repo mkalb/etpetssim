@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
@@ -15,9 +16,9 @@ public final class ForestStatistics
     private int maxTreeCells;
     private int maxBurningCells;
 
-    public ForestStatistics(int totalCells) {
-        super(totalCells);
-        emptyCells = totalCells;
+    public ForestStatistics(GridStructure gridStructure) {
+        super(gridStructure);
+        emptyCells = getTotalCells();
         treeCells = 0;
         burningCells = 0;
         maxTreeCells = 0;

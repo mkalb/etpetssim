@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
+import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 
@@ -9,8 +10,8 @@ public final class LangtonStatistics
     private int antCells;
     private int visitedCells;
 
-    public LangtonStatistics(int totalCells) {
-        super(totalCells);
+    public LangtonStatistics(GridStructure gridStructure) {
+        super(gridStructure);
         antCells = 0;
         visitedCells = 0;
     }

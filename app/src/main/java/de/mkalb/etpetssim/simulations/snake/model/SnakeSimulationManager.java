@@ -41,7 +41,7 @@ public final class SnakeSimulationManager
         super(config);
 
         structure = config.createGridStructure();
-        statistics = new SnakeStatistics(structure.cellCount());
+        statistics = new SnakeStatistics(structure);
         var random = new Random(config.seed());
         var model = new SparseGridModel<SnakeEntity>(structure, TerrainConstant.GROUND);
 
