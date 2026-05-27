@@ -52,11 +52,10 @@ public final class SnakeObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<SnakeEntity> gridCell) {
-        updateSelectedCellSectionVisibility(gridCell != null);
+        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
         if (gridCell != null) {
-            coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
             if (gridCell.entity() instanceof SnakeHead snakeHead) {
                 snakeIdLabel.setText("#" + snakeHead.id());
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
@@ -69,7 +68,8 @@ public final class SnakeObservationView
                         snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
             }
         } else {
-            clearValues(coordinateLabel, cellTypeLabel, snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            clearValues(snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
                     snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
         }
     }

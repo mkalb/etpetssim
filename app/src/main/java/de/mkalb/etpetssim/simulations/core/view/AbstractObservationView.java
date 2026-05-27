@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
@@ -171,5 +172,60 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
     }
 
     protected abstract void updateObservationLabels();
+
+    /**
+     * Creates a standard selected cell section displaying coordinate and cell type.
+     * The provided labels will be managed by the caller and updated via
+     * {@link #updateSelectedCellBasicLabels(Label, Label, de.mkalb.etpetssim.engine.model.GridCell)}.
+     *
+     * @param coordinateLabel the label that will display the cell coordinate
+     * @param cellTypeLabel the label that will display the cell type
+     * @return a VBox region containing the selected cell section with the provided labels
+     */
+    protected final VBox createSelectedCellSection(Label coordinateLabel, Label cellTypeLabel) {
+        return createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_COORDINATE,
+                        AppLocalizationKeys.OBSERVATION_CELL_TYPE
+                },
+                new Label[]{
+                        coordinateLabel,
+                        cellTypeLabel
+                }
+        );
+    }
+
+    /**
+     * Updates the visibility of a selected cell section based on whether a cell is selected.
+     * Call this from a grid cell change listener to show/hide the section.
+     *
+     * @param selectedCellSection the section VBox to control visibility for
+     * @param isVisible whether the section should be visible
+     */
+    protected final void updateSelectedCellSectionVisibility(@Nullable VBox selectedCellSection, boolean isVisible) {
+        if (selectedCellSection != null) {
+            selectedCellSection.setManaged(isVisible);
+            selectedCellSection.setVisible(isVisible);
+        }
+    }
+
+    /**
+     * Updates the standard coordinate and cell type labels in a selected cell section.
+     * Call this from a grid cell change listener to populate the basic selected cell info.
+     *
+     * @param coordinateLabel the label to update with coordinate
+     * @param cellTypeLabel the label to update with cell type
+     * @param gridCell the currently selected grid cell, or null if no cell is selected
+     */
+    protected final void updateSelectedCellBasicLabels(Label coordinateLabel, Label cellTypeLabel,
+                                                       @Nullable GridCell<?> gridCell) {
+        if (gridCell != null) {
+            coordinateLabel.setText(gridCell.coordinate().toDisplayString());
+            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
+        } else {
+            clearValues(coordinateLabel, cellTypeLabel);
+        }
+    }
 
 }

@@ -44,33 +44,24 @@ public final class SugarObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<SugarEntity> gridCell) {
-        updateSelectedCellSectionVisibility((gridCell != null)
-                && gridCell.entity().isNotEmpty());
+        boolean hasValidCell = (gridCell != null) && gridCell.entity().isNotEmpty();
+        updateSelectedCellSectionVisibility(selectedCellSection, hasValidCell);
 
-        if ((gridCell != null)
-                && gridCell.entity().isNotEmpty()) {
-            coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
+        if ((gridCell != null) && gridCell.entity().isNotEmpty()) {
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
             if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
                 setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
             } else {
                 clearValues(currentEnergyLabel);
             }
-            if (gridCell.entity().isResource()
-                    && (gridCell.entity() instanceof Sugar resource)) {
+            if (gridCell.entity().isResource() && (gridCell.entity() instanceof Sugar resource)) {
                 setFormattedIntegerValue(currentAmountLabel, resource.currentAmount());
             } else {
                 clearValues(currentAmountLabel);
             }
         } else {
-            clearValues(coordinateLabel, cellTypeLabel, currentEnergyLabel, currentAmountLabel);
-        }
-    }
-
-    private void updateSelectedCellSectionVisibility(boolean visible) {
-        if (selectedCellSection != null) {
-            selectedCellSection.setManaged(visible);
-            selectedCellSection.setVisible(visible);
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            clearValues(currentEnergyLabel, currentAmountLabel);
         }
     }
 

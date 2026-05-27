@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.forest.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -8,6 +9,8 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -25,10 +28,22 @@ public final class ForestObservationView
     private final Label burningCellsLabel = new Label();
     private final Label maxTreeCellsLabel = new Label();
     private final Label maxBurningCellsLabel = new Label();
+    private final Label coordinateLabel = new Label();
+    private final Label cellTypeLabel = new Label();
+    private @Nullable VBox selectedCellSection;
 
     public ForestObservationView(DefaultObservationViewModel<ForestEntity, ForestStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
+
+        viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
+                updateSelectedGridCell(newCell));
+    }
+
+    private void updateSelectedGridCell(@Nullable GridCell<ForestEntity> gridCell) {
+        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
+
+        updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
     }
 
     @Override
@@ -67,12 +82,15 @@ public final class ForestObservationView
                         maxBurningCellsLabel
                 }
         );
+        selectedCellSection = createSelectedCellSection(coordinateLabel, cellTypeLabel);
+        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
                 gridSection,
                 currentSection,
-                statisticsSection
+                statisticsSection,
+                selectedCellSection
         );
     }
 

@@ -48,20 +48,20 @@ public final class WatorObservationView
 
     private void updateSelectedGridCell(@Nullable GridCell<WatorEntity> gridCell) {
         Optional<WatorStatistics> statistics = viewModel.getStatistics();
+        boolean hasValidCell = gridCell != null;
 
-        updateSelectedCellSectionVisibility(gridCell != null);
+        updateSelectedCellSectionVisibility(selectedCellSection, hasValidCell);
 
         if (gridCell != null) {
-            coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
-            if (statistics.isPresent()
-                    && (gridCell.entity() instanceof CreatureBase creature)) {
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
+            if (statistics.isPresent() && (gridCell.entity() instanceof CreatureBase creature)) {
                 setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
             } else {
                 clearValues(ageLabel);
             }
         } else {
-            clearValues(coordinateLabel, cellTypeLabel, ageLabel);
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            clearValues(ageLabel);
         }
     }
 

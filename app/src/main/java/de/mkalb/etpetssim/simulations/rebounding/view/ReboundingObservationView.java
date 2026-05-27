@@ -41,18 +41,18 @@ public final class ReboundingObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<ReboundingEntity> gridCell) {
-        updateSelectedCellSectionVisibility(gridCell != null);
+        updateSelectedCellSectionVisibility(selectedCellSection, gridCell != null);
 
         if (gridCell != null) {
-            coordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, gridCell);
             if (gridCell.entity() instanceof Rebounder entity) {
                 directionLabel.setText(entity.getDirection().arrow());
             } else {
                 clearValues(directionLabel);
             }
         } else {
-            clearValues(coordinateLabel, cellTypeLabel, directionLabel);
+            updateSelectedCellBasicLabels(coordinateLabel, cellTypeLabel, null);
+            clearValues(directionLabel);
         }
     }
 
