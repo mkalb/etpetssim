@@ -46,7 +46,6 @@ public final class LabObservationView
 
     public void initializeForDraw() {
         initializeObservationLabels();
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
     }
 
 }
