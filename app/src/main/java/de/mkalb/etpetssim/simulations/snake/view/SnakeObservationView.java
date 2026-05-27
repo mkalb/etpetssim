@@ -15,8 +15,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class SnakeObservationView
-        extends
-        AbstractObservationView<SnakeStatistics, DefaultObservationViewModel<SnakeEntity, SnakeStatistics>> {
+        extends AbstractObservationView<
+        SnakeEntity,
+        SnakeStatistics,
+        DefaultObservationViewModel<SnakeEntity, SnakeStatistics>> {
 
     private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
     private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
@@ -42,15 +44,16 @@ public final class SnakeObservationView
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
-        viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
-                updateSelectedGridCell(newCell));
+        registerSelectedCellListener(viewModel.selectedGridCellProperty());
     }
 
-    private void updateSelectedGridCell(@Nullable GridCell<SnakeEntity> gridCell) {
-        updateSelectedCellSectionVisibility(gridCell != null);
+    @Override
+    protected void onSelectedCellChanged(@Nullable GridCell<SnakeEntity> gridCell) {
+        super.onSelectedCellChanged(gridCell);
+        clearValues(snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
+                snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
 
         if (gridCell != null) {
-            updateSelectedCellBasicLabels(gridCell);
             if (gridCell.entity() instanceof SnakeHead snakeHead) {
                 snakeIdLabel.setText("#" + snakeHead.id());
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
@@ -58,14 +61,7 @@ public final class SnakeObservationView
                 setFormattedIntegerValue(snakeSegmentCountLabel, snakeHead.segmentCount());
                 setFormattedIntegerValue(snakeMaxSegmentCountLabel, snakeHead.maxSegmentCount());
                 setFormattedIntegerValue(snakePointsLabel, snakeHead.points());
-            } else {
-                clearValues(snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
-                        snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
             }
-        } else {
-            updateSelectedCellBasicLabels(null);
-            clearValues(snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
-                    snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
         }
     }
 
@@ -106,7 +102,7 @@ public final class SnakeObservationView
                         snakePointsLabel
                 }
         );
-        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

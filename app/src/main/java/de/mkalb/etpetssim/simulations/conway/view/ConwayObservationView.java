@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
@@ -9,13 +8,14 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public final class ConwayObservationView
-        extends
-        AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
+        extends AbstractObservationView<
+        ConwayEntity,
+        ConwayStatistics,
+        DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
 
     private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
     private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
@@ -31,14 +31,7 @@ public final class ConwayObservationView
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
-        viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
-                updateSelectedGridCell(newCell));
-    }
-
-    private void updateSelectedGridCell(@Nullable GridCell<ConwayEntity> gridCell) {
-        updateSelectedCellSectionVisibility(gridCell != null);
-
-        updateSelectedCellBasicLabels(gridCell);
+        registerSelectedCellListener(viewModel.selectedGridCellProperty());
     }
 
     @Override
@@ -70,7 +63,7 @@ public final class ConwayObservationView
                 }
         );
         Region selectedCellSection = createSelectedCellSection();
-        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

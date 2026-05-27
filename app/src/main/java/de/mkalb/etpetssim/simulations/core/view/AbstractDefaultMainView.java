@@ -31,7 +31,7 @@ public abstract class AbstractDefaultMainView<
         CON extends SimulationConfig,
         STA extends AbstractTimedSimulationStatistics,
         CFV extends SimulationConfigView,
-        OV extends AbstractObservationView<STA, DefaultObservationViewModel<ENT, STA>>>
+        OV extends AbstractObservationView<ENT, STA, DefaultObservationViewModel<ENT, STA>>>
         extends
         AbstractMainView<
                 DefaultMainViewModel<ENT, GM, CON, STA>,

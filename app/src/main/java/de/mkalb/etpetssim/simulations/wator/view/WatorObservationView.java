@@ -15,8 +15,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class WatorObservationView
-        extends
-        AbstractObservationView<WatorStatistics, DefaultObservationViewModel<WatorEntity, WatorStatistics>> {
+        extends AbstractObservationView<
+        WatorEntity,
+        WatorStatistics,
+        DefaultObservationViewModel<WatorEntity, WatorStatistics>> {
 
     private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
@@ -38,26 +40,19 @@ public final class WatorObservationView
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
-        viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
-                updateSelectedGridCell(newCell));
+        registerSelectedCellListener(viewModel.selectedGridCellProperty());
     }
 
-    private void updateSelectedGridCell(@Nullable GridCell<WatorEntity> gridCell) {
-        Optional<WatorStatistics> statistics = viewModel.getStatistics();
-        boolean hasValidCell = gridCell != null;
-
-        updateSelectedCellSectionVisibility(hasValidCell);
+    @Override
+    protected void onSelectedCellChanged(@Nullable GridCell<WatorEntity> gridCell) {
+        super.onSelectedCellChanged(gridCell);
+        clearValues(ageLabel);
 
         if (gridCell != null) {
-            updateSelectedCellBasicLabels(gridCell);
+            Optional<WatorStatistics> statistics = viewModel.getStatistics();
             if (statistics.isPresent() && (gridCell.entity() instanceof CreatureBase creature)) {
                 setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
-            } else {
-                clearValues(ageLabel);
             }
-        } else {
-            updateSelectedCellBasicLabels(null);
-            clearValues(ageLabel);
         }
     }
 
@@ -101,7 +96,7 @@ public final class WatorObservationView
                         ageLabel
                 }
         );
-        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

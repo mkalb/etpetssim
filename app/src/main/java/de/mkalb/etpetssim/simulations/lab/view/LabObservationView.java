@@ -14,8 +14,10 @@ import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
 
 public final class LabObservationView
-        extends
-        AbstractObservationView<LabStatistics, DefaultObservationViewModel<LabEntity, LabStatistics>> {
+        extends AbstractObservationView<
+        LabEntity,
+        LabStatistics,
+        DefaultObservationViewModel<LabEntity, LabStatistics>> {
 
     private @Nullable Region selectedCellRegion;
 

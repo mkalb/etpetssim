@@ -16,8 +16,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class SugarObservationView
-        extends
-        AbstractObservationView<SugarStatistics, DefaultObservationViewModel<SugarEntity, SugarStatistics>> {
+        extends AbstractObservationView<
+        SugarEntity,
+        SugarStatistics,
+        DefaultObservationViewModel<SugarEntity, SugarStatistics>> {
 
     private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
     private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
@@ -33,29 +35,20 @@ public final class SugarObservationView
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
-        viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
-                updateSelectedGridCell(newCell));
+        registerSelectedCellListener(viewModel.selectedGridCellProperty());
     }
 
-    private void updateSelectedGridCell(@Nullable GridCell<SugarEntity> gridCell) {
-        boolean hasValidCell = (gridCell != null) && gridCell.entity().isNotEmpty();
-        updateSelectedCellSectionVisibility(hasValidCell);
+    @Override
+    protected void onSelectedCellChanged(@Nullable GridCell<SugarEntity> gridCell) {
+        super.onSelectedCellChanged(gridCell);
+        clearValues(currentEnergyLabel, currentAmountLabel);
 
-        if ((gridCell != null) && gridCell.entity().isNotEmpty()) {
-            updateSelectedCellBasicLabels(gridCell);
-            if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
+        if (gridCell != null) {
+            if (gridCell.entity() instanceof Agent agent) {
                 setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
-            } else {
-                clearValues(currentEnergyLabel);
-            }
-            if (gridCell.entity().isResource() && (gridCell.entity() instanceof Sugar resource)) {
+            } else if (gridCell.entity() instanceof Sugar resource) {
                 setFormattedIntegerValue(currentAmountLabel, resource.currentAmount());
-            } else {
-                clearValues(currentAmountLabel);
             }
-        } else {
-            updateSelectedCellBasicLabels(null);
-            clearValues(currentEnergyLabel, currentAmountLabel);
         }
     }
 
@@ -86,7 +79,7 @@ public final class SugarObservationView
                         currentAmountLabel
                 }
         );
-        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

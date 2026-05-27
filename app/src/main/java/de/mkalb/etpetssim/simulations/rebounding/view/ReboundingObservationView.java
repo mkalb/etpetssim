@@ -15,8 +15,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 
 public final class ReboundingObservationView
-        extends
-        AbstractObservationView<ReboundingStatistics, DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics>> {
+        extends AbstractObservationView<
+        ReboundingEntity,
+        ReboundingStatistics,
+        DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics>> {
 
     private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
     private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
@@ -30,23 +32,18 @@ public final class ReboundingObservationView
                                      GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
-        viewModel.selectedGridCellProperty().addListener((_, _, newCell) ->
-                updateSelectedGridCell(newCell));
+        registerSelectedCellListener(viewModel.selectedGridCellProperty());
     }
 
-    private void updateSelectedGridCell(@Nullable GridCell<ReboundingEntity> gridCell) {
-        updateSelectedCellSectionVisibility(gridCell != null);
+    @Override
+    protected void onSelectedCellChanged(@Nullable GridCell<ReboundingEntity> gridCell) {
+        super.onSelectedCellChanged(gridCell);
+        clearValues(directionLabel);
 
         if (gridCell != null) {
-            updateSelectedCellBasicLabels(gridCell);
             if (gridCell.entity() instanceof Rebounder entity) {
                 directionLabel.setText(entity.getDirection().arrow());
-            } else {
-                clearValues(directionLabel);
             }
-        } else {
-            updateSelectedCellBasicLabels(null);
-            clearValues(directionLabel);
         }
     }
 
@@ -75,7 +72,7 @@ public final class ReboundingObservationView
                         directionLabel
                 }
         );
-        updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
+        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

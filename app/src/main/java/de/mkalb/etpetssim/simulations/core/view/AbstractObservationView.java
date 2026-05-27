@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -21,7 +22,10 @@ import java.util.*;
 /**
  * Base class for simulation observation views.
  */
-public abstract class AbstractObservationView<STA extends SimulationStatistics, VM extends SimulationObservationViewModel<STA>>
+public abstract class AbstractObservationView<
+        ENT extends GridEntity,
+        STA extends SimulationStatistics,
+        VM extends SimulationObservationViewModel<STA>>
         implements SimulationObservationView {
 
     protected final VM viewModel;
@@ -125,6 +129,7 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
      *
      * @param statistics current statistics snapshot
      */
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     protected final void updateStatusSectionLabel(Optional<STA> statistics) {
         if (statistics.isPresent()) {
             setFormattedIntegerValue(stepCountLabel, statistics.get().getStepCount());
@@ -211,6 +216,31 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         }
     }
 
+    /**
+     * Registers a listener on the provided selected-cell property that calls
+     * {@link #onSelectedCellChanged(GridCell)} whenever the selection changes.
+     * Call this in the subclass constructor to wire up the standard cell-selection behavior.
+     *
+     * @param property selected-cell property to listen on
+     */
+    protected final void registerSelectedCellListener(ReadOnlyObjectProperty<@Nullable GridCell<ENT>> property) {
+        property.addListener((_, _, newCell) -> onSelectedCellChanged(newCell));
+    }
+
+    /**
+     * Called whenever the selected grid cell changes.
+     * <p>
+     * The default implementation updates the selected cell section visibility
+     * and the standard coordinate and cell type labels.
+     * Override to add simulation-specific selected cell behavior.
+     *
+     * @param gridCell the newly selected grid cell, or {@code null} if no cell is selected
+     */
+    protected void onSelectedCellChanged(@Nullable GridCell<ENT> gridCell) {
+        updateSelectedCellSectionVisibility(gridCell != null);
+        updateSelectedCellBasicLabels(gridCell);
+    }
+
     protected abstract void updateObservationLabels();
 
     /**
@@ -287,7 +317,7 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
      *
      * @param gridCell the currently selected grid cell, or null if no cell is selected
      */
-    protected final void updateSelectedCellBasicLabels(@Nullable GridCell<?> gridCell) {
+    protected final void updateSelectedCellBasicLabels(@Nullable GridCell<ENT> gridCell) {
         if (gridCell != null) {
             selectedCellCoordinateLabel.setText(gridCell.coordinate().toDisplayString());
             selectedCellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
