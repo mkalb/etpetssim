@@ -19,10 +19,9 @@ public final class ReboundingObservationView
         extends
         AbstractObservationView<ReboundingStatistics, DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics>> {
 
-    private static final String REBOUNDING_OBSERVATION_TOTAL_CELLS = "rebounding.observation.cells.total";
-    private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
-    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
     private static final String REBOUNDING_OBSERVATION_DIRECTION = "rebounding.observation.direction";
+    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
+    private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -77,15 +76,7 @@ public final class ReboundingObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        REBOUNDING_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -128,12 +119,12 @@ public final class ReboundingObservationView
         if (statistics.isPresent()) {
             ReboundingStatistics current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
             setFormattedIntegerValue(wallCellsLabel, current.getWallCells());
             setFormattedIntegerValue(movingEntityCellsLabel, current.getMovingEntityCells());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, wallCellsLabel, movingEntityCellsLabel);
+            setUnknownValues(stepCountLabel, wallCellsLabel, movingEntityCellsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

@@ -18,16 +18,15 @@ import java.util.*;
 public final class SnakeObservationView
         extends AbstractObservationView<SnakeStatistics, DefaultObservationViewModel<SnakeEntity, SnakeStatistics>> {
 
-    private static final String SNAKE_OBSERVATION_TOTAL_CELLS = "snake.observation.cells.total";
-    private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
-    private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
     private static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
-    private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
-    private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
+    private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
     private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
-    private static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
+    private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
     private static final String SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT = "snake.observation.snake.maxsegmentcount";
     private static final String SNAKE_OBSERVATION_SNAKE_POINTS = "snake.observation.snake.points";
+    private static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
+    private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
+    private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -95,15 +94,7 @@ public final class SnakeObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        SNAKE_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -158,13 +149,13 @@ public final class SnakeObservationView
         if (statistics.isPresent()) {
             SnakeStatistics current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
             setFormattedIntegerValue(snakeHeadCells, current.getSnakeHeadCells());
             setFormattedIntegerValue(foodCellsLabel, current.getFoodCells());
             setFormattedIntegerValue(deathsLabel, current.getDeaths());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, snakeHeadCells, foodCellsLabel, deathsLabel);
+            setUnknownValues(stepCountLabel, snakeHeadCells, foodCellsLabel, deathsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

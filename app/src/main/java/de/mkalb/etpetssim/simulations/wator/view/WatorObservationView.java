@@ -18,14 +18,13 @@ import java.util.*;
 public final class WatorObservationView
         extends AbstractObservationView<WatorStatistics, DefaultObservationViewModel<WatorEntity, WatorStatistics>> {
 
-    private static final String WATOR_OBSERVATION_TOTAL_CELLS = "wator.observation.cells.total";
+    private static final String WATOR_OBSERVATION_AGE = "wator.observation.age";
+    private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     private static final String WATOR_OBSERVATION_MAX_FISH_CELLS = "wator.observation.cells.maxfish";
     private static final String WATOR_OBSERVATION_MAX_SHARK_CELLS = "wator.observation.cells.maxshark";
     private static final String WATOR_OBSERVATION_MIN_FISH_CELLS = "wator.observation.cells.minfish";
     private static final String WATOR_OBSERVATION_MIN_SHARK_CELLS = "wator.observation.cells.minshark";
-    private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
-    private static final String WATOR_OBSERVATION_AGE = "wator.observation.age";
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
     private final Label maxFishCellsLabel = new Label();
@@ -86,15 +85,7 @@ public final class WatorObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        WATOR_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -153,7 +144,6 @@ public final class WatorObservationView
         if (statistics.isPresent()) {
             WatorStatistics current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
             setFormattedIntegerValue(maxFishCellsLabel, current.getMaxFishCells());
             setFormattedIntegerValue(maxSharkCellsLabel, current.getMaxSharkCells());
             setFormattedIntegerValue(minFishCellsLabel, current.getMinFishCells());
@@ -161,9 +151,10 @@ public final class WatorObservationView
             setFormattedIntegerValue(fishCellsLabel, current.getFishCells());
             setFormattedIntegerValue(sharkCellsLabel, current.getSharkCells());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, maxFishCellsLabel, maxSharkCellsLabel,
+            setUnknownValues(stepCountLabel, maxFishCellsLabel, maxSharkCellsLabel,
                     minFishCellsLabel, minSharkCellsLabel, fishCellsLabel, sharkCellsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
 
         updateSelectedGridCell(viewModel.selectedGridCellProperty().get());
     }

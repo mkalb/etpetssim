@@ -14,11 +14,10 @@ import java.util.*;
 public final class ForestObservationView
         extends AbstractObservationView<ForestStatistics, DefaultObservationViewModel<ForestEntity, ForestStatistics>> {
 
-    private static final String FOREST_OBSERVATION_TOTAL_CELLS = "forest.observation.cells.total";
-    private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
     private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
-    private static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
     private static final String FOREST_OBSERVATION_MAX_BURNING_CELLS = "forest.observation.cells.maxburning";
+    private static final String FOREST_OBSERVATION_MAX_TREE_CELLS = "forest.observation.cells.maxtree";
+    private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -45,15 +44,7 @@ public final class ForestObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        FOREST_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -92,14 +83,14 @@ public final class ForestObservationView
         if (statistics.isPresent()) {
             ForestStatistics current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
             setFormattedIntegerValue(treeCellsLabel, current.getTreeCells());
             setFormattedIntegerValue(burningCellsLabel, current.getBurningCells());
             setFormattedIntegerValue(maxTreeCellsLabel, current.getMaxTreeCells());
             setFormattedIntegerValue(maxBurningCellsLabel, current.getMaxBurningCells());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
+            setUnknownValues(stepCountLabel, treeCellsLabel, burningCellsLabel, maxTreeCellsLabel, maxBurningCellsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

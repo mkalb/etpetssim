@@ -14,11 +14,10 @@ import java.util.*;
 public final class ConwayObservationView
         extends AbstractObservationView<ConwayStatistics, DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
 
-    private static final String CONWAY_OBSERVATION_TOTAL_CELLS = "conway.observation.cells.total";
-    private static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
     private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
-    private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
     private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
+    private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
+    private static final String CONWAY_OBSERVATION_MAX_ALIVE_CELLS = "conway.observation.cells.maxalive";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -45,15 +44,7 @@ public final class ConwayObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        CONWAY_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -92,14 +83,14 @@ public final class ConwayObservationView
         if (statistics.isPresent()) {
             ConwayStatistics current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
-            setFormattedIntegerValue(maxAliveCellsLabel, current.getMaxAliveCells());
             setFormattedIntegerValue(aliveCellsLabel, current.getAliveCells());
             setFormattedIntegerValue(deadCellsLabel, current.getDeadCells());
             setFormattedIntegerValue(changedCellsLabel, current.getChangedCells());
+            setFormattedIntegerValue(maxAliveCellsLabel, current.getMaxAliveCells());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, maxAliveCellsLabel, aliveCellsLabel, deadCellsLabel, changedCellsLabel);
+            setUnknownValues(stepCountLabel, aliveCellsLabel, deadCellsLabel, changedCellsLabel, maxAliveCellsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

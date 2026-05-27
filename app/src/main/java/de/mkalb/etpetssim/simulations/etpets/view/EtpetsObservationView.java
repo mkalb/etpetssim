@@ -14,10 +14,9 @@ import java.util.*;
 public final class EtpetsObservationView
         extends AbstractObservationView<EtpetsStatistics, DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>> {
 
-    private static final String ETPETS_OBSERVATION_TOTAL_CELLS = "etpets.observation.cells.total";
     private static final String ETPETS_OBSERVATION_ACTIVE_PETS = "etpets.observation.cells.pets";
-    private static final String ETPETS_OBSERVATION_EGGS = "etpets.observation.cells.eggs";
     private static final String ETPETS_OBSERVATION_DEAD_PETS = "etpets.observation.pets.dead";
+    private static final String ETPETS_OBSERVATION_EGGS = "etpets.observation.cells.eggs";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -43,15 +42,7 @@ public final class EtpetsObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        ETPETS_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -80,13 +71,13 @@ public final class EtpetsObservationView
         if (statistics.isPresent()) {
             var current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
             setFormattedIntegerValue(activePetsLabel, current.getActivePetCount());
             setFormattedIntegerValue(eggsLabel, current.getEggCount());
             setFormattedIntegerValue(deadPetsLabel, current.getCumulativeDeadPetCount());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, activePetsLabel, eggsLabel, deadPetsLabel);
+            setUnknownValues(stepCountLabel, activePetsLabel, eggsLabel, deadPetsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

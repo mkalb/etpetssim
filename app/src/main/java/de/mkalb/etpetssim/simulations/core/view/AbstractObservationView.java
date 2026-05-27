@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
 
 import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * Base class for simulation observation views.
@@ -54,6 +55,41 @@ public abstract class AbstractObservationView<STA extends SimulationStatistics, 
         }
 
         return content;
+    }
+
+    /**
+     * Creates a standard grid section displaying the total cell count.
+     * This section displays the total number of cells in the simulation grid.
+     * The provided label will be managed by the caller and updated in {@link #updateObservationLabels()}.
+     *
+     * @param totalCellsLabel the label that will display the total cell count
+     * @return a VBox region containing the grid section with the provided label
+     */
+    protected final VBox createGridSection(Label totalCellsLabel) {
+        return createObservationSection(
+                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
+                new String[]{
+                        AppLocalizationKeys.OBSERVATION_GRID_TOTAL_CELLS
+                },
+                new Label[]{
+                        totalCellsLabel
+                }
+        );
+    }
+
+    /**
+     * Updates the total cells label with the current statistics value.
+     * Call this from {@link #updateObservationLabels()} to update the grid section.
+     *
+     * @param totalCellsLabel the label to update
+     */
+    protected final void updateGridSectionLabel(Label totalCellsLabel) {
+        Optional<STA> statistics = viewModel.getStatistics();
+        if (statistics.isPresent()) {
+            setFormattedIntegerValue(totalCellsLabel, statistics.get().getTotalCells());
+        } else {
+            setUnknownValues(totalCellsLabel);
+        }
     }
 
     protected final VBox createObservationSection(String titleKey, String[] nameKeys, Label[] valueLabels) {

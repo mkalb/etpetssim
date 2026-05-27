@@ -15,7 +15,6 @@ public final class LangtonObservationView
         extends
         AbstractObservationView<LangtonStatistics, DefaultObservationViewModel<LangtonEntity, LangtonStatistics>> {
 
-    private static final String LANGTON_OBSERVATION_TOTAL_CELLS = "langton.observation.cells.total";
     private static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
     private static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
 
@@ -42,15 +41,7 @@ public final class LangtonObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        LANGTON_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -77,12 +68,12 @@ public final class LangtonObservationView
         if (statistics.isPresent()) {
             LangtonStatistics current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
             setFormattedIntegerValue(antCellsLabel, current.getAntCells());
             setFormattedIntegerValue(visitedCellsLabel, current.getVisitedCells());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, antCellsLabel, visitedCellsLabel);
+            setUnknownValues(stepCountLabel, antCellsLabel, visitedCellsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
     }
 
 }

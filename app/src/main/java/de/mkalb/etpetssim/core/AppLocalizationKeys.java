@@ -69,6 +69,7 @@ public final class AppLocalizationKeys {
     public static final String HEADER_STARTSCREEN_LINK = "header.startscreen.link";
     public static final String OBSERVATION_CELL_TYPE = "observation.celltype";
     public static final String OBSERVATION_COORDINATE = "observation.coordinate";
+    public static final String OBSERVATION_GRID_TOTAL_CELLS = "observation.grid.totalcells";
     public static final String OBSERVATION_SECTION_CURRENT = "observation.section.current";
     public static final String OBSERVATION_SECTION_GRID = "observation.section.grid";
     public static final String OBSERVATION_SECTION_SELECTED_CELL = "observation.section.selectedcell";

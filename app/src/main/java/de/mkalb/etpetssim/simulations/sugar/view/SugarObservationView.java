@@ -20,11 +20,10 @@ public final class SugarObservationView
         extends
         AbstractObservationView<SugarStatistics, DefaultObservationViewModel<SugarEntity, SugarStatistics>> {
 
-    private static final String SUGAR_OBSERVATION_TOTAL_CELLS = "sugar.observation.cells.total";
-    private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
     private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
-    private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
     private static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";
+    private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
+    private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
 
     private final Label stepCountLabel = new Label();
     private final Label totalCellsLabel = new Label();
@@ -88,15 +87,7 @@ public final class SugarObservationView
                         stepCountLabel
                 }
         );
-        Region gridSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_GRID,
-                new String[]{
-                        SUGAR_OBSERVATION_TOTAL_CELLS
-                },
-                new Label[]{
-                        totalCellsLabel
-                }
-        );
+        Region gridSection = createGridSection(totalCellsLabel);
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
@@ -141,12 +132,12 @@ public final class SugarObservationView
         if (statistics.isPresent()) {
             SugarStatistics current = statistics.get();
             setFormattedIntegerValue(stepCountLabel, current.getStepCount());
-            setFormattedIntegerValue(totalCellsLabel, current.getTotalCells());
             setFormattedIntegerValue(resourceCellsLabel, current.getResourceCells());
             setFormattedIntegerValue(agentCellsLabel, current.getAgentCells());
         } else {
-            setUnknownValues(stepCountLabel, totalCellsLabel, resourceCellsLabel, agentCellsLabel);
+            setUnknownValues(stepCountLabel, resourceCellsLabel, agentCellsLabel);
         }
+        updateGridSectionLabel(totalCellsLabel);
     }
 
 }
