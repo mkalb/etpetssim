@@ -96,6 +96,9 @@ public final class DefaultMainViewModel<
                                 @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
+        // Keep a concrete-typed reference because the inherited `observationViewModel`
+        // is declared as `SimulationObservationViewModel` and does not expose
+        // `selectedGridCellProperty()` used during shutdown/unbinding.
         observationStateViewModel = observationViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
         timer = new SimulationTimer(this::runTimerStep);
