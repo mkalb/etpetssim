@@ -34,6 +34,7 @@ public abstract class AbstractObservationView<
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
+    private @Nullable GridCell<ENT> selectedGridCell;
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
 
@@ -216,7 +217,11 @@ public abstract class AbstractObservationView<
      * @param property selected-cell property to listen on
      */
     protected final void registerSelectedCellListener(ReadOnlyObjectProperty<@Nullable GridCell<ENT>> property) {
-        property.addListener((_, _, newCell) -> onSelectedCellChanged(newCell));
+        selectedGridCell = property.get();
+        property.addListener((_, _, newCell) -> {
+            selectedGridCell = newCell;
+            onSelectedCellChanged(newCell);
+        });
     }
 
     /**
@@ -244,8 +249,6 @@ public abstract class AbstractObservationView<
      * @return a VBox region containing the selected cell section with the standard labels
      */
     protected final VBox createSelectedCellSection() {
-        clearValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
-
         selectedCellSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 new String[]{
@@ -257,6 +260,7 @@ public abstract class AbstractObservationView<
                         selectedCellTypeLabel
                 }
         );
+        onSelectedCellChanged(selectedGridCell);
         return selectedCellSection;
     }
 
@@ -270,8 +274,6 @@ public abstract class AbstractObservationView<
      * @return a VBox region containing the extended selected cell section
      */
     protected final VBox createExtendedSelectedCellSection(String[] extraNameKeys, Label[] extraValueLabels) {
-        clearValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
-
         String[] allNameKeys = new String[2 + extraNameKeys.length];
         allNameKeys[0] = AppLocalizationKeys.OBSERVATION_COORDINATE;
         allNameKeys[1] = AppLocalizationKeys.OBSERVATION_CELL_TYPE;
@@ -287,6 +289,7 @@ public abstract class AbstractObservationView<
                 allNameKeys,
                 allValueLabels
         );
+        onSelectedCellChanged(selectedGridCell);
         return selectedCellSection;
     }
 
