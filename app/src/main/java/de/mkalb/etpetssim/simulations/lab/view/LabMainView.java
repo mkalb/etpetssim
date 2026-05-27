@@ -78,6 +78,7 @@ public final class LabMainView
 
         if (viewModel.getLastClickedCoordinate().filter(c -> c.equals(mouseCoordinate)).isEmpty()) {
             viewModel.updateClickedCoordinateProperties(mouseCoordinate);
+            viewModel.updateSelectedGridCell(mouseCoordinate);
             painter.drawCellOuterCircle(mouseCoordinate, TRANSLUCENT_WHITE, MOUSE_CLICK_COLOR, MOUSE_CLICK_LINE_WIDTH, StrokeType.OUTSIDE);
 
             GridStructure gridStructure = painter.gridStructure();
@@ -141,6 +142,7 @@ public final class LabMainView
                              });
         } else {
             viewModel.resetClickedCoordinateProperties();
+            viewModel.resetSelectedGridCell();
         }
     }
 
@@ -187,6 +189,7 @@ public final class LabMainView
         overlayCanvas.setOnMouseMoved(null);
 
         viewModel.resetClickedCoordinateProperties();
+        viewModel.resetSelectedGridCell();
 
         if (basePainter != null) {
             basePainter.clearCanvasBackground();
@@ -197,6 +200,7 @@ public final class LabMainView
 
     private void resetCanvasAndPainter() {
         viewModel.resetClickedCoordinateProperties();
+        viewModel.resetSelectedGridCell();
 
         double cellEdgeLength = viewModel.getCellEdgeLength();
         GridStructure structure = viewModel.getStructure();
@@ -232,6 +236,8 @@ public final class LabMainView
                          drawCoordinateAtBaseCanvas(coordinate, colorModeGrayscale, renderingModeCircle,
                                  strokeColor, SHAPE_LINE_WIDTH,
                                  textColor));
+
+        observationView.initializeForDraw();
     }
 
     private void drawBaseCanvasBackground(boolean colorModeBW) {

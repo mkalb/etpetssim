@@ -1,7 +1,9 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.model.SimulationState;
@@ -19,6 +21,8 @@ import java.util.*;
 public final class LabMainViewModel
         extends AbstractMainViewModel<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
+    private final DefaultObservationViewModel<LabEntity, LabStatistics> observationStateViewModel;
+
     private @Nullable LabSimulationManager simulationManager;
 
     private Runnable configChangedListener = () -> {};
@@ -31,6 +35,7 @@ public final class LabMainViewModel
                             LabControlViewModel controlViewModel,
                             DefaultObservationViewModel<LabEntity, LabStatistics> observationViewModel) {
         super(simulationState, configViewModel, observationViewModel);
+        observationStateViewModel = observationViewModel;
 
         configViewModel.configChangedRequestedProperty().addListener((_, _, newVal) -> {
             if (newVal) {
@@ -132,6 +137,7 @@ public final class LabMainViewModel
         }
 
         simulationManager = new LabSimulationManager(config);
+        observationStateViewModel.setStatistics(simulationManager.statistics());
 
         // Log information
         AppLogger.info("Structure:       " + simulationManager.structure().toDisplayString());
@@ -150,11 +156,25 @@ public final class LabMainViewModel
         drawTestRequestedListener.run();
     }
 
+    public void updateSelectedGridCell(@Nullable GridCoordinate coordinate) {
+        if ((simulationManager == null) || (coordinate == null)) {
+            observationStateViewModel.selectedGridCellProperty().set(null);
+            return;
+        }
+        LabEntity entity = simulationManager.currentModel().getEntity(coordinate);
+        observationStateViewModel.selectedGridCellProperty().set(new GridCell<>(coordinate, entity));
+    }
+
+    public void resetSelectedGridCell() {
+        observationStateViewModel.selectedGridCellProperty().set(null);
+    }
+
     private void reset() {
         // Reset the simulation manager if it exists
         simulationManager = null;
         // Clear last clicked coordinate
         resetClickedCoordinateProperties();
+        resetSelectedGridCell();
     }
 
 }

@@ -45,18 +45,7 @@ public abstract class AbstractObservationView<
     @Override
     public abstract Region buildObservationRegion();
 
-    protected final ScrollPane createObservationScrollPane(Region region) {
-        ScrollPane observationScrollPane = new ScrollPane(region);
-        observationScrollPane.getStyleClass().add(FXStyleClasses.OBSERVATION_SCROLLPANE);
-
-        return observationScrollPane;
-    }
-
     protected final ScrollPane createObservationScrollPane(Region... regions) {
-        return createObservationScrollPane(createObservationContent(regions));
-    }
-
-    protected final VBox createObservationContent(Region... regions) {
         VBox content = new VBox();
         content.getStyleClass().add(FXStyleClasses.OBSERVATION_CONTENT_VBOX);
 
@@ -64,7 +53,10 @@ public abstract class AbstractObservationView<
             content.getChildren().add(region);
         }
 
-        return content;
+        ScrollPane observationScrollPane = new ScrollPane(content);
+        observationScrollPane.getStyleClass().add(FXStyleClasses.OBSERVATION_SCROLLPANE);
+
+        return observationScrollPane;
     }
 
     /**
