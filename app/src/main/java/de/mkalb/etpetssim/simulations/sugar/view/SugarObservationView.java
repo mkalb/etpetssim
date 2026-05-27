@@ -31,6 +31,7 @@ public final class SugarObservationView
     private final Label resourceCellsLabel = new Label();
     private final Label agentCellsLabel = new Label();
     private final Label coordinateLabel = new Label();
+    private final Label cellTypeLabel = new Label();
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
     private @Nullable VBox selectedCellSection;
@@ -50,6 +51,7 @@ public final class SugarObservationView
         if ((gridCell != null)
                 && gridCell.entity().isNotEmpty()) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
+            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
             if (gridCell.entity().isAgent() && (gridCell.entity() instanceof Agent agent)) {
                 setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
             } else {
@@ -62,7 +64,7 @@ public final class SugarObservationView
                 clearValues(currentAmountLabel);
             }
         } else {
-            clearValues(coordinateLabel, currentEnergyLabel, currentAmountLabel);
+            clearValues(coordinateLabel, cellTypeLabel, currentEnergyLabel, currentAmountLabel);
         }
     }
 
@@ -110,11 +112,13 @@ public final class SugarObservationView
                 AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 new String[]{
                         AppLocalizationKeys.OBSERVATION_COORDINATE,
+                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
                         SUGAR_OBSERVATION_CURRENT_ENERGY,
                         SUGAR_OBSERVATION_CURRENT_AMOUNT
                 },
                 new Label[]{
                         coordinateLabel,
+                        cellTypeLabel,
                         currentEnergyLabel,
                         currentAmountLabel
                 }

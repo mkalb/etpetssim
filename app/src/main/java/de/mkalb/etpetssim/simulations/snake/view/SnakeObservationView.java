@@ -35,6 +35,7 @@ public final class SnakeObservationView
     private final Label foodCellsLabel = new Label();
     private final Label deathsLabel = new Label();
     private final Label coordinateLabel = new Label();
+    private final Label cellTypeLabel = new Label();
     private final Label snakeIdLabel = new Label();
     private final Label snakeStrategyLabel = new Label();
     private final Label snakeDeathsLabel = new Label();
@@ -52,13 +53,11 @@ public final class SnakeObservationView
     }
 
     private void updateSelectedGridCell(@Nullable GridCell<SnakeEntity> gridCell) {
-        Optional<SnakeStatistics> statistics = viewModel.getStatistics();
         updateSelectedCellSectionVisibility(gridCell != null);
 
-        if (statistics.isPresent()
-                && (gridCell != null)
-        ) {
+        if (gridCell != null) {
             coordinateLabel.setText(gridCell.coordinate().toDisplayString());
+            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
             if (gridCell.entity() instanceof SnakeHead snakeHead) {
                 snakeIdLabel.setText("#" + snakeHead.id());
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
@@ -71,7 +70,7 @@ public final class SnakeObservationView
                         snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
             }
         } else {
-            clearValues(coordinateLabel, snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
+            clearValues(coordinateLabel, cellTypeLabel, snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
                     snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
         }
     }
@@ -122,6 +121,7 @@ public final class SnakeObservationView
                 AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 new String[]{
                         AppLocalizationKeys.OBSERVATION_COORDINATE,
+                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
                         SNAKE_OBSERVATION_SNAKE_ID,
                         SNAKE_OBSERVATION_SNAKE_STRATEGY,
                         SNAKE_OBSERVATION_SNAKE_DEATHS,
@@ -131,6 +131,7 @@ public final class SnakeObservationView
                 },
                 new Label[]{
                         coordinateLabel,
+                        cellTypeLabel,
                         snakeIdLabel,
                         snakeStrategyLabel,
                         snakeDeathsLabel,

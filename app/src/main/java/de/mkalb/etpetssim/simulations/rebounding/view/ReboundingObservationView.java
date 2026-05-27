@@ -28,6 +28,8 @@ public final class ReboundingObservationView
     private final Label totalCellsLabel = new Label();
     private final Label wallCellsLabel = new Label();
     private final Label movingEntityCellsLabel = new Label();
+    private final Label coordinateLabel = new Label();
+    private final Label cellTypeLabel = new Label();
     private final Label directionLabel = new Label();
     private @Nullable VBox selectedCellSection;
 
@@ -42,10 +44,16 @@ public final class ReboundingObservationView
     private void updateSelectedGridCell(@Nullable GridCell<ReboundingEntity> gridCell) {
         updateSelectedCellSectionVisibility(gridCell != null);
 
-        if ((gridCell != null) && (gridCell.entity() instanceof Rebounder entity)) {
-            directionLabel.setText(entity.getDirection().arrow());
+        if (gridCell != null) {
+            coordinateLabel.setText(gridCell.coordinate().toDisplayString());
+            cellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
+            if (gridCell.entity() instanceof Rebounder entity) {
+                directionLabel.setText(entity.getDirection().arrow());
+            } else {
+                clearValues(directionLabel);
+            }
         } else {
-            clearValues(directionLabel);
+            clearValues(coordinateLabel, cellTypeLabel, directionLabel);
         }
     }
 
@@ -92,9 +100,13 @@ public final class ReboundingObservationView
         selectedCellSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_SELECTED_CELL,
                 new String[]{
+                        AppLocalizationKeys.OBSERVATION_COORDINATE,
+                        AppLocalizationKeys.OBSERVATION_CELL_TYPE,
                         REBOUNDING_OBSERVATION_DIRECTION
                 },
                 new Label[]{
+                        coordinateLabel,
+                        cellTypeLabel,
                         directionLabel
                 }
         );
