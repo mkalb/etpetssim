@@ -17,6 +17,8 @@ import java.util.*;
 public final class LabSimulationManager
         implements SimulationManager<LabEntity, WritableGridModel<LabEntity>, LabConfig, LabStatistics> {
 
+    private static final int INITIAL_HIGHLIGHTED_COUNT = 3;
+
     private final LabConfig config;
 
     private final GridStructure structure;
@@ -30,7 +32,7 @@ public final class LabSimulationManager
         statistics = new LabStatistics(structure);
 
         model = new SparseGridModel<>(structure, LabEntity.NORMAL);
-        GridInitializers.placeRandomCount(3,
+        GridInitializers.placeRandomCount(INITIAL_HIGHLIGHTED_COUNT,
                                 () -> LabEntity.HIGHLIGHTED,
                                 e -> e == LabEntity.NORMAL,
                                 new Random(config.seed()))

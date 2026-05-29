@@ -14,6 +14,8 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
+import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
+import de.mkalb.etpetssim.simulations.lab.shared.LabNeighborhoodHighlights;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
@@ -128,7 +130,7 @@ public final class LabMainView
         viewModel.resetSelectedGridCell();
     }
 
-    private void drawNeighborhoodHighlights(LabMainViewModel.NeighborhoodHighlights highlights,
+    private void drawNeighborhoodHighlights(LabNeighborhoodHighlights highlights,
                                             FXGridCanvasPainter painter) {
         drawRing(highlights.ringCellsByRadius(), OUTER_HIGHLIGHT_RING_RADIUS, Color.GOLD, painter);
         drawRing(highlights.ringCellsByRadius(), INNER_HIGHLIGHT_RING_RADIUS, Color.TOMATO, painter);
@@ -312,7 +314,7 @@ public final class LabMainView
 
         initializeCanvasAndPainters();
 
-        boolean colorModeGrayscale = (config.colorMode() == LabConfig.ColorMode.GRAYSCALE);
+        boolean colorModeGrayscale = (config.colorMode() == LabColorMode.GRAYSCALE);
         boolean renderingModeCircle = (config.cellDisplayMode() == CellDisplayMode.CIRCLE) || (config.cellDisplayMode() == CellDisplayMode.CIRCLE_BORDERED);
         Color textColor = colorModeGrayscale ? TEXT_COLOR_GRAYSCALE : TEXT_COLOR;
         Color strokeColor = config.cellDisplayMode().hasBorder() ? STROKE_COLOR : null;

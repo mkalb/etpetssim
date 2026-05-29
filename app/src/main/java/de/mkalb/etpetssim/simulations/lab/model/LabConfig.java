@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
 
@@ -30,7 +31,7 @@ public record LabConfig(
         // Layout
         double cellEdgeLength,
         CellDisplayMode cellDisplayMode,
-        ColorMode colorMode,
+        LabColorMode colorMode,
         // Initialization
         long seed,
         // Rules
@@ -48,10 +49,6 @@ public record LabConfig(
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
                 && isAllowedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_VALUES)
                 && isAllowedSelection(colorMode, COLOR_MODE_VALUES);
-    }
-
-    public enum ColorMode {
-        COLOR, GRAYSCALE
     }
 
 }

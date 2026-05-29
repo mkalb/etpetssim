@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +14,7 @@ final class LabConfigTest {
     private static LabConfig createConfig(CellShape cellShape,
                                           GridEdgeBehavior gridEdgeBehavior,
                                           CellDisplayMode cellDisplayMode,
-                                          LabConfig.ColorMode colorMode,
+                                          LabColorMode colorMode,
                                           NeighborhoodMode neighborhoodMode) {
         return new LabConfig(
                 cellShape,
@@ -46,7 +47,7 @@ final class LabConfigTest {
                 CellShape.SQUARE,
                 GridEdgeBehavior.BLOCK_X_WRAP_Y,
                 CellDisplayMode.CIRCLE,
-                LabConfig.ColorMode.GRAYSCALE,
+                LabColorMode.GRAYSCALE,
                 NeighborhoodMode.EDGES_ONLY);
 
         assertTrue(config.isValid());

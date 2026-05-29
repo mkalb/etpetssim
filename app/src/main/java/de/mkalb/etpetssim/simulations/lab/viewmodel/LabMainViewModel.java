@@ -14,6 +14,7 @@ import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
 import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
+import de.mkalb.etpetssim.simulations.lab.shared.LabNeighborhoodHighlights;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import org.jspecify.annotations.Nullable;
@@ -25,14 +26,17 @@ public final class LabMainViewModel
 
     private static final String LOG_COMPONENT = "LabMainViewModel";
 
+    private static final int NEIGHBORHOOD_RING_MAX_RADIUS = 5;
+    private static final int NEIGHBORHOOD_COORDINATE_RADIUS = 2;
+
     private final LabConfigViewModel labConfigViewModel;
     private final LabControlViewModel labControlViewModel;
     private final DefaultObservationViewModel<LabEntity, LabStatistics> labObservationViewModel;
 
     private final ChangeListener<Boolean> configChangedRequestedListener;
-    private final ChangeListener<Boolean> drawRequestedListenerProperty;
-    private final ChangeListener<Boolean> drawModelRequestedListenerProperty;
-    private final ChangeListener<Boolean> drawTestRequestedListenerProperty;
+    private final ChangeListener<Boolean> drawRequestedChangeListener;
+    private final ChangeListener<Boolean> drawModelRequestedChangeListener;
+    private final ChangeListener<Boolean> drawTestRequestedChangeListener;
 
     private @Nullable LabSimulationManager simulationManager;
 
@@ -59,29 +63,29 @@ public final class LabMainViewModel
         };
         labConfigViewModel.configChangedRequestedProperty().addListener(configChangedRequestedListener);
 
-        drawRequestedListenerProperty = (_, _, newVal) -> {
+        drawRequestedChangeListener = (_, _, newVal) -> {
             if (newVal) {
                 handleDrawRequested();
                 labControlViewModel.drawRequestedProperty().set(false); // reset
             }
         };
-        labControlViewModel.drawRequestedProperty().addListener(drawRequestedListenerProperty);
+        labControlViewModel.drawRequestedProperty().addListener(drawRequestedChangeListener);
 
-        drawModelRequestedListenerProperty = (_, _, newVal) -> {
+        drawModelRequestedChangeListener = (_, _, newVal) -> {
             if (newVal) {
                 handleDrawModelRequested();
                 labControlViewModel.drawModelRequestedProperty().set(false); // reset
             }
         };
-        labControlViewModel.drawModelRequestedProperty().addListener(drawModelRequestedListenerProperty);
+        labControlViewModel.drawModelRequestedProperty().addListener(drawModelRequestedChangeListener);
 
-        drawTestRequestedListenerProperty = (_, _, newVal) -> {
+        drawTestRequestedChangeListener = (_, _, newVal) -> {
             if (newVal) {
                 handleDrawTestRequested();
                 labControlViewModel.drawTestRequestedProperty().set(false); // reset
             }
         };
-        labControlViewModel.drawTestRequestedProperty().addListener(drawTestRequestedListenerProperty);
+        labControlViewModel.drawTestRequestedProperty().addListener(drawTestRequestedChangeListener);
     }
 
     @Override
@@ -90,9 +94,9 @@ public final class LabMainViewModel
         setSimulationState(SimulationState.SHUTTING_DOWN);
 
         labConfigViewModel.configChangedRequestedProperty().removeListener(configChangedRequestedListener);
-        labControlViewModel.drawRequestedProperty().removeListener(drawRequestedListenerProperty);
-        labControlViewModel.drawModelRequestedProperty().removeListener(drawModelRequestedListenerProperty);
-        labControlViewModel.drawTestRequestedProperty().removeListener(drawTestRequestedListenerProperty);
+        labControlViewModel.drawRequestedProperty().removeListener(drawRequestedChangeListener);
+        labControlViewModel.drawModelRequestedProperty().removeListener(drawModelRequestedChangeListener);
+        labControlViewModel.drawTestRequestedProperty().removeListener(drawTestRequestedChangeListener);
 
         observationViewModel.lastClickedCoordinateProperty().unbind();
 
@@ -187,7 +191,7 @@ public final class LabMainViewModel
         drawTestRequestedListener.run();
     }
 
-    public Optional<NeighborhoodHighlights> computeNeighborhoodHighlights(GridCoordinate center, GridStructure gridStructure) {
+    public Optional<LabNeighborhoodHighlights> computeNeighborhoodHighlights(GridCoordinate center, GridStructure gridStructure) {
         if (simulationManager == null) {
             return Optional.empty();
         }
@@ -199,14 +203,14 @@ public final class LabMainViewModel
                 CellNeighborhoods.cellsByRadiusRings(center,
                         neighborhoodMode,
                         gridStructure,
-                        5,
+                        NEIGHBORHOOD_RING_MAX_RADIUS,
                         coordinate -> new GridCell<>(coordinate, model.getEntity(coordinate)));
 
         List<GridCoordinate> validNeighborCoordinates = CellNeighborhoods.coordinatesOfNeighbors(
                                                                                  center,
                                                                                  neighborhoodMode,
                                                                                  gridStructure.cellShape(),
-                                                                                 2)
+                                                                                 NEIGHBORHOOD_COORDINATE_RADIUS)
                                                                          .stream()
                                                                          .filter(gridStructure::isCoordinateValid)
                                                                          .toList();
@@ -222,7 +226,7 @@ public final class LabMainViewModel
         List<EdgeBehaviorResult> neighborEdgeResults = List.copyOf(
                 CellNeighborhoods.neighborEdgeResults(center, neighborhoodMode, gridStructure));
 
-        return Optional.of(new NeighborhoodHighlights(
+        return Optional.of(new LabNeighborhoodHighlights(
                 ringCellsByRadius,
                 validNeighborCoordinates,
                 validNeighborsWithEdgeBehavior,
@@ -248,30 +252,6 @@ public final class LabMainViewModel
         // Clear last clicked coordinate
         resetClickedCoordinateProperties();
         resetSelectedGridCell();
-    }
-
-    public record NeighborhoodHighlights(
-            SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadius,
-            List<GridCoordinate> validNeighborCoordinates,
-            Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> validNeighborsWithEdgeBehavior,
-            List<EdgeBehaviorResult> neighborEdgeResults) {
-
-        public NeighborhoodHighlights {
-            SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadiusCopy = new TreeMap<>();
-            ringCellsByRadius.forEach((radius, cellsByCoordinate) ->
-                    ringCellsByRadiusCopy.put(radius, Collections.unmodifiableSortedMap(new TreeMap<>(cellsByCoordinate))));
-            ringCellsByRadius = Collections.unmodifiableSortedMap(ringCellsByRadiusCopy);
-
-            validNeighborCoordinates = List.copyOf(validNeighborCoordinates);
-
-            Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> neighborsWithEdgeBehaviorCopy = new LinkedHashMap<>();
-            validNeighborsWithEdgeBehavior.forEach((coordinate, neighborCells) ->
-                    neighborsWithEdgeBehaviorCopy.put(coordinate, List.copyOf(neighborCells)));
-            validNeighborsWithEdgeBehavior = Collections.unmodifiableMap(neighborsWithEdgeBehaviorCopy);
-
-            neighborEdgeResults = List.copyOf(neighborEdgeResults);
-        }
-
     }
 
 }

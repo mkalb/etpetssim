@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.GridSize;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 
 import java.util.*;
 
@@ -39,9 +40,9 @@ public final class LabConstraints {
             CellDisplayMode.SHAPE_BORDERED,
             CellDisplayMode.CIRCLE,
             CellDisplayMode.CIRCLE_BORDERED);
-    public static final LabConfig.ColorMode COLOR_MODE_DEFAULT = LabConfig.ColorMode.COLOR;
-    public static final List<LabConfig.ColorMode> COLOR_MODE_VALUES = List.of(
-            LabConfig.ColorMode.values());
+    public static final LabColorMode COLOR_MODE_DEFAULT = LabColorMode.COLOR;
+    public static final List<LabColorMode> COLOR_MODE_VALUES = List.of(
+            LabColorMode.values());
 
     // Initialization - Seed
     public static final String SEED_INITIAL = "";
