@@ -3,8 +3,8 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import javafx.beans.property.*;
 import org.jspecify.annotations.Nullable;
 

@@ -2,9 +2,9 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.simulations.core.model.SimulationMode;
-import de.mkalb.etpetssim.simulations.core.model.SimulationStartMode;
-import de.mkalb.etpetssim.simulations.core.model.SimulationTerminationCheck;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheck;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -34,8 +34,8 @@ public final class DefaultControlView
         String textResume = AppLocalization.getText(AppLocalizationKeys.CONTROL_RESUME);
         String textCancel = AppLocalization.getText(AppLocalizationKeys.CONTROL_CANCEL);
 
-        Button actionButton = createControlButton(textStart, false);
-        Button cancelButton = createControlButton(textCancel, true);
+        Button actionButton = createControlButton(textStart);
+        Button cancelButton = createControlButton(textCancel);
 
         actionButton.textProperty().bind(
                 Bindings.createStringBinding(() -> {
@@ -174,14 +174,14 @@ public final class DefaultControlView
 
     private void bindControlConfigDisabled(Region region) {
         region.disableProperty().bind(Bindings.createBooleanBinding(
-                () -> viewModel.getSimulationState().isControlConfigDisabled(),
+                viewModel::isControlConfigDisabled,
                 viewModel.simulationStateProperty()
         ));
     }
 
     private void bindCannotStartDisabled(Region region) {
         region.disableProperty().bind(Bindings.createBooleanBinding(
-                () -> viewModel.getSimulationState().cannotStart(),
+                viewModel::cannotStart,
                 viewModel.simulationStateProperty()
         ));
     }

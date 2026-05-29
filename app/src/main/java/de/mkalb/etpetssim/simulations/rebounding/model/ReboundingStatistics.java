@@ -1,11 +1,10 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
 public final class ReboundingStatistics
-        extends AbstractTimedSimulationStatistics {
+        extends BaseTimedSimulationStatistics {
 
     private int wallCells;
     private int movingEntityCells;
@@ -14,11 +13,6 @@ public final class ReboundingStatistics
         super(gridStructure);
         wallCells = 0;
         movingEntityCells = 0;
-    }
-
-    void update(int newStepCount,
-                StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     void updateInitialCells(int wallCellsInitial, int movingEntityCellsInitial) {

@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.conway.view.ConwayConfigView;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayMainView;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayObservationView;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;

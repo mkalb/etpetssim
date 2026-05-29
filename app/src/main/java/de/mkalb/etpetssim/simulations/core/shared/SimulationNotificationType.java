@@ -1,13 +1,10 @@
-package de.mkalb.etpetssim.simulations.core.model;
+package de.mkalb.etpetssim.simulations.core.shared;
 
 /**
  * Notification categories emitted during a simulation lifecycle.
  *
  * <p>Each constant maps to a resource bundle key usable for localized user messages.
  * The string value held by each enum constant is the lookup key.
- *
- * @see de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel
- * @see de.mkalb.etpetssim.simulations.core.view.AbstractMainView
  */
 public enum SimulationNotificationType {
 

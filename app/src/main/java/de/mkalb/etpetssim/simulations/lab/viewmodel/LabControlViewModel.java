@@ -1,20 +1,31 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
-import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractControlViewModel;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationControlViewModel;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
 public final class LabControlViewModel
-        extends AbstractControlViewModel {
+        implements SimulationControlViewModel {
 
+    private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final BooleanProperty drawRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty drawModelRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty drawTestRequested = new SimpleBooleanProperty(false);
 
     public LabControlViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState);
+        this.simulationState = simulationState;
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
+        return simulationState;
+    }
+
+    @Override
+    public SimulationState getSimulationState() {
+        return simulationState.get();
     }
 
     public BooleanProperty drawRequestedProperty() {

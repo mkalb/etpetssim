@@ -1,10 +1,9 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
-public final class EtpetsStatistics extends AbstractTimedSimulationStatistics {
+public final class EtpetsStatistics extends BaseTimedSimulationStatistics {
 
     private int activePetCount;
     private int eggCount;
@@ -15,11 +14,6 @@ public final class EtpetsStatistics extends AbstractTimedSimulationStatistics {
         activePetCount = 0;
         eggCount = 0;
         cumulativeDeadPetCount = 0;
-    }
-
-    public void update(int newStepCount,
-                       StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     void updateInitialCells(int activePetCountInitial,

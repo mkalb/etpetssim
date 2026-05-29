@@ -1,11 +1,10 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
 public final class SugarStatistics
-        extends AbstractTimedSimulationStatistics {
+        extends BaseTimedSimulationStatistics {
 
     private int resourceCells;
     private int agentCells;
@@ -14,11 +13,6 @@ public final class SugarStatistics
         super(gridStructure);
         resourceCells = 0;
         agentCells = 0;
-    }
-
-    void update(int newStepCount,
-                StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     void updateInitialCells(int resourceCellsInitial,

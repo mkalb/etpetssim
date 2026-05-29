@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.lab.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.AbstractControlView;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
@@ -24,9 +24,9 @@ public final class LabControlView
 
     @Override
     protected Pane createControlButtonPane() {
-        Button drawButton = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW), false);
-        Button drawButtonModel = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW_MODEL), true);
-        Button drawButtonTest = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW_TEST), true);
+        Button drawButton = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW));
+        Button drawButtonModel = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW_MODEL));
+        Button drawButtonTest = createControlButton(AppLocalization.getText(LAB_CONTROL_DRAW_TEST));
 
         drawButton.setOnAction(_ -> viewModel.requestDraw());
         drawButtonModel.setOnAction(_ -> viewModel.requestDrawModel());

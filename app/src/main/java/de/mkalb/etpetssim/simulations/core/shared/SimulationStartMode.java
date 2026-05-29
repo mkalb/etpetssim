@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.model;
+package de.mkalb.etpetssim.simulations.core.shared;
 
 /**
  * Available start modes for simulation initialization.
@@ -8,7 +8,6 @@ package de.mkalb.etpetssim.simulations.core.model;
  * before starting.
  *
  * @see SimulationState
- * @see de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel
  */
 public enum SimulationStartMode {
 

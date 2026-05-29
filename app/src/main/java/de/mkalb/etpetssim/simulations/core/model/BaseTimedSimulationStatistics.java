@@ -4,10 +4,14 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 
 /**
- * Shared base for statistics that also track step timing metrics.
+ * Base class for simulation statistics that track step timing metrics.
+ *
+ * <p>Subclasses inherit the standard {@link TimedSimulationStatistics} implementation
+ * and call {@link #update} to advance the shared counters. The constructor is
+ * {@code protected} to signal that this class is intended to be extended rather
+ * than instantiated directly.
  */
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractTimedSimulationStatistics
+public class BaseTimedSimulationStatistics
         implements TimedSimulationStatistics {
 
     private final GridStructure gridStructure;
@@ -21,7 +25,7 @@ public abstract class AbstractTimedSimulationStatistics
      *
      * @param gridStructure grid structure used by the simulation
      */
-    protected AbstractTimedSimulationStatistics(GridStructure gridStructure) {
+    protected BaseTimedSimulationStatistics(GridStructure gridStructure) {
         int totalCells = gridStructure.cellCount();
         if (totalCells < 0) {
             throw new IllegalArgumentException("totalCells must be >= 0");
@@ -47,15 +51,14 @@ public abstract class AbstractTimedSimulationStatistics
     }
 
     /**
-     * Updates the shared statistics fields.
-     * Subclasses must call this method from their own update logic
-     * to keep the common counters in sync.
+     * Updates the step count and timing statistics to the given values.
      *
-     * @param newStepCount            the current simulation step count
+     * @param newStepCount            the current simulation step count; must be &gt;= 0
      * @param newStepTimingStatistics the current step timing statistics
+     * @throws IllegalArgumentException if {@code newStepCount} is negative
      */
-    protected final void updateCommon(int newStepCount,
-                                      StepTimingStatistics newStepTimingStatistics) {
+    public final void update(int newStepCount,
+                             StepTimingStatistics newStepTimingStatistics) {
         if (newStepCount < 0) {
             throw new IllegalArgumentException("newStepCount must be >= 0");
         }

@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.model;
+package de.mkalb.etpetssim.simulations.core.shared;
 
 /**
  * Defines the possible states in the lifecycle of a simulation.
@@ -8,11 +8,6 @@ package de.mkalb.etpetssim.simulations.core.model;
  * <p>
  * The state determines which actions (start, pause, resume, cancel) are available and
  * whether configuration controls are enabled or disabled.
- *
- * @see de.mkalb.etpetssim.simulations.core.SimulationFactory
- * @see de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel
- * @see de.mkalb.etpetssim.simulations.core.view.DefaultControlView
- * @see SimulationMode
  */
 public enum SimulationState {
 
@@ -105,18 +100,6 @@ public enum SimulationState {
      */
     public boolean cannotStart() {
         return !canStart();
-    }
-
-    /**
-     * Checks if configuration controls should be disabled in the UI for the current state.
-     *
-     * @return {@code true} if configuration controls are disabled, {@code false} otherwise
-     */
-    public boolean isControlConfigDisabled() {
-        return switch (this) {
-            case INITIAL, PAUSED, CANCELED, FINISHED, ERROR -> false;
-            case RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, SHUTTING_DOWN -> true;
-        };
     }
 
     /**

@@ -4,8 +4,8 @@ import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
 import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
 

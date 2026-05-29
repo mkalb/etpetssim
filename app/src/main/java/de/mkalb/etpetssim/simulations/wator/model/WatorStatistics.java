@@ -1,11 +1,10 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
 public final class WatorStatistics
-        extends AbstractTimedSimulationStatistics {
+        extends BaseTimedSimulationStatistics {
 
     private int maxFishCells;
     private int maxSharkCells;
@@ -22,11 +21,6 @@ public final class WatorStatistics
         minSharkCells = getTotalCells();
         fishCells = 0;
         sharkCells = 0;
-    }
-
-    public void update(int newStepCount,
-                       StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     void updateCells() {
@@ -68,19 +62,35 @@ public final class WatorStatistics
         return sharkCells;
     }
 
-    public void incrementFishCells() {
+    /**
+     * Increments the fish cell count by one.
+     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void incrementFishCells() {
         fishCells++;
     }
 
-    public void decrementFishCells() {
+    /**
+     * Decrements the fish cell count by one.
+     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void decrementFishCells() {
         fishCells--;
     }
 
-    public void incrementSharkCells() {
+    /**
+     * Increments the shark cell count by one.
+     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void incrementSharkCells() {
         sharkCells++;
     }
 
-    public void decrementSharkCells() {
+    /**
+     * Decrements the shark cell count by one.
+     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void decrementSharkCells() {
         sharkCells--;
     }
 

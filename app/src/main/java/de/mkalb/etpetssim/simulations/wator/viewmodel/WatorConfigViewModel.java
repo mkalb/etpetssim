@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.wator.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.WatorConfig;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;

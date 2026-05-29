@@ -7,9 +7,9 @@ import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.core.model.SimulationStepEvent;
+import de.mkalb.etpetssim.simulations.core.model.TimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
@@ -29,7 +29,7 @@ public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
-        STA extends AbstractTimedSimulationStatistics,
+        STA extends TimedSimulationStatistics,
         CFV extends SimulationConfigView,
         OV extends AbstractObservationView<ENT, STA, DefaultObservationViewModel<ENT, STA>>>
         extends

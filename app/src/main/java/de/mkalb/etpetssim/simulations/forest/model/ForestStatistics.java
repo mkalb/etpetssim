@@ -1,14 +1,13 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
 /**
  * Holds statistics for a running Forest-fire model simulation.
  */
 public final class ForestStatistics
-        extends AbstractTimedSimulationStatistics {
+        extends BaseTimedSimulationStatistics {
 
     private int emptyCells;
     private int treeCells;
@@ -23,11 +22,6 @@ public final class ForestStatistics
         burningCells = 0;
         maxTreeCells = 0;
         maxBurningCells = 0;
-    }
-
-    void update(int newStepCount,
-                StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     void updateCells(int newTreeCells, int newBurningCells) {

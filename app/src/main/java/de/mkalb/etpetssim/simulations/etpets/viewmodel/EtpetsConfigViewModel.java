@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsConfig;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;

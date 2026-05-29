@@ -1,11 +1,10 @@
 package de.mkalb.etpetssim.simulations.snake.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
 public final class SnakeStatistics
-        extends AbstractTimedSimulationStatistics {
+        extends BaseTimedSimulationStatistics {
 
     private int snakeHeadCells;
     private int livingSnakeHeadCells;
@@ -18,11 +17,6 @@ public final class SnakeStatistics
         livingSnakeHeadCells = 0;
         foodCells = 0;
         deaths = 0;
-    }
-
-    public void update(int newStepCount,
-                       StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     void updateInitialCells(int snakeHeadCellsInitial,

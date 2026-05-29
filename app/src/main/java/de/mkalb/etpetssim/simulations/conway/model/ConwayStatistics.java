@@ -1,14 +1,13 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
 /**
  * Holds statistics for a running Conway's Game of Life simulation.
  */
 public final class ConwayStatistics
-        extends AbstractTimedSimulationStatistics {
+        extends BaseTimedSimulationStatistics {
 
     private int maxAliveCells;
     private int aliveCells;
@@ -21,11 +20,6 @@ public final class ConwayStatistics
         aliveCells = 0;
         deadCells = getTotalCells();
         changedCells = 0;
-    }
-
-    void update(int newStepCount,
-                StepTimingStatistics newStepTimingStatistics) {
-        updateCommon(newStepCount, newStepTimingStatistics);
     }
 
     void updateCells(int newAliveCells, int newChangedCells) {

@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

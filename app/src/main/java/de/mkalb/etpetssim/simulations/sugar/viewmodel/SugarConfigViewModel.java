@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.sugar.viewmodel;
 
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarConfig;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;

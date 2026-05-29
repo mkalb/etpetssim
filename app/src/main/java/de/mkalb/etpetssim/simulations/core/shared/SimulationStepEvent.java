@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.model;
+package de.mkalb.etpetssim.simulations.core.shared;
 
 /**
  * Represents a UI-facing event emitted after simulation step processing.

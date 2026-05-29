@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.model.*;
+import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import de.mkalb.etpetssim.ui.InputIntegerProperty;
@@ -13,17 +13,17 @@ import javafx.beans.property.SimpleBooleanProperty;
  * Default implementation of control view-model state and user requests.
  */
 public final class DefaultControlViewModel
-        extends AbstractControlViewModel {
+        implements SimulationControlViewModel {
 
     private static final int STEP_DURATION_INITIAL = 700;
     private static final int STEP_DURATION_MIN = 50;
     private static final int STEP_DURATION_MAX = 2_000;
-
     private static final int STEP_COUNT_INITIAL = 100;
     private static final int STEP_COUNT_MIN = 1;
     private static final int STEP_COUNT_MAX = 10_000;
     private static final int STEP_COUNT_STEP = 1;
 
+    private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.TIMED,
             SimulationMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
@@ -38,7 +38,7 @@ public final class DefaultControlViewModel
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
 
     public DefaultControlViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
-        super(simulationState);
+        this.simulationState = simulationState;
     }
 
     /**
@@ -51,6 +51,16 @@ public final class DefaultControlViewModel
         DefaultControlViewModel controlViewModel = new DefaultControlViewModel(simulationState);
         controlViewModel.stepDuration.setValue(STEP_DURATION_MIN);
         return controlViewModel;
+    }
+
+    @Override
+    public ReadOnlyObjectProperty<SimulationState> simulationStateProperty() {
+        return simulationState;
+    }
+
+    @Override
+    public SimulationState getSimulationState() {
+        return simulationState.get();
     }
 
     /**
@@ -128,6 +138,27 @@ public final class DefaultControlViewModel
      */
     public InputEnumProperty<SimulationTerminationCheck> terminationCheckProperty() {
         return terminationCheck;
+    }
+
+    /**
+     * Returns whether the simulation cannot be started from the current state.
+     *
+     * @return {@code true} if the simulation cannot be started
+     */
+    public boolean cannotStart() {
+        return !getSimulationState().canStart();
+    }
+
+    /**
+     * Returns whether configuration controls should be disabled for the current simulation state.
+     *
+     * @return {@code true} if configuration controls are disabled
+     */
+    public boolean isControlConfigDisabled() {
+        return switch (getSimulationState()) {
+            case INITIAL, PAUSED, CANCELED, FINISHED, ERROR -> false;
+            case RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, SHUTTING_DOWN -> true;
+        };
     }
 
     /**

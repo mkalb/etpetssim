@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.core.model;
+package de.mkalb.etpetssim.simulations.core.shared;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 

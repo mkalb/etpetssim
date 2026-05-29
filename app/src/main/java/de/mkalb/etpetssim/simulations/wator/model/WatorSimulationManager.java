@@ -37,8 +37,6 @@ public final class WatorSimulationManager
         var terminationCondition = new WatorTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        updateStatistics();
-
         // Initialize the grid with fish and sharks
         initializeGrid(model, random, entityFactory);
 

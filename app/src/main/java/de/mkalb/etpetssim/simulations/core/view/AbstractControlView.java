@@ -58,10 +58,9 @@ public abstract class AbstractControlView<VM extends SimulationControlViewModel>
 
     protected abstract Optional<Pane> createControlObservationPane();
 
-    protected final Button createControlButton(String text, boolean disabled) {
+    protected final Button createControlButton(String text) {
         Button controlButton = new Button(text);
         controlButton.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON);
-        controlButton.setDisable(disabled);
         return controlButton;
     }
 
