@@ -86,20 +86,11 @@ public enum SimulationState {
      *
      * @return {@code true} if the simulation can be started, {@code false} otherwise
      */
-    public boolean canStart() {
+    public boolean isStartable() {
         return switch (this) {
             case INITIAL, CANCELED, FINISHED, ERROR -> true;
             case RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, PAUSED, CANCELLING_BATCH, SHUTTING_DOWN -> false;
         };
-    }
-
-    /**
-     * Checks if the simulation cannot be started from the current state.
-     *
-     * @return {@code true} if the simulation cannot be started, {@code false} otherwise
-     */
-    public boolean cannotStart() {
-        return !canStart();
     }
 
     /**

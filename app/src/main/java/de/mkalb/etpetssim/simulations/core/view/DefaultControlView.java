@@ -39,7 +39,7 @@ public final class DefaultControlView
 
         actionButton.textProperty().bind(
                 Bindings.createStringBinding(() -> {
-                    if (viewModel.getSimulationState().canStart()) {
+                    if (viewModel.getSimulationState().isStartable()) {
                         return textStart;
                     } else if (viewModel.getSimulationState().isRunning()) {
                         return textPause;
@@ -101,7 +101,7 @@ public final class DefaultControlView
                 FXStyleClasses.CONFIG_CHECKBOX
         );
 
-        bindCannotStartDisabled(startModeControl.controlRegion());
+        bindNotStartableDisabled(startModeControl.controlRegion());
 
         var terminationCheckControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.terminationCheckProperty(),
                 SimulationTerminationCheck.CHECKED,
@@ -157,7 +157,7 @@ public final class DefaultControlView
 
     private void bindActionButtonDisabled(Button actionButton) {
         actionButton.disableProperty().bind(Bindings.createBooleanBinding(
-                () -> !viewModel.getSimulationState().canStart()
+                () -> !viewModel.getSimulationState().isStartable()
                         && !viewModel.getSimulationState().isRunning()
                         && !viewModel.getSimulationState().isPaused(),
                 viewModel.simulationStateProperty()
@@ -179,9 +179,9 @@ public final class DefaultControlView
         ));
     }
 
-    private void bindCannotStartDisabled(Region region) {
+    private void bindNotStartableDisabled(Region region) {
         region.disableProperty().bind(Bindings.createBooleanBinding(
-                viewModel::cannotStart,
+                () -> !viewModel.getSimulationState().isStartable(),
                 viewModel.simulationStateProperty()
         ));
     }

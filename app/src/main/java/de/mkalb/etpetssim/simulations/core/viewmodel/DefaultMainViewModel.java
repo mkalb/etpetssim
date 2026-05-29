@@ -288,7 +288,7 @@ public final class DefaultMainViewModel<
 
         resetClickedCoordinateProperties();
 
-        if (getSimulationState().canStart()) {
+        if (getSimulationState().isStartable()) {
             handleStartAction();
         } else if (getSimulationState().isRunning()) {
             handlePauseAction();

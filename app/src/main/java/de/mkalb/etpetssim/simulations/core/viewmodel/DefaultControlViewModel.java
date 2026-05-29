@@ -141,15 +141,6 @@ public final class DefaultControlViewModel
     }
 
     /**
-     * Returns whether the simulation cannot be started from the current state.
-     *
-     * @return {@code true} if the simulation cannot be started
-     */
-    public boolean cannotStart() {
-        return !getSimulationState().canStart();
-    }
-
-    /**
      * Returns whether configuration controls should be disabled for the current simulation state.
      *
      * @return {@code true} if configuration controls are disabled
