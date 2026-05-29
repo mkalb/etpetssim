@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -8,6 +9,7 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -30,6 +32,12 @@ public final class EtpetsObservationView
         super(viewModel, entityDescriptorRegistry);
 
         registerSelectedCellListener(viewModel.selectedGridCellProperty());
+    }
+
+    @Override
+    protected void onSelectedCellChanged(@Nullable GridCell<EtpetsEntity> gridCell) {
+        super.onSelectedCellChanged(gridCell);
+        // TODO EtpetsObservationView: Add and update more labels for selected cell
     }
 
     @Override

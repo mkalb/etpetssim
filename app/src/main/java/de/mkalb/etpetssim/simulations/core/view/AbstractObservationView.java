@@ -38,6 +38,12 @@ public abstract class AbstractObservationView<
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
 
+    /**
+     * Constructs a new observation view bound to the given view model and entity descriptor registry.
+     *
+     * @param viewModel                the simulation observation view model providing statistics and state
+     * @param entityDescriptorRegistry the registry used to resolve entity descriptors for display
+     */
     protected AbstractObservationView(VM viewModel, GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
@@ -46,6 +52,13 @@ public abstract class AbstractObservationView<
     @Override
     public abstract Region buildObservationRegion();
 
+    /**
+     * Wraps the given regions in a vertically stacked {@link VBox} inside a {@link ScrollPane}.
+     * The scroll pane and its content are styled with the standard observation CSS classes.
+     *
+     * @param regions one or more regions to stack vertically inside the scroll pane
+     * @return a styled {@link ScrollPane} containing all provided regions
+     */
     protected final ScrollPane createObservationScrollPane(Region... regions) {
         VBox content = new VBox();
         content.getStyleClass().add(FXStyleClasses.OBSERVATION_CONTENT_VBOX);
@@ -131,26 +144,18 @@ public abstract class AbstractObservationView<
         }
     }
 
+    /**
+     * Creates a titled observation section as a {@link VBox} containing a two-column {@link GridPane}.
+     * Each row pairs a localized name label (left-aligned) with a value label (right-aligned, expanding).
+     * {@code nameKeys} and {@code valueLabels} must have the same length.
+     *
+     * @param titleKey    localization key for the section title
+     * @param nameKeys    localization keys for the row name labels, one per row
+     * @param valueLabels pre-created value labels to place in the right column, one per row
+     * @return a styled {@link VBox} containing the title and the name/value grid
+     * @throws IllegalArgumentException if {@code nameKeys} and {@code valueLabels} differ in length
+     */
     protected final VBox createObservationSection(String titleKey, String[] nameKeys, Label[] valueLabels) {
-        return createObservationSection(titleKey, createObservationGrid(nameKeys, valueLabels));
-    }
-
-    protected final VBox createObservationSection(@Nullable String titleKey, Region region) {
-        VBox section = new VBox();
-        section.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_VBOX);
-
-        if (titleKey != null) {
-            Label titleLabel = new Label(AppLocalization.getText(titleKey));
-            titleLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_TITLE_LABEL);
-            section.getChildren().add(titleLabel);
-        }
-
-        section.getChildren().add(region);
-
-        return section;
-    }
-
-    protected final GridPane createObservationGrid(String[] nameKeys, Label[] valueLabels) {
         if (nameKeys.length != valueLabels.length) {
             throw new IllegalArgumentException("nameKeys and valueLabels must have the same length.");
         }
@@ -178,30 +183,41 @@ public abstract class AbstractObservationView<
             GridPane.setHgrow(valueLabels[i], Priority.ALWAYS);
         }
 
-        return grid;
+        VBox section = new VBox();
+        section.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_VBOX);
+
+        Label titleLabel = new Label(AppLocalization.getText(titleKey));
+        titleLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_TITLE_LABEL);
+        section.getChildren().add(titleLabel);
+
+        section.getChildren().add(grid);
+
+        return section;
     }
 
-    protected final String localizedShortCellTypeName(GridEntity entity) {
-        return entityDescriptorRegistry.requireByDescriptorId(entity.descriptorId()).shortName();
-    }
-
-    protected final NumberFormat integerFormat() {
+    private NumberFormat integerFormat() {
         if (integerFormat == null) {
             integerFormat = NumberFormat.getIntegerInstance(AppLocalization.locale());
         }
         return integerFormat;
     }
 
+    /**
+     * Sets the text of {@code valueLabel} to the locale-formatted integer representation of {@code value}.
+     *
+     * @param valueLabel the label whose text is updated
+     * @param value      the numeric value to format and display
+     */
     protected final void setFormattedIntegerValue(Label valueLabel, Number value) {
         valueLabel.setText(integerFormat().format(value));
     }
 
-    protected final void clearValues(Label... valueLabels) {
-        for (Label valueLabel : valueLabels) {
-            valueLabel.setText("");
-        }
-    }
-
+    /**
+     * Sets the text of each provided label to the localized unknown-value placeholder.
+     * Use this to reset labels to their initial indeterminate state.
+     *
+     * @param valueLabels one or more labels to reset
+     */
     protected final void setUnknownValues(Label... valueLabels) {
         String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
         for (Label valueLabel : valueLabels) {
@@ -234,17 +250,31 @@ public abstract class AbstractObservationView<
      * @param gridCell the newly selected grid cell, or {@code null} if no cell is selected
      */
     protected void onSelectedCellChanged(@Nullable GridCell<ENT> gridCell) {
-        updateSelectedCellSectionVisibility(gridCell != null);
-        updateSelectedCellBasicLabels(gridCell);
+        if (selectedCellSection != null) {
+            boolean hasSelectedCell = (gridCell != null);
+            selectedCellSection.setManaged(hasSelectedCell);
+            selectedCellSection.setVisible(hasSelectedCell);
+            setUnknownValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
+
+            if (hasSelectedCell) {
+                selectedCellCoordinateLabel.setText(gridCell.coordinate().toDisplayString());
+                entityDescriptorRegistry.findByDescriptorId(gridCell.entity().descriptorId())
+                                        .ifPresent(descriptor -> selectedCellTypeLabel.setText(descriptor.shortName()));
+            }
+        }
     }
 
+    /**
+     * Updates all simulation-specific observation labels with the latest state.
+     * Called by {@link #initializeObservationLabels()} on simulation creation and by subclasses
+     * whenever a step has been executed and labels need to reflect the new statistics.
+     */
     protected abstract void updateObservationLabels();
 
     /**
      * Creates a standard selected cell section displaying coordinate and cell type.
-     * The standard coordinate and cell type labels are managed by this base class and updated via
-     * {@link #updateSelectedCellBasicLabels(de.mkalb.etpetssim.engine.model.GridCell)}.
-     * The returned section is stored internally for use by {@link #updateSelectedCellSectionVisibility(boolean)}.
+     * The standard coordinate and cell type labels are managed by this base class; visibility and
+     * label values are updated by {@link #onSelectedCellChanged(GridCell)}.
      *
      * @return a VBox region containing the selected cell section with the standard labels
      */
@@ -267,7 +297,8 @@ public abstract class AbstractObservationView<
     /**
      * Creates an extended selected cell section with coordinate and cell type as the first two rows,
      * followed by the provided simulation-specific extra rows.
-     * The returned section is stored internally for use by {@link #updateSelectedCellSectionVisibility(boolean)}.
+     * The section is stored internally; its visibility and the standard label values are managed by
+     * {@link #onSelectedCellChanged(GridCell)}.
      *
      * @param extraNameKeys   additional localization keys for the extra rows
      * @param extraValueLabels additional labels for the extra rows
@@ -291,34 +322,6 @@ public abstract class AbstractObservationView<
         );
         onSelectedCellChanged(selectedGridCell);
         return selectedCellSection;
-    }
-
-    /**
-     * Updates the visibility of the selected cell section.
-     * Call this from a grid cell change listener to show/hide the section.
-     *
-     * @param isVisible whether the section should be visible
-     */
-    protected final void updateSelectedCellSectionVisibility(boolean isVisible) {
-        if (selectedCellSection != null) {
-            selectedCellSection.setManaged(isVisible);
-            selectedCellSection.setVisible(isVisible);
-        }
-    }
-
-    /**
-     * Updates the standard coordinate and cell type labels in a selected cell section.
-     * Call this from a grid cell change listener to populate the basic selected cell info.
-     *
-     * @param gridCell the currently selected grid cell, or null if no cell is selected
-     */
-    protected final void updateSelectedCellBasicLabels(@Nullable GridCell<ENT> gridCell) {
-        if (gridCell != null) {
-            selectedCellCoordinateLabel.setText(gridCell.coordinate().toDisplayString());
-            selectedCellTypeLabel.setText(localizedShortCellTypeName(gridCell.entity()));
-        } else {
-            clearValues(selectedCellCoordinateLabel, selectedCellTypeLabel);
-        }
     }
 
 }

@@ -46,7 +46,7 @@ public final class WatorObservationView
     @Override
     protected void onSelectedCellChanged(@Nullable GridCell<WatorEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
-        clearValues(ageLabel);
+        setUnknownValues(ageLabel);
 
         if (gridCell != null) {
             Optional<WatorStatistics> statistics = viewModel.getStatistics();

@@ -50,8 +50,13 @@ public final class SnakeObservationView
     @Override
     protected void onSelectedCellChanged(@Nullable GridCell<SnakeEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
-        clearValues(snakeIdLabel, snakeStrategyLabel, snakeDeathsLabel,
-                snakeSegmentCountLabel, snakeMaxSegmentCountLabel, snakePointsLabel);
+        setUnknownValues(
+                snakeIdLabel,
+                snakeStrategyLabel,
+                snakeDeathsLabel,
+                snakeSegmentCountLabel,
+                snakeMaxSegmentCountLabel,
+                snakePointsLabel);
 
         if (gridCell != null) {
             if (gridCell.entity() instanceof SnakeHead snakeHead) {

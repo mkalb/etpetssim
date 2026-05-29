@@ -41,7 +41,9 @@ public final class SugarObservationView
     @Override
     protected void onSelectedCellChanged(@Nullable GridCell<SugarEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
-        clearValues(currentEnergyLabel, currentAmountLabel);
+        setUnknownValues(
+                currentEnergyLabel,
+                currentAmountLabel);
 
         if (gridCell != null) {
             if (gridCell.entity() instanceof Agent agent) {

@@ -38,7 +38,7 @@ public final class ReboundingObservationView
     @Override
     protected void onSelectedCellChanged(@Nullable GridCell<ReboundingEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
-        clearValues(directionLabel);
+        setUnknownValues(directionLabel);
 
         if (gridCell != null) {
             if (gridCell.entity() instanceof Rebounder entity) {
