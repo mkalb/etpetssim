@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.wator;
 
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.model.SimulationState;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
@@ -16,9 +16,8 @@ import de.mkalb.etpetssim.simulations.wator.view.WatorConfigView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorObservationView;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public final class WatorFactory {
 
@@ -31,8 +30,8 @@ public final class WatorFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
-        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
-        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
+        ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel

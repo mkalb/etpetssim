@@ -15,9 +15,8 @@ import de.mkalb.etpetssim.simulations.langton.view.LangtonConfigView;
 import de.mkalb.etpetssim.simulations.langton.view.LangtonMainView;
 import de.mkalb.etpetssim.simulations.langton.view.LangtonObservationView;
 import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonConfigViewModel;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public final class LangtonFactory {
 
@@ -30,8 +29,8 @@ public final class LangtonFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
-        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
-        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
+        ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofCollection(LangtonEntity.allEntityDescriptorProviders());
 
         // ViewModel

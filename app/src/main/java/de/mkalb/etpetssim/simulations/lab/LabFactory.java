@@ -10,9 +10,8 @@ import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabConfigViewModel;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public final class LabFactory {
 
@@ -25,8 +24,8 @@ public final class LabFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
-        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
-        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
+        ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
 
         // ViewModel

@@ -15,9 +15,8 @@ import de.mkalb.etpetssim.simulations.forest.view.ForestConfigView;
 import de.mkalb.etpetssim.simulations.forest.view.ForestMainView;
 import de.mkalb.etpetssim.simulations.forest.view.ForestObservationView;
 import de.mkalb.etpetssim.simulations.forest.viewmodel.ForestConfigViewModel;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public final class ForestFactory {
 
@@ -30,8 +29,8 @@ public final class ForestFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
-        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
-        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
+        ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ForestEntity.values());
 
         // ViewModel

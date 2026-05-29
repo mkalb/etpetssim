@@ -16,9 +16,8 @@ import de.mkalb.etpetssim.simulations.snake.view.SnakeConfigView;
 import de.mkalb.etpetssim.simulations.snake.view.SnakeMainView;
 import de.mkalb.etpetssim.simulations.snake.view.SnakeObservationView;
 import de.mkalb.etpetssim.simulations.snake.viewmodel.SnakeConfigViewModel;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public final class SnakeFactory {
 
@@ -31,8 +30,8 @@ public final class SnakeFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
-        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
-        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
+        ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel

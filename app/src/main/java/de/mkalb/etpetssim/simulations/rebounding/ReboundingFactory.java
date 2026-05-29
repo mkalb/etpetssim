@@ -16,9 +16,8 @@ import de.mkalb.etpetssim.simulations.rebounding.view.ReboundingConfigView;
 import de.mkalb.etpetssim.simulations.rebounding.view.ReboundingMainView;
 import de.mkalb.etpetssim.simulations.rebounding.view.ReboundingObservationView;
 import de.mkalb.etpetssim.simulations.rebounding.viewmodel.ReboundingConfigViewModel;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public final class ReboundingFactory {
 
@@ -31,8 +30,8 @@ public final class ReboundingFactory {
     @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
-        ObjectProperty<SimulationState> simulationState = new SimpleObjectProperty<>(SimulationState.INITIAL);
-        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState;
+        ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.INITIAL);
+        ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
         var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
 
         // ViewModel
