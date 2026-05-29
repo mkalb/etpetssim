@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.model.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -137,7 +137,7 @@ public final class WatorMainView
             Integer value = switch (entity) {
                 case Fish fish -> fish.ageAtStepCount(stepCount);
                 case Shark shark -> Math.min(maxColorSharkEnergy, shark.currentEnergy());
-                default -> -1; // Illegal value
+                case TerrainConstant ignored -> -1; // Not expected when colorMap is non-null
             };
 
             return colorMap.getOrDefault(value, baseColor);
