@@ -24,7 +24,6 @@ public final class ForestUpdateStrategy implements SynchronousStepLogic<ForestEn
         this.random = random;
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Override
     public void performSynchronousStep(ReadableGridModel<ForestEntity> currentModel,
                                        WritableGridModel<ForestEntity> nextModel,
@@ -34,8 +33,8 @@ public final class ForestUpdateStrategy implements SynchronousStepLogic<ForestEn
                     .map(c -> processCell(c, currentModel))
                     .filter(c -> !c.entity().isEmpty())
                     .forEach(nextModel::setEntity);
-        int treeCells = (int) nextModel.countEntities(ForestEntity::isTree);
-        int burningCells = (int) nextModel.countEntities(ForestEntity::isBurning);
+        int treeCells = Math.toIntExact(nextModel.countEntities(ForestEntity::isTree));
+        int burningCells = Math.toIntExact(nextModel.countEntities(ForestEntity::isBurning));
 
         statistics.updateCells(treeCells, burningCells);
     }
