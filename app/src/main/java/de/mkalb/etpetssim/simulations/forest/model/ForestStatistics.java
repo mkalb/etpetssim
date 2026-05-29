@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
 /**
- * Holds statistics for a running Forest-fire model simulation.
+ * Holds runtime statistics for a running simulation.
  */
 public final class ForestStatistics
         extends BaseTimedSimulationStatistics {

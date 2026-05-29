@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Shared Langton configuration constraints and defaults used by model and view-model.
+ * Configuration constraints and defaults used across the simulation layers.
  */
 public final class LangtonConstraints {
 

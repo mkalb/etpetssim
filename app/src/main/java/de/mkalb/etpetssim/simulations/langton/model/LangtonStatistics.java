@@ -3,6 +3,9 @@ package de.mkalb.etpetssim.simulations.langton.model;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
+/**
+ * Holds runtime statistics for a running simulation.
+ */
 public final class LangtonStatistics
         extends BaseTimedSimulationStatistics {
 

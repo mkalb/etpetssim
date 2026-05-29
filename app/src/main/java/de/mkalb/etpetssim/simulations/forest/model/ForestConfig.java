@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
 
 /**
- * Immutable configuration for the forest-fire simulation.
+ * Immutable configuration for a simulation.
  *
  * @param cellShape                    the configured cell shape
  * @param gridEdgeBehavior             the configured grid edge behavior

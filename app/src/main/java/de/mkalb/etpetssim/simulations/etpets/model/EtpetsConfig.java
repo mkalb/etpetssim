@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
 
 /**
- * Immutable configuration for the ET Pets simulation.
+ * Immutable configuration for a simulation.
  *
  * @param cellShape the configured cell shape
  * @param gridEdgeBehavior the configured grid edge behavior

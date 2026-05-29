@@ -3,6 +3,9 @@ package de.mkalb.etpetssim.simulations.rebounding.model;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 
+/**
+ * Holds runtime statistics for a running simulation.
+ */
 public final class ReboundingStatistics
         extends BaseTimedSimulationStatistics {
 

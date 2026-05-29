@@ -3,6 +3,9 @@ package de.mkalb.etpetssim.simulations.lab.model;
 import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 
+/**
+ * Holds runtime statistics for a running simulation.
+ */
 public final class LabStatistics implements SimulationStatistics {
 
     private final GridStructure gridStructure;

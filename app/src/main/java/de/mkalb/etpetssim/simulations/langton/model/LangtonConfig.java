@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
 
 /**
- * Immutable configuration for the Langton's Ant simulation.
+ * Immutable configuration for a simulation.
  *
  * @param cellShape the configured cell shape
  * @param gridEdgeBehavior the configured grid edge behavior
