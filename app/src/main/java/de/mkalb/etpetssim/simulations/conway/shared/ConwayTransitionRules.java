@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conway.model;
+package de.mkalb.etpetssim.simulations.conway.shared;
 
 import java.util.*;
 
@@ -72,7 +72,7 @@ public record ConwayTransitionRules(
      * @throws IllegalArgumentException if either set contains out-of-range values
      */
     public static ConwayTransitionRules of(Collection<Integer> surviveCounts, Collection<Integer> birthCounts) {
-        return new ConwayTransitionRules(new java.util.TreeSet<>(surviveCounts), new java.util.TreeSet<>(birthCounts));
+        return new ConwayTransitionRules(new TreeSet<>(surviveCounts), new TreeSet<>(birthCounts));
     }
 
     /**
@@ -98,8 +98,8 @@ public record ConwayTransitionRules(
         if (parts.length != 2) {
             throw new IllegalArgumentException("Invalid format: must have one '/'");
         }
-        java.util.SortedSet<Integer> survive = new java.util.TreeSet<>();
-        java.util.SortedSet<Integer> birth = new java.util.TreeSet<>();
+        SortedSet<Integer> survive = new TreeSet<>();
+        SortedSet<Integer> birth = new TreeSet<>();
         for (char c : parts[0].toCharArray()) {
             if (Character.isDigit(c)) {
                 survive.add(Character.getNumericValue(c));
@@ -156,3 +156,4 @@ public record ConwayTransitionRules(
     }
 
 }
+

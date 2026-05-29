@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
-import de.mkalb.etpetssim.simulations.conway.model.ConwayTransitionRules;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
@@ -82,7 +82,7 @@ public final class ConwayConfigView
     }
 
     private FXComponentFactory.LabeledControl<GridPane> createTransitionRulesControl(List<BooleanProperty> surviveProperties,
-                                                                                     List<BooleanProperty> bornProperties,
+                                                                                     List<BooleanProperty> birthProperties,
                                                                                      ObjectProperty<ConwayTransitionRules> conwayRulesProperty,
                                                                                      IntegerProperty maxNeighborCountProperty,
                                                                                      String labelFormatString,
@@ -134,7 +134,7 @@ public final class ConwayConfigView
         for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
             int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
             var bornCheckBox = new javafx.scene.control.CheckBox();
-            bornCheckBox.selectedProperty().bindBidirectional(bornProperties.get(index));
+            bornCheckBox.selectedProperty().bindBidirectional(birthProperties.get(index));
             if (index == 0) { // It is not possible to be born without a neighbor.
                 bornCheckBox.setDisable(true);
             } else {

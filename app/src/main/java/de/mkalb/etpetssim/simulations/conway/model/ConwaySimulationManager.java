@@ -34,11 +34,9 @@ public final class ConwaySimulationManager
         var terminationCondition = new ConwayTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
-        updateStatistics();
-
         initializeGrid(config, model, random);
 
-        updateInitialStatistics(model);
+        initializeStatistics(model);
     }
 
     private void initializeGrid(ConwayConfig config, WritableGridModel<ConwayEntity> model, Random random) {
@@ -67,7 +65,7 @@ public final class ConwaySimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void updateInitialStatistics(ReadableGridModel<ConwayEntity> model) {
+    private void initializeStatistics(ReadableGridModel<ConwayEntity> model) {
         int aliveEntities = Math.toIntExact(model
                 .countEntities(ConwayEntity::isAlive));
         statistics.updateCells(aliveEntities, aliveEntities);

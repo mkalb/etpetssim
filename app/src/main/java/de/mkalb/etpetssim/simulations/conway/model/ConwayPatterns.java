@@ -19,6 +19,7 @@ import java.util.*;
  * @see de.mkalb.etpetssim.engine.support.GridPattern
  * @see de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity
  */
+// TODO Conway: Add possibility for the user to modify model by selecting a pattern and placing it on the grid (e.g. via drag & drop from a pattern palette)
 @SuppressWarnings("MagicNumber")
 public final class ConwayPatterns {
 
@@ -65,13 +66,12 @@ public final class ConwayPatterns {
     /**
      * Returns a normalized 2x2 {@link GridPattern} representing the "Block" still life.
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells:
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} cells:
      * <pre>
      * A A
      * A A
      * </pre>
      * <ul>
-     *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
      * The top-left of the pattern is at offset (0, 0).
@@ -88,7 +88,7 @@ public final class ConwayPatterns {
     }
 
     /**
-     * Returns a normalized 4x2 {@link GridPattern} representing the "Beehive" still life.
+     * Returns a normalized 4x3 {@link GridPattern} representing the "Beehive" still life.
      * <p>
      * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells:
      * <pre>

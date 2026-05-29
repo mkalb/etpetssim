@@ -2,12 +2,13 @@ package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
 import java.util.*;
 
 /**
- * Shared Conway configuration constraints and defaults used by model and view-model.
+ * Conway configuration constraints and defaults used across the simulation layers.
  */
 public final class ConwayConstraints {
 

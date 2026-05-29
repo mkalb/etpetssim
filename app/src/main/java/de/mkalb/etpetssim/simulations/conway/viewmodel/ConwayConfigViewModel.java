@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
-import de.mkalb.etpetssim.simulations.conway.model.ConwayTransitionRules;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.ui.InputDoubleProperty;
@@ -61,6 +61,8 @@ public final class ConwayConfigViewModel
         surviveProperties.forEach(p -> p.addListener(updateListener));
         birthProperties.forEach(p -> p.addListener(updateListener));
 
+        // TODO Conway: Add possibility for the user to use predefined rulesets (e.g. for specific cell shapes) and
+        //  display the corresponding ruleset for the selected cell shape as default, e.g.:
         // HEXAGON: 23/34, 34/34, 3/2456
         // SQUARE: 23/3
         // TRIANGLE: 45/456, 25/3
