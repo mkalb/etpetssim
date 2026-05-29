@@ -79,6 +79,25 @@ Apply rules in this order (highest first):
 - [MAY] Omit a dedicated ViewModel for trivial screens with no observable state (for example a static start screen); the
   View class may then implement the relevant View interfaces directly.
 
+### Simulation Package Structure
+
+These rules apply to all packages under `de.mkalb.etpetssim.simulations`.
+
+Each simulation package uses four sub-packages: `model` (domain state and rules), `view` (JavaFX scene-graph and
+rendering), `viewmodel` (JavaFX properties, bindings, UI state), and `shared` (layer-neutral types used by two or
+more layers).
+
+- [MUST NOT] Let `model` depend on `view` or `viewmodel`; must not import JavaFX scene-graph, control, property, or
+  binding types (the general MVVM rules above apply); may depend on `shared`.
+- [MUST NOT] Let `view` contain domain logic or depend on `model` directly; access domain data only through ViewModel
+  accessors; may depend on `shared`.
+- [MUST NOT] Let `viewmodel` contain domain/business logic; delegate computation to `model`.
+- [MUST] Place enums and records in `shared` when they carry no JavaFX dependency and are referenced by more than one
+  of `model`, `view`, or `viewmodel`.
+- [MUST NOT] Let `shared` depend on `model`, `view`, or `viewmodel`; it is a foundation layer, not a catch-all.
+- [MUST NOT] Import JavaFX scene-graph, control, property, or binding types from `shared`; neutral value types
+  (for example `javafx.scene.paint.Color`) are permitted when they act as plain value carriers.
+
 ## JavaFX UI
 
 ### UI Construction
