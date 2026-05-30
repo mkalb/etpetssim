@@ -44,7 +44,6 @@ public final class SugarSimulationManager
     private void initializeGrid(SugarConfig config, SugarGridModel model, Random random) {
         initializeGridSugar(config, model, random);
         initializeGridAgent(config, model, random);
-        //  initializeGridTest(config, model);
     }
 
     /**
@@ -163,22 +162,6 @@ public final class SugarSimulationManager
                         NoAgent.NO_AGENT,
                         random);
         agentGridInitializer.initialize(model.agentModel());
-    }
-
-    @SuppressWarnings("MagicNumber")
-    private void initializeGridTest(SugarConfig config, SugarGridModel model) {
-        int stepIndexOfSpawn = -1;
-        for (int i = 1; i < 30; i++) {
-            model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 10), new Agent(i, stepIndexOfSpawn));
-        }
-
-        for (int i = 1; i <= config.maxSugarAmount(); i++) {
-            model.resourceModel().setEntity(new GridCoordinate(10 + (i * 2), 20), new Sugar(config.maxSugarAmount(), i));
-
-            model.resourceModel().setEntity(new GridCoordinate(10 + (i * 2), 30),
-                    new Sugar(config.maxSugarAmount(), 1));
-            model.agentModel().setEntity(new GridCoordinate(10 + (i * 2), 30), new Agent(i, stepIndexOfSpawn));
-        }
     }
 
     @Override

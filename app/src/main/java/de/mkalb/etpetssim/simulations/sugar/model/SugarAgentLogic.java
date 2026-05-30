@@ -19,7 +19,8 @@ public final class SugarAgentLogic {
 
     private static final int DISTANCE_ORIGINAL = 0;
     private static final int DISTANCE_DIRECT_NEIGHBOR = 1;
-    private static final int MAX_RANDOM_ATTEMPTS = 100;
+    // Fast-path limit for random spawn sampling; a guaranteed linear scan follows if this is exhausted.
+    private static final int MAX_RANDOM_SPAWN_ATTEMPTS = 20;
 
     private SugarAgentLogic() {
     }
@@ -87,21 +88,31 @@ public final class SugarAgentLogic {
     private static Optional<GridCoordinate> findRandomFreeCell(GridStructure structure,
                                                                Random random,
                                                                WritableGridModel<AgentEntity> agentModel) {
-        GridCoordinate freeCoordinate = null;
+        int width = structure.size().width();
+        int height = structure.size().height();
 
-        int attempts = 0;
-        do {
-            int x = random.nextInt(structure.size().width());
-            int y = random.nextInt(structure.size().height());
-            GridCoordinate coordinate = new GridCoordinate(x, y);
-            if (agentModel.isDefaultEntity(coordinate)) {
-                freeCoordinate = coordinate;
+        // Fast path: random sampling works well when the grid is sparsely populated.
+        for (int i = 0; i < MAX_RANDOM_SPAWN_ATTEMPTS; i++) {
+            GridCoordinate candidate = new GridCoordinate(random.nextInt(width), random.nextInt(height));
+            if (agentModel.isDefaultEntity(candidate)) {
+                return Optional.of(candidate);
             }
+        }
 
-            attempts++;
-        } while ((freeCoordinate == null) && (attempts < MAX_RANDOM_ATTEMPTS));
+        // Fallback: linear scan from a random offset guarantees a free cell is found if one exists.
+        // This handles dense grids where random sampling would likely miss the few remaining free cells.
+        int startX = random.nextInt(width);
+        int startY = random.nextInt(height);
+        for (int dy = 0; dy < height; dy++) {
+            for (int dx = 0; dx < width; dx++) {
+                GridCoordinate candidate = new GridCoordinate((startX + dx) % width, (startY + dy) % height);
+                if (agentModel.isDefaultEntity(candidate)) {
+                    return Optional.of(candidate);
+                }
+            }
+        }
 
-        return Optional.ofNullable(freeCoordinate);
+        return Optional.empty(); // Grid is completely full.
     }
 
     private static List<AgentMoveCandidate> collectMoveCandidates(GridCoordinate originalCoordinate,
