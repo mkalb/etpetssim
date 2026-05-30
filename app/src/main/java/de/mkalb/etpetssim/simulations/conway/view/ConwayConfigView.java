@@ -26,6 +26,7 @@ public final class ConwayConfigView
 
     // Initialization
     private static final String CONWAY_CONFIG_ALIVE_PERCENT = "conway.config.alivepercent";
+    private static final String CONWAY_CONFIG_ALIVE_PERCENT_HINT = "conway.config.alivepercent.hint";
     private static final String CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP = "conway.config.alivepercent.tooltip";
 
     // Rules - Presets
@@ -66,9 +67,33 @@ public final class ConwayConfigView
                 FXStyleClasses.CONFIG_SLIDER
         );
 
+        var squarePresetProperty = viewModel.ruleProperty().presetSquareProperty().property();
+        var hintBinding = Bindings.createStringBinding(
+                () -> {
+                    if (viewModel.cellShapeProperty().property().getValue() != CellShape.SQUARE) {
+                        return "";
+                    }
+                    var preset = squarePresetProperty.getValue();
+                    int density = preset.recommendedDensityPercent();
+                    if (density == 0) {
+                        return "";
+                    }
+                    return AppLocalization.getFormattedText(CONWAY_CONFIG_ALIVE_PERCENT_HINT, density, preset.displayName());
+                },
+                squarePresetProperty, viewModel.cellShapeProperty().property()
+        );
+        Label densityHintLabel = FXComponentFactory.createLabel("", ConwayStyleClasses.CONWAY_DENSITY_HINT_LABEL);
+        densityHintLabel.textProperty().bind(hintBinding);
+        densityHintLabel.visibleProperty().bind(hintBinding.isNotEmpty());
+        densityHintLabel.managedProperty().bind(densityHintLabel.visibleProperty());
+        Label densityHintEmptyLabel = new Label();
+        densityHintEmptyLabel.setManaged(false);
+        densityHintEmptyLabel.setVisible(false);
+        var densityHintControl = new FXComponentFactory.LabeledControl<>(densityHintEmptyLabel, densityHintLabel);
+
         var initializationPane = createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_INITIALIZATION), true,
-                seedControl, alivePercentControl);
+                seedControl, alivePercentControl, densityHintControl);
 
         // Rules
         var presetTriangleControl = FXComponentFactory.createLabeledEnumComboBox(

@@ -1,3 +1,10 @@
+.config-vbox .conway-density-hint-label {
+  -fx-font-size: 12;
+  -fx-font-style: italic;
+  -fx-text-fill: #a0cfe0;
+  -fx-padding: 0 10 4 10;
+}
+
 .config-vbox .conway-transitionrules-gridpane {
   -fx-background-color: transparent;
   -fx-background-radius: 0;
