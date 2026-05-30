@@ -81,6 +81,21 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     }
 
     /**
+     * Returns the {@link TerrainConstant} associated with the given rule index.
+     *
+     * @param ruleIndex the rule index to look up
+     * @return the matching {@link TerrainConstant}
+     * @throws IllegalArgumentException if no constant exists for the given rule index
+     */
+    public static TerrainConstant requireByRuleIndex(int ruleIndex) {
+        TerrainConstant result = BY_RULE_INDEX.get(ruleIndex);
+        if (result == null) {
+            throw new IllegalArgumentException("No TerrainConstant for rule index: " + ruleIndex);
+        }
+        return result;
+    }
+
+    /**
      * Checks if this terrain constant represents an unvisited cell.
      *
      * @return {@code true} if this constant is {@link #UNVISITED}, {@code false} otherwise

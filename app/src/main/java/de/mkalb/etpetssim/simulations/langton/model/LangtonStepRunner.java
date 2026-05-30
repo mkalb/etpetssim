@@ -74,11 +74,7 @@ public final class LangtonStepRunner
 
     void switchGround(GridCoordinate coordinate, TerrainConstant groundEntity, WritableGridModel<TerrainConstant> groundModel) {
         int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getRuleCount();
-        TerrainConstant newGround = TerrainConstant.byRuleIndex(newRuleIndex);
-        if (newGround == null) {
-            throw new IllegalStateException("No TerrainConstant for rule index: " + newRuleIndex);
-        }
-        groundModel.setEntity(coordinate, newGround);
+        groundModel.setEntity(coordinate, TerrainConstant.requireByRuleIndex(newRuleIndex));
     }
 
     TerrainConstant determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {
