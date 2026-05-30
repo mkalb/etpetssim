@@ -30,8 +30,10 @@ public final class SnakeSimulationManager
                 return Integer.MAX_VALUE;
             });
 
-    private static final int WALL_MAX_WIDTH_SPACE = 2;
-    private static final int WALL_MAX_HEIGHT_SPACE = 4;
+    /** Minimum horizontal clearance (in cells) around each generated wall column. */
+    private static final int WALL_WIDTH_MARGIN = 2;
+    /** Minimum vertical clearance (in cells) that walls must leave at the bottom. */
+    private static final int WALL_HEIGHT_MARGIN = 4;
 
     private final GridStructure structure;
     private final SnakeStatistics statistics;
@@ -67,8 +69,8 @@ public final class SnakeSimulationManager
         int wallCount = config.verticalWalls();
 
         if ((wallCount > 0)
-                && (width >= ((wallCount * (1 + WALL_MAX_WIDTH_SPACE)) + WALL_MAX_WIDTH_SPACE))
-                && (height > WALL_MAX_HEIGHT_SPACE)) {
+                && (width >= ((wallCount * (1 + WALL_WIDTH_MARGIN)) + WALL_WIDTH_MARGIN))
+                && (height > WALL_HEIGHT_MARGIN)) {
             // Integer division (floor), ensures that walls have equal spacing and fit within the grid
             int distanceX = width / wallCount;
             // Center walls within the grid. Leave additional space on the left and right.
@@ -85,7 +87,7 @@ public final class SnakeSimulationManager
             List<GridCell<SnakeEntity>> cells = new ArrayList<>();
             for (int x : wallXPositions) {
                 int yStart = random.nextInt(height);
-                int maxLength = Math.min(height - WALL_MAX_HEIGHT_SPACE, height - yStart);
+                int maxLength = Math.min(height - WALL_HEIGHT_MARGIN, height - yStart);
                 int length = random.nextInt(maxLength);
                 int yEnd = yStart + length;
 
@@ -146,10 +148,8 @@ public final class SnakeSimulationManager
     }
 
     private void initializeStatistics(ReadableGridModel<SnakeEntity> model) {
-        int snakeHeadCellsInitial = Math.toIntExact(model
-                .countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD)));
-        int foodCellsInitial = Math.toIntExact(model
-                .countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD)));
+        int snakeHeadCellsInitial = Math.toIntExact(model.countEntities(e -> e instanceof SnakeHead));
+        int foodCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isFood));
         statistics.updateInitialCells(snakeHeadCellsInitial, foodCellsInitial);
     }
 

@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridEdgeBehavior;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 
 import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.*;
 

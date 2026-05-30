@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.snake.model;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 
 import java.util.*;
 

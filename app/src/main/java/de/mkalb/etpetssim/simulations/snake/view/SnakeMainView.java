@@ -136,15 +136,13 @@ public final class SnakeMainView
         Color headDeadColor = toDeadFillColor(headAliveColor, DEAD_HEAD_HUE);
         Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
-        currentModel.filteredCoordinates(e ->
-                            Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_WALL))
+        currentModel.filteredCoordinates(SnakeEntity::isWall)
                     .forEach(coordinate ->
                             basePainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
-        currentModel.filteredCoordinates(e ->
-                            Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD))
+        currentModel.filteredCoordinates(SnakeEntity::isFood)
                     .forEach(coordinate ->
                             basePainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
-        currentModel.filteredCells(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD))
+        currentModel.filteredCells(e -> e instanceof SnakeHead)
                     .forEach(cell -> {
                         if (cell.entity() instanceof SnakeHead head) {
                             boolean isDead = head.isDead();

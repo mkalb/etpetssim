@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
-import de.mkalb.etpetssim.simulations.snake.model.SnakeDeathMode;
+import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import de.mkalb.etpetssim.simulations.snake.viewmodel.SnakeConfigViewModel;
 import de.mkalb.etpetssim.ui.FXComponentFactory;
 import de.mkalb.etpetssim.ui.FXStyleClasses;

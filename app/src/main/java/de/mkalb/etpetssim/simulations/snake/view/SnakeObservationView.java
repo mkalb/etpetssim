@@ -39,6 +39,7 @@ public final class SnakeObservationView
     private final Label snakeSegmentCountLabel = new Label();
     private final Label snakeMaxSegmentCountLabel = new Label();
     private final Label snakePointsLabel = new Label();
+    // TODO SnakeObservationView: Add age for selected SnakeHead
 
     public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, SnakeStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {

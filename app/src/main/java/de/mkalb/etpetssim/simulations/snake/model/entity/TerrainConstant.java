@@ -20,11 +20,6 @@ public enum TerrainConstant implements SnakeEntity, ConstantGridEntity {
         this.descriptorId = descriptorId;
     }
 
-    /**
-     * Returns the unique descriptor ID for this entity.
-     *
-     * @return the descriptor ID string
-     */
     @Override
     public String descriptorId() {
         return descriptorId;

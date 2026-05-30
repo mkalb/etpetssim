@@ -62,23 +62,22 @@ public final class SnakeMoveStrategies {
     }
 
     public static List<SnakeMoveStrategy> strategiesForConfig() {
-        List<SnakeMoveStrategy> strategies = new ArrayList<>();
-        strategies.add(MOMENTUM);
-        strategies.add(VERTICAL_MOMENTUM);
-        strategies.add(HORIZONTAL_MOMENTUM);
-        strategies.add(GROUND);
-        strategies.add(GROUND_MOMENTUM);
-        strategies.add(FOOD);
-        strategies.add(FOOD_MOMENTUM);
-        strategies.add(FOOD_VERTICAL_CLUSTERED);
-        strategies.add(FOOD_HORIZONTAL_CLUSTERED);
-        strategies.add(FOOD_VERTICAL_SPREAD);
-        strategies.add(FOOD_HORIZONTAL_SPREAD);
-        strategies.add(FOOD_VERTICAL_MOMENTUM);
-        strategies.add(FOOD_HORIZONTAL_MOMENTUM);
-        strategies.add(FOOD_MOMENTUM_CLUSTERED);
-        strategies.add(FOOD_MOMENTUM_SPREAD);
-        return strategies;
+        return List.of(
+                MOMENTUM,
+                VERTICAL_MOMENTUM,
+                HORIZONTAL_MOMENTUM,
+                GROUND,
+                GROUND_MOMENTUM,
+                FOOD,
+                FOOD_MOMENTUM,
+                FOOD_VERTICAL_CLUSTERED,
+                FOOD_HORIZONTAL_CLUSTERED,
+                FOOD_VERTICAL_SPREAD,
+                FOOD_HORIZONTAL_SPREAD,
+                FOOD_VERTICAL_MOMENTUM,
+                FOOD_HORIZONTAL_MOMENTUM,
+                FOOD_MOMENTUM_CLUSTERED,
+                FOOD_MOMENTUM_SPREAD);
     }
 
     private static Optional<MoveDecision> pickRandomTopScoredMove(List<ScoredMove> moves, Random random) {
@@ -141,7 +140,8 @@ public final class SnakeMoveStrategies {
         }
 
         // Determine snake direction and segments for momentum and adjacent segment scoring
-        CompassDirection snakeDirection = ((straightWeight != 0) || (smallTurnWeight != 0) || (verticalWeight != 0)) ? context.snakeHead().direction().orElse(null) : null;
+        boolean needsDirectionInfo = (straightWeight != 0) || (smallTurnWeight != 0) || (verticalWeight != 0);
+        CompassDirection snakeDirection = needsDirectionInfo ? context.snakeHead().direction().orElse(null) : null;
         List<GridCoordinate> segments;
         if ((adjacentSegmentWeight != 0) && (context.snakeHead().segmentCount() > 0)) {
             segments = context.snakeHead().currentSegments();
@@ -218,7 +218,7 @@ public final class SnakeMoveStrategies {
                                 .anyMatch(coordinates::contains);
     }
 
-    record ScoredMove(
+    private record ScoredMove(
             int score,
             GridCoordinate targetCoordinate,
             CompassDirection direction,

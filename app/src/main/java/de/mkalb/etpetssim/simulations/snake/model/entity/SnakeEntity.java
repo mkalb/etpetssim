@@ -31,13 +31,21 @@ public sealed interface SnakeEntity extends GridEntity
     }
 
     /**
-     * Indicates whether this entity is static terrain (ground or wall).
+     * Indicates whether this entity represents a wall.
      *
-     * @return {@code true} when this entity is static terrain
+     * @return {@code true} when this entity is a wall
      */
-    default boolean isStaticTerrain() {
-        return DESCRIPTOR_ID_GROUND.equals(descriptorId()) ||
-                DESCRIPTOR_ID_WALL.equals(descriptorId());
+    default boolean isWall() {
+        return DESCRIPTOR_ID_WALL.equals(descriptorId());
+    }
+
+    /**
+     * Indicates whether this entity represents growth food.
+     *
+     * @return {@code true} when this entity is growth food
+     */
+    default boolean isFood() {
+        return DESCRIPTOR_ID_GROWTH_FOOD.equals(descriptorId());
     }
 
 }

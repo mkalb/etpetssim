@@ -137,7 +137,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                     var neighborEntity = model.getEntity(cellNeighborWithEdgeBehavior.mappedNeighborCoordinate());
                     if (neighborEntity.isGround()) {
                         groundNeighbors.add(cellNeighborWithEdgeBehavior);
-                    } else if (Objects.equals(neighborEntity.descriptorId(), SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD)) {
+                    } else if (neighborEntity.isFood()) {
                         foodNeighbors.add(cellNeighborWithEdgeBehavior);
                     }
                 }

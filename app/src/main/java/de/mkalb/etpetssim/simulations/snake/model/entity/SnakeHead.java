@@ -40,11 +40,6 @@ public final class SnakeHead implements SnakeEntity {
         direction = null;
     }
 
-    /**
-     * Returns the unique descriptor ID for this entity.
-     *
-     * @return the descriptor ID string
-     */
     @Override
     public String descriptorId() {
         return SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD;
@@ -138,7 +133,7 @@ public final class SnakeHead implements SnakeEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[SNAKE #%d %s %s L=%s P=%d %s]",
+        return "[SNAKE #%d %s %s L=%s P=%d %s]".formatted(
                 id,
                 (direction == null) ? "+" : direction.arrow(),
                 dead ? ("†" + deaths) : ("*" + stepIndexOfSpawn),
