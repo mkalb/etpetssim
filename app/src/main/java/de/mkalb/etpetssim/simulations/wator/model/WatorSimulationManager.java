@@ -28,18 +28,16 @@ public final class WatorSimulationManager
         statistics = new WatorStatistics(structure);
         var random = new Random(config.seed());
         var model = new ArrayGridModel<WatorEntity>(structure, TerrainConstant.WATER);
-        var entityFactory = new CreatureFactory();
 
-        // Executor with runner and terminationCondition
+        var entityFactory = new CreatureFactory();
         var agentStepLogic = new WatorStepLogic(config, random, entityFactory);
         var runner = new AsynchronousStepRunner<>(model, WatorEntity::isAgent, AgentOrderingStrategies.byPosition(), agentStepLogic);
         var terminationCondition = new WatorTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        // Initialize the grid with fish and sharks
         initializeGrid(model, random, entityFactory);
 
-        statistics.updateCells();
+        initializeStatistics();
     }
 
     private void initializeGrid(WritableGridModel<WatorEntity> model, Random random, CreatureFactory entityFactory) {
@@ -94,6 +92,10 @@ public final class WatorSimulationManager
         statistics.update(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
+    }
+
+    private void initializeStatistics() {
+        statistics.updateCells();
     }
 
     @Override

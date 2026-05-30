@@ -38,17 +38,14 @@ public final class ReboundingSimulationManager
         var random = new Random(config.seed());
         var model = new SparseGridModel<ReboundingEntity>(structure, TerrainConstant.GROUND);
 
-        // Executor with runner and terminationCondition
         var agentStepLogic = new ReboundingStepLogic(structure, config);
         var runner = new AsynchronousStepRunner<>(model, ReboundingEntity::isRebounder, AgentOrderingStrategies.byPosition(), agentStepLogic);
         var terminationCondition = new ReboundingTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        updateStatistics();
-
         initializeGrid(config, model, random);
 
-        updateInitialStatistics(model);
+        initializeStatistics(model);
     }
 
     private void initializeGrid(ReboundingConfig config, WritableGridModel<ReboundingEntity> model, Random random) {
@@ -134,7 +131,7 @@ public final class ReboundingSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void updateInitialStatistics(WritableGridModel<ReboundingEntity> model) {
+    private void initializeStatistics(WritableGridModel<ReboundingEntity> model) {
         int wallCellsInitial = Math.toIntExact(model
                 .countEntities(ReboundingEntity::isWall));
         int movingEntityCellsInitial = Math.toIntExact(model

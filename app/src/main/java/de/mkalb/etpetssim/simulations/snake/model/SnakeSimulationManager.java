@@ -45,17 +45,14 @@ public final class SnakeSimulationManager
         var random = new Random(config.seed());
         var model = new SparseGridModel<SnakeEntity>(structure, TerrainConstant.GROUND);
 
-        // Executor with runner and terminationCondition
         var agentStepLogic = new SnakeStepLogic(structure, config, random);
         var runner = new AsynchronousStepRunner<>(model, SnakeEntity::isAgent, AGENT_ORDERING_STRATEGY, agentStepLogic);
         var terminationCondition = new SnakeTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        updateStatistics();
-
         initializeGrid(config, model, random);
 
-        updateInitialStatistics(model);
+        initializeStatistics(model);
     }
 
     private void initializeGrid(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
@@ -148,7 +145,7 @@ public final class SnakeSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void updateInitialStatistics(ReadableGridModel<SnakeEntity> model) {
+    private void initializeStatistics(ReadableGridModel<SnakeEntity> model) {
         int snakeHeadCellsInitial = Math.toIntExact(model
                 .countEntities(e -> Objects.equals(e.descriptorId(), SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD)));
         int foodCellsInitial = Math.toIntExact(model

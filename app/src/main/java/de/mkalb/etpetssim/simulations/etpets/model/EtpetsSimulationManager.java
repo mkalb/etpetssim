@@ -36,13 +36,11 @@ public final class EtpetsSimulationManager
         var terminationCondition = new EtpetsTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        updateStatistics();
-
         initializeTerrain(model, random);
         initializeResources(model, random);
         initializePets(model, random, idSequence);
 
-        updateInitialStatistics(model);
+        initializeStatistics(model);
     }
 
     private static int computePercentCount(int totalCells, double percentDecimal) {
@@ -208,7 +206,7 @@ public final class EtpetsSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void updateInitialStatistics(EtpetsGridModel model) {
+    private void initializeStatistics(EtpetsGridModel model) {
         int activePetCountInitial = Math.toIntExact(model.agentModel()
                                                          .countEntities(entity -> (entity instanceof Pet pet) && !pet.isDead()));
         int eggCountInitial = Math.toIntExact(model.agentModel()

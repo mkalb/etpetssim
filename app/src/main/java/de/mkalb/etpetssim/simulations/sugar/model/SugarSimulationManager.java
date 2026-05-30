@@ -32,16 +32,13 @@ public final class SugarSimulationManager
                 new SparseGridModel<>(structure, NoResource.NO_RESOURCE),
                 new SparseGridModel<>(structure, NoAgent.NO_AGENT));
 
-        // Executor with runner and terminationCondition
         var runner = new SugarStepRunner(config, random, model);
         var terminationCondition = new SugarTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        updateStatistics();
-
         initializeGrid(config, model, random);
 
-        updateInitialStatistics(model);
+        initializeStatistics(model);
     }
 
     private void initializeGrid(SugarConfig config, SugarGridModel model, Random random) {
@@ -192,7 +189,7 @@ public final class SugarSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void updateInitialStatistics(SugarGridModel model) {
+    private void initializeStatistics(SugarGridModel model) {
         int resourceCellsInitial = Math.toIntExact(model.resourceModel()
                                                         .countEntities(SugarEntity::isNotEmpty));
         int agentCellsInitial = Math.toIntExact(model.agentModel()
