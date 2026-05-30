@@ -68,7 +68,8 @@ public final class ReboundingMainView
                             descriptor.colorOrFallback(),
                             backgroundColor,
                             strokeLineWidth);
-            default -> throw new IllegalArgumentException("CellDisplayMode not supported: " + config.cellDisplayMode());
+            case CellDisplayMode.CIRCLE, CellDisplayMode.CIRCLE_BORDERED, CellDisplayMode.EMOJI ->
+                    throw new IllegalArgumentException("CellDisplayMode not supported: " + config.cellDisplayMode());
         };
     }
 

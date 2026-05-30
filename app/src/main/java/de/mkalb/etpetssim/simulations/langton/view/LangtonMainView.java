@@ -74,7 +74,8 @@ public final class LangtonMainView
                             descriptor.color(),
                             backgroundColor,
                             strokeLineWidth);
-            default -> throw new IllegalArgumentException("CellDisplayMode not supported!");
+            case CellDisplayMode.CIRCLE, CellDisplayMode.CIRCLE_BORDERED, CellDisplayMode.EMOJI ->
+                    throw new IllegalArgumentException("CellDisplayMode not supported: " + config.cellDisplayMode());
         };
         cellAntDrawer = (descriptor, painter, cell, _) -> {
             if ((cellEmojiFont != null)
