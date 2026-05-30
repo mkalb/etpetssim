@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
 import de.mkalb.etpetssim.simulations.langton.model.entity.*;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 
 public final class LangtonStepRunner
         implements SimulationStepRunner<LangtonStatistics> {
@@ -73,7 +74,11 @@ public final class LangtonStepRunner
 
     void switchGround(GridCoordinate coordinate, TerrainConstant groundEntity, WritableGridModel<TerrainConstant> groundModel) {
         int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getRuleCount();
-        groundModel.setEntity(coordinate, TerrainConstant.byRuleIndex(newRuleIndex));
+        TerrainConstant newGround = TerrainConstant.byRuleIndex(newRuleIndex);
+        if (newGround == null) {
+            throw new IllegalStateException("No TerrainConstant for rule index: " + newRuleIndex);
+        }
+        groundModel.setEntity(coordinate, newGround);
     }
 
     TerrainConstant determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {

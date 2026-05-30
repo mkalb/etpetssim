@@ -35,7 +35,7 @@ public final class LangtonFactory {
 
         // ViewModel
         var configViewModel = new LangtonConfigViewModel(readOnlySimulationState);
-        var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
+        var controlViewModel = DefaultControlViewModel.withMinStepDuration(readOnlySimulationState);
         var observationViewModel = new DefaultObservationViewModel<LangtonEntity, LangtonStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
                 observationViewModel, LangtonSimulationManager::new,

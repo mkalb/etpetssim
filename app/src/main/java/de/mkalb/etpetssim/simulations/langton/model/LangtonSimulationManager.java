@@ -27,21 +27,18 @@ public final class LangtonSimulationManager
                 new ArrayGridModel<>(structure, TerrainConstant.UNVISITED),
                 new SparseGridModel<>(structure, NoAgent.NO_AGENT));
 
-        // Executor with runner and terminationCondition
         var runner = new LangtonStepRunner(config, model);
         var terminationCondition = new LangtonTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        updateStatistics();
+        initializeGrid(model);
 
-        initializeGrid(config, model);
-
-        updateInitialStatistics(model);
+        initializeStatistics(model);
     }
 
-    private void initializeGrid(LangtonConfig config, LangtonGridModel model) {
+    private void initializeGrid(LangtonGridModel model) {
         Ant ant = new Ant(CompassDirection.N);
-        // Start at the middle of teh grid but round down to an even number. This avoids problems with TRIANGLE.
+        // Start at the middle of the grid but round down to an even number. This avoids problems with TRIANGLE.
         GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
         model.antModel().setEntity(coordinate, ant);
         model.groundModel().setEntity(coordinate, TerrainConstant.COLOR_1);
@@ -68,7 +65,7 @@ public final class LangtonSimulationManager
                 executor.stepTimingStatistics());
     }
 
-    private void updateInitialStatistics(LangtonGridModel model) {
+    private void initializeStatistics(LangtonGridModel model) {
         int newAnts = Math.toIntExact(model.antModel()
                                            .countEntities(LangtonEntity::isAgent));
         statistics.updateCells(newAnts, newAnts);

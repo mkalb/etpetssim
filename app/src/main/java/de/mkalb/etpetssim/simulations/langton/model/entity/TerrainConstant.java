@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.langton.model.entity;
 import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
 import javafx.scene.paint.Color;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -75,7 +76,7 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
      * @param ruleIndex the rule index to look up
      * @return the matching {@link TerrainConstant}, or {@code null} if not found
      */
-    public static TerrainConstant byRuleIndex(int ruleIndex) {
+    public static @Nullable TerrainConstant byRuleIndex(int ruleIndex) {
         return BY_RULE_INDEX.get(ruleIndex);
     }
 
@@ -106,11 +107,6 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
         return spec;
     }
 
-    /**
-     * Checks if this entity represents an agent.
-     *
-     * @return {@code true} if this entity is an agent, {@code false} otherwise
-     */
     @Override
     public boolean isAgent() {
         return false;

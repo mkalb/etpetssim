@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorProvider;
 
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Common contract for all entities in the Langton simulation.
@@ -17,10 +18,8 @@ public sealed interface LangtonEntity extends GridEntity
      * @return immutable list of descriptor providers
      */
     static List<GridEntityDescriptorProvider> allEntityDescriptorProviders() {
-        List<GridEntityDescriptorProvider> allEntityDescriptorProviders = new ArrayList<>();
-        allEntityDescriptorProviders.addAll(Arrays.asList(EntityDescriptors.values()));
-        allEntityDescriptorProviders.addAll(Arrays.asList(TerrainConstant.values()));
-        return Collections.unmodifiableList(allEntityDescriptorProviders);
+        return Stream.concat(Arrays.stream(EntityDescriptors.values()), Arrays.stream(TerrainConstant.values()))
+                     .collect(Collectors.toUnmodifiableList());
     }
 
     /**

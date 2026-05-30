@@ -2,17 +2,18 @@ package de.mkalb.etpetssim.simulations.langton.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.simulations.langton.model.LangtonMovementRules;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.RULE_DEFAULT;
 
 public final class LangtonRuleProperty {
 
     private static final LangtonRulePresetTriangle PRESET_TRIANGLE_INITIAL = LangtonRulePresetTriangle.EMPTY;
     private static final LangtonRulePresetSquare PRESET_SQUARE_INITIAL = LangtonRulePresetSquare.EMPTY;
     private static final LangtonRulePresetHexagon PRESET_HEXAGON_INITIAL = LangtonRulePresetHexagon.EMPTY;
-    private static final String INITIAL_STRING = "RL";
 
     private final StringProperty stringProperty;
     private final StringProperty labelProperty;
@@ -21,7 +22,7 @@ public final class LangtonRuleProperty {
     private final InputEnumProperty<LangtonRulePresetHexagon> presetHexagonProperty;
 
     public LangtonRuleProperty() {
-        stringProperty = new SimpleStringProperty(INITIAL_STRING);
+        stringProperty = new SimpleStringProperty(RULE_DEFAULT);
         labelProperty = new SimpleStringProperty("");
 
         presetTriangleProperty = InputEnumProperty.of(PRESET_TRIANGLE_INITIAL, LangtonRulePresetTriangle.class, Enum::toString);
@@ -70,8 +71,8 @@ public final class LangtonRuleProperty {
                 throw new IllegalArgumentException("Rule not valid for cell shape! cellShape=" + cellShape + ", input=" + stringProperty.get());
             }
         } catch (IllegalArgumentException e) {
-            AppLogger.error(e, "Invalid Langton rule string: " + stringProperty.get() + ", using initial value: " + PRESET_SQUARE_INITIAL);
-            rules = LangtonMovementRules.fromString(PRESET_SQUARE_INITIAL.toString());
+            AppLogger.errorf(e, "Invalid Langton rule string '%s', falling back to '%s'", stringProperty.get(), RULE_DEFAULT);
+            rules = LangtonMovementRules.fromString(RULE_DEFAULT);
         }
         String rulesDisplayString = rules.toDisplayString();
         stringProperty.set(rulesDisplayString);

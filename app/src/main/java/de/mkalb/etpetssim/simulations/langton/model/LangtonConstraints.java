@@ -42,6 +42,9 @@ public final class LangtonConstraints {
     // Initialization - Seed
     public static final String SEED_INITIAL = "";
 
+    // Rules - Movement rules string
+    public static final String RULE_DEFAULT = "RL";
+
     // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 

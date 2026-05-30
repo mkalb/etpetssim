@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
-import de.mkalb.etpetssim.simulations.langton.model.LangtonMovementRules;
+import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
