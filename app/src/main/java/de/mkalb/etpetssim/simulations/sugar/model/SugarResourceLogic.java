@@ -11,7 +11,7 @@ public final class SugarResourceLogic {
         // Sugar regeneration
         gridModel.resourceModel().nonDefaultCells().forEach(cell -> {
             if (cell.entity() instanceof Sugar sugar) {
-                sugar.gainEnergy(config.sugarRegenerationRate());
+                sugar.gainAmount(config.sugarRegenerationRate());
             }
         });
     }

@@ -60,7 +60,7 @@ public final class SugarAgentLogic {
                 if (sugarResourceEntity instanceof Sugar sugar) {
                     int harvestedSugar = sugar.currentAmount();
                     agent.gainEnergy(harvestedSugar);
-                    sugar.reduceEnergy(harvestedSugar);
+                    sugar.reduceAmount(harvestedSugar);
                 }
 
                 // 1.5 Agent metabolism and death (consume sugar, die if energy <= 0 or age > maxAge)

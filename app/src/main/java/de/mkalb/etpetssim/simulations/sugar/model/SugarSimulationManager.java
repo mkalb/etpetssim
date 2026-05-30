@@ -61,7 +61,6 @@ public final class SugarSimulationManager
         return Math.clamp(count, 0, size - 1);
     }
 
-    @SuppressWarnings("MagicNumber")
     private List<GridCoordinate> computeSugarPeakCoordinates() {
         int width = structure.size().width();
         int height = structure.size().height();
@@ -69,15 +68,25 @@ public final class SugarSimulationManager
 
         if (config().sugarPeaks() > 0) {
             if ((config().sugarPeaks() % 2) == 1) {
-                peakCoordinates.add(new GridCoordinate(percentToClampedIndex(width, 0.5d), percentToClampedIndex(height, 0.5d)));
+                peakCoordinates.add(new GridCoordinate(
+                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_CENTER),
+                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_CENTER)));
             }
             if (config().sugarPeaks() >= 2) {
-                peakCoordinates.add(new GridCoordinate(percentToClampedIndex(width, 0.75d), percentToClampedIndex(height, 0.25d)));
-                peakCoordinates.add(new GridCoordinate(percentToClampedIndex(width, 0.25d), percentToClampedIndex(height, 0.75d)));
+                peakCoordinates.add(new GridCoordinate(
+                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_THREE_QUARTERS),
+                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_QUARTER)));
+                peakCoordinates.add(new GridCoordinate(
+                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_QUARTER),
+                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_THREE_QUARTERS)));
             }
             if (config().sugarPeaks() >= 4) {
-                peakCoordinates.add(new GridCoordinate(percentToClampedIndex(width, 0.25d), percentToClampedIndex(height, 0.25d)));
-                peakCoordinates.add(new GridCoordinate(percentToClampedIndex(width, 0.75d), percentToClampedIndex(height, 0.75d)));
+                peakCoordinates.add(new GridCoordinate(
+                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_QUARTER),
+                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_QUARTER)));
+                peakCoordinates.add(new GridCoordinate(
+                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_THREE_QUARTERS),
+                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_THREE_QUARTERS)));
             }
         }
 
@@ -134,15 +143,15 @@ public final class SugarSimulationManager
         return sugarMap;
     }
 
-    @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
+    @SuppressWarnings({"NumericCastThatLosesPrecision"})
     private int computeSugarAmount(int minSugar, int sugarRange, int radiusLimit, int radiusLevel, Random random) {
-        // linear interpolation: near peaks -> max, am Rand -> min
+        // linear interpolation: near peaks -> max, at edge -> min
         if (radiusLimit <= 0) {
             return minSugar;
         }
         return (int) Math.floor(minSugar
                 + (((double) sugarRange * (radiusLimit - radiusLevel)) / radiusLimit)
-                + random.nextDouble(-0.4f, 1.2f));
+                + random.nextDouble(SugarBalance.SUGAR_NOISE_MIN, SugarBalance.SUGAR_NOISE_MAX));
     }
 
     private void initializeGridAgent(SugarConfig config, SugarGridModel model, Random random) {

@@ -164,6 +164,7 @@ public final class SugarMainView
         }
         if (cellAgentDrawer == null) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
+            return;
         }
 
         basePainter.fillCanvasBackground(backgroundColor);
