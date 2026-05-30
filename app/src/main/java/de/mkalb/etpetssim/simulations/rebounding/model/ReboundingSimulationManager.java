@@ -53,30 +53,21 @@ public final class ReboundingSimulationManager
         createMovingEntityInitializer(config, random).initialize(model);
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
+    private int computeMovingEntityCount(ReboundingConfig config) {
+        return Math.toIntExact(Math.round(structure.cellCount() * config.movingEntityPercent()));
+    }
+
     private GridInitializer<ReboundingEntity> createWallInitializer(ReboundingConfig config) {
         int width = structure.size().width();
         int height = structure.size().height();
         int wallCount = config.verticalWalls();
-        int movingEntityCount = (int) (structure.cellCount() * config.movingEntityPercent());
+        int movingEntityCount = computeMovingEntityCount(config);
         int wallEntityCount = wallCount * height;
 
         if ((wallCount > 0)
                 && (width >= wallCount)
                 && ((movingEntityCount + wallEntityCount) <= structure.size().area())) {
-            // Integer division (floor), ensures that walls have equal spacing and fit within the grid
-            int distanceX = width / wallCount;
-            // Center walls within the grid. Leave additional space on the left and right.
-            int adjustment = (-1 - ((distanceX - 1) / 2)) + ((width % wallCount) / 2);
-
-            // Calculate wall x-positions
-            Set<Integer> wallXPositions = new TreeSet<>();
-            for (int i = 1; i <= wallCount; i++) {
-                int x = (i * distanceX) + adjustment;
-                wallXPositions.add(x);
-            }
-
-            // Create wall cells
+            Set<Integer> wallXPositions = computeWallXPositions(width, wallCount);
             List<GridCell<ReboundingEntity>> cells = new ArrayList<>();
             for (int x : wallXPositions) {
                 for (int y = 0; y < height; y++) {
@@ -88,30 +79,43 @@ public final class ReboundingSimulationManager
         return GridInitializers.identity();
     }
 
-    @SuppressWarnings("NumericCastThatLosesPrecision")
-    private GridInitializer<ReboundingEntity> createMovingEntityInitializer(ReboundingConfig config, Random random) {
-        if (config.movingEntityPercent() > 0.0d) {
-            List<CompassDirection> directionRing;
-            if (structure.cellShape() == CellShape.SQUARE) {
-                directionRing = (config.neighborhoodMode() == NeighborhoodMode.EDGES_AND_VERTICES)
-                        ? CellNeighborhoods.SQUARE_EDGES_AND_VERTICES_DIRECTION_RING
-                        : CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING;
-            } else if (structure.cellShape() == CellShape.HEXAGON) {
-                directionRing = CellNeighborhoods.HEXAGON_DIRECTION_RING;
-            } else {
-                throw new IllegalStateException("Unsupported cell shape: " + structure.cellShape());
-            }
-            int movingEntityCount = (int) (structure.cellCount() * config.movingEntityPercent());
-            List<ReboundingEntity> movingEntities = new ArrayList<>(movingEntityCount);
-            for (int i = 0; i < movingEntityCount; i++) {
-                movingEntities.add(new Rebounder(directionRing.get(random.nextInt(directionRing.size()))));
-            }
-            return GridInitializers.placeAllAtRandomPositions(
-                    movingEntities,
-                    ReboundingEntity::isGround,
-                    random);
+    private Set<Integer> computeWallXPositions(int width, int wallCount) {
+        // Integer division (floor), ensures that walls have equal spacing and fit within the grid
+        int distanceX = width / wallCount;
+        // Center walls within the grid. Leave additional space on the left and right.
+        int adjustment = (-1 - ((distanceX - 1) / 2)) + ((width % wallCount) / 2);
+        Set<Integer> positions = new TreeSet<>();
+        for (int i = 1; i <= wallCount; i++) {
+            positions.add((i * distanceX) + adjustment);
         }
-        return GridInitializers.identity();
+        return positions;
+    }
+
+    private GridInitializer<ReboundingEntity> createMovingEntityInitializer(ReboundingConfig config, Random random) {
+        int movingEntityCount = computeMovingEntityCount(config);
+        if (movingEntityCount == 0) {
+            return GridInitializers.identity();
+        }
+        List<CompassDirection> directionRing = resolveDirectionRing(config);
+        List<ReboundingEntity> movingEntities = new ArrayList<>(movingEntityCount);
+        for (int i = 0; i < movingEntityCount; i++) {
+            movingEntities.add(new Rebounder(directionRing.get(random.nextInt(directionRing.size()))));
+        }
+        return GridInitializers.placeAllAtRandomPositions(
+                movingEntities,
+                ReboundingEntity::isGround,
+                random);
+    }
+
+    private List<CompassDirection> resolveDirectionRing(ReboundingConfig config) {
+        if (structure.cellShape() == CellShape.SQUARE) {
+            return (config.neighborhoodMode() == NeighborhoodMode.EDGES_AND_VERTICES)
+                    ? CellNeighborhoods.SQUARE_EDGES_AND_VERTICES_DIRECTION_RING
+                    : CellNeighborhoods.SQUARE_EDGES_DIRECTION_RING;
+        } else if (structure.cellShape() == CellShape.HEXAGON) {
+            return CellNeighborhoods.HEXAGON_DIRECTION_RING;
+        }
+        throw new IllegalStateException("Unsupported cell shape: " + structure.cellShape());
     }
 
     @Override
