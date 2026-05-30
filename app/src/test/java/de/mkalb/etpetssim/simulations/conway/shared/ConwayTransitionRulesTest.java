@@ -199,6 +199,21 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
+    void testOfDisplayStringRoundTripsFromRules() {
+        ConwayTransitionRules original = ConwayTransitionRules.of(List.of(2, 3), List.of(3));
+        ConwayTransitionRules reparsed = ConwayTransitionRules.of(original.toDisplayString());
+        assertEquals(original, reparsed);
+    }
+
+    @Test
+    void testOfDisplayStringSilentlyIgnoresNonDigitCharacters() {
+        // Non-digit characters are silently skipped; same result as "23/3"
+        ConwayTransitionRules withNoise = ConwayTransitionRules.of("2 3/3!");
+        ConwayTransitionRules canonical = ConwayTransitionRules.of("23/3");
+        assertEquals(canonical, withNoise);
+    }
+
+    @Test
     void testToDisplayStringWithEmptySets() {
         ConwayTransitionRules rules = new ConwayTransitionRules(new TreeSet<>(), new TreeSet<>());
         assertEquals("/", rules.toDisplayString());

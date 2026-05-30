@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.shared;
 
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Represents the transition rule set for Conway-style cellular automata.
@@ -148,10 +149,10 @@ public record ConwayTransitionRules(
     public String toDisplayString() {
         String survive = surviveCounts.stream()
                                       .map(String::valueOf)
-                                      .collect(java.util.stream.Collectors.joining());
+                                      .collect(Collectors.joining());
         String birth = birthCounts.stream()
                                   .map(String::valueOf)
-                                  .collect(java.util.stream.Collectors.joining());
+                                  .collect(Collectors.joining());
         return survive + "/" + birth;
     }
 
