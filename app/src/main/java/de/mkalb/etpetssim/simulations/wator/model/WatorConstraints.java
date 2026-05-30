@@ -60,43 +60,33 @@ public final class WatorConstraints {
     public static final int FISH_MAX_AGE_DEFAULT = 20;
     public static final int FISH_MAX_AGE_MIN = 1;
     public static final int FISH_MAX_AGE_MAX = 1_000;
-    public static final int FISH_MAX_AGE_STEP = RULE_STEP;
     public static final int FISH_MIN_REPRODUCTION_AGE_DEFAULT = 5;
     public static final int FISH_MIN_REPRODUCTION_AGE_MIN = 1;
     public static final int FISH_MIN_REPRODUCTION_AGE_MAX = 1_000;
-    public static final int FISH_MIN_REPRODUCTION_AGE_STEP = RULE_STEP;
     public static final int FISH_MIN_REPRODUCTION_INTERVAL_DEFAULT = 3;
     public static final int FISH_MIN_REPRODUCTION_INTERVAL_MIN = 1;
     public static final int FISH_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
-    public static final int FISH_MIN_REPRODUCTION_INTERVAL_STEP = RULE_STEP;
     public static final int SHARK_MAX_AGE_DEFAULT = 40;
     public static final int SHARK_MAX_AGE_MIN = 1;
     public static final int SHARK_MAX_AGE_MAX = 1_000;
-    public static final int SHARK_MAX_AGE_STEP = RULE_STEP;
     public static final int SHARK_BIRTH_ENERGY_DEFAULT = 8;
     public static final int SHARK_BIRTH_ENERGY_MIN = 1;
     public static final int SHARK_BIRTH_ENERGY_MAX = 1_000;
-    public static final int SHARK_BIRTH_ENERGY_STEP = RULE_STEP;
     public static final int SHARK_ENERGY_LOSS_PER_STEP_DEFAULT = 1;
     public static final int SHARK_ENERGY_LOSS_PER_STEP_MIN = 1;
     public static final int SHARK_ENERGY_LOSS_PER_STEP_MAX = 1_000;
-    public static final int SHARK_ENERGY_LOSS_PER_STEP_STEP = RULE_STEP;
     public static final int SHARK_ENERGY_GAIN_PER_FISH_DEFAULT = 2;
     public static final int SHARK_ENERGY_GAIN_PER_FISH_MIN = 1;
     public static final int SHARK_ENERGY_GAIN_PER_FISH_MAX = 1_000;
-    public static final int SHARK_ENERGY_GAIN_PER_FISH_STEP = RULE_STEP;
     public static final int SHARK_MIN_REPRODUCTION_AGE_DEFAULT = 15;
     public static final int SHARK_MIN_REPRODUCTION_AGE_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_AGE_MAX = 1_000;
-    public static final int SHARK_MIN_REPRODUCTION_AGE_STEP = RULE_STEP;
     public static final int SHARK_MIN_REPRODUCTION_ENERGY_DEFAULT = 5;
     public static final int SHARK_MIN_REPRODUCTION_ENERGY_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_ENERGY_MAX = 1_000;
-    public static final int SHARK_MIN_REPRODUCTION_ENERGY_STEP = RULE_STEP;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_DEFAULT = 3;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
-    public static final int SHARK_MIN_REPRODUCTION_INTERVAL_STEP = RULE_STEP;
 
     /**
      * Private constructor to prevent instantiation.

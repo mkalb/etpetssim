@@ -46,8 +46,6 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
         } else if (entity instanceof Shark shark) {
             sharkLogic(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
         }
-
-        statistics.updateCells();
     }
 
     private void fishLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
