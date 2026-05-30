@@ -21,6 +21,8 @@ public enum ConwayPresetTriangle implements ConwayPreset {
 
     EMPTY("", "", -1),
     SIERPINSKI("/1", "Sierpinski", 1),
+    TRI_25_3("25/3", "Tri 25/3", 4),
+    TRI_45_456("45/456", "Tri 45/456", 20),
     TRI_LIFE("34/45", "Tri Life", 25),
     TRI_MAJORITY("56789/6789", "Tri Majority", 40);
 
