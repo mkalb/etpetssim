@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.langton.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
+import de.mkalb.etpetssim.simulations.langton.shared.*;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -25,9 +25,12 @@ public final class LangtonRuleProperty {
         stringProperty = new SimpleStringProperty(RULE_DEFAULT);
         labelProperty = new SimpleStringProperty("");
 
-        presetTriangleProperty = InputEnumProperty.of(PRESET_TRIANGLE_INITIAL, LangtonRulePresetTriangle.class, Enum::toString);
-        presetSquareProperty = InputEnumProperty.of(PRESET_SQUARE_INITIAL, LangtonRulePresetSquare.class, Enum::toString);
-        presetHexagonProperty = InputEnumProperty.of(PRESET_HEXAGON_INITIAL, LangtonRulePresetHexagon.class, Enum::toString);
+        presetTriangleProperty = InputEnumProperty.of(PRESET_TRIANGLE_INITIAL, LangtonRulePresetTriangle.class,
+                LangtonRulePresetTriangle::displayName);
+        presetSquareProperty = InputEnumProperty.of(PRESET_SQUARE_INITIAL, LangtonRulePresetSquare.class,
+                LangtonRulePresetSquare::displayName);
+        presetHexagonProperty = InputEnumProperty.of(PRESET_HEXAGON_INITIAL, LangtonRulePresetHexagon.class,
+                LangtonRulePresetHexagon::displayName);
 
         presetTriangleProperty.property().addListener((_, _, newVal) -> {
             stringProperty.set(newVal.toString());
@@ -80,61 +83,4 @@ public final class LangtonRuleProperty {
         return rules;
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
-    public enum LangtonRulePresetSquare {
-        EMPTY,
-        RL,
-        RLR,
-        RLLR,
-        RRLL,
-        RNNU,
-        RLLLLLRRL,
-        RRLLLRLLLRRR;
-
-        public String toString() {
-            if (this == EMPTY) {
-                return "";
-            } else {
-                return name();
-            }
-        }
-    }
-
-    @SuppressWarnings("SpellCheckingInspection")
-    public enum LangtonRulePresetHexagon {
-        EMPTY,
-        RL,
-        RL2,
-        R2N,
-        NR,
-        NR2,
-        R2RR,
-        R2NNRR2R,
-        RR2NUR2RL2;
-
-        public String toString() {
-            if (this == EMPTY) {
-                return "";
-            } else {
-                return name();
-            }
-        }
-    }
-
-    public enum LangtonRulePresetTriangle {
-        EMPTY,
-        RL,
-        RLL,
-        URR;
-
-        public String toString() {
-            if (this == EMPTY) {
-                return "";
-            } else {
-                return name();
-            }
-        }
-    }
-
 }
-
