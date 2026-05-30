@@ -77,19 +77,24 @@ public record ConwayTransitionRules(
     }
 
     /**
-     * Creates a new {@code ConwayTransitionRules} instance from a display string.
+     * Creates a new {@code ConwayTransitionRules} instance from a display string in S/B notation.
      * <p>
-     * The input string must be in the format {@code surviveCounts/birthCounts},
-     * where each part is a sequence of digits representing allowed neighbor counts.
+     * S/B notation (also called <em>traditional notation</em>) is one of two common rule string
+     * formats for Conway-style cellular automata. It places survival counts before the slash and
+     * birth counts after the slash.
+     * <p>
+     * The input string must be in the format {@code S/B}, where each part is a sequence of digits
+     * representing allowed neighbor counts. Non-digit characters other than the slash separator
+     * are silently ignored during parsing.
      * <br>
-     * Example: {@code 23/3} or {@code 1257/1357}
+     * Examples: {@code 23/3} (Conway's Game of Life) or {@code 1257/1357}
      * <p>
-     * The numbers before the slash represent the neighbor counts for which a cell survives.
-     * The numbers after the slash represent the neighbor counts for which a cell is born.
+     * The alternative <em>B/S notation</em> ({@code B3/S23}) is not supported by this method.
      *
-     * @param displayString the string representation of Conway rules
+     * @param displayString the S/B rule string to parse
      * @return a new {@code ConwayTransitionRules} instance parsed from the string
      * @throws IllegalArgumentException if the format is invalid or contains out-of-range values
+     * @see #toDisplayString()
      */
     public static ConwayTransitionRules of(String displayString) {
         if (!displayString.contains("/")) {
@@ -135,16 +140,22 @@ public record ConwayTransitionRules(
     }
 
     /**
-     * Returns a short, human-readable string representation of the Conway rules.
+     * Returns a short, human-readable string representation of these Conway rules in
+     * <em>S/B notation</em> (also called <em>traditional notation</em>).
      * <p>
-     * Format: {@code surviveCounts/birthCounts}
+     * S/B notation is one of two common rule string formats for Conway-style cellular automata.
+     * Survival counts appear before the slash, birth counts after. The alternative format,
+     * <em>B/S notation</em> (e.g., {@code B3/S23}), reverses this order and adds letter prefixes.
+     * <p>
+     * Format: {@code S/B} — survival neighbor counts followed by {@code /} followed by birth
+     * neighbor counts, each part as a sorted sequence of single digits.
      * <br>
-     * Example: {@code 23/3} or {@code 1257/1357}
+     * Examples: {@code 23/3} (Conway's Game of Life) or {@code 1257/1357}
      * <p>
-     * The numbers before the slash represent the neighbor counts for which a cell survives.
-     * The numbers after the slash represent the neighbor counts for which a cell is born.
+     * The returned string can be parsed back by {@link #of(String)}.
      *
-     * @return a concise display string for these Conway rules
+     * @return a concise S/B notation rule string for these Conway rules
+     * @see #of(String)
      */
     public String toDisplayString() {
         String survive = surviveCounts.stream()
