@@ -68,7 +68,7 @@ public final class ReboundingMainView
                             descriptor.colorOrFallback(),
                             backgroundColor,
                             strokeLineWidth);
-            default -> throw new IllegalArgumentException("CellDisplayMode not supported!");
+            default -> throw new IllegalArgumentException("CellDisplayMode not supported: " + config.cellDisplayMode());
         };
     }
 

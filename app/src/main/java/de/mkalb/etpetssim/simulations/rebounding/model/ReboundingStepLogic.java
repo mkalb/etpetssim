@@ -47,7 +47,7 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
 
         // Check edge behavior and neighbor cell entity to determine the action for the moving entity
         if ((neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED)) {
-            // Change direction at blocked edge (GROUND)
+            // Change direction at blocked grid boundary
             movingEntity.setDirection(computeBounceDirection(
                     movingEntity.getDirection(),
                     neighbor.mappedNeighborCoordinate()));
@@ -66,7 +66,7 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
 
                 statistics.decreaseWallCells();
             } else if (neighborEntity.isRebounder()) {
-                // Do not change direction and overwrite neighbor entity with this entity
+                // Move into the neighbor cell, destroying the other rebounder
                 model.setEntity(neighbor.mappedNeighborCoordinate(), movingEntity);
                 model.setEntityToDefault(currentCoordinate);
 
@@ -106,8 +106,7 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
             }
         }
 
-        // Fallback: If the cell shape or direction level is not handled, return the current direction (no change).
-        return currentDirection;
+        throw new IllegalStateException("Unhandled direction level: " + currentDirection.level() + " for direction: " + currentDirection);
     }
 
 }

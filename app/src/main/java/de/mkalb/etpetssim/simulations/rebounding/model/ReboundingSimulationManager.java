@@ -49,12 +49,12 @@ public final class ReboundingSimulationManager
     }
 
     private void initializeGrid(ReboundingConfig config, WritableGridModel<ReboundingEntity> model, Random random) {
-        wallInitializer(config).initialize(model);
-        movingEntityInitializer(config, random).initialize(model);
+        createWallInitializer(config).initialize(model);
+        createMovingEntityInitializer(config, random).initialize(model);
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private GridInitializer<ReboundingEntity> wallInitializer(ReboundingConfig config) {
+    private GridInitializer<ReboundingEntity> createWallInitializer(ReboundingConfig config) {
         int width = structure.size().width();
         int height = structure.size().height();
         int wallCount = config.verticalWalls();
@@ -89,7 +89,7 @@ public final class ReboundingSimulationManager
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private GridInitializer<ReboundingEntity> movingEntityInitializer(ReboundingConfig config, Random random) {
+    private GridInitializer<ReboundingEntity> createMovingEntityInitializer(ReboundingConfig config, Random random) {
         if (config.movingEntityPercent() > 0.0d) {
             List<CompassDirection> directionRing;
             if (structure.cellShape() == CellShape.SQUARE) {

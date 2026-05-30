@@ -34,13 +34,13 @@ public final class Rebounder implements ReboundingEntity {
         return direction;
     }
 
-    public void setDirection(CompassDirection direction) {
-        this.direction = direction;
+    public void setDirection(CompassDirection newDirection) {
+        direction = newDirection;
     }
 
     @Override
     public String toDisplayString() {
-        return String.format("[REBOUNDER %s]", direction.arrow());
+        return "[REBOUNDER %s]".formatted(direction.arrow());
     }
 
     @Override
