@@ -57,7 +57,8 @@ Apply rules in this order (highest first):
 - [SHOULD] Prefer the simplest solution that fully satisfies requirements; keep methods small and single-purpose (KISS).
 - [MUST NOT] Introduce abstractions without clear ongoing value.
 - [MUST] Use meaningful domain names and keep classes cohesive.
-- [MUST] Remove dead code and outdated comments.
+- [MUST] Remove dead code and outdated comments; commented-out `AppLogger` calls are exempt and may be kept as
+  diagnostic traces for future debugging.
 
 ## Architecture: MVVM
 
@@ -89,11 +90,14 @@ more layers).
 
 - [MUST NOT] Let `model` depend on `view` or `viewmodel`; must not import JavaFX scene-graph, control, property, or
   binding types (the general MVVM rules above apply); may depend on `shared`.
-- [MUST NOT] Let `view` contain domain logic or depend on `model` directly; access domain data only through ViewModel
+- [MUST NOT] Let `view` contain domain/business logic (for example simulation rules or model mutation); may read
+  entity state from `model.entity` types directly for rendering purposes (for example pattern-matching on entity
+  subtypes to resolve colors, labels, or display strings); access non-rendering domain data only through ViewModel
   accessors; may depend on `shared`.
 - [MUST NOT] Let `viewmodel` contain domain/business logic; delegate computation to `model`.
 - [MUST] Place enums and records in `shared` when they carry no JavaFX dependency and are referenced by more than one
-  of `model`, `view`, or `viewmodel`.
+  of `model`, `view`, or `viewmodel`; entity types that are defined in `model.entity` (for example sealed grid entity
+  subtypes) remain in `model.entity` even when the view reads them for rendering — they do not move to `shared`.
 - [MUST NOT] Let `shared` depend on `model`, `view`, or `viewmodel`; it is a foundation layer, not a catch-all.
 - [MUST NOT] Import JavaFX scene-graph, control, property, or binding types from `shared`; neutral value types
   (for example `javafx.scene.paint.Color`) are permitted when they act as plain value carriers.
