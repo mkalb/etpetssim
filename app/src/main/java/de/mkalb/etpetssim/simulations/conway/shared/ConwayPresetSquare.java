@@ -15,22 +15,22 @@ public enum ConwayPresetSquare implements ConwayPreset {
 
     EMPTY("", "", -1),
     CONWAYS_LIFE("23/3", "Conway's Life", 30),
-    TWO_X_TWO("125/36", "2x2", 40),
-    THIRTY_FOUR_LIFE("34/34", "34 Life", 40),
-    AMOEBA("1358/357", "Amoeba", 40),
+    TWO_X_TWO("125/36", "2x2", 15),
+    THIRTY_FOUR_LIFE("34/34", "34 Life", 10),
+    AMOEBA("1358/357", "Amoeba", 15),
     ANNEAL("35678/4678", "Anneal", 50),
-    COAGULATIONS("235678/378", "Coagulations", 40),
-    CORAL("45678/3", "Coral", 40),
-    DAY_AND_NIGHT("3678/34678", "Day & Night", 40),
+    COAGULATIONS("235678/378", "Coagulations", 10),
+    CORAL("45678/3", "Coral", 30),
+    DAY_AND_NIGHT("3678/34678", "Day & Night", 25),
     DIAMOEBA("5678/35678", "Diamoeba", 50),
-    GNARL("1/1", "Gnarl", 30),
+    GNARL("1/1", "Gnarl", 1),
     HIGHLIFE("23/36", "HighLife", 30),
-    LIFE_WITHOUT_DEATH("012345678/3", "Life Without Death", 20),
-    MAZE("12345/3", "Maze", 30),
+    LIFE_WITHOUT_DEATH("012345678/3", "Life Without Death", 2),
+    MAZE("12345/3", "Maze", 5),
     MAZECTRIC("1234/3", "Mazectric", 30),
-    MOVE("245/368", "Move", 40),
-    REPLICATOR("1357/1357", "Replicator", 5),
-    SEEDS("/2", "Seeds", 15);
+    MOVE("245/368", "Move", 25),
+    REPLICATOR("1357/1357", "Replicator", 1),
+    SEEDS("/2", "Seeds", 1);
 
     private final String ruleString;
     private final String displayName;

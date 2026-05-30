@@ -4,6 +4,7 @@ package de.mkalb.etpetssim.simulations.conway.shared;
  * Preset rule sets for Conway-style cellular automata with hexagon cells.
  * <p>
  * Each constant provides a well-known S/B rule string for hexagonal grids.
+ * In hexagonal grids each cell has at most 6 neighbors, so valid digit range is 0–6.
  * {@link #EMPTY} represents no preset selection.
  * <p>
  * Constants are ordered from no selection to increasingly complex rule sets,
@@ -13,9 +14,12 @@ package de.mkalb.etpetssim.simulations.conway.shared;
 public enum ConwayPresetHexagon implements ConwayPreset {
 
     EMPTY("", "", -1),
-    HEX_34_34("34/34", "Hex 34/34", 40),
+    HEX_34_LIFE("34/34", "Hex 34 Life", 40),
+    HEX_GLIDERS("3/245", "Hex Gliders", 15),
+    HEX_HIGHLIFE("23/36", "Hex HighLife", 30),
     HEX_LIFE("23/34", "Hex Life", 30),
-    SUGAR("3/2456", "Sugar", 20);
+    SNOWFLAKE("34/2", "Snowflake", 10),
+    SUGAR("3/2456", "Sugar", 15);
 
     private final String ruleString;
     private final String displayName;
