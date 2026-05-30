@@ -6,21 +6,25 @@ package de.mkalb.etpetssim.simulations.conway.shared;
  * Each constant provides a well-known S/B rule string for hexagonal grids.
  * {@link #EMPTY} represents no preset selection.
  * <p>
- * Constants are ordered from no selection to increasingly complex rule sets.
+ * Constants are ordered from no selection to increasingly complex rule sets,
+ * with {@link #EMPTY} first and all other presets sorted alphabetically by display name
+ * (ASCII order: digit-prefixed names before letter-prefixed names).
  */
-public enum ConwayPresetHexagon {
+public enum ConwayPresetHexagon implements ConwayPreset {
 
-    EMPTY("", ""),
-    HEX_LIFE("23/34", "Hex Life"),
-    HEX_34_34("34/34", "Hex 34/34"),
-    SUGAR("3/2456", "Sugar");
+    EMPTY("", "", -1),
+    HEX_34_34("34/34", "Hex 34/34", 40),
+    HEX_LIFE("23/34", "Hex Life", 30),
+    SUGAR("3/2456", "Sugar", 20);
 
     private final String ruleString;
     private final String displayName;
+    private final int recommendedDensityPercent;
 
-    ConwayPresetHexagon(String ruleString, String displayName) {
+    ConwayPresetHexagon(String ruleString, String displayName, int recommendedDensityPercent) {
         this.ruleString = ruleString;
         this.displayName = displayName;
+        this.recommendedDensityPercent = recommendedDensityPercent;
     }
 
     /**
@@ -28,6 +32,7 @@ public enum ConwayPresetHexagon {
      *
      * @return the display name
      */
+    @Override
     public String displayName() {
         return displayName;
     }
@@ -40,6 +45,18 @@ public enum ConwayPresetHexagon {
     @Override
     public String toString() {
         return ruleString;
+    }
+
+    /**
+     * Returns the recommended initial density of alive cells as a percentage (0–100),
+     * based on the birth and survival conditions of this rule.
+     * Returns {@code -1} for {@link #EMPTY}.
+     *
+     * @return the recommended starting density in percent
+     */
+    @Override
+    public int recommendedDensityPercent() {
+        return recommendedDensityPercent;
     }
 
 }

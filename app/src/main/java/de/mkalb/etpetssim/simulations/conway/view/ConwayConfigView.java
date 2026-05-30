@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayPreset;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
@@ -68,19 +69,24 @@ public final class ConwayConfigView
         );
 
         var squarePresetProperty = viewModel.ruleProperty().presetSquareProperty().property();
+        var trianglePresetProperty = viewModel.ruleProperty().presetTriangleProperty().property();
+        var hexagonPresetProperty = viewModel.ruleProperty().presetHexagonProperty().property();
         var hintBinding = Bindings.createStringBinding(
                 () -> {
-                    if (viewModel.cellShapeProperty().property().getValue() != CellShape.SQUARE) {
+                    var shape = viewModel.cellShapeProperty().property().getValue();
+                    ConwayPreset preset = (switch (shape) {
+                        case SQUARE -> squarePresetProperty;
+                        case TRIANGLE -> trianglePresetProperty;
+                        case HEXAGON -> hexagonPresetProperty;
+                    }).getValue();
+                    if ((preset == null) || (preset.recommendedDensityPercent() < 0)) {
                         return "";
                     }
-                    var preset = squarePresetProperty.getValue();
-                    int density = preset.recommendedDensityPercent();
-                    if (density == 0) {
-                        return "";
-                    }
-                    return AppLocalization.getFormattedText(CONWAY_CONFIG_ALIVE_PERCENT_HINT, density, preset.displayName());
+                    return AppLocalization.getFormattedText(CONWAY_CONFIG_ALIVE_PERCENT_HINT,
+                            preset.recommendedDensityPercent(), preset.displayName());
                 },
-                squarePresetProperty, viewModel.cellShapeProperty().property()
+                squarePresetProperty, trianglePresetProperty, hexagonPresetProperty,
+                viewModel.cellShapeProperty().property()
         );
         Label densityHintLabel = FXComponentFactory.createLabel("", ConwayStyleClasses.CONWAY_DENSITY_HINT_LABEL);
         densityHintLabel.textProperty().bind(hintBinding);

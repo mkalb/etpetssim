@@ -10,9 +10,10 @@ package de.mkalb.etpetssim.simulations.conway.shared;
  * followed by all other presets sorted alphabetically by display name
  * (ASCII order: digit-prefixed names before letter-prefixed names).
  */
-public enum ConwayPresetSquare {
+@SuppressWarnings("SpellCheckingInspection")
+public enum ConwayPresetSquare implements ConwayPreset {
 
-    EMPTY("", "", 0),
+    EMPTY("", "", -1),
     CONWAYS_LIFE("23/3", "Conway's Life", 30),
     TWO_X_TWO("125/36", "2x2", 40),
     THIRTY_FOUR_LIFE("34/34", "34 Life", 40),
@@ -46,6 +47,7 @@ public enum ConwayPresetSquare {
      *
      * @return the display name
      */
+    @Override
     public String displayName() {
         return displayName;
     }
@@ -63,10 +65,11 @@ public enum ConwayPresetSquare {
     /**
      * Returns the recommended initial density of alive cells as a percentage (0–100),
      * based on the birth and survival conditions of this rule.
-     * Returns {@code 0} for {@link #EMPTY}.
+     * Returns {@code -1} for {@link #EMPTY}.
      *
      * @return the recommended starting density in percent
      */
+    @Override
     public int recommendedDensityPercent() {
         return recommendedDensityPercent;
     }

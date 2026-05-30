@@ -6,20 +6,24 @@ package de.mkalb.etpetssim.simulations.conway.shared;
  * Each constant provides a well-known S/B rule string for triangular grids.
  * {@link #EMPTY} represents no preset selection.
  * <p>
- * Constants are ordered from no selection to increasingly complex rule sets.
+ * Constants are ordered from no selection to increasingly complex rule sets,
+ * with {@link #EMPTY} first and all other presets sorted alphabetically by display name
+ * (ASCII order: digit-prefixed names before letter-prefixed names).
  */
-public enum ConwayPresetTriangle {
+public enum ConwayPresetTriangle implements ConwayPreset {
 
-    EMPTY("", ""),
-    TRI_45_456("45/456", "Tri 45/456"),
-    TRI_25_3("25/3", "Tri 25/3");
+    EMPTY("", "", -1),
+    TRI_25_3("25/3", "Tri 25/3", 30),
+    TRI_45_456("45/456", "Tri 45/456", 40);
 
     private final String ruleString;
     private final String displayName;
+    private final int recommendedDensityPercent;
 
-    ConwayPresetTriangle(String ruleString, String displayName) {
+    ConwayPresetTriangle(String ruleString, String displayName, int recommendedDensityPercent) {
         this.ruleString = ruleString;
         this.displayName = displayName;
+        this.recommendedDensityPercent = recommendedDensityPercent;
     }
 
     /**
@@ -27,6 +31,7 @@ public enum ConwayPresetTriangle {
      *
      * @return the display name
      */
+    @Override
     public String displayName() {
         return displayName;
     }
@@ -39,6 +44,18 @@ public enum ConwayPresetTriangle {
     @Override
     public String toString() {
         return ruleString;
+    }
+
+    /**
+     * Returns the recommended initial density of alive cells as a percentage (0–100),
+     * based on the birth and survival conditions of this rule.
+     * Returns {@code -1} for {@link #EMPTY}.
+     *
+     * @return the recommended starting density in percent
+     */
+    @Override
+    public int recommendedDensityPercent() {
+        return recommendedDensityPercent;
     }
 
 }
