@@ -46,8 +46,8 @@ public final class LangtonConfigViewModel
                         () -> {
                             try {
                                 String ruleString = rule.stringProperty().get();
-                                if ((ruleString == null) || ruleString.trim().isEmpty()) {
-                                    return false;
+                                if (ruleString == null) {
+                                    return true;
                                 }
                                 LangtonMovementRules rules = LangtonMovementRules.fromString(ruleString);
                                 return !rules.isValidForCellShape(cellShapeProperty().getValue());
