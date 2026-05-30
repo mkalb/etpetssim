@@ -45,6 +45,7 @@ public final class LangtonSimulationManager
     }
 
     int halveToEven(int n) {
+        // Divides n by 2 and clears the lowest bit to guarantee an even result.
         return (n / 2) & ~1;
     }
 
