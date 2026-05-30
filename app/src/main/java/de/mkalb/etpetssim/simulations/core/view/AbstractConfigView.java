@@ -179,12 +179,14 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
     }
 
     protected final FXComponentFactory.LabeledControl<? extends Region> createSeedControl() {
-        return FXComponentFactory.createLabeledStringTextBox(
+        return FXComponentFactory.createLabeledStringTextBoxWithAdopt(
                 viewModel.seedProperty().stringProperty(),
+                viewModel.seedProperty().labelProperty(),
                 viewModel.seedProperty().labelProperty(),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_PROMPT),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_TOOLTIP),
+                AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_ADOPT_TOOLTIP),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_SEED_CLEAR_TOOLTIP),
                 FXStyleClasses.CONFIG_TEXTBOX
         );

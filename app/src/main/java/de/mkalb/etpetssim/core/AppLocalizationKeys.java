@@ -33,6 +33,7 @@ public final class AppLocalizationKeys {
     public static final String CONFIG_GRID_WIDTH_TOOLTIP = "config.grid.width.tooltip";
     public static final String CONFIG_NEIGHBORHOOD_MODE_TOOLTIP = "config.neighborhoodmode.tooltip";
     public static final String CONFIG_SEED = "config.seed";
+    public static final String CONFIG_SEED_ADOPT_TOOLTIP = "config.seed.adopt.tooltip";
     public static final String CONFIG_SEED_CLEAR_TOOLTIP = "config.seed.clear.tooltip";
     public static final String CONFIG_SEED_PROMPT = "config.seed.prompt";
     public static final String CONFIG_SEED_TOOLTIP = "config.seed.tooltip";

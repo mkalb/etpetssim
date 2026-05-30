@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -19,6 +20,9 @@ import java.util.stream.*;
  */
 @SuppressWarnings("MagicNumber")
 public final class FXComponentFactory {
+
+    private static final String BUTTON_TEXT_ADOPT = "↩";
+    private static final String BUTTON_TEXT_CLEAR = "✕";
 
     /**
      * Private constructor to prevent instantiation.
@@ -590,7 +594,7 @@ public final class FXComponentFactory {
      * @param labelFormatString the format string for the label (e.g., "Name: %s")
      * @param promptText the prompt text to display in the text field
      * @param tooltip the tooltip text for both the label and the text field
-     * @param tooltipButton the tooltip text for the clear button
+     * @param tooltipClearButton the tooltip text for the clear button
      * @param styleClass the CSS style class to apply to the text field and container
      * @return a {@link LabeledControl} containing the label and the HBox with the text field and clear button
      */
@@ -599,7 +603,7 @@ public final class FXComponentFactory {
                                                                   String labelFormatString,
                                                                   String promptText,
                                                                   String tooltip,
-                                                                  String tooltipButton,
+                                                                  String tooltipClearButton,
                                                                   String styleClass) {
         TextField textField = new TextField();
         textField.textProperty().bindBidirectional(inputProperty);
@@ -607,12 +611,74 @@ public final class FXComponentFactory {
         textField.setPromptText(promptText);
 
         // Add a clear button for the text field.
-        Button clearButton = new Button("✕");
+        Button clearButton = new Button(BUTTON_TEXT_CLEAR);
         clearButton.setFocusTraversable(false);
         clearButton.setOnAction(_ -> textField.clear());
-        clearButton.setTooltip(new Tooltip(tooltipButton));
+        clearButton.setTooltip(new Tooltip(tooltipClearButton));
 
         HBox hBox = new HBox(textField, clearButton);
+        hBox.getStyleClass().add(styleClass);
+
+        Label label = new Label(labelFormatString);
+        label.textProperty().bind(Bindings.format(labelFormatString, labelProperty));
+        label.setLabelFor(textField);
+
+        Tooltip tooltipValue = new Tooltip(tooltip);
+        label.setTooltip(tooltipValue);
+        textField.setTooltip(tooltipValue);
+
+        return new LabeledControl<>(label, hBox);
+    }
+
+    /**
+     * Creates a labeled text box with an adopt button and a clear button, formatted label, prompt text, tooltips, and custom style class.
+     * <p>
+     * The text field is bidirectionally bound to the given {@link StringProperty}. The label displays the current value
+     * using the provided format string and is bound to the given label property. An adopt button allows users to
+     * transfer the value from the read-only {@code adoptValueProperty} into the text field; it is disabled when
+     * {@code adoptValueProperty} is empty. A clear button allows users to quickly clear the text field.
+     * Both the label and the text field share the same tooltip for accessibility.
+     * The entire control is wrapped in an {@link HBox} for layout.
+     *
+     * @param inputProperty the {@link StringProperty} to bind to the text field
+     * @param labelProperty the {@link StringProperty} to bind to the label
+     * @param adoptValueProperty the {@link ReadOnlyStringProperty} providing the value to adopt into the text field
+     * @param labelFormatString the format string for the label (e.g., "Name: %s")
+     * @param promptText the prompt text to display in the text field
+     * @param tooltip the tooltip text for both the label and the text field
+     * @param tooltipAdoptButton the tooltip text for the adopt button
+     * @param tooltipClearButton the tooltip text for the clear button
+     * @param styleClass the CSS style class to apply to the text field and container
+     * @return a {@link LabeledControl} containing the label and the HBox with the text field, adopt button, and clear button
+     */
+    public static LabeledControl<HBox> createLabeledStringTextBoxWithAdopt(StringProperty inputProperty,
+                                                                           StringProperty labelProperty,
+                                                                           ReadOnlyStringProperty adoptValueProperty,
+                                                                           String labelFormatString,
+                                                                           String promptText,
+                                                                           String tooltip,
+                                                                           String tooltipAdoptButton,
+                                                                           String tooltipClearButton,
+                                                                           String styleClass) {
+        TextField textField = new TextField();
+        textField.textProperty().bindBidirectional(inputProperty);
+        textField.getStyleClass().add(styleClass);
+        textField.setPromptText(promptText);
+
+        // Add an adopt button that copies the adoptValueProperty into the text field.
+        Button adoptButton = new Button(BUTTON_TEXT_ADOPT);
+        adoptButton.setFocusTraversable(false);
+        adoptButton.setOnAction(_ -> textField.setText(adoptValueProperty.get()));
+        adoptButton.setTooltip(new Tooltip(tooltipAdoptButton));
+        adoptButton.disableProperty().bind(adoptValueProperty.isEmpty());
+
+        // Add a clear button for the text field.
+        Button clearButton = new Button(BUTTON_TEXT_CLEAR);
+        clearButton.setFocusTraversable(false);
+        clearButton.setOnAction(_ -> textField.clear());
+        clearButton.setTooltip(new Tooltip(tooltipClearButton));
+
+        HBox hBox = new HBox(textField, adoptButton, clearButton);
         hBox.getStyleClass().add(styleClass);
 
         Label label = new Label(labelFormatString);
