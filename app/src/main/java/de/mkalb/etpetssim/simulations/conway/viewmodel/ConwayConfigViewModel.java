@@ -37,6 +37,9 @@ public final class ConwayConfigViewModel
             SEED_INITIAL
     );
 
+    // Rules
+    private final ConwayRuleProperty ruleProperty = new ConwayRuleProperty();
+
     // Initialization
     private final InputDoubleProperty alivePercent = InputDoubleProperty.of(
             ALIVE_PERCENT_DEFAULT,
@@ -61,11 +64,9 @@ public final class ConwayConfigViewModel
         surviveProperties.forEach(p -> p.addListener(updateListener));
         birthProperties.forEach(p -> p.addListener(updateListener));
 
-        // TODO Conway: Add possibility for the user to use predefined rulesets (e.g. for specific cell shapes) and
-        //  display the corresponding ruleset for the selected cell shape as default, e.g.:
-        // HEXAGON: 23/34, 34/34, 3/2456
-        // SQUARE: 23/3
-        // TRIANGLE: 45/456, 25/3
+        ruleProperty.setOnRulesChanged(this::updateCheckboxesFromRules);
+
+        // Predefined rulesets per cell shape are available as presets in the rules section.
 
         maxNeighborCountProperty().addListener((_, _, _) -> disableUnusedNeighborProperties());
 
@@ -107,6 +108,14 @@ public final class ConwayConfigViewModel
         transitionRules.set(new ConwayTransitionRules(surviveCounts, birthCounts));
     }
 
+    private void updateCheckboxesFromRules(ConwayTransitionRules rules) {
+        for (int i = ConwayTransitionRules.MIN_NEIGHBOR_COUNT; i <= ConwayTransitionRules.MAX_NEIGHBOR_COUNT; i++) {
+            int index = i - ConwayTransitionRules.MIN_NEIGHBOR_COUNT;
+            surviveProperties.get(index).set(rules.surviveCounts().contains(i));
+            birthProperties.get(index).set(rules.birthCounts().contains(i));
+        }
+    }
+
     @Override
     public ConwayConfig getConfig() {
         return new ConwayConfig(
@@ -125,6 +134,10 @@ public final class ConwayConfigViewModel
 
     public InputDoubleProperty alivePercentProperty() {
         return alivePercent;
+    }
+
+    public ConwayRuleProperty ruleProperty() {
+        return ruleProperty;
     }
 
     public List<BooleanProperty> getSurviveProperties() {

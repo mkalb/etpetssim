@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
@@ -27,8 +28,20 @@ public final class ConwayConfigView
     private static final String CONWAY_CONFIG_ALIVE_PERCENT = "conway.config.alivepercent";
     private static final String CONWAY_CONFIG_ALIVE_PERCENT_TOOLTIP = "conway.config.alivepercent.tooltip";
 
+    // Rules - Presets
+    private static final String CONWAY_CONFIG_PRESET_HEXAGON = "conway.config.preset.hexagon";
+    private static final String CONWAY_CONFIG_PRESET_HEXAGON_TOOLTIP = "conway.config.preset.hexagon.tooltip";
+    private static final String CONWAY_CONFIG_PRESET_SQUARE = "conway.config.preset.square";
+    private static final String CONWAY_CONFIG_PRESET_SQUARE_TOOLTIP = "conway.config.preset.square.tooltip";
+    private static final String CONWAY_CONFIG_PRESET_TRIANGLE = "conway.config.preset.triangle";
+    private static final String CONWAY_CONFIG_PRESET_TRIANGLE_TOOLTIP = "conway.config.preset.triangle.tooltip";
+
     // Rules
     private static final String CONWAY_CONFIG_RULES = "conway.config.rules";
+    private static final String CONWAY_CONFIG_RULES_INPUT = "conway.config.rules.input";
+    private static final String CONWAY_CONFIG_RULES_INPUT_CLEAR_TOOLTIP = "conway.config.rules.input.clear.tooltip";
+    private static final String CONWAY_CONFIG_RULES_INPUT_PROMPT = "conway.config.rules.input.prompt";
+    private static final String CONWAY_CONFIG_RULES_INPUT_TOOLTIP = "conway.config.rules.input.tooltip";
     private static final String CONWAY_CONFIG_RULES_TOOLTIP = "conway.config.rules.tooltip";
     private static final String CONWAY_CONFIG_RULES_SURVIVE = "conway.config.rules.survive";
     private static final String CONWAY_CONFIG_RULES_BIRTH = "conway.config.rules.birth";
@@ -58,6 +71,42 @@ public final class ConwayConfigView
                 seedControl, alivePercentControl);
 
         // Rules
+        var presetTriangleControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.ruleProperty().presetTriangleProperty(),
+                viewModel.ruleProperty().presetTriangleProperty().displayNameProvider(),
+                AppLocalization.getText(CONWAY_CONFIG_PRESET_TRIANGLE),
+                AppLocalization.getText(CONWAY_CONFIG_PRESET_TRIANGLE_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+        var presetSquareControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.ruleProperty().presetSquareProperty(),
+                viewModel.ruleProperty().presetSquareProperty().displayNameProvider(),
+                AppLocalization.getText(CONWAY_CONFIG_PRESET_SQUARE),
+                AppLocalization.getText(CONWAY_CONFIG_PRESET_SQUARE_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+        var presetHexagonControl = FXComponentFactory.createLabeledEnumComboBox(
+                viewModel.ruleProperty().presetHexagonProperty(),
+                viewModel.ruleProperty().presetHexagonProperty().displayNameProvider(),
+                AppLocalization.getText(CONWAY_CONFIG_PRESET_HEXAGON),
+                AppLocalization.getText(CONWAY_CONFIG_PRESET_HEXAGON_TOOLTIP),
+                FXStyleClasses.CONFIG_COMBOBOX
+        );
+
+        setupPresetControlBindings(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
+        setupPresetControlBindings(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
+        setupPresetControlBindings(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
+
+        var inputControl = FXComponentFactory.createLabeledStringTextBox(
+                viewModel.ruleProperty().stringProperty(),
+                viewModel.ruleProperty().labelProperty(),
+                AppLocalization.getText(CONWAY_CONFIG_RULES_INPUT),
+                AppLocalization.getText(CONWAY_CONFIG_RULES_INPUT_PROMPT),
+                AppLocalization.getText(CONWAY_CONFIG_RULES_INPUT_TOOLTIP),
+                AppLocalization.getText(CONWAY_CONFIG_RULES_INPUT_CLEAR_TOOLTIP),
+                FXStyleClasses.CONFIG_TEXTBOX
+        );
+
         var rulesControl = createTransitionRulesControl(viewModel.getSurviveProperties(),
                 viewModel.getBirthProperties(),
                 viewModel.transitionRulesProperty(),
@@ -67,7 +116,7 @@ public final class ConwayConfigView
 
         var rulesPane = createConfigTitledPane(
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_TITLE_RULES), true,
-                rulesControl);
+                presetTriangleControl, presetSquareControl, presetHexagonControl, inputControl, rulesControl);
 
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
@@ -149,6 +198,13 @@ public final class ConwayConfigView
         }
 
         return new FXComponentFactory.LabeledControl<>(label, gridPane);
+    }
+
+    private void setupPresetControlBindings(Label label, Region controlRegion, CellShape shape) {
+        label.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+        label.managedProperty().bind(label.visibleProperty());
+        controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+        controlRegion.managedProperty().bind(controlRegion.visibleProperty());
     }
 
 }
