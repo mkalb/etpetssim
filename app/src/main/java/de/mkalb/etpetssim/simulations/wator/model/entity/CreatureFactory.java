@@ -20,8 +20,4 @@ public final class CreatureFactory {
         return shark;
     }
 
-    public long currentSequence() {
-        return sequence;
-    }
-
 }
