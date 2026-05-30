@@ -44,7 +44,7 @@ public final class ConwayConstraints {
     public static final String SEED_INITIAL = "";
 
     // Initialization
-    public static final double ALIVE_PERCENT_DEFAULT = 0.1d;
+    public static final double ALIVE_PERCENT_DEFAULT = 0.3d;
     public static final double ALIVE_PERCENT_MIN = 0.0d;
     public static final double ALIVE_PERCENT_MAX = 1.0d;
 

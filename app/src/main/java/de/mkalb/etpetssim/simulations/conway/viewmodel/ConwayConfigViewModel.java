@@ -66,8 +66,6 @@ public final class ConwayConfigViewModel
 
         ruleProperty.setOnRulesChanged(this::updateCheckboxesFromRules);
 
-        // Predefined rulesets per cell shape are available as presets in the rules section.
-
         maxNeighborCountProperty().addListener((_, _, _) -> disableUnusedNeighborProperties());
 
         cellShapeProperty().property().addListener((_, _, _) -> updateMaxNeighborCount());
