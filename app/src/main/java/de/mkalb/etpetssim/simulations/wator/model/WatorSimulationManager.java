@@ -31,8 +31,7 @@ public final class WatorSimulationManager
         var entityFactory = new CreatureFactory();
 
         // Executor with runner and terminationCondition
-        var agentLogicFactory = new WatorAgentLogicFactory(config, random, entityFactory);
-        var agentStepLogic = agentLogicFactory.createAgentLogic();
+        var agentStepLogic = new WatorStepLogic(config, random, entityFactory);
         var runner = new AsynchronousStepRunner<>(model, WatorEntity::isAgent, AgentOrderingStrategies.byPosition(), agentStepLogic);
         var terminationCondition = new WatorTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));

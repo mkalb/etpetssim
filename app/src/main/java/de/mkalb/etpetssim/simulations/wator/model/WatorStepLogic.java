@@ -10,24 +10,21 @@ import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 
 import java.util.*;
 
-public final class WatorAgentLogicFactory {
+public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorStatistics> {
 
     private final WatorConfig config;
     private final Random random;
     private final CreatureFactory entityFactory;
 
-    public WatorAgentLogicFactory(WatorConfig config, Random random, CreatureFactory entityFactory) {
+    public WatorStepLogic(WatorConfig config, Random random, CreatureFactory entityFactory) {
         this.config = config;
         this.random = random;
         this.entityFactory = entityFactory;
     }
 
-    public AgentStepLogic<WatorEntity, WatorStatistics> createAgentLogic() {
-        return this::simpleLogic;
-    }
-
-    private void simpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
-                             WatorStatistics statistics) {
+    @Override
+    public void performAgentStep(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
+                                 WatorStatistics statistics) {
         WatorEntity entity = agentCell.entity();
 
         List<GridCell<WatorEntity>> fishCells = new ArrayList<>();
@@ -45,17 +42,17 @@ public final class WatorAgentLogicFactory {
         }
 
         if (entity instanceof Fish fish) {
-            fishSimpleLogic(agentCell, model, stepIndex, statistics, fish, waterCells);
+            fishLogic(agentCell, model, stepIndex, statistics, fish, waterCells);
         } else if (entity instanceof Shark shark) {
-            sharkSimpleLogic(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
+            sharkLogic(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
         }
 
         statistics.updateCells();
     }
 
-    private void fishSimpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
-                                 WatorStatistics statistics,
-                                 Fish fish, List<GridCell<WatorEntity>> waterCells) {
+    private void fishLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
+                           WatorStatistics statistics,
+                           Fish fish, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate fishOriginalCoordinate = agentCell.coordinate();
         GridCoordinate fishNewCoordinate = fishOriginalCoordinate;
 
@@ -78,7 +75,7 @@ public final class WatorAgentLogicFactory {
                     statistics.incrementFishCells();
                     fish.reproduce(childFish);
                     model.setEntity(fishOriginalCoordinate, childFish);
-                    // AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " reproduced with child at: " + fishOriginalCoordinate);
+                    // AppLogger.info("WatorStepLogic - Fish at coordinate: " + fishNewCoordinate + " reproduced with child at: " + fishOriginalCoordinate);
                 }
             }
         }
@@ -87,13 +84,13 @@ public final class WatorAgentLogicFactory {
         if (fish.ageAtStepIndex(stepIndex) >= config.fishMaxAge()) {
             model.setEntityToDefault(fishNewCoordinate);
             statistics.decrementFishCells();
-            // AppLogger.info("WatorAgentLogicFactory - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
+            // AppLogger.info("WatorStepLogic - Fish at coordinate: " + fishNewCoordinate + " is too old and removed.");
         }
     }
 
-    private void sharkSimpleLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
-                                  WatorStatistics statistics,
-                                  Shark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
+    private void sharkLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
+                            WatorStatistics statistics,
+                            Shark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate sharkOriginalCoordinate = agentCell.coordinate();
         GridCoordinate sharkNewCoordinate = sharkOriginalCoordinate;
 
@@ -107,12 +104,12 @@ public final class WatorAgentLogicFactory {
             sharkNewCoordinate = fishCell.coordinate();
             shark.gainEnergy(config.sharkEnergyGainPerFish());
             statistics.decrementFishCells();
-            // AppLogger.info("WatorAgentLogicFactory - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
+            // AppLogger.info("WatorStepLogic - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
         } else if (!waterCells.isEmpty()) {
             GridCell<WatorEntity> waterCell = chooseRandomCell(waterCells);
             model.swapInputCellEntities(agentCell, waterCell);
             sharkNewCoordinate = waterCell.coordinate();
-            //    // AppLogger.info("WatorAgentLogicFactory - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
+            //    // AppLogger.info("WatorStepLogic - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
         }
         // Reproduce, if conditions are met
         if (!sharkOriginalCoordinate.equals(sharkNewCoordinate)) {
@@ -124,7 +121,7 @@ public final class WatorAgentLogicFactory {
                         statistics.incrementSharkCells();
                         shark.reproduce(childShark);
                         model.setEntity(sharkOriginalCoordinate, childShark);
-                        // AppLogger.info("WatorAgentLogicFactory - Reproducing shark at coordinate: " + sharkNewCoordinate + " with child at: " + sharkOriginalCoordinate);
+                        // AppLogger.info("WatorStepLogic - Reproducing shark at coordinate: " + sharkNewCoordinate + " with child at: " + sharkOriginalCoordinate);
                     }
                 }
             }
@@ -133,7 +130,7 @@ public final class WatorAgentLogicFactory {
         if ((shark.ageAtStepIndex(stepIndex) >= config.sharkMaxAge()) || (shark.currentEnergy() <= 0)) {
             model.setEntityToDefault(sharkNewCoordinate);
             statistics.decrementSharkCells();
-            // AppLogger.info("WatorAgentLogicFactory - Removing shark at coordinate: " + sharkNewCoordinate);
+            // AppLogger.info("WatorStepLogic - Removing shark at coordinate: " + sharkNewCoordinate);
         }
     }
 
