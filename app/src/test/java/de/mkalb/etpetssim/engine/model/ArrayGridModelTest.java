@@ -4,10 +4,12 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("MagicNumber")
 final class ArrayGridModelTest {
 
     @Test
@@ -31,6 +33,53 @@ final class ArrayGridModelTest {
     }
 
     @Test
+    void testFillAndClear() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+
+        model.fill(TestEntity.WALL);
+
+        assertAll(
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), model.countEntities(entity -> entity == TestEntity.WALL)),
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), model.nonDefaultCoordinates().size())
+        );
+
+        model.clear();
+
+        assertAll(
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), model.countEntities(entity -> entity == TestEntity.EMPTY)),
+                () -> assertTrue(model.nonDefaultCoordinates().isEmpty())
+        );
+    }
+
+    @Test
+    void testFillWithSupplierInvokesSupplierPerCell() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        AtomicInteger calls = new AtomicInteger();
+
+        model.fill(() -> ((calls.getAndIncrement() % 2) == 0) ? TestEntity.WALL : TestEntity.FOOD);
+
+        assertAll(
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), calls.get()),
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount() / 2, model.countEntities(entity -> entity == TestEntity.WALL)),
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount() / 2, model.countEntities(entity -> entity == TestEntity.FOOD))
+        );
+    }
+
+    @Test
+    void testFillWithMapperUsesCoordinate() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+
+        model.fill(c -> (c.x() == c.y()) ? TestEntity.WALL : TestEntity.EMPTY);
+
+        assertAll(
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.size().width(), model.countEntities(entity -> entity == TestEntity.WALL)),
+                () -> assertEquals(TestEntity.WALL, model.getEntity(coordinate(0, 0))),
+                () -> assertEquals(TestEntity.WALL, model.getEntity(coordinate(7, 7))),
+                () -> assertEquals(TestEntity.EMPTY, model.getEntity(coordinate(7, 6)))
+        );
+    }
+
+    @Test
     void testCopyAndCopyWithDefaultEntity() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate coordinate = coordinate(2, 0);
@@ -48,6 +97,131 @@ final class ArrayGridModelTest {
     }
 
     @Test
+    void testCellsReturnsAllCells() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(0, 0), TestEntity.WALL);
+
+        List<GridCell<TestEntity>> cells = model.cells().toList();
+
+        assertAll(
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), cells.size()),
+                () -> assertTrue(cells.contains(new GridCell<>(coordinate(0, 0), TestEntity.WALL))),
+                () -> assertTrue(cells.contains(new GridCell<>(coordinate(7, 7), TestEntity.EMPTY))),
+                () -> assertFalse(cells.contains(new GridCell<>(coordinate(0, 0), TestEntity.EMPTY)))
+        );
+    }
+
+    @Test
+    void testCellsIsInRowMajorOrder() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+
+        List<GridCell<TestEntity>> cells = model.cells().toList();
+
+        // cells() uses nested IntStream in row-major order: (x=0,y=0), (x=1,y=0), ..., (x=7,y=7)
+        assertAll(
+                () -> assertEquals(coordinate(0, 0), cells.getFirst().coordinate()),
+                () -> assertEquals(coordinate(7, 7), cells.getLast().coordinate()),
+                () -> assertEquals(coordinate(1, 0), cells.get(1).coordinate()),
+                () -> assertEquals(coordinate(0, 1), cells.get(8).coordinate())
+        );
+    }
+
+    @Test
+    void testNonDefaultCellsContainsOnlyNonDefaultEntities() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(2, 2), TestEntity.FOOD);
+
+        // nonDefaultCells() uses explicit nested loop in row-major order.
+        List<GridCell<TestEntity>> nonDefaultCells = model.nonDefaultCells().toList();
+
+        assertAll(
+                () -> assertEquals(2, nonDefaultCells.size()),
+                () -> assertTrue(nonDefaultCells.contains(new GridCell<>(coordinate(1, 1), TestEntity.WALL))),
+                () -> assertTrue(nonDefaultCells.contains(new GridCell<>(coordinate(2, 2), TestEntity.FOOD)))
+        );
+    }
+
+    @Test
+    void testNonDefaultCellsIsEmptyWhenAllDefault() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+
+        assertTrue(model.nonDefaultCells().toList().isEmpty());
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testNonDefaultCoordinatesIsUnmodifiable() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+
+        Set<GridCoordinate> coordinates = model.nonDefaultCoordinates();
+
+        assertAll(
+                () -> assertEquals(Set.of(coordinate(1, 1)), coordinates),
+                () -> assertThrows(UnsupportedOperationException.class, () -> coordinates.add(coordinate(0, 0)))
+        );
+    }
+
+    @Test
+    void testCountCellsMatchesExpectedCount() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(2, 2), TestEntity.WALL);
+        model.setEntity(coordinate(3, 3), TestEntity.FOOD);
+
+        assertAll(
+                () -> assertEquals(2, model.countCells(cell -> cell.entity() == TestEntity.WALL)),
+                () -> assertEquals(1, model.countCells(cell -> cell.entity() == TestEntity.FOOD)),
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount() - 3, model.countCells(cell -> cell.entity() == TestEntity.EMPTY))
+        );
+    }
+
+    @Test
+    void testCountEntitiesMatchesExpectedCount() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(2, 2), TestEntity.WALL);
+
+        assertAll(
+                () -> assertEquals(2, model.countEntities(entity -> entity == TestEntity.WALL)),
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount() - 2, model.countEntities(entity -> entity == TestEntity.EMPTY)),
+                () -> assertEquals(0, model.countEntities(entity -> entity == TestEntity.FOOD))
+        );
+    }
+
+    @Test
+    void testFilteredCoordinatesReturnsMatchingCoordinates() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(3, 3), TestEntity.WALL);
+        model.setEntity(coordinate(2, 2), TestEntity.FOOD);
+
+        // ArrayGridModel iterates in row-major order: y=1 row (x=1) comes before y=3 row (x=3).
+        List<GridCoordinate> filtered = model.filteredCoordinates(entity -> entity == TestEntity.WALL);
+
+        assertEquals(List.of(coordinate(1, 1), coordinate(3, 3)), filtered);
+    }
+
+    @Test
+    void testFilteredCellsReturnsMatchingCells() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(3, 3), TestEntity.WALL);
+
+        // ArrayGridModel iterates in row-major order: y=1 row comes before y=3 row.
+        List<GridCell<TestEntity>> filtered = model.filteredCells(entity -> entity == TestEntity.WALL);
+
+        assertEquals(
+                List.of(
+                        new GridCell<>(coordinate(1, 1), TestEntity.WALL),
+                        new GridCell<>(coordinate(3, 3), TestEntity.WALL)
+                ),
+                filtered
+        );
+    }
+
+    @Test
     void testFilteredCellsSortedBy() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(2, 1), TestEntity.WALL);
@@ -59,6 +233,32 @@ final class ArrayGridModelTest {
 
         assertEquals(List.of(coordinate(0, 0), coordinate(2, 1)),
                 cells.stream().map(GridCell::coordinate).toList());
+    }
+
+    @Test
+    void testFindRandomDefaultCoordinateReturnsEmpty() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.fill(TestEntity.WALL);
+
+        Optional<GridCoordinate> result = model.findRandomDefaultCoordinate(new Random(7L));
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testFindRandomDefaultCoordinateReturnsOnlyDefaultCells() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.fill(TestEntity.WALL);
+        GridCoordinate onlyDefaultCoordinate = coordinate(3, 5);
+        model.setEntityToDefault(onlyDefaultCoordinate);
+
+        Optional<GridCoordinate> result = model.findRandomDefaultCoordinate(new Random(13L));
+
+        assertAll(
+                () -> assertTrue(result.isPresent()),
+                () -> assertEquals(onlyDefaultCoordinate, result.orElseThrow()),
+                () -> assertTrue(model.isDefaultEntity(result.orElseThrow()))
+        );
     }
 
     @Test
@@ -126,4 +326,3 @@ final class ArrayGridModelTest {
     }
 
 }
-

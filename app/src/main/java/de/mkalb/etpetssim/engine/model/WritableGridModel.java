@@ -61,47 +61,35 @@ public non-sealed interface WritableGridModel<T extends GridEntity> extends Read
      * @param coordinate the grid coordinate
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
-    default void setEntityToDefault(GridCoordinate coordinate) {
-        setEntity(coordinate, defaultEntity());
-    }
+    void setEntityToDefault(GridCoordinate coordinate);
 
     /**
      * Sets all grid cells to the specified entity.
-     * <p>
-     * Should be overwritten by subclasses to optimize performance.
      *
      * @param entity the entity to set
      */
-    default void fill(T entity) {
-        structure().coordinatesStream().forEachOrdered(coordinate -> setEntity(coordinate, entity));
-    }
+    void fill(T entity);
 
     /**
      * Sets all grid cells using a supplier that provides a new entity for each cell.
+     * The supplier is invoked exactly once per cell; invocation order is implementation-defined.
      *
      * @param supplier the supplier to generate entities for each coordinate
      */
-    default void fill(Supplier<T> supplier) {
-        structure().coordinatesStream().forEachOrdered(coordinate -> setEntity(coordinate, supplier.get()));
-    }
+    void fill(Supplier<T> supplier);
 
     /**
      * Sets all grid cells using a mapping function from coordinate to entity.
+     * The mapper is invoked exactly once per cell; invocation order is implementation-defined.
      *
      * @param mapper the function to compute entities for each coordinate
      */
-    default void fill(Function<GridCoordinate, T> mapper) {
-        structure().coordinatesStream().forEachOrdered(coordinate -> setEntity(coordinate, mapper.apply(coordinate)));
-    }
+    void fill(Function<GridCoordinate, T> mapper);
 
     /**
      * Sets all grid cells to the default entity.
-     * <p>
-     * Should be overwritten by subclasses to optimize performance.
      */
-    default void clear() {
-        fill(defaultEntity());
-    }
+    void clear();
 
     /**
      * Writes swapped entity values from the two given {@link GridCell} objects.
@@ -110,24 +98,11 @@ public non-sealed interface WritableGridModel<T extends GridEntity> extends Read
      * opposite coordinates ({@code cellA.coordinate()} receives {@code cellB.entity()}, and vice versa).
      * Both coordinates are validated before any write is performed.
      * The current model state at those coordinates is not read.
-     * <p>
-     * Should be overridden by subclasses to optimize performance.
      *
      * @param cellA the first input cell providing one coordinate and one entity value
      * @param cellB the second input cell providing one coordinate and one entity value
      * @throws IndexOutOfBoundsException if either coordinate is not valid
      */
-    default void swapInputCellEntities(GridCell<T> cellA, GridCell<T> cellB) {
-        GridCoordinate coordinateA = cellA.coordinate();
-        GridCoordinate coordinateB = cellB.coordinate();
-        if (!isCoordinateValid(coordinateA)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateA + " for structure: " + structure());
-        }
-        if (!isCoordinateValid(coordinateB)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure());
-        }
-        setEntity(coordinateA, cellB.entity());
-        setEntity(coordinateB, cellA.entity());
-    }
+    void swapInputCellEntities(GridCell<T> cellA, GridCell<T> cellB);
 
 }

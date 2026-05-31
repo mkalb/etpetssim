@@ -58,9 +58,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @return {@code true} if the entity at the coordinate is the default entity, {@code false} otherwise
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
-    default boolean isDefaultEntity(GridCoordinate coordinate) {
-        return getEntity(coordinate).equals(defaultEntity());
-    }
+    boolean isDefaultEntity(GridCoordinate coordinate);
 
     /**
      * Indicates whether this grid model is sparse (optimized for mostly default entities).
@@ -70,109 +68,95 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     boolean isSparse();
 
     /**
-     * Returns a stream of all grid cells (coordinate and entity).
+     * Returns a stream of all grid cells (coordinate and entity), in row-major order
+     * (x-coordinate varies fastest within each row, y-coordinate varies slowest).
+     * <p>
+     * The stream is <em>not</em> backed by a snapshot: it reflects the model state
+     * at element-consumption time, not at the time of this call.
+     * Implementations must preserve row-major iteration order.
      *
-     * @return a stream of GridCell
+     * @return a lazy stream of all {@link GridCell} instances in row-major order
      */
-    default Stream<GridCell<T>> cells() {
-        return structure().coordinatesStream()
-                          .map(coordinate -> new GridCell<>(coordinate, getEntity(coordinate)));
-    }
+    Stream<GridCell<T>> cells();
 
     /**
-     * Returns a stream of grid cells whose entity is not the default entity.
+     * Returns a stream of all grid cells whose entity is not the default entity.
+     * <p>
+     * The stream is backed by a snapshot of the model state taken at the time of this call
+     * and is not affected by subsequent mutations to the model.
+     * Iteration order is implementation-defined.
      *
-     * @return a stream of non-default GridCell
+     * @return a stream of {@link GridCell} instances with non-default entities
      */
-    default Stream<GridCell<T>> nonDefaultCells() {
-        T def = defaultEntity();
-        return cells().filter(cell -> !Objects.equals(cell.entity(), def));
-    }
+    Stream<GridCell<T>> nonDefaultCells();
 
     /**
-     * Returns a set of coordinates for all grid cells whose entity is not equal to the default entity.
+     * Returns an unmodifiable set of all coordinates at which the entity is not
+     * the default entity.
+     * <p>
+     * The set is a snapshot of the model state taken at the time of this call
+     * and is not affected by subsequent mutations to the model.
+     * Iteration order is implementation-defined.
      *
-     * @return an unmodifiable set of coordinates for non-default entities
+     * @return an unmodifiable set of coordinates with non-default entities
      */
-    default Set<GridCoordinate> nonDefaultCoordinates() {
-        return nonDefaultCells()
-                .map(GridCell::coordinate)
-                .collect(Collectors.toUnmodifiableSet());
-    }
+    Set<GridCoordinate> nonDefaultCoordinates();
 
     /**
      * Counts the number of grid cells that match the given predicate.
-     * <p>
-     * This method filters the stream of all grid cells using the provided predicate
-     * and returns the count of matching cells.
      *
      * @param predicate the condition to test each grid cell against
      * @return the count of grid cells that match the predicate
      */
-    default long countCells(Predicate<? super GridCell<T>> predicate) {
-        return cells().filter(predicate).count();
-    }
+    long countCells(Predicate<? super GridCell<T>> predicate);
 
     /**
      * Counts the number of entities that match the given predicate.
-     * <p>
-     * This method filters the stream of all entities using the provided predicate
-     * and returns the count of matching entities.
      *
      * @param predicate the condition to test each entity against
      * @return the count of entities that match the predicate
      */
-    default long countEntities(Predicate<? super T> predicate) {
-        return structure().coordinatesStream()
-                          .map(this::getEntity)
-                          .filter(predicate)
-                          .count();
-    }
+    long countEntities(Predicate<? super T> predicate);
 
     /**
      * Returns a list of grid coordinates whose entities match the given predicate.
-     * This avoids creating {@link GridCell} instances.
+     * Avoids creating intermediate {@link GridCell} instances compared to {@link #filteredCells}.
+     * <p>
+     * The list is a snapshot of the model state taken at the time of this call
+     * and is not affected by subsequent mutations to the model.
+     * Iteration order is implementation-defined.
      *
      * @param entityPredicate the predicate to filter entities
      * @return a list of matching coordinates
      */
-    default List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate) {
-        return structure().coordinatesStream()
-                          .filter(c -> entityPredicate.test(getEntity(c)))
-                          .toList();
-    }
+    List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate);
 
     /**
-     * Returns a list of grid cells whose entities match the given predicate.
+     * Returns a mutable list of grid cells whose entities match the given predicate.
      * <p>
-     * This method filters all grid cells using the specified {@code entityPredicate}.
+     * The list is a snapshot of the model state taken at the time of this call
+     * and is not affected by subsequent mutations to the model.
+     * The returned list is mutable to allow in-place sorting as performed by
+     * {@link #filteredCellsSortedBy}.
+     * Iteration order is implementation-defined.
      *
      * @param entityPredicate the predicate to filter grid cell entities
-     * @return a list of filtered {@link GridCell} objects
+     * @return a mutable list of filtered {@link GridCell} objects
      */
-    default List<GridCell<T>> filteredCells(Predicate<T> entityPredicate) {
-        return cells()
-                .filter(cell -> entityPredicate.test(cell.entity()))
-                .toList();
-    }
+    List<GridCell<T>> filteredCells(Predicate<T> entityPredicate);
 
     /**
-     * Returns a list of grid cells whose entities match the given predicate,
+     * Returns a mutable list of grid cells whose entities match the given predicate,
      * ordered according to the provided comparator.
      * <p>
-     * This method filters all grid cells using the specified {@code entityPredicate}
-     * and sorts the resulting cells using {@code cellOrdering}.
+     * The list is a snapshot of the model state taken at the time of this call
+     * and is not affected by subsequent mutations to the model.
      *
      * @param entityPredicate the predicate to filter grid cell entities
      * @param cellOrdering the comparator to define the order of the resulting grid cells
-     * @return a list of filtered and sorted {@link GridCell} objects
+     * @return a mutable list of filtered and sorted {@link GridCell} objects
      */
-    default List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
-        return cells()
-                .filter(cell -> entityPredicate.test(cell.entity()))
-                .sorted(cellOrdering)
-                .toList();
-    }
+    List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering);
 
     /**
      * Selects a random coordinate from the grid that contains the default entity.
@@ -180,14 +164,6 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @param random the random number generator to use
      * @return an Optional containing a random default coordinate, or empty if none exist
      */
-    default Optional<GridCoordinate> findRandomDefaultCoordinate(Random random) {
-        List<GridCoordinate> defaults = structure().coordinatesStream()
-                                                   .filter(this::isDefaultEntity)
-                                                   .toList();
-        if (defaults.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(defaults.get(random.nextInt(defaults.size())));
-    }
+    Optional<GridCoordinate> findRandomDefaultCoordinate(Random random);
 
 }
