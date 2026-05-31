@@ -104,7 +104,6 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
         return snapshot.stream();
     }
 
-    @SuppressWarnings("Java9CollectionFactory")
     @Override
     public Set<GridCoordinate> nonDefaultCoordinates() {
         // Returns a HashSet snapshot instead of the live key set view: prevents ConcurrentModificationException
@@ -113,7 +112,7 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
         // structural change to the backing map during iteration, even in single-threaded code.
         // HashSet is preferred over Set.copyOf(): the latter uses ImmutableCollections.SetN with open
         // addressing that has poor hash distribution for GridCoordinate, making contains() slow.
-        return Collections.unmodifiableSet(new HashSet<>(data.keySet()));
+        return new HashSet<>(data.keySet());
     }
 
     @Override

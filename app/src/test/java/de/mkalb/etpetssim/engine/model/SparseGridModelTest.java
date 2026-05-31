@@ -117,9 +117,8 @@ final class SparseGridModelTest {
         assertTrue(model.nonDefaultCells().toList().isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testNonDefaultCoordinatesIsUnmodifiable() {
+    void testNonDefaultCoordinatesIsMutable() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(1, 1), TestEntity.WALL);
 
@@ -127,7 +126,7 @@ final class SparseGridModelTest {
 
         assertAll(
                 () -> assertEquals(Set.of(coordinate(1, 1)), coordinates),
-                () -> assertThrows(UnsupportedOperationException.class, () -> coordinates.add(coordinate(0, 0)))
+                () -> assertDoesNotThrow(() -> coordinates.add(coordinate(0, 0)))
         );
     }
 

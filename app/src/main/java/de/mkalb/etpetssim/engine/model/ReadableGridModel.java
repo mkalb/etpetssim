@@ -91,14 +91,14 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     Stream<GridCell<T>> nonDefaultCells();
 
     /**
-     * Returns an unmodifiable set of all coordinates at which the entity is not
+     * Returns a mutable set of all coordinates at which the entity is not
      * the default entity.
      * <p>
      * The set is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
      * Iteration order is implementation-defined.
      *
-     * @return an unmodifiable set of coordinates with non-default entities
+     * @return a mutable set of coordinates with non-default entities
      */
     Set<GridCoordinate> nonDefaultCoordinates();
 

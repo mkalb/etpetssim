@@ -112,6 +112,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     public Set<GridCoordinate> nonDefaultCoordinates() {
         // No snapshot copy is needed for ConcurrentModificationException safety:
         // the array backing has no fail-fast iterators, unlike the HashMap in SparseGridModel.
+        // The returned HashSet is mutable (no unmodifiable wrapper) consistent with filteredCells().
         int width = structure.size().width();
         int height = structure.size().height();
         Set<GridCoordinate> result = new HashSet<>();
@@ -124,7 +125,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
                 }
             }
         }
-        return Collections.unmodifiableSet(result);
+        return result;
     }
 
     @Override

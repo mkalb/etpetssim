@@ -149,9 +149,8 @@ final class ArrayGridModelTest {
         assertTrue(model.nonDefaultCells().toList().isEmpty());
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testNonDefaultCoordinatesIsUnmodifiable() {
+    void testNonDefaultCoordinatesIsMutable() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(1, 1), TestEntity.WALL);
 
@@ -159,8 +158,22 @@ final class ArrayGridModelTest {
 
         assertAll(
                 () -> assertEquals(Set.of(coordinate(1, 1)), coordinates),
-                () -> assertThrows(UnsupportedOperationException.class, () -> coordinates.add(coordinate(0, 0)))
+                () -> assertDoesNotThrow(() -> coordinates.add(coordinate(0, 0)))
         );
+    }
+
+    @Test
+    void testNonDefaultCoordinatesSnapshotIsIndependentOfModelMutation() {
+        ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(2, 2), TestEntity.FOOD);
+
+        Set<GridCoordinate> snapshot = model.nonDefaultCoordinates();
+        // Mutate the model after obtaining the snapshot.
+        model.setEntityToDefault(coordinate(1, 1));
+
+        // Snapshot must still reflect the state at the time of the call.
+        assertEquals(2, snapshot.size());
     }
 
     @Test
