@@ -117,26 +117,6 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
     }
 
     @Override
-    public long countCells(Predicate<? super GridCell<T>> predicate) {
-        // Inline nested loop avoids the intermediate ArrayList created by coordinatesList().
-        // data.getOrDefault() is used directly to skip the redundant bounds check of getEntity(),
-        // which is safe because all (x, y) pairs produced here are guaranteed to be valid.
-        int width = structure.size().width();
-        int height = structure.size().height();
-        long count = 0;
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                GridCoordinate coordinate = new GridCoordinate(x, y);
-                T entity = data.getOrDefault(coordinate, defaultEntity);
-                if (predicate.test(new GridCell<>(coordinate, entity))) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
-    @Override
     public long countEntities(Predicate<? super T> predicate) {
         // Sparse optimization: only iterate the non-default entries stored in the map (O(non-default)).
         // All cells not present in the map hold the default entity; their count is derived arithmetically.

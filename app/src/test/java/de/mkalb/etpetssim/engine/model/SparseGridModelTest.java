@@ -146,20 +146,6 @@ final class SparseGridModelTest {
     }
 
     @Test
-    void testCountCellsMatchesExpectedCount() {
-        SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
-        model.setEntity(coordinate(1, 1), TestEntity.WALL);
-        model.setEntity(coordinate(2, 2), TestEntity.WALL);
-        model.setEntity(coordinate(3, 3), TestEntity.FOOD);
-
-        assertAll(
-                () -> assertEquals(2, model.countCells(cell -> cell.entity() == TestEntity.WALL)),
-                () -> assertEquals(1, model.countCells(cell -> cell.entity() == TestEntity.FOOD)),
-                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount() - 3, model.countCells(cell -> cell.entity() == TestEntity.EMPTY))
-        );
-    }
-
-    @Test
     void testCountEntitiesUsingSparseOptimization() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(1, 1), TestEntity.WALL);

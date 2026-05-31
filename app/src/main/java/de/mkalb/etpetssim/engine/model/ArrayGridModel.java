@@ -128,24 +128,6 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public long countCells(Predicate<? super GridCell<T>> predicate) {
-        int width = structure.size().width();
-        int height = structure.size().height();
-        long count = 0;
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
-                GridCell<T> cell = new GridCell<>(new GridCoordinate(x, y), entity);
-                if (predicate.test(cell)) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-
-    @Override
     public long countEntities(Predicate<? super T> predicate) {
         int width = structure.size().width();
         int height = structure.size().height();

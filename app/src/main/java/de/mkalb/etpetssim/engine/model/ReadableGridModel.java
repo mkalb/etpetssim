@@ -103,14 +103,6 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     Set<GridCoordinate> nonDefaultCoordinates();
 
     /**
-     * Counts the number of grid cells that match the given predicate.
-     *
-     * @param predicate the condition to test each grid cell against
-     * @return the count of grid cells that match the predicate
-     */
-    long countCells(Predicate<? super GridCell<T>> predicate);
-
-    /**
      * Counts the number of entities that match the given predicate.
      *
      * @param predicate the condition to test each entity against
