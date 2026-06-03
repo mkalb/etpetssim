@@ -14,7 +14,8 @@ import java.util.function.*;
  *
  * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
-public non-sealed interface WritableGridModel<T extends GridEntity> extends ReadableGridModel<T> {
+public sealed interface WritableGridModel<T extends GridEntity> extends ReadableGridModel<T>
+        permits ArrayGridModel, SparseGridModel {
 
     /**
      * Creates a copy of this grid model, including the current grid state.

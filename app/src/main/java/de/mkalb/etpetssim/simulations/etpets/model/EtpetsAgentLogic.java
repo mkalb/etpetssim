@@ -33,9 +33,8 @@ public final class EtpetsAgentLogic {
         WritableGridModel<AgentEntity> agentModel = gridModel.agentModel();
 
         // Snapshot of all non-default agent cells, sorted by position to ensure deterministic processing order.
-        List<GridCell<AgentEntity>> agentCells = agentModel.nonDefaultCells()
-                                                           .sorted(AgentOrderingStrategies.byPosition())
-                                                           .toList();
+        List<GridCell<AgentEntity>> agentCells = agentModel.nonDefaultCells();
+        agentCells.sort(AgentOrderingStrategies.byPosition()); // TODO EtpetsAgentLogic: optimize sort
 
         for (GridCell<AgentEntity> cell : agentCells) {
             GridCoordinate currentCoordinate = cell.coordinate();

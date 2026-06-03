@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 /**
  * Read-only view of a {@link WritableGridModel}.
@@ -68,27 +67,12 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     boolean isSparse();
 
     /**
-     * Returns a stream of all grid cells (coordinate and entity), in row-major order
-     * (x-coordinate varies fastest within each row, y-coordinate varies slowest).
-     * <p>
-     * The stream is <em>not</em> backed by a snapshot: it reflects the model state
-     * at element-consumption time, not at the time of this call.
-     * Implementations must preserve row-major iteration order.
+     * Counts the number of entities that match the given predicate.
      *
-     * @return a lazy stream of all {@link GridCell} instances in row-major order
+     * @param predicate the condition to test each entity against
+     * @return the count of entities that match the predicate
      */
-    Stream<GridCell<T>> cells();
-
-    /**
-     * Returns a stream of all grid cells whose entity is not the default entity.
-     * <p>
-     * The stream is backed by a snapshot of the model state taken at the time of this call
-     * and is not affected by subsequent mutations to the model.
-     * Iteration order is implementation-defined.
-     *
-     * @return a stream of {@link GridCell} instances with non-default entities
-     */
-    Stream<GridCell<T>> nonDefaultCells();
+    long countEntities(Predicate<? super T> predicate);
 
     /**
      * Returns a mutable set of all coordinates at which the entity is not
@@ -101,14 +85,6 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @return a mutable set of coordinates with non-default entities
      */
     Set<GridCoordinate> nonDefaultCoordinates();
-
-    /**
-     * Counts the number of entities that match the given predicate.
-     *
-     * @param predicate the condition to test each entity against
-     * @return the count of entities that match the predicate
-     */
-    long countEntities(Predicate<? super T> predicate);
 
     /**
      * Returns a list of grid coordinates whose entities match the given predicate.
@@ -124,16 +100,44 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
     List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate);
 
     /**
+     * Selects a random coordinate from the grid that contains the default entity.
+     *
+     * @param random the random number generator to use
+     * @return an Optional containing a random default coordinate, or empty if none exist
+     */
+    Optional<GridCoordinate> findRandomDefaultCoordinate(Random random);
+
+    /**
+     * Returns a mutable list of all grid cells, in row-major order
+     * (x-coordinate varies fastest within each row, y-coordinate varies slowest).
+     * <p>
+     * The list is a snapshot of the model state taken at the time of this call
+     * and is not affected by subsequent mutations to the model.
+     *
+     * @return a mutable list of all {@link GridCell} instances in row-major order
+     */
+    List<GridCell<T>> allCells();
+
+    /**
+     * Returns a mutable list of all grid cells whose entity is not the default entity.
+     * <p>
+     * The list is a snapshot of the model state taken at the time of this call
+     * and is not affected by subsequent mutations to the model.
+     * Iteration order is implementation-defined.
+     *
+     * @return a mutable list of {@link GridCell} instances with non-default entities
+     */
+    List<GridCell<T>> nonDefaultCells();
+
+    /**
      * Returns a mutable list of grid cells whose entities match the given predicate.
      * <p>
      * The list is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
-     * The returned list is mutable to allow in-place sorting as performed by
-     * {@link #filteredCellsSortedBy}.
      * Iteration order is implementation-defined.
      *
      * @param entityPredicate the predicate to filter grid cell entities
-     * @return a mutable list of filtered {@link GridCell} objects
+     * @return a mutable list of filtered {@link GridCell} instances
      */
     List<GridCell<T>> filteredCells(Predicate<T> entityPredicate);
 
@@ -146,16 +150,8 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @param entityPredicate the predicate to filter grid cell entities
      * @param cellOrdering the comparator to define the order of the resulting grid cells
-     * @return a mutable list of filtered and sorted {@link GridCell} objects
+     * @return a mutable list of filtered and sorted {@link GridCell} instances
      */
     List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering);
-
-    /**
-     * Selects a random coordinate from the grid that contains the default entity.
-     *
-     * @param random the random number generator to use
-     * @return an Optional containing a random default coordinate, or empty if none exist
-     */
-    Optional<GridCoordinate> findRandomDefaultCoordinate(Random random);
 
 }

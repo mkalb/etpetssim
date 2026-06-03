@@ -286,21 +286,21 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.terrainModel().nonDefaultCells()
-                    .forEachOrdered(cell -> cellTerrainDrawer.draw(
+                    .forEach(cell -> cellTerrainDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter,
                             cell,
                             stepCount));
 
         currentModel.resourceModel().nonDefaultCells()
-                    .forEachOrdered(cell -> cellResourceDrawer.draw(
+                    .forEach(cell -> cellResourceDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter,
                             cell,
                             stepCount));
 
         currentModel.agentModel().nonDefaultCells()
-                    .forEachOrdered(cell -> cellAgentDrawer.draw(
+                    .forEach(cell -> cellAgentDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter,
                             cell,

@@ -101,7 +101,7 @@ public final class ReboundingMainView
         basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.nonDefaultCells()
-                    .forEachOrdered(cell -> cellDrawer.draw(
+                    .forEach(cell -> cellDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             basePainter, cell, stepCount));
     }

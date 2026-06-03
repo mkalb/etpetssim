@@ -97,11 +97,11 @@ final class ArrayGridModelTest {
     }
 
     @Test
-    void testCellsReturnsAllCells() {
+    void testAllCellsReturnsAllCells() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(0, 0), TestEntity.WALL);
 
-        List<GridCell<TestEntity>> cells = model.cells().toList();
+        List<GridCell<TestEntity>> cells = model.allCells();
 
         assertAll(
                 () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), cells.size()),
@@ -112,12 +112,12 @@ final class ArrayGridModelTest {
     }
 
     @Test
-    void testCellsIsInRowMajorOrder() {
+    void testAllCellsIsInRowMajorOrder() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
 
-        List<GridCell<TestEntity>> cells = model.cells().toList();
+        List<GridCell<TestEntity>> cells = model.allCells();
 
-        // cells() uses nested IntStream in row-major order: (x=0,y=0), (x=1,y=0), ..., (x=7,y=7)
+        // allCells() uses nested loop in row-major order: (x=0,y=0), (x=1,y=0), ..., (x=7,y=7)
         assertAll(
                 () -> assertEquals(coordinate(0, 0), cells.getFirst().coordinate()),
                 () -> assertEquals(coordinate(7, 7), cells.getLast().coordinate()),
@@ -133,7 +133,7 @@ final class ArrayGridModelTest {
         model.setEntity(coordinate(2, 2), TestEntity.FOOD);
 
         // nonDefaultCells() uses explicit nested loop in row-major order.
-        List<GridCell<TestEntity>> nonDefaultCells = model.nonDefaultCells().toList();
+        List<GridCell<TestEntity>> nonDefaultCells = model.nonDefaultCells();
 
         assertAll(
                 () -> assertEquals(2, nonDefaultCells.size()),
@@ -146,7 +146,7 @@ final class ArrayGridModelTest {
     void testNonDefaultCellsIsEmptyWhenAllDefault() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
 
-        assertTrue(model.nonDefaultCells().toList().isEmpty());
+        assertTrue(model.nonDefaultCells().isEmpty());
     }
 
     @Test

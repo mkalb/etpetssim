@@ -126,17 +126,17 @@ public final class LangtonMainView
         if ((lastDrawnStepCount + 1) < stepCount) {
             // draw ground
             groundModel.nonDefaultCells()
-                       .forEachOrdered(groundCell -> cellGroundDrawer.draw(
+                       .forEach(groundCell -> cellGroundDrawer.draw(
                                entityDescriptorRegistry.requireByDescriptorId(groundCell.descriptorId()),
                                basePainter, groundCell, stepCount));
             // draw ant
             antModel.nonDefaultCells()
-                    .forEachOrdered(antCell -> cellAntDrawer.draw(
+                    .forEach(antCell -> cellAntDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
                             overlayPainter, antCell, stepCount));
         } else {
             antModel.nonDefaultCells()
-                    .forEachOrdered(antCell -> {
+                    .forEach(antCell -> {
                         GridCell<TerrainConstant> groundCell = groundModel.getGridCell(antCell.coordinate());
                         // draw ground
                         cellGroundDrawer.draw(

@@ -29,7 +29,8 @@ public final class ForestUpdateStrategy implements SynchronousStepLogic<ForestEn
                                        WritableGridModel<ForestEntity> nextModel,
                                        int stepIndex,
                                        ForestStatistics statistics) {
-        currentModel.cells()
+        currentModel.allCells()
+                    .stream()
                     .map(c -> processCell(c, currentModel))
                     .filter(c -> !c.entity().isEmpty())
                     .forEach(nextModel::setEntity);

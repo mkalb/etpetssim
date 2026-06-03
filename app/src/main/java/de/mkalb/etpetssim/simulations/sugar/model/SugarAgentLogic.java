@@ -35,7 +35,7 @@ public final class SugarAgentLogic {
         GridStructure structure = gridModel.structure();
 
         // 1. Agent actions
-        List<GridCell<AgentEntity>> agentCells = new ArrayList<>(agentModel.nonDefaultCells().toList());
+        List<GridCell<AgentEntity>> agentCells = agentModel.nonDefaultCells();
         // Random order is important
         Collections.shuffle(agentCells, random);
         int diedAgents = 0;

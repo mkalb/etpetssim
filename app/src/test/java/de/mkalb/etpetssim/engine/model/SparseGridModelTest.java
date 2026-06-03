@@ -65,11 +65,11 @@ final class SparseGridModelTest {
     }
 
     @Test
-    void testCellsReturnsAllCells() {
+    void testAllCellsReturnsAllCells() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(0, 0), TestEntity.WALL);
 
-        List<GridCell<TestEntity>> cells = model.cells().toList();
+        List<GridCell<TestEntity>> cells = model.allCells();
 
         assertAll(
                 () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), cells.size()),
@@ -80,12 +80,12 @@ final class SparseGridModelTest {
     }
 
     @Test
-    void testCellsIsInRowMajorOrder() {
+    void testAllCellsIsInRowMajorOrder() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
 
-        List<GridCell<TestEntity>> cells = model.cells().toList();
+        List<GridCell<TestEntity>> cells = model.allCells();
 
-        // cells() uses nested IntStream in row-major order: (x=0,y=0), (x=1,y=0), ..., (x=7,y=7)
+        // allCells() uses nested loop in row-major order: (x=0,y=0), (x=1,y=0), ..., (x=7,y=7)
         assertAll(
                 () -> assertEquals(coordinate(0, 0), cells.getFirst().coordinate()),
                 () -> assertEquals(coordinate(7, 7), cells.getLast().coordinate()),
@@ -101,7 +101,7 @@ final class SparseGridModelTest {
         model.setEntity(coordinate(2, 2), TestEntity.FOOD);
 
         // nonDefaultCells() snapshots from HashMap.entrySet(): order is not guaranteed.
-        Set<GridCell<TestEntity>> nonDefaultCells = new HashSet<>(model.nonDefaultCells().toList());
+        Set<GridCell<TestEntity>> nonDefaultCells = new HashSet<>(model.nonDefaultCells());
 
         assertAll(
                 () -> assertEquals(2, nonDefaultCells.size()),
@@ -114,7 +114,7 @@ final class SparseGridModelTest {
     void testNonDefaultCellsIsEmptyWhenAllDefault() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
 
-        assertTrue(model.nonDefaultCells().toList().isEmpty());
+        assertTrue(model.nonDefaultCells().isEmpty());
     }
 
     @Test

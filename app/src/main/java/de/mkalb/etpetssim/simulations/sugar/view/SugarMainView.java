@@ -170,12 +170,12 @@ public final class SugarMainView
         basePainter.fillCanvasBackground(backgroundColor);
 
         currentModel.resourceModel().nonDefaultCells()
-                    .forEachOrdered(resourceCell -> cellResourceDrawer.draw(
+                    .forEach(resourceCell -> cellResourceDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(resourceCell.descriptorId()),
                             basePainter, resourceCell, stepCount));
 
         currentModel.agentModel().nonDefaultCells()
-                    .forEachOrdered(agentCell -> cellAgentDrawer.draw(
+                    .forEach(agentCell -> cellAgentDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
                             basePainter, agentCell, stepCount));
     }

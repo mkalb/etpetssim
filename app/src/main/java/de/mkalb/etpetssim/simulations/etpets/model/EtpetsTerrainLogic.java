@@ -10,10 +10,8 @@ public final class EtpetsTerrainLogic {
     }
 
     public static void apply(EtpetsGridModel gridModel) {
-        // List is needed, because we will modify the terrainModel while iterating over the cells
         var nonDefaultCells = gridModel.terrainModel()
-                                       .nonDefaultCells()
-                                       .toList();
+                                       .nonDefaultCells();
         for (GridCell<TerrainEntity> cell : nonDefaultCells) {
             if (cell.entity() instanceof Trail trail) {
                 if (gridModel.agentModel().getEntity(cell.coordinate()).isEmpty()) {
