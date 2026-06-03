@@ -24,8 +24,9 @@ public final class SnakeObservationView
     private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
     private static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
     private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
-    private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
+    private static final String SNAKE_OBSERVATION_SNAKE_AGE = "snake.observation.snake.age";
     private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
+    private static final String SNAKE_OBSERVATION_SNAKE_STRATEGY = "snake.observation.snake.strategy";
     private static final String SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT = "snake.observation.snake.segmentcount";
     private static final String SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT = "snake.observation.snake.maxsegmentcount";
     private static final String SNAKE_OBSERVATION_SNAKE_POINTS = "snake.observation.snake.points";
@@ -34,12 +35,12 @@ public final class SnakeObservationView
     private final Label foodCellsLabel = new Label();
     private final Label deathsLabel = new Label();
     private final Label snakeIdLabel = new Label();
-    private final Label snakeStrategyLabel = new Label();
+    private final Label snakeAgeLabel = new Label();
     private final Label snakeDeathsLabel = new Label();
+    private final Label snakeStrategyLabel = new Label();
     private final Label snakeSegmentCountLabel = new Label();
     private final Label snakeMaxSegmentCountLabel = new Label();
     private final Label snakePointsLabel = new Label();
-    // TODO SnakeObservationView: Add age for selected SnakeHead
 
     public SnakeObservationView(DefaultObservationViewModel<SnakeEntity, SnakeStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -53,17 +54,20 @@ public final class SnakeObservationView
         super.onSelectedCellChanged(gridCell);
         setUnknownValues(
                 snakeIdLabel,
-                snakeStrategyLabel,
+                snakeAgeLabel,
                 snakeDeathsLabel,
+                snakeStrategyLabel,
                 snakeSegmentCountLabel,
                 snakeMaxSegmentCountLabel,
                 snakePointsLabel);
 
         if (gridCell != null) {
-            if (gridCell.entity() instanceof SnakeHead snakeHead) {
+            Optional<SnakeStatistics> statistics = viewModel.getStatistics();
+            if (statistics.isPresent() && (gridCell.entity() instanceof SnakeHead snakeHead)) {
                 snakeIdLabel.setText("#" + snakeHead.id());
-                snakeStrategyLabel.setText(snakeHead.strategy().name());
+                setFormattedIntegerValue(snakeAgeLabel, snakeHead.ageAtStepCount(statistics.get().getStepCount()));
                 setFormattedIntegerValue(snakeDeathsLabel, snakeHead.deaths());
+                snakeStrategyLabel.setText(snakeHead.strategy().name());
                 setFormattedIntegerValue(snakeSegmentCountLabel, snakeHead.segmentCount());
                 setFormattedIntegerValue(snakeMaxSegmentCountLabel, snakeHead.maxSegmentCount());
                 setFormattedIntegerValue(snakePointsLabel, snakeHead.points());
@@ -93,16 +97,18 @@ public final class SnakeObservationView
         Region selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
                         SNAKE_OBSERVATION_SNAKE_ID,
-                        SNAKE_OBSERVATION_SNAKE_STRATEGY,
+                        SNAKE_OBSERVATION_SNAKE_AGE,
                         SNAKE_OBSERVATION_SNAKE_DEATHS,
+                        SNAKE_OBSERVATION_SNAKE_STRATEGY,
                         SNAKE_OBSERVATION_SNAKE_SEGMENT_COUNT,
                         SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT,
                         SNAKE_OBSERVATION_SNAKE_POINTS
                 },
                 new Label[]{
                         snakeIdLabel,
-                        snakeStrategyLabel,
+                        snakeAgeLabel,
                         snakeDeathsLabel,
+                        snakeStrategyLabel,
                         snakeSegmentCountLabel,
                         snakeMaxSegmentCountLabel,
                         snakePointsLabel
