@@ -8,9 +8,9 @@ import java.util.*;
 
 public final class Pet implements AgentEntity {
 
-    private final long petId;
-    private final @Nullable Long parentAId;
-    private final @Nullable Long parentBId;
+    private final int id;
+    private final @Nullable Integer parentAId;
+    private final @Nullable Integer parentBId;
     private final int stepIndexOfBirth;
     private final PetTraits traits;
     private final Deque<GridCoordinate> movementHistory;
@@ -19,14 +19,14 @@ public final class Pet implements AgentEntity {
     private @Nullable PetLastAction lastAction;
     private boolean dead;
 
-    public Pet(long petId,
-               @Nullable Long parentAId,
-               @Nullable Long parentBId,
+    public Pet(int id,
+               @Nullable Integer parentAId,
+               @Nullable Integer parentBId,
                int stepIndexOfBirth,
                int currentEnergy,
                int reproductionCooldownRemaining,
                PetTraits traits) {
-        this.petId = petId;
+        this.id = id;
         this.parentAId = parentAId;
         this.parentBId = parentBId;
         this.stepIndexOfBirth = stepIndexOfBirth;
@@ -51,15 +51,16 @@ public final class Pet implements AgentEntity {
         return false;
     }
 
-    public long petId() {
-        return petId;
+    @Override
+    public int id() {
+        return id;
     }
 
-    public @Nullable Long parentAId() {
+    public @Nullable Integer parentAId() {
         return parentAId;
     }
 
-    public @Nullable Long parentBId() {
+    public @Nullable Integer parentBId() {
         return parentBId;
     }
 
@@ -161,7 +162,7 @@ public final class Pet implements AgentEntity {
                 ? (lastAction.type() + "@" + lastAction.score())
                 : "-";
         return String.format(Locale.ROOT, "[PET #%d *%d E=%d C=%d A=%s S=%s]",
-                petId,
+                id,
                 stepIndexOfBirth,
                 currentEnergy,
                 reproductionCooldownRemaining,
@@ -172,7 +173,7 @@ public final class Pet implements AgentEntity {
     @Override
     public String toString() {
         return "Pet{" +
-                "petId=" + petId +
+                "id=" + id +
                 ", parentAId=" + parentAId +
                 ", parentBId=" + parentBId +
                 ", stepIndexOfBirth=" + stepIndexOfBirth +

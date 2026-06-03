@@ -30,7 +30,7 @@ public final class EtpetsSimulationManager
                 new SparseGridModel<>(structure, NoAgent.NO_AGENT)
         );
 
-        var idSequence = new EtpetsIdSequence(1L);
+        var idSequence = new EtpetsIdSequence(1);
 
         var runner = new EtpetsStepRunner(random, model, idSequence);
         var terminationCondition = new EtpetsTerminationCondition();

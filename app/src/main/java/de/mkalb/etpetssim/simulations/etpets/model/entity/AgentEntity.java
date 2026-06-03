@@ -16,4 +16,8 @@ public sealed interface AgentEntity extends EtpetsEntity
         return false;
     }
 
+    default int id() {
+        return 0;
+    }
+
 }

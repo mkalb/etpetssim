@@ -4,20 +4,20 @@ import java.util.*;
 
 public final class PetEgg implements AgentEntity {
 
-    private final long eggId;
-    private final long parentAId;
-    private final long parentBId;
+    private final int id;
+    private final int parentAId;
+    private final int parentBId;
     private final PetGenome petGenome;
     private final int stepIndexOfLaying;
     private int incubationRemaining;
 
-    public PetEgg(long eggId,
-                  long parentAId,
-                  long parentBId,
+    public PetEgg(int id,
+                  int parentAId,
+                  int parentBId,
                   PetGenome petGenome,
                   int stepIndexOfLaying,
                   int incubationRemaining) {
-        this.eggId = eggId;
+        this.id = id;
         this.parentAId = parentAId;
         this.parentBId = parentBId;
         this.petGenome = petGenome;
@@ -40,15 +40,16 @@ public final class PetEgg implements AgentEntity {
         return false;
     }
 
-    public long eggId() {
-        return eggId;
+    @Override
+    public int id() {
+        return id;
     }
 
-    public long parentAId() {
+    public int parentAId() {
         return parentAId;
     }
 
-    public long parentBId() {
+    public int parentBId() {
         return parentBId;
     }
 
@@ -72,7 +73,7 @@ public final class PetEgg implements AgentEntity {
     public String toDisplayString() {
         return String.format(Locale.ROOT,
                 "[PET_EGG #%d *%d I=%d]",
-                eggId,
+                id,
                 stepIndexOfLaying,
                 incubationRemaining);
     }
@@ -80,7 +81,7 @@ public final class PetEgg implements AgentEntity {
     @Override
     public String toString() {
         return "PetEgg{" +
-                "eggId=" + eggId +
+                "id=" + id +
                 ", parentAId=" + parentAId +
                 ", parentBId=" + parentBId +
                 ", petGenome=" + petGenome +

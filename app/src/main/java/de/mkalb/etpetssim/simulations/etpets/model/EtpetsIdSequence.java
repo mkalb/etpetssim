@@ -4,13 +4,13 @@ import java.util.concurrent.atomic.*;
 
 public final class EtpetsIdSequence {
 
-    private final AtomicLong nextValue;
+    private final AtomicInteger nextValue;
 
-    public EtpetsIdSequence(long initialValue) {
-        nextValue = new AtomicLong(initialValue);
+    public EtpetsIdSequence(int initialValue) {
+        nextValue = new AtomicInteger(initialValue);
     }
 
-    public long next() {
+    public int next() {
         return nextValue.getAndIncrement();
     }
 

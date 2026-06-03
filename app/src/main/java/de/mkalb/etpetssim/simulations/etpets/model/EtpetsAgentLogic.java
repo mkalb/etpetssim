@@ -6,13 +6,15 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.engine.support.AgentOrderingStrategies;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public final class EtpetsAgentLogic {
+
+    private static final Comparator<GridCell<AgentEntity>> AGENT_ORDERING_STRATEGY =
+            Comparator.comparingInt(cell -> cell.entity().id());
 
     // Debug/log formatting
     private static final int DISPLAY_STRING_CAPACITY_HINT = 80;
@@ -32,9 +34,9 @@ public final class EtpetsAgentLogic {
         GridStructure structure = gridModel.structure();
         WritableGridModel<AgentEntity> agentModel = gridModel.agentModel();
 
-        // Snapshot of all non-default agent cells, sorted by position to ensure deterministic processing order.
+        // Snapshot of all non-default agent cells, sorted by id to ensure deterministic processing order.
         List<GridCell<AgentEntity>> agentCells = agentModel.nonDefaultCells();
-        agentCells.sort(AgentOrderingStrategies.byPosition()); // TODO EtpetsAgentLogic: optimize sort
+        agentCells.sort(AGENT_ORDERING_STRATEGY);
 
         for (GridCell<AgentEntity> cell : agentCells) {
             GridCoordinate currentCoordinate = cell.coordinate();
@@ -367,8 +369,8 @@ public final class EtpetsAgentLogic {
                 EtpetsBalance.PET_GENOME_MUTATION_DELTA
         );
 
-        long parentAId = Math.min(pet.petId(), partnerPet.petId());
-        long parentBId = Math.max(pet.petId(), partnerPet.petId());
+        int parentAId = Math.min(pet.id(), partnerPet.id());
+        int parentBId = Math.max(pet.id(), partnerPet.id());
 
         PetEgg egg = new PetEgg(
                 idSequence.next(),
@@ -517,15 +519,15 @@ public final class EtpetsAgentLogic {
 
     private static boolean areDirectRelatives(Pet firstPet,
                                               Pet secondPet) {
-        Set<Long> idsA = new HashSet<>();
-        idsA.add(firstPet.petId());
+        Set<Integer> idsA = new HashSet<>();
+        idsA.add(firstPet.id());
         if (firstPet.parentAId() != null) {
             idsA.add(firstPet.parentAId());
         }
         if (firstPet.parentBId() != null) {
             idsA.add(firstPet.parentBId());
         }
-        if (idsA.contains(secondPet.petId())) {
+        if (idsA.contains(secondPet.id())) {
             return true;
         }
         if ((secondPet.parentAId() != null) && idsA.contains(secondPet.parentAId())) {
