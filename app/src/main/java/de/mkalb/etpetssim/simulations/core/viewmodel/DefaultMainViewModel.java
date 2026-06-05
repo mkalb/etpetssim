@@ -53,7 +53,7 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
-    private final @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider;
+    private final BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider;
     private final @Nullable SimulationUserAction<ENT, GM, CON, STA> simulationUserAction;
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
@@ -65,23 +65,6 @@ public final class DefaultMainViewModel<
     // Listener for view
     private Runnable simulationInitializedListener = () -> {};
     private Consumer<SimulationStepEvent> simulationStepListener = _ -> {};
-
-    /**
-     * Creates a main view model without cell-selection support.
-     *
-     * @param simulationState shared simulation state property
-     * @param configViewModel config view model
-     * @param controlViewModel control view model
-     * @param observationViewModel observation view model
-     * @param simulationManagerFactory factory used to initialize simulation managers
-     */
-    public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
-                                SimulationConfigViewModel<CON> configViewModel,
-                                DefaultControlViewModel controlViewModel,
-                                DefaultObservationViewModel<ENT, STA> observationViewModel,
-                                Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory) {
-        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory, null, null);
-    }
 
     /**
      * Creates a main view model with optional cell-selection support.
@@ -98,7 +81,7 @@ public final class DefaultMainViewModel<
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
-                                @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider) {
+                                BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider) {
         this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory, selectedGridCellProvider, null);
     }
 
@@ -118,7 +101,7 @@ public final class DefaultMainViewModel<
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
-                                @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider,
+                                BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider,
                                 @Nullable SimulationUserAction<ENT, GM, CON, STA> simulationUserAction) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
@@ -152,20 +135,16 @@ public final class DefaultMainViewModel<
         };
         controlViewModel.cancelButtonRequestedProperty().addListener(cancelButtonRequestedListener);
 
-        // Initialize selected grid cell handling if provider is given
-        if (selectedGridCellProvider != null) {
-            observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
-            lastClickedCoordinateListener = ((_, _, newValue) -> {
-                if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
-                    refreshSelectedGridCell(getCurrentModel(), newValue);
-                } else {
-                    selectedGridCell.set(null);
-                }
-            });
-            lastClickedCoordinateProperty().addListener(lastClickedCoordinateListener);
-        } else {
-            lastClickedCoordinateListener = null;
-        }
+        // Initialize selected grid cell handling
+        observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
+        lastClickedCoordinateListener = ((_, _, newValue) -> {
+            if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
+                refreshSelectedGridCell(getCurrentModel(), newValue);
+            } else {
+                selectedGridCell.set(null);
+            }
+        });
+        lastClickedCoordinateProperty().addListener(lastClickedCoordinateListener);
     }
 
     private static boolean isSelectionState(SimulationState simulationState) {
@@ -177,12 +156,6 @@ public final class DefaultMainViewModel<
 
     private void refreshSelectedGridCell(GM currentModel, GridCoordinate coordinate) {
         try {
-            if ((selectedGridCellProvider == null) || !currentModel.isCoordinateValid(coordinate)) {
-                AppLogger.errorf("%s: Cannot determine selected cell for coordinate=%s", LOG_COMPONENT, coordinate.toDisplayString());
-                selectedGridCell.set(null);
-                return;
-            }
-
             var cell = selectedGridCellProvider.apply(currentModel, coordinate);
             selectedGridCell.set(cell);
             lastSelectedCoordinate.set(cell.coordinate());
