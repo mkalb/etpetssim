@@ -53,6 +53,7 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
+    private final @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider;
     private final @Nullable SimulationUserAction<ENT, GM, CON, STA> simulationUserAction;
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
@@ -126,6 +127,7 @@ public final class DefaultMainViewModel<
         // `selectedGridCellProperty()` used during shutdown/unbinding.
         observationStateViewModel = observationViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
+        this.selectedGridCellProvider = selectedGridCellProvider;
         this.simulationUserAction = simulationUserAction;
         timer = new SimulationTimer(this::runTimerStep);
         batchExecutor = Executors.newSingleThreadExecutor(task -> {
@@ -155,18 +157,7 @@ public final class DefaultMainViewModel<
             observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
             lastClickedCoordinateListener = ((_, _, newValue) -> {
                 if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
-                    try {
-                        var cell = selectedGridCellProvider.apply(getCurrentModel(), newValue);
-                        selectedGridCell.set(cell);
-                        lastSelectedCoordinate.set(cell.coordinate());
-                        lastSelectedEntity.set(cell.entity());
-                        AppLogger.infof("%s: Cell selected: %s", LOG_COMPONENT, cell.toDisplayString());
-                    } catch (RuntimeException e) {
-                        AppLogger.errorf(e, "%s: Cannot determine selected cell for coordinate=%s", LOG_COMPONENT, newValue.toDisplayString());
-                        selectedGridCell.set(null);
-                        lastSelectedCoordinate.set(null);
-                        lastSelectedEntity.set(null);
-                    }
+                    refreshSelectedGridCell(getCurrentModel(), newValue);
                 } else {
                     selectedGridCell.set(null);
                 }
@@ -182,6 +173,25 @@ public final class DefaultMainViewModel<
             case PAUSED, CANCELED, FINISHED -> true;
             case INITIAL, RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, ERROR, SHUTTING_DOWN -> false;
         };
+    }
+
+    private void refreshSelectedGridCell(GM currentModel, GridCoordinate coordinate) {
+        try {
+            if ((selectedGridCellProvider == null) || !currentModel.isCoordinateValid(coordinate)) {
+                AppLogger.errorf("%s: Cannot determine selected cell for coordinate=%s", LOG_COMPONENT, coordinate.toDisplayString());
+                selectedGridCell.set(null);
+                return;
+            }
+
+            var cell = selectedGridCellProvider.apply(currentModel, coordinate);
+            selectedGridCell.set(cell);
+            lastSelectedCoordinate.set(cell.coordinate());
+            lastSelectedEntity.set(cell.entity());
+            AppLogger.infof("%s: Cell selected: %s", LOG_COMPONENT, cell.toDisplayString());
+        } catch (RuntimeException e) {
+            AppLogger.errorf(e, "%s: Cannot determine selected cell for coordinate=%s", LOG_COMPONENT, coordinate.toDisplayString());
+            selectedGridCell.set(null);
+        }
     }
 
     /**
@@ -699,6 +709,9 @@ public final class DefaultMainViewModel<
             logSimulationInfo("Applying user action to the current simulation state. selectedCell="
                     + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
             simulationUserAction.apply(currentModel, currentStatistics, currentConfig, currentSelectedCell);
+            if (currentSelectedCell != null) {
+                refreshSelectedGridCell(currentModel, currentSelectedCell.coordinate());
+            }
             return true;
         } else {
             AppLogger.errorf("%s: Simulation is not in a valid state for applying user action. thread=%s, state=%s, manager=%s, userAction=%s",
