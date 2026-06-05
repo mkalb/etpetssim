@@ -31,6 +31,9 @@ public final class LangtonMainView
         LangtonConfigView,
         LangtonObservationView> {
 
+    private static final Color SELECTED_STROKE_COLOR = Color.RED;
+    private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+
     private final Color backgroundColor;
     private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;

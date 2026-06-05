@@ -77,10 +77,10 @@ public final class ReboundingMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<ReboundingEntity> oldGridCell,
                                           @Nullable GridCell<ReboundingEntity> newGridCell) {
-        if ((oldGridCell != null) && oldGridCell.entity().isRebounder()) {
+        if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
-        if ((newGridCell != null) && newGridCell.entity().isRebounder()) {
+        if (newGridCell != null) {
             painter.drawCellOuterCircle(newGridCell.coordinate(), null,
                     SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
                     StrokeType.OUTSIDE);

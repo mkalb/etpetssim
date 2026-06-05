@@ -142,10 +142,10 @@ public final class SugarMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<SugarEntity> oldGridCell,
                                           @Nullable GridCell<SugarEntity> newGridCell) {
-        if ((oldGridCell != null) && oldGridCell.entity().isNotEmpty()) {
+        if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
-        if ((newGridCell != null) && newGridCell.entity().isNotEmpty()) {
+        if (newGridCell != null) {
             painter.drawCellOuterCircle(newGridCell.coordinate(), null,
                     SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
                     StrokeType.OUTSIDE);

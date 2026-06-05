@@ -29,6 +29,9 @@ public final class ConwayMainView
         ConwayConfigView,
         ConwayObservationView> {
 
+    private static final Color SELECTED_STROKE_COLOR = Color.BLACK;
+    private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+
     private final Color backgroundColor;
     private @Nullable CoordinateDrawer coordinateDrawer;
 
@@ -91,7 +94,14 @@ public final class ConwayMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<ConwayEntity> oldGridCell,
                                           @Nullable GridCell<ConwayEntity> newGridCell) {
-        // Do nothing
+        if (oldGridCell != null) {
+            painter.clearCanvasBackground();
+        }
+        if (newGridCell != null) {
+            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                    StrokeType.OUTSIDE);
+        }
     }
 
     @Override
