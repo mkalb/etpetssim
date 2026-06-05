@@ -211,8 +211,7 @@ public abstract class AbstractMainView<
             ToolBar modificationToolbar = new ToolBar();
             modificationToolbar.getItems().addAll(modificationNodes);
             modificationToolbar.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR);
-            modificationToolbar.visibleProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.PAUSED));
-            modificationToolbar.managedProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.PAUSED));
+            modificationToolbar.disableProperty().bind(viewModel.simulationStateProperty().isNotEqualTo(SimulationState.PAUSED));
             vBox.getChildren().add(modificationToolbar);
         }
 

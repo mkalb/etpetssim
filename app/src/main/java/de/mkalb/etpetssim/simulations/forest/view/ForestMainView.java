@@ -16,6 +16,7 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -157,6 +158,7 @@ public final class ForestMainView
     @Override
     protected List<Node> createModificationToolbarNodes() {
         Button cycleSelectedCellStateButton = new Button(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE));
+        cycleSelectedCellStateButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
         cycleSelectedCellStateButton.setTooltip(new Tooltip(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE_TOOLTIP)));
         cycleSelectedCellStateButton.setOnAction(_ -> applyUserActionAndRedraw(NoUserActionContext.NO_CONTEXT));
         cycleSelectedCellStateButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));

@@ -57,6 +57,7 @@ public final class FXStyleClasses {
     public static final String SIMULATION_SCROLLPANE = "simulation-scrollpane";
     public static final String SIMULATION_STACKPANE = "simulation-stackpane";
     public static final String SIMULATION_TOOLBAR = "simulation-toolbar";
+    public static final String SIMULATION_TOOLBAR_BUTTON = "simulation-toolbar-button";
     public static final String SIMULATION_TOP_BORDERPANE = "simulation-top-borderpane";
     public static final String START_CONTROL_VBOX = "start-control-vbox";
     public static final String START_TITLE_LABEL = "start-title-label";

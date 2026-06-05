@@ -535,6 +535,46 @@ ScrollPane .decrement-arrow {
   -fx-border-radius: 0;
 }
 
+.simulation-toolbar-button {
+  -fx-font-size: 13;
+  -fx-font-weight: bold;
+  -fx-background-color: linear-gradient(to bottom, #263a4d, #35516b);
+  -fx-text-fill: #00eaff;
+  -fx-background-radius: 4;
+  -fx-padding: 7 17;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 4;
+  -fx-border-insets: 0;
+  -fx-cursor: hand;
+  -fx-min-height: 32;
+  -fx-max-height: 32;
+  -fx-pref-height: 32;
+}
+
+.simulation-toolbar-button:hover {
+  -fx-background-color: linear-gradient(to bottom, #347ca3, #00bfff);
+  -fx-text-fill: #1a2233;
+}
+
+.simulation-toolbar-button:pressed {
+  -fx-background-color: #00eaff;
+  -fx-text-fill: #1a2233;
+}
+
+.simulation-toolbar-button:focused {
+  -fx-border-color: #00ff99;
+  -fx-border-width: 2;
+  -fx-border-insets: -1;
+  -fx-background-insets: 1;
+  -fx-background-radius: 3;
+}
+
+.simulation-toolbar-button:disabled {
+  -fx-opacity: 0.4;
+  -fx-cursor: default;
+}
+
 /* control region (bottom) */
 .control-scrollpane {
   -fx-border-width: 1 0 0 0;
