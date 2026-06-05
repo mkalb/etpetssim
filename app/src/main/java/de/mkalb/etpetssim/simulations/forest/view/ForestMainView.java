@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.forest.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
@@ -14,7 +15,10 @@ import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -30,6 +34,12 @@ public final class ForestMainView
         ForestStatistics,
         ForestConfigView,
         ForestObservationView> {
+
+    private static final String FOREST_TOOLBAR_CYCLE_STATE = "forest.toolbar.cyclestate";
+    private static final String FOREST_TOOLBAR_CYCLE_STATE_TOOLTIP = "forest.toolbar.cyclestate.tooltip";
+
+    private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
+    private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
     private final Color backgroundColor;
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
@@ -105,7 +115,14 @@ public final class ForestMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<ForestEntity> oldGridCell,
                                           @Nullable GridCell<ForestEntity> newGridCell) {
-        // Do nothing
+        if (oldGridCell != null) {
+            painter.clearCanvasBackground();
+        }
+        if (newGridCell != null) {
+            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                    StrokeType.OUTSIDE);
+        }
     }
 
     @Override
@@ -137,7 +154,12 @@ public final class ForestMainView
 
     @Override
     protected List<Node> createModificationToolbarNodes() {
-        return List.of();
+        Button cycleSelectedCellStateButton = new Button(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE));
+        cycleSelectedCellStateButton.setTooltip(new Tooltip(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE_TOOLTIP)));
+        cycleSelectedCellStateButton.setOnAction(_ -> applyUserActionAndRedraw());
+        cycleSelectedCellStateButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        return List.of(cycleSelectedCellStateButton);
     }
 
 }
