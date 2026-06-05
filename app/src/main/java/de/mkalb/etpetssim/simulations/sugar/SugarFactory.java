@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.sugar;
 
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.model.NoUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
@@ -46,7 +47,8 @@ public final class SugarFactory {
                     } else {
                         return new GridCell<>(selectedCoordinate, sugarGridModel.resourceModel().getEntity(selectedCoordinate));
                     }
-                });
+                },
+                new NoUserAction<>());
 
         // View
         var configView = new SugarConfigView(configViewModel);

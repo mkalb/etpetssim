@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.CoordinateDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -26,6 +27,7 @@ public final class ConwayMainView
         WritableGridModel<ConwayEntity>,
         ConwayConfig,
         ConwayStatistics,
+        NoUserActionContext,
         ConwayConfigView,
         ConwayObservationView> {
 
@@ -36,7 +38,7 @@ public final class ConwayMainView
     private @Nullable CoordinateDrawer coordinateDrawer;
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
-                                  ConwayStatistics> viewModel,
+                                  ConwayStatistics, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
                           DefaultControlView controlView,

@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
@@ -27,6 +28,7 @@ public final class SnakeMainView
         WritableGridModel<SnakeEntity>,
         SnakeConfig,
         SnakeStatistics,
+        NoUserActionContext,
         SnakeConfigView,
         SnakeObservationView> {
 
@@ -50,7 +52,7 @@ public final class SnakeMainView
     private final Color backgroundColor;
 
     public SnakeMainView(DefaultMainViewModel<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
-                                 SnakeStatistics> viewModel,
+                                 SnakeStatistics, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SnakeConfigView configView,
                          DefaultControlView controlView,

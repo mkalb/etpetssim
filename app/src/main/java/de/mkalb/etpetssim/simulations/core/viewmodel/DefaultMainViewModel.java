@@ -7,9 +7,7 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.model.*;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
+import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -34,7 +32,8 @@ public final class DefaultMainViewModel<
         ENT extends GridEntity,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
-        STA extends TimedSimulationStatistics>
+        STA extends TimedSimulationStatistics,
+        CTX extends SimulationUserActionContext>
         extends AbstractMainViewModel<ENT, GM, CON, STA> {
 
     private static final double TIMEOUT_EXECUTE_FACTOR = 0.4d;
@@ -54,7 +53,7 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider;
-    private final @Nullable SimulationUserAction<ENT, GM, CON, STA> simulationUserAction;
+    private final SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction;
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
@@ -67,34 +66,15 @@ public final class DefaultMainViewModel<
     private Consumer<SimulationStepEvent> simulationStepListener = _ -> {};
 
     /**
-     * Creates a main view model with optional cell-selection support.
+     * Creates a main view model.
      *
      * @param simulationState shared simulation state property
      * @param configViewModel config view model
      * @param controlViewModel control view model
      * @param observationViewModel observation view model
-     * @param simulationManagerFactory factory used to initialize simulation managers
-     * @param selectedGridCellProvider optional mapping from clicked coordinate to selected cell
-     */
-    public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
-                                SimulationConfigViewModel<CON> configViewModel,
-                                DefaultControlViewModel controlViewModel,
-                                DefaultObservationViewModel<ENT, STA> observationViewModel,
-                                Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
-                                BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider) {
-        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory, selectedGridCellProvider, null);
-    }
-
-    /**
-     * Creates a main view model with optional cell-selection support.
-     *
-     * @param simulationState shared simulation state property
-     * @param configViewModel config view model
-     * @param controlViewModel control view model
-     * @param observationViewModel observation view model
-     * @param simulationManagerFactory factory used to initialize simulation managers
-     * @param selectedGridCellProvider optional mapping from clicked coordinate to selected cell
-     * @param simulationUserAction optional hook that applies a user-triggered modification to the current simulation while it is paused
+     * @param simulationManagerFactory factory used to create simulation managers for validated configurations
+     * @param selectedGridCellProvider mapping from a clicked coordinate to the corresponding selected cell
+     * @param simulationUserAction user action applied to the current paused simulation state
      */
     public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
                                 SimulationConfigViewModel<CON> configViewModel,
@@ -102,7 +82,7 @@ public final class DefaultMainViewModel<
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
                                 BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider,
-                                @Nullable SimulationUserAction<ENT, GM, CON, STA> simulationUserAction) {
+                                SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         // Keep a concrete-typed reference because the inherited `observationViewModel`
@@ -663,17 +643,18 @@ public final class DefaultMainViewModel<
     /**
      * Applies the configured user action to the current simulation state.
      *
-     * <p>The action is only applied when the simulation is paused, a simulation manager
-     * is active, and a {@link SimulationUserAction} has been provided at construction time.
+     * <p>The action is only applied when a simulation manager is active and the simulation is currently paused.
+     * The current model, statistics, configuration, context, and selected cell are passed to the configured
+     * {@link SimulationUserAction}. If a cell was selected before the action, the selection is refreshed afterward.
      *
-     * @return {@code true} if the user action was applied; {@code false} if the preconditions
-     *         were not met (no action configured, no active manager, or wrong simulation state)
+     * @param context simulation-specific action context
+     * @return {@code true} if the user action was applied; {@code false} if no active manager exists or the
+     *         simulation is not paused
      */
     @SuppressWarnings("DataFlowIssue")
-    public boolean applyUserAction() {
+    public boolean applyUserAction(CTX context) {
         var manager = simulationManager;
         if ((manager != null)
-                && (simulationUserAction != null)
                 && (getSimulationState() == SimulationState.PAUSED)) {
             GM currentModel = manager.currentModel();
             CON currentConfig = manager.config();
@@ -681,18 +662,17 @@ public final class DefaultMainViewModel<
             GridCell<ENT> currentSelectedCell = selectedGridCell.get();
             logSimulationInfo("Applying user action to the current simulation state. selectedCell="
                     + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
-            simulationUserAction.apply(currentModel, currentStatistics, currentConfig, currentSelectedCell);
+            simulationUserAction.apply(currentModel, currentStatistics, currentConfig, context, currentSelectedCell);
             if (currentSelectedCell != null) {
                 refreshSelectedGridCell(currentModel, currentSelectedCell.coordinate());
             }
             return true;
         } else {
-            AppLogger.errorf("%s: Simulation is not in a valid state for applying user action. thread=%s, state=%s, manager=%s, userAction=%s",
+            AppLogger.errorf("%s: Simulation is not in a valid state for applying user action. thread=%s, state=%s, manager=%s",
                     LOG_COMPONENT,
                     Thread.currentThread().getName(),
                     getSimulationState(),
-                    manager,
-                    simulationUserAction);
+                    manager);
             return false;
         }
     }

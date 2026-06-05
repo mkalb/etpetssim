@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -28,6 +29,7 @@ public final class WatorMainView
         WritableGridModel<WatorEntity>,
         WatorConfig,
         WatorStatistics,
+        NoUserActionContext,
         WatorConfigView,
         WatorObservationView> {
 
@@ -47,7 +49,7 @@ public final class WatorMainView
     private int maxColorSharkEnergy = 1;
 
     public WatorMainView(DefaultMainViewModel<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
-                                 WatorStatistics> viewModel,
+                                 WatorStatistics, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
                          DefaultControlView controlView,

@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.simulations.wator;
 
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.model.NoUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
@@ -39,7 +40,7 @@ public final class WatorFactory {
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel = new DefaultObservationViewModel<WatorEntity, WatorStatistics>(readOnlySimulationState);
         var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
-                observationViewModel, WatorSimulationManager::new, ReadableGridModel::getGridCell);
+                observationViewModel, WatorSimulationManager::new, ReadableGridModel::getGridCell, new NoUserAction<>());
 
         // View
         var configView = new WatorConfigView(configViewModel);

@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -27,6 +28,7 @@ public final class SugarMainView
         SugarGridModel,
         SugarConfig,
         SugarStatistics,
+        NoUserActionContext,
         SugarConfigView,
         SugarObservationView> {
 
@@ -45,7 +47,8 @@ public final class SugarMainView
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
     private int maxColorAgentEnergy = 1;
 
-    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarGridModel, SugarConfig, SugarStatistics> viewModel,
+    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarGridModel, SugarConfig,
+                                 SugarStatistics, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SugarConfigView configView,
                          DefaultControlView controlView,

@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -32,6 +33,7 @@ public final class ForestMainView
         WritableGridModel<ForestEntity>,
         ForestConfig,
         ForestStatistics,
+        NoUserActionContext,
         ForestConfigView,
         ForestObservationView> {
 
@@ -45,7 +47,7 @@ public final class ForestMainView
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
     public ForestMainView(DefaultMainViewModel<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig,
-                                  ForestStatistics> viewModel,
+                                  ForestStatistics, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ForestConfigView configView,
                           DefaultControlView controlView,
@@ -156,7 +158,7 @@ public final class ForestMainView
     protected List<Node> createModificationToolbarNodes() {
         Button cycleSelectedCellStateButton = new Button(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE));
         cycleSelectedCellStateButton.setTooltip(new Tooltip(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE_TOOLTIP)));
-        cycleSelectedCellStateButton.setOnAction(_ -> applyUserActionAndRedraw());
+        cycleSelectedCellStateButton.setOnAction(_ -> applyUserActionAndRedraw(NoUserActionContext.NO_CONTEXT));
         cycleSelectedCellStateButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
 
         return List.of(cycleSelectedCellStateButton);

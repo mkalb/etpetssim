@@ -10,6 +10,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
 import de.mkalb.etpetssim.simulations.core.model.TimedSimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.ui.CellDimension;
@@ -30,11 +31,12 @@ public abstract class AbstractDefaultMainView<
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends TimedSimulationStatistics,
+        CTX extends SimulationUserActionContext,
         CFV extends SimulationConfigView,
         OV extends AbstractObservationView<ENT, STA, DefaultObservationViewModel<ENT, STA>>>
         extends
         AbstractMainView<
-                DefaultMainViewModel<ENT, GM, CON, STA>,
+                DefaultMainViewModel<ENT, GM, CON, STA, CTX>,
                 CFV,
                 SimulationControlView,
                 OV> {
@@ -62,7 +64,7 @@ public abstract class AbstractDefaultMainView<
 
     private boolean skipOverlayActive = false;
 
-    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GM, CON, STA> viewModel,
+    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GM, CON, STA, CTX> viewModel,
                                       CFV configView, SimulationControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
@@ -217,14 +219,15 @@ public abstract class AbstractDefaultMainView<
     protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);
 
     /**
-     * Applies the configured user action to the current simulation state and redraws
-     * the canvas if the action was applied successfully.
+     * Applies the configured user action to the current simulation state and redraws the simulation when the action
+     * changes the state.
      *
-     * <p>Delegates to {@link DefaultMainViewModel#applyUserAction()} and, on success,
-     * updates the observation labels and triggers a full canvas redraw.
+     * <p>Delegates to {@link DefaultMainViewModel#applyUserAction(SimulationUserActionContext)} and, when a change
+     * was applied, updates the observation labels and redraws the simulation canvas.
      */
-    protected final void applyUserActionAndRedraw() {
-        boolean changed = viewModel.applyUserAction();
+    @SuppressWarnings("SameParameterValue")
+    protected final void applyUserActionAndRedraw(CTX context) {
+        boolean changed = viewModel.applyUserAction(context);
         if (changed) {
             observationView.updateObservationLabels();
             drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());

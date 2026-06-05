@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -25,6 +26,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsGridModel,
         EtpetsConfig,
         EtpetsStatistics,
+        NoUserActionContext,
         EtpetsConfigView,
         EtpetsObservationView> {
 
@@ -51,7 +53,8 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
 
-    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> viewModel,
+    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsGridModel, EtpetsConfig,
+                                  EtpetsStatistics, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           EtpetsConfigView configView,
                           DefaultControlView controlView,

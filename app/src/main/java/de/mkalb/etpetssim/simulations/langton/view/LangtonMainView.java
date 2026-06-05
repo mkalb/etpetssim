@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
 import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
@@ -28,6 +29,7 @@ public final class LangtonMainView
         LangtonGridModel,
         LangtonConfig,
         LangtonStatistics,
+        NoUserActionContext,
         LangtonConfigView,
         LangtonObservationView> {
 
@@ -38,7 +40,8 @@ public final class LangtonMainView
     private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonGridModel, LangtonConfig, LangtonStatistics> viewModel,
+    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonGridModel, LangtonConfig,
+                                   LangtonStatistics, NoUserActionContext> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
                            DefaultControlView controlView,
