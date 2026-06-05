@@ -6,9 +6,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
-import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.core.model.TimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationStepEvent;
@@ -55,6 +53,7 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
+    private final @Nullable SimulationUserAction<ENT, GM, CON, STA> simulationUserAction;
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
@@ -80,7 +79,7 @@ public final class DefaultMainViewModel<
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory) {
-        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory, null);
+        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory, null, null);
     }
 
     /**
@@ -99,6 +98,27 @@ public final class DefaultMainViewModel<
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
                                 @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider) {
+        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory, selectedGridCellProvider, null);
+    }
+
+    /**
+     * Creates a main view model with optional cell-selection support.
+     *
+     * @param simulationState shared simulation state property
+     * @param configViewModel config view model
+     * @param controlViewModel control view model
+     * @param observationViewModel observation view model
+     * @param simulationManagerFactory factory used to initialize simulation managers
+     * @param selectedGridCellProvider optional mapping from clicked coordinate to selected cell
+     * @param simulationUserAction optional hook that applies a user-triggered modification to the current simulation while it is paused
+     */
+    public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
+                                SimulationConfigViewModel<CON> configViewModel,
+                                DefaultControlViewModel controlViewModel,
+                                DefaultObservationViewModel<ENT, STA> observationViewModel,
+                                Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
+                                @Nullable BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider,
+                                @Nullable SimulationUserAction<ENT, GM, CON, STA> simulationUserAction) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         // Keep a concrete-typed reference because the inherited `observationViewModel`
@@ -106,6 +126,7 @@ public final class DefaultMainViewModel<
         // `selectedGridCellProperty()` used during shutdown/unbinding.
         observationStateViewModel = observationViewModel;
         this.simulationManagerFactory = simulationManagerFactory;
+        this.simulationUserAction = simulationUserAction;
         timer = new SimulationTimer(this::runTimerStep);
         batchExecutor = Executors.newSingleThreadExecutor(task -> {
             var thread = new Thread(task, "simulation-batch-executor");
@@ -654,6 +675,40 @@ public final class DefaultMainViewModel<
                 observationViewModel.setStatistics(statistics);
             }
         });
+    }
+
+    /**
+     * Applies the configured user action to the current simulation state.
+     *
+     * <p>The action is only applied when the simulation is paused, a simulation manager
+     * is active, and a {@link SimulationUserAction} has been provided at construction time.
+     *
+     * @return {@code true} if the user action was applied; {@code false} if the preconditions
+     *         were not met (no action configured, no active manager, or wrong simulation state)
+     */
+    @SuppressWarnings("DataFlowIssue")
+    public boolean applyUserAction() {
+        var manager = simulationManager;
+        if ((manager != null)
+                && (simulationUserAction != null)
+                && (getSimulationState() == SimulationState.PAUSED)) {
+            GM currentModel = manager.currentModel();
+            CON currentConfig = manager.config();
+            STA currentStatistics = manager.statistics();
+            GridCell<ENT> currentSelectedCell = selectedGridCell.get();
+            logSimulationInfo("Applying user action to the current simulation state. selectedCell="
+                    + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
+            simulationUserAction.apply(currentModel, currentStatistics, currentConfig, currentSelectedCell);
+            return true;
+        } else {
+            AppLogger.errorf("%s: Simulation is not in a valid state for applying user action. thread=%s, state=%s, manager=%s, userAction=%s",
+                    LOG_COMPONENT,
+                    Thread.currentThread().getName(),
+                    getSimulationState(),
+                    manager,
+                    simulationUserAction);
+            return false;
+        }
     }
 
     private void logSimulationInfo(String message) {

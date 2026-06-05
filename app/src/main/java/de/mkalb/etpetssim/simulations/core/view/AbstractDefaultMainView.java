@@ -216,4 +216,19 @@ public abstract class AbstractDefaultMainView<
     @SuppressWarnings("ParameterHidesMemberVariable")
     protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);
 
+    /**
+     * Applies the configured user action to the current simulation state and redraws
+     * the canvas if the action was applied successfully.
+     *
+     * <p>Delegates to {@link DefaultMainViewModel#applyUserAction()} and, on success,
+     * updates the observation labels and triggers a full canvas redraw.
+     */
+    protected final void applyUserActionAndRedraw() {
+        boolean changed = viewModel.applyUserAction();
+        if (changed) {
+            observationView.updateObservationLabels();
+            drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());
+        }
+    }
+
 }
