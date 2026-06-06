@@ -300,6 +300,8 @@ public final class LabMainView
 
         updateCanvasBorderPane(structure);
 
+        rebuildActionToolBar();
+
         registerOverlayCanvasEvents();
     }
 
