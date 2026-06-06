@@ -50,6 +50,11 @@ public final class LangtonStepRunner
             }
 
             var newCoordinate = neighborOpt.get().mappedNeighborCoordinate();
+            if (!antModel.isDefaultEntity(newCoordinate)) {
+                // Another ant is already on the target cell. Remove the current ant from the simulation.
+                removeAnt(agentCell, antModel, statistics);
+                continue;
+            }
             var groundEntity = determineGround(newCoordinate, statistics);
             moveAnt(agentCell, newCoordinate, antModel, ant, groundEntity);
             switchGround(newCoordinate, groundEntity, groundModel);
