@@ -110,29 +110,28 @@ public final class LangtonMainView
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
                                           @Nullable GridCell<LangtonEntity> oldGridCell,
                                           @Nullable GridCell<LangtonEntity> newGridCell) {
-        // Do nothing
+        if (oldGridCell != null) {
+            painter.clearCanvasBackground();
+        }
+        if (newGridCell != null) {
+            painter.drawCellOuterCircle(newGridCell.coordinate(), null,
+                    SELECTED_STROKE_COLOR, SELECTED_STROKE_LINE_WIDTH,
+                    StrokeType.OUTSIDE);
+        }
     }
 
     @Override
     protected void drawSimulation(LangtonGridModel currentModel, int stepCount, int lastDrawnStepCount) {
-        if (basePainter == null) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
-        if (overlayPainter == null) {
-            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
-            return;
-        }
-        if (cellGroundDrawer == null) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
-            return;
-        }
-        if (cellAntDrawer == null) {
+        if ((cellGroundDrawer == null) || (cellAntDrawer == null)) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
-        overlayPainter.clearCanvasBackground();
+        dynamicPainter.clearCanvasBackground();
 
         ReadableGridModel<TerrainConstant> groundModel = currentModel.groundModel();
         ReadableGridModel<AntEntity> antModel = currentModel.antModel();
@@ -147,7 +146,7 @@ public final class LangtonMainView
             antModel.nonDefaultCells()
                     .forEach(antCell -> cellAntDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
-                            overlayPainter, antCell, stepCount));
+                            dynamicPainter, antCell, stepCount));
         } else {
             antModel.nonDefaultCells()
                     .forEach(antCell -> {
@@ -159,7 +158,7 @@ public final class LangtonMainView
                         // draw ant
                         cellAntDrawer.draw(
                                 entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),
-                                overlayPainter, antCell, stepCount);
+                                dynamicPainter, antCell, stepCount);
                     });
         }
     }
