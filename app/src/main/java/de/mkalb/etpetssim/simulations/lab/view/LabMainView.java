@@ -199,7 +199,7 @@ public final class LabMainView
     private void registerOverlayCanvasEvents() {
         // Exited
         overlayCanvas.setOnMouseExited(_ -> {
-            if ((basePainter == null) || (overlayPainter == null)) {
+            if (overlayPainter == null) {
                 return;
             }
             overlayPainter.clearCanvasBackground();
@@ -283,11 +283,14 @@ public final class LabMainView
         viewModel.resetClickedCoordinateProperties();
         viewModel.resetSelectedGridCell();
 
-        if (basePainter != null) {
+        if ((basePainter != null) && (dynamicPainter != null) && (overlayPainter != null)) {
             basePainter.clearCanvasBackground();
+            dynamicPainter.clearCanvasBackground();
+            overlayPainter.clearCanvasBackground();
+            basePainter = null;
+            dynamicPainter = null;
+            overlayPainter = null;
         }
-        basePainter = null;
-        overlayPainter = null;
     }
 
     private void initializeCanvasAndPainters() {
