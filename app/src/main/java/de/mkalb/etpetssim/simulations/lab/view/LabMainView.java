@@ -100,7 +100,7 @@ public final class LabMainView
     }
 
     @Override
-    protected List<Node> createModificationToolbarNodes() {
+    protected List<Node> createActionToolBarNodes() {
         return List.of();
     }
 

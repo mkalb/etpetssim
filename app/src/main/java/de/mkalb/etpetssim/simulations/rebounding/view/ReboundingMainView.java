@@ -110,7 +110,7 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected List<Node> createModificationToolbarNodes() {
+    protected List<Node> createActionToolBarNodes() {
         return List.of();
     }
 

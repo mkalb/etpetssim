@@ -165,7 +165,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected List<Node> createModificationToolbarNodes() {
+    protected List<Node> createActionToolBarNodes() {
         Button addNewAntButton = new Button(AppLocalization.getText(LANGTON_TOOLBAR_ADD_ANT));
         addNewAntButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
         addNewAntButton.setTooltip(new Tooltip(AppLocalization.getText(LANGTON_TOOLBAR_ADD_ANT_TOOLTIP)));

@@ -52,6 +52,7 @@ public abstract class AbstractMainView<
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
+    private final ToolBar actionToolBar;
     private final Map<Double, Font> fontCache;
 
     protected @Nullable FXGridCanvasPainter basePainter;
@@ -84,6 +85,10 @@ public abstract class AbstractMainView<
         notificationLabel = new Label();
         notificationLabel.getStyleClass().add(FXStyleClasses.SIMULATION_NOTIFICATION_LABEL);
         clearNotification();
+
+        actionToolBar = new ToolBar();
+        actionToolBar.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR);
+        clearActionToolBar();
     }
 
     @SuppressWarnings("MagicNumber")
@@ -141,6 +146,8 @@ public abstract class AbstractMainView<
         overlayPainter = null;
         cellFont = null;
         cellEmojiFont = null;
+        clearNotification();
+        clearActionToolBar();
     }
 
     protected abstract void registerViewModelListeners();
@@ -186,7 +193,26 @@ public abstract class AbstractMainView<
         notificationLabel.setManaged(false);
     }
 
-    protected abstract List<Node> createModificationToolbarNodes();
+    private void clearActionToolBar() {
+        actionToolBar.getItems().clear();
+        actionToolBar.disableProperty().unbind();
+        actionToolBar.setDisable(true);
+        actionToolBar.setVisible(false);
+        actionToolBar.setManaged(false);
+    }
+
+    protected final void rebuildActionToolBar() {
+        clearActionToolBar();
+        List<Node> nodes = createActionToolBarNodes();
+        if (!nodes.isEmpty()) {
+            actionToolBar.getItems().setAll(nodes);
+            actionToolBar.disableProperty().bind(viewModel.simulationStateProperty().isNotEqualTo(SimulationState.PAUSED));
+            actionToolBar.setVisible(true);
+            actionToolBar.setManaged(true);
+        }
+    }
+
+    protected abstract List<Node> createActionToolBarNodes();
 
     protected final Region createSimulationRegion() {
         StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
@@ -205,16 +231,7 @@ public abstract class AbstractMainView<
 
         VBox vBox = new VBox();
         vBox.getChildren().add(notificationLabel);
-
-        var modificationNodes = createModificationToolbarNodes();
-        if (!modificationNodes.isEmpty()) {
-            ToolBar modificationToolbar = new ToolBar();
-            modificationToolbar.getItems().addAll(modificationNodes);
-            modificationToolbar.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR);
-            modificationToolbar.disableProperty().bind(viewModel.simulationStateProperty().isNotEqualTo(SimulationState.PAUSED));
-            vBox.getChildren().add(modificationToolbar);
-        }
-
+        vBox.getChildren().add(actionToolBar);
         vBox.getChildren().add(canvasScrollPane);
         VBox.setVgrow(canvasScrollPane, Priority.ALWAYS);
 

@@ -113,6 +113,8 @@ public abstract class AbstractDefaultMainView<
 
         updateCanvasBorderPane(viewModel.getStructure());
 
+        rebuildActionToolBar();
+
         controlView.updateStepCount(stepCount);
         observationView.initializeObservationLabels();
 

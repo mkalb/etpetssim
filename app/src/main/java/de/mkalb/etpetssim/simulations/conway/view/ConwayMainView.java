@@ -125,7 +125,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected List<Node> createModificationToolbarNodes() {
+    protected List<Node> createActionToolBarNodes() {
         return List.of();
     }
 

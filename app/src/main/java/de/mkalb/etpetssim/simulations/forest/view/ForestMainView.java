@@ -156,7 +156,7 @@ public final class ForestMainView
     }
 
     @Override
-    protected List<Node> createModificationToolbarNodes() {
+    protected List<Node> createActionToolBarNodes() {
         Button cycleSelectedCellStateButton = new Button(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE));
         cycleSelectedCellStateButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
         cycleSelectedCellStateButton.setTooltip(new Tooltip(AppLocalization.getText(FOREST_TOOLBAR_CYCLE_STATE_TOOLTIP)));
