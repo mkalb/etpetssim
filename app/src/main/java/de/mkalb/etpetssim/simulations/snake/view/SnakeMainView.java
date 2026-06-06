@@ -79,7 +79,7 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void initSimulation(SnakeConfig config, CellDimension cellDimension) {
+    protected void initSimulation(SnakeConfig config, CellDimension cellDimension, WritableGridModel<SnakeEntity> model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -88,7 +88,11 @@ public final class SnakeMainView
                 .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
-        // TODO draw wall
+
+        var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
+        model.filteredCoordinates(SnakeEntity::isWall)
+             .forEach(coordinate ->
+                     basePainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
     }
 
     @Override
@@ -120,7 +124,6 @@ public final class SnakeMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
         var growthFoodDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
         var snakeSegmentDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
         var snakeHeadDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
@@ -142,9 +145,6 @@ public final class SnakeMainView
         Color headDeadColor = toDeadFillColor(headAliveColor, DEAD_HEAD_HUE);
         Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
-        currentModel.filteredCoordinates(SnakeEntity::isWall)
-                    .forEach(coordinate ->
-                            dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
         currentModel.filteredCoordinates(SnakeEntity::isFood)
                     .forEach(coordinate ->
                             dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));

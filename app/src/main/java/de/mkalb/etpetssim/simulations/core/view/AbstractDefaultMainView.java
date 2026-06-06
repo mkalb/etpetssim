@@ -118,7 +118,7 @@ public abstract class AbstractDefaultMainView<
         controlView.updateStepCount(stepCount);
         observationView.initializeObservationLabels();
 
-        initSimulation(viewModel.getCurrentConfig(), cellDimension);
+        initSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
 
         drawAndMeasureSimulationStep(stepCount);
 
@@ -215,7 +215,7 @@ public abstract class AbstractDefaultMainView<
         skipOverlayActive = false;
     }
 
-    protected abstract void initSimulation(CON config, CellDimension cellDimension);
+    protected abstract void initSimulation(CON config, CellDimension cellDimension, GM model);
 
     @SuppressWarnings("ParameterHidesMemberVariable")
     protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);

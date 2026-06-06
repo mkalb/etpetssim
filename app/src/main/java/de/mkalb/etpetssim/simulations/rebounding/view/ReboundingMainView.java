@@ -51,7 +51,7 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected void initSimulation(ReboundingConfig config, CellDimension cellDimension) {
+    protected void initSimulation(ReboundingConfig config, CellDimension cellDimension, WritableGridModel<ReboundingEntity> model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

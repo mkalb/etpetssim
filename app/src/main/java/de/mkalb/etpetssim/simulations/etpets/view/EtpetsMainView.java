@@ -68,7 +68,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void initSimulation(EtpetsConfig config, CellDimension cellDimension) {
+    protected void initSimulation(EtpetsConfig config, CellDimension cellDimension, EtpetsGridModel model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -77,7 +77,16 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 .requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
-        // TODO draw rock and water
+
+        var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
+        model.terrainModel().filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
+             .forEach(coordinate ->
+                     basePainter.drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+
+        var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
+        model.terrainModel().filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
+             .forEach(coordinate ->
+                     basePainter.drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
 
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
                 computeBrightnessVariantsMap(
@@ -290,7 +299,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         var resourceModel = currentModel.resourceModel();
         var agentModel = currentModel.agentModel();
 
-        terrainModel.nonDefaultCells()
+        terrainModel.filteredCells(e -> e instanceof Trail)
                     .forEach(cell -> cellTerrainDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             dynamicPainter,

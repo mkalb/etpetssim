@@ -61,7 +61,7 @@ public final class LangtonMainView
 
     @SuppressWarnings("MagicNumber")
     @Override
-    protected void initSimulation(LangtonConfig config, CellDimension cellDimension) {
+    protected void initSimulation(LangtonConfig config, CellDimension cellDimension, LangtonGridModel model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
