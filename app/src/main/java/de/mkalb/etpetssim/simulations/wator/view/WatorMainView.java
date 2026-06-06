@@ -73,6 +73,12 @@ public final class WatorMainView
 
     @Override
     protected void initSimulation(WatorConfig config, CellDimension cellDimension) {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(backgroundColor);
+
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);
         entityColors.put(EntityDescriptors.FISH.descriptorId(),
                 computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(EntityDescriptors.FISH.descriptorId()),
@@ -172,12 +178,12 @@ public final class WatorMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundColor);
+        dynamicPainter.clearCanvasBackground();
 
         currentModel.nonDefaultCells()
                     .forEach(cell -> cellDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            basePainter, cell, stepCount));
+                            dynamicPainter, cell, stepCount));
     }
 
     @Override

@@ -73,6 +73,12 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
     @Override
     protected void initSimulation(EtpetsConfig config, CellDimension cellDimension) {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(backgroundColor);
+
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
                 computeBrightnessVariantsMap(
                         entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_TRAIL),
@@ -278,28 +284,32 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundColor);
+        dynamicPainter.clearCanvasBackground();
 
-        currentModel.terrainModel().nonDefaultCells()
+        var terrainModel = currentModel.terrainModel();
+        var resourceModel = currentModel.resourceModel();
+        var agentModel = currentModel.agentModel();
+
+        terrainModel.nonDefaultCells()
                     .forEach(cell -> cellTerrainDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            basePainter,
+                            dynamicPainter,
                             cell,
                             stepCount));
 
-        currentModel.resourceModel().nonDefaultCells()
-                    .forEach(cell -> cellResourceDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            basePainter,
-                            cell,
-                            stepCount));
+        resourceModel.nonDefaultCells()
+                     .forEach(cell -> cellResourceDrawer.draw(
+                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                             dynamicPainter,
+                             cell,
+                             stepCount));
 
-        currentModel.agentModel().nonDefaultCells()
-                    .forEach(cell -> cellAgentDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            basePainter,
-                            cell,
-                            stepCount));
+        agentModel.nonDefaultCells()
+                  .forEach(cell -> cellAgentDrawer.draw(
+                          entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                          dynamicPainter,
+                          cell,
+                          stepCount));
     }
 
     @Override

@@ -56,6 +56,12 @@ public final class ReboundingMainView
 
     @Override
     protected void initSimulation(ReboundingConfig config, CellDimension cellDimension) {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(backgroundColor);
+
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
         cellDrawer = switch (config.cellDisplayMode()) {
@@ -101,12 +107,12 @@ public final class ReboundingMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundColor);
+        dynamicPainter.clearCanvasBackground();
 
         currentModel.nonDefaultCells()
                     .forEach(cell -> cellDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            basePainter, cell, stepCount));
+                            dynamicPainter, cell, stepCount));
     }
 
     @Override

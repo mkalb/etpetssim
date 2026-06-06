@@ -65,6 +65,12 @@ public final class ForestMainView
 
     @Override
     protected void initSimulation(ForestConfig config, CellDimension cellDimension) {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(backgroundColor);
+
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
         cellDrawer = switch (config.cellDisplayMode()) {
@@ -139,12 +145,12 @@ public final class ForestMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundColor);
+        dynamicPainter.clearCanvasBackground();
 
         // small helper lambda to avoid code duplication when drawing different entity types
         Consumer<GridCell<ForestEntity>> drawCell = cell -> cellDrawer.draw(
                 entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                basePainter, cell, stepCount);
+                dynamicPainter, cell, stepCount);
 
         // draw tree cells first
         currentModel.filteredCells(ForestEntity::isTree)

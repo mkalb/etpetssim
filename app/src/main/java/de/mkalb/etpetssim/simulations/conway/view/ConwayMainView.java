@@ -55,6 +55,12 @@ public final class ConwayMainView
 
     @Override
     protected void initSimulation(ConwayConfig config, CellDimension cellDimension) {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(backgroundColor);
+
         var descriptor = entityDescriptorRegistry.requireByDescriptorId(ConwayEntity.ALIVE.descriptorId());
         var aliveColor = descriptor.colorOrFallback();
         var aliveBorderColor = descriptor.borderColorOrFallback();
@@ -117,11 +123,11 @@ public final class ConwayMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundColor);
+        dynamicPainter.clearCanvasBackground();
 
         currentModel.nonDefaultCoordinates()
                     .forEach(coordinate -> coordinateDrawer.draw(
-                            basePainter, coordinate, stepCount));
+                            dynamicPainter, coordinate, stepCount));
     }
 
     @Override

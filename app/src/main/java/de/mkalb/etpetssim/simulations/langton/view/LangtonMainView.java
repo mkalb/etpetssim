@@ -3,7 +3,6 @@ package de.mkalb.etpetssim.simulations.langton.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -133,8 +132,8 @@ public final class LangtonMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        ReadableGridModel<TerrainConstant> groundModel = currentModel.groundModel();
-        ReadableGridModel<AntEntity> antModel = currentModel.antModel();
+        var groundModel = currentModel.groundModel();
+        var antModel = currentModel.antModel();
 
         if ((lastDrawnStepCount + 1) < stepCount) {
             // draw ground

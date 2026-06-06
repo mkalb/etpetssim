@@ -72,6 +72,12 @@ public final class SugarMainView
 
     @Override
     protected void initSimulation(SugarConfig config, CellDimension cellDimension) {
+        if (basePainter == null) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
+            return;
+        }
+        basePainter.fillCanvasBackground(backgroundColor);
+
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR,
                 computeBrightnessVariantsMap(entityDescriptorRegistry.requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_SUGAR),
@@ -166,17 +172,20 @@ public final class SugarMainView
             return;
         }
 
-        basePainter.fillCanvasBackground(backgroundColor);
+        dynamicPainter.clearCanvasBackground();
 
-        currentModel.resourceModel().nonDefaultCells()
-                    .forEach(resourceCell -> cellResourceDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(resourceCell.descriptorId()),
-                            basePainter, resourceCell, stepCount));
+        var resourceModel = currentModel.resourceModel();
+        var agentModel = currentModel.agentModel();
 
-        currentModel.agentModel().nonDefaultCells()
-                    .forEach(agentCell -> cellAgentDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
-                            basePainter, agentCell, stepCount));
+        resourceModel.nonDefaultCells()
+                     .forEach(resourceCell -> cellResourceDrawer.draw(
+                             entityDescriptorRegistry.requireByDescriptorId(resourceCell.descriptorId()),
+                             dynamicPainter, resourceCell, stepCount));
+
+        agentModel.nonDefaultCells()
+                  .forEach(agentCell -> cellAgentDrawer.draw(
+                          entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
+                          dynamicPainter, agentCell, stepCount));
     }
 
     @Override
