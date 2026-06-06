@@ -38,4 +38,5 @@ public interface SimulationUserAction<
     @SuppressWarnings("unused")
     void apply(GM model, STA statistics, CON config, CTX context, @Nullable GridCell<ENT> selectedCell);
 
+    // TODO add another method for disabeling button. REmove FunctionalInterface or use default
 }

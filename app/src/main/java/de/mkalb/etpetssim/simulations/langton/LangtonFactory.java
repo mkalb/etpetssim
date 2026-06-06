@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.langton;
 
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.model.NoUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
@@ -11,6 +10,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonSimulationManager;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
+import de.mkalb.etpetssim.simulations.langton.model.LangtonUserAction;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import de.mkalb.etpetssim.simulations.langton.view.LangtonConfigView;
 import de.mkalb.etpetssim.simulations.langton.view.LangtonMainView;
@@ -47,7 +47,7 @@ public final class LangtonFactory {
                         return new GridCell<>(selectedCoordinate, langtonGridModel.groundModel().getEntity(selectedCoordinate));
                     }
                 },
-                new NoUserAction<>());
+                new LangtonUserAction());
 
         // View
         var configView = new LangtonConfigView(configViewModel);

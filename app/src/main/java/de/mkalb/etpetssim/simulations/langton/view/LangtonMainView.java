@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
+import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
@@ -16,7 +17,11 @@ import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
 import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 import de.mkalb.etpetssim.ui.CellDimension;
 import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
+import de.mkalb.etpetssim.ui.FXStyleClasses;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -32,6 +37,9 @@ public final class LangtonMainView
         NoUserActionContext,
         LangtonConfigView,
         LangtonObservationView> {
+
+    private static final String LANGTON_TOOLBAR_ADD_ANT = "langton.toolbar.addant";
+    private static final String LANGTON_TOOLBAR_ADD_ANT_TOOLTIP = "langton.toolbar.addant.tooltip";
 
     private static final Color SELECTED_STROKE_COLOR = Color.RED;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
@@ -158,7 +166,13 @@ public final class LangtonMainView
 
     @Override
     protected List<Node> createModificationToolbarNodes() {
-        return List.of();
+        Button addNewAntButton = new Button(AppLocalization.getText(LANGTON_TOOLBAR_ADD_ANT));
+        addNewAntButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        addNewAntButton.setTooltip(new Tooltip(AppLocalization.getText(LANGTON_TOOLBAR_ADD_ANT_TOOLTIP)));
+        addNewAntButton.setOnAction(_ -> applyUserActionAndRedraw(NoUserActionContext.NO_CONTEXT));
+        addNewAntButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        return List.of(addNewAntButton);
     }
 
 }
