@@ -48,6 +48,7 @@ public abstract class AbstractMainView<
     protected final OV observationView;
     protected final GridEntityDescriptorRegistry entityDescriptorRegistry;
     protected final Canvas baseCanvas;
+    protected final Canvas dynamicCanvas;
     protected final Canvas overlayCanvas;
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
@@ -56,6 +57,7 @@ public abstract class AbstractMainView<
     private final Map<Double, Font> fontCache;
 
     protected @Nullable FXGridCanvasPainter basePainter;
+    protected @Nullable FXGridCanvasPainter dynamicPainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
@@ -70,8 +72,10 @@ public abstract class AbstractMainView<
         this.entityDescriptorRegistry = entityDescriptorRegistry;
 
         baseCanvas = new Canvas(INITIAL_CANVAS_WIDTH, INITIAL_CANVAS_HEIGHT);
+        dynamicCanvas = new Canvas(INITIAL_CANVAS_WIDTH, INITIAL_CANVAS_HEIGHT);
         overlayCanvas = new Canvas(INITIAL_CANVAS_WIDTH, INITIAL_CANVAS_HEIGHT);
         baseCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
+        dynamicCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
         overlayCanvas.getStyleClass().add(FXStyleClasses.SIMULATION_CANVAS);
 
         canvasBorderPane = new BorderPane();
@@ -143,6 +147,7 @@ public abstract class AbstractMainView<
     public void shutdownSimulation() {
         viewModel.shutdownSimulation();
         basePainter = null;
+        dynamicPainter = null;
         overlayPainter = null;
         cellFont = null;
         cellEmojiFont = null;
@@ -215,8 +220,9 @@ public abstract class AbstractMainView<
     protected abstract List<Node> createActionToolBarNodes();
 
     protected final Region createSimulationRegion() {
-        StackPane stackPane = new StackPane(baseCanvas, overlayCanvas);
+        StackPane stackPane = new StackPane(baseCanvas, dynamicCanvas, overlayCanvas);
         StackPane.setAlignment(baseCanvas, Pos.TOP_LEFT);
+        StackPane.setAlignment(dynamicCanvas, Pos.TOP_LEFT);
         StackPane.setAlignment(overlayCanvas, Pos.TOP_LEFT);
         stackPane.getStyleClass().add(FXStyleClasses.SIMULATION_STACKPANE);
 
@@ -239,16 +245,22 @@ public abstract class AbstractMainView<
     }
 
     protected final CellDimension createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
-        if ((basePainter != null) && (overlayPainter != null)) {
+        if ((basePainter != null) && (dynamicPainter != null) && (overlayPainter != null)) {
             basePainter.clearCanvasBackground();
+            dynamicPainter.clearCanvasBackground();
             overlayPainter.clearCanvasBackground();
             basePainter = null;
+            dynamicPainter = null;
             overlayPainter = null;
         }
 
         basePainter = new FXGridCanvasPainter(baseCanvas, structure, cellEdgeLength);
         baseCanvas.setWidth(Math.min(MAX_CANVAS_WIDTH, Math.ceil(basePainter.gridDimension2D().getWidth())));
         baseCanvas.setHeight(Math.min(MAX_CANVAS_HEIGHT, Math.ceil(basePainter.gridDimension2D().getHeight())));
+
+        dynamicPainter = new FXGridCanvasPainter(dynamicCanvas, structure, cellEdgeLength);
+        dynamicCanvas.setWidth(baseCanvas.getWidth());
+        dynamicCanvas.setHeight(baseCanvas.getHeight());
 
         overlayPainter = new FXGridCanvasPainter(overlayCanvas, structure, cellEdgeLength);
         overlayCanvas.setWidth(baseCanvas.getWidth());
