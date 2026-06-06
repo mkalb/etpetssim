@@ -269,19 +269,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
     @Override
     protected void drawSimulation(EtpetsGridModel currentModel, int stepCount, int lastDrawnStepCount) {
-        if (basePainter == null) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
-        if (cellTerrainDrawer == null) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
-            return;
-        }
-        if (cellResourceDrawer == null) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
-            return;
-        }
-        if (cellAgentDrawer == null) {
+        if ((cellTerrainDrawer == null) || (cellResourceDrawer == null) || (cellAgentDrawer == null)) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }

@@ -130,7 +130,7 @@ public final class ForestMainView
 
     @Override
     protected void drawSimulation(WritableGridModel<ForestEntity> currentModel, int stepCount, int lastDrawnStepCount) {
-        if (basePainter == null) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }

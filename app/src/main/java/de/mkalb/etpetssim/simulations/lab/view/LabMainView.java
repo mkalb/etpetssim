@@ -334,7 +334,8 @@ public final class LabMainView
     }
 
     private void drawBaseCanvasBackground(boolean colorModeGrayscale) {
-        if ((basePainter == null) || (overlayPainter == null)) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
 
@@ -353,7 +354,8 @@ public final class LabMainView
                                           @Nullable Color strokeColor,
                                           double strokeLineWidth,
                                           Color textColor) {
-        if ((basePainter == null) || (overlayPainter == null)) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
 
@@ -369,7 +371,8 @@ public final class LabMainView
     }
 
     private void drawModel() {
-        if ((basePainter == null) || (overlayPainter == null)) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
 
@@ -380,7 +383,8 @@ public final class LabMainView
     }
 
     private void drawTest() {
-        if ((basePainter == null) || (overlayPainter == null)) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
+            AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
 

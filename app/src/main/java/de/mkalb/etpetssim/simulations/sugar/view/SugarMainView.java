@@ -157,15 +157,11 @@ public final class SugarMainView
 
     @Override
     protected void drawSimulation(SugarGridModel currentModel, int stepCount, int lastDrawnStepCount) {
-        if (basePainter == null) {
+        if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
-        if (cellResourceDrawer == null) {
-            AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
-            return;
-        }
-        if (cellAgentDrawer == null) {
+        if ((cellResourceDrawer == null) || (cellAgentDrawer == null)) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
