@@ -34,7 +34,6 @@ public final class ConwayMainView
     private static final Color SELECTED_STROKE_COLOR = Color.BLACK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Color backgroundColor;
     private @Nullable CoordinateDrawer coordinateDrawer;
 
     public ConwayMainView(DefaultMainViewModel<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
@@ -48,9 +47,6 @@ public final class ConwayMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(ConwayEntity.DEAD.descriptorId())
-                .colorOrFallback();
     }
 
     @Override
@@ -59,6 +55,9 @@ public final class ConwayMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(ConwayEntity.DEAD.descriptorId())
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
 
         var descriptor = entityDescriptorRegistry.requireByDescriptorId(ConwayEntity.ALIVE.descriptorId());

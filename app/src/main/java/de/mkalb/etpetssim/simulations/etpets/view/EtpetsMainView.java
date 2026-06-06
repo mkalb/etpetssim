@@ -47,7 +47,6 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
     private static final double PET_EGG_STROKE_LINE_WIDTH = 1.0d;
 
-    private final Color backgroundColor;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private @Nullable CellDrawer<TerrainEntity> cellTerrainDrawer;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
@@ -60,9 +59,6 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                           DefaultControlView controlView,
                           EtpetsObservationView observationView) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
-                .colorOrFallback();
         entityColors = HashMap.newHashMap(5);
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL, null);
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PLANT, null);
@@ -77,7 +73,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
+        // TODO draw rock and water
 
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
                 computeBrightnessVariantsMap(

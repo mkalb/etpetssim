@@ -41,7 +41,6 @@ public final class SugarMainView
     private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 120, 120);
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Color backgroundColor;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
@@ -58,9 +57,6 @@ public final class SugarMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
-                .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR, null);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT, null);
@@ -76,6 +72,9 @@ public final class SugarMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(SugarEntity.DESCRIPTOR_ID_TERRAIN)
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
 
         maxColorAgentEnergy = computeMaxColorAgentEnergy(config);

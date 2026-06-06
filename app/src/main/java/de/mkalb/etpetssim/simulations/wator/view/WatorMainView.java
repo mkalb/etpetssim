@@ -42,7 +42,6 @@ public final class WatorMainView
     private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 255, 120);
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Color backgroundColor;
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
     private @Nullable CellDrawer<WatorEntity> cellDrawer;
 
@@ -59,9 +58,6 @@ public final class WatorMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
-                .colorOrFallback();
         entityColors = HashMap.newHashMap(2);
         entityColors.put(EntityDescriptors.FISH.descriptorId(), null);
         entityColors.put(EntityDescriptors.SHARK.descriptorId(), null);
@@ -77,6 +73,9 @@ public final class WatorMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(WatorEntity.DESCRIPTOR_ID_WATER)
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
 
         maxColorSharkEnergy = computeMaxColorSharkEnergy(config);

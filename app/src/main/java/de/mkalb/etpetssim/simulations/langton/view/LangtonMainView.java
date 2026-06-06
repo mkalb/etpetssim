@@ -43,7 +43,6 @@ public final class LangtonMainView
     private static final Color SELECTED_STROKE_COLOR = Color.RED;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Color backgroundColor;
     private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
 
@@ -58,9 +57,6 @@ public final class LangtonMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
-                .colorOrFallback();
     }
 
     @SuppressWarnings("MagicNumber")
@@ -70,6 +66,9 @@ public final class LangtonMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(TerrainConstant.UNVISITED.descriptorId())
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);

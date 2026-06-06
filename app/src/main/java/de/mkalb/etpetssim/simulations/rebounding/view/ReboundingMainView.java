@@ -35,7 +35,6 @@ public final class ReboundingMainView
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Color backgroundColor;
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
     public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig,
@@ -49,9 +48,6 @@ public final class ReboundingMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
-                .colorOrFallback();
     }
 
     @Override
@@ -60,6 +56,9 @@ public final class ReboundingMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(ReboundingEntity.DESCRIPTOR_ID_GROUND)
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);

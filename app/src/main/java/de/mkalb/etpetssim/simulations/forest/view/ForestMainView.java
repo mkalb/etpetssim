@@ -44,7 +44,6 @@ public final class ForestMainView
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Color backgroundColor;
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
     public ForestMainView(DefaultMainViewModel<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig,
@@ -58,9 +57,6 @@ public final class ForestMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(ForestEntity.EMPTY.descriptorId())
-                .colorOrFallback();
     }
 
     @Override
@@ -69,6 +65,9 @@ public final class ForestMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(ForestEntity.EMPTY.descriptorId())
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);

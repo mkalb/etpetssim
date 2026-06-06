@@ -49,8 +49,6 @@ public final class SnakeMainView
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    private final Color backgroundColor;
-
     public SnakeMainView(DefaultMainViewModel<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
                                  SnakeStatistics, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
@@ -62,9 +60,6 @@ public final class SnakeMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
-        backgroundColor = entityDescriptorRegistry
-                .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
-                .colorOrFallback();
     }
 
     private static Color toSelectedColor(Color aliveColor) {
@@ -89,7 +84,11 @@ public final class SnakeMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
+        Color backgroundColor = entityDescriptorRegistry
+                .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
+                .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
+        // TODO draw wall
     }
 
     @Override
