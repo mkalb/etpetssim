@@ -3,7 +3,6 @@ package de.mkalb.etpetssim.simulations.langton.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -31,6 +30,7 @@ import java.util.*;
 public final class LangtonMainView
         extends AbstractDefaultMainView<
         LangtonEntity,
+        GridCell<LangtonEntity>,
         LangtonGridModel,
         LangtonConfig,
         LangtonStatistics,
@@ -47,8 +47,7 @@ public final class LangtonMainView
     private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonGridModel, LangtonConfig,
-                                   LangtonStatistics, NoUserActionContext> viewModel,
+    public LangtonMainView(DefaultMainViewModel<LangtonEntity, GridCell<LangtonEntity>, LangtonGridModel, LangtonConfig, LangtonStatistics, NoUserActionContext> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
                            DefaultControlView controlView,
@@ -107,8 +106,8 @@ public final class LangtonMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCellView<LangtonEntity> oldGridCell,
-                                          @Nullable GridCellView<LangtonEntity> newGridCell) {
+                                          @Nullable GridCell<LangtonEntity> oldGridCell,
+                                          @Nullable GridCell<LangtonEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

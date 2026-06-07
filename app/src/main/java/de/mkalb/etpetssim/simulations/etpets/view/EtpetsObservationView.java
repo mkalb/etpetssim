@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsCell;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import javafx.scene.control.Label;
@@ -16,8 +16,9 @@ import java.util.*;
 public final class EtpetsObservationView
         extends AbstractObservationView<
         EtpetsEntity,
+        EtpetsCell,
         EtpetsStatistics,
-        DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>> {
+        DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>> {
 
     private static final String ETPETS_OBSERVATION_ACTIVE_PETS = "etpets.observation.cells.pets";
     private static final String ETPETS_OBSERVATION_EGGS = "etpets.observation.cells.eggs";
@@ -27,7 +28,7 @@ public final class EtpetsObservationView
     private final Label eggsLabel = new Label();
     private final Label deadPetsLabel = new Label();
 
-    public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics> viewModel,
+    public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
@@ -35,7 +36,7 @@ public final class EtpetsObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCellView<EtpetsEntity> gridCell) {
+    protected void onSelectedCellChanged(@Nullable EtpetsCell gridCell) {
         super.onSelectedCellChanged(gridCell);
         // TODO EtpetsObservationView: Add and update more labels for selected cell
     }

@@ -24,12 +24,13 @@ import java.util.function.*;
  * Default main view-model implementation that orchestrates timed and batch execution.
  *
  * @param <ENT> entity type stored in grid cells
- * @param <GM> grid model type managed by the simulation
+ * @param <GM>  grid model type managed by the simulation
  * @param <CON> immutable simulation config type
  * @param <STA> timed statistics type exposed to observation views
  */
 public final class DefaultMainViewModel<
         ENT extends GridEntity,
+        GC extends GridCellView<ENT>,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends TimedSimulationStatistics,
@@ -42,17 +43,17 @@ public final class DefaultMainViewModel<
     private static final String LOG_COMPONENT = "DefaultMainViewModel";
 
     private final DefaultControlViewModel controlViewModel;
-    private final DefaultObservationViewModel<ENT, STA> observationStateViewModel;
+    private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
     private final Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory;
     private final SimulationTimer timer;
     private final ExecutorService batchExecutor;
     private final ChangeListener<Boolean> actionButtonRequestedListener;
     private final ChangeListener<Boolean> cancelButtonRequestedListener;
     private final @Nullable ChangeListener<@Nullable GridCoordinate> lastClickedCoordinateListener;
-    private final ObjectProperty<@Nullable GridCellView<ENT>> selectedGridCell = new SimpleObjectProperty<>();
+    private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
-    private final BiFunction<GM, GridCoordinate, GridCellView<ENT>> selectedGridCellProvider;
+    private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
     private final SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction;
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
@@ -68,20 +69,20 @@ public final class DefaultMainViewModel<
     /**
      * Creates a main view model.
      *
-     * @param simulationState shared simulation state property
-     * @param configViewModel config view model
-     * @param controlViewModel control view model
-     * @param observationViewModel observation view model
+     * @param simulationState          shared simulation state property
+     * @param configViewModel          config view model
+     * @param controlViewModel         control view model
+     * @param observationViewModel     observation view model
      * @param simulationManagerFactory factory used to create simulation managers for validated configurations
      * @param selectedGridCellProvider mapping from a clicked coordinate to the corresponding selected cell
-     * @param simulationUserAction user action applied to the current paused simulation state
+     * @param simulationUserAction     user action applied to the current paused simulation state
      */
     public DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
                                 SimulationConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
-                                DefaultObservationViewModel<ENT, STA> observationViewModel,
+                                DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
-                                BiFunction<GM, GridCoordinate, GridCellView<ENT>> selectedGridCellProvider,
+                                BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
                                 SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
@@ -152,7 +153,7 @@ public final class DefaultMainViewModel<
      *
      * @return selected-cell property, nullable when no cell is selected
      */
-    public ObjectProperty<@Nullable GridCellView<ENT>> selectedGridCellProperty() {
+    public ObjectProperty<@Nullable GC> selectedGridCellProperty() {
         return selectedGridCell;
     }
 
@@ -659,7 +660,7 @@ public final class DefaultMainViewModel<
             GM currentModel = manager.currentModel();
             CON currentConfig = manager.config();
             STA currentStatistics = manager.statistics();
-            GridCellView<ENT> currentSelectedCell = selectedGridCell.get();
+            GC currentSelectedCell = selectedGridCell.get();
             logSimulationInfo("Applying user action to the current simulation state. selectedCell="
                     + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
             simulationUserAction.apply(currentModel, currentStatistics, currentConfig, context, currentSelectedCell);

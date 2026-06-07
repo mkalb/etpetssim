@@ -15,13 +15,14 @@ import java.util.*;
  */
 public final class DefaultObservationViewModel<
         ENT extends GridEntity,
+        GC extends GridCellView<ENT>,
         STA extends SimulationStatistics>
         implements SimulationObservationViewModel<STA> {
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final ReadOnlyObjectWrapper<@Nullable STA> statistics;
 
-    private final ObjectProperty<@Nullable GridCellView<ENT>> selectedGridCell = new SimpleObjectProperty<>();
+    private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
 
     /**
@@ -64,7 +65,7 @@ public final class DefaultObservationViewModel<
      *
      * @param property source property to bind from
      */
-    public void bindSelectedGridCellProperty(ObjectProperty<@Nullable GridCellView<ENT>> property) {
+    public void bindSelectedGridCellProperty(ObjectProperty<@Nullable GC> property) {
         if (selectedGridCell.isBound()) {
             selectedGridCell.unbind();
         }
@@ -76,7 +77,7 @@ public final class DefaultObservationViewModel<
      *
      * @return selected grid cell property
      */
-    public ObjectProperty<@Nullable GridCellView<ENT>> selectedGridCellProperty() {
+    public ObjectProperty<@Nullable GC> selectedGridCellProperty() {
         return selectedGridCell;
     }
 

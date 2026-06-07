@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.rebounding.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
@@ -25,6 +25,7 @@ import java.util.*;
 public final class ReboundingMainView
         extends AbstractDefaultMainView<
         ReboundingEntity,
+        GridCell<ReboundingEntity>,
         WritableGridModel<ReboundingEntity>,
         ReboundingConfig,
         ReboundingStatistics,
@@ -37,8 +38,7 @@ public final class ReboundingMainView
 
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
-    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig,
-                                      ReboundingStatistics, NoUserActionContext> viewModel,
+    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics, NoUserActionContext> viewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry,
                               ReboundingConfigView configView,
                               DefaultControlView controlView,
@@ -83,8 +83,8 @@ public final class ReboundingMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCellView<ReboundingEntity> oldGridCell,
-                                          @Nullable GridCellView<ReboundingEntity> newGridCell) {
+                                          @Nullable GridCell<ReboundingEntity> oldGridCell,
+                                          @Nullable GridCell<ReboundingEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

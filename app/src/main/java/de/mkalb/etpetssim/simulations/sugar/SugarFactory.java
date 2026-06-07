@@ -38,9 +38,11 @@ public final class SugarFactory {
         // ViewModel
         var configViewModel = new SugarConfigViewModel(readOnlySimulationState);
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
-        var observationViewModel = new DefaultObservationViewModel<SugarEntity, SugarStatistics>(readOnlySimulationState);
-        var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
-                observationViewModel, SugarSimulationManager::new,
+        var observationViewModel =
+                new DefaultObservationViewModel<SugarEntity, GridCell<SugarEntity>, SugarStatistics>(readOnlySimulationState);
+        var viewModel =
+                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                        SugarSimulationManager::new,
                 (sugarGridModel, selectedCoordinate) -> {
                     if (!sugarGridModel.agentModel().isDefaultEntity(selectedCoordinate)) {
                         return new GridCell<>(selectedCoordinate, sugarGridModel.agentModel().getEntity(selectedCoordinate));

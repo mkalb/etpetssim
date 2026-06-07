@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -23,6 +22,7 @@ import java.util.*;
 
 public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsEntity,
+        EtpetsCell,
         EtpetsGridModel,
         EtpetsConfig,
         EtpetsStatistics,
@@ -52,13 +52,16 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
 
-    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsGridModel, EtpetsConfig,
-                                  EtpetsStatistics, NoUserActionContext> viewModel,
+    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsCell, EtpetsGridModel, EtpetsConfig, EtpetsStatistics, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           EtpetsConfigView configView,
                           DefaultControlView controlView,
                           EtpetsObservationView observationView) {
-        super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
+        super(viewModel,
+                configView,
+                controlView,
+                observationView,
+                entityDescriptorRegistry);
         entityColors = HashMap.newHashMap(5);
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL, null);
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PLANT, null);
@@ -270,8 +273,8 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCellView<EtpetsEntity> oldGridCell,
-                                          @Nullable GridCellView<EtpetsEntity> newGridCell) {
+                                          @Nullable EtpetsCell oldGridCell,
+                                          @Nullable EtpetsCell newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

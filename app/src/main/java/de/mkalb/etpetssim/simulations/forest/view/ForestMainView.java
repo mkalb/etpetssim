@@ -3,7 +3,6 @@ package de.mkalb.etpetssim.simulations.forest.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
@@ -32,6 +31,7 @@ import java.util.function.*;
 public final class ForestMainView
         extends AbstractDefaultMainView<
         ForestEntity,
+        GridCell<ForestEntity>,
         WritableGridModel<ForestEntity>,
         ForestConfig,
         ForestStatistics,
@@ -47,8 +47,7 @@ public final class ForestMainView
 
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
-    public ForestMainView(DefaultMainViewModel<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig,
-                                  ForestStatistics, NoUserActionContext> viewModel,
+    public ForestMainView(DefaultMainViewModel<ForestEntity, GridCell<ForestEntity>, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ForestConfigView configView,
                           DefaultControlView controlView,
@@ -122,8 +121,8 @@ public final class ForestMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCellView<ForestEntity> oldGridCell,
-                                          @Nullable GridCellView<ForestEntity> newGridCell) {
+                                          @Nullable GridCell<ForestEntity> oldGridCell,
+                                          @Nullable GridCell<ForestEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

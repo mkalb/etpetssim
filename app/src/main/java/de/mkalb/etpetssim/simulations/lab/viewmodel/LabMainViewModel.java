@@ -31,7 +31,7 @@ public final class LabMainViewModel
 
     private final LabConfigViewModel labConfigViewModel;
     private final LabControlViewModel labControlViewModel;
-    private final DefaultObservationViewModel<LabEntity, LabStatistics> labObservationViewModel;
+    private final DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics> labObservationViewModel;
 
     private final ChangeListener<Boolean> configChangedRequestedListener;
     private final ChangeListener<Boolean> drawRequestedChangeListener;
@@ -48,7 +48,7 @@ public final class LabMainViewModel
     public LabMainViewModel(ObjectProperty<SimulationState> simulationState,
                             LabConfigViewModel configViewModel,
                             LabControlViewModel controlViewModel,
-                            DefaultObservationViewModel<LabEntity, LabStatistics> observationViewModel) {
+                            DefaultObservationViewModel<LabEntity, GridCell<LabEntity>, LabStatistics> observationViewModel) {
         super(simulationState, configViewModel, observationViewModel);
         // Keep references to the view models to add/remove listeners and access properties.
         labObservationViewModel = observationViewModel;

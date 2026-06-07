@@ -24,6 +24,7 @@ import java.util.*;
  */
 public abstract class AbstractObservationView<
         ENT extends GridEntity,
+        GC extends GridCellView<ENT>,
         STA extends SimulationStatistics,
         VM extends SimulationObservationViewModel<STA>>
         implements SimulationObservationView {
@@ -34,7 +35,7 @@ public abstract class AbstractObservationView<
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
-    private @Nullable GridCellView<ENT> selectedGridCell;
+    private @Nullable GC selectedGridCell;
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
 
@@ -44,7 +45,8 @@ public abstract class AbstractObservationView<
      * @param viewModel                the simulation observation view model providing statistics and state
      * @param entityDescriptorRegistry the registry used to resolve entity descriptors for display
      */
-    protected AbstractObservationView(VM viewModel, GridEntityDescriptorRegistry entityDescriptorRegistry) {
+    protected AbstractObservationView(VM viewModel,
+                                      GridEntityDescriptorRegistry entityDescriptorRegistry) {
         this.viewModel = viewModel;
         this.entityDescriptorRegistry = entityDescriptorRegistry;
     }
@@ -232,7 +234,7 @@ public abstract class AbstractObservationView<
      *
      * @param property selected-cell property to listen on
      */
-    protected final void registerSelectedCellListener(ReadOnlyObjectProperty<@Nullable GridCellView<ENT>> property) {
+    protected final void registerSelectedCellListener(ReadOnlyObjectProperty<@Nullable GC> property) {
         selectedGridCell = property.get();
         property.addListener((_, _, newCell) -> {
             selectedGridCell = newCell;
@@ -249,7 +251,7 @@ public abstract class AbstractObservationView<
      *
      * @param gridCell the newly selected grid cell, or {@code null} if no cell is selected
      */
-    protected void onSelectedCellChanged(@Nullable GridCellView<ENT> gridCell) {
+    protected void onSelectedCellChanged(@Nullable GC gridCell) {
         if (selectedCellSection != null) {
             boolean hasSelectedCell = (gridCell != null);
             selectedCellSection.setManaged(hasSelectedCell);

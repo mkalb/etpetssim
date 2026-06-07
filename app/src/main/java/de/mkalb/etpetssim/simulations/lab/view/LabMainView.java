@@ -88,7 +88,11 @@ public final class LabMainView
                        LabControlView controlView,
                        LabObservationView observationView,
                        GridEntityDescriptorRegistry entityDescriptorRegistry) {
-        super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
+        super(viewModel,
+                configView,
+                controlView,
+                observationView,
+                entityDescriptorRegistry);
     }
 
     @Override

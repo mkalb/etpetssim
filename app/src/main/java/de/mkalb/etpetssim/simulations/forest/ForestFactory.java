@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.forest;
 
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.ReadableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
@@ -37,9 +38,11 @@ public final class ForestFactory {
         // ViewModel
         var configViewModel = new ForestConfigViewModel(readOnlySimulationState);
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
-        var observationViewModel = new DefaultObservationViewModel<ForestEntity, ForestStatistics>(readOnlySimulationState);
-        var viewModel = new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel,
-                observationViewModel, ForestSimulationManager::new, ReadableGridModel::getGridCell, new ForestUserAction());
+        var observationViewModel =
+                new DefaultObservationViewModel<ForestEntity, GridCell<ForestEntity>, ForestStatistics>(readOnlySimulationState);
+        var viewModel =
+                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                        ForestSimulationManager::new, ReadableGridModel::getGridCell, new ForestUserAction());
 
         // View
         var configView = new ForestConfigView(configViewModel);

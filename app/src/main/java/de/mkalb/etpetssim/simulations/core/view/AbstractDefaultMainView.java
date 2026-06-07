@@ -28,15 +28,16 @@ import java.util.concurrent.*;
  */
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
+        GC extends GridCellView<ENT>,
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends TimedSimulationStatistics,
         CTX extends SimulationUserActionContext,
         CFV extends SimulationConfigView,
-        OV extends AbstractObservationView<ENT, STA, DefaultObservationViewModel<ENT, STA>>>
+        OV extends AbstractObservationView<ENT, GC, STA, DefaultObservationViewModel<ENT, GC, STA>>>
         extends
         AbstractMainView<
-                DefaultMainViewModel<ENT, GM, CON, STA, CTX>,
+                DefaultMainViewModel<ENT, GC, GM, CON, STA, CTX>,
                 CFV,
                 SimulationControlView,
                 OV> {
@@ -64,7 +65,7 @@ public abstract class AbstractDefaultMainView<
 
     private boolean skipOverlayActive = false;
 
-    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GM, CON, STA, CTX> viewModel,
+    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, CTX> viewModel,
                                       CFV configView, SimulationControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
@@ -154,8 +155,8 @@ public abstract class AbstractDefaultMainView<
     }
 
     protected abstract void handleGridCellSelected(FXGridCanvasPainter painter,
-                                                   @Nullable GridCellView<ENT> oldGridCell,
-                                                   @Nullable GridCellView<ENT> newGridCell);
+                                                   @Nullable GC oldGridCell,
+                                                   @Nullable GC newGridCell);
 
     private void drawAndMeasureSimulationStep(int stepCount) {
         long startNanos = System.nanoTime();

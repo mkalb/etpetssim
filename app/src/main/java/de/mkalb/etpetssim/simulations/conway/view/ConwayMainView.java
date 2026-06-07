@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
@@ -24,6 +24,7 @@ import java.util.*;
 public final class ConwayMainView
         extends AbstractDefaultMainView<
         ConwayEntity,
+        GridCell<ConwayEntity>,
         WritableGridModel<ConwayEntity>,
         ConwayConfig,
         ConwayStatistics,
@@ -36,8 +37,7 @@ public final class ConwayMainView
 
     private @Nullable CoordinateDrawer coordinateDrawer;
 
-    public ConwayMainView(DefaultMainViewModel<ConwayEntity, WritableGridModel<ConwayEntity>, ConwayConfig,
-                                  ConwayStatistics, NoUserActionContext> viewModel,
+    public ConwayMainView(DefaultMainViewModel<ConwayEntity, GridCell<ConwayEntity>, WritableGridModel<ConwayEntity>, ConwayConfig, ConwayStatistics, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
                           DefaultControlView controlView,
@@ -99,8 +99,8 @@ public final class ConwayMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCellView<ConwayEntity> oldGridCell,
-                                          @Nullable GridCellView<ConwayEntity> newGridCell) {
+                                          @Nullable GridCell<ConwayEntity> oldGridCell,
+                                          @Nullable GridCell<ConwayEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

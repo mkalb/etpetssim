@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
@@ -26,6 +26,7 @@ import java.util.*;
 public final class WatorMainView
         extends AbstractDefaultMainView<
         WatorEntity,
+        GridCell<WatorEntity>,
         WritableGridModel<WatorEntity>,
         WatorConfig,
         WatorStatistics,
@@ -47,8 +48,7 @@ public final class WatorMainView
 
     private int maxColorSharkEnergy = 1;
 
-    public WatorMainView(DefaultMainViewModel<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
-                                 WatorStatistics, NoUserActionContext> viewModel,
+    public WatorMainView(DefaultMainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>, WatorConfig, WatorStatistics, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
                          DefaultControlView controlView,
@@ -154,8 +154,8 @@ public final class WatorMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCellView<WatorEntity> oldGridCell,
-                                          @Nullable GridCellView<WatorEntity> newGridCell) {
+                                          @Nullable GridCell<WatorEntity> oldGridCell,
+                                          @Nullable GridCell<WatorEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

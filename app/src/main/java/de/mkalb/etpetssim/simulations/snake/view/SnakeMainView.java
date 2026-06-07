@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.snake.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -25,6 +25,7 @@ import java.util.*;
 public final class SnakeMainView
         extends AbstractDefaultMainView<
         SnakeEntity,
+        GridCell<SnakeEntity>,
         WritableGridModel<SnakeEntity>,
         SnakeConfig,
         SnakeStatistics,
@@ -49,8 +50,7 @@ public final class SnakeMainView
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    public SnakeMainView(DefaultMainViewModel<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
-                                 SnakeStatistics, NoUserActionContext> viewModel,
+    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SnakeConfigView configView,
                          DefaultControlView controlView,
@@ -97,8 +97,8 @@ public final class SnakeMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCellView<SnakeEntity> oldGridCell,
-                                          @Nullable GridCellView<SnakeEntity> newGridCell) {
+                                          @Nullable GridCell<SnakeEntity> oldGridCell,
+                                          @Nullable GridCell<SnakeEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

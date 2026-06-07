@@ -153,7 +153,7 @@ public final class EtpetsAgentLogic {
                         NeighborhoodMode.EDGES_ONLY,
                         structure,
                         2,
-                        c -> EtpetsCell.of(c, gridModel));
+                        c -> EtpetsCell.of(gridModel, c));
 
         // Flat map used by egg-placement search (needs all rings merged).
         SortedMap<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate = new TreeMap<>();
@@ -357,7 +357,7 @@ public final class EtpetsAgentLogic {
         }
 
         if (!(actionCandidate.eggTarget() instanceof GridCoordinate eggCoordinate)
-                || !EtpetsCell.of(eggCoordinate, gridModel).isWalkable()) {
+                || !EtpetsCell.of(gridModel, eggCoordinate).isWalkable()) {
             throw new IllegalStateException("EtpetsAgentLogic: REPRODUCE egg placement invalid for action " + actionCandidate + ".");
         }
 
@@ -592,7 +592,7 @@ public final class EtpetsAgentLogic {
                                                  List<GridCoordinate> neighborCoordinates) {
         int walkableCount = 0;
         for (GridCoordinate neighbor : neighborCoordinates) {
-            if (EtpetsCell.of(neighbor, gridModel).isWalkable()) {
+            if (EtpetsCell.of(gridModel, neighbor).isWalkable()) {
                 walkableCount++;
             }
         }

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.rebounding.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -17,8 +17,9 @@ import java.util.*;
 public final class ReboundingObservationView
         extends AbstractObservationView<
         ReboundingEntity,
+        GridCell<ReboundingEntity>,
         ReboundingStatistics,
-        DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics>> {
+        DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>> {
 
     private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
     private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
@@ -28,7 +29,7 @@ public final class ReboundingObservationView
     private final Label movingEntityCellsLabel = new Label();
     private final Label directionLabel = new Label();
 
-    public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, ReboundingStatistics> viewModel,
+    public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics> viewModel,
                                      GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
@@ -36,7 +37,7 @@ public final class ReboundingObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCellView<ReboundingEntity> gridCell) {
+    protected void onSelectedCellChanged(@Nullable GridCell<ReboundingEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
         setUnknownValues(directionLabel);
 

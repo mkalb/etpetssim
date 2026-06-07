@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
@@ -14,8 +15,9 @@ import java.util.*;
 public final class ConwayObservationView
         extends AbstractObservationView<
         ConwayEntity,
+        GridCell<ConwayEntity>,
         ConwayStatistics,
-        DefaultObservationViewModel<ConwayEntity, ConwayStatistics>> {
+        DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>> {
 
     private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
     private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
@@ -27,7 +29,7 @@ public final class ConwayObservationView
     private final Label changedCellsLabel = new Label();
     private final Label maxAliveCellsLabel = new Label();
 
-    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, ConwayStatistics> viewModel,
+    public ConwayObservationView(DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCellView;
+import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -18,8 +18,9 @@ import java.util.*;
 public final class SugarObservationView
         extends AbstractObservationView<
         SugarEntity,
+        GridCell<SugarEntity>,
         SugarStatistics,
-        DefaultObservationViewModel<SugarEntity, SugarStatistics>> {
+        DefaultObservationViewModel<SugarEntity, GridCell<SugarEntity>, SugarStatistics>> {
 
     private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
     private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
@@ -31,7 +32,7 @@ public final class SugarObservationView
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
 
-    public SugarObservationView(DefaultObservationViewModel<SugarEntity, SugarStatistics> viewModel,
+    public SugarObservationView(DefaultObservationViewModel<SugarEntity, GridCell<SugarEntity>, SugarStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
@@ -39,7 +40,7 @@ public final class SugarObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCellView<SugarEntity> gridCell) {
+    protected void onSelectedCellChanged(@Nullable GridCell<SugarEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
         setUnknownValues(
                 currentEnergyLabel,

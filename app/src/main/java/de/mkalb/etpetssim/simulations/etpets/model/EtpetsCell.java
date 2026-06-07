@@ -10,10 +10,10 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
  * The record stores all three layer entities (terrain, resource, agent) and
  * exposes an effective top-most entity via {@link #entity()}.
  *
- * @param coordinate coordinate of this snapshot
- * @param terrainEntity terrain layer entity
+ * @param coordinate     coordinate of this snapshot
+ * @param terrainEntity  terrain layer entity
  * @param resourceEntity resource layer entity
- * @param agentEntity agent layer entity
+ * @param agentEntity    agent layer entity
  */
 public record EtpetsCell(GridCoordinate coordinate,
                          TerrainEntity terrainEntity,
@@ -24,11 +24,11 @@ public record EtpetsCell(GridCoordinate coordinate,
     /**
      * Creates a layered ET-Pets cell snapshot from the given grid model.
      *
+     * @param model      the ET-Pets grid model providing all layers
      * @param coordinate the coordinate to read
-     * @param model the ET-Pets grid model providing all layers
      * @return the composed cell snapshot for the coordinate
      */
-    public static EtpetsCell of(GridCoordinate coordinate, EtpetsGridModel model) {
+    public static EtpetsCell of(EtpetsGridModel model, GridCoordinate coordinate) {
         return new EtpetsCell(coordinate,
                 model.terrainModel().getEntity(coordinate),
                 model.resourceModel().getEntity(coordinate),
@@ -58,13 +58,13 @@ public record EtpetsCell(GridCoordinate coordinate,
      * entities (terrain, resource, agent).
      * <p>
      * Format:
-     * {@code <coordinate> terrain=<terrain-display> resource=<resource-display> agent=<agent-display>}
+     * {@code <coordinate> <terrain-display> <resource-display> <agent-display>}
      *
      * @return a layer-complete display string for this ET-Pets cell
      */
     @Override
     public String toDisplayString() {
-        return String.format("%s terrain=%s resource=%s agent=%s",
+        return String.format("%s %s %s %s",
                 coordinate.toDisplayString(),
                 terrainEntity.toDisplayString(),
                 resourceEntity.toDisplayString(),

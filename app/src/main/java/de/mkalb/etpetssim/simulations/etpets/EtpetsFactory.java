@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.etpets;
 
-import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.NoUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
@@ -9,9 +8,11 @@ import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
+import de.mkalb.etpetssim.simulations.etpets.model.EtpetsCell;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsSimulationManager;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.EntityDescriptors;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.EtpetsEntity;
 import de.mkalb.etpetssim.simulations.etpets.view.EtpetsConfigView;
 import de.mkalb.etpetssim.simulations.etpets.view.EtpetsMainView;
 import de.mkalb.etpetssim.simulations.etpets.view.EtpetsObservationView;
@@ -21,6 +22,9 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 
 public final class EtpetsFactory {
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private EtpetsFactory() {
     }
 
@@ -34,27 +38,11 @@ public final class EtpetsFactory {
         // ViewModel
         var configViewModel = new EtpetsConfigViewModel(readOnlySimulationState);
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
-        var observationViewModel = new DefaultObservationViewModel<EtpetsEntity, EtpetsStatistics>(readOnlySimulationState);
-        var viewModel = new DefaultMainViewModel<>(
-                simulationState,
-                configViewModel,
-                controlViewModel,
-                observationViewModel,
-                EtpetsSimulationManager::new,
-                (model, selectedCoordinate) -> {
-                    AgentEntity agentEntity = model.agentModel().getEntity(selectedCoordinate);
-                    if (agentEntity.isNotEmpty()) {
-                        return new GridCell<>(selectedCoordinate, agentEntity);
-                    }
-
-                    ResourceEntity resourceEntity = model.resourceModel().getEntity(selectedCoordinate);
-                    if (resourceEntity.isNotEmpty()) {
-                        return new GridCell<>(selectedCoordinate, resourceEntity);
-                    }
-
-                    return new GridCell<>(selectedCoordinate, model.terrainModel().getEntity(selectedCoordinate));
-                },
-                new NoUserAction<>());
+        var observationViewModel =
+                new DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>(readOnlySimulationState);
+        var viewModel =
+                new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
+                        EtpetsSimulationManager::new, EtpetsCell::of, new NoUserAction<>());
 
         // View
         var configView = new EtpetsConfigView(configViewModel);
