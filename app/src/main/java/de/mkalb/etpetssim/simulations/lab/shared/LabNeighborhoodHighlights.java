@@ -2,9 +2,7 @@ package de.mkalb.etpetssim.simulations.lab.shared;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorResult;
-import de.mkalb.etpetssim.engine.neighborhood.RadiusRingCell;
+import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 
 import java.util.*;

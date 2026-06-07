@@ -4,8 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.langton.shared.*;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.RULE_DEFAULT;
 

@@ -2,8 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 
 import java.util.*;
 import java.util.function.*;

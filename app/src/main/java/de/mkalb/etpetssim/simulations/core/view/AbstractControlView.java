@@ -2,8 +2,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.util.*;

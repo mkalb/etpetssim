@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.model;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**

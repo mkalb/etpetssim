@@ -1,18 +1,14 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.GridCellView;
-import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.entity.*;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.geometry.*;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
 

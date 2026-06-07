@@ -1,14 +1,10 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridEdgeBehavior;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.simulations.core.model.SimulationConfig;
-import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
-import de.mkalb.etpetssim.ui.InputIntegerProperty;
+import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 

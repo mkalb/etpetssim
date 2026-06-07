@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
-import de.mkalb.etpetssim.engine.model.GridCellView;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;

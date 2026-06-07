@@ -2,8 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import de.mkalb.FxTestSupport;
 import javafx.util.Duration;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;

@@ -2,9 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 
 /**
  * Represents a double property with a defined range.

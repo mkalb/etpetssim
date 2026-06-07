@@ -1,19 +1,12 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
-import javafx.geometry.Dimension2D;
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import de.mkalb.etpetssim.engine.*;
+import javafx.geometry.*;
+import javafx.scene.canvas.*;
 import javafx.scene.image.PixelWriter;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.*;
 import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 import org.jspecify.annotations.Nullable;
 
 /**

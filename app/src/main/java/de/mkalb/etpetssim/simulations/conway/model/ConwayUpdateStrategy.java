@@ -1,12 +1,9 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.executor.SynchronousStepLogic;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
 import java.util.*;

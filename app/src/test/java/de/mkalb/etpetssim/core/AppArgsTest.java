@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.core;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 

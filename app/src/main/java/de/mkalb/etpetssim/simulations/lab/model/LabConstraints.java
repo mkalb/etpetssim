@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.simulations.lab.model;
 
-import de.mkalb.etpetssim.engine.CellShape;
-import de.mkalb.etpetssim.engine.GridEdgeBehavior;
-import de.mkalb.etpetssim.engine.GridSize;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;

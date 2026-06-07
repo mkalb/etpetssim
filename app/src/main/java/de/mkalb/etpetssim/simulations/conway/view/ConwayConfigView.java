@@ -1,24 +1,17 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayConfig;
-import de.mkalb.etpetssim.simulations.conway.shared.ConwayPreset;
-import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
+import de.mkalb.etpetssim.simulations.conway.shared.*;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
-import de.mkalb.etpetssim.ui.FXComponentFactory;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.*;
 import javafx.geometry.HPos;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import java.util.*;
 

@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
-import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
-import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 

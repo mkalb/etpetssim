@@ -1,11 +1,8 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
-import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
-import de.mkalb.etpetssim.engine.model.ArrayGridModel;
-import de.mkalb.etpetssim.engine.model.SparseGridModel;
+import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.executor.*;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.langton.model.entity.*;

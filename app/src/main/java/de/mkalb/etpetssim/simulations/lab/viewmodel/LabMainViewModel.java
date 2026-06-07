@@ -1,18 +1,12 @@
 package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractMainViewModel;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
-import de.mkalb.etpetssim.simulations.lab.model.LabSimulationManager;
-import de.mkalb.etpetssim.simulations.lab.model.LabStatistics;
+import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.simulations.core.viewmodel.*;
+import de.mkalb.etpetssim.simulations.lab.model.*;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.shared.LabNeighborhoodHighlights;
 import javafx.beans.property.ObjectProperty;

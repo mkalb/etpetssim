@@ -1,11 +1,9 @@
 package de.mkalb.etpetssim.engine.model.entity;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 

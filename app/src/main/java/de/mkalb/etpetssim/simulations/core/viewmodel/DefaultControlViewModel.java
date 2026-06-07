@@ -2,12 +2,8 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.ui.InputDoublePropertyIntRange;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
-import de.mkalb.etpetssim.ui.InputIntegerProperty;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import de.mkalb.etpetssim.ui.*;
+import javafx.beans.property.*;
 
 /**
  * Default implementation of control view-model state and user requests.

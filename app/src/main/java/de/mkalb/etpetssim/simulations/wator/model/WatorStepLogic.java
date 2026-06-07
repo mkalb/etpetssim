@@ -2,10 +2,8 @@ package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.executor.AgentStepLogic;
-import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
+import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 
 import java.util.*;

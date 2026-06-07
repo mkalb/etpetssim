@@ -1,22 +1,15 @@
 package de.mkalb.etpetssim;
 
 import de.mkalb.etpetssim.core.*;
-import de.mkalb.etpetssim.simulations.core.SimulationFactory;
-import de.mkalb.etpetssim.simulations.core.SimulationInstance;
-import de.mkalb.etpetssim.ui.FXComponentFactory;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Hyperlink;
+import de.mkalb.etpetssim.simulations.core.*;
+import de.mkalb.etpetssim.ui.*;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
+import javafx.stage.*;
 
 import java.util.*;
 

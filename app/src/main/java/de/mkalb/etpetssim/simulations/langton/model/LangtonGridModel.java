@@ -1,12 +1,8 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.CompositeGridModel;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
-import de.mkalb.etpetssim.simulations.langton.model.entity.AntEntity;
-import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
-import de.mkalb.etpetssim.simulations.langton.model.entity.TerrainConstant;
+import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 
 import java.util.*;
 

@@ -1,11 +1,8 @@
 package de.mkalb.etpetssim.engine.support;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.ReadableGridModel;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
-import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.model.entity.*;
 
 import java.util.*;
 import java.util.function.*;

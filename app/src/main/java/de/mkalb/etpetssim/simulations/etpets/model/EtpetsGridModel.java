@@ -1,9 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.CompositeGridModel;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 
 import java.util.*;

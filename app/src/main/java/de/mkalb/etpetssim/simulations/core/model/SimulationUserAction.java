@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.engine.model.GridCellView;
-import de.mkalb.etpetssim.engine.model.GridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import org.jspecify.annotations.Nullable;

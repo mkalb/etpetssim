@@ -2,8 +2,7 @@ package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.conway.shared.*;
 import de.mkalb.etpetssim.ui.InputEnumProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import org.jspecify.annotations.Nullable;
 
 import java.util.function.*;

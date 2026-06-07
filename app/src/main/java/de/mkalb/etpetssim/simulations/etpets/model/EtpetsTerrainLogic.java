@@ -1,8 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
 import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.TerrainEntity;
-import de.mkalb.etpetssim.simulations.etpets.model.entity.Trail;
+import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 
 public final class EtpetsTerrainLogic {
 

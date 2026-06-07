@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.engine.executor;
 
-import de.mkalb.etpetssim.engine.model.GridCell;
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 import java.util.*;

@@ -1,9 +1,7 @@
 package de.mkalb.etpetssim.ui;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;

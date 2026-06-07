@@ -6,8 +6,7 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractControlView;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabControlViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 
 import java.util.*;
 

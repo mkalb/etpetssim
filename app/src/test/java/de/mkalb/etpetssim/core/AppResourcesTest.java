@@ -3,8 +3,7 @@ package de.mkalb.etpetssim.core;
 import de.mkalb.FxTestSupport;
 import javafx.scene.image.Image;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.InputStream;
 import java.net.URL;

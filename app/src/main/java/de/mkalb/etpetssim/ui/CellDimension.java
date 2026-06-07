@@ -1,8 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
-import javafx.geometry.Dimension2D;
-import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.*;
 
 import java.util.*;
 

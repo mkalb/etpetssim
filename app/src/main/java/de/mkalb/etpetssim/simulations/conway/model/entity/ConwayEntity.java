@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.model.entity;
 
-import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec;
+import de.mkalb.etpetssim.engine.model.entity.*;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 

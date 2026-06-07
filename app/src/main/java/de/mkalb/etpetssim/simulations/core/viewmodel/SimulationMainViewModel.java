@@ -1,10 +1,8 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationNotificationType;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
+import de.mkalb.etpetssim.simulations.core.shared.*;
+import javafx.beans.property.*;
 
 /**
  * Contract for the main simulation orchestration view model.

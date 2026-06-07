@@ -1,12 +1,10 @@
 package de.mkalb.etpetssim.simulations.forest.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.forest.model.ForestConfig;
 import de.mkalb.etpetssim.simulations.forest.viewmodel.ForestConfigViewModel;
-import de.mkalb.etpetssim.ui.FXComponentFactory;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.*;
 import javafx.scene.layout.Region;
 
 public final class ForestConfigView

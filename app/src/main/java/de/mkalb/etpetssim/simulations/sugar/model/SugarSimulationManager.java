@@ -1,14 +1,10 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.executor.DefaultSimulationExecutor;
-import de.mkalb.etpetssim.engine.executor.TimedSimulationExecutor;
+import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
-import de.mkalb.etpetssim.engine.neighborhood.CellNeighborhoods;
-import de.mkalb.etpetssim.engine.neighborhood.EdgeBehaviorAction;
-import de.mkalb.etpetssim.engine.support.GridInitializer;
-import de.mkalb.etpetssim.engine.support.GridInitializers;
+import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.engine.support.*;
 import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 

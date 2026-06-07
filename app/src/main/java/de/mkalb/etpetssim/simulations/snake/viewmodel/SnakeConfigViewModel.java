@@ -5,9 +5,7 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeConfig;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
-import de.mkalb.etpetssim.ui.InputDoubleProperty;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
-import de.mkalb.etpetssim.ui.InputIntegerProperty;
+import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.ReadOnlyObjectProperty;
 
 import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.*;

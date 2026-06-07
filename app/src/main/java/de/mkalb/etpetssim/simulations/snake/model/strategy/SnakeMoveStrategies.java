@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.snake.model.strategy;
 
-import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 import org.jspecify.annotations.Nullable;
 

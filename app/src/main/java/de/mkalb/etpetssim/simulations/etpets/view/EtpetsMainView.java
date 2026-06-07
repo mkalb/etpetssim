@@ -1,18 +1,13 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
-import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.engine.model.entity.*;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
-import de.mkalb.etpetssim.simulations.core.view.AbstractDefaultMainView;
-import de.mkalb.etpetssim.simulations.core.view.CellDrawer;
-import de.mkalb.etpetssim.simulations.core.view.DefaultControlView;
+import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.*;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
-import de.mkalb.etpetssim.ui.CellDimension;
-import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
-import de.mkalb.etpetssim.ui.FXPaintFactory;
+import de.mkalb.etpetssim.ui.*;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;

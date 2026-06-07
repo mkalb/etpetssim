@@ -1,16 +1,11 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationStartMode;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationTerminationCheck;
+import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultControlViewModel;
-import de.mkalb.etpetssim.ui.FXComponentFactory;
-import de.mkalb.etpetssim.ui.FXStyleClasses;
+import de.mkalb.etpetssim.ui.*;
 import javafx.beans.binding.Bindings;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.util.*;

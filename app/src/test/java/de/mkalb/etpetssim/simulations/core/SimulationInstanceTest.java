@@ -5,8 +5,7 @@ import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.concurrent.atomic.*;
 
