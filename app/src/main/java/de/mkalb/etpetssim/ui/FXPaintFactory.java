@@ -39,7 +39,7 @@ public final class FXPaintFactory {
      * @param maxFactorDelta the total brightness change (positive to brighten, negative to darken)
      * @return a map from integer value to color variant
      * @throws IllegalArgumentException if the range is invalid, groupCount is less than 1,
-     * or maxFactorDelta is outside the range [-1.0, 10.0]
+     *                                  or maxFactorDelta is outside the range [-1.0, 10.0]
      */
     public static Map<Integer, Color> computeBrightnessVariantsMap(
             Color baseColor,

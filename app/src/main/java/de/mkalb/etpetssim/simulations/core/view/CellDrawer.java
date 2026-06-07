@@ -15,9 +15,9 @@ public interface CellDrawer<ENT extends GridEntity> {
      * Draws one simulation cell on the painter surface.
      *
      * @param descriptor descriptor metadata of the entity in the cell
-     * @param painter drawing facade for the grid canvas
-     * @param cell coordinate and entity data of the cell to draw
-     * @param stepCount current simulation step count
+     * @param painter    drawing facade for the grid canvas
+     * @param cell       coordinate and entity data of the cell to draw
+     * @param stepCount  current simulation step count
      */
     void draw(GridEntityDescriptor descriptor,
               FXGridCanvasPainter painter,

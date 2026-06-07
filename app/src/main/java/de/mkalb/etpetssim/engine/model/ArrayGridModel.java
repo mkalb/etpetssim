@@ -15,20 +15,26 @@ import java.util.function.*;
  */
 public final class ArrayGridModel<T extends GridEntity> implements WritableGridModel<T> {
 
-    /** The structure describing the grid's dimensions and valid coordinates. */
+    /**
+     * The structure describing the grid's dimensions and valid coordinates.
+     */
     private final GridStructure structure;
 
-    /** The default entity for all grid cells. */
+    /**
+     * The default entity for all grid cells.
+     */
     private final T defaultEntity;
 
-    /** The two-dimensional array holding the grid entities. */
+    /**
+     * The two-dimensional array holding the grid entities.
+     */
     private final Object[][] data;
 
     /**
      * Constructs a new {@code ArrayGridModel} with the given structure and default entity.
      * All cells are initialized to the default entity.
      *
-     * @param structure the grid structure
+     * @param structure     the grid structure
      * @param defaultEntity the default entity for all cells
      */
     public ArrayGridModel(GridStructure structure, T defaultEntity) {

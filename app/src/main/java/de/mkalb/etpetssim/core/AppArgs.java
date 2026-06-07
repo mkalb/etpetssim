@@ -65,7 +65,7 @@ public final class AppArgs {
      * Accepted false values are {@code false}, {@code 0}, {@code no}, and {@code off}.
      * For all other inputs, {@code defaultValue} is returned.
      *
-     * @param value the text to parse
+     * @param value        the text to parse
      * @param defaultValue the fallback value for unsupported inputs
      * @return the parsed boolean value or {@code defaultValue}
      * @throws NullPointerException if {@code value} is {@code null}
@@ -94,7 +94,7 @@ public final class AppArgs {
     /**
      * Returns the value for a key as a boolean.
      *
-     * @param key the key to resolve
+     * @param key          the key to resolve
      * @param defaultValue the fallback value when the key is missing or cannot be parsed
      * @return the parsed value, or {@code defaultValue}
      * @throws NullPointerException if {@code key} is {@code null}
@@ -111,7 +111,7 @@ public final class AppArgs {
     /**
      * Returns the value for a key as an integer.
      *
-     * @param key the key to resolve
+     * @param key          the key to resolve
      * @param defaultValue the fallback value when the key is missing, blank, or invalid
      * @return the parsed value, or {@code defaultValue}
      * @throws NullPointerException if {@code key} is {@code null}
@@ -135,7 +135,7 @@ public final class AppArgs {
      *
      * @param key the key to inspect
      * @return {@code true} if the flag is active, otherwise {@code false}
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws NullPointerException     if {@code key} is {@code null}
      * @throws IllegalArgumentException if {@code key} is not a flag key
      */
     public boolean isFlagActive(Key key) {

@@ -247,7 +247,7 @@ public interface GridPattern<T extends GridEntity> {
      * The returned pattern contains the same offsets as this pattern, but with mapped entities.
      *
      * @param mapper the function to apply to each entity
-     * @param <R> the type of the resulting entities
+     * @param <R>    the type of the resulting entities
      * @return a new pattern with mapped entities and the same offsets as this pattern
      */
     default <R extends GridEntity> GridPattern<R> mapValues(Function<T, R> mapper) {

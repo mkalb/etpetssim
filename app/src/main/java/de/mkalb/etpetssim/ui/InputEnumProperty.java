@@ -16,9 +16,9 @@ import java.util.function.*;
  * <p>
  * Use {@link #of(Enum, List, Function)} or {@link #of(Enum, Class, Function)} to create instances with validation and display name mapping.
  *
- * @param <E> the enum type
- * @param property    the underlying {@link ObjectProperty} for the enum
- * @param validValues the list of valid enum values (must not be empty)
+ * @param <E>                 the enum type
+ * @param property            the underlying {@link ObjectProperty} for the enum
+ * @param validValues         the list of valid enum values (must not be empty)
  * @param displayNameProvider a function mapping enum values to their display names
  */
 public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
@@ -31,8 +31,8 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
      * Validates that {@code validValues} is not empty and that the property's value is valid.
      * Makes a defensive copy of {@code validValues}.
      *
-     * @param property the underlying {@link ObjectProperty} for the enum
-     * @param validValues the list of valid enum values
+     * @param property            the underlying {@link ObjectProperty} for the enum
+     * @param validValues         the list of valid enum values
      * @param displayNameProvider a function mapping enum values to their display names
      * @throws IllegalArgumentException if {@code validValues} is empty or the property's value is not valid
      */
@@ -55,8 +55,8 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
      * <p>
      * Validates all arguments and ensures only valid values can be set.
      *
-     * @param initialValue the initial enum value
-     * @param validValues  the list of valid enum values
+     * @param initialValue        the initial enum value
+     * @param validValues         the list of valid enum values
      * @param displayNameProvider a function mapping enum values to their display names
      * @return a new {@code InputEnumProperty}
      * @throws IllegalArgumentException if {@code validValues} is empty or the initial value is not valid
@@ -91,8 +91,8 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
      * <p>
      * This method uses {@code enumClass.getEnumConstants()} to determine the valid values.
      *
-     * @param initialValue the initial enum value
-     * @param enumClass    the {@link Class} object of the enum type
+     * @param initialValue        the initial enum value
+     * @param enumClass           the {@link Class} object of the enum type
      * @param displayNameProvider a function mapping enum values to their display names
      * @return a new {@code InputEnumProperty} with all enum values as valid values
      * @throws IllegalArgumentException if the initial value is not a valid enum constant

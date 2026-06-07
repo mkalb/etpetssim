@@ -53,10 +53,10 @@ public final class AppLogger {
     /**
      * Initializes logging.
      *
-     * @param logLevel the minimum enabled log level
+     * @param logLevel   the minimum enabled log level
      * @param useConsole whether to attach a console handler
-     * @param logPath optional file path for file logging; {@code null} disables file logging
-     * @throws NullPointerException if {@code logLevel} is {@code null}
+     * @param logPath    optional file path for file logging; {@code null} disables file logging
+     * @throws NullPointerException  if {@code logLevel} is {@code null}
      * @throws IllegalStateException if logging is already initialized
      */
     public static synchronized void initialize(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
@@ -146,7 +146,7 @@ public final class AppLogger {
      * Logs a formatted debug message.
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
-     * @param args format arguments
+     * @param args   format arguments
      * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void debugf(String format, Object... args) {
@@ -178,7 +178,7 @@ public final class AppLogger {
      * Logs a formatted informational message.
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
-     * @param args format arguments
+     * @param args   format arguments
      * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void infof(String format, Object... args) {
@@ -210,7 +210,7 @@ public final class AppLogger {
      * Logs a formatted warning message.
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
-     * @param args format arguments
+     * @param args   format arguments
      * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void warnf(String format, Object... args) {
@@ -242,7 +242,7 @@ public final class AppLogger {
      * Logs a formatted error message.
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
-     * @param args format arguments
+     * @param args   format arguments
      * @throws NullPointerException if {@code format} is {@code null}
      */
     public static void errorf(String format, Object... args) {
@@ -254,8 +254,8 @@ public final class AppLogger {
      * Logs a formatted error message with an exception.
      *
      * @param throwable exception to attach
-     * @param format format string compatible with {@link String#format(String, Object...)}
-     * @param args format arguments
+     * @param format    format string compatible with {@link String#format(String, Object...)}
+     * @param args      format arguments
      * @throws NullPointerException if {@code throwable} or {@code format} is {@code null}
      */
     public static void errorf(Throwable throwable, String format, Object... args) {
@@ -279,10 +279,10 @@ public final class AppLogger {
     /**
      * Internal initialization implementation.
      *
-     * @param logLevel the minimum enabled log level
+     * @param logLevel   the minimum enabled log level
      * @param useConsole whether to attach a console handler
-     * @param logPath optional file path for file logging
-     * @throws NullPointerException if {@code logLevel} is {@code null}
+     * @param logPath    optional file path for file logging
+     * @throws NullPointerException  if {@code logLevel} is {@code null}
      * @throws IllegalStateException if logging is already initialized
      */
     private synchronized void initializeLogger(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {

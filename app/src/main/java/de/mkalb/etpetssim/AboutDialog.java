@@ -75,7 +75,7 @@ public final class AboutDialog {
      * Creates a tab containing a read-only monospaced text area.
      *
      * @param tabTitle title shown on the tab
-     * @param text text displayed inside the tab content area
+     * @param text     text displayed inside the tab content area
      * @return configured tab instance
      */
     private Tab createTextAreaTab(String tabTitle, String text) {

@@ -186,24 +186,24 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
     /**
      * Shared defaults and ranges used to initialize common config controls.
      *
-     * @param cellShapeInitial initial cell shape
-     * @param cellShapeValues selectable cell shapes
+     * @param cellShapeInitial        initial cell shape
+     * @param cellShapeValues         selectable cell shapes
      * @param gridEdgeBehaviorInitial initial grid edge behavior
-     * @param gridEdgeBehaviorValues selectable grid edge behaviors
-     * @param gridWidthInitial initial grid width
-     * @param gridWidthMin minimum grid width
-     * @param gridWidthMax maximum grid width
-     * @param gridWidthStep grid width step size
-     * @param gridHeightInitial initial grid height
-     * @param gridHeightMin minimum grid height
-     * @param gridHeightMax maximum grid height
-     * @param gridHeightStep grid height step size
-     * @param cellEdgeLengthInitial initial cell edge length
-     * @param cellEdgeLengthMin minimum cell edge length
-     * @param cellEdgeLengthMax maximum cell edge length
-     * @param cellDisplayModeInitial initial cell display mode
-     * @param cellDisplayModeValues selectable cell display modes
-     * @param seedInitial initial seed text
+     * @param gridEdgeBehaviorValues  selectable grid edge behaviors
+     * @param gridWidthInitial        initial grid width
+     * @param gridWidthMin            minimum grid width
+     * @param gridWidthMax            maximum grid width
+     * @param gridWidthStep           grid width step size
+     * @param gridHeightInitial       initial grid height
+     * @param gridHeightMin           minimum grid height
+     * @param gridHeightMax           maximum grid height
+     * @param gridHeightStep          grid height step size
+     * @param cellEdgeLengthInitial   initial cell edge length
+     * @param cellEdgeLengthMin       minimum cell edge length
+     * @param cellEdgeLengthMax       maximum cell edge length
+     * @param cellDisplayModeInitial  initial cell display mode
+     * @param cellDisplayModeValues   selectable cell display modes
+     * @param seedInitial             initial seed text
      */
     public record CommonConfigSettings(
             CellShape cellShapeInitial,

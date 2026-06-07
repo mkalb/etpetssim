@@ -74,7 +74,7 @@ public interface GridModifier<T extends GridEntity> {
      * on the same {@link WritableGridModel}. If no modifiers are given, the identity modifier is returned.
      *
      * @param modifiers the modifiers to compose
-     * @param <T> the type of grid entity
+     * @param <T>       the type of grid entity
      * @return a composed {@code GridModifier} that applies all given modifiers in order
      */
     @SafeVarargs

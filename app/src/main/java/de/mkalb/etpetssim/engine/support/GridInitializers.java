@@ -158,10 +158,10 @@ public final class GridInitializers {
      * eligible cells exist than entities to place, an {@link IllegalStateException} is thrown and
      * no entities are placed.</p>
      *
-     * @param entities the entities to place; each list element is placed exactly once
+     * @param entities           the entities to place; each list element is placed exactly once
      * @param canReplaceExisting predicate to determine if an existing entity can be replaced
      * @param random             the random number generator
-     * @param <T> the grid entity type
+     * @param <T>                the grid entity type
      * @return a {@link GridInitializer} that places the given entities at random eligible positions
      * @throws IllegalStateException if the grid contains fewer eligible cells than {@code entities.size()}
      */
@@ -247,7 +247,7 @@ public final class GridInitializers {
      * @param <T>                the type of grid entity
      * @return a grid initializer that places entities at a random percentage of positions, using the replacement predicate
      * @throws IllegalArgumentException if {@code percent} is outside the range [0.0, 1.0]
-     * @throws IllegalStateException if not all entities could be placed within the maximum number of attempts
+     * @throws IllegalStateException    if not all entities could be placed within the maximum number of attempts
      */
     @SuppressWarnings({"NumericCastThatLosesPrecision"})
     public static <T extends GridEntity> GridInitializer<T> placeRandomPercent(Supplier<T> entitySupplier,

@@ -11,7 +11,6 @@ package de.mkalb.etpetssim.engine;
  *
  * @param width  the number of columns (horizontal cells), must be within valid range
  * @param height the number of rows (vertical cells), must be within valid range
- *
  * @see #isInvalidSize(int)
  * @see #square(int)
  * @see #area()

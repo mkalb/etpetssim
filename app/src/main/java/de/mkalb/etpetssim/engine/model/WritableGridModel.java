@@ -38,7 +38,7 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      * Sets the entity at the specified coordinate.
      *
      * @param coordinate the grid coordinate
-     * @param entity the entity to set
+     * @param entity     the entity to set
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     void setEntity(GridCoordinate coordinate, T entity);

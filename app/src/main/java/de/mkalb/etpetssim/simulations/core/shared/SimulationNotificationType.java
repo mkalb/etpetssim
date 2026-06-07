@@ -8,19 +8,29 @@ package de.mkalb.etpetssim.simulations.core.shared;
  */
 public enum SimulationNotificationType {
 
-    /** No notification; simulation is running normally. */
+    /**
+     * No notification; simulation is running normally.
+     */
     NONE("notification.none"),
 
-    /** An exception occurred during the simulation. */
+    /**
+     * An exception occurred during the simulation.
+     */
     EXCEPTION("notification.exception"),
 
-    /** The simulation was stopped due to a timeout. */
+    /**
+     * The simulation was stopped due to a timeout.
+     */
     TIMEOUT("notification.timeout"),
 
-    /** The simulation configuration is invalid and cannot be started. */
+    /**
+     * The simulation configuration is invalid and cannot be started.
+     */
     INVALID_CONFIG("notification.invalidconfig"),
 
-    /** The canvas size exceeds the allowed limit for the simulation. */
+    /**
+     * The canvas size exceeds the allowed limit for the simulation.
+     */
     CANVAS_SIZE_LIMIT("notification.canvassizelimit");
 
     private final String resourceKey;

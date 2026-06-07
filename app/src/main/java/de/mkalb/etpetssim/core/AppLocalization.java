@@ -66,8 +66,8 @@ public final class AppLocalization {
      * {@link #DEFAULT_LOCALE}. The first matching supported locale is selected.
      *
      * @param localeArgument optional user-provided locale code (for example {@code en_US} or {@code en})
-     * @param defaultLocale fallback locale used when {@code localeArgument} does not resolve
-     * @throws NullPointerException if {@code defaultLocale} is {@code null}
+     * @param defaultLocale  fallback locale used when {@code localeArgument} does not resolve
+     * @throws NullPointerException  if {@code defaultLocale} is {@code null}
      * @throws IllegalStateException if already initialized or no bundle can be loaded for the resolved locale
      */
     public static synchronized void initialize(@Nullable String localeArgument, Locale defaultLocale) {
@@ -194,7 +194,7 @@ public final class AppLocalization {
      *
      * @param key the resource key
      * @return the localized text, or {@link #PLACEHOLDER_FOR_EXCEPTIONS} if the key is missing
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws NullPointerException  if {@code key} is {@code null}
      * @throws IllegalStateException if localization has not been initialized
      */
     public static String getText(String key) {
@@ -215,7 +215,7 @@ public final class AppLocalization {
      *
      * @param key the resource key
      * @return an {@link Optional} containing non-blank localized text, or empty otherwise
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws NullPointerException  if {@code key} is {@code null}
      * @throws IllegalStateException if localization has not been initialized
      */
     public static Optional<String> getOptionalText(String key) {
@@ -239,10 +239,10 @@ public final class AppLocalization {
     /**
      * Returns localized text for a key formatted with the active locale.
      *
-     * @param key the resource key
+     * @param key  the resource key
      * @param args formatting arguments passed to {@link String#format(Locale, String, Object...)}
      * @return the formatted localized text, or {@link #PLACEHOLDER_FOR_EXCEPTIONS} on lookup/format errors
-     * @throws NullPointerException if {@code key} is {@code null}
+     * @throws NullPointerException  if {@code key} is {@code null}
      * @throws IllegalStateException if localization has not been initialized
      */
     public static String getFormattedText(String key, Object... args) {
@@ -280,8 +280,8 @@ public final class AppLocalization {
          * Creates a locale descriptor.
          *
          * @param countryLocale locale with non-empty language and country codes
-         * @param displayName human-readable display name
-         * @throws NullPointerException if {@code countryLocale} or {@code displayName} is {@code null}
+         * @param displayName   human-readable display name
+         * @throws NullPointerException     if {@code countryLocale} or {@code displayName} is {@code null}
          * @throws IllegalArgumentException if {@code countryLocale} has an empty language or country code
          */
         CountryLocale(Locale countryLocale, String displayName) {

@@ -14,11 +14,11 @@ public record PetGenome(PetTraits traits) {
     /**
      * Creates a child genome by averaging the parent traits and applying optional mutation.
      *
-     * @param parentA the first parent genome
-     * @param parentB the second parent genome
-     * @param random the random source used for mutation
+     * @param parentA                the first parent genome
+     * @param parentB                the second parent genome
+     * @param random                 the random source used for mutation
      * @param mutationChancePerTrait the mutation probability per trait
-     * @param mutationDelta the relative mutation strength
+     * @param mutationDelta          the relative mutation strength
      * @return the derived child genome
      */
     @SuppressWarnings("MagicNumber")

@@ -12,14 +12,14 @@ import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
 /**
  * Immutable configuration for a simulation.
  *
- * @param cellShape the configured cell shape
- * @param gridEdgeBehavior the configured grid edge behavior
- * @param gridWidth the grid width in cells
- * @param gridHeight the grid height in cells
- * @param cellEdgeLength the rendered cell edge length in pixels
- * @param cellDisplayMode the cell display mode used by the UI
- * @param seed the random seed used for initialization
- * @param neighborhoodMode the neighborhood mode used for movement
+ * @param cellShape            the configured cell shape
+ * @param gridEdgeBehavior     the configured grid edge behavior
+ * @param gridWidth            the grid width in cells
+ * @param gridHeight           the grid height in cells
+ * @param cellEdgeLength       the rendered cell edge length in pixels
+ * @param cellDisplayMode      the cell display mode used by the UI
+ * @param seed                 the random seed used for initialization
+ * @param neighborhoodMode     the neighborhood mode used for movement
  * @param langtonMovementRules the cyclic movement rule set for visited states
  */
 public record LangtonConfig(

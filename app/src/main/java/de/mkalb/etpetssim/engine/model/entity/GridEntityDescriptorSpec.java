@@ -10,15 +10,14 @@ import org.jspecify.annotations.Nullable;
  * resolved to a {@link GridEntityDescriptor} by {@link GridEntityDescriptorRegistry}.
  * </p>
  *
- * @param descriptorId unique descriptor identifier
- * @param visible whether this entity should be visible
- * @param shortNameKey localization key for the short name
- * @param longNameKey localization key for the long name
+ * @param descriptorId   unique descriptor identifier
+ * @param visible        whether this entity should be visible
+ * @param shortNameKey   localization key for the short name
+ * @param longNameKey    localization key for the long name
  * @param descriptionKey localization key for the description
- * @param emojiKey optional localization key for the emoji
- * @param color optional fill color
- * @param borderColor optional border color
- *
+ * @param emojiKey       optional localization key for the emoji
+ * @param color          optional fill color
+ * @param borderColor    optional border color
  * @see GridEntityDescriptorProvider
  * @see GridEntityDescriptorRegistry
  * @see GridEntityDescriptor

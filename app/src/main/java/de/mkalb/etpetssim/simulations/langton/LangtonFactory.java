@@ -42,14 +42,14 @@ public final class LangtonFactory {
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         LangtonSimulationManager::new,
-                (langtonGridModel, selectedCoordinate) -> {
-                    if (!langtonGridModel.antModel().isDefaultEntity(selectedCoordinate)) {
-                        return new GridCell<>(selectedCoordinate, langtonGridModel.antModel().getEntity(selectedCoordinate));
-                    } else {
-                        return new GridCell<>(selectedCoordinate, langtonGridModel.groundModel().getEntity(selectedCoordinate));
-                    }
-                },
-                new LangtonUserAction());
+                        (langtonGridModel, selectedCoordinate) -> {
+                            if (!langtonGridModel.antModel().isDefaultEntity(selectedCoordinate)) {
+                                return new GridCell<>(selectedCoordinate, langtonGridModel.antModel().getEntity(selectedCoordinate));
+                            } else {
+                                return new GridCell<>(selectedCoordinate, langtonGridModel.groundModel().getEntity(selectedCoordinate));
+                            }
+                        },
+                        new LangtonUserAction());
 
         // View
         var configView = new LangtonConfigView(configViewModel);

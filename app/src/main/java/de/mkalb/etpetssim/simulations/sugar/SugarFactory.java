@@ -43,14 +43,14 @@ public final class SugarFactory {
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         SugarSimulationManager::new,
-                (sugarGridModel, selectedCoordinate) -> {
-                    if (!sugarGridModel.agentModel().isDefaultEntity(selectedCoordinate)) {
-                        return new GridCell<>(selectedCoordinate, sugarGridModel.agentModel().getEntity(selectedCoordinate));
-                    } else {
-                        return new GridCell<>(selectedCoordinate, sugarGridModel.resourceModel().getEntity(selectedCoordinate));
-                    }
-                },
-                new NoUserAction<>());
+                        (sugarGridModel, selectedCoordinate) -> {
+                            if (!sugarGridModel.agentModel().isDefaultEntity(selectedCoordinate)) {
+                                return new GridCell<>(selectedCoordinate, sugarGridModel.agentModel().getEntity(selectedCoordinate));
+                            } else {
+                                return new GridCell<>(selectedCoordinate, sugarGridModel.resourceModel().getEntity(selectedCoordinate));
+                            }
+                        },
+                        new NoUserAction<>());
 
         // View
         var configView = new SugarConfigView(configViewModel);

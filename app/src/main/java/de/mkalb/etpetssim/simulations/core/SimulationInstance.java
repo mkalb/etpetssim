@@ -8,9 +8,9 @@ import javafx.scene.layout.Region;
  * Represents an instance of a simulation, encapsulating the type of simulation,
  * the view managing it, and the view region for the simulation.
  *
- * @param simulationType the type of simulation
+ * @param simulationType     the type of simulation
  * @param simulationMainView the view managing the simulation lifecycle and UI composition
- * @param region the root UI region for the simulation
+ * @param region             the root UI region for the simulation
  */
 public record SimulationInstance(
         SimulationType simulationType,
@@ -25,7 +25,7 @@ public record SimulationInstance(
      * Intended for use by {@code SimulationFactory}.
      * </p>
      *
-     * @param type the simulation type
+     * @param type               the simulation type
      * @param simulationMainView the main view responsible for building the UI
      * @return a new instance bundling type, view, and its main region
      */

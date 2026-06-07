@@ -12,10 +12,9 @@ import java.util.*;
  * including whether the connection is via a shared edge or vertex.
  *
  * @param startCoordinate    the coordinate of the start (source) cell
- * @param direction         the compass direction from the start cell to the neighbor
- * @param connection        the type of connection (edge or vertex) between the cells
+ * @param direction          the compass direction from the start cell to the neighbor
+ * @param connection         the type of connection (edge or vertex) between the cells
  * @param neighborCoordinate the coordinate of the neighboring cell
- *
  * @see de.mkalb.etpetssim.engine.GridCoordinate
  * @see CompassDirection
  * @see CellConnectionType

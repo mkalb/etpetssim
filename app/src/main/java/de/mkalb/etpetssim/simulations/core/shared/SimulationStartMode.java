@@ -11,10 +11,14 @@ package de.mkalb.etpetssim.simulations.core.shared;
  */
 public enum SimulationStartMode {
 
-    /** Start running immediately after initialization. */
+    /**
+     * Start running immediately after initialization.
+     */
     START_IMMEDIATELY,
 
-    /** Initialize in a paused state so manual intervention is possible before running. */
+    /**
+     * Initialize in a paused state so manual intervention is possible before running.
+     */
     START_PAUSED
 
 }

@@ -11,7 +11,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * Timing statistics are accessible via {@link #stepTimingStatistics()} and {@link #currentStepNanos()}.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM> the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
+ * @param <GM>  the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
  */
 public final class TimedSimulationExecutor<
         ENT extends GridEntity,

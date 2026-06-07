@@ -13,9 +13,9 @@ import java.util.*;
 /**
  * Composite grid model for Langton's Ant with separate ground and ant layers.
  *
- * @param structure the shared grid structure of all sub-models
+ * @param structure   the shared grid structure of all sub-models
  * @param groundModel the terrain/state layer
- * @param antModel the ant layer
+ * @param antModel    the ant layer
  */
 public record LangtonGridModel(
         GridStructure structure,

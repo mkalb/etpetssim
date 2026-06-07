@@ -50,7 +50,7 @@ public final class AppResources {
      * Loads a resource bundle for a base name and locale.
      *
      * @param baseName bundle base name
-     * @param locale bundle locale
+     * @param locale   bundle locale
      * @return an {@link Optional} containing the bundle, or empty if unavailable
      * @throws NullPointerException if {@code baseName} or {@code locale} is {@code null}
      */
@@ -149,7 +149,7 @@ public final class AppResources {
      * Loads a classpath resource as text.
      *
      * @param relativePath resource path without leading slash
-     * @param charset charset used to decode bytes
+     * @param charset      charset used to decode bytes
      * @return an {@link Optional} containing resource text, or empty on lookup/read errors
      * @throws NullPointerException if {@code relativePath} or {@code charset} is {@code null}
      */

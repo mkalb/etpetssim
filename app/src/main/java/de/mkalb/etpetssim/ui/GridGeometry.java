@@ -93,8 +93,8 @@ public final class GridGeometry {
      * This method ensures that the resulting cell shape has the same width as the original cell shape.
      *
      * @param fromEdgeLength the edge length of the original cell shape
-     * @param fromCellShape the shape of the original cell
-     * @param toCellShape the shape of the target cell
+     * @param fromCellShape  the shape of the original cell
+     * @param toCellShape    the shape of the target cell
      * @return the edge length required for the target cell shape to match the width of the original cell shape
      */
     public static double convertEdgeLengthToMatchWidth(double fromEdgeLength, CellShape fromCellShape, CellShape toCellShape) {
@@ -118,7 +118,7 @@ public final class GridGeometry {
      *
      * @param edgeLength the length of each edge of the cell in pixels, must be between {@link #MIN_EDGE_LENGTH}
      *                   and  {@link #MAX_EDGE_LENGTH}
-     * @param shape the shape of the cell
+     * @param shape      the shape of the cell
      * @return a CellDimension object representing the dimensions of the cell
      * @throws IllegalArgumentException if {@code edgeLength} is outside the inclusive range
      *                                  [{@link #MIN_EDGE_LENGTH}, {@link #MAX_EDGE_LENGTH}]
@@ -172,9 +172,9 @@ public final class GridGeometry {
     /**
      * Computes the total pixel dimensions of the grid area based on size, cell dimension and shape.
      *
-     * @param gridSize the size of the grid in terms of columns and rows
+     * @param gridSize      the size of the grid in terms of columns and rows
      * @param cellDimension the dimensions of a single cell in the grid
-     * @param shape the shape of the cells in the grid
+     * @param shape         the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
      * @throws IllegalArgumentException if {@code shape} is unsupported
      */
@@ -211,10 +211,10 @@ public final class GridGeometry {
      * <p>This method is a convenience wrapper that combines the computation of
      * cell dimensions and grid dimensions into a single call.</p>
      *
-     * @param gridSize the size of the grid in terms of columns and rows
+     * @param gridSize   the size of the grid in terms of columns and rows
      * @param edgeLength the length of each edge of the cell in pixels, must be between {@link #MIN_EDGE_LENGTH}
-     *                        and  {@link #MAX_EDGE_LENGTH}
-     * @param shape the shape of the cells in the grid
+     *                   and  {@link #MAX_EDGE_LENGTH}
+     * @param shape      the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
      * @see de.mkalb.etpetssim.ui.GridGeometry#computeCellDimension(double, de.mkalb.etpetssim.engine.CellShape)
      * @see de.mkalb.etpetssim.ui.GridGeometry#computeGridDimension(de.mkalb.etpetssim.engine.GridSize, de.mkalb.etpetssim.ui.CellDimension, de.mkalb.etpetssim.engine.CellShape)
@@ -247,8 +247,8 @@ public final class GridGeometry {
     /**
      * Determines whether a given point lies inside the triangle defined by the cell at the specified grid coordinate.
      *
-     * @param point the point to test
-     * @param coordinate the grid coordinate of the triangle cell
+     * @param point         the point to test
+     * @param coordinate    the grid coordinate of the triangle cell
      * @param cellDimension the dimensions of the triangle cell
      * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
      */
@@ -260,9 +260,9 @@ public final class GridGeometry {
     /**
      * Converts a grid coordinate to its corresponding canvas position in pixel coordinates.
      *
-     * @param coordinate the grid coordinate of the cell
+     * @param coordinate    the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
+     * @param shape         the shape of the cell
      * @return the canvas position of the cell in pixel coordinates
      */
     public static Point2D toCanvasPosition(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
@@ -281,10 +281,10 @@ public final class GridGeometry {
      * always match the actual cell containing the point, due to staggered or interlocking layouts. For precise
      * mapping, use {@link #fromCanvasPosition(javafx.geometry.Point2D, de.mkalb.etpetssim.ui.CellDimension, javafx.geometry.Dimension2D, de.mkalb.etpetssim.engine.GridStructure)}.</p>
      *
-     * @param point the canvas position in pixel coordinates
+     * @param point         the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell
      * @param gridDimension the total dimensions of the grid area in pixels; used to check if the point is within bounds
-     * @param structure the grid structure defining the cell shape and size
+     * @param structure     the grid structure defining the cell shape and size
      * @return the estimated grid coordinate, or {@code GridCoordinate.ILLEGAL} if the point is outside the grid area
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -329,10 +329,10 @@ public final class GridGeometry {
      * For triangles, barycentric coordinate checks are used; for hexagons, the closest valid cell
      * center within a bounding box is selected.</p>
      *
-     * @param point the canvas position in pixel coordinates
+     * @param point         the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell
      * @param gridDimension the total dimensions of the grid area in pixels; used to check if the point is within bounds
-     * @param structure the grid structure defining the cell shape and size
+     * @param structure     the grid structure defining the cell shape and size
      * @return the grid coordinate corresponding to the canvas position, or {@code GridCoordinate.ILLEGAL} if no match is found
      */
     public static GridCoordinate fromCanvasPosition(Point2D point, CellDimension cellDimension,
@@ -387,9 +387,9 @@ public final class GridGeometry {
     /**
      * Computes the center point of a cell on the canvas based on its coordinate, shape, and dimensions.
      *
-     * @param coordinate the grid coordinate of the cell
+     * @param coordinate    the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
+     * @param shape         the shape of the cell
      * @return the center point of the cell in canvas coordinates
      */
     public static Point2D computeCellCenter(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
@@ -407,9 +407,9 @@ public final class GridGeometry {
     /**
      * Computes the bounding rectangle of a cell in canvas coordinates.
      *
-     * @param coordinate the grid coordinate of the cell
+     * @param coordinate    the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
+     * @param shape         the shape of the cell
      * @return the bounding rectangle of the cell
      */
     public static Rectangle2D computeCellBounds(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
@@ -419,9 +419,9 @@ public final class GridGeometry {
     /**
      * Computes the x and y coordinates of the cell's polygon vertices in canvas space.
      *
-     * @param coordinate the grid coordinate of the cell
+     * @param coordinate    the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
+     * @param shape         the shape of the cell
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
     public static double[][] computeCellPolygon(GridCoordinate coordinate, CellDimension cellDimension, CellShape shape) {
@@ -444,10 +444,10 @@ public final class GridGeometry {
      * the cell shape and the specified {@link CellShapeSide}.
      * </p>
      *
-     * @param coordinate the grid coordinate of the cell
+     * @param coordinate    the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
-     * @param shape the shape of the cell
-     * @param side the side or segment of the cell frame to compute
+     * @param shape         the shape of the cell
+     * @param side          the side or segment of the cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
      * @throws IllegalArgumentException if {@code side} is unsupported
      */
@@ -466,8 +466,8 @@ public final class GridGeometry {
     /**
      * Computes the x and y coordinates of the triangle cell's polygon vertices in canvas space.
      *
-     * @param topLeft the top-left position of the cell in canvas coordinates
-     * @param cellDimension the dimensions of the triangle cell
+     * @param topLeft        the top-left position of the cell in canvas coordinates
+     * @param cellDimension  the dimensions of the triangle cell
      * @param isPointingDown whether the triangle is pointing downwards
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
@@ -507,10 +507,10 @@ public final class GridGeometry {
      * The number and order of points depend on the triangle's orientation and the specified {@link CellShapeSide}.
      * </p>
      *
-     * @param topLeft the top-left position of the triangle cell in canvas coordinates
-     * @param cellDimension the dimensions of the triangle cell
+     * @param topLeft        the top-left position of the triangle cell in canvas coordinates
+     * @param cellDimension  the dimensions of the triangle cell
      * @param isPointingDown whether the triangle is pointing downwards
-     * @param side the side or segment of the triangle cell frame to compute
+     * @param side           the side or segment of the triangle cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
      * @throws IllegalArgumentException if {@code side} is unsupported
      */
@@ -604,7 +604,7 @@ public final class GridGeometry {
     /**
      * Computes the x and y coordinates of the square cell's polygon vertices in canvas space.
      *
-     * @param topLeft the top-left position of the square cell in canvas coordinates
+     * @param topLeft       the top-left position of the square cell in canvas coordinates
      * @param cellDimension the dimensions of the square cell
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
@@ -636,9 +636,9 @@ public final class GridGeometry {
      * that define the requested segment of the square cell's outline (frame) as a polyline.
      * </p>
      *
-     * @param topLeft the top-left position of the square cell in canvas coordinates
+     * @param topLeft       the top-left position of the square cell in canvas coordinates
      * @param cellDimension the dimensions of the square cell
-     * @param side the side or segment of the square cell frame to compute
+     * @param side          the side or segment of the square cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
      * @throws IllegalArgumentException if {@code side} is unsupported
      */
@@ -691,7 +691,7 @@ public final class GridGeometry {
     /**
      * Computes the x and y coordinates of the hexagon cell's polygon vertices in canvas space.
      *
-     * @param topLeft the top-left position of the cell in canvas coordinates
+     * @param topLeft       the top-left position of the cell in canvas coordinates
      * @param cellDimension the dimensions of the hexagon cell
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
@@ -728,9 +728,9 @@ public final class GridGeometry {
      * The number and order of points depend on the specified {@link CellShapeSide}.
      * </p>
      *
-     * @param topLeft the top-left position of the hexagon cell in canvas coordinates
+     * @param topLeft       the top-left position of the hexagon cell in canvas coordinates
      * @param cellDimension the dimensions of the hexagon cell
-     * @param side the side or segment of the hexagon cell frame to compute
+     * @param side          the side or segment of the hexagon cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
      * @throws IllegalArgumentException if {@code side} is unsupported
      */

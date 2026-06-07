@@ -17,16 +17,16 @@ import java.util.*;
  * The {@code width} and {@code height} refer to the bounding box
  * that fully encloses the polygonal cell shape, aligned with the axes.
  *
- * @param edgeLength the length of one edge of the cell in pixels
- * @param width the full width of the cell's bounding box in pixels
- * @param height the full height of the cell's bounding box in pixels
+ * @param edgeLength     the length of one edge of the cell in pixels
+ * @param width          the full width of the cell's bounding box in pixels
+ * @param height         the full height of the cell's bounding box in pixels
  * @param halfEdgeLength half the edge length of the cell in pixels
- * @param halfWidth half the width of the cell's bounding box in pixels
- * @param halfHeight half the height of the cell's bounding box in pixels
- * @param innerRadius the distance from the center to the midpoint of an edge
- * @param outerRadius the distance from the center to a vertex
- * @param columnWidth horizontal spacing between adjacent cell centers
- * @param rowHeight vertical spacing between adjacent cell centers
+ * @param halfWidth      half the width of the cell's bounding box in pixels
+ * @param halfHeight     half the height of the cell's bounding box in pixels
+ * @param innerRadius    the distance from the center to the midpoint of an edge
+ * @param outerRadius    the distance from the center to a vertex
+ * @param columnWidth    horizontal spacing between adjacent cell centers
+ * @param rowHeight      vertical spacing between adjacent cell centers
  */
 public record CellDimension(
         double edgeLength,

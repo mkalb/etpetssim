@@ -163,7 +163,7 @@ public enum SimulationType {
     /**
      * Resolves a simulation type from a command-line alias.
      *
-     * @param arg alias to match, case-insensitively
+     * @param arg             alias to match, case-insensitively
      * @param onlyImplemented whether to restrict matching to implemented simulations
      * @return an {@link Optional} containing the matching type, or empty if unmatched
      */

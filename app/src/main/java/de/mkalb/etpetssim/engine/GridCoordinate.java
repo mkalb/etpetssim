@@ -13,7 +13,6 @@ package de.mkalb.etpetssim.engine;
  *
  * @param x the x-coordinate (horizontal position, must be non-negative for valid coordinates)
  * @param y the y-coordinate (vertical position, must be non-negative for valid coordinates)
- *
  * @see #isIllegal()
  * @see #isWithinBounds(int, int, int, int)
  * @see #clampToBounds(int, int, int, int)
@@ -292,7 +291,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param other the coordinate to compare against
      * @return a negative value if this coordinate is smaller, {@code 0} if equal,
-     *         or a positive value if this coordinate is greater
+     * or a positive value if this coordinate is greater
      */
     @Override
     public int compareTo(GridCoordinate other) {

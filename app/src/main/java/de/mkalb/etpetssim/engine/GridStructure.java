@@ -17,7 +17,6 @@ import java.util.stream.*;
  *
  * @param topology the grid topology (cell shape and edge behavior)
  * @param size     the grid size (number of columns and rows)
- *
  * @see GridTopology
  * @see GridSize
  * @see CellShape
@@ -56,7 +55,7 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * This method returns {@code true} if both dimensions are valid, otherwise {@code false}.
      *
      * @param topology the grid topology (cell shape and edge behavior)
-     * @param size the grid size (width and height in cells)
+     * @param size     the grid size (width and height in cells)
      * @return {@code true} if the size is valid for the topology, {@code false} otherwise
      */
     public static boolean isValid(GridTopology topology, GridSize size) {

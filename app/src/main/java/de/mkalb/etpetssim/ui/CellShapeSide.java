@@ -13,12 +13,20 @@ import de.mkalb.etpetssim.engine.CellShape;
  * of vertices and edges per side may vary.
  */
 public enum CellShapeSide {
-    /** The top side of the cell. */
+    /**
+     * The top side of the cell.
+     */
     TOP,
-    /** The bottom side of the cell. */
+    /**
+     * The bottom side of the cell.
+     */
     BOTTOM,
-    /** The left side of the cell. */
+    /**
+     * The left side of the cell.
+     */
     LEFT,
-    /** The right side of the cell. */
+    /**
+     * The right side of the cell.
+     */
     RIGHT
 }

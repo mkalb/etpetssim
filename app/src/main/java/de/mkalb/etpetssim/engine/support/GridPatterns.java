@@ -58,9 +58,9 @@ public final class GridPatterns {
      * <p>
      * Modifications to the original collection of offsets after calling this method do not affect the pattern.
      *
-     * @param entity the entity to place at each offset
+     * @param entity  the entity to place at each offset
      * @param offsets the collection of offsets where the entity will be placed
-     * @param <T> the type of {@link GridEntity}
+     * @param <T>     the type of {@link GridEntity}
      * @return a pattern containing the entity at the specified offsets
      */
     public static <T extends GridEntity> GridPattern<T> of(T entity, Collection<GridOffset> offsets) {
@@ -96,7 +96,7 @@ public final class GridPatterns {
      * The resulting pattern is <b>not guaranteed to be normalized</b>.
      *
      * @param patterns the patterns to combine
-     * @param <T> the type of {@link GridEntity}
+     * @param <T>      the type of {@link GridEntity}
      * @return a combined pattern containing all entries from the input patterns
      */
     @SafeVarargs

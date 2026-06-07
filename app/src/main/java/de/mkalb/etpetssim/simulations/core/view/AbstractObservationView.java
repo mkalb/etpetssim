@@ -302,7 +302,7 @@ public abstract class AbstractObservationView<
      * The section is stored internally; its visibility and the standard label values are managed by
      * {@link #onSelectedCellChanged(GridCellView)}.
      *
-     * @param extraNameKeys   additional localization keys for the extra rows
+     * @param extraNameKeys    additional localization keys for the extra rows
      * @param extraValueLabels additional labels for the extra rows
      * @return a VBox region containing the extended selected cell section
      */

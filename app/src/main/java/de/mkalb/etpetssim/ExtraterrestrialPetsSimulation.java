@@ -47,7 +47,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * Determines the initial simulation type from parsed arguments.
      *
-     * @param arguments parsed application arguments
+     * @param arguments       parsed application arguments
      * @param onlyImplemented whether to restrict matching to implemented simulations
      * @return an {@link Optional} containing the matching simulation type, or empty if none matches
      */
@@ -77,7 +77,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * A new simulation instance is created, the scene content is replaced, and the
      * stage title, stylesheets, shutdown handling, and layout are updated.
      *
-     * @param stage primary application stage
+     * @param stage          primary application stage
      * @param simulationType simulation type to display
      * @see de.mkalb.etpetssim.simulations.core.SimulationFactory
      * @see de.mkalb.etpetssim.simulations.start.StartMainView
@@ -162,7 +162,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * JavaFX has completed the initial layout pass.
      *
      * @param stage stage to adjust
-     * @param root scene root associated with the stage
+     * @param root  scene root associated with the stage
      */
     private void adjustStageLayoutToScreen(Stage stage, Region root) {
         Objects.requireNonNull(stage, "Stage must not be null");
@@ -269,7 +269,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * Builds the simulation header shown above the main simulation region.
      *
-     * @param stage primary stage
+     * @param stage    primary stage
      * @param instance active simulation instance
      * @return header node containing titles and navigation links
      */

@@ -12,16 +12,24 @@ package de.mkalb.etpetssim.engine.neighborhood;
  */
 public enum EdgeBehaviorAction {
 
-    /** Movement is valid and allowed; no special edge handling applies. */
+    /**
+     * Movement is valid and allowed; no special edge handling applies.
+     */
     VALID,
 
-    /** Movement is blocked by the grid boundary; the entity cannot cross. */
+    /**
+     * Movement is blocked by the grid boundary; the entity cannot cross.
+     */
     BLOCKED,
 
-    /** The entity is wrapped to the opposite side of the grid. */
+    /**
+     * The entity is wrapped to the opposite side of the grid.
+     */
     WRAPPED,
 
-    /** The entity is absorbed by the boundary and removed from the simulation. */
+    /**
+     * The entity is absorbed by the boundary and removed from the simulation.
+     */
     ABSORBED
 
 }

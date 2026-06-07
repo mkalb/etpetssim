@@ -50,7 +50,7 @@ public final class SugarSimulationManager
      * Maps a fraction (0.0 .. 1.0) to an integer index in the range [0, size - 1].
      * Rounds with floor when fraction < 0.5, otherwise ceil, and clamps the result.
      *
-     * @param size  the dimension size (number of cells)
+     * @param size    the dimension size (number of cells)
      * @param percent fraction between 0.0 and 1.0
      * @return clamped index in [0, size - 1]
      */

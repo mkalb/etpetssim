@@ -21,7 +21,6 @@ import java.util.*;
  * @param originalNeighborCoordinate the theoretical neighbor coordinate before edge behavior is applied
  * @param mappedNeighborCoordinate   the resulting neighbor coordinate after applying edge behavior
  * @param edgeBehaviorAction         the action taken as a result of the edge behavior
- *
  * @see CellNeighbor
  * @see EdgeBehaviorResult
  * @see EdgeBehaviorAction

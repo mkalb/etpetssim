@@ -650,7 +650,7 @@ public final class DefaultMainViewModel<
      *
      * @param context simulation-specific action context
      * @return {@code true} if the user action was applied; {@code false} if no active manager exists or the
-     *         simulation is not paused
+     * simulation is not paused
      */
     @SuppressWarnings("DataFlowIssue")
     public boolean applyUserAction(CTX context) {

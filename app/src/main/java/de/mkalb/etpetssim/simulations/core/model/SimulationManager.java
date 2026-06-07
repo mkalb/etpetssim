@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * Defines the core lifecycle and execution contract of a simulation manager.
  *
  * @param <ENT> entity type used by the simulation model
- * @param <GM> model type used for simulation execution
+ * @param <GM>  model type used for simulation execution
  * @param <CON> immutable configuration type
  * @param <STA> statistics snapshot type
  */
@@ -48,9 +48,9 @@ public interface SimulationManager<
     /**
      * Executes multiple simulation steps with optional early termination.
      *
-     * @param count maximum number of steps to execute
+     * @param count            maximum number of steps to execute
      * @param checkTermination whether logical termination should stop execution early
-     * @param onStep callback invoked after each executed step
+     * @param onStep           callback invoked after each executed step
      * @return aggregated execution result
      */
     StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep);

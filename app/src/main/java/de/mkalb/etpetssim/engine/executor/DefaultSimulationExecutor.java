@@ -13,8 +13,8 @@ import java.util.function.*;
  * and batch execution. It provides access to the current model state and step count.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM> the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
- * @param <C> the type of the context object used to share or accumulate state or statistics during the simulation
+ * @param <GM>  the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
+ * @param <C>   the type of the context object used to share or accumulate state or statistics during the simulation
  */
 public final class DefaultSimulationExecutor<
         ENT extends GridEntity,
@@ -36,10 +36,10 @@ public final class DefaultSimulationExecutor<
     /**
      * Creates a new {@code DefaultSimulationExecutor}.
      *
-     * @param stepRunner the logic to perform a single simulation step, using the provided context
-     * @param modelSupplier supplies the current simulation model
+     * @param stepRunner           the logic to perform a single simulation step, using the provided context
+     * @param modelSupplier        supplies the current simulation model
      * @param terminationCondition the condition that determines when the simulation should stop, evaluated with the context
-     * @param context the context object used to share or accumulate state during the simulation
+     * @param context              the context object used to share or accumulate state during the simulation
      */
     public DefaultSimulationExecutor(
             SimulationStepRunner<C> stepRunner,

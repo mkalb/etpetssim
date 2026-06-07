@@ -11,6 +11,7 @@ public interface GridEntity {
 
     /**
      * Checks if the given grid entity is a constant entity.
+     *
      * @param entity the grid entity to check
      * @return true if the entity is a constant entity, false otherwise
      */

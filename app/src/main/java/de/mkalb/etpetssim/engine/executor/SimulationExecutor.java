@@ -11,7 +11,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * and the simulation step count.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM> the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
+ * @param <GM>  the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
  */
 public interface SimulationExecutor<
         ENT extends GridEntity,
@@ -72,9 +72,9 @@ public interface SimulationExecutor<
      * After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track progress,
      * update the UI, or perform other actions after each step.
      *
-     * @param count the maximum number of steps to execute
+     * @param count            the maximum number of steps to execute
      * @param checkTermination if {@code true}, the method will terminate early when the simulation is finished
-     * @param onStep a {@link Runnable} to be called after each executed step
+     * @param onStep           a {@link Runnable} to be called after each executed step
      * @return a {@link StepExecutionResult} containing:
      * <ul>
      *   <li>the current step count</li>

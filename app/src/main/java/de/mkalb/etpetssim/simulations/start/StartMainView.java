@@ -32,7 +32,7 @@ public final class StartMainView implements SimulationMainView, SimulationContro
     /**
      * Creates a new start screen main view.
      *
-     * @param stage the primary stage hosting the UI
+     * @param stage        the primary stage hosting the UI
      * @param stageUpdater a callback that switches the stage to a different simulation type
      */
     public StartMainView(Stage stage,

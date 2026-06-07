@@ -28,7 +28,7 @@ public final class GridEntityDescriptorRegistry {
      * for the expected number of entity descriptors.
      *
      * @param expectedDescriptorCount the anticipated number of descriptors to be registered,
-     *                               used to set the initial capacity of the internal map
+     *                                used to set the initial capacity of the internal map
      */
     public GridEntityDescriptorRegistry(int expectedDescriptorCount) {
         descriptorsById = HashMap.newHashMap(expectedDescriptorCount);
@@ -97,14 +97,14 @@ public final class GridEntityDescriptorRegistry {
      * The descriptor is stored for lookup by its unique descriptor ID.
      * </p>
      *
-     * @param descriptorId unique identifier for the descriptor
-     * @param visible whether the entity should be visible in the UI
-     * @param shortNameKey localization key for the short name
-     * @param longNameKey localization key for the long name
+     * @param descriptorId   unique identifier for the descriptor
+     * @param visible        whether the entity should be visible in the UI
+     * @param shortNameKey   localization key for the short name
+     * @param longNameKey    localization key for the long name
      * @param descriptionKey localization key for the description
-     * @param emojiKey optional localization key for the emoji, or {@code null}
-     * @param color optional fill color, or {@code null}
-     * @param borderColor optional border color, or {@code null}
+     * @param emojiKey       optional localization key for the emoji, or {@code null}
+     * @param color          optional fill color, or {@code null}
+     * @param borderColor    optional border color, or {@code null}
      * @return the registered {@link GridEntityDescriptor}; an existing descriptor with the same
      * descriptor ID is replaced
      */

@@ -30,10 +30,10 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      * Constructs a new {@code AsynchronousStepRunner} with the given grid model, agent predicate,
      * agent ordering strategy, and agent step logic.
      *
-     * @param model                 the grid model to operate on
-     * @param agentPredicate        predicate to identify agent entities in the grid
+     * @param model                         the grid model to operate on
+     * @param agentPredicate                predicate to identify agent entities in the grid
      * @param agentOrderingStrategyProvider function providing comparator defining the order in which agent cells are processed based on the context
-     * @param agentStepLogic        logic to apply to each agent cell
+     * @param agentStepLogic                logic to apply to each agent cell
      */
     public AsynchronousStepRunner(WritableGridModel<T> model,
                                   Predicate<T> agentPredicate,

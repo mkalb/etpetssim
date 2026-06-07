@@ -35,6 +35,7 @@ final class AppStorageTest {
 
     /**
      * Cleans up the test environment after each test.
+     *
      * @throws IOException if an I/O error occurs while deleting files
      */
     @AfterEach
@@ -49,6 +50,7 @@ final class AppStorageTest {
 
     /**
      * Creates a unique application data file name for testing.
+     *
      * @return a unique file name with a prefix, a random UUID, and a suffix
      */
     private String createUniqueAppFileName() {

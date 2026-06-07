@@ -12,9 +12,9 @@ public interface CoordinateDrawer {
     /**
      * Draws an overlay element for one grid coordinate.
      *
-     * @param painter drawing facade for the grid canvas
+     * @param painter    drawing facade for the grid canvas
      * @param coordinate coordinate to visualize
-     * @param stepCount current simulation step count
+     * @param stepCount  current simulation step count
      */
     void draw(FXGridCanvasPainter painter,
               GridCoordinate coordinate,

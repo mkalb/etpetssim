@@ -21,20 +21,26 @@ public final class SparseGridModel<T extends GridEntity> implements WritableGrid
      */
     private static final int MAX_RANDOM_DEFAULT_SAMPLING_ATTEMPTS = 64;
 
-    /** The structure describing the grid's dimensions and valid coordinates. */
+    /**
+     * The structure describing the grid's dimensions and valid coordinates.
+     */
     private final GridStructure structure;
 
-    /** The default entity for all grid cells. */
+    /**
+     * The default entity for all grid cells.
+     */
     private final T defaultEntity;
 
-    /** The map holding non-default grid entities, keyed by coordinate. */
+    /**
+     * The map holding non-default grid entities, keyed by coordinate.
+     */
     private final Map<GridCoordinate, T> data;
 
     /**
      * Constructs a new {@code SparseGridModel} with the given structure and default entity.
      * Initially, all cells are set to the default entity (i.e., the map is empty).
      *
-     * @param structure the grid structure
+     * @param structure     the grid structure
      * @param defaultEntity the default entity for all cells
      */
     public SparseGridModel(GridStructure structure, T defaultEntity) {

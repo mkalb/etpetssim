@@ -14,14 +14,13 @@ import java.util.*;
  * </p>
  *
  * @param descriptorId unique identifier for the entity descriptor
- * @param visible whether the entity should be visible in the UI
- * @param shortName resolved short display name
- * @param longName resolved long display name
- * @param description resolved description text
- * @param emoji optional resolved emoji representation, or {@code null} if not set
- * @param color optional fill color for rendering, or {@code null} if not set
- * @param borderColor optional border color for rendering, or {@code null} if not set
- *
+ * @param visible      whether the entity should be visible in the UI
+ * @param shortName    resolved short display name
+ * @param longName     resolved long display name
+ * @param description  resolved description text
+ * @param emoji        optional resolved emoji representation, or {@code null} if not set
+ * @param color        optional fill color for rendering, or {@code null} if not set
+ * @param borderColor  optional border color for rendering, or {@code null} if not set
  * @see GridEntityDescriptorProvider
  * @see GridEntityDescriptorRegistry
  */

@@ -8,9 +8,9 @@ package de.mkalb.etpetssim.engine.executor;
  * @param maxNanos     maximum step duration
  * @param sumNanos     sum of all step durations
  * @param avgNanos     average step duration
- * <p>
- * The canonical constructor enforces non-negative values and validates
- * cross-field consistency (for example, {@code minNanos <= maxNanos}).
+ *                     <p>
+ *                     The canonical constructor enforces non-negative values and validates
+ *                     cross-field consistency (for example, {@code minNanos <= maxNanos}).
  */
 public record StepTimingStatistics(
         long currentNanos,

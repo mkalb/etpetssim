@@ -13,10 +13,10 @@ import java.util.*;
  * Computed neighborhood data for a selected cell in the simulation lab,
  * used to drive the visual highlight overlay on the canvas.
  *
- * @param ringCellsByRadius           cells grouped by radius ring, used for ring highlight rendering
- * @param validNeighborCoordinates    direct neighbor coordinates that lie within the grid
+ * @param ringCellsByRadius              cells grouped by radius ring, used for ring highlight rendering
+ * @param validNeighborCoordinates       direct neighbor coordinates that lie within the grid
  * @param validNeighborsWithEdgeBehavior neighbors with edge-behavior details, keyed by coordinate
- * @param neighborEdgeResults         edge-behavior results for all neighbors of the selected cell
+ * @param neighborEdgeResults            edge-behavior results for all neighbors of the selected cell
  */
 public record LabNeighborhoodHighlights(
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadius,

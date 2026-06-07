@@ -9,10 +9,14 @@ package de.mkalb.etpetssim.simulations.core.shared;
  */
 public enum SimulationTerminationCheck {
 
-    /** Termination condition is evaluated during simulation execution. */
+    /**
+     * Termination condition is evaluated during simulation execution.
+     */
     CHECKED,
 
-    /** Termination condition is not evaluated during simulation execution. */
+    /**
+     * Termination condition is not evaluated during simulation execution.
+     */
     UNCHECKED
 
 }

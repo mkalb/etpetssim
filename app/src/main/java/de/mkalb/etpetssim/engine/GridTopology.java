@@ -8,16 +8,16 @@ package de.mkalb.etpetssim.engine;
  * <p>
  * <strong>Orientation:</strong><br>
  * - {@link CellShape#HEXAGON} is always rendered with a <strong>flat-top</strong> orientation,
- *   meaning one of its edges is aligned horizontally at the top.<br>
+ * meaning one of its edges is aligned horizontally at the top.<br>
  * - {@link CellShape#SQUARE} is axis-aligned and does not require orientation logic.<br>
  * - {@link CellShape#TRIANGLE} alternates orientation by coordinate parity
- *   ({@code x + y} even/odd), creating a checkerboard-style up/down pattern
- *   that supports consistent neighbor relationships and visual symmetry.
+ * ({@code x + y} even/odd), creating a checkerboard-style up/down pattern
+ * that supports consistent neighbor relationships and visual symmetry.
  * <p>
  * This orientation design simplifies rendering logic and ensures a uniform appearance across different grid types,
  * especially when displayed in graphical environments.
  *
- * @param cellShape    the shape of each cell in the grid
+ * @param cellShape        the shape of each cell in the grid
  * @param gridEdgeBehavior the type of boundary behavior for the grid edges
  */
 public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavior) {
@@ -67,7 +67,7 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
     /**
      * Calculates the required width multiple for a given cell shape and X-axis edge behavior.
      *
-     * @param cellShape the cell shape to evaluate
+     * @param cellShape     the cell shape to evaluate
      * @param edgeBehaviorX the edge behavior for the X-axis
      * @return the required width multiple for the specified configuration
      */
@@ -85,7 +85,7 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
     /**
      * Calculates the required height multiple for a given cell shape and Y-axis edge behavior.
      *
-     * @param cellShape the cell shape to evaluate
+     * @param cellShape     the cell shape to evaluate
      * @param edgeBehaviorY the edge behavior for the Y-axis
      * @return the required height multiple for the specified configuration
      */

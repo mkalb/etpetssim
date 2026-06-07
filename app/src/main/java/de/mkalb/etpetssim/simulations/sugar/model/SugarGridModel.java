@@ -13,9 +13,9 @@ import java.util.*;
 /**
  * Composite grid model for Sugarscape with resource and agent layers.
  *
- * @param structure the shared grid structure of all sub-models
+ * @param structure     the shared grid structure of all sub-models
  * @param resourceModel the terrain/resource layer
- * @param agentModel the agent layer
+ * @param agentModel    the agent layer
  */
 public record SugarGridModel(
         GridStructure structure,

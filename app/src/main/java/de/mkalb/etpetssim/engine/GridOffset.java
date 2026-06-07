@@ -11,7 +11,6 @@ package de.mkalb.etpetssim.engine;
  *
  * @param dx the change in the x-coordinate (horizontal direction)
  * @param dy the change in the y-coordinate (vertical direction)
- *
  * @see CellShape
  * @see GridCoordinate#offset(GridOffset)
  */

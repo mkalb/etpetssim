@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
  * This class allows starting, stopping, and checking the status of a simulation loop,
  * where a given {@link Runnable} is executed at a fixed interval.
  * </p>
- *
+ * <p>
  * Example usage:
  * <pre>
  *     SimulationTimer timer = new SimulationTimer(() -> doStep());
@@ -21,10 +21,14 @@ import org.jspecify.annotations.Nullable;
  */
 public final class SimulationTimer {
 
-    /** The action to execute on each timer tick. */
+    /**
+     * The action to execute on each timer tick.
+     */
     private final Runnable simulationStep;
 
-    /** The JavaFX Timeline managing the periodic execution. */
+    /**
+     * The JavaFX Timeline managing the periodic execution.
+     */
     private @Nullable Timeline timeline;
 
     /**

@@ -149,7 +149,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * and is not affected by subsequent mutations to the model.
      *
      * @param entityPredicate the predicate to filter grid cell entities
-     * @param cellOrdering the comparator to define the order of the resulting grid cells
+     * @param cellOrdering    the comparator to define the order of the resulting grid cells
      * @return a mutable list of filtered and sorted {@link GridCell} instances
      */
     List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering);

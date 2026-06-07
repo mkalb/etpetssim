@@ -30,9 +30,13 @@ public final class SnakeSimulationManager
                 return Integer.MAX_VALUE;
             });
 
-    /** Minimum horizontal clearance (in cells) around each generated wall column. */
+    /**
+     * Minimum horizontal clearance (in cells) around each generated wall column.
+     */
     private static final int WALL_WIDTH_MARGIN = 2;
-    /** Minimum vertical clearance (in cells) that walls must leave at the bottom. */
+    /**
+     * Minimum vertical clearance (in cells) that walls must leave at the bottom.
+     */
     private static final int WALL_HEIGHT_MARGIN = 4;
 
     private final GridStructure structure;

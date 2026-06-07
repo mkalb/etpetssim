@@ -32,7 +32,8 @@ public final class FXComponentFactory {
 
     /**
      * Creates a Label with the specified text and CSS class.
-     * @param text the text to display in the label
+     *
+     * @param text       the text to display in the label
      * @param styleClass the style class to add to the label
      * @return a Label with the specified text and CSS class
      */
@@ -77,14 +78,14 @@ public final class FXComponentFactory {
      * <p>
      * This method is suitable for enum-based selections with custom display names and flexible layout requirements.
      *
-     * @param inputEnumProperty the {@link InputEnumProperty} defining valid values and value binding
-     * @param displayNameProvider a function mapping enum values to their display names
+     * @param inputEnumProperty        the {@link InputEnumProperty} defining valid values and value binding
+     * @param displayNameProvider      a function mapping enum values to their display names
      * @param radioButtonContainerPane the {@link Pane} to contain the radio buttons (e.g., {@link VBox}, {@link HBox})
-     * @param labelFormatString the format string for the label (e.g., "%s")
-     * @param tooltip the tooltip text for both the label and the radio buttons
-     * @param styleClass the CSS style class to apply to the radio buttons
-     * @param <E> the enum type
-     * @param <P> the pane type
+     * @param labelFormatString        the format string for the label (e.g., "%s")
+     * @param tooltip                  the tooltip text for both the label and the radio buttons
+     * @param styleClass               the CSS style class to apply to the radio buttons
+     * @param <E>                      the enum type
+     * @param <P>                      the pane type
      * @return a {@link LabeledControl} containing the label and the container pane with radio buttons
      */
     @SuppressWarnings("unchecked")
@@ -151,12 +152,12 @@ public final class FXComponentFactory {
      * <p>
      * This method is suitable for enum properties with two valid states, allowing the user to toggle between them via a checkbox.
      *
-     * @param inputEnumProperty the {@link InputEnumProperty} defining valid values and value binding
-     * @param checkedEnumValue the enum value to set when the checkbox is checked
+     * @param inputEnumProperty  the {@link InputEnumProperty} defining valid values and value binding
+     * @param checkedEnumValue   the enum value to set when the checkbox is checked
      * @param uncheckedEnumValue the enum value to set when the checkbox is unchecked
-     * @param labelFormatString the format string for the label (e.g., "%s")
-     * @param tooltip the tooltip text for both the label and the checkbox
-     * @param styleClass the CSS style class to apply to the checkbox
+     * @param labelFormatString  the format string for the label (e.g., "%s")
+     * @param tooltip            the tooltip text for both the label and the checkbox
+     * @param styleClass         the CSS style class to apply to the checkbox
      * @return a {@link FXComponentFactory.LabeledControl} containing the label and the checkbox
      */
     public static <E extends Enum<E>> LabeledControl<CheckBox> createLabeledEnumCheckBox(InputEnumProperty<E> inputEnumProperty,
@@ -204,11 +205,11 @@ public final class FXComponentFactory {
      * <p>
      * This method is suitable for enum-based selections with custom display names.
      *
-     * @param inputEnumProperty the {@link InputEnumProperty} defining valid values and value binding
+     * @param inputEnumProperty   the {@link InputEnumProperty} defining valid values and value binding
      * @param displayNameProvider a function mapping enum values to their display names
-     * @param labelFormatString the format string for the label (e.g., "%s")
-     * @param tooltip the tooltip text for both the label and the combo box
-     * @param styleClass the CSS style class to apply to the combo box
+     * @param labelFormatString   the format string for the label (e.g., "%s")
+     * @param tooltip             the tooltip text for both the label and the combo box
+     * @param styleClass          the CSS style class to apply to the combo box
      * @return a {@link FXComponentFactory.LabeledControl} containing the label and the combo box
      */
     public static <E extends Enum<E>> LabeledControl<ComboBox<E>> createLabeledEnumComboBox(InputEnumProperty<E> inputEnumProperty,
@@ -251,7 +252,7 @@ public final class FXComponentFactory {
      * If a display name is not found, the enum's {@code toString()} value is used as a fallback.
      *
      * @param displayNames a map from enum values to their display names
-     * @param <E> the enum type
+     * @param <E>          the enum type
      * @return a {@link ListCell} that displays the display name for each enum value
      */
     private static <E extends Enum<E>> ListCell<E> createDisplayNameListCell(Map<E, String> displayNames) {
@@ -282,9 +283,9 @@ public final class FXComponentFactory {
      * This method is suitable for sliders with a moderate integer value range.
      *
      * @param inputDoublePropertyIntRange the {@link InputDoublePropertyIntRange} defining the integer range and value binding
-     * @param labelFormatString the format string for the label (e.g., "%d px")
-     * @param tooltip the tooltip text for both the label and the slider
-     * @param styleClass the CSS style class to apply to the slider
+     * @param labelFormatString           the format string for the label (e.g., "%d px")
+     * @param tooltip                     the tooltip text for both the label and the slider
+     * @param styleClass                  the CSS style class to apply to the slider
      * @return a {@link FXComponentFactory.LabeledControl} containing the label and the slider
      */
     public static LabeledControl<Slider> createLabeledIntSlider(InputDoublePropertyIntRange inputDoublePropertyIntRange,
@@ -325,9 +326,9 @@ public final class FXComponentFactory {
      * Input is validated and normalized to ensure only valid values are accepted.
      *
      * @param inputIntegerProperty the {@link InputIntegerProperty} defining range, step, and value binding
-     * @param labelFormatString the format string for the label (e.g., "Width: %d")
-     * @param tooltip the tooltip text for both the label and the spinner
-     * @param styleClass the CSS style class to apply to the spinner
+     * @param labelFormatString    the format string for the label (e.g., "Width: %d")
+     * @param tooltip              the tooltip text for both the label and the spinner
+     * @param styleClass           the CSS style class to apply to the spinner
      * @return a {@link FXComponentFactory.LabeledControl} containing the label and the spinner
      */
     public static LabeledControl<Spinner<Integer>> createLabeledIntSpinner(
@@ -395,7 +396,7 @@ public final class FXComponentFactory {
      * defined by the given {@link InputIntegerProperty}, and updates both the spinner and the property with the normalized value.
      * If parsing fails, resets the editor text and spinner value to the current property value.
      *
-     * @param spinner the {@link Spinner} whose editor input is to be normalized and synchronized
+     * @param spinner              the {@link Spinner} whose editor input is to be normalized and synchronized
      * @param inputIntegerProperty the {@link InputIntegerProperty} providing range and step constraints
      */
     private static void normalizeAndSyncSpinnerValue(Spinner<Integer> spinner,
@@ -440,9 +441,9 @@ public final class FXComponentFactory {
      * The slider is suitable for values between 0.0 and 1.0 (inclusive).
      *
      * @param inputDoubleProperty the {@link InputDoubleProperty} defining range and value binding
-     * @param labelFormatString the format string for the label (e.g., "%.2f %%")
-     * @param tooltip the tooltip text for both the label and the slider
-     * @param styleClass the CSS style class to apply to the slider
+     * @param labelFormatString   the format string for the label (e.g., "%.2f %%")
+     * @param tooltip             the tooltip text for both the label and the slider
+     * @param styleClass          the CSS style class to apply to the slider
      * @return a {@link FXComponentFactory.LabeledControl} containing the label and the slider
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -530,10 +531,10 @@ public final class FXComponentFactory {
      * This method is suitable for sliders requiring decimal precision and a continuous value range.
      *
      * @param inputDoubleProperty the {@link InputDoubleProperty} defining range and value binding
-     * @param decimalPlaces the requested number of decimal places to round the slider's value to; will be clamped to the range 0..9
-     * @param labelFormatString the format string for the label (e.g., "%.2f")
-     * @param tooltip the tooltip text for both the label and the slider
-     * @param styleClass the CSS style class to apply to the slider
+     * @param decimalPlaces       the requested number of decimal places to round the slider's value to; will be clamped to the range 0..9
+     * @param labelFormatString   the format string for the label (e.g., "%.2f")
+     * @param tooltip             the tooltip text for both the label and the slider
+     * @param styleClass          the CSS style class to apply to the slider
      * @return a {@link FXComponentFactory.LabeledControl} containing the label and the slider
      */
     public static LabeledControl<Slider> createLabeledDoubleSlider(
@@ -589,13 +590,13 @@ public final class FXComponentFactory {
      * clear the text field and includes its own tooltip. Both the label and the text field share the same tooltip for
      * accessibility. The entire control is wrapped in an {@link HBox} for layout.
      *
-     * @param inputProperty the {@link StringProperty} to bind to the text field
-     * @param labelProperty the {@link StringProperty} to bind to the label
-     * @param labelFormatString the format string for the label (e.g., "Name: %s")
-     * @param promptText the prompt text to display in the text field
-     * @param tooltip the tooltip text for both the label and the text field
+     * @param inputProperty      the {@link StringProperty} to bind to the text field
+     * @param labelProperty      the {@link StringProperty} to bind to the label
+     * @param labelFormatString  the format string for the label (e.g., "Name: %s")
+     * @param promptText         the prompt text to display in the text field
+     * @param tooltip            the tooltip text for both the label and the text field
      * @param tooltipClearButton the tooltip text for the clear button
-     * @param styleClass the CSS style class to apply to the text field and container
+     * @param styleClass         the CSS style class to apply to the text field and container
      * @return a {@link LabeledControl} containing the label and the HBox with the text field and clear button
      */
     public static LabeledControl<HBox> createLabeledStringTextBox(StringProperty inputProperty,
@@ -640,15 +641,15 @@ public final class FXComponentFactory {
      * Both the label and the text field share the same tooltip for accessibility.
      * The entire control is wrapped in an {@link HBox} for layout.
      *
-     * @param inputProperty the {@link StringProperty} to bind to the text field
-     * @param labelProperty the {@link StringProperty} to bind to the label
+     * @param inputProperty      the {@link StringProperty} to bind to the text field
+     * @param labelProperty      the {@link StringProperty} to bind to the label
      * @param adoptValueProperty the {@link ReadOnlyStringProperty} providing the value to adopt into the text field
-     * @param labelFormatString the format string for the label (e.g., "Name: %s")
-     * @param promptText the prompt text to display in the text field
-     * @param tooltip the tooltip text for both the label and the text field
+     * @param labelFormatString  the format string for the label (e.g., "Name: %s")
+     * @param promptText         the prompt text to display in the text field
+     * @param tooltip            the tooltip text for both the label and the text field
      * @param tooltipAdoptButton the tooltip text for the adopt button
      * @param tooltipClearButton the tooltip text for the clear button
-     * @param styleClass the CSS style class to apply to the text field and container
+     * @param styleClass         the CSS style class to apply to the text field and container
      * @return a {@link LabeledControl} containing the label and the HBox with the text field, adopt button, and clear button
      */
     public static LabeledControl<HBox> createLabeledStringTextBoxWithAdopt(StringProperty inputProperty,

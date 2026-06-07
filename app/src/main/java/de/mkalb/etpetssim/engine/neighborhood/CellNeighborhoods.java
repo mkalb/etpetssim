@@ -180,7 +180,7 @@ public final class CellNeighborhoods {
      * </ol>
      *
      * @param coordinate the grid coordinate to check
-     * @param structure the grid structure defining bounds and edge behaviors
+     * @param structure  the grid structure defining bounds and edge behaviors
      * @return the resulting {@link EdgeBehaviorAction} for the coordinate
      * @throws IllegalArgumentException if an unknown edge behavior is encountered
      */
@@ -245,7 +245,7 @@ public final class CellNeighborhoods {
      *   <li>{@code WRAPPED}: wraps the coordinate to the opposite edge using modular arithmetic.</li>
      * </ul>
      *
-     * @param original the original grid coordinate to process
+     * @param original  the original grid coordinate to process
      * @param structure the grid structure defining bounds and edge behaviors
      * @return an {@link EdgeBehaviorResult} containing the original coordinate, the mapped coordinate, and the action taken
      */
@@ -320,9 +320,9 @@ public final class CellNeighborhoods {
      * It is intended for use cases where only the geometric neighbor relationships are needed.
      * The caller can collect the stream into a list if needed.
      *
-     * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined (not checked for grid validity)
-     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
-     * @param cellShape         the shape of the cell (triangle, square, hexagon)
+     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined (not checked for grid validity)
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape        the shape of the cell (triangle, square, hexagon)
      * @return a stream of {@link CellNeighbor} objects representing all theoretical neighbors of the cell (ignoring grid boundaries and edge behavior)
      */
     public static Stream<CellNeighbor> cellNeighborsIgnoringEdgeBehavior(GridCoordinate startCoordinate,
@@ -348,12 +348,12 @@ public final class CellNeighborhoods {
      * applies the grid's edge behavior to the neighbor coordinate, and returns a record describing the relationship
      * and edge behavior outcome. If no neighbor exists in the specified direction, an empty {@link Optional} is returned.
      *
-     * @param startCoordinate   the coordinate of the cell whose neighbor is to be determined
-     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
-     * @param direction         the compass direction of the desired neighbor
-     * @param structure         the grid structure defining size, boundaries, and edge behavior
+     * @param startCoordinate  the coordinate of the cell whose neighbor is to be determined
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param direction        the compass direction of the desired neighbor
+     * @param structure        the grid structure defining size, boundaries, and edge behavior
      * @return an {@link Optional} containing the {@link CellNeighborWithEdgeBehavior} for the neighbor in the given direction,
-     *         or an empty {@link Optional} if no such neighbor exists
+     * or an empty {@link Optional} if no such neighbor exists
      */
     public static Optional<CellNeighborWithEdgeBehavior> cellNeighborWithEdgeBehavior(GridCoordinate startCoordinate,
                                                                                       NeighborhoodMode neighborhoodMode,
@@ -393,11 +393,11 @@ public final class CellNeighborhoods {
      * to distinguish between different edge behavior outcomes (including absorbed or blocked neighbors).
      * <b>Note:</b> This method does <b>not</b> filter out any edge behavior actions; all are included.
      *
-     * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined (must be valid in the grid)
-     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
-     * @param structure         the grid structure defining size, boundaries, and edge behavior
+     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined (must be valid in the grid)
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param structure        the grid structure defining size, boundaries, and edge behavior
      * @return a map from mapped neighbor coordinates to lists of {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records,
-     *         each describing the relationship and edge behavior outcome for that neighbor
+     * each describing the relationship and edge behavior outcome for that neighbor
      */
     public static Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> cellNeighborsWithEdgeBehavior(
             GridCoordinate startCoordinate,
@@ -431,15 +431,15 @@ public final class CellNeighborhoods {
      * The returned outer map always contains all radius keys from {@code 0} up to and including {@code radius},
      * even if some higher rings are empty.
      *
-     * @param <C> the generic cell value type created for each coordinate
-     * @param startCoordinate the coordinate of the center cell whose radius rings are to be determined
+     * @param <C>              the generic cell value type created for each coordinate
+     * @param startCoordinate  the coordinate of the center cell whose radius rings are to be determined
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
-     * @param structure the grid structure defining size, cell shape, and edge behavior
-     * @param radius the maximum radius ring to compute (non-negative and less than or equal to {@link #MAX_RADIUS})
-     * @param cellFactory function creating the generic cell value for a coordinate
+     * @param structure        the grid structure defining size, cell shape, and edge behavior
+     * @param radius           the maximum radius ring to compute (non-negative and less than or equal to {@link #MAX_RADIUS})
+     * @param cellFactory      function creating the generic cell value for a coordinate
      * @return an unmodifiable sorted map from radius ring to an unmodifiable sorted map of coordinates and their cell metadata
      * @throws IllegalArgumentException if the radius is negative, greater than {@link #MAX_RADIUS},
-     *         or if the start coordinate is not valid within the grid structure
+     *                                  or if the start coordinate is not valid within the grid structure
      */
     public static <C> SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<C>>> cellsByRadiusRings(
             GridCoordinate startCoordinate,
@@ -517,10 +517,10 @@ public final class CellNeighborhoods {
      * If {@code radius <= 0}, this method returns an empty set. If {@code radius > MAX_RADIUS}, an
      * {@link IllegalArgumentException} is thrown.
      *
-     * @param startCoordinate   the coordinate of the cell whose neighbors are to be determined
-     * @param neighborhoodMode  the neighborhood mode (edges only or edges and vertices)
-     * @param cellShape         the shape of the cell (triangle, square, hexagon)
-     * @param radius            the neighborhood radius (non-negative) and less than or equal to {@link #MAX_RADIUS}
+     * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
+     * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape        the shape of the cell (triangle, square, hexagon)
+     * @param radius           the neighborhood radius (non-negative) and less than or equal to {@link #MAX_RADIUS}
      * @return a set of {@link GridCoordinate} objects representing all neighbor coordinates within the given radius
      * @throws IllegalArgumentException if the radius is greater than {@link #MAX_RADIUS}
      */
@@ -580,7 +580,7 @@ public final class CellNeighborhoods {
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param cellShape        the shape of the cell (triangle, square, hexagon)
      * @return a modifiable {@link java.util.EnumSet} of {@link CompassDirection} containing the
-     *         directions of all theoretical direct neighbors for the given configuration
+     * directions of all theoretical direct neighbors for the given configuration
      */
     public static Set<CompassDirection> cellNeighborDirections(GridCoordinate startCoordinate,
                                                                NeighborhoodMode neighborhoodMode,
@@ -597,9 +597,9 @@ public final class CellNeighborhoods {
      * The cache key is generated by {@link #generateCacheKey(GridCoordinate, NeighborhoodMode, CellShape)}
      * and includes only parity/offset information that affects the geometry.
      *
-     * @param startCoordinate the source coordinate (used for parity/offset-dependent shapes)
+     * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)
      * @param neighborhoodMode the neighborhood mode to evaluate
-     * @param cellShape the cell shape to evaluate
+     * @param cellShape        the cell shape to evaluate
      * @return an immutable list of relative neighbor connections for the configuration
      */
     static List<CellNeighborConnection> getCellNeighborConnections(GridCoordinate startCoordinate,
@@ -617,9 +617,9 @@ public final class CellNeighborhoods {
      * triangle orientation for triangles, no coordinate component for squares,
      * and column-based vertical offset for hexagons.
      *
-     * @param startCoordinate the source coordinate (used only where relevant)
+     * @param startCoordinate  the source coordinate (used only where relevant)
      * @param neighborhoodMode the neighborhood mode
-     * @param cellShape the cell shape
+     * @param cellShape        the cell shape
      * @return a deterministic cache key for the given configuration
      */
     static String generateCacheKey(GridCoordinate startCoordinate,
@@ -638,9 +638,9 @@ public final class CellNeighborhoods {
      * This method performs shape-specific dispatch and returns only geometric neighbor
      * relations (without boundary checks or edge behavior mapping).
      *
-     * @param startCoordinate the source coordinate (used for parity/offset-dependent shapes)
+     * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)
      * @param neighborhoodMode the neighborhood mode
-     * @param cellShape the cell shape
+     * @param cellShape        the cell shape
      * @return a list of relative neighbor connections
      */
     static List<CellNeighborConnection> computeCellNeighborConnections(GridCoordinate startCoordinate,
@@ -661,7 +661,7 @@ public final class CellNeighborhoods {
      * The result depends on both the neighborhood mode and the triangle orientation
      * (pointing down vs. pointing up).
      *
-     * @param neighborhoodMode the neighborhood mode
+     * @param neighborhoodMode           the neighborhood mode
      * @param isTriangleCellPointingDown {@code true} if the triangle points down, {@code false} otherwise
      * @return a list of relative neighbor connections in deterministic direction order
      */

@@ -13,8 +13,8 @@ public final class ReboundingTerminationCondition implements SimulationTerminati
      * The simulation terminates once at most one entity-occupied cell remains,
      * i.e. when {@code statistics.getMovingEntityCells() <= 1}.
      *
-     * @param model the current simulation model
-     * @param stepCount the number of simulation steps completed
+     * @param model      the current simulation model
+     * @param stepCount  the number of simulation steps completed
      * @param statistics the current rebounding statistics
      * @return {@code true} if the simulation should terminate, otherwise {@code false}
      */

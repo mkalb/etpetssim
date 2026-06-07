@@ -18,7 +18,7 @@ import java.util.*;
  * Base class for main view models that coordinate config, observation and selection state.
  *
  * @param <ENT> entity type stored in grid cells
- * @param <GM> grid model type exposed by the simulation
+ * @param <GM>  grid model type exposed by the simulation
  * @param <CON> config type provided by the config view model
  * @param <STA> statistics type exposed through observation state
  */

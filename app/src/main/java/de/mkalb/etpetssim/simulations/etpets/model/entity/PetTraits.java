@@ -5,10 +5,10 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 /**
  * Immutable trait bundle describing a pet genome.
  *
- * @param maxEnergy the maximum energy capacity
- * @param movementCostModifier the movement energy cost modifier
+ * @param maxEnergy             the maximum energy capacity
+ * @param movementCostModifier  the movement energy cost modifier
  * @param reproductionMinEnergy the minimum energy required for reproduction
- * @param reproductionCooldown the cooldown between reproduction attempts
+ * @param reproductionCooldown  the cooldown between reproduction attempts
  */
 public record PetTraits(
         int maxEnergy,

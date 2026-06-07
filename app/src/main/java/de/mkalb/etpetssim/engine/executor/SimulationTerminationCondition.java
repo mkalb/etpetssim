@@ -10,8 +10,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * of the simulation model, the simulation step count, and a context object.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM> the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
- * @param <C> the type of the context object used to share or accumulate state or statistics during the simulation
+ * @param <GM>  the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
+ * @param <C>   the type of the context object used to share or accumulate state or statistics during the simulation
  */
 @FunctionalInterface
 public interface SimulationTerminationCondition<
@@ -22,9 +22,9 @@ public interface SimulationTerminationCondition<
     /**
      * Checks whether the simulation is finished.
      *
-     * @param model the current simulation model
+     * @param model     the current simulation model
      * @param stepCount the number of simulation steps completed (i.e., the next step to be executed, starting from 0)
-     * @param context a context object with additional information
+     * @param context   a context object with additional information
      * @return {@code true} if the simulation should terminate, {@code false} otherwise
      */
     boolean isFinished(GM model, int stepCount, C context);
