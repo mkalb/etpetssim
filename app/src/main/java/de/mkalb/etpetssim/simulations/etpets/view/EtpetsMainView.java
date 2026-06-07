@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -270,8 +270,8 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<EtpetsEntity> oldGridCell,
-                                          @Nullable GridCell<EtpetsEntity> newGridCell) {
+                                          @Nullable GridCellView<EtpetsEntity> oldGridCell,
+                                          @Nullable GridCellView<EtpetsEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

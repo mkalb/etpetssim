@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.model.*;
@@ -49,10 +49,10 @@ public final class DefaultMainViewModel<
     private final ChangeListener<Boolean> actionButtonRequestedListener;
     private final ChangeListener<Boolean> cancelButtonRequestedListener;
     private final @Nullable ChangeListener<@Nullable GridCoordinate> lastClickedCoordinateListener;
-    private final ObjectProperty<@Nullable GridCell<ENT>> selectedGridCell = new SimpleObjectProperty<>();
+    private final ObjectProperty<@Nullable GridCellView<ENT>> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
-    private final BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider;
+    private final BiFunction<GM, GridCoordinate, GridCellView<ENT>> selectedGridCellProvider;
     private final SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction;
     private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
     private @Nullable Future<?> batchFuture;
@@ -81,7 +81,7 @@ public final class DefaultMainViewModel<
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, STA> observationViewModel,
                                 Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
-                                BiFunction<GM, GridCoordinate, GridCell<ENT>> selectedGridCellProvider,
+                                BiFunction<GM, GridCoordinate, GridCellView<ENT>> selectedGridCellProvider,
                                 SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
@@ -152,7 +152,7 @@ public final class DefaultMainViewModel<
      *
      * @return selected-cell property, nullable when no cell is selected
      */
-    public ObjectProperty<@Nullable GridCell<ENT>> selectedGridCellProperty() {
+    public ObjectProperty<@Nullable GridCellView<ENT>> selectedGridCellProperty() {
         return selectedGridCell;
     }
 
@@ -659,7 +659,7 @@ public final class DefaultMainViewModel<
             GM currentModel = manager.currentModel();
             CON currentConfig = manager.config();
             STA currentStatistics = manager.statistics();
-            GridCell<ENT> currentSelectedCell = selectedGridCell.get();
+            GridCellView<ENT> currentSelectedCell = selectedGridCell.get();
             logSimulationInfo("Applying user action to the current simulation state. selectedCell="
                     + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
             simulationUserAction.apply(currentModel, currentStatistics, currentConfig, context, currentSelectedCell);

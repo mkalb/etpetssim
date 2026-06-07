@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.rebounding.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
@@ -83,8 +83,8 @@ public final class ReboundingMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<ReboundingEntity> oldGridCell,
-                                          @Nullable GridCell<ReboundingEntity> newGridCell) {
+                                          @Nullable GridCellView<ReboundingEntity> oldGridCell,
+                                          @Nullable GridCellView<ReboundingEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

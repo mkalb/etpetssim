@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.snake.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -97,8 +97,8 @@ public final class SnakeMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<SnakeEntity> oldGridCell,
-                                          @Nullable GridCell<SnakeEntity> newGridCell) {
+                                          @Nullable GridCellView<SnakeEntity> oldGridCell,
+                                          @Nullable GridCellView<SnakeEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

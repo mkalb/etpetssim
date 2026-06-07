@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -50,7 +50,7 @@ public final class SnakeObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCell<SnakeEntity> gridCell) {
+    protected void onSelectedCellChanged(@Nullable GridCellView<SnakeEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
         setUnknownValues(
                 snakeIdLabel,

@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.langton.view;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -106,8 +107,8 @@ public final class LangtonMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<LangtonEntity> oldGridCell,
-                                          @Nullable GridCell<LangtonEntity> newGridCell) {
+                                          @Nullable GridCellView<LangtonEntity> oldGridCell,
+                                          @Nullable GridCellView<LangtonEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

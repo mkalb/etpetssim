@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -23,7 +23,7 @@ public final class ForestUserAction
                       ForestStatistics statistics,
                       ForestConfig config,
                       NoUserActionContext context,
-                      @Nullable GridCell<ForestEntity> selectedCell) {
+                      @Nullable GridCellView<ForestEntity> selectedCell) {
         if (selectedCell == null) {
             // This user action works only if a cell is selected, so do nothing if no cell is selected.
             return;

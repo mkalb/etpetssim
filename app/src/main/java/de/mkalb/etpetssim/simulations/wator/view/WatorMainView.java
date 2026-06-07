@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
@@ -154,8 +154,8 @@ public final class WatorMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<WatorEntity> oldGridCell,
-                                          @Nullable GridCell<WatorEntity> newGridCell) {
+                                          @Nullable GridCellView<WatorEntity> oldGridCell,
+                                          @Nullable GridCellView<WatorEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

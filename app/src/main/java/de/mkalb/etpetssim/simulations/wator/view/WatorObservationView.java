@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -44,7 +44,7 @@ public final class WatorObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCell<WatorEntity> gridCell) {
+    protected void onSelectedCellChanged(@Nullable GridCellView<WatorEntity> gridCell) {
         super.onSelectedCellChanged(gridCell);
         setUnknownValues(ageLabel);
 

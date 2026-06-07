@@ -4,42 +4,15 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * A record representing a cell in a grid model, associating a coordinate with an entity.
+ * Immutable default implementation of {@link GridCellView} that binds a
+ * {@link GridCoordinate} to exactly one {@link GridEntity}.
+ * <p>
+ * This record is the canonical engine-level cell value for single-layer grid
+ * models.
  *
- * @param <T> the type of entity stored in the cell, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
- * @param coordinate the coordinate of the cell in the grid
- * @param entity the entity associated with the cell
- *
- * @see WritableGridModel
+ * @param <T> the concrete entity type stored in the cell
+ * @param coordinate the grid coordinate of this cell
+ * @param entity the entity stored at {@code coordinate}
  */
-public record GridCell<T extends GridEntity>(GridCoordinate coordinate, T entity) {
-
-    /**
-     * Returns the unique descriptor ID of the entity stored in this grid cell.
-     * <p>
-     * This is a convenience shortcut for {@link GridEntity#descriptorId()} on
-     * the associated {@link #entity()}.
-     *
-     * @return the descriptor ID of the associated entity
-     * @see GridEntity#descriptorId()
-     */
-    public String descriptorId() {
-        return entity.descriptorId();
-    }
-
-    /**
-     * Returns a short, human-readable string representation of this grid cell.
-     * <p>
-     * Format: {@code (x, y) [Entity]}
-     * <br>
-     * Example: {@code (10, 20) [WALL]}
-     *
-     * @return a concise display string for this grid cell
-     */
-    public String toDisplayString() {
-        return String.format("%s %s",
-                coordinate.toDisplayString(),
-                entity.toDisplayString());
-    }
-
-}
+public record GridCell<T extends GridEntity>(GridCoordinate coordinate, T entity)
+        implements GridCellView<T> {}

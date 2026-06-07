@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -148,8 +148,8 @@ public final class SugarMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<SugarEntity> oldGridCell,
-                                          @Nullable GridCell<SugarEntity> newGridCell) {
+                                          @Nullable GridCellView<SugarEntity> oldGridCell,
+                                          @Nullable GridCellView<SugarEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

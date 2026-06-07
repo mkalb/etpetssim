@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
@@ -36,6 +36,6 @@ public interface SimulationUserAction<
      * @param selectedCell the currently selected grid cell, or {@code null} if no cell is selected
      */
     @SuppressWarnings("unused")
-    void apply(GM model, STA statistics, CON config, CTX context, @Nullable GridCell<ENT> selectedCell);
+    void apply(GM model, STA statistics, CON config, CTX context, @Nullable GridCellView<ENT> selectedCell);
 
 }

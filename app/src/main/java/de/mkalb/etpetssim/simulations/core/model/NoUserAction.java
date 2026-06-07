@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -30,7 +30,7 @@ public final class NoUserAction<
             STA statistics,
             CON config,
             NoUserActionContext context,
-            @Nullable GridCell<ENT> selectedCell) {
+            @Nullable GridCellView<ENT> selectedCell) {
         // intentional no-op
     }
 

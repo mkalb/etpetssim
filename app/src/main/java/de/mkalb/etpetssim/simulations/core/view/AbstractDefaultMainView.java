@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptor;
@@ -154,8 +154,8 @@ public abstract class AbstractDefaultMainView<
     }
 
     protected abstract void handleGridCellSelected(FXGridCanvasPainter painter,
-                                                   @Nullable GridCell<ENT> oldGridCell,
-                                                   @Nullable GridCell<ENT> newGridCell);
+                                                   @Nullable GridCellView<ENT> oldGridCell,
+                                                   @Nullable GridCellView<ENT> newGridCell);
 
     private void drawAndMeasureSimulationStep(int stepCount) {
         long startNanos = System.nanoTime();

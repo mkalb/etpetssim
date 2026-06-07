@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
@@ -16,7 +16,7 @@ public class LangtonUserAction
         NoUserActionContext> {
 
     @Override
-    public void apply(LangtonGridModel model, LangtonStatistics statistics, LangtonConfig config, NoUserActionContext context, @Nullable GridCell<LangtonEntity> selectedCell) {
+    public void apply(LangtonGridModel model, LangtonStatistics statistics, LangtonConfig config, NoUserActionContext context, @Nullable GridCellView<LangtonEntity> selectedCell) {
         if (selectedCell == null) {
             // This user action works only if a cell is selected, so do nothing if no cell is selected.
             return;

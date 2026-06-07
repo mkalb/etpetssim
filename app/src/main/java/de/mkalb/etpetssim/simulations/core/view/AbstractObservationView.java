@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
@@ -34,7 +34,7 @@ public abstract class AbstractObservationView<
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
-    private @Nullable GridCell<ENT> selectedGridCell;
+    private @Nullable GridCellView<ENT> selectedGridCell;
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
 
@@ -227,12 +227,12 @@ public abstract class AbstractObservationView<
 
     /**
      * Registers a listener on the provided selected-cell property that calls
-     * {@link #onSelectedCellChanged(GridCell)} whenever the selection changes.
+     * {@link #onSelectedCellChanged(GridCellView)} whenever the selection changes.
      * Call this in the subclass constructor to wire up the standard cell-selection behavior.
      *
      * @param property selected-cell property to listen on
      */
-    protected final void registerSelectedCellListener(ReadOnlyObjectProperty<@Nullable GridCell<ENT>> property) {
+    protected final void registerSelectedCellListener(ReadOnlyObjectProperty<@Nullable GridCellView<ENT>> property) {
         selectedGridCell = property.get();
         property.addListener((_, _, newCell) -> {
             selectedGridCell = newCell;
@@ -249,7 +249,7 @@ public abstract class AbstractObservationView<
      *
      * @param gridCell the newly selected grid cell, or {@code null} if no cell is selected
      */
-    protected void onSelectedCellChanged(@Nullable GridCell<ENT> gridCell) {
+    protected void onSelectedCellChanged(@Nullable GridCellView<ENT> gridCell) {
         if (selectedCellSection != null) {
             boolean hasSelectedCell = (gridCell != null);
             selectedCellSection.setManaged(hasSelectedCell);
@@ -274,7 +274,7 @@ public abstract class AbstractObservationView<
     /**
      * Creates a standard selected cell section displaying coordinate and cell type.
      * The standard coordinate and cell type labels are managed by this base class; visibility and
-     * label values are updated by {@link #onSelectedCellChanged(GridCell)}.
+     * label values are updated by {@link #onSelectedCellChanged(GridCellView)}.
      *
      * @return a VBox region containing the selected cell section with the standard labels
      */
@@ -298,7 +298,7 @@ public abstract class AbstractObservationView<
      * Creates an extended selected cell section with coordinate and cell type as the first two rows,
      * followed by the provided simulation-specific extra rows.
      * The section is stored internally; its visibility and the standard label values are managed by
-     * {@link #onSelectedCellChanged(GridCell)}.
+     * {@link #onSelectedCellChanged(GridCellView)}.
      *
      * @param extraNameKeys   additional localization keys for the extra rows
      * @param extraValueLabels additional labels for the extra rows
