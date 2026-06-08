@@ -35,10 +35,10 @@ public final class WatorUserAction
             return;
         }
 
-        int stepCount = manager.stepCount();
+        int stepIndexOfBirth = manager.stepCount() - 1;
         WatorEntity newEntity = switch (context) {
-            case ADD_FISH -> manager.createFish(stepCount);
-            case ADD_SHARK -> manager.createShark(stepCount);
+            case ADD_FISH -> manager.createFish(stepIndexOfBirth);
+            case ADD_SHARK -> manager.createShark(stepIndexOfBirth);
         };
 
         manager.currentModel().setEntity(coordinate, newEntity);

@@ -58,9 +58,9 @@ public final class WatorSimulationManager
         GridInitializers.placeAllAtRandomPositions(sharks, WatorEntity::isWater, random).initialize(model);
     }
 
-    public Fish createFish(int stepIndex) {
+    public Fish createFish(int stepIndexOfBirth) {
         statistics.incrementFishCells();
-        return creatureFactory.createFish(stepIndex);
+        return creatureFactory.createFish(stepIndexOfBirth);
     }
 
     private Fish createFish(Random random) {
@@ -68,9 +68,9 @@ public final class WatorSimulationManager
         return createFish(stepIndexOfBirth);
     }
 
-    public Shark createShark(int stepIndex) {
+    public Shark createShark(int stepIndexOfBirth) {
         statistics.incrementSharkCells();
-        return creatureFactory.createShark(stepIndex, config().sharkBirthEnergy());
+        return creatureFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
     }
 
     private Shark createShark(Random random) {
