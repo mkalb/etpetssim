@@ -31,6 +31,7 @@ public final class DefaultMainViewModel<
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends TimedSimulationStatistics,
+        SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext>
         extends AbstractMainViewModel<ENT, GM, CON, STA> {
 
@@ -41,7 +42,7 @@ public final class DefaultMainViewModel<
 
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
-    private final Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory;
+    private final Function<CON, SM> simulationManagerFactory;
     private final SimulationTimer timer;
     private final ExecutorService batchExecutor;
     private final ChangeListener<Boolean> actionButtonRequestedListener;
@@ -51,8 +52,8 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
-    private final SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction;
-    private @Nullable AbstractTimedSimulationManager<ENT, GM, CON, STA> simulationManager;
+    private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
+    private @Nullable SM simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
@@ -78,9 +79,9 @@ public final class DefaultMainViewModel<
                                 SimulationConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
-                                Function<CON, AbstractTimedSimulationManager<ENT, GM, CON, STA>> simulationManagerFactory,
+                                Function<CON, SM> simulationManagerFactory,
                                 BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
-                                SimulationUserAction<ENT, GM, CON, STA, CTX> simulationUserAction) {
+                                SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         // Keep a concrete-typed reference because the inherited `observationViewModel`
@@ -654,15 +655,12 @@ public final class DefaultMainViewModel<
         var manager = simulationManager;
         if ((manager != null)
                 && (getSimulationState() == SimulationState.PAUSED)) {
-            GM currentModel = manager.currentModel();
-            CON currentConfig = manager.config();
-            STA currentStatistics = manager.statistics();
             GC currentSelectedCell = selectedGridCell.get();
             logSimulationInfo("Applying user action to the current simulation state. selectedCell="
                     + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
-            simulationUserAction.apply(currentModel, currentStatistics, currentConfig, context, currentSelectedCell);
+            simulationUserAction.apply(manager, context, currentSelectedCell);
             if (currentSelectedCell != null) {
-                refreshSelectedGridCell(currentModel, currentSelectedCell.coordinate());
+                refreshSelectedGridCell(manager.currentModel(), currentSelectedCell.coordinate());
             }
             return true;
         } else {

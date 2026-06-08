@@ -21,6 +21,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsGridModel,
         EtpetsConfig,
         EtpetsStatistics,
+        EtpetsSimulationManager,
         NoUserActionContext,
         EtpetsConfigView,
         EtpetsObservationView> {
@@ -47,7 +48,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
 
-    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsCell, EtpetsGridModel, EtpetsConfig, EtpetsStatistics, NoUserActionContext> viewModel,
+    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsCell, EtpetsGridModel, EtpetsConfig, EtpetsStatistics, EtpetsSimulationManager, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           EtpetsConfigView configView,
                           DefaultControlView controlView,

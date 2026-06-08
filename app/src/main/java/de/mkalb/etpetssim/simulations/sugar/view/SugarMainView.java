@@ -22,6 +22,7 @@ public final class SugarMainView
         SugarGridModel,
         SugarConfig,
         SugarStatistics,
+        SugarSimulationManager,
         NoUserActionContext,
         SugarConfigView,
         SugarObservationView> {
@@ -40,7 +41,7 @@ public final class SugarMainView
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
     private int maxColorAgentEnergy = 1;
 
-    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics, NoUserActionContext> viewModel,
+    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics, SugarSimulationManager, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SugarConfigView configView,
                          DefaultControlView controlView,

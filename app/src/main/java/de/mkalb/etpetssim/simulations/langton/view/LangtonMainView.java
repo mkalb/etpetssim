@@ -25,6 +25,7 @@ public final class LangtonMainView
         LangtonGridModel,
         LangtonConfig,
         LangtonStatistics,
+        LangtonSimulationManager,
         NoUserActionContext,
         LangtonConfigView,
         LangtonObservationView> {
@@ -38,7 +39,7 @@ public final class LangtonMainView
     private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonCell, LangtonGridModel, LangtonConfig, LangtonStatistics, NoUserActionContext> viewModel,
+    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonCell, LangtonGridModel, LangtonConfig, LangtonStatistics, LangtonSimulationManager, NoUserActionContext> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
                            DefaultControlView controlView,

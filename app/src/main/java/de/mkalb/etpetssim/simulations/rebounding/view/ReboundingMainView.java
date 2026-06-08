@@ -23,6 +23,7 @@ public final class ReboundingMainView
         WritableGridModel<ReboundingEntity>,
         ReboundingConfig,
         ReboundingStatistics,
+        ReboundingSimulationManager,
         NoUserActionContext,
         ReboundingConfigView,
         ReboundingObservationView> {
@@ -32,7 +33,7 @@ public final class ReboundingMainView
 
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
-    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics, NoUserActionContext> viewModel,
+    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics, ReboundingSimulationManager, NoUserActionContext> viewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry,
                               ReboundingConfigView configView,
                               DefaultControlView controlView,

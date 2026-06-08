@@ -26,6 +26,7 @@ public final class ForestMainView
         WritableGridModel<ForestEntity>,
         ForestConfig,
         ForestStatistics,
+        ForestSimulationManager,
         NoUserActionContext,
         ForestConfigView,
         ForestObservationView> {
@@ -38,7 +39,7 @@ public final class ForestMainView
 
     private @Nullable CellDrawer<ForestEntity> cellDrawer;
 
-    public ForestMainView(DefaultMainViewModel<ForestEntity, GridCell<ForestEntity>, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics, NoUserActionContext> viewModel,
+    public ForestMainView(DefaultMainViewModel<ForestEntity, GridCell<ForestEntity>, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics, ForestSimulationManager, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ForestConfigView configView,
                           DefaultControlView controlView,

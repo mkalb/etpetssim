@@ -12,21 +12,23 @@ public final class ForestUserAction
         WritableGridModel<ForestEntity>,
         ForestConfig,
         ForestStatistics,
+        ForestSimulationManager,
         NoUserActionContext> {
 
     public ForestUserAction() {
     }
 
     @Override
-    public void apply(WritableGridModel<ForestEntity> model,
-                      ForestStatistics statistics,
-                      ForestConfig config,
+    public void apply(ForestSimulationManager manager,
                       NoUserActionContext context,
                       @Nullable GridCellView<ForestEntity> selectedCell) {
         if (selectedCell == null) {
             // This user action works only if a cell is selected, so do nothing if no cell is selected.
             return;
         }
+
+        WritableGridModel<ForestEntity> model = manager.currentModel();
+        ForestStatistics statistics = manager.statistics();
 
         var coordinate = selectedCell.coordinate();
         ForestEntity entity = model.getEntity(coordinate);

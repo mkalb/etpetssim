@@ -7,20 +7,27 @@ import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 import org.jspecify.annotations.Nullable;
 
-public class LangtonUserAction
+public final class LangtonUserAction
         implements SimulationUserAction<
         LangtonEntity,
         LangtonGridModel,
         LangtonConfig,
         LangtonStatistics,
+        LangtonSimulationManager,
         NoUserActionContext> {
 
     @Override
-    public void apply(LangtonGridModel model, LangtonStatistics statistics, LangtonConfig config, NoUserActionContext context, @Nullable GridCellView<LangtonEntity> selectedCell) {
+    public void apply(LangtonSimulationManager manager,
+                      NoUserActionContext context,
+                      @Nullable GridCellView<LangtonEntity> selectedCell) {
         if (selectedCell == null) {
             // This user action works only if a cell is selected, so do nothing if no cell is selected.
             return;
         }
+
+        LangtonGridModel model = manager.currentModel();
+        LangtonStatistics statistics = manager.statistics();
+        LangtonConfig config = manager.config();
 
         var coordinate = selectedCell.coordinate();
 

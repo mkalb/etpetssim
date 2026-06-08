@@ -24,6 +24,7 @@ public final class SnakeMainView
         WritableGridModel<SnakeEntity>,
         SnakeConfig,
         SnakeStatistics,
+        SnakeSimulationManager,
         NoUserActionContext,
         SnakeConfigView,
         SnakeObservationView> {
@@ -45,7 +46,7 @@ public final class SnakeMainView
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics, NoUserActionContext> viewModel,
+    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics, SnakeSimulationManager, NoUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SnakeConfigView configView,
                          DefaultControlView controlView,

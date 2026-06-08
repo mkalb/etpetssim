@@ -16,6 +16,7 @@ public final class WatorSimulationManager
     private final GridStructure structure;
     private final WatorStatistics statistics;
     private final TimedSimulationExecutor<WatorEntity, WritableGridModel<WatorEntity>> executor;
+    private final CreatureFactory creatureFactory;
 
     public WatorSimulationManager(WatorConfig config) {
         super(config);
@@ -25,24 +26,24 @@ public final class WatorSimulationManager
         var random = new Random(config.seed());
         var model = new ArrayGridModel<WatorEntity>(structure, TerrainConstant.WATER);
 
-        var entityFactory = new CreatureFactory();
-        var agentStepLogic = new WatorStepLogic(config, random, entityFactory);
+        creatureFactory = new CreatureFactory();
+        var agentStepLogic = new WatorStepLogic(config, random, creatureFactory);
         var runner = new AsynchronousStepRunner<>(model, WatorEntity::isAgent, AgentOrderingStrategies.byPosition(), agentStepLogic);
         var terminationCondition = new WatorTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        initializeGrid(model, random, entityFactory);
+        initializeGrid(model, random);
 
         initializeStatistics();
     }
 
-    private void initializeGrid(WritableGridModel<WatorEntity> model, Random random, CreatureFactory entityFactory) {
+    private void initializeGrid(WritableGridModel<WatorEntity> model, Random random) {
         var fishCount = Math.clamp(
                 Math.toIntExact(Math.round(config().fishPercent() * structure.cellCount())),
                 0, structure.cellCount());
         var fish = new ArrayList<WatorEntity>(fishCount);
         for (int i = 0; i < fishCount; i++) {
-            fish.add(createFish(entityFactory, random));
+            fish.add(createFish(random));
         }
 
         var sharkCount = Math.clamp(
@@ -50,27 +51,32 @@ public final class WatorSimulationManager
                 0, structure.cellCount() - fishCount);
         var sharks = new ArrayList<WatorEntity>(sharkCount);
         for (int i = 0; i < sharkCount; i++) {
-            sharks.add(createShark(entityFactory, random));
+            sharks.add(createShark(random));
         }
 
         GridInitializers.placeAllAtRandomPositions(fish, WatorEntity::isWater, random).initialize(model);
         GridInitializers.placeAllAtRandomPositions(sharks, WatorEntity::isWater, random).initialize(model);
     }
 
-    private Fish createFish(CreatureFactory entityFactory, Random random) {
-        int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge()); // negative age for birth time
-
-        Fish fish = entityFactory.createFish(stepIndexOfBirth);
+    public Fish createFish(int stepIndex) {
         statistics.incrementFishCells();
-        return fish;
+        return creatureFactory.createFish(stepIndex);
     }
 
-    private Shark createShark(CreatureFactory entityFactory, Random random) {
+    private Fish createFish(Random random) {
+        int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge()); // negative age for birth time
+        return createFish(stepIndexOfBirth);
+    }
+
+    public Shark createShark(int stepIndex) {
+        statistics.incrementSharkCells();
+        return creatureFactory.createShark(stepIndex, config().sharkBirthEnergy());
+    }
+
+    private Shark createShark(Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().sharkMaxAge()); // negative age for birth time
 
-        Shark shark = entityFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
-        statistics.incrementSharkCells();
-        return shark;
+        return createShark(stepIndexOfBirth);
     }
 
     @Override

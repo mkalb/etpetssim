@@ -24,12 +24,13 @@ public abstract class AbstractDefaultMainView<
         GM extends GridModel<ENT>,
         CON extends SimulationConfig,
         STA extends TimedSimulationStatistics,
+        SM extends AbstractTimedSimulationManager<ENT, GM, CON, STA>,
         CTX extends SimulationUserActionContext,
         CFV extends SimulationConfigView,
         OV extends AbstractObservationView<ENT, GC, STA, DefaultObservationViewModel<ENT, GC, STA>>>
         extends
         AbstractMainView<
-                DefaultMainViewModel<ENT, GC, GM, CON, STA, CTX>,
+                DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX>,
                 CFV,
                 SimulationControlView,
                 OV> {
@@ -57,7 +58,7 @@ public abstract class AbstractDefaultMainView<
 
     private boolean skipOverlayActive = false;
 
-    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, CTX> viewModel,
+    protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
                                       CFV configView, SimulationControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
@@ -220,7 +221,6 @@ public abstract class AbstractDefaultMainView<
      * <p>Delegates to {@link DefaultMainViewModel#applyUserAction(SimulationUserActionContext)} and, when a change
      * was applied, updates the observation labels and redraws the simulation canvas.
      */
-    @SuppressWarnings("SameParameterValue")
     protected final void applyUserActionAndRedraw(CTX context) {
         boolean changed = viewModel.applyUserAction(context);
         if (changed) {

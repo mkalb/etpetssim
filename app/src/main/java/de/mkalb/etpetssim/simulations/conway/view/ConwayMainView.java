@@ -23,6 +23,7 @@ public final class ConwayMainView
         WritableGridModel<ConwayEntity>,
         ConwayConfig,
         ConwayStatistics,
+        ConwaySimulationManager,
         NoUserActionContext,
         ConwayConfigView,
         ConwayObservationView> {
@@ -32,7 +33,7 @@ public final class ConwayMainView
 
     private @Nullable CoordinateDrawer coordinateDrawer;
 
-    public ConwayMainView(DefaultMainViewModel<ConwayEntity, GridCell<ConwayEntity>, WritableGridModel<ConwayEntity>, ConwayConfig, ConwayStatistics, NoUserActionContext> viewModel,
+    public ConwayMainView(DefaultMainViewModel<ConwayEntity, GridCell<ConwayEntity>, WritableGridModel<ConwayEntity>, ConwayConfig, ConwayStatistics, ConwaySimulationManager, NoUserActionContext> viewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           ConwayConfigView configView,
                           DefaultControlView controlView,

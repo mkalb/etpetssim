@@ -1,15 +1,18 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.model.entity.*;
+import de.mkalb.etpetssim.simulations.wator.shared.WatorUserActionContext;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -23,9 +26,15 @@ public final class WatorMainView
         WritableGridModel<WatorEntity>,
         WatorConfig,
         WatorStatistics,
-        NoUserActionContext,
+        WatorSimulationManager,
+        WatorUserActionContext,
         WatorConfigView,
         WatorObservationView> {
+
+    private static final String WATOR_TOOLBAR_ADD_FISH = "wator.toolbar.addfish";
+    private static final String WATOR_TOOLBAR_ADD_FISH_TOOLTIP = "wator.toolbar.addfish.tooltip";
+    private static final String WATOR_TOOLBAR_ADD_SHARK = "wator.toolbar.addshark";
+    private static final String WATOR_TOOLBAR_ADD_SHARK_TOOLTIP = "wator.toolbar.addshark.tooltip";
 
     private static final Color FALLBACK_COLOR_AGENT = Color.WHITE;
     private static final double FISH_MAX_FACTOR_DELTA = -0.5d;
@@ -41,7 +50,7 @@ public final class WatorMainView
 
     private int maxColorSharkEnergy = 1;
 
-    public WatorMainView(DefaultMainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>, WatorConfig, WatorStatistics, NoUserActionContext> viewModel,
+    public WatorMainView(DefaultMainViewModel<WatorEntity, GridCell<WatorEntity>, WritableGridModel<WatorEntity>, WatorConfig, WatorStatistics, WatorSimulationManager, WatorUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          WatorConfigView configView,
                          DefaultControlView controlView,
@@ -180,7 +189,19 @@ public final class WatorMainView
 
     @Override
     protected List<Node> createActionToolBarNodes() {
-        return List.of();
+        Button addFishButton = new Button(AppLocalization.getText(WATOR_TOOLBAR_ADD_FISH));
+        addFishButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        addFishButton.setTooltip(new Tooltip(AppLocalization.getText(WATOR_TOOLBAR_ADD_FISH_TOOLTIP)));
+        addFishButton.setOnAction(_ -> applyUserActionAndRedraw(WatorUserActionContext.ADD_FISH));
+        addFishButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        Button addSharkButton = new Button(AppLocalization.getText(WATOR_TOOLBAR_ADD_SHARK));
+        addSharkButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        addSharkButton.setTooltip(new Tooltip(AppLocalization.getText(WATOR_TOOLBAR_ADD_SHARK_TOOLTIP)));
+        addSharkButton.setOnAction(_ -> applyUserActionAndRedraw(WatorUserActionContext.ADD_SHARK));
+        addSharkButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        return List.of(addFishButton, addSharkButton);
     }
 
 }
