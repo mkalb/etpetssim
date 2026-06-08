@@ -1,11 +1,10 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
+import de.mkalb.etpetssim.simulations.sugar.model.*;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
@@ -16,9 +15,9 @@ import java.util.*;
 public final class SugarObservationView
         extends AbstractObservationView<
         SugarEntity,
-        GridCell<SugarEntity>,
+        SugarCell,
         SugarStatistics,
-        DefaultObservationViewModel<SugarEntity, GridCell<SugarEntity>, SugarStatistics>> {
+        DefaultObservationViewModel<SugarEntity, SugarCell, SugarStatistics>> {
 
     private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
     private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
@@ -30,7 +29,7 @@ public final class SugarObservationView
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
 
-    public SugarObservationView(DefaultObservationViewModel<SugarEntity, GridCell<SugarEntity>, SugarStatistics> viewModel,
+    public SugarObservationView(DefaultObservationViewModel<SugarEntity, SugarCell, SugarStatistics> viewModel,
                                 GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
@@ -38,16 +37,17 @@ public final class SugarObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCell<SugarEntity> gridCell) {
+    protected void onSelectedCellChanged(@Nullable SugarCell gridCell) {
         super.onSelectedCellChanged(gridCell);
         setUnknownValues(
                 currentEnergyLabel,
                 currentAmountLabel);
 
         if (gridCell != null) {
-            if (gridCell.entity() instanceof Agent agent) {
+            if (gridCell.agentEntity() instanceof Agent agent) {
                 setFormattedIntegerValue(currentEnergyLabel, agent.currentEnergy());
-            } else if (gridCell.entity() instanceof Sugar resource) {
+            }
+            if (gridCell.resourceEntity() instanceof Sugar resource) {
                 setFormattedIntegerValue(currentAmountLabel, resource.currentAmount());
             }
         }
