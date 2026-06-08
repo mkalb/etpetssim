@@ -21,7 +21,7 @@ import java.util.*;
 public final class LangtonMainView
         extends AbstractDefaultMainView<
         LangtonEntity,
-        GridCell<LangtonEntity>,
+        LangtonCell,
         LangtonGridModel,
         LangtonConfig,
         LangtonStatistics,
@@ -38,7 +38,7 @@ public final class LangtonMainView
     private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
 
-    public LangtonMainView(DefaultMainViewModel<LangtonEntity, GridCell<LangtonEntity>, LangtonGridModel, LangtonConfig, LangtonStatistics, NoUserActionContext> viewModel,
+    public LangtonMainView(DefaultMainViewModel<LangtonEntity, LangtonCell, LangtonGridModel, LangtonConfig, LangtonStatistics, NoUserActionContext> viewModel,
                            GridEntityDescriptorRegistry entityDescriptorRegistry,
                            LangtonConfigView configView,
                            DefaultControlView controlView,
@@ -97,8 +97,8 @@ public final class LangtonMainView
 
     @Override
     protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<LangtonEntity> oldGridCell,
-                                          @Nullable GridCell<LangtonEntity> newGridCell) {
+                                          @Nullable LangtonCell oldGridCell,
+                                          @Nullable LangtonCell newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

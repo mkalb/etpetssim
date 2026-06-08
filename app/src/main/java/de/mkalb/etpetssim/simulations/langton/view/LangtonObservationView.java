@@ -1,11 +1,10 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
-import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
-import de.mkalb.etpetssim.simulations.langton.model.LangtonStatistics;
+import de.mkalb.etpetssim.simulations.langton.model.*;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
@@ -15,9 +14,9 @@ import java.util.*;
 public final class LangtonObservationView
         extends AbstractObservationView<
         LangtonEntity,
-        GridCell<LangtonEntity>,
+        LangtonCell,
         LangtonStatistics,
-        DefaultObservationViewModel<LangtonEntity, GridCell<LangtonEntity>, LangtonStatistics>> {
+        DefaultObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics>> {
 
     private static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
     private static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
@@ -25,7 +24,7 @@ public final class LangtonObservationView
     private final Label antCellsLabel = new Label();
     private final Label visitedCellsLabel = new Label();
 
-    public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, GridCell<LangtonEntity>, LangtonStatistics> viewModel,
+    public LangtonObservationView(DefaultObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics> viewModel,
                                   GridEntityDescriptorRegistry entityDescriptorRegistry) {
         super(viewModel, entityDescriptorRegistry);
 
