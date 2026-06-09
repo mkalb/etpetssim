@@ -24,6 +24,33 @@ Each regular 2D simulation package uses four sub-packages plus a factory class:
 - **lab**: Testing and showcase environment, not a simulation; used for testing infrastructure and demonstrating
   features
 
+## Registering New Simulations
+
+When creating a new simulation, you must complete five registration steps:
+
+1. **Add enum constant to `SimulationType`**: Add a new constant in
+   `app/src/main/java/de/mkalb/etpetssim/SimulationType.java` with appropriate metadata (title/subtitle/URL
+   localization keys, CSS path if needed, and CLI aliases).
+
+2. **Create simulation sub-package**: Create a new package under `de.mkalb.etpetssim.simulations.<name>` with the
+   standard structure (`model`, `view`, `viewmodel`, `shared`, and a factory class).
+
+3. **Add switch case to `SimulationFactory`**: Add a case for the new simulation type in the switch statement in
+   `app/src/main/java/de/mkalb/etpetssim/simulations/core/SimulationFactory.java` that calls the factory's
+   `createMainView()` method.
+
+4. **Add localization keys**: Add the simulation's title, subtitle, and URL keys to all message properties files in
+   `app/src/main/resources/i18n/messages_*.properties` (at minimum `messages_en_US.properties` and
+   `messages_de_DE.properties`).
+
+5. **Update README.md**: Add the new simulation to the "Implemented Simulations" table in `README.md` with its
+   characteristics (sync/async, grid model, entities, and a link to the Wikipedia article if applicable). Also add a
+   screenshot in the "Screenshots" section following the existing pattern (screenshot file in `assets/screenshots/`,
+   referenced with descriptive caption).
+
+All five steps are mandatory for each new simulation to ensure consistent discovery, factory wiring, localization,
+documentation, and user access.
+
 ## MVVM Layer Dependencies
 
 ### Model Layer
