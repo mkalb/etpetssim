@@ -7,6 +7,11 @@ description: "JUnit 5 test writing rules for etpetssim. Use when creating or mod
 
 JUnit 5 test writing rules for this repository. Complements project-wide and Java coding instructions.
 
+## Test Framework
+
+- Use JUnit 5 (JUnit Jupiter) executed via the JUnit Platform.
+- Do not add additional test frameworks (TestNG, Spock, AssertJ, Mockito) without prior agreement.
+
 ## Test Class Structure
 
 - Prefer package-private test classes.
@@ -40,6 +45,7 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 - Prefer specific assertions (`assertEquals`, `assertTrue`) over generic ones when possible.
 - Add assertion messages when the failure reason might be ambiguous.
 - Use delta parameter for floating-point comparisons: `assertEquals(expected, actual, 0.00001d)`.
+- Use `@Disabled("reason")` with a clear reason when temporarily disabling tests.
 
 ## Test Data and Helpers
 
@@ -54,6 +60,7 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 ### Enum Testing
 
 ```java
+
 @Test
 void testValueOfInvalidThrows() {
     assertThrows(IllegalArgumentException.class, () -> MyEnum.valueOf("INVALID"));
@@ -68,6 +75,7 @@ void testValueOfNullThrows() {
 ### Boundary Value Testing
 
 ```java
+
 @Test
 void testMinAndMaxSizeAreValid() {
     assertDoesNotThrow(() -> new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE));
@@ -78,6 +86,7 @@ void testMinAndMaxSizeAreValid() {
 ### Immutability Testing
 
 ```java
+
 @Test
 void testGetValidValuesReturnsUnmodifiableList() {
     assertThrows(UnsupportedOperationException.class,
@@ -88,6 +97,7 @@ void testGetValidValuesReturnsUnmodifiableList() {
 ### Defensive Copying Testing
 
 ```java
+
 @Test
 void testConstructorMakesDefensiveCopyOfValidValues() {
     List<Mode> validValues = new ArrayList<>(List.of(Mode.A, Mode.B));
@@ -99,11 +109,13 @@ void testConstructorMakesDefensiveCopyOfValidValues() {
 
 ## Suppressions in Tests
 
+Follow general suppressions policy from java.instructions.md.
+
+Common test-specific suppressions:
+
 - Use `@SuppressWarnings("MagicNumber")` at class level when tests use many numeric literals.
 - Use `@SuppressWarnings("DataFlowIssue")` at method level for intentional null-passing tests.
 - Use `@SuppressWarnings("SpellCheckingInspection")` at class level for domain-specific terminology.
-- Keep each suppression as narrow as possible (prefer method over class scope).
-- Do not add explanatory comments to `@SuppressWarnings`.
 
 ## JavaFX Testing
 
@@ -138,14 +150,17 @@ Example:
  */
 @SuppressWarnings("MagicNumber")
 public final class ScoringAnalyzer {
-    private ScoringAnalyzer() {}
-    
+
+    private ScoringAnalyzer() {
+    }
+
     static void main() {
         Locale.setDefault(Locale.ROOT);
         runAnalysis();
     }
-    
-    private static void runAnalysis() { ... }
+
+    private static void runAnalysis() { ...}
+
 }
 ```
 
@@ -157,12 +172,12 @@ Group related tests using comment separators:
 // --- Construction tests ---
 
 @Test
-void testConstructorWithValidArguments() { ... }
+void testConstructorWithValidArguments() { ...}
 
 // --- Validation tests ---
 
 @Test
-void testIsValidReturnsTrueForValidConfig() { ... }
+void testIsValidReturnsTrueForValidConfig() { ...}
 ```
 
 Common groupings:

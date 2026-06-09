@@ -17,6 +17,7 @@ exists.
 - Keep changes minimal and focused. Do not reformat unrelated code.
 - Do not invent file paths, package names, class names, symbols, or APIs.
 - If requirements are ambiguous, ask before guessing.
+- Follow existing naming patterns and nearest peer-file conventions when adding new code.
 
 ## Platform Baseline
 

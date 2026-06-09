@@ -1,6 +1,6 @@
 ---
 applyTo: "**/*.java"
-description: "General Java coding rules for etpetssim. Applies to all Java files."
+description: "General Java coding rules for etpetssim. Use when writing Java code, defining records, using enums, working with JSpecify nullability, or using AppLogger. Applies to all Java files."
 ---
 
 # Java Coding Instructions
@@ -48,12 +48,14 @@ Example from codebase:
 
 ```java
 public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate> {
+
     // Validation in compact constructor
     public GridCoordinate {
         if ((x < 0) || (y < 0)) {
             throw new IllegalArgumentException("Coordinates must be non-negative");
         }
     }
+
 }
 ```
 
