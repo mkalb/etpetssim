@@ -9,7 +9,8 @@ This repository implements 2D grid-based simulations using MVVM architecture.
 
 Use this file as the default behavior baseline for all tasks in this repository.
 If a more specific instructions file exists for a path, that file takes precedence.
-Treat these rules as preferred defaults: follow them by default, and only deviate when a clear, task-specific reason exists.
+Treat these rules as preferred defaults: follow them by default, and only deviate when a clear, task-specific reason
+exists.
 
 ## Priority And Scope
 
