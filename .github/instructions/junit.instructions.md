@@ -16,7 +16,6 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 
 - Prefer package-private test classes.
 - Prefer `final` for test classes unless extension is required for test inheritance.
-- Organize tests by functionality using section comments (e.g., `// --- Construction tests ---`).
 - Place test-specific constants at the top of the class after fields.
 - Use descriptive constant names in UPPER_SNAKE_CASE (e.g., `GRID_WIDTH_SAMPLE`, `CELL_EDGE_LENGTH`).
 
@@ -59,7 +58,34 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 
 ### Enum Testing
 
+Enum test classes follow a standardized structure. Order test methods:
+
+1. Core contract tests (`testEnumValues`, `testEnumCount`, `testDeclarationOrder`)
+2. Exception tests (`testValueOfInvalidThrows`, `testValueOfNullThrows`)
+3. Resource key tests (if applicable)
+4. Domain-specific behavior tests
+
+#### Required Core Tests
+
 ```java
+@Test
+void testEnumValues() {
+    assertNotNull(MyEnum.valueOf("CONSTANT_ONE"));
+    assertNotNull(MyEnum.valueOf("CONSTANT_TWO"));
+}
+
+@Test
+void testEnumCount() {
+    assertEquals(3, MyEnum.values().length, "There should be exactly 3 values");
+}
+
+@Test
+void testDeclarationOrder() {
+    assertArrayEquals(
+            new MyEnum[]{MyEnum.CONSTANT_ONE, MyEnum.CONSTANT_TWO, MyEnum.CONSTANT_THREE},
+            MyEnum.values()
+    );
+}
 
 @Test
 void testValueOfInvalidThrows() {
@@ -71,6 +97,30 @@ void testValueOfNullThrows() {
     assertThrows(NullPointerException.class, () -> MyEnum.valueOf(null));
 }
 ```
+
+#### Resource Key Tests
+
+For enums with localization support:
+
+```java
+@Test
+void testStaticLabelResourceKey() {
+    assertEquals("myenum.label", MyEnum.labelResourceKey());
+}
+
+@Test
+void testResourceKey() {
+    assertEquals("myenum.constant_one", MyEnum.CONSTANT_ONE.resourceKey());
+    assertEquals("myenum.constant_two", MyEnum.CONSTANT_TWO.resourceKey());
+}
+```
+
+For multiple resource key methods (e.g., `nameResourceKey()`, `abbreviationResourceKey()`), create separate test
+methods.
+
+#### Domain-Specific Tests
+
+Test enum-specific methods with descriptive names (`testVertexCount()`, `testOpposite()`).
 
 ### Boundary Value Testing
 

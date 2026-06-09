@@ -221,12 +221,14 @@ Example structure:
 
 ```java
 public final class ConwayFactory implements SimulationFactory {
+
     @Override
     public SimulationInstance createSimulation() {
         // Wire model, viewmodel, and view
         var mainView = new ConwayMainView(...)
         return SimulationInstance.of(SimulationType.CONWAYS_LIFE, mainView);
     }
+
 }
 ```
 
