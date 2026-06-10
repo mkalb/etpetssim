@@ -324,7 +324,7 @@ public final class GridGeometry {
      * For {@code TRIANGLE} and {@code HEXAGON} cells, the conversion is not analytically invertible
      * due to the staggered or interlocking layout. Instead, the method estimates a base coordinate
      * and evaluates a set of nearby candidate cells to determine which one contains the given point.
-     * For triangles, barycentric coordinate checks are used; for hexagons, the closest valid cell
+     * For triangles, barycentric coordinate checks are used; for hexagons, the closest in-bounds cell
      * center within a bounding box is selected.</p>
      *
      * @param point         the canvas position in pixel coordinates
@@ -350,7 +350,7 @@ public final class GridGeometry {
             case SQUARE -> estimatedCoordinate;
             case HEXAGON -> {
                 // Evaluate candidate coordinates for the hexagon cell.
-                GridCoordinate closestValidHexCell = GridCoordinate.ILLEGAL;
+                GridCoordinate closestHexCell = GridCoordinate.ILLEGAL;
                 double minDistance = Double.MAX_VALUE;
                 double earlyAcceptThreshold = cellDimension.halfEdgeLength();
                 for (int[] offset : HEXAGON_NEIGHBOR_OFFSETS) {
@@ -370,14 +370,14 @@ public final class GridGeometry {
                     double distance = center.distance(point);
                     if (distance < minDistance) {
                         minDistance = distance;
-                        closestValidHexCell = candidate;
+                        closestHexCell = candidate;
                         if (distance < earlyAcceptThreshold) {
                             break;
                         }
                     }
                 }
 
-                yield closestValidHexCell;
+                yield structure.isCoordinateValid(closestHexCell) ? closestHexCell : GridCoordinate.ILLEGAL;
             }
         };
     }
