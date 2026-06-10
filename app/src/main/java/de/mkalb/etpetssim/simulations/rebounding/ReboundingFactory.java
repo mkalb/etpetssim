@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.rebounding;
 
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.model.NoUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
@@ -34,7 +33,7 @@ public final class ReboundingFactory {
                 new DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>(readOnlySimulationState);
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
-                        ReboundingSimulationManager::new, ReadableGridModel::getGridCell, new NoUserAction<>());
+                        ReboundingSimulationManager::new, ReadableGridModel::getGridCell, new ReboundingUserAction());
 
         // View
         var configView = new ReboundingConfigView(configViewModel);

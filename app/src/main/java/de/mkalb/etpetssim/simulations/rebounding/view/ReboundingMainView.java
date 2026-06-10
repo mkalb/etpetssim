@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.rebounding.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.*;
@@ -9,7 +9,9 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.rebounding.model.*;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -30,6 +32,8 @@ public final class ReboundingMainView
 
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+    private static final String REBOUNDING_TOOLBAR_ADD_WALL = "rebounding.toolbar.addwall";
+    private static final String REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP = "rebounding.toolbar.addwall.tooltip";
 
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
@@ -111,7 +115,13 @@ public final class ReboundingMainView
 
     @Override
     protected List<Node> createActionToolBarNodes() {
-        return List.of();
+        Button addWallButton = new Button(AppLocalization.getText(REBOUNDING_TOOLBAR_ADD_WALL));
+        addWallButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        addWallButton.setTooltip(new Tooltip(AppLocalization.getText(REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP)));
+        addWallButton.setOnAction(_ -> applyUserActionAndRedraw(NoUserActionContext.NO_CONTEXT));
+        addWallButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        return List.of(addWallButton);
     }
 
 }
