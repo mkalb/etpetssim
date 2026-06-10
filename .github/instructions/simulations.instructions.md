@@ -24,9 +24,38 @@ Each regular 2D simulation package uses four sub-packages plus a factory class:
 - **lab**: Testing and showcase environment, not a simulation; used for testing infrastructure and demonstrating
   features
 
+## Package Isolation
+
+Each simulation must be in its own sub-package under `de.mkalb.etpetssim.simulations.<name>` (e.g., `wator`,
+`langton`, `etpets`). Simulation packages are isolated:
+
+- No other packages may directly access simulation-specific types (classes in `model`, `view`, `viewmodel`, or
+  `shared` of a simulation package).
+- The only exception is `SimulationFactory`, which wires simulation factories to create simulation instances.
+- Simulations must not depend on each other; shared infrastructure belongs in `simulations.core`.
+- Keep simulation-specific logic, entities, and UI components within the simulation's own package.
+
+## Consistency Across Simulations
+
+When creating a new simulation, follow the patterns established in existing similar simulations:
+
+- **Study similar simulations first**: Before implementing, review existing simulations with comparable structure
+  (e.g., agent-based simulations like `wator` or `etpets`, cellular automata like `conway` or `forest`).
+- **Match naming conventions**: Use the same naming patterns for factory classes, ViewModel methods, View construction
+  methods, and entity types that similar simulations use.
+- **Follow architectural patterns**: Structure your `model`, `view`, `viewmodel`, and `shared` packages the same way as
+  comparable simulations.
+- **Maintain code style consistency**: Keep class organization, method ordering, field declarations, and code
+  formatting consistent with peer simulations.
+- **Reuse core infrastructure**: All simulations use classes from `simulations.core`, which provides baseline
+  consistency. Build on this foundation by keeping simulation-specific code similarly structured.
+
+This consistency improves readability, makes the codebase more maintainable, and significantly simplifies future
+refactoring across all simulations.
+
 ## Registering New Simulations
 
-When creating a new simulation, you must complete five registration steps:
+When creating a new simulation, you must complete six registration steps:
 
 1. **Add enum constant to `SimulationType`**: Add a new constant in
    `app/src/main/java/de/mkalb/etpetssim/SimulationType.java` with appropriate metadata (title/subtitle/URL
@@ -48,8 +77,12 @@ When creating a new simulation, you must complete five registration steps:
    screenshot in the "Screenshots" section following the existing pattern (screenshot file in `assets/screenshots/`,
    referenced with descriptive caption).
 
-All five steps are mandatory for each new simulation to ensure consistent discovery, factory wiring, localization,
-documentation, and user access.
+6. **Document entities in Simulation_Entity_Catalog.md**: Add a new section to
+   `docs/simulations/Simulation_Entity_Catalog.md` with a table documenting all entity types in the simulation's
+   `model.entity` package and an Entity Display Catalog table documenting all descriptors with their visual properties.
+
+All six steps are mandatory for each new simulation to ensure consistent discovery, factory wiring, localization,
+documentation, entity catalog completeness, and user access.
 
 ## MVVM Layer Dependencies
 
@@ -90,6 +123,27 @@ documentation, and user access.
   (`javafx.scene.paint.Color`) are permitted when they act as plain value carriers.
 - Entity types defined in `model.entity` remain in `model.entity` even when the view reads them for rendering — they do
   not move to `shared`.
+
+## Javadoc Requirements
+
+### Core Infrastructure (simulations.core)
+
+All classes in the `simulations.core` package and its sub-packages require comprehensive Javadoc:
+
+- Document all `public` and `protected` classes, interfaces, enums, and records.
+- Document all `public` and `protected` methods and constructors.
+- Document all `public` and `protected` constants.
+- These types form the reusable foundation for all simulations; thorough documentation is mandatory.
+
+### Simulation-Specific Packages
+
+Simulation-specific classes (in `model`, `view`, `viewmodel`, `shared` sub-packages of individual simulations like
+`wator`, `langton`, `etpets`) do not require Javadoc:
+
+- These classes are internal implementation details of each simulation.
+- They are not APIs consumed by other simulations or external code (except via `SimulationFactory`).
+- Focus on clear naming and code readability instead of Javadoc.
+- Add Javadoc only when complex domain logic or non-obvious behavior requires explanation.
 
 ## Entity Design
 
@@ -162,6 +216,7 @@ Use specialized components from `simulations.core.model`:
 
 ### Properties and Bindings
 
+- Prefer JavaFX Property/Binding APIs over manual listener wiring for derived UI state.
 - Expose ViewModel state via accessor methods named `xProperty()`.
 - When exposing a plain JavaFX property, also provide `getX()`/`setX(...)` accessors consistent with the property type.
 - Keep property field declared types compatible with their public accessor return types (do not expose a
@@ -175,7 +230,9 @@ Use specialized components from `simulations.core.model`:
 - Mutate JavaFX scene graph and `Property` values only on the JavaFX Application Thread.
 - Use `Platform.runLater(...)` to marshal updates from background threads to the FX thread.
 - Re-check relevant state (e.g., simulation state) inside the `Platform.runLater(...)` body before applying updates.
-- Do not block the JavaFX Application Thread with long-running computation or I/O.
+- Do not block the JavaFX Application Thread with long-running computation or I/O; use `javafx.concurrent.Task`/
+  `Service`
+  or a dedicated executor for such work.
 - Use `Timeline`/`AnimationTimer` for periodic UI ticks and frame-driven rendering.
 - Encapsulate periodic simulation drivers (e.g., `SimulationTimer`) instead of using `Timeline` directly in Views.
 
@@ -206,6 +263,7 @@ Use specialized components from `simulations.core.model`:
 - Reference resource bundle keys via constants; do not pass string literals to `AppLocalization`.
 - Define cross-cutting keys (used from multiple simulations or shared infrastructure) in `AppLocalizationKeys`.
 - Simulation-local keys may live as `private static final String` constants in the consuming View class.
+- Keep resource bundle keys sorted alphabetically.
 
 ## Simulation Factory Pattern
 

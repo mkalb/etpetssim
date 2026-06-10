@@ -37,10 +37,18 @@ Core provides infrastructure; it does not depend on domain logic or UI.
 
 Core package is the **only package allowed** to use `Objects.requireNonNull()` for parameter validation.
 
+This rule intentionally **overrides** the general Java instruction that says not to add
+`Objects.requireNonNull(...)` guards at the start of methods for non-null parameters.
+For all files matched by this instruction file, constructors and methods may, and for critical
+infrastructure usually should, validate required parameters with `Objects.requireNonNull()`.
+
 All other packages (`engine`, `ui`, `simulations`) rely on JSpecify non-null-by-default contracts without explicit
 runtime checks.
 
 **Reason:** Core classes are critical infrastructure; fail-fast validation prevents cascading failures.
+
+When fail-fast null validation is part of the public contract in core classes, Javadoc may explicitly document the
+resulting `NullPointerException`.
 
 ## Documentation Requirements
 
