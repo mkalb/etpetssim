@@ -1,13 +1,19 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.property.SimpleObjectProperty;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 final class InputEnumPropertyTest {
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        AppLogger.initializeForTesting();
+    }
 
     @Test
     void testConstructorMakesDefensiveCopyOfValidValues() {

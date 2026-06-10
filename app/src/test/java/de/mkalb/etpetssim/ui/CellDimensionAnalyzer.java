@@ -21,6 +21,11 @@ public final class CellDimensionAnalyzer {
     private CellDimensionAnalyzer() {
     }
 
+    /**
+     * Runs cell dimension and stroke line width analysis.
+     * Intended for manual invocation from the IDE to iteratively analyze and optimize
+     * {@code GridGeometry} calculations for different cell shapes and edge lengths.
+     */
     static void main() {
         Locale.setDefault(Locale.ROOT);
 

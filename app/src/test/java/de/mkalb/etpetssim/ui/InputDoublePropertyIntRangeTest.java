@@ -1,7 +1,8 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.property.SimpleDoubleProperty;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +18,11 @@ final class InputDoublePropertyIntRangeTest {
     private static final double EXPECTED_ROUND_LOW = 6.0d;
     private static final double ABOVE_MAX = 99.0d;
     private static final double BELOW_MIN = -99.0d;
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        AppLogger.initializeForTesting();
+    }
 
     @Test
     void testConstructorAcceptsNonIntegerInitialValueWithinRange() {

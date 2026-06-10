@@ -1,7 +1,8 @@
 package de.mkalb.etpetssim.ui;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.property.SimpleIntegerProperty;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +19,11 @@ final class InputIntegerPropertyTest {
     private static final int EXPECTED_STEP_MID = 15;
     private static final int ABOVE_MAX = 25;
     private static final int BELOW_MIN = -5;
+
+    @BeforeAll
+    static void setUpBeforeAll() {
+        AppLogger.initializeForTesting();
+    }
 
     @Test
     void testConstructorAcceptsValidInitialValueAndAccessors() {
