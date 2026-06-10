@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.*;
@@ -9,7 +9,9 @@ import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -30,6 +32,8 @@ public final class ConwayMainView
 
     private static final Color SELECTED_STROKE_COLOR = Color.BLACK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+    private static final String CONWAY_TOOLBAR_TOGGLE_CELL = "conway.toolbar.togglecell";
+    private static final String CONWAY_TOOLBAR_TOGGLE_CELL_TOOLTIP = "conway.toolbar.togglecell.tooltip";
 
     private @Nullable CoordinateDrawer coordinateDrawer;
 
@@ -127,7 +131,13 @@ public final class ConwayMainView
 
     @Override
     protected List<Node> createActionToolBarNodes() {
-        return List.of();
+        Button toggleCellButton = new Button(AppLocalization.getText(CONWAY_TOOLBAR_TOGGLE_CELL));
+        toggleCellButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        toggleCellButton.setTooltip(new Tooltip(AppLocalization.getText(CONWAY_TOOLBAR_TOGGLE_CELL_TOOLTIP)));
+        toggleCellButton.setOnAction(_ -> applyUserActionAndRedraw(NoUserActionContext.NO_CONTEXT));
+        toggleCellButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        return List.of(toggleCellButton);
     }
 
 }

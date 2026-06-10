@@ -29,6 +29,17 @@ public final class ConwayStatistics
         changedCells = newChangedCells;
     }
 
+    public void adjustAliveCells(int aliveCellsDelta) {
+        int newAliveCells = aliveCells + aliveCellsDelta;
+        maxAliveCells = Math.max(newAliveCells, maxAliveCells);
+        aliveCells = newAliveCells;
+        deadCells = getTotalCells() - newAliveCells;
+    }
+
+    public void incrementChangedCells() {
+        changedCells += 1;
+    }
+
     public int getMaxAliveCells() {
         return maxAliveCells;
     }
