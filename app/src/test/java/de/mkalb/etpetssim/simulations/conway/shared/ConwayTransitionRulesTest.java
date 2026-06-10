@@ -29,7 +29,7 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testConstructorStoresSurvivaAndBirthCountsInSortedOrder() {
+    void testConstructorStoresSurviveAndBirthCountsInSortedOrder() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(3, 2, 5), List.of(6, 1));
         assertAll(
                 () -> assertEquals(List.of(2, 3, 5), new ArrayList<>(rules.surviveCounts())),
@@ -38,14 +38,14 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testConstructorRejectsSurvivaCountBelowMin() {
+    void testConstructorRejectsSurviveCountBelowMin() {
         SortedSet<Integer> invalid = new TreeSet<>(List.of(ConwayTransitionRules.MIN_NEIGHBOR_COUNT - 1));
         assertThrows(IllegalArgumentException.class,
                 () -> new ConwayTransitionRules(invalid, new TreeSet<>()));
     }
 
     @Test
-    void testConstructorRejectsSurvivaCountAboveMax() {
+    void testConstructorRejectsSurviveCountAboveMax() {
         SortedSet<Integer> invalid = new TreeSet<>(List.of(ConwayTransitionRules.MAX_NEIGHBOR_COUNT + 1));
         assertThrows(IllegalArgumentException.class,
                 () -> new ConwayTransitionRules(invalid, new TreeSet<>()));
@@ -73,7 +73,7 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testSurvivaCountsIsUnmodifiable() {
+    void testSurviveCountsIsUnmodifiable() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(2, 3), List.of(3));
         assertThrows(UnsupportedOperationException.class, () -> rules.surviveCounts().add(1));
     }

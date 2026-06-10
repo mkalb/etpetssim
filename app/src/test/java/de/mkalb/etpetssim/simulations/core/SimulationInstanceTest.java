@@ -192,10 +192,6 @@ final class SimulationInstanceTest {
         assertNotEquals(ref1.get(), ref2.get());
     }
 
-    /**
-     * Minimal stub view that returns a fixed region and does nothing on shutdown.
-     * Named so that {@code getSimpleName()} yields a predictable value in {@code toDisplayString()} tests.
-     */
     private record StubMainView(Region region) implements SimulationMainView {
 
         @Override

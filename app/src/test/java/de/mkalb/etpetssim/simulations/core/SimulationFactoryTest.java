@@ -22,9 +22,6 @@ final class SimulationFactoryTest {
         FxTestSupport.ensureStarted();
     }
 
-    /**
-     * Creates a {@link Stage} on the FX thread.
-     */
     private static Stage createStage() {
         AtomicReference<@Nullable Stage> ref = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> ref.set(new Stage()));
@@ -33,10 +30,6 @@ final class SimulationFactoryTest {
         return stage;
     }
 
-    /**
-     * Creates a {@link SimulationInstance} for the given type on the FX thread.
-     * Uses a no-op stage updater.
-     */
     private static SimulationInstance createInstance(SimulationType type) {
         Stage stage = createStage();
         AtomicReference<@Nullable SimulationInstance> ref = new AtomicReference<>();
