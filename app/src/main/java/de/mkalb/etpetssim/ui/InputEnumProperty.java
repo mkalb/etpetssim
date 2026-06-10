@@ -86,7 +86,7 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
     }
 
     /**
-     * Creates a new {@code InputEnumProperty} with the specified initial value, all values of the given enum type as valid values, and a display name provider.
+     * Creates a new {@code InputEnumProperty} with all values of the given enum type and a display name provider.
      * <p>
      * This method uses {@code enumClass.getEnumConstants()} to determine the valid values.
      *
@@ -181,8 +181,6 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
 
     /**
      * Returns an unmodifiable list of valid enum values for this property.
-     * <p>
-     * Only values from this list are allowed to be set for the property.
      *
      * @return the list of valid enum values
      */

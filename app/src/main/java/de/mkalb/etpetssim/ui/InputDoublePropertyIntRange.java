@@ -5,21 +5,22 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 
 /**
- * Represents a double property with an integer-based range.
+ * Represents a double property with a defined range specified by integer bounds.
  * <p>
  * This record encapsulates a {@link DoubleProperty} and enforces value constraints:
  * - The value must be between {@code min} and {@code max} (inclusive).
+ * - Validation is range-based and does not require integer-valued doubles.
  * <p>
- * Use {@link #of(int, int, int)} to create instances with validation.
+ * Use {@link #of(int, int, int)} to create instances.
  *
  * @param property the underlying {@link DoubleProperty}
- * @param min      the minimum allowed value (inclusive, integer)
- * @param max      the maximum allowed value (inclusive, integer)
+ * @param min      the minimum allowed value (inclusive)
+ * @param max      the maximum allowed value (inclusive)
  */
 public record InputDoublePropertyIntRange(DoubleProperty property, int min, int max) {
 
     /**
-     * Constructs a {@code InputDoublePropertyIntRange} with the given property and integer range.
+     * Constructs an {@code InputDoublePropertyIntRange} with the given property and range.
      * <p>
      * Validates that {@code min < max} and the property's value is valid.
      *
@@ -38,7 +39,7 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
     }
 
     /**
-     * Creates a new {@code InputDoublePropertyIntRange} with the specified initial value and integer range.
+     * Creates a new {@code InputDoublePropertyIntRange} with the specified initial value and range.
      * <p>
      * Validates all arguments.
      *
@@ -71,7 +72,7 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
     }
 
     /**
-     * Adjusts a value by clamping it to the range.
+     * Adjusts a value by rounding to the nearest integer and clamping it to the range.
      *
      * @param newValue the value to adjust
      * @param min      the minimum allowed value
