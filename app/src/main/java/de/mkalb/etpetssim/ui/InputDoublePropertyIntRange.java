@@ -9,7 +9,7 @@ import javafx.beans.property.*;
  * <p>
  * This record encapsulates a {@link DoubleProperty} and enforces value constraints:
  * - The value must be between {@code min} and {@code max} (inclusive).
- * - Validation is range-based and does not require integer-valued doubles.
+ * - Validation is range-based only; integer-valued doubles are not required.
  * <p>
  * Use {@link #of(int, int, int)} to create instances.
  *
@@ -23,6 +23,7 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
      * Constructs an {@code InputDoublePropertyIntRange} with the given property and range.
      * <p>
      * Validates that {@code min < max} and the property's value is valid.
+     * The value is only required to be within the range; it need not be integer-valued.
      *
      * @param property the underlying {@link DoubleProperty}
      * @param min      the minimum allowed value
@@ -85,6 +86,8 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
 
     /**
      * Checks if a value is valid for the given range.
+     * <p>
+     * Validation is range-based only; the value need not be integer-valued.
      *
      * @param value the value to check
      * @param min   the minimum allowed value
@@ -134,6 +137,8 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
 
     /**
      * Checks if the current value is valid.
+     * <p>
+     * Validation is range-based only; the value need not be integer-valued.
      *
      * @return {@code true} if the value is valid, {@code false} otherwise
      */
