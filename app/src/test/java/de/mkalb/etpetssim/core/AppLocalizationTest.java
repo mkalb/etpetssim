@@ -1,11 +1,14 @@
 package de.mkalb.etpetssim.core;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// Keep this class single-threaded because AppLocalization holds shared static state.
+@Execution(ExecutionMode.SAME_THREAD)
 final class AppLocalizationTest {
 
     @BeforeAll
@@ -15,7 +18,6 @@ final class AppLocalizationTest {
 
     @BeforeEach
     void setUpBeforeEach() {
-        // Reset AppLocalization before each test.
         AppLocalization.resetForTesting();
     }
 
@@ -110,18 +112,6 @@ final class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.resolveLocaleFromDefault(null));
     }
 
-    /**
-     * Tests the retrieval of localized text for the key "greeting".
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *   <li>The ResourceBundle for "en_US" must contain the key "greeting" with the value "Hello".</li>
-     *   <li>The ResourceBundle for "de_DE" must contain the key "greeting" with the value "Hallo".</li>
-     *   <li>The key "non_existent_key" must not exist in either bundle.</li>
-     * </ul>
-     *
-     * <p>If these keys are missing or incorrect, the test will fail or return the placeholder string.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetText() {
@@ -154,18 +144,6 @@ final class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getOptionalText(null));
     }
 
-    /**
-     * Tests the retrieval and formatting of localized text for the key "welcome" with a parameter.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>The ResourceBundle for "en_US" must contain the key "welcome" with the value "Welcome, %s!".</li>
-     *     <li>The ResourceBundle for "de_DE" must contain the key "welcome" with the value "Willkommen, %s!".</li>
-     *     <li>The key "non_existent_key" must not exist in either bundle.</li>
-     * </ul>
-     *
-     * <p>If these keys are missing or incorrect, the test will fail or return the placeholder string.</p>
-     */
     @SuppressWarnings({"SpellCheckingInspection", "DataFlowIssue", "GrazieInspectionRunner"})
     @Test
     void testGetFormattedText() {
@@ -181,8 +159,39 @@ final class AppLocalizationTest {
     }
 
     @Test
+    void testEnumValues() {
+        assertNotNull(AppLocalization.CountryLocale.valueOf("EN_US"));
+        assertNotNull(AppLocalization.CountryLocale.valueOf("DE_DE"));
+    }
+
+    @Test
+    void testEnumCount() {
+        assertEquals(2, AppLocalization.CountryLocale.values().length, "There should be exactly 2 values");
+    }
+
+    @Test
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new AppLocalization.CountryLocale[]{
+                        AppLocalization.CountryLocale.EN_US,
+                        AppLocalization.CountryLocale.DE_DE
+                },
+                AppLocalization.CountryLocale.values()
+        );
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> AppLocalization.CountryLocale.valueOf("INVALID"));
+    }
+
+    @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> AppLocalization.CountryLocale.valueOf(null));
+    }
+
+    @Test
     void testEnumCountryLocale() {
-        // Test that enum country locales are not null.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             Locale country = locale.countryLocale();
             assertNotNull(country);
@@ -194,7 +203,6 @@ final class AppLocalizationTest {
 
     @Test
     void testEnumDisplayName() {
-        // Test that enum display names are not null or empty.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String displayName = locale.displayName();
             assertNotNull(displayName);
@@ -207,7 +215,6 @@ final class AppLocalizationTest {
 
     @Test
     void testEnumLanguageCode() {
-        // Test that enum language codes are not null or empty.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.languageCode();
             assertNotNull(code);
@@ -221,7 +228,6 @@ final class AppLocalizationTest {
 
     @Test
     void testEnumCountryCode() {
-        // Test that enum country codes are not null or empty.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.countryCode();
             assertNotNull(code);
@@ -235,7 +241,6 @@ final class AppLocalizationTest {
 
     @Test
     void testEnumLocaleCode() {
-        // Test that enum locale codes match the expected format.
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.localeCode();
             assertNotNull(code);

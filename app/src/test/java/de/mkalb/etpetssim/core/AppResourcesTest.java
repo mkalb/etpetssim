@@ -22,17 +22,6 @@ final class AppResourcesTest {
         FxTestSupport.ensureStarted();
     }
 
-    /**
-     * Tests the retrieval of the default resource bundle for a specific locale.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>The resource bundle for the specified locale must exist in the classpath.</li>
-     *     <li>The bundle should contain a key "greeting" with a corresponding value.</li>
-     * </ul>
-     *
-     * <p>If the resource bundle is not present or does not contain the expected key, the test will fail.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetBundleDefaultWithLocale() {
@@ -43,17 +32,6 @@ final class AppResourcesTest {
         assertThrows(NullPointerException.class, () -> AppResources.getBundle(null));
     }
 
-    /**
-     * Tests the retrieval of a resource bundle by its base name and locale.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>The resource bundle with the specified base name must exist in the classpath.</li>
-     *     <li>The bundle should contain a key "greeting" with a corresponding value.</li>
-     * </ul>
-     *
-     * <p>If the resource bundle is not present or does not contain the expected key, the test will fail.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetBundleWithBaseNameAndLocale() {
@@ -71,16 +49,6 @@ final class AppResourcesTest {
         assertFalse(bundleOpt.isPresent(), "Missing bundle should not be present");
     }
 
-    /**
-     * Tests the retrieval of a CSS file by its filename.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>The CSS file "etpetssim.css" must exist in the /css/ directory.</li>
-     * </ul>
-     *
-     * <p>If this CSS file is not present, the test will fail.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetCssUrl() {
@@ -97,16 +65,6 @@ final class AppResourcesTest {
         assertFalse(cssUrlOpt.isPresent(), "Missing CSS should not be present");
     }
 
-    /**
-     * Tests the retrieval of an image by its filename.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>The image "etpetssim16.png" must exist in the /images/ directory.</li>
-     * </ul>
-     *
-     * <p>If this image is not present, the test will fail.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImage() {
@@ -116,17 +74,6 @@ final class AppResourcesTest {
         assertThrows(NullPointerException.class, () -> AppResources.getImage(null));
     }
 
-    /**
-     * Tests the retrieval of multiple images, including duplicates and missing images.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>Images "etpetssim16.png" and "etpetssim32.png" must exist in the /images/ directory.</li>
-     *     <li>"unknown.png" is a placeholder for a missing image.</li>
-     * </ul>
-     *
-     * <p>If these images are not present, the test will fail.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImages() {
@@ -150,16 +97,6 @@ final class AppResourcesTest {
         assertFalse(imageOpt.isPresent(), "Illegal image should not be present");
     }
 
-    /**
-     * Tests the retrieval of a resource as an InputStream.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>The resource "css/etpetssim.css" must exist in the classpath.</li>
-     * </ul>
-     *
-     * <p>If this resource is not present, the test will fail.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsStream() {
@@ -191,16 +128,6 @@ final class AppResourcesTest {
         assertFalse(resOpt.isPresent(), "Missing string should not be present");
     }
 
-    /**
-     * Tests the retrieval of a resource as a URL.
-     *
-     * <p><b>Test data prerequisites:</b></p>
-     * <ul>
-     *     <li>The resource "css/etpetssim.css" must exist in the classpath.</li>
-     * </ul>
-     *
-     * <p>If this resource is not present, the test will fail.</p>
-     */
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsUrl() {

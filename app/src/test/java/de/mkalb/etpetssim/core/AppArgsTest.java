@@ -210,6 +210,10 @@ final class AppArgsTest {
 
         assertTrue(result.startsWith("List of available command-line arguments:"));
         assertTrue(result.contains("--help"));
+        assertTrue(result.contains("--locale"));
+        assertTrue(result.contains("--log-console"));
+        assertTrue(result.contains("--log-file"));
+        assertTrue(result.contains("--log-level"));
         assertTrue(result.contains("--simulation"));
     }
 
@@ -224,11 +228,48 @@ final class AppArgsTest {
     }
 
     @Test
+    void testEnumValues() {
+        assertNotNull(AppArgs.Key.valueOf("HELP"));
+        assertNotNull(AppArgs.Key.valueOf("LOCALE"));
+        assertNotNull(AppArgs.Key.valueOf("LOG_CONSOLE"));
+        assertNotNull(AppArgs.Key.valueOf("LOG_FILE"));
+        assertNotNull(AppArgs.Key.valueOf("LOG_LEVEL"));
+        assertNotNull(AppArgs.Key.valueOf("SIMULATION"));
+    }
+
+    @Test
+    void testEnumCount() {
+        assertEquals(6, AppArgs.Key.values().length, "There should be exactly 6 values");
+    }
+
+    @Test
+    void testDeclarationOrder() {
+        assertArrayEquals(
+                new AppArgs.Key[]{
+                        AppArgs.Key.HELP,
+                        AppArgs.Key.LOCALE,
+                        AppArgs.Key.LOG_CONSOLE,
+                        AppArgs.Key.LOG_FILE,
+                        AppArgs.Key.LOG_LEVEL,
+                        AppArgs.Key.SIMULATION
+                },
+                AppArgs.Key.values()
+        );
+    }
+
+    @Test
     void testEnumKeyValues() {
         for (AppArgs.Key key : AppArgs.Key.values()) {
             assertNotNull(key.key(), "Key name should not be null: " + key);
             assertFalse(key.key().isBlank(), "Key name should not be blank: " + key);
         }
+
+        assertEquals("help", AppArgs.Key.HELP.key());
+        assertEquals("locale", AppArgs.Key.LOCALE.key());
+        assertEquals("log-console", AppArgs.Key.LOG_CONSOLE.key());
+        assertEquals("log-file", AppArgs.Key.LOG_FILE.key());
+        assertEquals("log-level", AppArgs.Key.LOG_LEVEL.key());
+        assertEquals("simulation", AppArgs.Key.SIMULATION.key());
     }
 
     @Test
@@ -245,6 +286,22 @@ final class AppArgsTest {
         assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("HELP").orElseThrow());
         assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("Help").orElseThrow());
 
+        assertEquals(AppArgs.Key.LOCALE, AppArgs.Key.fromString("locale").orElseThrow());
+        assertEquals(AppArgs.Key.LOCALE, AppArgs.Key.fromString("LOCALE").orElseThrow());
+        assertEquals(AppArgs.Key.LOCALE, AppArgs.Key.fromString("Locale").orElseThrow());
+
+        assertEquals(AppArgs.Key.LOG_CONSOLE, AppArgs.Key.fromString("log-console").orElseThrow());
+        assertEquals(AppArgs.Key.LOG_CONSOLE, AppArgs.Key.fromString("LOG-CONSOLE").orElseThrow());
+        assertEquals(AppArgs.Key.LOG_CONSOLE, AppArgs.Key.fromString("Log-Console").orElseThrow());
+
+        assertEquals(AppArgs.Key.LOG_FILE, AppArgs.Key.fromString("log-file").orElseThrow());
+        assertEquals(AppArgs.Key.LOG_FILE, AppArgs.Key.fromString("LOG-FILE").orElseThrow());
+        assertEquals(AppArgs.Key.LOG_FILE, AppArgs.Key.fromString("Log-File").orElseThrow());
+
+        assertEquals(AppArgs.Key.LOG_LEVEL, AppArgs.Key.fromString("log-level").orElseThrow());
+        assertEquals(AppArgs.Key.LOG_LEVEL, AppArgs.Key.fromString("LOG-LEVEL").orElseThrow());
+        assertEquals(AppArgs.Key.LOG_LEVEL, AppArgs.Key.fromString("Log-Level").orElseThrow());
+
         assertEquals(AppArgs.Key.SIMULATION, AppArgs.Key.fromString("simulation").orElseThrow());
         assertEquals(AppArgs.Key.SIMULATION, AppArgs.Key.fromString("SIMULATION").orElseThrow());
         assertEquals(AppArgs.Key.SIMULATION, AppArgs.Key.fromString("Simulation").orElseThrow());
@@ -254,6 +311,16 @@ final class AppArgsTest {
         assertFalse(AppArgs.Key.fromString(" help").isPresent());
         assertFalse(AppArgs.Key.fromString(" ").isPresent());
         assertFalse(AppArgs.Key.fromString("").isPresent());
+    }
+
+    @Test
+    void testValueOfInvalidThrows() {
+        assertThrows(IllegalArgumentException.class, () -> AppArgs.Key.valueOf("INVALID"));
+    }
+
+    @Test
+    void testValueOfNullThrows() {
+        assertThrows(NullPointerException.class, () -> AppArgs.Key.valueOf(null));
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -283,13 +350,11 @@ final class AppArgsTest {
 
     @Test
     void testArgumentsAsString() {
-        // Test variations of "--help".
         assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help", "--simulation=testSim"}).argumentsAsString());
         assertEquals("--simulation=testSim", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).argumentsAsString());
         assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).argumentsAsString());
         assertEquals("--help=false --simulation=testSim", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).argumentsAsString());
 
-        // Test variations of "--simulation".
         assertEquals("", new AppArgs(new String[]{"--simulation"}).argumentsAsString());
         assertEquals("", new AppArgs(new String[]{"--simulation="}).argumentsAsString());
         assertEquals("--simulation=1", new AppArgs(new String[]{"--simulation=1"}).argumentsAsString());
@@ -298,13 +363,11 @@ final class AppArgsTest {
 
     @Test
     void testToString() {
-        // Test variations of "--help".
         assertEquals("AppArgs{arguments={HELP=true, SIMULATION=testSim}}", new AppArgs(new String[]{"--help", "--simulation=testSim"}).toString());
         assertEquals("AppArgs{arguments={SIMULATION=testSim}}", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).toString());
         assertEquals("AppArgs{arguments={HELP=true, SIMULATION=testSim}}", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).toString());
         assertEquals("AppArgs{arguments={HELP=false, SIMULATION=testSim}}", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).toString());
 
-        // Test variations of "--simulation".
         assertEquals("AppArgs{arguments={}}", new AppArgs(new String[]{"--simulation"}).toString());
         assertEquals("AppArgs{arguments={}}", new AppArgs(new String[]{"--simulation="}).toString());
         assertEquals("AppArgs{arguments={SIMULATION=1}}", new AppArgs(new String[]{"--simulation=1"}).toString());
