@@ -7,7 +7,7 @@ import java.util.regex.*;
  * Parses and stores command-line arguments.
  * <p>
  * Supported formats are {@code --key=value} and {@code --flag}. Unknown keys and
- * malformed arguments are ignored and reported through {@link AppLogger}.
+ * syntactically invalid argument strings are ignored and reported through {@link AppLogger}.
  */
 public final class AppArgs {
 
@@ -187,6 +187,11 @@ public final class AppArgs {
         return sb.toString();
     }
 
+    /**
+     * Returns a debug-oriented string representation of this argument container.
+     *
+     * @return string containing the currently parsed argument map
+     */
     @Override
     public String toString() {
         return "AppArgs{" +

@@ -115,8 +115,8 @@ public final class AppResources {
      * Loads multiple images from {@code /images/}.
      *
      * @param relativePaths image paths without leading slashes
-     * @return list of successfully loaded images; missing/invalid entries are skipped
-     * @throws NullPointerException if {@code relativePaths} is {@code null}
+     * @return list of successfully loaded images; missing or undecodable resources are skipped
+     * @throws NullPointerException if {@code relativePaths} is {@code null} or contains {@code null} elements
      * @see #FOLDER_IMAGES
      */
     public static List<Image> getImages(String... relativePaths) {
