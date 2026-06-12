@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.snake;
 
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.model.NoUserAction;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
@@ -34,7 +33,7 @@ public final class SnakeFactory {
                 new DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>(readOnlySimulationState);
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
-                        SnakeSimulationManager::new, ReadableGridModel::getGridCell, new NoUserAction<>());
+                        SnakeSimulationManager::new, ReadableGridModel::getGridCell, new SnakeUserAction());
 
         // View
         var configView = new SnakeConfigView(configViewModel);

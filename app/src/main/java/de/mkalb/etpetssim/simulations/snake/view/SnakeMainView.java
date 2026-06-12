@@ -1,16 +1,18 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.snake.model.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.*;
+import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -25,9 +27,18 @@ public final class SnakeMainView
         SnakeConfig,
         SnakeStatistics,
         SnakeSimulationManager,
-        NoUserActionContext,
+        SnakeUserActionContext,
         SnakeConfigView,
         SnakeObservationView> {
+
+    private static final String SNAKE_TOOLBAR_ADD_WALL = "snake.toolbar.addwall";
+    private static final String SNAKE_TOOLBAR_ADD_WALL_TOOLTIP = "snake.toolbar.addwall.tooltip";
+    private static final String SNAKE_TOOLBAR_REMOVE_WALL = "snake.toolbar.removewall";
+    private static final String SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP = "snake.toolbar.removewall.tooltip";
+    private static final String SNAKE_TOOLBAR_ADD_FOOD = "snake.toolbar.addfood";
+    private static final String SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP = "snake.toolbar.addfood.tooltip";
+    private static final String SNAKE_TOOLBAR_REMOVE_FOOD = "snake.toolbar.removefood";
+    private static final String SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP = "snake.toolbar.removefood.tooltip";
 
     // Entity dead colors are derived from the alive colors using two warm dead hues.
     private static final double DEAD_HEAD_HUE = 4.0d;
@@ -46,7 +57,7 @@ public final class SnakeMainView
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
-    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics, SnakeSimulationManager, NoUserActionContext> viewModel,
+    public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics, SnakeSimulationManager, SnakeUserActionContext> viewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SnakeConfigView configView,
                          DefaultControlView controlView,
@@ -84,11 +95,6 @@ public final class SnakeMainView
                 .requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
-
-        var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
-        model.filteredCoordinates(SnakeEntity::isWall)
-             .forEach(coordinate ->
-                     basePainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
     }
 
     @Override
@@ -120,6 +126,7 @@ public final class SnakeMainView
 
         dynamicPainter.clearCanvasBackground();
 
+        var wallDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_WALL);
         var growthFoodDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_GROWTH_FOOD);
         var snakeSegmentDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_SEGMENT);
         var snakeHeadDescriptor = entityDescriptorRegistry.requireByDescriptorId(SnakeEntity.DESCRIPTOR_ID_SNAKE_HEAD);
@@ -141,6 +148,9 @@ public final class SnakeMainView
         Color headDeadColor = toDeadFillColor(headAliveColor, DEAD_HEAD_HUE);
         Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
+        currentModel.filteredCoordinates(SnakeEntity::isWall)
+                    .forEach(coordinate ->
+                            dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
         currentModel.filteredCoordinates(SnakeEntity::isFood)
                     .forEach(coordinate ->
                             dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
@@ -181,7 +191,31 @@ public final class SnakeMainView
 
     @Override
     protected List<Node> createActionToolBarNodes() {
-        return List.of();
+        Button addWallButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_ADD_WALL));
+        addWallButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        addWallButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_ADD_WALL_TOOLTIP)));
+        addWallButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.ADD_WALL));
+        addWallButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        Button removeWallButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_WALL));
+        removeWallButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        removeWallButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP)));
+        removeWallButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.REMOVE_WALL));
+        removeWallButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        Button addFoodButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_ADD_FOOD));
+        addFoodButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        addFoodButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP)));
+        addFoodButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.ADD_FOOD));
+        addFoodButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        Button removeFoodButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_FOOD));
+        removeFoodButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
+        removeFoodButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP)));
+        removeFoodButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.REMOVE_FOOD));
+        removeFoodButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
+
+        return List.of(addWallButton, removeWallButton, addFoodButton, removeFoodButton);
     }
 
     private boolean isSelected(SnakeHead head) {
