@@ -11,6 +11,7 @@ public final class SnakeStatistics
 
     private int snakeHeadCells;
     private int livingSnakeHeadCells;
+    private int wallCells;
     private int foodCells;
     private int deaths;
 
@@ -18,14 +19,17 @@ public final class SnakeStatistics
         super(gridStructure);
         snakeHeadCells = 0;
         livingSnakeHeadCells = 0;
+        wallCells = 0;
         foodCells = 0;
         deaths = 0;
     }
 
     void updateInitialCells(int snakeHeadCellsInitial,
+                            int wallCellsInitial,
                             int foodCellsInitial) {
         snakeHeadCells = snakeHeadCellsInitial;
         livingSnakeHeadCells = snakeHeadCellsInitial;
+        wallCells = wallCellsInitial;
         foodCells = foodCellsInitial;
     }
 
@@ -45,6 +49,14 @@ public final class SnakeStatistics
         foodCells--;
     }
 
+    public void adjustWallCells(int delta) {
+        wallCells += delta;
+    }
+
+    public void adjustFoodCells(int delta) {
+        foodCells += delta;
+    }
+
     void incrementDeaths() {
         deaths++;
     }
@@ -61,6 +73,10 @@ public final class SnakeStatistics
         return foodCells;
     }
 
+    public int getWallCells() {
+        return wallCells;
+    }
+
     public int getDeaths() {
         return deaths;
     }
@@ -71,6 +87,7 @@ public final class SnakeStatistics
                 baseToString() +
                 ", snakeHeadCells=" + snakeHeadCells +
                 ", livingSnakeHeadCells=" + livingSnakeHeadCells +
+                ", wallCells=" + wallCells +
                 ", foodCells=" + foodCells +
                 ", deaths=" + deaths +
                 '}';
