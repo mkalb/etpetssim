@@ -15,7 +15,7 @@ import java.util.function.*;
  * <p>
  * Invalid values are logged via {@link AppLogger} and still set on the property.
  * <p>
- * Use {@link #of(Object, List, Function)} to create instances.
+ * Use {@link #ofList(Object, List, Function)} or {@link #ofEnum(Enum, Class, Function)} to create instances.
  *
  * @param <T>                 the value type
  * @param property            the underlying {@link ObjectProperty} for the selected value
@@ -66,9 +66,9 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
      * @return a new {@code InputChoiceProperty}
      * @throws IllegalArgumentException if any argument is invalid
      */
-    public static <T> InputChoiceProperty<T> of(T initialValue,
-                                                List<T> validValues,
-                                                Function<T, String> displayNameProvider) {
+    public static <T> InputChoiceProperty<T> ofList(T initialValue,
+                                                    List<T> validValues,
+                                                    Function<T, String> displayNameProvider) {
         List<T> copiedValidValues = List.copyOf(validValues);
         var property = new SimpleObjectProperty<>(initialValue) {
             @Override
@@ -82,6 +82,24 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
             }
         };
         return new InputChoiceProperty<>(property, copiedValidValues, displayNameProvider);
+    }
+
+    /**
+     * Creates a new {@code InputChoiceProperty} with all values of the given enum type and a display name provider.
+     * <p>
+     * This method uses {@code enumClass.getEnumConstants()} to determine the valid values.
+     *
+     * @param initialValue        the initial selected enum value
+     * @param enumClass           the {@link Class} object of the enum type
+     * @param displayNameProvider a function mapping values to their display names
+     * @param <T>                 the enum type
+     * @return a new {@code InputChoiceProperty} with all enum values as valid values
+     * @throws IllegalArgumentException if any argument is invalid
+     */
+    public static <T extends Enum<T>> InputChoiceProperty<T> ofEnum(T initialValue,
+                                                                    Class<T> enumClass,
+                                                                    Function<T, String> displayNameProvider) {
+        return ofList(initialValue, List.of(enumClass.getEnumConstants()), displayNameProvider);
     }
 
     /**

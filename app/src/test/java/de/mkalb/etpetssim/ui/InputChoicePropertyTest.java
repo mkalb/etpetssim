@@ -32,7 +32,7 @@ final class InputChoicePropertyTest {
 
     @Test
     void testSetInvalidValueUpdatesProperty() {
-        InputChoiceProperty<String> property = InputChoiceProperty.of(
+        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
                 String::toUpperCase);
@@ -48,7 +48,7 @@ final class InputChoicePropertyTest {
 
     @Test
     void testSetValidValueUpdatesProperty() {
-        InputChoiceProperty<String> property = InputChoiceProperty.of(
+        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
                 String::toUpperCase);
@@ -64,7 +64,7 @@ final class InputChoicePropertyTest {
 
     @Test
     void testGetValidValuesReturnsUnmodifiableList() {
-        InputChoiceProperty<String> property = InputChoiceProperty.of(
+        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
                 String::toUpperCase);
@@ -75,7 +75,7 @@ final class InputChoicePropertyTest {
 
     @Test
     void testSingletonValidValuesListReportsNoMultipleValues() {
-        InputChoiceProperty<String> property = InputChoiceProperty.of(
+        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha"),
                 String::toUpperCase);
@@ -88,7 +88,7 @@ final class InputChoicePropertyTest {
 
     @Test
     void testAsStringBindingUsesDisplayNameProviderAndTracksUpdates() {
-        InputChoiceProperty<String> property = InputChoiceProperty.of(
+        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
                 value -> "display-" + value.toUpperCase(Locale.ROOT));
@@ -106,7 +106,7 @@ final class InputChoicePropertyTest {
     @Test
     void testOfRejectsEmptyValidValuesList() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputChoiceProperty.of("alpha", List.of(), String::toUpperCase));
+                () -> InputChoiceProperty.ofList("alpha", List.of(), String::toUpperCase));
 
         assertTrue(exception.getMessage().contains("validValues must not be empty"));
     }
@@ -114,7 +114,7 @@ final class InputChoicePropertyTest {
     @Test
     void testOfRejectsInitialValueOutsideValidValuesList() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputChoiceProperty.of("gamma",
+                () -> InputChoiceProperty.ofList("gamma",
                         List.of("alpha", "beta"),
                         String::toUpperCase));
 
@@ -124,7 +124,7 @@ final class InputChoicePropertyTest {
     @Test
     void testOfRejectsDuplicateValidValuesList() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputChoiceProperty.of("alpha",
+                () -> InputChoiceProperty.ofList("alpha",
                         List.of("alpha", "alpha"),
                         String::toUpperCase));
 
@@ -139,6 +139,27 @@ final class InputChoicePropertyTest {
     @Test
     void testIsInvalidValueReturnsTrueForValueOutsideList() {
         assertTrue(InputChoiceProperty.isInvalidValue("delta", VALID_VALUES));
+    }
+
+    @Test
+    void testOfEnumUsesAllEnumConstants() {
+        InputChoiceProperty<TestMode> property = InputChoiceProperty.ofEnum(
+                TestMode.MODE_BETA,
+                TestMode.class,
+                mode -> "display-" + mode.name());
+
+        assertAll(
+                () -> assertEquals(TestMode.MODE_BETA, property.getValue()),
+                () -> assertEquals(List.of(TestMode.values()), property.validValues()),
+                () -> assertTrue(property.hasMultipleValidValues()),
+                () -> assertEquals("display-MODE_BETA", property.displayNameProvider().apply(property.getValue()))
+        );
+    }
+
+    private enum TestMode {
+        MODE_ALPHA,
+        MODE_BETA,
+        MODE_GAMMA
     }
 
 }
