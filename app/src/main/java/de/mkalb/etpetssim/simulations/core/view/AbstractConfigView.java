@@ -86,9 +86,8 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
 
         // cellShapeProperty
         if (viewModel.cellShapeProperty().hasMultipleValidValues()) {
-            content.add(FXComponentFactory.createLabeledEnumComboBox(
+            content.add(FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.cellShapeProperty(),
-                    viewModel.cellShapeProperty().displayNameProvider(),
                     AppLocalization.getText(CellShape.labelResourceKey()),
                     AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_SHAPE_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
@@ -97,9 +96,8 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
 
         // gridEdgeBehaviorProperty
         if (viewModel.gridEdgeBehaviorProperty().hasMultipleValidValues()) {
-            content.add(FXComponentFactory.createLabeledEnumComboBox(
+            content.add(FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.gridEdgeBehaviorProperty(),
-                    viewModel.gridEdgeBehaviorProperty().displayNameProvider(),
                     AppLocalization.getText(GridEdgeBehavior.labelResourceKey()),
                     AppLocalization.getText(AppLocalizationKeys.CONFIG_GRID_EDGE_BEHAVIOR_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
@@ -144,9 +142,8 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         int baseControls = 1;
         FXComponentFactory.LabeledControl<? extends Region> cellDisplayModeControl;
         if (viewModel.cellDisplayModeProperty().hasMultipleValidValues()) {
-            cellDisplayModeControl = FXComponentFactory.createLabeledEnumComboBox(
+            cellDisplayModeControl = FXComponentFactory.createLabeledChoiceComboBox(
                     viewModel.cellDisplayModeProperty(),
-                    viewModel.cellDisplayModeProperty().displayNameProvider(),
                     AppLocalization.getText(CellDisplayMode.labelResourceKey()),
                     AppLocalization.getText(AppLocalizationKeys.CONFIG_CELL_DISPLAY_MODE_TOOLTIP),
                     FXStyleClasses.CONFIG_COMBOBOX
@@ -186,10 +183,9 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         );
     }
 
-    protected final FXComponentFactory.LabeledControl<? extends Region> createNeighborhoodModeControl(InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty) {
-        return FXComponentFactory.createLabeledEnumComboBox(
+    protected final FXComponentFactory.LabeledControl<? extends Region> createNeighborhoodModeControl(InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty) {
+        return FXComponentFactory.createLabeledChoiceComboBox(
                 neighborhoodModeProperty,
-                neighborhoodModeProperty.displayNameProvider(),
                 AppLocalization.getText(NeighborhoodMode.labelResourceKey()),
                 AppLocalization.getText(AppLocalizationKeys.CONFIG_NEIGHBORHOOD_MODE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX

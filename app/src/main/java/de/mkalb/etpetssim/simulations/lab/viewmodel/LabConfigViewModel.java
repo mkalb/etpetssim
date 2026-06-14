@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.viewmodel.AbstractConfigViewModel;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.*;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 
@@ -43,7 +43,9 @@ public final class LabConfigViewModel
     private final InputEnumProperty<LabColorMode> colorMode = InputEnumProperty.of(COLOR_MODE_DEFAULT, COLOR_MODE_VALUES, Enum::toString);
 
     // Rules - NeighborhoodMode
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(NEIGHBORHOOD_MODE_DEFAULT, NEIGHBORHOOD_MODE_VALUES,
+    private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
+            NEIGHBORHOOD_MODE_DEFAULT,
+            NeighborhoodMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     // Internal state
@@ -98,7 +100,7 @@ public final class LabConfigViewModel
         return colorMode;
     }
 
-    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
+    public InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty() {
         return neighborhoodMode;
     }
 

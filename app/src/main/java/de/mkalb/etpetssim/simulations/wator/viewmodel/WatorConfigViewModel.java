@@ -47,7 +47,7 @@ public final class WatorConfigViewModel
             SHARK_PERCENT_MAX);
 
     // Rules - NeighborhoodMode
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
+    private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
             NeighborhoodMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
@@ -146,7 +146,7 @@ public final class WatorConfigViewModel
         return sharkPercent;
     }
 
-    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
+    public InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty() {
         return neighborhoodMode;
     }
 

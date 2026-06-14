@@ -51,9 +51,9 @@ public final class ForestConfigViewModel
             TREE_DENSITY_MAX);
 
     // Rules - NeighborhoodMode
-    private final InputEnumProperty<NeighborhoodMode> neighborhoodMode = InputEnumProperty.of(
+    private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
             NEIGHBORHOOD_MODE_DEFAULT,
-            NEIGHBORHOOD_MODE_VALUES,
+            NeighborhoodMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
 
     // Rules
@@ -91,7 +91,7 @@ public final class ForestConfigViewModel
         return treeDensity;
     }
 
-    public InputEnumProperty<NeighborhoodMode> neighborhoodModeProperty() {
+    public InputChoiceProperty<NeighborhoodMode> neighborhoodModeProperty() {
         return neighborhoodMode;
     }
 

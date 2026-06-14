@@ -23,23 +23,23 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
 
-    private final InputEnumProperty<CellShape> cellShape;
-    private final InputEnumProperty<GridEdgeBehavior> gridEdgeBehavior;
+    private final InputChoiceProperty<CellShape> cellShape;
+    private final InputChoiceProperty<GridEdgeBehavior> gridEdgeBehavior;
     private final InputIntegerProperty gridWidth;
     private final InputIntegerProperty gridHeight;
     private final InputDoublePropertyIntRange cellEdgeLength;
-    private final InputEnumProperty<CellDisplayMode> cellDisplayMode;
+    private final InputChoiceProperty<CellDisplayMode> cellDisplayMode;
     private final SeedProperty seed;
 
     protected AbstractConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState,
                                       CommonConfigSettings commonConfigSettings) {
         this.simulationState = simulationState;
 
-        cellShape = InputEnumProperty.of(
+        cellShape = InputChoiceProperty.ofList(
                 commonConfigSettings.cellShapeInitial(),
                 commonConfigSettings.cellShapeValues(),
                 e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
-        gridEdgeBehavior = InputEnumProperty.of(
+        gridEdgeBehavior = InputChoiceProperty.ofList(
                 commonConfigSettings.gridEdgeBehaviorInitial(),
                 commonConfigSettings.gridEdgeBehaviorValues(),
                 e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
@@ -57,7 +57,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
                 commonConfigSettings.cellEdgeLengthInitial(),
                 commonConfigSettings.cellEdgeLengthMin(),
                 commonConfigSettings.cellEdgeLengthMax());
-        cellDisplayMode = InputEnumProperty.of(
+        cellDisplayMode = InputChoiceProperty.ofList(
                 commonConfigSettings.cellDisplayModeInitial(),
                 commonConfigSettings.cellDisplayModeValues(),
                 e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
@@ -79,7 +79,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
      *
      * @return cell-shape input property wrapper
      */
-    public final InputEnumProperty<CellShape> cellShapeProperty() {
+    public final InputChoiceProperty<CellShape> cellShapeProperty() {
         return cellShape;
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
      *
      * @return grid-edge behavior input property wrapper
      */
-    public final InputEnumProperty<GridEdgeBehavior> gridEdgeBehaviorProperty() {
+    public final InputChoiceProperty<GridEdgeBehavior> gridEdgeBehaviorProperty() {
         return gridEdgeBehavior;
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
      *
      * @return cell-display-mode input property wrapper
      */
-    public final InputEnumProperty<CellDisplayMode> cellDisplayModeProperty() {
+    public final InputChoiceProperty<CellDisplayMode> cellDisplayModeProperty() {
         return cellDisplayMode;
     }
 

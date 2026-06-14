@@ -208,38 +208,6 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Creates a labeled combo box for selecting enum values, with display names, formatted label, tooltip, and custom style class.
-     * <p>
-     * The combo box displays only valid enum values as provided by the InputEnumProperty.
-     * Display names for each enum value are supplied via the display name provider function, allowing for localization or custom labels.
-     * Selection changes are synchronized with the property, and vice versa.
-     * Null selections from the combo box are ignored.
-     * The label displays the current value using the provided format string.
-     * Both the label and the combo box share the same tooltip for improved accessibility.
-     * <p>
-     * This method is suitable for enum-based selections with custom display names.
-     *
-     * @param inputEnumProperty   the InputEnumProperty defining valid values and value binding
-     * @param displayNameProvider a function mapping enum values to their display names
-     * @param labelFormatString   the format string for the label (e.g., "%s")
-     * @param tooltip             the tooltip text for both the label and the combo box
-     * @param styleClass          the CSS style class to apply to the combo box
-     * @return a LabeledControl containing the label and the combo box
-     */
-    public static <E extends Enum<E>> LabeledControl<ComboBox<E>> createLabeledEnumComboBox(
-            InputEnumProperty<E> inputEnumProperty,
-            Function<E, String> displayNameProvider,
-            String labelFormatString,
-            String tooltip,
-            String styleClass) {
-        return createLabeledChoiceComboBox(
-                new InputChoiceProperty<>(inputEnumProperty.property(), inputEnumProperty.validValues(), inputEnumProperty.displayNameProvider()),
-                labelFormatString,
-                tooltip,
-                styleClass);
-    }
-
-    /**
      * Creates a labeled combo box for selecting values from a fixed choice set, with display names,
      * formatted label, tooltip, and custom style class.
      * <p>
