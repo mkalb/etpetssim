@@ -226,25 +226,55 @@ public final class FXComponentFactory {
      * @param styleClass          the CSS style class to apply to the combo box
      * @return a LabeledControl containing the label and the combo box
      */
-    @SuppressWarnings("ConstantValue")
     public static <E extends Enum<E>> LabeledControl<ComboBox<E>> createLabeledEnumComboBox(
             InputEnumProperty<E> inputEnumProperty,
             Function<E, String> displayNameProvider,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        Map<E, String> displayNames = inputEnumProperty
+        return createLabeledChoiceComboBox(
+                new InputChoiceProperty<>(inputEnumProperty.property(), inputEnumProperty.validValues(), inputEnumProperty.displayNameProvider()),
+                labelFormatString,
+                tooltip,
+                styleClass);
+    }
+
+    /**
+     * Creates a labeled combo box for selecting values from a fixed choice set, with display names,
+     * formatted label, tooltip, and custom style class.
+     * <p>
+     * The combo box displays only valid values as provided by the InputChoiceProperty.
+     * Display names for each value are supplied by the property's display name provider.
+     * Selection changes are synchronized with the property, and vice versa.
+     * Null selections from the combo box are ignored.
+     * The label displays the current value using the provided format string.
+     * Both the label and the combo box share the same tooltip for improved accessibility.
+     *
+     * @param inputChoiceProperty the InputChoiceProperty defining valid values, display names, and value binding
+     * @param labelFormatString   the format string for the label (e.g., "%s")
+     * @param tooltip             the tooltip text for both the label and the combo box
+     * @param styleClass          the CSS style class to apply to the combo box
+     * @param <T>                 the choice value type
+     * @return a LabeledControl containing the label and the combo box
+     */
+    @SuppressWarnings("ConstantValue")
+    public static <T> LabeledControl<ComboBox<T>> createLabeledChoiceComboBox(
+            InputChoiceProperty<T> inputChoiceProperty,
+            String labelFormatString,
+            String tooltip,
+            String styleClass) {
+        Map<T, String> displayNames = inputChoiceProperty
                 .validValues()
                 .stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
-                        displayNameProvider,
+                        inputChoiceProperty.displayNameProvider(),
                         (v1, _) -> v1 // Merge function, in case the list contains duplicates.
                 ));
 
-        ComboBox<E> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(inputEnumProperty.validValues());
-        comboBox.setValue(inputEnumProperty.getValue());
+        ComboBox<T> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(inputChoiceProperty.validValues());
+        comboBox.setValue(inputChoiceProperty.getValue());
         comboBox.setCellFactory(_ -> createDisplayNameListCell(displayNames));
         comboBox.setButtonCell(createDisplayNameListCell(displayNames));
         comboBox.getStyleClass().add(styleClass);
@@ -252,19 +282,19 @@ public final class FXComponentFactory {
         // Update the property when the combo box selection changes.
         comboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
             if (newVal != null) {
-                inputEnumProperty.setValue(newVal);
+                inputChoiceProperty.setValue(newVal);
             }
         });
 
         // Update the combo box when the property changes.
-        inputEnumProperty.property().addListener((_, _, newVal) -> {
+        inputChoiceProperty.property().addListener((_, _, newVal) -> {
             if (newVal != null) {
                 comboBox.setValue(newVal);
             }
         });
 
         Label label = new Label();
-        label.textProperty().bind(inputEnumProperty.asStringBinding(labelFormatString));
+        label.textProperty().bind(inputChoiceProperty.asStringBinding(labelFormatString));
         label.setLabelFor(comboBox);
 
         Tooltip tooltipValue = new Tooltip(tooltip);
@@ -275,20 +305,20 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Creates a ListCell for displaying enum values using their display names.
+     * Creates a ListCell for displaying values using their display names.
      * <p>
-     * The cell uses the provided map to look up display names for each enum value.
-     * If a display name is not found, the enum's toString() value is used as a fallback.
+     * The cell uses the provided map to look up display names for each value.
+     * If a display name is not found, the value's toString() value is used as a fallback.
      *
-     * @param displayNames a map from enum values to their display names
-     * @param <E>          the enum type
-     * @return a ListCell that displays the display name for each enum value
+     * @param displayNames a map from values to their display names
+     * @param <T>          the value type
+     * @return a ListCell that displays the display name for each value
      */
-    private static <E extends Enum<E>> ListCell<E> createDisplayNameListCell(Map<E, String> displayNames) {
+    private static <T> ListCell<T> createDisplayNameListCell(Map<T, String> displayNames) {
         return new ListCell<>() {
             @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
             @Override
-            protected void updateItem(@Nullable E item, boolean empty) {
+            protected void updateItem(@Nullable T item, boolean empty) {
                 // Follow the JavaFX Cell#updateItem(...) contract: call super first and clear the cell for empty or null items.
                 super.updateItem(item, empty);
                 if (empty || (item == null)) {
