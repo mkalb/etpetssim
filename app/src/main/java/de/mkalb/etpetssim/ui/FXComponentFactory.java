@@ -96,7 +96,7 @@ public final class FXComponentFactory {
             String styleClass) {
         ToggleGroup toggleGroup = new ToggleGroup();
 
-        List<RadioButton> radioButtons = inputEnumProperty.getValidValues()
+        List<RadioButton> radioButtons = inputEnumProperty.validValues()
                                                           .stream()
                                                           .map(enumValue -> {
                                                               RadioButton radioButton = new RadioButton(displayNameProvider.apply(enumValue));
@@ -169,7 +169,7 @@ public final class FXComponentFactory {
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        List<E> validValues = inputEnumProperty.getValidValues();
+        List<E> validValues = inputEnumProperty.validValues();
         if (validValues.size() != 2) {
             throw new IllegalArgumentException("InputEnumProperty must define exactly 2 valid values for checkbox usage.");
         }
@@ -234,7 +234,7 @@ public final class FXComponentFactory {
             String tooltip,
             String styleClass) {
         Map<E, String> displayNames = inputEnumProperty
-                .getValidValues()
+                .validValues()
                 .stream()
                 .collect(Collectors.toMap(
                         Function.identity(),
@@ -243,7 +243,7 @@ public final class FXComponentFactory {
                 ));
 
         ComboBox<E> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(inputEnumProperty.getValidValues());
+        comboBox.getItems().addAll(inputEnumProperty.validValues());
         comboBox.setValue(inputEnumProperty.getValue());
         comboBox.setCellFactory(_ -> createDisplayNameListCell(displayNames));
         comboBox.setButtonCell(createDisplayNameListCell(displayNames));
