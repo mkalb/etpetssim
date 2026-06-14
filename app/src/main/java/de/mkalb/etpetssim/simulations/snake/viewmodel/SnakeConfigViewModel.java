@@ -62,7 +62,7 @@ public final class SnakeConfigViewModel
             INITIAL_PENDING_GROWTH_STEP);
 
     // Rules
-    private final InputEnumProperty<SnakeDeathMode> deathMode = InputEnumProperty.of(
+    private final InputChoiceProperty<SnakeDeathMode> deathMode = InputChoiceProperty.ofList(
             SNAKE_DEATH_MODE_DEFAULT,
             SNAKE_DEATH_MODE_VALUES,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
@@ -126,7 +126,7 @@ public final class SnakeConfigViewModel
         return initialPendingGrowth;
     }
 
-    public InputEnumProperty<SnakeDeathMode> deathModeProperty() {
+    public InputChoiceProperty<SnakeDeathMode> deathModeProperty() {
         return deathMode;
     }
 

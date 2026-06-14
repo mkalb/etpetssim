@@ -73,9 +73,8 @@ public final class SnakeConfigView
                 seedControl, verticalWallsControl, foodCellsControl, snakesControl, initialPendingGrowthControl);
 
         // Rules
-        var deathModeControl = FXComponentFactory.createLabeledEnumComboBox(
+        var deathModeControl = FXComponentFactory.createLabeledChoiceComboBox(
                 viewModel.deathModeProperty(),
-                viewModel.deathModeProperty().displayNameProvider(),
                 AppLocalization.getText(SnakeDeathMode.labelResourceKey()),
                 AppLocalization.getText(SNAKE_CONFIG_DEATH_MODE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX

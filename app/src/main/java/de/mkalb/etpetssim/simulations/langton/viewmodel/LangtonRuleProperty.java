@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.langton.viewmodel;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.simulations.langton.shared.*;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import javafx.beans.property.*;
 
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.RULE_DEFAULT;
@@ -16,19 +16,19 @@ public final class LangtonRuleProperty {
 
     private final StringProperty stringProperty;
     private final StringProperty labelProperty;
-    private final InputEnumProperty<LangtonRulePresetTriangle> presetTriangleProperty;
-    private final InputEnumProperty<LangtonRulePresetSquare> presetSquareProperty;
-    private final InputEnumProperty<LangtonRulePresetHexagon> presetHexagonProperty;
+    private final InputChoiceProperty<LangtonRulePresetTriangle> presetTriangleProperty;
+    private final InputChoiceProperty<LangtonRulePresetSquare> presetSquareProperty;
+    private final InputChoiceProperty<LangtonRulePresetHexagon> presetHexagonProperty;
 
     public LangtonRuleProperty() {
         stringProperty = new SimpleStringProperty(RULE_DEFAULT);
         labelProperty = new SimpleStringProperty("");
 
-        presetTriangleProperty = InputEnumProperty.of(PRESET_TRIANGLE_INITIAL, LangtonRulePresetTriangle.class,
+        presetTriangleProperty = InputChoiceProperty.ofEnum(PRESET_TRIANGLE_INITIAL, LangtonRulePresetTriangle.class,
                 LangtonRulePresetTriangle::displayName);
-        presetSquareProperty = InputEnumProperty.of(PRESET_SQUARE_INITIAL, LangtonRulePresetSquare.class,
+        presetSquareProperty = InputChoiceProperty.ofEnum(PRESET_SQUARE_INITIAL, LangtonRulePresetSquare.class,
                 LangtonRulePresetSquare::displayName);
-        presetHexagonProperty = InputEnumProperty.of(PRESET_HEXAGON_INITIAL, LangtonRulePresetHexagon.class,
+        presetHexagonProperty = InputChoiceProperty.ofEnum(PRESET_HEXAGON_INITIAL, LangtonRulePresetHexagon.class,
                 LangtonRulePresetHexagon::displayName);
 
         presetTriangleProperty.property().addListener((_, _, newVal) -> {
@@ -53,15 +53,15 @@ public final class LangtonRuleProperty {
         return labelProperty;
     }
 
-    public InputEnumProperty<LangtonRulePresetTriangle> presetTriangleProperty() {
+    public InputChoiceProperty<LangtonRulePresetTriangle> presetTriangleProperty() {
         return presetTriangleProperty;
     }
 
-    public InputEnumProperty<LangtonRulePresetSquare> presetSquareProperty() {
+    public InputChoiceProperty<LangtonRulePresetSquare> presetSquareProperty() {
         return presetSquareProperty;
     }
 
-    public InputEnumProperty<LangtonRulePresetHexagon> presetHexagonProperty() {
+    public InputChoiceProperty<LangtonRulePresetHexagon> presetHexagonProperty() {
         return presetHexagonProperty;
     }
 

@@ -36,23 +36,20 @@ public final class LangtonConfigView
         var layoutPane = createLayoutPane(true);
 
         // Rules
-        var presetTriangleControl = FXComponentFactory.createLabeledEnumComboBox(
+        var presetTriangleControl = FXComponentFactory.createLabeledChoiceComboBox(
                 viewModel.ruleProperty().presetTriangleProperty(),
-                viewModel.ruleProperty().presetTriangleProperty().displayNameProvider(),
                 AppLocalization.getText(LANGTON_CONFIG_PRESET_TRIANGLE),
                 AppLocalization.getText(LANGTON_CONFIG_PRESET_TRIANGLE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
-        var presetSquareControl = FXComponentFactory.createLabeledEnumComboBox(
+        var presetSquareControl = FXComponentFactory.createLabeledChoiceComboBox(
                 viewModel.ruleProperty().presetSquareProperty(),
-                viewModel.ruleProperty().presetSquareProperty().displayNameProvider(),
                 AppLocalization.getText(LANGTON_CONFIG_PRESET_SQUARE),
                 AppLocalization.getText(LANGTON_CONFIG_PRESET_SQUARE_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX
         );
-        var presetHexagonControl = FXComponentFactory.createLabeledEnumComboBox(
+        var presetHexagonControl = FXComponentFactory.createLabeledChoiceComboBox(
                 viewModel.ruleProperty().presetHexagonProperty(),
-                viewModel.ruleProperty().presetHexagonProperty().displayNameProvider(),
                 AppLocalization.getText(LANGTON_CONFIG_PRESET_HEXAGON),
                 AppLocalization.getText(LANGTON_CONFIG_PRESET_HEXAGON_TOOLTIP),
                 FXStyleClasses.CONFIG_COMBOBOX

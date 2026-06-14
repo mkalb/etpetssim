@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.conway.shared.*;
-import de.mkalb.etpetssim.ui.InputEnumProperty;
+import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.*;
 import org.jspecify.annotations.Nullable;
 
@@ -28,9 +28,9 @@ public final class ConwayRuleProperty {
 
     private final StringProperty stringProperty;
     private final StringProperty labelProperty;
-    private final InputEnumProperty<ConwayPresetTriangle> presetTriangleProperty;
-    private final InputEnumProperty<ConwayPresetSquare> presetSquareProperty;
-    private final InputEnumProperty<ConwayPresetHexagon> presetHexagonProperty;
+    private final InputChoiceProperty<ConwayPresetTriangle> presetTriangleProperty;
+    private final InputChoiceProperty<ConwayPresetSquare> presetSquareProperty;
+    private final InputChoiceProperty<ConwayPresetHexagon> presetHexagonProperty;
 
     private @Nullable Consumer<ConwayTransitionRules> onRulesChanged;
 
@@ -38,11 +38,11 @@ public final class ConwayRuleProperty {
         stringProperty = new SimpleStringProperty("");
         labelProperty = new SimpleStringProperty("");
 
-        presetTriangleProperty = InputEnumProperty.of(PRESET_TRIANGLE_INITIAL, ConwayPresetTriangle.class,
+        presetTriangleProperty = InputChoiceProperty.ofEnum(PRESET_TRIANGLE_INITIAL, ConwayPresetTriangle.class,
                 ConwayPresetTriangle::displayName);
-        presetSquareProperty = InputEnumProperty.of(PRESET_SQUARE_INITIAL, ConwayPresetSquare.class,
+        presetSquareProperty = InputChoiceProperty.ofEnum(PRESET_SQUARE_INITIAL, ConwayPresetSquare.class,
                 ConwayPresetSquare::displayName);
-        presetHexagonProperty = InputEnumProperty.of(PRESET_HEXAGON_INITIAL, ConwayPresetHexagon.class,
+        presetHexagonProperty = InputChoiceProperty.ofEnum(PRESET_HEXAGON_INITIAL, ConwayPresetHexagon.class,
                 ConwayPresetHexagon::displayName);
 
         presetTriangleProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.toString()));
@@ -92,15 +92,15 @@ public final class ConwayRuleProperty {
         return labelProperty;
     }
 
-    public InputEnumProperty<ConwayPresetTriangle> presetTriangleProperty() {
+    public InputChoiceProperty<ConwayPresetTriangle> presetTriangleProperty() {
         return presetTriangleProperty;
     }
 
-    public InputEnumProperty<ConwayPresetSquare> presetSquareProperty() {
+    public InputChoiceProperty<ConwayPresetSquare> presetSquareProperty() {
         return presetSquareProperty;
     }
 
-    public InputEnumProperty<ConwayPresetHexagon> presetHexagonProperty() {
+    public InputChoiceProperty<ConwayPresetHexagon> presetHexagonProperty() {
         return presetHexagonProperty;
     }
 
