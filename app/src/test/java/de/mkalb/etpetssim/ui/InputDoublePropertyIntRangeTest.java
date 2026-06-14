@@ -32,8 +32,6 @@ final class InputDoublePropertyIntRangeTest {
         assertAll(
                 () -> assertEquals(NON_INTEGER_INITIAL_VALUE, property.getValue()),
                 () -> assertTrue(property.isValid()),
-                () -> assertFalse(property.isMin()),
-                () -> assertFalse(property.isMax()),
                 () -> assertEquals(NON_INTEGER_INITIAL_VALUE, property.asObjectProperty().get()),
                 () -> assertEquals(String.format("%.1f", NON_INTEGER_INITIAL_VALUE), property.asStringBinding("%.1f").get())
         );
@@ -58,17 +56,13 @@ final class InputDoublePropertyIntRangeTest {
         property.setValue(MIN_VALUE);
         assertAll(
                 () -> assertEquals(MIN_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid()),
-                () -> assertTrue(property.isMin()),
-                () -> assertFalse(property.isMax())
+                () -> assertTrue(property.isValid())
         );
 
         property.setValue(MAX_VALUE);
         assertAll(
                 () -> assertEquals(MAX_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid()),
-                () -> assertFalse(property.isMin()),
-                () -> assertTrue(property.isMax())
+                () -> assertTrue(property.isValid())
         );
     }
 

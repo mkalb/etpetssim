@@ -33,7 +33,7 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
             throw new IllegalArgumentException("min must be less than max");
         }
         if (!isValidValue(property.get(), min, max)) {
-            throw new IllegalArgumentException("Initial value is not valid: " + property.getValue());
+            throw new IllegalArgumentException("Initial value is not valid: " + property.get());
         }
     }
 
@@ -49,14 +49,7 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
      * @throws IllegalArgumentException if any argument is invalid
      */
     public static InputDoubleProperty of(double initialValue, double min, double max) {
-        if (min >= max) {
-            throw new IllegalArgumentException("min must be less than max");
-        }
-        if (!isValidValue(initialValue, min, max)) {
-            throw new IllegalArgumentException("Initial value is not valid: " + initialValue);
-        }
-
-        DoubleProperty property = new SimpleDoubleProperty(initialValue) {
+        var property = new SimpleDoubleProperty(initialValue) {
             @Override
             public void set(double newValue) {
                 if (!isValidValue(newValue, min, max)) {
@@ -119,7 +112,7 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
      * @return the current value
      */
     public double getValue() {
-        return property.getValue();
+        return property.get();
     }
 
     /**
@@ -128,7 +121,7 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
      * @param value the value to set
      */
     public void setValue(double value) {
-        property.setValue(value);
+        property.set(value);
     }
 
     /**
@@ -138,26 +131,6 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
      */
     public boolean isValid() {
         return isValidValue(getValue(), min, max);
-    }
-
-    /**
-     * Checks if the current value equals {@code min}.
-     *
-     * @return {@code true} if the value is {@code min}, {@code false} otherwise
-     */
-    @SuppressWarnings("FloatingPointEquality")
-    public boolean isMin() {
-        return getValue() == min;
-    }
-
-    /**
-     * Checks if the current value equals {@code max}.
-     *
-     * @return {@code true} if the value is {@code max}, {@code false} otherwise
-     */
-    @SuppressWarnings("FloatingPointEquality")
-    public boolean isMax() {
-        return getValue() == max;
     }
 
     /**

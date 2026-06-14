@@ -42,8 +42,8 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
         if (((max - min) % step) != 0) {
             throw new IllegalArgumentException("The range (max - min) must be divisible by step");
         }
-        if (!isValidValue(property.getValue(), min, max, step)) {
-            throw new IllegalArgumentException("Initial value is not valid: " + property.getValue());
+        if (!isValidValue(property.get(), min, max, step)) {
+            throw new IllegalArgumentException("Initial value is not valid: " + property.get());
         }
     }
 
@@ -60,20 +60,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      * @throws IllegalArgumentException if any argument is invalid
      */
     public static InputIntegerProperty of(int initialValue, int min, int max, int step) {
-        if (min >= max) {
-            throw new IllegalArgumentException("min must be less than max");
-        }
-        if (step <= 0) {
-            throw new IllegalArgumentException("step must be positive");
-        }
-        if (((max - min) % step) != 0) {
-            throw new IllegalArgumentException("The range (max - min) must be divisible by step");
-        }
-        if (!isValidValue(initialValue, min, max, step)) {
-            throw new IllegalArgumentException("Initial value is not valid: " + initialValue);
-        }
-
-        IntegerProperty property = new SimpleIntegerProperty(initialValue) {
+        var property = new SimpleIntegerProperty(initialValue) {
             @Override
             public void set(int newValue) {
                 if (!isValidValue(newValue, min, max, step)) {
@@ -146,7 +133,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      * @return the current value
      */
     public int getValue() {
-        return property.getValue();
+        return property.get();
     }
 
     /**
@@ -155,7 +142,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      * @param value the value to set
      */
     public void setValue(int value) {
-        property.setValue(value);
+        property.set(value);
     }
 
     /**
@@ -165,51 +152,6 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
      */
     public boolean isValid() {
         return isValidValue(getValue(), min, max, step);
-    }
-
-    /**
-     * Checks if the current value equals {@code min}.
-     *
-     * @return {@code true} if the value is {@code min}, {@code false} otherwise
-     */
-    public boolean isMin() {
-        return getValue() == min;
-    }
-
-    /**
-     * Checks if the current value equals {@code max}.
-     *
-     * @return {@code true} if the value is {@code max}, {@code false} otherwise
-     */
-    public boolean isMax() {
-        return getValue() == max;
-    }
-
-    /**
-     * Checks if the step size is 1.
-     *
-     * @return {@code true} if {@code step} is 1, {@code false} otherwise
-     */
-    public boolean isStepOne() {
-        return step == 1;
-    }
-
-    /**
-     * Returns the index of the current value within the range, based on the step size.
-     *
-     * @return the index of the value
-     */
-    public int getIndex() {
-        return (getValue() - min) / step;
-    }
-
-    /**
-     * Returns the maximum index (number of steps in the range).
-     *
-     * @return the maximum index
-     */
-    public int getMaxIndex() {
-        return (max - min) / step;
     }
 
     /**

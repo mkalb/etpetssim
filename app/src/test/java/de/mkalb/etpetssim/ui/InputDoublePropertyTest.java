@@ -27,8 +27,6 @@ final class InputDoublePropertyTest {
         assertAll(
                 () -> assertEquals(INITIAL_VALUE, property.getValue()),
                 () -> assertTrue(property.isValid()),
-                () -> assertFalse(property.isMin()),
-                () -> assertFalse(property.isMax()),
                 () -> assertEquals(INITIAL_VALUE, property.asObjectProperty().get()),
                 () -> assertEquals(String.format("%.1f", INITIAL_VALUE), property.asStringBinding("%.1f").get())
         );
@@ -88,17 +86,13 @@ final class InputDoublePropertyTest {
         property.setValue(MIN_VALUE);
         assertAll(
                 () -> assertEquals(MIN_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid()),
-                () -> assertTrue(property.isMin()),
-                () -> assertFalse(property.isMax())
+                () -> assertTrue(property.isValid())
         );
 
         property.setValue(MAX_VALUE);
         assertAll(
                 () -> assertEquals(MAX_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid()),
-                () -> assertFalse(property.isMin()),
-                () -> assertTrue(property.isMax())
+                () -> assertTrue(property.isValid())
         );
     }
 

@@ -36,11 +36,6 @@ final class InputIntegerPropertyTest {
         assertAll(
                 () -> assertEquals(INITIAL_VALUE, property.getValue()),
                 () -> assertTrue(property.isValid()),
-                () -> assertFalse(property.isMin()),
-                () -> assertFalse(property.isMax()),
-                () -> assertFalse(property.isStepOne()),
-                () -> assertEquals(2, property.getIndex()),
-                () -> assertEquals(4, property.getMaxIndex()),
                 () -> assertEquals(INITIAL_VALUE, property.asObjectProperty().get()),
                 () -> assertEquals("10", property.asStringBinding("%d").get())
         );
@@ -78,10 +73,7 @@ final class InputIntegerPropertyTest {
         property.setValue(MAX_VALUE);
         assertAll(
                 () -> assertEquals(MAX_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid()),
-                () -> assertFalse(property.isMin()),
-                () -> assertTrue(property.isMax()),
-                () -> assertEquals(4, property.getIndex())
+                () -> assertTrue(property.isValid())
         );
     }
 
@@ -116,10 +108,7 @@ final class InputIntegerPropertyTest {
         InputIntegerProperty property = InputIntegerProperty.of(3, MIN_VALUE, 4, 1);
 
         assertAll(
-                () -> assertEquals(3, property.getValue()),
-                () -> assertTrue(property.isStepOne()),
-                () -> assertEquals(3, property.getIndex()),
-                () -> assertEquals(4, property.getMaxIndex())
+                () -> assertEquals(3, property.getValue())
         );
     }
 
