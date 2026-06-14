@@ -42,7 +42,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
         if (((max - min) % step) != 0) {
             throw new IllegalArgumentException("The range (max - min) must be divisible by step");
         }
-        if (!isValidValue(property.get(), min, max, step)) {
+        if (isInvalidValue(property.get(), min, max, step)) {
             throw new IllegalArgumentException("Initial value is not valid: " + property.get());
         }
     }
@@ -50,7 +50,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
     /**
      * Creates a new {@code InputIntegerProperty} with the specified initial value, range, and step.
      * <p>
-     * Validates all arguments.
+     * Validation is performed by the canonical constructor.
      *
      * @param initialValue the initial value
      * @param min          the minimum allowed value
@@ -63,7 +63,7 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
         var property = new SimpleIntegerProperty(initialValue) {
             @Override
             public void set(int newValue) {
-                if (!isValidValue(newValue, min, max, step)) {
+                if (isInvalidValue(newValue, min, max, step)) {
                     AppLogger.error("InputIntegerProperty: Invalid value set: " + newValue +
                             " (min=" + min + ", max=" + max + ", step=" + step + ")");
                 }
@@ -75,37 +75,16 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
     }
 
     /**
-     * Adjusts a value by clamping it to the range and snapping it to the nearest valid step.
-     *
-     * @param newValue the value to adjust
-     * @param min      the minimum allowed value
-     * @param max      the maximum allowed value
-     * @param step     the step size
-     * @return the adjusted value
-     */
-    static int adjustValue(int newValue, int min, int max, int step) {
-        int clamped = Math.clamp(newValue, min, max);
-        int delta = clamped - min;
-        int lowerOffset = (delta / step) * step;
-        int upperOffset = Math.min(lowerOffset + step, max - min);
-
-        if ((delta - lowerOffset) <= (upperOffset - delta)) {
-            return min + lowerOffset;
-        }
-        return min + upperOffset;
-    }
-
-    /**
-     * Checks if a value is valid for the given range and step.
+     * Checks if a value is invalid for the given range and step.
      *
      * @param value the value to check
      * @param min   the minimum allowed value
      * @param max   the maximum allowed value
      * @param step  the step size
-     * @return {@code true} if the value is valid, {@code false} otherwise
+     * @return {@code true} if the value is invalid, {@code false} otherwise
      */
-    static boolean isValidValue(int value, int min, int max, int step) {
-        return (value >= min) && (value <= max) && (((value - min) % step) == 0);
+    static boolean isInvalidValue(int value, int min, int max, int step) {
+        return (value < min) || (value > max) || (((value - min) % step) != 0);
     }
 
     /**
@@ -146,22 +125,21 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
     }
 
     /**
-     * Checks if the current value is valid.
-     *
-     * @return {@code true} if the value is valid, {@code false} otherwise
-     */
-    public boolean isValid() {
-        return isValidValue(getValue(), min, max, step);
-    }
-
-    /**
      * Adjusts a value using the current range and step.
      *
      * @param newValue the value to adjust
      * @return the adjusted value
      */
     public int adjustValue(int newValue) {
-        return adjustValue(newValue, min, max, step);
+        int clamped = Math.clamp(newValue, min, max);
+        int delta = clamped - min;
+        int lowerOffset = (delta / step) * step;
+        int upperOffset = Math.min(lowerOffset + step, max - min);
+
+        if ((delta - lowerOffset) <= (upperOffset - delta)) {
+            return min + lowerOffset;
+        }
+        return min + upperOffset;
     }
 
 }

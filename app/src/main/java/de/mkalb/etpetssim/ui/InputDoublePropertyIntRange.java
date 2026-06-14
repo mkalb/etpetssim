@@ -34,7 +34,7 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
-        if (!isValidValue(property.get(), min, max)) {
+        if (isInvalidValue(property.get(), min, max)) {
             throw new IllegalArgumentException("Initial value is not valid: " + property.get());
         }
     }
@@ -42,7 +42,7 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
     /**
      * Creates a new {@code InputDoublePropertyIntRange} with the specified initial value and range.
      * <p>
-     * Validates all arguments.
+     * Validation is performed by the canonical constructor.
      *
      * @param initialValue the initial value
      * @param min          the minimum allowed value
@@ -54,7 +54,7 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
         var property = new SimpleDoubleProperty(initialValue) {
             @Override
             public void set(double newValue) {
-                if (!isValidValue(newValue, min, max)) {
+                if (isInvalidValue(newValue, min, max)) {
                     AppLogger.error("InputDoublePropertyIntRange: Invalid value set: " + newValue +
                             " (min=" + min + ", max=" + max + ")");
                 }
@@ -66,29 +66,17 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
     }
 
     /**
-     * Adjusts a value by rounding to the nearest integer and clamping it to the range.
-     *
-     * @param newValue the value to adjust
-     * @param min      the minimum allowed value
-     * @param max      the maximum allowed value
-     * @return the adjusted value
-     */
-    static double adjustValue(double newValue, int min, int max) {
-        return Math.clamp(Math.rint(newValue), min, max);
-    }
-
-    /**
-     * Checks if a value is valid for the given range.
+     * Checks if a value is invalid for the given range.
      * <p>
-     * Validation is range-based only; the value need not be integer-valued.
+     * Validation is range-based only; integer-valued doubles are not required.
      *
      * @param value the value to check
      * @param min   the minimum allowed value
      * @param max   the maximum allowed value
-     * @return {@code true} if the value is valid, {@code false} otherwise
+     * @return {@code true} if the value is invalid, {@code false} otherwise
      */
-    static boolean isValidValue(double value, int min, int max) {
-        return (value >= min) && (value <= max);
+    static boolean isInvalidValue(double value, int min, int max) {
+        return (!(value >= min)) || (!(value <= max));
     }
 
     /**
@@ -129,24 +117,13 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
     }
 
     /**
-     * Checks if the current value is valid.
-     * <p>
-     * Validation is range-based only; the value need not be integer-valued.
-     *
-     * @return {@code true} if the value is valid, {@code false} otherwise
-     */
-    public boolean isValid() {
-        return isValidValue(getValue(), min, max);
-    }
-
-    /**
      * Adjusts a value using the current range.
      *
      * @param newValue the value to adjust
      * @return the adjusted value
      */
     public double adjustValue(double newValue) {
-        return adjustValue(newValue, min, max);
+        return Math.clamp(Math.rint(newValue), min, max);
     }
 
 }

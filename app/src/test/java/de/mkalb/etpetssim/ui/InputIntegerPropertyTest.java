@@ -26,7 +26,7 @@ final class InputIntegerPropertyTest {
     }
 
     @Test
-    void testConstructorAcceptsValidInitialValueAndAccessors() {
+    void testConstructorAcceptsValidInitialValueAndExposesAccessors() {
         InputIntegerProperty property = new InputIntegerProperty(
                 new SimpleIntegerProperty(INITIAL_VALUE),
                 MIN_VALUE,
@@ -35,7 +35,7 @@ final class InputIntegerPropertyTest {
 
         assertAll(
                 () -> assertEquals(INITIAL_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid()),
+                () -> assertFalse(InputIntegerProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE, STEP)),
                 () -> assertEquals(INITIAL_VALUE, property.asObjectProperty().get()),
                 () -> assertEquals("10", property.asStringBinding("%d").get())
         );
@@ -67,48 +67,49 @@ final class InputIntegerPropertyTest {
     }
 
     @Test
-    void testSetValueOnStepUpdatesPropertyAndKeepsValidState() {
+    void testSetValueAcceptsValidValueOnStep() {
         InputIntegerProperty property = InputIntegerProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE, STEP);
 
         property.setValue(MAX_VALUE);
         assertAll(
                 () -> assertEquals(MAX_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid())
+                () -> assertFalse(InputIntegerProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE, STEP))
         );
     }
 
     @Test
-    void testSetValueOutsideRangeUpdatesPropertyAndSetsInvalidState() {
+    void testSetValueAllowsInvalidValuesOutsideRange() {
         InputIntegerProperty property = InputIntegerProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE, STEP);
 
         property.setValue(ABOVE_MAX);
         assertEquals(ABOVE_MAX, property.getValue());
-        assertFalse(property.isValid());
+        assertTrue(InputIntegerProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE, STEP));
 
         property.setValue(BELOW_MIN);
         assertEquals(BELOW_MIN, property.getValue());
-        assertFalse(property.isValid());
+        assertTrue(InputIntegerProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE, STEP));
     }
 
     @Test
-    void testSetValueOffStepUpdatesPropertyAndSetsInvalidState() {
+    void testSetValueAllowsInvalidValuesOffStep() {
         InputIntegerProperty property = InputIntegerProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE, STEP);
 
         property.setValue(OFF_STEP_HIGH);
         assertEquals(OFF_STEP_HIGH, property.getValue());
-        assertFalse(property.isValid());
+        assertTrue(InputIntegerProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE, STEP));
 
         property.setValue(OFF_STEP_HIGHER);
         assertEquals(OFF_STEP_HIGHER, property.getValue());
-        assertFalse(property.isValid());
+        assertTrue(InputIntegerProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE, STEP));
     }
 
     @Test
-    void testOfWithStepOneReportsStepOne() {
-        InputIntegerProperty property = InputIntegerProperty.of(3, MIN_VALUE, 4, 1);
+    void testOfWithStepOneCreatesInstanceAndAcceptsValue() {
+        InputIntegerProperty property = InputIntegerProperty.of(3, 0, 4, 1);
 
         assertAll(
-                () -> assertEquals(3, property.getValue())
+                () -> assertEquals(3, property.getValue()),
+                () -> assertFalse(InputIntegerProperty.isInvalidValue(property.getValue(), 0, 4, 1))
         );
     }
 

@@ -26,7 +26,7 @@ final class InputDoublePropertyTest {
 
         assertAll(
                 () -> assertEquals(INITIAL_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid()),
+                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE)),
                 () -> assertEquals(INITIAL_VALUE, property.asObjectProperty().get()),
                 () -> assertEquals(String.format("%.1f", INITIAL_VALUE), property.asStringBinding("%.1f").get())
         );
@@ -55,45 +55,45 @@ final class InputDoublePropertyTest {
     }
 
     @Test
-    void testSetValueOutsideRangeUpdatesPropertyAndSetsInvalidState() {
-        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
-
-        property.setValue(ABOVE_MAX);
-        assertEquals(ABOVE_MAX, property.getValue());
-        assertFalse(property.isValid());
-
-        property.setValue(BELOW_MIN);
-        assertEquals(BELOW_MIN, property.getValue());
-        assertFalse(property.isValid());
-    }
-
-    @Test
-    void testSetValueWithinRangeUpdatesPropertyAndKeepsValidState() {
+    void testSetValueAcceptsValidValuesWithinRange() {
         InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
 
         property.setValue(FRACTIONAL_IN_RANGE);
 
         assertAll(
                 () -> assertEquals(FRACTIONAL_IN_RANGE, property.getValue()),
-                () -> assertTrue(property.isValid())
+                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE))
         );
     }
 
     @Test
-    void testSetValueAtRangeBoundariesUpdatesDerivedState() {
+    void testSetValueAcceptsRangeBoundaries() {
         InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
 
         property.setValue(MIN_VALUE);
         assertAll(
                 () -> assertEquals(MIN_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid())
+                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE))
         );
 
         property.setValue(MAX_VALUE);
         assertAll(
                 () -> assertEquals(MAX_VALUE, property.getValue()),
-                () -> assertTrue(property.isValid())
+                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE))
         );
+    }
+
+    @Test
+    void testSetValueAllowsInvalidValuesOutsideRange() {
+        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+
+        property.setValue(ABOVE_MAX);
+        assertEquals(ABOVE_MAX, property.getValue());
+        assertTrue(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE));
+
+        property.setValue(BELOW_MIN);
+        assertEquals(BELOW_MIN, property.getValue());
+        assertTrue(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE));
     }
 
     @Test
