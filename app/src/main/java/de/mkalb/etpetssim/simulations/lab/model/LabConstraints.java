@@ -47,8 +47,6 @@ public final class LabConstraints {
 
     // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
-    public static final List<NeighborhoodMode> NEIGHBORHOOD_MODE_VALUES = List.of(
-            NeighborhoodMode.values());
 
     /**
      * Private constructor to prevent instantiation.

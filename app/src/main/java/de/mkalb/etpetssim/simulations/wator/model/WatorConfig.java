@@ -86,7 +86,6 @@ public record WatorConfig(
     public boolean isValid() {
         return isBaseValid()
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
-                && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidRanges()
                 && hasValidCombinedPopulationShare();
     }

@@ -102,26 +102,6 @@ final class WatorConfigTest {
     }
 
     @Test
-    void testIsValidRejectsUnexpectedNeighborhoodMode() {
-        WatorConfig config = createConfig(
-                WatorConstraints.FISH_PERCENT_DEFAULT,
-                WatorConstraints.SHARK_PERCENT_DEFAULT,
-                WatorConstraints.FISH_MAX_AGE_DEFAULT,
-                WatorConstraints.FISH_MIN_REPRODUCTION_AGE_DEFAULT,
-                WatorConstraints.FISH_MIN_REPRODUCTION_INTERVAL_DEFAULT,
-                WatorConstraints.SHARK_MAX_AGE_DEFAULT,
-                WatorConstraints.SHARK_BIRTH_ENERGY_DEFAULT,
-                WatorConstraints.SHARK_ENERGY_LOSS_PER_STEP_DEFAULT,
-                WatorConstraints.SHARK_ENERGY_GAIN_PER_FISH_DEFAULT,
-                WatorConstraints.SHARK_MIN_REPRODUCTION_AGE_DEFAULT,
-                WatorConstraints.SHARK_MIN_REPRODUCTION_ENERGY_DEFAULT,
-                WatorConstraints.SHARK_MIN_REPRODUCTION_INTERVAL_DEFAULT,
-                NeighborhoodMode.EDGES_AND_VERTICES);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
     void testIsValidRejectsUnsupportedGridEdgeBehavior() {
         WatorConfig config = createConfig(
                 WatorConstraints.CELL_SHAPE_DEFAULT,
