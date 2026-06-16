@@ -18,24 +18,22 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 ## Simulations
 
-### Implemented Simulations
-
-| Name (Wikipedia)                                                               | Sync / Async | Grid Model     | Default Entity    | Entities / Agents / Cells                                                    |
-|--------------------------------------------------------------------------------|--------------|----------------|-------------------|------------------------------------------------------------------------------|
-| ET Pets                                                                        | asynchronous | Sparse         |                   |                                                                              |
-| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | asynchronous | Array          | 🟦 Water          | Shark 🦈 (many), Fish 🐟 (many)                                              |
-| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | synchronous  | Sparse         | 🟨 Dead           | Alive 🟥 (many)                                                              |
-| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | asynchronous | Array & Sparse | ⬜ Unvisited       | Ant 🐜 (1 agent), Visited Ground (many, 16 colors)                           |
-| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | synchronous  | Array          | 🟫 Empty          | Tree 🌲 (many), Burning 🔥 (many)                                            |
-| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | asynchronous | Sparse         | None (🟫 Terrain) | 🟨 Sugar (many), 🟦 Agent (many)                                             |
-| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | asynchronous | Sparse         | ⬛ Ground          | 🔵 Snake Head (many), 🟩 Snake Segment (many), 🟡 Food (many), ⬜ Wall (many) |
-| Rebounding Entities                                                            | asynchronous | Sparse         | ⬛ Ground          | 🟨 Moving Entity (many), ⬜ Wall (many)                                       |
-| Simulation Lab                                                                 | n/a          | Sparse         | Normal            | Highlighted                                                                  |
+| Simulation                                                                     | Type               | Description                                                                                          |
+|--------------------------------------------------------------------------------|--------------------|------------------------------------------------------------------------------------------------------|
+| ET Pets                                                                        | Agent-Based Model  | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance |
+| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent-Based Model  | Agents (fish and sharks) interact in a predator–prey system                                          |
+| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automaton | Cells evolve based on simple local birth and survival rules                                          |
+| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Cellular Automaton | A moving ant updates cell states using simple rules                                                  |
+| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automaton | Cells model tree growth and fire spread through local rules                                          |
+| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent-Based Model  | Agents collect and consume sugar resources                                                           |
+| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Agent-Based Model  | Snakes move, grow, and avoid collisions while consuming food                                         |
+| Rebounding Entities                                                            | Agent-Based Model  | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           |
+| Simulation Lab                                                                 | Development Tool   | Testing environment for grid rendering and cell shapes                                               |
 
 For a detailed inventory of simulation entity types, see
 the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 
-### Screenshots
+### Simulation Gallery
 
 #### ET Pets
 
@@ -43,37 +41,37 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 
 #### Wa-Tor
 
-![Wa-Tor - Screenshot 01](assets/screenshots/screenshot_wator_01.png)
+![Wa-Tor](assets/screenshots/screenshot_wator_01.png)
 
 #### Conway's Game of Life
 
-![Conway's Game of Life - Screenshot 01](assets/screenshots/screenshot_conway_01.png)
+![Conway's Game of Life](assets/screenshots/screenshot_conway_01.png)
 
 #### Langton's Ant
 
-![Langton's Ant - Screenshot 01](assets/screenshots/screenshot_langton_01.png)
+![Langton's Ant](assets/screenshots/screenshot_langton_01.png)
 
 #### Forest-fire model
 
-![Forest-fire model - Screenshot 01](assets/screenshots/screenshot_forest_01.png)
+![Forest-fire model](assets/screenshots/screenshot_forest_01.png)
 
 #### Sugarscape
 
-![Sugarscape - Screenshot 01](assets/screenshots/screenshot_sugar_01.png)
+![Sugarscape](assets/screenshots/screenshot_sugar_01.png)
 
 #### Snake
 
-![Snake - Screenshot 01](assets/screenshots/screenshot_snake_01.png)
+![Snake](assets/screenshots/screenshot_snake_01.png)
 
 #### Rebounding Entities
 
-![Rebounding Entities - Screenshot 01](assets/screenshots/screenshot_rebounding_01.png)
+![Rebounding Entities](assets/screenshots/screenshot_rebounding_01.png)
 
 #### Simulation Lab
 
-![Simulation Lab - Screenshot 01](assets/screenshots/screenshot_lab_01.png)
-![Simulation Lab - Screenshot 02](assets/screenshots/screenshot_lab_02.png)
-![Simulation Lab - Screenshot 03](assets/screenshots/screenshot_lab_03.png)
+![Simulation Lab — Hexagon](assets/screenshots/screenshot_lab_01.png)
+![Simulation Lab — Triangle](assets/screenshots/screenshot_lab_02.png)
+![Simulation Lab — Square](assets/screenshots/screenshot_lab_03.png)
 
 ## Goals
 
@@ -92,7 +90,8 @@ At the same time, all generated content is reviewed and adapted in the context o
 consistency, and long-term maintainability. AI support is therefore treated as development assistance, while final
 technical decisions remain project-driven and under maintainer control.
 
-For coding conventions and detailed project rules, see the [Java Coding Guide](docs/Java-Coding-Guide.md).
+Project-specific AI instruction files for coding assistants are available
+in [.github/instructions](.github/instructions).
 
 ## Feedback and Issues
 
