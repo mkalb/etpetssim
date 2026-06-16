@@ -9,11 +9,12 @@ import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 public final class ForestStatistics
         extends BaseTimedSimulationStatistics {
 
+    private int maxTreeCells;
+    private int maxBurningCells;
+
     private int emptyCells;
     private int treeCells;
     private int burningCells;
-    private int maxTreeCells;
-    private int maxBurningCells;
 
     public ForestStatistics(GridStructure gridStructure) {
         super(gridStructure);
@@ -24,12 +25,26 @@ public final class ForestStatistics
         maxBurningCells = 0;
     }
 
-    void updateCells(int newTreeCells, int newBurningCells) {
+    void initializeStartupCellCounts(int treeCellsInitial) {
+        maxTreeCells = treeCellsInitial;
+        emptyCells = getTotalCells() - treeCellsInitial;
+        treeCells = treeCellsInitial;
+    }
+
+    void updateCellCounts(int newTreeCells, int newBurningCells) {
         emptyCells = getTotalCells() - newTreeCells - newBurningCells;
         treeCells = newTreeCells;
         burningCells = newBurningCells;
         maxTreeCells = Math.max(newTreeCells, maxTreeCells);
         maxBurningCells = Math.max(newBurningCells, maxBurningCells);
+    }
+
+    public int getMaxTreeCells() {
+        return maxTreeCells;
+    }
+
+    public int getMaxBurningCells() {
+        return maxBurningCells;
     }
 
     public int getEmptyCells() {
@@ -44,23 +59,15 @@ public final class ForestStatistics
         return burningCells;
     }
 
-    public int getMaxTreeCells() {
-        return maxTreeCells;
-    }
-
-    public int getMaxBurningCells() {
-        return maxBurningCells;
-    }
-
     @Override
     public String toString() {
         return "ForestStatistics{" +
                 baseToString() +
+                ", maxTreeCells=" + maxTreeCells +
+                ", maxBurningCells=" + maxBurningCells +
                 ", emptyCells=" + emptyCells +
                 ", treeCells=" + treeCells +
                 ", burningCells=" + burningCells +
-                ", maxTreeCells=" + maxTreeCells +
-                ", maxBurningCells=" + maxBurningCells +
                 '}';
     }
 

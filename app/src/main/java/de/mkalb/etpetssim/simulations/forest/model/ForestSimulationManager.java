@@ -61,9 +61,8 @@ public final class ForestSimulationManager
     }
 
     private void initializeStatistics(ReadableGridModel<ForestEntity> model) {
-        int treeEntities = Math.toIntExact(model
-                .countEntities(ForestEntity::isTree));
-        statistics.updateCells(treeEntities, 0);
+        int treeCellsInitial = Math.toIntExact(model.countEntities(ForestEntity::isTree));
+        statistics.initializeStartupCellCounts(treeCellsInitial);
     }
 
     @Override

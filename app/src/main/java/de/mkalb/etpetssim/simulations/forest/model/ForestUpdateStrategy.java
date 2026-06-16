@@ -33,7 +33,7 @@ public final class ForestUpdateStrategy implements SynchronousStepLogic<ForestEn
         int treeCells = Math.toIntExact(nextModel.countEntities(ForestEntity::isTree));
         int burningCells = Math.toIntExact(nextModel.countEntities(ForestEntity::isBurning));
 
-        statistics.updateCells(treeCells, burningCells);
+        statistics.updateCellCounts(treeCells, burningCells);
     }
 
     private GridCell<ForestEntity> processCell(GridCell<ForestEntity> cell,
