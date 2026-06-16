@@ -18,14 +18,14 @@ public final class SugarStatistics
         agentCells = 0;
     }
 
-    void updateInitialCells(int resourceCellsInitial,
-                            int agentCellsInitial) {
+    void initializeStartupCellCounts(int resourceCellsInitial,
+                                     int agentCellsInitial) {
         resourceCells = resourceCellsInitial;
         agentCells = agentCellsInitial;
     }
 
-    void updateCells(int agentCellsChange) {
-        agentCells += agentCellsChange;
+    void adjustAgentsCells(int agentCellsDelta) {
+        agentCells += agentCellsDelta;
     }
 
     public int getResourceCells() {

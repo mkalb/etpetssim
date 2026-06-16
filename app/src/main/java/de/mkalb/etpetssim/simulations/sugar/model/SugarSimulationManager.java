@@ -178,11 +178,9 @@ public final class SugarSimulationManager
     }
 
     private void initializeStatistics(SugarGridModel model) {
-        int resourceCellsInitial = Math.toIntExact(model.resourceModel()
-                                                        .countEntities(SugarEntity::isNotEmpty));
-        int agentCellsInitial = Math.toIntExact(model.agentModel()
-                                                     .countEntities(SugarEntity::isNotEmpty));
-        statistics.updateInitialCells(resourceCellsInitial, agentCellsInitial);
+        int resourceCellsInitial = Math.toIntExact(model.resourceModel().countEntities(SugarEntity::isNotEmpty));
+        int agentCellsInitial = Math.toIntExact(model.agentModel().countEntities(SugarEntity::isNotEmpty));
+        statistics.initializeStartupCellCounts(resourceCellsInitial, agentCellsInitial);
     }
 
     @Override

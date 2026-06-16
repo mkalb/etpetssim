@@ -66,7 +66,7 @@ public final class SugarAgentLogic {
                 agent.reduceEnergy(config.agentMetabolismRate());
                 if ((agent.ageAtStepIndex(stepIndex) >= config.agentMaxAge()) || (agent.currentEnergy() <= 0)) {
                     agentModel.setEntityToDefault(finalCoordinate);
-                    statistics.updateCells(-1);
+                    statistics.adjustAgentsCells(-1);
                     diedAgents++;
                 }
             }
@@ -78,7 +78,7 @@ public final class SugarAgentLogic {
                 // Spawn new agent
                 Agent newAgent = new Agent(config.agentInitialEnergy(), stepIndex);
                 agentModel.setEntity(spawnCoordinate.get(), newAgent);
-                statistics.updateCells(1);
+                statistics.adjustAgentsCells(1);
             }
         }
     }
