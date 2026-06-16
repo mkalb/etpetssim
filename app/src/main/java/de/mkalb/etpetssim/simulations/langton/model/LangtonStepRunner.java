@@ -66,7 +66,7 @@ public final class LangtonStepRunner
 
     void removeAnt(GridCell<AntEntity> agentCell, WritableGridModel<AntEntity> antModel, LangtonStatistics statistics) {
         antModel.setEntityToDefault(agentCell.coordinate());
-        statistics.updateCells(-1, 0);
+        statistics.adjustCellCounts(-1, 0);
     }
 
     void moveAnt(GridCell<AntEntity> agentCell, GridCoordinate newCoordinate, WritableGridModel<AntEntity> antModel, Ant ant, TerrainConstant groundEntity) {
@@ -85,7 +85,7 @@ public final class LangtonStepRunner
         TerrainConstant groundEntity = groundModel.getEntity(newCoordinate);
         if (groundEntity == TerrainConstant.UNVISITED) {
             groundEntity = TerrainConstant.COLOR_0;
-            statistics.updateCells(0, 1);
+            statistics.adjustCellCounts(0, 1);
         }
         return groundEntity;
     }

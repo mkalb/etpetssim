@@ -64,9 +64,8 @@ public final class LangtonSimulationManager
     }
 
     private void initializeStatistics(LangtonGridModel model) {
-        int newAnts = Math.toIntExact(model.antModel()
-                                           .countEntities(LangtonEntity::isAgent));
-        statistics.updateCells(newAnts, newAnts);
+        int antCellsInitial = Math.toIntExact(model.antModel().countEntities(LangtonEntity::isAgent));
+        statistics.initializeStartupCellCounts(antCellsInitial);
     }
 
     @Override

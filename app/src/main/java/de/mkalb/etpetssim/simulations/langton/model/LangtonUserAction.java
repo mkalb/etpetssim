@@ -43,7 +43,7 @@ public final class LangtonUserAction
             model.antModel().setEntity(coordinate, ant);
             model.groundModel().setEntity(coordinate, TerrainConstant.COLOR_1);
 
-            statistics.updateCells(1, 1);
+            statistics.adjustCellCounts(1, 1);
         }
     }
 

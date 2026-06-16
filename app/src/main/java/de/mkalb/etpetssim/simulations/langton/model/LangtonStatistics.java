@@ -18,9 +18,15 @@ public final class LangtonStatistics
         visitedCells = 0;
     }
 
-    void updateCells(int antCellsChange, int visitedCellChange) {
-        antCells += antCellsChange;
-        visitedCells += visitedCellChange;
+    void initializeStartupCellCounts(int antCellsInitial) {
+        antCells = antCellsInitial;
+        visitedCells = antCellsInitial;
+    }
+
+    void adjustCellCounts(int antCellsDelta,
+                          int visitedCellsDelta) {
+        antCells += antCellsDelta;
+        visitedCells += visitedCellsDelta;
     }
 
     public int getAntCells() {
