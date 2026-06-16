@@ -124,11 +124,9 @@ public final class ReboundingSimulationManager
     }
 
     private void initializeStatistics(WritableGridModel<ReboundingEntity> model) {
-        int wallCellsInitial = Math.toIntExact(model
-                .countEntities(ReboundingEntity::isWall));
-        int movingEntityCellsInitial = Math.toIntExact(model
-                .countEntities(ReboundingEntity::isRebounder));
-        statistics.updateInitialCells(wallCellsInitial, movingEntityCellsInitial);
+        int wallCellsInitial = Math.toIntExact(model.countEntities(ReboundingEntity::isWall));
+        int movingEntityCellsInitial = Math.toIntExact(model.countEntities(ReboundingEntity::isRebounder));
+        statistics.initializeStartupCellCounts(wallCellsInitial, movingEntityCellsInitial);
     }
 
     @Override
