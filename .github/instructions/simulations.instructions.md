@@ -53,36 +53,20 @@ When creating a new simulation, follow the patterns established in existing simi
 This consistency improves readability, makes the codebase more maintainable, and significantly simplifies future
 refactoring across all simulations.
 
-## Registering New Simulations
+## Registering and Maintaining Simulations
 
-When creating a new simulation, you must complete six registration steps:
+To create a new simulation from scratch, use the `/create-simulation` prompt which guides through all required
+registration steps.
 
-1. **Add enum constant to `SimulationType`**: Add a new constant in
-   `app/src/main/java/de/mkalb/etpetssim/SimulationType.java` with appropriate metadata (title/subtitle/URL
-   localization keys, CSS path if needed, and CLI aliases).
+When modifying an existing simulation, keep the following cross-cutting files in sync with any changes:
 
-2. **Create simulation sub-package**: Create a new package under `de.mkalb.etpetssim.simulations.<name>` with the
-   standard structure (`model`, `view`, `viewmodel`, `shared`, and a factory class).
-
-3. **Add switch case to `SimulationFactory`**: Add a case for the new simulation type in the switch statement in
-   `app/src/main/java/de/mkalb/etpetssim/simulations/core/SimulationFactory.java` that calls the factory's
-   `createMainView()` method.
-
-4. **Add localization keys**: Add the simulation's title, subtitle, and URL keys to all message properties files in
-   `app/src/main/resources/i18n/messages_*.properties` (at minimum `messages_en_US.properties` and
-   `messages_de_DE.properties`).
-
-5. **Update README.md**: Add the new simulation to the "Implemented Simulations" table in `README.md` with its
-   characteristics (sync/async, grid model, entities, and a link to the Wikipedia article if applicable). Also add a
-   screenshot in the "Screenshots" section following the existing pattern (screenshot file in `assets/screenshots/`,
-   referenced with descriptive caption).
-
-6. **Document entities in Simulation_Entity_Catalog.md**: Add a new section to
-   `docs/simulations/Simulation_Entity_Catalog.md` with a table documenting all entity types in the simulation's
-   `model.entity` package and an Entity Display Catalog table documenting all descriptors with their visual properties.
-
-All six steps are mandatory for each new simulation to ensure consistent discovery, factory wiring, localization,
-documentation, entity catalog completeness, and user access.
+| What changed                          | Files to update                                                      |
+|---------------------------------------|----------------------------------------------------------------------|
+| Enum metadata (title, CSS, CLI alias) | `SimulationType.java`, `SimulationTypeTest.java`, localization files |
+| Entity types added, removed, renamed  | `docs/simulations/Simulation_Entity_Catalog.md`                      |
+| Display properties (colors, emoji)    | `docs/simulations/Simulation_Entity_Catalog.md`                      |
+| Localization keys changed             | All `messages_*.properties` files                                    |
+| Factory wiring changed                | `SimulationFactory.java`, `SimulationFactoryTest.java`               |
 
 ## MVVM Layer Dependencies
 
@@ -149,19 +133,21 @@ Simulation-specific classes (in `model`, `view`, `viewmodel`, `shared` sub-packa
 
 ### Entity Naming
 
-Follow patterns documented in `docs/simulations/Simulation_Entity_Catalog.md`:
+Entity names in `.../model/entity` packages are local to each simulation and need not be globally unique.
+See `docs/simulations/Simulation_Entity_Catalog.md` for a reference of all existing entity types per simulation.
 
 - Use one simulation-specific root entity contract per simulation (e.g., `EtpetsEntity`, `WatorEntity`,
-  `LangtonEntity`).
+  `LangtonEntity`, `SugarEntity`, `SnakeEntity`, `ReboundingEntity`).
 - For simple simulations with a single entity enum, use that enum itself as the primary entity type
   (e.g., `ConwayEntity`, `ForestEntity`, `LabEntity`).
 - Prefer role-focused names inside `.../model/entity` packages instead of repeating the simulation prefix
-  (e.g., `Fish`, `Shark`, `Ant`, `Pet`, `Rebounder`).
+  (e.g., `Fish`, `Shark`, `Ant`, `Pet`, `Rebounder`, `SnakeHead`).
 - Use standard placeholder names `NoAgent` and `NoResource` when placeholder entities are needed.
 - Use suffix `Base` for abstract base classes (e.g., `ResourceBase`, `CreatureBase`).
 - Use standard name `TerrainConstant` for constant terrain enums.
 - Use standard name `EntityDescriptors` for descriptor enums implementing
-  `SpecBackedGridEntityDescriptorProvider`.
+  `SpecBackedGridEntityDescriptorProvider`. Exception: simple simulations whose single enum already implements
+  `ConstantGridEntityDescriptorProvider` do not need a separate descriptor enum.
 - For value object records, use concise domain-specific names (e.g., `PetGenome`, `PetTraits`).
 - For factories, prefer domain-specific names (e.g., `CreatureFactory`) over generic names like `EntityFactory`.
 
