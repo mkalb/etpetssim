@@ -61,9 +61,8 @@ public final class ConwaySimulationManager
     }
 
     private void initializeStatistics(ReadableGridModel<ConwayEntity> model) {
-        int aliveEntities = Math.toIntExact(model
-                .countEntities(ConwayEntity::isAlive));
-        statistics.updateCells(aliveEntities, aliveEntities);
+        int aliveCellsInitial = Math.toIntExact(model.countEntities(ConwayEntity::isAlive));
+        statistics.initializeStartupCellCounts(aliveCellsInitial);
     }
 
     @Override

@@ -38,8 +38,7 @@ public final class ConwayUserAction
 
         model.setEntity(coordinate, newEntity);
 
-        statistics.adjustAliveCells(entity.isDead() ? 1 : -1);
-        statistics.incrementChangedCells();
+        statistics.adjustCellCounts(entity.isDead() ? 1 : -1, 1);
     }
 
 }

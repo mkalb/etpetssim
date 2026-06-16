@@ -10,6 +10,7 @@ public final class ConwayStatistics
         extends BaseTimedSimulationStatistics {
 
     private int maxAliveCells;
+
     private int aliveCells;
     private int deadCells;
     private int changedCells;
@@ -22,22 +23,27 @@ public final class ConwayStatistics
         changedCells = 0;
     }
 
-    void updateCells(int newAliveCells, int newChangedCells) {
+    void initializeStartupCellCounts(int aliveCellsInitial) {
+        maxAliveCells = aliveCellsInitial;
+        aliveCells = aliveCellsInitial;
+        deadCells = getTotalCells() - aliveCellsInitial;
+    }
+
+    void updateCellCounts(int newAliveCells,
+                          int newChangedCells) {
         maxAliveCells = Math.max(newAliveCells, maxAliveCells);
         aliveCells = newAliveCells;
         deadCells = getTotalCells() - newAliveCells;
         changedCells = newChangedCells;
     }
 
-    public void adjustAliveCells(int aliveCellsDelta) {
+    public void adjustCellCounts(int aliveCellsDelta,
+                                 int changedCellsDelta) {
         int newAliveCells = aliveCells + aliveCellsDelta;
         maxAliveCells = Math.max(newAliveCells, maxAliveCells);
         aliveCells = newAliveCells;
         deadCells = getTotalCells() - newAliveCells;
-    }
-
-    public void incrementChangedCells() {
-        changedCells += 1;
+        changedCells += changedCellsDelta;
     }
 
     public int getMaxAliveCells() {

@@ -57,7 +57,7 @@ public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEn
             }
         }
 
-        statistics.updateCells(aliveCells, changedCells);
+        statistics.updateCellCounts(aliveCells, changedCells);
     }
 
 }
