@@ -26,14 +26,14 @@ public final class ReboundingUserAction
             return;
         }
 
+        var model = manager.currentModel();
+        var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
-        ReboundingEntity entity = manager.currentModel().getEntity(coordinate);
+        var entity = model.getEntity(coordinate);
+
         if (!entity.isGround()) {
             return;
         }
-
-        WritableGridModel<ReboundingEntity> model = manager.currentModel();
-        ReboundingStatistics statistics = manager.statistics();
 
         model.setEntity(coordinate, TerrainConstant.WALL);
         statistics.increaseWallCells();

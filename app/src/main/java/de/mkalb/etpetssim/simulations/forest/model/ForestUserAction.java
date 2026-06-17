@@ -27,11 +27,10 @@ public final class ForestUserAction
             return;
         }
 
-        WritableGridModel<ForestEntity> model = manager.currentModel();
-        ForestStatistics statistics = manager.statistics();
-
+        var model = manager.currentModel();
+        var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
-        ForestEntity entity = model.getEntity(coordinate);
+        var entity = model.getEntity(coordinate);
 
         ForestEntity newEntity = switch (entity) {
             case ForestEntity.EMPTY -> ForestEntity.TREE;
@@ -46,16 +45,15 @@ public final class ForestUserAction
             case ForestEntity.TREE -> -1;
             case ForestEntity.BURNING -> 0;
         };
-
         int burningDelta = switch (entity) {
             case ForestEntity.EMPTY -> 0;
             case ForestEntity.TREE -> 1;
             case ForestEntity.BURNING -> -1;
         };
-
         statistics.updateCellCounts(
                 statistics.getTreeCells() + treeDelta,
-                statistics.getBurningCells() + burningDelta);
+                statistics.getBurningCells() + burningDelta
+        );
     }
 
 }

@@ -25,16 +25,14 @@ public final class LangtonUserAction
             return;
         }
 
-        LangtonGridModel model = manager.currentModel();
-        LangtonStatistics statistics = manager.statistics();
-        LangtonConfig config = manager.config();
-
+        var model = manager.currentModel();
+        var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
+        var antEntity = model.antModel().getEntity(coordinate);
+        var terrainEntity = model.groundModel().getEntity(coordinate);
+        var config = manager.config();
 
-        AntEntity antEntity = model.antModel().getEntity(coordinate);
-        TerrainConstant terrain = model.groundModel().getEntity(coordinate);
-
-        if ((terrain == TerrainConstant.UNVISITED) && (antEntity instanceof NoAgent)) {
+        if ((terrainEntity == TerrainConstant.UNVISITED) && (antEntity instanceof NoAgent)) {
             var direction = switch (config.cellShape()) {
                 case SQUARE, HEXAGON -> CompassDirection.N;
                 case TRIANGLE -> coordinate.isTriangleCellPointingDown() ? CompassDirection.N : CompassDirection.S;

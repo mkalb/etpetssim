@@ -26,10 +26,10 @@ public final class ConwayUserAction
             return;
         }
 
-        WritableGridModel<ConwayEntity> model = manager.currentModel();
-        ConwayStatistics statistics = manager.statistics();
+        var model = manager.currentModel();
+        var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
-        ConwayEntity entity = model.getEntity(coordinate);
+        var entity = model.getEntity(coordinate);
 
         ConwayEntity newEntity = switch (entity) {
             case DEAD -> ConwayEntity.ALIVE;
@@ -37,8 +37,10 @@ public final class ConwayUserAction
         };
 
         model.setEntity(coordinate, newEntity);
-
-        statistics.adjustCellCounts(entity.isDead() ? 1 : -1, 1);
+        statistics.adjustCellCounts(
+                entity.isDead() ? 1 : -1,
+                1
+        );
     }
 
 }

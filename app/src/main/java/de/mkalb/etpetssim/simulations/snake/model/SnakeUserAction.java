@@ -26,32 +26,34 @@ public final class SnakeUserAction
             return;
         }
 
+        var model = manager.currentModel();
+        var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
-        SnakeEntity entity = manager.currentModel().getEntity(coordinate);
+        var entity = model.getEntity(coordinate);
 
         switch (context) {
             case ADD_WALL -> {
                 if (entity.isGround()) {
-                    manager.currentModel().setEntity(coordinate, TerrainConstant.WALL);
-                    manager.statistics().adjustWallCells(1);
+                    model.setEntity(coordinate, TerrainConstant.WALL);
+                    statistics.adjustWallCells(1);
                 }
             }
             case REMOVE_WALL -> {
                 if (entity.isWall()) {
-                    manager.currentModel().setEntity(coordinate, TerrainConstant.GROUND);
-                    manager.statistics().adjustWallCells(-1);
+                    model.setEntity(coordinate, TerrainConstant.GROUND);
+                    statistics.adjustWallCells(-1);
                 }
             }
             case ADD_FOOD -> {
                 if (entity.isGround()) {
-                    manager.currentModel().setEntity(coordinate, TerrainConstant.GROWTH_FOOD);
-                    manager.statistics().adjustFoodCells(1);
+                    model.setEntity(coordinate, TerrainConstant.GROWTH_FOOD);
+                    statistics.adjustFoodCells(1);
                 }
             }
             case REMOVE_FOOD -> {
                 if (entity.isFood()) {
-                    manager.currentModel().setEntity(coordinate, TerrainConstant.GROUND);
-                    manager.statistics().adjustFoodCells(-1);
+                    model.setEntity(coordinate, TerrainConstant.GROUND);
+                    statistics.adjustFoodCells(-1);
                 }
             }
         }
