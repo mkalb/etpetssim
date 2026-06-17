@@ -10,13 +10,14 @@ Extends project-wide and Java coding instructions with simulation-specific patte
 
 ## Package Structure
 
-Each regular 2D simulation package uses four sub-packages plus a factory class:
+Each regular 2D simulation package uses three required sub-packages, an optional `shared` sub-package, and a
+package-root factory class:
 
 - `model`: domain state, business rules, and grid entities
 - `view`: JavaFX scene-graph, rendering, and UI components
 - `viewmodel`: JavaFX properties, bindings, and UI state
-- `shared`: layer-neutral types used by two or more layers
-- `<SimulationName>Factory`: factory implementing `SimulationFactory` interface
+- `shared`: optional layer-neutral types used by two or more layers
+- `<SimulationName>Factory`: package-root factory class exposing `createMainView()` for the central factory
 
 ### Special-Status Simulations
 
@@ -29,9 +30,10 @@ Each regular 2D simulation package uses four sub-packages plus a factory class:
 Each simulation must be in its own sub-package under `de.mkalb.etpetssim.simulations.<name>` (e.g., `wator`,
 `langton`, `etpets`). Simulation packages are isolated:
 
-- No other packages may directly access simulation-specific types (classes in `model`, `view`, `viewmodel`, or
-  `shared` of a simulation package).
-- The only exception is `SimulationFactory`, which wires simulation factories to create simulation instances.
+- No production code outside that simulation package may directly access simulation-specific types (classes in `model`,
+  `view`, `viewmodel`, or `shared` of a simulation package).
+- The central `simulations.core.SimulationFactory` may import package-root `<SimulationName>Factory` classes to create
+  simulation instances.
 - Simulations must not depend on each other; shared infrastructure belongs in `simulations.core`.
 - Keep simulation-specific logic, entities, and UI components within the simulation's own package.
 
@@ -43,8 +45,8 @@ When creating a new simulation, follow the patterns established in existing simi
   (e.g., agent-based simulations like `wator` or `etpets`, cellular automata like `conway` or `forest`).
 - **Match naming conventions**: Use the same naming patterns for factory classes, ViewModel methods, View construction
   methods, and entity types that similar simulations use.
-- **Follow architectural patterns**: Structure your `model`, `view`, `viewmodel`, and `shared` packages the same way as
-  comparable simulations.
+- **Follow architectural patterns**: Structure your `model`, `view`, `viewmodel`, and optional `shared` packages the
+  same way as comparable simulations.
 - **Maintain code style consistency**: Keep class organization, method ordering, field declarations, and code
   formatting consistent with peer simulations.
 - **Reuse core infrastructure**: All simulations use classes from `simulations.core`, which provides baseline
@@ -60,13 +62,13 @@ registration steps.
 
 When modifying an existing simulation, keep the following cross-cutting files in sync with any changes:
 
-| What changed                          | Files to update                                                      |
-|---------------------------------------|----------------------------------------------------------------------|
-| Enum metadata (title, CSS, CLI alias) | `SimulationType.java`, `SimulationTypeTest.java`, localization files |
-| Entity types added, removed, renamed  | `docs/simulations/Simulation_Entity_Catalog.md`                      |
-| Display properties (colors, emoji)    | `docs/simulations/Simulation_Entity_Catalog.md`                      |
-| Localization keys changed             | All `messages_*.properties` files                                    |
-| Factory wiring changed                | `SimulationFactory.java`, `SimulationFactoryTest.java`               |
+| What changed                          | Files to update                                                         |
+|---------------------------------------|-------------------------------------------------------------------------|
+| Enum metadata (title, CSS, CLI alias) | `SimulationType.java`, `SimulationTypeTest.java`, localization files    |
+| Entity types added, removed, renamed  | `docs/simulations/Simulation_Entity_Catalog.md`                         |
+| Display properties (colors, emoji)    | `docs/simulations/Simulation_Entity_Catalog.md`                         |
+| Localization keys changed             | All `messages_*.properties` files                                       |
+| Factory wiring changed                | `simulations/core/SimulationFactory.java`, `SimulationFactoryTest.java` |
 
 ## MVVM Layer Dependencies
 
@@ -253,24 +255,28 @@ Use specialized components from `simulations.core.model`:
 
 ## Simulation Factory Pattern
 
-Each simulation package must provide a factory class implementing `SimulationFactory`:
+Each simulation package must provide a package-root factory class used by the central
+`simulations.core.SimulationFactory`:
 
 - Name pattern: `<SimulationName>Factory` (e.g., `ConwayFactory`, `WatorFactory`, `EtpetsFactory`)
 - Place at simulation package root (e.g., `de.mkalb.etpetssim.simulations.conway.ConwayFactory`)
-- Implement `createSimulation()` method to instantiate the main view and return `SimulationInstance`
+- Make it a `public final class` with a private constructor
+- Provide `public static SimulationMainView createMainView()` to instantiate the main view
+- Let `simulations.core.SimulationFactory` wrap the returned view in a `SimulationInstance`
 - Use factory to wire together model, viewmodel, and view components
 - Keep factory simple; delegate complex construction to builder methods in the respective layer classes
 
 Example structure:
 
 ```java
-public final class ConwayFactory implements SimulationFactory {
+public final class ConwayFactory {
 
-    @Override
-    public SimulationInstance createSimulation() {
-        // Wire model, viewmodel, and view
-        var mainView = new ConwayMainView(...)
-        return SimulationInstance.of(SimulationType.CONWAYS_LIFE, mainView);
+    private ConwayFactory() {
+    }
+
+    public static SimulationMainView createMainView() { // factory entry point
+        // Wire model, viewmodel, and view, then return the main view.
+        return new ConwayMainView(...)
     }
 
 }

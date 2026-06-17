@@ -9,7 +9,7 @@ Foundation infrastructure for `de.mkalb.etpetssim.core` package only (no subpack
 
 ## Class Structure Requirements
 
-- All classes must be `public final class`.
+- Concrete utility classes must be `public final class`.
 - Class names must start with `App` prefix (e.g., `AppLogger`, `AppStorage`, `AppLocalization`).
 - Purpose: General-purpose utility classes usable across all other packages.
 - May define internal `public enum` and `public record` types.

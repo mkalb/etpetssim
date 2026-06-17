@@ -1,6 +1,6 @@
 ---
 applyTo: "**/de/mkalb/etpetssim/ui/*.java"
-description: "JavaFX UI helper classes for de.mkalb.etpetssim.ui package. Use when creating or modifying FX* factory/painter classes or Input* property wrapper classes."
+description: "JavaFX UI helper classes for de.mkalb.etpetssim.ui package. Use when creating or modifying FX* factory/painter classes, Input* property wrapper records, geometry helpers, or SimulationTimer."
 ---
 
 # UI Package Instructions
@@ -32,30 +32,43 @@ Use `@Nullable Paint` parameters for optional fill and stroke colors in drawing 
 Use `GridGeometry` for geometric calculations (cell dimensions, coordinates, polygons).
 Do not duplicate geometry logic in other classes.
 
+## Geometry and Timer Helpers
+
+Geometry and timing helpers are reusable UI infrastructure, not simulation-specific domain logic.
+
+- `GridGeometry`, `CellDimension`, and `CellShapeSide` contain shared grid geometry and cell-shape calculations.
+- `SimulationTimer` encapsulates JavaFX `Timeline` usage for periodic simulation steps.
+- Keep these helpers independent from `de.mkalb.etpetssim.simulations` packages.
+- Prefer adding reusable UI/math behavior here only when more than one simulation or UI component needs it.
+
 ## Input* Classes (Property Wrappers)
 
-Input-prefixed records wrap JavaFX properties with validation and range constraints.
+Input-prefixed records wrap JavaFX properties with validation, range constraints, or constrained choices.
 
 ### Validation Behavior
 
-Input* records set invalid values even when out-of-range, but log an error via `AppLogger.error(...)`.
-This allows UI controls to remain responsive while signaling constraint violations.
-Preserve this behavior in all Input* classes.
+Compact constructors validate structural constraints and the initial property value before storing record components.
+Throw `IllegalArgumentException` for invalid ranges, empty or duplicate choice lists, or invalid initial values.
 
-Validate constraints in the compact constructor before storing values.
+Factory methods create JavaFX properties whose setters log invalid later values via `AppLogger.error(...)`, but still
+set
+the value. This allows UI controls to remain responsive while signaling constraint violations.
+Preserve this post-construction setter behavior in all Input* classes.
 
 ### Common API
 
-All Input* records provide:
+All Input* records provide the relevant subset of:
 
-- `of(...)` static factory methods for creating instances
+- static factory methods for creating instances, e.g. `of(...)`, `ofList(...)`, or `ofEnum(...)`
 - `getValue()` and `setValue(...)` for value access
-- `isValid()` to check current value against constraints
 - `property()` or direct property accessor for binding
 
-Additional API methods (e.g., `asStringBinding(...)`, `isMin()`, `isMax()`) are class-specific.
+Additional API methods are class-specific:
+
+- Numeric Input* records expose `asObjectProperty()`, `asStringBinding(...)`, and `adjustValue(...)`.
+- Choice-based Input* records expose `asStringBinding(...)`, `isValue(...)`, and `hasMultipleValidValues()`.
 
 ### Helper Methods
 
-Consider adding package-private static helper methods like `isValidValue(...)` and `adjustValue(...)` when validation or
-clamping logic is non-trivial or reused.
+Use package-private static validation helpers like `isInvalidValue(...)` when validation logic is non-trivial or reused.
+Use instance methods like `adjustValue(...)` for clamping or snapping values with the record's configured constraints.

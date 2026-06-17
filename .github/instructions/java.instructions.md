@@ -81,7 +81,10 @@ Rules:
 - Treat unannotated types as non-null under `@NullMarked`.
 - Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts.
 - Do not add `@Nullable` defensively or "just in case".
-- Do not add `Objects.requireNonNull(...)` guards at the start of methods for non-null parameters.
+- Outside package-specific exceptions, do not add routine `Objects.requireNonNull(...)` guards at the start of methods
+  solely for non-null-by-default parameters.
+- Use `Objects.requireNonNull(...)` only for established boundary checks, state assertions after nullable fields are
+  checked, or where a more specific instruction explicitly allows it.
 
 Common `@Nullable` usage patterns found in codebase:
 

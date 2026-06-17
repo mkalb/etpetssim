@@ -16,7 +16,7 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 
 - Prefer package-private test classes.
 - Prefer `final` for test classes unless extension is required for test inheritance.
-- Place test-specific constants at the top of the class after fields.
+- Place test-specific constants near the top of the class before lifecycle methods and test methods; follow peer style.
 - Use descriptive constant names in UPPER_SNAKE_CASE (e.g., `GRID_WIDTH_SAMPLE`, `CELL_EDGE_LENGTH`).
 
 ## Test Lifecycle
@@ -68,6 +68,7 @@ Enum test classes follow a standardized structure. Order test methods:
 #### Required Core Tests
 
 ```java
+
 @Test
 void testEnumValues() {
     assertNotNull(MyEnum.valueOf("CONSTANT_ONE"));
@@ -103,6 +104,7 @@ void testValueOfNullThrows() {
 For enums with localization support:
 
 ```java
+
 @Test
 void testStaticLabelResourceKey() {
     assertEquals("myenum.label", MyEnum.labelResourceKey());
@@ -169,7 +171,7 @@ Common test-specific suppressions:
 
 ## JavaFX Testing
 
-- Use `de.mkalb.FxTestSupport` for JavaFX platform initialization and thread synchronization.
+- Use `de.mkalb.FxTestSupport` from the test source tree for JavaFX platform initialization and thread synchronization.
 - Call `FxTestSupport.ensureStarted()` once in `@BeforeAll` for tests using JavaFX components.
 - Use `FxTestSupport.runAndWait(runnable)` to execute JavaFX operations synchronously from test threads.
 - `runAndWait()` uses a 10-second default timeout; use the two-argument overload `runAndWait(runnable, timeoutSeconds)`
