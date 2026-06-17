@@ -148,7 +148,7 @@ public final class SnakeSimulationManager
         int snakeHeadCellsInitial = Math.toIntExact(model.countEntities(e -> e instanceof SnakeHead));
         int wallCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isWall));
         int foodCellsInitial = Math.toIntExact(model.countEntities(SnakeEntity::isFood));
-        statistics.updateInitialCells(snakeHeadCellsInitial, wallCellsInitial, foodCellsInitial);
+        statistics.initializeStartupCellCounts(snakeHeadCellsInitial, wallCellsInitial, foodCellsInitial);
     }
 
     @Override

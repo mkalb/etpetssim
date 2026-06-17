@@ -19,13 +19,13 @@ public final class EtpetsObservationView
         EtpetsStatistics,
         DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>> {
 
-    private static final String ETPETS_OBSERVATION_ACTIVE_PETS = "etpets.observation.cells.pets";
-    private static final String ETPETS_OBSERVATION_EGGS = "etpets.observation.cells.eggs";
-    private static final String ETPETS_OBSERVATION_DEAD_PETS = "etpets.observation.pets.dead";
+    private static final String ETPETS_OBSERVATION_ACTIVE_PET_CELLS = "etpets.observation.cells.activepets";
+    private static final String ETPETS_OBSERVATION_EGG_CELLS = "etpets.observation.cells.eggs";
+    private static final String ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT = "etpets.observation.cumulativepetdeathcount";
 
-    private final Label activePetsLabel = new Label();
-    private final Label eggsLabel = new Label();
-    private final Label deadPetsLabel = new Label();
+    private final Label activePetCellsLabel = new Label();
+    private final Label eggCellsLabel = new Label();
+    private final Label cumulativePetDeathCountLabel = new Label();
 
     public EtpetsObservationView(DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics> viewModel,
                                  GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -49,14 +49,14 @@ public final class EtpetsObservationView
         Region currentSection = createObservationSection(
                 AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
                 new String[]{
-                        ETPETS_OBSERVATION_ACTIVE_PETS,
-                        ETPETS_OBSERVATION_EGGS,
-                        ETPETS_OBSERVATION_DEAD_PETS
+                        ETPETS_OBSERVATION_ACTIVE_PET_CELLS,
+                        ETPETS_OBSERVATION_EGG_CELLS,
+                        ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT
                 },
                 new Label[]{
-                        activePetsLabel,
-                        eggsLabel,
-                        deadPetsLabel
+                        activePetCellsLabel,
+                        eggCellsLabel,
+                        cumulativePetDeathCountLabel
                 }
         );
         Region selectedCellSection = createSelectedCellSection();
@@ -77,14 +77,14 @@ public final class EtpetsObservationView
 
         if (statistics.isPresent()) {
             var current = statistics.get();
-            setFormattedIntegerValue(activePetsLabel, current.getActivePetCount());
-            setFormattedIntegerValue(eggsLabel, current.getEggCount());
-            setFormattedIntegerValue(deadPetsLabel, current.getCumulativeDeadPetCount());
+            setFormattedIntegerValue(activePetCellsLabel, current.getActivePetCells());
+            setFormattedIntegerValue(eggCellsLabel, current.getEggCells());
+            setFormattedIntegerValue(cumulativePetDeathCountLabel, current.getCumulativePetDeathCount());
         } else {
             setUnknownValues(
-                    activePetsLabel,
-                    eggsLabel,
-                    deadPetsLabel);
+                    activePetCellsLabel,
+                    eggCellsLabel,
+                    cumulativePetDeathCountLabel);
         }
     }
 

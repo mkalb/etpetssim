@@ -13,7 +13,8 @@ public final class SnakeStatistics
     private int livingSnakeHeadCells;
     private int wallCells;
     private int foodCells;
-    private int deaths;
+
+    private int cumulativeSnakeDeathCount;
 
     public SnakeStatistics(GridStructure gridStructure) {
         super(gridStructure);
@@ -21,12 +22,12 @@ public final class SnakeStatistics
         livingSnakeHeadCells = 0;
         wallCells = 0;
         foodCells = 0;
-        deaths = 0;
+        cumulativeSnakeDeathCount = 0;
     }
 
-    void updateInitialCells(int snakeHeadCellsInitial,
-                            int wallCellsInitial,
-                            int foodCellsInitial) {
+    void initializeStartupCellCounts(int snakeHeadCellsInitial,
+                                     int wallCellsInitial,
+                                     int foodCellsInitial) {
         snakeHeadCells = snakeHeadCellsInitial;
         livingSnakeHeadCells = snakeHeadCellsInitial;
         wallCells = wallCellsInitial;
@@ -49,16 +50,16 @@ public final class SnakeStatistics
         foodCells--;
     }
 
-    public void adjustWallCells(int delta) {
-        wallCells += delta;
+    public void adjustWallCells(int wallCellsDelta) {
+        wallCells += wallCellsDelta;
     }
 
-    public void adjustFoodCells(int delta) {
-        foodCells += delta;
+    public void adjustFoodCells(int foodCellsDelta) {
+        foodCells += foodCellsDelta;
     }
 
-    void incrementDeaths() {
-        deaths++;
+    void incrementCumulativeSnakeDeathCount() {
+        cumulativeSnakeDeathCount++;
     }
 
     public int getSnakeHeadCells() {
@@ -77,8 +78,8 @@ public final class SnakeStatistics
         return wallCells;
     }
 
-    public int getDeaths() {
-        return deaths;
+    public int getCumulativeSnakeDeathCount() {
+        return cumulativeSnakeDeathCount;
     }
 
     @Override
@@ -89,7 +90,7 @@ public final class SnakeStatistics
                 ", livingSnakeHeadCells=" + livingSnakeHeadCells +
                 ", wallCells=" + wallCells +
                 ", foodCells=" + foodCells +
-                ", deaths=" + deaths +
+                ", cumulativeSnakeDeathCount=" + cumulativeSnakeDeathCount +
                 '}';
     }
 

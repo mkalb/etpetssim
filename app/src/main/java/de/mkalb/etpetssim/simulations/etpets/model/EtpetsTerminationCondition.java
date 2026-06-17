@@ -8,7 +8,7 @@ public final class EtpetsTerminationCondition
 
     @Override
     public boolean isFinished(EtpetsGridModel model, int stepCount, EtpetsStatistics statistics) {
-        return (statistics.getActivePetCount() <= 0) && (statistics.getEggCount() <= 0);
+        return (statistics.getActivePetCells() <= 0) && (statistics.getEggCells() <= 0);
     }
 
 }

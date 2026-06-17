@@ -111,7 +111,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
                            SnakeStatistics statistics) {
         snakeHead.die();
         statistics.decreaseLivingSnakeHeadCells();
-        statistics.incrementDeaths();
+        statistics.incrementCumulativeSnakeDeathCount();
     }
 
     private MoveContext buildStrategyContext(SnakeHead snakeHead,

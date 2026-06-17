@@ -22,7 +22,7 @@ public final class SnakeObservationView
 
     private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
     private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
-    private static final String SNAKE_OBSERVATION_DEATHS = "snake.observation.deaths";
+    private static final String SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT = "snake.observation.cumulativesnakedeathcount";
     private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
     private static final String SNAKE_OBSERVATION_SNAKE_AGE = "snake.observation.snake.age";
     private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
@@ -33,7 +33,7 @@ public final class SnakeObservationView
 
     private final Label snakeHeadCellsLabel = new Label();
     private final Label foodCellsLabel = new Label();
-    private final Label deathsLabel = new Label();
+    private final Label cumulativeSnakeDeathCountLabel = new Label();
     private final Label snakeIdLabel = new Label();
     private final Label snakeAgeLabel = new Label();
     private final Label snakeDeathsLabel = new Label();
@@ -86,12 +86,12 @@ public final class SnakeObservationView
                 new String[]{
                         SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
                         SNAKE_OBSERVATION_FOOD_CELLS,
-                        SNAKE_OBSERVATION_DEATHS
+                        SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT
                 },
                 new Label[]{
                         snakeHeadCellsLabel,
                         foodCellsLabel,
-                        deathsLabel
+                        cumulativeSnakeDeathCountLabel
                 }
         );
         Region selectedCellSection = createExtendedSelectedCellSection(
@@ -133,12 +133,12 @@ public final class SnakeObservationView
             var current = statistics.get();
             setFormattedIntegerValue(snakeHeadCellsLabel, current.getSnakeHeadCells());
             setFormattedIntegerValue(foodCellsLabel, current.getFoodCells());
-            setFormattedIntegerValue(deathsLabel, current.getDeaths());
+            setFormattedIntegerValue(cumulativeSnakeDeathCountLabel, current.getCumulativeSnakeDeathCount());
         } else {
             setUnknownValues(
                     snakeHeadCellsLabel,
                     foodCellsLabel,
-                    deathsLabel);
+                    cumulativeSnakeDeathCountLabel);
         }
     }
 

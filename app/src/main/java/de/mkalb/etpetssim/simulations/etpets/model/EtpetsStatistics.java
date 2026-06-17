@@ -8,58 +8,52 @@ import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
  */
 public final class EtpetsStatistics extends BaseTimedSimulationStatistics {
 
-    private int activePetCount;
-    private int eggCount;
-    private int cumulativeDeadPetCount;
+    private int activePetCells;
+    private int eggCells;
+
+    private int cumulativePetDeathCount;
 
     public EtpetsStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        activePetCount = 0;
-        eggCount = 0;
-        cumulativeDeadPetCount = 0;
+        activePetCells = 0;
+        eggCells = 0;
+        cumulativePetDeathCount = 0;
     }
 
-    void updateInitialCells(int activePetCountInitial,
-                            int eggCountInitial,
-                            int cumulativeDeadPetCountInitial) {
-        activePetCount = activePetCountInitial;
-        eggCount = eggCountInitial;
-        cumulativeDeadPetCount = cumulativeDeadPetCountInitial;
+    void initializeStartupCellCounts(int activePetCountInitial,
+                                     int eggCountInitial) {
+        activePetCells = activePetCountInitial;
+        eggCells = eggCountInitial;
     }
 
-    void updateActivePetCount(int activePetCountChange) {
-        activePetCount += activePetCountChange;
+    void adjustCellCounts(int activePetCellsDelta,
+                          int eggCellsDelta,
+                          int cumulativePetDeathCountDelta) {
+        activePetCells += activePetCellsDelta;
+        eggCells += eggCellsDelta;
+        cumulativePetDeathCount += cumulativePetDeathCountDelta;
     }
 
-    void updateEggCount(int eggCountChange) {
-        eggCount += eggCountChange;
+    public int getActivePetCells() {
+        return activePetCells;
     }
 
-    void updateCumulativeDeadPetCount(int cumulativeDeadPetCountChange) {
-        cumulativeDeadPetCount += cumulativeDeadPetCountChange;
+    public int getEggCells() {
+        return eggCells;
     }
 
-    public int getActivePetCount() {
-        return activePetCount;
-    }
-
-    public int getEggCount() {
-        return eggCount;
-    }
-
-    public int getCumulativeDeadPetCount() {
-        return cumulativeDeadPetCount;
+    public int getCumulativePetDeathCount() {
+        return cumulativePetDeathCount;
     }
 
     @Override
     public String toString() {
         return "EtpetsStatistics{" +
                 baseToString() +
-                ", activePetCount=" + activePetCount +
-                ", eggCount=" + eggCount +
-                ", cumulativeDeadPetCount=" + cumulativeDeadPetCount +
+                ", activePetCells=" + activePetCells +
+                ", eggCells=" + eggCells +
+                ", cumulativePetDeathCount=" + cumulativePetDeathCount +
                 '}';
     }
 
 }
-

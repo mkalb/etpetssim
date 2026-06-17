@@ -209,9 +209,7 @@ public final class EtpetsSimulationManager
                                                          .countEntities(entity -> (entity instanceof Pet pet) && !pet.isDead()));
         int eggCountInitial = Math.toIntExact(model.agentModel()
                                                    .countEntities(entity -> entity instanceof PetEgg));
-        int cumulativeDeadPetCountInitial = Math.toIntExact(model.agentModel()
-                                                                 .countEntities(entity -> (entity instanceof Pet pet) && pet.isDead()));
-        statistics.updateInitialCells(activePetCountInitial, eggCountInitial, cumulativeDeadPetCountInitial);
+        statistics.initializeStartupCellCounts(activePetCountInitial, eggCountInitial);
     }
 
     @Override

@@ -101,9 +101,7 @@ public final class EtpetsAgentLogic {
         }
 
         // Update statistics after processing all agents.
-        statistics.updateActivePetCount(activePetCountChange);
-        statistics.updateEggCount(eggCountChange);
-        statistics.updateCumulativeDeadPetCount(cumulativeDeadPetCountChange);
+        statistics.adjustCellCounts(activePetCountChange, eggCountChange, cumulativeDeadPetCountChange);
     }
 
     private static ActionEffect selectAndExecuteAction(Pet pet,
