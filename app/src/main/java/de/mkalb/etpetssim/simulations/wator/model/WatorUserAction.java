@@ -27,8 +27,10 @@ public final class WatorUserAction
             return;
         }
 
+        var model = manager.currentModel();
+        var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
-        WatorEntity entity = manager.currentModel().getEntity(coordinate);
+        var entity = model.getEntity(coordinate);
 
         // Only place a creature on a water cell.
         if (!entity.isWater()) {
@@ -41,7 +43,11 @@ public final class WatorUserAction
             case ADD_SHARK -> manager.createShark(stepIndexOfBirth);
         };
 
-        manager.currentModel().setEntity(coordinate, newEntity);
+        model.setEntity(coordinate, newEntity);
+        statistics.adjustCellCounts(
+                newEntity.isFish() ? 1 : 0,
+                newEntity.isShark() ? 1 : 0
+        );
     }
 
 }

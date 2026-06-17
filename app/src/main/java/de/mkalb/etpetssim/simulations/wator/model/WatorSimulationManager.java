@@ -34,7 +34,7 @@ public final class WatorSimulationManager
 
         initializeGrid(model, random);
 
-        initializeStatistics();
+        initializeStatistics(model);
     }
 
     private void initializeGrid(WritableGridModel<WatorEntity> model, Random random) {
@@ -43,7 +43,7 @@ public final class WatorSimulationManager
                 0, structure.cellCount());
         var fish = new ArrayList<WatorEntity>(fishCount);
         for (int i = 0; i < fishCount; i++) {
-            fish.add(createFish(random));
+            fish.add(createInitialFish(random));
         }
 
         var sharkCount = Math.clamp(
@@ -51,7 +51,7 @@ public final class WatorSimulationManager
                 0, structure.cellCount() - fishCount);
         var sharks = new ArrayList<WatorEntity>(sharkCount);
         for (int i = 0; i < sharkCount; i++) {
-            sharks.add(createShark(random));
+            sharks.add(createInitialShark(random));
         }
 
         GridInitializers.placeAllAtRandomPositions(fish, WatorEntity::isWater, random).initialize(model);
@@ -59,23 +59,20 @@ public final class WatorSimulationManager
     }
 
     public Fish createFish(int stepIndexOfBirth) {
-        statistics.incrementFishCells();
         return creatureFactory.createFish(stepIndexOfBirth);
     }
 
-    private Fish createFish(Random random) {
+    private Fish createInitialFish(Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().fishMaxAge()); // negative age for birth time
         return createFish(stepIndexOfBirth);
     }
 
     public Shark createShark(int stepIndexOfBirth) {
-        statistics.incrementSharkCells();
         return creatureFactory.createShark(stepIndexOfBirth, config().sharkBirthEnergy());
     }
 
-    private Shark createShark(Random random) {
+    private Shark createInitialShark(Random random) {
         int stepIndexOfBirth = -1 - random.nextInt(config().sharkMaxAge()); // negative age for birth time
-
         return createShark(stepIndexOfBirth);
     }
 
@@ -91,14 +88,16 @@ public final class WatorSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.updateCells();
+        statistics.updateMinMaxCells();
         statistics.update(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
     }
 
-    private void initializeStatistics() {
-        statistics.updateCells();
+    private void initializeStatistics(ReadableGridModel<WatorEntity> model) {
+        int fishCellsInitial = Math.toIntExact(model.countEntities(WatorEntity::isFish));
+        int sharkCellsInitial = Math.toIntExact(model.countEntities(WatorEntity::isShark));
+        statistics.initializeStartupCellCounts(fishCellsInitial, sharkCellsInitial);
     }
 
     @Override

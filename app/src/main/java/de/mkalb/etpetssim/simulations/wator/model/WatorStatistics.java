@@ -13,6 +13,7 @@ public final class WatorStatistics
     private int maxSharkCells;
     private int minFishCells;
     private int minSharkCells;
+
     private int fishCells;
     private int sharkCells;
 
@@ -20,13 +21,30 @@ public final class WatorStatistics
         super(gridStructure);
         maxFishCells = 0;
         maxSharkCells = 0;
-        minFishCells = getTotalCells();
-        minSharkCells = getTotalCells();
+        minFishCells = 0;
+        minSharkCells = 0;
         fishCells = 0;
         sharkCells = 0;
     }
 
-    void updateCells() {
+    void initializeStartupCellCounts(int fishCellsInitial,
+                                     int sharkCellsInitial) {
+        maxFishCells = fishCellsInitial;
+        maxSharkCells = sharkCellsInitial;
+        minFishCells = fishCellsInitial;
+        minSharkCells = sharkCellsInitial;
+        fishCells = fishCellsInitial;
+        sharkCells = sharkCellsInitial;
+    }
+
+    public void adjustCellCounts(int fishCellsDelta,
+                                 int sharkCellsDelta) {
+        fishCells += fishCellsDelta;
+        sharkCells += sharkCellsDelta;
+        updateMinMaxCells();
+    }
+
+    void updateMinMaxCells() {
         if (fishCells > maxFishCells) {
             maxFishCells = fishCells;
         }
@@ -39,6 +57,38 @@ public final class WatorStatistics
         if (sharkCells < minSharkCells) {
             minSharkCells = sharkCells;
         }
+    }
+
+    /**
+     * Increments the fish cell count by one.
+     * Call {@link #updateMinMaxCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void incrementFishCells() {
+        fishCells++;
+    }
+
+    /**
+     * Decrements the fish cell count by one.
+     * Call {@link #updateMinMaxCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void decrementFishCells() {
+        fishCells--;
+    }
+
+    /**
+     * Increments the shark cell count by one.
+     * Call {@link #updateMinMaxCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void incrementSharkCells() {
+        sharkCells++;
+    }
+
+    /**
+     * Decrements the shark cell count by one.
+     * Call {@link #updateMinMaxCells()} after all mutations of a simulation step to keep min/max values consistent.
+     */
+    void decrementSharkCells() {
+        sharkCells--;
     }
 
     public int getMaxFishCells() {
@@ -63,38 +113,6 @@ public final class WatorStatistics
 
     public int getSharkCells() {
         return sharkCells;
-    }
-
-    /**
-     * Increments the fish cell count by one.
-     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
-     */
-    void incrementFishCells() {
-        fishCells++;
-    }
-
-    /**
-     * Decrements the fish cell count by one.
-     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
-     */
-    void decrementFishCells() {
-        fishCells--;
-    }
-
-    /**
-     * Increments the shark cell count by one.
-     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
-     */
-    void incrementSharkCells() {
-        sharkCells++;
-    }
-
-    /**
-     * Decrements the shark cell count by one.
-     * Call {@link #updateCells()} after all mutations of a simulation step to keep min/max values consistent.
-     */
-    void decrementSharkCells() {
-        sharkCells--;
     }
 
     @Override
