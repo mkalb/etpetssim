@@ -6,15 +6,15 @@ import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.engine.support.GridEntityUtils;
-import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
+import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
 import de.mkalb.etpetssim.simulations.lab.model.LabConfig;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
 import de.mkalb.etpetssim.simulations.lab.shared.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.LabMainViewModel;
 import de.mkalb.etpetssim.ui.*;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -24,6 +24,7 @@ import java.util.*;
 public final class LabMainView
         extends AbstractMainView<
         LabMainViewModel,
+        NoUserActionContext,
         LabConfigView,
         LabControlView,
         LabObservationView> {
@@ -99,8 +100,7 @@ public final class LabMainView
     }
 
     @Override
-    protected List<Node> createActionToolBarNodes() {
-        return List.of();
+    protected void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<NoUserActionContext> descriptor) {
     }
 
     @Override

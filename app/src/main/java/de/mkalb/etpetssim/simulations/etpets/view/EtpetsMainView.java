@@ -8,7 +8,6 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.etpets.model.*;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 import de.mkalb.etpetssim.ui.*;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -318,11 +317,6 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                           dynamicPainter,
                           cell,
                           stepCount));
-    }
-
-    @Override
-    protected List<Node> createActionToolBarNodes() {
-        return List.of();
     }
 
 }

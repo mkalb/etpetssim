@@ -1,18 +1,15 @@
 package de.mkalb.etpetssim.simulations.wator.view;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
+import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.wator.model.*;
 import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 import de.mkalb.etpetssim.simulations.wator.shared.WatorUserActionContext;
 import de.mkalb.etpetssim.ui.*;
-import javafx.beans.binding.Bindings;
-import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -188,20 +185,18 @@ public final class WatorMainView
     }
 
     @Override
-    protected List<Node> createActionToolBarNodes() {
-        Button addFishButton = new Button(AppLocalization.getText(WATOR_TOOLBAR_ADD_FISH));
-        addFishButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
-        addFishButton.setTooltip(new Tooltip(AppLocalization.getText(WATOR_TOOLBAR_ADD_FISH_TOOLTIP)));
-        addFishButton.setOnAction(_ -> applyUserActionAndRedraw(WatorUserActionContext.ADD_FISH));
-        addFishButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
-
-        Button addSharkButton = new Button(AppLocalization.getText(WATOR_TOOLBAR_ADD_SHARK));
-        addSharkButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
-        addSharkButton.setTooltip(new Tooltip(AppLocalization.getText(WATOR_TOOLBAR_ADD_SHARK_TOOLTIP)));
-        addSharkButton.setOnAction(_ -> applyUserActionAndRedraw(WatorUserActionContext.ADD_SHARK));
-        addSharkButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
-
-        return List.of(addFishButton, addSharkButton);
+    protected List<SimulationUserActionDescriptor<WatorUserActionContext>> createUserActionDescriptors() {
+        return List.of(
+                new SimulationUserActionDescriptor<>(
+                        WatorUserActionContext.ADD_FISH,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        WATOR_TOOLBAR_ADD_FISH,
+                        WATOR_TOOLBAR_ADD_FISH_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        WatorUserActionContext.ADD_SHARK,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        WATOR_TOOLBAR_ADD_SHARK,
+                        WATOR_TOOLBAR_ADD_SHARK_TOOLTIP));
     }
 
 }

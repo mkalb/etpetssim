@@ -47,12 +47,15 @@ public final class DefaultMainViewModel<
     private final ExecutorService batchExecutor;
     private final ChangeListener<Boolean> actionButtonRequestedListener;
     private final ChangeListener<Boolean> cancelButtonRequestedListener;
+    private final ChangeListener<SimulationState> simulationStateListener;
     private final @Nullable ChangeListener<@Nullable GridCoordinate> lastClickedCoordinateListener;
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastSelectedCoordinate = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
     private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
+    private final BooleanProperty editModeActive = new SimpleBooleanProperty(false);
+    private final ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptor = new SimpleObjectProperty<>();
     private @Nullable SM simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
@@ -114,6 +117,14 @@ public final class DefaultMainViewModel<
         };
         controlViewModel.cancelButtonRequestedProperty().addListener(cancelButtonRequestedListener);
 
+        simulationStateListener = (_, _, newState) -> {
+            if (newState != SimulationState.PAUSED) {
+                editModeActive.set(false);
+                selectedUserActionDescriptor.set(null);
+            }
+        };
+        simulationStateProperty().addListener(simulationStateListener);
+
         // Initialize selected grid cell handling
         observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
         lastClickedCoordinateListener = ((_, _, newValue) -> {
@@ -174,6 +185,24 @@ public final class DefaultMainViewModel<
     }
 
     /**
+     * Exposes whether edit mode is currently active.
+     *
+     * @return edit-mode property
+     */
+    public BooleanProperty editModeActiveProperty() {
+        return editModeActive;
+    }
+
+    /**
+     * Exposes the currently selected user-action descriptor.
+     *
+     * @return selected descriptor property, nullable when no action tool is selected
+     */
+    public ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptorProperty() {
+        return selectedUserActionDescriptor;
+    }
+
+    /**
      * Clears selection-related properties.
      */
     public void resetSelectedProperties() {
@@ -222,9 +251,12 @@ public final class DefaultMainViewModel<
         if (lastClickedCoordinateListener != null) {
             lastClickedCoordinateProperty().removeListener(lastClickedCoordinateListener);
         }
+        simulationStateProperty().removeListener(simulationStateListener);
         observationViewModel.lastClickedCoordinateProperty().unbind();
         observationStateViewModel.selectedGridCellProperty().unbind();
 
+        editModeActive.set(false);
+        selectedUserActionDescriptor.set(null);
         resetSelectedProperties();
         resetClickedCoordinateProperties();
         stopTimer();
@@ -671,6 +703,27 @@ public final class DefaultMainViewModel<
                     manager);
             return false;
         }
+    }
+
+    /**
+     * Applies the currently selected cell-scoped action descriptor.
+     *
+     * @return {@code true} when an action was applied; {@code false} when edit mode is inactive, no cell action is
+     * selected, or the simulation state does not allow applying actions
+     */
+    public boolean applySelectedCellUserAction() {
+        if (!editModeActive.get()) {
+            return false;
+        }
+
+        var descriptor = selectedUserActionDescriptor.get();
+        if ((descriptor == null) || (descriptor.scope() != SimulationUserActionScope.CELL_SELECTED)) {
+            return false;
+        }
+        if (selectedGridCell.get() == null) {
+            return false;
+        }
+        return applyUserAction(descriptor.context());
     }
 
     private void logSimulationInfo(String message) {

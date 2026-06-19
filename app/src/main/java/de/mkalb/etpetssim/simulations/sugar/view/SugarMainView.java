@@ -8,7 +8,6 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
 import de.mkalb.etpetssim.simulations.sugar.model.*;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 import de.mkalb.etpetssim.ui.*;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -179,11 +178,6 @@ public final class SugarMainView
                   .forEach(agentCell -> cellAgentDrawer.draw(
                           entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
                           dynamicPainter, agentCell, stepCount));
-    }
-
-    @Override
-    protected List<Node> createActionToolBarNodes() {
-        return List.of();
     }
 
 }

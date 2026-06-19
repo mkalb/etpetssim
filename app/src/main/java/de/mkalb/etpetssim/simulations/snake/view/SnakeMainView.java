@@ -1,18 +1,16 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.snake.model.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.*;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
 import de.mkalb.etpetssim.ui.*;
-import javafx.beans.binding.Bindings;
-import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -190,32 +188,28 @@ public final class SnakeMainView
     }
 
     @Override
-    protected List<Node> createActionToolBarNodes() {
-        Button addWallButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_ADD_WALL));
-        addWallButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
-        addWallButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_ADD_WALL_TOOLTIP)));
-        addWallButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.ADD_WALL));
-        addWallButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
-
-        Button removeWallButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_WALL));
-        removeWallButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
-        removeWallButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP)));
-        removeWallButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.REMOVE_WALL));
-        removeWallButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
-
-        Button addFoodButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_ADD_FOOD));
-        addFoodButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
-        addFoodButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP)));
-        addFoodButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.ADD_FOOD));
-        addFoodButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
-
-        Button removeFoodButton = new Button(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_FOOD));
-        removeFoodButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
-        removeFoodButton.setTooltip(new Tooltip(AppLocalization.getText(SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP)));
-        removeFoodButton.setOnAction(_ -> applyUserActionAndRedraw(SnakeUserActionContext.REMOVE_FOOD));
-        removeFoodButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
-
-        return List.of(addWallButton, removeWallButton, addFoodButton, removeFoodButton);
+    protected List<SimulationUserActionDescriptor<SnakeUserActionContext>> createUserActionDescriptors() {
+        return List.of(
+                new SimulationUserActionDescriptor<>(
+                        SnakeUserActionContext.ADD_WALL,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SNAKE_TOOLBAR_ADD_WALL,
+                        SNAKE_TOOLBAR_ADD_WALL_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        SnakeUserActionContext.REMOVE_WALL,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SNAKE_TOOLBAR_REMOVE_WALL,
+                        SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        SnakeUserActionContext.ADD_FOOD,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SNAKE_TOOLBAR_ADD_FOOD,
+                        SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        SnakeUserActionContext.REMOVE_FOOD,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SNAKE_TOOLBAR_REMOVE_FOOD,
+                        SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP));
     }
 
     private boolean isSelected(SnakeHead head) {

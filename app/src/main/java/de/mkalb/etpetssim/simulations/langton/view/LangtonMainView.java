@@ -1,17 +1,14 @@
 package de.mkalb.etpetssim.simulations.langton.view;
 
-import de.mkalb.etpetssim.core.*;
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.langton.model.*;
 import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 import de.mkalb.etpetssim.ui.*;
-import javafx.beans.binding.Bindings;
-import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
@@ -154,14 +151,12 @@ public final class LangtonMainView
     }
 
     @Override
-    protected List<Node> createActionToolBarNodes() {
-        Button addNewAntButton = new Button(AppLocalization.getText(LANGTON_TOOLBAR_ADD_ANT));
-        addNewAntButton.getStyleClass().add(FXStyleClasses.SIMULATION_TOOLBAR_BUTTON);
-        addNewAntButton.setTooltip(new Tooltip(AppLocalization.getText(LANGTON_TOOLBAR_ADD_ANT_TOOLTIP)));
-        addNewAntButton.setOnAction(_ -> applyUserActionAndRedraw(NoUserActionContext.NO_CONTEXT));
-        addNewAntButton.disableProperty().bind(Bindings.isNull(viewModel.selectedGridCellProperty()));
-
-        return List.of(addNewAntButton);
+    protected List<SimulationUserActionDescriptor<NoUserActionContext>> createUserActionDescriptors() {
+        return List.of(new SimulationUserActionDescriptor<>(
+                NoUserActionContext.NO_CONTEXT,
+                SimulationUserActionScope.CELL_SELECTED,
+                LANGTON_TOOLBAR_ADD_ANT,
+                LANGTON_TOOLBAR_ADD_ANT_TOOLTIP));
     }
 
 }

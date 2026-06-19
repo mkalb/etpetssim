@@ -78,6 +78,10 @@ public final class AppLocalizationKeys {
     public static final String OBSERVATION_SECTION_STATUS = "observation.section.status";
     public static final String OBSERVATION_STEP = "observation.step";
     public static final String OBSERVATION_VALUE_UNKNOWN = "observation.valueunknown";
+    public static final String SIMULATION_TOOLBAR_EDIT = "simulation.toolbar.edit";
+    public static final String SIMULATION_TOOLBAR_EDIT_TOOLTIP = "simulation.toolbar.edit.tooltip";
+    public static final String SIMULATION_TOOLBAR_SELECT = "simulation.toolbar.select";
+    public static final String SIMULATION_TOOLBAR_SELECT_TOOLTIP = "simulation.toolbar.select.tooltip";
     public static final String WINDOW_TITLE = "window.title";
 
     /**

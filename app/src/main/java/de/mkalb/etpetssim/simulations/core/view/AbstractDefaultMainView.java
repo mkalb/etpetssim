@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
@@ -31,6 +32,7 @@ public abstract class AbstractDefaultMainView<
         extends
         AbstractMainView<
                 DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX>,
+                CTX,
                 CFV,
                 SimulationControlView,
                 OV> {
@@ -98,6 +100,37 @@ public abstract class AbstractDefaultMainView<
     @Override
     protected void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter) {
         viewModel.updateClickedCoordinateProperties(mouseCoordinate);
+        applySelectedCellUserActionAndRedraw();
+    }
+
+    @Override
+    protected final BooleanProperty editModeActiveProperty() {
+        return viewModel.editModeActiveProperty();
+    }
+
+    @Override
+    protected final ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptorProperty() {
+        return viewModel.selectedUserActionDescriptorProperty();
+    }
+
+    @Override
+    protected final void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<CTX> descriptor) {
+        boolean changed = viewModel.applyUserAction(descriptor.context());
+        if (changed) {
+            redrawAfterUserAction();
+        }
+    }
+
+    private void applySelectedCellUserActionAndRedraw() {
+        boolean changed = viewModel.applySelectedCellUserAction();
+        if (changed) {
+            redrawAfterUserAction();
+        }
+    }
+
+    private void redrawAfterUserAction() {
+        observationView.updateObservationLabels();
+        drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());
     }
 
     protected final void handleSimulationInitialized() {
@@ -213,20 +246,5 @@ public abstract class AbstractDefaultMainView<
 
     @SuppressWarnings("ParameterHidesMemberVariable")
     protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);
-
-    /**
-     * Applies the configured user action to the current simulation state and redraws the simulation when the action
-     * changes the state.
-     *
-     * <p>Delegates to {@link DefaultMainViewModel#applyUserAction(SimulationUserActionContext)} and, when a change
-     * was applied, updates the observation labels and redraws the simulation canvas.
-     */
-    protected final void applyUserActionAndRedraw(CTX context) {
-        boolean changed = viewModel.applyUserAction(context);
-        if (changed) {
-            observationView.updateObservationLabels();
-            drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());
-        }
-    }
 
 }
