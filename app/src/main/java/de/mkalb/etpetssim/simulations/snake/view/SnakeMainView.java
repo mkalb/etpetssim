@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
@@ -10,12 +10,19 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.snake.model.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.*;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
+import de.mkalb.etpetssim.simulations.snake.viewmodel.SnakeEditToolBarViewModel;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.*;
 
 public final class SnakeMainView
         extends AbstractDefaultMainView<
@@ -29,18 +36,23 @@ public final class SnakeMainView
         SnakeConfigView,
         SnakeObservationView> {
 
-    private static final String SNAKE_TOOL_ID_ADD_WALL = "snake.addWall";
-    private static final String SNAKE_TOOL_ID_REMOVE_WALL = "snake.removeWall";
-    private static final String SNAKE_TOOL_ID_ADD_FOOD = "snake.addFood";
-    private static final String SNAKE_TOOL_ID_REMOVE_FOOD = "snake.removeFood";
-    private static final String SNAKE_TOOLBAR_ADD_WALL = "snake.toolbar.addwall";
-    private static final String SNAKE_TOOLBAR_ADD_WALL_TOOLTIP = "snake.toolbar.addwall.tooltip";
-    private static final String SNAKE_TOOLBAR_REMOVE_WALL = "snake.toolbar.removewall";
-    private static final String SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP = "snake.toolbar.removewall.tooltip";
     private static final String SNAKE_TOOLBAR_ADD_FOOD = "snake.toolbar.addfood";
     private static final String SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP = "snake.toolbar.addfood.tooltip";
+    private static final String SNAKE_TOOLBAR_ADD_SNAKE = "snake.toolbar.addsnake";
+    private static final String SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY = "snake.toolbar.addsnake.strategy";
+    private static final String SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY_TOOLTIP = "snake.toolbar.addsnake.strategy.tooltip";
+    private static final String SNAKE_TOOLBAR_ADD_SNAKE_TOOLTIP = "snake.toolbar.addsnake.tooltip";
+    private static final String SNAKE_TOOLBAR_ADD_WALL = "snake.toolbar.addwall";
+    private static final String SNAKE_TOOLBAR_ADD_WALL_TOOLTIP = "snake.toolbar.addwall.tooltip";
     private static final String SNAKE_TOOLBAR_REMOVE_FOOD = "snake.toolbar.removefood";
     private static final String SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP = "snake.toolbar.removefood.tooltip";
+    private static final String SNAKE_TOOLBAR_REMOVE_WALL = "snake.toolbar.removewall";
+    private static final String SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP = "snake.toolbar.removewall.tooltip";
+    private static final String SNAKE_TOOL_ID_ADD_FOOD = "snake.addFood";
+    private static final String SNAKE_TOOL_ID_ADD_SNAKE = "snake.addSnake";
+    private static final String SNAKE_TOOL_ID_ADD_WALL = "snake.addWall";
+    private static final String SNAKE_TOOL_ID_REMOVE_FOOD = "snake.removeFood";
+    private static final String SNAKE_TOOL_ID_REMOVE_WALL = "snake.removeWall";
 
     // Entity dead colors are derived from the alive colors using two warm dead hues.
     private static final double DEAD_HEAD_HUE = 4.0d;
@@ -58,8 +70,12 @@ public final class SnakeMainView
 
     private static final Color SELECTED_STROKE_COLOR = Color.PINK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+    private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
+
+    private final SnakeEditToolBarViewModel editToolBarViewModel;
 
     public SnakeMainView(DefaultMainViewModel<SnakeEntity, GridCell<SnakeEntity>, WritableGridModel<SnakeEntity>, SnakeConfig, SnakeStatistics, SnakeSimulationManager, SnakeUserActionContext> viewModel,
+                         SnakeEditToolBarViewModel editToolBarViewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SnakeConfigView configView,
                          DefaultControlView controlView,
@@ -69,6 +85,7 @@ public final class SnakeMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
+        this.editToolBarViewModel = editToolBarViewModel;
     }
 
     private static Color toSelectedColor(Color aliveColor) {
@@ -217,7 +234,47 @@ public final class SnakeMainView
                         SnakeUserActionContext.FixedAction.REMOVE_FOOD,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_REMOVE_FOOD,
-                        SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP));
+                        SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        SNAKE_TOOL_ID_ADD_SNAKE,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SNAKE_TOOLBAR_ADD_SNAKE,
+                        SNAKE_TOOLBAR_ADD_SNAKE_TOOLTIP,
+                        () -> Optional.of(editToolBarViewModel.getSelectedStrategy())
+                                      .map(SnakeUserActionContext.AddSnake::new)
+                                      .map(Function.identity())));
+    }
+
+    @Override
+    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+        var strategyControl = FXComponentFactory.createLabeledChoiceComboBox(
+                editToolBarViewModel.selectedStrategyProperty(),
+                AppLocalization.getText(SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY),
+                AppLocalization.getText(SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY_TOOLTIP),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX,
+                this::registerActionToolBarCleanup);
+        Label strategyLabel = strategyControl.label();
+        strategyLabel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
+        var strategyComboBox = strategyControl.controlRegion();
+
+        if (selectedToolId == null) {
+            strategyLabel.setDisable(true);
+            strategyComboBox.setDisable(true);
+        } else {
+            var disableWhenNoAddSnakeToolSelected = Bindings.not(selectedToolId.isEqualTo(SNAKE_TOOL_ID_ADD_SNAKE));
+            strategyLabel.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
+            strategyComboBox.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
+        }
+
+        registerActionToolBarCleanup(() -> {
+            strategyLabel.disableProperty().unbind();
+            strategyComboBox.disableProperty().unbind();
+        });
+
+        HBox optionPanel = new HBox(strategyLabel, strategyComboBox);
+        optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
+        optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
+        return optionPanel;
     }
 
     private boolean isSelected(SnakeHead head) {

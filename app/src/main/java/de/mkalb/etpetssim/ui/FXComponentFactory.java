@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
@@ -225,12 +226,33 @@ public final class FXComponentFactory {
      * @param <T>                 the choice value type
      * @return a LabeledControl containing the label and the combo box
      */
-    @SuppressWarnings("ConstantValue")
     public static <T> LabeledControl<ComboBox<T>> createLabeledChoiceComboBox(
             InputChoiceProperty<T> inputChoiceProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
+        return createLabeledChoiceComboBox(inputChoiceProperty, labelFormatString, tooltip, styleClass, _ -> {});
+    }
+
+    /**
+     * Creates a labeled combo box for selecting values from a fixed choice set and registers cleanup for listeners and
+     * bindings created by this factory method.
+     *
+     * @param inputChoiceProperty the InputChoiceProperty defining valid values, display names, and value binding
+     * @param labelFormatString   the format string for the label (e.g., "%s")
+     * @param tooltip             the tooltip text for both the label and the combo box
+     * @param styleClass          the CSS style class to apply to the combo box
+     * @param cleanupRegistrar    accepts a cleanup action that removes listeners and bindings created by this method
+     * @param <T>                 the choice value type
+     * @return a LabeledControl containing the label and the combo box
+     */
+    @SuppressWarnings("ConstantValue")
+    public static <T> LabeledControl<ComboBox<T>> createLabeledChoiceComboBox(
+            InputChoiceProperty<T> inputChoiceProperty,
+            String labelFormatString,
+            String tooltip,
+            String styleClass,
+            Consumer<Runnable> cleanupRegistrar) {
         Map<T, String> displayNames = inputChoiceProperty
                 .validValues()
                 .stream()
@@ -248,26 +270,36 @@ public final class FXComponentFactory {
         comboBox.getStyleClass().add(styleClass);
 
         // Update the property when the combo box selection changes.
-        comboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newVal) -> {
+        ChangeListener<T> comboBoxSelectionListener = (_, _, newVal) -> {
             if (newVal != null) {
                 inputChoiceProperty.setValue(newVal);
             }
-        });
+        };
+        comboBox.getSelectionModel().selectedItemProperty().addListener(comboBoxSelectionListener);
 
         // Update the combo box when the property changes.
-        inputChoiceProperty.property().addListener((_, _, newVal) -> {
+        ChangeListener<T> inputChoicePropertyListener = (_, _, newVal) -> {
             if (newVal != null) {
                 comboBox.setValue(newVal);
             }
-        });
+        };
+        inputChoiceProperty.property().addListener(inputChoicePropertyListener);
 
         Label label = new Label();
-        label.textProperty().bind(inputChoiceProperty.asStringBinding(labelFormatString));
+        var labelTextBinding = inputChoiceProperty.asStringBinding(labelFormatString);
+        label.textProperty().bind(labelTextBinding);
         label.setLabelFor(comboBox);
 
         Tooltip tooltipValue = new Tooltip(tooltip);
         label.setTooltip(tooltipValue);
         comboBox.setTooltip(tooltipValue);
+
+        cleanupRegistrar.accept(() -> {
+            comboBox.getSelectionModel().selectedItemProperty().removeListener(comboBoxSelectionListener);
+            inputChoiceProperty.property().removeListener(inputChoicePropertyListener);
+            label.textProperty().unbind();
+            labelTextBinding.dispose();
+        });
 
         return new LabeledControl<>(label, comboBox);
     }

@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.snake.model.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.*;
 import de.mkalb.etpetssim.simulations.snake.view.*;
-import de.mkalb.etpetssim.simulations.snake.viewmodel.SnakeConfigViewModel;
+import de.mkalb.etpetssim.simulations.snake.viewmodel.*;
 import javafx.beans.property.*;
 
 public final class SnakeFactory {
@@ -28,6 +28,7 @@ public final class SnakeFactory {
 
         // ViewModel
         var configViewModel = new SnakeConfigViewModel(readOnlySimulationState);
+        var editToolBarViewModel = new SnakeEditToolBarViewModel();
         var controlViewModel = DefaultControlViewModel.withMinStepDuration(readOnlySimulationState);
         var observationViewModel =
                 new DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>(readOnlySimulationState);
@@ -39,7 +40,7 @@ public final class SnakeFactory {
         var configView = new SnakeConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new SnakeObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new SnakeMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        var view = new SnakeMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view
         return view;
