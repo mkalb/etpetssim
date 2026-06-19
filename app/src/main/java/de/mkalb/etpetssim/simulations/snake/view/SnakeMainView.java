@@ -29,6 +29,10 @@ public final class SnakeMainView
         SnakeConfigView,
         SnakeObservationView> {
 
+    private static final String SNAKE_TOOL_ID_ADD_WALL = "snake.addWall";
+    private static final String SNAKE_TOOL_ID_REMOVE_WALL = "snake.removeWall";
+    private static final String SNAKE_TOOL_ID_ADD_FOOD = "snake.addFood";
+    private static final String SNAKE_TOOL_ID_REMOVE_FOOD = "snake.removeFood";
     private static final String SNAKE_TOOLBAR_ADD_WALL = "snake.toolbar.addwall";
     private static final String SNAKE_TOOLBAR_ADD_WALL_TOOLTIP = "snake.toolbar.addwall.tooltip";
     private static final String SNAKE_TOOLBAR_REMOVE_WALL = "snake.toolbar.removewall";
@@ -191,21 +195,25 @@ public final class SnakeMainView
     protected List<SimulationUserActionDescriptor<SnakeUserActionContext>> createUserActionDescriptors() {
         return List.of(
                 new SimulationUserActionDescriptor<>(
+                        SNAKE_TOOL_ID_ADD_WALL,
                         SnakeUserActionContext.ADD_WALL,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_ADD_WALL,
                         SNAKE_TOOLBAR_ADD_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
+                        SNAKE_TOOL_ID_REMOVE_WALL,
                         SnakeUserActionContext.REMOVE_WALL,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_REMOVE_WALL,
                         SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
+                        SNAKE_TOOL_ID_ADD_FOOD,
                         SnakeUserActionContext.ADD_FOOD,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_ADD_FOOD,
                         SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
+                        SNAKE_TOOL_ID_REMOVE_FOOD,
                         SnakeUserActionContext.REMOVE_FOOD,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_REMOVE_FOOD,

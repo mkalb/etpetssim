@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import javafx.beans.property.*;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -14,15 +13,15 @@ import java.util.*;
 final class SimulationEditToolBarViewModel<CTX extends SimulationUserActionContext> {
 
     private final BooleanProperty editModeActive = new SimpleBooleanProperty(false);
-    private final ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptor =
-            new SimpleObjectProperty<>();
+    private final ObjectProperty<String> selectedUserActionToolId =
+            new SimpleObjectProperty<>(SimulationUserActionDescriptor.SELECT_TOOL_ID);
 
     BooleanProperty editModeActiveProperty() {
         return editModeActive;
     }
 
-    ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptorProperty() {
-        return selectedUserActionDescriptor;
+    ObjectProperty<String> selectedUserActionToolIdProperty() {
+        return selectedUserActionToolId;
     }
 
     boolean isEditModeActive() {
@@ -31,15 +30,18 @@ final class SimulationEditToolBarViewModel<CTX extends SimulationUserActionConte
 
     void resetToSelectMode() {
         editModeActive.set(false);
-        selectedUserActionDescriptor.set(null);
+        selectedUserActionToolId.set(SimulationUserActionDescriptor.SELECT_TOOL_ID);
     }
 
-    Optional<SimulationUserActionDescriptor<CTX>> getSelectedCellActionDescriptor() {
-        var descriptor = selectedUserActionDescriptor.get();
-        if ((descriptor == null) || (descriptor.scope() != SimulationUserActionScope.CELL_SELECTED)) {
-            return Optional.empty();
-        }
-        return Optional.of(descriptor);
+    Optional<SimulationUserActionDescriptor<CTX>> getSelectedUserActionDescriptor(List<SimulationUserActionDescriptor<CTX>> descriptors) {
+        return descriptors.stream()
+                          .filter(descriptor -> selectedUserActionToolId.get().equals(descriptor.toolId()))
+                          .findFirst();
+    }
+
+    Optional<SimulationUserActionDescriptor<CTX>> getSelectedCellActionDescriptor(List<SimulationUserActionDescriptor<CTX>> descriptors) {
+        return getSelectedUserActionDescriptor(descriptors)
+                .filter(descriptor -> descriptor.scope() == SimulationUserActionScope.CELL_SELECTED);
     }
 
 }

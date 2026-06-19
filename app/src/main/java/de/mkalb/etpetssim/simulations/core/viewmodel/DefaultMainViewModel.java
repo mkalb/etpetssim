@@ -193,12 +193,12 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Exposes the currently selected user-action descriptor.
+     * Exposes the currently selected stable user-action tool id.
      *
-     * @return selected descriptor property, nullable when no action tool is selected
+     * @return selected tool-id property
      */
-    public ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptorProperty() {
-        return editToolBarViewModel.selectedUserActionDescriptorProperty();
+    public ObjectProperty<String> selectedUserActionToolIdProperty() {
+        return editToolBarViewModel.selectedUserActionToolIdProperty();
     }
 
     /**
@@ -704,24 +704,39 @@ public final class DefaultMainViewModel<
     }
 
     /**
+     * Applies the resolved user action described by the given descriptor.
+     *
+     * @param descriptor descriptor whose current context should be resolved and applied
+     * @return {@code true} if the action context resolved and was applied; {@code false} otherwise
+     */
+    public boolean applyUserAction(SimulationUserActionDescriptor<CTX> descriptor) {
+        var context = descriptor.resolveContext();
+        if (context.isEmpty()) {
+            return false;
+        }
+        return applyUserAction(context.get());
+    }
+
+    /**
      * Applies the currently selected cell-scoped action descriptor.
      *
+     * @param descriptors descriptors currently available in the toolbar
      * @return {@code true} when an action was applied; {@code false} when edit mode is inactive, no cell action is
      * selected, or the simulation state does not allow applying actions
      */
-    public boolean applySelectedCellUserAction() {
+    public boolean applySelectedCellUserAction(List<SimulationUserActionDescriptor<CTX>> descriptors) {
         if (!editToolBarViewModel.isEditModeActive()) {
             return false;
         }
 
-        var descriptor = editToolBarViewModel.getSelectedCellActionDescriptor();
+        var descriptor = editToolBarViewModel.getSelectedCellActionDescriptor(descriptors);
         if (descriptor.isEmpty()) {
             return false;
         }
         if (selectedGridCell.get() == null) {
             return false;
         }
-        return applyUserAction(descriptor.get().context());
+        return applyUserAction(descriptor.get());
     }
 
     private void logSimulationInfo(String message) {

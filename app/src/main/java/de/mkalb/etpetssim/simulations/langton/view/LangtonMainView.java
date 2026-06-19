@@ -27,6 +27,7 @@ public final class LangtonMainView
         LangtonConfigView,
         LangtonObservationView> {
 
+    private static final String LANGTON_TOOL_ID_ADD_ANT = "langton.addAnt";
     private static final String LANGTON_TOOLBAR_ADD_ANT = "langton.toolbar.addant";
     private static final String LANGTON_TOOLBAR_ADD_ANT_TOOLTIP = "langton.toolbar.addant.tooltip";
 
@@ -153,6 +154,7 @@ public final class LangtonMainView
     @Override
     protected List<SimulationUserActionDescriptor<NoUserActionContext>> createUserActionDescriptors() {
         return List.of(new SimulationUserActionDescriptor<>(
+                LANGTON_TOOL_ID_ADD_ANT,
                 NoUserActionContext.NO_CONTEXT,
                 SimulationUserActionScope.CELL_SELECTED,
                 LANGTON_TOOLBAR_ADD_ANT,

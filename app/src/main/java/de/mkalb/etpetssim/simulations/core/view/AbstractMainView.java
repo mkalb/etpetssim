@@ -61,8 +61,8 @@ public abstract class AbstractMainView<
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
     private @Nullable Button editModeButton;
-    private @Nullable ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedDescriptorProperty;
-    private @Nullable ChangeListener<@Nullable SimulationUserActionDescriptor<CTX>> selectedDescriptorListener;
+    private @Nullable ObjectProperty<String> selectedToolIdProperty;
+    private @Nullable ChangeListener<String> selectedToolIdListener;
 
     protected AbstractMainView(VM viewModel,
                                CFV configView, CLV controlView, OV observationView,
@@ -202,11 +202,11 @@ public abstract class AbstractMainView<
     }
 
     private void clearActionToolBar() {
-        if ((selectedDescriptorProperty != null) && (selectedDescriptorListener != null)) {
-            selectedDescriptorProperty.removeListener(selectedDescriptorListener);
+        if ((selectedToolIdProperty != null) && (selectedToolIdListener != null)) {
+            selectedToolIdProperty.removeListener(selectedToolIdListener);
         }
-        selectedDescriptorProperty = null;
-        selectedDescriptorListener = null;
+        selectedToolIdProperty = null;
+        selectedToolIdListener = null;
     }
 
     private void clearEditAffordanceToolBar() {
@@ -240,8 +240,8 @@ public abstract class AbstractMainView<
             return;
         }
 
-        var currentSelectedDescriptorProperty = selectedUserActionDescriptorProperty();
-        List<Node> nodes = createEditToolBarNodes(descriptors, currentEditModeProperty, currentSelectedDescriptorProperty);
+        var currentSelectedToolIdProperty = selectedUserActionToolIdProperty();
+        List<Node> nodes = createEditToolBarNodes(descriptors, currentEditModeProperty, currentSelectedToolIdProperty);
         if (nodes.isEmpty()) {
             return;
         }
@@ -277,7 +277,7 @@ public abstract class AbstractMainView<
     private List<Node> createEditToolBarNodes(
             List<SimulationUserActionDescriptor<CTX>> descriptors,
             BooleanProperty currentEditModeProperty,
-            @Nullable ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> currentSelectedDescriptorProperty) {
+            @Nullable ObjectProperty<String> currentSelectedToolIdProperty) {
 
         ToggleGroup cellActionToggleGroup = new ToggleGroup();
         ToggleButton selectButton = null;
@@ -286,7 +286,7 @@ public abstract class AbstractMainView<
 
         Map<Toggle, SimulationUserActionDescriptor<CTX>> descriptorByToggle = new HashMap<>();
 
-        if (currentSelectedDescriptorProperty != null) {
+        if (currentSelectedToolIdProperty != null) {
             selectButton = new ToggleButton(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
             configureEditToolBarButton(selectButton);
             selectButton.setTooltip(new Tooltip(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP)));
@@ -298,7 +298,7 @@ public abstract class AbstractMainView<
 
         for (var descriptor : descriptors) {
             if ((descriptor.scope() == SimulationUserActionScope.CELL_SELECTED)
-                    && (currentSelectedDescriptorProperty != null)) {
+                    && (currentSelectedToolIdProperty != null)) {
                 ToggleButton actionButton = new ToggleButton(AppLocalization.getText(descriptor.labelKey()));
                 configureEditToolBarButton(actionButton);
                 actionButton.setTooltip(new Tooltip(AppLocalization.getText(descriptor.tooltipKey())));
@@ -322,34 +322,38 @@ public abstract class AbstractMainView<
             }
         }
 
-        if (currentSelectedDescriptorProperty != null) {
-            selectedDescriptorProperty = currentSelectedDescriptorProperty;
+        if (currentSelectedToolIdProperty != null) {
+            selectedToolIdProperty = currentSelectedToolIdProperty;
             var finalSelectButton = selectButton;
 
-            selectedDescriptorListener = (_, _, descriptor) -> {
-                if (descriptor == null) {
+            selectedToolIdListener = (_, _, toolId) -> {
+                if (SimulationUserActionDescriptor.SELECT_TOOL_ID.equals(toolId)) {
                     cellActionToggleGroup.selectToggle(finalSelectButton);
                     return;
                 }
                 for (var entry : descriptorByToggle.entrySet()) {
-                    if (descriptor.equals(entry.getValue())) {
+                    if (toolId.equals(entry.getValue().toolId())) {
                         cellActionToggleGroup.selectToggle(entry.getKey());
                         return;
                     }
                 }
                 cellActionToggleGroup.selectToggle(finalSelectButton);
             };
-            currentSelectedDescriptorProperty.addListener(selectedDescriptorListener);
+            currentSelectedToolIdProperty.addListener(selectedToolIdListener);
 
-            selectedDescriptorListener.changed(currentSelectedDescriptorProperty, null, currentSelectedDescriptorProperty.get());
+            String currentToolId = currentSelectedToolIdProperty.get();
+            selectedToolIdListener.changed(currentSelectedToolIdProperty, currentToolId, currentToolId);
         }
 
         cellActionToggleGroup.selectedToggleProperty().addListener((_, _, selectedToggle) -> {
-            if (currentSelectedDescriptorProperty == null) {
+            if (currentSelectedToolIdProperty == null) {
                 return;
             }
             var descriptor = descriptorByToggle.get(selectedToggle);
-            currentSelectedDescriptorProperty.set(descriptor);
+            currentSelectedToolIdProperty.set(
+                    (descriptor != null)
+                            ? descriptor.toolId()
+                            : SimulationUserActionDescriptor.SELECT_TOOL_ID);
         });
 
         return nodes;
@@ -369,11 +373,11 @@ public abstract class AbstractMainView<
     }
 
     /**
-     * Exposes the selected cell-scoped action descriptor used by toolbar toggle tools.
+     * Exposes the selected stable tool id used by toolbar toggle tools.
      *
-     * @return selected descriptor property, or {@code null} when descriptor selection is not supported
+     * @return selected tool-id property, or {@code null} when tool selection is not supported
      */
-    protected @Nullable ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptorProperty() {
+    protected @Nullable ObjectProperty<String> selectedUserActionToolIdProperty() {
         return null;
     }
 

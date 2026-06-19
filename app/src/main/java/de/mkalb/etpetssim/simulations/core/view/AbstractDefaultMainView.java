@@ -109,20 +109,20 @@ public abstract class AbstractDefaultMainView<
     }
 
     @Override
-    protected final ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptorProperty() {
-        return viewModel.selectedUserActionDescriptorProperty();
+    protected final ObjectProperty<String> selectedUserActionToolIdProperty() {
+        return viewModel.selectedUserActionToolIdProperty();
     }
 
     @Override
     protected final void applyGlobalUserActionAndRedraw(SimulationUserActionDescriptor<CTX> descriptor) {
-        boolean changed = viewModel.applyUserAction(descriptor.context());
+        boolean changed = viewModel.applyUserAction(descriptor);
         if (changed) {
             redrawAfterUserAction();
         }
     }
 
     private void applySelectedCellUserActionAndRedraw() {
-        boolean changed = viewModel.applySelectedCellUserAction();
+        boolean changed = viewModel.applySelectedCellUserAction(createUserActionDescriptors());
         if (changed) {
             redrawAfterUserAction();
         }

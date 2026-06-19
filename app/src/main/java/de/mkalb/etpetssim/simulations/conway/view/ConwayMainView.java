@@ -29,6 +29,7 @@ public final class ConwayMainView
 
     private static final Color SELECTED_STROKE_COLOR = Color.BLACK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+    private static final String CONWAY_TOOL_ID_TOGGLE_CELL = "conway.toggleCell";
     private static final String CONWAY_TOOLBAR_TOGGLE_CELL = "conway.toolbar.togglecell";
     private static final String CONWAY_TOOLBAR_TOGGLE_CELL_TOOLTIP = "conway.toolbar.togglecell.tooltip";
 
@@ -129,6 +130,7 @@ public final class ConwayMainView
     @Override
     protected List<SimulationUserActionDescriptor<NoUserActionContext>> createUserActionDescriptors() {
         return List.of(new SimulationUserActionDescriptor<>(
+                CONWAY_TOOL_ID_TOGGLE_CELL,
                 NoUserActionContext.NO_CONTEXT,
                 SimulationUserActionScope.CELL_SELECTED,
                 CONWAY_TOOLBAR_TOGGLE_CELL,

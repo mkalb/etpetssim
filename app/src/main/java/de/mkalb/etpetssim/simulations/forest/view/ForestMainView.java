@@ -28,6 +28,7 @@ public final class ForestMainView
         ForestConfigView,
         ForestObservationView> {
 
+    private static final String FOREST_TOOL_ID_CYCLE_STATE = "forest.cycleState";
     private static final String FOREST_TOOLBAR_CYCLE_STATE = "forest.toolbar.cyclestate";
     private static final String FOREST_TOOLBAR_CYCLE_STATE_TOOLTIP = "forest.toolbar.cyclestate.tooltip";
 
@@ -152,6 +153,7 @@ public final class ForestMainView
     @Override
     protected List<SimulationUserActionDescriptor<NoUserActionContext>> createUserActionDescriptors() {
         return List.of(new SimulationUserActionDescriptor<>(
+                FOREST_TOOL_ID_CYCLE_STATE,
                 NoUserActionContext.NO_CONTEXT,
                 SimulationUserActionScope.CELL_SELECTED,
                 FOREST_TOOLBAR_CYCLE_STATE,

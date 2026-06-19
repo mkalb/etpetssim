@@ -29,6 +29,7 @@ public final class ReboundingMainView
 
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+    private static final String REBOUNDING_TOOL_ID_ADD_WALL = "rebounding.addWall";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL = "rebounding.toolbar.addwall";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP = "rebounding.toolbar.addwall.tooltip";
 
@@ -113,6 +114,7 @@ public final class ReboundingMainView
     @Override
     protected List<SimulationUserActionDescriptor<NoUserActionContext>> createUserActionDescriptors() {
         return List.of(new SimulationUserActionDescriptor<>(
+                REBOUNDING_TOOL_ID_ADD_WALL,
                 NoUserActionContext.NO_CONTEXT,
                 SimulationUserActionScope.CELL_SELECTED,
                 REBOUNDING_TOOLBAR_ADD_WALL,

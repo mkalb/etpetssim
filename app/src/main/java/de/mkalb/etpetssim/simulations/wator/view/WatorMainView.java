@@ -28,6 +28,8 @@ public final class WatorMainView
         WatorConfigView,
         WatorObservationView> {
 
+    private static final String WATOR_TOOL_ID_ADD_FISH = "wator.addFish";
+    private static final String WATOR_TOOL_ID_ADD_SHARK = "wator.addShark";
     private static final String WATOR_TOOLBAR_ADD_FISH = "wator.toolbar.addfish";
     private static final String WATOR_TOOLBAR_ADD_FISH_TOOLTIP = "wator.toolbar.addfish.tooltip";
     private static final String WATOR_TOOLBAR_ADD_SHARK = "wator.toolbar.addshark";
@@ -188,11 +190,13 @@ public final class WatorMainView
     protected List<SimulationUserActionDescriptor<WatorUserActionContext>> createUserActionDescriptors() {
         return List.of(
                 new SimulationUserActionDescriptor<>(
+                        WATOR_TOOL_ID_ADD_FISH,
                         WatorUserActionContext.ADD_FISH,
                         SimulationUserActionScope.CELL_SELECTED,
                         WATOR_TOOLBAR_ADD_FISH,
                         WATOR_TOOLBAR_ADD_FISH_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
+                        WATOR_TOOL_ID_ADD_SHARK,
                         WatorUserActionContext.ADD_SHARK,
                         SimulationUserActionScope.CELL_SELECTED,
                         WATOR_TOOLBAR_ADD_SHARK,
