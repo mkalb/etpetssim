@@ -380,39 +380,68 @@ Recommended migration order:
 
 5. Implement Snake `Add snake`.
 
+   Split this step into `5a` and `5b`. Treat them as separate migration slices. After `5a`, verify, summarize, and stop
+   for human review and manual testing before starting `5b`.
+
+   **5a. Model and context groundwork.**
+
    Scope:
 
     - Migrate Snake action context from the current fixed enum-only shape to a context hierarchy that can represent both
       existing fixed actions and `AddSnake(SnakeMoveStrategy strategy)`.
-    - Add a stable `Add snake` descriptor id, label key, and tooltip key.
-    - Add a Snake edit ViewModel for selected strategy state, and construct it in `SnakeFactory` so the resolver and the
-      option panel share the same instance.
-    - Add a strategy ComboBox to the Snake option panel. It should be visible while edit mode is expanded and enabled
-      only
-      when `Add snake` is selected.
-    - Add localized ComboBox label and tooltip keys for the strategy control in both `messages_en_US.properties` and
-      `messages_de_DE.properties`, plus `AppLocalizationKeys` constants, separate from the descriptor label and tooltip
-      keys.
-    - Populate strategies from `SnakeMoveStrategies.strategiesForConfig()`, not from localized display text. Note that
-      this
-      method currently takes no `SnakeConfig` despite its name; pass config only if it starts depending on one.
-    - If selected strategy state is ever nullable, the `Add snake` descriptor resolver must return `Optional.empty()`
-      until
-      a strategy is selected.
     - Apply `Add snake` only to ground cells; walls, food, snake heads, and snake segments remain no-ops.
     - Assign snake ids from a monotonic `nextSnakeId` counter owned by `SnakeSimulationManager`, not from grid contents,
       because dead snakes are removed.
     - Initialize `nextSnakeId` from the initial configured snake count after startup initialization, then increment it
-      only
-      after the model writes a new snake head.
+      only after the model writes a new snake head.
     - Construct the new `SnakeHead` with id, selected strategy, `config.initialPendingGrowth()`, and the current step
       index `manager.stepCount() - 1` as `stepIndexOfSpawn`.
     - Add a total-increment method to `SnakeStatistics` (it has no total-increase path today) and keep total and living
       snake-head counts consistent.
+    - Keep the existing Snake toolbar behavior unchanged in this step. Do not add the visible `Add snake` tool or the
+      strategy option panel yet.
 
    Acceptance checks:
 
     - Existing Snake tools still work unchanged.
+    - The Snake model can apply an `AddSnake(SnakeMoveStrategy strategy)` context when called through the existing user
+      action path.
+    - Adding a snake through the model action writes a snake head only to ground cells.
+    - Added snakes receive monotonic ids from `nextSnakeId`, not ids derived from grid contents.
+    - Adding a snake updates Snake statistics for total snake-head cells and living snake-head cells.
+    - Invalid target cells remain no-ops without UI-side per-cell checks.
+
+   **5b. Toolbar and strategy option UI.**
+
+   Start this slice only after `5a` has been reviewed, manually tested, and explicitly approved.
+
+   Scope:
+
+    - Add a stable `Add snake` descriptor id, label key, and tooltip key.
+    - Add a Snake edit ViewModel for selected strategy state, and construct it in `SnakeFactory` so the resolver and the
+      option panel share the same instance.
+    - Populate strategies from `SnakeMoveStrategies.strategiesForConfig()`, not from localized display text. Note that
+      this method currently takes no `SnakeConfig` despite its name; pass config only if it starts depending on one.
+    - Use the first strategy returned by `SnakeMoveStrategies.strategiesForConfig()` as the default selected strategy.
+      With the current catalog this is `SnakeMoveStrategies.MOMENTUM`.
+    - Store the selected option as the actual `SnakeMoveStrategy` value. Do not store or compare localized text, display
+      names, or ComboBox strings for strategy identity.
+    - Display strategies in the ComboBox using their existing short strategy names, such as `M`, `F M`, or `F V C+`.
+      Do not introduce longer localized strategy display names in this step.
+    - Add a strategy ComboBox to the Snake option panel. It should be visible while edit mode is expanded and enabled
+      only when `Add snake` is selected.
+    - Add localized ComboBox label and tooltip keys for the strategy control in both `messages_en_US.properties` and
+      `messages_de_DE.properties`, plus `AppLocalizationKeys` constants, separate from the descriptor label and tooltip
+      keys.
+    - If selected strategy state is ever nullable, the `Add snake` descriptor resolver must return `Optional.empty()`
+      until a strategy is selected. With the default strategy described above, normal startup should have a non-null
+      selected strategy.
+
+   Acceptance checks:
+
+    - Existing Snake tools still work unchanged.
+    - Expanded edit toolbar contains the existing Snake tools plus `Add snake`.
+    - The strategy ComboBox is visible while edit mode is expanded and disabled unless `Add snake` is selected.
     - Repeated clicks with `Add snake` selected reuse the selected strategy.
     - Changing the strategy affects later added snakes only.
     - Adding a snake updates the rendered grid, observation selection, and Snake statistics.
