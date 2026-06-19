@@ -19,14 +19,35 @@ import java.util.*;
  * @see de.mkalb.etpetssim.engine.support.GridPattern
  * @see de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity
  */
-// TODO Conway: Add possibility for the user to modify model by selecting a pattern and placing it on the grid (e.g. via drag & drop from a pattern palette)
 @SuppressWarnings("MagicNumber")
 public final class ConwayPatterns {
+
+    private static final String PATTERN_ID_GLIDER = "conway.pattern.glider";
+    private static final String PATTERN_ID_BLOCK = "conway.pattern.block";
+    private static final String PATTERN_ID_BEEHIVE = "conway.pattern.beehive";
+    private static final String PATTERN_ID_BLINKER = "conway.pattern.blinker";
+
+    private static final List<ConwayPatternChoice> CLASSIC_CHOICES = List.of(
+            new ConwayPatternChoice(PATTERN_ID_GLIDER, PATTERN_ID_GLIDER, ConwayPatterns::glider, config -> true),
+            new ConwayPatternChoice(PATTERN_ID_BLOCK, PATTERN_ID_BLOCK, ConwayPatterns::block, config -> true),
+            new ConwayPatternChoice(PATTERN_ID_BEEHIVE, PATTERN_ID_BEEHIVE, ConwayPatterns::beehive, config -> true),
+            new ConwayPatternChoice(PATTERN_ID_BLINKER, PATTERN_ID_BLINKER, ConwayPatterns::blinker, config -> true)
+    );
 
     /**
      * Private constructor to prevent instantiation.
      */
     private ConwayPatterns() {
+    }
+
+    public static List<ConwayPatternChoice> choices() {
+        return CLASSIC_CHOICES;
+    }
+
+    public static List<ConwayPatternChoice> availableChoices(ConwayConfig config) {
+        return CLASSIC_CHOICES.stream()
+                              .filter(choice -> choice.availableFor(config))
+                              .toList();
     }
 
     /**

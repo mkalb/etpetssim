@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.*;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.view.*;
-import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
+import de.mkalb.etpetssim.simulations.conway.viewmodel.*;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
@@ -28,6 +28,7 @@ public final class ConwayFactory {
 
         // ViewModel
         var configViewModel = new ConwayConfigViewModel(readOnlySimulationState);
+        var editToolBarViewModel = new ConwayEditToolBarViewModel();
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel =
                 new DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, ConwayStatistics>(readOnlySimulationState);
@@ -39,7 +40,7 @@ public final class ConwayFactory {
         var configView = new ConwayConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ConwayObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new ConwayMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        var view = new ConwayMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view
         return view;
