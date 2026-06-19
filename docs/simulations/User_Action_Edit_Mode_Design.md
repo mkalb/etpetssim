@@ -276,8 +276,9 @@ General guardrails for every step:
 - Keep `SimulationUserAction.apply(manager, context, selectedCell)` returning `void`.
 - Keep action validity model-side. Do not add per-cell applicability checks to the toolbar.
 - Keep toolbar labels and tooltips localized through resource-bundle keys.
-- Add `AppLocalizationKeys` constants for new localization keys used from Java. Keep properties files sorted
-  alphabetically when new localization keys are added.
+- Use `AppLocalizationKeys` constants only for shared or cross-cutting localization keys. Keep simulation-specific
+  localization key constants in the simulation class that consumes them. Keep properties files sorted alphabetically
+  when new localization keys are added.
 - Do not add or modify unit tests; this project has none yet and Version 2 keeps it that way.
 - Verify each implementation slice with `.\gradlew.bat compileJava`, then run the application and test it manually.
 - Implement only one step per change set, then hand off for human review and human testing before the next step starts.
@@ -431,8 +432,8 @@ Recommended migration order:
     - Add a strategy ComboBox to the Snake option panel. It should be visible while edit mode is expanded and enabled
       only when `Add snake` is selected.
     - Add localized ComboBox label and tooltip keys for the strategy control in both `messages_en_US.properties` and
-      `messages_de_DE.properties`, plus `AppLocalizationKeys` constants, separate from the descriptor label and tooltip
-      keys.
+      `messages_de_DE.properties`. Keep these Snake-specific localization key constants in the Snake class that uses
+      them, separate from the descriptor label and tooltip keys.
     - If selected strategy state is ever nullable, the `Add snake` descriptor resolver must return `Optional.empty()`
       until a strategy is selected. With the default strategy described above, normal startup should have a non-null
       selected strategy.
@@ -449,50 +450,81 @@ Recommended migration order:
 
 6. Implement Conway `Place pattern`.
 
+   Split this step into `6a` and `6b`. Treat them as separate migration slices. After `6a`, verify, summarize, and stop
+   for human review and manual testing before starting `6b`.
+
+   **6a. Model, context, and pattern groundwork.**
+
    Scope:
 
     - Introduce a Conway-specific action context so Conway no longer relies on `NoUserActionContext` for edit tools.
-    - Keep `Toggle cell` as a fixed Conway action.
-    - Add a stable `Place pattern` descriptor id, label key, and tooltip key.
+    - Keep `Toggle cell` as a fixed Conway action and preserve the existing Conway toolbar behavior in this slice. Do
+      not add the visible `Place pattern` tool or the pattern option panel yet.
     - Define the pattern catalog and an availability rule such as `availableFor(ConwayConfig)`. Decide whether the
-      classic
-      `ConwayPatterns` factories are always available, square-only, or rule-dependent, and add a config-aware accessor
-      because `ConwayConfig` has no pattern field today.
+      classic `ConwayPatterns` factories are always available, square-only, or rule-dependent, and add a config-aware
+      accessor because `ConwayConfig` has no pattern field today.
     - Represent catalog entries as stable pattern choices, not localized strings. Each choice should provide a stable
-      id,
-      localized display key, pattern value or factory, and availability rule.
-    - Add a Conway edit ViewModel for available pattern choices and selected pattern state, and construct it in
-      `ConwayFactory` so the resolver and the option panel share the same instance.
-    - Add a pattern ComboBox to the Conway option panel. It should be visible while edit mode is expanded and enabled
-      only
-      when `Place pattern` is selected and at least one pattern is available. Use an empty-safe binding for the
-      zero-pattern case, because `InputChoiceProperty` rejects an empty value list. A plain nullable property plus
-      ComboBox
-      items is acceptable here.
-    - Add localized ComboBox label and tooltip keys plus pattern display names in both `messages_en_US.properties` and
-      `messages_de_DE.properties`, plus `AppLocalizationKeys` constants, separate from the descriptor label and tooltip
-      keys.
-    - Derive available pattern choices from the active `ConwayConfig` after simulation initialization or restart, not
-      from
-      editable config controls.
-    - If no pattern is selected or no patterns are available, the `Place pattern` descriptor resolver must return
-      `Optional.empty()`.
+      id, localized display key, pattern value or factory, and availability rule.
+    - Add a `Place pattern` context that carries the selected stable pattern choice or resolved `GridPattern` needed by
+      the model action. The context must not carry localized display text.
     - Use the selected cell as the top-left origin of the normalized `GridPattern`.
     - Place patterns without grid-edge wrapping.
     - Make placement all-or-nothing: validate the full footprint first (for example a `canPlacePatternAt` check) and do
       nothing if any coordinate falls outside the grid. Do not call `GridEntityUtils.placePatternAt` directly, because
-      it
-      skips out-of-bounds cells and writes the rest.
+      it skips out-of-bounds cells and writes the rest.
     - Overwrite the full pattern footprint, including `DEAD` cells contained in the pattern.
-    - Define how `Place pattern` updates `ConwayStatistics.changedCells`: count only cells whose value actually changes,
-      matching the existing `Toggle cell` semantics, not the full footprint size.
+    - Compute alive/dead deltas and changed-cell count from the pre-write footprint before mutating the model, then
+      update statistics once. `changedCells` should increase only by cells whose entity actually changed, matching the
+      existing `Toggle cell` semantics.
 
    Acceptance checks:
 
     - Existing Conway `Toggle cell` behavior remains unchanged.
-    - Pattern choices recompute when a new Conway simulation starts with a different config.
+    - The Conway model can apply a `Place pattern` context when called through the existing user action path.
     - Out-of-bounds pattern placement leaves the grid and statistics unchanged.
-    - Successful placement updates grid cells, alive/dead statistics, observation labels, and redraw state.
+    - Successful placement updates grid cells and alive/dead/changed statistics correctly.
+    - Invalid placement remains a model-side no-op without UI-side per-cell checks.
+
+   **6b. Toolbar and pattern option UI.**
+
+   Start this slice only after `6a` has been reviewed, manually tested, and explicitly approved.
+
+   Scope:
+
+    - Add a stable `Place pattern` descriptor id, label key, and tooltip key.
+    - Add a Conway edit ViewModel for available pattern choices and selected pattern state, and construct it in
+      `ConwayFactory` so the resolver and the option panel share the same instance.
+    - Derive available pattern choices from the active `ConwayConfig` after simulation initialization or restart, not
+      from editable config controls.
+    - Use the first available pattern choice as the default selected pattern whenever at least one pattern is available.
+      If no patterns are available, keep the selected pattern empty.
+    - Store the selected option as the stable pattern choice value or stable choice id. Do not store or compare
+      localized text, display names, or ComboBox strings for pattern identity.
+    - Display pattern choices in the ComboBox using localized display names resolved from the pattern choice label keys.
+    - Add a pattern ComboBox to the Conway option panel. It should be visible while edit mode is expanded and enabled
+      only when `Place pattern` is selected and at least one pattern is available.
+    - Use an empty-safe binding for the zero-pattern case, because `InputChoiceProperty` rejects an empty value list. A
+      plain nullable property plus ComboBox items is acceptable here.
+    - Add localized ComboBox label and tooltip keys plus pattern display names in both `messages_en_US.properties` and
+      `messages_de_DE.properties`. Keep Conway-specific localization key constants in the Conway class that uses them,
+      separate from the descriptor label and tooltip keys.
+    - If no pattern is selected or no patterns are available, the `Place pattern` descriptor resolver must return
+      `Optional.empty()`.
+    - Ensure option-panel listener cleanup follows the shared toolbar cleanup pattern when the toolbar is rebuilt or the
+      simulation shuts down.
+
+   Acceptance checks:
+
+    - Existing Conway `Toggle cell` behavior remains unchanged.
+    - Expanded edit toolbar contains the existing `Toggle cell` tool plus `Place pattern`.
+    - The pattern ComboBox is visible while edit mode is expanded and disabled unless `Place pattern` is selected and at
+      least one pattern is available.
+    - Pattern choices recompute when a new Conway simulation starts with a different config.
+    - Repeated clicks with `Place pattern` selected reuse the selected pattern.
+    - Changing the selected pattern affects later placements only.
+    - Successful placement updates the rendered grid, observation labels, alive/dead/changed statistics, and redraw
+      state.
+    - Out-of-bounds pattern placement leaves the grid and statistics unchanged.
 
 7. Stabilize and document follow-up boundaries.
 
