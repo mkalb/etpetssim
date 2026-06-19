@@ -54,7 +54,7 @@ public abstract class AbstractMainView<
     private final Label notificationLabel;
     private final ToolBar editAffordanceToolBar;
     private final Map<Double, Font> fontCache;
-
+    private final List<Runnable> actionToolBarCleanupActions = new ArrayList<>();
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter dynamicPainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
@@ -207,6 +207,14 @@ public abstract class AbstractMainView<
         }
         selectedToolIdProperty = null;
         selectedToolIdListener = null;
+        for (var cleanupAction : actionToolBarCleanupActions) {
+            try {
+                cleanupAction.run();
+            } catch (RuntimeException e) {
+                AppLogger.errorf(e, "%s: Failed to clean up edit toolbar resources.", LOG_COMPONENT);
+            }
+        }
+        actionToolBarCleanupActions.clear();
     }
 
     private void clearEditAffordanceToolBar() {
@@ -322,6 +330,13 @@ public abstract class AbstractMainView<
             }
         }
 
+        Node optionPanelNode = createEditToolBarOptionPanel(currentSelectedToolIdProperty);
+        if (optionPanelNode != null) {
+            optionPanelNode.visibleProperty().bind(currentEditModeProperty);
+            optionPanelNode.managedProperty().bind(currentEditModeProperty);
+            nodes.add(optionPanelNode);
+        }
+
         if (currentSelectedToolIdProperty != null) {
             selectedToolIdProperty = currentSelectedToolIdProperty;
             var finalSelectButton = selectButton;
@@ -357,6 +372,29 @@ public abstract class AbstractMainView<
         });
 
         return nodes;
+    }
+
+    /**
+     * Creates simulation-specific edit option controls shown in expanded edit mode.
+     *
+     * <p>The returned node is managed by the common edit-toolbar lifecycle and will be made visible/managed only while
+     * edit mode is active. Implementations should keep descriptor metadata and JavaFX node creation separate.
+     *
+     * @param selectedToolId selected stable tool id used for enablement bindings
+     * @return option-panel node, or {@code null} when the simulation has no option controls
+     */
+    @SuppressWarnings("unused")
+    protected @Nullable Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+        return null;
+    }
+
+    /**
+     * Registers a cleanup action invoked when the edit toolbar is rebuilt or the simulation shuts down.
+     *
+     * @param cleanupAction cleanup action for listeners or bindings owned by simulation-specific option controls
+     */
+    protected final void registerActionToolBarCleanup(Runnable cleanupAction) {
+        actionToolBarCleanupActions.add(cleanupAction);
     }
 
     private void configureEditToolBarButton(ButtonBase button) {
