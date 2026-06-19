@@ -1,335 +1,188 @@
 # User Action Edit Mode Design
 
-This document records the planned design for improving simulation user actions in etpetssim.
+This document summarizes the implemented Version 1 edit-mode design and records the planned Version 2 follow-up for
+simulation user actions in etpetssim.
 
 Scope of this document: architecture and UX guidance only. No Java code, tests, resources, or build files are changed by
 this document.
 
-## Problem
+## Version 1 Summary (Implemented)
 
-Simulation user actions currently follow this interaction pattern:
+Version 1 has already been implemented. It replaced direct select-then-button editing with an explicit edit mode above
+the canvas while preserving normal cell selection as the default inspection behavior.
 
-1. The user pauses the simulation.
-2. The user selects a grid cell on the canvas.
-3. The selected cell is exposed through `viewModel.selectedGridCellProperty()`.
-4. The user presses an action button in the simulation toolbar.
-5. `SimulationUserAction.apply(...)` receives the active manager, action context, and selected cell.
+Implemented intent:
 
-This works for occasional edits, but it is awkward when the user wants to perform the same action repeatedly, for
-example adding several walls or toggling several cells. Each change requires selecting a cell and then pressing the
-toolbar button again.
+- Canvas clicks select cells by default and update the observation view.
+- Grid mutations require edit mode plus a selected cell action tool.
+- Entering edit mode shows a compact toolbar with `Select` and simulation-provided cell tools.
+- Choosing a tool does not mutate immediately; the next canvas click selects the cell first and then applies the tool.
+- Leaving `PAUSED` exits edit mode and resets tool selection to `Select`.
+- Simulations without descriptors show no edit row and keep their canvas space.
 
-At the same time, selection is not only an edit target. It is also the normal inspection mechanism used by the
-ObservationView. Selection must therefore remain inspect-first by default and must not automatically mutate simulation
-state.
+Main introduced contracts and hooks:
 
-## Goals
+- `SimulationUserActionScope` in `de.mkalb.etpetssim.simulations.core.shared` with `CELL_SELECTED` and `GLOBAL`.
+- `SimulationUserActionDescriptor` in `de.mkalb.etpetssim.simulations.core.viewmodel` with fixed `context`, `scope`,
+  `labelKey`, and `tooltipKey`.
+- `AbstractMainView.createUserActionDescriptors()` for simulation-specific edit tool descriptors.
+- Descriptor-based edit-toolbar creation in `AbstractMainView`.
+- Edit-mode and selected-descriptor state in `DefaultMainViewModel`.
+- Click-to-apply flow in `AbstractDefaultMainView`, delegated to `DefaultMainViewModel.applySelectedCellUserAction()`.
 
-- Preserve cell selection as the default inspection behavior.
-- Require explicit user intent before clicks mutate the grid.
-- Make repeated cell edits faster than the current select-then-button flow.
-- Keep `SimulationUserAction` implementations usable without a large model-layer redesign.
-- Keep run controls and edit controls conceptually separate.
-- Preserve canvas space for simulations without user actions.
-- Allow gradual migration without breaking all simulations in one change.
+Important Version 1 constraints that still apply unless a later version explicitly changes them:
 
-## Non-Goals
+- `SimulationUserAction.apply(...)` still returns `void`.
+- Redraw after an attempted action is acceptable, even if the action is a no-op.
+- Action validity remains model-side; there are no per-cell applicability checks in the toolbar.
+- There is no undo, drag painting, icon system, or action-result reporting.
+- User-facing labels and tooltips remain localized through resource-bundle keys.
 
-- No undo system.
-- No drag painting in the first version.
-- No per-cell action validity checks in the first version.
-- No icon system in the first version.
-- No automatic switch into edit mode.
-- No change to `SimulationUserAction.apply(...)` return type in the first version.
+## Version 2 Plan
 
-## Current Code Shape
+Version 2 is a planned follow-up and must stay separate from the implemented Version 1 changes. Version 1 keeps fixed
+cell-action tools. Version 2 extends the same interaction model with parameterized edit tools.
 
-Relevant current contracts:
+### Problem
 
-| Type                                                    | Current role                                                                                                |
-|---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `SimulationUserAction`                                  | Model-side action contract. Applies a context to the current simulation manager and optional selected cell. |
-| `SimulationUserActionContext`                           | Layer-neutral marker for simulation-specific action context values.                                         |
-| `GridCell` / `GridCellView`                             | Selected cell value passed to actions.                                                                      |
-| `DefaultMainViewModel.applyUserAction(...)`             | Applies configured user action only while simulation state is `PAUSED`.                                     |
-| `AbstractDefaultMainView.applyUserActionAndRedraw(...)` | Delegates to ViewModel action application and redraws after attempted action.                               |
-| `AbstractMainView.createActionToolBarNodes()`           | Current hook used by simulations to create toolbar buttons.                                                 |
-| `DefaultControlView`                                    | Bottom run-control area for start, pause, resume, cancel, mode, speed/count, and step display.              |
+The Version 1 descriptor model assumes that selecting a tool is enough to produce a complete
+`SimulationUserActionContext`. This is too limited for actions whose behavior depends on an additional user choice.
 
-Current examples:
+Known examples:
 
-- Conway: one selected-cell action, toggle selected cell.
-- Snake: several selected-cell actions, add/remove wall and add/remove food.
-- Wator: several selected-cell actions, add fish or add shark.
-- Some simulations have no meaningful user actions and should not show edit controls.
+- Snake needs an `Add snake` tool that also needs a selected `SnakeMoveStrategy`.
+- Conway needs a `Place pattern` tool that also needs a selected `GridPattern` whose availability depends on the active
+  Conway configuration.
 
-## UX Decision
+These should not be represented as many separate toggle buttons. `Add snake` should be one tool with a strategy option,
+and `Place pattern` should be one tool with a pattern option.
 
-Use an explicit edit mode above the canvas in the simulation main view.
+### Architecture
 
-Default behavior:
+Introduce a dedicated edit-toolbar ViewModel and a simulation-specific option-panel hook. The goal is to keep
+`DefaultMainViewModel` focused on simulation lifecycle, cell selection, and action application while moving
+tool-specific UI state into edit-focused components.
 
-- Selection remains inspect-first.
-- Canvas clicks select cells and update the ObservationView.
-- No action is applied unless edit mode is active and a cell action tool is selected.
+Recommended ownership:
 
-Edit behavior:
+- `DefaultMainViewModel` keeps ownership of the active simulation manager, selection, and the final call to
+  `SimulationUserAction.apply(...)`.
+- A shared edit-toolbar ViewModel owns edit-mode state, selected tool state, and context resolution for the currently
+  selected tool.
+- Simulation-specific edit ViewModels own option state such as the selected Snake strategy or selected Conway pattern.
+- Simulation-specific edit Views create option controls such as ComboBoxes and bind them to the simulation-specific edit
+  ViewModel.
+- `SimulationUserActionDescriptor` remains metadata and context-resolution information. It must not own JavaFX nodes or
+  become a generic UI control schema.
 
-- A compact `Edit` affordance is shown above the canvas for simulations that provide user action descriptors.
-- The `Edit` affordance is always visible for those simulations, but disabled while the simulation is running.
-- The full edit toolbar is shown only while edit mode is active.
-- Leaving `PAUSED` automatically exits edit mode.
-- Returning to `PAUSED` starts in inspect/select mode again.
-- Choosing an action tool never mutates immediately.
-- A canvas click first updates selection, then applies the selected cell action to that selected cell.
+The shared toolbar should provide the common edit affordance, the `Select` tool, selected-tool handling, enablement
+rules, and click-to-apply flow. Simulations can contribute a small option panel for controls that are specific to their
+edit tools.
 
-Recommended labels:
+### Descriptor And Context Resolution
 
-| UI element         | Label    | Tooltip                              |
-|--------------------|----------|--------------------------------------|
-| Compact affordance | `Edit`   | `Show editing tools`                 |
-| Default tool       | `Select` | `Select cells without changing them` |
+Keep `SimulationUserAction.apply(...)` unchanged for Version 2. Parameter values should be folded into the resolved
+action context before the action is applied.
 
-Controls are text-only in the first version.
+Recommended descriptor direction:
 
-## Toolbar Placement
+- Replace or supplement the fixed `context` value with a resolver-style concept that can produce the current `CTX` at
+  apply time.
+- Fixed tools can use a resolver that always returns the same enum or context value.
+- Parameterized tools can use a resolver that combines the selected tool with current option state from the edit-toolbar
+  ViewModel.
+- Add a stable tool id if selected tools must be matched to option controls. Do not use localized labels for logic.
 
-Place edit controls in `SimulationMainView`, above the canvas, where the current simulation toolbar is displayed.
+Recommended action-context direction:
 
-Do not place edit controls in `SimulationControlView`.
+- Simple actions may remain enum constants.
+- Parameterized actions should use richer context values, such as records implementing the simulation-specific
+  `SimulationUserActionContext` contract.
+- Snake can use an `AddSnake` context carrying the selected `SnakeMoveStrategy`.
+- Conway can use a `PlacePattern` context carrying the selected pattern value.
 
-Rationale:
+This keeps model actions independent of JavaFX controls while allowing the existing `apply(manager, context,
+selectedCell)` contract to remain stable.
 
-- Edit tools affect canvas/grid interaction.
-- The bottom `SimulationControlView` is for simulation execution and timing controls.
-- Keeping edit controls near the canvas keeps the mental model clean.
-- Existing simulation `MainView` classes already own action toolbar definitions.
-- Existing action application flow already lives in the main view and main ViewModel path.
+### Toolbar Behavior
 
-Trade-off:
+Keep the Version 1 inspect-first behavior:
 
-- Expanding edit tools can reduce visible canvas height.
-- This layout shift is acceptable because it happens only after explicit user action.
-- Simulations without action descriptors should show no edit row at all, preserving canvas space.
+1. Canvas clicks still update selection first.
+2. Observation views still show the selected cell.
+3. An edit action is applied only when edit mode is active and a non-`Select` tool is selected.
 
-## Action Scopes
+For parameter controls:
 
-User actions need explicit scope metadata.
+- Option controls are visible whenever edit mode is expanded, so the toolbar layout does not jump when switching tools.
+- Option controls are disabled unless their associated tool is selected.
+- The default selected tool after entering edit mode remains `Select`.
+- Tool option values may stay selected while edit mode remains open, enabling repeated edits with the same parameter.
+- Leaving `PAUSED` still exits edit mode and returns to inspect/select behavior.
 
-Recommended descriptor scopes:
+Example behavior:
 
-| Scope           | Meaning                                                                       | Example                            |
-|-----------------|-------------------------------------------------------------------------------|------------------------------------|
-| `CELL_SELECTED` | Requires a selected grid cell. Applies to the selected cell.                  | Toggle cell, add wall, remove food |
-| `GLOBAL`        | Does not require a selected grid cell. Applies to the whole simulation state. | Clear all, fill all                |
+- Snake shows the strategy ComboBox while edit mode is expanded, but it is enabled only when `Add snake` is selected.
+- Conway shows the pattern ComboBox while edit mode is expanded, but it is enabled only when `Place pattern` is selected
+  and at least one pattern is available for the active simulation config.
 
-`CELL_SELECTED` actions can be represented as toggle tools inside edit mode.
+### Snake Behavior
 
-`GLOBAL` actions should be normal buttons inside the expanded edit toolbar. They should not appear when edit mode is
-collapsed.
+Add a new Snake cell action for creating a snake at the selected cell.
 
-`GLOBAL` is a future extension point. No current simulation needs global user actions in the first migration. The first
-implementation should migrate existing `CELL_SELECTED` actions and keep `GLOBAL` support minimal until a real global
-action is added.
+Expected behavior:
 
-Future global destructive actions should use confirmation before applying.
+- Expanded edit toolbar contains the existing Snake tools plus `Add snake`.
+- A strategy ComboBox is visible in the expanded edit toolbar.
+- The strategy ComboBox is disabled unless `Add snake` is the selected tool.
+- The selected strategy is used for every canvas click while `Add snake` remains selected.
+- `Add snake` applies only to ground cells. Walls, food, snake heads, and snake segments remain no-ops.
+- The action context carries the selected strategy; it does not carry a snake id.
+- Snake ids are assigned by the model or simulation manager at apply time using the next unique id.
+- Adding a snake must update Snake statistics consistently, including total snake-head cells and living snake-head cells.
 
-## Descriptor Model
+### Conway Behavior
 
-Keep `SimulationUserActionContext` as the layer-neutral action value. Add a descriptor to carry UI and behavior
-metadata.
+Add a Conway cell action for placing a predefined pattern at the selected cell.
 
-Recommended core types:
+Expected behavior:
 
-```java
-public enum SimulationUserActionScope {
-    CELL_SELECTED,
-    GLOBAL
-}
-```
+- Expanded edit toolbar contains the existing `Toggle cell` tool plus `Place pattern`.
+- A pattern ComboBox is visible in the expanded edit toolbar.
+- The pattern ComboBox is disabled unless `Place pattern` is selected and at least one pattern is available.
+- Available pattern choices are derived from the active `ConwayConfig`, not from editable config controls.
+- Pattern choices are recomputed when a Conway simulation is initialized or restarted with a new config.
+- The selected cell is the top-left origin of the normalized `GridPattern`.
+- Pattern placement does not use grid-edge wrap behavior.
+- Pattern placement is all-or-nothing: if any pattern coordinate would fall outside the grid, the action is a no-op.
+- Placing a pattern overwrites the full pattern footprint, including `DEAD` cells contained in the pattern.
 
-Package: `de.mkalb.etpetssim.simulations.core.shared`
+### Migration Notes
 
-```java
-public record SimulationUserActionDescriptor<CTX extends SimulationUserActionContext>(
-        CTX context,
-        SimulationUserActionScope scope,
-        String labelKey,
-        String tooltipKey) {
-}
-```
-
-Package: `de.mkalb.etpetssim.simulations.core.viewmodel`
-
-Rationale:
-
-- Scope is layer-neutral.
-- Descriptor is UI-facing because it includes localization keys.
-- Model actions continue to depend only on `SimulationUserActionContext` and selected cells.
-- ViewModels can store selected descriptor/context as UI state without creating JavaFX nodes.
-
-## State Ownership
-
-Edit state belongs in `DefaultMainViewModel`.
-
-The main ViewModel should own:
-
-- whether edit mode is active
-- selected cell action descriptor/context
-- automatic edit-mode reset when simulation state leaves `PAUSED`
-
-`AbstractMainView` should own:
-
-- JavaFX controls
-- toggle groups
-- compact edit affordance
-- expanded edit toolbar layout
-- binding controls to ViewModel state
-
-Do not put JavaFX `Node` creation in ViewModel.
-
-## Click Behavior
-
-First version uses click-only behavior.
-
-Expected click flow in edit mode:
-
-1. User selects a `CELL_SELECTED` action tool.
-2. User clicks a canvas cell.
-3. Main view resolves the clicked coordinate.
-4. Main ViewModel updates selected cell state.
-5. ObservationView updates to the selected cell.
-6. Active action is applied to the selected cell.
-7. Selected cell is refreshed after mutation.
-8. Simulation redraws.
-
-Do not bypass selection. Action application must still use the selected `GridCellView`, matching the current
-`SimulationUserAction.apply(...)` contract.
-
-No drag painting in the first version. Drag painting would need duplicate-cell suppression, pointer tracking, scroll
-interaction decisions, and likely undo batching. Keep it as future work.
-
-## No Undo
-
-Do not introduce undo for the first version.
-
-Rationale:
-
-- Most planned edits are easy to reverse manually, such as toggling a cell or removing a wall.
-- The simulation can be restarted with the same configuration.
-- Undo would require action snapshots, inverse actions, or model copy strategy.
-- That would make the first edit-mode change much larger than needed.
-
-## No Per-Cell Validity Checks Initially
-
-Do not add per-cell validity checks in the first version.
-
-Example: Snake `ADD_WALL` on a food cell currently does nothing. Keep this behavior initially.
-
-Rationale:
-
-- Current `SimulationUserAction.apply(...)` owns action rules.
-- The method returns `void`, so core cannot distinguish no-op from mutation.
-- Per-cell validation would require another API, such as `canApply(manager, cell)`.
-
-Future improvement:
-
-- Change or supplement action application with a boolean changed result.
-- Add optional per-action applicability checks.
-- Use applicability for disabled tools, tooltip hints, or notifications.
-
-## Compatibility And Migration
-
-Use a transitional two-hook migration to avoid one large internal breaking change.
-
-Phase 1: Add descriptor support.
-
-- Add `SimulationUserActionScope`.
-- Add `SimulationUserActionDescriptor`.
-- Add a new descriptor hook in `AbstractMainView`, for example `createUserActionDescriptors()`.
-- Default descriptor hook returns an empty list.
-- Keep existing `createActionToolBarNodes()` temporarily.
-- Core uses descriptor-based edit UI when descriptors are present.
-- Old toolbar nodes remain available for not-yet-migrated simulations.
-
-Phase 2: Migrate simulations one at a time.
+Implement Version 2 only after the implemented Version 1 behavior is stable.
 
 Recommended order:
 
-1. Conway: validates simplest single-action cell edit flow.
-2. Snake: validates multiple action contexts and selected tool behavior.
-3. Wator: validates simpler multi-action add-only flow.
-4. Forest, Langton, Rebounding: migrate matching simple actions.
-5. ET Pets, Sugar: keep no edit row unless meaningful descriptors are added.
-6. Lab: keep outside this migration. Lab has special status and uses a different core-superclass path, so it is not
-   compatible with this user-action edit-mode pipeline.
+1. Extract shared edit-toolbar state from `DefaultMainViewModel` into a dedicated edit-toolbar ViewModel without
+   changing behavior.
+2. Add descriptor context resolution while preserving fixed-context behavior for existing tools.
+3. Add the simulation option-panel extension point.
+4. Implement Snake `Add snake` with a strategy ComboBox.
+5. Implement Conway `Place pattern` with a config-derived pattern ComboBox.
+6. Keep other simulations on fixed tools until they need parameterized edit behavior.
 
-Rule during migration:
+Do not add drag painting, undo, per-cell applicability checks, or changed/unchanged action results as part of Version 2.
 
-- A migrated simulation uses the new edit behavior only.
-- A not-yet-migrated simulation may keep the old direct action buttons temporarily.
-- Do not show old direct buttons and new edit tools in the same simulation.
-
-Phase 3: Remove old hook.
-
-- After all simulations are migrated, remove `createActionToolBarNodes()`.
-- Remove old direct-button creation code.
-- Keep descriptor-based edit UI as the only user-action toolbar mechanism.
-
-## Expected Simulation Behavior
-
-### Conway
-
-- Compact `Edit` control appears above canvas.
-- Expanded edit toolbar contains `Select` and `Toggle cell`.
-- Selecting `Toggle cell` does not mutate immediately.
-- Clicking cells toggles them while the tool is active.
-- Leaving pause exits edit mode.
-
-### Snake
-
-- Compact `Edit` control appears above canvas.
-- Expanded edit toolbar contains `Select`, `Add wall`, `Remove wall`, `Add food`, `Remove food`.
-- Cell actions are mutually exclusive tools.
-- Clicking a cell first selects it, then applies the active tool to that selected cell.
-- Invalid targets are no-ops.
-
-### Wator
-
-- Compact `Edit` control appears above canvas.
-- Expanded edit toolbar contains `Select`, `Add fish`, `Add shark`.
-- Adding to non-water cells remains a no-op.
-
-### Simulations Without Descriptors
-
-- No edit row.
-- No disabled empty edit button.
-- Canvas space is preserved.
-
-### Simulation Lab
-
-- No edit row.
-- No user-action descriptor migration.
-- Lab keeps its current interaction model because its classes use a different core-superclass structure and are not
-  compatible with the regular simulation user-action pipeline.
-
-## Implementation Notes
-
-- Keep `SimulationUserAction.apply(...)` returning `void` for the first version.
-- Redraw after attempted action is acceptable, even if the action was a no-op.
-- Keep localization keys in resource bundles.
-- Keep user-facing labels and tooltips localizable.
-- Keep toolbar CSS in shared simulation styling unless a simulation needs special local styling.
-- Disable edit affordance while simulation state is not `PAUSED`.
-- Auto-exit edit mode when state leaves `PAUSED`.
-- Preserve selection when edit mode changes; do not use edit mode as deselect.
-
-## Future Improvements
+## Other Future Improvements
 
 - Drag painting for repeated cell edits.
-- Boolean action result or action event result.
-- Optional per-cell applicability checks.
 - Confirmation for destructive global actions.
 - Keyboard shortcuts for edit tools.
 - Icons for common tools after an icon strategy exists.
 - Undo or edit history only if future workflows require it.
+
+## Version 3 Note
+
+Version 3 can revisit action results and applicability. A future action API may return whether the model actually
+changed, expose optional per-cell applicability checks, and use those results for disabled tools, no-op feedback,
+statistics refresh decisions, and more precise redraw behavior.
