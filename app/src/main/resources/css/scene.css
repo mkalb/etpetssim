@@ -524,15 +524,33 @@ ScrollPane .decrement-arrow {
 }
 
 .simulation-edit-toolbar {
+  -fx-alignment: center-left;
   -fx-background-color: #1a2233;
   -fx-background: #1a2233;
   -fx-background-insets: 0;
   -fx-background-radius: 0;
   -fx-padding: 4 8 3 8;
   -fx-spacing: 6;
+}
+
+.simulation-edit-toolbar-scrollpane {
+  -fx-background-color: #1a2233;
+  -fx-background: #1a2233;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
   -fx-border-color: #00eaff;
   -fx-border-width: 1 0 0 0;
   -fx-border-radius: 0;
+}
+
+.simulation-edit-toolbar-scrollpane > .viewport {
+  -fx-background-color: #1a2233;
+}
+
+.simulation-edit-toolbar-scrollpane .scroll-bar:horizontal {
+  -fx-pref-height: 0;
+  -fx-max-height: 0;
+  -fx-opacity: 0;
 }
 
 .simulation-edit-toolbar-button {

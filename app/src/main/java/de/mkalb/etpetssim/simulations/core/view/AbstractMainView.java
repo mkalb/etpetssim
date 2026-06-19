@@ -12,7 +12,7 @@ import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -52,7 +52,8 @@ public abstract class AbstractMainView<
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
-    private final ToolBar editAffordanceToolBar;
+    private final ScrollPane editAffordanceScrollPane;
+    private final HBox editAffordanceBox;
     private final Map<Double, Font> fontCache;
     private final List<Runnable> actionToolBarCleanupActions = new ArrayList<>();
     protected @Nullable FXGridCanvasPainter basePainter;
@@ -92,9 +93,23 @@ public abstract class AbstractMainView<
         notificationLabel.getStyleClass().add(FXStyleClasses.SIMULATION_NOTIFICATION_LABEL);
         clearNotification();
 
-        editAffordanceToolBar = new ToolBar();
-        editAffordanceToolBar.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR);
+        editAffordanceBox = new HBox();
+        editAffordanceBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR);
+
+        editAffordanceScrollPane = new ScrollPane();
+        editAffordanceScrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_SCROLLPANE);
+        editAffordanceScrollPane.setContent(editAffordanceBox);
+        editAffordanceScrollPane.setFitToHeight(true);
+        editAffordanceScrollPane.setFitToWidth(false);
+        editAffordanceScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        editAffordanceScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        editAffordanceScrollPane.setPannable(false);
+        registerEditAffordanceWheelScroll();
         clearEditAffordanceToolBar();
+    }
+
+    private static double clampZeroToOne(double value) {
+        return Math.clamp(value, 0.0d, 1.0d);
     }
 
     @SuppressWarnings("MagicNumber")
@@ -115,6 +130,31 @@ public abstract class AbstractMainView<
                     case SQUARE -> 0.9d;
                     case HEXAGON -> 0.8d;
                 });
+    }
+
+    private void registerEditAffordanceWheelScroll() {
+        editAffordanceScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            double delta = (Math.abs(event.getDeltaX()) > 0.0d)
+                    ? event.getDeltaX()
+                    : -event.getDeltaY();
+            if (delta == 0.0d) {
+                return;
+            }
+
+            Node content = editAffordanceScrollPane.getContent();
+            if (content == null) {
+                return;
+            }
+            double viewportWidth = editAffordanceScrollPane.getViewportBounds().getWidth();
+            double maxX = content.getLayoutBounds().getWidth() - viewportWidth;
+            if (maxX <= 0.0d) {
+                return;
+            }
+
+            double nextHValue = clampZeroToOne(editAffordanceScrollPane.getHvalue() + (delta / maxX));
+            editAffordanceScrollPane.setHvalue(nextHValue);
+            event.consume();
+        });
     }
 
     @Override
@@ -222,17 +262,17 @@ public abstract class AbstractMainView<
             editModeButton.setOnAction(null);
         }
         editModeButton = null;
-        for (Node item : editAffordanceToolBar.getItems()) {
+        for (Node item : editAffordanceBox.getChildren()) {
             item.visibleProperty().unbind();
             item.managedProperty().unbind();
         }
-        editAffordanceToolBar.getItems().clear();
-        editAffordanceToolBar.disableProperty().unbind();
-        editAffordanceToolBar.visibleProperty().unbind();
-        editAffordanceToolBar.managedProperty().unbind();
-        editAffordanceToolBar.setDisable(true);
-        editAffordanceToolBar.setVisible(false);
-        editAffordanceToolBar.setManaged(false);
+        editAffordanceBox.getChildren().clear();
+        editAffordanceScrollPane.disableProperty().unbind();
+        editAffordanceScrollPane.visibleProperty().unbind();
+        editAffordanceScrollPane.managedProperty().unbind();
+        editAffordanceScrollPane.setDisable(true);
+        editAffordanceScrollPane.setVisible(false);
+        editAffordanceScrollPane.setManaged(false);
     }
 
     protected final void rebuildActionToolBar() {
@@ -267,10 +307,10 @@ public abstract class AbstractMainView<
         List<Node> toolbarNodes = new ArrayList<>();
         toolbarNodes.add(editButton);
         toolbarNodes.addAll(nodes);
-        editAffordanceToolBar.getItems().setAll(toolbarNodes);
-        editAffordanceToolBar.disableProperty().bind(viewModel.simulationStateProperty().isNotEqualTo(SimulationState.PAUSED));
-        editAffordanceToolBar.setVisible(true);
-        editAffordanceToolBar.setManaged(true);
+        editAffordanceBox.getChildren().setAll(toolbarNodes);
+        editAffordanceScrollPane.disableProperty().bind(viewModel.simulationStateProperty().isNotEqualTo(SimulationState.PAUSED));
+        editAffordanceScrollPane.setVisible(true);
+        editAffordanceScrollPane.setManaged(true);
     }
 
     /**
@@ -444,7 +484,7 @@ public abstract class AbstractMainView<
 
         VBox vBox = new VBox();
         vBox.getChildren().add(notificationLabel);
-        vBox.getChildren().add(editAffordanceToolBar);
+        vBox.getChildren().add(editAffordanceScrollPane);
         vBox.getChildren().add(canvasScrollPane);
         VBox.setVgrow(canvasScrollPane, Priority.ALWAYS);
 

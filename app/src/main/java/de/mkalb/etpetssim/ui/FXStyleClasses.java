@@ -56,6 +56,7 @@ public final class FXStyleClasses {
     public static final String SIMULATION_EDIT_TOOLBAR_COMBOBOX = "simulation-edit-toolbar-combobox";
     public static final String SIMULATION_EDIT_TOOLBAR_OPTION_LABEL = "simulation-edit-toolbar-option-label";
     public static final String SIMULATION_EDIT_TOOLBAR_OPTION_PANEL = "simulation-edit-toolbar-option-panel";
+    public static final String SIMULATION_EDIT_TOOLBAR_SCROLLPANE = "simulation-edit-toolbar-scrollpane";
     public static final String SIMULATION_LEFT_BORDERPANE = "simulation-left-borderpane";
     public static final String SIMULATION_NOTIFICATION_LABEL = "simulation-notification-label";
     public static final String SIMULATION_RIGHT_BORDERPANE = "simulation-right-borderpane";
