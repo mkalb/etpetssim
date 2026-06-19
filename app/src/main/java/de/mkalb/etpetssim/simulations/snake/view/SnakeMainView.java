@@ -196,25 +196,25 @@ public final class SnakeMainView
         return List.of(
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_ADD_WALL,
-                        SnakeUserActionContext.ADD_WALL,
+                        SnakeUserActionContext.FixedAction.ADD_WALL,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_ADD_WALL,
                         SNAKE_TOOLBAR_ADD_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_REMOVE_WALL,
-                        SnakeUserActionContext.REMOVE_WALL,
+                        SnakeUserActionContext.FixedAction.REMOVE_WALL,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_REMOVE_WALL,
                         SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_ADD_FOOD,
-                        SnakeUserActionContext.ADD_FOOD,
+                        SnakeUserActionContext.FixedAction.ADD_FOOD,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_ADD_FOOD,
                         SNAKE_TOOLBAR_ADD_FOOD_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_REMOVE_FOOD,
-                        SnakeUserActionContext.REMOVE_FOOD,
+                        SnakeUserActionContext.FixedAction.REMOVE_FOOD,
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_REMOVE_FOOD,
                         SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP));

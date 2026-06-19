@@ -38,6 +38,10 @@ public final class SnakeStatistics
         snakeHeadCells--;
     }
 
+    public void increaseSnakeHeadCells() {
+        snakeHeadCells++;
+    }
+
     public void decreaseLivingSnakeHeadCells() {
         livingSnakeHeadCells--;
     }

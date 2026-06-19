@@ -35,6 +35,7 @@ public final class SnakeSimulationManager
     private final GridStructure structure;
     private final SnakeStatistics statistics;
     private final TimedSimulationExecutor<SnakeEntity, WritableGridModel<SnakeEntity>> executor;
+    private int nextSnakeId;
 
     public SnakeSimulationManager(SnakeConfig config) {
         super(config);
@@ -50,8 +51,17 @@ public final class SnakeSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
         initializeGrid(config, model, random);
+        nextSnakeId = config.snakes();
 
         initializeStatistics(model);
+    }
+
+    int nextSnakeId() {
+        return nextSnakeId;
+    }
+
+    void incrementNextSnakeId() {
+        nextSnakeId++;
     }
 
     private void initializeGrid(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {

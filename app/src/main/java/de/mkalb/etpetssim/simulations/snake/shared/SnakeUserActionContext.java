@@ -1,28 +1,29 @@
 package de.mkalb.etpetssim.simulations.snake.shared;
 
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 
 /**
  * Identifies which modification the user wants to apply to the selected cell.
  */
-public enum SnakeUserActionContext implements SimulationUserActionContext {
-    /**
-     * Add a wall to the selected cell.
-     */
-    ADD_WALL,
+public sealed interface SnakeUserActionContext extends SimulationUserActionContext
+        permits SnakeUserActionContext.FixedAction, SnakeUserActionContext.AddSnake {
 
     /**
-     * Remove a wall from the selected cell.
+     * Fixed edit tools that do not require additional parameters.
      */
-    REMOVE_WALL,
+    enum FixedAction implements SnakeUserActionContext {
+        ADD_WALL,
+        REMOVE_WALL,
+        ADD_FOOD,
+        REMOVE_FOOD
+    }
 
     /**
-     * Add food to the selected cell.
+     * Parameterized context for creating a snake with a selected move strategy.
      */
-    ADD_FOOD,
+    record AddSnake(SnakeMoveStrategy strategy) implements SnakeUserActionContext {
+    }
 
-    /**
-     * Remove food from the selected cell.
-     */
-    REMOVE_FOOD
 }
+
