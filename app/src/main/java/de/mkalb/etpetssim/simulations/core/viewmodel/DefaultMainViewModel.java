@@ -54,8 +54,7 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
     private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
-    private final BooleanProperty editModeActive = new SimpleBooleanProperty(false);
-    private final ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptor = new SimpleObjectProperty<>();
+    private final SimulationEditToolBarViewModel<CTX> editToolBarViewModel;
     private @Nullable SM simulationManager;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
@@ -94,6 +93,7 @@ public final class DefaultMainViewModel<
         this.simulationManagerFactory = simulationManagerFactory;
         this.selectedGridCellProvider = selectedGridCellProvider;
         this.simulationUserAction = simulationUserAction;
+        editToolBarViewModel = new SimulationEditToolBarViewModel<>();
         timer = new SimulationTimer(this::runTimerStep);
         batchExecutor = Executors.newSingleThreadExecutor(task -> {
             var thread = new Thread(task, "simulation-batch-executor");
@@ -119,8 +119,7 @@ public final class DefaultMainViewModel<
 
         simulationStateListener = (_, _, newState) -> {
             if (newState != SimulationState.PAUSED) {
-                editModeActive.set(false);
-                selectedUserActionDescriptor.set(null);
+                editToolBarViewModel.resetToSelectMode();
             }
         };
         simulationStateProperty().addListener(simulationStateListener);
@@ -190,7 +189,7 @@ public final class DefaultMainViewModel<
      * @return edit-mode property
      */
     public BooleanProperty editModeActiveProperty() {
-        return editModeActive;
+        return editToolBarViewModel.editModeActiveProperty();
     }
 
     /**
@@ -199,7 +198,7 @@ public final class DefaultMainViewModel<
      * @return selected descriptor property, nullable when no action tool is selected
      */
     public ObjectProperty<@Nullable SimulationUserActionDescriptor<CTX>> selectedUserActionDescriptorProperty() {
-        return selectedUserActionDescriptor;
+        return editToolBarViewModel.selectedUserActionDescriptorProperty();
     }
 
     /**
@@ -255,8 +254,7 @@ public final class DefaultMainViewModel<
         observationViewModel.lastClickedCoordinateProperty().unbind();
         observationStateViewModel.selectedGridCellProperty().unbind();
 
-        editModeActive.set(false);
-        selectedUserActionDescriptor.set(null);
+        editToolBarViewModel.resetToSelectMode();
         resetSelectedProperties();
         resetClickedCoordinateProperties();
         stopTimer();
@@ -712,18 +710,18 @@ public final class DefaultMainViewModel<
      * selected, or the simulation state does not allow applying actions
      */
     public boolean applySelectedCellUserAction() {
-        if (!editModeActive.get()) {
+        if (!editToolBarViewModel.isEditModeActive()) {
             return false;
         }
 
-        var descriptor = selectedUserActionDescriptor.get();
-        if ((descriptor == null) || (descriptor.scope() != SimulationUserActionScope.CELL_SELECTED)) {
+        var descriptor = editToolBarViewModel.getSelectedCellActionDescriptor();
+        if (descriptor.isEmpty()) {
             return false;
         }
         if (selectedGridCell.get() == null) {
             return false;
         }
-        return applyUserAction(descriptor.context());
+        return applyUserAction(descriptor.get().context());
     }
 
     private void logSimulationInfo(String message) {
