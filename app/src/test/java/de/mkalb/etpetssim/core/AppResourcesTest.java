@@ -101,9 +101,10 @@ final class AppResourcesTest {
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void testGetResourceAsStream() {
-        Optional<InputStream> streamOpt = AppResources.getResourceAsStream("css/etpetssim.css");
-        assertTrue(streamOpt.isPresent(), "InputStream should be present");
+    void testGetResourceAsStream() throws Exception {
+        try (InputStream stream = AppResources.getResourceAsStream("css/etpetssim.css").orElseThrow()) {
+            assertNotNull(stream, "InputStream should be present");
+        }
 
         assertThrows(NullPointerException.class, () -> AppResources.getResourceAsStream(null));
     }

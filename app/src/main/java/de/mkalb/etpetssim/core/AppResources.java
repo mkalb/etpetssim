@@ -130,6 +130,8 @@ public final class AppResources {
 
     /**
      * Opens a classpath resource as stream.
+     * <p>
+     * The caller owns the returned stream and must close it.
      *
      * @param relativePath resource path without leading slash
      * @return an {@link Optional} containing the stream, or empty if missing
@@ -186,6 +188,5 @@ public final class AppResources {
     }
 
 }
-
 
 
