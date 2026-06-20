@@ -355,11 +355,7 @@ public abstract class AbstractMainView<
                 actionButton.managedProperty().bind(currentEditModeProperty);
                 nodes.add(actionButton);
                 descriptorByToggle.put(actionButton, descriptor);
-            }
-        }
-
-        for (var descriptor : descriptors) {
-            if (descriptor.scope() == SimulationUserActionScope.GLOBAL) {
+            } else if (descriptor.scope() == SimulationUserActionScope.GLOBAL) {
                 Button actionButton = new Button(AppLocalization.getText(descriptor.labelKey()));
                 configureEditToolBarButton(actionButton);
                 actionButton.setTooltip(new Tooltip(AppLocalization.getText(descriptor.tooltipKey())));
