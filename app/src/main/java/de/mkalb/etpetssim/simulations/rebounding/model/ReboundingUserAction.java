@@ -22,7 +22,7 @@ public final class ReboundingUserAction
     public void apply(ReboundingSimulationManager manager,
                       ReboundingUserActionContext context,
                       @Nullable GridCellView<ReboundingEntity> selectedCell) {
-                                 var model = manager.currentModel();
+        var model = manager.currentModel();
         var statistics = manager.statistics();
 
         switch (context) {

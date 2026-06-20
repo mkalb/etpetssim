@@ -40,10 +40,13 @@ public final class LangtonMainView
         LangtonObservationView> {
 
     private static final String LANGTON_TOOL_ID_ADD_ANT = "langton.addAnt";
+    private static final String LANGTON_TOOL_ID_REMOVE_ANT = "langton.removeAnt";
     private static final String LANGTON_TOOLBAR_ADD_ANT_DIRECTION = "langton.toolbar.addant.direction";
     private static final String LANGTON_TOOLBAR_ADD_ANT_DIRECTION_TOOLTIP = "langton.toolbar.addant.direction.tooltip";
     private static final String LANGTON_TOOLBAR_ADD_ANT = "langton.toolbar.addant";
     private static final String LANGTON_TOOLBAR_ADD_ANT_TOOLTIP = "langton.toolbar.addant.tooltip";
+    private static final String LANGTON_TOOLBAR_REMOVE_ANT = "langton.toolbar.removeant";
+    private static final String LANGTON_TOOLBAR_REMOVE_ANT_TOOLTIP = "langton.toolbar.removeant.tooltip";
     private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
 
     private static final Color SELECTED_STROKE_COLOR = Color.RED;
@@ -174,12 +177,19 @@ public final class LangtonMainView
 
     @Override
     protected List<SimulationUserActionDescriptor<LangtonUserActionContext>> createUserActionDescriptors() {
-        return List.of(new SimulationUserActionDescriptor<>(
-                LANGTON_TOOL_ID_ADD_ANT,
-                SimulationUserActionScope.CELL_SELECTED,
-                LANGTON_TOOLBAR_ADD_ANT,
-                LANGTON_TOOLBAR_ADD_ANT_TOOLTIP,
-                () -> resolveSelectedAddAntContext().map(Function.identity())));
+        return List.of(
+                new SimulationUserActionDescriptor<>(
+                        LANGTON_TOOL_ID_REMOVE_ANT,
+                        LangtonUserActionContext.FixedAction.REMOVE_ANT,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        LANGTON_TOOLBAR_REMOVE_ANT,
+                        LANGTON_TOOLBAR_REMOVE_ANT_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        LANGTON_TOOL_ID_ADD_ANT,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        LANGTON_TOOLBAR_ADD_ANT,
+                        LANGTON_TOOLBAR_ADD_ANT_TOOLTIP,
+                        () -> resolveSelectedAddAntContext().map(Function.identity())));
     }
 
     @Override

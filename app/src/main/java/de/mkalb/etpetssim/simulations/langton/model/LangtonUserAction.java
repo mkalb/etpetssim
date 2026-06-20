@@ -30,21 +30,27 @@ public final class LangtonUserAction
         var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
         var antEntity = model.antModel().getEntity(coordinate);
-        var terrainEntity = model.groundModel().getEntity(coordinate);
-        var config = manager.config();
-
-        if ((terrainEntity == TerrainConstant.UNVISITED) && (antEntity instanceof NoAgent)) {
-            var direction = switch (context) {
-                case LangtonUserActionContext.AddAnt addAnt -> addAnt.direction();
-            };
-            if (!isValidInitialDirection(config, coordinate, direction)) {
-                return;
+        switch (context) {
+            case LangtonUserActionContext.FixedAction fixedAction -> {
+                if ((fixedAction == LangtonUserActionContext.FixedAction.REMOVE_ANT) && antEntity.isAgent()) {
+                    model.antModel().setEntityToDefault(coordinate);
+                    statistics.adjustCellCounts(-1, 0);
+                }
             }
-            Ant ant = new Ant(direction);
-            model.antModel().setEntity(coordinate, ant);
-            model.groundModel().setEntity(coordinate, TerrainConstant.COLOR_1);
-
-            statistics.adjustCellCounts(1, 1);
+            case LangtonUserActionContext.AddAnt addAnt -> {
+                var terrainEntity = model.groundModel().getEntity(coordinate);
+                if ((terrainEntity != TerrainConstant.UNVISITED) || !(antEntity instanceof NoAgent)) {
+                    return;
+                }
+                var direction = addAnt.direction();
+                if (!isValidInitialDirection(manager.config(), coordinate, direction)) {
+                    return;
+                }
+                Ant ant = new Ant(direction);
+                model.antModel().setEntity(coordinate, ant);
+                model.groundModel().setEntity(coordinate, TerrainConstant.COLOR_1);
+                statistics.adjustCellCounts(1, 1);
+            }
         }
     }
 

@@ -116,4 +116,54 @@ final class LangtonUserActionTest {
         );
     }
 
+    @Test
+    void testRemoveAntRemovesSelectedAntCell() {
+        LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
+        LangtonUserAction userAction = new LangtonUserAction();
+        GridCoordinate coordinate = manager.currentModel()
+                                           .antModel()
+                                           .filteredCoordinates(LangtonEntity::isAgent)
+                                           .stream()
+                                           .findFirst()
+                                           .orElseThrow();
+        int antCellsBefore = manager.statistics().getAntCells();
+        int visitedCellsBefore = manager.statistics().getVisitedCells();
+
+        userAction.apply(
+                manager,
+                LangtonUserActionContext.FixedAction.REMOVE_ANT,
+                selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
+                () -> assertEquals(antCellsBefore - 1, manager.statistics().getAntCells()),
+                () -> assertEquals(visitedCellsBefore, manager.statistics().getVisitedCells())
+        );
+    }
+
+    @Test
+    void testRemoveAntOnCellWithoutAntDoesNothing() {
+        LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
+        LangtonUserAction userAction = new LangtonUserAction();
+        GridCoordinate coordinate = manager.currentModel()
+                                           .groundModel()
+                                           .filteredCoordinates(TerrainConstant::isUnvisited)
+                                           .stream()
+                                           .findFirst()
+                                           .orElseThrow();
+        int antCellsBefore = manager.statistics().getAntCells();
+        int visitedCellsBefore = manager.statistics().getVisitedCells();
+
+        userAction.apply(
+                manager,
+                LangtonUserActionContext.FixedAction.REMOVE_ANT,
+                selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
+                () -> assertEquals(antCellsBefore, manager.statistics().getAntCells()),
+                () -> assertEquals(visitedCellsBefore, manager.statistics().getVisitedCells())
+        );
+    }
+
 }
