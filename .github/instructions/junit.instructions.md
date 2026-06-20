@@ -25,6 +25,8 @@ Test-source rules for this repository. Complements project-wide and Java coding 
 - Use `@BeforeEach` with method name `setUpBeforeEach()` for per-test setup.
 - Use `@AfterEach` with method name `tearDownAfterEach()` for per-test cleanup.
 - Initialize `AppLogger` in `@BeforeAll` via `AppLogger.initializeForTesting()` when tests use logging.
+- Use `@Execution(ExecutionMode.SAME_THREAD)` for tests that call `AppLogger.initializeForTesting()` because
+  `AppLogger` holds shared static state.
 - Reset `AppLogger` in `@BeforeEach` via `AppLogger.resetForTesting()` when tests modify logger state.
 - Initialize JavaFX in `@BeforeAll` via `FxTestSupport.ensureStarted()` for JavaFX tests.
 - Use `@Execution(ExecutionMode.SAME_THREAD)` when tests share mutable static state or require sequential execution.

@@ -4,6 +4,7 @@ import de.mkalb.FxTestSupport;
 import javafx.scene.image.Image;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -12,6 +13,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 final class AppResourcesTest {
 
     private static final Locale TEST_LOCALE = Locale.GERMANY;
@@ -144,4 +146,3 @@ final class AppResourcesTest {
     }
 
 }
-

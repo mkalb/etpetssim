@@ -1,11 +1,13 @@
 package de.mkalb.etpetssim.core;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 @SuppressWarnings("MagicNumber")
 final class AppArgsTest {
 

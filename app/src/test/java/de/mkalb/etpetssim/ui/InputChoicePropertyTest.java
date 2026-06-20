@@ -3,11 +3,13 @@ package de.mkalb.etpetssim.ui;
 import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.property.SimpleObjectProperty;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 final class InputChoicePropertyTest {
 
     private static final List<String> VALID_VALUES = List.of("alpha", "beta", "gamma");
@@ -163,4 +165,3 @@ final class InputChoicePropertyTest {
     }
 
 }
-

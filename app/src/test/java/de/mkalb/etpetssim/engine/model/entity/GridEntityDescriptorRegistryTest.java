@@ -4,18 +4,20 @@ import de.mkalb.etpetssim.core.*;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 final class GridEntityDescriptorRegistryTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
         if (!AppLocalization.isInitialized()) {
-            AppLocalization.initialize("en_US");
+            AppLocalization.initialize("en_US", Locale.US);
         }
     }
 

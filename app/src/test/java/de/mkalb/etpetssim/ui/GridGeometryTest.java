@@ -5,9 +5,11 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import javafx.geometry.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 @SuppressWarnings("MagicNumber")
 final class GridGeometryTest {
 
@@ -677,4 +679,3 @@ final class GridGeometryTest {
     }
 
 }
-

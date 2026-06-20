@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.core;
 
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -9,6 +10,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 final class AppStorageTest {
 
     private static final String FILE_PREFIX = "AppStorageTest_";

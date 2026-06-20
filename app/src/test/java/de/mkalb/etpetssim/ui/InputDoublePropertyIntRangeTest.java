@@ -3,9 +3,11 @@ package de.mkalb.etpetssim.ui;
 import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.property.SimpleDoubleProperty;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 final class InputDoublePropertyIntRangeTest {
 
     private static final int MIN_VALUE = 0;
@@ -125,4 +127,3 @@ final class InputDoublePropertyIntRangeTest {
     }
 
 }
-

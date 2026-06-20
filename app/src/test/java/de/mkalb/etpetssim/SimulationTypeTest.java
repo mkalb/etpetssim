@@ -1,17 +1,21 @@
 package de.mkalb.etpetssim;
 
-import de.mkalb.etpetssim.core.AppLocalization;
-import org.junit.jupiter.api.Test;
+import de.mkalb.etpetssim.core.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.net.URI;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 @SuppressWarnings("SpellCheckingInspection")
 final class SimulationTypeTest {
 
-    private static synchronized void ensureLocalizationInitialized() {
+    @BeforeAll
+    static void setUpBeforeAll() {
+        AppLogger.initializeForTesting();
         if (!AppLocalization.isInitialized()) {
             AppLocalization.initialize("en_US", Locale.US);
         }
@@ -188,8 +192,6 @@ final class SimulationTypeTest {
 
     @Test
     void testTitle() {
-        ensureLocalizationInitialized();
-
         for (SimulationType simulationType : SimulationType.values()) {
             assertEquals(AppLocalization.getText(simulationType.titleKey()), simulationType.title());
         }
@@ -197,8 +199,6 @@ final class SimulationTypeTest {
 
     @Test
     void testSubtitle() {
-        ensureLocalizationInitialized();
-
         for (SimulationType simulationType : SimulationType.values()) {
             assertEquals(AppLocalization.getOptionalText(simulationType.subtitleKey()), simulationType.subtitle());
         }
@@ -206,8 +206,6 @@ final class SimulationTypeTest {
 
     @Test
     void testUrl() {
-        ensureLocalizationInitialized();
-
         for (SimulationType simulationType : SimulationType.values()) {
             assertEquals(AppLocalization.getOptionalText(simulationType.urlKey()), simulationType.url());
         }
@@ -215,8 +213,6 @@ final class SimulationTypeTest {
 
     @Test
     void testUrlAsURI() {
-        ensureLocalizationInitialized();
-
         for (SimulationType simulationType : SimulationType.values()) {
             Optional<URI> expected = simulationType.url().flatMap(text -> {
                 try {
