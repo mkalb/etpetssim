@@ -60,3 +60,28 @@ Keep these out of Version 2 follow-up work unless a future Version 3 explicitly 
 - preview behavior
 - keyboard shortcuts
 - icon-system work
+
+## Follow-up Ideas: Using User Actions in Existing Simulations
+
+These notes capture the practical Version 2 adoption ideas discussed after the descriptor, scope, and parameter-context
+work was completed. They intentionally avoid Version 3 topics from the boundary above.
+
+General direction:
+
+- Prefer user actions that support runtime experimentation on the current simulation state.
+- Do not add actions that merely duplicate starting a new simulation with the same or adjusted configuration.
+- Use at least one concrete `GLOBAL` action to exercise the infrastructure in a real simulation. Conway's `Clear grid`
+  is the best first candidate because it is simple, selection-independent, and complements pattern placement.
+- Most other useful additions are still `CELL_SELECTED` actions, often with simulation-specific parameters.
+
+| Simulation            | Keep / current stance                                                                     | Practical additions                                                                                                                            | Not now / rationale                                                                                                                                                      |
+|-----------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Conway's Game of Life | Keep `Toggle cell` and parameterized `Place pattern`.                                     | Add `Clear grid` as a `GLOBAL` action. It provides a quick empty workspace for manual pattern experiments without selecting a cell.            | Do not add `Set cell state` or `Randomize grid` yet. Random initialization is covered by configuration plus restart.                                                     |
+| Forest-fire model     | Keep `Cycle state`.                                                                       | None for now.                                                                                                                                  | Do not add parameterized `Set state` or global forest reinitialization yet. The current cycle tool is sufficient, and initial tree density is already configurable.      |
+| Wa-Tor                | Keep `Add fish` and `Add shark`.                                                          | Add `Remove creature` for the selected fish or shark cell.                                                                                     | Do not add global population reset or random seeding actions; fish and shark percentages are configuration concerns.                                                     |
+| Langton's Ant         | Keep `Add ant`.                                                                           | Parameterize `Add ant` with the initial ant direction.                                                                                         | Do not add `Reset visited cells` or global reinitialization yet. Restarting already covers clean-state experiments.                                                      |
+| Snake                 | Keep `Add wall`, `Remove wall`, `Add food`, `Remove food`, and parameterized `Add snake`. | Add `Remove snake` for a selected snake head or segment.                                                                                       | Do not replace the existing terrain tools with a generic `Set cell content` tool yet, and do not add global clear/reinitialize tools.                                    |
+| Rebounding Entities   | Keep `Add wall`.                                                                          | Add `Remove wall`, parameterized `Add rebounder` with direction, and `Remove rebounder`.                                                       | Do not add global wall or moving-entity reinitialization; vertical walls and initial moving entity percentage are configuration concerns.                                |
+| Sugarscape            | No current edit actions.                                                                  | Add `Add agent`, `Remove agent`, parameterized `Set sugar` with practical levels (`empty`, `low`, `medium`, `high`), and `Remove sugar`.       | Avoid free numeric sugar editing for now; staged values are easier to expose in the toolbar and keep the UI compact.                                                     |
+| ET Pets               | No current edit actions.                                                                  | Add layer-focused tools: parameterized `Set terrain` (`Ground`, `Rock`, `Water`) and parameterized `Set resource` (`None`, `Plant`, `Insect`). | Do not add `Add pet` or `Add pet egg` yet. Pets and eggs require IDs, traits/genomes, energy, age, cooldown, and parent metadata, so they need a more deliberate design. |
+| Simulation Lab        | Treat as a special development tool.                                                      | None.                                                                                                                                          | Do not add simulation user actions. Existing click behavior already drives inspection and neighborhood highlighting.                                                     |
