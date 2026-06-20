@@ -450,9 +450,9 @@ Recommended migration order:
 
 6. Implement Conway `Place pattern`.
 
-    Split this step into `6a`, `6b`, and `6c`. Treat them as separate migration slices. After `6a`, verify, summarize,
-    and stop for human review and manual testing before starting `6b`. After `6b`, verify, summarize, and stop again
-    before starting `6c`.
+   Split this step into `6a`, `6b`, and `6c`. Treat them as separate migration slices. After `6a`, verify, summarize,
+   and stop for human review and manual testing before starting `6b`. After `6b`, verify, summarize, and stop again
+   before starting `6c`.
 
    **6a. Model, context, and pattern groundwork.**
 
@@ -538,15 +538,12 @@ Recommended migration order:
     - Separate stable pattern choice ids from localization label keys. Do not reuse resource-bundle keys such as
       `conway.pattern.glider` as the stable choice identity. Keep UI display based on localized label keys, but keep
       selection, matching, and persistence-ready identity based on stable pattern ids.
-    - Make each pattern choice availability rule check the active `ConwayConfig` explicitly, including `CellShape`,
-      `ConwayTransitionRules`, and `NeighborhoodMode`. Do not leave classic patterns available through an unconditional
+    - Make each pattern choice availability rule check the active `ConwayConfig` explicitly, including `CellShape` and
+      `ConwayTransitionRules`. Do not leave classic patterns available through an unconditional
       `config -> true` rule unless that is intentionally correct for that exact pattern.
     - Define the intended availability semantics for classic Conway patterns. For example, decide whether they require
       square cells, the classic `23/3` transition rule, a specific neighborhood mode, or another documented
       combination.
-    - Review every existing `ConwayPatterns` factory and ensure each placeable pattern includes a surrounding footprint
-      of `DEAD` cells where required. Patterns that omit their outer dead border can fail when placed over existing
-      alive cells because placement overwrites only the coordinates contained in the pattern.
     - Add additional predefined Conway patterns to the catalog. Each new pattern must provide a stable id, localized
       display key, pattern factory, and config-aware availability rule.
     - Keep pattern placement all-or-nothing and model-side. Do not add per-cell applicability checks, preview behavior,
@@ -556,8 +553,8 @@ Recommended migration order:
    Acceptance checks:
 
     - Pattern choice ids are stable technical ids and are not identical to localization label keys.
-    - Pattern availability changes when the active config's `CellShape`, `ConwayTransitionRules`, or `NeighborhoodMode`
-      makes a pattern invalid.
+    - Pattern availability changes when the active config's `CellShape` or `ConwayTransitionRules` makes a pattern
+      invalid.
     - The pattern ComboBox shows only patterns available for the initialized Conway simulation config and becomes
       disabled when no patterns are available.
     - Existing and newly added pattern factories include all footprint cells needed for reliable overwrite behavior,

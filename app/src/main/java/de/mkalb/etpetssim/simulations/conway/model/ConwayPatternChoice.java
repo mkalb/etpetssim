@@ -18,6 +18,9 @@ public record ConwayPatternChoice(
         if (labelKey.isBlank()) {
             throw new IllegalArgumentException("labelKey must not be blank");
         }
+        if (choiceId.equals(labelKey)) {
+            throw new IllegalArgumentException("choiceId must differ from labelKey");
+        }
     }
 
     public GridPattern<ConwayEntity> pattern() {

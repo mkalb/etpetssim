@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ConwayPatternChoiceTest {
 
-    private static final String CHOICE_ID_SAMPLE = "conway.pattern.sample";
+    private static final String CHOICE_ID_SAMPLE = "conway.sample";
     private static final String LABEL_KEY_SAMPLE = "conway.pattern.sample";
 
     private static ConwayConfig createConfig(CellShape cellShape) {
@@ -82,25 +82,41 @@ final class ConwayPatternChoiceTest {
     }
 
     @Test
+    void testConstructorRejectsChoiceIdMatchingLabelKey() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> new ConwayPatternChoice(
+                        LABEL_KEY_SAMPLE,
+                        LABEL_KEY_SAMPLE,
+                        createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
+                        _ -> true));
+
+        assertEquals("choiceId must differ from labelKey", exception.getMessage());
+    }
+
+    @Test
     @SuppressWarnings("DataFlowIssue")
     void testConstructorRejectsNullChoiceId() {
-        assertThrows(NullPointerException.class,
+        NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> new ConwayPatternChoice(
                         null,
                         LABEL_KEY_SAMPLE,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
                         _ -> true));
+
+        assertNotNull(exception);
     }
 
     @Test
     @SuppressWarnings("DataFlowIssue")
     void testConstructorRejectsNullLabelKey() {
-        assertThrows(NullPointerException.class,
+        NullPointerException exception = assertThrows(NullPointerException.class,
                 () -> new ConwayPatternChoice(
                         CHOICE_ID_SAMPLE,
                         null,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
                         _ -> true));
+
+        assertNotNull(exception);
     }
 
     // --- Pattern tests ---

@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -12,12 +13,22 @@ import static org.junit.jupiter.api.Assertions.*;
 final class ConwayPatternsTest {
 
     private static final int CLASSIC_PATTERN_COUNT = 9;
-    private static final List<CellShape> SUPPORTED_CELL_SHAPES = List.of(
+    private static final List<CellShape> UNSUPPORTED_PATTERN_CELL_SHAPES = List.of(
             CellShape.TRIANGLE,
-            CellShape.SQUARE,
             CellShape.HEXAGON
     );
     private static final List<String> EXPECTED_CHOICE_IDS = List.of(
+            "conway.beehive",
+            "conway.block",
+            "conway.boat",
+            "conway.loaf",
+            "conway.beacon",
+            "conway.blinker",
+            "conway.toad",
+            "conway.glider",
+            "conway.lwss"
+    );
+    private static final List<String> EXPECTED_LABEL_KEYS = List.of(
             "conway.pattern.beehive",
             "conway.pattern.block",
             "conway.pattern.boat",
@@ -29,18 +40,22 @@ final class ConwayPatternsTest {
             "conway.pattern.lwss"
     );
     private static final Map<String, PatternExpectation> EXPECTED_PATTERNS = Map.of(
-            "conway.pattern.beehive", new PatternExpectation(6, 5, 6),
-            "conway.pattern.block", new PatternExpectation(4, 4, 4),
-            "conway.pattern.boat", new PatternExpectation(5, 5, 5),
-            "conway.pattern.loaf", new PatternExpectation(6, 6, 7),
-            "conway.pattern.beacon", new PatternExpectation(6, 6, 6),
-            "conway.pattern.blinker", new PatternExpectation(5, 5, 3),
-            "conway.pattern.toad", new PatternExpectation(6, 4, 6),
-            "conway.pattern.glider", new PatternExpectation(5, 5, 5),
-            "conway.pattern.lwss", new PatternExpectation(7, 6, 9)
+            "conway.beehive", new PatternExpectation(6, 5, 6),
+            "conway.block", new PatternExpectation(4, 4, 4),
+            "conway.boat", new PatternExpectation(5, 5, 5),
+            "conway.loaf", new PatternExpectation(6, 6, 7),
+            "conway.beacon", new PatternExpectation(6, 6, 6),
+            "conway.blinker", new PatternExpectation(5, 5, 3),
+            "conway.toad", new PatternExpectation(6, 4, 6),
+            "conway.glider", new PatternExpectation(5, 5, 5),
+            "conway.lwss", new PatternExpectation(7, 6, 9)
     );
 
     private static ConwayConfig createConfig(CellShape cellShape) {
+        return createConfig(cellShape, ConwayConstraints.TRANSITION_RULES_DEFAULT);
+    }
+
+    private static ConwayConfig createConfig(CellShape cellShape, ConwayTransitionRules transitionRules) {
         return new ConwayConfig(
                 cellShape,
                 ConwayConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
@@ -51,7 +66,7 @@ final class ConwayPatternsTest {
                 1L,
                 ConwayConstraints.ALIVE_PERCENT_DEFAULT,
                 ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayConstraints.TRANSITION_RULES_DEFAULT
+                transitionRules
         );
     }
 
@@ -96,30 +111,50 @@ final class ConwayPatternsTest {
         assertAll(
                 () -> assertEquals(CLASSIC_PATTERN_COUNT, choices.size(), "All classic patterns should be registered"),
                 () -> assertEquals(EXPECTED_CHOICE_IDS, choices.stream().map(ConwayPatternChoice::choiceId).toList()),
-                () -> assertEquals(EXPECTED_CHOICE_IDS, choices.stream().map(ConwayPatternChoice::labelKey).toList())
+                () -> assertEquals(EXPECTED_LABEL_KEYS, choices.stream().map(ConwayPatternChoice::labelKey).toList()),
+                () -> assertTrue(choices.stream().noneMatch(choice -> choice.choiceId().equals(choice.labelKey())),
+                        "Pattern choice ids must stay separate from localization keys")
         );
     }
 
     // --- Pattern structure tests ---
 
     @Test
-    void testAvailableChoicesMatchChoicesForSupportedShapes() {
+    void testAvailableChoicesMatchChoicesForClassicSquareConfig() {
         List<ConwayPatternChoice> classicChoices = ConwayPatterns.choices();
+        ConwayConfig config = createConfig(CellShape.SQUARE);
+        List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
 
-        assertAll(SUPPORTED_CELL_SHAPES.stream()
-                                       .<org.junit.jupiter.api.function.Executable>map(cellShape -> () -> {
-                                           ConwayConfig config = createConfig(cellShape);
-                                           List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
+        assertAll(
+                () -> assertEquals(classicChoices, availableChoices,
+                        "Available choices should match classic choices for the classic square config"),
+                () -> assertEquals(EXPECTED_CHOICE_IDS,
+                        availableChoices.stream().map(ConwayPatternChoice::choiceId).toList(),
+                        "Choice order should stay stable for the classic square config")
+        );
+    }
 
-                                           assertAll(
-                                                   () -> assertEquals(classicChoices, availableChoices,
-                                                           "Available choices should match classic choices for " + cellShape),
-                                                   () -> assertEquals(EXPECTED_CHOICE_IDS,
-                                                           availableChoices.stream().map(ConwayPatternChoice::choiceId).toList(),
-                                                           "Choice order should stay stable for " + cellShape)
-                                           );
-                                       })
-                                       .toArray(org.junit.jupiter.api.function.Executable[]::new));
+    @Test
+    void testAvailableChoicesRejectUnsupportedCellShapes() {
+        assertAll(UNSUPPORTED_PATTERN_CELL_SHAPES.stream()
+                                                 .<org.junit.jupiter.api.function.Executable>map(cellShape -> () -> {
+                                                     ConwayConfig config = createConfig(cellShape);
+                                                     List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
+
+                                                     assertTrue(availableChoices.isEmpty(),
+                                                             "Classic patterns should not be available for " + cellShape);
+                                                 })
+                                                 .toArray(org.junit.jupiter.api.function.Executable[]::new));
+    }
+
+    @Test
+    void testAvailableChoicesRejectNonClassicTransitionRules() {
+        ConwayConfig config = createConfig(
+                CellShape.SQUARE,
+                ConwayTransitionRules.of(Set.of(2, 3), Set.of(3, 4)));
+
+        assertTrue(ConwayPatterns.availableChoices(config).isEmpty(),
+                "Classic patterns should not be available for non-classic transition rules");
     }
 
     @Test

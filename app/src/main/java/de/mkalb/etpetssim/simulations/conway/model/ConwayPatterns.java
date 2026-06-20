@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.engine.GridOffset;
+import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
@@ -23,30 +23,72 @@ import java.util.*;
 @SuppressWarnings("MagicNumber")
 public final class ConwayPatterns {
 
-    private static final String PATTERN_ID_BEEHIVE = "conway.pattern.beehive";
-    private static final String PATTERN_ID_BLOCK = "conway.pattern.block";
-    private static final String PATTERN_ID_BOAT = "conway.pattern.boat";
-    private static final String PATTERN_ID_LOAF = "conway.pattern.loaf";
-    private static final String PATTERN_ID_BEACON = "conway.pattern.beacon";
-    private static final String PATTERN_ID_BLINKER = "conway.pattern.blinker";
-    private static final String PATTERN_ID_TOAD = "conway.pattern.toad";
-    private static final String PATTERN_ID_GLIDER = "conway.pattern.glider";
-    private static final String PATTERN_ID_LIGHTWEIGHT_SPACESHIP = "conway.pattern.lwss";
+    private static final String PATTERN_ID_BEEHIVE = "conway.beehive";
+    private static final String PATTERN_ID_BLOCK = "conway.block";
+    private static final String PATTERN_ID_BOAT = "conway.boat";
+    private static final String PATTERN_ID_LOAF = "conway.loaf";
+    private static final String PATTERN_ID_BEACON = "conway.beacon";
+    private static final String PATTERN_ID_BLINKER = "conway.blinker";
+    private static final String PATTERN_ID_TOAD = "conway.toad";
+    private static final String PATTERN_ID_GLIDER = "conway.glider";
+    private static final String PATTERN_ID_LIGHTWEIGHT_SPACESHIP = "conway.lwss";
+
+    private static final String PATTERN_LABEL_KEY_BEEHIVE = "conway.pattern.beehive";
+    private static final String PATTERN_LABEL_KEY_BLOCK = "conway.pattern.block";
+    private static final String PATTERN_LABEL_KEY_BOAT = "conway.pattern.boat";
+    private static final String PATTERN_LABEL_KEY_LOAF = "conway.pattern.loaf";
+    private static final String PATTERN_LABEL_KEY_BEACON = "conway.pattern.beacon";
+    private static final String PATTERN_LABEL_KEY_BLINKER = "conway.pattern.blinker";
+    private static final String PATTERN_LABEL_KEY_TOAD = "conway.pattern.toad";
+    private static final String PATTERN_LABEL_KEY_GLIDER = "conway.pattern.glider";
+    private static final String PATTERN_LABEL_KEY_LIGHTWEIGHT_SPACESHIP = "conway.pattern.lwss";
 
     private static final List<ConwayPatternChoice> CLASSIC_CHOICES = List.of(
-            new ConwayPatternChoice(PATTERN_ID_BEEHIVE, PATTERN_ID_BEEHIVE, ConwayPatterns::beehive, ConwayPatterns::isAvailableForAnyConfig),
-            new ConwayPatternChoice(PATTERN_ID_BLOCK, PATTERN_ID_BLOCK, ConwayPatterns::block, ConwayPatterns::isAvailableForAnyConfig),
-            new ConwayPatternChoice(PATTERN_ID_BOAT, PATTERN_ID_BOAT, ConwayPatterns::boat, ConwayPatterns::isAvailableForAnyConfig),
-            new ConwayPatternChoice(PATTERN_ID_LOAF, PATTERN_ID_LOAF, ConwayPatterns::loaf, ConwayPatterns::isAvailableForAnyConfig),
-            new ConwayPatternChoice(PATTERN_ID_BEACON, PATTERN_ID_BEACON, ConwayPatterns::beacon, ConwayPatterns::isAvailableForAnyConfig),
-            new ConwayPatternChoice(PATTERN_ID_BLINKER, PATTERN_ID_BLINKER, ConwayPatterns::blinker, ConwayPatterns::isAvailableForAnyConfig),
-            new ConwayPatternChoice(PATTERN_ID_TOAD, PATTERN_ID_TOAD, ConwayPatterns::toad, ConwayPatterns::isAvailableForAnyConfig),
-            new ConwayPatternChoice(PATTERN_ID_GLIDER, PATTERN_ID_GLIDER, ConwayPatterns::glider, ConwayPatterns::isAvailableForAnyConfig),
+            new ConwayPatternChoice(
+                    PATTERN_ID_BEEHIVE,
+                    PATTERN_LABEL_KEY_BEEHIVE,
+                    ConwayPatterns::beehive,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_BLOCK,
+                    PATTERN_LABEL_KEY_BLOCK,
+                    ConwayPatterns::block,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_BOAT,
+                    PATTERN_LABEL_KEY_BOAT,
+                    ConwayPatterns::boat,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_LOAF,
+                    PATTERN_LABEL_KEY_LOAF,
+                    ConwayPatterns::loaf,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_BEACON,
+                    PATTERN_LABEL_KEY_BEACON,
+                    ConwayPatterns::beacon,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_BLINKER,
+                    PATTERN_LABEL_KEY_BLINKER,
+                    ConwayPatterns::blinker,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_TOAD,
+                    PATTERN_LABEL_KEY_TOAD,
+                    ConwayPatterns::toad,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_GLIDER,
+                    PATTERN_LABEL_KEY_GLIDER,
+                    ConwayPatterns::glider,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
             new ConwayPatternChoice(
                     PATTERN_ID_LIGHTWEIGHT_SPACESHIP,
-                    PATTERN_ID_LIGHTWEIGHT_SPACESHIP,
+                    PATTERN_LABEL_KEY_LIGHTWEIGHT_SPACESHIP,
                     ConwayPatterns::lightweightSpaceship,
-                    ConwayPatterns::isAvailableForAnyConfig)
+                    ConwayPatterns::isAvailableForClassicSquareRules)
     );
 
     /**
@@ -55,10 +97,9 @@ public final class ConwayPatterns {
     private ConwayPatterns() {
     }
 
-    private static boolean isAvailableForAnyConfig(ConwayConfig config) {
-        return switch (config.cellShape()) {
-            case HEXAGON, SQUARE, TRIANGLE -> true;
-        };
+    private static boolean isAvailableForClassicSquareRules(ConwayConfig config) {
+        return (config.cellShape() == CellShape.SQUARE)
+                && ConwayConstraints.TRANSITION_RULES_DEFAULT.equals(config.transitionRules());
     }
 
     public static List<ConwayPatternChoice> choices() {
