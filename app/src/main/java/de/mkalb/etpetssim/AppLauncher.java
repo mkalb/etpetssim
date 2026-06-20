@@ -38,7 +38,6 @@ public final class AppLauncher {
         if (arguments.isFlagActive(AppArgs.Key.HELP)) {
             AppArgs.Key.printHelp(System.out);
             // Exit the JavaFX application after printing help
-            AppLogger.info("AppLauncher: Exiting after printing help.");
             System.exit(0);
         }
         return arguments;
