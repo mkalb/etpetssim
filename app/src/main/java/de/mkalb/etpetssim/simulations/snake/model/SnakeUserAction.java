@@ -7,6 +7,8 @@ import de.mkalb.etpetssim.simulations.snake.model.entity.*;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeUserActionContext;
 import org.jspecify.annotations.Nullable;
 
+import java.util.*;
+
 public final class SnakeUserAction
         implements SimulationUserAction<
         SnakeEntity,
@@ -79,6 +81,41 @@ public final class SnakeUserAction
                     statistics.adjustFoodCells(-1);
                 }
             }
+            case REMOVE_SNAKE -> {
+                if (entity instanceof SnakeHead head) {
+                    removeSnake(model, statistics, coordinate, head);
+                } else if (entity == TerrainConstant.SNAKE_SEGMENT) {
+                    findSnakeHeadCoordinateBySegment(model, coordinate)
+                            .ifPresent(headCoordinate -> {
+                                SnakeEntity headEntity = model.getEntity(headCoordinate);
+                                if (headEntity instanceof SnakeHead head) {
+                                    removeSnake(model, statistics, headCoordinate, head);
+                                }
+                            });
+                }
+            }
+        }
+    }
+
+    private Optional<GridCoordinate> findSnakeHeadCoordinateBySegment(ReadableGridModel<SnakeEntity> model,
+                                                                      GridCoordinate segmentCoordinate) {
+        return model.filteredCells(e -> e instanceof SnakeHead)
+                    .stream()
+                    .filter(cell -> (cell.entity() instanceof SnakeHead head)
+                            && head.currentSegments().contains(segmentCoordinate))
+                    .map(GridCell::coordinate)
+                    .findFirst();
+    }
+
+    private void removeSnake(WritableGridModel<SnakeEntity> model,
+                             SnakeStatistics statistics,
+                             GridCoordinate headCoordinate,
+                             SnakeHead head) {
+        model.setEntityToDefault(headCoordinate);
+        head.currentSegments().forEach(model::setEntityToDefault);
+        statistics.decreaseSnakeHeadCells();
+        if (!head.isDead()) {
+            statistics.decreaseLivingSnakeHeadCells();
         }
     }
 

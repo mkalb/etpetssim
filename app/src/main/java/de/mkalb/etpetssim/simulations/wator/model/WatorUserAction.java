@@ -32,22 +32,33 @@ public final class WatorUserAction
         var coordinate = selectedCell.coordinate();
         var entity = model.getEntity(coordinate);
 
-        // Only place a creature on a water cell.
-        if (!entity.isWater()) {
-            return;
+        switch (context) {
+            case ADD_FISH -> {
+                if (entity.isWater()) {
+                    int stepIndexOfBirth = manager.stepCount() - 1;
+                    WatorEntity newEntity = manager.createFish(stepIndexOfBirth);
+                    model.setEntity(coordinate, newEntity);
+                    statistics.adjustCellCounts(1, 0);
+                }
+            }
+            case ADD_SHARK -> {
+                if (entity.isWater()) {
+                    int stepIndexOfBirth = manager.stepCount() - 1;
+                    WatorEntity newEntity = manager.createShark(stepIndexOfBirth);
+                    model.setEntity(coordinate, newEntity);
+                    statistics.adjustCellCounts(0, 1);
+                }
+            }
+            case REMOVE_CREATURE -> {
+                if (entity.isFish()) {
+                    model.setEntityToDefault(coordinate);
+                    statistics.adjustCellCounts(-1, 0);
+                } else if (entity.isShark()) {
+                    model.setEntityToDefault(coordinate);
+                    statistics.adjustCellCounts(0, -1);
+                }
+            }
         }
-
-        int stepIndexOfBirth = manager.stepCount() - 1;
-        WatorEntity newEntity = switch (context) {
-            case ADD_FISH -> manager.createFish(stepIndexOfBirth);
-            case ADD_SHARK -> manager.createShark(stepIndexOfBirth);
-        };
-
-        model.setEntity(coordinate, newEntity);
-        statistics.adjustCellCounts(
-                newEntity.isFish() ? 1 : 0,
-                newEntity.isShark() ? 1 : 0
-        );
     }
 
 }

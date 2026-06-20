@@ -14,5 +14,10 @@ public enum WatorUserActionContext implements SimulationUserActionContext {
     /**
      * Add a shark to the selected cell.
      */
-    ADD_SHARK
+    ADD_SHARK,
+
+    /**
+     * Remove a fish or shark from the selected cell.
+     */
+    REMOVE_CREATURE
 }

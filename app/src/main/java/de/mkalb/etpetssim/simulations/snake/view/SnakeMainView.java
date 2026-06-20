@@ -46,12 +46,15 @@ public final class SnakeMainView
     private static final String SNAKE_TOOLBAR_ADD_WALL_TOOLTIP = "snake.toolbar.addwall.tooltip";
     private static final String SNAKE_TOOLBAR_REMOVE_FOOD = "snake.toolbar.removefood";
     private static final String SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP = "snake.toolbar.removefood.tooltip";
+    private static final String SNAKE_TOOLBAR_REMOVE_SNAKE = "snake.toolbar.removesnake";
+    private static final String SNAKE_TOOLBAR_REMOVE_SNAKE_TOOLTIP = "snake.toolbar.removesnake.tooltip";
     private static final String SNAKE_TOOLBAR_REMOVE_WALL = "snake.toolbar.removewall";
     private static final String SNAKE_TOOLBAR_REMOVE_WALL_TOOLTIP = "snake.toolbar.removewall.tooltip";
     private static final String SNAKE_TOOL_ID_ADD_FOOD = "snake.addFood";
     private static final String SNAKE_TOOL_ID_ADD_SNAKE = "snake.addSnake";
     private static final String SNAKE_TOOL_ID_ADD_WALL = "snake.addWall";
     private static final String SNAKE_TOOL_ID_REMOVE_FOOD = "snake.removeFood";
+    private static final String SNAKE_TOOL_ID_REMOVE_SNAKE = "snake.removeSnake";
     private static final String SNAKE_TOOL_ID_REMOVE_WALL = "snake.removeWall";
 
     // Entity dead colors are derived from the alive colors using two warm dead hues.
@@ -235,6 +238,12 @@ public final class SnakeMainView
                         SimulationUserActionScope.CELL_SELECTED,
                         SNAKE_TOOLBAR_REMOVE_FOOD,
                         SNAKE_TOOLBAR_REMOVE_FOOD_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        SNAKE_TOOL_ID_REMOVE_SNAKE,
+                        SnakeUserActionContext.FixedAction.REMOVE_SNAKE,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SNAKE_TOOLBAR_REMOVE_SNAKE,
+                        SNAKE_TOOLBAR_REMOVE_SNAKE_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         SNAKE_TOOL_ID_ADD_SNAKE,
                         SimulationUserActionScope.CELL_SELECTED,

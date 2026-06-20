@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 /**
  * Identifies which modification the user wants to apply to the selected cell.
  */
+@SuppressWarnings("MarkerInterface")
 public sealed interface SnakeUserActionContext extends SimulationUserActionContext
         permits SnakeUserActionContext.FixedAction, SnakeUserActionContext.AddSnake {
 
@@ -16,7 +17,8 @@ public sealed interface SnakeUserActionContext extends SimulationUserActionConte
         ADD_WALL,
         REMOVE_WALL,
         ADD_FOOD,
-        REMOVE_FOOD
+        REMOVE_FOOD,
+        REMOVE_SNAKE
     }
 
     /**
@@ -26,4 +28,3 @@ public sealed interface SnakeUserActionContext extends SimulationUserActionConte
     }
 
 }
-

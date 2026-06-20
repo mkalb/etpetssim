@@ -28,6 +28,10 @@ public final class SugarStatistics
         agentCells += agentCellsDelta;
     }
 
+    public void adjustResourceCells(int resourceCellsDelta) {
+        resourceCells += resourceCellsDelta;
+    }
+
     public int getResourceCells() {
         return resourceCells;
     }

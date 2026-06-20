@@ -1,18 +1,28 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.sugar.model.*;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
+import de.mkalb.etpetssim.simulations.sugar.shared.*;
+import de.mkalb.etpetssim.simulations.sugar.viewmodel.SugarEditToolBarViewModel;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.*;
 
 public final class SugarMainView
         extends AbstractDefaultMainView<
@@ -22,7 +32,7 @@ public final class SugarMainView
         SugarConfig,
         SugarStatistics,
         SugarSimulationManager,
-        NoUserActionContext,
+        SugarUserActionContext,
         SugarConfigView,
         SugarObservationView> {
 
@@ -34,13 +44,24 @@ public final class SugarMainView
     private static final int MAX_COLOR_AGENT_ENERGY_FACTOR = 2;
     private static final Color SELECTED_STROKE_COLOR = Color.rgb(255, 120, 120);
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
+    private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
+    private static final String SUGAR_TOOLBAR_ADD_SUGAR = "sugar.toolbar.addsugar";
+    private static final String SUGAR_TOOLBAR_ADD_SUGAR_LEVEL = "sugar.toolbar.addsugar.level";
+    private static final String SUGAR_TOOLBAR_ADD_SUGAR_LEVEL_TOOLTIP = "sugar.toolbar.addsugar.level.tooltip";
+    private static final String SUGAR_TOOLBAR_ADD_SUGAR_TOOLTIP = "sugar.toolbar.addsugar.tooltip";
+    private static final String SUGAR_TOOLBAR_REMOVE_SUGAR = "sugar.toolbar.removesugar";
+    private static final String SUGAR_TOOLBAR_REMOVE_SUGAR_TOOLTIP = "sugar.toolbar.removesugar.tooltip";
+    private static final String SUGAR_TOOL_ID_ADD_SUGAR = "sugar.addSugar";
+    private static final String SUGAR_TOOL_ID_REMOVE_SUGAR = "sugar.removeSugar";
 
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
+    private final SugarEditToolBarViewModel editToolBarViewModel;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
     private int maxColorAgentEnergy = 1;
 
-    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics, SugarSimulationManager, NoUserActionContext> viewModel,
+    public SugarMainView(DefaultMainViewModel<SugarEntity, SugarCell, SugarGridModel, SugarConfig, SugarStatistics, SugarSimulationManager, SugarUserActionContext> viewModel,
+                         SugarEditToolBarViewModel editToolBarViewModel,
                          GridEntityDescriptorRegistry entityDescriptorRegistry,
                          SugarConfigView configView,
                          DefaultControlView controlView,
@@ -50,6 +71,7 @@ public final class SugarMainView
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
+        this.editToolBarViewModel = editToolBarViewModel;
         entityColors = HashMap.newHashMap(2);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_SUGAR, null);
         entityColors.put(SugarEntity.DESCRIPTOR_ID_AGENT, null);
@@ -178,6 +200,108 @@ public final class SugarMainView
                   .forEach(agentCell -> cellAgentDrawer.draw(
                           entityDescriptorRegistry.requireByDescriptorId(agentCell.descriptorId()),
                           dynamicPainter, agentCell, stepCount));
+    }
+
+    @Override
+    protected List<SimulationUserActionDescriptor<SugarUserActionContext>> createUserActionDescriptors() {
+        return List.of(
+                new SimulationUserActionDescriptor<>(
+                        SUGAR_TOOL_ID_REMOVE_SUGAR,
+                        SugarUserActionContext.FixedAction.REMOVE_SUGAR,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SUGAR_TOOLBAR_REMOVE_SUGAR,
+                        SUGAR_TOOLBAR_REMOVE_SUGAR_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        SUGAR_TOOL_ID_ADD_SUGAR,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        SUGAR_TOOLBAR_ADD_SUGAR,
+                        SUGAR_TOOLBAR_ADD_SUGAR_TOOLTIP,
+                        () -> editToolBarViewModel.resolveSelectedAddSugarContext()
+                                                  .map(Function.identity()))
+        );
+    }
+
+    @Override
+    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+        ObservableList<SugarAddSugarLevel> availableAddSugarLevels = editToolBarViewModel.availableAddSugarLevels();
+        ComboBox<SugarAddSugarLevel> levelComboBox = new ComboBox<>();
+        levelComboBox.setItems(availableAddSugarLevels);
+        levelComboBox.setMaxWidth(Double.MAX_VALUE);
+        levelComboBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX);
+        levelComboBox.setCellFactory(_ -> createAddSugarLevelCell());
+        levelComboBox.setButtonCell(createAddSugarLevelCell());
+
+        SugarAddSugarLevel selectedLevel = editToolBarViewModel.getSelectedAddSugarLevel();
+        if (selectedLevel != null) {
+            levelComboBox.setValue(selectedLevel);
+        }
+
+        Label levelLabel = FXComponentFactory.createLabel(
+                AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
+        levelLabel.setLabelFor(levelComboBox);
+        levelLabel.setTooltip(new Tooltip(AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL_TOOLTIP)));
+        levelComboBox.setTooltip(new Tooltip(AppLocalization.getText(SUGAR_TOOLBAR_ADD_SUGAR_LEVEL_TOOLTIP)));
+
+        ChangeListener<@Nullable SugarAddSugarLevel> comboSelectionListener = (_, oldValue, newValue) -> {
+            if (oldValue != newValue) {
+                editToolBarViewModel.setSelectedAddSugarLevel(newValue);
+            }
+        };
+        ChangeListener<@Nullable SugarAddSugarLevel> viewModelSelectionListener = (_, _, newValue) -> {
+            if (levelComboBox.getValue() != newValue) {
+                if (newValue == null) {
+                    levelComboBox.getSelectionModel().clearSelection();
+                } else {
+                    levelComboBox.setValue(newValue);
+                }
+            }
+        };
+        var selectedLevelProperty = editToolBarViewModel.selectedAddSugarLevelProperty();
+        levelComboBox.valueProperty().addListener(comboSelectionListener);
+        selectedLevelProperty.addListener(viewModelSelectionListener);
+
+        if (selectedToolId != null) {
+            var enabledBinding = Bindings.createBooleanBinding(
+                    () -> SUGAR_TOOL_ID_ADD_SUGAR.equals(selectedToolId.get()) && !availableAddSugarLevels.isEmpty(),
+                    selectedToolId,
+                    availableAddSugarLevels);
+            levelLabel.disableProperty().bind(enabledBinding.not());
+            levelComboBox.disableProperty().bind(enabledBinding.not());
+            registerActionToolBarCleanup(() -> {
+                levelLabel.disableProperty().unbind();
+                levelComboBox.disableProperty().unbind();
+                enabledBinding.dispose();
+                levelComboBox.valueProperty().removeListener(comboSelectionListener);
+                selectedLevelProperty.removeListener(viewModelSelectionListener);
+            });
+        } else {
+            registerActionToolBarCleanup(() -> {
+                levelComboBox.valueProperty().removeListener(comboSelectionListener);
+                selectedLevelProperty.removeListener(viewModelSelectionListener);
+            });
+        }
+
+        HBox optionPanel = new HBox(levelLabel, levelComboBox);
+        optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
+        optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
+        return optionPanel;
+    }
+
+    private ListCell<SugarAddSugarLevel> createAddSugarLevelCell() {
+        return new ListCell<>() {
+            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
+            @Override
+            protected void updateItem(@Nullable SugarAddSugarLevel item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || (item == null)) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(AppLocalization.getText(item.labelKey()));
+                }
+            }
+        };
     }
 
 }

@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.simulations.rebounding.model;
 
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
-import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
+import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import org.jspecify.annotations.Nullable;
 
 public final class ReboundingUserAction
@@ -13,14 +13,14 @@ public final class ReboundingUserAction
         ReboundingConfig,
         ReboundingStatistics,
         ReboundingSimulationManager,
-        NoUserActionContext> {
+        ReboundingUserActionContext> {
 
     public ReboundingUserAction() {
     }
 
     @Override
     public void apply(ReboundingSimulationManager manager,
-                      NoUserActionContext context,
+                      ReboundingUserActionContext context,
                       @Nullable GridCellView<ReboundingEntity> selectedCell) {
         if (selectedCell == null) {
             return;
@@ -31,12 +31,26 @@ public final class ReboundingUserAction
         var coordinate = selectedCell.coordinate();
         var entity = model.getEntity(coordinate);
 
-        if (!entity.isGround()) {
-            return;
+        switch (context) {
+            case ADD_WALL -> {
+                if (entity.isGround()) {
+                    model.setEntity(coordinate, TerrainConstant.WALL);
+                    statistics.increaseWallCells();
+                }
+            }
+            case REMOVE_WALL -> {
+                if (entity.isWall()) {
+                    model.setEntityToDefault(coordinate);
+                    statistics.decreaseWallCells();
+                }
+            }
+            case REMOVE_REBOUNDER -> {
+                if (entity.isRebounder()) {
+                    model.setEntityToDefault(coordinate);
+                    statistics.decreaseMovingEntityCells();
+                }
+            }
         }
-
-        model.setEntity(coordinate, TerrainConstant.WALL);
-        statistics.increaseWallCells();
     }
 
 }

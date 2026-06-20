@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.rebounding.model.*;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
+import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import de.mkalb.etpetssim.ui.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
@@ -23,19 +24,25 @@ public final class ReboundingMainView
         ReboundingConfig,
         ReboundingStatistics,
         ReboundingSimulationManager,
-        NoUserActionContext,
+        ReboundingUserActionContext,
         ReboundingConfigView,
         ReboundingObservationView> {
 
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
     private static final String REBOUNDING_TOOL_ID_ADD_WALL = "rebounding.addWall";
+    private static final String REBOUNDING_TOOL_ID_REMOVE_REBOUNDER = "rebounding.removeRebounder";
+    private static final String REBOUNDING_TOOL_ID_REMOVE_WALL = "rebounding.removeWall";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL = "rebounding.toolbar.addwall";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP = "rebounding.toolbar.addwall.tooltip";
+    private static final String REBOUNDING_TOOLBAR_REMOVE_REBOUNDER = "rebounding.toolbar.removerebounder";
+    private static final String REBOUNDING_TOOLBAR_REMOVE_REBOUNDER_TOOLTIP = "rebounding.toolbar.removerebounder.tooltip";
+    private static final String REBOUNDING_TOOLBAR_REMOVE_WALL = "rebounding.toolbar.removewall";
+    private static final String REBOUNDING_TOOLBAR_REMOVE_WALL_TOOLTIP = "rebounding.toolbar.removewall.tooltip";
 
     private @Nullable CellDrawer<ReboundingEntity> cellDrawer;
 
-    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics, ReboundingSimulationManager, NoUserActionContext> viewModel,
+    public ReboundingMainView(DefaultMainViewModel<ReboundingEntity, GridCell<ReboundingEntity>, WritableGridModel<ReboundingEntity>, ReboundingConfig, ReboundingStatistics, ReboundingSimulationManager, ReboundingUserActionContext> viewModel,
                               GridEntityDescriptorRegistry entityDescriptorRegistry,
                               ReboundingConfigView configView,
                               DefaultControlView controlView,
@@ -112,13 +119,26 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected List<SimulationUserActionDescriptor<NoUserActionContext>> createUserActionDescriptors() {
-        return List.of(new SimulationUserActionDescriptor<>(
-                REBOUNDING_TOOL_ID_ADD_WALL,
-                NoUserActionContext.NO_CONTEXT,
-                SimulationUserActionScope.CELL_SELECTED,
-                REBOUNDING_TOOLBAR_ADD_WALL,
-                REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP));
+    protected List<SimulationUserActionDescriptor<ReboundingUserActionContext>> createUserActionDescriptors() {
+        return List.of(
+                new SimulationUserActionDescriptor<>(
+                        REBOUNDING_TOOL_ID_ADD_WALL,
+                        ReboundingUserActionContext.ADD_WALL,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        REBOUNDING_TOOLBAR_ADD_WALL,
+                        REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        REBOUNDING_TOOL_ID_REMOVE_WALL,
+                        ReboundingUserActionContext.REMOVE_WALL,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        REBOUNDING_TOOLBAR_REMOVE_WALL,
+                        REBOUNDING_TOOLBAR_REMOVE_WALL_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        REBOUNDING_TOOL_ID_REMOVE_REBOUNDER,
+                        ReboundingUserActionContext.REMOVE_REBOUNDER,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        REBOUNDING_TOOLBAR_REMOVE_REBOUNDER,
+                        REBOUNDING_TOOLBAR_REMOVE_REBOUNDER_TOOLTIP));
     }
 
 }

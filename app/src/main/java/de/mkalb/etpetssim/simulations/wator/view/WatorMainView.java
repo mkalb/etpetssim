@@ -30,10 +30,13 @@ public final class WatorMainView
 
     private static final String WATOR_TOOL_ID_ADD_FISH = "wator.addFish";
     private static final String WATOR_TOOL_ID_ADD_SHARK = "wator.addShark";
+    private static final String WATOR_TOOL_ID_REMOVE_CREATURE = "wator.removeCreature";
     private static final String WATOR_TOOLBAR_ADD_FISH = "wator.toolbar.addfish";
     private static final String WATOR_TOOLBAR_ADD_FISH_TOOLTIP = "wator.toolbar.addfish.tooltip";
     private static final String WATOR_TOOLBAR_ADD_SHARK = "wator.toolbar.addshark";
     private static final String WATOR_TOOLBAR_ADD_SHARK_TOOLTIP = "wator.toolbar.addshark.tooltip";
+    private static final String WATOR_TOOLBAR_REMOVE_CREATURE = "wator.toolbar.removecreature";
+    private static final String WATOR_TOOLBAR_REMOVE_CREATURE_TOOLTIP = "wator.toolbar.removecreature.tooltip";
 
     private static final Color FALLBACK_COLOR_AGENT = Color.WHITE;
     private static final double FISH_MAX_FACTOR_DELTA = -0.5d;
@@ -200,7 +203,13 @@ public final class WatorMainView
                         WatorUserActionContext.ADD_SHARK,
                         SimulationUserActionScope.CELL_SELECTED,
                         WATOR_TOOLBAR_ADD_SHARK,
-                        WATOR_TOOLBAR_ADD_SHARK_TOOLTIP));
+                        WATOR_TOOLBAR_ADD_SHARK_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        WATOR_TOOL_ID_REMOVE_CREATURE,
+                        WatorUserActionContext.REMOVE_CREATURE,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        WATOR_TOOLBAR_REMOVE_CREATURE,
+                        WATOR_TOOLBAR_REMOVE_CREATURE_TOOLTIP));
     }
 
 }
