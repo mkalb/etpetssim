@@ -1,11 +1,11 @@
 ---
-applyTo: "**/*Test.java"
-description: "JUnit 5 test writing rules for etpetssim. Use when creating or modifying JUnit tests, writing test assertions, organizing test methods, or setting up test fixtures."
+applyTo: "**/src/test/java/**/*.java"
+description: "Test-source rules for etpetssim. Use when creating or modifying JUnit tests, fixtures, support classes, or manual test utilities."
 ---
 
-# JUnit Test Instructions
+# Test Source Instructions
 
-JUnit 5 test writing rules for this repository. Complements project-wide and Java coding instructions.
+Test-source rules for this repository. Complements project-wide and Java coding instructions.
 
 ## Test Framework
 
@@ -16,7 +16,7 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 
 - Prefer package-private test classes.
 - Prefer `final` for test classes unless extension is required for test inheritance.
-- Place test-specific constants near the top of the class before lifecycle methods and test methods; follow peer style.
+- Place reused test constants near the top of the class before lifecycle and test methods.
 - Use descriptive constant names in UPPER_SNAKE_CASE (e.g., `GRID_WIDTH_SAMPLE`, `CELL_EDGE_LENGTH`).
 
 ## Test Lifecycle
@@ -43,12 +43,11 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 - Use `assertDoesNotThrow(() -> ...)` to verify valid operations.
 - Prefer specific assertions (`assertEquals`, `assertTrue`) over generic ones when possible.
 - Add assertion messages when the failure reason might be ambiguous.
-- Use delta parameter for floating-point comparisons: `assertEquals(expected, actual, 0.00001d)`.
+- Use a delta parameter for floating-point comparisons.
 - Use `@Disabled("reason")` with a clear reason when temporarily disabling tests.
 
 ## Test Data and Helpers
 
-- Define test-specific constants at class level when values are reused across tests.
 - Create helper methods for complex object construction (e.g., `createConfig(int width, int height)`).
 - Use nested enums or records for test-specific data types (place at bottom of test class).
 - Prefer immutable test data; use defensive copying when needed.
@@ -58,106 +57,22 @@ JUnit 5 test writing rules for this repository. Complements project-wide and Jav
 
 ### Enum Testing
 
-Enum test classes follow a standardized structure. Order test methods:
+Enum test classes follow a standardized structure. Order test methods as follows:
 
 1. Core contract tests (`testEnumValues`, `testEnumCount`, `testDeclarationOrder`)
 2. Exception tests (`testValueOfInvalidThrows`, `testValueOfNullThrows`)
 3. Resource key tests (if applicable)
 4. Domain-specific behavior tests
 
-#### Required Core Tests
+- Test `values()`, `valueOf(...)`, declaration order, expected count, invalid names, and null names when relevant.
+- For localized enums, test each resource key method separately.
+- Test enum-specific methods with descriptive names such as `testVertexCount()` or `testOpposite()`.
 
-```java
+### Boundary, Immutability, and Copying Tests
 
-@Test
-void testEnumValues() {
-    assertNotNull(MyEnum.valueOf("CONSTANT_ONE"));
-    assertNotNull(MyEnum.valueOf("CONSTANT_TWO"));
-}
-
-@Test
-void testEnumCount() {
-    assertEquals(3, MyEnum.values().length, "There should be exactly 3 values");
-}
-
-@Test
-void testDeclarationOrder() {
-    assertArrayEquals(
-            new MyEnum[]{MyEnum.CONSTANT_ONE, MyEnum.CONSTANT_TWO, MyEnum.CONSTANT_THREE},
-            MyEnum.values()
-    );
-}
-
-@Test
-void testValueOfInvalidThrows() {
-    assertThrows(IllegalArgumentException.class, () -> MyEnum.valueOf("INVALID"));
-}
-
-@Test
-void testValueOfNullThrows() {
-    assertThrows(NullPointerException.class, () -> MyEnum.valueOf(null));
-}
-```
-
-#### Resource Key Tests
-
-For enums with localization support:
-
-```java
-
-@Test
-void testStaticLabelResourceKey() {
-    assertEquals("myenum.label", MyEnum.labelResourceKey());
-}
-
-@Test
-void testResourceKey() {
-    assertEquals("myenum.constant_one", MyEnum.CONSTANT_ONE.resourceKey());
-    assertEquals("myenum.constant_two", MyEnum.CONSTANT_TWO.resourceKey());
-}
-```
-
-For multiple resource key methods (e.g., `nameResourceKey()`, `abbreviationResourceKey()`), create separate test
-methods.
-
-#### Domain-Specific Tests
-
-Test enum-specific methods with descriptive names (`testVertexCount()`, `testOpposite()`).
-
-### Boundary Value Testing
-
-```java
-
-@Test
-void testMinAndMaxSizeAreValid() {
-    assertDoesNotThrow(() -> new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE));
-    assertDoesNotThrow(() -> new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE));
-}
-```
-
-### Immutability Testing
-
-```java
-
-@Test
-void testGetValidValuesReturnsUnmodifiableList() {
-    assertThrows(UnsupportedOperationException.class,
-            () -> property.getValidValues().add(newValue));
-}
-```
-
-### Defensive Copying Testing
-
-```java
-
-@Test
-void testConstructorMakesDefensiveCopyOfValidValues() {
-    List<Mode> validValues = new ArrayList<>(List.of(Mode.A, Mode.B));
-    Property property = new Property(validValues);
-    validValues.clear();
-    assertEquals(List.of(Mode.A, Mode.B), property.getValidValues());
-}
-```
+- Cover minimum, maximum, and invalid boundary values for constructors and factories.
+- Verify unmodifiable collection views reject mutation.
+- Verify constructors and accessors make defensive copies for mutable inputs or outputs.
 
 ## Suppressions in Tests
 
@@ -193,49 +108,7 @@ The test source tree may contain non-JUnit classes for manual testing, analysis,
 - Generate formatted console output using `System.out.printf(Locale.ROOT, ...)`.
 - Document the purpose and usage in the class Javadoc.
 
-Example:
-
-```java
-/**
- * Manual analyzer for scoring formula tuning.
- * Generates tabular output for iterative refinement.
- */
-@SuppressWarnings("MagicNumber")
-public final class ScoringAnalyzer {
-
-    private ScoringAnalyzer() {
-    }
-
-    static void main() {
-        Locale.setDefault(Locale.ROOT);
-        runAnalysis();
-    }
-
-    private static void runAnalysis() { ...}
-
-}
-```
-
 ## Test Organization
 
-Group related tests using comment separators:
-
-```java
-// --- Construction tests ---
-
-@Test
-void testConstructorWithValidArguments() { ...}
-
-// --- Validation tests ---
-
-@Test
-void testIsValidReturnsTrueForValidConfig() { ...}
-```
-
-Common groupings:
-
-- Construction tests (constructors, factory methods)
-- Validation tests (invariants, preconditions)
-- Behavior tests (methods, state transitions)
-- Edge case tests (boundary values, null handling)
-- Exception tests (error conditions, contract violations)
+Group larger test classes with comment separators such as `// --- Construction tests ---`.
+Common groupings: construction, validation, behavior, edge case, and exception tests.

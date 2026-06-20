@@ -1,23 +1,22 @@
 ---
 applyTo: "**/simulations/**/*.java"
-description: "MVVM architecture and simulation-specific rules for etpetssim. Use when creating or modifying simulations, working with JavaFX UI components, implementing ViewModels, or extending simulation infrastructure in de.mkalb.etpetssim.simulations."
+description: "MVVM and simulation-specific rules for de.mkalb.etpetssim.simulations."
 ---
 
 # Simulations Instructions
 
-MVVM architecture and simulation-specific coding rules for `de.mkalb.etpetssim.simulations` packages.
-Extends project-wide and Java coding instructions with simulation-specific patterns.
+MVVM architecture and simulation-specific rules for `de.mkalb.etpetssim.simulations`.
+These rules complement the project-wide, Java, UI, and test instructions.
 
 ## Package Structure
 
-Each regular 2D simulation package uses three required sub-packages, an optional `shared` sub-package, and a
-package-root factory class:
+Each regular 2D simulation package uses three required sub-packages, optional `shared`, and a package-root factory:
 
 - `model`: domain state, business rules, and grid entities
 - `view`: JavaFX scene-graph, rendering, and UI components
 - `viewmodel`: JavaFX properties, bindings, and UI state
 - `shared`: optional layer-neutral types used by two or more layers
-- `<SimulationName>Factory`: package-root factory class exposing `createMainView()` for the central factory
+- `<SimulationName>Factory`: package-root factory exposing `createMainView()`
 
 ### Special-Status Simulations
 
@@ -39,26 +38,14 @@ Each simulation must be in its own sub-package under `de.mkalb.etpetssim.simulat
 
 ## Consistency Across Simulations
 
-When creating a new simulation, follow the patterns established in existing similar simulations:
+When creating or changing a simulation, first review similar simulations and reuse established patterns:
 
-- **Study similar simulations first**: Before implementing, review existing simulations with comparable structure
-  (e.g., agent-based simulations like `wator` or `etpets`, cellular automata like `conway` or `forest`).
-- **Match naming conventions**: Use the same naming patterns for factory classes, ViewModel methods, View construction
-  methods, and entity types that similar simulations use.
-- **Follow architectural patterns**: Structure your `model`, `view`, `viewmodel`, and optional `shared` packages the
-  same way as comparable simulations.
-- **Maintain code style consistency**: Keep class organization, method ordering, field declarations, and code
-  formatting consistent with peer simulations.
-- **Reuse core infrastructure**: All simulations use classes from `simulations.core`, which provides baseline
-  consistency. Build on this foundation by keeping simulation-specific code similarly structured.
-
-This consistency improves readability, makes the codebase more maintainable, and significantly simplifies future
-refactoring across all simulations.
+- Agent-based examples: `wator`, `etpets`, `snake`, `rebounding`
+- Cellular automata examples: `conway`, `forest`, `langton`
+- Follow comparable package structure, factory wiring, ViewModel APIs, View construction, and entity design.
+- Reuse `simulations.core` infrastructure instead of duplicating shared behavior.
 
 ## Registering and Maintaining Simulations
-
-To create a new simulation from scratch, use the `/create-simulation` prompt which guides through all required
-registration steps.
 
 When modifying an existing simulation, keep the following cross-cutting files in sync with any changes:
 
@@ -107,29 +94,14 @@ When modifying an existing simulation, keep the following cross-cutting files in
 - Must not depend on `model`, `view`, or `viewmodel`.
 - Must not import JavaFX scene-graph, control, property, or binding types; neutral value types
   (`javafx.scene.paint.Color`) are permitted when they act as plain value carriers.
-- Entity types defined in `model.entity` remain in `model.entity` even when the view reads them for rendering — they do
+- Entity types defined in `model.entity` remain in `model.entity` even when the view reads them for rendering; they do
   not move to `shared`.
 
 ## Javadoc Requirements
 
-### Core Infrastructure (simulations.core)
-
-All classes in the `simulations.core` package and its sub-packages require comprehensive Javadoc:
-
-- Document all `public` and `protected` classes, interfaces, enums, and records.
-- Document all `public` and `protected` methods and constructors.
-- Document all `public` and `protected` constants.
-- These types form the reusable foundation for all simulations; thorough documentation is mandatory.
-
-### Simulation-Specific Packages
-
-Simulation-specific classes (in `model`, `view`, `viewmodel`, `shared` sub-packages of individual simulations like
-`wator`, `langton`, `etpets`) do not require Javadoc:
-
-- These classes are internal implementation details of each simulation.
-- They are not APIs consumed by other simulations or external code (except via `SimulationFactory`).
-- Focus on clear naming and code readability instead of Javadoc.
-- Add Javadoc only when complex domain logic or non-obvious behavior requires explanation.
+- `simulations.core` and subpackages are shared infrastructure: document public/protected types, members, and constants.
+- Simulation-specific packages are internal implementation details: add Javadoc only for complex domain logic or
+  non-obvious behavior.
 
 ## Entity Design
 
@@ -142,14 +114,9 @@ See `docs/simulations/Simulation_Entity_Catalog.md` for a reference of all exist
   `LangtonEntity`, `SugarEntity`, `SnakeEntity`, `ReboundingEntity`).
 - For simple simulations with a single entity enum, use that enum itself as the primary entity type
   (e.g., `ConwayEntity`, `ForestEntity`, `LabEntity`).
-- Prefer role-focused names inside `.../model/entity` packages instead of repeating the simulation prefix
-  (e.g., `Fish`, `Shark`, `Ant`, `Pet`, `Rebounder`, `SnakeHead`).
-- Use standard placeholder names `NoAgent` and `NoResource` when placeholder entities are needed.
-- Use suffix `Base` for abstract base classes (e.g., `ResourceBase`, `CreatureBase`).
-- Use standard name `TerrainConstant` for constant terrain enums.
-- Use standard name `EntityDescriptors` for descriptor enums implementing
-  `SpecBackedGridEntityDescriptorProvider`. Exception: simple simulations whose single enum already implements
-  `ConstantGridEntityDescriptorProvider` do not need a separate descriptor enum.
+- Prefer role-focused names inside `.../model/entity` packages instead of repeating the simulation prefix.
+- Use standard names where applicable: `NoAgent`, `NoResource`, `TerrainConstant`, `EntityDescriptors`.
+- Use suffix `Base` for abstract base classes.
 - For value object records, use concise domain-specific names (e.g., `PetGenome`, `PetTraits`).
 - For factories, prefer domain-specific names (e.g., `CreatureFactory`) over generic names like `EntityFactory`.
 
@@ -163,35 +130,15 @@ See `docs/simulations/Simulation_Entity_Catalog.md` for a reference of all exist
 
 ## Reusable Infrastructure (simulations.core)
 
-### Abstract Base Classes
+Use reusable components from `simulations.core` before adding simulation-local infrastructure:
 
-Use abstract base classes from `simulations.core` to reduce boilerplate:
-
-- **View**: `AbstractMainView`, `AbstractDefaultMainView`, `AbstractObservationView`, `AbstractControlView`,
+- View base classes: `AbstractMainView`, `AbstractDefaultMainView`, `AbstractObservationView`, `AbstractControlView`,
   `AbstractConfigView`
-- **ViewModel**: `AbstractMainViewModel`, `AbstractConfigViewModel`, `DefaultMainViewModel`, `DefaultControlViewModel`,
-  `DefaultObservationViewModel`
-
-### View Components
-
-Use specialized components from `simulations.core.view`:
-
-- `CellDrawer`: rendering hexagons, triangles, and squares on Canvas
-- `CoordinateDrawer`: drawing grid coordinates for debugging
-- `DrawCallThrottler`: throttling canvas redraws to avoid excessive render calls
-- `DefaultControlView`: standard control panel with play/pause/step/reset buttons
-
-### ViewModel Components
-
-Use specialized components from `simulations.core.viewmodel`:
-
-- `SeedProperty`: encapsulates seed input with validation and random seed generation
-
-### Model Components
-
-Use specialized components from `simulations.core.model`:
-
-- `SimulationConfig`: immutable configuration record for simulation parameters
+- ViewModel base classes: `AbstractMainViewModel`, `AbstractConfigViewModel`, `DefaultMainViewModel`,
+  `DefaultControlViewModel`, `DefaultObservationViewModel`
+- View helpers: `CellDrawer`, `CoordinateDrawer`, `DrawCallThrottler`, `DefaultControlView`
+- ViewModel helpers: `SeedProperty`
+- Model helpers: `SimulationConfig`
 
 ## JavaFX UI Patterns
 
@@ -218,9 +165,7 @@ Use specialized components from `simulations.core.model`:
 - Mutate JavaFX scene graph and `Property` values only on the JavaFX Application Thread.
 - Use `Platform.runLater(...)` to marshal updates from background threads to the FX thread.
 - Re-check relevant state (e.g., simulation state) inside the `Platform.runLater(...)` body before applying updates.
-- Do not block the JavaFX Application Thread with long-running computation or I/O; use `javafx.concurrent.Task`/
-  `Service`
-  or a dedicated executor for such work.
+- Do not block the JavaFX Application Thread with long-running computation or I/O.
 - Use `Timeline`/`AnimationTimer` for periodic UI ticks and frame-driven rendering.
 - Encapsulate periodic simulation drivers (e.g., `SimulationTimer`) instead of using `Timeline` directly in Views.
 
@@ -246,12 +191,9 @@ Use specialized components from `simulations.core.model`:
 ### Resources and Internationalization
 
 - Load images, CSS, and other UI resources from the classpath via `AppResources`.
-- Centralize user-facing text in `ResourceBundle` properties files using base name `i18n.messages`.
 - Access resource bundles via `AppLocalization`.
-- Reference resource bundle keys via constants; do not pass string literals to `AppLocalization`.
 - Define cross-cutting keys (used from multiple simulations or shared infrastructure) in `AppLocalizationKeys`.
 - Simulation-local keys may live as `private static final String` constants in the consuming View class.
-- Keep resource bundle keys sorted alphabetically.
 
 ## Simulation Factory Pattern
 
@@ -265,22 +207,6 @@ Each simulation package must provide a package-root factory class used by the ce
 - Let `simulations.core.SimulationFactory` wrap the returned view in a `SimulationInstance`
 - Use factory to wire together model, viewmodel, and view components
 - Keep factory simple; delegate complex construction to builder methods in the respective layer classes
-
-Example structure:
-
-```java
-public final class ConwayFactory {
-
-    private ConwayFactory() {
-    }
-
-    public static SimulationMainView createMainView() { // factory entry point
-        // Wire model, viewmodel, and view, then return the main view.
-        return new ConwayMainView(...)
-    }
-
-}
-```
 
 ## Canvas Rendering
 
@@ -306,7 +232,6 @@ Use configuration ViewModels to expose simulation parameters:
 - Expose configuration as JavaFX properties (doubles, integers, booleans, enums)
 - Use repository wrapper types (`InputDoubleProperty`, `InputIntegerProperty`, `InputEnumProperty`) for validated input
 - Provide sensible default values
-- Document parameter ranges and constraints in Javadoc
 - Validate configuration before passing to Model layer
 
 ## Lifecycle Management
@@ -349,17 +274,10 @@ Shutdown checklist:
 - Use `buildMainRegion()` as the entry point for UI composition
 - Keep layout code in View classes; do not construct UI in ViewModel
 
-## Naming Conventions for Simulations
+## Simulation-Specific Naming
 
-Use consistent method naming across simulation packages:
-
-- `create...`: instantiate and configure one object/control/view
-- `build...`: assemble multiple UI parts into one region/container
-- `draw...`: rendering on a canvas/graphics context
-- `compute...`: deterministic calculation from input/state
-- `initialize...`: lifecycle initialization
-- `shutdown...`: cleanup and resource release
-- `requestDraw()`: standard callback name for triggering canvas redraw
+- Use `draw...` for canvas rendering methods.
+- Use `requestDraw()` as the standard callback name for triggering canvas redraw.
 
 ## Anti-Patterns to Avoid
 

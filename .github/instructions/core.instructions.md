@@ -1,22 +1,22 @@
 ---
-description: "Core infrastructure rules for etpetssim. Use when creating or modifying foundational App-prefixed utilities in de.mkalb.etpetssim.core that serve as cross-cutting services for all other packages."
 applyTo: "**/de/mkalb/etpetssim/core/*.java"
+description: "Core infrastructure rules for App-prefixed utilities in de.mkalb.etpetssim.core."
 ---
 
 # Core Package Instructions
 
-Foundation infrastructure for `de.mkalb.etpetssim.core` package only (no subpackages).
+Foundation infrastructure rules for `de.mkalb.etpetssim.core` package only (no subpackages).
 
 ## Class Structure Requirements
 
 - Concrete utility classes must be `public final class`.
 - Class names must start with `App` prefix (e.g., `AppLogger`, `AppStorage`, `AppLocalization`).
-- Purpose: General-purpose utility classes usable across all other packages.
+- Purpose: cross-cutting utilities usable by all other packages.
 - May define internal `public enum` and `public record` types.
 
-## Zero-Dependency Rule
+## Dependency Boundaries
 
-Core package must remain dependency-free from all application packages.
+Core must not depend on application packages or domain/UI logic.
 
 **Prohibited imports:**
 
@@ -29,31 +29,22 @@ Core package must remain dependency-free from all application packages.
 
 - Java Platform (JDK standard library)
 - JSpecify annotations (`@Nullable`, `@NullMarked`)
-- JavaFX only in exceptional cases (e.g., `javafx.scene.image.Image` in `AppResources`)
-
-Core provides infrastructure; it does not depend on domain logic or UI.
+- JavaFX only for infrastructure-level resource integration (e.g., `javafx.scene.image.Image` in `AppResources`)
 
 ## Objects.requireNonNull Privilege
 
-Core package is the **only package allowed** to use `Objects.requireNonNull()` for parameter validation.
+Core overrides the general Java instruction for `Objects.requireNonNull(...)`.
 
-This rule intentionally **overrides** the general Java instruction that says not to add
-`Objects.requireNonNull(...)` guards at the start of methods for non-null parameters.
-For all files matched by this instruction file, constructors and methods may, and for critical
-infrastructure usually should, validate required parameters with `Objects.requireNonNull()`.
-
-All other packages (`engine`, `ui`, `simulations`) rely on JSpecify non-null-by-default contracts without explicit
-runtime checks.
-
-**Reason:** Core classes are critical infrastructure; fail-fast validation prevents cascading failures.
-
-When fail-fast null validation is part of the public contract in core classes, Javadoc may explicitly document the
-resulting `NullPointerException`.
+- Core constructors and methods may validate required parameters with `Objects.requireNonNull(...)`.
+- Prefer fail-fast validation for critical infrastructure entry points.
+- Other packages (`engine`, `ui`, `simulations`) rely on JSpecify non-null-by-default contracts by default.
+- If fail-fast null validation is part of a public core contract, Javadoc may document the resulting
+  `NullPointerException`.
 
 ## Documentation Requirements
 
 - All public classes require class-level Javadoc describing purpose and responsibilities.
-- All public methods require Javadoc covering intent, parameters, return values, and exceptions.
+- Public methods require Javadoc covering intent, parameters, return values, and contract-relevant exceptions.
 
 ## Testing Requirements
 

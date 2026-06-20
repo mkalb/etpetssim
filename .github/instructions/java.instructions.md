@@ -1,24 +1,25 @@
 ---
 applyTo: "**/*.java"
-description: "General Java coding rules for etpetssim. Use when writing Java code, defining records, using enums, working with JSpecify nullability, or using AppLogger. Applies to all Java files."
+description: "Java-specific coding rules for etpetssim. Use when writing Java code, defining records, using enums, working with JSpecify nullability, or using AppLogger."
 ---
 
 # Java Coding Instructions
 
-General Java coding rules for all `.java` files in this repository.
+Java-specific coding rules for all `.java` files in this repository.
+These rules complement the project-wide instructions.
 
 ## Code Style
 
-- Prefer minimal diffs; do not reformat or restructure unrelated code.
 - Do not add comments that only restate obvious code.
+- Do not spend effort on formatting-only changes, import sorting, or import cleanup.
 - Do not change existing imports without a concrete reason; keep existing wildcard imports unless a specific change
   requires otherwise.
-- Prefer modern Java 25 APIs/features when they improve clarity.
+- Prefer modern Java 25 APIs and language features when they improve clarity; avoid novelty for its own sake.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
 
 ## Naming Conventions
 
-Follow these method naming patterns:
+Use these method naming patterns when they match the behavior:
 
 - `create...`: instantiate and configure one object/control/view
 - `build...`: assemble multiple UI parts into one region/container
@@ -35,29 +36,15 @@ Follow these method naming patterns:
 - `reset...`: reset state to initial/clean condition
 - `shutdown...`: cleanup and resource release
 - `request...`: user-intent action trigger/flag
-- Compact names: Use concise noun-style names (`locale()`, `area()`, `opposite()`) on utility/value APIs; Java records
-  keep generated accessor names (`x()`, `y()`)
+- Compact names: Use concise noun-style names (`locale()`, `area()`, `opposite()`) on utility/value APIs.
+- Keep generated Java record accessor names (`x()`, `y()`) unless a custom method adds distinct behavior.
 
 ## Java Records
 
 - Use records for small immutable value carriers; move derived/convenience behavior to small methods.
 - Use canonical/compact constructors to enforce invariants and to defensively copy mutable inputs (collections, maps,
   arrays) before storing.
-
-Example from codebase:
-
-```java
-public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate> {
-
-    // Validation in compact constructor
-    public GridCoordinate {
-        if ((x < 0) || (y < 0)) {
-            throw new IllegalArgumentException("Coordinates must be non-negative");
-        }
-    }
-
-}
-```
+- Do not use records for mutable JavaFX state, properties, or classes with identity/lifecycle semantics.
 
 ## Enums
 
@@ -69,14 +56,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
 
 ## Nullability (JSpecify)
 
-All packages use `@NullMarked` in `package-info.java` to establish non-null-by-default:
-
-```java
-@org.jspecify.annotations.NullMarked
-package de.mkalb.etpetssim.core;
-```
-
-Rules:
+All packages use `@NullMarked` in `package-info.java` to establish non-null-by-default.
 
 - Treat unannotated types as non-null under `@NullMarked`.
 - Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts.
@@ -86,19 +66,8 @@ Rules:
 - Use `Objects.requireNonNull(...)` only for established boundary checks, state assertions after nullable fields are
   checked, or where a more specific instruction explicitly allows it.
 
-Common `@Nullable` usage patterns found in codebase:
-
-```java
-// Method parameters
-public static void initialize(LogLevel logLevel, boolean useConsole, @Nullable Path logPath)
-
-// Return types with generic
-public ObjectProperty<@Nullable GC> selectedGridCellProperty()
-
-// Fields
-@Nullable
-private SM simulationManager;
-```
+Valid `@Nullable` locations include fields, method parameters, return types, and type arguments such as
+`ObjectProperty<@Nullable GC>`.
 
 ## Javadoc
 

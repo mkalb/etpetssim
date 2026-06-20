@@ -5,17 +5,24 @@ description: "Project-wide GitHub Copilot rules for etpetssim. Applies to all fi
 
 # etpetssim Global Instructions
 
-This repository implements 2D grid-based simulations using MVVM architecture.
+This repository implements 2D grid-based simulations (Agent-Based Models, Cellular Automata, Toy Models)
+using MVVM architecture.
+
+The simulation engine organizes a grid into structured cells, each with coordinates and entities.
+Cells use regular polygon shapes: triangle, square, or hexagon.
+The grid supports configurable edge behaviors (blocking, wrapping, absorbing) and neighbor modes
+(shared edges only, or edges and vertices).
 
 Use this file as the default behavior baseline for all tasks in this repository.
 If a more specific instructions file exists for a path, that file takes precedence.
 Treat these rules as preferred defaults: follow them by default, and only deviate when a clear, task-specific reason
 exists.
 
-## Priority And Scope
+## Priority and Scope
 
 - Keep changes minimal and focused. Do not reformat unrelated code.
 - Do not invent file paths, package names, class names, symbols, or APIs.
+- Preserve existing public APIs unless explicitly asked to change them.
 - If requirements are ambiguous, ask before guessing.
 - Follow existing naming patterns and nearest peer-file conventions when adding new code.
 
@@ -23,12 +30,14 @@ exists.
 
 - Use Java 25 language features only.
 - Use JavaFX 25 for UI work.
-- Use the Gradle Wrapper from repository root for build and test commands.
+- Use the Gradle Wrapper from the repository root for build and test commands.
+- Prefer `gradlew.bat app:compileJava` for compile checks and `gradlew.bat app:test` for test checks.
+- Use `gradlew.bat app:run` only when running the JavaFX application is necessary.
 
 ## Encoding and File Conventions
 
 - Use UTF-8 for `.java`, `.md`, and `.properties` files.
-- Keep Java properties files sorted alphabetically by key.
+- Keep `.properties` files and localization keys sorted alphabetically.
 - Write repository Markdown in standard GitHub Markdown.
 
 ## Core Engineering Rules
@@ -39,21 +48,14 @@ exists.
 - Use meaningful domain names and keep classes cohesive.
 - Remove dead code and outdated comments; commented-out `AppLogger` calls may be kept as diagnostic traces.
 
-## Localization And Text
+## Localization and Text
 
 - Write comments, Javadoc, and repository Markdown in English (en_US).
 - Keep user-facing text in `i18n.messages` resource bundles.
 - Use constants for localization keys instead of string literals.
-- Keep `.properties` keys sorted alphabetically.
 
 ## Nullability and Tests
 
 - Follow JSpecify defaults.
 - Use `@Nullable` only for intentional nullable contracts.
 - Use JUnit 5 for tests. Name test methods with `test...`.
-
-## API And Naming Discipline
-
-- Preserve existing public APIs unless explicitly asked to change them.
-- Follow existing naming patterns and nearest peer-file conventions.
-- Prefer simple, cohesive designs and avoid unnecessary abstractions.
