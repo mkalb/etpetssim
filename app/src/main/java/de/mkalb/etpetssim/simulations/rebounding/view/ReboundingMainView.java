@@ -43,6 +43,7 @@ public final class ReboundingMainView
     private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
     private static final String REBOUNDING_TOOL_ID_ADD_REBOUNDER = "rebounding.addRebounder";
     private static final String REBOUNDING_TOOL_ID_ADD_WALL = "rebounding.addWall";
+    private static final String REBOUNDING_TOOL_ID_FILL_WALLS = "rebounding.fillWalls";
     private static final String REBOUNDING_TOOL_ID_REMOVE_REBOUNDER = "rebounding.removeRebounder";
     private static final String REBOUNDING_TOOL_ID_REMOVE_WALL = "rebounding.removeWall";
     private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER = "rebounding.toolbar.addrebounder";
@@ -51,6 +52,8 @@ public final class ReboundingMainView
     private static final String REBOUNDING_TOOLBAR_ADD_REBOUNDER_TOOLTIP = "rebounding.toolbar.addrebounder.tooltip";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL = "rebounding.toolbar.addwall";
     private static final String REBOUNDING_TOOLBAR_ADD_WALL_TOOLTIP = "rebounding.toolbar.addwall.tooltip";
+    private static final String REBOUNDING_TOOLBAR_FILL_WALLS = "rebounding.toolbar.fillwalls";
+    private static final String REBOUNDING_TOOLBAR_FILL_WALLS_TOOLTIP = "rebounding.toolbar.fillwalls.tooltip";
     private static final String REBOUNDING_TOOLBAR_REMOVE_REBOUNDER = "rebounding.toolbar.removerebounder";
     private static final String REBOUNDING_TOOLBAR_REMOVE_REBOUNDER_TOOLTIP = "rebounding.toolbar.removerebounder.tooltip";
     private static final String REBOUNDING_TOOLBAR_REMOVE_WALL = "rebounding.toolbar.removewall";
@@ -159,6 +162,12 @@ public final class ReboundingMainView
                         SimulationUserActionScope.CELL_SELECTED,
                         REBOUNDING_TOOLBAR_REMOVE_REBOUNDER,
                         REBOUNDING_TOOLBAR_REMOVE_REBOUNDER_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
+                        REBOUNDING_TOOL_ID_FILL_WALLS,
+                        ReboundingUserActionContext.FixedAction.FILL_WALLS,
+                        SimulationUserActionScope.GLOBAL,
+                        REBOUNDING_TOOLBAR_FILL_WALLS,
+                        REBOUNDING_TOOLBAR_FILL_WALLS_TOOLTIP),
                 new SimulationUserActionDescriptor<>(
                         REBOUNDING_TOOL_ID_ADD_REBOUNDER,
                         SimulationUserActionScope.CELL_SELECTED,

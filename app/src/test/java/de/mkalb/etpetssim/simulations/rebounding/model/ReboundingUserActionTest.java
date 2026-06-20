@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.rebounding.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
+import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import org.junit.jupiter.api.Test;
 
@@ -90,6 +90,45 @@ final class ReboundingUserActionTest {
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isRebounder()),
                 () -> assertEquals(movingEntityCellsBefore + 1, manager.statistics().getMovingEntityCells())
+        );
+    }
+
+    @Test
+    void testFillWallsFillsAllGroundCells() {
+        ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
+        ReboundingUserAction userAction = new ReboundingUserAction();
+        int totalCells = manager.currentModel().allCells().size();
+
+        userAction.apply(
+                manager,
+                ReboundingUserActionContext.FixedAction.FILL_WALLS,
+                null);
+
+        assertAll(
+                () -> assertEquals(totalCells, manager.currentModel().countEntities(ReboundingEntity::isWall)),
+                () -> assertEquals(totalCells, manager.statistics().getWallCells())
+        );
+    }
+
+    @Test
+    void testFillWallsKeepsExistingRebounderCells() {
+        ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
+        ReboundingUserAction userAction = new ReboundingUserAction();
+        GridCoordinate rebounderCoordinate = new GridCoordinate(0, 0);
+        manager.currentModel().setEntity(rebounderCoordinate, new Rebounder(CompassDirection.N));
+        manager.statistics().increaseMovingEntityCells();
+        int totalCells = manager.currentModel().allCells().size();
+
+        userAction.apply(
+                manager,
+                ReboundingUserActionContext.FixedAction.FILL_WALLS,
+                null);
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(rebounderCoordinate).isRebounder()),
+                () -> assertEquals(totalCells - 1L, manager.currentModel().countEntities(ReboundingEntity::isWall)),
+                () -> assertEquals(totalCells - 1, manager.statistics().getWallCells()),
+                () -> assertEquals(1, manager.statistics().getMovingEntityCells())
         );
     }
 

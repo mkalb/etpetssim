@@ -22,31 +22,50 @@ public final class ReboundingUserAction
     public void apply(ReboundingSimulationManager manager,
                       ReboundingUserActionContext context,
                       @Nullable GridCellView<ReboundingEntity> selectedCell) {
-        if (selectedCell == null) {
-            return;
-        }
-
-        var model = manager.currentModel();
+                                 var model = manager.currentModel();
         var statistics = manager.statistics();
-        var coordinate = selectedCell.coordinate();
-        var entity = model.getEntity(coordinate);
 
         switch (context) {
             case ReboundingUserActionContext.FixedAction fixedAction -> {
                 switch (fixedAction) {
                     case ADD_WALL -> {
+                        if (selectedCell == null) {
+                            return;
+                        }
+                        var coordinate = selectedCell.coordinate();
+                        var entity = model.getEntity(coordinate);
                         if (entity.isGround()) {
                             model.setEntity(coordinate, TerrainConstant.WALL);
                             statistics.increaseWallCells();
                         }
                     }
+                    case FILL_WALLS -> {
+                        var groundCoordinates = model.filteredCoordinates(ReboundingEntity::isGround);
+                        if (groundCoordinates.isEmpty()) {
+                            return;
+                        }
+                        for (var coordinate : groundCoordinates) {
+                            model.setEntity(coordinate, TerrainConstant.WALL);
+                            statistics.increaseWallCells();
+                        }
+                    }
                     case REMOVE_WALL -> {
+                        if (selectedCell == null) {
+                            return;
+                        }
+                        var coordinate = selectedCell.coordinate();
+                        var entity = model.getEntity(coordinate);
                         if (entity.isWall()) {
                             model.setEntityToDefault(coordinate);
                             statistics.decreaseWallCells();
                         }
                     }
                     case REMOVE_REBOUNDER -> {
+                        if (selectedCell == null) {
+                            return;
+                        }
+                        var coordinate = selectedCell.coordinate();
+                        var entity = model.getEntity(coordinate);
                         if (entity.isRebounder()) {
                             model.setEntityToDefault(coordinate);
                             statistics.decreaseMovingEntityCells();
@@ -55,6 +74,11 @@ public final class ReboundingUserAction
                 }
             }
             case ReboundingUserActionContext.AddRebounder addRebounder -> {
+                if (selectedCell == null) {
+                    return;
+                }
+                var coordinate = selectedCell.coordinate();
+                var entity = model.getEntity(coordinate);
                 if (entity.isGround()) {
                     model.setEntity(coordinate, new Rebounder(addRebounder.direction()));
                     statistics.increaseMovingEntityCells();

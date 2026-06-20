@@ -15,6 +15,7 @@ public sealed interface ReboundingUserActionContext extends SimulationUserAction
      */
     enum FixedAction implements ReboundingUserActionContext {
         ADD_WALL,
+        FILL_WALLS,
         REMOVE_WALL,
         REMOVE_REBOUNDER
     }
