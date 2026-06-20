@@ -101,10 +101,15 @@ public final class AppStorage {
 
     /**
      * Resolves a file name against a directory and enforces that the normalized result stays within that directory.
+     *
+     * @throws IllegalArgumentException if {@code fileName} is empty or blank
      */
     private static Path resolveFileInDirectory(Path directory, String fileName) throws IOException {
         Objects.requireNonNull(directory, "Directory must not be null");
         Objects.requireNonNull(fileName, "File name must not be null");
+        if (fileName.isBlank()) {
+            throw new IllegalArgumentException("File name must not be empty or blank");
+        }
 
         Path normalizedDirectory = directory.toAbsolutePath().normalize();
         Path resolvedPath = normalizedDirectory.resolve(fileName).toAbsolutePath().normalize();
@@ -120,8 +125,9 @@ public final class AppStorage {
      * @param fileName file name relative to the data directory
      * @param os       operating system
      * @return resolved file path
-     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
-     * @throws IOException          if the data directory cannot be created/validated or {@code fileName} escapes that directory
+     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
+     * @throws IllegalArgumentException if {@code fileName} is empty or blank
+     * @throws IOException              if the data directory cannot be created/validated or {@code fileName} escapes that directory
      */
     public static Path getAppDataFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
@@ -135,8 +141,9 @@ public final class AppStorage {
      * @param fileName file name relative to the data directory
      * @param os       operating system
      * @return path to the created file
-     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
-     * @throws IOException          if directory validation fails, file creation fails, or the file already exists
+     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
+     * @throws IllegalArgumentException if {@code fileName} is empty or blank
+     * @throws IOException              if directory validation fails, file creation fails, or the file already exists
      */
     public static Path createAppDataFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
@@ -150,8 +157,9 @@ public final class AppStorage {
      * @param fileName file name relative to the data directory
      * @param os       operating system
      * @return {@code true} if a regular file existed and was deleted; otherwise {@code false}
-     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
-     * @throws IOException          if directory validation fails or deletion fails
+     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
+     * @throws IllegalArgumentException if {@code fileName} is empty or blank
+     * @throws IOException              if directory validation fails or deletion fails
      */
     public static boolean deleteAppDataFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");
@@ -169,8 +177,9 @@ public final class AppStorage {
      * @param fileName file name relative to the log directory
      * @param os       operating system
      * @return resolved log file path
-     * @throws NullPointerException if {@code fileName} or {@code os} is {@code null}
-     * @throws IOException          if the log directory cannot be created/validated or {@code fileName} escapes that directory
+     * @throws NullPointerException     if {@code fileName} or {@code os} is {@code null}
+     * @throws IllegalArgumentException if {@code fileName} is empty or blank
+     * @throws IOException              if the log directory cannot be created/validated or {@code fileName} escapes that directory
      */
     public static Path getLogFile(String fileName, OperatingSystem os) throws IOException {
         Objects.requireNonNull(fileName, "File name must not be null");

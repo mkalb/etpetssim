@@ -110,6 +110,20 @@ final class AppStorageTest {
     }
 
     @Test
+    void testFileNameRejectsEmptyOrBlank() {
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("   ", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("   ", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("   ", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("   ", OS))
+        );
+    }
+
+    @Test
     void testAppDataFileRejectsPathTraversal() {
         String pathTraversalName = Path.of("..", "outside.txt").toString();
         assertThrows(IOException.class, () -> AppStorage.getAppDataFile(pathTraversalName, OS));
