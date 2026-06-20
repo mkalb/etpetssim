@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
-import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
+import de.mkalb.etpetssim.simulations.conway.shared.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -12,19 +12,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ConwayPatternsTest {
 
-    private static final int CLASSIC_PATTERN_COUNT = 9;
+    private static final int PATTERN_COUNT = 15;
     private static final List<CellShape> UNSUPPORTED_PATTERN_CELL_SHAPES = List.of(
             CellShape.TRIANGLE,
             CellShape.HEXAGON
+    );
+    private static final List<String> EXPECTED_CLASSIC_CHOICE_IDS = List.of(
+            "conway.beehive",
+            "conway.block",
+            "conway.boat",
+            "conway.loaf",
+            "conway.tub",
+            "conway.beacon",
+            "conway.blinker",
+            "conway.pentadecathlon",
+            "conway.pulsar",
+            "conway.toad",
+            "conway.acorn",
+            "conway.rpentomino",
+            "conway.glider",
+            "conway.lwss"
     );
     private static final List<String> EXPECTED_CHOICE_IDS = List.of(
             "conway.beehive",
             "conway.block",
             "conway.boat",
             "conway.loaf",
+            "conway.tub",
             "conway.beacon",
             "conway.blinker",
+            "conway.pentadecathlon",
+            "conway.pulsar",
             "conway.toad",
+            "conway.acorn",
+            "conway.rpentomino",
+            "conway.highlife.replicator",
             "conway.glider",
             "conway.lwss"
     );
@@ -33,22 +55,34 @@ final class ConwayPatternsTest {
             "conway.pattern.block",
             "conway.pattern.boat",
             "conway.pattern.loaf",
+            "conway.pattern.tub",
             "conway.pattern.beacon",
             "conway.pattern.blinker",
+            "conway.pattern.pentadecathlon",
+            "conway.pattern.pulsar",
             "conway.pattern.toad",
+            "conway.pattern.acorn",
+            "conway.pattern.rpentomino",
+            "conway.pattern.highlife.replicator",
             "conway.pattern.glider",
             "conway.pattern.lwss"
     );
-    private static final Map<String, PatternExpectation> EXPECTED_PATTERNS = Map.of(
-            "conway.beehive", new PatternExpectation(6, 5, 6),
-            "conway.block", new PatternExpectation(4, 4, 4),
-            "conway.boat", new PatternExpectation(5, 5, 5),
-            "conway.loaf", new PatternExpectation(6, 6, 7),
-            "conway.beacon", new PatternExpectation(6, 6, 6),
-            "conway.blinker", new PatternExpectation(5, 5, 3),
-            "conway.toad", new PatternExpectation(6, 4, 6),
-            "conway.glider", new PatternExpectation(5, 5, 5),
-            "conway.lwss", new PatternExpectation(7, 6, 9)
+    private static final Map<String, PatternExpectation> EXPECTED_PATTERNS = Map.ofEntries(
+            Map.entry("conway.beehive", new PatternExpectation(6, 5, 6)),
+            Map.entry("conway.block", new PatternExpectation(4, 4, 4)),
+            Map.entry("conway.boat", new PatternExpectation(5, 5, 5)),
+            Map.entry("conway.loaf", new PatternExpectation(6, 6, 7)),
+            Map.entry("conway.tub", new PatternExpectation(5, 5, 4)),
+            Map.entry("conway.beacon", new PatternExpectation(6, 6, 6)),
+            Map.entry("conway.blinker", new PatternExpectation(5, 5, 3)),
+            Map.entry("conway.pentadecathlon", new PatternExpectation(12, 5, 12)),
+            Map.entry("conway.pulsar", new PatternExpectation(15, 15, 48)),
+            Map.entry("conway.toad", new PatternExpectation(6, 4, 6)),
+            Map.entry("conway.acorn", new PatternExpectation(9, 5, 7)),
+            Map.entry("conway.rpentomino", new PatternExpectation(5, 5, 5)),
+            Map.entry("conway.highlife.replicator", new PatternExpectation(7, 7, 12)),
+            Map.entry("conway.glider", new PatternExpectation(5, 5, 5)),
+            Map.entry("conway.lwss", new PatternExpectation(7, 6, 9))
     );
 
     private static ConwayConfig createConfig(CellShape cellShape) {
@@ -109,7 +143,7 @@ final class ConwayPatternsTest {
         List<ConwayPatternChoice> choices = ConwayPatterns.choices();
 
         assertAll(
-                () -> assertEquals(CLASSIC_PATTERN_COUNT, choices.size(), "All classic patterns should be registered"),
+                () -> assertEquals(PATTERN_COUNT, choices.size(), "All patterns should be registered"),
                 () -> assertEquals(EXPECTED_CHOICE_IDS, choices.stream().map(ConwayPatternChoice::choiceId).toList()),
                 () -> assertEquals(EXPECTED_LABEL_KEYS, choices.stream().map(ConwayPatternChoice::labelKey).toList()),
                 () -> assertTrue(choices.stream().noneMatch(choice -> choice.choiceId().equals(choice.labelKey())),
@@ -121,17 +155,12 @@ final class ConwayPatternsTest {
 
     @Test
     void testAvailableChoicesMatchChoicesForClassicSquareConfig() {
-        List<ConwayPatternChoice> classicChoices = ConwayPatterns.choices();
         ConwayConfig config = createConfig(CellShape.SQUARE);
         List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
 
-        assertAll(
-                () -> assertEquals(classicChoices, availableChoices,
-                        "Available choices should match classic choices for the classic square config"),
-                () -> assertEquals(EXPECTED_CHOICE_IDS,
-                        availableChoices.stream().map(ConwayPatternChoice::choiceId).toList(),
-                        "Choice order should stay stable for the classic square config")
-        );
+        assertEquals(EXPECTED_CLASSIC_CHOICE_IDS,
+                availableChoices.stream().map(ConwayPatternChoice::choiceId).toList(),
+                "Choice order should stay stable for the classic square config");
     }
 
     @Test
@@ -155,6 +184,18 @@ final class ConwayPatternsTest {
 
         assertTrue(ConwayPatterns.availableChoices(config).isEmpty(),
                 "Classic patterns should not be available for non-classic transition rules");
+    }
+
+    @Test
+    void testAvailableChoicesIncludeHighLifeReplicatorForHighLifeRules() {
+        ConwayConfig config = createConfig(
+                CellShape.SQUARE,
+                ConwayTransitionRules.of(ConwayPresetSquare.HIGHLIFE.toString()));
+
+        List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
+
+        assertEquals(List.of("conway.highlife.replicator"),
+                availableChoices.stream().map(ConwayPatternChoice::choiceId).toList());
     }
 
     @Test
@@ -198,6 +239,11 @@ final class ConwayPatternsTest {
     }
 
     @Test
+    void testTubPatternHasDeadBorderAndExpectedDimensions() {
+        assertPattern(ConwayPatterns.tub(), 5, 5, 4);
+    }
+
+    @Test
     void testBeaconPatternHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.beacon(), 6, 6, 6);
     }
@@ -208,8 +254,33 @@ final class ConwayPatternsTest {
     }
 
     @Test
+    void testPentadecathlonPatternHasDeadBorderAndExpectedDimensions() {
+        assertPattern(ConwayPatterns.pentadecathlon(), 12, 5, 12);
+    }
+
+    @Test
+    void testPulsarPatternHasDeadBorderAndExpectedDimensions() {
+        assertPattern(ConwayPatterns.pulsar(), 15, 15, 48);
+    }
+
+    @Test
     void testToadPatternHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.toad(), 6, 4, 6);
+    }
+
+    @Test
+    void testAcornPatternHasDeadBorderAndExpectedDimensions() {
+        assertPattern(ConwayPatterns.acorn(), 9, 5, 7);
+    }
+
+    @Test
+    void testRPentominoPatternHasDeadBorderAndExpectedDimensions() {
+        assertPattern(ConwayPatterns.rPentomino(), 5, 5, 5);
+    }
+
+    @Test
+    void testHighLifeReplicatorPatternHasDeadBorderAndExpectedDimensions() {
+        assertPattern(ConwayPatterns.highlifeReplicator(), 7, 7, 12);
     }
 
     @Test

@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.neighborhood.NeighborhoodMode;
-import de.mkalb.etpetssim.simulations.conway.shared.ConwayTransitionRules;
+import de.mkalb.etpetssim.simulations.conway.shared.*;
 import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 
 import java.util.*;
@@ -52,7 +52,8 @@ public final class ConwayConstraints {
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
 
     // Rules
-    public static final ConwayTransitionRules TRANSITION_RULES_DEFAULT = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
+    public static final ConwayTransitionRules TRANSITION_RULES_DEFAULT = ConwayTransitionRules.of(
+            ConwayPresetSquare.CONWAYS_LIFE.toString());
     public static final int BIRTH_NEIGHBOR_COUNT_MIN = 1;
 
     /**

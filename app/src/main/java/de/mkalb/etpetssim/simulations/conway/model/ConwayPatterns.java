@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.shared.*;
 
 import java.util.*;
 
@@ -13,7 +14,7 @@ import java.util.*;
  * Each method returns a normalized pattern (top-left at (0, 0)), fully filled with
  * {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#ALIVE} and {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#DEAD} cells, representing classic
  * Game of Life configurations grouped into the well-known categories Still Life, Oscillator,
- * and Spaceship. The exposed choice order follows these groups.
+ * Methuselah, Replicator, and Spaceship. The exposed choice order follows these groups.
  * <p>
  * This class cannot be instantiated.
  *
@@ -27,9 +28,15 @@ public final class ConwayPatterns {
     private static final String PATTERN_ID_BLOCK = "conway.block";
     private static final String PATTERN_ID_BOAT = "conway.boat";
     private static final String PATTERN_ID_LOAF = "conway.loaf";
+    private static final String PATTERN_ID_TUB = "conway.tub";
     private static final String PATTERN_ID_BEACON = "conway.beacon";
     private static final String PATTERN_ID_BLINKER = "conway.blinker";
+    private static final String PATTERN_ID_PENTADECATHLON = "conway.pentadecathlon";
+    private static final String PATTERN_ID_PULSAR = "conway.pulsar";
     private static final String PATTERN_ID_TOAD = "conway.toad";
+    private static final String PATTERN_ID_ACORN = "conway.acorn";
+    private static final String PATTERN_ID_R_PENTOMINO = "conway.rpentomino";
+    private static final String PATTERN_ID_HIGHLIFE_REPLICATOR = "conway.highlife.replicator";
     private static final String PATTERN_ID_GLIDER = "conway.glider";
     private static final String PATTERN_ID_LIGHTWEIGHT_SPACESHIP = "conway.lwss";
 
@@ -37,11 +44,22 @@ public final class ConwayPatterns {
     private static final String PATTERN_LABEL_KEY_BLOCK = "conway.pattern.block";
     private static final String PATTERN_LABEL_KEY_BOAT = "conway.pattern.boat";
     private static final String PATTERN_LABEL_KEY_LOAF = "conway.pattern.loaf";
+    private static final String PATTERN_LABEL_KEY_TUB = "conway.pattern.tub";
     private static final String PATTERN_LABEL_KEY_BEACON = "conway.pattern.beacon";
     private static final String PATTERN_LABEL_KEY_BLINKER = "conway.pattern.blinker";
+    private static final String PATTERN_LABEL_KEY_PENTADECATHLON = "conway.pattern.pentadecathlon";
+    private static final String PATTERN_LABEL_KEY_PULSAR = "conway.pattern.pulsar";
     private static final String PATTERN_LABEL_KEY_TOAD = "conway.pattern.toad";
+    private static final String PATTERN_LABEL_KEY_ACORN = "conway.pattern.acorn";
+    private static final String PATTERN_LABEL_KEY_R_PENTOMINO = "conway.pattern.rpentomino";
+    private static final String PATTERN_LABEL_KEY_HIGHLIFE_REPLICATOR = "conway.pattern.highlife.replicator";
     private static final String PATTERN_LABEL_KEY_GLIDER = "conway.pattern.glider";
     private static final String PATTERN_LABEL_KEY_LIGHTWEIGHT_SPACESHIP = "conway.pattern.lwss";
+
+    private static final ConwayTransitionRules CONWAYS_LIFE_TRANSITION_RULES = ConwayTransitionRules.of(
+            ConwayPresetSquare.CONWAYS_LIFE.toString());
+    private static final ConwayTransitionRules HIGHLIFE_TRANSITION_RULES = ConwayTransitionRules.of(
+            ConwayPresetSquare.HIGHLIFE.toString());
 
     private static final List<ConwayPatternChoice> CLASSIC_CHOICES = List.of(
             new ConwayPatternChoice(
@@ -65,6 +83,11 @@ public final class ConwayPatterns {
                     ConwayPatterns::loaf,
                     ConwayPatterns::isAvailableForClassicSquareRules),
             new ConwayPatternChoice(
+                    PATTERN_ID_TUB,
+                    PATTERN_LABEL_KEY_TUB,
+                    ConwayPatterns::tub,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
                     PATTERN_ID_BEACON,
                     PATTERN_LABEL_KEY_BEACON,
                     ConwayPatterns::beacon,
@@ -75,10 +98,35 @@ public final class ConwayPatterns {
                     ConwayPatterns::blinker,
                     ConwayPatterns::isAvailableForClassicSquareRules),
             new ConwayPatternChoice(
+                    PATTERN_ID_PENTADECATHLON,
+                    PATTERN_LABEL_KEY_PENTADECATHLON,
+                    ConwayPatterns::pentadecathlon,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_PULSAR,
+                    PATTERN_LABEL_KEY_PULSAR,
+                    ConwayPatterns::pulsar,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
                     PATTERN_ID_TOAD,
                     PATTERN_LABEL_KEY_TOAD,
                     ConwayPatterns::toad,
                     ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_ACORN,
+                    PATTERN_LABEL_KEY_ACORN,
+                    ConwayPatterns::acorn,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_R_PENTOMINO,
+                    PATTERN_LABEL_KEY_R_PENTOMINO,
+                    ConwayPatterns::rPentomino,
+                    ConwayPatterns::isAvailableForClassicSquareRules),
+            new ConwayPatternChoice(
+                    PATTERN_ID_HIGHLIFE_REPLICATOR,
+                    PATTERN_LABEL_KEY_HIGHLIFE_REPLICATOR,
+                    ConwayPatterns::highlifeReplicator,
+                    ConwayPatterns::isAvailableForHighLifeSquareRules),
             new ConwayPatternChoice(
                     PATTERN_ID_GLIDER,
                     PATTERN_LABEL_KEY_GLIDER,
@@ -99,7 +147,12 @@ public final class ConwayPatterns {
 
     private static boolean isAvailableForClassicSquareRules(ConwayConfig config) {
         return (config.cellShape() == CellShape.SQUARE)
-                && ConwayConstraints.TRANSITION_RULES_DEFAULT.equals(config.transitionRules());
+                && CONWAYS_LIFE_TRANSITION_RULES.equals(config.transitionRules());
+    }
+
+    private static boolean isAvailableForHighLifeSquareRules(ConwayConfig config) {
+        return (config.cellShape() == CellShape.SQUARE)
+                && HIGHLIFE_TRANSITION_RULES.equals(config.transitionRules());
     }
 
     public static List<ConwayPatternChoice> choices() {
@@ -110,6 +163,22 @@ public final class ConwayPatterns {
         return CLASSIC_CHOICES.stream()
                               .filter(choice -> choice.availableFor(config))
                               .toList();
+    }
+
+    private static GridPattern<ConwayEntity> createPattern(String... rows) {
+        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(rows.length * rows[0].length());
+        for (int y = 0; y < rows.length; y++) {
+            String row = rows[y];
+            for (int x = 0; x < row.length(); x++) {
+                ConwayEntity entity = switch (row.charAt(x)) {
+                    case 'A' -> ConwayEntity.ALIVE;
+                    case 'D' -> ConwayEntity.DEAD;
+                    default -> throw new IllegalArgumentException("Unsupported pattern cell: " + row.charAt(x));
+                };
+                map.put(new GridOffset(x, y), entity);
+            }
+        }
+        return () -> map;
     }
 
     /**
@@ -322,6 +391,23 @@ public final class ConwayPatterns {
     }
 
     /**
+     * Returns a normalized 5x5 {@link GridPattern} representing the "Tub" Still Life.
+     * <p>
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
+     * DEAD border so placement overwrites the complete footprint.
+     *
+     * @return a normalized 5x5 tub pattern with DEAD border
+     */
+    public static GridPattern<ConwayEntity> tub() {
+        return createPattern(
+                "DDDDD",
+                "DDADD",
+                "DADAD",
+                "DDADD",
+                "DDDDD");
+    }
+
+    /**
      * Returns a normalized 6x6 {@link GridPattern} representing the "Beacon" Oscillator.
      * <p>
      * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
@@ -432,6 +518,50 @@ public final class ConwayPatterns {
     }
 
     /**
+     * Returns a normalized 12x5 {@link GridPattern} representing the "Pentadecathlon" Oscillator.
+     * <p>
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
+     * DEAD border so placement overwrites the complete footprint.
+     *
+     * @return a normalized 12x5 pentadecathlon pattern with DEAD border
+     */
+    public static GridPattern<ConwayEntity> pentadecathlon() {
+        return createPattern(
+                "DDDDDDDDDDDD",
+                "DDDADDDDADDD",
+                "DAADAAAADAAD",
+                "DDDADDDDADDD",
+                "DDDDDDDDDDDD");
+    }
+
+    /**
+     * Returns a normalized 15x15 {@link GridPattern} representing the "Pulsar" Oscillator.
+     * <p>
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
+     * DEAD border so placement overwrites the complete footprint.
+     *
+     * @return a normalized 15x15 pulsar pattern with DEAD border
+     */
+    public static GridPattern<ConwayEntity> pulsar() {
+        return createPattern(
+                "DDDDDDDDDDDDDDD",
+                "DDDAAADDDDAAADD",
+                "DDDDDDDDDDDDDDD",
+                "DADDDDADADDDDAD",
+                "DADDDDADADDDDAD",
+                "DADDDDADADDDDAD",
+                "DDDAAADDDDAAADD",
+                "DDDDDDDDDDDDDDD",
+                "DDDAAADDDDAAADD",
+                "DADDDDADADDDDAD",
+                "DADDDDADADDDDAD",
+                "DADDDDADADDDDAD",
+                "DDDDDDDDDDDDDDD",
+                "DDDAAADDDDAAADD",
+                "DDDDDDDDDDDDDDD");
+    }
+
+    /**
      * Returns a normalized 6x4 {@link GridPattern} representing the "Toad" Oscillator.
      * <p>
      * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
@@ -475,6 +605,60 @@ public final class ConwayPatterns {
             map.put(new GridOffset(x, 3), ConwayEntity.DEAD);
         }
         return () -> map;
+    }
+
+    /**
+     * Returns a normalized 9x5 {@link GridPattern} representing the "Acorn" Methuselah.
+     * <p>
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
+     * DEAD border so placement overwrites the complete footprint.
+     *
+     * @return a normalized 9x5 acorn pattern with DEAD border
+     */
+    public static GridPattern<ConwayEntity> acorn() {
+        return createPattern(
+                "DDDDDDDDD",
+                "DDADDDDDD",
+                "DDDDADDDD",
+                "DAADDAAAD",
+                "DDDDDDDDD");
+    }
+
+    /**
+     * Returns a normalized 5x5 {@link GridPattern} representing the "R-pentomino" Methuselah.
+     * <p>
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
+     * DEAD border so placement overwrites the complete footprint.
+     *
+     * @return a normalized 5x5 R-pentomino pattern with DEAD border
+     */
+    public static GridPattern<ConwayEntity> rPentomino() {
+        return createPattern(
+                "DDDDD",
+                "DDAAD",
+                "DAADD",
+                "DDADD",
+                "DDDDD");
+    }
+
+    /**
+     * Returns a normalized 7x7 {@link GridPattern} representing the HighLife "Replicator".
+     * <p>
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
+     * DEAD border so placement overwrites the complete footprint. This pattern is intended for the HighLife rule
+     * ({@code 23/36}).
+     *
+     * @return a normalized 7x7 HighLife replicator pattern with DEAD border
+     */
+    public static GridPattern<ConwayEntity> highlifeReplicator() {
+        return createPattern(
+                "DDDDDDD",
+                "DDDAAAD",
+                "DDADDAD",
+                "DADDDAD",
+                "DADDADD",
+                "DAAADDD",
+                "DDDDDDD");
     }
 
     /**
