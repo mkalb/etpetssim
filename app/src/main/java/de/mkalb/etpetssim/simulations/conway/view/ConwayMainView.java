@@ -40,8 +40,11 @@ public final class ConwayMainView
     private static final Color SELECTED_STROKE_COLOR = Color.BLACK;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
     private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
+    private static final String CONWAY_TOOL_ID_CLEAR_GRID = "conway.clearGrid";
     private static final String CONWAY_TOOL_ID_PLACE_PATTERN = "conway.placePattern";
     private static final String CONWAY_TOOL_ID_TOGGLE_CELL = "conway.toggleCell";
+    private static final String CONWAY_TOOLBAR_CLEAR_GRID = "conway.toolbar.cleargrid";
+    private static final String CONWAY_TOOLBAR_CLEAR_GRID_TOOLTIP = "conway.toolbar.cleargrid.tooltip";
     private static final String CONWAY_TOOLBAR_PATTERN = "conway.toolbar.pattern";
     private static final String CONWAY_TOOLBAR_PATTERN_TOOLTIP = "conway.toolbar.pattern.tooltip";
     private static final String CONWAY_TOOLBAR_PLACE_PATTERN = "conway.toolbar.placepattern";
@@ -151,6 +154,12 @@ public final class ConwayMainView
     protected List<SimulationUserActionDescriptor<ConwayUserActionContext>> createUserActionDescriptors() {
         return List.of(
                 new SimulationUserActionDescriptor<>(
+                        CONWAY_TOOL_ID_CLEAR_GRID,
+                        ConwayUserActionContext.FixedAction.CLEAR_GRID,
+                        SimulationUserActionScope.GLOBAL,
+                        CONWAY_TOOLBAR_CLEAR_GRID,
+                        CONWAY_TOOLBAR_CLEAR_GRID_TOOLTIP),
+                new SimulationUserActionDescriptor<>(
                         CONWAY_TOOL_ID_TOGGLE_CELL,
                         ConwayUserActionContext.FixedAction.TOGGLE_CELL,
                         SimulationUserActionScope.CELL_SELECTED,
@@ -251,4 +260,3 @@ public final class ConwayMainView
     }
 
 }
-

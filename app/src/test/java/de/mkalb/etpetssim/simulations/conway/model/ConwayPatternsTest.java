@@ -10,6 +10,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("MagicNumber")
 final class ConwayPatternsTest {
 
     private static final int PATTERN_COUNT = 15;
@@ -297,4 +298,3 @@ final class ConwayPatternsTest {
     }
 
 }
-

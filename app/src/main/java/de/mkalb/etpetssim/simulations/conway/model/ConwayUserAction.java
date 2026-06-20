@@ -23,39 +23,52 @@ public final class ConwayUserAction
     public void apply(ConwaySimulationManager manager,
                       ConwayUserActionContext context,
                       @Nullable GridCellView<ConwayEntity> selectedCell) {
-        if (selectedCell == null) {
-            return;
-        }
-
         var model = manager.currentModel();
         var statistics = manager.statistics();
-        var coordinate = selectedCell.coordinate();
-        var entity = model.getEntity(coordinate);
 
         switch (context) {
             case ConwayUserActionContext.FixedAction fixedAction ->
-                    applyFixedAction(model, statistics, coordinate, entity, fixedAction);
+                    applyFixedAction(model, statistics, selectedCell, fixedAction);
             case ConwayUserActionContext.PlacePattern placePattern -> {
+                if (selectedCell == null) {
+                    return;
+                }
                 if (!placePattern.patternChoice().availableFor(manager.config())) {
                     return;
                 }
-                applyPattern(model, statistics, coordinate, placePattern.patternChoice().pattern());
+                applyPattern(model, statistics, selectedCell.coordinate(), placePattern.patternChoice().pattern());
             }
         }
     }
 
     private void applyFixedAction(WritableGridModel<ConwayEntity> model,
                                   ConwayStatistics statistics,
-                                  GridCoordinate coordinate,
-                                  ConwayEntity entity,
+                                  @Nullable GridCellView<ConwayEntity> selectedCell,
                                   ConwayUserActionContext.FixedAction fixedAction) {
-        if (fixedAction != ConwayUserActionContext.FixedAction.TOGGLE_CELL) {
+        switch (fixedAction) {
+            case CLEAR_GRID -> applyClearGrid(model, statistics);
+            case TOGGLE_CELL -> {
+                if (selectedCell == null) {
+                    return;
+                }
+
+                var coordinate = selectedCell.coordinate();
+                var entity = model.getEntity(coordinate);
+                ConwayEntity newEntity = entity.isDead() ? ConwayEntity.ALIVE : ConwayEntity.DEAD;
+                model.setEntity(coordinate, newEntity);
+                statistics.adjustCellCounts(entity.isDead() ? 1 : -1, 1);
+            }
+        }
+    }
+
+    private void applyClearGrid(WritableGridModel<ConwayEntity> model,
+                                ConwayStatistics statistics) {
+        int clearedAliveCells = Math.toIntExact(model.countEntities(ConwayEntity::isAlive));
+        if (clearedAliveCells == 0) {
             return;
         }
-
-        ConwayEntity newEntity = entity.isDead() ? ConwayEntity.ALIVE : ConwayEntity.DEAD;
-        model.setEntity(coordinate, newEntity);
-        statistics.adjustCellCounts(entity.isDead() ? 1 : -1, 1);
+        model.clear();
+        statistics.adjustCellCounts(-clearedAliveCells, clearedAliveCells);
     }
 
     private void applyPattern(WritableGridModel<ConwayEntity> model,
@@ -100,4 +113,3 @@ public final class ConwayUserAction
     }
 
 }
-

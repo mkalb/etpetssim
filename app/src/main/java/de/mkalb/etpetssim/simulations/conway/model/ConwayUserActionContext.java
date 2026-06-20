@@ -7,6 +7,7 @@ public sealed interface ConwayUserActionContext extends SimulationUserActionCont
         permits ConwayUserActionContext.FixedAction, ConwayUserActionContext.PlacePattern {
 
     enum FixedAction implements ConwayUserActionContext {
+        CLEAR_GRID,
         TOGGLE_CELL
     }
 
@@ -14,4 +15,3 @@ public sealed interface ConwayUserActionContext extends SimulationUserActionCont
     }
 
 }
-
