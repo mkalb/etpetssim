@@ -1,18 +1,29 @@
 package de.mkalb.etpetssim.simulations.etpets.view;
 
-import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.shared.NoUserActionContext;
+import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.*;
-import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultMainViewModel;
+import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.etpets.model.*;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
+import de.mkalb.etpetssim.simulations.etpets.shared.*;
+import de.mkalb.etpetssim.simulations.etpets.viewmodel.EtpetsEditToolBarViewModel;
 import de.mkalb.etpetssim.ui.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.*;
 
 public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsEntity,
@@ -21,7 +32,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         EtpetsConfig,
         EtpetsStatistics,
         EtpetsSimulationManager,
-        NoUserActionContext,
+        EtpetsUserActionContext,
         EtpetsConfigView,
         EtpetsObservationView> {
 
@@ -37,17 +48,30 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     private static final double PET_EGG_MAX_FACTOR_DELTA = 0.30d;
 
     private static final double DEAD_PET_BRIGHTNESS_FACTOR = 0.20d;
+    private static final double EDIT_OPTION_BOX_SPACING = 6.0d;
+    private static final String ETPETS_TOOL_ID_SET_RESOURCE = "etpets.setResource";
+    private static final String ETPETS_TOOL_ID_SET_TERRAIN = "etpets.setTerrain";
+    private static final String ETPETS_TOOLBAR_SET_RESOURCE = "etpets.toolbar.setresource";
+    private static final String ETPETS_TOOLBAR_SET_RESOURCE_OPTION = "etpets.toolbar.setresource.option";
+    private static final String ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP = "etpets.toolbar.setresource.option.tooltip";
+    private static final String ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP = "etpets.toolbar.setresource.tooltip";
+    private static final String ETPETS_TOOLBAR_SET_TERRAIN = "etpets.toolbar.setterrain";
+    private static final String ETPETS_TOOLBAR_SET_TERRAIN_OPTION = "etpets.toolbar.setterrain.option";
+    private static final String ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP = "etpets.toolbar.setterrain.option.tooltip";
+    private static final String ETPETS_TOOLBAR_SET_TERRAIN_TOOLTIP = "etpets.toolbar.setterrain.tooltip";
 
     private static final Color SELECTED_STROKE_COLOR = Color.WHITE;
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
     private static final double PET_EGG_STROKE_LINE_WIDTH = 1.0d;
 
     private final Map<String, @Nullable Map<Integer, Color>> entityColors;
+    private final EtpetsEditToolBarViewModel editToolBarViewModel;
     private @Nullable CellDrawer<TerrainEntity> cellTerrainDrawer;
     private @Nullable CellDrawer<ResourceEntity> cellResourceDrawer;
     private @Nullable CellDrawer<AgentEntity> cellAgentDrawer;
 
-    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsCell, EtpetsGridModel, EtpetsConfig, EtpetsStatistics, EtpetsSimulationManager, NoUserActionContext> viewModel,
+    public EtpetsMainView(DefaultMainViewModel<EtpetsEntity, EtpetsCell, EtpetsGridModel, EtpetsConfig, EtpetsStatistics, EtpetsSimulationManager, EtpetsUserActionContext> viewModel,
+                          EtpetsEditToolBarViewModel editToolBarViewModel,
                           GridEntityDescriptorRegistry entityDescriptorRegistry,
                           EtpetsConfigView configView,
                           DefaultControlView controlView,
@@ -57,6 +81,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 controlView,
                 observationView,
                 entityDescriptorRegistry);
+        this.editToolBarViewModel = editToolBarViewModel;
         entityColors = HashMap.newHashMap(5);
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL, null);
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_PLANT, null);
@@ -75,16 +100,6 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 .requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_GROUND)
                 .colorOrFallback();
         basePainter.fillCanvasBackground(backgroundColor);
-
-        var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
-        model.terrainModel().filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
-             .forEach(coordinate ->
-                     basePainter.drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
-
-        var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
-        model.terrainModel().filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
-             .forEach(coordinate ->
-                     basePainter.drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
 
         entityColors.put(EtpetsEntity.DESCRIPTOR_ID_TRAIL,
                 computeBrightnessVariantsMap(
@@ -297,6 +312,16 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         var resourceModel = currentModel.resourceModel();
         var agentModel = currentModel.agentModel();
 
+        var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
+        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
+                    .forEach(coordinate ->
+                            dynamicPainter.drawCell(coordinate, rockDescriptor.color(), rockDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+
+        var waterDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_WATER);
+        terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_WATER.equals(e.descriptorId()))
+                    .forEach(coordinate ->
+                            dynamicPainter.drawCell(coordinate, waterDescriptor.color(), waterDescriptor.borderColor(), NO_STROKE_LINE_WIDTH));
+
         terrainModel.filteredCells(e -> e instanceof Trail)
                     .forEach(cell -> cellTerrainDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
@@ -319,5 +344,196 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                           stepCount));
     }
 
-}
+    @Override
+    protected List<SimulationUserActionDescriptor<EtpetsUserActionContext>> createUserActionDescriptors() {
+        return List.of(
+                new SimulationUserActionDescriptor<>(
+                        ETPETS_TOOL_ID_SET_TERRAIN,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        ETPETS_TOOLBAR_SET_TERRAIN,
+                        ETPETS_TOOLBAR_SET_TERRAIN_TOOLTIP,
+                        () -> editToolBarViewModel.resolveSelectedTerrainContext()
+                                                  .map(Function.identity())),
+                new SimulationUserActionDescriptor<>(
+                        ETPETS_TOOL_ID_SET_RESOURCE,
+                        SimulationUserActionScope.CELL_SELECTED,
+                        ETPETS_TOOLBAR_SET_RESOURCE,
+                        ETPETS_TOOLBAR_SET_RESOURCE_TOOLTIP,
+                        () -> editToolBarViewModel.resolveSelectedResourceContext()
+                                                  .map(Function.identity()))
+        );
+    }
 
+    @Override
+    protected Node createEditToolBarOptionPanel(@Nullable ObjectProperty<String> selectedToolId) {
+        HBox optionPanel = new HBox(
+                createTerrainOptionBox(selectedToolId),
+                createResourceOptionBox(selectedToolId));
+        optionPanel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_PANEL);
+        optionPanel.setSpacing(EDIT_OPTION_BOX_SPACING);
+        return optionPanel;
+    }
+
+    private HBox createTerrainOptionBox(@Nullable ObjectProperty<String> selectedToolId) {
+        ObservableList<EtpetsTerrainChoice> availableTerrainChoices = editToolBarViewModel.availableTerrainChoices();
+        ComboBox<EtpetsTerrainChoice> terrainComboBox = new ComboBox<>();
+        terrainComboBox.setItems(availableTerrainChoices);
+        terrainComboBox.setMaxWidth(Double.MAX_VALUE);
+        terrainComboBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX);
+        terrainComboBox.setCellFactory(_ -> createTerrainChoiceCell());
+        terrainComboBox.setButtonCell(createTerrainChoiceCell());
+        EtpetsTerrainChoice selectedTerrainChoice = editToolBarViewModel.getSelectedTerrainChoice();
+        if (selectedTerrainChoice != null) {
+            terrainComboBox.setValue(selectedTerrainChoice);
+        }
+
+        Label terrainLabel = FXComponentFactory.createLabel(
+                AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
+        terrainLabel.setLabelFor(terrainComboBox);
+        terrainLabel.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP)));
+        terrainComboBox.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_TERRAIN_OPTION_TOOLTIP)));
+
+        ChangeListener<@Nullable EtpetsTerrainChoice> comboSelectionListener = (_, oldValue, newValue) -> {
+            if (oldValue != newValue) {
+                editToolBarViewModel.setSelectedTerrainChoice(newValue);
+            }
+        };
+        ChangeListener<@Nullable EtpetsTerrainChoice> viewModelSelectionListener = (_, _, newValue) -> {
+            if (terrainComboBox.getValue() != newValue) {
+                if (newValue == null) {
+                    terrainComboBox.getSelectionModel().clearSelection();
+                } else {
+                    terrainComboBox.setValue(newValue);
+                }
+            }
+        };
+        var selectedTerrainChoiceProperty = editToolBarViewModel.selectedTerrainChoiceProperty();
+        terrainComboBox.valueProperty().addListener(comboSelectionListener);
+        selectedTerrainChoiceProperty.addListener(viewModelSelectionListener);
+
+        if (selectedToolId != null) {
+            var enabledBinding = Bindings.createBooleanBinding(
+                    () -> ETPETS_TOOL_ID_SET_TERRAIN.equals(selectedToolId.get()) && !availableTerrainChoices.isEmpty(),
+                    selectedToolId,
+                    availableTerrainChoices);
+            terrainLabel.disableProperty().bind(enabledBinding.not());
+            terrainComboBox.disableProperty().bind(enabledBinding.not());
+            registerActionToolBarCleanup(() -> {
+                terrainLabel.disableProperty().unbind();
+                terrainComboBox.disableProperty().unbind();
+                enabledBinding.dispose();
+                terrainComboBox.valueProperty().removeListener(comboSelectionListener);
+                selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
+            });
+        } else {
+            registerActionToolBarCleanup(() -> {
+                terrainComboBox.valueProperty().removeListener(comboSelectionListener);
+                selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
+            });
+        }
+
+        HBox terrainOptionBox = new HBox(terrainLabel, terrainComboBox);
+        terrainOptionBox.setAlignment(Pos.CENTER_LEFT);
+        terrainOptionBox.setSpacing(EDIT_OPTION_BOX_SPACING);
+        return terrainOptionBox;
+    }
+
+    private HBox createResourceOptionBox(@Nullable ObjectProperty<String> selectedToolId) {
+        ObservableList<EtpetsResourceChoice> availableResourceChoices = editToolBarViewModel.availableResourceChoices();
+        ComboBox<EtpetsResourceChoice> resourceComboBox = new ComboBox<>();
+        resourceComboBox.setItems(availableResourceChoices);
+        resourceComboBox.setMaxWidth(Double.MAX_VALUE);
+        resourceComboBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX);
+        resourceComboBox.setCellFactory(_ -> createResourceChoiceCell());
+        resourceComboBox.setButtonCell(createResourceChoiceCell());
+        EtpetsResourceChoice selectedResourceChoice = editToolBarViewModel.getSelectedResourceChoice();
+        if (selectedResourceChoice != null) {
+            resourceComboBox.setValue(selectedResourceChoice);
+        }
+
+        Label resourceLabel = FXComponentFactory.createLabel(
+                AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION),
+                FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
+        resourceLabel.setLabelFor(resourceComboBox);
+        resourceLabel.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP)));
+        resourceComboBox.setTooltip(new Tooltip(AppLocalization.getText(ETPETS_TOOLBAR_SET_RESOURCE_OPTION_TOOLTIP)));
+
+        ChangeListener<@Nullable EtpetsResourceChoice> comboSelectionListener = (_, oldValue, newValue) -> {
+            if (oldValue != newValue) {
+                editToolBarViewModel.setSelectedResourceChoice(newValue);
+            }
+        };
+        ChangeListener<@Nullable EtpetsResourceChoice> viewModelSelectionListener = (_, _, newValue) -> {
+            if (resourceComboBox.getValue() != newValue) {
+                if (newValue == null) {
+                    resourceComboBox.getSelectionModel().clearSelection();
+                } else {
+                    resourceComboBox.setValue(newValue);
+                }
+            }
+        };
+        var selectedResourceChoiceProperty = editToolBarViewModel.selectedResourceChoiceProperty();
+        resourceComboBox.valueProperty().addListener(comboSelectionListener);
+        selectedResourceChoiceProperty.addListener(viewModelSelectionListener);
+
+        if (selectedToolId != null) {
+            var enabledBinding = Bindings.createBooleanBinding(
+                    () -> ETPETS_TOOL_ID_SET_RESOURCE.equals(selectedToolId.get()) && !availableResourceChoices.isEmpty(),
+                    selectedToolId,
+                    availableResourceChoices);
+            resourceLabel.disableProperty().bind(enabledBinding.not());
+            resourceComboBox.disableProperty().bind(enabledBinding.not());
+            registerActionToolBarCleanup(() -> {
+                resourceLabel.disableProperty().unbind();
+                resourceComboBox.disableProperty().unbind();
+                enabledBinding.dispose();
+                resourceComboBox.valueProperty().removeListener(comboSelectionListener);
+                selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
+            });
+        } else {
+            registerActionToolBarCleanup(() -> {
+                resourceComboBox.valueProperty().removeListener(comboSelectionListener);
+                selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
+            });
+        }
+
+        HBox resourceOptionBox = new HBox(resourceLabel, resourceComboBox);
+        resourceOptionBox.setAlignment(Pos.CENTER_LEFT);
+        resourceOptionBox.setSpacing(EDIT_OPTION_BOX_SPACING);
+        return resourceOptionBox;
+    }
+
+    private ListCell<EtpetsTerrainChoice> createTerrainChoiceCell() {
+        return new ListCell<>() {
+            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
+            @Override
+            protected void updateItem(@Nullable EtpetsTerrainChoice item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || (item == null)) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(AppLocalization.getText(item.labelKey()));
+                }
+            }
+        };
+    }
+
+    private ListCell<EtpetsResourceChoice> createResourceChoiceCell() {
+        return new ListCell<>() {
+            @SuppressWarnings({"ConstantValue", "DataFlowIssue"})
+            @Override
+            protected void updateItem(@Nullable EtpetsResourceChoice item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || (item == null)) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(AppLocalization.getText(item.labelKey()));
+                }
+            }
+        };
+    }
+
+}
