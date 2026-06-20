@@ -24,44 +24,44 @@ import java.util.*;
 @SuppressWarnings("SpellCheckingInspection")
 public final class ConwayPatterns {
 
+    private static final String PATTERN_ID_ACORN = "conway.acorn";
+    private static final String PATTERN_ID_BEACON = "conway.beacon";
     private static final String PATTERN_ID_BEEHIVE = "conway.beehive";
+    private static final String PATTERN_ID_BLINKER = "conway.blinker";
     private static final String PATTERN_ID_BLOCK = "conway.block";
     private static final String PATTERN_ID_BOAT = "conway.boat";
+    private static final String PATTERN_ID_GLIDER = "conway.glider";
+    private static final String PATTERN_ID_HIGHLIFE_REPLICATOR = "conway.highlife.replicator";
+    private static final String PATTERN_ID_LIGHTWEIGHT_SPACESHIP = "conway.lwss";
     private static final String PATTERN_ID_LOAF = "conway.loaf";
-    private static final String PATTERN_ID_TUB = "conway.tub";
-    private static final String PATTERN_ID_BEACON = "conway.beacon";
-    private static final String PATTERN_ID_BLINKER = "conway.blinker";
     private static final String PATTERN_ID_PENTADECATHLON = "conway.pentadecathlon";
     private static final String PATTERN_ID_PULSAR = "conway.pulsar";
-    private static final String PATTERN_ID_TOAD = "conway.toad";
-    private static final String PATTERN_ID_ACORN = "conway.acorn";
     private static final String PATTERN_ID_R_PENTOMINO = "conway.rpentomino";
-    private static final String PATTERN_ID_HIGHLIFE_REPLICATOR = "conway.highlife.replicator";
-    private static final String PATTERN_ID_GLIDER = "conway.glider";
-    private static final String PATTERN_ID_LIGHTWEIGHT_SPACESHIP = "conway.lwss";
+    private static final String PATTERN_ID_TOAD = "conway.toad";
+    private static final String PATTERN_ID_TUB = "conway.tub";
 
+    private static final String PATTERN_LABEL_KEY_ACORN = "conway.pattern.acorn";
+    private static final String PATTERN_LABEL_KEY_BEACON = "conway.pattern.beacon";
     private static final String PATTERN_LABEL_KEY_BEEHIVE = "conway.pattern.beehive";
+    private static final String PATTERN_LABEL_KEY_BLINKER = "conway.pattern.blinker";
     private static final String PATTERN_LABEL_KEY_BLOCK = "conway.pattern.block";
     private static final String PATTERN_LABEL_KEY_BOAT = "conway.pattern.boat";
+    private static final String PATTERN_LABEL_KEY_GLIDER = "conway.pattern.glider";
+    private static final String PATTERN_LABEL_KEY_HIGHLIFE_REPLICATOR = "conway.pattern.highlife.replicator";
+    private static final String PATTERN_LABEL_KEY_LIGHTWEIGHT_SPACESHIP = "conway.pattern.lwss";
     private static final String PATTERN_LABEL_KEY_LOAF = "conway.pattern.loaf";
-    private static final String PATTERN_LABEL_KEY_TUB = "conway.pattern.tub";
-    private static final String PATTERN_LABEL_KEY_BEACON = "conway.pattern.beacon";
-    private static final String PATTERN_LABEL_KEY_BLINKER = "conway.pattern.blinker";
     private static final String PATTERN_LABEL_KEY_PENTADECATHLON = "conway.pattern.pentadecathlon";
     private static final String PATTERN_LABEL_KEY_PULSAR = "conway.pattern.pulsar";
-    private static final String PATTERN_LABEL_KEY_TOAD = "conway.pattern.toad";
-    private static final String PATTERN_LABEL_KEY_ACORN = "conway.pattern.acorn";
     private static final String PATTERN_LABEL_KEY_R_PENTOMINO = "conway.pattern.rpentomino";
-    private static final String PATTERN_LABEL_KEY_HIGHLIFE_REPLICATOR = "conway.pattern.highlife.replicator";
-    private static final String PATTERN_LABEL_KEY_GLIDER = "conway.pattern.glider";
-    private static final String PATTERN_LABEL_KEY_LIGHTWEIGHT_SPACESHIP = "conway.pattern.lwss";
+    private static final String PATTERN_LABEL_KEY_TOAD = "conway.pattern.toad";
+    private static final String PATTERN_LABEL_KEY_TUB = "conway.pattern.tub";
 
     private static final ConwayTransitionRules CONWAYS_LIFE_TRANSITION_RULES = ConwayTransitionRules.of(
             ConwayPresetSquare.CONWAYS_LIFE.toString());
     private static final ConwayTransitionRules HIGHLIFE_TRANSITION_RULES = ConwayTransitionRules.of(
             ConwayPresetSquare.HIGHLIFE.toString());
 
-    private static final List<ConwayPatternChoice> CLASSIC_CHOICES = List.of(
+    private static final List<ConwayPatternChoice> CATALOG_CHOICES = List.of(
             new ConwayPatternChoice(
                     PATTERN_ID_BEEHIVE,
                     PATTERN_LABEL_KEY_BEEHIVE,
@@ -164,7 +164,7 @@ public final class ConwayPatterns {
      * @return all registered pattern choices in stable catalog order
      */
     public static List<ConwayPatternChoice> choices() {
-        return CLASSIC_CHOICES;
+        return CATALOG_CHOICES;
     }
 
     /**
@@ -177,7 +177,7 @@ public final class ConwayPatterns {
      * @return the pattern choices available for the specified configuration, in stable catalog order
      */
     public static List<ConwayPatternChoice> availableChoices(ConwayConfig config) {
-        return CLASSIC_CHOICES.stream()
+        return CATALOG_CHOICES.stream()
                               .filter(choice -> choice.availableFor(config))
                               .toList();
     }
