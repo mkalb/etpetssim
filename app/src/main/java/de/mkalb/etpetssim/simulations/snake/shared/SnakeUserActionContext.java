@@ -23,6 +23,8 @@ public sealed interface SnakeUserActionContext extends SimulationUserActionConte
 
     /**
      * Parameterized context for creating a snake with a selected move strategy.
+     *
+     * @param strategy selected move strategy
      */
     record AddSnake(SnakeMoveStrategy strategy) implements SnakeUserActionContext {
     }

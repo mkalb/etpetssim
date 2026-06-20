@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.shared;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 
 /**
- * Identifies which type of creature the user wants to add to the selected cell.
+ * Identifies which Wa-Tor edit action should be applied to the selected cell.
  */
 public enum WatorUserActionContext implements SimulationUserActionContext {
     /**
