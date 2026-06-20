@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("SameParameterValue")
 final class ConwayUserActionTest {
 
     private static ConwayConfig createConfig(double alivePercent) {
@@ -63,6 +64,30 @@ final class ConwayUserActionTest {
                 () -> assertEquals(manager.statistics().getTotalCells(), manager.statistics().getDeadCells()),
                 () -> assertEquals(4, manager.statistics().getChangedCells()),
                 () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
+        );
+    }
+
+    @Test
+    void testPlacePatternAppliesAvailablePatternAtSelectedCell() {
+        ConwaySimulationManager manager = new ConwaySimulationManager(createConfig(0.0d));
+        ConwayUserAction userAction = new ConwayUserAction();
+        ConwayPatternChoice patternChoice = ConwayPatterns.availableChoices(manager.config())
+                                                          .getFirst();
+        GridCoordinate anchorCoordinate = new GridCoordinate(1, 1);
+        int expectedAliveCells = Math.toIntExact(patternChoice.pattern().offsetMap()
+                                                              .values()
+                                                              .stream()
+                                                              .filter(ConwayEntity::isAlive)
+                                                              .count());
+
+        userAction.apply(
+                manager,
+                new ConwayUserActionContext.PlacePattern(patternChoice),
+                selectedCell(manager, anchorCoordinate.x(), anchorCoordinate.y()));
+
+        assertAll(
+                () -> assertEquals(expectedAliveCells, manager.statistics().getAliveCells()),
+                () -> assertEquals(expectedAliveCells, manager.statistics().getChangedCells())
         );
     }
 

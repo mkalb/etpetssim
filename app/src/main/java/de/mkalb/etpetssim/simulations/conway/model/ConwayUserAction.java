@@ -16,9 +16,6 @@ public final class ConwayUserAction
         ConwaySimulationManager,
         ConwayUserActionContext> {
 
-    public ConwayUserAction() {
-    }
-
     @Override
     public void apply(ConwaySimulationManager manager,
                       ConwayUserActionContext context,

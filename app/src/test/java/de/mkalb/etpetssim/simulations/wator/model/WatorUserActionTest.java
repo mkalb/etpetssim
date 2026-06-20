@@ -40,6 +40,50 @@ final class WatorUserActionTest {
     }
 
     @Test
+    void testApplyIgnoresMissingSelection() {
+        WatorSimulationManager manager = new WatorSimulationManager(createConfig());
+        WatorUserAction userAction = new WatorUserAction();
+
+        userAction.apply(manager, WatorUserActionContext.ADD_FISH, null);
+
+        assertAll(
+                () -> assertEquals(0, manager.statistics().getFishCells()),
+                () -> assertEquals(0, manager.statistics().getSharkCells()),
+                () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
+        );
+    }
+
+    @Test
+    void testAddFishAddsFishToSelectedWaterCell() {
+        WatorSimulationManager manager = new WatorSimulationManager(createConfig());
+        WatorUserAction userAction = new WatorUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+
+        userAction.apply(manager, WatorUserActionContext.ADD_FISH, selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isFish()),
+                () -> assertEquals(1, manager.statistics().getFishCells()),
+                () -> assertEquals(0, manager.statistics().getSharkCells())
+        );
+    }
+
+    @Test
+    void testAddSharkAddsSharkToSelectedWaterCell() {
+        WatorSimulationManager manager = new WatorSimulationManager(createConfig());
+        WatorUserAction userAction = new WatorUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+
+        userAction.apply(manager, WatorUserActionContext.ADD_SHARK, selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isShark()),
+                () -> assertEquals(0, manager.statistics().getFishCells()),
+                () -> assertEquals(1, manager.statistics().getSharkCells())
+        );
+    }
+
+    @Test
     void testRemoveCreatureRemovesFishFromSelectedCell() {
         WatorSimulationManager manager = new WatorSimulationManager(createConfig());
         WatorUserAction userAction = new WatorUserAction();

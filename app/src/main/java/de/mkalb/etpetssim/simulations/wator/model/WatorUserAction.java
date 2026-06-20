@@ -15,9 +15,6 @@ public final class WatorUserAction
         WatorSimulationManager,
         WatorUserActionContext> {
 
-    public WatorUserAction() {
-    }
-
     @Override
     public void apply(WatorSimulationManager manager,
                       WatorUserActionContext context,

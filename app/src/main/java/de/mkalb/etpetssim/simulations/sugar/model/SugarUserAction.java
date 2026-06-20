@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
+import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
@@ -37,7 +38,7 @@ public final class SugarUserAction
 
     private void applyFixedAction(SugarGridModel model,
                                   SugarStatistics statistics,
-                                  de.mkalb.etpetssim.engine.GridCoordinate coordinate,
+                                  GridCoordinate coordinate,
                                   SugarUserActionContext.FixedAction fixedAction) {
         switch (fixedAction) {
             case REMOVE_SUGAR -> {
@@ -53,7 +54,7 @@ public final class SugarUserAction
     private void applyAddSugar(SugarSimulationManager manager,
                                SugarGridModel model,
                                SugarStatistics statistics,
-                               de.mkalb.etpetssim.engine.GridCoordinate coordinate,
+                               GridCoordinate coordinate,
                                SugarAddSugarLevel addSugarLevel) {
         int maxSugarAmount = manager.config().maxSugarAmount();
         int sugarAmount = addSugarLevel.resolveSugarAmount(maxSugarAmount);

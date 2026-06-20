@@ -15,9 +15,6 @@ public final class ReboundingUserAction
         ReboundingSimulationManager,
         ReboundingUserActionContext> {
 
-    public ReboundingUserAction() {
-    }
-
     @Override
     public void apply(ReboundingSimulationManager manager,
                       ReboundingUserActionContext context,

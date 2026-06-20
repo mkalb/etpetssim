@@ -18,9 +18,6 @@ public final class SnakeUserAction
         SnakeSimulationManager,
         SnakeUserActionContext> {
 
-    public SnakeUserAction() {
-    }
-
     @Override
     public void apply(SnakeSimulationManager manager,
                       SnakeUserActionContext context,

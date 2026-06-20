@@ -32,6 +32,24 @@ final class ReboundingUserActionTest {
     }
 
     @Test
+    void testAddWallAddsWallToSelectedGroundCell() {
+        ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
+        ReboundingUserAction userAction = new ReboundingUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+        int wallCellsBefore = manager.statistics().getWallCells();
+
+        userAction.apply(
+                manager,
+                ReboundingUserActionContext.FixedAction.ADD_WALL,
+                selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isWall()),
+                () -> assertEquals(wallCellsBefore + 1, manager.statistics().getWallCells())
+        );
+    }
+
+    @Test
     void testRemoveWallRemovesSelectedWallCell() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(1, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("MagicNumber")
 final class SnakeUserActionTest {
 
     private static SnakeConfig createConfig() {
@@ -35,6 +36,98 @@ final class SnakeUserActionTest {
 
     private static GridCell<SnakeEntity> selectedCell(SnakeSimulationManager manager, GridCoordinate coordinate) {
         return new GridCell<>(coordinate, manager.currentModel().getEntity(coordinate));
+    }
+
+    @Test
+    void testApplyIgnoresMissingSelection() {
+        SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
+        SnakeUserAction userAction = new SnakeUserAction();
+
+        userAction.apply(manager, SnakeUserActionContext.FixedAction.ADD_WALL, null);
+
+        assertAll(
+                () -> assertEquals(0, manager.statistics().getWallCells()),
+                () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
+        );
+    }
+
+    @Test
+    void testAddWallAddsWallToSelectedGroundCell() {
+        SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
+        SnakeUserAction userAction = new SnakeUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+
+        userAction.apply(manager, SnakeUserActionContext.FixedAction.ADD_WALL, selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isWall()),
+                () -> assertEquals(1, manager.statistics().getWallCells())
+        );
+    }
+
+    @Test
+    void testRemoveWallRemovesSelectedWallCell() {
+        SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
+        SnakeUserAction userAction = new SnakeUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+        manager.currentModel().setEntity(coordinate, TerrainConstant.WALL);
+        manager.statistics().adjustWallCells(1);
+
+        userAction.apply(manager, SnakeUserActionContext.FixedAction.REMOVE_WALL, selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isGround()),
+                () -> assertEquals(0, manager.statistics().getWallCells())
+        );
+    }
+
+    @Test
+    void testAddFoodAddsFoodToSelectedGroundCell() {
+        SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
+        SnakeUserAction userAction = new SnakeUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+
+        userAction.apply(manager, SnakeUserActionContext.FixedAction.ADD_FOOD, selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isFood()),
+                () -> assertEquals(1, manager.statistics().getFoodCells())
+        );
+    }
+
+    @Test
+    void testRemoveFoodRemovesSelectedFoodCell() {
+        SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
+        SnakeUserAction userAction = new SnakeUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+        manager.currentModel().setEntity(coordinate, TerrainConstant.GROWTH_FOOD);
+        manager.statistics().adjustFoodCells(1);
+
+        userAction.apply(manager, SnakeUserActionContext.FixedAction.REMOVE_FOOD, selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isGround()),
+                () -> assertEquals(0, manager.statistics().getFoodCells())
+        );
+    }
+
+    @Test
+    void testAddSnakeAddsSnakeHeadToSelectedGroundCell() {
+        SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
+        SnakeUserAction userAction = new SnakeUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+
+        userAction.apply(
+                manager,
+                new SnakeUserActionContext.AddSnake(SnakeMoveStrategies.MOMENTUM),
+                selectedCell(manager, coordinate));
+
+        SnakeEntity entity = manager.currentModel().getEntity(coordinate);
+        assertAll(
+                () -> assertInstanceOf(SnakeHead.class, entity),
+                () -> assertEquals(1, manager.statistics().getSnakeHeadCells()),
+                () -> assertEquals(1, manager.statistics().getLivingSnakeHeadCells())
+        );
     }
 
     @Test

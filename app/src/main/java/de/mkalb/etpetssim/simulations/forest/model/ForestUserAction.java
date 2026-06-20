@@ -15,9 +15,6 @@ public final class ForestUserAction
         ForestSimulationManager,
         NoUserActionContext> {
 
-    public ForestUserAction() {
-    }
-
     @Override
     public void apply(ForestSimulationManager manager,
                       NoUserActionContext context,
