@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -36,6 +37,8 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private static final double FALLBACK_WINDOW_DECORATION_WIDTH = 16.0d;
     private static final double FALLBACK_WINDOW_DECORATION_HEIGHT = 39.0d;
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
+
+    private @Nullable SimulationInstance currentSimulationInstance;
 
     /**
      * Determines the initial simulation type from parsed arguments.
@@ -86,6 +89,9 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         var simulationHeaderNode = buildSimulationHeaderNode(stage, simulationInstance);
         var simulationMainRegion = simulationInstance.region();
 
+        shutdownCurrentSimulation();
+        currentSimulationInstance = simulationInstance;
+
         // Create new root layout with header and main region
         VBox root = new VBox(simulationHeaderNode, simulationMainRegion);
         root.getStyleClass().add(FXStyleClasses.APP_VBOX);
@@ -109,18 +115,33 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         // Update stage
         stage.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE, simulationType.title()));
-        stage.setOnCloseRequest(_ -> {
-            try {
-                AppLogger.info("Application: Shutting down simulation instance: " + simulationInstance.simulationType());
-                simulationMainRegion.setDisable(true);
-                simulationInstance.simulationMainView().shutdownSimulation();
-            } catch (Exception e) {
-                AppLogger.error(e, "Application: Error during simulation shutdown: " + simulationInstance.simulationType());
-            }
-        });
+        stage.setOnCloseRequest(_ -> shutdownCurrentSimulation());
 
         // Adjust stage size and position to fit the screen. Run later to ensure layout is calculated.
         Platform.runLater(() -> adjustStageLayoutToScreen(stage, root));
+    }
+
+    /**
+     * Shuts down the currently active simulation instance, if one exists.
+     * <p>
+     * The instance reference is cleared before invoking simulation shutdown so
+     * repeated lifecycle paths, such as close request followed by {@link #stop()},
+     * cannot shut down the same instance twice.
+     */
+    private void shutdownCurrentSimulation() {
+        SimulationInstance simulationInstance = currentSimulationInstance;
+        if (simulationInstance == null) {
+            return;
+        }
+
+        currentSimulationInstance = null;
+        try {
+            AppLogger.info("Application: Shutting down simulation instance: " + simulationInstance.simulationType());
+            simulationInstance.region().setDisable(true);
+            simulationInstance.simulationMainView().shutdownSimulation();
+        } catch (Exception e) {
+            AppLogger.error(e, "Application: Error during simulation shutdown: " + simulationInstance.simulationType());
+        }
     }
 
     /**
@@ -285,8 +306,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             startScreenLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
             startScreenLink.setOnAction(_ -> {
                 AppLogger.info("Application: Switching to start screen from simulation: " + instance.simulationType());
-                instance.region().setDisable(true);
-                instance.simulationMainView().shutdownSimulation();
                 switchToSimulation(stage, SimulationType.STARTSCREEN);
             });
             linkBox.getChildren().add(startScreenLink);
@@ -354,6 +373,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     @Override
     public void stop() {
         AppLogger.info("Application: Shutting down.");
+        shutdownCurrentSimulation();
         AppLogger.shutdown();
     }
 
