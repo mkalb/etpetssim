@@ -36,6 +36,10 @@ public final class ReboundingStatistics
         movingEntityCells -= 1;
     }
 
+    public void increaseMovingEntityCells() {
+        movingEntityCells += 1;
+    }
+
     public int getWallCells() {
         return wallCells;
     }

@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.rebounding.model.*;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
 import de.mkalb.etpetssim.simulations.rebounding.view.*;
-import de.mkalb.etpetssim.simulations.rebounding.viewmodel.ReboundingConfigViewModel;
+import de.mkalb.etpetssim.simulations.rebounding.viewmodel.*;
 import javafx.beans.property.*;
 
 public final class ReboundingFactory {
@@ -28,6 +28,7 @@ public final class ReboundingFactory {
 
         // ViewModel
         var configViewModel = new ReboundingConfigViewModel(readOnlySimulationState);
+        var editToolBarViewModel = new ReboundingEditToolBarViewModel();
         var controlViewModel = DefaultControlViewModel.withMinStepDuration(readOnlySimulationState);
         var observationViewModel =
                 new DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>(readOnlySimulationState);
@@ -39,7 +40,7 @@ public final class ReboundingFactory {
         var configView = new ReboundingConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ReboundingObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new ReboundingMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        var view = new ReboundingMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view
         return view;

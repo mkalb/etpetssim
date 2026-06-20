@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.langton.model.*;
 import de.mkalb.etpetssim.simulations.langton.model.entity.LangtonEntity;
 import de.mkalb.etpetssim.simulations.langton.view.*;
-import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonConfigViewModel;
+import de.mkalb.etpetssim.simulations.langton.viewmodel.*;
 import javafx.beans.property.*;
 
 public final class LangtonFactory {
@@ -27,6 +27,7 @@ public final class LangtonFactory {
 
         // ViewModel
         var configViewModel = new LangtonConfigViewModel(readOnlySimulationState);
+        var editToolBarViewModel = new LangtonEditToolBarViewModel();
         var controlViewModel = DefaultControlViewModel.withMinStepDuration(readOnlySimulationState);
         var observationViewModel =
                 new DefaultObservationViewModel<LangtonEntity, LangtonCell, LangtonStatistics>(readOnlySimulationState);
@@ -38,7 +39,7 @@ public final class LangtonFactory {
         var configView = new LangtonConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new LangtonObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new LangtonMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
+        var view = new LangtonMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
 
         // Return the main view
         return view;

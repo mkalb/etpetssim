@@ -1,12 +1,30 @@
 package de.mkalb.etpetssim.simulations.rebounding.shared;
 
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 
 /**
- * Identifies the fixed edit action requested by the user in the Rebounding simulation.
+ * Identifies which edit action should be applied to the selected Rebounding cell.
  */
-public enum ReboundingUserActionContext implements SimulationUserActionContext {
-    ADD_WALL,
-    REMOVE_WALL,
-    REMOVE_REBOUNDER
+@SuppressWarnings("MarkerInterface")
+public sealed interface ReboundingUserActionContext extends SimulationUserActionContext
+        permits ReboundingUserActionContext.FixedAction, ReboundingUserActionContext.AddRebounder {
+
+    /**
+     * Fixed actions that do not require additional parameters.
+     */
+    enum FixedAction implements ReboundingUserActionContext {
+        ADD_WALL,
+        REMOVE_WALL,
+        REMOVE_REBOUNDER
+    }
+
+    /**
+     * Parameterized context for adding a rebounder with a selected direction.
+     *
+     * @param direction selected movement direction
+     */
+    record AddRebounder(CompassDirection direction) implements ReboundingUserActionContext {
+    }
+
 }

@@ -32,22 +32,32 @@ public final class ReboundingUserAction
         var entity = model.getEntity(coordinate);
 
         switch (context) {
-            case ADD_WALL -> {
+            case ReboundingUserActionContext.FixedAction fixedAction -> {
+                switch (fixedAction) {
+                    case ADD_WALL -> {
+                        if (entity.isGround()) {
+                            model.setEntity(coordinate, TerrainConstant.WALL);
+                            statistics.increaseWallCells();
+                        }
+                    }
+                    case REMOVE_WALL -> {
+                        if (entity.isWall()) {
+                            model.setEntityToDefault(coordinate);
+                            statistics.decreaseWallCells();
+                        }
+                    }
+                    case REMOVE_REBOUNDER -> {
+                        if (entity.isRebounder()) {
+                            model.setEntityToDefault(coordinate);
+                            statistics.decreaseMovingEntityCells();
+                        }
+                    }
+                }
+            }
+            case ReboundingUserActionContext.AddRebounder addRebounder -> {
                 if (entity.isGround()) {
-                    model.setEntity(coordinate, TerrainConstant.WALL);
-                    statistics.increaseWallCells();
-                }
-            }
-            case REMOVE_WALL -> {
-                if (entity.isWall()) {
-                    model.setEntityToDefault(coordinate);
-                    statistics.decreaseWallCells();
-                }
-            }
-            case REMOVE_REBOUNDER -> {
-                if (entity.isRebounder()) {
-                    model.setEntityToDefault(coordinate);
-                    statistics.decreaseMovingEntityCells();
+                    model.setEntity(coordinate, new Rebounder(addRebounder.direction()));
+                    statistics.increaseMovingEntityCells();
                 }
             }
         }

@@ -2,12 +2,14 @@ package de.mkalb.etpetssim.simulations.rebounding.model;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
+import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.ReboundingEntity;
 import de.mkalb.etpetssim.simulations.rebounding.shared.ReboundingUserActionContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("MagicNumber")
 final class ReboundingUserActionTest {
 
     private static ReboundingConfig createConfig(int verticalWalls, double movingEntityPercent) {
@@ -42,7 +44,7 @@ final class ReboundingUserActionTest {
 
         userAction.apply(
                 manager,
-                ReboundingUserActionContext.REMOVE_WALL,
+                ReboundingUserActionContext.FixedAction.REMOVE_WALL,
                 selectedCell(manager, wallCell.coordinate()));
 
         assertAll(
@@ -64,12 +66,30 @@ final class ReboundingUserActionTest {
 
         userAction.apply(
                 manager,
-                ReboundingUserActionContext.REMOVE_REBOUNDER,
+                ReboundingUserActionContext.FixedAction.REMOVE_REBOUNDER,
                 selectedCell(manager, rebounderCell.coordinate()));
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(rebounderCell.coordinate()).isGround()),
                 () -> assertEquals(movingEntityCellsBefore - 1, manager.statistics().getMovingEntityCells())
+        );
+    }
+
+    @Test
+    void testAddRebounderAddsSelectedDirectionToGroundCell() {
+        ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
+        ReboundingUserAction userAction = new ReboundingUserAction();
+        GridCoordinate coordinate = new GridCoordinate(0, 0);
+        int movingEntityCellsBefore = manager.statistics().getMovingEntityCells();
+
+        userAction.apply(
+                manager,
+                new ReboundingUserActionContext.AddRebounder(CompassDirection.SE),
+                selectedCell(manager, coordinate));
+
+        assertAll(
+                () -> assertTrue(manager.currentModel().getEntity(coordinate).isRebounder()),
+                () -> assertEquals(movingEntityCellsBefore + 1, manager.statistics().getMovingEntityCells())
         );
     }
 
