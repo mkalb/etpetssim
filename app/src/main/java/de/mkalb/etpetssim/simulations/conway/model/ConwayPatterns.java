@@ -21,7 +21,7 @@ import java.util.*;
  * @see de.mkalb.etpetssim.engine.support.GridPattern
  * @see de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity
  */
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings("SpellCheckingInspection")
 public final class ConwayPatterns {
 
     private static final String PATTERN_ID_BEEHIVE = "conway.beehive";
@@ -155,10 +155,27 @@ public final class ConwayPatterns {
                 && HIGHLIFE_TRANSITION_RULES.equals(config.transitionRules());
     }
 
+    /**
+     * Returns all registered Conway pattern choices in stable catalog order.
+     * <p>
+     * The returned list includes patterns for all supported square rule presets, including patterns that are not
+     * available for the current configuration.
+     *
+     * @return all registered pattern choices in stable catalog order
+     */
     public static List<ConwayPatternChoice> choices() {
         return CLASSIC_CHOICES;
     }
 
+    /**
+     * Returns the registered Conway pattern choices available for the specified configuration.
+     * <p>
+     * Availability depends on the configured cell shape and transition rules. Unsupported cell shapes and rule sets
+     * return an empty list.
+     *
+     * @param config the Conway configuration to test against the pattern availability rules
+     * @return the pattern choices available for the specified configuration, in stable catalog order
+     */
     public static List<ConwayPatternChoice> availableChoices(ConwayConfig config) {
         return CLASSIC_CHOICES.stream()
                               .filter(choice -> choice.availableFor(config))
@@ -202,37 +219,12 @@ public final class ConwayPatterns {
      * @return a normalized 6x5 beehive pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> beehive() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(30);
-        // Row 0 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(5, 2), ConwayEntity.DEAD);
-        // Row 3
-        map.put(new GridOffset(0, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 3), ConwayEntity.DEAD);
-        // Row 4 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 4), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDDD",
+                "DDAADD",
+                "DADDAD",
+                "DDAADD",
+                "DDDDDD");
     }
 
     /**
@@ -255,26 +247,11 @@ public final class ConwayPatterns {
      * @return a normalized 4x4 block pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> block() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(16);
-        // Row 0 (border)
-        for (int x = 0; x < 4; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 2), ConwayEntity.DEAD);
-        // Row 3 (border)
-        for (int x = 0; x < 4; x++) {
-            map.put(new GridOffset(x, 3), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDD",
+                "DAAD",
+                "DAAD",
+                "DDDD");
     }
 
     /**
@@ -298,34 +275,12 @@ public final class ConwayPatterns {
      * @return a normalized 5x5 boat pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> boat() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(25);
-        // Row 0 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 2), ConwayEntity.DEAD);
-        // Row 3
-        map.put(new GridOffset(0, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 3), ConwayEntity.DEAD);
-        // Row 4 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 4), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDD",
+                "DAADD",
+                "DADAD",
+                "DDADD",
+                "DDDDD");
     }
 
     /**
@@ -350,51 +305,32 @@ public final class ConwayPatterns {
      * @return a normalized 6x6 loaf pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> loaf() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(36);
-        // Row 0 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(5, 2), ConwayEntity.DEAD);
-        // Row 3
-        map.put(new GridOffset(0, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(5, 3), ConwayEntity.DEAD);
-        // Row 4
-        map.put(new GridOffset(0, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 4), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 4), ConwayEntity.DEAD);
-        // Row 5 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 5), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDDD",
+                "DDAADD",
+                "DADDAD",
+                "DDADAD",
+                "DDDADD",
+                "DDDDDD");
     }
 
     /**
      * Returns a normalized 5x5 {@link GridPattern} representing the "Tub" Still Life.
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
-     * DEAD border so placement overwrites the complete footprint.
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
+     * surrounded by a border of DEAD cells:
+     * <pre>
+     * D D D D D
+     * D D A D D
+     * D A D A D
+     * D D A D D
+     * D D D D D
+     * </pre>
+     * <ul>
+     *   <li>D = {@link ConwayEntity#DEAD}</li>
+     *   <li>A = {@link ConwayEntity#ALIVE}</li>
+     * </ul>
+     * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 tub pattern with DEAD border
      */
@@ -429,44 +365,13 @@ public final class ConwayPatterns {
      * @return a normalized 6x6 beacon pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> beacon() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(36);
-        // Row 0 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 2), ConwayEntity.DEAD);
-        // Row 3
-        map.put(new GridOffset(0, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(5, 3), ConwayEntity.DEAD);
-        // Row 4
-        map.put(new GridOffset(0, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 4), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 4), ConwayEntity.ALIVE);
-        map.put(new GridOffset(5, 4), ConwayEntity.DEAD);
-        // Row 5 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 5), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDDD",
+                "DAADDD",
+                "DADDDD",
+                "DDDDAD",
+                "DDDAAD",
+                "DDDDDD");
     }
 
     /**
@@ -491,37 +396,31 @@ public final class ConwayPatterns {
      * @return a normalized 5x5 blinker pattern with DEAD border (horizontal phase)
      */
     public static GridPattern<ConwayEntity> blinker() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(25);
-        // Row 0 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 1), ConwayEntity.DEAD);
-        }
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 2), ConwayEntity.DEAD);
-        // Row 3 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 3), ConwayEntity.DEAD);
-        }
-        // Row 4 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 4), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDD",
+                "DDDDD",
+                "DAAAD",
+                "DDDDD",
+                "DDDDD");
     }
 
     /**
      * Returns a normalized 12x5 {@link GridPattern} representing the "Pentadecathlon" Oscillator.
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
-     * DEAD border so placement overwrites the complete footprint.
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
+     * surrounded by a border of DEAD cells:
+     * <pre>
+     * D D D D D D D D D D D D
+     * D D D A D D D D A D D D
+     * D A A D A A A A D A A D
+     * D D D A D D D D A D D D
+     * D D D D D D D D D D D D
+     * </pre>
+     * <ul>
+     *   <li>D = {@link ConwayEntity#DEAD}</li>
+     *   <li>A = {@link ConwayEntity#ALIVE}</li>
+     * </ul>
+     * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 12x5 pentadecathlon pattern with DEAD border
      */
@@ -537,8 +436,30 @@ public final class ConwayPatterns {
     /**
      * Returns a normalized 15x15 {@link GridPattern} representing the "Pulsar" Oscillator.
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
-     * DEAD border so placement overwrites the complete footprint.
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
+     * surrounded by a border of DEAD cells:
+     * <pre>
+     * D D D D D D D D D D D D D D D
+     * D D D A A A D D D D A A A D D
+     * D D D D D D D D D D D D D D D
+     * D A D D D D A D A D D D D A D
+     * D A D D D D A D A D D D D A D
+     * D A D D D D A D A D D D D A D
+     * D D D A A A D D D D A A A D D
+     * D D D D D D D D D D D D D D D
+     * D D D A A A D D D D A A A D D
+     * D A D D D D A D A D D D D A D
+     * D A D D D D A D A D D D D A D
+     * D A D D D D A D A D D D D A D
+     * D D D D D D D D D D D D D D D
+     * D D D A A A D D D D A A A D D
+     * D D D D D D D D D D D D D D D
+     * </pre>
+     * <ul>
+     *   <li>D = {@link ConwayEntity#DEAD}</li>
+     *   <li>A = {@link ConwayEntity#ALIVE}</li>
+     * </ul>
+     * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 15x15 pulsar pattern with DEAD border
      */
@@ -581,37 +502,30 @@ public final class ConwayPatterns {
      * @return a normalized 6x4 toad pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> toad() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(24);
-        // Row 0 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(5, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 2), ConwayEntity.DEAD);
-        // Row 3 (border)
-        for (int x = 0; x < 6; x++) {
-            map.put(new GridOffset(x, 3), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDDD",
+                "DDAAAD",
+                "DAAADD",
+                "DDDDDD");
     }
 
     /**
      * Returns a normalized 9x5 {@link GridPattern} representing the "Acorn" Methuselah.
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
-     * DEAD border so placement overwrites the complete footprint.
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
+     * surrounded by a border of DEAD cells:
+     * <pre>
+     * D D D D D D D D D
+     * D D A D D D D D D
+     * D D D D A D D D D
+     * D A A D D A A A D
+     * D D D D D D D D D
+     * </pre>
+     * <ul>
+     *   <li>D = {@link ConwayEntity#DEAD}</li>
+     *   <li>A = {@link ConwayEntity#ALIVE}</li>
+     * </ul>
+     * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 9x5 acorn pattern with DEAD border
      */
@@ -627,8 +541,20 @@ public final class ConwayPatterns {
     /**
      * Returns a normalized 5x5 {@link GridPattern} representing the "R-pentomino" Methuselah.
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
-     * DEAD border so placement overwrites the complete footprint.
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
+     * surrounded by a border of DEAD cells:
+     * <pre>
+     * D D D D D
+     * D D A A D
+     * D A A D D
+     * D D A D D
+     * D D D D D
+     * </pre>
+     * <ul>
+     *   <li>D = {@link ConwayEntity#DEAD}</li>
+     *   <li>A = {@link ConwayEntity#ALIVE}</li>
+     * </ul>
+     * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 R-pentomino pattern with DEAD border
      */
@@ -644,8 +570,22 @@ public final class ConwayPatterns {
     /**
      * Returns a normalized 7x7 {@link GridPattern} representing the HighLife "Replicator".
      * <p>
-     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells and includes a
-     * DEAD border so placement overwrites the complete footprint. This pattern is intended for the HighLife rule
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
+     * surrounded by a border of DEAD cells:
+     * <pre>
+     * D D D D D D D
+     * D D D A A A D
+     * D D A D D A D
+     * D A D D D A D
+     * D A D D A D D
+     * D A A A D D D
+     * D D D D D D D
+     * </pre>
+     * <ul>
+     *   <li>D = {@link ConwayEntity#DEAD}</li>
+     *   <li>A = {@link ConwayEntity#ALIVE}</li>
+     * </ul>
+     * The top-left of the pattern is at offset (0, 0). This pattern is intended for the HighLife rule
      * ({@code 23/36}).
      *
      * @return a normalized 7x7 HighLife replicator pattern with DEAD border
@@ -665,7 +605,7 @@ public final class ConwayPatterns {
      * Returns a normalized 5x5 {@link GridPattern} representing the classic "Glider" Spaceship
      * from Conway's Game of Life.
      * <p>
-     * The pattern is fully filled with {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#ALIVE} and {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#DEAD} cells,
+     * The pattern is fully filled with {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells,
      * surrounded by a border of DEAD cells:
      * <pre>
      * D D D D D
@@ -675,42 +615,20 @@ public final class ConwayPatterns {
      * D D D D D
      * </pre>
      * <ul>
-     *   <li>D = {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#DEAD}</li>
-     *   <li>A = {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#ALIVE}</li>
+     *   <li>D = {@link ConwayEntity#DEAD}</li>
+     *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 glider pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> glider() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(25);
-        // Row 0 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 2), ConwayEntity.DEAD);
-        // Row 3
-        map.put(new GridOffset(0, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 3), ConwayEntity.DEAD);
-        // Row 4 (border)
-        for (int x = 0; x < 5; x++) {
-            map.put(new GridOffset(x, 4), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDD",
+                "DDADD",
+                "DDDAD",
+                "DAAAD",
+                "DDDDD");
     }
 
     /**
@@ -736,48 +654,13 @@ public final class ConwayPatterns {
      * @return a normalized 7x6 lightweight spaceship pattern with DEAD border
      */
     public static GridPattern<ConwayEntity> lightweightSpaceship() {
-        Map<GridOffset, ConwayEntity> map = HashMap.newHashMap(42);
-        // Row 0 (border)
-        for (int x = 0; x < 7; x++) {
-            map.put(new GridOffset(x, 0), ConwayEntity.DEAD);
-        }
-        // Row 1
-        map.put(new GridOffset(0, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(2, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 1), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 1), ConwayEntity.ALIVE);
-        map.put(new GridOffset(6, 1), ConwayEntity.DEAD);
-        // Row 2
-        map.put(new GridOffset(0, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 2), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 2), ConwayEntity.DEAD);
-        map.put(new GridOffset(6, 2), ConwayEntity.DEAD);
-        // Row 3
-        map.put(new GridOffset(0, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(3, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(4, 3), ConwayEntity.DEAD);
-        map.put(new GridOffset(5, 3), ConwayEntity.ALIVE);
-        map.put(new GridOffset(6, 3), ConwayEntity.DEAD);
-        // Row 4
-        map.put(new GridOffset(0, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(1, 4), ConwayEntity.ALIVE);
-        map.put(new GridOffset(2, 4), ConwayEntity.ALIVE);
-        map.put(new GridOffset(3, 4), ConwayEntity.ALIVE);
-        map.put(new GridOffset(4, 4), ConwayEntity.ALIVE);
-        map.put(new GridOffset(5, 4), ConwayEntity.DEAD);
-        map.put(new GridOffset(6, 4), ConwayEntity.DEAD);
-        // Row 5 (border)
-        for (int x = 0; x < 7; x++) {
-            map.put(new GridOffset(x, 5), ConwayEntity.DEAD);
-        }
-        return () -> map;
+        return createPattern(
+                "DDDDDDD",
+                "DDADDAD",
+                "DADDDDD",
+                "DADDDAD",
+                "DAAAADD",
+                "DDDDDDD");
     }
 
 }
