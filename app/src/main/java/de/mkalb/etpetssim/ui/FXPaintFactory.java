@@ -58,13 +58,14 @@ public final class FXPaintFactory {
             throw new IllegalArgumentException("maxFactorDelta must be in the range [-1.0, 10.0]: " + maxFactorDelta);
         }
 
-        int baseGroupSize = Math.max(1, range / groupCount);
-        int remainder = range % groupCount;
-        double brightnessStep = (groupCount > 1) ? (maxFactorDelta / (groupCount - 1)) : 0.0d;
+        int effectiveGroupCount = Math.min(groupCount, range);
+        int baseGroupSize = range / effectiveGroupCount;
+        int remainder = range % effectiveGroupCount;
+        double brightnessStep = (effectiveGroupCount > 1) ? (maxFactorDelta / (effectiveGroupCount - 1)) : 0.0d;
 
         Map<Integer, Color> map = HashMap.newHashMap(range);
         int groupStart = minInclusive;
-        for (int groupIndex = 0; groupIndex < groupCount; groupIndex++) {
+        for (int groupIndex = 0; groupIndex < effectiveGroupCount; groupIndex++) {
             double groupIndexFactor = 1.0d + (groupIndex * brightnessStep);
             Color groupColor = adjustBrightness(baseColor, groupIndexFactor);
 
@@ -90,6 +91,9 @@ public final class FXPaintFactory {
      * @return a new color with adjusted brightness
      */
     public static Color adjustBrightness(Color color, double factor) {
+        if (!Double.isFinite(factor)) {
+            throw new IllegalArgumentException("factor must be finite: " + factor);
+        }
         double r = Math.clamp(color.getRed() * factor, 0.0d, 1.0d);
         double g = Math.clamp(color.getGreen() * factor, 0.0d, 1.0d);
         double b = Math.clamp(color.getBlue() * factor, 0.0d, 1.0d);
@@ -161,7 +165,7 @@ public final class FXPaintFactory {
      * @throws IllegalArgumentException if {@code alpha} is not in the range [0.0, 1.0]
      */
     public static Color adjustColorAlpha(Color baseColor, double alpha) {
-        if ((alpha < 0.0) || (alpha > 1.0)) {
+        if (Double.isNaN(alpha) || (alpha < 0.0) || (alpha > 1.0)) {
             throw new IllegalArgumentException("Alpha must be in the range [0.0, 1.0]");
         }
         return new Color(
