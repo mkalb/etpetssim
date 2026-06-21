@@ -5,50 +5,43 @@ description: "Core infrastructure rules for App-prefixed utilities in de.mkalb.e
 
 # Core Package Instructions
 
-Foundation infrastructure rules for `de.mkalb.etpetssim.core` package only (no subpackages).
+Rules for `de.mkalb.etpetssim.core` only, excluding subpackages.
 
-## Class Structure Requirements
+## Class Structure
 
-- Concrete utility classes must be `public final class`.
-- Class names must start with `App` prefix (e.g., `AppLogger`, `AppStorage`, `AppLocalization`).
-- Purpose: cross-cutting utilities usable by all other packages.
-- May define internal `public enum` and `public record` types.
+- Concrete utility classes must be `public final class` with an `App` prefix (e.g., `AppLogger`, `AppStorage`).
+- Core classes provide cross-cutting infrastructure usable by all other packages.
+- Internal `public enum` and `public record` types are allowed.
 
 ## Dependency Boundaries
 
-Core must not depend on application packages or domain/UI logic.
+Core must not depend on application, domain, simulation, or UI logic.
 
-**Prohibited imports:**
+Prohibited imports:
 
 - `de.mkalb.etpetssim.simulations.*`
 - `de.mkalb.etpetssim.engine.*`
 - `de.mkalb.etpetssim.ui.*`
 - Main application classes (e.g., `ExtraterrestrialPetsSimulation`)
 
-**Allowed dependencies:**
+Allowed dependencies:
 
-- Java Platform (JDK standard library)
-- JSpecify annotations (`@Nullable`, `@NullMarked`)
-- JavaFX only for infrastructure-level resource integration (e.g., `javafx.scene.image.Image` in `AppResources`)
+- JDK standard library
+- JSpecify annotations
+- JavaFX only for infrastructure-level resource integration (e.g., `Image` in `AppResources`)
 
-## Objects.requireNonNull Privilege
+## Null Validation
 
-Core overrides the general Java instruction for `Objects.requireNonNull(...)`.
+Core overrides the general Java rule for `Objects.requireNonNull(...)`.
 
 - Core constructors and methods may validate required parameters with `Objects.requireNonNull(...)`.
 - Prefer fail-fast validation for critical infrastructure entry points.
-- Other packages (`engine`, `ui`, `simulations`) rely on JSpecify non-null-by-default contracts by default.
-- If fail-fast null validation is part of a public core contract, Javadoc may document the resulting
-  `NullPointerException`.
+- Other packages rely on JSpecify non-null-by-default contracts unless a specific instruction says otherwise.
+- Document `NullPointerException` in Javadoc only when it is part of a public core contract.
 
-## Documentation Requirements
+## Documentation and Tests
 
-- All public classes require class-level Javadoc describing purpose and responsibilities.
+- Public classes require class-level Javadoc describing purpose and responsibilities.
 - Public methods require Javadoc covering intent, parameters, return values, and contract-relevant exceptions.
-
-## Testing Requirements
-
-- All core classes must have comprehensive JUnit 5 test coverage.
-- Methods with `*ForTesting()` naming pattern are allowed for test infrastructure needs (e.g., `resetForTesting()`,
-  `initializeForTesting()`).
-- Test-specific methods must be documented in Javadoc with their testing purpose.
+- Core classes require comprehensive JUnit 5 coverage.
+- `*ForTesting()` methods are allowed for test infrastructure and must document their testing purpose.

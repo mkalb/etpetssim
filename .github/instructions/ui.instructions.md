@@ -1,64 +1,52 @@
 ---
 applyTo: "**/de/mkalb/etpetssim/ui/*.java"
-description: "JavaFX UI helper rules for de.mkalb.etpetssim.ui."
+description: "Compact JavaFX UI-package rules for reusable controls, input wrappers, canvas rendering, geometry, and timers."
 ---
 
 # UI Package Instructions
 
-Rules for JavaFX helper classes in `de.mkalb.etpetssim.ui` only.
+Rules for `de.mkalb.etpetssim.ui`. Keep this package reusable infrastructure for simulations, not simulation logic.
 
-## Package Scope and Dependencies
+## Scope
 
-This package contains reusable JavaFX UI helpers invoked primarily from the `simulations` package.
+- Allowed dependencies: JavaFX, `de.mkalb.etpetssim.core`, and `de.mkalb.etpetssim.engine`.
+- Do not depend on `de.mkalb.etpetssim.simulations`.
+- Add code here only when it is reusable by multiple UI or simulation components.
 
-- Classes may depend on `de.mkalb.etpetssim.core` and `de.mkalb.etpetssim.engine`.
-- Classes must NOT depend on `de.mkalb.etpetssim.simulations`.
+## UI Factories and Styles
 
-## FX* Classes (JavaFX Factories and Painters)
+- `FXComponentFactory` creates styled controls and returns `LabeledControl<R>` when a label/control pair is needed.
+- Keep labels connected with `setLabelFor(...)`; share tooltips between labels and controls when the factory pattern
+  does so.
+- Use `FXStyleClasses` constants for CSS class names; add new constants there instead of scattering literal style names.
+- For factory-created listeners, bindings, or bidirectional bindings that can outlive the control, provide or preserve
+  cleanup registration.
+- `FXPaintFactory` is for reusable paint/color calculations; validate numeric ranges before creating colors or maps.
 
-FX-prefixed classes provide JavaFX component factories, paint utilities, and rendering helpers.
+## Input Property Records
 
-- Static factory/helper classes use `final` class and private constructor.
-- Stateful painter classes such as `FXGridCanvasPainter` use instance methods and standard constructors.
-- Use `@Nullable Paint` parameters for optional fill and stroke colors in drawing methods.
-- `@SuppressWarnings("MagicNumber")` is acceptable for UI layout and rendering numeric constants.
-- Use `GridGeometry` for cell dimensions, coordinates, and polygons; do not duplicate geometry logic.
+- `Input*Property` records wrap JavaFX properties plus constraints, valid choices, or display-name providers.
+- Compact constructors validate structural constraints and the initial property value; copy valid-value lists
+  defensively.
+- Factory-created setters log invalid later values via `AppLogger.error(...)` but still set them so controls stay
+  responsive.
+- Numeric wrappers expose `asObjectProperty()`, `asStringBinding(...)`, and `adjustValue(...)` for control integration.
+- Choice wrappers expose `asStringBinding(...)`, `isValue(...)`, and `hasMultipleValidValues()`.
+- Keep validation helpers package-private when they support tests or shared non-trivial checks.
 
-## Geometry and Timer Helpers
+## Grid Geometry and Rendering
 
-Geometry and timing helpers are reusable UI infrastructure, not simulation-specific domain logic.
+- Treat `GridGeometry` and `CellDimension` as the source of truth for cell sizes, canvas positions, polygons, bounds,
+  and point-to-cell conversion.
+- Do not duplicate triangle, square, or hexagon geometry in painters or component code.
+- `FXGridCanvasPainter` is stateful canvas rendering around one `Canvas`, `GridStructure`, and computed dimensions.
+- Drawing methods may accept `@Nullable Paint` or `@Nullable Color` only when null explicitly means "do not draw this
+  layer".
+- Preserve bounds checks for direct pixel drawing and positive-size checks for shapes.
+- `CellShapeSide` represents UI frame sides only; extend it only when all shape-specific frame methods are updated.
 
-- Keep these helpers independent from `de.mkalb.etpetssim.simulations` packages.
-- Prefer adding reusable UI/math behavior here only when more than one simulation or UI component needs it.
+## Timer
 
-## Input* Classes (Property Wrappers)
-
-Input-prefixed records wrap JavaFX properties with validation, range constraints, or constrained choices.
-
-### Validation Behavior
-
-Compact constructors validate structural constraints and the initial property value before storing record components.
-Throw `IllegalArgumentException` for invalid ranges, empty or duplicate choice lists, or invalid initial values.
-
-Factory methods create JavaFX properties whose setters log invalid later values via `AppLogger.error(...)`, but still
-set
-the value. This allows UI controls to remain responsive while signaling constraint violations.
-Preserve this post-construction setter behavior in all Input* classes.
-
-### Common API
-
-Input* records provide the relevant subset of:
-
-- static factory methods, e.g. `of(...)`, `ofList(...)`, or `ofEnum(...)`
-- `getValue()` and `setValue(...)` for value access
-- `property()` or direct property accessor for binding
-
-Additional API methods are class-specific:
-
-- Numeric Input* records expose `asObjectProperty()`, `asStringBinding(...)`, and `adjustValue(...)`.
-- Choice-based Input* records expose `asStringBinding(...)`, `isValue(...)`, and `hasMultipleValidValues()`.
-
-### Helper Methods
-
-Use package-private static validation helpers like `isInvalidValue(...)` when validation logic is non-trivial or reused.
-Use instance methods like `adjustValue(...)` for clamping or snapping values with the record's configured constraints.
+- `SimulationTimer` owns a JavaFX `Timeline`; `start(...)` validates a finite positive interval and stops the previous
+  timeline first.
+- `stop()` must stop and clear the timeline so `isRunning()` reflects current state.
