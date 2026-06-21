@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -8,6 +8,24 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 final class FXStyleClassesTest {
+
+    private static List<String> getStyleClassConstantValues() {
+        return Arrays.stream(FXStyleClasses.class.getDeclaredFields())
+                     .filter(field -> Modifier.isPublic(field.getModifiers()))
+                     .filter(field -> Modifier.isStatic(field.getModifiers()))
+                     .filter(field -> Modifier.isFinal(field.getModifiers()))
+                     .filter(field -> field.getType() == String.class)
+                     .map(FXStyleClassesTest::getStringValue)
+                     .toList();
+    }
+
+    private static String getStringValue(Field field) {
+        try {
+            return (String) field.get(null);
+        } catch (IllegalAccessException e) {
+            throw new AssertionError("Unable to read style class constant: " + field.getName(), e);
+        }
+    }
 
     @Test
     void testStyleClassConstantsAreUniqueAndNonBlank() {
@@ -39,24 +57,6 @@ final class FXStyleClassesTest {
         List<String> sortedNames = names.stream().sorted().toList();
 
         assertEquals(sortedNames, names);
-    }
-
-    private static List<String> getStyleClassConstantValues() {
-        return Arrays.stream(FXStyleClasses.class.getDeclaredFields())
-                     .filter(field -> Modifier.isPublic(field.getModifiers()))
-                     .filter(field -> Modifier.isStatic(field.getModifiers()))
-                     .filter(field -> Modifier.isFinal(field.getModifiers()))
-                     .filter(field -> field.getType() == String.class)
-                     .map(FXStyleClassesTest::getStringValue)
-                     .toList();
-    }
-
-    private static String getStringValue(Field field) {
-        try {
-            return (String) field.get(null);
-        } catch (IllegalAccessException e) {
-            throw new AssertionError("Unable to read style class constant: " + field.getName(), e);
-        }
     }
 
 }
