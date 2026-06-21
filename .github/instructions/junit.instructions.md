@@ -66,6 +66,10 @@ Rules that are specific to test sources; do not repeat broader repository or Jav
 - Use `de.mkalb.FxTestSupport`.
 - Call `FxTestSupport.ensureStarted()` once in `@BeforeAll`.
 - Create and mutate JavaFX components via `FxTestSupport.runAndWait(...)`; use the timeout overload only when needed.
+- Use `FxTestSupport.supplyAndWait(...)` to create a JavaFX object on the FX thread and return it for assertions on the
+  calling thread.
+- Throwables (including `AssertionError`) thrown inside `runAndWait`/`supplyAndWait` propagate to the calling thread, so
+  assertions may be placed inside the runnable or made on returned values.
 - Use `@Execution(ExecutionMode.SAME_THREAD)` when JavaFX state is shared or platform ordering matters.
 
 ## Manual Test Utilities
