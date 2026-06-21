@@ -3,15 +3,19 @@ package de.mkalb.etpetssim.simulations.core;
 import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.core.AppLocalization;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 final class SimulationFactoryTest {
 
     @BeforeAll
@@ -23,19 +27,15 @@ final class SimulationFactoryTest {
     }
 
     private static Stage createStage() {
-        AtomicReference<@Nullable Stage> ref = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> ref.set(new Stage()));
-        Stage stage = ref.get();
+        Stage stage = FxTestSupport.supplyAndWait(Stage::new);
         assertNotNull(stage, "Stage must not be null after FX initialization");
         return stage;
     }
 
     private static SimulationInstance createInstance(SimulationType type) {
         Stage stage = createStage();
-        AtomicReference<@Nullable SimulationInstance> ref = new AtomicReference<>();
-        FxTestSupport.runAndWait(() ->
-                ref.set(SimulationFactory.createInstance(type, stage, (_, _) -> {})));
-        SimulationInstance instance = ref.get();
+        SimulationInstance instance = FxTestSupport.supplyAndWait(() ->
+                SimulationFactory.createInstance(type, stage, (_, _) -> {}));
         assertNotNull(instance, "SimulationInstance must not be null for type: " + type);
         return instance;
     }
@@ -165,20 +165,39 @@ final class SimulationFactoryTest {
 
     @Test
     void testCreateInstanceStartscreenInvokesStageUpdater() {
-        // The STARTSCREEN view receives the stageUpdater callback; verify it is wired
-        // correctly by checking that the returned instance is well-formed.
-        Stage stage = createStage();
-        AtomicReference<@Nullable SimulationInstance> ref = new AtomicReference<>();
-        FxTestSupport.runAndWait(() ->
-                ref.set(SimulationFactory.createInstance(SimulationType.STARTSCREEN, stage, (_, _) -> {})));
+        FxTestSupport.runAndWait(() -> {
+            Stage stage = new Stage();
+            AtomicReference<@Nullable Stage> updatedStage = new AtomicReference<>();
+            AtomicReference<@Nullable SimulationType> updatedType = new AtomicReference<>();
+            SimulationType expectedType = Arrays.stream(SimulationType.values())
+                                                .filter(type -> type.isShownOnStartScreen() && type.isImplemented())
+                                                .findFirst()
+                                                .orElseThrow();
 
-        SimulationInstance instance = ref.get();
-        assertNotNull(instance);
-        assertAll(
-                () -> assertEquals(SimulationType.STARTSCREEN, instance.simulationType()),
-                () -> assertNotNull(instance.simulationMainView()),
-                () -> assertNotNull(instance.region())
-        );
+            SimulationInstance instance = SimulationFactory.createInstance(
+                    SimulationType.STARTSCREEN,
+                    stage,
+                    (nextStage, nextType) -> {
+                        updatedStage.set(nextStage);
+                        updatedType.set(nextType);
+                    });
+            VBox startScreen = assertInstanceOf(VBox.class, instance.region());
+            Button button = startScreen.getChildren()
+                                       .stream()
+                                       .filter(Button.class::isInstance)
+                                       .map(Button.class::cast)
+                                       .filter(candidate -> candidate.getText().equals(expectedType.title()))
+                                       .findFirst()
+                                       .orElseThrow();
+
+            button.fire();
+
+            assertAll(
+                    () -> assertEquals(SimulationType.STARTSCREEN, instance.simulationType()),
+                    () -> assertSame(stage, updatedStage.get()),
+                    () -> assertEquals(expectedType, updatedType.get())
+            );
+        });
     }
 
 }
