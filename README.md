@@ -90,8 +90,9 @@ At the same time, all generated content is reviewed and adapted in the context o
 consistency, and long-term maintainability. AI support is therefore treated as development assistance, while final
 technical decisions remain project-driven and under maintainer control.
 
-Project-specific AI instruction files for coding assistants are available
-in [.github/instructions](.github/instructions).
+Project-specific AI instructions for coding assistants are available in
+[.github/copilot-instructions.md](.github/copilot-instructions.md) and
+[.github/instructions](.github/instructions).
 
 ## Feedback and Issues
 
