@@ -3,12 +3,14 @@ package de.mkalb.etpetssim.ui;
 import de.mkalb.FxTestSupport;
 import javafx.util.Duration;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Execution(ExecutionMode.SAME_THREAD)
 final class SimulationTimerTest {
 
     private static final double STEP_INTERVAL_MILLIS = 20.0d;
@@ -84,4 +86,3 @@ final class SimulationTimerTest {
     }
 
 }
-

@@ -1,10 +1,8 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.FxTestSupport;
-import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import javafx.geometry.*;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,12 +18,6 @@ final class GridGeometryTest {
     private static final int GRID_HEIGHT = 8;
     private static final GridSize TEST_GRID_SIZE = new GridSize(GRID_WIDTH, GRID_HEIGHT);
     private static final GridCoordinate TEST_COORDINATE = new GridCoordinate(3, 4);
-
-    @BeforeAll
-    static void setUpBeforeAll() {
-        AppLogger.initializeForTesting();
-        FxTestSupport.ensureStarted();
-    }
 
     // --- Constants tests ---
 
