@@ -11,7 +11,6 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * to be chained and applied in sequence.
  *
  * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
- * @see GridModifier
  */
 @FunctionalInterface
 public interface GridInitializer<T extends GridEntity> {
