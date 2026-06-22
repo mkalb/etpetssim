@@ -57,6 +57,9 @@ matching paths.
 ## Localization and Text
 
 - Write comments, Javadoc, and repository Markdown in English (en_US).
+- All authored repository artifacts — including skills, prompts, scripts, and tool output — are written in English
+  (en_US),
+  regardless of the language of the request.
 - Keep user-facing text in `i18n.messages` resource bundles.
 - Use constants for localization keys instead of string literals.
 
