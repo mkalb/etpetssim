@@ -1,11 +1,11 @@
 ---
-applyTo: "**/simulations/**/*.java"
-description: "MVVM and simulation-specific rules for de.mkalb.etpetssim.simulations."
+applyTo: "**/src/main/java/de/mkalb/etpetssim/simulations/**/*.java"
+description: "MVVM and simulation rules for de.mkalb.etpetssim.simulations."
 ---
 
 # Simulations Instructions
 
-Rules for `de.mkalb.etpetssim.simulations`. These complement repository-wide, Java, UI, and test instructions.
+Rules for production code in `de.mkalb.etpetssim.simulations`; repository-wide, Java, and UI instructions still apply.
 
 ## Package Structure
 

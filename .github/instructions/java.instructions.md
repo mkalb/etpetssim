@@ -1,11 +1,11 @@
 ---
 applyTo: "**/*.java"
-description: "Java-specific coding rules for etpetssim. Use when writing Java code, defining records, using enums, working with JSpecify nullability, or using AppLogger."
+description: "Java rules for etpetssim: code style, records, enums, JSpecify nullability, and AppLogger usage."
 ---
 
 # Java Coding Instructions
 
-Java-specific rules for all `.java` files. These complement repository-wide instructions.
+Rules for all `.java` files; repository-wide instructions still apply.
 
 ## Code Style
 

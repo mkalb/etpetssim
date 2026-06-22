@@ -7,6 +7,19 @@ with configurable edge behavior and neighbor modes.
 Use these as repository-wide defaults. More specific `.github/instructions/*.instructions.md` files take precedence for
 matching paths.
 
+## Project Structure
+
+- `app/src/main/java/de/mkalb/etpetssim/core`: cross-cutting App utilities.
+- `app/src/main/java/de/mkalb/etpetssim/engine`: grid, topology, model, neighborhood, and execution engine.
+- `app/src/main/java/de/mkalb/etpetssim/ui`: reusable JavaFX UI infrastructure.
+- `app/src/main/java/de/mkalb/etpetssim/simulations`: MVVM simulation implementations.
+- `app/src/main/resources/css`: JavaFX stylesheets.
+- `app/src/main/resources/i18n`: user-facing localization bundles.
+- `app/src/main/resources/images`: application image resources.
+- `app/src/test/java`: JUnit tests and test support.
+- `assets`: project screenshots and media assets.
+- `docs`: project documentation, including planning and simulation docs.
+
 ## Priority and Scope
 
 - Keep changes minimal, focused, and convention-preserving; avoid unrelated refactors and formatting-only edits.

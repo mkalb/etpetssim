@@ -1,11 +1,11 @@
 ---
-applyTo: "**/de/mkalb/etpetssim/ui/*.java"
-description: "Compact JavaFX UI-package rules for reusable controls, input wrappers, canvas rendering, geometry, and timers."
+applyTo: "**/src/main/java/de/mkalb/etpetssim/ui/*.java"
+description: "JavaFX UI-package rules for reusable controls, input wrappers, canvas rendering, geometry, and timers."
 ---
 
 # UI Package Instructions
 
-Rules for `de.mkalb.etpetssim.ui`. Keep this package reusable infrastructure for simulations, not simulation logic.
+Rules for production code in `de.mkalb.etpetssim.ui`; keep reusable UI infrastructure here, not simulation logic.
 
 ## Scope
 

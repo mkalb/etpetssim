@@ -1,11 +1,11 @@
 ---
 applyTo: "**/src/test/java/**/*.java"
-description: "Test-source rules for etpetssim. Use when creating or modifying JUnit tests, fixtures, support classes, or manual test utilities."
+description: "Rules for JUnit tests, fixtures, test support classes, and manual test utilities."
 ---
 
 # Test Source Instructions
 
-Rules that are specific to test sources; do not repeat broader repository or Java rules.
+Rules for test sources only; repository-wide and Java instructions still apply.
 
 ## Test Types
 
