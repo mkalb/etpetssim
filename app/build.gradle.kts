@@ -39,7 +39,7 @@ javafx {
 application {
     applicationName = baseName
     mainClass = "de.mkalb.etpetssim.AppLauncher"
-    applicationDefaultJvmArgs = listOf("--enable-native-access=ALL-UNNAMED")
+    applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics,ALL-UNNAMED")
 }
 
 tasks.named<Test>("test") {
@@ -47,7 +47,7 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
     // Set JVM args for JavaFX headless testing
     jvmArgs(
-        "--enable-native-access=ALL-UNNAMED",
+        "--enable-native-access=javafx.graphics,ALL-UNNAMED",
         "-Dprism.order=sw",
         "-Djavafx.headless=true"
     )
