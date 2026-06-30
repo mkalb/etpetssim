@@ -6,6 +6,9 @@ build/
 out/
 bin/
 
+# Ignore Kotlin plugin data
+.kotlin
+
 # Ignore IntelliJ IDEA
 .idea/
 .run/
