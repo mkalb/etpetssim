@@ -1,6 +1,6 @@
 # etpetssim Copilot Instructions
 
-etpetssim is a Java 25 / JavaFX 25 MVVM application for 2D grid-based simulations
+etpetssim is a Java 26 / JavaFX 25 MVVM application for 2D grid-based simulations
 (agent-based models, cellular automata, and toy models). The engine models grids of triangle, square, or hexagon cells
 with configurable edge behavior and neighbor modes.
 
@@ -32,7 +32,7 @@ matching paths.
 
 ## Platform Baseline
 
-- Use Java 25 language features only.
+- Use Java 26 language features only.
 - Use JavaFX 25 for UI work.
 - Use the Gradle Wrapper from the repository root. Prefer `gradlew.bat app:compileJava` for compile checks and
   `gradlew.bat app:test` for tests.

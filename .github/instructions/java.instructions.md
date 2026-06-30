@@ -12,7 +12,7 @@ Rules for all `.java` files; repository-wide instructions still apply.
 - Do not add comments that only restate obvious code.
 - Avoid formatting-only changes, import sorting, or import cleanup unless required by the task.
 - Keep existing wildcard imports unless a concrete change requires otherwise.
-- Prefer modern Java 25 APIs and language features when they improve clarity; avoid novelty.
+- Prefer modern Java 26 APIs and language features when they improve clarity; avoid novelty.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
 
 ## Naming Conventions

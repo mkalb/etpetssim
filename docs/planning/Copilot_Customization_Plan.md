@@ -190,7 +190,7 @@ scope and must not be implemented now.
 
 **Helper script technology**
 
-- Implement the helper as a single-file **Java 25** source program run in
+- Implement the helper as a single-file **Java 26** source program run in
   source-file mode (`java <script>.java <args>`); no compilation step, no Gradle,
   no external dependencies, JDK standard library only.
 - Read and write files as UTF-8. Do not emit a BOM.
@@ -258,7 +258,7 @@ scope and must not be implemented now.
 - **Classification:** Skill. A reusable, on-demand capability that can carry a
   checklist resource derived from the instruction files.
 - **What it does:** Check a given file or package against repository rules
-  (Java 25 features only, JSpecify nullability, AppLogger usage, DRY/KISS,
+  (Java 26 features only, JSpecify nullability, AppLogger usage, DRY/KISS,
   naming, UTF-8/ASCII) and report violations.
 - **Value:** Med — complements the always-on instructions with an explicit audit
   pass.
@@ -395,7 +395,7 @@ Phased adoption, increasing in risk and ambition:
 - For Idea 5, implement the accepted Version 1 scope: production-bundle key
   parity, alphabetical ordering, placeholder compatibility, Unicode-escape
   reporting, and opt-in sort/alignment plus Unicode-escape auto-fix. The helper
-  is a single-file Java 25 source program (`java <script>.java`); see the
+  is a single-file Java 26 source program (`java <script>.java`); see the
   "Implementation handoff (Version 1)" subsection for the full specification.
 - For Ideas 2 and 7, define the canonical per-simulation doc structure and which
   README/catalog sections are machine-managed.
