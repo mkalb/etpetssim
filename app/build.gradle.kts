@@ -33,7 +33,7 @@ java {
 
 javafx {
     modules = listOf("javafx.controls")
-    version = "25.0.2"
+    version = "26"
 }
 
 application {
