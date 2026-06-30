@@ -1,4 +1,5 @@
 plugins {
+    java
     application
     id("project-report")
     id("org.openjfx.javafxplugin") version "0.1.0"
@@ -32,8 +33,8 @@ java {
 }
 
 javafx {
-    modules = listOf("javafx.controls")
     version = "26"
+    modules = listOf("javafx.controls")
 }
 
 application {
@@ -60,6 +61,9 @@ distributions {
             from(rootProject.file("README.md"))
             from(rootProject.file("LICENSE"))
             from(rootProject.file("THIRD-PARTY-LICENSES"))
+            from(rootProject.file("docs/simulations/")) {
+                into("docs/simulations/")
+            }
         }
     }
 }
@@ -68,7 +72,8 @@ tasks.processResources {
     from(
         rootProject.layout.projectDirectory.file("README.md"),
         rootProject.layout.projectDirectory.file("LICENSE"),
-        rootProject.layout.projectDirectory.file("THIRD-PARTY-LICENSES")
+        rootProject.layout.projectDirectory.file("THIRD-PARTY-LICENSES"),
+        rootProject.layout.projectDirectory.dir("/docs/simulations/")
     )
 }
 
