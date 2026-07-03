@@ -41,6 +41,10 @@ public abstract class AbstractMainViewModel<
         this.configViewModel = configViewModel;
         this.observationViewModel = observationViewModel;
 
+        bindObservationBindings();
+    }
+
+    private void bindObservationBindings() {
         observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinateProperty());
     }
 
@@ -146,6 +150,17 @@ public abstract class AbstractMainViewModel<
     public final void resetClickedCoordinateProperties() {
         previousClickedCoordinate.set(null);
         lastClickedCoordinate.set(null);
+    }
+
+    /**
+     * Unbinds the observation bindings created by this base class in its constructor.
+     *
+     * <p>Subclasses must call this exactly once from their {@code shutdownSimulation()} implementation, replacing any
+     * direct {@code observationViewModel.lastClickedCoordinateProperty().unbind()} call. Selection-specific bindings
+     * created by subclasses (for example the selected-grid-cell binding) remain the subclass's responsibility.
+     */
+    protected final void unbindObservationBindings() {
+        observationViewModel.lastClickedCoordinateProperty().unbind();
     }
 
 }

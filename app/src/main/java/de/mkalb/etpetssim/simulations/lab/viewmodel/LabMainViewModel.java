@@ -92,7 +92,7 @@ public final class LabMainViewModel
         labControlViewModel.drawModelRequestedProperty().removeListener(drawModelRequestedChangeListener);
         labControlViewModel.drawTestRequestedProperty().removeListener(drawTestRequestedChangeListener);
 
-        observationViewModel.lastClickedCoordinateProperty().unbind();
+        unbindObservationBindings();
 
         reset();
         configChangedListener = () -> {};

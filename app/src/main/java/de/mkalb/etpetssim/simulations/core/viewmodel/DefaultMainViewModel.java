@@ -251,7 +251,7 @@ public final class DefaultMainViewModel<
             lastClickedCoordinateProperty().removeListener(lastClickedCoordinateListener);
         }
         simulationStateProperty().removeListener(simulationStateListener);
-        observationViewModel.lastClickedCoordinateProperty().unbind();
+        unbindObservationBindings();
         observationStateViewModel.selectedGridCellProperty().unbind();
 
         editToolBarViewModel.resetToSelectMode();
