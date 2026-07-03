@@ -7,12 +7,11 @@ import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import org.jspecify.annotations.Nullable;
@@ -52,18 +51,13 @@ public abstract class AbstractMainView<
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
-    private final ScrollPane editAffordanceScrollPane;
-    private final HBox editAffordanceBox;
+    private final SimulationEditToolBarView<CTX> editToolBar = new SimulationEditToolBarView<>();
     private final Map<Double, Font> fontCache;
-    private final List<Runnable> actionToolBarCleanupActions = new ArrayList<>();
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter dynamicPainter;
     protected @Nullable FXGridCanvasPainter overlayPainter;
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
-    private @Nullable Button editModeButton;
-    private @Nullable ObjectProperty<String> selectedToolIdProperty;
-    private @Nullable ChangeListener<String> selectedToolIdListener;
 
     protected AbstractMainView(VM viewModel,
                                CFV configView, CLV controlView, OV observationView,
@@ -92,24 +86,6 @@ public abstract class AbstractMainView<
         notificationLabel = new Label();
         notificationLabel.getStyleClass().add(FXStyleClasses.SIMULATION_NOTIFICATION_LABEL);
         clearNotification();
-
-        editAffordanceBox = new HBox();
-        editAffordanceBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR);
-
-        editAffordanceScrollPane = new ScrollPane();
-        editAffordanceScrollPane.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_SCROLLPANE);
-        editAffordanceScrollPane.setContent(editAffordanceBox);
-        editAffordanceScrollPane.setFitToHeight(true);
-        editAffordanceScrollPane.setFitToWidth(false);
-        editAffordanceScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        editAffordanceScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        editAffordanceScrollPane.setPannable(false);
-        registerEditAffordanceWheelScroll();
-        clearEditAffordanceToolBar();
-    }
-
-    private static double clampZeroToOne(double value) {
-        return Math.clamp(value, 0.0d, 1.0d);
     }
 
     @SuppressWarnings("MagicNumber")
@@ -130,31 +106,6 @@ public abstract class AbstractMainView<
                     case SQUARE -> 0.9d;
                     case HEXAGON -> 0.8d;
                 });
-    }
-
-    private void registerEditAffordanceWheelScroll() {
-        editAffordanceScrollPane.addEventFilter(ScrollEvent.SCROLL, event -> {
-            double delta = (Math.abs(event.getDeltaX()) > 0.0d)
-                    ? event.getDeltaX()
-                    : -event.getDeltaY();
-            if (delta == 0.0d) {
-                return;
-            }
-
-            Node content = editAffordanceScrollPane.getContent();
-            if (content == null) {
-                return;
-            }
-            double viewportWidth = editAffordanceScrollPane.getViewportBounds().getWidth();
-            double maxX = content.getLayoutBounds().getWidth() - viewportWidth;
-            if (maxX <= 0.0d) {
-                return;
-            }
-
-            double nextHValue = clampZeroToOne(editAffordanceScrollPane.getHvalue() + (delta / maxX));
-            editAffordanceScrollPane.setHvalue(nextHValue);
-            event.consume();
-        });
     }
 
     @Override
@@ -194,8 +145,7 @@ public abstract class AbstractMainView<
         cellFont = null;
         cellEmojiFont = null;
         clearNotification();
-        clearEditAffordanceToolBar();
-        clearActionToolBar();
+        editToolBar.clear();
     }
 
     protected abstract void registerViewModelListeners();
@@ -241,76 +191,14 @@ public abstract class AbstractMainView<
         notificationLabel.setManaged(false);
     }
 
-    private void clearActionToolBar() {
-        if ((selectedToolIdProperty != null) && (selectedToolIdListener != null)) {
-            selectedToolIdProperty.removeListener(selectedToolIdListener);
-        }
-        selectedToolIdProperty = null;
-        selectedToolIdListener = null;
-        for (var cleanupAction : actionToolBarCleanupActions) {
-            try {
-                cleanupAction.run();
-            } catch (RuntimeException e) {
-                AppLogger.errorf(e, "%s: Failed to clean up edit toolbar resources.", LOG_COMPONENT);
-            }
-        }
-        actionToolBarCleanupActions.clear();
-    }
-
-    private void clearEditAffordanceToolBar() {
-        if (editModeButton != null) {
-            editModeButton.setOnAction(null);
-        }
-        editModeButton = null;
-        for (Node item : editAffordanceBox.getChildren()) {
-            item.visibleProperty().unbind();
-            item.managedProperty().unbind();
-        }
-        editAffordanceBox.getChildren().clear();
-        editAffordanceScrollPane.disableProperty().unbind();
-        editAffordanceScrollPane.visibleProperty().unbind();
-        editAffordanceScrollPane.managedProperty().unbind();
-        editAffordanceScrollPane.setDisable(true);
-        editAffordanceScrollPane.setVisible(false);
-        editAffordanceScrollPane.setManaged(false);
-    }
-
     protected final void rebuildActionToolBar() {
-        clearEditAffordanceToolBar();
-        clearActionToolBar();
-        List<SimulationUserActionDescriptor<CTX>> descriptors = createUserActionDescriptors();
-        if (descriptors.isEmpty()) {
-            return;
-        }
-
-        var currentEditModeProperty = editModeActiveProperty();
-        if (currentEditModeProperty == null) {
-            return;
-        }
-
-        var currentSelectedToolIdProperty = selectedUserActionToolIdProperty();
-        List<Node> nodes = createEditToolBarNodes(descriptors, currentEditModeProperty, currentSelectedToolIdProperty);
-        if (nodes.isEmpty()) {
-            return;
-        }
-
-        Button editButton = new Button();
-        configureEditToolBarButton(editButton);
-        editButton.setText(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_EDIT));
-        editButton.setTooltip(new Tooltip(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_EDIT_TOOLTIP)));
-        editButton.setOnAction(_ -> currentEditModeProperty.set(!currentEditModeProperty.get()));
-        editButton.visibleProperty().bind(currentEditModeProperty.not());
-        editButton.managedProperty().bind(currentEditModeProperty.not());
-
-        editModeButton = editButton;
-
-        List<Node> toolbarNodes = new ArrayList<>();
-        toolbarNodes.add(editButton);
-        toolbarNodes.addAll(nodes);
-        editAffordanceBox.getChildren().setAll(toolbarNodes);
-        editAffordanceScrollPane.disableProperty().bind(viewModel.simulationStateProperty().isNotEqualTo(SimulationState.PAUSED));
-        editAffordanceScrollPane.setVisible(true);
-        editAffordanceScrollPane.setManaged(true);
+        editToolBar.rebuild(
+                createUserActionDescriptors(),
+                editModeActiveProperty(),
+                selectedUserActionToolIdProperty(),
+                viewModel.simulationStateProperty(),
+                this::createEditToolBarOptionPanel,
+                this::applyGlobalUserActionAndRedraw);
     }
 
     /**
@@ -320,94 +208,6 @@ public abstract class AbstractMainView<
      */
     protected List<SimulationUserActionDescriptor<CTX>> createUserActionDescriptors() {
         return List.of();
-    }
-
-    private List<Node> createEditToolBarNodes(
-            List<SimulationUserActionDescriptor<CTX>> descriptors,
-            BooleanProperty currentEditModeProperty,
-            @Nullable ObjectProperty<String> currentSelectedToolIdProperty) {
-
-        ToggleGroup cellActionToggleGroup = new ToggleGroup();
-        ToggleButton selectButton = null;
-
-        List<Node> nodes = new ArrayList<>();
-
-        Map<Toggle, SimulationUserActionDescriptor<CTX>> descriptorByToggle = new HashMap<>();
-
-        if (currentSelectedToolIdProperty != null) {
-            selectButton = new ToggleButton(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
-            configureEditToolBarButton(selectButton);
-            selectButton.setTooltip(new Tooltip(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP)));
-            selectButton.setToggleGroup(cellActionToggleGroup);
-            selectButton.visibleProperty().bind(currentEditModeProperty);
-            selectButton.managedProperty().bind(currentEditModeProperty);
-            nodes.add(selectButton);
-        }
-
-        for (var descriptor : descriptors) {
-            if ((descriptor.scope() == SimulationUserActionScope.CELL_SELECTED)
-                    && (currentSelectedToolIdProperty != null)) {
-                ToggleButton actionButton = new ToggleButton(AppLocalization.getText(descriptor.labelKey()));
-                configureEditToolBarButton(actionButton);
-                actionButton.setTooltip(new Tooltip(AppLocalization.getText(descriptor.tooltipKey())));
-                actionButton.setToggleGroup(cellActionToggleGroup);
-                actionButton.visibleProperty().bind(currentEditModeProperty);
-                actionButton.managedProperty().bind(currentEditModeProperty);
-                nodes.add(actionButton);
-                descriptorByToggle.put(actionButton, descriptor);
-            } else if (descriptor.scope() == SimulationUserActionScope.GLOBAL) {
-                Button actionButton = new Button(AppLocalization.getText(descriptor.labelKey()));
-                configureEditToolBarButton(actionButton);
-                actionButton.setTooltip(new Tooltip(AppLocalization.getText(descriptor.tooltipKey())));
-                actionButton.setOnAction(_ -> applyGlobalUserActionAndRedraw(descriptor));
-                actionButton.visibleProperty().bind(currentEditModeProperty);
-                actionButton.managedProperty().bind(currentEditModeProperty);
-                nodes.add(actionButton);
-            }
-        }
-
-        Node optionPanelNode = createEditToolBarOptionPanel(currentSelectedToolIdProperty);
-        if (optionPanelNode != null) {
-            optionPanelNode.visibleProperty().bind(currentEditModeProperty);
-            optionPanelNode.managedProperty().bind(currentEditModeProperty);
-            nodes.add(optionPanelNode);
-        }
-
-        if (currentSelectedToolIdProperty != null) {
-            selectedToolIdProperty = currentSelectedToolIdProperty;
-            var finalSelectButton = selectButton;
-
-            selectedToolIdListener = (_, _, toolId) -> {
-                if (SimulationUserActionDescriptor.SELECT_TOOL_ID.equals(toolId)) {
-                    cellActionToggleGroup.selectToggle(finalSelectButton);
-                    return;
-                }
-                for (var entry : descriptorByToggle.entrySet()) {
-                    if (toolId.equals(entry.getValue().toolId())) {
-                        cellActionToggleGroup.selectToggle(entry.getKey());
-                        return;
-                    }
-                }
-                cellActionToggleGroup.selectToggle(finalSelectButton);
-            };
-            currentSelectedToolIdProperty.addListener(selectedToolIdListener);
-
-            String currentToolId = currentSelectedToolIdProperty.get();
-            selectedToolIdListener.changed(currentSelectedToolIdProperty, currentToolId, currentToolId);
-        }
-
-        cellActionToggleGroup.selectedToggleProperty().addListener((_, _, selectedToggle) -> {
-            if (currentSelectedToolIdProperty == null) {
-                return;
-            }
-            var descriptor = descriptorByToggle.get(selectedToggle);
-            currentSelectedToolIdProperty.set(
-                    (descriptor != null)
-                            ? descriptor.toolId()
-                            : SimulationUserActionDescriptor.SELECT_TOOL_ID);
-        });
-
-        return nodes;
     }
 
     /**
@@ -430,11 +230,7 @@ public abstract class AbstractMainView<
      * @param cleanupAction cleanup action for listeners or bindings owned by simulation-specific option controls
      */
     protected final void registerActionToolBarCleanup(Runnable cleanupAction) {
-        actionToolBarCleanupActions.add(cleanupAction);
-    }
-
-    private void configureEditToolBarButton(ButtonBase button) {
-        button.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_BUTTON);
+        editToolBar.registerCleanup(cleanupAction);
     }
 
     /**
@@ -480,7 +276,7 @@ public abstract class AbstractMainView<
 
         VBox vBox = new VBox();
         vBox.getChildren().add(notificationLabel);
-        vBox.getChildren().add(editAffordanceScrollPane);
+        vBox.getChildren().add(editToolBar.getNode());
         vBox.getChildren().add(canvasScrollPane);
         VBox.setVgrow(canvasScrollPane, Priority.ALWAYS);
 
