@@ -60,8 +60,9 @@ Potential pressure points:
   UI mechanics.
 - The edit-toolbar code is generic enough for default simulations, but Lab currently gets this machinery even though it
   has no edit descriptors.
-- Listener cleanup for the edit toolbar is partly internal to this view class, while related edit state lives in
-  `DefaultMainViewModel`.
+- Listener cleanup for the edit toolbar is partly internal to this view class, while the corresponding edit-mode state
+  already lives in a dedicated helper (`SimulationEditToolBarViewModel`) on the view-model side. Only the view side of
+  the toolbar remains unextracted.
 
 ### `AbstractDefaultMainView`
 
@@ -95,8 +96,10 @@ Potential pressure points:
   regular simulations and Lab.
 - It performs the observation binding in the constructor, which requires every subclass to remember to unbind in
   shutdown.
-- `getCurrentConfig()` is protected abstract, while `getCurrentModel()` and `hasSimulationManager()` are public
-  abstract. Confirm whether this visibility split is intentional API design or just historical growth.
+- `getCurrentConfig()` is declared `protected abstract` here, while `getCurrentModel()` and `hasSimulationManager()`
+  are `public abstract`. Both concrete subclasses (`DefaultMainViewModel` and `LabMainViewModel`) already widen
+  `getCurrentConfig()` to `public`, so the split is historical growth, not intentional API design. Aligning the base
+  declaration to `public abstract` is a safe, mechanical cleanup covered by existing call sites.
 
 ### `DefaultMainViewModel`
 
@@ -104,7 +107,9 @@ Current role:
 
 - Owns the default timed and batch simulation lifecycle.
 - Creates simulation managers, executes timed and batch steps, handles pause/resume/cancel, and updates statistics.
-- Owns selected-cell properties, last selected coordinate/entity, edit-mode state, and selected action descriptor.
+- Owns selected-cell properties, last selected coordinate/entity, and the selected-grid-cell provider.
+- Delegates edit-mode state and selected-tool-id tracking to the already-extracted `SimulationEditToolBarViewModel`
+  helper (package-private in `simulations.core.viewmodel`); it no longer stores raw edit-mode fields itself.
 - Listens to clicked-coordinate changes and refreshes selected-cell state when the simulation state allows selection.
 - Applies simulation user actions.
 - Manages timer and executor resources.
@@ -112,9 +117,11 @@ Current role:
 Potential pressure points:
 
 - It combines several responsibilities: lifecycle execution, manager ownership, statistics updates, selection,
-  edit-mode state, action application, timeout configuration, timer control, batch execution, and logging.
-- Selected-cell behavior overlaps conceptually with Lab's manual `updateSelectedGridCell(...)` and
-  `resetSelectedGridCell()` methods.
+  action application, timeout configuration, timer control, batch execution, and logging. Edit-mode state is already
+  delegated to `SimulationEditToolBarViewModel`, so it is no longer a raw responsibility of this class.
+- Selected-cell behavior overlaps only loosely with Lab. Lab does not own a selection model; it writes selection
+  directly onto its observation view-model with two trivial methods (`updateSelectedGridCell(...)` and
+  `resetSelectedGridCell()`), using `set` rather than the `bind` mechanism used by the default path.
 - The concrete reference to `DefaultObservationViewModel` is needed for selected-cell binding and unbinding, while the
   abstract superclass only knows `SimulationObservationViewModel`.
 - The optional `lastClickedCoordinateListener` field is currently nullable even though it is always assigned in the
@@ -127,12 +134,16 @@ Current Lab-specific behavior:
 - `LabMainViewModel` owns custom draw request listeners for config, base draw, model draw, and test draw.
 - It creates a `LabSimulationManager` only for explicit draw requests, not for timed execution.
 - It computes neighborhood highlight data for the view.
-- It manually updates selected-cell state on the concrete `DefaultObservationViewModel`.
+- It manually updates selected-cell state on the concrete `DefaultObservationViewModel` by calling
+  `selectedGridCellProperty().set(...)` directly. It has no `selectedGridCell` property, no last-selected
+  coordinate/entity, and no selected-cell provider of its own; the whole selection logic is roughly five lines.
 - `LabMainView` handles hover overlays, diagnostic drawing, neighborhood highlights, and test geometry rendering.
 
 Potential pressure points:
 
-- Lab duplicates selected-cell reset/update concepts that also exist in the default view-model path.
+- Lab only superficially resembles the default selection path: it shares the concept of "publish a selected cell,
+  clear it on reset", but not the implementation. Because Lab's version is trivial and uses a different mechanism
+  (`set` vs `bind`), the shared-helper payoff for Lab is small.
 - Lab calls `viewModel.updateClickedCoordinateProperties(...)` and then separately updates selected-cell state. Default
   simulations use a clicked-coordinate listener to derive selected-cell state.
 - Lab's click handling clears and redraws canvas overlays directly, which is probably Lab-specific and should not be
@@ -160,7 +171,7 @@ Before editing code, answer these questions with concrete references from the cu
 These are candidates, not instructions to implement all of them. The future agent should choose the smallest set that
 improves ownership without adding unnecessary abstraction.
 
-### Candidate 1: Extract Shared Selection Support
+### Candidate 1: Extract Shared Selection Support (Priority: optional, low)
 
 Problem:
 
@@ -169,10 +180,12 @@ model while Lab manually writes selected-cell state into its observation view-mo
 
 Analysis:
 
-Selection is the strongest overlap between the default path and Lab. Both paths need to publish a selected cell to the
-observation view and clear that selection during reset/shutdown. The important difference is how selection is triggered:
-regular simulations derive selected cells from clicked-coordinate changes and simulation state, while Lab explicitly
-updates selection during custom click handling after it has redrawn diagnostic overlays.
+Selection looks like an overlap between the default path and Lab, but the current code shows the overlap is mostly
+conceptual. Both paths publish a selected cell to the observation view and clear it during reset/shutdown, yet the
+implementations differ substantially. Regular simulations derive selected cells from clicked-coordinate changes and
+simulation state through a rich model (`selectedGridCell`, `lastSelectedCoordinate`, `lastSelectedEntity`, a provider,
+and a `bind` to the observation view-model). Lab has none of that: it calls `selectedGridCellProperty().set(...)`
+directly in about five lines during custom click handling. The shared surface is therefore small.
 
 Moving all selection state into `AbstractMainViewModel` would make the base class more powerful, but it would also add a
 cell-view generic type to a class that currently only knows entity, model, config, and statistics. That would ripple
@@ -202,54 +215,157 @@ Decision criteria:
 
 Recommendation:
 
-Implement this candidate first, but as a small helper owned by the view-models, not as new state on
-`AbstractMainViewModel`. Keep selection policy in `DefaultMainViewModel` and `LabMainViewModel`; share only property
-storage, selected-cell binding support, and reset/update operations.
+Do not implement this first. Re-verification of the current code shows the Lab/Default overlap is smaller than
+originally assumed: `LabMainViewModel` has no selection model at all and simply calls
+`selectedGridCellProperty().set(...)` in about five lines, using `set` instead of the default path's `bind`. A shared
+selection helper would therefore benefit almost only `DefaultMainViewModel`, which does not justify a new shared
+abstraction. Treat this candidate as optional and low priority. If pursued, keep it as a small helper owned by
+`DefaultMainViewModel` alone (selected-cell property, last selected coordinate/entity, provider, refresh/reset), and
+leave Lab's trivial direct-set logic untouched.
 
-### Candidate 2: Encapsulate Observation Binding Lifecycle
+### Candidate 2: Encapsulate Observation Binding Lifecycle (Priority: first)
 
 Problem:
 
-`AbstractMainViewModel` binds the observation view-model's last-clicked-coordinate property in its constructor, while
-subclasses explicitly unbind during shutdown.
+`AbstractMainViewModel` binds the observation view-model's last-clicked-coordinate property in its constructor, but the
+matching `unbind()` is duplicated by hand in every subclass `shutdownSimulation()`. The base class creates the binding
+yet does not own its teardown, so the contract is implicit and easy to forget when a new main view-model is added.
 
-Analysis:
+Verified current state (context only — no action; re-checked against the code):
 
-This is a small but worthwhile lifecycle cleanup. The current constructor binding creates a hidden obligation: every
-subclass must remember to unbind during shutdown. Both current subclasses do this, but the contract is implicit. That is
-exactly the kind of responsibility that belongs in the base class because the base class created the binding.
+- `AbstractMainViewModel` constructor performs exactly one base-owned binding:
+  `observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinateProperty());`
+  The `observationViewModel` field is typed `SimulationObservationViewModel<STA>`, and that interface already exposes
+  `lastClickedCoordinateProperty()` returning `ObjectProperty<@Nullable GridCoordinate>`. The base can therefore unbind
+  through the inherited field without any concrete-type reference.
+- `AbstractMainViewModel` does **not** implement `shutdownSimulation()`; the method is declared on
+  `SimulationMainViewModel` and implemented independently by each subclass.
+- `DefaultMainViewModel.shutdownSimulation()` executes, in order: set state `SHUTTING_DOWN`; remove
+  `actionButtonRequestedListener` and `cancelButtonRequestedListener`; remove `lastClickedCoordinateListener`; remove
+  `simulationStateListener`; `observationViewModel.lastClickedCoordinateProperty().unbind();` (the base-owned binding);
+  `observationStateViewModel.selectedGridCellProperty().unbind();` (a **different**, Candidate-1 binding created via
+  `bindSelectedGridCellProperty(...)`); `editToolBarViewModel.resetToSelectMode()`; `resetSelectedProperties()`;
+  `resetClickedCoordinateProperties()`; `stopTimer()`; `cancelBatch()`; `shutdownBatchExecutor()`;
+  `simulationManager = null`.
+- `LabMainViewModel.shutdownSimulation()` executes, in order: set state `SHUTTING_DOWN`; remove the four
+  config/control request listeners; `observationViewModel.lastClickedCoordinateProperty().unbind();` (the base-owned
+  binding); `reset()` (which nulls the manager and calls `resetClickedCoordinateProperties()` and
+  `resetSelectedGridCell()`); reset the four `Runnable` view callbacks to no-ops.
 
-A full template-method shutdown may be too broad if it requires rearranging timer/executor cleanup, Lab draw-listener
-cleanup, or subclass-specific state reset. A narrower protected cleanup method is likely enough. For example, the base
-class could expose a final or protected method that unbinds common observation state and clears common clicked-coordinate
-state. Subclasses would call it during their existing shutdown sequence at the point where they currently unbind
-manually.
+Conclusion: the only binding the base created and that is duplicated in both subclasses is the last-clicked-coordinate
+binding. The `selectedGridCellProperty().unbind()` in `DefaultMainViewModel` is a separate concern that belongs to
+Candidate 1 and must not be moved by this candidate.
 
-The future agent should inspect shutdown ordering before changing this. In the default path, timer and batch shutdown
-interacts with state changes and callbacks. In Lab, view callbacks are replaced with no-op runnables after reset.
-Common observation cleanup should not accidentally fire selection or notification updates after subclass resources have
-already been nulled.
+Chosen approach (narrow, low risk):
 
-Possible direction:
+Introduce a single `protected final` teardown method on `AbstractMainViewModel` that unbinds exactly the bindings the
+base created, and have both subclasses call it in place of their inline `unbind()` line. Also extract the
+constructor binding into a private method so the bind and unbind live next to each other for discoverability. Do **not**
+convert `shutdownSimulation()` into a template method in this candidate; keep each subclass's own
+`shutdownSimulation()` and its existing ordering.
 
-- Add protected lifecycle methods in `AbstractMainViewModel` for binding and unbinding observation state.
-- Let subclasses call a superclass shutdown helper instead of directly unbinding the inherited observation view-model.
-- Consider whether `SimulationMainViewModel.shutdownSimulation()` should have a template-method shape, where the base
-  class handles common cleanup and subclasses implement a protected hook.
+Implementation steps for the executing agent:
+
+Files to edit (all under `app/src/main/java/`):
+
+- `de/mkalb/etpetssim/simulations/core/viewmodel/AbstractMainViewModel.java`
+- `de/mkalb/etpetssim/simulations/core/viewmodel/DefaultMainViewModel.java`
+- `de/mkalb/etpetssim/simulations/lab/viewmodel/LabMainViewModel.java`
+
+Do not edit any other file.
+
+1. In `AbstractMainViewModel`, extract the constructor binding into a private helper for symmetry (perform this step; it
+   is required):
+
+   ```java
+   protected AbstractMainViewModel(ObjectProperty<SimulationState> simulationState,
+                                   SimulationConfigViewModel<CON> configViewModel,
+                                   SimulationObservationViewModel<STA> observationViewModel) {
+       this.simulationState = simulationState;
+       this.configViewModel = configViewModel;
+       this.observationViewModel = observationViewModel;
+
+       bindObservationBindings();
+   }
+
+   private void bindObservationBindings() {
+       observationViewModel.lastClickedCoordinateProperty().bind(lastClickedCoordinateProperty());
+   }
+   ```
+
+2. In `AbstractMainViewModel`, add the teardown method that mirrors the base-owned bindings. Place it directly below the
+   existing `resetClickedCoordinateProperties()` method so the clicked-coordinate lifecycle helpers stay together:
+
+   ```java
+   /**
+    * Unbinds the observation bindings created by this base class in its constructor.
+    *
+    * <p>Subclasses must call this exactly once from their {@code shutdownSimulation()} implementation, replacing any
+    * direct {@code observationViewModel.lastClickedCoordinateProperty().unbind()} call. Selection-specific bindings
+    * created by subclasses (for example the selected-grid-cell binding) remain the subclass's responsibility.
+    */
+   protected final void unbindObservationBindings() {
+       observationViewModel.lastClickedCoordinateProperty().unbind();
+   }
+   ```
+
+   Keep this method limited to base-created bindings. Do not add `resetClickedCoordinateProperties()` here, because both
+   subclasses already reset clicked coordinates at their own point in the shutdown sequence and merging it would change
+   ordering.
+
+3. In `DefaultMainViewModel.shutdownSimulation()`, replace the line
+   `observationViewModel.lastClickedCoordinateProperty().unbind();` with `unbindObservationBindings();`. Leave the
+   following line `observationStateViewModel.selectedGridCellProperty().unbind();` exactly where it is (Candidate 1
+   scope). Do not move any other statement. Warning: these two lines look almost identical but differ by the receiver
+   variable (`observationViewModel` vs `observationStateViewModel`) and the property
+   (`lastClickedCoordinateProperty` vs `selectedGridCellProperty`); only the `observationViewModel` /
+   `lastClickedCoordinateProperty` line is the target. Do not touch the `observationStateViewModel` /
+   `selectedGridCellProperty` line.
+
+4. In `LabMainViewModel.shutdownSimulation()`, replace the line
+   `observationViewModel.lastClickedCoordinateProperty().unbind();` with `unbindObservationBindings();`. Leave the
+   subsequent `reset()` call and callback resets unchanged.
+
+5. Do not change the `SimulationMainViewModel` interface, factories, views, or any simulation-specific subclass.
+
+Ordering and safety constraints:
+
+- Preserve the existing shutdown order in both subclasses. In `DefaultMainViewModel`, `SHUTTING_DOWN` must still be set
+  first, before `cancelBatch()`/`shutdownBatchExecutor()`, because batch `Platform.runLater(...)` callbacks and
+  `updateObservationStatistics(...)` guard on `getSimulationState() != SHUTTING_DOWN`.
+- The unbind must remain after `lastClickedCoordinateListener` has been removed (already the case in
+  `DefaultMainViewModel`), so that later `resetClickedCoordinateProperties()` cannot trigger a selection refresh.
+- `unbindObservationBindings()` performs no state mutation and fires no listeners, so it is safe to call at the same
+  position where the inline unbind currently sits.
 
 Decision criteria:
 
-- Common cleanup should be impossible to forget.
-- Avoid introducing a complex lifecycle framework for two bindings.
-- Preserve existing shutdown order where it matters, especially timer/executor cancellation in `DefaultMainViewModel`.
+- Common cleanup for base-created bindings should live in the base class.
+- Avoid introducing a lifecycle framework for what is currently a single binding.
+- Preserve existing shutdown order, especially timer/executor cancellation and the `SHUTTING_DOWN` guard in
+  `DefaultMainViewModel`.
+- Keep Candidate 1's selected-grid-cell binding out of scope.
 
 Recommendation:
 
-Implement this candidate as a narrow base-class cleanup method, not as a full shutdown template yet. Move the common
-last-clicked-coordinate unbind responsibility into `AbstractMainViewModel`, and have each subclass call the common
-cleanup from its current shutdown flow.
+Implement the narrow approach: add `bindObservationBindings()` and `unbindObservationBindings()` to
+`AbstractMainViewModel`, and replace the inline unbind line in both `DefaultMainViewModel` and `LabMainViewModel` with a
+call to `unbindObservationBindings()`. Keep each subclass's own `shutdownSimulation()` and its existing ordering; only
+the shared unbind moves into the base.
 
-### Candidate 3: Split Default Lifecycle Execution From UI State
+Validation for this candidate:
+
+- Compile with `gradlew.bat app:compileJava`.
+- Run `gradlew.bat app:test`.
+- Confirm the binding is really torn down with this precise check (a scratch test or step-by-step code reasoning):
+  after calling `shutdownSimulation()` on a main view-model, call `updateClickedCoordinateProperties(someCoordinate)` on
+  that same main view-model, then read the observation view-model's `lastClickedCoordinateProperty().get()`. It must
+  **not** equal `someCoordinate` (this proves the bind was removed). Calling `shutdownSimulation()` a second time must
+  not throw.
+- Grep both subclasses to confirm no direct `observationViewModel.lastClickedCoordinateProperty().unbind()` call
+  remains and that each `shutdownSimulation()` now calls `unbindObservationBindings()` exactly once.
+
+### Candidate 3: Split Default Lifecycle Execution From UI State (Priority: deferred)
 
 Problem:
 
@@ -291,12 +407,14 @@ Defer this candidate until after smaller ownership cleanups are complete. If it 
 mechanical execution resources first, such as timer/batch runner management, while keeping state transitions and manager
 ownership in `DefaultMainViewModel`.
 
-### Candidate 4: Extract Edit Toolbar View Mechanics
+### Candidate 4: Extract Edit Toolbar View Mechanics (Priority: second)
 
 Problem:
 
-`AbstractMainView` builds and manages descriptor-based edit toolbar controls, while edit state and selected descriptor
-live only in the default view-model path.
+`AbstractMainView` builds and manages descriptor-based edit toolbar controls (control construction, toggle mapping,
+listener cleanup, visibility bindings, wheel scrolling, and the option panel). The view-model side of the edit state
+has already been extracted into `SimulationEditToolBarViewModel`, but the view side remains inline in
+`AbstractMainView`.
 
 Analysis:
 
@@ -304,6 +422,10 @@ The edit toolbar is generic UI machinery, but it is not core to every main view.
 because it owns the common simulation layout and because the toolbar appears above the canvas. That placement is
 reasonable, yet the implementation adds a lot of JavaFX control construction, toggle mapping, listener cleanup, and
 visibility binding to a class that already owns canvas and notification concerns.
+
+Because the view-model side is already isolated in `SimulationEditToolBarViewModel`, this candidate is now purely a
+view-side extraction that would mirror the existing view-model helper. That symmetry makes it one of the clearest
+ownership wins and raises its priority relative to the original plan.
 
 An extraction could make `AbstractMainView` easier to read without changing the external behavior. The helper should be
 a view-level component, not a view-model. It can create controls from `SimulationUserActionDescriptor`, bind them to
@@ -329,11 +451,12 @@ Decision criteria:
 
 Recommendation:
 
-Implement this candidate after the selection and observation-binding cleanup, especially before adding parameterized
-edit tools. Extract a view helper that owns toolbar node creation and cleanup, while leaving toolbar placement and action
-application hooks in `AbstractMainView`.
+Implement this candidate right after the observation-binding cleanup (and before the demoted selection candidate),
+especially before adding parameterized edit tools. Extract a view-side helper (for example `SimulationEditToolBarView`)
+that mirrors the existing `SimulationEditToolBarViewModel` and owns toolbar node creation, toggle wiring, and listener
+cleanup, while leaving toolbar placement and action-application hooks in `AbstractMainView`.
 
-### Candidate 5: Clarify Canvas/Painter Ownership
+### Candidate 5: Clarify Canvas/Painter Ownership (Priority: optional, low)
 
 Problem:
 
@@ -375,7 +498,7 @@ Do not prioritize this candidate as a standalone refactoring. Keep canvas and pa
 only add a tiny readiness helper if it naturally falls out of another edit and clearly removes repeated null-check
 noise.
 
-### Candidate 6: Normalize Listener Registration And Cleanup
+### Candidate 6: Normalize Listener Registration And Cleanup (Priority: opportunistic)
 
 Problem:
 
@@ -419,13 +542,20 @@ generic listener registry unless a concrete duplication pattern remains.
 
 ## Suggested Refactoring Sequence
 
+Recommended candidate order after re-verifying the current code:
+**Candidate 2 -> Candidate 4 -> (Candidate 6 opportunistically) -> optional Candidate 1 / Candidate 5 -> defer Candidate 3.**
+
 1. Inventory call sites and subclass relationships for the four core classes plus Lab direct subclasses.
 2. Write a responsibility table before changing code; confirm which methods are common, default-only, and Lab-only.
-3. Pick one narrow candidate, preferably selection support or observation binding cleanup.
-4. Add or update focused tests for behavior that changes ownership.
-5. Refactor with minimal public API changes.
-6. Run the relevant test suite with the Gradle Wrapper from the repository root.
-7. If a second candidate is still valuable, repeat the same narrow cycle rather than bundling unrelated moves.
+3. Start with Candidate 2 (observation binding lifecycle) as the lowest-risk cleanup.
+4. Then do Candidate 4 (extract the edit-toolbar view mechanics), mirroring the existing
+   `SimulationEditToolBarViewModel`; fold in Candidate 6 listener cleanup where it naturally applies.
+5. Treat Candidate 1 (shared selection) and Candidate 5 (painter readiness helper) as optional, low-priority follow-ups.
+6. Keep Candidate 3 (splitting `DefaultMainViewModel`) deferred unless a concrete lifecycle bug appears.
+7. Add or update focused tests for behavior that changes ownership.
+8. Refactor with minimal public API changes.
+9. Run the relevant test suite with the Gradle Wrapper from the repository root.
+10. If a further candidate is still valuable, repeat the same narrow cycle rather than bundling unrelated moves.
 
 ## Guardrails For The Future Agent
 
