@@ -223,7 +223,11 @@ abstraction. Treat this candidate as optional and low priority. If pursued, keep
 `DefaultMainViewModel` alone (selected-cell property, last selected coordinate/entity, provider, refresh/reset), and
 leave Lab's trivial direct-set logic untouched.
 
-### Candidate 2: Encapsulate Observation Binding Lifecycle (Priority: first)
+### Candidate 2: Encapsulate Observation Binding Lifecycle (Status: implemented)
+
+> **Implemented.** `AbstractMainViewModel` now owns `bindObservationBindings()` and `unbindObservationBindings()`, and
+> both `DefaultMainViewModel` and `LabMainViewModel` call `unbindObservationBindings()` in `shutdownSimulation()`. The
+> steps below are retained as a record of what was done.
 
 Problem:
 
@@ -407,54 +411,199 @@ Defer this candidate until after smaller ownership cleanups are complete. If it 
 mechanical execution resources first, such as timer/batch runner management, while keeping state transitions and manager
 ownership in `DefaultMainViewModel`.
 
-### Candidate 4: Extract Edit Toolbar View Mechanics (Priority: second)
+### Candidate 4: Extract Edit Toolbar View Mechanics (Priority: second, next)
 
 Problem:
 
-`AbstractMainView` builds and manages descriptor-based edit toolbar controls (control construction, toggle mapping,
-listener cleanup, visibility bindings, wheel scrolling, and the option panel). The view-model side of the edit state
-has already been extracted into `SimulationEditToolBarViewModel`, but the view side remains inline in
+`AbstractMainView` builds and manages all descriptor-based edit-toolbar controls (control construction, toggle mapping,
+listener cleanup, visibility bindings, wheel scrolling, and the option panel) inline. The view-model side of the edit
+state is already extracted into `SimulationEditToolBarViewModel`, but the view side still lives in `AbstractMainView`,
+which already owns canvas hosting, notification rendering, and click routing. Extracting the toolbar view mechanics into
+a dedicated helper mirrors the existing view-model helper and reduces the size and mixed responsibilities of
 `AbstractMainView`.
 
-Analysis:
+Verified current state (context only — no action; re-checked against the code):
 
-The edit toolbar is generic UI machinery, but it is not core to every main view. `AbstractMainView` currently owns it
-because it owns the common simulation layout and because the toolbar appears above the canvas. That placement is
-reasonable, yet the implementation adds a lot of JavaFX control construction, toggle mapping, listener cleanup, and
-visibility binding to a class that already owns canvas and notification concerns.
+- `AbstractMainView` (package `de.mkalb.etpetssim.simulations.core.view`) owns all edit-toolbar view state and logic:
+  - Fields: `editAffordanceScrollPane` (`ScrollPane`), `editAffordanceBox` (`HBox`), `actionToolBarCleanupActions`
+    (`List<Runnable>`), `editModeButton` (`@Nullable Button`), `selectedToolIdProperty`
+    (`@Nullable ObjectProperty<String>`), `selectedToolIdListener` (`@Nullable ChangeListener<String>`).
+  - Private methods: `registerEditAffordanceWheelScroll()`, `clearActionToolBar()`, `clearEditAffordanceToolBar()`,
+    `createEditToolBarNodes(...)`, `configureEditToolBarButton(ButtonBase)`.
+  - `protected final`: `rebuildActionToolBar()`, `registerActionToolBarCleanup(Runnable)`.
+  - Overridable hooks that must stay on `AbstractMainView`: `createUserActionDescriptors()` (default empty list),
+    `createEditToolBarOptionPanel(@Nullable ObjectProperty<String>)` (default `null`), `editModeActiveProperty()`
+    (default `null`; `AbstractDefaultMainView` returns the view-model property), `selectedUserActionToolIdProperty()`
+    (default `null`; same), and `applyGlobalUserActionAndRedraw(descriptor)` (abstract).
+- The `AbstractMainView` constructor builds the `HBox` + `ScrollPane`, registers wheel scrolling, and calls
+  `clearEditAffordanceToolBar()`.
+- `createSimulationRegion()` adds `editAffordanceScrollPane` to the `VBox`, between the notification label and the canvas
+  scroll pane.
+- `shutdownSimulation()` calls `clearEditAffordanceToolBar()` and `clearActionToolBar()`.
+- `rebuildActionToolBar()` is called by `AbstractDefaultMainView.handleSimulationInitialized()` and by
+  `LabMainView.initializeCanvasAndPainters()`. It binds
+  `editAffordanceScrollPane.disableProperty()` to `viewModel.simulationStateProperty().isNotEqualTo(SimulationState.PAUSED)`.
+- Only `EtpetsMainView` overrides `createEditToolBarOptionPanel(...)` and calls `registerActionToolBarCleanup(...)`; all
+  other simulations rely on the defaults. Lab supplies no descriptors, so its toolbar stays empty and unmanaged.
 
-Because the view-model side is already isolated in `SimulationEditToolBarViewModel`, this candidate is now purely a
-view-side extraction that would mirror the existing view-model helper. That symmetry makes it one of the clearest
-ownership wins and raises its priority relative to the original plan.
+Conclusion: the entire toolbar view mechanism can move into a dedicated helper as long as (a) the five subclass hooks
+stay on `AbstractMainView`, (b) `registerActionToolBarCleanup(...)` remains callable from simulation subclasses and
+forwards to the helper, and (c) the disable binding still uses `simulationStateProperty()`.
 
-An extraction could make `AbstractMainView` easier to read without changing the external behavior. The helper should be
-a view-level component, not a view-model. It can create controls from `SimulationUserActionDescriptor`, bind them to
-edit-mode state, synchronize the selected descriptor property, and return a configured toolbar node. `AbstractMainView`
-would still decide where that node is placed.
+Chosen approach:
 
-This candidate becomes more valuable if Version 2 edit tools add parameter controls. Without extraction, parameterized
-tools would likely make `AbstractMainView` even larger. With extraction, the future edit UI can evolve in one dedicated
-place while keeping Lab unaffected when it supplies no descriptors.
+Create a package-private view-side helper `SimulationEditToolBarView<CTX extends SimulationUserActionContext>` in
+`de.mkalb.etpetssim.simulations.core.view` that owns the toolbar node, its state fields, build logic, and cleanup.
+`AbstractMainView` keeps the overridable subclass hooks and decides where the toolbar node is placed, and delegates
+build/clear/cleanup to the helper. This is a pure move with no behavior change and requires no edits to simulation
+subclasses.
 
-Possible direction:
+Implementation steps for the executing agent:
 
-- Extract the edit toolbar into a small core view component or helper owned by `AbstractMainView`.
-- Keep `AbstractMainView` responsible for placement of the toolbar in the page layout.
-- Let the helper own toggle/button creation, listener cleanup, and visible/managed bindings.
-- Keep descriptor context and action application outside JavaFX nodes.
+Files to edit (all under `app/src/main/java/`):
+
+- create `de/mkalb/etpetssim/simulations/core/view/SimulationEditToolBarView.java`
+- edit `de/mkalb/etpetssim/simulations/core/view/AbstractMainView.java`
+
+Do not edit simulation subclasses, `AbstractDefaultMainView`, Lab classes, factories, resources, or the
+`SimulationEditToolBarViewModel`.
+
+1. Create the helper `SimulationEditToolBarView<CTX extends SimulationUserActionContext>`. Move the following members
+   out of `AbstractMainView` into it, verbatim where possible: the six fields listed above, and the methods
+   `registerEditAffordanceWheelScroll()`, `createEditToolBarNodes(...)`, `configureEditToolBarButton(ButtonBase)`,
+   `clearActionToolBar()`, and `clearEditAffordanceToolBar()`. Give the helper this shape:
+
+   ```java
+   final class SimulationEditToolBarView<CTX extends SimulationUserActionContext> {
+
+       private final ScrollPane editAffordanceScrollPane;
+       private final HBox editAffordanceBox;
+       private final List<Runnable> actionToolBarCleanupActions = new ArrayList<>();
+       private @Nullable Button editModeButton;
+       private @Nullable ObjectProperty<String> selectedToolIdProperty;
+       private @Nullable ChangeListener<String> selectedToolIdListener;
+
+       SimulationEditToolBarView() {
+           editAffordanceBox = new HBox();
+           editAffordanceBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR);
+           editAffordanceScrollPane = new ScrollPane();
+           // ... move the existing ScrollPane setup from the AbstractMainView constructor here ...
+           registerEditAffordanceWheelScroll();
+           clear();
+       }
+
+       /** Node to be placed by the owning view. */
+       Region getNode() {
+           return editAffordanceScrollPane;
+       }
+
+       /** Registers a cleanup action invoked on the next rebuild or on clear. */
+       void registerCleanup(Runnable cleanupAction) {
+           actionToolBarCleanupActions.add(cleanupAction);
+       }
+
+       /** Clears and neutralizes the toolbar (formerly clearEditAffordanceToolBar + clearActionToolBar). */
+       void clear() {
+           // move the bodies of clearEditAffordanceToolBar() and clearActionToolBar() here, in the same order.
+       }
+
+       /** Rebuilds the toolbar from descriptors (formerly rebuildActionToolBar + createEditToolBarNodes). */
+       void rebuild(
+               List<SimulationUserActionDescriptor<CTX>> descriptors,
+               @Nullable BooleanProperty editModeProperty,
+               @Nullable ObjectProperty<String> selectedToolIdProperty,
+               ReadOnlyObjectProperty<SimulationState> simulationStateProperty,
+               Function<@Nullable ObjectProperty<String>, @Nullable Node> optionPanelFactory,
+               Consumer<SimulationUserActionDescriptor<CTX>> globalActionHandler) {
+           // move the body of rebuildActionToolBar() here; call optionPanelFactory instead of
+           // createEditToolBarOptionPanel(...), and globalActionHandler.accept(descriptor) instead of
+           // applyGlobalUserActionAndRedraw(descriptor); bind disable to
+           // simulationStateProperty.isNotEqualTo(SimulationState.PAUSED).
+       }
+
+       // moved private helpers: registerEditAffordanceWheelScroll(), createEditToolBarNodes(...),
+       // configureEditToolBarButton(ButtonBase)
+   }
+   ```
+
+   Keep the internal ordering of `createEditToolBarNodes(...)` unchanged: create the select/action toggles first, then
+   call `optionPanelFactory`, then set the box children. This matters because `optionPanelFactory` (the subclass's
+   `createEditToolBarOptionPanel`) calls back into `registerActionToolBarCleanup(...)`, which must forward to this
+   helper's `registerCleanup(...)`.
+
+2. In `AbstractMainView`, replace the six edit-toolbar fields and the five moved private methods with a single field:
+
+   ```java
+   private final SimulationEditToolBarView<CTX> editToolBar = new SimulationEditToolBarView<>();
+   ```
+
+3. In the `AbstractMainView` constructor, delete the `editAffordanceBox`/`editAffordanceScrollPane` setup, the
+   `registerEditAffordanceWheelScroll()` call, and the `clearEditAffordanceToolBar()` call (now done by the helper
+   constructor).
+
+4. In `createSimulationRegion()`, replace the reference to `editAffordanceScrollPane` with `editToolBar.getNode()`.
+   Keep the placement (still between the notification label and the canvas scroll pane in the `VBox`).
+
+5. Keep `rebuildActionToolBar()` as a `protected final` method (its callers must not change) and delegate:
+
+   ```java
+   protected final void rebuildActionToolBar() {
+       editToolBar.rebuild(
+               createUserActionDescriptors(),
+               editModeActiveProperty(),
+               selectedUserActionToolIdProperty(),
+               viewModel.simulationStateProperty(),
+               this::createEditToolBarOptionPanel,
+               this::applyGlobalUserActionAndRedraw);
+   }
+   ```
+
+6. Keep `registerActionToolBarCleanup(Runnable)` as a `protected final` method and delegate to
+   `editToolBar.registerCleanup(cleanupAction)`.
+
+7. In `shutdownSimulation()`, replace the `clearEditAffordanceToolBar()` and `clearActionToolBar()` calls with a single
+   `editToolBar.clear()`.
+
+8. Leave the overridable hooks unchanged on `AbstractMainView`: `createUserActionDescriptors()`,
+   `createEditToolBarOptionPanel(...)`, `editModeActiveProperty()`, `selectedUserActionToolIdProperty()`, and
+   `applyGlobalUserActionAndRedraw(...)`. No simulation subclass changes.
+
+Ordering and safety constraints:
+
+- The helper is a `final` field created before any `rebuild(...)` call, so the callback chain
+  `rebuild` -> `optionPanelFactory` -> `AbstractMainView.registerActionToolBarCleanup` -> `editToolBar.registerCleanup`
+  is safe.
+- `clear()` must remove `selectedToolIdListener`, run the cleanup actions, and unbind the visible/managed/disable
+  properties in the same order as today's `clearEditAffordanceToolBar()` + `clearActionToolBar()`.
+- Preserve the empty-toolbar behavior: when `descriptors` is empty or `editModeProperty`/`selectedToolIdProperty`
+  resolve as they do today, `rebuild(...)` must leave the scroll pane hidden and unmanaged, so simulations without
+  descriptors and Lab consume no toolbar space.
+- Keep the disable binding `simulationStateProperty.isNotEqualTo(SimulationState.PAUSED)` so edit mode stays disabled
+  outside `PAUSED`.
 
 Decision criteria:
 
 - Extract only if it reduces `AbstractMainView` complexity and improves cleanup clarity.
 - Preserve simulations with no descriptors: no toolbar space should be consumed.
 - Preserve Lab behavior: Lab should remain unaffected when it contributes no descriptors.
+- Keep the extraction a pure move: identical rendered controls, identical enable/disable behavior, no subclass edits.
 
 Recommendation:
 
-Implement this candidate right after the observation-binding cleanup (and before the demoted selection candidate),
-especially before adding parameterized edit tools. Extract a view-side helper (for example `SimulationEditToolBarView`)
-that mirrors the existing `SimulationEditToolBarViewModel` and owns toolbar node creation, toggle wiring, and listener
-cleanup, while leaving toolbar placement and action-application hooks in `AbstractMainView`.
+Implement now, immediately after Candidate 2. Extract `SimulationEditToolBarView` as described, keep the subclass hooks
+and toolbar placement in `AbstractMainView`, and verify no simulation subclass needs changes. This mirrors the existing
+`SimulationEditToolBarViewModel` and is the clearest remaining ownership win.
+
+Validation for this candidate:
+
+- Compile with `gradlew.bat app:compileJava`.
+- Run `gradlew.bat app:test`.
+- Run `gradlew.bat app:run` and manually confirm: (a) Etpets shows the edit toolbar, the Edit button toggles edit mode,
+  the Select and terrain/resource tools work, the option combo boxes enable/disable with the selected tool, and global
+  actions apply; (b) a simulation with only global actions still shows its action buttons; (c) Lab shows no toolbar; and
+  (d) the toolbar is disabled unless the simulation is `PAUSED`.
+- Grep `AbstractMainView` to confirm no `editAffordance*` fields or moved private toolbar methods remain, and that
+  `EtpetsMainView` still compiles against `registerActionToolBarCleanup(...)` and `createEditToolBarOptionPanel(...)`.
 
 ### Candidate 5: Clarify Canvas/Painter Ownership (Priority: optional, low)
 
@@ -543,12 +692,12 @@ generic listener registry unless a concrete duplication pattern remains.
 ## Suggested Refactoring Sequence
 
 Recommended candidate order after re-verifying the current code:
-**Candidate 2 -> Candidate 4 -> (Candidate 6 opportunistically) -> optional Candidate 1 / Candidate 5 -> defer Candidate 3.**
+**Candidate 2 (done) -> Candidate 4 (next) -> (Candidate 6 opportunistically) -> optional Candidate 1 / Candidate 5 -> defer Candidate 3.**
 
 1. Inventory call sites and subclass relationships for the four core classes plus Lab direct subclasses.
 2. Write a responsibility table before changing code; confirm which methods are common, default-only, and Lab-only.
-3. Start with Candidate 2 (observation binding lifecycle) as the lowest-risk cleanup.
-4. Then do Candidate 4 (extract the edit-toolbar view mechanics), mirroring the existing
+3. Candidate 2 (observation binding lifecycle) is implemented.
+4. Next, do Candidate 4 (extract the edit-toolbar view mechanics), mirroring the existing
    `SimulationEditToolBarViewModel`; fold in Candidate 6 listener cleanup where it naturally applies.
 5. Treat Candidate 1 (shared selection) and Candidate 5 (painter readiness helper) as optional, low-priority follow-ups.
 6. Keep Candidate 3 (splitting `DefaultMainViewModel`) deferred unless a concrete lifecycle bug appears.
