@@ -411,7 +411,11 @@ Defer this candidate until after smaller ownership cleanups are complete. If it 
 mechanical execution resources first, such as timer/batch runner management, while keeping state transitions and manager
 ownership in `DefaultMainViewModel`.
 
-### Candidate 4: Extract Edit Toolbar View Mechanics (Priority: second, next)
+### Candidate 4: Extract Edit Toolbar View Mechanics (Status: implemented)
+
+> **Implemented, tested, and committed.** The edit-toolbar view mechanics were extracted from `AbstractMainView` into a
+> dedicated view-side helper (`SimulationEditToolBarView`), with `AbstractMainView` keeping the subclass hooks and
+> toolbar placement and delegating build/clear/cleanup. The steps below are retained as a record of what was done.
 
 Problem:
 
@@ -692,19 +696,19 @@ generic listener registry unless a concrete duplication pattern remains.
 ## Suggested Refactoring Sequence
 
 Recommended candidate order after re-verifying the current code:
-**Candidate 2 (done) -> Candidate 4 (next) -> (Candidate 6 opportunistically) -> optional Candidate 1 / Candidate 5 -> defer Candidate 3.**
+**Candidate 2 (done) -> Candidate 4 (done) -> (Candidate 6 opportunistically) -> optional Candidate 1 / Candidate 5 -> defer Candidate 3.**
 
 1. Inventory call sites and subclass relationships for the four core classes plus Lab direct subclasses.
 2. Write a responsibility table before changing code; confirm which methods are common, default-only, and Lab-only.
 3. Candidate 2 (observation binding lifecycle) is implemented.
-4. Next, do Candidate 4 (extract the edit-toolbar view mechanics), mirroring the existing
-   `SimulationEditToolBarViewModel`; fold in Candidate 6 listener cleanup where it naturally applies.
-5. Treat Candidate 1 (shared selection) and Candidate 5 (painter readiness helper) as optional, low-priority follow-ups.
-6. Keep Candidate 3 (splitting `DefaultMainViewModel`) deferred unless a concrete lifecycle bug appears.
-7. Add or update focused tests for behavior that changes ownership.
-8. Refactor with minimal public API changes.
-9. Run the relevant test suite with the Gradle Wrapper from the repository root.
-10. If a further candidate is still valuable, repeat the same narrow cycle rather than bundling unrelated moves.
+4. Candidate 4 (extract the edit-toolbar view mechanics) is implemented.
+5. Fold in Candidate 6 (listener cleanup) where it naturally applies.
+6. Treat Candidate 1 (shared selection) and Candidate 5 (painter readiness helper) as optional, low-priority follow-ups.
+7. Keep Candidate 3 (splitting `DefaultMainViewModel`) deferred unless a concrete lifecycle bug appears.
+8. Add or update focused tests for behavior that changes ownership.
+9. Refactor with minimal public API changes.
+10. Run the relevant test suite with the Gradle Wrapper from the repository root.
+11. If a further candidate is still valuable, repeat the same narrow cycle rather than bundling unrelated moves.
 
 ## Guardrails For The Future Agent
 
