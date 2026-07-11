@@ -120,10 +120,8 @@ public abstract class AbstractObservationView<
         }
     }
 
-    /**
-     * Initializes observation labels when the simulation has been created.
-     */
-    protected final void initializeObservationLabels() {
+    @Override
+    public final void initializeObservationLabels() {
         updateGridSectionLabel();
         updateObservationLabels();
     }

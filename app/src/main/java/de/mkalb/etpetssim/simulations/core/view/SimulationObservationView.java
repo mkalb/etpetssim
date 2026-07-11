@@ -5,7 +5,6 @@ import javafx.scene.layout.Region;
 /**
  * Contract for building the simulation observation region.
  */
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SimulationObservationView {
 
     /**
@@ -14,5 +13,10 @@ public interface SimulationObservationView {
      * @return root region for simulation observation
      */
     Region buildObservationRegion();
+
+    /**
+     * Initializes observation labels when the simulation has been created.
+     */
+    void initializeObservationLabels();
 
 }
