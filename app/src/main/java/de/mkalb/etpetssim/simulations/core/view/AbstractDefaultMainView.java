@@ -9,6 +9,7 @@ import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
@@ -60,6 +61,8 @@ public abstract class AbstractDefaultMainView<
 
     private boolean skipOverlayActive = false;
 
+    private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
+
     protected AbstractDefaultMainView(DefaultMainViewModel<ENT, GC, GM, CON, STA, SM, CTX> viewModel,
                                       CFV configView, SimulationControlView controlView, OV observationView,
                                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
@@ -70,11 +73,21 @@ public abstract class AbstractDefaultMainView<
     protected final void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(this::handleSimulationInitialized);
         viewModel.setSimulationStepListener(this::handleSimulationStep);
-        viewModel.selectedGridCellProperty().addListener((_, oldGridCell, newGridCell) -> {
+        selectedGridCellListener = (_, oldGridCell, newGridCell) -> {
             if (overlayPainter != null) {
                 handleGridCellSelected(overlayPainter, oldGridCell, newGridCell);
             }
-        });
+        };
+        viewModel.selectedGridCellProperty().addListener(selectedGridCellListener);
+    }
+
+    @Override
+    public void shutdownSimulation() {
+        if (selectedGridCellListener != null) {
+            viewModel.selectedGridCellProperty().removeListener(selectedGridCellListener);
+            selectedGridCellListener = null;
+        }
+        super.shutdownSimulation();
     }
 
     @SuppressWarnings("MagicNumber")
