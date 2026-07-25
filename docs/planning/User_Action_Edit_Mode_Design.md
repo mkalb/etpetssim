@@ -4,6 +4,23 @@ This document is the compact closeout for the completed Version 1 and Version 2 
 Both versions are fully implemented. Keep this file short so future agent sessions spend tokens on current work, not
 historical migration detail.
 
+## Re-Verification Status (2026-07-25)
+
+Re-checked against the current codebase; no gaps found. All items below are confirmed complete, so no further
+implementation work is open for this document.
+
+- Architecture facts (see below) all hold in code: `DefaultMainViewModel`, `SimulationEditToolBarViewModel`,
+  `SimulationUserActionDescriptor`, `Optional<CTX>` resolvers, stable-tool-id toolbar selection.
+- Every row in the "Completed Follow-up Decisions" table matches an actual `createUserActionDescriptors()`
+  implementation in the corresponding `*MainView` class:
+  `conway/view/ConwayMainView.java`, `forest/view/ForestMainView.java`, `wator/view/WatorMainView.java`,
+  `langton/view/LangtonMainView.java`, `snake/view/SnakeMainView.java`, `rebounding/view/ReboundingMainView.java`,
+  `sugar/view/SugarMainView.java`, `etpets/view/EtpetsMainView.java`.
+- Sugarscape confirmed to **not** implement `Add agent`, `Remove agent`, or `Set sugar` (as intended by the ❌ marker).
+- `lab` package confirmed to have no `createUserActionDescriptors()` override, i.e. no user actions, as intended.
+- Grep across `de.mkalb.etpetssim.simulations` for Version 3 Boundary terms (`undo`, `Undo`, `dragPaint`, `DragPaint`,
+  `EditHistory`, `KeyboardShortcut`) returned no hits, confirming none of those topics were accidentally implemented.
+
 ## Completed Behavior
 
 - Version 1 added explicit edit mode above the canvas. Canvas clicks still inspect/select first; model mutations require
