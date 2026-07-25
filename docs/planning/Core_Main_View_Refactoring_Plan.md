@@ -651,7 +651,48 @@ Do not prioritize this candidate as a standalone refactoring. Keep canvas and pa
 only add a tiny readiness helper if it naturally falls out of another edit and clearly removes repeated null-check
 noise.
 
-### Candidate 6: Normalize Listener Registration And Cleanup (Priority: opportunistic)
+### Candidate 6: Normalize Listener Registration And Cleanup (Status: implemented)
+
+> **Implemented.** A full listener inventory was taken across the four core classes and Lab's direct subclasses. Only
+> one gap was found: the selected-grid-cell listener registered by `AbstractDefaultMainView.registerViewModelListeners()`
+> was an unstored lambda, never removed. It has been extracted into a stored field and is now removed in an overridden
+> `shutdownSimulation()` before delegating to `super.shutdownSimulation()`. All other listeners in scope were already
+> either stored-and-removed or are legitimately scene/instance-lifetime. The steps below are retained as a record of
+> what was done.
+
+Verified current state (context only — no action; re-checked against the code):
+
+- `AbstractMainView.registerOverlayPrimaryClickHandler()` installs a node-owned `setOnMouseReleased` handler on
+  `overlayCanvas`; this is not an `addListener` registration and needs no explicit removal.
+- `AbstractMainView.registerNotificationListener()` adds an unstored lambda listener to
+  `viewModel.notificationTypeProperty()`. This is left in place: the view and its view-model are created and discarded
+  together as one `SimulationInstance` (see `ExtraterrestrialPetsSimulation.switchToSimulation`/
+  `shutdownCurrentSimulation`), and `notificationTypeProperty()` is never mutated from within any `shutdownSimulation()`
+  implementation, so no stale-listener redraw can occur during teardown. Classified as scene/instance-lifetime and
+  intentionally left unstored.
+- `AbstractDefaultMainView.registerViewModelListeners()` previously added an unstored lambda listener to
+  `viewModel.selectedGridCellProperty()`. This was the one real risk: `AbstractMainView.shutdownSimulation()` calls
+  `viewModel.shutdownSimulation()` **before** clearing painters, and `DefaultMainViewModel.shutdownSimulation()` calls
+  `resetSelectedProperties()`, which sets `selectedGridCell` to `null` and would fire the old unstored listener with a
+  still-valid `overlayPainter`, triggering an unnecessary redraw during shutdown. Fixed by storing the listener in a new
+  `@Nullable ChangeListener<@Nullable GC> selectedGridCellListener` field and removing it in an overridden
+  `shutdownSimulation()` before delegating to `super.shutdownSimulation()`.
+- `DefaultMainViewModel` already stores and removes `actionButtonRequestedListener`, `cancelButtonRequestedListener`,
+  `simulationStateListener`, and `lastClickedCoordinateListener` in `shutdownSimulation()`.
+- `LabMainViewModel` already stores and removes `configChangedRequestedListener`, `drawRequestedChangeListener`,
+  `drawModelRequestedChangeListener`, and `drawTestRequestedChangeListener` in `shutdownSimulation()`.
+- `LabMainView.registerOverlayCanvasEvents()` installs node-owned `setOnMouseExited`/`setOnMouseMoved` handlers, which
+  `disableCanvas()` already resets to `null`.
+- `SimulationEditToolBarView` (Candidate 4) already stores and removes its `selectedToolIdListener`.
+
+Files edited (all under `app/src/main/java/`):
+
+- `de/mkalb/etpetssim/simulations/core/view/AbstractDefaultMainView.java`
+
+Validation performed:
+
+- Compiled with `gradlew.bat app:compileJava` (success).
+- Ran `gradlew.bat app:test` (success, no regressions).
 
 Problem:
 
@@ -696,13 +737,15 @@ generic listener registry unless a concrete duplication pattern remains.
 ## Suggested Refactoring Sequence
 
 Recommended candidate order after re-verifying the current code:
-**Candidate 2 (done) -> Candidate 4 (done) -> (Candidate 6 opportunistically) -> optional Candidate 1 / Candidate 5 -> defer Candidate 3.**
+**Candidate 2 (done) -> Candidate 4 (done) -> Candidate 6 (done) -> optional Candidate 1 / Candidate 5 -> defer Candidate 3.**
 
 1. Inventory call sites and subclass relationships for the four core classes plus Lab direct subclasses.
 2. Write a responsibility table before changing code; confirm which methods are common, default-only, and Lab-only.
 3. Candidate 2 (observation binding lifecycle) is implemented.
 4. Candidate 4 (extract the edit-toolbar view mechanics) is implemented.
-5. Fold in Candidate 6 (listener cleanup) where it naturally applies.
+5. Candidate 6 (listener cleanup) is implemented; the one identified gap (`AbstractDefaultMainView`'s selected-grid-cell
+   listener) is fixed, and the remaining listeners in scope are documented as already correct or intentionally
+   scene/instance-lifetime.
 6. Treat Candidate 1 (shared selection) and Candidate 5 (painter readiness helper) as optional, low-priority follow-ups.
 7. Keep Candidate 3 (splitting `DefaultMainViewModel`) deferred unless a concrete lifecycle bug appears.
 8. Add or update focused tests for behavior that changes ownership.
