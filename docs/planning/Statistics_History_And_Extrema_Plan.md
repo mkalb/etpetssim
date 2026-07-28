@@ -599,54 +599,212 @@ this commit. The remaining next steps (2–7) are the working agenda for that br
 
 #### 2. Fix The Non-Finite Guard In `recordStatisticsSample()`
 
-Replace the `IllegalStateException` throw with a warning log and a fallback (skip the sample or substitute `0.0`):
+**Decision (2026-07-28):** Replace the `IllegalStateException` with an `error` log and substitute `Double.NaN` as
+sentinel value. The sample is still recorded so the history time series has no gaps; chart and display code must
+filter or handle `Double.NaN` entries explicitly.
 
-```java
-// instead of throw new IllegalStateException(...)
-AppLogger.warnf("StatisticMetric: non-finite value skipped: key=%s, value=%f", metric.key(), value);
-// then either skip the whole sample or substitute Double.NaN / 0.0 consistently
+**Implementation instructions for an agent:**
+
+In `AbstractTimedSimulationManager.recordStatisticsSample()`, replace the block that throws
+`IllegalStateException` for non-finite values with the following behaviour:
+
+- Call `AppLogger.errorf(...)` with a stable component tag, the metric key, and the actual value.
+- Store `Double.NaN` in the `values` map for that metric key instead of the raw non-finite value.
+- Continue processing the remaining metrics; do not abort the whole sample.
+- All other metrics in the same sample retain their correct values.
+
+Suggested log message pattern (use `AppLogger.errorf`):
+
+```
+"AbstractTimedSimulationManager: non-finite metric value replaced with NaN: key=%s, value=%f"
 ```
 
-Decide on the substitution policy before wiring chart data to history samples.
+No changes to `StatisticSample`, `StatisticHistory`, or `StatisticExtremaTracker` are required. The extrema
+tracker already skips NaN implicitly via `Math.min`/`Math.max` — verify this holds and add a note in the tracker
+if needed; if not, add an explicit `Double.isFinite(value)` guard in `StatisticExtremaTracker.update(...)` before
+calling `merge`.
+
+**Acceptance criteria:**
+
+- A metric extractor returning `NaN` or `Infinity` no longer causes a runtime exception.
+- An `error`-level log entry is emitted for each affected metric key.
+- The affected metric appears in the sample's `values` map with value `Double.NaN`.
+- Other metrics in the same sample are unaffected.
+- `StatisticExtremaTracker` does not update extrema for `NaN` or `Infinity` values.
+- Existing tests still pass; add a unit test in `StatisticExtremaTrackerTest` or a new test that covers the NaN
+  substitution path end-to-end.
 
 #### 3. Add Parity Tests For The Remaining 5 Simulations (Phase 4 Completion)
 
-Add test cases in `TimedStatisticsTrackingTest` (or a new `TimedStatisticsTrackingExtendedTest`) for:
+**Decision (2026-07-28):** New tests go into the existing `TimedStatisticsTrackingTest` class. Metrics with
+`StatisticExtremaMode.NONE` (e.g., `cumulativePetDeathCount`) are not tested for extrema presence — their absence
+from the extrema maps is implicitly covered by the existing infrastructure tests.
 
-- **Etpets**: `activePetCells` and `eggCells` generic min/max
-- **Snake**: `snakeHeadCells`, `livingSnakeHeadCells`, `foodCells` generic min/max
-- **Sugar**: `resourceCells`, `agentCells` generic min/max
-- **Rebounding**: `movingEntityCells` generic min/max
-- **Langton**: `visitedCells` generic max
+**Implementation instructions for an agent:**
 
-These tests are the prerequisite for safely removing hand-maintained typed extrema fields later (Phase 5).
+Add the following test methods to
+`app/src/test/java/de/mkalb/etpetssim/simulations/core/model/TimedStatisticsTrackingTest.java`.
+
+Follow the existing pattern: create a config via a private helper, construct the manager, call
+`executeSteps(20, false, () -> {})`, then compare generic extrema values against typed getter results.
+Use the constant `DOUBLE_DELTA = 1.0e-9d` already defined in the class.
+
+**Etpets** — add `testEtpetsGenericExtremaMatchesTypedMinMax()`:
+
+- Create `EtpetsSimulationManager` using `EtpetsConstraints` defaults (see existing `createConwayConfig()` as
+  reference; import `EtpetsConfig`, `EtpetsConstraints`).
+- Assert `statisticsExtrema().minimumValues().get("activePetCells")` equals `statistics().getMinActivePetCells()`
+  — **note**: check whether `EtpetsStatistics` currently exposes a typed `getMinActivePetCells()` method.
+  If not, the generic extrema value has no typed counterpart to compare against yet; in that case assert only
+  that the key is present in the extrema map and its value is finite.
+- Same for `eggCells`.
+
+**Snake** — add `testSnakeGenericExtremaMatchesTypedMinMax()`:
+
+- Create `SnakeSimulationManager` using `SnakeConstraints` defaults.
+- Assert min/max for `snakeHeadCells`, `livingSnakeHeadCells`, `foodCells` against typed getters if they exist.
+  Apply the same fallback rule as for Etpets: if no typed getter exists yet, assert key presence and finite value.
+- `cumulativeSnakeDeathCount` has mode `NONE` — assert it is absent from both `minimumValues` and `maximumValues`.
+
+**Sugar** — add `testSugarGenericExtremaMatchesTypedMinMax()`:
+
+- Create `SugarSimulationManager` using `SugarConstraints` defaults.
+- Assert min/max for `resourceCells` and `agentCells` against typed getters if they exist.
+
+**Rebounding** — add `testReboundingGenericExtremaMatchesTypedMinMax()`:
+
+- Create `ReboundingSimulationManager` using `ReboundingConstraints` defaults.
+- Assert min/max for `movingEntityCells` against typed getters if they exist.
+- For `wallCells`: assert the key is present and that min equals max (walls are static), regardless of typed getter.
+
+**Langton** — add `testLangtonGenericExtremaMatchesTypedMax()`:
+
+- Create `LangtonSimulationManager` using `LangtonConstraints` defaults.
+- Assert max for `visitedCells` against typed getter if it exists.
+- `antCells` has mode `NONE` — assert it is absent from both extrema maps.
+
+**Config helper pattern** (follow the existing helpers in the test class):
+
+```java
+private static EtpetsConfig createEtpetsConfig() { ... }
+private static SnakeConfig createSnakeConfig() { ... }
+// etc.
+```
+
+**Acceptance criteria:**
+
+- All 5 new test methods pass.
+- Each test verifies at least one `MIN_AND_MAX` metric's generic value against a typed getter or asserts finite
+  presence when no typed getter exists.
+- Each test verifies that metrics with mode `NONE` are absent from both `minimumValues` and `maximumValues`.
+- No existing tests are modified or broken.
 
 #### 4. Revisit `StatisticExtremaMode` For Static Cell Counts
 
-Decide whether `wallCells` in `ReboundingStatistics` and `SnakeStatistics` should use `NONE` or `MAX` instead of
-`MIN_AND_MAX`. Document the decision in the descriptor list comments. Apply the same review to any other metric that
-is monotonic or structurally constant.
+**Decision (2026-07-28):** No code changes required for this step. All three questions were resolved in favor of
+keeping the current configuration:
+
+- `ReboundingStatistics.wallCells` stays `MIN_AND_MAX`. Walls are static, so min and max will permanently equal
+  the initial value. This is accepted as a harmless redundancy.
+- `SnakeStatistics.wallCells` stays `MIN_AND_MAX` for the same reason.
+- `LangtonStatistics.visitedCells` stays `MAX`. The value is monotonically increasing, so tracking the maximum
+  is still useful (it equals the current value). Tracking the minimum would always return the step-0 value and is
+  therefore omitted.
+
+**Documentation note for the agent:** Add a brief inline comment next to the `wallCells` descriptor in
+`ReboundingStatistics.metrics()` and `SnakeStatistics.metrics()` explaining that min==max is expected because wall
+cell counts do not change during execution. This prevents future reviewers from flagging it as a bug.
 
 #### 5. Decide On `labelKey` Placement Policy
 
-Either:
+**Decision (2026-07-28):** The current placement is accepted. Statistics classes may hold private `String` constants
+for `labelKey` values, because `labelKey` is an intrinsic part of the `StatisticMetric` descriptor and belongs near
+the extractor and key that define the same metric. This is a deliberate exception to the general rule that
+localization key constants belong in the consuming View.
 
-- **Accept the current placement** and document that model statistics classes may carry UI label keys for
-  descriptor-backed metrics. Update the simulations instructions accordingly.
-- **Move the key constants to the View or ViewModel layer** by passing them at the call site where `metrics()` is
-  referenced, or by defining a separate descriptor-enrichment step in the View.
+The decision is documented here only; `simulations.instructions.md` is not changed.
 
-This decision must be made before adding more simulations or chart rendering code, to avoid inconsistent patterns.
+**Note for future agents:** When adding new metrics to any statistics class, declare the `labelKey` value as a
+`private static final String` constant at the top of the `metrics()` method's owning class, following the pattern
+established in `WatorStatistics`, `ConwayStatistics`, etc. Do not scatter label key strings as inline literals
+inside `metrics()` calls.
 
-#### 6. Remove `synchronized` From `StatisticHistory` (Optional Cleanup)
+#### 6. Remove `synchronized` From `StatisticHistory`
 
-If the model layer is confirmed to run exclusively on the simulation thread, remove the `synchronized` modifiers from
-`StatisticHistory`. If background threading is planned for batch execution, document the threading contract explicitly
-instead of relying on implicit synchronization.
+**Decision (2026-07-28):** Remove all `synchronized` modifiers from `StatisticHistory`. The model layer runs
+exclusively on the simulation thread; no concurrent access to `StatisticHistory` occurs.
+
+**Implementation instructions for an agent:**
+
+In `StatisticHistory.java`, remove the `synchronized` keyword from all four methods:
+`capacity()`, `size()`, `clear()`, `add(...)`, and `asList()`.
+
+No functional changes; the `ArrayDeque` remains the backing store. No Javadoc additions are required.
+Existing tests in `StatisticHistoryTest` must still pass without modification.
 
 #### 7. Phase 5: Migrate Observation Views Away From Hand-Maintained Extrema
 
-Once parity tests for all simulations pass (step 3 above), the hand-maintained `max...` / `min...` fields in
-`ConwayStatistics`, `ForestStatistics`, and `WatorStatistics` can be removed. Observation views should read extrema
-from `statisticsExtrema()` instead. Implement and validate one simulation at a time before removing typed fields.
+**Decision (2026-07-28):**
+
+- Scope: All 8 timed simulations — remove typed min/max fields from the 3 that have them (Conway, Forest, Wator),
+  and migrate all 8 observation views to read extrema from the generic `statisticsExtrema()`.
+- Observation views are fully migrated to `statisticsExtrema()`; typed extrema getters are removed together with
+  their backing fields.
+- Conway, Forest, and Wator are migrated in one commit; the other 5 observation views (which currently show no
+  extrema) are updated in the same pass if their views already display any min/max row, otherwise they are left
+  for a later UI feature.
+- ViewModel access to extrema: expose `statisticsExtrema()` as a plain accessor method in the ViewModel
+  (e.g., `getStatisticsExtrema()`), mirroring the existing `getStatistics()` pattern. This can be promoted to a
+  reactive `ObservableValue` in a future step if needed.
+
+**Prerequisite:** Step 3 (parity tests for all 5 remaining simulations) must pass before this step begins.
+
+**Implementation instructions for an agent:**
+
+This step has three sub-tasks. Complete them in order.
+
+**Sub-task A — Remove typed extrema fields and getters from Conway, Forest, Wator:**
+
+1. `ConwayStatistics`: remove the `maxAliveCells` field, `initializeStartupCellCounts(int)` update for it, the
+   `updateMaxAliveCells(...)` call site in the step logic, and the `getMaxAliveCells()` getter.
+2. `ForestStatistics`: remove `maxTreeCells`, `maxBurningCells`, their update logic, and `getMaxTreeCells()` /
+   `getMaxBurningCells()` getters.
+3. `WatorStatistics`: remove `minFishCells`, `maxFishCells`, `minSharkCells`, `maxSharkCells`, their update logic,
+   and `getMinFishCells()` / `getMaxFishCells()` / `getMinSharkCells()` / `getMaxSharkCells()` getters.
+4. Fix all compilation errors caused by removed getters (primarily in observation ViewModels and Views).
+
+**Sub-task B — Expose `statisticsExtrema()` in the ViewModel layer:**
+
+For each affected simulation, add a `getStatisticsExtrema()` method to the simulation's ViewModel class
+(e.g., `ConwayViewModel`, `ForestViewModel`, `WatorViewModel`) that delegates to
+`simulationManager.statisticsExtrema()`. Follow the same pattern as the existing `getStatistics()` delegation.
+
+For simulations where the ViewModel uses `DefaultMainViewModel` or `DefaultObservationViewModel`, check whether
+the extrema accessor can be added to the shared base class instead of each simulation's ViewModel.
+
+**Sub-task C — Update observation Views to use generic extrema:**
+
+For each simulation whose observation view currently displays a max or min row (Conway, Forest, Wator):
+
+- Replace calls to `statistics.getMaxAliveCells()` with
+  `viewModel.getStatisticsExtrema().maximumValues().getOrDefault("aliveCells", Double.NaN)`.
+- Use `Double.isFinite(value)` guards before formatting; display a placeholder (e.g., `"—"`) for `NaN`.
+- Apply the same replacement for Forest (treeCells, burningCells max) and Wator (fish/shark min and max).
+- Format the `double` value from extrema as an integer string where appropriate
+  (e.g., `String.valueOf((int) value)` or via an existing formatter).
+
+For the other 5 simulations (Etpets, Snake, Sugar, Rebounding, Langton): no observation view changes are required
+unless those views already show a min/max row. If they do, migrate them by the same pattern.
+
+**Acceptance criteria:**
+
+- `ConwayStatistics`, `ForestStatistics`, `WatorStatistics` no longer contain any typed `min...` / `max...`
+  fields or getters.
+- Observation views for Conway, Forest, and Wator display the same numeric values as before, sourced from
+  `statisticsExtrema()`.
+- Parity tests from Step 3 (`TimedStatisticsTrackingTest`) still pass.
+- No `NullPointerException` or formatting errors when `statisticsExtrema()` returns empty maps (e.g., before
+  step-0 is recorded — verify this cannot happen, since `recordInitialStatisticsSample()` runs in the
+  constructor).
+- All existing tests pass.
 
