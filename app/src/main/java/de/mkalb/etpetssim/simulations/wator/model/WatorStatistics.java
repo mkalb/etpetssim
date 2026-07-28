@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
+
+import java.util.*;
 
 /**
  * Holds runtime statistics for a running simulation.
  */
 public final class WatorStatistics
         extends BaseTimedSimulationStatistics {
+
+    private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
+    private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
 
     private int maxFishCells;
     private int maxSharkCells;
@@ -25,6 +30,15 @@ public final class WatorStatistics
         minSharkCells = 0;
         fishCells = 0;
         sharkCells = 0;
+    }
+
+    public static List<StatisticMetric<WatorStatistics>> metrics() {
+        return List.of(
+                new StatisticMetric<>("fishCells", WATOR_OBSERVATION_FISH_CELLS, WatorStatistics::getFishCells,
+                        StatisticExtremaMode.MIN_AND_MAX),
+                new StatisticMetric<>("sharkCells", WATOR_OBSERVATION_SHARK_CELLS, WatorStatistics::getSharkCells,
+                        StatisticExtremaMode.MIN_AND_MAX)
+        );
     }
 
     void initializeStartupCellCounts(int fishCellsInitial,

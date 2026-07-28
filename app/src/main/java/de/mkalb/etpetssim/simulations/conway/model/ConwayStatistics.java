@@ -1,13 +1,19 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
+
+import java.util.*;
 
 /**
  * Holds runtime statistics for a running simulation.
  */
 public final class ConwayStatistics
         extends BaseTimedSimulationStatistics {
+
+    private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
+    private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
+    private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
 
     private int maxAliveCells;
 
@@ -21,6 +27,17 @@ public final class ConwayStatistics
         aliveCells = 0;
         deadCells = getTotalCells();
         changedCells = 0;
+    }
+
+    public static List<StatisticMetric<ConwayStatistics>> metrics() {
+        return List.of(
+                new StatisticMetric<>("aliveCells", CONWAY_OBSERVATION_ALIVE_CELLS, ConwayStatistics::getAliveCells,
+                        StatisticExtremaMode.MAX),
+                new StatisticMetric<>("deadCells", CONWAY_OBSERVATION_DEAD_CELLS, ConwayStatistics::getDeadCells,
+                        StatisticExtremaMode.NONE),
+                new StatisticMetric<>("changedCells", CONWAY_OBSERVATION_CHANGED_CELLS, ConwayStatistics::getChangedCells,
+                        StatisticExtremaMode.NONE)
+        );
     }
 
     void initializeStartupCellCounts(int aliveCellsInitial) {

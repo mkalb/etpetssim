@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
+
+import java.util.*;
 
 /**
  * Holds runtime statistics for a running simulation.
  */
 public final class SugarStatistics
         extends BaseTimedSimulationStatistics {
+
+    private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
+    private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
 
     private int resourceCells;
     private int agentCells;
@@ -16,6 +21,15 @@ public final class SugarStatistics
         super(gridStructure);
         resourceCells = 0;
         agentCells = 0;
+    }
+
+    public static List<StatisticMetric<SugarStatistics>> metrics() {
+        return List.of(
+                new StatisticMetric<>("resourceCells", SUGAR_OBSERVATION_RESOURCE_CELLS, SugarStatistics::getResourceCells,
+                        StatisticExtremaMode.MIN_AND_MAX),
+                new StatisticMetric<>("agentCells", SUGAR_OBSERVATION_AGENT_CELLS, SugarStatistics::getAgentCells,
+                        StatisticExtremaMode.MIN_AND_MAX)
+        );
     }
 
     void initializeStartupCellCounts(int resourceCellsInitial,

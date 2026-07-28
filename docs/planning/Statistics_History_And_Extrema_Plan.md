@@ -506,3 +506,147 @@ The initial implementation (phases 1 through 4) should satisfy these criteria:
 - Existing hand-maintained min/max fields remain until parity tests justify removing them.
 - Tests cover step-0 sampling, single-step sampling, batch sampling, queue eviction, extrema policy, and parity with at
   least Wator plus one max-only simulation.
+
+---
+
+## Implementation Status (as of 2026-07-28)
+
+An agent implemented phases 1 through 4 without prior explicit approval of this plan. The implementation is
+functionally complete and all tests pass. The sections below document findings from a post-implementation review and
+describe the recommended next steps before building further on this foundation.
+
+### What Was Implemented
+
+**New core types** in `de.mkalb.etpetssim.simulations.core.model`:
+
+- `StatisticExtremaMode`, `StatisticMetric`, `StatisticSample`, `StatisticHistory`, `StatisticExtrema`,
+  `StatisticExtremaTracker`
+
+**New test classes**:
+
+- `StatisticHistoryTest` — capacity eviction and immutable snapshot
+- `StatisticExtremaTrackerTest` — mode policies and duplicate-key rejection
+- `TimedStatisticsTrackingTest` — step-0 recording, batch recording without duplicate final sample, and typed/generic
+  parity tests for Conway, Forest, and Wator
+
+**Modified infrastructure**:
+
+- `SimulationManager`: two default methods `statisticsHistory()` and `statisticsExtrema()` returning empty values
+- `AbstractTimedSimulationManager`: new metrics-aware constructor, `recordStatisticsSample()` after every executed
+  step (single and batch), `recordInitialStatisticsSample()` protected hook
+
+**All 8 timed simulations wired**: Conway, Forest, Wator, Etpets, Snake, Sugar, Rebounding, Langton — each with a
+`metrics()` static factory method and `recordInitialStatisticsSample()` called at the end of the constructor.
+
+### Review Findings
+
+#### 🔴 Risk: `IllegalStateException` For Non-Finite Metric Values
+
+`AbstractTimedSimulationManager.recordStatisticsSample()` throws `IllegalStateException` when a metric extractor
+returns a non-finite value (`NaN`, `Infinity`). This is not in the plan and could cause a runtime crash for any future
+metric that divides by a count that can be zero. A warning log followed by skipping or replacing the value would be
+safer than a hard throw.
+
+#### 🟡 Plan Deviation: Phase 3 Rolled Out To All 8 Simulations At Once
+
+The plan recommended an incremental validation sequence (Wator → Conway → Forest as a first validation set, then the
+remaining simulations). The agent wired all 8 simulations in one step. Parity tests cover only Wator, Conway, and
+Forest; the other 5 simulations (Etpets, Snake, Sugar, Rebounding, Langton) do not yet have parity tests. Phase 4 is
+therefore only partially complete.
+
+#### 🟡 `labelKey` Strings Live In The Model Layer
+
+Each `metrics()` method declares i18n key strings as private constants inside statistics classes (e.g.,
+`"wator.observation.cells.fish"` in `WatorStatistics`). The project instructions say simulation-local localization
+key constants belong in the consuming View, not in the model. The `StatisticMetric.labelKey` field was designed as a
+bridge for future chart labels, so placing the strings here is a deliberate architectural trade-off; future UI work
+must be aware that model classes now carry UI label keys.
+
+#### 🟡 Static Cell Counts Tracked With `MIN_AND_MAX`
+
+`ReboundingStatistics` and `SnakeStatistics` declare `wallCells` with `StatisticExtremaMode.MIN_AND_MAX`. Wall cells
+do not change during execution in either simulation, so min and max will always equal the initial value. This produces
+no wrong results but generates two extrema entries that are permanently equal. Consider `NONE` or `MAX` for static
+counts.
+
+#### 🟢 Correct Handling Of The Duplicate Batch Sample Risk
+
+The post-batch `updateStatistics()` call in `AbstractTimedSimulationManager` does not invoke
+`recordStatisticsSample()`. The test `testExecuteStepsRecordsEveryExecutedStepWithoutDuplicateFinalSample` confirms
+that running 7 steps yields exactly 8 history entries (step-0 plus one per executed step).
+
+#### 🟢 Step-0 Initialization Pattern Is Safe
+
+`recordInitialStatisticsSample()` is called at the end of each concrete manager constructor, after
+`initializeStatistics(...)` has populated simulation-specific counters. This avoids the overridable-method-in-
+constructor anti-pattern and ensures the step-0 sample contains the correct initial cell counts.
+
+#### 🟢 Unnecessary But Harmless Synchronization
+
+`StatisticHistory` methods are all `synchronized`. The model layer runs on the simulation thread and does not require
+thread safety at this level. The overhead is negligible but could be removed in a future cleanup.
+
+### Recommended Next Steps
+
+#### 1. ~~Decide: Accept Or Roll Back The Current State~~ — Decision: Keep ✅
+
+The implementation passes all tests and introduces no breaking changes. The findings above are all correctable
+incrementally. A rollback is only warranted if the architectural decisions (metrics in model layer, all-at-once
+phase 3) are considered unacceptable.
+
+**Decision (2026-07-28):** The current state is accepted. Further work will be done in a dedicated branch on top of
+this commit. The remaining next steps (2–7) are the working agenda for that branch.
+
+#### 2. Fix The Non-Finite Guard In `recordStatisticsSample()`
+
+Replace the `IllegalStateException` throw with a warning log and a fallback (skip the sample or substitute `0.0`):
+
+```java
+// instead of throw new IllegalStateException(...)
+AppLogger.warnf("StatisticMetric: non-finite value skipped: key=%s, value=%f", metric.key(), value);
+// then either skip the whole sample or substitute Double.NaN / 0.0 consistently
+```
+
+Decide on the substitution policy before wiring chart data to history samples.
+
+#### 3. Add Parity Tests For The Remaining 5 Simulations (Phase 4 Completion)
+
+Add test cases in `TimedStatisticsTrackingTest` (or a new `TimedStatisticsTrackingExtendedTest`) for:
+
+- **Etpets**: `activePetCells` and `eggCells` generic min/max
+- **Snake**: `snakeHeadCells`, `livingSnakeHeadCells`, `foodCells` generic min/max
+- **Sugar**: `resourceCells`, `agentCells` generic min/max
+- **Rebounding**: `movingEntityCells` generic min/max
+- **Langton**: `visitedCells` generic max
+
+These tests are the prerequisite for safely removing hand-maintained typed extrema fields later (Phase 5).
+
+#### 4. Revisit `StatisticExtremaMode` For Static Cell Counts
+
+Decide whether `wallCells` in `ReboundingStatistics` and `SnakeStatistics` should use `NONE` or `MAX` instead of
+`MIN_AND_MAX`. Document the decision in the descriptor list comments. Apply the same review to any other metric that
+is monotonic or structurally constant.
+
+#### 5. Decide On `labelKey` Placement Policy
+
+Either:
+
+- **Accept the current placement** and document that model statistics classes may carry UI label keys for
+  descriptor-backed metrics. Update the simulations instructions accordingly.
+- **Move the key constants to the View or ViewModel layer** by passing them at the call site where `metrics()` is
+  referenced, or by defining a separate descriptor-enrichment step in the View.
+
+This decision must be made before adding more simulations or chart rendering code, to avoid inconsistent patterns.
+
+#### 6. Remove `synchronized` From `StatisticHistory` (Optional Cleanup)
+
+If the model layer is confirmed to run exclusively on the simulation thread, remove the `synchronized` modifiers from
+`StatisticHistory`. If background threading is planned for batch execution, document the threading contract explicitly
+instead of relying on implicit synchronization.
+
+#### 7. Phase 5: Migrate Observation Views Away From Hand-Maintained Extrema
+
+Once parity tests for all simulations pass (step 3 above), the hand-maintained `max...` / `min...` fields in
+`ConwayStatistics`, `ForestStatistics`, and `WatorStatistics` can be removed. Observation views should read extrema
+from `statisticsExtrema()` instead. Implement and validate one simulation at a time before removing typed fields.
+

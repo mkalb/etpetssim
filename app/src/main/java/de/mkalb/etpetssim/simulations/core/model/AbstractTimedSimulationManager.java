@@ -4,6 +4,8 @@ import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
+import java.util.*;
+
 /**
  * Base implementation for managers backed by a timed simulation executor.
  *
@@ -25,6 +27,9 @@ public abstract class AbstractTimedSimulationManager<
         implements SimulationManager<ENT, GM, CON, STA> {
 
     private final CON config;
+    private final List<StatisticMetric<STA>> metrics;
+    private final StatisticHistory statisticsHistory;
+    private final StatisticExtremaTracker statisticsExtremaTracker;
 
     /**
      * Initializes the base manager with the given immutable configuration.
@@ -32,7 +37,22 @@ public abstract class AbstractTimedSimulationManager<
      * @param config the immutable simulation configuration
      */
     protected AbstractTimedSimulationManager(CON config) {
+        this(config, List.of());
+    }
+
+    /**
+     * Initializes the base manager with configuration and metric descriptors used for
+     * immutable sample history and generic extrema tracking.
+     *
+     * @param config the immutable simulation configuration
+     * @param metrics metric descriptors sampled after each executed step
+     */
+    protected AbstractTimedSimulationManager(CON config,
+                                             List<StatisticMetric<STA>> metrics) {
         this.config = config;
+        this.metrics = List.copyOf(metrics);
+        statisticsHistory = new StatisticHistory();
+        statisticsExtremaTracker = new StatisticExtremaTracker(metrics);
     }
 
     /**
@@ -58,6 +78,7 @@ public abstract class AbstractTimedSimulationManager<
         var timedExecutor = executor();
         timedExecutor.executeStep();
         updateStatistics();
+        recordStatisticsSample();
         afterStepExecuted();
     }
 
@@ -66,6 +87,7 @@ public abstract class AbstractTimedSimulationManager<
         var timedExecutor = executor();
         var result = timedExecutor.executeSteps(count, checkTermination, () -> {
             updateStatistics();
+            recordStatisticsSample();
             onStep.run();
         });
         // Keep snapshots synchronized even when no per-step callback is triggered.
@@ -116,6 +138,16 @@ public abstract class AbstractTimedSimulationManager<
         return executor().currentModel();
     }
 
+    @Override
+    public final List<StatisticSample> statisticsHistory() {
+        return statisticsHistory.asList();
+    }
+
+    @Override
+    public final StatisticExtrema statisticsExtrema() {
+        return statisticsExtremaTracker.snapshot();
+    }
+
     /**
      * Returns the current step timing statistics from the executor.
      *
@@ -123,6 +155,32 @@ public abstract class AbstractTimedSimulationManager<
      */
     public final StepTimingStatistics stepTimingStatistics() {
         return executor().stepTimingStatistics();
+    }
+
+    /**
+     * Records the initial step-0 sample after simulation-specific startup counters were initialized.
+     *
+     * <p>Subclasses should call this once at the end of their constructor.
+     */
+    protected final void recordInitialStatisticsSample() {
+        updateStatistics();
+        recordStatisticsSample();
+    }
+
+    private void recordStatisticsSample() {
+        STA liveStatistics = statistics();
+        Map<String, Double> values = new LinkedHashMap<>(metrics.size());
+        for (var metric : metrics) {
+            double value = metric.extractor().applyAsDouble(liveStatistics);
+            if (!Double.isFinite(value)) {
+                throw new IllegalStateException("Statistic metric must be finite: key=" + metric.key() + ", value=" + value);
+            }
+            values.put(metric.key(), value);
+        }
+
+        var sample = new StatisticSample(stepCount(), stepTimingStatistics(), values);
+        statisticsHistory.add(sample);
+        statisticsExtremaTracker.update(sample.values());
     }
 
 }

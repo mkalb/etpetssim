@@ -19,7 +19,7 @@ public final class ReboundingSimulationManager
     private final TimedSimulationExecutor<ReboundingEntity, WritableGridModel<ReboundingEntity>> executor;
 
     public ReboundingSimulationManager(ReboundingConfig config) {
-        super(config);
+        super(config, ReboundingStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new ReboundingStatistics(structure);
@@ -34,6 +34,7 @@ public final class ReboundingSimulationManager
         initializeGrid(config, model, random);
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     private void initializeGrid(ReboundingConfig config, WritableGridModel<ReboundingEntity> model, Random random) {

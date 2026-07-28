@@ -16,7 +16,7 @@ public final class EtpetsSimulationManager
     private final TimedSimulationExecutor<EtpetsEntity, EtpetsGridModel> executor;
 
     public EtpetsSimulationManager(EtpetsConfig config) {
-        super(config);
+        super(config, EtpetsStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new EtpetsStatistics(structure);
@@ -39,6 +39,7 @@ public final class EtpetsSimulationManager
         initializePets(model, random, idSequence);
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     private static int computePercentCount(int totalCells, double percentDecimal) {

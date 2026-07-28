@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.rebounding.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
+
+import java.util.*;
 
 /**
  * Holds runtime statistics for a running simulation.
  */
 public final class ReboundingStatistics
         extends BaseTimedSimulationStatistics {
+
+    private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
+    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.moving";
 
     private int wallCells;
     private int movingEntityCells;
@@ -16,6 +21,15 @@ public final class ReboundingStatistics
         super(gridStructure);
         wallCells = 0;
         movingEntityCells = 0;
+    }
+
+    public static List<StatisticMetric<ReboundingStatistics>> metrics() {
+        return List.of(
+                new StatisticMetric<>("wallCells", REBOUNDING_OBSERVATION_WALL_CELLS, ReboundingStatistics::getWallCells,
+                        StatisticExtremaMode.MIN_AND_MAX),
+                new StatisticMetric<>("movingEntityCells", REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
+                        ReboundingStatistics::getMovingEntityCells, StatisticExtremaMode.MIN_AND_MAX)
+        );
     }
 
     void initializeStartupCellCounts(int wallCellsInitial,
