@@ -5,6 +5,8 @@ import de.mkalb.etpetssim.engine.executor.StepExecutionResult;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
+import java.util.*;
+
 /**
  * Defines the core lifecycle and execution contract of a simulation manager.
  *
@@ -39,6 +41,24 @@ public interface SimulationManager<
      * @return simulation statistics
      */
     STA statistics();
+
+    /**
+     * Returns immutable sampled statistics history ordered from oldest to newest.
+     *
+     * @return sampled statistics history
+     */
+    default List<StatisticSample> statisticsHistory() {
+        return List.of();
+    }
+
+    /**
+     * Returns tracked minimum and maximum metric values.
+     *
+     * @return tracked metric extrema
+     */
+    default StatisticExtrema statisticsExtrema() {
+        return StatisticExtrema.empty();
+    }
 
     /**
      * Executes a single simulation step.

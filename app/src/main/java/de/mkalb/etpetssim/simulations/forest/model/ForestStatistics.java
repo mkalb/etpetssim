@@ -1,13 +1,19 @@
 package de.mkalb.etpetssim.simulations.forest.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
+
+import java.util.*;
 
 /**
  * Holds runtime statistics for a running simulation.
  */
 public final class ForestStatistics
         extends BaseTimedSimulationStatistics {
+
+    private static final String FOREST_OBSERVATION_EMPTY_CELLS = "forest.observation.cells.empty";
+    private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
+    private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
 
     private int maxTreeCells;
     private int maxBurningCells;
@@ -23,6 +29,17 @@ public final class ForestStatistics
         burningCells = 0;
         maxTreeCells = 0;
         maxBurningCells = 0;
+    }
+
+    public static List<StatisticMetric<ForestStatistics>> metrics() {
+        return List.of(
+                new StatisticMetric<>("emptyCells", FOREST_OBSERVATION_EMPTY_CELLS, ForestStatistics::getEmptyCells,
+                        StatisticExtremaMode.NONE),
+                new StatisticMetric<>("treeCells", FOREST_OBSERVATION_TREE_CELLS, ForestStatistics::getTreeCells,
+                        StatisticExtremaMode.MAX),
+                new StatisticMetric<>("burningCells", FOREST_OBSERVATION_BURNING_CELLS, ForestStatistics::getBurningCells,
+                        StatisticExtremaMode.MAX)
+        );
     }
 
     void initializeStartupCellCounts(int treeCellsInitial) {

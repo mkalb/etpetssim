@@ -18,7 +18,7 @@ public final class ConwaySimulationManager
     private final TimedSimulationExecutor<ConwayEntity, WritableGridModel<ConwayEntity>> executor;
 
     public ConwaySimulationManager(ConwayConfig config) {
-        super(config);
+        super(config, ConwayStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new ConwayStatistics(structure);
@@ -32,6 +32,7 @@ public final class ConwaySimulationManager
         initializeGrid(config, model, random);
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     private void initializeGrid(ConwayConfig config, WritableGridModel<ConwayEntity> model, Random random) {

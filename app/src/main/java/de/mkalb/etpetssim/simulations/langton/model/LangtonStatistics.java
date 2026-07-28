@@ -1,13 +1,18 @@
 package de.mkalb.etpetssim.simulations.langton.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
+
+import java.util.*;
 
 /**
  * Holds runtime statistics for a running simulation.
  */
 public final class LangtonStatistics
         extends BaseTimedSimulationStatistics {
+
+    private static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
+    private static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
 
     private int antCells;
     private int visitedCells;
@@ -16,6 +21,15 @@ public final class LangtonStatistics
         super(gridStructure);
         antCells = 0;
         visitedCells = 0;
+    }
+
+    public static List<StatisticMetric<LangtonStatistics>> metrics() {
+        return List.of(
+                new StatisticMetric<>("antCells", LANGTON_OBSERVATION_ANT_CELLS, LangtonStatistics::getAntCells,
+                        StatisticExtremaMode.NONE),
+                new StatisticMetric<>("visitedCells", LANGTON_OBSERVATION_VISITED_CELLS, LangtonStatistics::getVisitedCells,
+                        StatisticExtremaMode.MAX)
+        );
     }
 
     void initializeStartupCellCounts(int antCellsInitial) {
