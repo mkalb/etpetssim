@@ -87,7 +87,8 @@ These were established during the initial implementation and must remain intact 
 - The step-0 sample is recorded via `recordInitialStatisticsSample()` at the end of each concrete manager constructor,
   after simulation-specific counters are initialized.
 - `StatisticExtremaTracker` stays `synchronized` (`update()` on the batch thread, `snapshot()` on the FX thread); do not
-  remove it. This is distinct from Step 4, which concerns `StatisticHistory`.
+  remove it.
+- `StatisticHistory` stays `synchronized` (`add()` on the batch thread, `asList()` on the FX thread); do not remove it.
 - Non-finite metric values are logged and stored as the `Double.NaN` sentinel and skipped by the extrema tracker; the
   history time series stays gap-free.
 
@@ -119,7 +120,12 @@ the generic values equal the previous behavior; a regression in an extractor or 
    capture the expected exact `int` extrema.
 2. Assert exact equality against the generic `StatisticExtrema` values, covering both the single-step and batch paths.
 
-### Step 4 — Align `StatisticHistory` Threading Contract
+**Step 4 (2026-08-08):** `StatisticHistory` threading contract aligned with `StatisticExtremaTracker`. `add()`,
+`asList()`, and `clear()` are now `synchronized`, preventing a `ConcurrentModificationException` from `List.copyOf()`
+when a future FX-thread consumer reads `statisticsHistory()` while a background batch thread calls `add()`. The
+Javadoc on `StatisticHistory` documents the thread-safety guarantee.
+
+### Step 4 — Align `StatisticHistory` Threading Contract ✓ DONE
 
 > **Type:** Refactor/Bug · **Priority:** Medium (High before Step 7) · **Effort:** S · **Risk:** Low · **Depends on:** —
 

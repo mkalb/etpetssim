@@ -4,6 +4,10 @@ import java.util.*;
 
 /**
  * Bounded in-memory history of statistic samples.
+ *
+ * <p>Thread-safe: {@code add()}, {@code asList()}, and {@code clear()} are {@code synchronized}
+ * so that a JavaFX-thread consumer reading {@code asList()} does not race with a background
+ * thread calling {@code add()}.
  */
 public final class StatisticHistory {
 
@@ -32,18 +36,18 @@ public final class StatisticHistory {
         return samples.size();
     }
 
-    public void clear() {
+    public synchronized void clear() {
         samples.clear();
     }
 
-    public void add(StatisticSample sample) {
+    public synchronized void add(StatisticSample sample) {
         if (samples.size() == capacity) {
             samples.removeFirst();
         }
         samples.addLast(sample);
     }
 
-    public List<StatisticSample> asList() {
+    public synchronized List<StatisticSample> asList() {
         return List.copyOf(samples);
     }
 
