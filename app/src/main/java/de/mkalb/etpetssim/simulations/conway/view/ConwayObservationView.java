@@ -86,13 +86,18 @@ public final class ConwayObservationView
             setFormattedIntegerValue(aliveCellsLabel, current.getAliveCells());
             setFormattedIntegerValue(deadCellsLabel, current.getDeadCells());
             setFormattedIntegerValue(changedCellsLabel, current.getChangedCells());
-            setFormattedIntegerValue(maxAliveCellsLabel, current.getMaxAliveCells());
         } else {
             setUnknownValues(
                     aliveCellsLabel,
                     deadCellsLabel,
-                    changedCellsLabel,
-                    maxAliveCellsLabel);
+                    changedCellsLabel);
+        }
+
+        double maxAlive = viewModel.getStatisticsExtrema().maximumValues().getOrDefault("aliveCells", Double.NaN);
+        if (Double.isFinite(maxAlive)) {
+            setFormattedIntegerValue(maxAliveCellsLabel, (int) maxAlive);
+        } else {
+            setUnknownValues(maxAliveCellsLabel);
         }
     }
 

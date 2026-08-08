@@ -15,9 +15,6 @@ public final class ForestStatistics
     private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
     private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
 
-    private int maxTreeCells;
-    private int maxBurningCells;
-
     private int emptyCells;
     private int treeCells;
     private int burningCells;
@@ -27,8 +24,6 @@ public final class ForestStatistics
         emptyCells = getTotalCells();
         treeCells = 0;
         burningCells = 0;
-        maxTreeCells = 0;
-        maxBurningCells = 0;
     }
 
     public static List<StatisticMetric<ForestStatistics>> metrics() {
@@ -43,7 +38,6 @@ public final class ForestStatistics
     }
 
     void initializeStartupCellCounts(int treeCellsInitial) {
-        maxTreeCells = treeCellsInitial;
         emptyCells = getTotalCells() - treeCellsInitial;
         treeCells = treeCellsInitial;
     }
@@ -52,16 +46,6 @@ public final class ForestStatistics
         emptyCells = getTotalCells() - newTreeCells - newBurningCells;
         treeCells = newTreeCells;
         burningCells = newBurningCells;
-        maxTreeCells = Math.max(newTreeCells, maxTreeCells);
-        maxBurningCells = Math.max(newBurningCells, maxBurningCells);
-    }
-
-    public int getMaxTreeCells() {
-        return maxTreeCells;
-    }
-
-    public int getMaxBurningCells() {
-        return maxBurningCells;
     }
 
     public int getEmptyCells() {
@@ -80,8 +64,6 @@ public final class ForestStatistics
     public String toString() {
         return "ForestStatistics{" +
                 baseToString() +
-                ", maxTreeCells=" + maxTreeCells +
-                ", maxBurningCells=" + maxBurningCells +
                 ", emptyCells=" + emptyCells +
                 ", treeCells=" + treeCells +
                 ", burningCells=" + burningCells +

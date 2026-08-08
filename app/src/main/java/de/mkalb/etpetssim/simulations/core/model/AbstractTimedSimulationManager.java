@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
+import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
@@ -44,7 +45,7 @@ public abstract class AbstractTimedSimulationManager<
      * Initializes the base manager with configuration and metric descriptors used for
      * immutable sample history and generic extrema tracking.
      *
-     * @param config the immutable simulation configuration
+     * @param config  the immutable simulation configuration
      * @param metrics metric descriptors sampled after each executed step
      */
     protected AbstractTimedSimulationManager(CON config,
@@ -91,6 +92,9 @@ public abstract class AbstractTimedSimulationManager<
             onStep.run();
         });
         // Keep snapshots synchronized even when no per-step callback is triggered.
+        // recordStatisticsSample() is intentionally NOT called here: every executed step has
+        // already been sampled inside the per-step callback above. Calling it again would
+        // create a duplicate sample for the final batch step at the same stepCount.
         updateStatistics();
         afterStepsExecuted(result);
         return result;
@@ -173,7 +177,9 @@ public abstract class AbstractTimedSimulationManager<
         for (var metric : metrics) {
             double value = metric.extractor().applyAsDouble(liveStatistics);
             if (!Double.isFinite(value)) {
-                throw new IllegalStateException("Statistic metric must be finite: key=" + metric.key() + ", value=" + value);
+                AppLogger.errorf("AbstractTimedSimulationManager: non-finite metric value replaced with NaN: key=%s, value=%f",
+                        metric.key(), value);
+                value = Double.NaN;
             }
             values.put(metric.key(), value);
         }

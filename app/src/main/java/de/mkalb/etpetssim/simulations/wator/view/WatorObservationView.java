@@ -116,18 +116,36 @@ public final class WatorObservationView
             var current = statistics.get();
             setFormattedIntegerValue(fishCellsLabel, current.getFishCells());
             setFormattedIntegerValue(sharkCellsLabel, current.getSharkCells());
-            setFormattedIntegerValue(minFishCellsLabel, current.getMinFishCells());
-            setFormattedIntegerValue(maxFishCellsLabel, current.getMaxFishCells());
-            setFormattedIntegerValue(minSharkCellsLabel, current.getMinSharkCells());
-            setFormattedIntegerValue(maxSharkCellsLabel, current.getMaxSharkCells());
         } else {
             setUnknownValues(
                     fishCellsLabel,
-                    sharkCellsLabel,
-                    minFishCellsLabel,
-                    maxFishCellsLabel,
-                    minSharkCellsLabel,
-                    maxSharkCellsLabel);
+                    sharkCellsLabel);
+        }
+
+        var extrema = viewModel.getStatisticsExtrema();
+        double minFish = extrema.minimumValues().getOrDefault("fishCells", Double.NaN);
+        double maxFish = extrema.maximumValues().getOrDefault("fishCells", Double.NaN);
+        double minShark = extrema.minimumValues().getOrDefault("sharkCells", Double.NaN);
+        double maxShark = extrema.maximumValues().getOrDefault("sharkCells", Double.NaN);
+        if (Double.isFinite(minFish)) {
+            setFormattedIntegerValue(minFishCellsLabel, (int) minFish);
+        } else {
+            setUnknownValues(minFishCellsLabel);
+        }
+        if (Double.isFinite(maxFish)) {
+            setFormattedIntegerValue(maxFishCellsLabel, (int) maxFish);
+        } else {
+            setUnknownValues(maxFishCellsLabel);
+        }
+        if (Double.isFinite(minShark)) {
+            setFormattedIntegerValue(minSharkCellsLabel, (int) minShark);
+        } else {
+            setUnknownValues(minSharkCellsLabel);
+        }
+        if (Double.isFinite(maxShark)) {
+            setFormattedIntegerValue(maxSharkCellsLabel, (int) maxShark);
+        } else {
+            setUnknownValues(maxSharkCellsLabel);
         }
     }
 

@@ -3,10 +3,11 @@ package de.mkalb.etpetssim.simulations.core.model;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("MagicNumber")
 final class StatisticHistoryTest {
 
     @Test

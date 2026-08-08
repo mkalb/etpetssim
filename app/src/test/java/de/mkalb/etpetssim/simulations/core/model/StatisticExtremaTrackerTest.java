@@ -6,6 +6,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("MagicNumber")
 final class StatisticExtremaTrackerTest {
 
     @Test
@@ -39,6 +40,56 @@ final class StatisticExtremaTrackerTest {
                 new StatisticMetric<>("dup", "k1", _ -> 1.0d, StatisticExtremaMode.NONE),
                 new StatisticMetric<>("dup", "k2", _ -> 2.0d, StatisticExtremaMode.MAX)
         )));
+    }
+
+    @Test
+    void testUpdateSkipsNaNValues() {
+        StatisticExtremaTracker tracker = new StatisticExtremaTracker(List.of(
+                new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
+        ));
+
+        // First update with a valid value to establish an extremum.
+        tracker.update(Map.of("count", 5.0d));
+        // Second update with NaN should be skipped; extrema should remain unchanged.
+        tracker.update(Map.of("count", Double.NaN));
+
+        var extrema = tracker.snapshot();
+        assertAll(
+                () -> assertEquals(5.0d, extrema.minimumValues().get("count")),
+                () -> assertEquals(5.0d, extrema.maximumValues().get("count"))
+        );
+    }
+
+    @Test
+    void testUpdateSkipsPositiveInfinityValues() {
+        StatisticExtremaTracker tracker = new StatisticExtremaTracker(List.of(
+                new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
+        ));
+
+        tracker.update(Map.of("count", 3.0d));
+        tracker.update(Map.of("count", Double.POSITIVE_INFINITY));
+
+        var extrema = tracker.snapshot();
+        assertAll(
+                () -> assertEquals(3.0d, extrema.minimumValues().get("count")),
+                () -> assertEquals(3.0d, extrema.maximumValues().get("count"))
+        );
+    }
+
+    @Test
+    void testUpdateSkipsNegativeInfinityValues() {
+        StatisticExtremaTracker tracker = new StatisticExtremaTracker(List.of(
+                new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
+        ));
+
+        tracker.update(Map.of("count", 7.0d));
+        tracker.update(Map.of("count", Double.NEGATIVE_INFINITY));
+
+        var extrema = tracker.snapshot();
+        assertAll(
+                () -> assertEquals(7.0d, extrema.minimumValues().get("count")),
+                () -> assertEquals(7.0d, extrema.maximumValues().get("count"))
+        );
     }
 
 }

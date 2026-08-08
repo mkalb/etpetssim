@@ -85,14 +85,24 @@ public final class ForestObservationView
             var current = statistics.get();
             setFormattedIntegerValue(treeCellsLabel, current.getTreeCells());
             setFormattedIntegerValue(burningCellsLabel, current.getBurningCells());
-            setFormattedIntegerValue(maxTreeCellsLabel, current.getMaxTreeCells());
-            setFormattedIntegerValue(maxBurningCellsLabel, current.getMaxBurningCells());
         } else {
             setUnknownValues(
                     treeCellsLabel,
-                    burningCellsLabel,
-                    maxTreeCellsLabel,
-                    maxBurningCellsLabel);
+                    burningCellsLabel);
+        }
+
+        var extrema = viewModel.getStatisticsExtrema();
+        double maxTree = extrema.maximumValues().getOrDefault("treeCells", Double.NaN);
+        double maxBurning = extrema.maximumValues().getOrDefault("burningCells", Double.NaN);
+        if (Double.isFinite(maxTree)) {
+            setFormattedIntegerValue(maxTreeCellsLabel, (int) maxTree);
+        } else {
+            setUnknownValues(maxTreeCellsLabel);
+        }
+        if (Double.isFinite(maxBurning)) {
+            setFormattedIntegerValue(maxBurningCellsLabel, (int) maxBurning);
+        } else {
+            setUnknownValues(maxBurningCellsLabel);
         }
     }
 
