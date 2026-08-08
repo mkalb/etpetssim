@@ -357,5 +357,86 @@ final class TimedStatisticsTrackingTest {
         );
     }
 
+    // --- Golden-value regression tests ---
+    // Expected values captured with seed=1, 20 steps, default constraints.
+    // Both the batch path (executeSteps(20)) and the single-step path
+    // (executeSteps(1) x20) must produce identical extrema.
+
+    @Test
+    void testConwayGoldenExtremaExactValues() {
+        ConwaySimulationManager batch = new ConwaySimulationManager(createConwayConfig());
+        batch.executeSteps(20, false, () -> {
+        });
+
+        ConwaySimulationManager singleStep = new ConwaySimulationManager(createConwayConfig());
+        for (int i = 0; i < 20; i++) {
+            singleStep.executeSteps(1, false, () -> {
+            });
+        }
+
+        assertAll(
+                () -> assertEquals(6945, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).intValue(),
+                        "batch: maxAliveCells"),
+                () -> assertEquals(6945, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).intValue(),
+                        "singleStep: maxAliveCells")
+        );
+    }
+
+    @Test
+    void testForestGoldenExtremaExactValues() {
+        ForestSimulationManager batch = new ForestSimulationManager(createForestConfig());
+        batch.executeSteps(20, false, () -> {
+        });
+
+        ForestSimulationManager singleStep = new ForestSimulationManager(createForestConfig());
+        for (int i = 0; i < 20; i++) {
+            singleStep.executeSteps(1, false, () -> {
+            });
+        }
+
+        assertAll(
+                () -> assertEquals(1037, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).intValue(),
+                        "batch: maxTreeCells"),
+                () -> assertEquals(17, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).intValue(),
+                        "batch: maxBurningCells"),
+                () -> assertEquals(1037, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).intValue(),
+                        "singleStep: maxTreeCells"),
+                () -> assertEquals(17, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).intValue(),
+                        "singleStep: maxBurningCells")
+        );
+    }
+
+    @Test
+    void testWatorGoldenExtremaExactValues() {
+        WatorSimulationManager batch = new WatorSimulationManager(createWatorConfig());
+        batch.executeSteps(20, false, () -> {
+        });
+
+        WatorSimulationManager singleStep = new WatorSimulationManager(createWatorConfig());
+        for (int i = 0; i < 20; i++) {
+            singleStep.executeSteps(1, false, () -> {
+            });
+        }
+
+        assertAll(
+                () -> assertEquals(1900, batch.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue(),
+                        "batch: minFishCells"),
+                () -> assertEquals(6127, batch.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue(),
+                        "batch: maxFishCells"),
+                () -> assertEquals(1000, batch.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue(),
+                        "batch: minSharkCells"),
+                () -> assertEquals(3002, batch.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue(),
+                        "batch: maxSharkCells"),
+                () -> assertEquals(1900, singleStep.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue(),
+                        "singleStep: minFishCells"),
+                () -> assertEquals(6127, singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue(),
+                        "singleStep: maxFishCells"),
+                () -> assertEquals(1000, singleStep.statisticsExtrema().minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue(),
+                        "singleStep: minSharkCells"),
+                () -> assertEquals(3002, singleStep.statisticsExtrema().maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue(),
+                        "singleStep: maxSharkCells")
+        );
+    }
+
 }
 
