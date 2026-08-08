@@ -29,7 +29,7 @@ public final class ReboundingStatistics
     public static List<StatisticMetric<ReboundingStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_WALL_CELLS, ReboundingStatistics::getWallCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
+                        StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
                         ReboundingStatistics::getMovingEntityCells, StatisticExtremaMode.MIN_AND_MAX)
         );
