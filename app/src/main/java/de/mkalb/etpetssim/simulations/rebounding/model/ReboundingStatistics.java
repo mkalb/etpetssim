@@ -12,7 +12,7 @@ public final class ReboundingStatistics
         extends BaseTimedSimulationStatistics {
 
     private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
-    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.moving";
+    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
 
     private int wallCells;
     private int movingEntityCells;
