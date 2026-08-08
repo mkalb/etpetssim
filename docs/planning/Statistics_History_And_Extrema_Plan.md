@@ -93,7 +93,19 @@ These were established during the initial implementation and must remain intact 
 
 
 
-### Step 3 — Restore Extrema Regression Coverage (Golden Values)
+**Step 3 (2026-08-08):** Extrema golden-value regression coverage was restored for Conway, Forest, and Wator.
+Three new tests (`testConwayGoldenExtremaExactValues`, `testForestGoldenExtremaExactValues`,
+`testWatorGoldenExtremaExactValues`) were added to `TimedStatisticsTrackingTest`. Each test asserts exact `int`
+extrema against values captured with seed `1L` and 20 steps using default constraints, and verifies that the batch
+path (`executeSteps(20)`) and the single-step path (`executeSteps(1)` × 20) produce identical results. The companion
+`ExtremaGoldenValueAnalyzer` utility was added to re-capture values if simulation logic changes.
+
+Golden values (seed=1, 20 steps, default constraints):
+- Conway: `maxAliveCells` = 6945
+- Forest: `maxTreeCells` = 1037, `maxBurningCells` = 17
+- Wator: `minFishCells` = 1900, `maxFishCells` = 6127, `minSharkCells` = 1000, `maxSharkCells` = 3002
+
+### Step 3 — Restore Extrema Regression Coverage (Golden Values) ✓ DONE
 
 > **Type:** Test · **Priority:** Medium · **Effort:** M · **Risk:** Low · **Depends on:** —
 
