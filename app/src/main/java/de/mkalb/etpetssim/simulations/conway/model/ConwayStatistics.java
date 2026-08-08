@@ -11,6 +11,10 @@ import java.util.*;
 public final class ConwayStatistics
         extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_ALIVE_CELLS = "aliveCells";
+    public static final String KEY_DEAD_CELLS = "deadCells";
+    public static final String KEY_CHANGED_CELLS = "changedCells";
+
     private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
     private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
     private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
@@ -28,11 +32,11 @@ public final class ConwayStatistics
 
     public static List<StatisticMetric<ConwayStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("aliveCells", CONWAY_OBSERVATION_ALIVE_CELLS, ConwayStatistics::getAliveCells,
+                new StatisticMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS, ConwayStatistics::getAliveCells,
                         StatisticExtremaMode.MAX),
-                new StatisticMetric<>("deadCells", CONWAY_OBSERVATION_DEAD_CELLS, ConwayStatistics::getDeadCells,
+                new StatisticMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS, ConwayStatistics::getDeadCells,
                         StatisticExtremaMode.NONE),
-                new StatisticMetric<>("changedCells", CONWAY_OBSERVATION_CHANGED_CELLS, ConwayStatistics::getChangedCells,
+                new StatisticMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CHANGED_CELLS, ConwayStatistics::getChangedCells,
                         StatisticExtremaMode.NONE)
         );
     }

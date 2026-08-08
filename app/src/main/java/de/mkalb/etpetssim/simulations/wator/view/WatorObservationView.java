@@ -123,10 +123,10 @@ public final class WatorObservationView
         }
 
         var extrema = viewModel.getStatisticsExtrema();
-        double minFish = extrema.minimumValues().getOrDefault("fishCells", Double.NaN);
-        double maxFish = extrema.maximumValues().getOrDefault("fishCells", Double.NaN);
-        double minShark = extrema.minimumValues().getOrDefault("sharkCells", Double.NaN);
-        double maxShark = extrema.maximumValues().getOrDefault("sharkCells", Double.NaN);
+        double minFish = extrema.minimumValues().getOrDefault(WatorStatistics.KEY_FISH_CELLS, Double.NaN);
+        double maxFish = extrema.maximumValues().getOrDefault(WatorStatistics.KEY_FISH_CELLS, Double.NaN);
+        double minShark = extrema.minimumValues().getOrDefault(WatorStatistics.KEY_SHARK_CELLS, Double.NaN);
+        double maxShark = extrema.maximumValues().getOrDefault(WatorStatistics.KEY_SHARK_CELLS, Double.NaN);
         if (Double.isFinite(minFish)) {
             setFormattedIntegerValue(minFishCellsLabel, (int) minFish);
         } else {

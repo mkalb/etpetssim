@@ -11,6 +11,9 @@ import java.util.*;
 public final class SugarStatistics
         extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_RESOURCE_CELLS = "resourceCells";
+    public static final String KEY_AGENT_CELLS = "agentCells";
+
     private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
     private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
 
@@ -25,9 +28,9 @@ public final class SugarStatistics
 
     public static List<StatisticMetric<SugarStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("resourceCells", SUGAR_OBSERVATION_RESOURCE_CELLS, SugarStatistics::getResourceCells,
+                new StatisticMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_RESOURCE_CELLS, SugarStatistics::getResourceCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("agentCells", SUGAR_OBSERVATION_AGENT_CELLS, SugarStatistics::getAgentCells,
+                new StatisticMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_AGENT_CELLS, SugarStatistics::getAgentCells,
                         StatisticExtremaMode.MIN_AND_MAX)
         );
     }

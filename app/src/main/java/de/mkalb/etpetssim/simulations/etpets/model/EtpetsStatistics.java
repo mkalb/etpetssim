@@ -10,6 +10,10 @@ import java.util.*;
  */
 public final class EtpetsStatistics extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_ACTIVE_PET_CELLS = "activePetCells";
+    public static final String KEY_EGG_CELLS = "eggCells";
+    public static final String KEY_CUMULATIVE_PET_DEATH_COUNT = "cumulativePetDeathCount";
+
     private static final String ETPETS_OBSERVATION_ACTIVE_PET_CELLS = "etpets.observation.cells.activepets";
     private static final String ETPETS_OBSERVATION_EGG_CELLS = "etpets.observation.cells.eggs";
     private static final String ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT = "etpets.observation.cumulativepetdeathcount";
@@ -28,11 +32,11 @@ public final class EtpetsStatistics extends BaseTimedSimulationStatistics {
 
     public static List<StatisticMetric<EtpetsStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("activePetCells", ETPETS_OBSERVATION_ACTIVE_PET_CELLS, EtpetsStatistics::getActivePetCells,
+                new StatisticMetric<>(KEY_ACTIVE_PET_CELLS, ETPETS_OBSERVATION_ACTIVE_PET_CELLS, EtpetsStatistics::getActivePetCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("eggCells", ETPETS_OBSERVATION_EGG_CELLS, EtpetsStatistics::getEggCells,
+                new StatisticMetric<>(KEY_EGG_CELLS, ETPETS_OBSERVATION_EGG_CELLS, EtpetsStatistics::getEggCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("cumulativePetDeathCount", ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT,
+                new StatisticMetric<>(KEY_CUMULATIVE_PET_DEATH_COUNT, ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT,
                         EtpetsStatistics::getCumulativePetDeathCount, StatisticExtremaMode.NONE)
         );
     }

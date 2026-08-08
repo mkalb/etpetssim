@@ -11,6 +11,9 @@ import java.util.*;
 public final class WatorStatistics
         extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_FISH_CELLS = "fishCells";
+    public static final String KEY_SHARK_CELLS = "sharkCells";
+
     private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
 
@@ -25,9 +28,9 @@ public final class WatorStatistics
 
     public static List<StatisticMetric<WatorStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("fishCells", WATOR_OBSERVATION_FISH_CELLS, WatorStatistics::getFishCells,
+                new StatisticMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS, WatorStatistics::getFishCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("sharkCells", WATOR_OBSERVATION_SHARK_CELLS, WatorStatistics::getSharkCells,
+                new StatisticMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS, WatorStatistics::getSharkCells,
                         StatisticExtremaMode.MIN_AND_MAX)
         );
     }
