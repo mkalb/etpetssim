@@ -35,6 +35,9 @@ final class StatisticExtremaTracker {
                 continue;
             }
             double value = entry.getValue();
+            if (!Double.isFinite(value)) {
+                continue;
+            }
             if ((mode == StatisticExtremaMode.MIN) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
                 minimumValues.merge(key, value, Math::min);
             }

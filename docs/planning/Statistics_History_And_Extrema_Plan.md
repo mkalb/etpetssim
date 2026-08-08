@@ -152,7 +152,9 @@ Recommended candidate type:
 
 ```java
 public final class StatisticHistory {
+
     public static final int DEFAULT_CAPACITY = 100;
+
 }
 ```
 
@@ -309,8 +311,8 @@ Recommended new responsibilities:
 Possible constructor direction:
 
 ```java
-protected AbstractTimedSimulationManager(CON config,
-                                         List<StatisticMetric<STA>> metrics) {
+private AbstractTimedSimulationManager(CON config,
+                                       List<StatisticMetric<STA>> metrics) {
 }
 ```
 
@@ -425,7 +427,8 @@ Do not remove these fields in the first implementation phase.
 
 Future agents should answer these with code references before editing Java:
 
-1. Should tracking APIs live only on `AbstractTimedSimulationManager`, or should `SimulationManager` expose default empty
+1. Should tracking APIs live only on `AbstractTimedSimulationManager`, or should `SimulationManager` expose default
+   empty
    history/extrema methods for all managers?
 2. Where should each simulation's descriptor list live so it stays close to the counters but does not clutter mutable
    statistics classes?
@@ -463,7 +466,8 @@ Record inside the per-step callback managed by `AbstractTimedSimulationManager`.
 
 Risk:
 
-The existing post-batch `updateStatistics()` call may create a duplicate sample for the final step if sample recording is
+The existing post-batch `updateStatistics()` call may create a duplicate sample for the final step if sample recording
+is
 naively attached to every statistics update.
 
 Mitigation:
@@ -597,11 +601,21 @@ phase 3) are considered unacceptable.
 **Decision (2026-07-28):** The current state is accepted. Further work will be done in a dedicated branch on top of
 this commit. The remaining next steps (2–7) are the working agenda for that branch.
 
-#### 2. Fix The Non-Finite Guard In `recordStatisticsSample()`
+#### 2. Fix The Non-Finite Guard In `recordStatisticsSample()` ✅
 
 **Decision (2026-07-28):** Replace the `IllegalStateException` with an `error` log and substitute `Double.NaN` as
 sentinel value. The sample is still recorded so the history time series has no gaps; chart and display code must
 filter or handle `Double.NaN` entries explicitly.
+
+**Implemented (2026-08-08):**
+
+- `AbstractTimedSimulationManager.recordStatisticsSample()`: replaced `IllegalStateException` with
+  `AppLogger.errorf(...)` and `Double.NaN` substitution; processing continues for remaining metrics.
+- `StatisticExtremaTracker.update(...)`: added explicit `!Double.isFinite(value)` guard with `continue` before
+  calling `merge`, preventing NaN/Infinity from corrupting min/max maps.
+- `StatisticExtremaTrackerTest`: added three new tests — `testUpdateSkipsNaNValues`,
+  `testUpdateSkipsPositiveInfinityValues`, `testUpdateSkipsNegativeInfinityValues`.
+- All existing tests pass.
 
 **Implementation instructions for an agent:**
 
@@ -634,7 +648,7 @@ calling `merge`.
 - Existing tests still pass; add a unit test in `StatisticExtremaTrackerTest` or a new test that covers the NaN
   substitution path end-to-end.
 
-#### 3. Add Parity Tests For The Remaining 5 Simulations (Phase 4 Completion)
+#### 3. Add Parity Tests For The Remaining 5 Simulations (Phase 4 Completion) ✅
 
 **Decision (2026-07-28):** New tests go into the existing `TimedStatisticsTrackingTest` class. Metrics with
 `StatisticExtremaMode.NONE` (e.g., `cumulativePetDeathCount`) are not tested for extrema presence — their absence
@@ -686,8 +700,9 @@ Use the constant `DOUBLE_DELTA = 1.0e-9d` already defined in the class.
 **Config helper pattern** (follow the existing helpers in the test class):
 
 ```java
-private static EtpetsConfig createEtpetsConfig() { ... }
-private static SnakeConfig createSnakeConfig() { ... }
+private static EtpetsConfig createEtpetsConfig() { ...}
+
+private static SnakeConfig createSnakeConfig() { ...}
 // etc.
 ```
 
@@ -699,7 +714,19 @@ private static SnakeConfig createSnakeConfig() { ... }
 - Each test verifies that metrics with mode `NONE` are absent from both `minimumValues` and `maximumValues`.
 - No existing tests are modified or broken.
 
-#### 4. Revisit `StatisticExtremaMode` For Static Cell Counts
+**Implemented (2026-08-08):**
+
+Added five test methods to `TimedStatisticsTrackingTest`:
+`testEtpetsGenericExtremaPresenceAndNoneAbsence`, `testSnakeGenericExtremaPresenceAndNoneAbsence`,
+`testSugarGenericExtremaPresence`, `testReboundingGenericExtremaPresenceAndStaticWalls`,
+`testLangtonGenericMaxPresenceAndNoneAbsence`. Config helper methods for all 5 simulations were also added.
+
+**Correction to plan:** The plan stated that `ReboundingStatistics.wallCells` and `SnakeStatistics.wallCells` are
+static (min==max always). In practice, both statistics classes expose mutation methods (`increaseWallCells`,
+`decreaseWallCells`, `adjustWallCells`), so walls can change during execution. The tests for those metrics assert
+key presence and finite value rather than min==max equality. All 10 tests in `TimedStatisticsTrackingTest` pass.
+
+#### 4. Revisit `StatisticExtremaMode` For Static Cell Counts ✅
 
 **Decision (2026-07-28):** No code changes required for this step. All three questions were resolved in favor of
 keeping the current configuration:
@@ -715,7 +742,12 @@ keeping the current configuration:
 `ReboundingStatistics.metrics()` and `SnakeStatistics.metrics()` explaining that min==max is expected because wall
 cell counts do not change during execution. This prevents future reviewers from flagging it as a bug.
 
-#### 5. Decide On `labelKey` Placement Policy
+**Correction (2026-08-08):** Step 3 testing revealed that both `ReboundingStatistics` and `SnakeStatistics` expose
+mutation methods (`increaseWallCells`, `decreaseWallCells`, `adjustWallCells`), so wall cell counts do change during
+execution. The planned inline comment "min==max is expected" was **not** added because the assumption was incorrect.
+The `MIN_AND_MAX` mode for `wallCells` remains appropriate; no documentation change is needed.
+
+#### 5. Decide On `labelKey` Placement Policy ✅
 
 **Decision (2026-07-28):** The current placement is accepted. Statistics classes may hold private `String` constants
 for `labelKey` values, because `labelKey` is an intrinsic part of the `StatisticMetric` descriptor and belongs near
@@ -729,10 +761,13 @@ The decision is documented here only; `simulations.instructions.md` is not chang
 established in `WatorStatistics`, `ConwayStatistics`, etc. Do not scatter label key strings as inline literals
 inside `metrics()` calls.
 
-#### 6. Remove `synchronized` From `StatisticHistory`
+#### 6. Remove `synchronized` From `StatisticHistory` ✅
 
 **Decision (2026-07-28):** Remove all `synchronized` modifiers from `StatisticHistory`. The model layer runs
 exclusively on the simulation thread; no concurrent access to `StatisticHistory` occurs.
+
+**Implemented (2026-08-08):** Removed `synchronized` from `capacity()`, `size()`, `clear()`, `add(...)`, and
+`asList()`. Backing `ArrayDeque` unchanged. All existing tests in `StatisticHistoryTest` pass without modification.
 
 **Implementation instructions for an agent:**
 
@@ -742,7 +777,7 @@ In `StatisticHistory.java`, remove the `synchronized` keyword from all four meth
 No functional changes; the `ArrayDeque` remains the backing store. No Javadoc additions are required.
 Existing tests in `StatisticHistoryTest` must still pass without modification.
 
-#### 7. Phase 5: Migrate Observation Views Away From Hand-Maintained Extrema
+#### 7. Phase 5: Migrate Observation Views Away From Hand-Maintained Extrema ✅
 
 **Decision (2026-07-28):**
 
@@ -808,3 +843,74 @@ unless those views already show a min/max row. If they do, migrate them by the s
   constructor).
 - All existing tests pass.
 
+**Implemented (2026-08-08):**
+
+**Sub-task A** — Removed all typed min/max fields and getters from `ConwayStatistics` (`maxAliveCells`,
+`getMaxAliveCells()`), `ForestStatistics` (`maxTreeCells`, `maxBurningCells`, `getMaxTreeCells()`,
+`getMaxBurningCells()`), and `WatorStatistics` (`minFishCells`, `maxFishCells`, `minSharkCells`, `maxSharkCells`,
+`updateMinMaxCells()`, and all four getters). Removed the `statistics.updateMinMaxCells()` call from
+`WatorSimulationManager.updateStatistics()`.
+
+**Sub-task B** — Added `getStatisticsExtrema()` / `setStatisticsExtrema(StatisticExtrema)` to
+`DefaultObservationViewModel`. Updated `DefaultMainViewModel.updateObservationStatistics()` to also push
+`simulationManager.statisticsExtrema()` to the observation ViewModel on every statistics update (both on the FX
+thread for timed steps and via `Platform.runLater` for batch).
+
+**Sub-task C** — Updated `ConwayObservationView`, `ForestObservationView`, and `WatorObservationView` to read
+extrema from `viewModel.getStatisticsExtrema()` using `getOrDefault("key", Double.NaN)` with `Double.isFinite`
+guards. The typed min/max getters are gone; the observation rows are now fed from the generic
+`StatisticExtrema` snapshot.
+
+**Test updates** — The three original parity tests compared generic extrema against now-deleted typed getters.
+They were replaced with equivalent finite-value and non-negative assertions. All tests pass.
+
+---
+
+## Post-Implementation Notes (2026-08-08)
+
+All 7 recommended next steps are complete. The following observations were made during implementation and are
+documented here as reference for future work.
+
+### ✅ TODO Comment Resolved In `AbstractTimedSimulationManager`
+
+The original implementation left a `// TODO Check if recordStatisticsSample is needed` comment after the post-batch
+`updateStatistics()` call. The comment was resolved with an explanatory note: `recordStatisticsSample()` must NOT
+be called there because every executed step has already been sampled inside the per-step callback. Calling it again
+would create a duplicate sample for the final batch step at the same stepCount. The existing test
+`testExecuteStepsRecordsEveryExecutedStepWithoutDuplicateFinalSample` confirms this constraint.
+
+### ✅ `StatisticExtremaTracker` `synchronized` Is Intentional
+
+Step 6 removed `synchronized` from `StatisticHistory` on the grounds that it is only accessed from the simulation
+thread. `StatisticExtremaTracker` still has `synchronized` on `clear()`, `update()`, and `snapshot()` — this is
+correct and must not be removed. Unlike `StatisticHistory`, the tracker is accessed from two threads:
+
+- `update()` runs on the background batch thread (inside `executeSteps` per-step callback).
+- `snapshot()` is called from the JavaFX Application Thread (inside `updateObservationStatistics`, which is always
+  called on the FX thread via Timeline callback or `Platform.runLater`).
+
+In continuous batch mode these can overlap: a new batch starts on the background thread while the FX thread is still
+processing the previous `Platform.runLater`. The `synchronized` prevents corrupted min/max state in that scenario.
+
+### 🔵 Behavioral Change: Extrema Labels Persist After Simulation Shutdown
+
+In the original code, min/max labels were wrapped inside the `statistics.isPresent()` block and showed `"—"` after
+shutdown (when statistics is empty). In the new code, extrema labels are read from
+`viewModel.getStatisticsExtrema()` unconditionally; they show `"—"` only when the `StatisticExtrema` maps have no
+finite value for the key. Because `DefaultObservationViewModel.statisticsExtrema` is not reset to
+`StatisticExtrema.empty()` on shutdown, extrema labels retain their last-run values until the next simulation start.
+
+This is an intentional trade-off: it matches the pre-existing behavior of the statistics labels (which also retain
+their last values after shutdown). When a new simulation starts, `createAndInitSimulation` immediately calls
+`updateObservationStatistics`, which resets both statistics and extrema to the new step-0 values.
+
+If future UI work requires resetting extrema labels on shutdown, `DefaultMainViewModel.shutdownSimulation()` should
+call `observationStateViewModel.setStatisticsExtrema(StatisticExtrema.empty())` before nulling the manager.
+
+### 🔵 `statisticsExtrema` In `DefaultObservationViewModel` Is Not A JavaFX Property
+
+The `statisticsExtrema` field is a plain Java field (`StatisticExtrema statisticsExtrema`), not a JavaFX
+`ObjectProperty`. This mirrors the implementation note in the Step 7 decision: "This can be promoted to a reactive
+`ObservableValue` in a future step if needed." For future line chart rendering or reactive observation rows,
+`statisticsExtrema` should be promoted to a `ReadOnlyObjectProperty<StatisticExtrema>` so views can bind to it
+directly without requiring a manual refresh cycle.

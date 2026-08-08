@@ -7,9 +7,9 @@ import java.util.*;
 /**
  * Immutable sampled statistics at one step index.
  *
- * @param stepCount simulation step index of this sample
+ * @param stepCount            simulation step index of this sample
  * @param stepTimingStatistics timing snapshot for the sampled step
- * @param values sampled metric values by metric key
+ * @param values               sampled metric values by metric key
  */
 public record StatisticSample(
         int stepCount,

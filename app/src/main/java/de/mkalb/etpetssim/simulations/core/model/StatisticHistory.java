@@ -24,28 +24,27 @@ public final class StatisticHistory {
         samples = new ArrayDeque<>(capacity);
     }
 
-    public synchronized int capacity() {
+    public int capacity() {
         return capacity;
     }
 
-    public synchronized int size() {
+    public int size() {
         return samples.size();
     }
 
-    public synchronized void clear() {
+    public void clear() {
         samples.clear();
     }
 
-    public synchronized void add(StatisticSample sample) {
+    public void add(StatisticSample sample) {
         if (samples.size() == capacity) {
             samples.removeFirst();
         }
         samples.addLast(sample);
     }
 
-    public synchronized List<StatisticSample> asList() {
+    public List<StatisticSample> asList() {
         return List.copyOf(samples);
     }
 
 }
-

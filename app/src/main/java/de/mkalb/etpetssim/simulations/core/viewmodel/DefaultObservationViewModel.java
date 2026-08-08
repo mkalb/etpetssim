@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.core.viewmodel;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import javafx.beans.property.*;
 import org.jspecify.annotations.Nullable;
@@ -21,9 +21,9 @@ public final class DefaultObservationViewModel<
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
     private final ReadOnlyObjectWrapper<@Nullable STA> statistics;
-
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
+    private StatisticExtrema statisticsExtrema;
 
     /**
      * Creates observation state bound to a shared simulation-state property.
@@ -33,6 +33,7 @@ public final class DefaultObservationViewModel<
     public DefaultObservationViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
         statistics = new ReadOnlyObjectWrapper<>();
+        statisticsExtrema = StatisticExtrema.empty();
     }
 
     @Override
@@ -58,6 +59,24 @@ public final class DefaultObservationViewModel<
     @Override
     public void setStatistics(STA stats) {
         statistics.set(stats);
+    }
+
+    /**
+     * Returns the current statistic extrema snapshot.
+     *
+     * @return the latest extrema, or an empty snapshot before any step executes
+     */
+    public StatisticExtrema getStatisticsExtrema() {
+        return statisticsExtrema;
+    }
+
+    /**
+     * Updates the extrema snapshot exposed to observation views.
+     *
+     * @param extrema the latest extrema snapshot from the simulation manager
+     */
+    public void setStatisticsExtrema(StatisticExtrema extrema) {
+        statisticsExtrema = extrema;
     }
 
     /**

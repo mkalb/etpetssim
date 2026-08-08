@@ -89,7 +89,6 @@ public final class WatorSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.updateMinMaxCells();
         statistics.update(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
