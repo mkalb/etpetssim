@@ -123,27 +123,27 @@ public final class WatorObservationView
         }
 
         var extrema = viewModel.getStatisticsExtrema();
-        double minFish = extrema.minimumValues().getOrDefault(WatorStatistics.KEY_FISH_CELLS, Double.NaN);
-        double maxFish = extrema.maximumValues().getOrDefault(WatorStatistics.KEY_FISH_CELLS, Double.NaN);
-        double minShark = extrema.minimumValues().getOrDefault(WatorStatistics.KEY_SHARK_CELLS, Double.NaN);
-        double maxShark = extrema.maximumValues().getOrDefault(WatorStatistics.KEY_SHARK_CELLS, Double.NaN);
-        if (Double.isFinite(minFish)) {
-            setFormattedIntegerValue(minFishCellsLabel, (int) minFish);
+        var minFishExtremum = extrema.minimumValues().get(WatorStatistics.KEY_FISH_CELLS);
+        var maxFishExtremum = extrema.maximumValues().get(WatorStatistics.KEY_FISH_CELLS);
+        var minSharkExtremum = extrema.minimumValues().get(WatorStatistics.KEY_SHARK_CELLS);
+        var maxSharkExtremum = extrema.maximumValues().get(WatorStatistics.KEY_SHARK_CELLS);
+        if (minFishExtremum != null) {
+            setFormattedIntegerValue(minFishCellsLabel, minFishExtremum.intValue());
         } else {
             setUnknownValues(minFishCellsLabel);
         }
-        if (Double.isFinite(maxFish)) {
-            setFormattedIntegerValue(maxFishCellsLabel, (int) maxFish);
+        if (maxFishExtremum != null) {
+            setFormattedIntegerValue(maxFishCellsLabel, maxFishExtremum.intValue());
         } else {
             setUnknownValues(maxFishCellsLabel);
         }
-        if (Double.isFinite(minShark)) {
-            setFormattedIntegerValue(minSharkCellsLabel, (int) minShark);
+        if (minSharkExtremum != null) {
+            setFormattedIntegerValue(minSharkCellsLabel, minSharkExtremum.intValue());
         } else {
             setUnknownValues(minSharkCellsLabel);
         }
-        if (Double.isFinite(maxShark)) {
-            setFormattedIntegerValue(maxSharkCellsLabel, (int) maxShark);
+        if (maxSharkExtremum != null) {
+            setFormattedIntegerValue(maxSharkCellsLabel, maxSharkExtremum.intValue());
         } else {
             setUnknownValues(maxSharkCellsLabel);
         }

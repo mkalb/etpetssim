@@ -19,7 +19,7 @@ import de.mkalb.etpetssim.simulations.wator.model.*;
  *             minSharkCells   : 1000 | maxSharkCells   : 3002
  * </pre>
  */
-@SuppressWarnings({"MagicNumber", "HardcodedLineSeparator"})
+@SuppressWarnings({"MagicNumber", "HardcodedLineSeparator", "NumericCastThatLosesPrecision"})
 public final class ExtremaGoldenValueAnalyzer {
 
     private ExtremaGoldenValueAnalyzer() {
@@ -99,10 +99,10 @@ public final class ExtremaGoldenValueAnalyzer {
         });
         var extrema = m.statisticsExtrema();
         sb.append("=== Conway (seed=1, steps=20) ===\n");
-        sb.append("  minAliveCells    = ").append(extrema.minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).intValue()).append('\n');
-        sb.append("  maxAliveCells    = ").append(extrema.maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).intValue()).append('\n');
-        sb.append("  minChangedCells  = ").append(extrema.minimumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).intValue()).append('\n');
-        sb.append("  maxChangedCells  = ").append(extrema.maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).intValue()).append('\n');
+        sb.append("  minAliveCells    = ").append((int) extrema.minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value()).append('\n');
+        sb.append("  maxAliveCells    = ").append((int) extrema.maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value()).append('\n');
+        sb.append("  minChangedCells  = ").append((int) extrema.minimumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value()).append('\n');
+        sb.append("  maxChangedCells  = ").append((int) extrema.maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value()).append('\n');
     }
 
     private static void appendForest(StringBuilder sb) {
@@ -111,10 +111,10 @@ public final class ExtremaGoldenValueAnalyzer {
         });
         var extrema = m.statisticsExtrema();
         sb.append("=== Forest (seed=1, steps=20) ===\n");
-        sb.append("  maxEmptyCells   = ").append(extrema.maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).intValue()).append('\n');
-        sb.append("  minTreeCells    = ").append(extrema.minimumValues().get(ForestStatistics.KEY_TREE_CELLS).intValue()).append('\n');
-        sb.append("  maxTreeCells    = ").append(extrema.maximumValues().get(ForestStatistics.KEY_TREE_CELLS).intValue()).append('\n');
-        sb.append("  maxBurningCells = ").append(extrema.maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).intValue()).append('\n');
+        sb.append("  maxEmptyCells   = ").append((int) extrema.maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).value()).append('\n');
+        sb.append("  minTreeCells    = ").append((int) extrema.minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value()).append('\n');
+        sb.append("  maxTreeCells    = ").append((int) extrema.maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value()).append('\n');
+        sb.append("  maxBurningCells = ").append((int) extrema.maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value()).append('\n');
     }
 
     private static void appendWator(StringBuilder sb) {
@@ -123,10 +123,10 @@ public final class ExtremaGoldenValueAnalyzer {
         });
         var extrema = m.statisticsExtrema();
         sb.append("=== Wator (seed=1, steps=20) ===\n");
-        sb.append("  minFishCells  = ").append(extrema.minimumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue()).append('\n');
-        sb.append("  maxFishCells  = ").append(extrema.maximumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue()).append('\n');
-        sb.append("  minSharkCells = ").append(extrema.minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue()).append('\n');
-        sb.append("  maxSharkCells = ").append(extrema.maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue()).append('\n');
+        sb.append("  minFishCells  = ").append((int) extrema.minimumValues().get(WatorStatistics.KEY_FISH_CELLS).value()).append('\n');
+        sb.append("  maxFishCells  = ").append((int) extrema.maximumValues().get(WatorStatistics.KEY_FISH_CELLS).value()).append('\n');
+        sb.append("  minSharkCells = ").append((int) extrema.minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).value()).append('\n');
+        sb.append("  maxSharkCells = ").append((int) extrema.maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).value()).append('\n');
     }
 
 }

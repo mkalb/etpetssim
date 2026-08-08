@@ -3,13 +3,13 @@ package de.mkalb.etpetssim.simulations.core.model;
 import java.util.*;
 
 /**
- * Mutable accumulator that updates min/max values according to configured metric policies.
+ * Mutable accumulator that updates min/max extrema according to configured metric policies.
  */
 final class StatisticExtremaTracker {
 
     private final Map<String, StatisticExtremaMode> extremaModesByKey;
-    private final LinkedHashMap<String, Double> minimumValues;
-    private final LinkedHashMap<String, Double> maximumValues;
+    private final LinkedHashMap<String, StatisticExtremum> minimumValues;
+    private final LinkedHashMap<String, StatisticExtremum> maximumValues;
 
     StatisticExtremaTracker(List<? extends StatisticMetric<?>> metrics) {
         extremaModesByKey = new LinkedHashMap<>();
@@ -27,7 +27,7 @@ final class StatisticExtremaTracker {
         maximumValues.clear();
     }
 
-    synchronized void update(Map<String, Double> values) {
+    synchronized void update(Map<String, Double> values, long stepCount) {
         for (var entry : values.entrySet()) {
             String key = entry.getKey();
             StatisticExtremaMode mode = extremaModesByKey.get(key);
@@ -38,11 +38,14 @@ final class StatisticExtremaTracker {
             if (!Double.isFinite(value)) {
                 continue;
             }
+            var candidate = new StatisticExtremum(value, stepCount);
             if ((mode == StatisticExtremaMode.MIN) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
-                minimumValues.merge(key, value, Math::min);
+                minimumValues.merge(key, candidate,
+                        (existing, incoming) -> (incoming.value() < existing.value()) ? incoming : existing);
             }
             if ((mode == StatisticExtremaMode.MAX) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
-                maximumValues.merge(key, value, Math::max);
+                maximumValues.merge(key, candidate,
+                        (existing, incoming) -> (incoming.value() > existing.value()) ? incoming : existing);
             }
         }
     }
