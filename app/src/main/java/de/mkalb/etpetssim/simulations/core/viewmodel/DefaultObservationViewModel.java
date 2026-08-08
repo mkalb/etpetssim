@@ -24,6 +24,7 @@ public final class DefaultObservationViewModel<
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
     private StatisticExtrema statisticsExtrema;
+    private List<StatisticSample> statisticsHistory;
 
     /**
      * Creates observation state bound to a shared simulation-state property.
@@ -34,6 +35,7 @@ public final class DefaultObservationViewModel<
         this.simulationState = simulationState;
         statistics = new ReadOnlyObjectWrapper<>();
         statisticsExtrema = StatisticExtrema.empty();
+        statisticsHistory = List.of();
     }
 
     @Override
@@ -77,6 +79,26 @@ public final class DefaultObservationViewModel<
      */
     public void setStatisticsExtrema(StatisticExtrema extrema) {
         statisticsExtrema = extrema;
+    }
+
+    /**
+     * Returns the current statistics history snapshot.
+     *
+     * @return immutable ordered list of samples, oldest first; empty before any step executes
+     */
+    public List<StatisticSample> getStatisticsHistory() {
+        return statisticsHistory;
+    }
+
+    /**
+     * Updates the history snapshot exposed to observation views.
+     *
+     * <p>The list must already be an immutable defensive copy captured on the producing thread.
+     *
+     * @param history immutable ordered list of samples from the simulation manager
+     */
+    public void setStatisticsHistory(List<StatisticSample> history) {
+        statisticsHistory = history;
     }
 
     /**

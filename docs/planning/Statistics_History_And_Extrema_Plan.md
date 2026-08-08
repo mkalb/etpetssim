@@ -203,7 +203,14 @@ it through `StatisticExtrema`. This turns "peak shark population 128" into "peak
 is far more useful for the observation panel and future chart tooltips. It is cheap to capture next to the existing
 `merge` calls, but changes the public `StatisticExtrema` shape, so land it before generic rows (Step 11).
 
-### Step 7 — Forward History To The ViewModel Layer
+**Step 7 (2026-08-08):** `statisticsHistory` forwarding mirrored the existing extrema forwarding in `DefaultMainViewModel`.
+`DefaultObservationViewModel` gained a `List<StatisticSample> statisticsHistory` field (initialized to `List.of()`),
+a `getStatisticsHistory()` accessor, and a `setStatisticsHistory()` mutator. `updateObservationStatistics()` in
+`DefaultMainViewModel` now captures `manager.statisticsHistory()` before any `Platform.runLater()` lambda (satisfying
+the Step 4 defensive-copy contract — `StatisticHistory.asList()` already returns `List.copyOf(...)`) and forwards it to
+`observationStateViewModel.setStatisticsHistory()` on both the FX-thread fast path and the `runLater` path.
+
+### Step 7 — Forward History To The ViewModel Layer ✓ DONE
 
 > **Type:** Feature · **Priority:** Medium · **Effort:** S-M · **Risk:** Low · **Depends on:** Step 4
 

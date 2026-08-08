@@ -660,10 +660,14 @@ public final class DefaultMainViewModel<
     private void updateObservationStatistics(STA statistics) {
         var manager = simulationManager;
         var extrema = (manager != null) ? manager.statisticsExtrema() : null;
+        var history = (manager != null) ? manager.statisticsHistory() : null;
         if (Platform.isFxApplicationThread()) {
             observationViewModel.setStatistics(statistics);
             if (extrema != null) {
                 observationStateViewModel.setStatisticsExtrema(extrema);
+            }
+            if (history != null) {
+                observationStateViewModel.setStatisticsHistory(history);
             }
             return;
         }
@@ -672,6 +676,9 @@ public final class DefaultMainViewModel<
                 observationViewModel.setStatistics(statistics);
                 if (extrema != null) {
                     observationStateViewModel.setStatisticsExtrema(extrema);
+                }
+                if (history != null) {
+                    observationStateViewModel.setStatisticsHistory(history);
                 }
             }
         });
