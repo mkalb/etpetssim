@@ -45,6 +45,13 @@ Etpets, Snake, Sugar, Rebounding, Langton) declare `metrics()`; the non-finite g
 observation views now read from `statisticsExtrema()`; and `StatisticHistory` synchronization was removed. Tests live in
 `StatisticHistoryTest`, `StatisticExtremaTrackerTest`, and `TimedStatisticsTrackingTest`.
 
+**Step 1 (2026-08-08):** All four broken `labelKey` values were fixed: the Rebounding constant was corrected to
+`rebounding.observation.cells.movingentity`; the three missing keys (`forest.observation.cells.empty`,
+`snake.observation.cells.livingsnakehead`, `snake.observation.cells.wall`) were added to both locale bundles
+(alphabetically sorted, `=` column-aligned). A guard test `StatisticMetricLabelKeyTest` was added that iterates all
+8 simulations' `metrics()` lists and asserts each `labelKey` resolves in both the `en_US` and `de_DE` production
+bundles, preventing future drift.
+
 Open questions retained for future work: descriptor location vs. drift, whether timing should be a descriptor, whether
 `double` suffices for all metrics, sample sequence numbers for edit-mode history, and configurable history capacity.
 
@@ -77,36 +84,6 @@ These were established during the initial implementation and must remain intact 
 - Non-finite metric values are logged and stored as the `Double.NaN` sentinel and skipped by the extrema tracker; the
   history time series stays gap-free.
 
-### Step 1 — Fix Broken Metric `labelKey` Values
-
-> **Type:** Bug · **Priority:** High · **Effort:** S · **Risk:** Low (no runtime behavior today) · **Depends on:** —
-
-Four `labelKey` constants in `metrics()` factories point at localization keys that exist in **neither**
-`messages_en_US.properties` nor `messages_de_DE.properties`:
-
-| Simulation | Constant / value                                                                        | Correct or missing key                                    |
-|------------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------|
-| Forest     | `FOREST_OBSERVATION_EMPTY_CELLS = "forest.observation.cells.empty"`                     | key does not exist                                        |
-| Rebounding | `REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.moving"`    | actual key is `rebounding.observation.cells.movingentity` |
-| Snake      | `SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS = "snake.observation.cells.livingsnakehead"` | key does not exist                                        |
-| Snake      | `SNAKE_OBSERVATION_WALL_CELLS = "snake.observation.cells.wall"`                         | key does not exist                                        |
-
-No runtime failure occurs today because `labelKey` is not yet resolved for display; only `key`, `extractor`, and
-`extremaMode` are consumed. Once the planned chart/label UI resolves `labelKey` through `AppLocalization`, these metrics
-would produce missing-key errors or blank labels. This also violates the repository rules "Localization keys → update
-all `messages_*.properties`" and "Use constants for localization keys".
-
-**Actions:**
-
-1. Correct the Rebounding constant to `rebounding.observation.cells.movingentity`.
-2. Add the three genuinely missing keys (`forest.observation.cells.empty`,
-   `snake.observation.cells.livingsnakehead`, `snake.observation.cells.wall`) to **both** locale bundles
-   (alphabetically sorted, `=` column-aligned), or repoint the constants at existing keys.
-3. Add a guard test that iterates every simulation's `metrics()` list and asserts each `labelKey` resolves via
-   `AppLocalization`. This prevents future drift and would have caught all four cases automatically.
-
-This step also resolves the minor observation that Forest `emptyCells` / Conway `deadCells` descriptors carry
-never-exercised label keys.
 
 ### Step 2 — Extract Shared Technical Metric-Key Constants
 
