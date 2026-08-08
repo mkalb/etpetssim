@@ -11,6 +11,10 @@ import java.util.*;
 public final class ForestStatistics
         extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_EMPTY_CELLS = "emptyCells";
+    public static final String KEY_TREE_CELLS = "treeCells";
+    public static final String KEY_BURNING_CELLS = "burningCells";
+
     private static final String FOREST_OBSERVATION_EMPTY_CELLS = "forest.observation.cells.empty";
     private static final String FOREST_OBSERVATION_TREE_CELLS = "forest.observation.cells.tree";
     private static final String FOREST_OBSERVATION_BURNING_CELLS = "forest.observation.cells.burning";
@@ -28,11 +32,11 @@ public final class ForestStatistics
 
     public static List<StatisticMetric<ForestStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("emptyCells", FOREST_OBSERVATION_EMPTY_CELLS, ForestStatistics::getEmptyCells,
+                new StatisticMetric<>(KEY_EMPTY_CELLS, FOREST_OBSERVATION_EMPTY_CELLS, ForestStatistics::getEmptyCells,
                         StatisticExtremaMode.NONE),
-                new StatisticMetric<>("treeCells", FOREST_OBSERVATION_TREE_CELLS, ForestStatistics::getTreeCells,
+                new StatisticMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS, ForestStatistics::getTreeCells,
                         StatisticExtremaMode.MAX),
-                new StatisticMetric<>("burningCells", FOREST_OBSERVATION_BURNING_CELLS, ForestStatistics::getBurningCells,
+                new StatisticMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_BURNING_CELLS, ForestStatistics::getBurningCells,
                         StatisticExtremaMode.MAX)
         );
     }

@@ -11,6 +11,12 @@ import java.util.*;
 public final class SnakeStatistics
         extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_SNAKE_HEAD_CELLS = "snakeHeadCells";
+    public static final String KEY_LIVING_SNAKE_HEAD_CELLS = "livingSnakeHeadCells";
+    public static final String KEY_WALL_CELLS = "wallCells";
+    public static final String KEY_FOOD_CELLS = "foodCells";
+    public static final String KEY_CUMULATIVE_SNAKE_DEATH_COUNT = "cumulativeSnakeDeathCount";
+
     private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
     private static final String SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS = "snake.observation.cells.livingsnakehead";
     private static final String SNAKE_OBSERVATION_WALL_CELLS = "snake.observation.cells.wall";
@@ -35,15 +41,15 @@ public final class SnakeStatistics
 
     public static List<StatisticMetric<SnakeStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("snakeHeadCells", SNAKE_OBSERVATION_SNAKE_HEAD_CELLS, SnakeStatistics::getSnakeHeadCells,
+                new StatisticMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_SNAKE_HEAD_CELLS, SnakeStatistics::getSnakeHeadCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("livingSnakeHeadCells", SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
+                new StatisticMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
                         SnakeStatistics::getLivingSnakeHeadCells, StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("wallCells", SNAKE_OBSERVATION_WALL_CELLS, SnakeStatistics::getWallCells,
+                new StatisticMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS, SnakeStatistics::getWallCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("foodCells", SNAKE_OBSERVATION_FOOD_CELLS, SnakeStatistics::getFoodCells,
+                new StatisticMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS, SnakeStatistics::getFoodCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("cumulativeSnakeDeathCount", SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
+                new StatisticMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
                         SnakeStatistics::getCumulativeSnakeDeathCount, StatisticExtremaMode.NONE)
         );
     }

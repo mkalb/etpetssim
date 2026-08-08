@@ -52,6 +52,13 @@ observation views now read from `statisticsExtrema()`; and `StatisticHistory` sy
 8 simulations' `metrics()` lists and asserts each `labelKey` resolves in both the `en_US` and `de_DE` production
 bundles, preventing future drift.
 
+**Step 2 (2026-08-08):** Each technical metric key is now defined exactly once as a `public static final String KEY_*`
+constant on the owning statistics class (e.g., `ConwayStatistics.KEY_ALIVE_CELLS`). All 8 statistics classes were
+updated; `metrics()` factories reference the constant instead of repeating the string literal. The three observation
+views that previously re-declared the key as a literal (`ConwayObservationView`, `ForestObservationView`,
+`WatorObservationView`) were updated to reference the statistics-class constants, making a rename a compile-time error
+going forward.
+
 Open questions retained for future work: descriptor location vs. drift, whether timing should be a descriptor, whether
 `double` suffices for all metrics, sample sequence numbers for edit-mode history, and configurable history capacity.
 
@@ -85,21 +92,6 @@ These were established during the initial implementation and must remain intact 
   history time series stays gap-free.
 
 
-### Step 2 — Extract Shared Technical Metric-Key Constants
-
-> **Type:** Refactor · **Priority:** Medium · **Effort:** M · **Risk:** Low · **Depends on:** — (do before Steps 5 and
-11)
-
-The technical metric keys are declared as string literals in the `metrics()` factories (e.g., `"aliveCells"`,
-`"fishCells"`, `"treeCells"`) and repeated as literals in the migrated observation views
-(`getStatisticsExtrema().maximumValues().getOrDefault("aliveCells", Double.NaN)` in `ConwayObservationView`,
-`ForestObservationView`, `WatorObservationView`). A rename on one side silently breaks the other with no compile error.
-
-**Actions:**
-
-1. Define each metric key once as a shared constant near the owning statistics class
-   (e.g., `public static final String KEY_ALIVE_CELLS = "aliveCells";`).
-2. Reference the constant from both `metrics()` and the corresponding observation view.
 
 ### Step 3 — Restore Extrema Regression Coverage (Golden Values)
 

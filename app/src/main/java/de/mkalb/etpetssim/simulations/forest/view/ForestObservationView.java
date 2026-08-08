@@ -92,8 +92,8 @@ public final class ForestObservationView
         }
 
         var extrema = viewModel.getStatisticsExtrema();
-        double maxTree = extrema.maximumValues().getOrDefault("treeCells", Double.NaN);
-        double maxBurning = extrema.maximumValues().getOrDefault("burningCells", Double.NaN);
+        double maxTree = extrema.maximumValues().getOrDefault(ForestStatistics.KEY_TREE_CELLS, Double.NaN);
+        double maxBurning = extrema.maximumValues().getOrDefault(ForestStatistics.KEY_BURNING_CELLS, Double.NaN);
         if (Double.isFinite(maxTree)) {
             setFormattedIntegerValue(maxTreeCellsLabel, (int) maxTree);
         } else {

@@ -11,6 +11,9 @@ import java.util.*;
 public final class ReboundingStatistics
         extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_WALL_CELLS = "wallCells";
+    public static final String KEY_MOVING_ENTITY_CELLS = "movingEntityCells";
+
     private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
     private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
 
@@ -25,9 +28,9 @@ public final class ReboundingStatistics
 
     public static List<StatisticMetric<ReboundingStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("wallCells", REBOUNDING_OBSERVATION_WALL_CELLS, ReboundingStatistics::getWallCells,
+                new StatisticMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_WALL_CELLS, ReboundingStatistics::getWallCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>("movingEntityCells", REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
+                new StatisticMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
                         ReboundingStatistics::getMovingEntityCells, StatisticExtremaMode.MIN_AND_MAX)
         );
     }

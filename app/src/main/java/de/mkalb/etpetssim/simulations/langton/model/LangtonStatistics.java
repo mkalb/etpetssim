@@ -11,6 +11,9 @@ import java.util.*;
 public final class LangtonStatistics
         extends BaseTimedSimulationStatistics {
 
+    public static final String KEY_ANT_CELLS = "antCells";
+    public static final String KEY_VISITED_CELLS = "visitedCells";
+
     private static final String LANGTON_OBSERVATION_ANT_CELLS = "langton.observation.cells.ant";
     private static final String LANGTON_OBSERVATION_VISITED_CELLS = "langton.observation.cells.visited";
 
@@ -25,9 +28,9 @@ public final class LangtonStatistics
 
     public static List<StatisticMetric<LangtonStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>("antCells", LANGTON_OBSERVATION_ANT_CELLS, LangtonStatistics::getAntCells,
+                new StatisticMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_ANT_CELLS, LangtonStatistics::getAntCells,
                         StatisticExtremaMode.NONE),
-                new StatisticMetric<>("visitedCells", LANGTON_OBSERVATION_VISITED_CELLS, LangtonStatistics::getVisitedCells,
+                new StatisticMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_VISITED_CELLS, LangtonStatistics::getVisitedCells,
                         StatisticExtremaMode.MAX)
         );
     }
