@@ -31,7 +31,7 @@ public final class LangtonStatistics
                 new StatisticMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_ANT_CELLS, LangtonStatistics::getAntCells,
                         StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_VISITED_CELLS, LangtonStatistics::getVisitedCells,
-                        StatisticExtremaMode.MAX)
+                        StatisticExtremaMode.NONE)
         );
     }
 

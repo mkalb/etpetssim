@@ -46,7 +46,7 @@ public final class SnakeStatistics
                 new StatisticMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
                         SnakeStatistics::getLivingSnakeHeadCells, StatisticExtremaMode.MIN_AND_MAX),
                 new StatisticMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS, SnakeStatistics::getWallCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
+                        StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS, SnakeStatistics::getFoodCells,
                         StatisticExtremaMode.MIN_AND_MAX),
                 new StatisticMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,

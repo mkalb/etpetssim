@@ -141,7 +141,17 @@ from `List.copyOf(...)` or return an inconsistent snapshot.
 2. Explicitly document that `statisticsHistory()` must only be consumed after copying on the producing thread, and
    enforce the copy at the forwarding boundary in Step 7.
 
-### Step 5 — Add Meaningful Extrema Modes To The Cellular Automata
+**Step 5 (2026-08-08):** Extrema modes updated for all cellular automata and static-wall simulations.
+Only tracking was added; display will follow in Step 11.
+
+- **Conway** `aliveCells` MAX → MIN_AND_MAX; `changedCells` NONE → MIN_AND_MAX (MIN==0 marks still-life / frozen board).
+- **Forest** `emptyCells` NONE → MAX; `treeCells` MAX → MIN_AND_MAX.
+- **Langton** `visitedCells` MAX → NONE (monotonically increasing; MAX always equals current value).
+- **Snake / Rebounding** `wallCells` MIN_AND_MAX → NONE (walls only change via user edit actions, not during step execution).
+
+Golden values updated in `TimedStatisticsTrackingTest` and `ExtremaGoldenValueAnalyzer` to cover the new extrema.
+
+### Step 5 — Add Meaningful Extrema Modes To The Cellular Automata ✓ DONE
 
 > **Type:** Feature · **Priority:** Medium · **Effort:** M · **Risk:** Low-Medium (changes displayed extrema) · *
 *Depends on:** Steps 2, 3
@@ -149,16 +159,16 @@ from `List.copyOf(...)` or return an inconsistent snapshot.
 The agent-based simulations (Wator, Etpets, Snake, Sugar, Rebounding) already track `MIN_AND_MAX` for their live
 population counters. The cellular automata are the gap. Current `extremaMode` per simulation for reference:
 
-| Simulation | Metrics and current mode                                                                                      |
-|------------|---------------------------------------------------------------------------------------------------------------|
-| Conway     | `aliveCells` MAX, `deadCells` NONE, `changedCells` NONE                                                       |
-| Forest     | `emptyCells` NONE, `treeCells` MAX, `burningCells` MAX                                                        |
-| Langton    | `antCells` NONE, `visitedCells` MAX                                                                           |
-| Wator      | `fishCells` MIN_AND_MAX, `sharkCells` MIN_AND_MAX                                                             |
-| Etpets     | `activePetCells` MIN_AND_MAX, `eggCells` MIN_AND_MAX, `cumulativePetDeathCount` NONE                          |
-| Snake      | `snakeHeadCells`/`livingSnakeHeadCells`/`wallCells`/`foodCells` MIN_AND_MAX, `cumulativeSnakeDeathCount` NONE |
-| Sugar      | `resourceCells` MIN_AND_MAX, `agentCells` MIN_AND_MAX                                                         |
-| Rebounding | `wallCells` MIN_AND_MAX, `movingEntityCells` MIN_AND_MAX                                                      |
+| Simulation | Metrics and current mode                                                                                                    |
+|------------|-----------------------------------------------------------------------------------------------------------------------------|
+| Conway     | `aliveCells` MIN_AND_MAX, `deadCells` NONE, `changedCells` MIN_AND_MAX                                                      |
+| Forest     | `emptyCells` MAX, `treeCells` MIN_AND_MAX, `burningCells` MAX                                                               |
+| Langton    | `antCells` NONE, `visitedCells` NONE                                                                                        |
+| Wator      | `fishCells` MIN_AND_MAX, `sharkCells` MIN_AND_MAX                                                                           |
+| Etpets     | `activePetCells` MIN_AND_MAX, `eggCells` MIN_AND_MAX, `cumulativePetDeathCount` NONE                                        |
+| Snake      | `snakeHeadCells`/`livingSnakeHeadCells`/`foodCells` MIN_AND_MAX, `wallCells` NONE, `cumulativeSnakeDeathCount` NONE         |
+| Sugar      | `resourceCells` MIN_AND_MAX, `agentCells` MIN_AND_MAX                                                                       |
+| Rebounding | `wallCells` NONE, `movingEntityCells` MIN_AND_MAX                                                                           |
 
 **Actions:**
 

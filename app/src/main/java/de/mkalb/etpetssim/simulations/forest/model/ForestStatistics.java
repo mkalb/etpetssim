@@ -33,9 +33,9 @@ public final class ForestStatistics
     public static List<StatisticMetric<ForestStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_EMPTY_CELLS, FOREST_OBSERVATION_EMPTY_CELLS, ForestStatistics::getEmptyCells,
-                        StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS, ForestStatistics::getTreeCells,
                         StatisticExtremaMode.MAX),
+                new StatisticMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS, ForestStatistics::getTreeCells,
+                        StatisticExtremaMode.MIN_AND_MAX),
                 new StatisticMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_BURNING_CELLS, ForestStatistics::getBurningCells,
                         StatisticExtremaMode.MAX)
         );

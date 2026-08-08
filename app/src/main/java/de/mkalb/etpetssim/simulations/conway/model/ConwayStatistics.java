@@ -33,11 +33,11 @@ public final class ConwayStatistics
     public static List<StatisticMetric<ConwayStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS, ConwayStatistics::getAliveCells,
-                        StatisticExtremaMode.MAX),
+                        StatisticExtremaMode.MIN_AND_MAX),
                 new StatisticMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS, ConwayStatistics::getDeadCells,
                         StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CHANGED_CELLS, ConwayStatistics::getChangedCells,
-                        StatisticExtremaMode.NONE)
+                        StatisticExtremaMode.MIN_AND_MAX)
         );
     }
 

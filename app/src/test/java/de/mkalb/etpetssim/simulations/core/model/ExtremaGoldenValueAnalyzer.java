@@ -11,22 +11,30 @@ import de.mkalb.etpetssim.simulations.wator.model.*;
  *
  * <p>Current golden values (seed=1, 20 steps, default constraints):
  * <pre>
- *   Conway  — maxAliveCells : 6945
- *   Forest  — maxTreeCells  : 1037 | maxBurningCells : 17
- *   Wator   — minFishCells  : 1900 | maxFishCells    : 6127
- *             minSharkCells : 1000 | maxSharkCells   : 3002
+ *   Conway  — minAliveCells   : 3575 | maxAliveCells   : 6945
+ *             minChangedCells : 0    | maxChangedCells : 6475
+ *   Forest  — maxEmptyCells   : 4000
+ *             minTreeCells    : 1000 | maxTreeCells    : 1037 | maxBurningCells : 17
+ *   Wator   — minFishCells    : 1900 | maxFishCells    : 6127
+ *             minSharkCells   : 1000 | maxSharkCells   : 3002
  * </pre>
  */
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings({"MagicNumber", "HardcodedLineSeparator"})
 public final class ExtremaGoldenValueAnalyzer {
 
     private ExtremaGoldenValueAnalyzer() {
     }
 
     static void main() {
-        printConway();
-        printForest();
-        printWator();
+        System.out.println(captureValues());
+    }
+
+    static String captureValues() {
+        var sb = new StringBuilder(512);
+        appendConway(sb);
+        appendForest(sb);
+        appendWator(sb);
+        return sb.toString();
     }
 
     private static ConwayConfig conwayConfig() {
@@ -85,35 +93,40 @@ public final class ExtremaGoldenValueAnalyzer {
         );
     }
 
-    private static void printConway() {
+    private static void appendConway(StringBuilder sb) {
         ConwaySimulationManager m = new ConwaySimulationManager(conwayConfig());
         m.executeSteps(20, false, () -> {
         });
         var extrema = m.statisticsExtrema();
-        System.out.println("=== Conway (seed=1, steps=20) ===");
-        System.out.println("  maxAliveCells = " + extrema.maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).intValue());
+        sb.append("=== Conway (seed=1, steps=20) ===\n");
+        sb.append("  minAliveCells    = ").append(extrema.minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).intValue()).append('\n');
+        sb.append("  maxAliveCells    = ").append(extrema.maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).intValue()).append('\n');
+        sb.append("  minChangedCells  = ").append(extrema.minimumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).intValue()).append('\n');
+        sb.append("  maxChangedCells  = ").append(extrema.maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).intValue()).append('\n');
     }
 
-    private static void printForest() {
+    private static void appendForest(StringBuilder sb) {
         ForestSimulationManager m = new ForestSimulationManager(forestConfig());
         m.executeSteps(20, false, () -> {
         });
         var extrema = m.statisticsExtrema();
-        System.out.println("=== Forest (seed=1, steps=20) ===");
-        System.out.println("  maxTreeCells    = " + extrema.maximumValues().get(ForestStatistics.KEY_TREE_CELLS).intValue());
-        System.out.println("  maxBurningCells = " + extrema.maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).intValue());
+        sb.append("=== Forest (seed=1, steps=20) ===\n");
+        sb.append("  maxEmptyCells   = ").append(extrema.maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).intValue()).append('\n');
+        sb.append("  minTreeCells    = ").append(extrema.minimumValues().get(ForestStatistics.KEY_TREE_CELLS).intValue()).append('\n');
+        sb.append("  maxTreeCells    = ").append(extrema.maximumValues().get(ForestStatistics.KEY_TREE_CELLS).intValue()).append('\n');
+        sb.append("  maxBurningCells = ").append(extrema.maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).intValue()).append('\n');
     }
 
-    private static void printWator() {
+    private static void appendWator(StringBuilder sb) {
         WatorSimulationManager m = new WatorSimulationManager(watorConfig());
         m.executeSteps(20, false, () -> {
         });
         var extrema = m.statisticsExtrema();
-        System.out.println("=== Wator (seed=1, steps=20) ===");
-        System.out.println("  minFishCells  = " + extrema.minimumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue());
-        System.out.println("  maxFishCells  = " + extrema.maximumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue());
-        System.out.println("  minSharkCells = " + extrema.minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue());
-        System.out.println("  maxSharkCells = " + extrema.maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue());
+        sb.append("=== Wator (seed=1, steps=20) ===\n");
+        sb.append("  minFishCells  = ").append(extrema.minimumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue()).append('\n');
+        sb.append("  maxFishCells  = ").append(extrema.maximumValues().get(WatorStatistics.KEY_FISH_CELLS).intValue()).append('\n');
+        sb.append("  minSharkCells = ").append(extrema.minimumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue()).append('\n');
+        sb.append("  maxSharkCells = ").append(extrema.maximumValues().get(WatorStatistics.KEY_SHARK_CELLS).intValue()).append('\n');
     }
 
 }
