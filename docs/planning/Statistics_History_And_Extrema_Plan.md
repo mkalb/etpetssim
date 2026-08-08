@@ -219,42 +219,160 @@ in `DefaultMainViewModel`: push `simulationManager.statisticsHistory()` into `De
 update, exposed as a snapshot accessor (`getStatisticsHistory()`). Perform the defensive copy at this forwarding
 boundary per the Step 4 contract.
 
-### Step 8 — Promote Extrema And History To Observable Properties
+**Step 8 (2026-08-08):** `statisticsExtrema` and `statisticsHistory` in `DefaultObservationViewModel` were promoted from
+plain fields to `ReadOnlyObjectWrapper`-backed observable properties. Two new property accessors,
+`statisticsExtremaProperty()` and `statisticsHistoryProperty()`, were added; the existing getters now delegate to
+`wrapper.get()` and the setters delegate to `wrapper.set()`, keeping all existing call sites (Conway/Forest/Wator
+observation views) compile-compatible. `DefaultMainViewModel.shutdownSimulation()` resets both properties to
+`StatisticExtrema.empty()` and `List.of()` after setting `simulationManager = null`, preventing stale chart data from
+lingering when a new simulation has not yet started. The shutdown decision was resolved: only extrema and history are
+reset (statistics label is kept for consistency with prior behavior). A new test class
+`DefaultObservationViewModelTest` (5 tests) covers initial values, setter→property and setter→getter round-trips, and
+reset-to-empty behavior for both properties.
+
+### Step 8 — Promote Extrema And History To Observable Properties ✓ DONE
 
 > **Type:** Refactor · **Priority:** Medium · **Effort:** M · **Risk:** Low · **Depends on:** Step 7
 
-`DefaultObservationViewModel.statisticsExtrema` is a plain field, not a JavaFX property. Promote both extrema and
-history to `ReadOnlyObjectProperty<StatisticExtrema>` / `ReadOnlyObjectProperty<List<StatisticSample>>` so views can
-bind directly instead of relying on a manual refresh cycle. Decide the shutdown policy here as well: optionally reset
-extrema/history to empty in `DefaultMainViewModel.shutdownSimulation()` (via
-`observationStateViewModel.setStatisticsExtrema(StatisticExtrema.empty())`) so labels do not linger with last-run
-values; the current persist-until-next-start behavior is an intentional trade-off that matches the statistics labels.
+`DefaultObservationViewModel.statisticsExtrema` and `statisticsHistory` are plain fields updated via setter; views
+pull them in `updateObservationLabels()` which fires indirectly on the `statistics` property change. This pull-on-statistics
+pattern works while statistics and extrema/history are always updated together, but breaks for:
+- chart series that must react to history independently (Step 9),
+- edit-mode user actions that may change extrema without advancing statistics.
+
+**API shape (mirrors the existing `statistics` field):**
+
+```java
+// In DefaultObservationViewModel:
+private final ReadOnlyObjectWrapper<StatisticExtrema>    statisticsExtremaWrapper = new ReadOnlyObjectWrapper<>(StatisticExtrema.empty());
+private final ReadOnlyObjectWrapper<List<StatisticSample>> statisticsHistoryWrapper = new ReadOnlyObjectWrapper<>(List.of());
+
+public ReadOnlyObjectProperty<StatisticExtrema>    statisticsExtremaProperty() { return statisticsExtremaWrapper.getReadOnlyProperty(); }
+public ReadOnlyObjectProperty<List<StatisticSample>> statisticsHistoryProperty()  { return statisticsHistoryWrapper.getReadOnlyProperty(); }
+
+// Setters delegate to wrappers (keep existing method names for call-site compatibility):
+public void setStatisticsExtrema(StatisticExtrema extrema)      { statisticsExtremaWrapper.set(extrema); }
+public void setStatisticsHistory(List<StatisticSample> history) { statisticsHistoryWrapper.set(history); }
+// Getters become wrappers().get() under the hood; existing call sites (ConwayObservationView etc.) keep compiling.
+```
+
+**Shutdown policy (decision required before Step 9):** Reset extrema to `StatisticExtrema.empty()` and history to
+`List.of()` in `DefaultMainViewModel.shutdownSimulation()` immediately after `simulationManager = null`. This prevents
+stale values from lingering in the chart (Step 9) when a new simulation has not yet been started. The statistics label
+currently persists until the next start; consistency is achieved by resetting those too, or by accepting the asymmetry
+and documenting it. **Recommended: reset all three** (statistics, extrema, history) to empty/null on shutdown for a
+clean slate — aligned with the SimulationState.SHUTTING_DOWN transition that already clears other UI state.
+
+**Impact on existing views:** Conway/Forest/Wator call `viewModel.getStatisticsExtrema()` in `updateObservationLabels()`.
+No change required there — the getter still works. Step 11 will replace those rows with the generic renderer anyway.
+
+**Tests to add/update:**
+- After `setStatisticsExtrema()` / `setStatisticsHistory()`, verify `statisticsExtremaProperty().get()` / `statisticsHistoryProperty().get()` return the new value.
+- After `shutdownSimulation()`, verify both properties hold `StatisticExtrema.empty()` / `List.of()`.
 
 ### Step 9 — Descriptor-Driven Line Chart Region
 
 > **Type:** Feature · **Priority:** Medium · **Effort:** L · **Risk:** Medium · **Depends on:** Steps 7, 8
 
-Add an optional chart to the observation area (e.g., an `AbstractObservationView` helper or a new
-`StatisticHistoryChartView`) using a JavaFX `LineChart<Number, Number>` with `stepCount` on the X axis and metric value
-on the Y axis. Build one `XYChart.Series` per selected metric, driving the series name from the metric's `labelKey`
-(via `AppLocalization`) and the points from `StatisticSample.values().get(key)`. Skip `NaN` points. This is exactly
-what the descriptor design was built for; timing series can reuse `StatisticSample.stepTimingStatistics()` with no new
-plumbing.
+Add an optional chart to the observation area using a JavaFX `LineChart<Number, Number>` with `stepCount` on the X axis
+and metric value on the Y axis. One `XYChart.Series<Number, Number>` per selected metric; series name from
+`AppLocalization.getString(metric.labelKey())`; points from `StatisticSample.values().get(key)` — skip `NaN` entries.
+
+**Location and integration:**
+
+Create a new `StatisticHistoryChartView` in `simulations/core/view/`. It takes the `ReadOnlyObjectProperty<List<StatisticSample>>`
+from `DefaultObservationViewModel` (Step 8) and the simulation's `List<StatisticMetric<STA>>` as constructor arguments.
+`AbstractObservationView` gains an optional `buildChartSection(StatisticHistoryChartView)` helper so concrete observation
+views can include the chart without duplicating layout logic. The chart section is initially collapsed (via a
+`TitledPane`) to avoid occupying vertical space before the user opts in.
+
+**Series management strategy (performance):**
+
+With up to 100 samples × 8 metrics, incremental `getData().add()` calls trigger excessive scene-graph updates. Instead,
+rebuild each `XYChart.Series` from scratch on every `statisticsHistoryProperty` change:
+1. Create new `ObservableList<XYChart.Data<Number, Number>>` for each active metric.
+2. Set `series.setData(newList)` atomically — one scene-graph invalidation per series.
+3. Run this on the FX thread inside the property listener; no background thread needed (list is already an immutable snapshot from Step 4/7).
+
+**Axis configuration:**
+- X axis (`NumberAxis`): auto-ranging off; bounds from `history.get(0).stepCount()` to `history.getLast().stepCount()`.
+- Y axis (`NumberAxis`): auto-ranging on (or per-metric bounds if Step 10 adds per-metric axis options).
+- `LineChart.setCreateSymbols(false)` for smooth rendering at 100+ points.
+- `LineChart.setAnimated(false)` to prevent animation lag on rapid updates.
+
+**Timing metrics (optional):** `StatisticSample.stepTimingStatistics()` can be plotted as an additional series (e.g.,
+step duration in ms) without any new model changes — the series key is not in `metrics()` so it needs explicit wiring,
+deferred to an optional enhancement.
+
+**Tests:** unit-test `StatisticHistoryChartView` with a synthetic history list — verify correct series count, correct
+data point count, and that `NaN` values are skipped.
 
 ### Step 10 — Metric Selection UI From Descriptors
 
 > **Type:** Feature · **Priority:** Low · **Effort:** M · **Risk:** Low · **Depends on:** Step 9
 
-Because each simulation already declares an ordered `metrics()` list, a generic checkbox/toggle list can let the user
-pick which series to plot, with no per-simulation UI code.
+Because each simulation already declares an ordered `metrics()` list, a generic toggle-based selector can drive which
+series the chart (Step 9) renders, with no per-simulation UI code.
+
+**UI design:**
+
+A row of `ToggleButton`s inside the chart section (above the `LineChart`), one per metric whose `extremaMode != NONE`
+(pure `NONE` metrics like `deadCells` carry no useful trend). Labels come from `AppLocalization.getString(metric.labelKey())`.
+All metrics are selected by default. `StatisticHistoryChartView` holds a `Set<String>` of active metric keys and
+rebuilds the series list when the selection changes or the history property fires.
+
+**State management:**
+
+The selection is transient per simulation run (reset when `shutdownSimulation()` resets history in Step 8). It does not
+need to survive to the next launch. A `Map<String, BooleanProperty>` keyed by metric key, one entry per metric, gives
+direct binding to each toggle button's `selectedProperty()`.
+
+**No per-simulation code required** — `StatisticHistoryChartView` receives `List<StatisticMetric<STA>>` from the concrete
+observation view's constructor and builds toggle buttons generically. Concrete observation views pass `metrics()` without
+knowing the UI details.
+
+**Tests:** verify that deselecting a metric removes its series from the chart, and reselecting it restores it.
 
 ### Step 11 — Generic Descriptor-Driven Observation Rows
 
 > **Type:** Refactor · **Priority:** Low · **Effort:** M · **Risk:** Medium (UI parity) · **Depends on:** Steps 2, 6
 
-Replace the per-simulation min/max label wiring in the observation views with a generic row renderer that iterates the
-`metrics()` list and renders current value + extrema (plus the extremum step index from Step 6). This removes the
-duplicated key lookups and keeps views in sync with descriptors automatically.
+Replace the per-simulation min/max label wiring in the observation views with a generic row renderer that iterates
+the `metrics()` list and renders current value + extrema (with step index from Step 6). This removes duplicated key
+lookups and keeps views automatically in sync when metrics change. **Independent of Steps 8–10** — can land before
+or after the chart feature.
+
+**Scope:** All 8 observation views. Conway, Forest, and Wator already show extrema labels; the other 5 (Etpets, Snake,
+Sugar, Rebounding, Langton) show only current values. After this step all 8 use the same renderer.
+
+**Row format per metric** (controlled by `metric.extremaMode()`):
+
+| extremaMode   | Columns rendered                                      |
+|---------------|-------------------------------------------------------|
+| `NONE`        | `[label] [current value]`                             |
+| `MAX`         | `[label] [current value]   max [value @step]`         |
+| `MIN`         | `[label] [current value]   min [value @step]`         |
+| `MIN_AND_MAX` | `[label] [current value]   min [value @step]   max [value @step]` |
+
+Step index display: `@N` suffix (e.g., `6127 @step 42`). Formatting: existing `setFormattedIntegerValue()` /
+`setFormattedDoubleValue()` helpers in `AbstractObservationView`; cast to `int` when the metric value is known to be
+integral (e.g., cell counts), otherwise display with one decimal place. A formatting hint on `StatisticMetric` (from
+the "Richer metadata" optional enhancement) would make this exact, but is not required here — follow existing
+simulation-specific conventions.
+
+**Implementation approach:**
+
+Add a `buildGenericMetricRows(List<StatisticMetric<STA>>, …)` helper to `AbstractObservationView` that creates the label
+grid. Each concrete observation view calls it to build its metrics section, and its `updateObservationLabels()` calls a
+corresponding `updateGenericMetricRows()` helper passing the current statistics optional and the extrema snapshot.
+
+**Migration path (reduce risk):** migrate one simulation (e.g., Wator, which already has the most extrema rows) first,
+run all tests and visually verify layout parity, then migrate the remaining 7 in one batch.
+
+**Tests:**
+- Extend `TimedStatisticsTrackingTest` or add a `StatisticMetricRowTest` that verifies each simulation's `metrics()`
+  list maps to the expected extrema-mode row layout, catching missing or mismatched keys early.
+- Existing observation-view tests (if any) must remain green.
 
 ### Optional / Independent Enhancements
 

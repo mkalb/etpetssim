@@ -23,8 +23,10 @@ public final class DefaultObservationViewModel<
     private final ReadOnlyObjectWrapper<@Nullable STA> statistics;
     private final ObjectProperty<@Nullable GC> selectedGridCell = new SimpleObjectProperty<>();
     private final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinate = new SimpleObjectProperty<>();
-    private StatisticExtrema statisticsExtrema;
-    private List<StatisticSample> statisticsHistory;
+    private final ReadOnlyObjectWrapper<StatisticExtrema> statisticsExtremaWrapper =
+            new ReadOnlyObjectWrapper<>(StatisticExtrema.empty());
+    private final ReadOnlyObjectWrapper<List<StatisticSample>> statisticsHistoryWrapper =
+            new ReadOnlyObjectWrapper<>(List.of());
 
     /**
      * Creates observation state bound to a shared simulation-state property.
@@ -34,8 +36,6 @@ public final class DefaultObservationViewModel<
     public DefaultObservationViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         this.simulationState = simulationState;
         statistics = new ReadOnlyObjectWrapper<>();
-        statisticsExtrema = StatisticExtrema.empty();
-        statisticsHistory = List.of();
     }
 
     @Override
@@ -64,12 +64,21 @@ public final class DefaultObservationViewModel<
     }
 
     /**
+     * Exposes the current statistic extrema snapshot as an observable property.
+     *
+     * @return read-only property containing the latest extrema
+     */
+    public ReadOnlyObjectProperty<StatisticExtrema> statisticsExtremaProperty() {
+        return statisticsExtremaWrapper.getReadOnlyProperty();
+    }
+
+    /**
      * Returns the current statistic extrema snapshot.
      *
      * @return the latest extrema, or an empty snapshot before any step executes
      */
     public StatisticExtrema getStatisticsExtrema() {
-        return statisticsExtrema;
+        return statisticsExtremaWrapper.get();
     }
 
     /**
@@ -78,7 +87,16 @@ public final class DefaultObservationViewModel<
      * @param extrema the latest extrema snapshot from the simulation manager
      */
     public void setStatisticsExtrema(StatisticExtrema extrema) {
-        statisticsExtrema = extrema;
+        statisticsExtremaWrapper.set(extrema);
+    }
+
+    /**
+     * Exposes the current statistics history snapshot as an observable property.
+     *
+     * @return read-only property containing an immutable ordered list of samples, oldest first
+     */
+    public ReadOnlyObjectProperty<List<StatisticSample>> statisticsHistoryProperty() {
+        return statisticsHistoryWrapper.getReadOnlyProperty();
     }
 
     /**
@@ -87,7 +105,7 @@ public final class DefaultObservationViewModel<
      * @return immutable ordered list of samples, oldest first; empty before any step executes
      */
     public List<StatisticSample> getStatisticsHistory() {
-        return statisticsHistory;
+        return statisticsHistoryWrapper.get();
     }
 
     /**
@@ -98,7 +116,7 @@ public final class DefaultObservationViewModel<
      * @param history immutable ordered list of samples from the simulation manager
      */
     public void setStatisticsHistory(List<StatisticSample> history) {
-        statisticsHistory = history;
+        statisticsHistoryWrapper.set(history);
     }
 
     /**
