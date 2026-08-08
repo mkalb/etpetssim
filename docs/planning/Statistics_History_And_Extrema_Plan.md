@@ -26,7 +26,8 @@ instead of forcing them to become immutable. Extrema are full-run values (not li
   insertion-ordered `Map<String, Double>` of values (defensively copied).
 - **`StatisticHistory`** — bounded `ArrayDeque` ring buffer (`DEFAULT_CAPACITY = 100`), oldest evicted first, exposed
   as an immutable ordered list.
-- **`StatisticExtrema`** — immutable public min/max snapshot; **`StatisticExtremaTracker`** — package-private mutable
+- **`StatisticExtremum`** — immutable record: `double value` and `long stepCount` (step at which the extremum was first recorded).
+- **`StatisticExtrema`** — immutable public min/max snapshot (`Map<String, StatisticExtremum>`); **`StatisticExtremaTracker`** — package-private mutable
   accumulator honoring each metric's mode.
 
 ## Manager Integration
@@ -183,7 +184,16 @@ population counters. The cellular automata are the gap. Current `extremaMode` pe
    effectively static there, downgrade from `MIN_AND_MAX` to `NONE`.
 5. Update/extend tests and add any newly displayed i18n rows (both bundles).
 
-### Step 6 — Track The Step Index Of Each Extremum
+**Step 6 (2026-08-08):** Step index of each extremum is now tracked alongside the value.
+
+New `public record StatisticExtremum(double value, long stepCount)` was added to `simulations.core.model`.
+`StatisticExtrema` maps changed from `Map<String, Double>` to `Map<String, StatisticExtremum>`. The tracker's
+`update()` now accepts `long stepCount` and stores `StatisticExtremum` objects using a merge strategy instead of
+`Math::min` / `Math::max`. `AbstractTimedSimulationManager` passes `sample.stepCount()` to `update()`. The three
+existing observation views (Conway, Forest, Wator) were updated to call `.value()` for compilation; the step index
+will be displayed in Step 11. All tests updated; `StatisticExtremaTrackerTest` gained step-count assertions.
+
+### Step 6 — Track The Step Index Of Each Extremum ✓ DONE
 
 > **Type:** Feature · **Priority:** Medium · **Effort:** M · **Risk:** Medium (API change to `StatisticExtrema` /
 > tracker) · **Depends on:** Step 3

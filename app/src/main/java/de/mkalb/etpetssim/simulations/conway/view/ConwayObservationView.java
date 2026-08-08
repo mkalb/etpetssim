@@ -93,9 +93,9 @@ public final class ConwayObservationView
                     changedCellsLabel);
         }
 
-        double maxAlive = viewModel.getStatisticsExtrema().maximumValues().getOrDefault(ConwayStatistics.KEY_ALIVE_CELLS, Double.NaN);
-        if (Double.isFinite(maxAlive)) {
-            setFormattedIntegerValue(maxAliveCellsLabel, (int) maxAlive);
+        var maxAliveExtremum = viewModel.getStatisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS);
+        if (maxAliveExtremum != null) {
+            setFormattedIntegerValue(maxAliveCellsLabel, maxAliveExtremum.intValue());
         } else {
             setUnknownValues(maxAliveCellsLabel);
         }

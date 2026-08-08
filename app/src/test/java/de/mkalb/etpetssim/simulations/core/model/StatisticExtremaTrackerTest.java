@@ -18,19 +18,23 @@ final class StatisticExtremaTrackerTest {
                 new StatisticMetric<>("both", "both.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
         ));
 
-        tracker.update(Map.of("none", 5.0d, "min", 5.0d, "max", 5.0d, "both", 5.0d));
-        tracker.update(Map.of("none", 1.0d, "min", 1.0d, "max", 9.0d, "both", 9.0d));
+        tracker.update(Map.of("none", 5.0d, "min", 5.0d, "max", 5.0d, "both", 5.0d), 1L);
+        tracker.update(Map.of("none", 1.0d, "min", 1.0d, "max", 9.0d, "both", 9.0d), 2L);
 
         var extrema = tracker.snapshot();
         assertAll(
                 () -> assertFalse(extrema.minimumValues().containsKey("none")),
                 () -> assertFalse(extrema.maximumValues().containsKey("none")),
-                () -> assertEquals(1.0d, extrema.minimumValues().get("min")),
+                () -> assertEquals(1.0d, extrema.minimumValues().get("min").value()),
+                () -> assertEquals(2L, extrema.minimumValues().get("min").stepCount()),
                 () -> assertFalse(extrema.maximumValues().containsKey("min")),
-                () -> assertEquals(9.0d, extrema.maximumValues().get("max")),
+                () -> assertEquals(9.0d, extrema.maximumValues().get("max").value()),
+                () -> assertEquals(2L, extrema.maximumValues().get("max").stepCount()),
                 () -> assertFalse(extrema.minimumValues().containsKey("max")),
-                () -> assertEquals(5.0d, extrema.minimumValues().get("both")),
-                () -> assertEquals(9.0d, extrema.maximumValues().get("both"))
+                () -> assertEquals(5.0d, extrema.minimumValues().get("both").value()),
+                () -> assertEquals(1L, extrema.minimumValues().get("both").stepCount()),
+                () -> assertEquals(9.0d, extrema.maximumValues().get("both").value()),
+                () -> assertEquals(2L, extrema.maximumValues().get("both").stepCount())
         );
     }
 
@@ -49,14 +53,14 @@ final class StatisticExtremaTrackerTest {
         ));
 
         // First update with a valid value to establish an extremum.
-        tracker.update(Map.of("count", 5.0d));
+        tracker.update(Map.of("count", 5.0d), 1L);
         // Second update with NaN should be skipped; extrema should remain unchanged.
-        tracker.update(Map.of("count", Double.NaN));
+        tracker.update(Map.of("count", Double.NaN), 2L);
 
         var extrema = tracker.snapshot();
         assertAll(
-                () -> assertEquals(5.0d, extrema.minimumValues().get("count")),
-                () -> assertEquals(5.0d, extrema.maximumValues().get("count"))
+                () -> assertEquals(5.0d, extrema.minimumValues().get("count").value()),
+                () -> assertEquals(5.0d, extrema.maximumValues().get("count").value())
         );
     }
 
@@ -66,13 +70,13 @@ final class StatisticExtremaTrackerTest {
                 new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
         ));
 
-        tracker.update(Map.of("count", 3.0d));
-        tracker.update(Map.of("count", Double.POSITIVE_INFINITY));
+        tracker.update(Map.of("count", 3.0d), 1L);
+        tracker.update(Map.of("count", Double.POSITIVE_INFINITY), 2L);
 
         var extrema = tracker.snapshot();
         assertAll(
-                () -> assertEquals(3.0d, extrema.minimumValues().get("count")),
-                () -> assertEquals(3.0d, extrema.maximumValues().get("count"))
+                () -> assertEquals(3.0d, extrema.minimumValues().get("count").value()),
+                () -> assertEquals(3.0d, extrema.maximumValues().get("count").value())
         );
     }
 
@@ -82,13 +86,13 @@ final class StatisticExtremaTrackerTest {
                 new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
         ));
 
-        tracker.update(Map.of("count", 7.0d));
-        tracker.update(Map.of("count", Double.NEGATIVE_INFINITY));
+        tracker.update(Map.of("count", 7.0d), 1L);
+        tracker.update(Map.of("count", Double.NEGATIVE_INFINITY), 2L);
 
         var extrema = tracker.snapshot();
         assertAll(
-                () -> assertEquals(7.0d, extrema.minimumValues().get("count")),
-                () -> assertEquals(7.0d, extrema.maximumValues().get("count"))
+                () -> assertEquals(7.0d, extrema.minimumValues().get("count").value()),
+                () -> assertEquals(7.0d, extrema.maximumValues().get("count").value())
         );
     }
 

@@ -186,7 +186,7 @@ public abstract class AbstractTimedSimulationManager<
 
         var sample = new StatisticSample(stepCount(), stepTimingStatistics(), values);
         statisticsHistory.add(sample);
-        statisticsExtremaTracker.update(sample.values());
+        statisticsExtremaTracker.update(sample.values(), sample.stepCount());
     }
 
 }
