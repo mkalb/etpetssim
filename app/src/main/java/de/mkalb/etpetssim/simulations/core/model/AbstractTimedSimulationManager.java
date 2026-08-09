@@ -91,11 +91,6 @@ public abstract class AbstractTimedSimulationManager<
             recordStatisticsSample();
             onStep.run();
         });
-        // Keep snapshots synchronized even when no per-step callback is triggered.
-        // recordStatisticsSample() is intentionally NOT called here: every executed step has
-        // already been sampled inside the per-step callback above. Calling it again would
-        // create a duplicate sample for the final batch step at the same stepCount.
-        updateStatistics();
         afterStepsExecuted(result);
         return result;
     }
