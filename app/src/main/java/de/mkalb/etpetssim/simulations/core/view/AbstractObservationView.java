@@ -344,17 +344,24 @@ public abstract class AbstractObservationView<
         nameColumn.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().add(nameColumn);
 
-        boolean hasExtrema = metrics.stream().anyMatch(m -> m.extremaMode() != StatisticExtremaMode.NONE);
+        boolean hasMin = metrics.stream().anyMatch(m -> (m.extremaMode() == StatisticExtremaMode.MIN) || (m.extremaMode() == StatisticExtremaMode.MIN_AND_MAX));
+        boolean hasMax = metrics.stream().anyMatch(m -> (m.extremaMode() == StatisticExtremaMode.MAX) || (m.extremaMode() == StatisticExtremaMode.MIN_AND_MAX));
+        int minCol = 2;
+        int maxCol = hasMin ? 3 : 2;
         int rowOffset = 0;
-        if (hasExtrema) {
-            Label minHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MIN));
-            Label maxHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MAX));
-            minHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
-            maxHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
-            grid.add(minHeader, 2, 0);
-            grid.add(maxHeader, 3, 0);
-            GridPane.setHalignment(minHeader, HPos.RIGHT);
-            GridPane.setHalignment(maxHeader, HPos.RIGHT);
+        if (hasMin || hasMax) {
+            if (hasMin) {
+                Label minHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MIN));
+                minHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
+                grid.add(minHeader, minCol, 0);
+                GridPane.setHalignment(minHeader, HPos.RIGHT);
+            }
+            if (hasMax) {
+                Label maxHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MAX));
+                maxHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
+                grid.add(maxHeader, maxCol, 0);
+                GridPane.setHalignment(maxHeader, HPos.RIGHT);
+            }
             rowOffset = 1;
         }
 
@@ -389,7 +396,7 @@ public abstract class AbstractObservationView<
                 minLabel.setAlignment(Pos.CENTER_RIGHT);
                 setUnknownValues(minLabel);
                 minTooltip = new Tooltip();
-                grid.add(minLabel, 2, row);
+                grid.add(minLabel, minCol, row);
                 GridPane.setHalignment(minLabel, HPos.RIGHT);
             }
             if ((mode == StatisticExtremaMode.MAX) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
@@ -398,7 +405,7 @@ public abstract class AbstractObservationView<
                 maxLabel.setAlignment(Pos.CENTER_RIGHT);
                 setUnknownValues(maxLabel);
                 maxTooltip = new Tooltip();
-                grid.add(maxLabel, 3, row);
+                grid.add(maxLabel, maxCol, row);
                 GridPane.setHalignment(maxLabel, HPos.RIGHT);
             }
 
