@@ -26,8 +26,10 @@ instead of forcing them to become immutable. Extrema are full-run values (not li
   insertion-ordered `Map<String, Double>` of values (defensively copied).
 - **`StatisticHistory`** — bounded `ArrayDeque` ring buffer (`DEFAULT_CAPACITY = 100`), oldest evicted first, exposed
   as an immutable ordered list.
-- **`StatisticExtremum`** — immutable record: `double value` and `long stepCount` (step at which the extremum was first recorded).
-- **`StatisticExtrema`** — immutable public min/max snapshot (`Map<String, StatisticExtremum>`); **`StatisticExtremaTracker`** — package-private mutable
+- **`StatisticExtremum`** — immutable record: `double value` and `long stepCount` (step at which the extremum was first
+  recorded).
+- **`StatisticExtrema`** — immutable public min/max snapshot (`Map<String, StatisticExtremum>`); *
+  *`StatisticExtremaTracker`** — package-private mutable
   accumulator honoring each metric's mode.
 
 ## Manager Integration
@@ -93,8 +95,6 @@ These were established during the initial implementation and must remain intact 
 - Non-finite metric values are logged and stored as the `Double.NaN` sentinel and skipped by the extrema tracker; the
   history time series stays gap-free.
 
-
-
 **Step 3 (2026-08-08):** Extrema golden-value regression coverage was restored for Conway, Forest, and Wator.
 Three new tests (`testConwayGoldenExtremaExactValues`, `testForestGoldenExtremaExactValues`,
 `testWatorGoldenExtremaExactValues`) were added to `TimedStatisticsTrackingTest`. Each test asserts exact `int`
@@ -103,6 +103,7 @@ path (`executeSteps(20)`) and the single-step path (`executeSteps(1)` × 20) pro
 `ExtremaGoldenValueAnalyzer` utility was added to re-capture values if simulation logic changes.
 
 Golden values (seed=1, 20 steps, default constraints):
+
 - Conway: `maxAliveCells` = 6945
 - Forest: `maxTreeCells` = 1037, `maxBurningCells` = 17
 - Wator: `minFishCells` = 1900, `maxFishCells` = 6127, `minSharkCells` = 1000, `maxSharkCells` = 3002
@@ -148,7 +149,8 @@ Only tracking was added; display will follow in Step 11.
 - **Conway** `aliveCells` MAX → MIN_AND_MAX; `changedCells` NONE → MIN_AND_MAX (MIN==0 marks still-life / frozen board).
 - **Forest** `emptyCells` NONE → MAX; `treeCells` MAX → MIN_AND_MAX.
 - **Langton** `visitedCells` MAX → NONE (monotonically increasing; MAX always equals current value).
-- **Snake / Rebounding** `wallCells` MIN_AND_MAX → NONE (walls only change via user edit actions, not during step execution).
+- **Snake / Rebounding** `wallCells` MIN_AND_MAX → NONE (walls only change via user edit actions, not during step
+  execution).
 
 Golden values updated in `TimedStatisticsTrackingTest` and `ExtremaGoldenValueAnalyzer` to cover the new extrema.
 
@@ -160,16 +162,16 @@ Golden values updated in `TimedStatisticsTrackingTest` and `ExtremaGoldenValueAn
 The agent-based simulations (Wator, Etpets, Snake, Sugar, Rebounding) already track `MIN_AND_MAX` for their live
 population counters. The cellular automata are the gap. Current `extremaMode` per simulation for reference:
 
-| Simulation | Metrics and current mode                                                                                                    |
-|------------|-----------------------------------------------------------------------------------------------------------------------------|
-| Conway     | `aliveCells` MIN_AND_MAX, `deadCells` NONE, `changedCells` MIN_AND_MAX                                                      |
-| Forest     | `emptyCells` MAX, `treeCells` MIN_AND_MAX, `burningCells` MAX                                                               |
-| Langton    | `antCells` NONE, `visitedCells` NONE                                                                                        |
-| Wator      | `fishCells` MIN_AND_MAX, `sharkCells` MIN_AND_MAX                                                                           |
-| Etpets     | `activePetCells` MIN_AND_MAX, `eggCells` MIN_AND_MAX, `cumulativePetDeathCount` NONE                                        |
-| Snake      | `snakeHeadCells`/`livingSnakeHeadCells`/`foodCells` MIN_AND_MAX, `wallCells` NONE, `cumulativeSnakeDeathCount` NONE         |
-| Sugar      | `resourceCells` MIN_AND_MAX, `agentCells` MIN_AND_MAX                                                                       |
-| Rebounding | `wallCells` NONE, `movingEntityCells` MIN_AND_MAX                                                                           |
+| Simulation | Metrics and current mode                                                                                            |
+|------------|---------------------------------------------------------------------------------------------------------------------|
+| Conway     | `aliveCells` MIN_AND_MAX, `deadCells` NONE, `changedCells` MIN_AND_MAX                                              |
+| Forest     | `emptyCells` MAX, `treeCells` MIN_AND_MAX, `burningCells` MAX                                                       |
+| Langton    | `antCells` NONE, `visitedCells` NONE                                                                                |
+| Wator      | `fishCells` MIN_AND_MAX, `sharkCells` MIN_AND_MAX                                                                   |
+| Etpets     | `activePetCells` MIN_AND_MAX, `eggCells` MIN_AND_MAX, `cumulativePetDeathCount` NONE                                |
+| Snake      | `snakeHeadCells`/`livingSnakeHeadCells`/`foodCells` MIN_AND_MAX, `wallCells` NONE, `cumulativeSnakeDeathCount` NONE |
+| Sugar      | `resourceCells` MIN_AND_MAX, `agentCells` MIN_AND_MAX                                                               |
+| Rebounding | `wallCells` NONE, `movingEntityCells` MIN_AND_MAX                                                                   |
 
 **Actions:**
 
@@ -203,7 +205,8 @@ it through `StatisticExtrema`. This turns "peak shark population 128" into "peak
 is far more useful for the observation panel and future chart tooltips. It is cheap to capture next to the existing
 `merge` calls, but changes the public `StatisticExtrema` shape, so land it before generic rows (Step 11).
 
-**Step 7 (2026-08-08):** `statisticsHistory` forwarding mirrored the existing extrema forwarding in `DefaultMainViewModel`.
+**Step 7 (2026-08-08):** `statisticsHistory` forwarding mirrored the existing extrema forwarding in
+`DefaultMainViewModel`.
 `DefaultObservationViewModel` gained a `List<StatisticSample> statisticsHistory` field (initialized to `List.of()`),
 a `getStatisticsHistory()` accessor, and a `setStatisticsHistory()` mutator. `updateObservationStatistics()` in
 `DefaultMainViewModel` now captures `manager.statisticsHistory()` before any `Platform.runLater()` lambda (satisfying
@@ -235,8 +238,10 @@ reset-to-empty behavior for both properties.
 > **Type:** Refactor · **Priority:** Medium · **Effort:** M · **Risk:** Low · **Depends on:** Step 7
 
 `DefaultObservationViewModel.statisticsExtrema` and `statisticsHistory` are plain fields updated via setter; views
-pull them in `updateObservationLabels()` which fires indirectly on the `statistics` property change. This pull-on-statistics
+pull them in `updateObservationLabels()` which fires indirectly on the `statistics` property change. This
+pull-on-statistics
 pattern works while statistics and extrema/history are always updated together, but breaks for:
+
 - chart series that must react to history independently (Step 9),
 - edit-mode user actions that may change extrema without advancing statistics.
 
@@ -263,11 +268,14 @@ currently persists until the next start; consistency is achieved by resetting th
 and documenting it. **Recommended: reset all three** (statistics, extrema, history) to empty/null on shutdown for a
 clean slate — aligned with the SimulationState.SHUTTING_DOWN transition that already clears other UI state.
 
-**Impact on existing views:** Conway/Forest/Wator call `viewModel.getStatisticsExtrema()` in `updateObservationLabels()`.
+**Impact on existing views:** Conway/Forest/Wator call `viewModel.getStatisticsExtrema()` in
+`updateObservationLabels()`.
 No change required there — the getter still works. Step 11 will replace those rows with the generic renderer anyway.
 
 **Tests to add/update:**
-- After `setStatisticsExtrema()` / `setStatisticsHistory()`, verify `statisticsExtremaProperty().get()` / `statisticsHistoryProperty().get()` return the new value.
+
+- After `setStatisticsExtrema()` / `setStatisticsHistory()`, verify `statisticsExtremaProperty().get()` /
+  `statisticsHistoryProperty().get()` return the new value.
 - After `shutdownSimulation()`, verify both properties hold `StatisticExtrema.empty()` / `List.of()`.
 
 ### Step 9 — Descriptor-Driven Line Chart Region
@@ -280,9 +288,11 @@ and metric value on the Y axis. One `XYChart.Series<Number, Number>` per selecte
 
 **Location and integration:**
 
-Create a new `StatisticHistoryChartView` in `simulations/core/view/`. It takes the `ReadOnlyObjectProperty<List<StatisticSample>>`
+Create a new `StatisticHistoryChartView` in `simulations/core/view/`. It takes the
+`ReadOnlyObjectProperty<List<StatisticSample>>`
 from `DefaultObservationViewModel` (Step 8) and the simulation's `List<StatisticMetric<STA>>` as constructor arguments.
-`AbstractObservationView` gains an optional `buildChartSection(StatisticHistoryChartView)` helper so concrete observation
+`AbstractObservationView` gains an optional `buildChartSection(StatisticHistoryChartView)` helper so concrete
+observation
 views can include the chart without duplicating layout logic. The chart section is initially collapsed (via a
 `TitledPane`) to avoid occupying vertical space before the user opts in.
 
@@ -290,11 +300,14 @@ views can include the chart without duplicating layout logic. The chart section 
 
 With up to 100 samples × 8 metrics, incremental `getData().add()` calls trigger excessive scene-graph updates. Instead,
 rebuild each `XYChart.Series` from scratch on every `statisticsHistoryProperty` change:
+
 1. Create new `ObservableList<XYChart.Data<Number, Number>>` for each active metric.
 2. Set `series.setData(newList)` atomically — one scene-graph invalidation per series.
-3. Run this on the FX thread inside the property listener; no background thread needed (list is already an immutable snapshot from Step 4/7).
+3. Run this on the FX thread inside the property listener; no background thread needed (list is already an immutable
+   snapshot from Step 4/7).
 
 **Axis configuration:**
+
 - X axis (`NumberAxis`): auto-ranging off; bounds from `history.get(0).stepCount()` to `history.getLast().stepCount()`.
 - Y axis (`NumberAxis`): auto-ranging on (or per-metric bounds if Step 10 adds per-metric axis options).
 - `LineChart.setCreateSymbols(false)` for smooth rendering at 100+ points.
@@ -317,7 +330,8 @@ series the chart (Step 9) renders, with no per-simulation UI code.
 **UI design:**
 
 A row of `ToggleButton`s inside the chart section (above the `LineChart`), one per metric whose `extremaMode != NONE`
-(pure `NONE` metrics like `deadCells` carry no useful trend). Labels come from `AppLocalization.getString(metric.labelKey())`.
+(pure `NONE` metrics like `deadCells` carry no useful trend). Labels come from
+`AppLocalization.getString(metric.labelKey())`.
 All metrics are selected by default. `StatisticHistoryChartView` holds a `Set<String>` of active metric keys and
 rebuilds the series list when the selection changes or the history property fires.
 
@@ -327,13 +341,44 @@ The selection is transient per simulation run (reset when `shutdownSimulation()`
 need to survive to the next launch. A `Map<String, BooleanProperty>` keyed by metric key, one entry per metric, gives
 direct binding to each toggle button's `selectedProperty()`.
 
-**No per-simulation code required** — `StatisticHistoryChartView` receives `List<StatisticMetric<STA>>` from the concrete
-observation view's constructor and builds toggle buttons generically. Concrete observation views pass `metrics()` without
+**No per-simulation code required** — `StatisticHistoryChartView` receives `List<StatisticMetric<STA>>` from the
+concrete
+observation view's constructor and builds toggle buttons generically. Concrete observation views pass `metrics()`
+without
 knowing the UI details.
 
 **Tests:** verify that deselecting a metric removes its series from the chart, and reselecting it restores it.
 
-### Step 11 — Generic Descriptor-Driven Observation Rows
+**Step 11 (2026-08-08):** The per-simulation min/max label wiring in all 8 observation views was replaced by a
+generic descriptor-driven renderer in `AbstractObservationView`. Three new localization constants and bundle entries
+(`observation.extremum.at.step`, `observation.extremum.max`, `observation.extremum.min`) were added to both locale
+bundles (alphabetically sorted, `=` column-aligned). `AbstractObservationView` gained:
+
+- `createGenericMetricSection(String titleKey, List<StatisticMetric<STA>> metrics)` — builds a GridPane with a name
+  column, a current-value column, and — only when at least one metric in the list has an extrema mode other than
+  `NONE` — separate min and max value columns with a right-aligned header row (`OBSERVATION_EXTREMUM_MIN` /
+  `OBSERVATION_EXTREMUM_MAX`, styled via the dedicated `observation-extremum-header-label` CSS class). Sections
+  without any tracked extrema render only the name and current-value columns. The current/min/max value columns
+  share a common minimum width (`VALUE_COLUMN_MIN_WIDTH`, 60px) so values stay aligned across rows.
+- `updateGenericMetricSection(Optional<STA> statistics, StatisticExtrema extrema)` — refreshes all labels; current
+  values are cast to `int` after a `Double.isFinite` guard (all metrics are cell counts). Min/max values are shown
+  as separate numeric labels (not concatenated text); each carries a tooltip with the step count at which the
+  extremum occurred, attached only when a value is present (no empty tooltips before the first sample).
+
+Each of the 8 concrete observation views (`Conway`, `Forest`, `Wator`, `Etpets`, `Snake`, `Sugar`, `Rebounding`,
+`Langton`) was rewritten: per-metric private label fields and their localization key constants were removed; the
+hand-coded current section plus the separate statistics section were replaced by a single
+`createGenericMetricSection(OBSERVATION_SECTION_METRICS, <Sim>Statistics.metrics())` call; `updateObservationLabels()`
+now calls `updateGenericMetricSection`. Simulation-specific selected-cell labels (Wator age, Snake head details, Sugar
+energy/amount, Rebounding direction) were unchanged. Forest now shows `emptyCells` and its MAX extremum, which was
+previously omitted; Snake now shows `livingSnakeHeadCells` and `wallCells`. A new `StatisticMetricRowTest` class
+(8 tests) verifies each simulation's `metrics()` list size and each metric's `StatisticExtremaMode`, catching future
+mode regressions at compile time. The now-unused `observation.section.current` / `observation.section.statistics`
+localization keys were removed from both bundles. The center `SplitPane` divider (`AbstractMainView`,
+`CENTER_SPLIT_PANE_DIVIDER_POSITION`) was reduced from `0.75d` to `0.65d`, giving the observation region more width
+to accommodate the widened value columns.
+
+### Step 11 — Generic Descriptor-Driven Observation Rows ✓ DONE
 
 > **Type:** Refactor · **Priority:** Low · **Effort:** M · **Risk:** Medium (UI parity) · **Depends on:** Steps 2, 6
 
@@ -345,31 +390,35 @@ or after the chart feature.
 **Scope:** All 8 observation views. Conway, Forest, and Wator already show extrema labels; the other 5 (Etpets, Snake,
 Sugar, Rebounding, Langton) show only current values. After this step all 8 use the same renderer.
 
-**Row format per metric** (controlled by `metric.extremaMode()`):
+**Column layout** (as implemented): the min and max columns are added to the GridPane only when at least one metric
+in the section has `extremaMode() != NONE`; sections without any tracked extrema render just the name and
+current-value columns.
 
-| extremaMode   | Columns rendered                                      |
-|---------------|-------------------------------------------------------|
-| `NONE`        | `[label] [current value]`                             |
-| `MAX`         | `[label] [current value]   max [value @step]`         |
-| `MIN`         | `[label] [current value]   min [value @step]`         |
-| `MIN_AND_MAX` | `[label] [current value]   min [value @step]   max [value @step]` |
+| extremaMode   | current column | min column | max column |
+|---------------|----------------|------------|------------|
+| `NONE`        | value          | —          | —          |
+| `MIN`         | value          | value      | —          |
+| `MAX`         | value          | —          | value      |
+| `MIN_AND_MAX` | value          | value      | value      |
 
-Step index display: `@N` suffix (e.g., `6127 @step 42`). Formatting: existing `setFormattedIntegerValue()` /
-`setFormattedDoubleValue()` helpers in `AbstractObservationView`; cast to `int` when the metric value is known to be
-integral (e.g., cell counts), otherwise display with one decimal place. A formatting hint on `StatisticMetric` (from
-the "Richer metadata" optional enhancement) would make this exact, but is not required here — follow existing
-simulation-specific conventions.
+Step index is not shown inline; each populated min/max label carries a tooltip (`observation.extremum.at.step`) with
+the step count at which the extremum occurred, attached only once a value exists. Formatting uses the existing
+`setFormattedIntegerValue()` helper in `AbstractObservationView`, after a `Double.isFinite` guard (all current metrics
+are cell counts).
 
-**Implementation approach:**
+**Implementation approach (as implemented):**
 
-Add a `buildGenericMetricRows(List<StatisticMetric<STA>>, …)` helper to `AbstractObservationView` that creates the label
-grid. Each concrete observation view calls it to build its metrics section, and its `updateObservationLabels()` calls a
-corresponding `updateGenericMetricRows()` helper passing the current statistics optional and the extrema snapshot.
+`AbstractObservationView` gained `createGenericMetricSection(String titleKey, List<StatisticMetric<STA>> metrics)` to
+build the label grid and `updateGenericMetricSection(Optional<STA> statistics, StatisticExtrema extrema)` to refresh
+it. Each concrete observation view calls `createGenericMetricSection(...)` once to build its metrics section, and its
+`updateObservationLabels()` calls `updateGenericMetricSection(...)` with the current statistics optional and the
+extrema snapshot.
 
 **Migration path (reduce risk):** migrate one simulation (e.g., Wator, which already has the most extrema rows) first,
 run all tests and visually verify layout parity, then migrate the remaining 7 in one batch.
 
 **Tests:**
+
 - Extend `TimedStatisticsTrackingTest` or add a `StatisticMetricRowTest` that verifies each simulation's `metrics()`
   list maps to the expected extrema-mode row layout, catching missing or mismatched keys early.
 - Existing observation-view tests (if any) must remain green.
