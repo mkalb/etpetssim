@@ -27,7 +27,6 @@ public final class SnakeStatistics
     private int livingSnakeHeadCells;
     private int wallCells;
     private int foodCells;
-
     private int cumulativeSnakeDeathCount;
 
     public SnakeStatistics(GridStructure gridStructure) {
@@ -41,16 +40,21 @@ public final class SnakeStatistics
 
     public static List<StatisticMetric<SnakeStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_SNAKE_HEAD_CELLS, SnakeStatistics::getSnakeHeadCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
-                        SnakeStatistics::getLivingSnakeHeadCells, StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS, SnakeStatistics::getWallCells,
+                new StatisticMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
+                        SnakeStatistics::getSnakeHeadCells,
                         StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS, SnakeStatistics::getFoodCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
+                new StatisticMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
+                        SnakeStatistics::getLivingSnakeHeadCells,
+                        StatisticExtremaMode.NONE),
+                new StatisticMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS,
+                        SnakeStatistics::getWallCells,
+                        StatisticExtremaMode.NONE),
+                new StatisticMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS,
+                        SnakeStatistics::getFoodCells,
+                        StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
-                        SnakeStatistics::getCumulativeSnakeDeathCount, StatisticExtremaMode.NONE)
+                        SnakeStatistics::getCumulativeSnakeDeathCount,
+                        StatisticExtremaMode.NONE)
         );
     }
 
