@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -34,6 +34,8 @@ public abstract class AbstractObservationView<
     private @Nullable GC selectedGridCell;
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
+    private @Nullable List<StatisticMetric<STA>> genericMetrics;
+    private @Nullable List<MetricLabels> genericMetricLabels;
 
     /**
      * Constructs a new observation view bound to the given view model and entity descriptor registry.
@@ -320,4 +322,159 @@ public abstract class AbstractObservationView<
         return selectedCellSection;
     }
 
+    /**
+     * Creates a titled metrics section displaying current values and running extrema for each metric.
+     * <p>
+     * When any metric tracks extrema, a "min" / "max" header row is prepended; step-count context
+     * appears in a tooltip on each extremum value label on hover.
+     * Call {@link #updateGenericMetricSection(Optional, StatisticExtrema)} to refresh all values.
+     *
+     * @param metrics ordered metric descriptors defining the row layout
+     * @return a styled {@link VBox} containing the title and the metric grid
+     */
+    protected final VBox createGenericMetricSection(List<StatisticMetric<STA>> metrics) {
+        genericMetrics = List.copyOf(metrics);
+        List<MetricLabels> labels = new ArrayList<>(metrics.size());
+        genericMetricLabels = labels;
+
+        GridPane grid = new GridPane();
+        grid.getStyleClass().add(FXStyleClasses.OBSERVATION_GRID);
+
+        ColumnConstraints nameColumn = new ColumnConstraints();
+        nameColumn.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().add(nameColumn);
+
+        boolean hasExtrema = metrics.stream().anyMatch(m -> m.extremaMode() != StatisticExtremaMode.NONE);
+        int rowOffset = 0;
+        if (hasExtrema) {
+            Label minHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MIN));
+            Label maxHeader = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_MAX));
+            minHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
+            maxHeader.getStyleClass().add(FXStyleClasses.OBSERVATION_EXTREMUM_HEADER_LABEL);
+            grid.add(minHeader, 2, 0);
+            grid.add(maxHeader, 3, 0);
+            GridPane.setHalignment(minHeader, HPos.RIGHT);
+            GridPane.setHalignment(maxHeader, HPos.RIGHT);
+            rowOffset = 1;
+        }
+
+        for (int i = 0; i < metrics.size(); i++) {
+            StatisticMetric<STA> metric = metrics.get(i);
+            int row = i + rowOffset;
+
+            Label nameLabel = new Label(AppLocalization.getText(metric.labelKey()));
+            nameLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_NAME_LABEL);
+            nameLabel.setMaxWidth(Double.MAX_VALUE);
+
+            Label currentLabel = new Label();
+            currentLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
+            currentLabel.setAlignment(Pos.CENTER_RIGHT);
+            setUnknownValues(currentLabel);
+
+            grid.add(nameLabel, 0, row);
+            grid.add(currentLabel, 1, row);
+            GridPane.setHalignment(nameLabel, HPos.LEFT);
+            GridPane.setHgrow(nameLabel, Priority.ALWAYS);
+            GridPane.setHalignment(currentLabel, HPos.RIGHT);
+
+            Label minLabel = null;
+            Tooltip minTooltip = null;
+            Label maxLabel = null;
+            Tooltip maxTooltip = null;
+
+            var mode = metric.extremaMode();
+            if ((mode == StatisticExtremaMode.MIN) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
+                minLabel = new Label();
+                minLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
+                minLabel.setAlignment(Pos.CENTER_RIGHT);
+                setUnknownValues(minLabel);
+                minTooltip = new Tooltip();
+                grid.add(minLabel, 2, row);
+                GridPane.setHalignment(minLabel, HPos.RIGHT);
+            }
+            if ((mode == StatisticExtremaMode.MAX) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
+                maxLabel = new Label();
+                maxLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
+                maxLabel.setAlignment(Pos.CENTER_RIGHT);
+                setUnknownValues(maxLabel);
+                maxTooltip = new Tooltip();
+                grid.add(maxLabel, 3, row);
+                GridPane.setHalignment(maxLabel, HPos.RIGHT);
+            }
+
+            labels.add(new MetricLabels(currentLabel, minLabel, minTooltip, maxLabel, maxTooltip));
+        }
+
+        VBox section = new VBox();
+        section.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_VBOX);
+
+        Label titleLabel = new Label(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_SECTION_METRICS));
+        titleLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_SECTION_TITLE_LABEL);
+        section.getChildren().add(titleLabel);
+        section.getChildren().add(grid);
+
+        return section;
+    }
+
+    /**
+     * Refreshes the generic metrics section with the latest statistics and extrema values.
+     *
+     * @param statistics current statistics snapshot, or empty if no simulation is active
+     * @param extrema    current extrema snapshot
+     */
+    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "NumericCastThatLosesPrecision"})
+    protected final void updateGenericMetricSection(Optional<STA> statistics, StatisticExtrema extrema) {
+        if ((genericMetrics == null) || (genericMetricLabels == null)) {
+            return;
+        }
+        String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
+        String atStep = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_AT_STEP);
+        for (int i = 0; i < genericMetrics.size(); i++) {
+            StatisticMetric<STA> metric = genericMetrics.get(i);
+            MetricLabels rowLabels = genericMetricLabels.get(i);
+            if (statistics.isPresent()) {
+                double currentValue = metric.extractor().applyAsDouble(statistics.get());
+                if (Double.isFinite(currentValue)) {
+                    setFormattedIntegerValue(rowLabels.currentLabel(), (int) currentValue);
+                } else {
+                    rowLabels.currentLabel().setText(unknown);
+                }
+            } else {
+                rowLabels.currentLabel().setText(unknown);
+            }
+            if (rowLabels.minLabel() != null) {
+                var minTooltip = Objects.requireNonNull(rowLabels.minTooltip());
+                var min = extrema.minimumValues().get(metric.key());
+                if (min != null) {
+                    setFormattedIntegerValue(rowLabels.minLabel(), min.intValue());
+                    minTooltip.setText(atStep + " " + integerFormat().format(min.stepCount()));
+                    rowLabels.minLabel().setTooltip(minTooltip);
+                } else {
+                    rowLabels.minLabel().setText(unknown);
+                    rowLabels.minLabel().setTooltip(null);
+                }
+            }
+            if (rowLabels.maxLabel() != null) {
+                var maxTooltip = Objects.requireNonNull(rowLabels.maxTooltip());
+                var max = extrema.maximumValues().get(metric.key());
+                if (max != null) {
+                    setFormattedIntegerValue(rowLabels.maxLabel(), max.intValue());
+                    maxTooltip.setText(atStep + " " + integerFormat().format(max.stepCount()));
+                    rowLabels.maxLabel().setTooltip(maxTooltip);
+                } else {
+                    rowLabels.maxLabel().setText(unknown);
+                    rowLabels.maxLabel().setTooltip(null);
+                }
+            }
+        }
+    }
+
+    private record MetricLabels(
+            Label currentLabel,
+            @Nullable Label minLabel,
+            @Nullable Tooltip minTooltip,
+            @Nullable Label maxLabel,
+            @Nullable Tooltip maxTooltip) {}
+
 }
+

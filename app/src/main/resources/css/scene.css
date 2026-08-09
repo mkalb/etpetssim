@@ -17,6 +17,18 @@
   -fx-effect: null;
 }
 
+.tooltip {
+  -fx-background-color: #263a4d;
+  -fx-background-radius: 4;
+  -fx-background-insets: 0;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 4;
+  -fx-text-fill: #aeefff;
+  -fx-font-size: 12;
+  -fx-padding: 4 8 4 8;
+}
+
 ScrollPane {
   -fx-background-insets: 0;
   -fx-background-radius: 0;
@@ -831,9 +843,17 @@ ScrollPane .decrement-arrow {
   -fx-padding: 1 4 1 0;
 }
 
+.observation-extremum-header-label {
+  -fx-font-size: 12;
+  -fx-font-weight: bold;
+  -fx-text-fill: #aeefff;
+  -fx-padding: 1 4 1 0;
+}
+
 .observation-value-label {
   -fx-font-size: 13;
   -fx-font-weight: normal;
   -fx-text-fill: #00ff99;
   -fx-padding: 1 4 1 0;
+  -fx-min-width: 55;
 }
