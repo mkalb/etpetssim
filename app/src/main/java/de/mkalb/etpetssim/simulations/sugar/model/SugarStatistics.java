@@ -28,10 +28,12 @@ public final class SugarStatistics
 
     public static List<StatisticMetric<SugarStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_RESOURCE_CELLS, SugarStatistics::getResourceCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_AGENT_CELLS, SugarStatistics::getAgentCells,
-                        StatisticExtremaMode.MIN_AND_MAX)
+                new StatisticMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_RESOURCE_CELLS,
+                        SugarStatistics::getResourceCells,
+                        StatisticExtremaMode.NONE),
+                new StatisticMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_AGENT_CELLS,
+                        SugarStatistics::getAgentCells,
+                        StatisticExtremaMode.NONE)
         );
     }
 

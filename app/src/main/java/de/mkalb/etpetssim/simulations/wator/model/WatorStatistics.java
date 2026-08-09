@@ -28,9 +28,11 @@ public final class WatorStatistics
 
     public static List<StatisticMetric<WatorStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS, WatorStatistics::getFishCells,
+                new StatisticMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS,
+                        WatorStatistics::getFishCells,
                         StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS, WatorStatistics::getSharkCells,
+                new StatisticMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS,
+                        WatorStatistics::getSharkCells,
                         StatisticExtremaMode.MIN_AND_MAX)
         );
     }

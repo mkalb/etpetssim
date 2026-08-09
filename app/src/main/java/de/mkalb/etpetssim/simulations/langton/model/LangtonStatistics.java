@@ -28,9 +28,11 @@ public final class LangtonStatistics
 
     public static List<StatisticMetric<LangtonStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_ANT_CELLS, LangtonStatistics::getAntCells,
+                new StatisticMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_ANT_CELLS,
+                        LangtonStatistics::getAntCells,
                         StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_VISITED_CELLS, LangtonStatistics::getVisitedCells,
+                new StatisticMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_VISITED_CELLS,
+                        LangtonStatistics::getVisitedCells,
                         StatisticExtremaMode.NONE)
         );
     }
