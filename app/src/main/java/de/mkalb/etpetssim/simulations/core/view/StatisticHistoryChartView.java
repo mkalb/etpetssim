@@ -22,18 +22,19 @@ final class StatisticHistoryChartView {
     private static final double TARGET_TICK_COUNT = 5.0;
     private static final double CHART_SPACING = 8.0;
     private static final double[] NICE_CEILING_FACTORS = {1.0, 2.0, 5.0, 10.0};
+    private static final double SHRINK_THRESHOLD_RATIO = 0.2;
 
     private final List<StatisticChartGroup> distinctGroups;
     private final List<GroupChart> groupCharts;
     private final Map<String, XYChart.Series<Number, Number>> seriesByKey;
     private final Map<StatisticChartGroup, List<String>> keysByGroup;
     private final Map<StatisticChartGroup, Integer> windowSizeByGroup;
+    private final Map<StatisticChartGroup, Double> ceilingByGroup;
     private final TitledPane titledPane;
 
     StatisticHistoryChartView(
             List<? extends StatisticMetric<?>> metrics,
-            ReadOnlyObjectProperty<List<StatisticSample>> historyProperty,
-            ReadOnlyObjectProperty<StatisticExtrema> extremaProperty) {
+            ReadOnlyObjectProperty<List<StatisticSample>> historyProperty) {
 
         distinctGroups = Arrays.stream(StatisticChartGroup.values())
                                .filter(g -> g != StatisticChartGroup.NONE)
@@ -56,6 +57,8 @@ final class StatisticHistoryChartView {
                                     .orElse(StatisticMetric.DEFAULT_CHART_WINDOW_SIZE);
             windowSizeByGroup.put(group, windowSize);
         }
+
+        ceilingByGroup = new EnumMap<>(StatisticChartGroup.class);
 
         seriesByKey = new LinkedHashMap<>();
         for (StatisticMetric<?> metric : metrics) {
@@ -105,8 +108,8 @@ final class StatisticHistoryChartView {
         titledPane.setManaged(false);
         titledPane.setVisible(false);
 
-        historyProperty.addListener((_, _, history) -> updateCharts(history, extremaProperty.get()));
-        updateCharts(historyProperty.get(), extremaProperty.get());
+        historyProperty.addListener((_, _, history) -> updateCharts(history));
+        updateCharts(historyProperty.get());
     }
 
     /**
@@ -120,12 +123,13 @@ final class StatisticHistoryChartView {
     /**
      * Rounds up to the smallest {@code {1, 2, 5} x 10^n} value that is greater than or equal
      * to the given value, so the Y-axis ceiling stays stable and human-readable as the group
-     * maximum grows (e.g. {@code 12 -> 20}, {@code 2495 -> 5000}).
+     * maximum grows (e.g. {@code 12 -> 20}, {@code 2495 -> 5000}). Never returns less than
+     * {@code 1}, so an all-zero group still renders a usable {@code [0, 1]} axis.
      */
     @SuppressWarnings("MagicNumber")
     private static double niceCeiling(double value) {
-        if (value <= 0.0) {
-            return 0.0;
+        if (value <= 1.0) {
+            return 1.0;
         }
         double magnitude = Math.pow(10.0, Math.floor(Math.log10(value) + 1.0e-9));
         for (double factor : NICE_CEILING_FACTORS) {
@@ -135,6 +139,20 @@ final class StatisticHistoryChartView {
             }
         }
         return 10.0 * magnitude;
+    }
+
+    /**
+     * Extracts the maximum finite value across the given metric keys for a single sample,
+     * or {@code 0.0} if none of the keys have a finite value.
+     */
+    private static double maxValueAcrossKeys(StatisticSample sample, List<String> keys) {
+        return keys.stream()
+                   .map(k -> sample.values().get(k))
+                   .filter(Objects::nonNull)
+                   .filter(Double::isFinite)
+                   .mapToDouble(Double::doubleValue)
+                   .max()
+                   .orElse(0.0);
     }
 
     TitledPane titledPane() {
@@ -148,7 +166,11 @@ final class StatisticHistoryChartView {
         return groupCharts.stream().map(GroupChart::chart).collect(Collectors.toList());
     }
 
-    private void updateCharts(List<StatisticSample> history, StatisticExtrema extrema) {
+    private void updateCharts(List<StatisticSample> history) {
+        if (history.isEmpty()) {
+            ceilingByGroup.clear();
+        }
+
         boolean anyVisible = false;
 
         for (int i = 0; i < distinctGroups.size(); i++) {
@@ -156,28 +178,36 @@ final class StatisticHistoryChartView {
             GroupChart gc = groupCharts.get(i);
             List<String> keys = keysByGroup.get(group);
 
-            double groupMax = keys.stream()
-                                  .map(k -> extrema.maximumValues().get(k))
-                                  .filter(Objects::nonNull)
-                                  .mapToDouble(StatisticExtremum::value)
-                                  .max()
-                                  .orElse(0.0);
-            groupMax = niceCeiling(groupMax);
-
-            boolean chartVisible = (groupMax > 0) && !history.isEmpty();
+            boolean chartVisible = !history.isEmpty();
             gc.chart().setManaged(chartVisible);
             gc.chart().setVisible(chartVisible);
 
             if (chartVisible) {
                 anyVisible = true;
 
-                gc.yAxis().setUpperBound(groupMax);
-                gc.yAxis().setTickUnit(tickUnit(groupMax));
-
                 int windowSize = windowSizeByGroup.get(group);
                 List<StatisticSample> windowedHistory = (history.size() <= windowSize)
                         ? history
                         : history.subList(history.size() - windowSize, history.size());
+
+                double windowedMax = windowedHistory.stream()
+                                                    .mapToDouble(s -> maxValueAcrossKeys(s, keys))
+                                                    .max()
+                                                    .orElse(0.0);
+                double latestMax = maxValueAcrossKeys(history.getLast(), keys);
+                double currentCeiling = ceilingByGroup.getOrDefault(group, 0.0);
+                double newCeiling;
+                if ((currentCeiling <= 0.0) || (windowedMax > currentCeiling)) {
+                    newCeiling = niceCeiling(windowedMax); // initial ceiling or immediate growth
+                } else if (latestMax < (SHRINK_THRESHOLD_RATIO * currentCeiling)) {
+                    newCeiling = niceCeiling(windowedMax); // gated shrink
+                } else {
+                    newCeiling = currentCeiling; // no change
+                }
+                ceilingByGroup.put(group, newCeiling);
+
+                gc.yAxis().setUpperBound(newCeiling);
+                gc.yAxis().setTickUnit(tickUnit(newCeiling));
 
                 int xMin = windowedHistory.getFirst().stepCount();
                 int xMax = windowedHistory.getLast().stepCount();

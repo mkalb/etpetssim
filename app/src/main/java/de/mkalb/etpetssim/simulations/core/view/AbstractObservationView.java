@@ -496,8 +496,7 @@ public abstract class AbstractObservationView<
         }
         return new StatisticHistoryChartView(
                 genericMetrics,
-                viewModel.statisticsHistoryProperty(),
-                viewModel.statisticsExtremaProperty())
+                viewModel.statisticsHistoryProperty())
                 .titledPane();
     }
 
