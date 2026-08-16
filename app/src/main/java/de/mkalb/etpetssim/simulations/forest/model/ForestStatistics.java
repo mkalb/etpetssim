@@ -37,10 +37,10 @@ public final class ForestStatistics
                         StatisticExtremaMode.MAX),
                 new StatisticMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS,
                         ForestStatistics::getTreeCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
                 new StatisticMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_BURNING_CELLS,
                         ForestStatistics::getBurningCells,
-                        StatisticExtremaMode.MAX)
+                        StatisticExtremaMode.MAX, StatisticChartGroup.SECONDARY)
         );
     }
 

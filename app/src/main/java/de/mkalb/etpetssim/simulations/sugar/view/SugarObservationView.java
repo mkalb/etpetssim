@@ -71,6 +71,7 @@ public final class SugarObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }

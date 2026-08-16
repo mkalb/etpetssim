@@ -10,12 +10,14 @@ import java.util.function.*;
  * @param labelKey    localization key used for display labels
  * @param extractor   function extracting the metric from live statistics
  * @param extremaMode min/max tracking policy
+ * @param chartGroup  chart group assignment; {@link StatisticChartGroup#NONE} means not charted
  */
 public record StatisticMetric<STA extends SimulationStatistics>(
         String key,
         String labelKey,
         ToDoubleFunction<STA> extractor,
-        StatisticExtremaMode extremaMode) {
+        StatisticExtremaMode extremaMode,
+        StatisticChartGroup chartGroup) {
 
     public StatisticMetric {
         if (key.isBlank()) {
@@ -24,6 +26,13 @@ public record StatisticMetric<STA extends SimulationStatistics>(
         if (labelKey.isBlank()) {
             throw new IllegalArgumentException("labelKey must not be blank");
         }
+    }
+
+    /**
+     * Convenience constructor for metrics that are not charted ({@code chartGroup = NONE}).
+     */
+    public StatisticMetric(String key, String labelKey, ToDoubleFunction<STA> extractor, StatisticExtremaMode extremaMode) {
+        this(key, labelKey, extractor, extremaMode, StatisticChartGroup.NONE);
     }
 
 }

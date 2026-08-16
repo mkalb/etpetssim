@@ -63,6 +63,7 @@ public final class ReboundingObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }

@@ -34,7 +34,7 @@ public final class EtpetsStatistics
         return List.of(
                 new StatisticMetric<>(KEY_ACTIVE_PET_CELLS, ETPETS_OBSERVATION_ACTIVE_PET_CELLS,
                         EtpetsStatistics::getActivePetCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
                 new StatisticMetric<>(KEY_EGG_CELLS, ETPETS_OBSERVATION_EGG_CELLS,
                         EtpetsStatistics::getEggCells,
                         StatisticExtremaMode.MAX),

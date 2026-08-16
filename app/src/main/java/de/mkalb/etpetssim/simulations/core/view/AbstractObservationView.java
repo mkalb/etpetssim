@@ -59,16 +59,19 @@ public abstract class AbstractObservationView<
      * @param regions one or more regions to stack vertically inside the scroll pane
      * @return a styled {@link ScrollPane} containing all provided regions
      */
-    protected final ScrollPane createObservationScrollPane(Region... regions) {
+    protected final ScrollPane createObservationScrollPane(@Nullable Region... regions) {
         VBox content = new VBox();
         content.getStyleClass().add(FXStyleClasses.OBSERVATION_CONTENT_VBOX);
 
         for (Region region : regions) {
-            content.getChildren().add(region);
+            if (region != null) {
+                content.getChildren().add(region);
+            }
         }
 
         ScrollPane observationScrollPane = new ScrollPane(content);
         observationScrollPane.getStyleClass().add(FXStyleClasses.OBSERVATION_SCROLLPANE);
+        observationScrollPane.setFitToWidth(true);
 
         return observationScrollPane;
     }
@@ -474,6 +477,26 @@ public abstract class AbstractObservationView<
                 }
             }
         }
+    }
+
+    /**
+     * Creates the chart section for simulations that have at least one charted metric.
+     * Returns {@code null} when no metric in the current {@code metrics()} list has a non-{@code NONE} chart group.
+     * Must be called after {@link #createGenericMetricSection}.
+     *
+     * @return a {@link TitledPane} wrapping the history line charts, or {@code null}
+     */
+    @Nullable
+    protected final TitledPane buildChartSection() {
+        if ((genericMetrics == null) ||
+                genericMetrics.stream().noneMatch(m -> m.chartGroup() != StatisticChartGroup.NONE)) {
+            return null;
+        }
+        return new StatisticHistoryChartView(
+                genericMetrics,
+                viewModel.statisticsHistoryProperty(),
+                viewModel.statisticsExtremaProperty())
+                .titledPane();
     }
 
     private record MetricLabels(

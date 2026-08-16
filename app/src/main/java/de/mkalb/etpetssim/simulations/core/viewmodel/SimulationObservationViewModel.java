@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
-import de.mkalb.etpetssim.simulations.core.model.SimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import javafx.beans.property.*;
 import org.jspecify.annotations.Nullable;
@@ -58,5 +58,19 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
      * @return mutable property that may contain {@code null} when no cell is selected
      */
     ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty();
+
+    /**
+     * Exposes the current statistic extrema snapshot as an observable property.
+     *
+     * @return read-only property containing the latest extrema
+     */
+    ReadOnlyObjectProperty<StatisticExtrema> statisticsExtremaProperty();
+
+    /**
+     * Exposes the current statistics history snapshot as an observable property.
+     *
+     * @return read-only property containing an immutable ordered list of samples, oldest first
+     */
+    ReadOnlyObjectProperty<List<StatisticSample>> statisticsHistoryProperty();
 
 }

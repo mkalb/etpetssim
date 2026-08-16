@@ -160,18 +160,20 @@ Golden values updated in `TimedStatisticsTrackingTest` and `ExtremaGoldenValueAn
 *Depends on:** Steps 2, 3
 
 The agent-based simulations (Wator, Etpets, Snake, Sugar, Rebounding) already track `MIN_AND_MAX` for their live
-population counters. The cellular automata are the gap. Current `extremaMode` per simulation for reference:
+population counters. The cellular automata are the gap. The `extremaMode` values below reflect the **current code**
+(after the Step 5 changes and subsequent manual adjustments); the Actions list records the original Step 5 intent,
+parts of which were later revised:
 
-| Simulation | Metrics and current mode                                                                                            |
-|------------|---------------------------------------------------------------------------------------------------------------------|
-| Conway     | `aliveCells` MIN_AND_MAX, `deadCells` NONE, `changedCells` MIN_AND_MAX                                              |
-| Forest     | `emptyCells` MAX, `treeCells` MIN_AND_MAX, `burningCells` MAX                                                       |
-| Langton    | `antCells` NONE, `visitedCells` NONE                                                                                |
-| Wator      | `fishCells` MIN_AND_MAX, `sharkCells` MIN_AND_MAX                                                                   |
-| Etpets     | `activePetCells` MIN_AND_MAX, `eggCells` MIN_AND_MAX, `cumulativePetDeathCount` NONE                                |
-| Snake      | `snakeHeadCells`/`livingSnakeHeadCells`/`foodCells` MIN_AND_MAX, `wallCells` NONE, `cumulativeSnakeDeathCount` NONE |
-| Sugar      | `resourceCells` MIN_AND_MAX, `agentCells` MIN_AND_MAX                                                               |
-| Rebounding | `wallCells` NONE, `movingEntityCells` MIN_AND_MAX                                                                   |
+| Simulation | Metrics and current mode                                                                                                 |
+|------------|--------------------------------------------------------------------------------------------------------------------------|
+| Conway     | `aliveCells` MIN_AND_MAX, `deadCells` MIN_AND_MAX, `changedCells` MAX                                                    |
+| Forest     | `emptyCells` MAX, `treeCells` MIN_AND_MAX, `burningCells` MAX                                                            |
+| Langton    | `antCells` NONE, `visitedCells` NONE                                                                                     |
+| Wator      | `fishCells` MIN_AND_MAX, `sharkCells` MIN_AND_MAX                                                                        |
+| Etpets     | `activePetCells` MIN_AND_MAX, `eggCells` MAX, `cumulativePetDeathCount` NONE                                             |
+| Snake      | `snakeHeadCells` NONE, `livingSnakeHeadCells` NONE, `foodCells` NONE, `wallCells` NONE, `cumulativeSnakeDeathCount` NONE |
+| Sugar      | `resourceCells` NONE, `agentCells` NONE                                                                                  |
+| Rebounding | `wallCells` MAX, `movingEntityCells` MAX                                                                                 |
 
 **Actions:**
 
@@ -278,76 +280,117 @@ No change required there — the getter still works. Step 11 will replace those 
   `statisticsHistoryProperty().get()` return the new value.
 - After `shutdownSimulation()`, verify both properties hold `StatisticExtrema.empty()` / `List.of()`.
 
-### Step 9 — Descriptor-Driven Line Chart Region
+### Step 9 — Descriptor-Driven Per-Group Line Charts ✓ DONE
 
 > **Type:** Feature · **Priority:** Medium · **Effort:** L · **Risk:** Medium · **Depends on:** Steps 7, 8
 
-Add an optional chart to the observation area using a JavaFX `LineChart<Number, Number>` with `stepCount` on the X axis
-and metric value on the Y axis. One `XYChart.Series<Number, Number>` per selected metric; series name from
-`AppLocalization.getString(metric.labelKey())`; points from `StatisticSample.values().get(key)` — skip `NaN` entries.
+Add an optional chart region to the observation area that renders one JavaFX `LineChart<Number, Number>` **per scale
+group**, driven entirely by the metric descriptors. `stepCount` is on the X axis and the **raw** metric value on the Y
+axis — no normalization. This section is the implementation-ready specification; the decisions below are final.
 
-**Location and integration:**
+**1. New descriptor field and enum:**
 
-Create a new `StatisticHistoryChartView` in `simulations/core/view/`. It takes the
-`ReadOnlyObjectProperty<List<StatisticSample>>`
-from `DefaultObservationViewModel` (Step 8) and the simulation's `List<StatisticMetric<STA>>` as constructor arguments.
-`AbstractObservationView` gains an optional `buildChartSection(StatisticHistoryChartView)` helper so concrete
-observation
-views can include the chart without duplicating layout logic. The chart section is initially collapsed (via a
-`TitledPane`) to avoid occupying vertical space before the user opts in.
+- New enum `StatisticChartGroup { NONE, PRIMARY, SECONDARY }` in `simulations.core.model` (no `null`; `NONE` = not
+  charted). Enum order is the stacking order (`PRIMARY` on top).
+- `StatisticMetric` gains a fifth record component `StatisticChartGroup chartGroup` **plus** a secondary four-argument
+  constructor that delegates to the canonical constructor with `chartGroup = NONE`. Existing four-argument call sites
+  compile unchanged; only the charted metrics of the four charted simulations use the five-argument form.
 
-**Series management strategy (performance):**
+**2. Group assignment (final scope):** only four simulations declare a non-`NONE` group; every other metric stays
+`NONE`.
 
-With up to 100 samples × 8 metrics, incremental `getData().add()` calls trigger excessive scene-graph updates. Instead,
-rebuild each `XYChart.Series` from scratch on every `statisticsHistoryProperty` change:
+| Simulation | Group assignment                                      | Sub-charts |
+|------------|-------------------------------------------------------|------------|
+| Wa-Tor     | `fishCells`, `sharkCells` → `PRIMARY`                 | 1 (shared) |
+| Forest     | `treeCells` → `PRIMARY`; `burningCells` → `SECONDARY` | 2          |
+| Conway     | `aliveCells` → `PRIMARY`                              | 1          |
+| Etpets     | `activePetCells` → `PRIMARY`                          | 1          |
 
-1. Create new `ObservableList<XYChart.Data<Number, Number>>` for each active metric.
-2. Set `series.setData(newList)` atomically — one scene-graph invalidation per series.
-3. Run this on the FX thread inside the property listener; no background thread needed (list is already an immutable
-   snapshot from Step 4/7).
+Complement metrics (Conway `deadCells`, Forest `emptyCells`), monotonic metrics (Langton `visitedCells`), and
+cumulative counters (`cumulative*DeathCount`) are intentionally excluded. Wa-Tor is the only multi-line chart; its
+shared axis preserves the fish/shark amplitude relation, which is the whole point of overlaying them.
 
-**Axis configuration:**
+**3. The view (`StatisticHistoryChartView` in `simulations/core/view/`):**
 
-- X axis (`NumberAxis`): auto-ranging off; bounds from `history.get(0).stepCount()` to `history.getLast().stepCount()`.
-- Y axis (`NumberAxis`): auto-ranging on (or per-metric bounds if Step 10 adds per-metric axis options).
-- `LineChart.setCreateSymbols(false)` for smooth rendering at 100+ points.
-- `LineChart.setAnimated(false)` to prevent animation lag on rapid updates.
+- **Not generic.** It works purely key-based (reads `StatisticSample.values().get(key)` and
+  `StatisticExtrema.maximumValues().get(key)`), never via the extractor. Constructor takes
+  `List<StatisticMetric<?>>`, `ReadOnlyObjectProperty<List<StatisticSample>>` (history, Step 8), and
+  `ReadOnlyObjectProperty<StatisticExtrema>` (extrema, Step 8).
+- **Build once, then only update.** At construction, create exactly one `LineChart<Number, Number>` per distinct
+  non-`NONE` group (groups are static, derived from the metric list), each with its own `NumberAxis` pair, held as
+  fields inside a `VBox` in enum order. Also create one `XYChart.Series` per charted metric up front.
+- **Update path:** register a listener on `statisticsHistoryProperty` (plus an initial render from the current value).
+  On each change, on the FX thread:
+    1. Read the extrema snapshot via `statisticsExtremaProperty().get()` (history and extrema are updated together, so
+       no
+       second listener is needed).
+    2. For each group, compute `groupMax = ceil(max over the group's metric keys of extrema.maximumValues().get(key)
+     .value())`, treating a missing key as `0`.
+    3. Toggle the sub-chart `managed`/`visible` to `groupMax > 0`; toggle the whole `TitledPane` section
+       `managed`/`visible` to "at least one group has `groupMax > 0`".
+    4. For each **visible** sub-chart: set the Y axis to `[0, groupMax]` (auto-ranging off), set the X axis bounds from
+       `history.get(0).stepCount()` to `history.getLast().stepCount()` (auto-ranging off; guard the single-sample case
+       so
+       lower != upper), rebuild each metric's data list skipping `NaN` values, and apply it atomically via
+       `series.setData(newList)` (one scene-graph invalidation per series).
+- **Chart config:** `setCreateSymbols(false)`, `setAnimated(false)`, legend shown (series names from
+  `AppLocalization.getText(metric.labelKey())`), no sub-chart title, no Y-axis label. Series colors stay JavaFX
+  default (series order is deterministic from `metrics()`, so colors are stable).
+- **Do not draw until data exists.** Because `groupMax` is a full-run maximum (monotonic non-decreasing), a sub-chart
+  appears once its group first exceeds `0` and never disappears afterward (no flicker). Shutdown (history `List.of()`
+    + `StatisticExtrema.empty()` from Step 8) hides the whole section automatically. Consequence: Forest's `fire`
+      sub-chart appears only once something first burns; Wa-Tor/Conway/Etpets charts are present from the step-0 sample.
 
-**Timing metrics (optional):** `StatisticSample.stepTimingStatistics()` can be plotted as an additional series (e.g.,
-step duration in ms) without any new model changes — the series key is not in `metrics()` so it needs explicit wiring,
-deferred to an optional enhancement.
+**4. Integration into observation views (generic, self-hiding):**
 
-**Tests:** unit-test `StatisticHistoryChartView` with a synthetic history list — verify correct series count, correct
-data point count, and that `NaN` values are skipped.
+- `AbstractObservationView` gains `buildChartSection()` that uses the already-stored `genericMetrics` field plus the
+  view model's history/extrema properties to construct the `StatisticHistoryChartView`, wrapped in an initially
+  **collapsed** `TitledPane`. It returns `@Nullable Region` (`null` when no metric has `chartGroup != NONE`).
+- `createObservationScrollPane(Region...)` is adjusted to **skip `null`** regions. All eight observation views call
+  `buildChartSection()` once and pass the result to the scroll pane; the four non-charted simulations receive `null`
+  and show nothing. No chart-specific code lives in any concrete view.
 
-### Step 10 — Metric Selection UI From Descriptors
+**5. Styling:** add a new `FXStyleClasses` constant (e.g. `OBSERVATION_CHART` → `.observation-chart`) and set sub-chart
+height/spacing in the existing observation stylesheet (no inline sizing in Java).
 
-> **Type:** Feature · **Priority:** Low · **Effort:** M · **Risk:** Low · **Depends on:** Step 9
+**6. New i18n keys (both bundles, alphabetically sorted, `=` column-aligned):**
 
-Because each simulation already declares an ordered `metrics()` list, a generic toggle-based selector can drive which
-series the chart (Step 9) renders, with no per-simulation UI code.
+- `observation.section.charts` — the `TitledPane` section title.
+- `observation.chart.axis.step` — the X-axis label.
 
-**UI design:**
+**7. Invariant (guard test):** every metric with `chartGroup != NONE` must have `extremaMode ∈ {MAX, MIN_AND_MAX}`;
+otherwise no full-run group maximum exists for the Y-axis ceiling. Add a test iterating all simulations' `metrics()`
+that asserts this coupling so it cannot drift.
 
-A row of `ToggleButton`s inside the chart section (above the `LineChart`), one per metric whose `extremaMode != NONE`
-(pure `NONE` metrics like `deadCells` carry no useful trend). Labels come from
-`AppLocalization.getString(metric.labelKey())`.
-All metrics are selected by default. `StatisticHistoryChartView` holds a `Set<String>` of active metric keys and
-rebuilds the series list when the selection changes or the history property fires.
+**Timing metrics (optional):** `StatisticSample.stepTimingStatistics()` could be plotted as an additional series
+without model changes — the series key is not in `metrics()`, so it needs explicit wiring; deferred to an optional
+enhancement.
 
-**State management:**
+**Tests:** using [FxTestSupport](../../app/src/test/java/de/mkalb/FxTestSupport.java), unit-test
+`StatisticHistoryChartView` with synthetic history + extrema via `SimpleObjectProperty`. Expose a package-private
+accessor (e.g. `List<LineChart<Number, Number>> chartsForTest()`) and assert from the mirrored test package
+`simulations.core.view`: number of sub-charts = distinct non-`NONE` groups; series per sub-chart; data-point counts;
+`NaN` points skipped; `[0, groupMax]` Y bounds; and section/sub-chart visibility toggling on the `groupMax > 0` rule.
 
-The selection is transient per simulation run (reset when `shutdownSimulation()` resets history in Step 8). It does not
-need to survive to the next launch. A `Map<String, BooleanProperty>` keyed by metric key, one entry per metric, gives
-direct binding to each toggle button's `selectedProperty()`.
-
-**No per-simulation code required** — `StatisticHistoryChartView` receives `List<StatisticMetric<STA>>` from the
-concrete
-observation view's constructor and builds toggle buttons generically. Concrete observation views pass `metrics()`
-without
-knowing the UI details.
-
-**Tests:** verify that deselecting a metric removes its series from the chart, and reselecting it restores it.
+**Step 9 (2026-08-11):** Production code fully implemented. `StatisticChartGroup { NONE, PRIMARY, SECONDARY }` added
+to `simulations.core.model`; `StatisticMetric` gained a fifth `chartGroup` component with a backward-compatible
+four-argument constructor. Conway (`aliveCells → PRIMARY`), Forest (`treeCells → PRIMARY`, `burningCells →
+SECONDARY`), Wa-Tor (`fishCells`, `sharkCells → PRIMARY`), and Etpets (`activePetCells → PRIMARY`) declare non-NONE
+groups; all other metrics retain `NONE` via the convenience constructor. `StatisticHistoryChartView` (package-private,
+`simulations.core.view`) renders one `LineChart<Number, Number>` per distinct non-NONE group, keyed on
+`StatisticSample.values()` and `StatisticExtrema.maximumValues()`; it listens on `statisticsHistoryProperty` and
+updates Y-axis ceiling, X-axis span, and series data on each change. `AbstractObservationView.buildChartSection()`
+constructs the view and wraps it in an initially-collapsed `TitledPane`; `createObservationScrollPane` skips `null`
+regions. All 8 observation views call `buildChartSection()`. `FXStyleClasses.OBSERVATION_CHART`, i18n keys
+`observation.section.charts` and `observation.chart.axis.step` (both bundles, alphabetically sorted, `=`
+column-aligned), and a `.observation-chart` CSS rule (pref-height 140) were added. `SimulationObservationViewModel`
+gained two new abstract methods (`statisticsExtremaProperty()`, `statisticsHistoryProperty()`) that
+`DefaultObservationViewModel` already satisfies. The invariant guard test `testChartedMetricsHaveMaxExtremaMode` was
+added to `StatisticMetricRowTest`. `StatisticHistoryChartViewTest` (10 tests) was added to the mirrored test package
+`simulations.core.view`, covering sub-chart count, series count, data-point counts, NaN skipping, Y-axis ceiling,
+X-axis single-sample guard, and visibility toggling including shutdown reset. Note: 11 pre-existing test failures in
+`StatisticMetricRowTest` and `TimedStatisticsTrackingTest` (extrema-mode mismatches predating Step 9) remain
+unresolved.
 
 **Step 11 (2026-08-08):** The per-simulation min/max label wiring in all 8 observation views was replaced by a
 generic descriptor-driven renderer in `AbstractObservationView`. Three new localization constants and bundle entries
@@ -432,7 +475,8 @@ Not on the critical path; pick up as needed.
   like `(int) value`.
 - **Configurable history capacity + decimation** — Feature · Low · M. Promote `StatisticHistory.DEFAULT_CAPACITY`
   (100) to `SimulationConfig`, an app preference, or a chart setting (one of the retained open questions); add
-  down-sampling for longer windows.
+  down-sampling for longer windows. The current 100-sample window is too short for slow-developing simulations such as
+  Etpets, where larger population trends span far more than 100 steps and are lost once the ring buffer evicts them.
 - **Derived / computed metrics** — Feature · Low · M. Ratios and densities (Wator `sharkCells / fishCells`, Forest
   tree-coverage `%`, Sugar `agentCells / resourceCells`); relies on the existing non-finite (divide-by-zero) guard.
 - **Rolling averages / smoothing** — Feature · Low · S-M (depends on Step 9). Moving-average overlay per metric.
@@ -444,3 +488,10 @@ Not on the critical path; pick up as needed.
   history tail (e.g., `changedCells == 0` for K consecutive steps) and optionally stop or badge it.
 - **Sparklines / trend tooltips** — Feature · Low · M. Inline mini trend line or a "last N steps" tooltip per
   observation row, fed from the history tail.
+- **Per-metric chart selection toggles** — Feature · Low · M (formerly Step 10). A generic `ToggleButton` row (one per
+  charted metric) to show/hide individual series. Dropped from the critical path because the final chart scope has at
+  most two lines per chart (only Wa-Tor overlays two), so a selector adds little value; revisit only if a chart ever
+  hosts many series.
+- **Per-step event / result display** — Feature · Low · M. Surface discrete simulation events and results (e.g. Etpets
+  `HatchEgg` / `Death`, forest ignition, snake death) as counts or markers, either inline in the observation panel or
+  as annotations on the history chart (overlaps with **Event annotations** above).

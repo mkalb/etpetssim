@@ -11,6 +11,7 @@ import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,8 +32,8 @@ final class StatisticMetricRowTest {
         assertAll(
                 () -> assertEquals(3, metrics.size()),
                 () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, ConwayStatistics.KEY_ALIVE_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, ConwayStatistics.KEY_DEAD_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, ConwayStatistics.KEY_CHANGED_CELLS))
+                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, ConwayStatistics.KEY_DEAD_CELLS)),
+                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ConwayStatistics.KEY_CHANGED_CELLS))
         );
     }
 
@@ -63,7 +64,7 @@ final class StatisticMetricRowTest {
         assertAll(
                 () -> assertEquals(3, metrics.size()),
                 () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, EtpetsStatistics.KEY_ACTIVE_PET_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, EtpetsStatistics.KEY_EGG_CELLS)),
+                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, EtpetsStatistics.KEY_EGG_CELLS)),
                 () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT))
         );
     }
@@ -73,10 +74,10 @@ final class StatisticMetricRowTest {
         var metrics = SnakeStatistics.metrics();
         assertAll(
                 () -> assertEquals(5, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, SnakeStatistics.KEY_SNAKE_HEAD_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS)),
+                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_SNAKE_HEAD_CELLS)),
+                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS)),
                 () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_WALL_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, SnakeStatistics.KEY_FOOD_CELLS)),
+                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_FOOD_CELLS)),
                 () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT))
         );
     }
@@ -86,8 +87,8 @@ final class StatisticMetricRowTest {
         var metrics = SugarStatistics.metrics();
         assertAll(
                 () -> assertEquals(2, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, SugarStatistics.KEY_RESOURCE_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, SugarStatistics.KEY_AGENT_CELLS))
+                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SugarStatistics.KEY_RESOURCE_CELLS)),
+                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SugarStatistics.KEY_AGENT_CELLS))
         );
     }
 
@@ -96,8 +97,8 @@ final class StatisticMetricRowTest {
         var metrics = ReboundingStatistics.metrics();
         assertAll(
                 () -> assertEquals(2, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, ReboundingStatistics.KEY_WALL_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, ReboundingStatistics.KEY_MOVING_ENTITY_CELLS))
+                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ReboundingStatistics.KEY_WALL_CELLS)),
+                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ReboundingStatistics.KEY_MOVING_ENTITY_CELLS))
         );
     }
 
@@ -109,6 +110,27 @@ final class StatisticMetricRowTest {
                 () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, LangtonStatistics.KEY_ANT_CELLS)),
                 () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, LangtonStatistics.KEY_VISITED_CELLS))
         );
+    }
+
+    @Test
+    void testChartedMetricsHaveMaxExtremaMode() {
+        Stream.<List<? extends StatisticMetric<?>>>of(
+                      ConwayStatistics.metrics(),
+                      EtpetsStatistics.metrics(),
+                      ForestStatistics.metrics(),
+                      LangtonStatistics.metrics(),
+                      ReboundingStatistics.metrics(),
+                      SnakeStatistics.metrics(),
+                      SugarStatistics.metrics(),
+                      WatorStatistics.metrics()
+              ).flatMap(List::stream)
+              .filter(m -> m.chartGroup() != StatisticChartGroup.NONE)
+              .forEach(m -> assertTrue(
+                      (m.extremaMode() == StatisticExtremaMode.MAX) ||
+                              (m.extremaMode() == StatisticExtremaMode.MIN_AND_MAX),
+                      "Charted metric '" + m.key() + "' (group=" + m.chartGroup() +
+                              ") must have extremaMode MAX or MIN_AND_MAX, but has " + m.extremaMode()
+              ));
     }
 
 }
