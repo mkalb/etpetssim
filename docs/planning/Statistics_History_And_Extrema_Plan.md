@@ -251,15 +251,25 @@ pattern works while statistics and extrema/history are always updated together, 
 
 ```java
 // In DefaultObservationViewModel:
-private final ReadOnlyObjectWrapper<StatisticExtrema>    statisticsExtremaWrapper = new ReadOnlyObjectWrapper<>(StatisticExtrema.empty());
+private final ReadOnlyObjectWrapper<StatisticExtrema> statisticsExtremaWrapper = new ReadOnlyObjectWrapper<>(StatisticExtrema.empty());
 private final ReadOnlyObjectWrapper<List<StatisticSample>> statisticsHistoryWrapper = new ReadOnlyObjectWrapper<>(List.of());
 
-public ReadOnlyObjectProperty<StatisticExtrema>    statisticsExtremaProperty() { return statisticsExtremaWrapper.getReadOnlyProperty(); }
-public ReadOnlyObjectProperty<List<StatisticSample>> statisticsHistoryProperty()  { return statisticsHistoryWrapper.getReadOnlyProperty(); }
+public ReadOnlyObjectProperty<StatisticExtrema> statisticsExtremaProperty() {
+    return statisticsExtremaWrapper.getReadOnlyProperty();
+}
+
+public ReadOnlyObjectProperty<List<StatisticSample>> statisticsHistoryProperty() {
+    return statisticsHistoryWrapper.getReadOnlyProperty();
+}
 
 // Setters delegate to wrappers (keep existing method names for call-site compatibility):
-public void setStatisticsExtrema(StatisticExtrema extrema)      { statisticsExtremaWrapper.set(extrema); }
-public void setStatisticsHistory(List<StatisticSample> history) { statisticsHistoryWrapper.set(history); }
+public void setStatisticsExtrema(StatisticExtrema extrema) {
+    statisticsExtremaWrapper.set(extrema);
+}
+
+public void setStatisticsHistory(List<StatisticSample> history) {
+    statisticsHistoryWrapper.set(history);
+}
 // Getters become wrappers().get() under the hood; existing call sites (ConwayObservationView etc.) keep compiling.
 ```
 
@@ -468,30 +478,90 @@ run all tests and visually verify layout parity, then migrate the remaining 7 in
 
 ### Optional / Independent Enhancements
 
-Not on the critical path; pick up as needed.
+Not on the critical path; pick up as needed. Split into two groups: items planned for this branch (small,
+independent chart/label polish) and items deferred to a later branch (bigger features or ones with still-open
+design questions). The per-metric history capacity idea was replaced by a shared capacity bump plus a separate
+per-metric chart display window; the sparkline/tooltip idea was dropped as redundant with the existing per-group
+charts; the two event-related items were merged into one; and the per-metric chart selection toggles item was
+dropped entirely.
 
-- **Richer `StatisticMetric` metadata** — Feature · Low · M. Add an optional value formatter, unit, and display policy
-  (integer / percentage / duration) so chart axes and observation rows format consistently, removing per-view casts
-  like `(int) value`.
-- **Configurable history capacity + decimation** — Feature · Low · M. Promote `StatisticHistory.DEFAULT_CAPACITY`
-  (100) to `SimulationConfig`, an app preference, or a chart setting (one of the retained open questions); add
-  down-sampling for longer windows. The current 100-sample window is too short for slow-developing simulations such as
-  Etpets, where larger population trends span far more than 100 steps and are lost once the ring buffer evicts them.
-- **Derived / computed metrics** — Feature · Low · M. Ratios and densities (Wator `sharkCells / fishCells`, Forest
-  tree-coverage `%`, Sugar `agentCells / resourceCells`); relies on the existing non-finite (divide-by-zero) guard.
-- **Rolling averages / smoothing** — Feature · Low · S-M (depends on Step 9). Moving-average overlay per metric.
-- **CSV export + manual `*Analyzer`** — Feature · Low · S-M (depends on Step 7). Export `stepCount` + one column per
-  metric key for offline analysis.
-- **Event annotations** — Feature · Low · L. Mark notable steps (extinction, first reproduction, snake death,
-  ignition) on the history/chart; ties into the deferred edit-mode history extension.
-- **Stagnation / termination detection** — Feature · Low · M (depends on Step 7). Detect a stabilized run from the
-  history tail (e.g., `changedCells == 0` for K consecutive steps) and optionally stop or badge it.
-- **Sparklines / trend tooltips** — Feature · Low · M. Inline mini trend line or a "last N steps" tooltip per
-  observation row, fed from the history tail.
-- **Per-metric chart selection toggles** — Feature · Low · M (formerly Step 10). A generic `ToggleButton` row (one per
-  charted metric) to show/hide individual series. Dropped from the critical path because the final chart scope has at
-  most two lines per chart (only Wa-Tor overlays two), so a selector adds little value; revisit only if a chart ever
-  hosts many series.
-- **Per-step event / result display** — Feature · Low · M. Surface discrete simulation events and results (e.g. Etpets
-  `HatchEgg` / `Death`, forest ignition, snake death) as counts or markers, either inline in the observation panel or
-  as annotations on the history chart (overlaps with **Event annotations** above).
+#### Planned for this branch
+
+1. **Drop the trailing colon from localized metric names** — Refactor · **High** · S · Depends on: —.
+   Localized `labelKey` values in `i18n.messages` currently end with a colon (e.g. "Alive cells:"), which is meant
+   for the observation table but also leaks into the `StatisticHistoryChartView` legend, where a trailing colon
+   after each series name looks wrong. The colon is a UI layout concern, not a translation concern (both `en_US`
+   and `de_DE` use `:` as a label separator), so it must not live in the resource bundles at all. Remove the
+   trailing colon from **all** metric `labelKey` values in both locale bundles — independent of whether the metric
+   is charted — and append the colon explicitly in code only at the one place that needs it: the name column in
+   `AbstractObservationView.createGenericMetricSection` / `updateGenericMetricSection`. The
+   `StatisticHistoryChartView` legend then shows the plain name with no special-casing.
+2. **"Nice" Y-axis ceiling rounding** — Feature · **High** · S · Depends on: —.
+   `StatisticHistoryChartView` currently sets the Y-axis upper bound to the exact `ceil(groupMax)` of the group's
+   running maximum, which changes every time a new group maximum is reached and produces awkward, non-round bounds
+   (e.g. `12`, `2495`). Round the ceiling up using the standard **1-2-5 sequence**
+   (1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, ...) — the ceiling is the smallest value of the form
+   `{1, 2, 5} × 10^n` that is `>= groupMax` (e.g. `12 → 20`, `2495 → 5000`). Since `groupMax` already changes
+   dynamically as history/extrema update, this rounding must be recomputed on every update rather than fixed at
+   construction time.
+3. **Per-metric configurable history capacity** — Feature · **High** · M · Depends on: —.
+   The original per-metric history-capacity idea (including a `0` opt-out) is dropped — analysis showed the
+   memory/CPU cost of a much larger shared history is negligible at this app's scale (roughly ~180 KB extra per
+   running simulation going from 100 to 1000 samples; chart series rebuilds stay sub-millisecond). Instead, two
+   independent, simpler changes replace it:
+    - Raise the single shared `StatisticHistory.DEFAULT_CAPACITY` from 100 to **1000**, so slow-developing
+      simulations such as Etpets retain enough history for meaningful trends. This is pure retention and does not
+      affect `StatisticExtremaTracker` (already full-run) or require any chart-side change on its own.
+    - Add a **per-metric `chartWindowSize`** field to `StatisticMetric` (alongside `chartGroup`), defaulting to a
+      value close to the old capacity (e.g. 100) via the existing convenience constructor, so only the charted
+      metrics of the 4 charted simulations need to specify it explicitly. `StatisticHistoryChartView` renders only
+      the **trailing `chartWindowSize` samples** of the retained history for each sub-chart's series and X-axis
+      bounds, instead of the full history — this is a display concern, decoupled from retention. Since metrics
+      sharing a `chartGroup` render on one chart with one shared X-axis, they must agree on the same window size;
+      add a guard test enforcing that (alongside the existing `chartGroup`/`extremaMode` coupling test). The actual
+      per-simulation window values (e.g. Wa-Tor vs. Conway) are chosen later via manual visual testing, since the
+      right window depends on how much each simulation's metrics fluctuate.
+
+#### Deferred
+
+1. **CSV export + manual `*Analyzer`** — Feature · Low · M · Depends on: —.
+   Not implemented now. If picked up later, scope is bigger than a dev-only utility: it must work both for devs
+   (manual/offline analysis) and for end users via a GUI export action, and must also export the run's
+   configuration (not just `stepCount` + one column per metric key), so the exported data is self-describing and
+   reproducible. Whether CSV is the right export format (vs. e.g. JSON) is an open question, deliberately left
+   unresolved until this item is actually scheduled.
+2. **Richer `StatisticMetric` metadata** — Feature · Low · M · Depends on: —.
+   Not implemented now; re-scope at the time Deferred item 3 or Deferred item 4 is actually picked up, building
+   only the metadata those items concretely need rather than a speculative general formatter/unit/display-policy
+   system now. Add an optional value formatter, unit, and display policy (integer / percentage / duration) so
+   chart axes and observation rows format consistently, removing per-view casts like `(int) value`. Recommended
+   before Deferred item 3 (percentages/ratios need a formatter) and Deferred item 4 (a smoothed series still
+   needs consistent display).
+3. **Derived / computed metrics** — Feature · Low · M · Depends on: Deferred item 2 (percentage/ratio formatting).
+   Not implemented now; deferred alongside Deferred item 2, since an unformatted raw-`double` ratio in the table
+   would add little value and would need redoing once that item's formatting lands. Ratios and densities (Wator
+   `sharkCells / fishCells`, Forest tree-coverage `%`, Sugar `agentCells / resourceCells`); relies on the existing
+   non-finite (divide-by-zero) guard.
+4. **Rolling averages / smoothing** — Feature · Low · M · Depends on: Planned item 3 (history capacity + chart
+   window). Not implemented now. Planned item 3 (capacity 1000 + per-metric chart window) resolves the original
+   blocker (a meaningful window to average over), but this remains a distinct new feature — a derived
+   moving-average series per charted metric needs its own design (overlay styling/color, averaging window size,
+   whether it's toggleable) rather than being folded into that item's chart-polish work. Revisit as its own
+   scoped task once Planned item 3 has landed and the chart windows have been visually tuned.
+5. **Stagnation / termination detection** — Feature · Low · M · Depends on: —.
+   Not implemented now. Beyond the metric-agnostic detection logic itself (e.g. `changedCells == 0` for K
+   consecutive steps), this needs an unresolved product decision — whether it's purely a UI indicator (a
+   badge/label) or should actually auto-stop the run, the latter touching the `SimulationState` run/pause
+   machinery with real regression risk — plus deciding which metric(s) per simulation qualify and the threshold
+   `K`. Left open until scheduled. Can feed into Deferred item 6 (Per-step events & chart annotations) as one of
+   the annotated event types.
+6. **Per-step events & chart annotations** — Feature · Low · L · Depends on: —.
+   Merged from the former separate "Per-step event / result display" and "Event annotations" items, since they
+   overlapped. Not implemented now; this is the largest item in the backlog and touches every layer
+   (manager-level event capture, history/ViewModel forwarding, chart-annotation rendering, observation-panel
+   display) — realistically its own follow-up plan document rather than a paragraph here when it is picked up.
+   Capture discrete simulation events and results (e.g. Etpets `HatchEgg` / `Death`, forest ignition, snake death)
+   and surface them both inline in the observation panel (as counts or markers) and as annotations on the history
+   chart at the step where they occurred (extinction, first reproduction, snake death, ignition); ties into the
+   deferred edit-mode history extension.
+
