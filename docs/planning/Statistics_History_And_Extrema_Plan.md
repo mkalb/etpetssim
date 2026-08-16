@@ -521,6 +521,53 @@ dropped entirely.
       add a guard test enforcing that (alongside the existing `chartGroup`/`extremaMode` coupling test). The actual
       per-simulation window values (e.g. Wa-Tor vs. Conway) are chosen later via manual visual testing, since the
       right window depends on how much each simulation's metrics fluctuate.
+4. **Window-relative Y-axis scaling** ✓ DONE — Feature · **High** · M · Depends on: Planned item 3 (chart window).
+   `StatisticHistoryChartView` currently sets the Y-axis ceiling from the full-run maximum
+   (`StatisticExtrema.maximumValues()`), rounded via `niceCeiling`. For simulations that start high and settle much
+   lower (e.g. Conway's `aliveCells`, which typically starts near 50% occupancy and dies down to a small stable
+   population), this wastes most of the chart's vertical resolution on the long, flat post-settling phase. Replace
+   the ceiling source with the trailing `chartWindowSize` window (the same window already used for the X-axis),
+   applied uniformly to all charted groups (no new per-metric opt-in):
+    - **Growth:** immediate — whenever the windowed max (across all series in the group) exceeds the current
+      ceiling, grow to `niceCeiling(windowedMax)` right away.
+    - **Shrink:** gated — only re-evaluated when `max(latest value per series in the group) < 20%` of the current
+      ceiling (a fixed threshold constant). When triggered, recompute `niceCeiling(windowedMax)` and shrink to it.
+      This avoids constant axis "breathing" from every small dip.
+    - **State:** each group chart needs a remembered current-ceiling value (mutable per-group state, since the
+      ceiling is no longer recomputed from scratch on every update). Reset it to unset whenever history becomes
+      empty (simulation shutdown), so a new run starts fresh instead of inheriting the previous run's ceiling — the
+      chart view instance is built once per simulation screen and reused across restarts
+      (`DefaultMainViewModel.shutdownSimulation()` only resets the `statisticsHistory`/`statisticsExtrema`
+      properties, not the view).
+    - **Minimum ceiling / visibility:** `niceCeiling(0)` returns `1` instead of `0`, and the existing
+      `groupMax > 0` visibility gate is removed entirely — a chart becomes visible as soon as history is non-empty
+      (from step 0), even while all its values are `0` (e.g. Forest's burning-cells sub-chart would show
+      immediately with a flat `0` line instead of only appearing once something first burns).
+    - `StatisticExtrema` is no longer read by the chart at all (it remains the source for the observation table
+      rows). The `StatisticMetricRowTest.testChartedMetricsHaveMaxExtremaMode` guard test — which asserted every
+      charted metric has extrema mode `MAX`/`MIN_AND_MAX` because the old ceiling needed a full-run max — was
+      removed as it is no longer a real invariant.
+    - `StatisticHistoryChartViewTest` was rewritten for the new ceiling logic and the always-visible-from-step-0
+      behavior.
+
+   **Implementation (2026-08-16):** `StatisticHistoryChartView` gained a `Map<StatisticChartGroup, Double>
+   ceilingByGroup` field holding the remembered ceiling per group, and `SHRINK_THRESHOLD_RATIO = 0.2`. `updateCharts`
+   now computes `windowedMax` (max finite value across the group's keys over the trailing-window samples) and
+   `latestMax` (max finite value across the group's keys in the single most recent sample), then applies: if the
+   ceiling is unset (`<= 0.0`) or `windowedMax > currentCeiling` → grow to `niceCeiling(windowedMax)`; else if
+   `latestMax < 0.2 * currentCeiling` → shrink to `niceCeiling(windowedMax)`; otherwise the ceiling is unchanged.
+   `ceilingByGroup` is cleared whenever `history.isEmpty()`, restoring the fresh/unset state on the next run.
+   `niceCeiling` now treats any input `<= 1.0` as `1.0` (previously `<= 0.0` → `0.0`), and the `groupMax > 0`
+   visibility gate was removed — `chartVisible` is now simply `!history.isEmpty()`. The `extremaProperty` constructor
+   parameter was dropped from `StatisticHistoryChartView` (and the `buildChartSection()` call site in
+   `AbstractObservationView`) since the chart no longer reads `StatisticExtrema`. The
+   `testChartedMetricsHaveMaxExtremaMode` guard test was removed from `StatisticMetricRowTest`.
+   `StatisticHistoryChartViewTest` was rewritten: existing structure/data-point/X-axis tests were adapted to the new
+   constructor signature, and new tests cover the always-visible-with-all-zero-values case, the minimum ceiling of
+   `1`, immediate growth, the shrink gate holding when the latest value stays above 20% of the ceiling, an actual
+   shrink once the prior peak leaves the trailing window and the latest value drops below the gate, and the
+   ceiling-reset-on-empty-history contract (verified against the case where a stale ceiling would otherwise survive
+   the gate check for a new run's first sample).
 
 #### Deferred
 

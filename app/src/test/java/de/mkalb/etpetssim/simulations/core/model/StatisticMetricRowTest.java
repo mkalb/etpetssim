@@ -113,27 +113,6 @@ final class StatisticMetricRowTest {
     }
 
     @Test
-    void testChartedMetricsHaveMaxExtremaMode() {
-        Stream.<List<? extends StatisticMetric<?>>>of(
-                      ConwayStatistics.metrics(),
-                      EtpetsStatistics.metrics(),
-                      ForestStatistics.metrics(),
-                      LangtonStatistics.metrics(),
-                      ReboundingStatistics.metrics(),
-                      SnakeStatistics.metrics(),
-                      SugarStatistics.metrics(),
-                      WatorStatistics.metrics()
-              ).flatMap(List::stream)
-              .filter(m -> m.chartGroup() != StatisticChartGroup.NONE)
-              .forEach(m -> assertTrue(
-                      (m.extremaMode() == StatisticExtremaMode.MAX) ||
-                              (m.extremaMode() == StatisticExtremaMode.MIN_AND_MAX),
-                      "Charted metric '" + m.key() + "' (group=" + m.chartGroup() +
-                              ") must have extremaMode MAX or MIN_AND_MAX, but has " + m.extremaMode()
-              ));
-    }
-
-    @Test
     void testChartedMetricsShareWindowSizeWithinGroup() {
         Map<StatisticChartGroup, Set<Integer>> windowSizesByGroup = Stream.<List<? extends StatisticMetric<?>>>of(
                                                                                   ConwayStatistics.metrics(),
