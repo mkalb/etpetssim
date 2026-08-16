@@ -27,6 +27,7 @@ final class StatisticHistoryChartView {
     private final List<GroupChart> groupCharts;
     private final Map<String, XYChart.Series<Number, Number>> seriesByKey;
     private final Map<StatisticChartGroup, List<String>> keysByGroup;
+    private final Map<StatisticChartGroup, Integer> windowSizeByGroup;
     private final TitledPane titledPane;
 
     StatisticHistoryChartView(
@@ -40,12 +41,20 @@ final class StatisticHistoryChartView {
                                .collect(Collectors.toList());
 
         keysByGroup = new LinkedHashMap<>();
+        windowSizeByGroup = new LinkedHashMap<>();
         for (StatisticChartGroup group : distinctGroups) {
             List<String> keys = metrics.stream()
                                        .filter(m -> m.chartGroup() == group)
                                        .map(StatisticMetric::key)
                                        .collect(Collectors.toList());
             keysByGroup.put(group, keys);
+            // Guarded by StatisticMetricRowTest: metrics sharing a chartGroup use the same chartWindowSize.
+            int windowSize = metrics.stream()
+                                    .filter(m -> m.chartGroup() == group)
+                                    .mapToInt(StatisticMetric::chartWindowSize)
+                                    .findFirst()
+                                    .orElse(StatisticMetric.DEFAULT_CHART_WINDOW_SIZE);
+            windowSizeByGroup.put(group, windowSize);
         }
 
         seriesByKey = new LinkedHashMap<>();
@@ -165,8 +174,13 @@ final class StatisticHistoryChartView {
                 gc.yAxis().setUpperBound(groupMax);
                 gc.yAxis().setTickUnit(tickUnit(groupMax));
 
-                int xMin = history.getFirst().stepCount();
-                int xMax = history.getLast().stepCount();
+                int windowSize = windowSizeByGroup.get(group);
+                List<StatisticSample> windowedHistory = (history.size() <= windowSize)
+                        ? history
+                        : history.subList(history.size() - windowSize, history.size());
+
+                int xMin = windowedHistory.getFirst().stepCount();
+                int xMax = windowedHistory.getLast().stepCount();
                 if (xMin == xMax) {
                     xMax = xMin + 1;
                 }
@@ -177,7 +191,7 @@ final class StatisticHistoryChartView {
                 for (String key : keys) {
                     XYChart.Series<Number, Number> series = seriesByKey.get(key);
                     ObservableList<XYChart.Data<Number, Number>> data = FXCollections.observableArrayList();
-                    for (StatisticSample sample : history) {
+                    for (StatisticSample sample : windowedHistory) {
                         Double value = sample.values().get(key);
                         if ((value != null) && Double.isFinite(value)) {
                             data.add(new XYChart.Data<>(sample.stepCount(), value));

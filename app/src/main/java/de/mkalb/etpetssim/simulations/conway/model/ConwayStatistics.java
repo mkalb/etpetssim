@@ -18,6 +18,7 @@ public final class ConwayStatistics
     private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
     private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
     private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
+    private static final int CHART_WINDOW_SIZE = 50;
 
     private int aliveCells;
     private int deadCells;
@@ -34,7 +35,7 @@ public final class ConwayStatistics
         return List.of(
                 new StatisticMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS,
                         ConwayStatistics::getAliveCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
                 new StatisticMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS,
                         ConwayStatistics::getDeadCells,
                         StatisticExtremaMode.MIN_AND_MAX),

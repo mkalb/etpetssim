@@ -133,4 +133,24 @@ final class StatisticMetricRowTest {
               ));
     }
 
+    @Test
+    void testChartedMetricsShareWindowSizeWithinGroup() {
+        Map<StatisticChartGroup, Set<Integer>> windowSizesByGroup = Stream.<List<? extends StatisticMetric<?>>>of(
+                                                                                  ConwayStatistics.metrics(),
+                                                                                  EtpetsStatistics.metrics(),
+                                                                                  ForestStatistics.metrics(),
+                                                                                  LangtonStatistics.metrics(),
+                                                                                  ReboundingStatistics.metrics(),
+                                                                                  SnakeStatistics.metrics(),
+                                                                                  SugarStatistics.metrics(),
+                                                                                  WatorStatistics.metrics()
+                                                                          ).flatMap(List::stream)
+                                                                          .filter(m -> m.chartGroup() != StatisticChartGroup.NONE)
+                                                                          .collect(Collectors.groupingBy(
+                                                                                  StatisticMetric::chartGroup,
+                                                                                  Collectors.mapping(StatisticMetric::chartWindowSize, Collectors.toSet())));
+        windowSizesByGroup.forEach((group, windowSizes) -> assertEquals(1, windowSizes.size(),
+                "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found " + windowSizes));
+    }
+
 }

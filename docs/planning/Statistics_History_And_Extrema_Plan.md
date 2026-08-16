@@ -504,7 +504,7 @@ dropped entirely.
    `{1, 2, 5} × 10^n` that is `>= groupMax` (e.g. `12 → 20`, `2495 → 5000`). Since `groupMax` already changes
    dynamically as history/extrema update, this rounding must be recomputed on every update rather than fixed at
    construction time.
-3. **Per-metric configurable history capacity** — Feature · **High** · M · Depends on: —.
+3. **Per-metric configurable history capacity** ✓ DONE — Feature · **High** · M · Depends on: —.
    The original per-metric history-capacity idea (including a `0` opt-out) is dropped — analysis showed the
    memory/CPU cost of a much larger shared history is negligible at this app's scale (roughly ~180 KB extra per
    running simulation going from 100 to 1000 samples; chart series rebuilds stay sub-millisecond). Instead, two

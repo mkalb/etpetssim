@@ -11,7 +11,7 @@ import java.util.*;
  */
 public final class StatisticHistory {
 
-    public static final int DEFAULT_CAPACITY = 100;
+    public static final int DEFAULT_CAPACITY = 1000;
 
     private final int capacity;
     private final ArrayDeque<StatisticSample> samples;
