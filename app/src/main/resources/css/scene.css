@@ -825,17 +825,6 @@ ScrollPane .decrement-arrow {
   -fx-padding: 0 0 3 0;
 }
 
-.observation-grid {
-  -fx-padding: 3;
-  -fx-hgap: 6;
-  -fx-vgap: 6;
-  -fx-background-color: #2e485c;
-  -fx-border-width: 0;
-  -fx-border-radius: 0;
-  -fx-border-color: transparent;
-  -fx-effect: null;
-}
-
 .observation-name-label {
   -fx-font-size: 13;
   -fx-font-weight: normal;
@@ -856,4 +845,133 @@ ScrollPane .decrement-arrow {
   -fx-text-fill: #00ff99;
   -fx-padding: 1 4 1 0;
   -fx-min-width: 55;
+}
+
+.observation-chart-section {
+  -fx-background-color: linear-gradient(to bottom, #35516b, #2e485c);
+  -fx-background-insets: 0;
+  -fx-background-radius: 6;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1;
+  -fx-border-radius: 6;
+  -fx-padding: 0;
+}
+
+.observation-chart-section>.title {
+  -fx-background-color: linear-gradient(to right, #347ca3, #35516b 80%, #2e485c 100%);
+  -fx-background-radius: 6 6 0 0;
+  -fx-font-size: 12;
+  -fx-font-weight: bold;
+  -fx-text-fill: #aeefff;
+  -fx-padding: 4 10 4 10;
+  -fx-cursor: hand;
+}
+
+.observation-chart-section>.title:hover {
+  -fx-background-color: linear-gradient(to right, #3f92bd, #3d6183 80%, #365571 100%);
+  -fx-text-fill: #eaf6fb;
+}
+
+.observation-chart-section:collapsed>.title {
+  -fx-background-radius: 6;
+}
+
+.observation-chart-section>.content {
+  -fx-background-color: #2e485c;
+  -fx-background-radius: 0 0 6 6;
+  -fx-border-color: #00eaff;
+  -fx-border-width: 1 0 0 0;
+  -fx-padding: 6;
+}
+
+.observation-chart-section>.title>.arrow-button>.arrow {
+  -fx-background-color: #aeefff;
+}
+
+.observation-chart {
+  -fx-pref-height: 175;
+  -fx-padding: 0;
+}
+
+.observation-chart > .chart-title {
+  visibility: hidden;
+  -fx-min-height: 0;
+  -fx-pref-height: 0;
+  -fx-max-height: 0;
+  -fx-padding: 0;
+}
+
+.observation-chart > .chart-content {
+  -fx-padding: 4 4 0 4;
+}
+
+.observation-chart .chart-plot-background {
+  -fx-background-color: #1a2233;
+}
+
+.observation-chart .chart-vertical-grid-lines,
+.observation-chart .chart-horizontal-grid-lines {
+  -fx-stroke: #46607a;
+}
+
+.observation-chart .chart-vertical-zero-line,
+.observation-chart .chart-horizontal-zero-line {
+  -fx-stroke: #5e7d99;
+}
+
+.observation-chart .axis {
+  -fx-font-size: 10;
+  -fx-tick-label-fill: #7fffd4;
+}
+
+.observation-chart .axis .axis-label {
+  -fx-text-fill: #aeefff;
+}
+
+.observation-chart .axis-tick-mark,
+.observation-chart .axis-minor-tick-mark {
+  -fx-stroke: #46607a;
+}
+
+.observation-chart .chart-legend {
+  -fx-background-color: #2e3b50;
+  -fx-background-radius: 4;
+  -fx-padding: 2 6 2 6;
+}
+
+.observation-chart .chart-legend-item {
+  -fx-text-fill: #aeefff;
+  -fx-font-size: 11;
+}
+
+.observation-chart .default-color0.chart-series-line {
+  -fx-stroke: #00eaff;
+}
+
+.observation-chart .default-color1.chart-series-line {
+  -fx-stroke: #00ff99;
+}
+
+.observation-chart .default-color2.chart-series-line {
+  -fx-stroke: #ffd27f;
+}
+
+.observation-chart .default-color3.chart-series-line {
+  -fx-stroke: #ff9ab3;
+}
+
+.observation-chart .default-color0.chart-legend-item-symbol {
+  -fx-background-color: #00eaff;
+}
+
+.observation-chart .default-color1.chart-legend-item-symbol {
+  -fx-background-color: #00ff99;
+}
+
+.observation-chart .default-color2.chart-legend-item-symbol {
+  -fx-background-color: #ffd27f;
+}
+
+.observation-chart .default-color3.chart-legend-item-symbol {
+  -fx-background-color: #ff9ab3;
 }

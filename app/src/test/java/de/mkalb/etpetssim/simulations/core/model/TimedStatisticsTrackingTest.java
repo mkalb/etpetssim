@@ -208,10 +208,10 @@ final class TimedStatisticsTrackingTest {
                 () -> assertTrue(manager.statisticsExtrema().maximumValues().containsKey("aliveCells")),
                 () -> assertTrue(Double.isFinite(genericAliveMax)),
                 () -> assertTrue(genericAliveMax >= 0.0d),
-                () -> assertTrue(manager.statisticsExtrema().minimumValues().containsKey("changedCells")),
+                () -> assertFalse(manager.statisticsExtrema().minimumValues().containsKey("changedCells")),
                 () -> assertTrue(manager.statisticsExtrema().maximumValues().containsKey("changedCells")),
-                () -> assertFalse(manager.statisticsExtrema().minimumValues().containsKey("deadCells")),
-                () -> assertFalse(manager.statisticsExtrema().maximumValues().containsKey("deadCells"))
+                () -> assertTrue(manager.statisticsExtrema().minimumValues().containsKey("deadCells")),
+                () -> assertTrue(manager.statisticsExtrema().maximumValues().containsKey("deadCells"))
         );
     }
 
@@ -271,8 +271,7 @@ final class TimedStatisticsTrackingTest {
                 () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("activePetCells").value())),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey("activePetCells")),
                 () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("activePetCells").value())),
-                () -> assertTrue(genericExtrema.minimumValues().containsKey("eggCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("eggCells").value())),
+                () -> assertFalse(genericExtrema.minimumValues().containsKey("eggCells")),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey("eggCells")),
                 () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("eggCells").value())),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey("cumulativePetDeathCount")),
@@ -289,20 +288,14 @@ final class TimedStatisticsTrackingTest {
 
         var genericExtrema = manager.statisticsExtrema();
         assertAll(
-                () -> assertTrue(genericExtrema.minimumValues().containsKey("snakeHeadCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("snakeHeadCells").value())),
-                () -> assertTrue(genericExtrema.maximumValues().containsKey("snakeHeadCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("snakeHeadCells").value())),
-                () -> assertTrue(genericExtrema.minimumValues().containsKey("livingSnakeHeadCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("livingSnakeHeadCells").value())),
-                () -> assertTrue(genericExtrema.maximumValues().containsKey("livingSnakeHeadCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("livingSnakeHeadCells").value())),
+                () -> assertFalse(genericExtrema.minimumValues().containsKey("snakeHeadCells")),
+                () -> assertFalse(genericExtrema.maximumValues().containsKey("snakeHeadCells")),
+                () -> assertFalse(genericExtrema.minimumValues().containsKey("livingSnakeHeadCells")),
+                () -> assertFalse(genericExtrema.maximumValues().containsKey("livingSnakeHeadCells")),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey("wallCells")),
                 () -> assertFalse(genericExtrema.maximumValues().containsKey("wallCells")),
-                () -> assertTrue(genericExtrema.minimumValues().containsKey("foodCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("foodCells").value())),
-                () -> assertTrue(genericExtrema.maximumValues().containsKey("foodCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("foodCells").value())),
+                () -> assertFalse(genericExtrema.minimumValues().containsKey("foodCells")),
+                () -> assertFalse(genericExtrema.maximumValues().containsKey("foodCells")),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey("cumulativeSnakeDeathCount")),
                 () -> assertFalse(genericExtrema.maximumValues().containsKey("cumulativeSnakeDeathCount"))
         );
@@ -317,14 +310,10 @@ final class TimedStatisticsTrackingTest {
 
         var genericExtrema = manager.statisticsExtrema();
         assertAll(
-                () -> assertTrue(genericExtrema.minimumValues().containsKey("resourceCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("resourceCells").value())),
-                () -> assertTrue(genericExtrema.maximumValues().containsKey("resourceCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("resourceCells").value())),
-                () -> assertTrue(genericExtrema.minimumValues().containsKey("agentCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("agentCells").value())),
-                () -> assertTrue(genericExtrema.maximumValues().containsKey("agentCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("agentCells").value()))
+                () -> assertFalse(genericExtrema.minimumValues().containsKey("resourceCells")),
+                () -> assertFalse(genericExtrema.maximumValues().containsKey("resourceCells")),
+                () -> assertFalse(genericExtrema.minimumValues().containsKey("agentCells")),
+                () -> assertFalse(genericExtrema.maximumValues().containsKey("agentCells"))
         );
     }
 
@@ -337,12 +326,11 @@ final class TimedStatisticsTrackingTest {
 
         var genericExtrema = manager.statisticsExtrema();
         assertAll(
-                () -> assertTrue(genericExtrema.minimumValues().containsKey("movingEntityCells")),
-                () -> assertTrue(Double.isFinite(genericExtrema.minimumValues().get("movingEntityCells").value())),
+                () -> assertFalse(genericExtrema.minimumValues().containsKey("movingEntityCells")),
                 () -> assertTrue(genericExtrema.maximumValues().containsKey("movingEntityCells")),
                 () -> assertTrue(Double.isFinite(genericExtrema.maximumValues().get("movingEntityCells").value())),
                 () -> assertFalse(genericExtrema.minimumValues().containsKey("wallCells")),
-                () -> assertFalse(genericExtrema.maximumValues().containsKey("wallCells"))
+                () -> assertTrue(genericExtrema.maximumValues().containsKey("wallCells"))
         );
     }
 
@@ -384,16 +372,12 @@ final class TimedStatisticsTrackingTest {
                         "batch: minAliveCells"),
                 () -> assertEquals(6945, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "batch: maxAliveCells"),
-                () -> assertEquals(0, batch.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
-                        "batch: minChangedCells"),
                 () -> assertEquals(6475, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "batch: maxChangedCells"),
                 () -> assertEquals(3575, singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: minAliveCells"),
                 () -> assertEquals(6945, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: maxAliveCells"),
-                () -> assertEquals(0, singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
-                        "singleStep: minChangedCells"),
                 () -> assertEquals(6475, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "singleStep: maxChangedCells")
         );

@@ -101,6 +101,7 @@ public final class SnakeObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }

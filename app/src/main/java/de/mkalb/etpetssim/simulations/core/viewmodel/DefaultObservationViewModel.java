@@ -68,6 +68,7 @@ public final class DefaultObservationViewModel<
      *
      * @return read-only property containing the latest extrema
      */
+    @Override
     public ReadOnlyObjectProperty<StatisticExtrema> statisticsExtremaProperty() {
         return statisticsExtremaWrapper.getReadOnlyProperty();
     }
@@ -95,6 +96,7 @@ public final class DefaultObservationViewModel<
      *
      * @return read-only property containing an immutable ordered list of samples, oldest first
      */
+    @Override
     public ReadOnlyObjectProperty<List<StatisticSample>> statisticsHistoryProperty() {
         return statisticsHistoryWrapper.getReadOnlyProperty();
     }

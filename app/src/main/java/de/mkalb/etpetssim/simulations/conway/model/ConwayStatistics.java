@@ -34,7 +34,7 @@ public final class ConwayStatistics
         return List.of(
                 new StatisticMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS,
                         ConwayStatistics::getAliveCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
                 new StatisticMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS,
                         ConwayStatistics::getDeadCells,
                         StatisticExtremaMode.MIN_AND_MAX),

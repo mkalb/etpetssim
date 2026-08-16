@@ -38,6 +38,7 @@ public final class ForestObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }

@@ -64,6 +64,7 @@ public final class WatorObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }
