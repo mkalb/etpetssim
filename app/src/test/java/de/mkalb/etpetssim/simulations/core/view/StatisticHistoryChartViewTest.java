@@ -177,7 +177,7 @@ final class StatisticHistoryChartViewTest {
     // --- Y-axis bounds ---
 
     @Test
-    void testYAxisUpperBoundIsCeilOfGroupMax() {
+    void testYAxisUpperBoundIsNiceCeilingOfGroupMax() {
         var history = List.of(sample(1, Map.of(
                 WatorStatistics.KEY_FISH_CELLS, 100.3,
                 WatorStatistics.KEY_SHARK_CELLS, 50.0)));
@@ -190,7 +190,7 @@ final class StatisticHistoryChartViewTest {
             return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(101.0, yUpper, "Y upper bound must be ceil(100.3) = 101");
+        assertEquals(200.0, yUpper, "Y upper bound must be the 1-2-5 nice ceiling of 100.3, i.e. 200");
     }
 
     // --- X-axis single-sample guard ---
