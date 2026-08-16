@@ -16,6 +16,7 @@ public final class WatorStatistics
 
     private static final String WATOR_OBSERVATION_FISH_CELLS = "wator.observation.cells.fish";
     private static final String WATOR_OBSERVATION_SHARK_CELLS = "wator.observation.cells.shark";
+    private static final int CHART_WINDOW_SIZE = 500;
 
     private int fishCells;
     private int sharkCells;
@@ -30,10 +31,10 @@ public final class WatorStatistics
         return List.of(
                 new StatisticMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS,
                         WatorStatistics::getFishCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
                 new StatisticMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS,
                         WatorStatistics::getSharkCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY)
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE)
         );
     }
 

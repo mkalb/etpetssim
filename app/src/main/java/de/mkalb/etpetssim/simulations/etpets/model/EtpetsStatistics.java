@@ -18,6 +18,7 @@ public final class EtpetsStatistics
     private static final String ETPETS_OBSERVATION_ACTIVE_PET_CELLS = "etpets.observation.cells.activepets";
     private static final String ETPETS_OBSERVATION_EGG_CELLS = "etpets.observation.cells.eggs";
     private static final String ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT = "etpets.observation.cumulativepetdeathcount";
+    private static final int CHART_WINDOW_SIZE = 1_000;
 
     private int activePetCells;
     private int eggCells;
@@ -34,7 +35,7 @@ public final class EtpetsStatistics
         return List.of(
                 new StatisticMetric<>(KEY_ACTIVE_PET_CELLS, ETPETS_OBSERVATION_ACTIVE_PET_CELLS,
                         EtpetsStatistics::getActivePetCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
                 new StatisticMetric<>(KEY_EGG_CELLS, ETPETS_OBSERVATION_EGG_CELLS,
                         EtpetsStatistics::getEggCells,
                         StatisticExtremaMode.MAX),
