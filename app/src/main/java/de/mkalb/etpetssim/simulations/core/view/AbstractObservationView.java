@@ -25,6 +25,8 @@ public abstract class AbstractObservationView<
         VM extends SimulationObservationViewModel<STA>>
         implements SimulationObservationView {
 
+    private static final String LABEL_SEPARATOR = ":";
+
     protected final VM viewModel;
     private final GridEntityDescriptorRegistry entityDescriptorRegistry;
     private final Label stepCountLabel = new Label();
@@ -372,7 +374,7 @@ public abstract class AbstractObservationView<
             StatisticMetric<STA> metric = metrics.get(i);
             int row = i + rowOffset;
 
-            Label nameLabel = new Label(AppLocalization.getText(metric.labelKey()));
+            Label nameLabel = new Label(AppLocalization.getText(metric.labelKey()) + LABEL_SEPARATOR);
             nameLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_NAME_LABEL);
             nameLabel.setMaxWidth(Double.MAX_VALUE);
 

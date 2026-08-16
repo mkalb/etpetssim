@@ -487,7 +487,7 @@ dropped entirely.
 
 #### Planned for this branch
 
-1. **Drop the trailing colon from localized metric names** — Refactor · **High** · S · Depends on: —.
+1. **Drop the trailing colon from localized metric names** ✓ DONE — Refactor · **High** · S · Depends on: —.
    Localized `labelKey` values in `i18n.messages` currently end with a colon (e.g. "Alive cells:"), which is meant
    for the observation table but also leaks into the `StatisticHistoryChartView` legend, where a trailing colon
    after each series name looks wrong. The colon is a UI layout concern, not a translation concern (both `en_US`
