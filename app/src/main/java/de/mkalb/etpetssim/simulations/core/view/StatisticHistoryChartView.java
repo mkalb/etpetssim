@@ -21,6 +21,7 @@ final class StatisticHistoryChartView {
 
     private static final double TARGET_TICK_COUNT = 5.0;
     private static final double CHART_SPACING = 8.0;
+    private static final double[] NICE_CEILING_FACTORS = {1.0, 2.0, 5.0, 10.0};
 
     private final List<StatisticChartGroup> distinctGroups;
     private final List<GroupChart> groupCharts;
@@ -107,6 +108,26 @@ final class StatisticHistoryChartView {
         return Math.max(1.0, Math.ceil(span / TARGET_TICK_COUNT));
     }
 
+    /**
+     * Rounds up to the smallest {@code {1, 2, 5} x 10^n} value that is greater than or equal
+     * to the given value, so the Y-axis ceiling stays stable and human-readable as the group
+     * maximum grows (e.g. {@code 12 -> 20}, {@code 2495 -> 5000}).
+     */
+    @SuppressWarnings("MagicNumber")
+    private static double niceCeiling(double value) {
+        if (value <= 0.0) {
+            return 0.0;
+        }
+        double magnitude = Math.pow(10.0, Math.floor(Math.log10(value) + 1.0e-9));
+        for (double factor : NICE_CEILING_FACTORS) {
+            double candidate = factor * magnitude;
+            if (candidate >= (value - 1.0e-9)) {
+                return candidate;
+            }
+        }
+        return 10.0 * magnitude;
+    }
+
     TitledPane titledPane() {
         return titledPane;
     }
@@ -132,7 +153,7 @@ final class StatisticHistoryChartView {
                                   .mapToDouble(StatisticExtremum::value)
                                   .max()
                                   .orElse(0.0);
-            groupMax = Math.ceil(groupMax);
+            groupMax = niceCeiling(groupMax);
 
             boolean chartVisible = (groupMax > 0) && !history.isEmpty();
             gc.chart().setManaged(chartVisible);

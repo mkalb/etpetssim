@@ -496,7 +496,7 @@ dropped entirely.
    is charted — and append the colon explicitly in code only at the one place that needs it: the name column in
    `AbstractObservationView.createGenericMetricSection` / `updateGenericMetricSection`. The
    `StatisticHistoryChartView` legend then shows the plain name with no special-casing.
-2. **"Nice" Y-axis ceiling rounding** — Feature · **High** · S · Depends on: —.
+2. **"Nice" Y-axis ceiling rounding** ✓ DONE — Feature · **High** · S · Depends on: —.
    `StatisticHistoryChartView` currently sets the Y-axis upper bound to the exact `ceil(groupMax)` of the group's
    running maximum, which changes every time a new group maximum is reached and produces awkward, non-round bounds
    (e.g. `12`, `2495`). Round the ceiling up using the standard **1-2-5 sequence**
