@@ -20,8 +20,7 @@ stop and ask for one — do **not** guess or document all simulations.
 
 Resolve the name to a simulation by matching it (case-insensitively) against the
 CLI aliases in
-[
-`app/src/main/java/de/mkalb/etpetssim/SimulationType.java`](../../../app/src/main/java/de/mkalb/etpetssim/SimulationType.java)
+[`SimulationType.java`](../../../app/src/main/java/de/mkalb/etpetssim/SimulationType.java)
 (the `cliArguments` list of each constant) or the simulation package name under
 `app/src/main/java/de/mkalb/etpetssim/simulations/`.
 
@@ -46,24 +45,25 @@ Read these sources for the matched simulation; do not invent values.
   `simulation.<name>.url`. Use these exact strings for the document title,
   one-line summary, and the reference link.
 - **Package:** `app/src/main/java/de/mkalb/etpetssim/simulations/<package>/`.
-  The key source files are listed below. `<Name>` is the simulation's class prefix (e.g. `Wator`).
-- Names are conventional, not guaranteed: confirm the actual files in the package, and skip any that do not exist
-  for a given simulation.
+  `<Name>` is the simulation's class prefix (e.g. `Wator`). File names are
+  conventional, not guaranteed: confirm the actual files in the package, and
+  skip any that do not exist for a given simulation.
 
-  | Source file                          | What to extract                                                                                                                                                                                                  | Feeds doc section                |
-    |--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
-  | `model/<Name>Config.java`            | Configurable parameters (record components + Javadoc), grouped by the pane comments (Structure, Layout, Initialization, Rules)                                                                                   | Configuration                    |
-  | `model/<Name>Constraints.java`       | Defaults, valid ranges, and allowed choices (e.g. `CELL_SHAPE_VALUES`, `*_DEFAULT`); used for default-first `(default)` marking                                                                                  | Category and grid, Configuration |
-  | `model/<Name>GridModel.java`         | Whether the simulation uses a single grid or **multiple layered grids** (e.g. resource layer + agent layer in Sugarscape / ET Pets). Name each layer conceptually.                                               | Entities, Rules and mechanics    |
-  | `model/<Name>StepLogic.java`         | Per-agent step logic (implements `AgentStepLogic`): what happens to a single agent each tick — movement, neighbor interactions, reproduction, death (e.g. Wa-Tor, Snake)                                         | Rules and mechanics              |
-  | `model/<Name>UpdateStrategy.java`    | Synchronous, double-buffered cellular-automaton step (implements `SynchronousStepLogic`): rules applied to every cell from the current grid into a next grid in one pass (e.g. Conway survival/birth thresholds) | Rules and mechanics              |
-  | `model/<Name>StepRunner.java`        | Whole-step orchestration (implements `SimulationStepRunner`): the ordered sub-phases executed per tick (e.g. agent logic, then resource regrowth, then terrain updates in ET Pets / Sugarscape)                  | Rules and mechanics              |
-  | `model/<Name>AgentLogic.java`, `<Name>ResourceLogic.java`, and any other `*Logic.java` in the package | Each sub-phase that `StepRunner` invokes. List **every** logic class present, not only those matching the suffixes above.                                                       | Rules and mechanics              |
+  | Source file | What to extract | Feeds doc section |
+  |---|---|---|
+  | `model/<Name>Config.java` | Configurable parameters (record components + Javadoc), grouped by the pane comments (Structure, Layout, Initialization, Rules) | Configuration |
+  | `model/<Name>Constraints.java` | Defaults, valid ranges, and allowed choices (e.g. `CELL_SHAPE_VALUES`, `*_DEFAULT`); used for default-first `(default)` marking | Category and grid, Configuration |
+  | `model/<Name>GridModel.java` | Whether the simulation uses a single grid or **multiple layered grids** (e.g. resource layer + agent layer in Sugarscape / ET Pets). Name each layer conceptually. | Entities, Rules and mechanics |
+  | `model/<Name>StepLogic.java` | Per-agent step logic (implements `AgentStepLogic`): what happens to a single agent each tick — movement, neighbor interactions, reproduction, death (e.g. Wa-Tor, Snake) | Rules and mechanics |
+  | `model/<Name>UpdateStrategy.java` | Synchronous, double-buffered cellular-automaton step (implements `SynchronousStepLogic`): rules applied to every cell from the current grid into a next grid in one pass (e.g. Conway survival/birth thresholds) | Rules and mechanics |
+  | `model/<Name>StepRunner.java` | Whole-step orchestration (implements `SimulationStepRunner`): the ordered sub-phases executed per tick (e.g. agent logic, then resource regrowth, then terrain updates in ET Pets / Sugarscape) | Rules and mechanics |
+  | `model/<Name>AgentLogic.java`, `<Name>ResourceLogic.java`, and any other `*Logic.java` in the package | Each sub-phase that `StepRunner` invokes. List **every** logic class present, not only those matching the suffixes above. | Rules and mechanics |
   | `model/<Name>SimulationManager.java` | **Starting conditions** (peak placement, resource seeding, agent placement strategy, RNG use) **and** overall run flow. For Sugarscape this is where peak coordinates, radial sugar distribution, and percentage-based agent seeding live — these are user-visible facts that exist nowhere else. | Rules and mechanics, Configuration (Initialization) |
-  | `model/entity/`                      | The entities the user can see; describe each conceptually                                                                                                                                                        | Entities                         |
-  | `view/<Name>ConfigView.java`         | **Authoritative source** for which configuration parameters are actually exposed in the UI and in which titled pane they live (`createConfigTitledPane(CONFIG_TITLE_STRUCTURE/LAYOUT/INITIALIZATION/RULES, ...)`). Also indicates whether cell shape / edge / neighborhood are user-configurable (`createStructurePane(true|false)`). Trust this over the grouping comments in `Config.java` when they disagree. | Configuration                    |
-  | `view/<Name>MainView.java`           | (a) Interactive edit tools available while the simulation runs, declared in `createUserActionDescriptors()` together with their localization keys (e.g. `sugar.toolbar.addsugar`). (b) Dynamic visual coding the user perceives but the entity catalog does not cover (brightness by value, markers for state transitions such as newly spawned agents). | Interactive editing, Entities    |
-  | `shared/<Name>UserActionContext.java`, `shared/<Name>*Level.java` | Option values that accompany edit tools (e.g. selectable add-sugar levels).                                                                                                                       | Interactive editing              |
+  | `model/entity/` | The entities the user can see; describe each conceptually | Entities |
+  | `model/<Name>UserAction.java` (implements `SimulationUserAction`) | What actually happens when an edit tool is applied to the selected cell (or globally): e.g. spawn/remove an agent, cycle a cell's state, set terrain or a resource. This is the precise, per-tool behavior behind the toolbar entries in `MainView`. | Interactive editing |
+  | `view/<Name>ConfigView.java` | **Authoritative source** for which configuration parameters are actually exposed in the UI and in which titled pane they live. Structure and Layout are usually built for free by the base class (`createStructurePane(...)`, `createLayoutPane(...)`); Initialization and Rules are always simulation-specific, via `createConfigTitledPane(CONFIG_TITLE_INITIALIZATION` / `CONFIG_TITLE_RULES, ...)`. Also indicates whether cell shape / edge / neighborhood are user-configurable (`createStructurePane(true\|false)`). Trust this over the grouping comments in `Config.java` when they disagree. | Configuration |
+  | `view/<Name>MainView.java` | (a) Interactive edit tools available while the simulation runs, declared in `createUserActionDescriptors()` together with their localization keys (e.g. `sugar.toolbar.addsugar`) and their scope (`SimulationUserActionScope.CELL_SELECTED` vs. `GLOBAL`). (b) Dynamic visual coding the user perceives but the entity catalog does not cover (brightness by value, markers for state transitions such as newly spawned agents). | Interactive editing, Entities |
+  | `shared/<Name>UserActionContext.java` (occasionally in `model/`, e.g. Conway), `shared/<Name>*Level.java`, `shared/<Name>*Choice.java` | Option values that parameterize an edit tool (e.g. selectable add-sugar levels, ET Pets terrain/resource choices). | Interactive editing |
 
   Do not list every parameter exhaustively; condense rules into 3-7
   plain-language bullets, and keep entities conceptual.
@@ -71,13 +71,13 @@ Read these sources for the matched simulation; do not invent values.
   Files that exist in some packages but are **not** sources for user-facing
   documentation, and should be ignored:
 
-    - `model/<Name>Balance.java` — internal tuning constants (e.g. noise ranges,
-      fixed peak positions); never quote these magic numbers in the doc.
-    - `model/<Name>TerminationCondition.java` — usually a one-line "stop when
-      empty" check; mention only if it implies something genuinely surprising to
-      the user.
-    - `model/<Name>Statistics.java`, `view/<Name>ObservationView.java`,
-      `viewmodel/`, `<Name>Factory.java`, `package-info.java` — infrastructure.
+  - `model/<Name>Balance.java` — internal tuning constants (e.g. noise ranges,
+    fixed peak positions); never quote these magic numbers in the doc.
+  - `model/<Name>TerminationCondition.java` — usually a one-line "stop when
+    empty" check; mention only if it implies something genuinely surprising to
+    the user.
+  - `model/<Name>Statistics.java`, `view/<Name>ObservationView.java`,
+    `viewmodel/`, `<Name>Factory.java`, `package-info.java` — infrastructure.
 - **Category:** classify as **Agent-based** (`wator`, `etpets`, `snake`,
   `rebounding`, `sugar`) or **Cellular automaton** (`conway`, `forest`,
   `langton`); confirm against the actual model if unsure.

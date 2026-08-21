@@ -81,11 +81,6 @@ public final class DefaultObservationViewModel<
         return selectedGridCell;
     }
 
-    /**
-     * Exposes the last clicked grid coordinate.
-     *
-     * @return last clicked coordinate property
-     */
     @Override
     public ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
         return lastClickedCoordinate;

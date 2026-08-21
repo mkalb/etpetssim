@@ -1,7 +1,8 @@
 <!--
   Per-simulation documentation generated/maintained by the `per-simulation-docs` skill.
   Audience: end users of the application (not developers).
-  Replace every <...> placeholder. Remove this comment in the final file.
+  Replace every <...> placeholder. Remove all HTML comments, including this
+  one, from the final file — they are authoring guidance only.
   Keep section headings and their order. Do not add a "Controls" or "Tips" section
   unless requested; this template intentionally omits them.
   Conditionally included sections (delete the whole section if not applicable):
@@ -37,8 +38,9 @@ idea, and what a user sees happening on the grid. Avoid implementation detail.>
 
 <Summarize the core per-step loop in plain language as a concise list of 3-7
 bullet points. Derive this from whichever step class the simulation provides
-(step-logic, update-strategy, or step-runner) together with the model classes,
-but phrase it for a user, not a developer.>
+(step-logic, update-strategy, or step-runner), its per-phase `*Logic` classes,
+and the SimulationManager (starting conditions such as seeding and initial
+placement), but phrase it for a user, not a developer.>
 
 - <Rule 1>
 - <Rule 2>
@@ -65,21 +67,24 @@ entity catalog; keep this conceptual.>
 <!--
   Include this section ONLY if the simulation's MainView declares user actions
   in createUserActionDescriptors() (i.e. the run-time edit toolbar is not
-  empty). Otherwise delete the whole section including its heading.
+  empty). Otherwise delete the whole section including its heading. Derive the
+  precise per-tool behavior from the simulation's `*UserAction` class and any
+  option enums (`*Level`, `*Choice`) it accepts.
 -->
 
 <One short paragraph or a bullet list naming each available tool in plain
 language (e.g. "Add sugar (with level selection)", "Remove sugar") and, if
-relevant, when it applies (e.g. "applied to the currently selected cell").>
+relevant, when it applies (e.g. "applied to the currently selected cell", or
+"applies globally" for tools with no cell selection).>
 
 ## Configuration
 
 <A brief prose summary of what the user can adjust, split into the configuration
-panes below. Use only the panes that exist for this simulation (derive them from
-the grouping comments in the configuration class, e.g. Structure, Layout,
-Initialization, Rules) and omit any pane that does not apply. Keep each pane to a
-short sentence or two; mention notable limits or defaults inline only where they
-help the user, and do not use a table.>
+panes below. Use only the panes that exist for this simulation — derive them
+from the simulation's ConfigView (authoritative for what is actually shown) and
+the grouping comments in the configuration class — and omit any pane that does
+not apply. Keep each pane to a short sentence or two; mention notable limits or
+defaults inline only where they help the user, and do not use a table.>
 
 ### Structure
 

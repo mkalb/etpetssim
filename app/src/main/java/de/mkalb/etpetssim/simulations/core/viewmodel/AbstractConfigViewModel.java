@@ -154,16 +154,8 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         return hasConfigValidationIssues.getReadOnlyProperty();
     }
 
-    public final boolean hasConfigValidationIssues() {
-        return hasConfigValidationIssues.get();
-    }
-
     public final ReadOnlyStringProperty configValidationMessageProperty() {
         return configValidationMessage.getReadOnlyProperty();
-    }
-
-    public final String getConfigValidationMessage() {
-        return configValidationMessage.get();
     }
 
     private void updateConfigValidationState() {

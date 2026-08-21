@@ -18,17 +18,17 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 
 ## Simulations
 
-| Simulation                                                                     | Type               | Description                                                                                          |
-|--------------------------------------------------------------------------------|--------------------|------------------------------------------------------------------------------------------------------|
-| ET Pets                                                                        | Agent-Based Model  | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance |
-| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent-Based Model  | Agents (fish and sharks) interact in a predator–prey system                                          |
-| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automaton | Cells evolve based on simple local birth and survival rules                                          |
-| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Cellular Automaton | A moving ant updates cell states using simple rules                                                  |
-| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automaton | Cells model tree growth and fire spread through local rules                                          |
-| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent-Based Model  | Agents collect and consume sugar resources                                                           |
-| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Agent-Based Model  | Snakes move, grow, and avoid collisions while consuming food                                         |
-| Rebounding Entities                                                            | Agent-Based Model  | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           |
-| Simulation Lab                                                                 | Development Tool   | Testing environment for grid rendering and cell shapes                                               |
+| Simulation                                                                     | Type               | Description                                                                                          | Docs                                            |
+|--------------------------------------------------------------------------------|--------------------|--------------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| ET Pets                                                                        | Agent-Based Model  | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance | [etpets.md](docs/simulations/etpets.md)         |
+| [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent-Based Model  | Agents (fish and sharks) interact in a predator–prey system                                          | [wator.md](docs/simulations/wator.md)           |
+| [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automaton | Cells evolve based on simple local birth and survival rules                                          | [conway.md](docs/simulations/conway.md)         |
+| [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Cellular Automaton | A moving ant updates cell states using simple rules                                                  | [langton.md](docs/simulations/langton.md)       |
+| [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automaton | Cells model tree growth and fire spread through local rules                                          | [forest.md](docs/simulations/forest.md)         |
+| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent-Based Model  | Agents collect and consume sugar resources                                                           | [sugar.md](docs/simulations/sugar.md)           |
+| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Agent-Based Model  | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
+| Rebounding Entities                                                            | Agent-Based Model  | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
+| Simulation Lab                                                                 | Development Tool   | Testing environment for grid rendering and cell shapes                                               | —                                                |
 
 For a detailed inventory of simulation entity types, see
 the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
@@ -66,6 +66,7 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 #### Rebounding Entities
 
 ![Rebounding Entities](assets/screenshots/screenshot_rebounding_01.png)
+
 
 #### Simulation Lab
 
