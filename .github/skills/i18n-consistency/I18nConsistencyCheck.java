@@ -1,9 +1,11 @@
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -40,49 +42,45 @@ public final class I18nConsistencyCheck {
             Mode mode = parseMode(args);
             Path repositoryRoot = findRepositoryRoot();
 
+            BundleSource enUsSource = BundleSource.load(repositoryRoot, EN_US_RELATIVE_PATH);
+            BundleSource deDeSource = BundleSource.load(repositoryRoot, DE_DE_RELATIVE_PATH);
             List<Finding> encodingFindings = new ArrayList<>();
-            encodingFindings.addAll(analyzeEncoding(repositoryRoot, EN_US_RELATIVE_PATH));
-            encodingFindings.addAll(analyzeEncoding(repositoryRoot, DE_DE_RELATIVE_PATH));
+            encodingFindings.addAll(analyzeEncoding(enUsSource.relativePath(), enUsSource.originalBytes()));
+            encodingFindings.addAll(analyzeEncoding(deDeSource.relativePath(), deDeSource.originalBytes()));
             if (hasInvalidUtf8(encodingFindings)) {
                 Report report = new Report(encodingFindings);
                 report.print(mode);
                 System.exit(report.exitCode());
             }
 
-            ParseResult enUsParseResult = Bundle.load(repositoryRoot, EN_US_RELATIVE_PATH);
-            ParseResult deDeParseResult = Bundle.load(repositoryRoot, DE_DE_RELATIVE_PATH);
+            ParseResult enUsParseResult = enUsSource.parse();
+            ParseResult deDeParseResult = deDeSource.parse();
             Report report = analyze(encodingFindings, enUsParseResult, deDeParseResult);
 
             if (mode == Mode.FIX) {
-                if (enUsParseResult.hasFailures() || deDeParseResult.hasFailures()) {
-                    report.print(mode);
-                    System.exit(report.exitCode());
-                }
-                if (enUsParseResult.requiresCanonicalRenderer() || deDeParseResult.requiresCanonicalRenderer()) {
-                    List<Finding> findings = new ArrayList<>(report.findings());
-                    findings.add(Finding.fail(
-                            "fix safety",
-                            "valid properties syntax requires the canonical renderer; no files were changed"
-                    ));
-                    report = new Report(findings);
+                if (enUsParseResult.hasFailures() || deDeParseResult.hasFailures()
+                        || report.hasFailure("empty bundle")) {
                     report.print(mode);
                     System.exit(report.exitCode());
                 }
 
-                FixResult enUsFix = applyFix(repositoryRoot, EN_US_RELATIVE_PATH, enUsParseResult.bundle());
-                FixResult deDeFix = applyFix(repositoryRoot, DE_DE_RELATIVE_PATH, deDeParseResult.bundle());
+                PreparedFix enUsFix = prepareFix(enUsSource, enUsParseResult.bundle());
+                PreparedFix deDeFix = prepareFix(deDeSource, deDeParseResult.bundle());
+                commitFixes(List.of(enUsFix, deDeFix));
 
                 System.out.println("i18n consistency auto-fix");
-                System.out.println("- " + enUsFix.message());
-                System.out.println("- " + deDeFix.message());
+                System.out.println("- " + enUsFix.result().message());
+                System.out.println("- " + deDeFix.result().message());
                 System.out.println();
 
+                enUsSource = BundleSource.load(repositoryRoot, EN_US_RELATIVE_PATH);
+                deDeSource = BundleSource.load(repositoryRoot, DE_DE_RELATIVE_PATH);
                 encodingFindings = new ArrayList<>();
-                encodingFindings.addAll(analyzeEncoding(repositoryRoot, EN_US_RELATIVE_PATH));
-                encodingFindings.addAll(analyzeEncoding(repositoryRoot, DE_DE_RELATIVE_PATH));
+                encodingFindings.addAll(analyzeEncoding(enUsSource.relativePath(), enUsSource.originalBytes()));
+                encodingFindings.addAll(analyzeEncoding(deDeSource.relativePath(), deDeSource.originalBytes()));
 
-                enUsParseResult = Bundle.load(repositoryRoot, EN_US_RELATIVE_PATH);
-                deDeParseResult = Bundle.load(repositoryRoot, DE_DE_RELATIVE_PATH);
+                enUsParseResult = enUsSource.parse();
+                deDeParseResult = deDeSource.parse();
                 report = analyze(encodingFindings, enUsParseResult, deDeParseResult);
             }
 
@@ -94,6 +92,9 @@ public final class I18nConsistencyCheck {
             System.exit(2);
         } catch (IOException exception) {
             System.err.println("FAIL io: " + exception.getMessage());
+            for (Throwable suppressed : exception.getSuppressed()) {
+                System.err.println("FAIL io recovery: " + suppressed.getMessage());
+            }
             System.exit(2);
         }
     }
@@ -123,19 +124,263 @@ public final class I18nConsistencyCheck {
         throw new IOException("could not locate repository root containing production i18n bundles");
     }
 
-    private static FixResult applyFix(Path repositoryRoot, Path relativePath, Bundle bundle) throws IOException {
-        Path path = repositoryRoot.resolve(relativePath);
-        byte[] originalBytes = Files.readAllBytes(path);
-        String cleanedContent = cleanContent(originalBytes);
-        String fixedContent = formatEntries(bundle.entries().values(), lineSeparatorOf(cleanedContent));
-        byte[] fixedBytes = fixedContent.getBytes(StandardCharsets.UTF_8);
+    private static PreparedFix prepareFix(BundleSource source, Bundle bundle) throws IOException {
+        Path relativePath = source.relativePath();
+        Path path = source.path();
+        byte[] originalBytes = source.originalBytes();
+        String originalContent = decodeUtf8(stripUtf8Bom(originalBytes));
+        SanitizedEntries sanitized = sanitizeEntries(bundle);
+        String fixedContent = formatEntries(sanitized.entries(), lineSeparatorOf(originalContent));
+        byte[] fixedBytes = encodeUtf8(fixedContent);
+        validateRenderedBundle(relativePath, sanitized.entries(), fixedBytes);
 
-        if (Arrays.equals(originalBytes, fixedBytes)) {
-            return new FixResult(relativePath + ": no changes");
+        boolean changed = !Arrays.equals(originalBytes, fixedBytes);
+        String action = changed
+                ? "updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes"
+                : "no changes";
+        String noun = sanitized.removedInvisibleCharacters() == 1 ? "character" : "characters";
+        FixResult result = new FixResult(
+                relativePath + ": " + action + "; removed " + sanitized.removedInvisibleCharacters()
+                        + " invisible " + noun
+        );
+        return new PreparedFix(path, originalBytes, fixedBytes, changed, result);
+    }
+
+    private static SanitizedEntries sanitizeEntries(Bundle bundle) throws IOException {
+        List<Entry> entries = new ArrayList<>();
+        LinkedHashSet<String> sanitizedKeys = new LinkedHashSet<>();
+        int removedInvisibleCharacters = 0;
+        int marker = sanitizationMarker(bundle);
+
+        for (Entry entry : bundle.entries().values()) {
+            String markedRawKey = markInvisibleCharacters(entry.rawKey(), marker);
+            String markedRawValue = markInvisibleCharacters(entry.rawValue(), marker);
+            Entry sanitizedEntry = decodeSanitizedEntry(entry, markedRawKey, markedRawValue, marker);
+            if (!sanitizedKeys.add(sanitizedEntry.key())) {
+                throw new IOException(fileLabel(bundle.relativePath())
+                        + ": removing invisible characters creates duplicate key " + sanitizedEntry.key());
+            }
+            entries.add(sanitizedEntry);
+            removedInvisibleCharacters += countInvisibleCharacters(entry.key())
+                    - countInvisibleCharacters(sanitizedEntry.key());
+            removedInvisibleCharacters += countInvisibleCharacters(entry.value())
+                    - countInvisibleCharacters(sanitizedEntry.value());
+        }
+        return new SanitizedEntries(entries, removedInvisibleCharacters);
+    }
+
+    private static int sanitizationMarker(Bundle bundle) throws IOException {
+        LinkedHashSet<Integer> usedCodePoints = new LinkedHashSet<>();
+        for (Entry entry : bundle.entries().values()) {
+            entry.rawKey().codePoints().forEach(usedCodePoints::add);
+            entry.rawValue().codePoints().forEach(usedCodePoints::add);
+            entry.key().codePoints().forEach(usedCodePoints::add);
+            entry.value().codePoints().forEach(usedCodePoints::add);
+        }
+        int marker = unusedCodePoint(usedCodePoints, 0xE000, 0xF8FF);
+        if (marker < 0) {
+            marker = unusedCodePoint(usedCodePoints, 0xF0000, 0xFFFFD);
+        }
+        if (marker < 0) {
+            marker = unusedCodePoint(usedCodePoints, 0x100000, 0x10FFFD);
+        }
+        if (marker < 0) {
+            throw new IOException(fileLabel(bundle.relativePath()) + ": no sanitization marker is available");
+        }
+        return marker;
+    }
+
+    private static int unusedCodePoint(Collection<Integer> usedCodePoints, int start, int end) {
+        for (int codePoint = start; codePoint <= end; codePoint++) {
+            if (!usedCodePoints.contains(codePoint)) {
+                return codePoint;
+            }
+        }
+        return -1;
+    }
+
+    private static String markInvisibleCharacters(String source, int marker) {
+        StringBuilder builder = new StringBuilder(source.length());
+        for (int index = 0; index < source.length(); ) {
+            int codePoint = source.codePointAt(index);
+            if ((codePoint == '\n') || (codePoint == '\r') || !isInvisibleCharacter(codePoint)) {
+                builder.appendCodePoint(codePoint);
+            } else {
+                builder.appendCodePoint(marker);
+            }
+            index += Character.charCount(codePoint);
+        }
+        return builder.toString();
+    }
+
+    private static int countInvisibleCharacters(String text) {
+        int count = 0;
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            if (isInvisibleCharacter(codePoint)) {
+                count++;
+            }
+            index += Character.charCount(codePoint);
+        }
+        return count;
+    }
+
+    private static Entry decodeSanitizedEntry(
+            Entry sourceEntry,
+            String markedRawKey,
+            String markedRawValue,
+            int marker
+    ) throws IOException {
+        Properties properties = new Properties();
+        properties.load(new StringReader(markedRawKey + "=" + markedRawValue));
+        if (properties.size() != 1) {
+            throw new IOException("could not decode sanitized entry at line " + sourceEntry.lineNumber());
+        }
+        var decodedEntry = properties.entrySet().iterator().next();
+        String key = removeCodePoint((String) decodedEntry.getKey(), marker);
+        String value = removeCodePoint((String) decodedEntry.getValue(), marker);
+        return new Entry(
+                sourceEntry.lineNumber(),
+                markedRawKey,
+                markedRawValue,
+                key,
+                value,
+                sourceEntry.rawSource()
+        );
+    }
+
+    private static String removeCodePoint(String text, int removedCodePoint) {
+        StringBuilder builder = new StringBuilder(text.length());
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            if (codePoint != removedCodePoint) {
+                builder.appendCodePoint(codePoint);
+            }
+            index += Character.charCount(codePoint);
+        }
+        return builder.toString();
+    }
+
+    private static byte[] encodeUtf8(String content) throws CharacterCodingException {
+        ByteBuffer encoded = StandardCharsets.UTF_8.newEncoder()
+                                                   .onMalformedInput(CodingErrorAction.REPORT)
+                                                   .onUnmappableCharacter(CodingErrorAction.REPORT)
+                                                   .encode(CharBuffer.wrap(content));
+        byte[] bytes = new byte[encoded.remaining()];
+        encoded.get(bytes);
+        return bytes;
+    }
+
+    private static void validateRenderedBundle(Path relativePath, List<Entry> expectedEntries, byte[] fixedBytes)
+            throws IOException {
+        String content = decodeUtf8(fixedBytes);
+        Finding invisibleFinding = analyzeInvisibleCharacters(fileLabel(relativePath), content);
+        if (invisibleFinding.severity() == Severity.FAIL) {
+            throw new IOException(relativePath + ": rendered output contains invisible characters");
         }
 
-        Files.write(path, fixedBytes);
-        return new FixResult(relativePath + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes");
+        ParseResult rendered = Bundle.parse(relativePath, content);
+        if (rendered.hasFailures()) {
+            throw new IOException(relativePath + ": rendered output does not parse cleanly");
+        }
+        SequencedMap<String, Entry> actualEntries = rendered.bundle().entries();
+        if (actualEntries.size() != expectedEntries.size()) {
+            throw new IOException(relativePath + ": rendered output changed the entry count");
+        }
+        for (Entry expected : expectedEntries) {
+            Entry actual = actualEntries.get(expected.key());
+            if ((actual == null) || !Objects.equals(actual.value(), expected.value())) {
+                throw new IOException(relativePath + ": rendered output changed key or value semantics for " + expected.key());
+            }
+        }
+    }
+
+    private static void commitFixes(List<PreparedFix> fixes) throws IOException {
+        Path[] temporaryFiles = new Path[fixes.size()];
+        IOException failure = null;
+        int lastReplacementAttempt = -1;
+        try {
+            for (int index = 0; index < fixes.size(); index++) {
+                PreparedFix fix = fixes.get(index);
+                if (!fix.changed()) {
+                    continue;
+                }
+                Path parent = fix.path().getParent();
+                temporaryFiles[index] = Files.createTempFile(parent, fix.path().getFileName().toString(), ".tmp");
+                Files.write(temporaryFiles[index], fix.fixedBytes());
+            }
+            for (int index = 0; index < fixes.size(); index++) {
+                if (temporaryFiles[index] == null) {
+                    continue;
+                }
+                lastReplacementAttempt = index;
+                replaceFile(temporaryFiles[index], fixes.get(index).path());
+                temporaryFiles[index] = null;
+            }
+        } catch (IOException exception) {
+            failure = exception;
+            for (int index = 0; index <= lastReplacementAttempt; index++) {
+                PreparedFix fix = fixes.get(index);
+                if (!fix.changed()) {
+                    continue;
+                }
+                try {
+                    restoreFile(fix.path(), fix.originalBytes());
+                } catch (IOException restoreException) {
+                    failure.addSuppressed(restoreException);
+                }
+            }
+        } finally {
+            for (Path temporaryFile : temporaryFiles) {
+                if (temporaryFile == null) {
+                    continue;
+                }
+                try {
+                    Files.deleteIfExists(temporaryFile);
+                } catch (IOException cleanupException) {
+                    if (failure == null) {
+                        failure = cleanupException;
+                    } else {
+                        failure.addSuppressed(cleanupException);
+                    }
+                }
+            }
+        }
+        if (failure != null) {
+            throw failure;
+        }
+    }
+
+    private static void replaceFile(Path source, Path destination) throws IOException {
+        try {
+            Files.move(source, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+                    java.nio.file.StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException exception) {
+            Files.move(source, destination, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private static void restoreFile(Path destination, byte[] originalBytes) throws IOException {
+        Path temporaryFile = Files.createTempFile(
+                destination.getParent(), destination.getFileName().toString(), ".restore.tmp"
+        );
+        IOException failure = null;
+        try {
+            Files.write(temporaryFile, originalBytes);
+            replaceFile(temporaryFile, destination);
+        } catch (IOException exception) {
+            failure = exception;
+            throw exception;
+        } finally {
+            try {
+                Files.deleteIfExists(temporaryFile);
+            } catch (IOException cleanupException) {
+                if (failure == null) {
+                    throw cleanupException;
+                }
+                failure.addSuppressed(cleanupException);
+            }
+        }
     }
 
     private static byte[] stripUtf8Bom(byte[] bytes) {
@@ -150,23 +395,6 @@ public final class I18nConsistencyCheck {
                                      .onUnmappableCharacter(CodingErrorAction.REPORT)
                                      .decode(ByteBuffer.wrap(bytes))
                                      .toString();
-    }
-
-    private static String cleanContent(byte[] bytes) throws CharacterCodingException {
-        return stripInvisibleCharacters(decodeUtf8(stripUtf8Bom(bytes)));
-    }
-
-    // \n and \r are kept to preserve line structure even though they are CONTROL characters.
-    private static String stripInvisibleCharacters(String content) {
-        StringBuilder builder = new StringBuilder(content.length());
-        for (int i = 0; i < content.length(); ) {
-            int codePoint = content.codePointAt(i);
-            if ((codePoint == '\n') || (codePoint == '\r') || !isInvisibleCharacter(codePoint)) {
-                builder.appendCodePoint(codePoint);
-            }
-            i += Character.charCount(codePoint);
-        }
-        return builder.toString();
     }
 
     private static String localeFrom(Path relativePath) {
@@ -185,21 +413,10 @@ public final class I18nConsistencyCheck {
     }
 
     private static String formatEntries(Collection<Entry> entries, String lineSeparator) {
-        List<Entry> sortedEntries = entries.stream()
-                                           .map(entry -> {
-                                               String key = stripInvisibleCharacters(entry.rawKey());
-                                               String value = convertUnicodeEscapes(stripInvisibleCharacters(entry.rawValue()));
-                                               return new Entry(
-                                                       entry.lineNumber(),
-                                                       entry.rawKey(),
-                                                       entry.rawValue(),
-                                                       key,
-                                                       value,
-                                                       entry.rawSource()
-                                               );
-                                           })
-                                           .sorted(Comparator.comparing(Entry::key, KEY_COMPARATOR))
-                                           .toList();
+        List<RenderedEntry> sortedEntries = entries.stream()
+                                                   .map(I18nConsistencyCheck::renderEntry)
+                                                   .sorted(Comparator.comparing(RenderedEntry::decodedKey, KEY_COMPARATOR))
+                                                   .toList();
         int maxKeyLength = sortedEntries.stream()
                                         .mapToInt(entry -> entry.key().length())
                                         .max()
@@ -211,20 +428,51 @@ public final class I18nConsistencyCheck {
         return content + lineSeparator;
     }
 
-    private static String formatEntry(Entry entry, int maxKeyLength) {
+    private static String formatEntry(RenderedEntry entry, int maxKeyLength) {
         String alignedKey = entry.key() + " ".repeat(maxKeyLength - entry.key().length() + 1) + "=";
         return entry.value().isEmpty() ? alignedKey : alignedKey + " " + entry.value();
     }
 
-    private static String convertUnicodeEscapes(String value) {
-        Matcher matcher = UNICODE_ESCAPE_PATTERN.matcher(value);
-        StringBuilder builder = new StringBuilder();
-        while (matcher.find()) {
-            char decoded = (char) Integer.parseInt(matcher.group(1), 16);
-            matcher.appendReplacement(builder, Matcher.quoteReplacement(String.valueOf(decoded)));
+    private static RenderedEntry renderEntry(Entry entry) {
+        return new RenderedEntry(entry.key(), escapePropertyText(entry.key(), true), escapePropertyText(entry.value(), false));
+    }
+
+    private static String escapePropertyText(String text, boolean key) {
+        StringBuilder builder = new StringBuilder(text.length());
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            int charCount = Character.charCount(codePoint);
+            boolean unpairedSurrogate = (charCount == 1) && Character.isSurrogate(text.charAt(index));
+            if (unpairedSurrogate || isInvisibleCharacter(codePoint)) {
+                appendEscapedCodePoint(builder, codePoint);
+            } else if (codePoint == '\\') {
+                builder.append("\\\\");
+            } else if (key && ((codePoint == ' ') || (codePoint == '=') || (codePoint == ':')
+                    || (codePoint == '#') || (codePoint == '!'))) {
+                builder.append('\\').appendCodePoint(codePoint);
+            } else if (!key && (codePoint == ' ') && (index == 0)) {
+                builder.append("\\ ");
+            } else {
+                builder.appendCodePoint(codePoint);
+            }
+            index += charCount;
         }
-        matcher.appendTail(builder);
         return builder.toString();
+    }
+
+    private static void appendEscapedCodePoint(StringBuilder builder, int codePoint) {
+        switch (codePoint) {
+            case '\t' -> builder.append("\\t");
+            case '\n' -> builder.append("\\n");
+            case '\r' -> builder.append("\\r");
+            case '\f' -> builder.append("\\f");
+            default -> {
+                char[] characters = Character.toChars(codePoint);
+                for (char character : characters) {
+                    builder.append("\\u%04X".formatted((int) character));
+                }
+            }
+        }
     }
 
     private static Report analyze(
@@ -239,6 +487,8 @@ public final class I18nConsistencyCheck {
         Bundle enUs = enUsParseResult.bundle();
         Bundle deDe = deDeParseResult.bundle();
 
+        findings.add(analyzeEmptyBundle(enUs));
+        findings.add(analyzeEmptyBundle(deDe));
         findings.addAll(analyzeKeyParity(enUs, deDe));
         findings.addAll(analyzeOrdering(enUs));
         findings.addAll(analyzeOrdering(deDe));
@@ -249,6 +499,13 @@ public final class I18nConsistencyCheck {
         findings.addAll(analyzeUnicodeEscapes(deDe));
 
         return new Report(findings);
+    }
+
+    private static Finding analyzeEmptyBundle(Bundle bundle) {
+        if (bundle.entries().isEmpty()) {
+            return Finding.fail("empty bundle", bundle.fileName() + " contains no semantic entries");
+        }
+        return Finding.pass("empty bundle", bundle.fileName() + " contains semantic entries");
     }
 
     private static List<Finding> analyzeKeyParity(Bundle enUs, Bundle deDe) {
@@ -276,9 +533,7 @@ public final class I18nConsistencyCheck {
         return findings;
     }
 
-    private static List<Finding> analyzeEncoding(Path repositoryRoot, Path relativePath) throws IOException {
-        Path path = repositoryRoot.resolve(relativePath);
-        byte[] bytes = Files.readAllBytes(path);
+    private static List<Finding> analyzeEncoding(Path relativePath, byte[] bytes) {
         String fileName = fileLabel(relativePath);
         List<Finding> findings = new ArrayList<>();
 
@@ -446,13 +701,14 @@ public final class I18nConsistencyCheck {
     private static List<Finding> analyzeAlignment(Bundle bundle) {
         List<Entry> entries = List.copyOf(bundle.entries().values());
         int maxKeyLength = entries.stream()
+                                  .map(I18nConsistencyCheck::renderEntry)
                                   .mapToInt(entry -> entry.key().length())
                                   .max()
                                   .orElse(0);
         List<String> misaligned = new ArrayList<>();
 
         for (Entry entry : entries) {
-            String expected = formatEntry(entry, maxKeyLength);
+            String expected = formatEntry(renderEntry(entry), maxKeyLength);
             if (!Objects.equals(entry.rawSource(), expected)) {
                 misaligned.add("line " + entry.lineNumber() + " key " + entry.key());
             }
@@ -557,6 +813,40 @@ public final class I18nConsistencyCheck {
     private record FixResult(String message) {
     }
 
+    private record PreparedFix(
+            Path path,
+            byte[] originalBytes,
+            byte[] fixedBytes,
+            boolean changed,
+            FixResult result
+    ) {
+    }
+
+    private record SanitizedEntries(List<Entry> entries, int removedInvisibleCharacters) {
+
+        private SanitizedEntries {
+            entries = List.copyOf(entries);
+        }
+
+    }
+
+    private record RenderedEntry(String decodedKey, String key, String value) {
+    }
+
+    private record BundleSource(Path relativePath, Path path, byte[] originalBytes) {
+
+        private static BundleSource load(Path repositoryRoot, Path relativePath) throws IOException {
+            Path path = repositoryRoot.resolve(relativePath);
+            return new BundleSource(relativePath, path, Files.readAllBytes(path));
+        }
+
+        private ParseResult parse() throws CharacterCodingException {
+            String content = decodeUtf8(stripUtf8Bom(originalBytes));
+            return Bundle.parse(relativePath, content);
+        }
+
+    }
+
     private record ParseResult(
             Bundle bundle,
             List<Finding> findings,
@@ -574,12 +864,6 @@ public final class I18nConsistencyCheck {
     }
 
     private record Bundle(Path relativePath, SequencedMap<String, Entry> entries) {
-
-        private static ParseResult load(Path repositoryRoot, Path relativePath) throws IOException {
-            Path path = repositoryRoot.resolve(relativePath);
-            String content = decodeUtf8(stripUtf8Bom(Files.readAllBytes(path)));
-            return parse(relativePath, content);
-        }
 
         private static ParseResult parse(Path relativePath, String content) {
             SequencedMap<String, Entry> entries = new LinkedHashMap<>();
@@ -845,6 +1129,11 @@ public final class I18nConsistencyCheck {
                            .map(Finding::severity)
                            .max(Comparator.comparingInt(severity -> severity.exitCode))
                            .orElse(Severity.PASS);
+        }
+
+        private boolean hasFailure(String rule) {
+            return findings.stream().anyMatch(finding -> (finding.severity() == Severity.FAIL)
+                    && Objects.equals(finding.rule(), rule));
         }
 
     }

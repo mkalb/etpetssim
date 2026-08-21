@@ -128,6 +128,10 @@ final class I18nConsistencyCheckTest {
                 "PASS trailing newline: messages_en_US.properties (en_US) ends with exactly one trailing line break",
                 "PASS trailing newline: messages_de_DE.properties (de_DE) ends with exactly one trailing line break",
                 "",
+                "Rule: empty bundle",
+                "PASS empty bundle: messages_en_US.properties (en_US) contains semantic entries",
+                "PASS empty bundle: messages_de_DE.properties (de_DE) contains semantic entries",
+                "",
                 "Rule: key parity",
                 "FAIL key parity: messages_de_DE.properties (de_DE) is missing keys present in messages_en_US.properties (en_US): only.en",
                 "FAIL key parity: messages_en_US.properties (en_US) is missing keys present in messages_de_DE.properties (de_DE): only.de",
@@ -173,8 +177,8 @@ final class I18nConsistencyCheckTest {
         byte[] expectedDeDeBytes = bytesWithLineEnding("\r\n", "alpha = AB", "beta  = Kaffee", "gamma = C:\\\\temp");
         String expected = expectedOutput(
                 "i18n consistency auto-fix",
-                "- " + EN_US_RELATIVE_PATH + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes",
-                "- " + DE_DE_RELATIVE_PATH + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes",
+                "- " + EN_US_RELATIVE_PATH + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes; removed 1 invisible character",
+                "- " + DE_DE_RELATIVE_PATH + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes; removed 0 invisible characters",
                 "",
                 "i18n consistency report",
                 "Mode: fix",
@@ -202,6 +206,10 @@ final class I18nConsistencyCheckTest {
                 "PASS trailing newline: messages_en_US.properties (en_US) ends with exactly one trailing line break",
                 "PASS trailing newline: messages_de_DE.properties (de_DE) ends with exactly one trailing line break",
                 "",
+                "Rule: empty bundle",
+                "PASS empty bundle: messages_en_US.properties (en_US) contains semantic entries",
+                "PASS empty bundle: messages_de_DE.properties (de_DE) contains semantic entries",
+                "",
                 "Rule: key parity",
                 "PASS key parity: production bundles contain the same keys (.url keys exempt)",
                 "",
@@ -210,8 +218,8 @@ final class I18nConsistencyCheckTest {
                 "PASS alphabetical ordering: messages_de_DE.properties (de_DE) is sorted by key",
                 "",
                 "Rule: = alignment",
-                "WARN = alignment: messages_en_US.properties (en_US) has a misaligned '=' column or spacing for keys: line 3 key gamma",
-                "WARN = alignment: messages_de_DE.properties (de_DE) has a misaligned '=' column or spacing for keys: line 3 key gamma",
+                "PASS = alignment: messages_en_US.properties (en_US) aligns the '=' column",
+                "PASS = alignment: messages_de_DE.properties (de_DE) aligns the '=' column",
                 "",
                 "Rule: placeholder count",
                 "PASS placeholder count: shared keys use the same number of '%' characters (.url keys exempt)",
@@ -220,10 +228,10 @@ final class I18nConsistencyCheckTest {
                 "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly",
                 "PASS Unicode escapes: messages_de_DE.properties (de_DE) stores localized characters directly",
                 "",
-                "Overall: WARN"
+                "Overall: PASS"
         );
         assertAll(
-                () -> assertEquals(1, result.exitCode()),
+                () -> assertEquals(0, result.exitCode()),
                 () -> assertEquals(expected, result.output()),
                 () -> assertArrayEquals(expectedEnUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
                 () -> assertArrayEquals(expectedDeDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
@@ -385,9 +393,130 @@ final class I18nConsistencyCheckTest {
     }
 
     @Test
-    void testFixRefusesValidNonCanonicalSyntaxWithoutChangingEitherBundle() throws Exception {
+    void testFixCanonicalizesValidNonCanonicalSyntaxAndIsIdempotent() throws Exception {
         byte[] enUsBytes = bytesWithLineEnding("\n", "alpha: value", "beta = continued\\", "    value");
         byte[] deDeBytes = bytesWithLineEnding("\n", "alpha value", "beta = value");
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult firstResult = runHelper("fix");
+        byte[] firstEnUsBytes = Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH));
+        byte[] firstDeDeBytes = Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH));
+        ProcessResult secondResult = runHelper("fix");
+
+        byte[] expectedEnUsBytes = bytesWithLineEnding("\n", "alpha = value", "beta  = continuedvalue");
+        byte[] expectedDeDeBytes = bytesWithLineEnding("\n", "alpha = value", "beta  = value");
+
+        assertAll(
+                () -> assertEquals(0, firstResult.exitCode()),
+                () -> assertTrue(firstResult.output().contains("i18n consistency auto-fix")),
+                () -> assertTrue(firstResult.output().endsWith("Overall: PASS" + System.lineSeparator())),
+                () -> assertEquals(0, secondResult.exitCode()),
+                () -> assertTrue(secondResult.output().contains(EN_US_RELATIVE_PATH + ": no changes")),
+                () -> assertTrue(secondResult.output().contains(DE_DE_RELATIVE_PATH + ": no changes")),
+                () -> assertArrayEquals(expectedEnUsBytes, firstEnUsBytes),
+                () -> assertArrayEquals(expectedDeDeBytes, firstDeDeBytes),
+                () -> assertArrayEquals(firstEnUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(firstDeDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testFixPreservesUnsafeAndLiteralUnicodeLookingEscapes() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding(
+                "\n",
+                "backslash = x\\u005Cy",
+                "escaped = \\\\u0041",
+                "line-break = x\\u000Ay",
+                "lone-surrogate = \\uD800",
+                "non-breaking = x\\u00A0y",
+                "pair = \\uD83D\\uDE00"
+        );
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult firstResult = runHelper("fix");
+        byte[] firstBytes = Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH));
+        ProcessResult secondResult = runHelper("fix");
+
+        byte[] expectedBytes = bytesWithLineEnding(
+                "\n",
+                "backslash      = x\\\\y",
+                "escaped        = \\\\u0041",
+                "line-break     = x\\ny",
+                "lone-surrogate = \\uD800",
+                "non-breaking   = x\\u00A0y",
+                "pair           = 😀"
+        );
+        assertAll(
+                () -> assertEquals(1, firstResult.exitCode()),
+                () -> assertTrue(firstResult.output().endsWith("Overall: WARN" + System.lineSeparator())),
+                () -> assertEquals(1, secondResult.exitCode()),
+                () -> assertArrayEquals(expectedBytes, firstBytes),
+                () -> assertArrayEquals(firstBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(firstBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testFixReportsLiteralInvisibleCharacterRemovalAndThenMakesNoChanges() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding("\n", "alpha = A\u200BB", "beta = value");
+        byte[] deDeBytes = bytesWithLineEnding("\n", "alpha = AB", "beta = va\u200Blue");
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult firstResult = runHelper("fix");
+        ProcessResult secondResult = runHelper("fix");
+
+        assertAll(
+                () -> assertEquals(0, firstResult.exitCode()),
+                () -> assertTrue(firstResult.output().contains(EN_US_RELATIVE_PATH + ": updated encoding")),
+                () -> assertTrue(firstResult.output().contains(DE_DE_RELATIVE_PATH + ": updated encoding")),
+                () -> assertTrue(firstResult.output().contains("removed 1 invisible character")),
+                () -> assertEquals(0, secondResult.exitCode()),
+                () -> assertTrue(secondResult.output().contains(EN_US_RELATIVE_PATH + ": no changes; removed 0 invisible characters")),
+                () -> assertTrue(secondResult.output().contains(DE_DE_RELATIVE_PATH + ": no changes; removed 0 invisible characters")),
+                () -> assertArrayEquals(
+                        bytesWithLineEnding("\n", "alpha = AB", "beta  = value"),
+                        Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))
+                ),
+                () -> assertArrayEquals(
+                        bytesWithLineEnding("\n", "alpha = AB", "beta  = value"),
+                        Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH))
+                )
+        );
+    }
+
+    @Test
+    void testFixDoesNotCreateEscapesWhenRemovingLiteralInvisibleCharacters() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding(
+                "\n",
+                "key\\\u200Bu0041 = value",
+                "value = x\\\u200Bu0041y"
+        );
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("fix");
+
+        byte[] expectedBytes = bytesWithLineEnding(
+                "\n",
+                "keyu0041 = value",
+                "value    = xu0041y"
+        );
+        assertAll(
+                () -> assertEquals(0, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        EN_US_RELATIVE_PATH + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes; removed 2 invisible characters"
+                )),
+                () -> assertTrue(result.output().contains(
+                        DE_DE_RELATIVE_PATH + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes; removed 2 invisible characters"
+                )),
+                () -> assertArrayEquals(expectedBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(expectedBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testFixRejectsEmptyBundleWithoutChangingEitherBundle() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding("\n", "# header", "# only comments");
+        byte[] deDeBytes = bytesWithLineEnding("\n", "# header");
         writeBundles(enUsBytes, deDeBytes);
 
         ProcessResult result = runHelper("fix");
@@ -395,7 +524,10 @@ final class I18nConsistencyCheckTest {
         assertAll(
                 () -> assertEquals(2, result.exitCode()),
                 () -> assertTrue(result.output().contains(
-                        "FAIL fix safety: valid properties syntax requires the canonical renderer; no files were changed"
+                        "FAIL empty bundle: messages_en_US.properties (en_US) contains no semantic entries"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL empty bundle: messages_de_DE.properties (de_DE) contains no semantic entries"
                 )),
                 () -> assertFalse(result.output().contains("i18n consistency auto-fix")),
                 () -> assertTrue(result.output().endsWith("Overall: FAIL" + System.lineSeparator())),
@@ -403,8 +535,6 @@ final class I18nConsistencyCheckTest {
                 () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
         );
     }
-
-    // Pending Block 5: F7 unsafe escapes, F11 idempotence, and F12 empty-bundle validation fixtures.
 
     private record ProcessResult(int exitCode, String output) {
     }
