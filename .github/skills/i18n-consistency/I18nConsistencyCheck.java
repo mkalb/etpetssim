@@ -42,7 +42,7 @@ public final class I18nConsistencyCheck {
             encodingFindings.addAll(analyzeEncoding(repositoryRoot, EN_US_RELATIVE_PATH));
             encodingFindings.addAll(analyzeEncoding(repositoryRoot, DE_DE_RELATIVE_PATH));
             if (hasInvalidUtf8(encodingFindings)) {
-                Report report = new Report(encodingFindings.toArray(Finding[]::new));
+                Report report = new Report(encodingFindings);
                 report.print(mode);
                 System.exit(report.exitCode());
             }
@@ -55,11 +55,15 @@ public final class I18nConsistencyCheck {
                 System.out.println("- " + enUsFix.message());
                 System.out.println("- " + deDeFix.message());
                 System.out.println();
+
+                encodingFindings = new ArrayList<>();
+                encodingFindings.addAll(analyzeEncoding(repositoryRoot, EN_US_RELATIVE_PATH));
+                encodingFindings.addAll(analyzeEncoding(repositoryRoot, DE_DE_RELATIVE_PATH));
             }
 
             Bundle enUs = Bundle.load(repositoryRoot, EN_US_RELATIVE_PATH);
             Bundle deDe = Bundle.load(repositoryRoot, DE_DE_RELATIVE_PATH);
-            Report report = analyze(repositoryRoot, enUs, deDe);
+            Report report = analyze(encodingFindings, enUs, deDe);
 
             report.print(mode);
             System.exit(report.exitCode());
@@ -122,10 +126,10 @@ public final class I18nConsistencyCheck {
 
     private static String decodeUtf8(byte[] bytes) throws CharacterCodingException {
         return StandardCharsets.UTF_8.newDecoder()
-                                    .onMalformedInput(CodingErrorAction.REPORT)
-                                    .onUnmappableCharacter(CodingErrorAction.REPORT)
-                                    .decode(ByteBuffer.wrap(bytes))
-                                    .toString();
+                                     .onMalformedInput(CodingErrorAction.REPORT)
+                                     .onUnmappableCharacter(CodingErrorAction.REPORT)
+                                     .decode(ByteBuffer.wrap(bytes))
+                                     .toString();
     }
 
     private static String cleanContent(byte[] bytes) throws CharacterCodingException {
@@ -192,11 +196,9 @@ public final class I18nConsistencyCheck {
         return builder.toString();
     }
 
-    private static Report analyze(Path repositoryRoot, Bundle enUs, Bundle deDe) throws IOException {
-        List<Finding> findings = new ArrayList<>();
+    private static Report analyze(List<Finding> encodingFindings, Bundle enUs, Bundle deDe) {
+        List<Finding> findings = new ArrayList<>(encodingFindings);
 
-        findings.addAll(analyzeEncoding(repositoryRoot, enUs.relativePath()));
-        findings.addAll(analyzeEncoding(repositoryRoot, deDe.relativePath()));
         findings.addAll(analyzeKeyParity(enUs, deDe));
         findings.addAll(analyzeOrdering(enUs));
         findings.addAll(analyzeOrdering(deDe));
@@ -206,7 +208,7 @@ public final class I18nConsistencyCheck {
         findings.addAll(analyzeUnicodeEscapes(enUs));
         findings.addAll(analyzeUnicodeEscapes(deDe));
 
-        return new Report(findings.toArray(Finding[]::new));
+        return new Report(findings);
     }
 
     private static List<Finding> analyzeKeyParity(Bundle enUs, Bundle deDe) {
@@ -545,7 +547,11 @@ public final class I18nConsistencyCheck {
 
     }
 
-    private record Report(Finding[] findings) {
+    private record Report(List<Finding> findings) {
+
+        private Report {
+            findings = List.copyOf(findings);
+        }
 
         private int exitCode() {
             return highestSeverity().exitCode;
@@ -559,25 +565,25 @@ public final class I18nConsistencyCheck {
             System.out.println("- " + DE_DE_RELATIVE_PATH);
             System.out.println();
 
-            Arrays.stream(findings)
-                                    .collect(Collectors.groupingBy(Finding::rule, LinkedHashMap::new, Collectors.toList()))
-                  .forEach((rule, ruleFindings) -> {
-                      System.out.println("Rule: " + rule);
-                      ruleFindings.forEach(finding -> System.out.println(
-                              finding.severity().name() + " " + finding.rule() + ": " + finding.message()
-                      ));
-                      System.out.println();
-                  });
+            findings.stream()
+                    .collect(Collectors.groupingBy(Finding::rule, LinkedHashMap::new, Collectors.toList()))
+                    .forEach((rule, ruleFindings) -> {
+                        System.out.println("Rule: " + rule);
+                        ruleFindings.forEach(finding -> System.out.println(
+                                finding.severity().name() + " " + finding.rule() + ": " + finding.message()
+                        ));
+                        System.out.println();
+                    });
 
             Severity highestSeverity = highestSeverity();
             System.out.println("Overall: " + highestSeverity.name());
         }
 
         private Severity highestSeverity() {
-            return Arrays.stream(findings)
-                         .map(Finding::severity)
-                         .max(Comparator.comparingInt(severity -> severity.exitCode))
-                         .orElse(Severity.PASS);
+            return findings.stream()
+                           .map(Finding::severity)
+                           .max(Comparator.comparingInt(severity -> severity.exitCode))
+                           .orElse(Severity.PASS);
         }
 
     }
