@@ -612,3 +612,86 @@ dropped entirely.
    chart at the step where they occurred (extinction, first reproduction, snake death, ignition); ties into the
    deferred edit-mode history extension.
 
+## Review File Lists
+
+The following two lists enumerate every file touched by this feature branch (`feature/statistic-history-and-extrema`),
+relative to its merge base with `main`, as the basis for a code review pass.
+
+### New Files
+
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticChartGroup.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtrema.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaMode.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaTracker.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremum.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticHistory.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetric.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticSample.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartView.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/ExtremaGoldenValueAnalyzer.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaTrackerTest.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticHistoryTest.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricLabelKeyTest.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricRowTest.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/TimedStatisticsTrackingTest.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartViewTest.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/package-info.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModelTest.java`
+- `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/package-info.java`
+- `docs/simulations/conway.md`
+- `docs/simulations/etpets.md`
+- `docs/simulations/forest.md`
+- `docs/simulations/langton.md`
+- `docs/simulations/rebounding.md`
+- `docs/simulations/snake.md`
+- `docs/simulations/sugar.md`
+- `docs/simulations/wator.md`
+
+### Changed Files
+
+- `.github/skills/per-simulation-docs/SKILL.md`
+- `.github/skills/per-simulation-docs/template.md`
+- `README.md`
+- `app/src/main/java/de/mkalb/etpetssim/core/AppLocalizationKeys.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/conway/model/ConwaySimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/conway/model/ConwayStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/conway/view/ConwayObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/AbstractTimedSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/SimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/AbstractDefaultMainView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/AbstractMainView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/AbstractObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/SimulationObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/AbstractConfigViewModel.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultMainViewModel.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModel.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/SimulationObservationViewModel.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/etpets/model/EtpetsSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/etpets/model/EtpetsStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/etpets/view/EtpetsObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/forest/model/ForestSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/forest/model/ForestStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/forest/view/ForestObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/langton/model/LangtonSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/langton/model/LangtonStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/langton/view/LangtonObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/rebounding/model/ReboundingSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/rebounding/model/ReboundingStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/rebounding/view/ReboundingObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/snake/model/SnakeSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/snake/model/SnakeStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/snake/view/SnakeObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/sugar/model/SugarSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/sugar/model/SugarStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/sugar/view/SugarObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/wator/model/WatorSimulationManager.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/wator/model/WatorStatistics.java`
+- `app/src/main/java/de/mkalb/etpetssim/simulations/wator/view/WatorObservationView.java`
+- `app/src/main/java/de/mkalb/etpetssim/ui/FXStyleClasses.java`
+- `app/src/main/resources/css/scene.css`
+- `app/src/main/resources/i18n/messages_de_DE.properties`
+- `app/src/main/resources/i18n/messages_en_US.properties`
+- `docs/planning/Core_Main_View_Refactoring_Plan.md`
+- `docs/planning/Statistics_History_And_Extrema_Plan.md`
+- `docs/planning/User_Action_Edit_Mode_Design.md`
+
