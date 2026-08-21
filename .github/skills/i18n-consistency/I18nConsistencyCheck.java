@@ -793,7 +793,7 @@ public final class I18nConsistencyCheck {
 
     private static List<Finding> analyzeUnicodeEscapes(Bundle bundle) {
         List<String> keysWithEscapes = bundle.entries().values().stream()
-                                             .filter(entry -> UNICODE_ESCAPE_PATTERN.matcher(entry.rawValue()).find())
+                                             .filter(entry -> containsUnescapedUnicodeEscape(entry.rawValue()))
                                              .map(Entry::key)
                                              .sorted(KEY_COMPARATOR)
                                              .toList();
@@ -809,7 +809,7 @@ public final class I18nConsistencyCheck {
 
     private static Finding analyzeUnicodeEscapesInKeys(Bundle bundle) {
         List<String> affectedEntries = bundle.entries().values().stream()
-                                             .filter(entry -> containsValidUnicodeEscape(entry.rawKey()))
+                                             .filter(entry -> containsUnescapedUnicodeEscape(entry.rawKey()))
                                              .sorted(Comparator.comparing(Entry::key, KEY_COMPARATOR))
                                              .map(entry -> entry.key() + " (line " + entry.lineNumber() + ")")
                                              .toList();
@@ -825,7 +825,7 @@ public final class I18nConsistencyCheck {
         );
     }
 
-    private static boolean containsValidUnicodeEscape(String rawText) {
+    private static boolean containsUnescapedUnicodeEscape(String rawText) {
         Matcher matcher = UNICODE_ESCAPE_PATTERN.matcher(rawText);
         for (int index = 0; index < rawText.length(); ) {
             if (rawText.charAt(index) != '\\') {
@@ -929,11 +929,7 @@ public final class I18nConsistencyCheck {
 
     }
 
-    private record ParseResult(
-            Bundle bundle,
-            List<Finding> findings,
-            boolean requiresCanonicalRenderer
-    ) {
+    private record ParseResult(Bundle bundle, List<Finding> findings) {
 
         private ParseResult {
             findings = List.copyOf(findings);
@@ -951,7 +947,6 @@ public final class I18nConsistencyCheck {
             SequencedMap<String, Entry> entries = new LinkedHashMap<>();
             List<Finding> findings = new ArrayList<>();
             List<PhysicalLine> lines = physicalLines(content);
-            boolean requiresCanonicalRenderer = false;
 
             for (int index = 0; index < lines.size(); index++) {
                 PhysicalLine firstLine = lines.get(index);
@@ -1020,9 +1015,8 @@ public final class I18nConsistencyCheck {
                                     + " at lines " + previous.lineNumber() + " and " + entry.lineNumber()
                     ));
                 }
-                requiresCanonicalRenderer |= continued || rawRegions.requiresCanonicalRenderer();
             }
-            return new ParseResult(new Bundle(relativePath, entries), findings, requiresCanonicalRenderer);
+            return new ParseResult(new Bundle(relativePath, entries), findings);
         }
 
         private static List<PhysicalLine> physicalLines(String content) {
@@ -1134,10 +1128,9 @@ public final class I18nConsistencyCheck {
             while ((valueStart < source.length()) && isPropertiesWhitespace(source.charAt(valueStart))) {
                 valueStart++;
             }
-            char separator = '\0';
             if ((valueStart < source.length())
                     && ((source.charAt(valueStart) == '=') || (source.charAt(valueStart) == ':'))) {
-                separator = source.charAt(valueStart++);
+                valueStart++;
             }
             while ((valueStart < source.length()) && isPropertiesWhitespace(source.charAt(valueStart))) {
                 valueStart++;
@@ -1145,8 +1138,7 @@ public final class I18nConsistencyCheck {
 
             String rawKey = source.substring(keyStart, keyEnd);
             String rawValue = source.substring(valueStart);
-            boolean requiresCanonicalRenderer = (separator != '=') || rawKey.contains("\\");
-            return new RawRegions(rawKey, rawValue, requiresCanonicalRenderer);
+            return new RawRegions(rawKey, rawValue);
         }
 
         private static int lineEndingLengthAt(String source, int index) {
@@ -1171,7 +1163,7 @@ public final class I18nConsistencyCheck {
     private record PhysicalLine(String text, String separator, int lineNumber) {
     }
 
-    private record RawRegions(String key, String value, boolean requiresCanonicalRenderer) {
+    private record RawRegions(String key, String value) {
     }
 
     private record Report(List<Finding> findings) {

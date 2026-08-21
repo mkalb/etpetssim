@@ -55,6 +55,10 @@ source lines and are failures; a bundle with no semantic entries is also a
 failure. All report analyses use the decoded source semantics without changing
 either bundle.
 
+Only syntactically effective `\uXXXX` sequences produce Unicode-escape
+warnings. Escaped-backslash text such as `\\u0041`, whose decoded value is the
+literal text `\u0041`, is not reported.
+
 It also checks that each bundle uses one consistent line ending throughout
 (either all LF or all CRLF, never a mix) and ends with exactly one trailing
 line break (no missing trailing newline, no extra trailing blank lines).

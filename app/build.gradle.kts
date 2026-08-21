@@ -45,18 +45,34 @@ application {
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
-    useJUnitPlatform()
-    val i18nConsistencyCheckSource = rootProject.layout.projectDirectory.file(
-        ".github/skills/i18n-consistency/I18nConsistencyCheck.java"
-    )
-    inputs.file(i18nConsistencyCheckSource)
-    systemProperty("i18nConsistencyCheck.source", i18nConsistencyCheckSource.asFile.absolutePath)
+    useJUnitPlatform {
+        excludeTags("skill")
+    }
     // Set JVM args for JavaFX headless testing
     jvmArgs(
         "--enable-native-access=javafx.graphics,ALL-UNNAMED",
         "-Dprism.order=sw",
         "-Djavafx.headless=true"
     )
+}
+
+tasks.register<Test>("skillTest") {
+    description = "Runs tests for repository skills."
+    group = "verification"
+
+    dependsOn(tasks.testClasses)
+    testClassesDirs = sourceSets.test.get().output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+
+    useJUnitPlatform {
+        includeTags("skill")
+    }
+
+    val i18nConsistencyCheckSource = rootProject.layout.projectDirectory.file(
+        ".github/skills/i18n-consistency/I18nConsistencyCheck.java"
+    )
+    inputs.file(i18nConsistencyCheckSource)
+    systemProperty("i18nConsistencyCheck.source", i18nConsistencyCheckSource.asFile.absolutePath)
 }
 
 distributions {

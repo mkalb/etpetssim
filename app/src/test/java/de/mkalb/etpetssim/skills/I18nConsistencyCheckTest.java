@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.skills;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
@@ -10,6 +10,8 @@ import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("skill")
+@SuppressWarnings({"MagicNumber", "HardcodedLineSeparator", "SpellCheckingInspection"})
 final class I18nConsistencyCheckTest {
 
     private static final Path EN_US_RELATIVE_PATH = Path.of(
@@ -20,6 +22,7 @@ final class I18nConsistencyCheckTest {
     );
     private static final Path HELPER_SOURCE = resolveHelperSource();
 
+    @SuppressWarnings("NotNullFieldNotInitialized")
     @TempDir
     Path temporaryDirectory;
 
@@ -97,6 +100,7 @@ final class I18nConsistencyCheckTest {
 
     private ProcessResult runHelper(String mode) throws IOException, InterruptedException {
         Path outputPath = Files.createTempFile(temporaryDirectory, "i18n-consistency-", ".log");
+        // noinspection UseOfProcessBuilder
         Process process = new ProcessBuilder(javaExecutable().toString(), HELPER_SOURCE.toString(), mode)
                 .directory(temporaryDirectory.toFile())
                 .redirectErrorStream(true)
@@ -278,6 +282,7 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     @Test
     void testFixRejectsMalformedUtf8InSecondBundleWithoutChangingEitherBundle() throws Exception {
         byte[] enUsBytes = "alpha = valid\n".getBytes(StandardCharsets.UTF_8);
@@ -660,6 +665,27 @@ final class I18nConsistencyCheckTest {
                         "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly"
                 )),
                 () -> assertTrue(result.output().endsWith("Overall: WARN" + System.lineSeparator())),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testReportIgnoresEscapedLiteralUnicodeLookingValues() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding("\n", "escaped = \\\\u0041");
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(0, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "PASS Unicode escapes: messages_de_DE.properties (de_DE) stores localized characters directly"
+                )),
+                () -> assertTrue(result.output().endsWith("Overall: PASS" + System.lineSeparator())),
                 () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
                 () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
         );
