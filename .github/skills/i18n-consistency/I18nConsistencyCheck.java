@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
@@ -14,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.SequencedMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,9 +49,28 @@ public final class I18nConsistencyCheck {
                 System.exit(report.exitCode());
             }
 
+            ParseResult enUsParseResult = Bundle.load(repositoryRoot, EN_US_RELATIVE_PATH);
+            ParseResult deDeParseResult = Bundle.load(repositoryRoot, DE_DE_RELATIVE_PATH);
+            Report report = analyze(encodingFindings, enUsParseResult, deDeParseResult);
+
             if (mode == Mode.FIX) {
-                FixResult enUsFix = applyFix(repositoryRoot, EN_US_RELATIVE_PATH);
-                FixResult deDeFix = applyFix(repositoryRoot, DE_DE_RELATIVE_PATH);
+                if (enUsParseResult.hasFailures() || deDeParseResult.hasFailures()) {
+                    report.print(mode);
+                    System.exit(report.exitCode());
+                }
+                if (enUsParseResult.requiresCanonicalRenderer() || deDeParseResult.requiresCanonicalRenderer()) {
+                    List<Finding> findings = new ArrayList<>(report.findings());
+                    findings.add(Finding.fail(
+                            "fix safety",
+                            "valid properties syntax requires the canonical renderer; no files were changed"
+                    ));
+                    report = new Report(findings);
+                    report.print(mode);
+                    System.exit(report.exitCode());
+                }
+
+                FixResult enUsFix = applyFix(repositoryRoot, EN_US_RELATIVE_PATH, enUsParseResult.bundle());
+                FixResult deDeFix = applyFix(repositoryRoot, DE_DE_RELATIVE_PATH, deDeParseResult.bundle());
 
                 System.out.println("i18n consistency auto-fix");
                 System.out.println("- " + enUsFix.message());
@@ -59,11 +80,11 @@ public final class I18nConsistencyCheck {
                 encodingFindings = new ArrayList<>();
                 encodingFindings.addAll(analyzeEncoding(repositoryRoot, EN_US_RELATIVE_PATH));
                 encodingFindings.addAll(analyzeEncoding(repositoryRoot, DE_DE_RELATIVE_PATH));
-            }
 
-            Bundle enUs = Bundle.load(repositoryRoot, EN_US_RELATIVE_PATH);
-            Bundle deDe = Bundle.load(repositoryRoot, DE_DE_RELATIVE_PATH);
-            Report report = analyze(encodingFindings, enUs, deDe);
+                enUsParseResult = Bundle.load(repositoryRoot, EN_US_RELATIVE_PATH);
+                deDeParseResult = Bundle.load(repositoryRoot, DE_DE_RELATIVE_PATH);
+                report = analyze(encodingFindings, enUsParseResult, deDeParseResult);
+            }
 
             report.print(mode);
             System.exit(report.exitCode());
@@ -102,11 +123,10 @@ public final class I18nConsistencyCheck {
         throw new IOException("could not locate repository root containing production i18n bundles");
     }
 
-    private static FixResult applyFix(Path repositoryRoot, Path relativePath) throws IOException {
+    private static FixResult applyFix(Path repositoryRoot, Path relativePath, Bundle bundle) throws IOException {
         Path path = repositoryRoot.resolve(relativePath);
         byte[] originalBytes = Files.readAllBytes(path);
         String cleanedContent = cleanContent(originalBytes);
-        Bundle bundle = Bundle.parse(relativePath, cleanedContent);
         String fixedContent = formatEntries(bundle.entries().values(), lineSeparatorOf(cleanedContent));
         byte[] fixedBytes = fixedContent.getBytes(StandardCharsets.UTF_8);
 
@@ -166,7 +186,18 @@ public final class I18nConsistencyCheck {
 
     private static String formatEntries(Collection<Entry> entries, String lineSeparator) {
         List<Entry> sortedEntries = entries.stream()
-                                           .map(entry -> new Entry(entry.lineNumber(), entry.key(), convertUnicodeEscapes(entry.value()), entry.rawLine()))
+                                           .map(entry -> {
+                                               String key = stripInvisibleCharacters(entry.rawKey());
+                                               String value = convertUnicodeEscapes(stripInvisibleCharacters(entry.rawValue()));
+                                               return new Entry(
+                                                       entry.lineNumber(),
+                                                       entry.rawKey(),
+                                                       entry.rawValue(),
+                                                       key,
+                                                       value,
+                                                       entry.rawSource()
+                                               );
+                                           })
                                            .sorted(Comparator.comparing(Entry::key, KEY_COMPARATOR))
                                            .toList();
         int maxKeyLength = sortedEntries.stream()
@@ -196,8 +227,17 @@ public final class I18nConsistencyCheck {
         return builder.toString();
     }
 
-    private static Report analyze(List<Finding> encodingFindings, Bundle enUs, Bundle deDe) {
+    private static Report analyze(
+            List<Finding> encodingFindings,
+            ParseResult enUsParseResult,
+            ParseResult deDeParseResult
+    ) {
         List<Finding> findings = new ArrayList<>(encodingFindings);
+        findings.addAll(enUsParseResult.findings());
+        findings.addAll(deDeParseResult.findings());
+
+        Bundle enUs = enUsParseResult.bundle();
+        Bundle deDe = deDeParseResult.bundle();
 
         findings.addAll(analyzeKeyParity(enUs, deDe));
         findings.addAll(analyzeOrdering(enUs));
@@ -413,7 +453,7 @@ public final class I18nConsistencyCheck {
 
         for (Entry entry : entries) {
             String expected = formatEntry(entry, maxKeyLength);
-            if (!Objects.equals(entry.rawLine(), expected)) {
+            if (!Objects.equals(entry.rawSource(), expected)) {
                 misaligned.add("line " + entry.lineNumber() + " key " + entry.key());
             }
         }
@@ -457,7 +497,7 @@ public final class I18nConsistencyCheck {
 
     private static List<Finding> analyzeUnicodeEscapes(Bundle bundle) {
         List<String> keysWithEscapes = bundle.entries().values().stream()
-                                             .filter(entry -> UNICODE_ESCAPE_PATTERN.matcher(entry.value()).find())
+                                             .filter(entry -> UNICODE_ESCAPE_PATTERN.matcher(entry.rawValue()).find())
                                              .map(Entry::key)
                                              .sorted(KEY_COMPARATOR)
                                              .toList();
@@ -488,7 +528,14 @@ public final class I18nConsistencyCheck {
         }
     }
 
-    private record Entry(int lineNumber, String key, String value, String rawLine) {
+    private record Entry(
+            int lineNumber,
+            String rawKey,
+            String rawValue,
+            String key,
+            String value,
+            String rawSource
+    ) {
     }
 
     private record Finding(Severity severity, String rule, String message) {
@@ -510,41 +557,255 @@ public final class I18nConsistencyCheck {
     private record FixResult(String message) {
     }
 
-    private record Bundle(Path relativePath, SequencedMap<String, Entry> entries) {
+    private record ParseResult(
+            Bundle bundle,
+            List<Finding> findings,
+            boolean requiresCanonicalRenderer
+    ) {
 
-        private static Bundle load(Path repositoryRoot, Path relativePath) throws IOException {
-            Path path = repositoryRoot.resolve(relativePath);
-            return parse(relativePath, cleanContent(Files.readAllBytes(path)));
+        private ParseResult {
+            findings = List.copyOf(findings);
         }
 
-        private static Bundle parse(Path relativePath, String content) throws IOException {
+        private boolean hasFailures() {
+            return findings.stream().anyMatch(finding -> finding.severity() == Severity.FAIL);
+        }
+
+    }
+
+    private record Bundle(Path relativePath, SequencedMap<String, Entry> entries) {
+
+        private static ParseResult load(Path repositoryRoot, Path relativePath) throws IOException {
+            Path path = repositoryRoot.resolve(relativePath);
+            String content = decodeUtf8(stripUtf8Bom(Files.readAllBytes(path)));
+            return parse(relativePath, content);
+        }
+
+        private static ParseResult parse(Path relativePath, String content) {
             SequencedMap<String, Entry> entries = new LinkedHashMap<>();
-            String[] lines = LINE_ENDING_PATTERN.split(content, -1);
-            for (int index = 0; index < lines.length; index++) {
-                String line = lines[index];
-                if (index == lines.length - 1 && line.isEmpty()) {
-                    continue;
-                }
-                if (line.isBlank() || line.startsWith("#") || line.startsWith("!")) {
+            List<Finding> findings = new ArrayList<>();
+            List<PhysicalLine> lines = physicalLines(content);
+            boolean requiresCanonicalRenderer = false;
+
+            for (int index = 0; index < lines.size(); index++) {
+                PhysicalLine firstLine = lines.get(index);
+                if (isBlankOrComment(firstLine.text())) {
                     continue;
                 }
 
-                int separatorIndex = line.indexOf('=');
-                if (separatorIndex < 0) {
-                    throw new IOException("invalid properties entry without '=' in " + relativePath + " at line " + (index + 1));
+                StringBuilder sourceBuilder = new StringBuilder(firstLine.text());
+                boolean continued = false;
+                PhysicalLine currentLine = firstLine;
+                while (hasContinuation(currentLine.text())
+                        && !currentLine.separator().isEmpty()
+                        && (index + 1 < lines.size())) {
+                    continued = true;
+                    sourceBuilder.append(currentLine.separator());
+                    currentLine = lines.get(++index);
+                    sourceBuilder.append(currentLine.text());
+                }
+                String rawSource = sourceBuilder.toString();
+
+                int malformedEscapeIndex = malformedUnicodeEscapeIndex(rawSource);
+                if (malformedEscapeIndex >= 0) {
+                    int lineNumber = sourceLineNumber(firstLine.lineNumber(), rawSource, malformedEscapeIndex);
+                    findings.add(Finding.fail(
+                            "properties syntax",
+                            fileLabel(relativePath) + " has malformed Unicode escape at line " + lineNumber
+                    ));
+                    continue;
                 }
 
-                String key = line.substring(0, separatorIndex).trim();
-                String value = line.substring(separatorIndex + 1).stripLeading();
-                entries.put(key, new Entry(index + 1, key, value, line));
+                Properties properties = new Properties();
+                try {
+                    properties.load(new StringReader(rawSource));
+                } catch (IllegalArgumentException | IOException exception) {
+                    findings.add(Finding.fail(
+                            "properties syntax",
+                            fileLabel(relativePath) + " has malformed properties syntax at line " + firstLine.lineNumber()
+                    ));
+                    continue;
+                }
+                if (properties.size() != 1) {
+                    findings.add(Finding.fail(
+                            "properties syntax",
+                            fileLabel(relativePath) + " has an invalid logical entry at line " + firstLine.lineNumber()
+                    ));
+                    continue;
+                }
+
+                var decodedEntry = properties.entrySet().iterator().next();
+                String key = (String) decodedEntry.getKey();
+                String value = (String) decodedEntry.getValue();
+                RawRegions rawRegions = rawRegions(rawSource);
+                Entry entry = new Entry(
+                        firstLine.lineNumber(),
+                        rawRegions.key(),
+                        rawRegions.value(),
+                        key,
+                        value,
+                        rawSource
+                );
+                Entry previous = entries.putIfAbsent(key, entry);
+                if (previous != null) {
+                    findings.add(Finding.fail(
+                            "duplicate keys",
+                            fileLabel(relativePath) + " has duplicate decoded key " + key
+                                    + " at lines " + previous.lineNumber() + " and " + entry.lineNumber()
+                    ));
+                }
+                requiresCanonicalRenderer |= continued || rawRegions.requiresCanonicalRenderer();
             }
-            return new Bundle(relativePath, entries);
+            return new ParseResult(new Bundle(relativePath, entries), findings, requiresCanonicalRenderer);
+        }
+
+        private static List<PhysicalLine> physicalLines(String content) {
+            List<PhysicalLine> lines = new ArrayList<>();
+            Matcher matcher = LINE_ENDING_PATTERN.matcher(content);
+            int start = 0;
+            int lineNumber = 1;
+            while (matcher.find()) {
+                lines.add(new PhysicalLine(content.substring(start, matcher.start()), matcher.group(), lineNumber++));
+                start = matcher.end();
+            }
+            if (start < content.length()) {
+                lines.add(new PhysicalLine(content.substring(start), "", lineNumber));
+            }
+            return lines;
+        }
+
+        private static boolean isBlankOrComment(String line) {
+            int index = 0;
+            while ((index < line.length()) && isPropertiesWhitespace(line.charAt(index))) {
+                index++;
+            }
+            return (index == line.length()) || (line.charAt(index) == '#') || (line.charAt(index) == '!');
+        }
+
+        private static boolean hasContinuation(String line) {
+            int backslashCount = 0;
+            for (int index = line.length() - 1; (index >= 0) && (line.charAt(index) == '\\'); index--) {
+                backslashCount++;
+            }
+            return (backslashCount % 2) == 1;
+        }
+
+        private static int malformedUnicodeEscapeIndex(String source) {
+            for (int index = 0; index < source.length(); ) {
+                if (source.charAt(index) != '\\') {
+                    index++;
+                    continue;
+                }
+                if (index + 1 >= source.length()) {
+                    return -1;
+                }
+                char escaped = source.charAt(index + 1);
+                if (escaped != 'u') {
+                    index += 2;
+                    continue;
+                }
+                if (index + 6 > source.length()) {
+                    return index;
+                }
+                for (int digitIndex = index + 2; digitIndex < index + 6; digitIndex++) {
+                    if (!isAsciiHexDigit(source.charAt(digitIndex))) {
+                        return index;
+                    }
+                }
+                index += 6;
+            }
+            return -1;
+        }
+
+        private static boolean isAsciiHexDigit(char character) {
+            return ((character >= '0') && (character <= '9'))
+                    || ((character >= 'A') && (character <= 'F'))
+                    || ((character >= 'a') && (character <= 'f'));
+        }
+
+        private static int sourceLineNumber(int firstLineNumber, String source, int sourceIndex) {
+            Matcher matcher = LINE_ENDING_PATTERN.matcher(source.substring(0, sourceIndex));
+            int lineNumber = firstLineNumber;
+            while (matcher.find()) {
+                lineNumber++;
+            }
+            return lineNumber;
+        }
+
+        private static RawRegions rawRegions(String source) {
+            int keyStart = 0;
+            while ((keyStart < source.length()) && isPropertiesWhitespace(source.charAt(keyStart))) {
+                keyStart++;
+            }
+
+            int keyEnd = source.length();
+            boolean escaped = false;
+            for (int index = keyStart; index < source.length(); ) {
+                char character = source.charAt(index);
+                if (escaped) {
+                    escaped = false;
+                    index++;
+                } else if (character == '\\') {
+                    int lineEndingLength = lineEndingLengthAt(source, index + 1);
+                    if (lineEndingLength == 0) {
+                        escaped = true;
+                        index++;
+                    } else {
+                        index += lineEndingLength + 1;
+                        while ((index < source.length()) && isPropertiesWhitespace(source.charAt(index))) {
+                            index++;
+                        }
+                    }
+                } else if ((character == '=') || (character == ':') || isPropertiesWhitespace(character)) {
+                    keyEnd = index;
+                    break;
+                } else {
+                    index++;
+                }
+            }
+
+            int valueStart = keyEnd;
+            while ((valueStart < source.length()) && isPropertiesWhitespace(source.charAt(valueStart))) {
+                valueStart++;
+            }
+            char separator = '\0';
+            if ((valueStart < source.length())
+                    && ((source.charAt(valueStart) == '=') || (source.charAt(valueStart) == ':'))) {
+                separator = source.charAt(valueStart++);
+            }
+            while ((valueStart < source.length()) && isPropertiesWhitespace(source.charAt(valueStart))) {
+                valueStart++;
+            }
+
+            String rawKey = source.substring(keyStart, keyEnd);
+            String rawValue = source.substring(valueStart);
+            boolean requiresCanonicalRenderer = (separator != '=') || rawKey.contains("\\");
+            return new RawRegions(rawKey, rawValue, requiresCanonicalRenderer);
+        }
+
+        private static int lineEndingLengthAt(String source, int index) {
+            if ((index >= source.length()) || ((source.charAt(index) != '\r') && (source.charAt(index) != '\n'))) {
+                return 0;
+            }
+            return ((source.charAt(index) == '\r')
+                    && (index + 1 < source.length())
+                    && (source.charAt(index + 1) == '\n')) ? 2 : 1;
+        }
+
+        private static boolean isPropertiesWhitespace(char character) {
+            return (character == ' ') || (character == '\t') || (character == '\f');
         }
 
         private String fileName() {
             return I18nConsistencyCheck.fileLabel(relativePath);
         }
 
+    }
+
+    private record PhysicalLine(String text, String separator, int lineNumber) {
+    }
+
+    private record RawRegions(String key, String value, boolean requiresCanonicalRenderer) {
     }
 
     private record Report(List<Finding> findings) {

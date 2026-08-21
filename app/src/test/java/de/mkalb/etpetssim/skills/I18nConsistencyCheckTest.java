@@ -210,8 +210,8 @@ final class I18nConsistencyCheckTest {
                 "PASS alphabetical ordering: messages_de_DE.properties (de_DE) is sorted by key",
                 "",
                 "Rule: = alignment",
-                "PASS = alignment: messages_en_US.properties (en_US) aligns the '=' column",
-                "PASS = alignment: messages_de_DE.properties (de_DE) aligns the '=' column",
+                "WARN = alignment: messages_en_US.properties (en_US) has a misaligned '=' column or spacing for keys: line 3 key gamma",
+                "WARN = alignment: messages_de_DE.properties (de_DE) has a misaligned '=' column or spacing for keys: line 3 key gamma",
                 "",
                 "Rule: placeholder count",
                 "PASS placeholder count: shared keys use the same number of '%' characters (.url keys exempt)",
@@ -220,10 +220,10 @@ final class I18nConsistencyCheckTest {
                 "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly",
                 "PASS Unicode escapes: messages_de_DE.properties (de_DE) stores localized characters directly",
                 "",
-                "Overall: PASS"
+                "Overall: WARN"
         );
         assertAll(
-                () -> assertEquals(0, result.exitCode()),
+                () -> assertEquals(1, result.exitCode()),
                 () -> assertEquals(expected, result.output()),
                 () -> assertArrayEquals(expectedEnUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
                 () -> assertArrayEquals(expectedDeDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
@@ -246,7 +246,164 @@ final class I18nConsistencyCheckTest {
         );
     }
 
-    // Pending Block 4: F6 duplicate keys and F8 malformed-entry preflight fixtures.
+    @Test
+    void testReportParsesPropertiesGrammarWithDecodedKeysValuesAndSourceLines() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding(
+                "\n",
+                "# Source syntax intentionally varies.",
+                "colon.key: value",
+                "continued = hello\\",
+                "    world %",
+                "escaped\\=key = 100%%",
+                "path = C:\\\\temp",
+                "space.key value %"
+        );
+        byte[] deDeBytes = bytesWithLineEnding(
+                "\n",
+                "! Source syntax intentionally varies.",
+                "colon.key = Wert",
+                "continued = hallo\\",
+                "    Welt",
+                "escaped\\=key = 100%",
+                "path = C:\\\\temp",
+                "space.key = Wert %"
+        );
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "PASS key parity: production bundles contain the same keys (.url keys exempt)"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL placeholder count: key continued has 1 '%' in en_US but 0 '%' in de_DE"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL placeholder count: key escaped=key has 2 '%' in en_US but 1 '%' in de_DE"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "line 3 key continued"
+                )),
+                () -> assertFalse(result.output().contains("FAIL io:")),
+                () -> assertTrue(result.output().endsWith("Overall: FAIL" + System.lineSeparator())),
+                () -> assertArrayEquals(enUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testReportKeepsContinuedKeyEscapesOutOfRawValues() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding("\n", "foo\\", "  \\u0062ar = value");
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(1, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "PASS key parity: production bundles contain the same keys (.url keys exempt)"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "PASS Unicode escapes: messages_de_DE.properties (de_DE) stores localized characters directly"
+                )),
+                () -> assertFalse(result.output().contains(
+                        "contains \\uXXXX escapes in values for keys: foobar"
+                )),
+                () -> assertTrue(result.output().endsWith("Overall: WARN" + System.lineSeparator())),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testDuplicateDecodedKeysInBothLocalesAreReportedAndBlockFix() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding("\n", "alpha = first", "beta = shared", "\\u0061lpha = override");
+        byte[] deDeBytes = bytesWithLineEnding("\n", "alpha = erste", "alpha = überschrieben", "beta = gemeinsam");
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult reportResult = runHelper("report");
+        ProcessResult fixResult = runHelper("fix");
+
+        assertAll(
+                () -> assertEquals(2, reportResult.exitCode()),
+                () -> assertTrue(reportResult.output().contains(
+                        "FAIL duplicate keys: messages_en_US.properties (en_US) has duplicate decoded key alpha at lines 1 and 3"
+                )),
+                () -> assertTrue(reportResult.output().contains(
+                        "FAIL duplicate keys: messages_de_DE.properties (de_DE) has duplicate decoded key alpha at lines 1 and 2"
+                )),
+                () -> assertTrue(reportResult.output().endsWith("Overall: FAIL" + System.lineSeparator())),
+                () -> assertEquals(2, fixResult.exitCode()),
+                () -> assertTrue(fixResult.output().contains("Rule: duplicate keys")),
+                () -> assertFalse(fixResult.output().contains("i18n consistency auto-fix")),
+                () -> assertArrayEquals(enUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testMalformedUnicodeEscapesAreReportedWithSourceLinesAndBlockFix() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding(
+                "\n",
+                "nonhex = \\u12G4",
+                "repeated = \\uu0041",
+                "truncated = \\u123",
+                "unicode-digits = \\u１２３４"
+        );
+        byte[] deDeBytes = bytesWithLineEnding(
+                "\n", "nonhex = valid", "repeated = valid", "truncated = valid", "unicode-digits = valid"
+        );
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult result = runHelper("fix");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "FAIL properties syntax: messages_en_US.properties (en_US) has malformed Unicode escape at line 1"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL properties syntax: messages_en_US.properties (en_US) has malformed Unicode escape at line 2"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL properties syntax: messages_en_US.properties (en_US) has malformed Unicode escape at line 3"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL properties syntax: messages_en_US.properties (en_US) has malformed Unicode escape at line 4"
+                )),
+                () -> assertFalse(result.output().contains("FAIL usage:")),
+                () -> assertFalse(result.output().contains("FAIL io:")),
+                () -> assertTrue(result.output().endsWith("Overall: FAIL" + System.lineSeparator())),
+                () -> assertArrayEquals(enUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testFixRefusesValidNonCanonicalSyntaxWithoutChangingEitherBundle() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding("\n", "alpha: value", "beta = continued\\", "    value");
+        byte[] deDeBytes = bytesWithLineEnding("\n", "alpha value", "beta = value");
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult result = runHelper("fix");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "FAIL fix safety: valid properties syntax requires the canonical renderer; no files were changed"
+                )),
+                () -> assertFalse(result.output().contains("i18n consistency auto-fix")),
+                () -> assertTrue(result.output().endsWith("Overall: FAIL" + System.lineSeparator())),
+                () -> assertArrayEquals(enUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
     // Pending Block 5: F7 unsafe escapes, F11 idempotence, and F12 empty-bundle validation fixtures.
 
     private record ProcessResult(int exitCode, String output) {
