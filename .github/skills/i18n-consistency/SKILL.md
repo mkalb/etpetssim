@@ -1,6 +1,6 @@
 ---
 name: i18n-consistency
-description: 'Checks the production bundles app/src/main/resources/i18n/messages_en_US.properties and messages_de_DE.properties for UTF-8 encoding without a byte order mark, invisible/non-printable characters anywhere in the file, consistent LF or CRLF line endings with a single trailing newline, key parity, alphabetical ordering, = column alignment, placeholder (%) count parity, and unwanted \uXXXX Unicode escapes; optional auto-fix for stripping a BOM/invisible characters, normalizing line endings, sorting, = column alignment, and escape-to-UTF-8 conversion. Use when someone wants to check or clean up localization/i18n.'
+description: 'Checks the production bundles app/src/main/resources/i18n/messages_en_US.properties and messages_de_DE.properties for UTF-8 encoding without a byte order mark, invisible/non-printable characters, consistent LF or CRLF line endings with a single trailing newline, valid Java properties syntax, non-empty content, unique decoded keys, key parity, alphabetical ordering, = column alignment, decoded trailing whitespace, placeholder (%) count parity, and unwanted \uXXXX Unicode escapes in values or keys; optional auto-fix for stripping a BOM/literal invisible characters, normalizing line endings, semantic canonicalization, sorting, = column alignment, and safe escape conversion. Use when someone wants to check or clean up localization/i18n.'
 argument-hint: "[report|fix]"
 ---
 
@@ -15,21 +15,27 @@ the `.properties` files yourself first — the helper performs the full analysis
 java .github/skills/i18n-consistency/I18nConsistencyCheck.java report
 ```
 
-`report` is the default, read-only mode. Requirements: Java 26+ on the `PATH`.
+`report` is the default, read-only mode. Requirements: Java 26 on the `PATH`.
 No compilation, Gradle, or `JAVA_HOME` setup is needed.
 
 ## Interpreting the result
 
 The helper prints findings grouped by rule and ends with an `Overall:` verdict.
 Determine the result **only** from the printed `Overall:` line. Do **not** read,
-evaluate, rely on, or report the process exit code — it is unreliable in some
-terminals and must be ignored.
+evaluate, rely on, or report the observed process exit code as the verdict —
+terminal integrations may misreport it.
 
-| Verdict | Meaning                                                                                                                                             |
-|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `PASS`  | Rule satisfied.                                                                                                                                     |
-| `WARN`  | Convention deviation: alphabetical ordering, `=` column alignment, or `\uXXXX` Unicode escapes.                                                    |
-| `FAIL`  | Hard consistency violation: UTF-8 BOM, an invisible character anywhere in the file, mixed or missing line endings, a missing or extra trailing newline, key parity, or placeholder (`%`) count parity between the two bundles. Of these, UTF-8 BOM, invisible characters, line ending consistency, and trailing newline are fixable via `fix`; UTF-8 encoding, key parity, and placeholder count are not. |
+| Verdict | Meaning                                                                                                                                                                                                                                                                                                                                                                         |
+|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `PASS`  | Rule satisfied.                                                                                                                                                                                                                                                                                                                                                                 |
+| `WARN`  | Convention deviation: alphabetical ordering, `=` column alignment, decoded trailing whitespace in a value, or `\uXXXX` Unicode escapes in values or keys. Trailing whitespace is not changed by `fix`; safe value and key escapes are eligible for conversion.                                                                                                                  |
+| `FAIL`  | Hard consistency violation: UTF-8 BOM or encoding, invisible characters, inconsistent/unsupported/missing line endings, an invalid trailing newline, malformed properties syntax, duplicate decoded keys, an empty bundle, key parity, or placeholder (`%`) count parity. Syntax, duplicates, empty bundles, UTF-8 encoding, key parity, and placeholder count are not fixable. |
+
+The helper uses this stable exit-code contract: `0` for `PASS`, `1` for `WARN`,
+`2` for a successfully produced report with `Overall: FAIL`, `3` for usage
+errors, and `4` for I/O or unexpected execution errors. These codes describe
+the helper contract, but the printed `Overall:` line remains authoritative for
+the agent workflow because terminal wrappers can surface a different code.
 
 A `WARN` or `FAIL` verdict is an **expected finding, not a skill execution
 error**. Read it off the printed output and report it.
@@ -40,11 +46,14 @@ or non-printable characters (control, format, and non-regular-space Unicode
 categories; the plain space U+0020 is exempt). A leading BOM is reported only
 by the dedicated `UTF-8 BOM` rule, not again as an invisible character.
 
-After those checks, key parity, ordering, alignment, placeholder counts, and
-Unicode escapes are analyzed on a cleaned in-memory view with the BOM and
-invisible characters removed. This prevents duplicate or misleading follow-on
-findings without modifying either bundle in `report` mode. `fix` uses the same
-cleaned view when formatting the files.
+The parser accepts Java properties syntax, including `=`, `:`, and whitespace
+separators, escaped key separators, comments, blank lines, and continued logical
+entries. It retains source positions while using `Properties.load` for decoded
+key/value semantics. Malformed Unicode escapes or other malformed logical
+entries are `properties syntax` failures. Duplicate decoded keys name both
+source lines and are failures; a bundle with no semantic entries is also a
+failure. All report analyses use the decoded source semantics without changing
+either bundle.
 
 It also checks that each bundle uses one consistent line ending throughout
 (either all LF or all CRLF, never a mix) and ends with exactly one trailing
@@ -61,16 +70,20 @@ URL-encoding and may exist in only one bundle.
 
 - Report the findings exactly as printed.
 - If the verdict is `PASS`, stop here. Do not ask about or run `fix`.
-- If the output contains only non-fixable `FAIL` findings (`UTF-8 encoding`,
-  `key parity`, or `placeholder count`) and no fixable `WARN` or fixable
-  `FAIL` findings, stop here. Do **not** ask about or run `fix`; explain that
-  these findings must be resolved manually.
+- If the output contains only non-fixable findings — `FAIL` findings for
+  `UTF-8 encoding`, `properties syntax`, `duplicate keys`, `empty bundle`,
+  `key parity`, or `placeholder count`, and/or `WARN` findings for `trailing
+  whitespace` — stop here. Do **not** ask about or run `fix`; explain that these
+  findings must be resolved manually.
 - If the output contains fixable `WARN` findings (`alphabetical ordering`,
-  `= alignment`, or `Unicode escapes`) or fixable `FAIL` findings (`UTF-8 BOM`,
-  `invisible characters`, `line ending consistency`, or `trailing newline`),
-  **ask the user one explicit question** before doing anything else: whether
-  the auto-`fix` should be run for those fixable findings. Offer the two
-  choices "Run fix" and "Do not run fix". Wait for the answer.
+  `= alignment`, or safe `Unicode escapes` in values or keys) or fixable
+  `FAIL` findings (`UTF-8 BOM`, `invisible characters`, `line ending
+  consistency`, or `trailing newline`), **ask the user one explicit question**
+  before doing anything else: whether the auto-`fix` should be run for those
+  fixable findings. Offer the two choices "Run fix" and "Do not run fix". Wait
+  for the answer. The `trailing whitespace` warning is non-fixable. Unicode
+  escapes that must remain escaped for safe properties syntax can remain after
+  `fix`.
     - Only run `fix` if the user clearly confirms (for example by choosing
       "Run fix"). A bare "fix" reply counts as confirmation **only** in answer to
       this question.
@@ -80,14 +93,35 @@ URL-encoding and may exist in only one bundle.
   `fix` mode (see below). If you cannot run the helper, report that and stop —
   do not hand-edit the bundles.
 - `fix` strips a UTF-8 BOM, removes invisible/non-printable characters (except
-  regular spaces), normalizes line endings to one consistent style with
-  exactly one trailing newline (CRLF is used when the file contains any CRLF,
-  otherwise LF), sorts entries, re-aligns the `=` column, and
-  converts `\uXXXX` escapes in values to UTF-8 characters. It may remove
-  comments and blank lines while rewriting the entries. It does not convert
-  `\uXXXX` escapes in keys. It never adds keys, removes keys, or changes
-  placeholders or translations, so it **cannot** resolve UTF-8 encoding,
-  key-parity, or placeholder-count `FAIL` findings.
+  regular spaces) that are literally present in decoded keys or values,
+  normalizes line endings to one consistent style with exactly one trailing
+  newline (CRLF is used when the file contains any CRLF, otherwise LF), sorts
+  entries, re-aligns the `=` column, and converts only unescaped, valid Unicode
+  scalar escapes in values or keys that are safe to materialize as UTF-8.
+  Unsafe control, invisible, malformed-surrogate, and escaped-backslash
+  sequences are retained safely.
+- `fix` semantically canonicalizes accepted Java properties syntax to one
+  `key = value` entry per physical line. It may remove comments and blank lines
+  and rewrite separators or escapes, but validates that the rendered bundle has
+  the same semantic entry count and sanitized decoded key/value pairs. Removing
+  literal invisible characters is the only intentional semantic cleanup, and
+  the per-bundle fix result reports the exact removal count. If sanitization
+  would create a duplicate key or rendered semantics cannot be preserved, the
+  operation fails before commit.
+- `fix` validates and renders both bundles before writing either one. It writes
+  temporary files beside the destinations, then replaces both destinations. If
+  replacement fails after one file changed, it attempts to restore every
+  replaced file from the original bytes and reports incomplete restoration.
+  Two filesystem replacements cannot be fully atomic, so this is a best-effort
+  two-file commit. Parse, validation, rendering, and encoding failures leave
+  both originals byte-for-byte unchanged.
+- The helper blocks `fix` for malformed syntax, duplicate keys, and empty
+  bundles, but it does not block writes for key-parity or placeholder-count
+  failures, trailing-whitespace warnings, or Unicode-escape warnings. If
+  invoked directly, it may therefore rewrite canonical source even when only
+  non-fixable findings exist. The agent workflow above must not invoke `fix`
+  when only non-fixable findings are present. Any remaining findings stay
+  visible in the post-fix report.
 
 ## Fix mode (only after explicit user confirmation)
 
@@ -99,8 +133,8 @@ java .github/skills/i18n-consistency/I18nConsistencyCheck.java fix
 ```
 
 Fix mode writes only the two production bundles, then re-runs the report so any
-remaining `FAIL` findings stay visible. As with `report`, judge the result from
-the printed `Overall:` line only and ignore the exit code.
+remaining `WARN` or `FAIL` findings stay visible. As with `report`, judge the
+result from the printed `Overall:` line rather than the observed exit code.
 
 ## Scope
 

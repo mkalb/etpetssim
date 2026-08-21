@@ -87,16 +87,19 @@ public final class I18nConsistencyCheck {
 
             report.print(mode);
             System.exit(report.exitCode());
-        } catch (IllegalArgumentException exception) {
+        } catch (UsageException exception) {
             System.err.println("FAIL usage: " + exception.getMessage());
             System.err.println("Usage: java .github/skills/i18n-consistency/I18nConsistencyCheck.java [report|fix]");
-            System.exit(2);
+            System.exit(3);
         } catch (IOException exception) {
             System.err.println("FAIL io: " + exception.getMessage());
             for (Throwable suppressed : exception.getSuppressed()) {
                 System.err.println("FAIL io recovery: " + suppressed.getMessage());
             }
-            System.exit(2);
+            System.exit(4);
+        } catch (RuntimeException exception) {
+            System.err.println("FAIL unexpected: " + exception.getMessage());
+            System.exit(4);
         }
     }
 
@@ -110,7 +113,7 @@ public final class I18nConsistencyCheck {
         if (args.length == 1 && Objects.equals(args[0], "fix")) {
             return Mode.FIX;
         }
-        throw new IllegalArgumentException("expected no argument, 'report', or 'fix'");
+        throw new UsageException("expected no argument, 'report', or 'fix'");
     }
 
     private static Path findRepositoryRoot() throws IOException {
@@ -853,6 +856,14 @@ public final class I18nConsistencyCheck {
         Severity(int exitCode) {
             this.exitCode = exitCode;
         }
+    }
+
+    private static final class UsageException extends RuntimeException {
+
+        private UsageException(String message) {
+            super(message);
+        }
+
     }
 
     private record Entry(
