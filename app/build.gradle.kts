@@ -46,6 +46,11 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    val i18nConsistencyCheckSource = rootProject.layout.projectDirectory.file(
+        ".github/skills/i18n-consistency/I18nConsistencyCheck.java"
+    )
+    inputs.file(i18nConsistencyCheckSource)
+    systemProperty("i18nConsistencyCheck.source", i18nConsistencyCheckSource.asFile.absolutePath)
     // Set JVM args for JavaFX headless testing
     jvmArgs(
         "--enable-native-access=javafx.graphics,ALL-UNNAMED",
