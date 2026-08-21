@@ -30,6 +30,7 @@ public final class I18nConsistencyCheck {
     private static final Path DE_DE_RELATIVE_PATH = Path.of("app", "src", "main", "resources", "i18n", "messages_de_DE.properties");
 
     private static final Pattern UNICODE_ESCAPE_PATTERN = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
+    private static final int MAX_REPORTED_INVISIBLE_CHARACTERS = 20;
 
     private static final Pattern LINE_ENDING_PATTERN = Pattern.compile("\r\n|\n|\r");
 
@@ -494,9 +495,13 @@ public final class I18nConsistencyCheck {
         findings.addAll(analyzeOrdering(deDe));
         findings.addAll(analyzeAlignment(enUs));
         findings.addAll(analyzeAlignment(deDe));
+        findings.add(analyzeTrailingWhitespace(enUs));
+        findings.add(analyzeTrailingWhitespace(deDe));
         findings.addAll(analyzePlaceholderCount(enUs, deDe));
         findings.addAll(analyzeUnicodeEscapes(enUs));
         findings.addAll(analyzeUnicodeEscapes(deDe));
+        findings.add(analyzeUnicodeEscapesInKeys(enUs));
+        findings.add(analyzeUnicodeEscapesInKeys(deDe));
 
         return new Report(findings);
     }
@@ -573,7 +578,9 @@ public final class I18nConsistencyCheck {
         while (matcher.find()) {
             styles.add(lineEndingStyleName(matcher.group()));
         }
-        String consistentStyle = (styles.size() == 1) ? styles.iterator().next() : null;
+        String consistentStyle = ((styles.size() == 1) && !styles.contains("CR"))
+                ? styles.iterator().next()
+                : null;
 
         if (styles.contains("CR")) {
             findings.add(Finding.fail("line ending consistency", fileName + " uses unsupported CR line endings; use LF or CRLF"));
@@ -599,13 +606,10 @@ public final class I18nConsistencyCheck {
 
     private static Finding analyzeTrailingNewline(String fileName, String content, String consistentStyle) {
         if (consistentStyle == null) {
-            return Finding.fail("trailing newline", fileName + ": cannot verify the trailing line break because line endings are inconsistent or missing");
+            return Finding.fail("trailing newline", fileName
+                    + ": cannot verify the trailing line break because line endings are inconsistent, missing, or unsupported");
         }
-        String separator = switch (consistentStyle) {
-            case "CRLF" -> "\r\n";
-            case "LF" -> "\n";
-            default -> "\r";
-        };
+        String separator = Objects.equals(consistentStyle, "CRLF") ? "\r\n" : "\n";
         if (!content.endsWith(separator)) {
             return Finding.fail("trailing newline", fileName + " does not end with a trailing line break");
         }
@@ -617,6 +621,7 @@ public final class I18nConsistencyCheck {
 
     private static Finding analyzeInvisibleCharacters(String fileName, String content) {
         List<String> occurrences = new ArrayList<>();
+        int occurrenceCount = 0;
         int line = 1;
         int column = 1;
         for (int index = 0; index < content.length(); ) {
@@ -638,7 +643,10 @@ public final class I18nConsistencyCheck {
                 continue;
             }
             if (isInvisibleCharacter(codePoint)) {
-                occurrences.add("line " + line + " column " + column + " (U+%04X)".formatted(codePoint));
+                occurrenceCount++;
+                if (occurrences.size() < MAX_REPORTED_INVISIBLE_CHARACTERS) {
+                    occurrences.add("line " + line + " column " + column + " (U+%04X)".formatted(codePoint));
+                }
             }
             index += charCount;
             column++;
@@ -647,7 +655,11 @@ public final class I18nConsistencyCheck {
         if (occurrences.isEmpty()) {
             return Finding.pass("invisible characters", fileName + " contains no invisible characters other than regular spaces");
         }
-        return Finding.fail("invisible characters", fileName + " contains invisible characters: " + String.join(", ", occurrences));
+        int omittedCount = occurrenceCount - occurrences.size();
+        String omitted = (omittedCount == 0) ? "" : ", ... and " + omittedCount + " more";
+        String noun = (occurrenceCount == 1) ? "character" : "characters";
+        return Finding.fail("invisible characters", fileName + " contains " + occurrenceCount + " invisible " + noun
+                + ": " + String.join(", ", occurrences) + omitted);
     }
 
     // Only the regular space (U+0020) is treated as visible whitespace; \n/\r are handled as line boundaries above.
@@ -747,6 +759,31 @@ public final class I18nConsistencyCheck {
         return mismatches;
     }
 
+    private static Finding analyzeTrailingWhitespace(Bundle bundle) {
+        List<String> affectedEntries = bundle.entries().values().stream()
+                                             .filter(entry -> hasTrailingWhitespace(entry.value()))
+                                             .map(entry -> entry.key() + " (line " + entry.lineNumber() + ")")
+                                             .toList();
+        if (affectedEntries.isEmpty()) {
+            return Finding.pass(
+                    "trailing whitespace",
+                    bundle.fileName() + " has no decoded trailing whitespace in values"
+            );
+        }
+        return Finding.warn(
+                "trailing whitespace",
+                bundle.fileName() + " has decoded trailing whitespace for keys: " + String.join(", ", affectedEntries)
+        );
+    }
+
+    private static boolean hasTrailingWhitespace(String value) {
+        if (value.isEmpty()) {
+            return false;
+        }
+        int codePoint = value.codePointBefore(value.length());
+        return Character.isWhitespace(codePoint) || Character.isSpaceChar(codePoint);
+    }
+
     private static long percentCount(String value) {
         return value.chars().filter(character -> character == '%').count();
     }
@@ -765,6 +802,40 @@ public final class I18nConsistencyCheck {
                 "Unicode escapes",
                 bundle.fileName() + " contains \\uXXXX escapes in values for keys: " + String.join(", ", keysWithEscapes)
         ));
+    }
+
+    private static Finding analyzeUnicodeEscapesInKeys(Bundle bundle) {
+        List<String> affectedEntries = bundle.entries().values().stream()
+                                             .filter(entry -> containsValidUnicodeEscape(entry.rawKey()))
+                                             .sorted(Comparator.comparing(Entry::key, KEY_COMPARATOR))
+                                             .map(entry -> entry.key() + " (line " + entry.lineNumber() + ")")
+                                             .toList();
+        if (affectedEntries.isEmpty()) {
+            return Finding.pass(
+                    "Unicode escapes in keys",
+                    bundle.fileName() + " contains no \\uXXXX escapes in keys"
+            );
+        }
+        return Finding.warn(
+                "Unicode escapes in keys",
+                bundle.fileName() + " contains \\uXXXX escapes in keys: " + String.join(", ", affectedEntries)
+        );
+    }
+
+    private static boolean containsValidUnicodeEscape(String rawText) {
+        Matcher matcher = UNICODE_ESCAPE_PATTERN.matcher(rawText);
+        for (int index = 0; index < rawText.length(); ) {
+            if (rawText.charAt(index) != '\\') {
+                index++;
+                continue;
+            }
+            matcher.region(index, rawText.length());
+            if (matcher.lookingAt()) {
+                return true;
+            }
+            index += 2;
+        }
+        return false;
     }
 
     private enum Mode {

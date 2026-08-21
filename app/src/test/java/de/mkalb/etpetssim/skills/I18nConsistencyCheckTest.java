@@ -6,6 +6,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,6 +78,16 @@ final class I18nConsistencyCheckTest {
         );
     }
 
+    private static void destroyProcessTree(Process process) throws InterruptedException {
+        process.descendants().forEach(ProcessHandle::destroy);
+        process.destroy();
+        if (!process.waitFor(2, TimeUnit.SECONDS)) {
+            process.descendants().forEach(ProcessHandle::destroyForcibly);
+            process.destroyForcibly();
+            process.waitFor(2, TimeUnit.SECONDS);
+        }
+    }
+
     private void writeBundles(byte[] enUsBytes, byte[] deDeBytes) throws IOException {
         Path i18nDirectory = temporaryDirectory.resolve(EN_US_RELATIVE_PATH).getParent();
         Files.createDirectories(i18nDirectory);
@@ -85,12 +96,25 @@ final class I18nConsistencyCheckTest {
     }
 
     private ProcessResult runHelper(String mode) throws IOException, InterruptedException {
+        Path outputPath = Files.createTempFile(temporaryDirectory, "i18n-consistency-", ".log");
         Process process = new ProcessBuilder(javaExecutable().toString(), HELPER_SOURCE.toString(), mode)
                 .directory(temporaryDirectory.toFile())
                 .redirectErrorStream(true)
+                .redirectOutput(outputPath.toFile())
                 .start();
-        String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        return new ProcessResult(process.waitFor(), output);
+        try {
+            if (!process.waitFor(30, TimeUnit.SECONDS)) {
+                destroyProcessTree(process);
+                String output = Files.readString(outputPath, StandardCharsets.UTF_8);
+                throw new IOException("i18n helper timed out after 30 seconds; output:" + System.lineSeparator() + output);
+            }
+            return new ProcessResult(process.exitValue(), Files.readString(outputPath, StandardCharsets.UTF_8));
+        } finally {
+            if (process.isAlive()) {
+                destroyProcessTree(process);
+            }
+            Files.deleteIfExists(outputPath);
+        }
     }
 
     @Test
@@ -144,12 +168,20 @@ final class I18nConsistencyCheckTest {
                 "PASS = alignment: messages_en_US.properties (en_US) aligns the '=' column",
                 "PASS = alignment: messages_de_DE.properties (de_DE) aligns the '=' column",
                 "",
+                "Rule: trailing whitespace",
+                "PASS trailing whitespace: messages_en_US.properties (en_US) has no decoded trailing whitespace in values",
+                "PASS trailing whitespace: messages_de_DE.properties (de_DE) has no decoded trailing whitespace in values",
+                "",
                 "Rule: placeholder count",
                 "FAIL placeholder count: key alpha has 1 '%' in en_US but 0 '%' in de_DE",
                 "",
                 "Rule: Unicode escapes",
                 "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly",
                 "PASS Unicode escapes: messages_de_DE.properties (de_DE) stores localized characters directly",
+                "",
+                "Rule: Unicode escapes in keys",
+                "PASS Unicode escapes in keys: messages_en_US.properties (en_US) contains no \\uXXXX escapes in keys",
+                "PASS Unicode escapes in keys: messages_de_DE.properties (de_DE) contains no \\uXXXX escapes in keys",
                 "",
                 "Overall: FAIL"
         );
@@ -221,12 +253,20 @@ final class I18nConsistencyCheckTest {
                 "PASS = alignment: messages_en_US.properties (en_US) aligns the '=' column",
                 "PASS = alignment: messages_de_DE.properties (de_DE) aligns the '=' column",
                 "",
+                "Rule: trailing whitespace",
+                "PASS trailing whitespace: messages_en_US.properties (en_US) has no decoded trailing whitespace in values",
+                "PASS trailing whitespace: messages_de_DE.properties (de_DE) has no decoded trailing whitespace in values",
+                "",
                 "Rule: placeholder count",
                 "PASS placeholder count: shared keys use the same number of '%' characters (.url keys exempt)",
                 "",
                 "Rule: Unicode escapes",
                 "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly",
                 "PASS Unicode escapes: messages_de_DE.properties (de_DE) stores localized characters directly",
+                "",
+                "Rule: Unicode escapes in keys",
+                "PASS Unicode escapes in keys: messages_en_US.properties (en_US) contains no \\uXXXX escapes in keys",
+                "PASS Unicode escapes in keys: messages_de_DE.properties (de_DE) contains no \\uXXXX escapes in keys",
                 "",
                 "Overall: PASS"
         );
@@ -533,6 +573,130 @@ final class I18nConsistencyCheckTest {
                 () -> assertTrue(result.output().endsWith("Overall: FAIL" + System.lineSeparator())),
                 () -> assertArrayEquals(enUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
                 () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testReportWarnsAboutDecodedTrailingWhitespaceWithoutChangingBundles() throws Exception {
+        byte[] enUsBytes = bytesWithLineEnding(
+                "\n",
+                "escaped-space      = value\\ ",
+                "escaped-tab        = value\\t",
+                "literal-space      = value  ",
+                "literal-tab        = value\t",
+                "terminal-backslash = value\\\\"
+        );
+        byte[] deDeBytes = bytesWithLineEnding(
+                "\n",
+                "escaped-space      = value",
+                "escaped-tab        = value",
+                "literal-space      = value",
+                "literal-tab        = value",
+                "terminal-backslash = value\\\\"
+        );
+        writeBundles(enUsBytes, deDeBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "WARN trailing whitespace: messages_en_US.properties (en_US) has decoded trailing whitespace"
+                                + " for keys: escaped-space (line 1), escaped-tab (line 2),"
+                                + " literal-space (line 3), literal-tab (line 4)"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "PASS trailing whitespace: messages_de_DE.properties (de_DE) has no decoded trailing whitespace in values"
+                )),
+                () -> assertFalse(result.output().contains("terminal-backslash (line 5)")),
+                () -> assertArrayEquals(enUsBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(deDeBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testReportCannotVerifyTrailingNewlineForUnsupportedCrLineEndings() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding("\r", "alpha = one", "beta  = two");
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "FAIL line ending consistency: messages_en_US.properties (en_US) uses unsupported CR line endings; use LF or CRLF"
+                )),
+                () -> assertTrue(result.output().contains(
+                        "FAIL trailing newline: messages_en_US.properties (en_US): cannot verify the trailing line break"
+                                + " because line endings are inconsistent, missing, or unsupported"
+                )),
+                () -> assertFalse(result.output().contains(
+                        "PASS trailing newline: messages_en_US.properties (en_US) ends with exactly one trailing line break"
+                )),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testReportWarnsAboutValidUnicodeEscapesInKeys() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding(
+                "\n",
+                "\\u0061lpha          = value",
+                "literal\\\\u0062eta = value",
+                "plain                = value"
+        );
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(1, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "WARN Unicode escapes in keys: messages_en_US.properties (en_US) contains \\uXXXX escapes"
+                                + " in keys: alpha (line 1)" + System.lineSeparator()
+                )),
+                () -> assertTrue(result.output().contains(
+                        "PASS Unicode escapes: messages_en_US.properties (en_US) stores localized characters directly"
+                )),
+                () -> assertTrue(result.output().endsWith("Overall: WARN" + System.lineSeparator())),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testFixCanonicalizesUnicodeEscapesInKeys() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding("\n", "\\u0061lpha = value", "plain = value");
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("fix");
+
+        byte[] expectedBytes = bytesWithLineEnding("\n", "alpha = value", "plain = value");
+        assertAll(
+                () -> assertEquals(0, result.exitCode()),
+                () -> assertTrue(result.output().endsWith("Overall: PASS" + System.lineSeparator())),
+                () -> assertArrayEquals(expectedBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(expectedBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
+        );
+    }
+
+    @Test
+    void testReportCapsInvisibleCharacterPositionsAndPrintsTotalCount() throws Exception {
+        byte[] bundleBytes = bytesWithLineEnding("\n", "alpha = x" + "\t".repeat(25));
+        writeBundles(bundleBytes, bundleBytes);
+
+        ProcessResult result = runHelper("report");
+
+        assertAll(
+                () -> assertEquals(2, result.exitCode()),
+                () -> assertTrue(result.output().contains(
+                        "FAIL invisible characters: messages_en_US.properties (en_US) contains 25 invisible characters:"
+                )),
+                () -> assertTrue(result.output().contains("line 1 column 29 (U+0009), ... and 5 more")),
+                () -> assertFalse(result.output().contains("line 1 column 30 (U+0009)")),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(EN_US_RELATIVE_PATH))),
+                () -> assertArrayEquals(bundleBytes, Files.readAllBytes(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH)))
         );
     }
 
