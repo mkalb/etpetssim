@@ -1,4 +1,7 @@
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -6,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -13,6 +18,7 @@ import java.util.SequencedMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class I18nConsistencyCheck {
 
@@ -21,15 +27,25 @@ public final class I18nConsistencyCheck {
 
     private static final Pattern UNICODE_ESCAPE_PATTERN = Pattern.compile("\\\\u([0-9a-fA-F]{4})");
 
-    private static final Comparator<String> KEY_COMPARATOR = Comparator.<String, String>comparing(
-            key -> key.toLowerCase(Locale.ROOT),
-            String::compareTo
-    ).thenComparing(Comparator.naturalOrder());
+    private static final Pattern LINE_ENDING_PATTERN = Pattern.compile("\r\n|\n|\r");
+
+    private static final Comparator<String> KEY_COMPARATOR =
+            Comparator.comparing((String key) -> key.toLowerCase(Locale.ROOT))
+                      .thenComparing(Comparator.naturalOrder());
 
     public static void main(String[] args) {
         try {
             Mode mode = parseMode(args);
             Path repositoryRoot = findRepositoryRoot();
+
+            List<Finding> encodingFindings = new ArrayList<>();
+            encodingFindings.addAll(analyzeEncoding(repositoryRoot, EN_US_RELATIVE_PATH));
+            encodingFindings.addAll(analyzeEncoding(repositoryRoot, DE_DE_RELATIVE_PATH));
+            if (hasInvalidUtf8(encodingFindings)) {
+                Report report = new Report(encodingFindings.toArray(Finding[]::new));
+                report.print(mode);
+                System.exit(report.exitCode());
+            }
 
             if (mode == Mode.FIX) {
                 FixResult enUsFix = applyFix(repositoryRoot, EN_US_RELATIVE_PATH);
@@ -41,9 +57,9 @@ public final class I18nConsistencyCheck {
                 System.out.println();
             }
 
-            Bundle enUs = Bundle.load(repositoryRoot, "en_US", EN_US_RELATIVE_PATH);
-            Bundle deDe = Bundle.load(repositoryRoot, "de_DE", DE_DE_RELATIVE_PATH);
-            Report report = analyze(enUs, deDe);
+            Bundle enUs = Bundle.load(repositoryRoot, EN_US_RELATIVE_PATH);
+            Bundle deDe = Bundle.load(repositoryRoot, DE_DE_RELATIVE_PATH);
+            Report report = analyze(repositoryRoot, enUs, deDe);
 
             report.print(mode);
             System.exit(report.exitCode());
@@ -84,16 +100,49 @@ public final class I18nConsistencyCheck {
 
     private static FixResult applyFix(Path repositoryRoot, Path relativePath) throws IOException {
         Path path = repositoryRoot.resolve(relativePath);
-        String originalContent = Files.readString(path, StandardCharsets.UTF_8);
-        Bundle bundle = Bundle.parse(repositoryRoot, path, relativePath, localeFrom(relativePath), originalContent);
-        String fixedContent = formatEntries(bundle.entries().values(), lineSeparatorOf(originalContent), originalContent.endsWith("\n"));
+        byte[] originalBytes = Files.readAllBytes(path);
+        String cleanedContent = cleanContent(originalBytes);
+        Bundle bundle = Bundle.parse(relativePath, cleanedContent);
+        String fixedContent = formatEntries(bundle.entries().values(), lineSeparatorOf(cleanedContent));
+        byte[] fixedBytes = fixedContent.getBytes(StandardCharsets.UTF_8);
 
-        if (Objects.equals(originalContent, fixedContent)) {
+        if (Arrays.equals(originalBytes, fixedBytes)) {
             return new FixResult(relativePath + ": no changes");
         }
 
-        Files.writeString(path, fixedContent, StandardCharsets.UTF_8);
-        return new FixResult(relativePath + ": updated sorting, alignment, or Unicode escapes");
+        Files.write(path, fixedBytes);
+        return new FixResult(relativePath + ": updated encoding (BOM/invisible characters), line endings, sorting, alignment, or Unicode escapes");
+    }
+
+    private static byte[] stripUtf8Bom(byte[] bytes) {
+        boolean hasBom = (bytes.length >= 3)
+                && (bytes[0] == (byte) 0xEF) && (bytes[1] == (byte) 0xBB) && (bytes[2] == (byte) 0xBF);
+        return hasBom ? Arrays.copyOfRange(bytes, 3, bytes.length) : bytes;
+    }
+
+    private static String decodeUtf8(byte[] bytes) throws CharacterCodingException {
+        return StandardCharsets.UTF_8.newDecoder()
+                                    .onMalformedInput(CodingErrorAction.REPORT)
+                                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                                    .decode(ByteBuffer.wrap(bytes))
+                                    .toString();
+    }
+
+    private static String cleanContent(byte[] bytes) throws CharacterCodingException {
+        return stripInvisibleCharacters(decodeUtf8(stripUtf8Bom(bytes)));
+    }
+
+    // \n and \r are kept to preserve line structure even though they are CONTROL characters.
+    private static String stripInvisibleCharacters(String content) {
+        StringBuilder builder = new StringBuilder(content.length());
+        for (int i = 0; i < content.length(); ) {
+            int codePoint = content.codePointAt(i);
+            if ((codePoint == '\n') || (codePoint == '\r') || !isInvisibleCharacter(codePoint)) {
+                builder.appendCodePoint(codePoint);
+            }
+            i += Character.charCount(codePoint);
+        }
+        return builder.toString();
     }
 
     private static String localeFrom(Path relativePath) {
@@ -103,11 +152,15 @@ public final class I18nConsistencyCheck {
         return fileName.substring(start, end);
     }
 
+    private static String fileLabel(Path relativePath) {
+        return relativePath.getFileName().toString() + " (" + localeFrom(relativePath) + ")";
+    }
+
     private static String lineSeparatorOf(String content) {
         return content.contains("\r\n") ? "\r\n" : "\n";
     }
 
-    private static String formatEntries(Collection<Entry> entries, String lineSeparator, boolean finalNewline) {
+    private static String formatEntries(Collection<Entry> entries, String lineSeparator) {
         List<Entry> sortedEntries = entries.stream()
                                            .map(entry -> new Entry(entry.lineNumber(), entry.key(), convertUnicodeEscapes(entry.value()), entry.rawLine()))
                                            .sorted(Comparator.comparing(Entry::key, KEY_COMPARATOR))
@@ -120,7 +173,7 @@ public final class I18nConsistencyCheck {
         String content = sortedEntries.stream()
                                       .map(entry -> formatEntry(entry, maxKeyLength))
                                       .collect(Collectors.joining(lineSeparator));
-        return finalNewline ? content + lineSeparator : content;
+        return content + lineSeparator;
     }
 
     private static String formatEntry(Entry entry, int maxKeyLength) {
@@ -139,9 +192,11 @@ public final class I18nConsistencyCheck {
         return builder.toString();
     }
 
-    private static Report analyze(Bundle enUs, Bundle deDe) {
+    private static Report analyze(Path repositoryRoot, Bundle enUs, Bundle deDe) throws IOException {
         List<Finding> findings = new ArrayList<>();
 
+        findings.addAll(analyzeEncoding(repositoryRoot, enUs.relativePath()));
+        findings.addAll(analyzeEncoding(repositoryRoot, deDe.relativePath()));
         findings.addAll(analyzeKeyParity(enUs, deDe));
         findings.addAll(analyzeOrdering(enUs));
         findings.addAll(analyzeOrdering(deDe));
@@ -177,6 +232,139 @@ public final class I18nConsistencyCheck {
             ));
         }
         return findings;
+    }
+
+    private static List<Finding> analyzeEncoding(Path repositoryRoot, Path relativePath) throws IOException {
+        Path path = repositoryRoot.resolve(relativePath);
+        byte[] bytes = Files.readAllBytes(path);
+        String fileName = fileLabel(relativePath);
+        List<Finding> findings = new ArrayList<>();
+
+        boolean hasBom = (bytes.length >= 3)
+                && (bytes[0] == (byte) 0xEF) && (bytes[1] == (byte) 0xBB) && (bytes[2] == (byte) 0xBF);
+        if (hasBom) {
+            findings.add(Finding.fail("UTF-8 BOM", fileName + " starts with a UTF-8 byte order mark (EF BB BF); save it as UTF-8 without BOM"));
+        } else {
+            findings.add(Finding.pass("UTF-8 BOM", fileName + " has no UTF-8 byte order mark"));
+        }
+
+        String content;
+        try {
+            content = decodeUtf8(stripUtf8Bom(bytes));
+        } catch (CharacterCodingException exception) {
+            findings.add(Finding.fail("UTF-8 encoding", fileName + " is not valid UTF-8: " + exception.getMessage()));
+            return findings;
+        }
+        findings.add(Finding.pass("UTF-8 encoding", fileName + " is valid UTF-8"));
+
+        findings.add(analyzeInvisibleCharacters(fileName, content));
+        findings.addAll(analyzeLineEndings(fileName, content));
+
+        return findings;
+    }
+
+    private static boolean hasInvalidUtf8(List<Finding> findings) {
+        return findings.stream().anyMatch(finding -> (finding.severity() == Severity.FAIL)
+                && Objects.equals(finding.rule(), "UTF-8 encoding"));
+    }
+
+    private static List<Finding> analyzeLineEndings(String fileName, String content) {
+        List<Finding> findings = new ArrayList<>();
+
+        LinkedHashSet<String> styles = new LinkedHashSet<>();
+        Matcher matcher = LINE_ENDING_PATTERN.matcher(content);
+        while (matcher.find()) {
+            styles.add(lineEndingStyleName(matcher.group()));
+        }
+        String consistentStyle = (styles.size() == 1) ? styles.iterator().next() : null;
+
+        if (styles.contains("CR")) {
+            findings.add(Finding.fail("line ending consistency", fileName + " uses unsupported CR line endings; use LF or CRLF"));
+        } else if (styles.size() > 1) {
+            findings.add(Finding.fail("line ending consistency", fileName + " mixes line ending styles: " + String.join(", ", styles)));
+        } else if (styles.isEmpty()) {
+            findings.add(Finding.fail("line ending consistency", fileName + " has no line endings"));
+        } else {
+            findings.add(Finding.pass("line ending consistency", fileName + " consistently uses " + consistentStyle + " line endings"));
+        }
+
+        findings.add(analyzeTrailingNewline(fileName, content, consistentStyle));
+        return findings;
+    }
+
+    private static String lineEndingStyleName(String separator) {
+        return switch (separator) {
+            case "\r\n" -> "CRLF";
+            case "\n" -> "LF";
+            default -> "CR";
+        };
+    }
+
+    private static Finding analyzeTrailingNewline(String fileName, String content, String consistentStyle) {
+        if (consistentStyle == null) {
+            return Finding.fail("trailing newline", fileName + ": cannot verify the trailing line break because line endings are inconsistent or missing");
+        }
+        String separator = switch (consistentStyle) {
+            case "CRLF" -> "\r\n";
+            case "LF" -> "\n";
+            default -> "\r";
+        };
+        if (!content.endsWith(separator)) {
+            return Finding.fail("trailing newline", fileName + " does not end with a trailing line break");
+        }
+        if (content.substring(0, content.length() - separator.length()).endsWith(separator)) {
+            return Finding.fail("trailing newline", fileName + " has extra blank lines at the end of the file");
+        }
+        return Finding.pass("trailing newline", fileName + " ends with exactly one trailing line break");
+    }
+
+    private static Finding analyzeInvisibleCharacters(String fileName, String content) {
+        List<String> occurrences = new ArrayList<>();
+        int line = 1;
+        int column = 1;
+        for (int index = 0; index < content.length(); ) {
+            int codePoint = content.codePointAt(index);
+            int charCount = Character.charCount(codePoint);
+            if (codePoint == '\r') {
+                index += charCount;
+                if ((index < content.length()) && (content.charAt(index) == '\n')) {
+                    index++;
+                }
+                line++;
+                column = 1;
+                continue;
+            }
+            if (codePoint == '\n') {
+                index += charCount;
+                line++;
+                column = 1;
+                continue;
+            }
+            if (isInvisibleCharacter(codePoint)) {
+                occurrences.add("line " + line + " column " + column + " (U+%04X)".formatted(codePoint));
+            }
+            index += charCount;
+            column++;
+        }
+
+        if (occurrences.isEmpty()) {
+            return Finding.pass("invisible characters", fileName + " contains no invisible characters other than regular spaces");
+        }
+        return Finding.fail("invisible characters", fileName + " contains invisible characters: " + String.join(", ", occurrences));
+    }
+
+    // Only the regular space (U+0020) is treated as visible whitespace; \n/\r are handled as line boundaries above.
+    private static boolean isInvisibleCharacter(int codePoint) {
+        if (codePoint == ' ') {
+            return false;
+        }
+        int type = Character.getType(codePoint);
+        return (codePoint == '\uFEFF')
+                || (type == Character.CONTROL)
+                || (type == Character.FORMAT)
+                || (type == Character.SPACE_SEPARATOR)
+                || (type == Character.LINE_SEPARATOR)
+                || (type == Character.PARAGRAPH_SEPARATOR);
     }
 
     private static List<String> missingKeys(Bundle source, Bundle target) {
@@ -242,18 +430,17 @@ public final class I18nConsistencyCheck {
                                        .filter(key -> !isUrlKey(key))
                                        .filter(key -> deDe.entries().containsKey(key))
                                        .sorted(KEY_COMPARATOR)
-                                       .map(key -> {
+                                       .flatMap(key -> {
                                            long enUsCount = percentCount(enUs.entries().get(key).value());
                                            long deDeCount = percentCount(deDe.entries().get(key).value());
                                            if (enUsCount == deDeCount) {
-                                               return null;
+                                               return Stream.empty();
                                            }
-                                           return Finding.fail(
+                                           return Stream.of(Finding.fail(
                                                    "placeholder count",
                                                    "key " + key + " has " + enUsCount + " '%' in en_US but " + deDeCount + " '%' in de_DE"
-                                           );
+                                           ));
                                        })
-                                       .filter(Objects::nonNull)
                                        .toList();
 
         if (mismatches.isEmpty()) {
@@ -321,20 +508,16 @@ public final class I18nConsistencyCheck {
     private record FixResult(String message) {
     }
 
-    private record Bundle(String locale, Path relativePath, SequencedMap<String, Entry> entries) {
+    private record Bundle(Path relativePath, SequencedMap<String, Entry> entries) {
 
-        private static Bundle load(Path repositoryRoot, String locale, Path relativePath) throws IOException {
+        private static Bundle load(Path repositoryRoot, Path relativePath) throws IOException {
             Path path = repositoryRoot.resolve(relativePath);
-            return parse(repositoryRoot, path, relativePath, locale, Files.readString(path, StandardCharsets.UTF_8));
+            return parse(relativePath, cleanContent(Files.readAllBytes(path)));
         }
 
-        private static Bundle parse(Path repositoryRoot, Path path, Path relativePath, String locale, String content) throws IOException {
-            if (!Files.isRegularFile(path)) {
-                throw new IOException("bundle not found: " + repositoryRoot.relativize(path));
-            }
-
-            SequencedMap<String, Entry> entries = new java.util.LinkedHashMap<>();
-            String[] lines = content.split("\\R", -1);
+        private static Bundle parse(Path relativePath, String content) throws IOException {
+            SequencedMap<String, Entry> entries = new LinkedHashMap<>();
+            String[] lines = LINE_ENDING_PATTERN.split(content, -1);
             for (int index = 0; index < lines.length; index++) {
                 String line = lines[index];
                 if (index == lines.length - 1 && line.isEmpty()) {
@@ -353,11 +536,11 @@ public final class I18nConsistencyCheck {
                 String value = line.substring(separatorIndex + 1).stripLeading();
                 entries.put(key, new Entry(index + 1, key, value, line));
             }
-            return new Bundle(locale, relativePath, entries);
+            return new Bundle(relativePath, entries);
         }
 
         private String fileName() {
-            return relativePath.getFileName().toString() + " (" + locale + ")";
+            return I18nConsistencyCheck.fileLabel(relativePath);
         }
 
     }
@@ -377,7 +560,7 @@ public final class I18nConsistencyCheck {
             System.out.println();
 
             Arrays.stream(findings)
-                  .collect(Collectors.groupingBy(Finding::rule, java.util.LinkedHashMap::new, Collectors.toList()))
+                                    .collect(Collectors.groupingBy(Finding::rule, LinkedHashMap::new, Collectors.toList()))
                   .forEach((rule, ruleFindings) -> {
                       System.out.println("Rule: " + rule);
                       ruleFindings.forEach(finding -> System.out.println(
