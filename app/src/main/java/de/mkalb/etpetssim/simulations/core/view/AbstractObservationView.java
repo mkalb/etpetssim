@@ -508,4 +508,3 @@ public abstract class AbstractObservationView<
             @Nullable Tooltip maxTooltip) {}
 
 }
-
