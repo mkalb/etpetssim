@@ -3,8 +3,9 @@
   Audience: end users of the application (not developers).
   Replace every <...> placeholder. Remove all HTML comments, including this
   one, from the final file — they are authoring guidance only.
-  Keep section headings and their order. Do not add a "Controls" or "Tips" section
-  unless requested; this template intentionally omits them.
+  Keep the top-level section headings and their order. Do not add a "Controls",
+  "Tips", "Observation", or "Statistics" section unless requested; this
+  template intentionally omits them.
   Conditionally included sections (delete the whole section if not applicable):
     - "Interactive editing" — only if the MainView declares run-time edit tools.
     - "Screenshot"          — only if screenshot_<package>_01.png exists.
@@ -22,7 +23,7 @@ idea, and what a user sees happening on the grid. Avoid implementation detail.>
 
 ## Category and grid
 
-- **Category:** <Agent-based simulation | Cellular automaton>
+- **Category:** <Accurate user-facing model category>
 - **Cell shapes:** <e.g. Square (default), Triangle, Hexagon>
 - **Edge behavior:** <plain-language note if relevant, otherwise omit this line>
 - **Neighborhood:** <plain-language note if relevant, otherwise omit this line>
@@ -68,8 +69,9 @@ entity catalog; keep this conceptual.>
   Include this section ONLY if the simulation's MainView declares user actions
   in createUserActionDescriptors() (i.e. the run-time edit toolbar is not
   empty). Otherwise delete the whole section including its heading. Derive the
-  precise per-tool behavior from the simulation's `*UserAction` class and any
-  option enums (`*Level`, `*Choice`) it accepts.
+  precise per-tool behavior from the simulation's `*UserAction` class. Trace
+  each visible option control to its actual catalog, enum, choice type, or
+  provider regardless of package.
 -->
 
 <One short paragraph or a bullet list naming each available tool in plain
@@ -79,12 +81,15 @@ relevant, when it applies (e.g. "applied to the currently selected cell", or
 
 ## Configuration
 
-<A brief prose summary of what the user can adjust, split into the configuration
-panes below. Use only the panes that exist for this simulation — derive them
-from the simulation's ConfigView (authoritative for what is actually shown) and
-the grouping comments in the configuration class — and omit any pane that does
-not apply. Keep each pane to a short sentence or two; mention notable limits or
-defaults inline only where they help the user, and do not use a table.>
+<A brief prose summary of what the user can adjust. Cover every control exposed
+by the simulation's ConfigView, but group related UI panes into the semantic
+documentation categories below rather than mirroring every pane as a separate
+subsection. In particular, combine all rule-oriented panes under Rules while
+preserving their conceptual groups in prose. Omit empty categories. Add another
+subsection only for a genuinely distinct concern that would be misleading under
+every standard category. Keep each subsection to a short sentence or two;
+mention notable limits or defaults inline only where they help the user, and do
+not use a table.>
 
 ### Structure
 
@@ -106,9 +111,10 @@ settings.>
 ## Screenshot
 
 <!--
-  Use the file assets/screenshots/screenshot_<package>_01.png (always the _01
-  variant). If that file does not exist, delete this entire section including
-  its heading.
+  Verify that assets/screenshots/screenshot_<package>_01.png exists relative to
+  the repository root (always the _01 variant). Use the ../../assets/... path
+  below from docs/simulations/. If the file does not exist, delete this entire
+  section including its heading.
 -->
 
 ![<Display title> screenshot](../../assets/screenshots/screenshot_<package>_01.png)
