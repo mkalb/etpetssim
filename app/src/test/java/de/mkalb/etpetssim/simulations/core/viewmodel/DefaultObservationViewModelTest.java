@@ -67,6 +67,35 @@ final class DefaultObservationViewModelTest {
     }
 
     @Test
+    void testStatisticsExtremaPropertyNotifiesListener() {
+        var viewModel = createViewModel();
+        var extrema = new StatisticExtrema(
+                Map.of("metric", new StatisticExtremum(42.0, 7L)),
+                Map.of());
+        var observedValues = new ArrayList<StatisticExtrema>();
+        viewModel.statisticsExtremaProperty().addListener((_, _, value) -> observedValues.add(value));
+
+        viewModel.setStatisticsExtrema(extrema);
+
+        assertEquals(List.of(extrema), observedValues);
+    }
+
+    @Test
+    void testStatisticsHistoryPropertyNotifiesListener() {
+        var viewModel = createViewModel();
+        var history = List.of(new StatisticSample(
+                1,
+                StepTimingStatistics.empty(),
+                Map.of("metric", 3.0)));
+        var observedValues = new ArrayList<List<StatisticSample>>();
+        viewModel.statisticsHistoryProperty().addListener((_, _, value) -> observedValues.add(value));
+
+        viewModel.setStatisticsHistory(history);
+
+        assertEquals(List.of(history), observedValues);
+    }
+
+    @Test
     void testSetStatisticsExtremaToEmptyResetsProperty() {
         var viewModel = createViewModel();
         viewModel.setStatisticsExtrema(new StatisticExtrema(Map.of("x", new StatisticExtremum(1.0, 0L)), Map.of()));

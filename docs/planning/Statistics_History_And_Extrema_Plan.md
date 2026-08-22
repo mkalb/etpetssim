@@ -628,7 +628,7 @@ relative to its merge base with `main`, as the basis for a code review pass.
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticHistory.java`
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetric.java`
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticSample.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartView.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartView.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/ExtremaGoldenValueAnalyzer.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticChartGroupTest.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaModeTest.java`
@@ -640,11 +640,11 @@ relative to its merge base with `main`, as the basis for a code review pass.
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricRowTest.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricTest.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticSampleTest.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/TimedStatisticsTrackingTest.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartViewTest.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/package-info.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModelTest.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/package-info.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/TimedStatisticsTrackingTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartViewTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/package-info.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModelTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/package-info.java`
 
 ### Changed Files
 

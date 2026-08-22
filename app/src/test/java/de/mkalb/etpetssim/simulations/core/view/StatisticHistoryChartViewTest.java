@@ -46,7 +46,7 @@ final class StatisticHistoryChartViewTest {
     // --- Structure: number of sub-charts and series ---
 
     @Test
-    void testWatorMetrics_oneChartWithTwoSeries() {
+    void testWatorMetricsProduceOneChartWithTwoSeries() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticSample>of());
 
         List<LineChart<Number, Number>> charts = FxTestSupport.supplyAndWait(() ->
@@ -185,6 +185,44 @@ final class StatisticHistoryChartViewTest {
         });
 
         assertEquals(2, dataCount, "NaN step must be skipped; only 2 finite data points expected");
+    }
+
+    @Test
+    void testSeriesUsesTrailingChartWindow() {
+        var history = List.of(
+                sample(0, Map.of(TEST_KEY, 10.0)),
+                sample(1, Map.of(TEST_KEY, 20.0)),
+                sample(2, Map.of(TEST_KEY, 30.0))
+        );
+        var historyProp = new SimpleObjectProperty<>(history);
+
+        List<Number> xValues = FxTestSupport.supplyAndWait(() -> {
+            var view = new StatisticHistoryChartView(singleMetric(2), historyProp);
+            return view.chartsForTest().getFirst().getData().getFirst().getData().stream()
+                       .map(XYChart.Data::getXValue)
+                       .toList();
+        });
+
+        assertEquals(List.of(1, 2), xValues, "Only the two trailing samples must appear in the series");
+    }
+
+    @Test
+    void testXAxisUsesTrailingChartWindow() {
+        var history = List.of(
+                sample(0, Map.of(TEST_KEY, 10.0)),
+                sample(1, Map.of(TEST_KEY, 20.0)),
+                sample(2, Map.of(TEST_KEY, 30.0))
+        );
+        var historyProp = new SimpleObjectProperty<>(history);
+
+        Double[] xBounds = FxTestSupport.supplyAndWait(() -> {
+            var view = new StatisticHistoryChartView(singleMetric(2), historyProp);
+            var xAxis = (ValueAxis<Number>) view.chartsForTest().getFirst().getXAxis();
+            return new Double[]{xAxis.getLowerBound(), xAxis.getUpperBound()};
+        });
+
+        assertArrayEquals(new Double[]{1.0, 2.0}, xBounds,
+                "X-axis bounds must span only the two trailing samples");
     }
 
     // --- Y-axis bounds: nice ceiling, minimum, growth, shrink, reset ---
