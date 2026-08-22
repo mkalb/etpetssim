@@ -1,76 +1,76 @@
 # Forest-fire model
 
-Simulate the Forest-fire model.
+Simulate the Forest-fire model
 
 ## Overview
 
-The forest-fire model shows how a forest of trees grows, catches fire, and
-regrows over time on a grid of cells. Each cell is either empty ground, a
-tree, or a burning tree. Trees spontaneously sprout in empty cells, fire
-spreads from burning neighbors, and rare lightning strikes ignite trees on
-their own, producing a self-organizing cycle of growth and destruction.
+The Forest-fire model shows how a forest changes as trees grow, fires spread,
+and burning areas become empty again. Each cell is empty, contains a healthy
+tree, or contains a burning tree, producing shifting clusters of vegetation
+and fire across the grid.
 
 ## Category and grid
 
 - **Category:** Cellular automaton
-- **Cell shapes:** Hexagon (default), Square, Triangle
-- **Edge behavior:** Blocked at the grid border (default), or wrapped around
-  (toroidal)
-- **Neighborhood:** Edge-adjacent neighbors only (default)
+- **Cell shapes:** Hexagon (default), Triangle, Square
+- **Edge behavior:** Block X and Y (default), Wrap X and Y
+- **Neighborhood:** Edges only (default), Edges and vertices
 
 ## Rules and mechanics
 
-- The grid starts with a configurable percentage of cells set to Tree and the
-  rest Empty; no cell starts burning.
-- Each step, every cell is updated at the same time based on its current
-  state (synchronous update).
-- An Empty cell may spontaneously grow a Tree, based on the tree growth
-  probability.
-- A Tree cell catches fire and becomes Burning if any neighboring cell is
-  currently burning.
-- A Tree cell may also ignite on its own due to a lightning strike, based on
-  the (usually very small) lightning ignition probability.
-- A Burning cell always burns out completely within one step, turning back
-  into an Empty cell.
-- Over many steps this produces recurring waves of forest growth followed by
-  fires that clear it, without ever needing outside intervention.
+- The grid starts with trees placed randomly according to the configured tree
+  density; all remaining cells are empty.
+- Each empty cell has a configurable chance to grow a tree on every step.
+- A healthy tree starts burning when a neighboring cell is burning or when the
+  tree is struck by lightning according to the configured chance.
+- A burning tree becomes an empty cell on the next step.
+- All cells are updated together from the same current state, so changes made
+  during a step affect their neighbors only on the following step.
+- Fire spreads through the selected neighborhood and follows the selected edge
+  behavior at the grid boundaries.
 
 ## Entities
 
-- **Empty:** Bare ground with no tree; can grow a new tree over time.
-- **Tree:** A living tree; can catch fire from a burning neighbor or from a
+- **Empty Cell:** A cell without a tree where a new tree may grow.
+- **Tree Cell:** A healthy tree that can catch fire from a neighbor or a
   lightning strike.
-- **Burning:** A tree currently on fire; always turns into empty ground in
-  the next step.
+- **Burning Tree:** A tree that can ignite neighboring trees and becomes an
+  empty cell on the next step.
 
 ## Interactive editing
 
-- **Cycle State:** Applied to the currently selected cell. Cycles it through
-  Empty → Tree → Burning → Empty, letting you manually plant trees, start a
-  fire, or clear a cell.
+- **Cycle State:** Applied to the selected cell, this tool cycles its state from
+  empty to tree, tree to burning, and burning to empty.
 
 ## Configuration
 
+You can adjust the grid, its visual presentation, the initial forest, and the
+probabilities that control growth and fire.
+
 ### Structure
 
-Choose the cell shape (hexagon, square, or triangle), how the grid edges
-behave (blocked or wrapped), and the grid width and height.
+Choose Hexagon (default), Triangle, or Square cells; set the grid width and
+height from 4 to 1,000 cells, with defaults of 100 by 50; and choose between
+blocked edges (default) and edges that wrap in both directions.
 
 ### Layout
 
-Set the rendered cell edge length and the cell display mode (shape, bordered
-shape, circle, bordered circle, or emoji).
+Set the cell edge length from 1 to 50 pixels (4 by default) and choose Shape,
+Bordered shape, Inner circle, Bordered inner circle (default), or Emoji as the
+cell display mode.
 
 ### Initialization
 
-Set the random seed and the initial tree density, the percentage of cells
-that start as trees.
+Set the initial Tree Density from 0% to 100% (20% by default). The Seed can be
+left blank for a random value or set to a number or text for repeatable random
+placement and events.
 
 ### Rules
 
-Choose the neighborhood mode used for fire spread, the tree growth
-probability for empty cells, and the lightning ignition probability for
-spontaneous tree fires.
+Choose whether the Neighborhood Mode includes only shared edges (default) or
+both edges and vertices. Tree Growth ranges from 0.000 to 0.200 (0.002 by
+default), and Lightning Chance ranges from 0.0000 to 0.0200 (0.0010 by
+default); each is the per-step probability for the corresponding event.
 
 ## Screenshot
 
@@ -78,5 +78,4 @@ spontaneous tree fires.
 
 ## References
 
-- [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)
-
+- https://en.wikipedia.org/wiki/Forest-fire_model

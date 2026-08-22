@@ -4,91 +4,80 @@ Simulate rebounding entities
 
 ## Overview
 
-Rebounding Entities is a toy physics simulation on a grid: a set of moving
-entities travel in straight lines and bounce off the grid boundary, off
-walls, or off each other. There is no growth or reproduction here, only
-motion and collision, so the entity count only ever shrinks until at most one
-mover remains. The user sees a field of small moving markers gliding across
-the grid, occasionally colliding with fixed wall segments or with each other.
+Rebounding Entities models directionally moving agents in a grid containing
+ground and walls. Moving entities travel from cell to cell, rebound from blocked
+boundaries and walls, and gradually clear obstacles or eliminate one another
+when collisions occur.
 
 ## Category and grid
 
-- **Category:** Agent-based simulation
+- **Category:** Agent-based model
 - **Cell shapes:** Hexagon (default), Square
-- **Edge behavior:** The grid boundary always blocks movement; entities bounce
-  off it instead of wrapping around or being removed.
+- **Edge behavior:** Block X and Y (default)
 - **Neighborhood:** Edges and vertices (default), Edges only
 
 ## Rules and mechanics
 
-- At startup, a configurable number of vertical wall segments is generated,
-  evenly spaced and centered across the grid width.
-- A configurable percentage of the remaining ground cells is filled with
-  moving entities, each starting with a random movement direction drawn from
-  the directions available for the chosen cell shape and neighborhood mode.
-- On each step, every moving entity attempts to advance by one cell in its
-  current direction.
-- If the next cell lies outside the grid, the entity bounces: its direction
-  is reflected so it continues on a new course instead of leaving the grid.
-- If the next cell is empty ground, the entity simply moves there.
-- If the next cell is a wall, the wall is destroyed (it becomes ground again)
-  and the entity bounces off it, continuing in a new direction.
-- If the next cell holds another moving entity, the two collide: the other
-  entity is destroyed and this entity moves into its cell.
-- The simulation ends once at most one moving entity remains on the grid.
+- A new grid starts with evenly spaced, full-height vertical walls and a
+  configurable percentage of moving entities placed randomly on free ground.
+- Each moving entity starts in a random direction supported by the selected
+  cell shape and neighborhood mode.
+- Entities act one at a time in grid-position order and move one neighboring
+  cell in their current direction when that cell is ground.
+- At a blocked grid boundary, an entity stays in place and changes direction as
+  if it had bounced from the edge.
+- On hitting a wall, an entity stays in place, rebounds, and removes that wall.
+- On hitting another moving entity, the active entity moves into the occupied
+  cell and removes the other entity.
 
 ## Entities
 
-- **Ground:** An empty, passable cell that moving entities and walls can
-  occupy.
-- **Wall:** A fixed obstacle. Entities bounce off it and destroy it on
-  contact, turning it back into ground.
-- **Rebounder (Moving Entity):** An entity that travels across the grid in a
-  straight line, changing direction whenever it hits the grid boundary, a
-  wall, or another rebounder.
+- **Ground Cell:** An empty cell that moving entities can enter and that can be
+  replaced with a wall or a new rebounder while editing.
+- **Wall Cell:** A stationary obstacle that is removed when a moving entity
+  rebounds from it.
+- **Moving Entity:** A direction-bearing agent that crosses ground, rebounds
+  from boundaries and walls, and removes another moving entity on collision.
 
 ## Interactive editing
 
-While the simulation is running, the following tools are available on the
-edit toolbar:
-
-- **Add Wall:** Places a wall on the currently selected ground cell.
-- **Remove Wall:** Removes the wall on the currently selected cell, turning
-  it back into ground.
-- **Add Rebounder:** Places a new moving entity on the currently selected
-  ground cell, using a direction chosen from an accompanying direction
-  selector.
-- **Remove Rebounder:** Removes the moving entity on the currently selected
-  cell, turning it back into ground.
-- **Fill Walls:** Applies globally, turning every remaining ground cell on
-  the grid into a wall.
+- **Add Wall:** Replaces the selected ground cell with a wall.
+- **Remove Wall:** Replaces a wall in the selected cell with ground.
+- **Remove Rebounder:** Removes a moving entity from the selected cell.
+- **Fill Walls:** Replaces every free ground cell with a wall across the grid.
+- **Add Rebounder:** Adds a rebounder to the selected ground cell in the chosen
+  **Direction**. Hexagon grids offer North, Northeast, Southeast, South,
+  Southwest, and Northwest. Square grids also offer East and West when the
+  neighborhood includes vertices; with edges only, they offer North, East,
+  South, and West.
 
 ## Configuration
 
+The configuration controls the grid geometry and appearance, its randomized
+starting state, and which neighboring cells moving entities can enter.
+
 ### Structure
 
-Choose the cell shape (Hexagon or Square), the grid width and height. The
-grid edge behavior is fixed to blocking, so entities always bounce off the
-boundary.
+Choose Hexagon (default) or Square cells and set the grid width and height, up
+to 1,000 cells in each dimension. Grid boundaries always block movement on both
+axes.
 
 ### Layout
 
-Set the rendered cell edge length in pixels and the cell display mode (plain
-shapes or shapes with a border).
+Set the cell edge length from 1 to 50 pixels (8 by default) and display cells as
+Shape (default) or Bordered shape.
 
 ### Initialization
 
-Set the random seed, the number of vertical wall segments to generate at
-startup, and the initial percentage of ground cells populated with moving
-entities.
+Set a repeatable random seed or leave it blank for a random run. Choose 0 to 100
+Vertical Walls (2 by default) and an initial Moving Entities percentage from 0%
+to 10% (2% by default).
 
 ### Rules
 
-Choose the neighborhood mode, which determines both the set of directions a
-moving entity can travel in and which neighboring cells count as adjacent
-for movement and collisions: edges and vertices (default) or edges only.
+Choose Edges and vertices (default) or Edges only as the Neighborhood Mode used
+for movement and collision directions.
 
 ## Screenshot
 
 ![Rebounding Entities screenshot](../../assets/screenshots/screenshot_rebounding_01.png)
-
