@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.core.model;
 import de.mkalb.etpetssim.simulations.conway.model.*;
 import de.mkalb.etpetssim.simulations.etpets.model.*;
 import de.mkalb.etpetssim.simulations.forest.model.*;
+import de.mkalb.etpetssim.simulations.lab.model.*;
 import de.mkalb.etpetssim.simulations.langton.model.*;
 import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 import de.mkalb.etpetssim.simulations.rebounding.model.*;
@@ -166,32 +167,56 @@ final class TimedStatisticsTrackingTest {
         );
     }
 
-    private static void assertStepZeroSample(AbstractTimedSimulationManager<?, ?, ?, ?> manager) {
+    private static LabConfig createLabConfig() {
+        return new LabConfig(
+                LabConstraints.CELL_SHAPE_DEFAULT,
+                LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
+                LabConstraints.GRID_WIDTH_DEFAULT,
+                LabConstraints.GRID_HEIGHT_DEFAULT,
+                LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
+                LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
+                LabConstraints.COLOR_MODE_DEFAULT,
+                1L,
+                LabConstraints.NEIGHBORHOOD_MODE_DEFAULT
+        );
+    }
+
+    private static <STA extends TimedSimulationStatistics> void assertStepZeroSample(
+            AbstractTimedSimulationManager<?, ?, ?, STA> manager,
+            List<StatisticMetric<STA>> metrics) {
         var history = manager.statisticsHistory();
+        Map<String, Double> expectedValues = new LinkedHashMap<>();
+        metrics.forEach(metric -> expectedValues.put(metric.key(), metric.extractor().applyAsDouble(manager.statistics())));
         assertAll(
                 manager.getClass().getSimpleName(),
                 () -> assertEquals(1, history.size()),
                 () -> assertEquals(0, history.getFirst().stepCount()),
-                () -> assertEquals(0, history.getFirst().stepTimingStatistics().sumNanos())
+                () -> assertEquals(0, history.getFirst().stepTimingStatistics().sumNanos()),
+                () -> assertEquals(expectedValues, history.getFirst().values())
         );
     }
 
     @Test
     void testAllTimedManagerConstructorsRecordStepZeroSample() {
-        List<AbstractTimedSimulationManager<?, ?, ?, ?>> managers = List.of(
-                new ConwaySimulationManager(createConwayConfig()),
-                new EtpetsSimulationManager(createEtpetsConfig()),
-                new ForestSimulationManager(createForestConfig()),
-                new LangtonSimulationManager(createLangtonConfig()),
-                new ReboundingSimulationManager(createReboundingConfig()),
-                new SnakeSimulationManager(createSnakeConfig()),
-                new SugarSimulationManager(createSugarConfig()),
-                new WatorSimulationManager(createWatorConfig())
+        assertAll(
+                () -> assertStepZeroSample(new ConwaySimulationManager(createConwayConfig()), ConwayStatistics.metrics()),
+                () -> assertStepZeroSample(new EtpetsSimulationManager(createEtpetsConfig()), EtpetsStatistics.metrics()),
+                () -> assertStepZeroSample(new ForestSimulationManager(createForestConfig()), ForestStatistics.metrics()),
+                () -> assertStepZeroSample(new LangtonSimulationManager(createLangtonConfig()), LangtonStatistics.metrics()),
+                () -> assertStepZeroSample(new ReboundingSimulationManager(createReboundingConfig()), ReboundingStatistics.metrics()),
+                () -> assertStepZeroSample(new SnakeSimulationManager(createSnakeConfig()), SnakeStatistics.metrics()),
+                () -> assertStepZeroSample(new SugarSimulationManager(createSugarConfig()), SugarStatistics.metrics()),
+                () -> assertStepZeroSample(new WatorSimulationManager(createWatorConfig()), WatorStatistics.metrics())
         );
+    }
+
+    @Test
+    void testNonTimedManagerUsesEmptyTrackingDefaults() {
+        SimulationManager<?, ?, ?, ?> manager = new LabSimulationManager(createLabConfig());
 
         assertAll(
-                managers.stream()
-                        .map(manager -> () -> assertStepZeroSample(manager))
+                () -> assertEquals(List.of(), manager.statisticsHistory()),
+                () -> assertEquals(StatisticExtrema.empty(), manager.statisticsExtrema())
         );
     }
 
@@ -224,6 +249,22 @@ final class TimedStatisticsTrackingTest {
                 () -> assertEquals(executeCount + 1, history.size()),
                 () -> assertEquals(executeCount, history.getLast().stepCount()),
                 () -> assertEquals(1L, finalStepSamples)
+        );
+    }
+
+    @Test
+    void testExecuteZeroStepsDoesNotRecordSample() {
+        ConwaySimulationManager manager = new ConwaySimulationManager(createConwayConfig());
+        var historyBefore = manager.statisticsHistory();
+
+        var result = manager.executeSteps(0, false, () -> fail("callback must not run"));
+
+        assertAll(
+                () -> assertEquals(0, result.stepCount()),
+                () -> assertEquals(0, result.executedSteps()),
+                () -> assertFalse(result.isFinished()),
+                () -> assertFalse(result.isInterrupted()),
+                () -> assertEquals(historyBefore, manager.statisticsHistory())
         );
     }
 

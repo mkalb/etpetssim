@@ -15,6 +15,7 @@ import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@SuppressWarnings("MagicNumber")
 final class StatisticMetricRowTest {
 
     private static void assertMetricLayout(
@@ -25,6 +26,15 @@ final class StatisticMetricRowTest {
                                                             metric.key(), metric.extremaMode(), metric.chartGroup()))
                                                     .toList();
         assertEquals(List.of(expectedMetrics), actualMetrics);
+    }
+
+    private static void assertChartWindowSizes(
+            List<? extends StatisticMetric<?>> metrics,
+            int... expectedWindowSizes) {
+        List<Integer> actualWindowSizes = metrics.stream()
+                                                 .map(StatisticMetric::chartWindowSize)
+                                                 .toList();
+        assertEquals(Arrays.stream(expectedWindowSizes).boxed().toList(), actualWindowSizes);
     }
 
     @Test
@@ -125,6 +135,19 @@ final class StatisticMetricRowTest {
                 new ExpectedMetric(LangtonStatistics.KEY_VISITED_CELLS,
                         StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
         );
+    }
+
+    @Test
+    void testMetricChartWindowSizes() {
+        assertChartWindowSizes(ConwayStatistics.metrics(), 50, 0, 0);
+        assertChartWindowSizes(EtpetsStatistics.metrics(), 1_000, 0, 0);
+        assertChartWindowSizes(ForestStatistics.metrics(), 0, StatisticMetric.DEFAULT_CHART_WINDOW_SIZE,
+                StatisticMetric.DEFAULT_CHART_WINDOW_SIZE);
+        assertChartWindowSizes(LangtonStatistics.metrics(), 0, 0);
+        assertChartWindowSizes(ReboundingStatistics.metrics(), 0, 0);
+        assertChartWindowSizes(SnakeStatistics.metrics(), 0, 0, 0, 0, 0);
+        assertChartWindowSizes(SugarStatistics.metrics(), 0, 0);
+        assertChartWindowSizes(WatorStatistics.metrics(), 500, 500);
     }
 
     @Test
