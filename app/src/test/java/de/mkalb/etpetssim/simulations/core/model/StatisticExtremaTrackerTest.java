@@ -9,6 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("MagicNumber")
 final class StatisticExtremaTrackerTest {
 
+    private static StatisticExtremaTracker createCountTracker() {
+        return new StatisticExtremaTracker(List.of(
+                new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
+        ));
+    }
+
     @Test
     void testUpdateRespectsExtremaModes() {
         StatisticExtremaTracker tracker = new StatisticExtremaTracker(List.of(
@@ -40,35 +46,61 @@ final class StatisticExtremaTrackerTest {
 
     @Test
     void testConstructorRejectsDuplicateMetricKeys() {
-        assertThrows(IllegalArgumentException.class, () -> new StatisticExtremaTracker(List.of(
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new StatisticExtremaTracker(List.of(
                 new StatisticMetric<>("dup", "k1", _ -> 1.0d, StatisticExtremaMode.NONE),
                 new StatisticMetric<>("dup", "k2", _ -> 2.0d, StatisticExtremaMode.MAX)
         )));
+        assertTrue(exception.getMessage().contains("dup"));
+    }
+
+    @Test
+    void testEqualValuesKeepFirstStepCount() {
+        StatisticExtremaTracker tracker = createCountTracker();
+
+        tracker.update(Map.of("count", 5.0d), 1L);
+        tracker.update(Map.of("count", 5.0d), 2L);
+
+        var extrema = tracker.snapshot();
+        assertAll(
+                () -> assertEquals(1L, extrema.minimumValues().get("count").stepCount()),
+                () -> assertEquals(1L, extrema.maximumValues().get("count").stepCount())
+        );
+    }
+
+    @Test
+    void testSnapshotIsUnaffectedByLaterUpdates() {
+        StatisticExtremaTracker tracker = createCountTracker();
+        tracker.update(Map.of("count", 5.0d), 1L);
+        StatisticExtrema snapshot = tracker.snapshot();
+
+        tracker.update(Map.of("count", 1.0d), 2L);
+        tracker.update(Map.of("count", 9.0d), 3L);
+
+        assertAll(
+                () -> assertEquals(new StatisticExtremum(5.0d, 1L), snapshot.minimumValues().get("count")),
+                () -> assertEquals(new StatisticExtremum(5.0d, 1L), snapshot.maximumValues().get("count"))
+        );
     }
 
     @Test
     void testUpdateSkipsNaNValues() {
-        StatisticExtremaTracker tracker = new StatisticExtremaTracker(List.of(
-                new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
-        ));
+        StatisticExtremaTracker tracker = createCountTracker();
 
-        // First update with a valid value to establish an extremum.
         tracker.update(Map.of("count", 5.0d), 1L);
-        // Second update with NaN should be skipped; extrema should remain unchanged.
         tracker.update(Map.of("count", Double.NaN), 2L);
 
         var extrema = tracker.snapshot();
         assertAll(
                 () -> assertEquals(5.0d, extrema.minimumValues().get("count").value()),
-                () -> assertEquals(5.0d, extrema.maximumValues().get("count").value())
+                () -> assertEquals(1L, extrema.minimumValues().get("count").stepCount()),
+                () -> assertEquals(5.0d, extrema.maximumValues().get("count").value()),
+                () -> assertEquals(1L, extrema.maximumValues().get("count").stepCount())
         );
     }
 
     @Test
     void testUpdateSkipsPositiveInfinityValues() {
-        StatisticExtremaTracker tracker = new StatisticExtremaTracker(List.of(
-                new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
-        ));
+        StatisticExtremaTracker tracker = createCountTracker();
 
         tracker.update(Map.of("count", 3.0d), 1L);
         tracker.update(Map.of("count", Double.POSITIVE_INFINITY), 2L);
@@ -76,15 +108,15 @@ final class StatisticExtremaTrackerTest {
         var extrema = tracker.snapshot();
         assertAll(
                 () -> assertEquals(3.0d, extrema.minimumValues().get("count").value()),
-                () -> assertEquals(3.0d, extrema.maximumValues().get("count").value())
+                () -> assertEquals(1L, extrema.minimumValues().get("count").stepCount()),
+                () -> assertEquals(3.0d, extrema.maximumValues().get("count").value()),
+                () -> assertEquals(1L, extrema.maximumValues().get("count").stepCount())
         );
     }
 
     @Test
     void testUpdateSkipsNegativeInfinityValues() {
-        StatisticExtremaTracker tracker = new StatisticExtremaTracker(List.of(
-                new StatisticMetric<>("count", "count.key", _ -> 0.0d, StatisticExtremaMode.MIN_AND_MAX)
-        ));
+        StatisticExtremaTracker tracker = createCountTracker();
 
         tracker.update(Map.of("count", 7.0d), 1L);
         tracker.update(Map.of("count", Double.NEGATIVE_INFINITY), 2L);
@@ -92,7 +124,9 @@ final class StatisticExtremaTrackerTest {
         var extrema = tracker.snapshot();
         assertAll(
                 () -> assertEquals(7.0d, extrema.minimumValues().get("count").value()),
-                () -> assertEquals(7.0d, extrema.maximumValues().get("count").value())
+                () -> assertEquals(1L, extrema.minimumValues().get("count").stepCount()),
+                () -> assertEquals(7.0d, extrema.maximumValues().get("count").value()),
+                () -> assertEquals(1L, extrema.maximumValues().get("count").stepCount())
         );
     }
 

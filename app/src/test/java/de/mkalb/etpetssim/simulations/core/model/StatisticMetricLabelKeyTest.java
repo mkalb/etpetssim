@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
-import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
@@ -9,28 +8,29 @@ import de.mkalb.etpetssim.simulations.rebounding.model.ReboundingStatistics;
 import de.mkalb.etpetssim.simulations.snake.model.SnakeStatistics;
 import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.*;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-// Keep single-threaded because AppLogger holds shared static state.
-@Execution(ExecutionMode.SAME_THREAD)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 final class StatisticMetricLabelKeyTest {
 
-    private Set<String> enKeys = Set.of();
-    private Set<String> deKeys = Set.of();
-
     private static Set<String> loadMainPropertyKeys(String fileName) throws IOException {
+        String resourceName = "i18n/" + fileName;
+        List<URL> mainResources = Collections.list(
+                                                     StatisticMetricLabelKeyTest.class.getClassLoader().getResources(resourceName)
+                                             ).stream()
+                                             .filter(resource -> resource.toExternalForm().contains("/main/"))
+                                             .toList();
+        assertEquals(1, mainResources.size(), "Expected exactly one production bundle: " + fileName);
+
         Properties props = new Properties();
-        File file = new File("src/main/resources/i18n/" + fileName);
-        try (var reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
+        try (var reader = new InputStreamReader(mainResources.getFirst().openStream(), StandardCharsets.UTF_8)) {
             props.load(reader);
         }
         return props.stringPropertyNames();
@@ -51,19 +51,12 @@ final class StatisticMetricLabelKeyTest {
                      .toList();
     }
 
-    // --- Helper ---
-
-    @BeforeAll
-    void setUpBeforeAll() throws IOException {
-        AppLogger.initializeForTesting();
-        enKeys = loadMainPropertyKeys("messages_en_US.properties");
-        deKeys = loadMainPropertyKeys("messages_de_DE.properties");
-    }
-
     // --- LabelKey resolution tests ---
 
     @Test
-    void testAllLabelKeysResolveInEnglishBundle() {
+    void testAllLabelKeysResolveInEnglishBundle() throws IOException {
+        Set<String> enKeys = loadMainPropertyKeys("messages_en_US.properties");
+
         for (String labelKey : allLabelKeys()) {
             assertTrue(enKeys.contains(labelKey),
                     "Missing en_US key: " + labelKey);
@@ -71,7 +64,9 @@ final class StatisticMetricLabelKeyTest {
     }
 
     @Test
-    void testAllLabelKeysResolveInGermanBundle() {
+    void testAllLabelKeysResolveInGermanBundle() throws IOException {
+        Set<String> deKeys = loadMainPropertyKeys("messages_de_DE.properties");
+
         for (String labelKey : allLabelKeys()) {
             assertTrue(deKeys.contains(labelKey),
                     "Missing de_DE key: " + labelKey);

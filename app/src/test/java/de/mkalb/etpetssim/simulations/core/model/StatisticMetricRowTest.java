@@ -13,102 +13,117 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 import java.util.stream.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class StatisticMetricRowTest {
 
-    private static <S extends SimulationStatistics> StatisticExtremaMode extremaModeOf(
-            List<StatisticMetric<S>> metrics, String key) {
-        return metrics.stream()
-                      .filter(m -> m.key().equals(key))
-                      .findFirst()
-                      .orElseThrow(() -> new AssertionError("Metric not found: " + key))
-                      .extremaMode();
+    private static void assertMetricLayout(
+            List<? extends StatisticMetric<?>> metrics,
+            ExpectedMetric... expectedMetrics) {
+        List<ExpectedMetric> actualMetrics = metrics.stream()
+                                                    .map(metric -> new ExpectedMetric(
+                                                            metric.key(), metric.extremaMode(), metric.chartGroup()))
+                                                    .toList();
+        assertEquals(List.of(expectedMetrics), actualMetrics);
     }
 
     @Test
     void testConwayMetricRowLayout() {
-        var metrics = ConwayStatistics.metrics();
-        assertAll(
-                () -> assertEquals(3, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, ConwayStatistics.KEY_ALIVE_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, ConwayStatistics.KEY_DEAD_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ConwayStatistics.KEY_CHANGED_CELLS))
+        assertMetricLayout(
+                ConwayStatistics.metrics(),
+                new ExpectedMetric(ConwayStatistics.KEY_ALIVE_CELLS,
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                new ExpectedMetric(ConwayStatistics.KEY_DEAD_CELLS,
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.NONE),
+                new ExpectedMetric(ConwayStatistics.KEY_CHANGED_CELLS,
+                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE)
         );
     }
 
     @Test
     void testForestMetricRowLayout() {
-        var metrics = ForestStatistics.metrics();
-        assertAll(
-                () -> assertEquals(3, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ForestStatistics.KEY_EMPTY_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, ForestStatistics.KEY_TREE_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ForestStatistics.KEY_BURNING_CELLS))
+        assertMetricLayout(
+                ForestStatistics.metrics(),
+                new ExpectedMetric(ForestStatistics.KEY_EMPTY_CELLS,
+                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE),
+                new ExpectedMetric(ForestStatistics.KEY_TREE_CELLS,
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                new ExpectedMetric(ForestStatistics.KEY_BURNING_CELLS,
+                        StatisticExtremaMode.MAX, StatisticChartGroup.SECONDARY)
         );
     }
 
     @Test
     void testWatorMetricRowLayout() {
-        var metrics = WatorStatistics.metrics();
-        assertAll(
-                () -> assertEquals(2, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, WatorStatistics.KEY_FISH_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, WatorStatistics.KEY_SHARK_CELLS))
+        assertMetricLayout(
+                WatorStatistics.metrics(),
+                new ExpectedMetric(WatorStatistics.KEY_FISH_CELLS,
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                new ExpectedMetric(WatorStatistics.KEY_SHARK_CELLS,
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY)
         );
     }
 
     @Test
     void testEtpetsMetricRowLayout() {
-        var metrics = EtpetsStatistics.metrics();
-        assertAll(
-                () -> assertEquals(3, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.MIN_AND_MAX, extremaModeOf(metrics, EtpetsStatistics.KEY_ACTIVE_PET_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, EtpetsStatistics.KEY_EGG_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT))
+        assertMetricLayout(
+                EtpetsStatistics.metrics(),
+                new ExpectedMetric(EtpetsStatistics.KEY_ACTIVE_PET_CELLS,
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                new ExpectedMetric(EtpetsStatistics.KEY_EGG_CELLS,
+                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE),
+                new ExpectedMetric(EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
         );
     }
 
     @Test
     void testSnakeMetricRowLayout() {
-        var metrics = SnakeStatistics.metrics();
-        assertAll(
-                () -> assertEquals(5, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_SNAKE_HEAD_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_WALL_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_FOOD_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT))
+        assertMetricLayout(
+                SnakeStatistics.metrics(),
+                new ExpectedMetric(SnakeStatistics.KEY_SNAKE_HEAD_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                new ExpectedMetric(SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                new ExpectedMetric(SnakeStatistics.KEY_WALL_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                new ExpectedMetric(SnakeStatistics.KEY_FOOD_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                new ExpectedMetric(SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
         );
     }
 
     @Test
     void testSugarMetricRowLayout() {
-        var metrics = SugarStatistics.metrics();
-        assertAll(
-                () -> assertEquals(2, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SugarStatistics.KEY_RESOURCE_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, SugarStatistics.KEY_AGENT_CELLS))
+        assertMetricLayout(
+                SugarStatistics.metrics(),
+                new ExpectedMetric(SugarStatistics.KEY_RESOURCE_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                new ExpectedMetric(SugarStatistics.KEY_AGENT_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
         );
     }
 
     @Test
     void testReboundingMetricRowLayout() {
-        var metrics = ReboundingStatistics.metrics();
-        assertAll(
-                () -> assertEquals(2, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ReboundingStatistics.KEY_WALL_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.MAX, extremaModeOf(metrics, ReboundingStatistics.KEY_MOVING_ENTITY_CELLS))
+        assertMetricLayout(
+                ReboundingStatistics.metrics(),
+                new ExpectedMetric(ReboundingStatistics.KEY_WALL_CELLS,
+                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE),
+                new ExpectedMetric(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS,
+                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE)
         );
     }
 
     @Test
     void testLangtonMetricRowLayout() {
-        var metrics = LangtonStatistics.metrics();
-        assertAll(
-                () -> assertEquals(2, metrics.size()),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, LangtonStatistics.KEY_ANT_CELLS)),
-                () -> assertEquals(StatisticExtremaMode.NONE, extremaModeOf(metrics, LangtonStatistics.KEY_VISITED_CELLS))
+        assertMetricLayout(
+                LangtonStatistics.metrics(),
+                new ExpectedMetric(LangtonStatistics.KEY_ANT_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                new ExpectedMetric(LangtonStatistics.KEY_VISITED_CELLS,
+                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
         );
     }
 
@@ -135,5 +150,10 @@ final class StatisticMetricRowTest {
                     "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found " + windowSizes));
         });
     }
+
+    private record ExpectedMetric(
+            String key,
+            StatisticExtremaMode extremaMode,
+            StatisticChartGroup chartGroup) {}
 
 }

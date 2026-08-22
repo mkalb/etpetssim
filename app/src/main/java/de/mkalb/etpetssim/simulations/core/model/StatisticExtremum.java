@@ -8,8 +8,20 @@ package de.mkalb.etpetssim.simulations.core.model;
  */
 public record StatisticExtremum(double value, long stepCount) {
 
+    public StatisticExtremum {
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("value must be finite: " + value);
+        }
+        if (stepCount < 0) {
+            throw new IllegalArgumentException("stepCount must be >= 0");
+        }
+    }
+
     /**
-     * Returns {@code value} truncated to {@code int}, for metrics that are always integral cell counts.
+     * Returns {@code value} using Java's narrowing conversion to {@code int}.
+     * Intended for metrics that represent integral cell counts.
+     *
+     * @return the metric value converted to {@code int}
      */
     @SuppressWarnings("NumericCastThatLosesPrecision")
     public int intValue() {

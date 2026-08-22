@@ -19,6 +19,11 @@ public record StatisticExtrema(
         maximumValues = Collections.unmodifiableMap(new LinkedHashMap<>(maximumValues));
     }
 
+    /**
+     * Returns an extrema snapshot without tracked values.
+     *
+     * @return the empty extrema snapshot
+     */
     public static StatisticExtrema empty() {
         return EMPTY;
     }

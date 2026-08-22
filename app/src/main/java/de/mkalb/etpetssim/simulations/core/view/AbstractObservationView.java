@@ -349,8 +349,8 @@ public abstract class AbstractObservationView<
         nameColumn.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().add(nameColumn);
 
-        boolean hasMin = metrics.stream().anyMatch(m -> (m.extremaMode() == StatisticExtremaMode.MIN) || (m.extremaMode() == StatisticExtremaMode.MIN_AND_MAX));
-        boolean hasMax = metrics.stream().anyMatch(m -> (m.extremaMode() == StatisticExtremaMode.MAX) || (m.extremaMode() == StatisticExtremaMode.MIN_AND_MAX));
+        boolean hasMin = metrics.stream().anyMatch(m -> m.extremaMode().tracksMinimum());
+        boolean hasMax = metrics.stream().anyMatch(m -> m.extremaMode().tracksMaximum());
         int minCol = 2;
         int maxCol = hasMin ? 3 : 2;
         int rowOffset = 0;
@@ -395,7 +395,7 @@ public abstract class AbstractObservationView<
             Tooltip maxTooltip = null;
 
             var mode = metric.extremaMode();
-            if ((mode == StatisticExtremaMode.MIN) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
+            if (mode.tracksMinimum()) {
                 minLabel = new Label();
                 minLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
                 minLabel.setAlignment(Pos.CENTER_RIGHT);
@@ -404,7 +404,7 @@ public abstract class AbstractObservationView<
                 grid.add(minLabel, minCol, row);
                 GridPane.setHalignment(minLabel, HPos.RIGHT);
             }
-            if ((mode == StatisticExtremaMode.MAX) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
+            if (mode.tracksMaximum()) {
                 maxLabel = new Label();
                 maxLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
                 maxLabel.setAlignment(Pos.CENTER_RIGHT);

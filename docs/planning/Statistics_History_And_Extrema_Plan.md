@@ -8,7 +8,7 @@ Remaining and follow-on work lives in the backlog section below.
 
 Two foundations were added to `de.mkalb.etpetssim.simulations.core.model` and the timed simulations:
 
-- A **bounded history** of recent statistic samples (default 100 executed steps), suitable for later line-chart
+- A **bounded history** of recent statistic samples (default 1000 executed steps), suitable for later line-chart
   rendering.
 - A **generic per-metric minimum/maximum tracker**, replacing the hand-maintained `min…`/`max…` fields that Conway,
   Forest, and Wator previously carried.
@@ -18,13 +18,13 @@ instead of forcing them to become immutable. Extrema are full-run values (not li
 
 ## Key Types (as implemented, in `simulations.core.model`)
 
-- **`StatisticMetric<STA>`** — descriptor record: technical `key`, `labelKey` (i18n), `ToDoubleFunction` extractor, and
-  `StatisticExtremaMode`. Each statistics class exposes a static `metrics()` list. Metrics use `double`; descriptors are
-  explicit (no reflection).
+- **`StatisticMetric<STA>`** — descriptor record: technical `key`, `labelKey` (i18n), `ToDoubleFunction` extractor,
+  `StatisticExtremaMode`, `StatisticChartGroup`, and `chartWindowSize`. Each statistics class exposes a static
+  `metrics()` list. Metrics use `double`; descriptors are explicit (no reflection).
 - **`StatisticExtremaMode`** — enum `NONE` / `MIN` / `MAX` / `MIN_AND_MAX`.
 - **`StatisticSample`** — immutable point-in-time record: `stepCount`, `StepTimingStatistics`, and an unmodifiable,
   insertion-ordered `Map<String, Double>` of values (defensively copied).
-- **`StatisticHistory`** — bounded `ArrayDeque` ring buffer (`DEFAULT_CAPACITY = 100`), oldest evicted first, exposed
+- **`StatisticHistory`** — bounded `ArrayDeque` ring buffer (`DEFAULT_CAPACITY = 1000`), oldest evicted first, exposed
   as an immutable ordered list.
 - **`StatisticExtremum`** — immutable record: `double value` and `long stepCount` (step at which the extremum was first
   recorded).
@@ -45,7 +45,8 @@ baseline. History and extrema are exposed via `statisticsHistory()` / `statistic
 All originally planned phases and follow-up steps are **complete**: all 8 timed simulations (Conway, Forest, Wator,
 Etpets, Snake, Sugar, Rebounding, Langton) declare `metrics()`; the non-finite guard logs and substitutes `Double.NaN`
 (skipped by the extrema tracker); the hand-maintained min/max fields were removed from Conway/Forest/Wator and their
-observation views now read from `statisticsExtrema()`; and `StatisticHistory` synchronization was removed. Tests live in
+observation views now read from `statisticsExtrema()`; and `StatisticHistory` access is synchronized for
+background/FX-thread use. Tests live in
 `StatisticHistoryTest`, `StatisticExtremaTrackerTest`, and `TimedStatisticsTrackingTest`.
 
 **Step 1 (2026-08-08):** All four broken `labelKey` values were fixed: the Rebounding constant was corrected to
@@ -619,39 +620,34 @@ relative to its merge base with `main`, as the basis for a code review pass.
 
 ### New Files
 
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticChartGroup.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtrema.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaMode.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaTracker.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremum.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticHistory.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetric.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticSample.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticChartGroup.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtrema.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaMode.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaTracker.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremum.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticHistory.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetric.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/model/StatisticSample.java`
 - `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartView.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/ExtremaGoldenValueAnalyzer.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaTrackerTest.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticHistoryTest.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricLabelKeyTest.java`
-- `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricRowTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/ExtremaGoldenValueAnalyzer.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticChartGroupTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaModeTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremaTrackerTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticExtremumTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticHistoryTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricLabelKeyTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricRowTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticMetricTest.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/StatisticSampleTest.java`
 - `app/src/test/java/de/mkalb/etpetssim/simulations/core/model/TimedStatisticsTrackingTest.java`
 - `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartViewTest.java`
 - `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/package-info.java`
 - `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModelTest.java`
 - `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/package-info.java`
-- `docs/simulations/conway.md`
-- `docs/simulations/etpets.md`
-- `docs/simulations/forest.md`
-- `docs/simulations/langton.md`
-- `docs/simulations/rebounding.md`
-- `docs/simulations/snake.md`
-- `docs/simulations/sugar.md`
-- `docs/simulations/wator.md`
 
 ### Changed Files
 
-- `.github/skills/per-simulation-docs/SKILL.md`
-- `.github/skills/per-simulation-docs/template.md`
-- `README.md`
 - `app/src/main/java/de/mkalb/etpetssim/core/AppLocalizationKeys.java`
 - `app/src/main/java/de/mkalb/etpetssim/simulations/conway/model/ConwaySimulationManager.java`
 - `app/src/main/java/de/mkalb/etpetssim/simulations/conway/model/ConwayStatistics.java`
@@ -691,7 +687,3 @@ relative to its merge base with `main`, as the basis for a code review pass.
 - `app/src/main/resources/css/scene.css`
 - `app/src/main/resources/i18n/messages_de_DE.properties`
 - `app/src/main/resources/i18n/messages_en_US.properties`
-- `docs/planning/Core_Main_View_Refactoring_Plan.md`
-- `docs/planning/Statistics_History_And_Extrema_Plan.md`
-- `docs/planning/User_Action_Edit_Mode_Design.md`
-

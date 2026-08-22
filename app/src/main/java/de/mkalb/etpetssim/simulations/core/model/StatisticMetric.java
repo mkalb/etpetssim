@@ -48,17 +48,30 @@ public record StatisticMetric<STA extends SimulationStatistics>(
 
     /**
      * Convenience constructor for metrics that are not charted ({@code chartGroup = NONE}).
+     *
+     * @param key         technical metric key
+     * @param labelKey    localization key used for display labels
+     * @param extractor   function extracting the metric from live statistics
+     * @param extremaMode min/max tracking policy
      */
     public StatisticMetric(String key, String labelKey, ToDoubleFunction<STA> extractor, StatisticExtremaMode extremaMode) {
         this(key, labelKey, extractor, extremaMode, StatisticChartGroup.NONE, 0);
     }
 
     /**
-     * Convenience constructor using the default chart window size.
+     * Convenience constructor using {@link #DEFAULT_CHART_WINDOW_SIZE} for charted metrics and {@code 0} for
+     * uncharted metrics.
+     *
+     * @param key         technical metric key
+     * @param labelKey    localization key used for display labels
+     * @param extractor   function extracting the metric from live statistics
+     * @param extremaMode min/max tracking policy
+     * @param chartGroup  chart group assignment
      */
     public StatisticMetric(String key, String labelKey, ToDoubleFunction<STA> extractor, StatisticExtremaMode extremaMode,
                            StatisticChartGroup chartGroup) {
-        this(key, labelKey, extractor, extremaMode, chartGroup, DEFAULT_CHART_WINDOW_SIZE);
+        this(key, labelKey, extractor, extremaMode, chartGroup,
+                (chartGroup == StatisticChartGroup.NONE) ? 0 : DEFAULT_CHART_WINDOW_SIZE);
     }
 
 }

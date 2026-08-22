@@ -22,11 +22,6 @@ final class StatisticExtremaTracker {
         maximumValues = new LinkedHashMap<>();
     }
 
-    synchronized void clear() {
-        minimumValues.clear();
-        maximumValues.clear();
-    }
-
     synchronized void update(Map<String, Double> values, long stepCount) {
         for (var entry : values.entrySet()) {
             String key = entry.getKey();
@@ -39,11 +34,11 @@ final class StatisticExtremaTracker {
                 continue;
             }
             var candidate = new StatisticExtremum(value, stepCount);
-            if ((mode == StatisticExtremaMode.MIN) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
+            if (mode.tracksMinimum()) {
                 minimumValues.merge(key, candidate,
                         (existing, incoming) -> (incoming.value() < existing.value()) ? incoming : existing);
             }
-            if ((mode == StatisticExtremaMode.MAX) || (mode == StatisticExtremaMode.MIN_AND_MAX)) {
+            if (mode.tracksMaximum()) {
                 maximumValues.merge(key, candidate,
                         (existing, incoming) -> (incoming.value() > existing.value()) ? incoming : existing);
             }
