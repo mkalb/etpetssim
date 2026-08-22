@@ -644,6 +644,7 @@ relative to its merge base with `main`, as the basis for a code review pass.
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/AbstractMainViewTest.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/StatisticHistoryChartViewTest.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/view/package-info.java`
+- ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultMainViewModelTest.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModelTest.java`
 - ✅ `app/src/test/java/de/mkalb/etpetssim/simulations/core/viewmodel/package-info.java`
 
@@ -659,10 +660,10 @@ relative to its merge base with `main`, as the basis for a code review pass.
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/AbstractMainView.java`
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/AbstractObservationView.java`
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/view/SimulationObservationView.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/AbstractConfigViewModel.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultMainViewModel.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModel.java`
-- `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/SimulationObservationViewModel.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/AbstractConfigViewModel.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultMainViewModel.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/DefaultObservationViewModel.java`
+- ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/core/viewmodel/SimulationObservationViewModel.java`
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/etpets/model/EtpetsSimulationManager.java`
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/etpets/model/EtpetsStatistics.java`
 - ✅ `app/src/main/java/de/mkalb/etpetssim/simulations/etpets/view/EtpetsObservationView.java`
