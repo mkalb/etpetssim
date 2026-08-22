@@ -4,78 +4,75 @@ Simulate Langton's Ant
 
 ## Overview
 
-Langton's Ant is a cellular automaton in which one or more simple "ants" crawl
-across a grid of colored ground cells. Each ant looks at the color of the cell
-it stands on, turns according to a fixed rule for that color, flips the
-cell's color to the next one in a cycle, and moves forward one step. Despite
-these trivial per-step rules, the ants trace out intricate, evolving patterns
-that a user can watch unfold on the grid.
+Langton's Ant explores how a simple set of movement rules can produce complex
+patterns. Ants travel across a grid of changing ground states, turn according to
+the state they enter, and leave a trail as those states advance.
 
 ## Category and grid
 
 - **Category:** Cellular automaton
 - **Cell shapes:** Square (default), Triangle, Hexagon
-- **Edge behavior:** Wrap (default) or Absorb; an ant that reaches an absorbing
-  edge is removed from the simulation.
-- **Neighborhood:** Fixed to edge-adjacent neighbors (an ant always moves to a
-  cell sharing an edge with its current cell).
+- **Edge behavior:** Wrap X and Y (default), Absorb X and Y
+- **Neighborhood:** Edges only
 
 ## Rules and mechanics
 
-- A single ant starts at the center of the grid, facing north, on a ground
-  cell set to its first color; all other cells start unvisited (blank).
-- Each step, every ant looks at the color of the cell ahead of it in its
-  current facing direction.
-- The ant turns according to the turn assigned to that color by the
-  configured turn rule (left, right, a double turn, no turn, or a U-turn,
-  depending on cell shape and rule), then moves onto that cell.
-- The cell the ant leaves keeps its ground color; the cell the ant moves onto
-  advances to the next color in the configured cycle (an unvisited cell
-  becomes the first color).
-- An ant that would move off the grid is removed if the edge behavior absorbs
-  it, or wraps around to the opposite side if the edge behavior wraps.
-- If two ants would move onto the same cell in one step, the ant that tried to
-  move there is removed instead of colliding.
-- The simulation ends once every ant has been removed, or once every cell on
-  the grid has been visited at least once.
+- A run starts with one north-facing ant near the center of the grid, on ground
+  state 1.
+- On each step, an ant moves to the adjacent cell in its current direction.
+- The ant turns according to the rule assigned to the ground state it enters,
+  then that ground advances to the next state in the rule cycle.
+- A previously unvisited destination begins at state 0 before its rule is
+  applied.
+- With wrapping edges, ants crossing a boundary reappear on the opposite side.
+  With absorbing edges, they leave the simulation instead.
+- If an ant tries to enter a cell already occupied by another ant, the moving
+  ant is removed.
 
 ## Entities
 
-- **Ant:** A single mobile agent that moves across the grid, one cell per
-  step, turning based on the color of the ground it steps onto. Its current
-  facing direction is shown as an arrow drawn on the cell.
-- **Ground cell:** A stationary cell colored according to how many times an
-  ant has passed over it, cycling through up to 16 colors as defined by the
-  active turn rule. Cells that have never been visited are shown as blank
-  (unvisited).
+- **Langton's Ant:** A moving agent whose direction changes according to the
+  ground state it enters. At larger cell sizes, an arrow shows its direction.
+- **Ground cells:** Initially unvisited cells that cycle through one state per
+  configured turn. The visible trail records where ants have traveled.
 
 ## Interactive editing
 
-- **Add Ant:** Places a new ant on the selected cell, using a direction chosen
-  from a dropdown of directions valid for the current cell shape.
-- **Remove Ant:** Removes the ant from the selected cell.
+- **Add Ant:** Adds an ant to the selected unvisited, unoccupied cell and sets
+  that cell to ground state 1. For square cells, choose North, East, South, or
+  West; for hexagon cells, choose North, Northeast, Southeast, South,
+  Southwest, or Northwest. Triangle cells choose North or South automatically
+  from the selected triangle's orientation.
+- **Remove Ant:** Removes an ant from the selected cell without changing its
+  ground state.
 
 ## Configuration
 
+You can choose the grid geometry and rendering, then select a preset or enter a
+custom turn rule suited to that geometry.
+
 ### Structure
 
-Choose the cell shape (square, triangle, or hexagon), the grid width and
-height (100-2000 cells, default 200x200), and the edge behavior (wrap around
-or absorb ants at the border).
+Choose Square (default), Triangle, or Hexagon cells; Wrap X and Y (default) or
+Absorb X and Y edges; and a grid width and height from 100 to 2,000 cells. Both
+dimensions default to 200 cells.
 
 ### Layout
 
-Set the rendered cell edge length (1-50 pixels, default 4) and choose between
-plain shapes or shapes with a border outline.
+Set the cell edge length from 1 to 50 pixels (4 by default), and display cells
+as Shape (default) or Bordered shape.
 
 ### Rules
 
-Pick a preset turn rule for the current cell shape from a dropdown (options
-vary by shape and grow in complexity), or enter a custom turn rule directly as
-a compact string using `L` (left), `R` (right), `L2`/`R2` (double turn), `N`
-(no turn), and `U` (U-turn). Triangle cells only support `L`, `R`, and `U`.
-The rule string must contain at least 2 and at most 16 turns; the default is
-`RL`, alternating right and left turns each time a cell is visited.
+The turn rule defaults to `RL` and contains 2 to 16 turns. Use `L` and `R` for
+left and right, `L2` and `R2` for double turns, `N` for no turn, and `U` for a
+U-turn; triangle cells accept only `L`, `R`, and `U`.
+
+Shape-specific presets are available: triangle offers `RL`, `RLL`, and `URR`;
+square offers `RL`, `RLR`, `RLLR`, `RRLL`, `RNNU`, `RLLLLLRRL`, and
+`RRLLLRLLLRRR`; hexagon offers `RL`, `NR`, `R2N`, `RL2`, `NR2`, `R2RR`,
+`R2NNRR2R`, and `RR2NUR2RL2`. Each preset menu also has a blank selection for
+entering a custom rule.
 
 ## Screenshot
 
@@ -84,4 +81,3 @@ The rule string must contain at least 2 and at most 16 turns; the default is
 ## References
 
 - https://en.wikipedia.org/wiki/Langton%27s_ant
-

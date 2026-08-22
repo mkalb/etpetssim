@@ -4,94 +4,94 @@ Simulate the classic Snake game
 
 ## Overview
 
-This simulation runs many independent snakes at once on a shared grid, each
-one following its own movement strategy instead of being controlled by a
-player. Snakes crawl across the grid, growing longer and scoring points each
-time they eat food, while avoiding walls, the grid edges, and other snakes'
-bodies. When a snake can no longer move, it dies and either respawns
-elsewhere or is removed for good, depending on the configured death mode.
+Snake models multiple autonomous snakes competing for food on a single grid.
+Each snake follows a movement strategy, grows as it eats, and must navigate
+around walls, other snakes, and its own body.
 
 ## Category and grid
 
-- **Category:** Agent-based simulation
+- **Category:** Agent-based model
 - **Cell shapes:** Hexagon (default), Square
-- **Edge behavior:** Wrap X / Block Y (default), Block X/Y, Wrap X/Y, Block X / Wrap Y
-- **Neighborhood:** Fixed to edge-adjacent neighbors only; not user-configurable.
+- **Edge behavior:** Wrap X and Block Y (default), Block X and Y, Wrap X and Y,
+  Block X and Wrap Y
+- **Neighborhood:** Edges only (fixed)
 
 ## Rules and mechanics
 
-- Each step, every living snake head looks at its ground and food neighbor
-  cells (only cells reachable across a valid or wrapped grid edge count) and
-  picks a move using its assigned movement strategy; strategies favor moves
-  such as continuing straight, heading toward food, staying near the snake's
-  own body, or preferring vertical/horizontal directions.
-- If no ground or food neighbor is available, the snake dies instead of
-  moving.
-- Moving onto a food cell grows the snake, awards points that scale with its
-  current length, and immediately respawns a new food cell at a random free
-  ground cell elsewhere on the grid.
-- Moving onto an empty ground cell advances the snake normally; its tail
-  segment is removed unless the snake still has pending growth left over from
-  a recent meal.
-- A dead snake is shown for one step in a distinct "dead" color before being
-  cleared from the grid. Depending on the configured death mode, it then
-  either respawns at a random free cell with a fresh, short body, or is
-  permanently removed from the simulation.
-- At start-up, a configurable number of vertical wall segments is generated at
-  spaced-out horizontal positions with randomized length, snakes are placed at
-  random free cells and assigned strategies in a round-robin fashion, and food
-  is scattered across the remaining free ground cells.
-- The simulation ends once no snake heads remain at all, or once none of the
-  remaining snake heads are still alive.
+- The grid starts with configurable numbers of vertical wall segments, food
+  cells, and snakes. Walls vary in height, while snakes and food are placed on
+  random free cells.
+- Each snake uses one of several strategies to choose an adjacent ground or
+  food cell. Its head moves there, the former head becomes a body segment, and
+  the tail shortens unless the snake still has pending growth.
+- Eating food adds the configured pending growth, awards base points plus a
+  length-based bonus, and places replacement food on another free cell.
+- A snake dies when it has no valid move. Permanent Death removes it; Respawn
+  (default) returns its head to a random free cell and resets its growth.
+- Initial snakes receive the available movement strategies in rotation. The
+  strategies can favor momentum, open ground, food, vertical or horizontal
+  movement, and clustered or spread-out paths.
+- Square cells provide four movement directions and hexagons provide six.
+  Walls, occupied cells, and the selected edge behavior determine which moves
+  remain available.
 
 ## Entities
 
-- **Ground:** Plain, empty terrain that snakes and food can occupy.
-- **Wall:** A fixed obstacle; snakes cannot move onto wall cells.
-- **Food:** A pickup that a snake head consumes to grow, score points, and
-  trigger a new food cell elsewhere.
-- **Snake Head:** The leading cell of a snake; it decides the snake's
-  direction each step based on its assigned movement strategy.
-- **Snake Segment:** A body cell trailing behind a snake head.
+- **Ground:** An unoccupied cell where food, walls, or a snake can be placed.
+- **Wall:** A fixed obstacle that snakes cannot enter.
+- **Growth Food:** A consumable item that increases a snake's pending growth
+  and score.
+- **Snake Head:** The moving agent that chooses a route and leads its body.
+- **Snake Segment:** One cell of the body chain left behind by a moving head.
 
-Dead snake heads and segments are rendered in a different, muted color from
-living ones, and the currently selected snake's head and segments are
-highlighted with a lighter blended color and an outline.
+Dead snakes use warm colors, while selecting a snake highlights its head and
+complete body chain.
 
 ## Interactive editing
 
-While the simulation runs, the following tools can be applied to the
-currently selected cell:
+All edit tools apply to the currently selected cell:
 
-- Add Wall / Remove Wall
-- Add Food / Remove Food
-- Add Snake (with a movement-strategy option to choose the new snake's
-  behavior)
-- Remove Snake (removes the entire snake, head and body, when a head or any
-  body segment is selected)
+- **Add Food:** Places food on a ground cell.
+- **Remove Food:** Turns food back into ground.
+- **Add Wall:** Places a wall on a ground cell.
+- **Remove Wall:** Turns a wall back into ground.
+- **Add Snake:** Places a new snake head on a ground cell using the selected
+  strategy. The Strategy selector offers `M`, `V M`, `H M`, `G`, `G M`, `F`,
+  `F M`, `F V C+`, `F H C+`, `F V C-`, `F H C-`, `F V M`, `F H M`,
+  `F M C+`, and `F M C-`, combining momentum, ground or food preference,
+  directional bias, and clustering or spreading behavior.
+- **Remove Snake:** Removes an entire snake when either its head or one of its
+  segments is selected.
 
 ## Configuration
 
+The configuration controls the grid, its presentation, the starting layout,
+and how snakes grow, score, and recover from death.
+
 ### Structure
 
-Choose the cell shape (Hexagon or Square), the grid edge behavior, and the
-grid width and height.
+Choose Hexagon or Square cells, select one of the four edge behaviors, and set
+the grid width and height from 12 to 1,000 cells. The defaults are Hexagon,
+Wrap X and Block Y, 80 cells wide, and 40 cells high.
 
 ### Layout
 
-Adjust the rendered cell edge length and the cell display mode.
+Set the cell edge length from 1 to 50 pixels; the default is 6 pixels. Cells
+are displayed as Bordered shape.
 
 ### Initialization
 
-Set the random seed, the number of vertical wall segments, the number of food
-cells, the number of snakes to start with, and the pending growth each snake
-starts (and respawns) with.
+Leave Seed blank for a random run, or enter a number or text for a repeatable
+layout. Set Vertical Walls (default 6, range 0-100), Food Cells (default 50,
+range 0-10,000), Snakes (default 15, range 0-1,000), and Initial Pending
+Growth for each snake (default 2, range 0-1,000).
 
 ### Rules
 
-Choose the death mode (respawn or permanent death), how many segments a snake
-grows per food eaten, the base points awarded per food eaten, and the
-multiplier that scales bonus points by the snake's current length.
+Choose Death Mode as Respawn (default) or Permanent Death. Set Growth per Food
+(default 1, range 0-100), Base Points per Food (default 10, range 0-100), and
+the Segment Length Multiplier used for bonus points (default 0.5, range
+0.0-5.0).
 
 ## Screenshot
 
@@ -100,4 +100,3 @@ multiplier that scales bonus points by the snake's current length.
 ## References
 
 - https://en.wikipedia.org/wiki/Snake_(video_game_genre)
-

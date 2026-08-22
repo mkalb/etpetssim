@@ -4,85 +4,83 @@ Simulate the Wa-Tor world
 
 ## Overview
 
-Wa-Tor is a predator-prey simulation set on a grid representing a toroidal
-ocean. Fish and sharks move, age, reproduce, and (for sharks) hunt and lose
-energy over time. Watching the grid, you see fish populations grow into open
-water while sharks chase them down, with both populations rising and falling
-in cycles as the simulation runs.
+Wa-Tor models a predator-prey ecosystem on a world of water cells. Fish move,
+reproduce, and age, while sharks hunt fish for energy and must keep feeding to
+survive. The changing fish and shark populations form visible cycles across
+the grid.
 
 ## Category and grid
 
-- **Category:** Agent-based simulation
+- **Category:** Agent-based model
 - **Cell shapes:** Square (default), Triangle, Hexagon
-- **Edge behavior:** Wrap (default), Block
-- **Neighborhood:** Edge-adjacent neighbors only (default); configurable
+- **Edge behavior:** Wrap X and Y (default), Block X and Y
+- **Neighborhood:** Edges only (default), Edges and vertices
 
 ## Rules and mechanics
 
-- Each step, every fish and shark acts once, in grid-position order.
-- A fish moves to a random neighboring open-water cell, if one is available.
-- A fish reproduces once it reaches a minimum age and enough time has passed
-  since its last reproduction, leaving a new fish behind at its old position.
-- A fish that reaches its maximum age dies and its cell becomes open water.
-- A shark loses energy every step and moves onto a neighboring fish if one is
-  present, eating it and gaining energy; otherwise it moves to a random
-  neighboring open-water cell if one is available.
-- A shark reproduces once it has moved, reached a minimum age, has enough
-  energy, and enough time has passed since its last reproduction.
-- A shark that reaches its maximum age or runs out of energy dies and its
-  cell becomes open water.
-- At startup, fish and sharks are placed at random positions according to
-  their configured population shares, with randomized starting ages so the
-  population is not perfectly synchronized.
-- The simulation ends once all sharks are gone and either no fish remain, or
-  fish have overrun the ocean.
+- The grid begins with configured shares of fish and sharks placed randomly in
+  water. Their starting ages are randomized, and the seed can make the same
+  initial world reproducible.
+- Fish move to a randomly chosen neighboring water cell. Once old enough, and
+  after the configured reproduction interval, a moving fish leaves offspring
+  in its previous cell.
+- Sharks lose energy each step. They move to and eat a randomly chosen
+  neighboring fish when possible; otherwise, they move to neighboring water.
+- A shark that moves can leave offspring behind when it meets the configured
+  age, energy, and reproduction-interval requirements.
+- Fish die at their maximum age. Sharks die at their maximum age or when their
+  energy reaches zero.
+- Creatures are processed by their positions during each step, so changes made
+  by an earlier creature can affect a later creature in the same step.
 
 ## Entities
 
-- **Fish:** A prey creature that swims to open water, ages, and reproduces
-  when old enough. Its display color darkens as it approaches its maximum
-  age.
-- **Shark:** A predator creature that hunts nearby fish for energy, otherwise
-  swims to open water. Its display color brightens with higher energy levels.
-- **Water:** The open ocean terrain that fish and sharks swim through.
+- **Water:** An empty cell where fish or sharks can move.
+- **Fish:** Prey that move through water, reproduce, and eventually die of old
+  age. Their brightness changes with age.
+- **Sharks:** Predators that eat fish to restore energy, reproduce when they
+  meet the required conditions, and die from age or depleted energy. Their
+  brightness changes with current energy.
 
 ## Interactive editing
 
-While the simulation is running, you can apply the following tools to the
-currently selected cell:
+The edit toolbar provides three tools for the currently selected cell:
 
-- **Add fish:** places a fish on the selected cell if it is open water.
-- **Add shark:** places a shark on the selected cell if it is open water.
-- **Remove creature:** removes a fish or shark from the selected cell,
-  turning it back into open water.
+- **Add Fish:** Adds a new fish if the selected cell is water.
+- **Add Shark:** Adds a new shark if the selected cell is water.
+- **Remove Creature:** Removes a fish or shark from the selected cell, leaving
+  water behind.
 
 ## Configuration
 
-You can adjust the grid structure and appearance, the starting populations,
-and the life-cycle rules for fish and sharks separately.
+You can adjust the world geometry and appearance, initial populations, and the
+life-cycle rules for both species.
 
 ### Structure
 
-Choose the cell shape, grid size, and edge behavior (wrap-around or blocked
-edges).
+Choose square, triangle, or hexagon cells; set the grid width and height from 8
+to 1,000 cells; and choose whether both axes are blocked or wrap around. The
+defaults are square cells, a 200-by-100 grid, and wrapping edges.
 
 ### Layout
 
-Set the rendered cell edge length and how cells are displayed (filled shape,
-bordered shape, circle, bordered circle, or emoji).
+Set the cell edge length from 1 to 50 pixels and display cells as shapes,
+bordered shapes, inner circles, bordered inner circles, or emoji. Shape display
+with a 4-pixel edge length is the default.
 
 ### Initialization
 
-Set the random seed and the initial population shares for fish and sharks;
-their combined share cannot exceed the full grid.
+Set a seed or leave it blank for a random world, then choose the initial fish
+and shark percentages. The defaults are 20% fish and 5% sharks, and their
+combined share cannot exceed 100%.
 
 ### Rules
 
-Choose the neighborhood mode used for movement and hunting, then set the
-fish life cycle (maximum age, minimum reproduction age, minimum reproduction
-interval) and the shark life cycle (maximum age, birth energy, energy loss
-per step, energy gained per fish eaten, minimum reproduction age, minimum
-reproduction energy, minimum reproduction interval) in their own panes.
+Choose whether movement and interaction use edge-sharing neighbors only or
+also include vertex-sharing neighbors. Fish rules control maximum age,
+minimum reproduction age, and the interval between reproductions. Shark rules
+add birth energy, energy lost each step, energy gained per fish, and the
+minimum energy required for reproduction.
 
 ## Screenshot
 
@@ -91,4 +89,3 @@ reproduction energy, minimum reproduction interval) in their own panes.
 ## References
 
 - https://en.wikipedia.org/wiki/Wa-Tor
-

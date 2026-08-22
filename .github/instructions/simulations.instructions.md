@@ -32,12 +32,14 @@ Special cases:
 
 ## Consistency and Registration
 
-Before creating or changing a simulation, review similar implementations:
+Before creating or changing a simulation, review relevant existing implementations. The following are representative
+examples, not an exhaustive list:
 
-- Agent-based: `wator`, `etpets`, `snake`, `rebounding`
-- Cellular automata: `conway`, `forest`, `langton`
+- Agent-based examples: `wator`, `etpets`, `snake`, `rebounding`
+- Cellular automata examples: `conway`, `forest`, `langton`
 
-Reuse `simulations.core` infrastructure and keep cross-cutting files in sync:
+Reuse `simulations.core` infrastructure and keep relevant cross-cutting files in sync. Common synchronization points
+include:
 
 | Change                                | Update                                                                  |
 |---------------------------------------|-------------------------------------------------------------------------|
@@ -90,7 +92,8 @@ Reuse `simulations.core` infrastructure and keep cross-cutting files in sync:
 - Use one simulation-specific root entity contract (e.g., `WatorEntity`, `SugarEntity`).
 - For single-entity-enum simulations, use that enum as the primary entity type (e.g., `ConwayEntity`).
 - Prefer role-focused names instead of repeating the simulation prefix.
-- Standard names: `NoAgent`, `NoResource`, `TerrainConstant`, `EntityDescriptors`.
+- Prefer established names where applicable, including `NoAgent`, `NoResource`, `TerrainConstant`, and
+  `EntityDescriptors`.
 - Use suffix `Base` for abstract bases.
 - Use concise domain names for value records (e.g., `PetGenome`, `PetTraits`).
 - Prefer domain-specific factories (e.g., `CreatureFactory`) over generic `EntityFactory`.
@@ -104,7 +107,7 @@ Reuse `simulations.core` infrastructure and keep cross-cutting files in sync:
 
 ## Reusable Infrastructure
 
-Check `simulations.core` before adding simulation-local infrastructure:
+Check `simulations.core` before adding simulation-local infrastructure. Relevant examples include:
 
 - Views: `AbstractMainView`, `AbstractDefaultMainView`, `AbstractObservationView`, `AbstractControlView`,
   `AbstractConfigView`

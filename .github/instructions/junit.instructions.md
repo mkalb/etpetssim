@@ -72,6 +72,20 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   assertions may be placed inside the runnable or made on returned values.
 - Use `@Execution(ExecutionMode.SAME_THREAD)` when JavaFX state is shared or platform ordering matters.
 
+## Repository Skill Tests
+
+- Put all automated tests for repository skills under
+  `app/src/test/java/de/mkalb/etpetssim/skills` in the `de.mkalb.etpetssim.skills` package and annotate each test class
+  with `@Tag("skill")`.
+- Run skill tests with `gradlew.bat app:skillTest`; the regular `test` task intentionally excludes the `skill` tag.
+- The existing `skillTest` task automatically discovers every test class tagged `skill`; adding tests for another
+  skill must not require changes to the Gradle configuration.
+- Run skills that read or modify repository-shaped files against fixtures under `@TempDir`; never use production files
+  as mutable test input.
+- For command-style skills, assert the exit code and stable output fragments or exact output. For modifying modes,
+  also assert exact resulting bytes, unchanged input on failure, and idempotence where applicable.
+- Give spawned processes a bounded timeout and ensure they and their descendants are terminated during cleanup.
+
 ## Manual Test Utilities
 
 - Make non-JUnit utility classes `public final` only when they are intended for IDE/manual launch; otherwise
