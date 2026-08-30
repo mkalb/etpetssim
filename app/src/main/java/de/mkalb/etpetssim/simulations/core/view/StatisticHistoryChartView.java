@@ -4,7 +4,6 @@ import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.collections.*;
 import javafx.geometry.Side;
 import javafx.scene.chart.*;
 import javafx.scene.control.TitledPane;
@@ -220,14 +219,14 @@ final class StatisticHistoryChartView {
 
                 for (String key : keys) {
                     XYChart.Series<Number, Number> series = seriesByKey.get(key);
-                    ObservableList<XYChart.Data<Number, Number>> data = FXCollections.observableArrayList();
+                    List<XYChart.Data<Number, Number>> data = new ArrayList<>(windowedHistory.size());
                     for (StatisticSample sample : windowedHistory) {
                         Double value = sample.values().get(key);
                         if ((value != null) && Double.isFinite(value)) {
                             data.add(new XYChart.Data<>(sample.stepCount(), value));
                         }
                     }
-                    series.setData(data);
+                    series.getData().setAll(data);
                 }
             }
         }
