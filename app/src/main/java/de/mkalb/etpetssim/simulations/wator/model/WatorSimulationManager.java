@@ -19,7 +19,7 @@ public final class WatorSimulationManager
     private final CreatureFactory creatureFactory;
 
     public WatorSimulationManager(WatorConfig config) {
-        super(config);
+        super(config, WatorStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new WatorStatistics(structure);
@@ -35,6 +35,7 @@ public final class WatorSimulationManager
         initializeGrid(model, random);
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     private void initializeGrid(WritableGridModel<WatorEntity> model, Random random) {
@@ -88,7 +89,6 @@ public final class WatorSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.updateMinMaxCells();
         statistics.update(
                 executor.stepCount(),
                 executor.stepTimingStatistics());

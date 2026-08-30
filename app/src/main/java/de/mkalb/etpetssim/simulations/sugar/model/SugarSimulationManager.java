@@ -19,7 +19,7 @@ public final class SugarSimulationManager
     private final TimedSimulationExecutor<SugarEntity, SugarGridModel> executor;
 
     public SugarSimulationManager(SugarConfig config) {
-        super(config);
+        super(config, SugarStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new SugarStatistics(structure);
@@ -35,6 +35,7 @@ public final class SugarSimulationManager
         initializeGrid(config, model, random);
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     private void initializeGrid(SugarConfig config, SugarGridModel model, Random random) {

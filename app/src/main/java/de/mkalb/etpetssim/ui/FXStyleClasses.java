@@ -41,7 +41,10 @@ public final class FXStyleClasses {
     public static final String HEADER_TITLE_VBOX = "header-title-vbox";
     public static final String HEADER_URL_HYPERLINK = "header-url-hyperlink";
     public static final String MAIN_BORDERPANE = "main-borderpane";
+    public static final String OBSERVATION_CHART = "observation-chart";
+    public static final String OBSERVATION_CHART_SECTION = "observation-chart-section";
     public static final String OBSERVATION_CONTENT_VBOX = "observation-content-vbox";
+    public static final String OBSERVATION_EXTREMUM_HEADER_LABEL = "observation-extremum-header-label";
     public static final String OBSERVATION_GRID = "observation-grid";
     public static final String OBSERVATION_NAME_LABEL = "observation-name-label";
     public static final String OBSERVATION_SCROLLPANE = "observation-scrollpane";

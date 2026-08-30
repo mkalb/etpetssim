@@ -38,7 +38,7 @@ public final class SnakeSimulationManager
     private int nextSnakeId;
 
     public SnakeSimulationManager(SnakeConfig config) {
-        super(config);
+        super(config, SnakeStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new SnakeStatistics(structure);
@@ -54,6 +54,7 @@ public final class SnakeSimulationManager
         nextSnakeId = config.snakes();
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     int nextSnakeId() {

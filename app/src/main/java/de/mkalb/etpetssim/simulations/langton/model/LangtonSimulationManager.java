@@ -16,7 +16,7 @@ public final class LangtonSimulationManager
     private final TimedSimulationExecutor<LangtonEntity, LangtonGridModel> executor;
 
     public LangtonSimulationManager(LangtonConfig config) {
-        super(config);
+        super(config, LangtonStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new LangtonStatistics(structure);
@@ -31,6 +31,7 @@ public final class LangtonSimulationManager
         initializeGrid(model);
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     private void initializeGrid(LangtonGridModel model) {

@@ -37,7 +37,7 @@ public abstract class AbstractMainView<
     private static final String FALLBACK_FONT_FAMILY = "System";
     private static final double MIN_CELL_FONT_SIZE = 7.0d;
     private static final double MIN_EMOJI_FONT_SIZE = 3.0d;
-    private static final double CENTER_SPLIT_PANE_DIVIDER_POSITION = 0.75d;
+    private static final double CENTER_SPLIT_PANE_DIVIDER_POSITION = 0.65d;
     private static final String LOG_COMPONENT = "MainView";
 
     protected final VM viewModel;

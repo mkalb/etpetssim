@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.sugar.view;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.DefaultObservationViewModel;
@@ -19,13 +18,9 @@ public final class SugarObservationView
         SugarStatistics,
         DefaultObservationViewModel<SugarEntity, SugarCell, SugarStatistics>> {
 
-    private static final String SUGAR_OBSERVATION_RESOURCE_CELLS = "sugar.observation.cells.resource";
-    private static final String SUGAR_OBSERVATION_AGENT_CELLS = "sugar.observation.cells.agent";
     private static final String SUGAR_OBSERVATION_CURRENT_ENERGY = "sugar.observation.currentenergy";
     private static final String SUGAR_OBSERVATION_CURRENT_AMOUNT = "sugar.observation.currentamount";
 
-    private final Label resourceCellsLabel = new Label();
-    private final Label agentCellsLabel = new Label();
     private final Label currentEnergyLabel = new Label();
     private final Label currentAmountLabel = new Label();
 
@@ -59,17 +54,7 @@ public final class SugarObservationView
 
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
-        Region currentSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
-                new String[]{
-                        SUGAR_OBSERVATION_RESOURCE_CELLS,
-                        SUGAR_OBSERVATION_AGENT_CELLS
-                },
-                new Label[]{
-                        resourceCellsLabel,
-                        agentCellsLabel
-                }
-        );
+        Region metricsSection = createGenericMetricSection(SugarStatistics.metrics());
         Region selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
                         SUGAR_OBSERVATION_CURRENT_ENERGY,
@@ -85,7 +70,8 @@ public final class SugarObservationView
         return createObservationScrollPane(
                 statusSection,
                 gridSection,
-                currentSection,
+                metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }
@@ -94,16 +80,7 @@ public final class SugarObservationView
     protected void updateObservationLabels() {
         Optional<SugarStatistics> statistics = viewModel.getStatistics();
         updateStatusSectionLabel(statistics);
-
-        if (statistics.isPresent()) {
-            var current = statistics.get();
-            setFormattedIntegerValue(resourceCellsLabel, current.getResourceCells());
-            setFormattedIntegerValue(agentCellsLabel, current.getAgentCells());
-        } else {
-            setUnknownValues(
-                    resourceCellsLabel,
-                    agentCellsLabel);
-        }
+        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

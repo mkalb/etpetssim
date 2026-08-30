@@ -1,7 +1,9 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
+import de.mkalb.etpetssim.simulations.core.model.*;
+
+import java.util.*;
 
 /**
  * Holds runtime statistics for a running simulation.
@@ -9,7 +11,14 @@ import de.mkalb.etpetssim.simulations.core.model.BaseTimedSimulationStatistics;
 public final class ConwayStatistics
         extends BaseTimedSimulationStatistics {
 
-    private int maxAliveCells;
+    public static final String KEY_ALIVE_CELLS = "aliveCells";
+    public static final String KEY_DEAD_CELLS = "deadCells";
+    public static final String KEY_CHANGED_CELLS = "changedCells";
+
+    private static final String CONWAY_OBSERVATION_ALIVE_CELLS = "conway.observation.cells.alive";
+    private static final String CONWAY_OBSERVATION_DEAD_CELLS = "conway.observation.cells.dead";
+    private static final String CONWAY_OBSERVATION_CHANGED_CELLS = "conway.observation.cells.changed";
+    private static final int CHART_WINDOW_SIZE = 50;
 
     private int aliveCells;
     private int deadCells;
@@ -17,21 +26,32 @@ public final class ConwayStatistics
 
     public ConwayStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        maxAliveCells = 0;
         aliveCells = 0;
         deadCells = getTotalCells();
         changedCells = 0;
     }
 
+    public static List<StatisticMetric<ConwayStatistics>> metrics() {
+        return List.of(
+                new StatisticMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS,
+                        ConwayStatistics::getAliveCells,
+                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
+                new StatisticMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS,
+                        ConwayStatistics::getDeadCells,
+                        StatisticExtremaMode.MIN_AND_MAX),
+                new StatisticMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CHANGED_CELLS,
+                        ConwayStatistics::getChangedCells,
+                        StatisticExtremaMode.MAX)
+        );
+    }
+
     void initializeStartupCellCounts(int aliveCellsInitial) {
-        maxAliveCells = aliveCellsInitial;
         aliveCells = aliveCellsInitial;
         deadCells = getTotalCells() - aliveCellsInitial;
     }
 
     void updateCellCounts(int newAliveCells,
                           int newChangedCells) {
-        maxAliveCells = Math.max(newAliveCells, maxAliveCells);
         aliveCells = newAliveCells;
         deadCells = getTotalCells() - newAliveCells;
         changedCells = newChangedCells;
@@ -40,14 +60,9 @@ public final class ConwayStatistics
     public void adjustCellCounts(int aliveCellsDelta,
                                  int changedCellsDelta) {
         int newAliveCells = aliveCells + aliveCellsDelta;
-        maxAliveCells = Math.max(newAliveCells, maxAliveCells);
         aliveCells = newAliveCells;
         deadCells = getTotalCells() - newAliveCells;
         changedCells += changedCellsDelta;
-    }
-
-    public int getMaxAliveCells() {
-        return maxAliveCells;
     }
 
     public int getAliveCells() {
@@ -66,7 +81,6 @@ public final class ConwayStatistics
     public String toString() {
         return "ConwayStatistics{" +
                 baseToString() +
-                ", maxAliveCells=" + maxAliveCells +
                 ", aliveCells=" + aliveCells +
                 ", deadCells=" + deadCells +
                 ", changedCells=" + changedCells +

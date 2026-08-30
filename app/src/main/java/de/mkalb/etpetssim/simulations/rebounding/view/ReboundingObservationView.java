@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.rebounding.view;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
@@ -20,12 +19,8 @@ public final class ReboundingObservationView
         ReboundingStatistics,
         DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics>> {
 
-    private static final String REBOUNDING_OBSERVATION_WALL_CELLS = "rebounding.observation.cells.wall";
-    private static final String REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS = "rebounding.observation.cells.movingentity";
     private static final String REBOUNDING_OBSERVATION_DIRECTION = "rebounding.observation.direction";
 
-    private final Label wallCellsLabel = new Label();
-    private final Label movingEntityCellsLabel = new Label();
     private final Label directionLabel = new Label();
 
     public ReboundingObservationView(DefaultObservationViewModel<ReboundingEntity, GridCell<ReboundingEntity>, ReboundingStatistics> viewModel,
@@ -53,17 +48,7 @@ public final class ReboundingObservationView
 
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
-        Region currentSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
-                new String[]{
-                        REBOUNDING_OBSERVATION_WALL_CELLS,
-                        REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS
-                },
-                new Label[]{
-                        wallCellsLabel,
-                        movingEntityCellsLabel
-                }
-        );
+        Region metricsSection = createGenericMetricSection(ReboundingStatistics.metrics());
         Region selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
                         REBOUNDING_OBSERVATION_DIRECTION
@@ -77,7 +62,8 @@ public final class ReboundingObservationView
         return createObservationScrollPane(
                 statusSection,
                 gridSection,
-                currentSection,
+                metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }
@@ -86,16 +72,7 @@ public final class ReboundingObservationView
     protected void updateObservationLabels() {
         Optional<ReboundingStatistics> statistics = viewModel.getStatistics();
         updateStatusSectionLabel(statistics);
-
-        if (statistics.isPresent()) {
-            var current = statistics.get();
-            setFormattedIntegerValue(wallCellsLabel, current.getWallCells());
-            setFormattedIntegerValue(movingEntityCellsLabel, current.getMovingEntityCells());
-        } else {
-            setUnknownValues(
-                    wallCellsLabel,
-                    movingEntityCellsLabel);
-        }
+        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }

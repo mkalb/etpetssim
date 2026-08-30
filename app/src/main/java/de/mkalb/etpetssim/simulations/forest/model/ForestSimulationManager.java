@@ -18,7 +18,7 @@ public final class ForestSimulationManager
     private final TimedSimulationExecutor<ForestEntity, WritableGridModel<ForestEntity>> executor;
 
     public ForestSimulationManager(ForestConfig config) {
-        super(config);
+        super(config, ForestStatistics.metrics());
 
         structure = config.createGridStructure();
         statistics = new ForestStatistics(structure);
@@ -32,6 +32,7 @@ public final class ForestSimulationManager
         initializeGrid(config, model, random);
 
         initializeStatistics(model);
+        recordInitialStatisticsSample();
     }
 
     private void initializeGrid(ForestConfig config, WritableGridModel<ForestEntity> model, Random random) {

@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.snake.view;
 
-import de.mkalb.etpetssim.core.AppLocalizationKeys;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.core.view.AbstractObservationView;
@@ -20,9 +19,6 @@ public final class SnakeObservationView
         SnakeStatistics,
         DefaultObservationViewModel<SnakeEntity, GridCell<SnakeEntity>, SnakeStatistics>> {
 
-    private static final String SNAKE_OBSERVATION_SNAKE_HEAD_CELLS = "snake.observation.cells.snakehead";
-    private static final String SNAKE_OBSERVATION_FOOD_CELLS = "snake.observation.cells.food";
-    private static final String SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT = "snake.observation.cumulativesnakedeathcount";
     private static final String SNAKE_OBSERVATION_SNAKE_ID = "snake.observation.snake.id";
     private static final String SNAKE_OBSERVATION_SNAKE_AGE = "snake.observation.snake.age";
     private static final String SNAKE_OBSERVATION_SNAKE_DEATHS = "snake.observation.snake.deaths";
@@ -31,9 +27,6 @@ public final class SnakeObservationView
     private static final String SNAKE_OBSERVATION_SNAKE_MAX_SEGMENT_COUNT = "snake.observation.snake.maxsegmentcount";
     private static final String SNAKE_OBSERVATION_SNAKE_POINTS = "snake.observation.snake.points";
 
-    private final Label snakeHeadCellsLabel = new Label();
-    private final Label foodCellsLabel = new Label();
-    private final Label cumulativeSnakeDeathCountLabel = new Label();
     private final Label snakeIdLabel = new Label();
     private final Label snakeAgeLabel = new Label();
     private final Label snakeDeathsLabel = new Label();
@@ -81,19 +74,7 @@ public final class SnakeObservationView
 
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
-        Region currentSection = createObservationSection(
-                AppLocalizationKeys.OBSERVATION_SECTION_CURRENT,
-                new String[]{
-                        SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
-                        SNAKE_OBSERVATION_FOOD_CELLS,
-                        SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT
-                },
-                new Label[]{
-                        snakeHeadCellsLabel,
-                        foodCellsLabel,
-                        cumulativeSnakeDeathCountLabel
-                }
-        );
+        Region metricsSection = createGenericMetricSection(SnakeStatistics.metrics());
         Region selectedCellSection = createExtendedSelectedCellSection(
                 new String[]{
                         SNAKE_OBSERVATION_SNAKE_ID,
@@ -119,7 +100,8 @@ public final class SnakeObservationView
         return createObservationScrollPane(
                 statusSection,
                 gridSection,
-                currentSection,
+                metricsSection,
+                buildChartSection(),
                 selectedCellSection
         );
     }
@@ -128,18 +110,7 @@ public final class SnakeObservationView
     protected void updateObservationLabels() {
         Optional<SnakeStatistics> statistics = viewModel.getStatistics();
         updateStatusSectionLabel(statistics);
-
-        if (statistics.isPresent()) {
-            var current = statistics.get();
-            setFormattedIntegerValue(snakeHeadCellsLabel, current.getSnakeHeadCells());
-            setFormattedIntegerValue(foodCellsLabel, current.getFoodCells());
-            setFormattedIntegerValue(cumulativeSnakeDeathCountLabel, current.getCumulativeSnakeDeathCount());
-        } else {
-            setUnknownValues(
-                    snakeHeadCellsLabel,
-                    foodCellsLabel,
-                    cumulativeSnakeDeathCountLabel);
-        }
+        updateGenericMetricSection(statistics, viewModel.getStatisticsExtrema());
     }
 
 }
