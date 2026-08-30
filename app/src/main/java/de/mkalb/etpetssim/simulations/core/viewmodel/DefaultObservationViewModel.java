@@ -122,6 +122,19 @@ public final class DefaultObservationViewModel<
     }
 
     /**
+     * Resets the statistics snapshot, extrema, and history to their initial empty state.
+     *
+     * <p>Call this during shutdown so a stale statistics snapshot (which may keep a
+     * {@link de.mkalb.etpetssim.engine.GridStructure} of a finished simulation strongly reachable) is released,
+     * together with its extrema and history.
+     */
+    public void resetStatistics() {
+        statistics.set(null);
+        statisticsExtremaWrapper.set(StatisticExtrema.empty());
+        statisticsHistoryWrapper.set(List.of());
+    }
+
+    /**
      * Binds the selected-cell property from the main view model.
      *
      * @param property source property to bind from

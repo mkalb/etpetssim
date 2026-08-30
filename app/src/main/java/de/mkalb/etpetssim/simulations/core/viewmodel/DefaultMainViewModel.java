@@ -261,8 +261,7 @@ public final class DefaultMainViewModel<
         cancelBatch();
         shutdownBatchExecutor();
         simulationManager = null;
-        observationStateViewModel.setStatisticsExtrema(StatisticExtrema.empty());
-        observationStateViewModel.setStatisticsHistory(List.of());
+        observationStateViewModel.resetStatistics();
     }
 
     @Override
