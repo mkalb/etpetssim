@@ -44,7 +44,7 @@ public final class DefaultMainViewModel<
     private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
     private final Function<CON, SM> simulationManagerFactory;
     private final SimulationTimer timer;
-    private final ExecutorService batchExecutor;
+    private final ExecutorService lifecycleExecutor;
     private final ChangeListener<Boolean> actionButtonRequestedListener;
     private final ChangeListener<Boolean> cancelButtonRequestedListener;
     private final ChangeListener<SimulationState> simulationStateListener;
@@ -84,6 +84,18 @@ public final class DefaultMainViewModel<
                                 Function<CON, SM> simulationManagerFactory,
                                 BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
                                 SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction) {
+        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory,
+                selectedGridCellProvider, simulationUserAction, createLifecycleExecutor());
+    }
+
+    DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
+                         SimulationConfigViewModel<CON> configViewModel,
+                         DefaultControlViewModel controlViewModel,
+                         DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
+                         Function<CON, SM> simulationManagerFactory,
+                         BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
+                         SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction,
+                         ExecutorService lifecycleExecutor) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         // Keep a concrete-typed reference because the inherited `observationViewModel`
@@ -95,11 +107,7 @@ public final class DefaultMainViewModel<
         this.simulationUserAction = simulationUserAction;
         editToolBarViewModel = new SimulationEditToolBarViewModel<>();
         timer = new SimulationTimer(this::runTimerStep);
-        batchExecutor = Executors.newSingleThreadExecutor(task -> {
-            var thread = new Thread(task, "simulation-batch-executor");
-            thread.setDaemon(true);
-            return thread;
-        });
+        this.lifecycleExecutor = lifecycleExecutor;
 
         actionButtonRequestedListener = (_, _, newVal) -> {
             if (newVal) {
@@ -134,6 +142,14 @@ public final class DefaultMainViewModel<
             }
         });
         lastClickedCoordinateProperty().addListener(lastClickedCoordinateListener);
+    }
+
+    private static ExecutorService createLifecycleExecutor() {
+        return Executors.newSingleThreadExecutor(task -> {
+            var thread = new Thread(task, "simulation-lifecycle-executor");
+            thread.setDaemon(true);
+            return thread;
+        });
     }
 
     private static boolean isSelectionState(SimulationState simulationState) {
@@ -527,7 +543,7 @@ public final class DefaultMainViewModel<
     }
 
     private void runBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
-        batchFuture = batchExecutor.submit(() -> {
+        batchFuture = lifecycleExecutor.submit(() -> {
             batchThread = Thread.currentThread();
             try {
                 var manager = simulationManager;
@@ -648,13 +664,13 @@ public final class DefaultMainViewModel<
     }
 
     private void shutdownBatchExecutor() {
-        batchExecutor.shutdown();
+        lifecycleExecutor.shutdown();
         try {
-            if (!batchExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                batchExecutor.shutdownNow();
+            if (!lifecycleExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                lifecycleExecutor.shutdownNow();
             }
         } catch (InterruptedException e) {
-            batchExecutor.shutdownNow();
+            lifecycleExecutor.shutdownNow();
             Thread.currentThread().interrupt();
         }
     }
