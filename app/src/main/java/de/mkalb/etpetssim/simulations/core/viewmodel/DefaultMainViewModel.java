@@ -139,7 +139,8 @@ public final class DefaultMainViewModel<
     private static boolean isSelectionState(SimulationState simulationState) {
         return switch (simulationState) {
             case PAUSED, CANCELED, FINISHED -> true;
-            case INITIAL, RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, ERROR, SHUTTING_DOWN -> false;
+            case READY, INITIALIZING, RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, ERROR,
+                 SHUTTING_DOWN -> false;
         };
     }
 

@@ -12,11 +12,18 @@ package de.mkalb.etpetssim.simulations.core.shared;
 public enum SimulationState {
 
     /**
-     * Application launched, no simulation has been started yet.
+     * The simulation is ready to be started.
      * <p>
      * Configuration controls are enabled. Simulation can be started.
      */
-    INITIAL,
+    READY,
+
+    /**
+     * A simulation manager is being initialized in the background.
+     * <p>
+     * All simulation controls and configuration controls are disabled.
+     */
+    INITIALIZING,
 
     /**
      * Simulation is running in timed mode (stepwise execution with UI updates).
@@ -88,8 +95,9 @@ public enum SimulationState {
      */
     public boolean isStartable() {
         return switch (this) {
-            case INITIAL, CANCELED, FINISHED, ERROR -> true;
-            case RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, PAUSED, CANCELLING_BATCH, SHUTTING_DOWN -> false;
+            case READY, CANCELED, FINISHED, ERROR -> true;
+            case INITIALIZING, RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, PAUSED, CANCELLING_BATCH, SHUTTING_DOWN ->
+                    false;
         };
     }
 
@@ -101,7 +109,8 @@ public enum SimulationState {
     public boolean isRunning() {
         return switch (this) {
             case RUNNING_TIMED, RUNNING_BATCH -> true;
-            case INITIAL, PAUSING_BATCH, PAUSED, CANCELLING_BATCH, CANCELED, FINISHED, ERROR, SHUTTING_DOWN -> false;
+            case READY, INITIALIZING, PAUSING_BATCH, PAUSED, CANCELLING_BATCH, CANCELED, FINISHED, ERROR,
+                 SHUTTING_DOWN -> false;
         };
     }
 

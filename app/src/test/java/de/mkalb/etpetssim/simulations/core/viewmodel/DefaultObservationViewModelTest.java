@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class DefaultObservationViewModelTest {
 
     private static <STA extends SimulationStatistics> DefaultObservationViewModel<?, ?, STA> createViewModel() {
-        var stateWrapper = new ReadOnlyObjectWrapper<>(SimulationState.INITIAL);
+        var stateWrapper = new ReadOnlyObjectWrapper<>(SimulationState.READY);
         return new DefaultObservationViewModel<>(stateWrapper.getReadOnlyProperty());
     }
 

@@ -30,7 +30,7 @@ final class DefaultMainViewModelTest {
 
     private static Fixture createFixture() {
         ObjectProperty<SimulationState> simulationState =
-                new SimpleObjectProperty<>(SimulationState.INITIAL);
+                new SimpleObjectProperty<>(SimulationState.READY);
         var configViewModel = new ConwayConfigViewModel(simulationState);
         var controlViewModel = new DefaultControlViewModel(simulationState);
         controlViewModel.startModeProperty().setValue(SimulationStartMode.START_PAUSED);

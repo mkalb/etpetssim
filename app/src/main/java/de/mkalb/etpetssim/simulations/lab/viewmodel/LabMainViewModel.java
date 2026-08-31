@@ -147,7 +147,7 @@ public final class LabMainViewModel
     }
 
     public void handleConfigChanged() {
-        setSimulationState(SimulationState.INITIAL);
+        setSimulationState(SimulationState.READY);
         reset();
 
         configChangedListener.run();
