@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.engine.support.*;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
 
 import java.util.*;
@@ -19,7 +19,12 @@ public final class ReboundingSimulationManager
     private final TimedSimulationExecutor<ReboundingEntity, WritableGridModel<ReboundingEntity>> executor;
 
     public ReboundingSimulationManager(ReboundingConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public ReboundingSimulationManager(ReboundingConfig config, SimulationInitializationCancellation cancellation) {
         super(config, ReboundingStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new ReboundingStatistics(structure);
@@ -32,7 +37,7 @@ public final class ReboundingSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
         initializeGrid(config, model, random);
-
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }

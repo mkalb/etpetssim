@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.support.*;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.*;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
 
@@ -38,7 +38,12 @@ public final class SnakeSimulationManager
     private int nextSnakeId;
 
     public SnakeSimulationManager(SnakeConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public SnakeSimulationManager(SnakeConfig config, SimulationInitializationCancellation cancellation) {
         super(config, SnakeStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new SnakeStatistics(structure);
@@ -52,7 +57,7 @@ public final class SnakeSimulationManager
 
         initializeGrid(config, model, random);
         nextSnakeId = config.snakes();
-
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }

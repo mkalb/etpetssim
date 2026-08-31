@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 
 import java.util.*;
@@ -16,7 +16,12 @@ public final class EtpetsSimulationManager
     private final TimedSimulationExecutor<EtpetsEntity, EtpetsGridModel> executor;
 
     public EtpetsSimulationManager(EtpetsConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public EtpetsSimulationManager(EtpetsConfig config, SimulationInitializationCancellation cancellation) {
         super(config, EtpetsStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new EtpetsStatistics(structure);
@@ -37,7 +42,7 @@ public final class EtpetsSimulationManager
         initializeTerrain(model, random);
         initializeResources(model, random);
         initializePets(model, random, idSequence);
-
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }

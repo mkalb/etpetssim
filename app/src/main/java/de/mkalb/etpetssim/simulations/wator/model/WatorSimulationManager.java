@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.support.*;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 
 import java.util.*;
@@ -19,7 +19,12 @@ public final class WatorSimulationManager
     private final CreatureFactory creatureFactory;
 
     public WatorSimulationManager(WatorConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public WatorSimulationManager(WatorConfig config, SimulationInitializationCancellation cancellation) {
         super(config, WatorStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new WatorStatistics(structure);
@@ -33,7 +38,7 @@ public final class WatorSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
         initializeGrid(model, random);
-
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }

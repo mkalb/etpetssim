@@ -42,7 +42,7 @@ public final class DefaultMainViewModel<
 
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
-    private final Function<CON, SM> simulationManagerFactory;
+    private final BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory;
     private final SimulationTimer timer;
     private final ExecutorService lifecycleExecutor;
     private final ChangeListener<Boolean> actionButtonRequestedListener;
@@ -81,7 +81,7 @@ public final class DefaultMainViewModel<
                                 SimulationConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
-                                Function<CON, SM> simulationManagerFactory,
+                                BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
                                 BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
                                 SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction) {
         this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory,
@@ -92,7 +92,7 @@ public final class DefaultMainViewModel<
                          SimulationConfigViewModel<CON> configViewModel,
                          DefaultControlViewModel controlViewModel,
                          DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
-                         Function<CON, SM> simulationManagerFactory,
+                         BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
                          BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
                          SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction,
                          ExecutorService lifecycleExecutor) {
@@ -443,7 +443,7 @@ public final class DefaultMainViewModel<
     }
 
     private void createAndInitSimulation(CON config) {
-        simulationManager = simulationManagerFactory.apply(config);
+        simulationManager = simulationManagerFactory.apply(config, SimulationInitializationCancellation.none());
         Objects.requireNonNull(simulationManager, "Simulation manager factory returned null.");
 
         configureSimulationTimeout();

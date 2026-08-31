@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.neighborhood.*;
 import de.mkalb.etpetssim.engine.support.*;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 
 import java.util.*;
@@ -19,7 +19,12 @@ public final class SugarSimulationManager
     private final TimedSimulationExecutor<SugarEntity, SugarGridModel> executor;
 
     public SugarSimulationManager(SugarConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public SugarSimulationManager(SugarConfig config, SimulationInitializationCancellation cancellation) {
         super(config, SugarStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new SugarStatistics(structure);
@@ -33,7 +38,7 @@ public final class SugarSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
         initializeGrid(config, model, random);
-
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
