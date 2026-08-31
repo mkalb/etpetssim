@@ -34,18 +34,22 @@ public final class ForestSimulationManager
         var terminationCondition = new ForestTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
-        initializeGrid(config, model, random);
+        initializeGrid(config, model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(ForestConfig config, WritableGridModel<ForestEntity> model, Random random) {
+    private void initializeGrid(ForestConfig config,
+                                WritableGridModel<ForestEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
                 () -> ForestEntity.TREE,
                 config.treeDensity(),
                 ForestEntity.EMPTY,
-                random);
+                random,
+                cancellation::checkCanceled);
         gridInitializer.initialize(model);
     }
 

@@ -37,15 +37,18 @@ public final class SugarSimulationManager
         var terminationCondition = new SugarTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        initializeGrid(config, model, random);
+        initializeGrid(config, model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(SugarConfig config, SugarGridModel model, Random random) {
-        initializeGridSugar(config, model, random);
-        initializeGridAgent(config, model, random);
+    private void initializeGrid(SugarConfig config,
+                                SugarGridModel model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
+        initializeGridSugar(config, model, random, cancellation);
+        initializeGridAgent(config, model, random, cancellation);
     }
 
     /**
@@ -94,14 +97,29 @@ public final class SugarSimulationManager
         return peakCoordinates;
     }
 
-    private void initializeGridSugar(SugarConfig config, SugarGridModel model, Random random) {
+    @SuppressWarnings("MagicNumber")
+    private void initializeGridSugar(SugarConfig config,
+                                     SugarGridModel model,
+                                     Random random,
+                                     SimulationInitializationCancellation cancellation) {
         List<GridCoordinate> peakCoordinates = computeSugarPeakCoordinates();
 
-        Map<GridCoordinate, Integer> sugarMap = computeSugarRadiusMap(config, peakCoordinates, random);
-        sugarMap.forEach(((coordinate, amount) -> model.resourceModel().setEntity(coordinate, new Sugar(amount, amount))));
+        Map<GridCoordinate, Integer> sugarMap = computeSugarRadiusMap(config, peakCoordinates, random, cancellation);
+        int index = 0;
+        for (var entry : sugarMap.entrySet()) {
+            if ((index & 1_023) == 0) {
+                cancellation.checkCanceled();
+            }
+            index++;
+            model.resourceModel().setEntity(entry.getKey(), new Sugar(entry.getValue(), entry.getValue()));
+        }
     }
 
-    private Map<GridCoordinate, Integer> computeSugarRadiusMap(SugarConfig config, List<GridCoordinate> peakCoordinates, Random random) {
+    @SuppressWarnings("MagicNumber")
+    private Map<GridCoordinate, Integer> computeSugarRadiusMap(SugarConfig config,
+                                                               List<GridCoordinate> peakCoordinates,
+                                                               Random random,
+                                                               SimulationInitializationCancellation cancellation) {
         Map<GridCoordinate, Integer> sugarMap = new HashMap<>();
         int minSugarAmount = config().minSugarAmount();
         int radiusLimit = config.sugarRadiusLimit();
@@ -113,6 +131,7 @@ public final class SugarSimulationManager
 
         // Initialize peaks first
         for (GridCoordinate peak : peakCoordinates) {
+            cancellation.checkCanceled();
             visited.add(peak);
             queue.add(peak);
             sugarMap.put(peak, maxSugarAmount);
@@ -121,8 +140,12 @@ public final class SugarSimulationManager
         int radiusLevel = 1;
 
         while (!queue.isEmpty() && (radiusLevel <= radiusLimit)) {
+            cancellation.checkCanceled();
             int levelSize = queue.size();
             for (int i = 0; i < levelSize; i++) {
+                if ((i & 1_023) == 0) {
+                    cancellation.checkCanceled();
+                }
                 GridCoordinate current = queue.remove();
                 for (var result : CellNeighborhoods.neighborEdgeResults(current, config.neighborhoodMode(), structure)) {
                     if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
@@ -155,14 +178,18 @@ public final class SugarSimulationManager
                 + random.nextDouble(SugarBalance.SUGAR_NOISE_MIN, SugarBalance.SUGAR_NOISE_MAX));
     }
 
-    private void initializeGridAgent(SugarConfig config, SugarGridModel model, Random random) {
+    private void initializeGridAgent(SugarConfig config,
+                                     SugarGridModel model,
+                                     Random random,
+                                     SimulationInitializationCancellation cancellation) {
         int stepIndexOfSpawn = -1;
         GridInitializer<AgentEntity> agentGridInitializer =
                 GridInitializers.fillRandomPercent(
                         () -> new Agent(config.agentInitialEnergy(), stepIndexOfSpawn),
                         config.agentPercent(),
                         NoAgent.NO_AGENT,
-                        random);
+                        random,
+                        cancellation::checkCanceled);
         agentGridInitializer.initialize(model.agentModel());
     }
 

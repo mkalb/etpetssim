@@ -34,18 +34,22 @@ public final class ConwaySimulationManager
         var terminationCondition = new ConwayTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
-        initializeGrid(config, model, random);
+        initializeGrid(config, model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(ConwayConfig config, WritableGridModel<ConwayEntity> model, Random random) {
+    private void initializeGrid(ConwayConfig config,
+                                WritableGridModel<ConwayEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
                 () -> ConwayEntity.ALIVE,
                 config.alivePercent(),
                 ConwayEntity.DEAD,
-                random);
+                random,
+                cancellation::checkCanceled);
         gridInitializer.initialize(model);
     }
 

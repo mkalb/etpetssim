@@ -278,39 +278,94 @@ public final class GridInitializers {
      * @return a {@link GridInitializer} that fills the grid according to the described policy
      * @throws IllegalStateException if an underlying placement (via {@code placeRandomPercent}) cannot place the requested entities
      */
-    @SuppressWarnings("MagicNumber")
     public static <T extends GridEntity> GridInitializer<T> fillRandomPercent(
             Supplier<T> entitySupplier,
             double percent,
             T fallback,
             Random random) {
+        return fillRandomPercent(entitySupplier, percent, fallback, random, () -> {});
+    }
+
+    /**
+     * Returns a cancellation-aware initializer that fills a percentage of cells with supplied entities.
+     *
+     * <p>The resulting population count and randomized placement are equivalent to
+     * {@link #fillRandomPercent(Supplier, double, GridEntity, Random)}. The cancellation check runs before work and
+     * at most every 1,024 visited cells.</p>
+     *
+     * @param entitySupplier    supplier producing entities to place
+     * @param percent           the desired fraction of cells populated from the supplier
+     * @param fallback          entity used for remaining cells
+     * @param random            random number generator used for placement
+     * @param cancellationCheck operation that may stop initialization
+     * @param <T>               grid entity type
+     * @return cancellation-aware initializer
+     */
+    @SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
+    public static <T extends GridEntity> GridInitializer<T> fillRandomPercent(
+            Supplier<T> entitySupplier,
+            double percent,
+            T fallback,
+            Random random,
+            Runnable cancellationCheck) {
+        cancellationCheck.run();
         if (percent <= 0.0d) {
-            // No cells from supplier, all fallback
-            return GridInitializers.constant(fallback);
+            return model -> fillWithConstant(model, fallback, cancellationCheck);
         }
-
         if (percent >= 1.0d) {
-            // All cells from supplier, no fallback
-            return GridInitializers.supplier(entitySupplier);
+            return model -> fillWithSupplier(model, entitySupplier, cancellationCheck);
         }
+        return model -> {
+            int entityCount = (int) Math.round(percent * model.structure().size().area());
+            if (percent <= 0.8d) {
+                fillWithConstant(model, fallback, cancellationCheck);
+                placeAtShuffledCoordinates(model, entityCount, entitySupplier, random, cancellationCheck);
+            } else {
+                fillWithSupplier(model, entitySupplier, cancellationCheck);
+                placeAtShuffledCoordinates(model, model.structure().size().area() - entityCount,
+                        () -> fallback, random, cancellationCheck);
+            }
+        };
+    }
 
-        if (percent <= 0.8d) {
-            // Fill completely with fallback, then place from supplier
-            return GridInitializers.constant(fallback)
-                                   .andThen(GridInitializers.placeRandomPercent(
-                                           entitySupplier,
-                                           fallback::equals,
-                                           percent,
-                                           random));
+    @SuppressWarnings("MagicNumber")
+    private static <T extends GridEntity> void fillWithConstant(WritableGridModel<T> model, T entity,
+                                                                Runnable cancellationCheck) {
+        int index = 0;
+        for (GridCoordinate coordinate : model.structure().coordinatesList()) {
+            if ((index & 1_023) == 0) {
+                cancellationCheck.run();
+            }
+            index++;
+            model.setEntity(coordinate, entity);
         }
+    }
 
-        // Fill completely from supplier, then place fallbacks
-        return GridInitializers.supplier(entitySupplier)
-                               .andThen(GridInitializers.placeRandomPercent(
-                                       () -> fallback,
-                                       Predicate.not(fallback::equals),
-                                       1.0d - percent,
-                                       random));
+    @SuppressWarnings("MagicNumber")
+    private static <T extends GridEntity> void fillWithSupplier(WritableGridModel<T> model, Supplier<T> supplier,
+                                                                Runnable cancellationCheck) {
+        int index = 0;
+        for (GridCoordinate coordinate : model.structure().coordinatesList()) {
+            if ((index & 1_023) == 0) {
+                cancellationCheck.run();
+            }
+            index++;
+            model.setEntity(coordinate, supplier.get());
+        }
+    }
+
+    @SuppressWarnings("MagicNumber")
+    private static <T extends GridEntity> void placeAtShuffledCoordinates(WritableGridModel<T> model, int count,
+                                                                          Supplier<T> entitySupplier, Random random,
+                                                                          Runnable cancellationCheck) {
+        List<GridCoordinate> coordinates = model.structure().coordinatesList();
+        Collections.shuffle(coordinates, random);
+        for (int index = 0; index < count; index++) {
+            if ((index & 1_023) == 0) {
+                cancellationCheck.run();
+            }
+            model.setEntity(coordinates.get(index), entitySupplier.get());
+        }
     }
 
     /**
