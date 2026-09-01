@@ -59,7 +59,8 @@ public final class DefaultMainViewModel<
     private @Nullable Future<?> initializationFuture;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
-    private long initializationGeneration;
+    private long lifecycleGeneration;
+    private boolean disposed;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
@@ -261,6 +262,10 @@ public final class DefaultMainViewModel<
 
     @Override
     public void shutdownSimulation() {
+        if (disposed) {
+            return;
+        }
+        disposed = true;
         AppLogger.infof("%s: Shutting down simulation during state=%s", LOG_COMPONENT, getSimulationState());
         setSimulationState(SimulationState.SHUTTING_DOWN);
 
@@ -279,7 +284,7 @@ public final class DefaultMainViewModel<
         stopTimer();
         cancelInitialization();
         cancelBatch();
-        shutdownBatchExecutor();
+        shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
     }
@@ -380,8 +385,8 @@ public final class DefaultMainViewModel<
                 controlViewModel.isModeTimed(), controlViewModel.isModeBatchContinuous(),
                 controlViewModel.stepDurationProperty().getValue(), controlViewModel.stepCountProperty().getValue(),
                 controlViewModel.isTerminationChecked());
-        ++initializationGeneration;
-        long generation = initializationGeneration;
+        ++lifecycleGeneration;
+        long generation = lifecycleGeneration;
         setSimulationState(SimulationState.INITIALIZING);
         initializationFuture = lifecycleExecutor.submit(() -> initializeSimulation(request, generation, System.nanoTime()));
     }
@@ -477,7 +482,11 @@ public final class DefaultMainViewModel<
     }
 
     private boolean isInitializationActive(long generation) {
-        return (initializationGeneration == generation) && (getSimulationState() == SimulationState.INITIALIZING);
+        return isActiveTask(generation) && (getSimulationState() == SimulationState.INITIALIZING);
+    }
+
+    private boolean isActiveTask(long generation) {
+        return !disposed && (lifecycleGeneration == generation);
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
@@ -569,6 +578,8 @@ public final class DefaultMainViewModel<
     }
 
     private void runBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
+        ++lifecycleGeneration;
+        long generation = lifecycleGeneration;
         batchFuture = lifecycleExecutor.submit(() -> {
             batchThread = Thread.currentThread();
             try {
@@ -583,7 +594,7 @@ public final class DefaultMainViewModel<
                     var stepEvent = new SimulationStepEvent(true, manager.stepCount(), false);
                     Platform.runLater(() -> {
                         // Check at JavaFX-Thread if it is still running.
-                        if (getSimulationState() == SimulationState.RUNNING_BATCH) {
+                        if (isActiveTask(generation) && (getSimulationState() == SimulationState.RUNNING_BATCH)) {
                             simulationStepListener.accept(stepEvent);
                         }
                     });
@@ -595,6 +606,9 @@ public final class DefaultMainViewModel<
                 boolean executorFinished = executionResult.isFinished() && manager.isExecutorFinished();
 
                 Platform.runLater(() -> {
+                    if (!isActiveTask(generation)) {
+                        return;
+                    }
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
                         if (executorFinished) {
                             setSimulationState(SimulationState.FINISHED);
@@ -647,6 +661,9 @@ public final class DefaultMainViewModel<
             } catch (IllegalArgumentException | IllegalStateException | NullPointerException
                      | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
                 Platform.runLater(() -> {
+                    if (!isActiveTask(generation)) {
+                        return;
+                    }
                     setNotificationType(SimulationNotificationType.EXCEPTION);
 
                     setSimulationState(SimulationState.ERROR);
@@ -690,23 +707,15 @@ public final class DefaultMainViewModel<
     }
 
     private void cancelInitialization() {
-        initializationGeneration++;
+        lifecycleGeneration++;
         if ((initializationFuture != null) && !initializationFuture.isDone()) {
             initializationFuture.cancel(true);
         }
         initializationFuture = null;
     }
 
-    private void shutdownBatchExecutor() {
+    private void shutdownLifecycleExecutor() {
         lifecycleExecutor.shutdown();
-        try {
-            if (!lifecycleExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                lifecycleExecutor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            lifecycleExecutor.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
     }
 
     private void updateObservationStatistics(STA statistics) {

@@ -121,6 +121,42 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
+    void testShutdownDoesNotWaitForInitializationWorker() throws InterruptedException {
+        CountDownLatch constructionStarted = new CountDownLatch(1);
+        CountDownLatch releaseConstruction = new CountDownLatch(1);
+        ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
+        Fixture fixture = FxTestSupport.supplyAndWait(() -> createFixture((config, cancellation) -> {
+            constructionStarted.countDown();
+            boolean interrupted = false;
+            while (releaseConstruction.getCount() > 0L) {
+                try {
+                    releaseConstruction.await();
+                } catch (InterruptedException e) {
+                    interrupted = true;
+                }
+            }
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+            return new ConwaySimulationManager(config, cancellation);
+        }, lifecycleExecutor));
+
+        FxTestSupport.runAndWait(fixture.controlViewModel()::requestActionButton);
+        assertTrue(constructionStarted.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+
+        FxTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().shutdownSimulation();
+            fixture.mainViewModel().shutdownSimulation();
+            assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState());
+        });
+
+        assertTrue(lifecycleExecutor.isShutdown());
+        assertFalse(lifecycleExecutor.isTerminated());
+        releaseConstruction.countDown();
+        assertTrue(lifecycleExecutor.awaitTermination(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+    }
+
+    @Test
     void testShutdownClearsHistoryAndExtrema() throws InterruptedException {
         Fixture fixture = FxTestSupport.supplyAndWait(DefaultMainViewModelTest::createFixture);
         startAndAwaitInitialization(fixture);

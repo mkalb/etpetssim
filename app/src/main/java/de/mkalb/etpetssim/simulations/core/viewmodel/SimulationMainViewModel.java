@@ -52,7 +52,9 @@ public interface SimulationMainViewModel {
     double getCellEdgeLength();
 
     /**
-     * Stops the simulation and releases resources.
+     * Immediately stops the simulation and releases resources on the JavaFX Application Thread.
+     *
+     * <p>This operation is idempotent and must not wait for background work to terminate.
      */
     void shutdownSimulation();
 
