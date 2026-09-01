@@ -289,6 +289,8 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
+        simulationInitializedListener = () -> {};
+        simulationStepListener = _ -> {};
         termination = new ExecutorSimulationTermination(lifecycleExecutor);
         return termination;
     }

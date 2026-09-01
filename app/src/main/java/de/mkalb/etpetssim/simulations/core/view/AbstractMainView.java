@@ -8,6 +8,7 @@ import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -59,6 +60,7 @@ public abstract class AbstractMainView<
     protected @Nullable FXGridCanvasPainter overlayPainter;
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
+    private @Nullable ChangeListener<SimulationNotificationType> notificationListener;
 
     protected AbstractMainView(VM viewModel,
                                CFV configView, CLV controlView, OV observationView,
@@ -139,6 +141,10 @@ public abstract class AbstractMainView<
 
     @Override
     public SimulationTermination shutdownSimulation() {
+        if (notificationListener != null) {
+            viewModel.notificationTypeProperty().removeListener(notificationListener);
+            notificationListener = null;
+        }
         SimulationTermination termination = viewModel.shutdownSimulation();
         basePainter = null;
         dynamicPainter = null;
@@ -172,13 +178,14 @@ public abstract class AbstractMainView<
     protected abstract void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
 
     private void registerNotificationListener() {
-        viewModel.notificationTypeProperty().addListener((_, _, newVal) -> {
+        notificationListener = (_, _, newVal) -> {
             if (newVal == SimulationNotificationType.NONE) {
                 clearNotification();
             } else {
                 updateNotification(AppLocalization.getText(newVal.resourceKey()));
             }
-        });
+        };
+        viewModel.notificationTypeProperty().addListener(notificationListener);
     }
 
     private void updateNotification(String notification) {
