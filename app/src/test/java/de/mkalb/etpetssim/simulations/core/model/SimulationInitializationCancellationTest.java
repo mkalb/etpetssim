@@ -19,7 +19,7 @@ final class SimulationInitializationCancellationTest {
             assertThrows(SimulationInitializationCanceledException.class,
                     SimulationInitializationCancellation.interruptionAware()::checkCanceled);
         } finally {
-            Thread.interrupted();
+            assertTrue(Thread.interrupted());
         }
     }
 

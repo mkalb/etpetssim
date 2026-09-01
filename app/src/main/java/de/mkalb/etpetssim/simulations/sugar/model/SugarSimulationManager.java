@@ -10,6 +10,8 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 
 import java.util.*;
 
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+
 public final class SugarSimulationManager
         extends AbstractTimedSimulationManager<SugarEntity, SugarGridModel, SugarConfig,
         SugarStatistics> {
@@ -97,7 +99,6 @@ public final class SugarSimulationManager
         return peakCoordinates;
     }
 
-    @SuppressWarnings("MagicNumber")
     private void initializeGridSugar(SugarConfig config,
                                      SugarGridModel model,
                                      Random random,
@@ -107,7 +108,7 @@ public final class SugarSimulationManager
         Map<GridCoordinate, Integer> sugarMap = computeSugarRadiusMap(config, peakCoordinates, random, cancellation);
         int index = 0;
         for (var entry : sugarMap.entrySet()) {
-            if ((index & 1_023) == 0) {
+            if ((index & CANCELLATION_CHECK_MASK) == 0) {
                 cancellation.checkCanceled();
             }
             index++;
@@ -115,7 +116,6 @@ public final class SugarSimulationManager
         }
     }
 
-    @SuppressWarnings("MagicNumber")
     private Map<GridCoordinate, Integer> computeSugarRadiusMap(SugarConfig config,
                                                                List<GridCoordinate> peakCoordinates,
                                                                Random random,
@@ -143,7 +143,7 @@ public final class SugarSimulationManager
             cancellation.checkCanceled();
             int levelSize = queue.size();
             for (int i = 0; i < levelSize; i++) {
-                if ((i & 1_023) == 0) {
+                if ((i & CANCELLATION_CHECK_MASK) == 0) {
                     cancellation.checkCanceled();
                 }
                 GridCoordinate current = queue.remove();

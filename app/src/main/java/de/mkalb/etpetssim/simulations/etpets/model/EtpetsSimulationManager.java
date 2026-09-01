@@ -8,6 +8,8 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 
 import java.util.*;
 
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+
 public final class EtpetsSimulationManager
         extends AbstractTimedSimulationManager<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> {
 
@@ -39,9 +41,9 @@ public final class EtpetsSimulationManager
         var terminationCondition = new EtpetsTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        initializeTerrain(model, random);
-        initializeResources(model, random);
-        initializePets(model, random, idSequence);
+        initializeTerrain(model, random, cancellation);
+        initializeResources(model, random, cancellation);
+        initializePets(model, random, idSequence, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
@@ -51,7 +53,7 @@ public final class EtpetsSimulationManager
         return Math.clamp(Math.round((totalCells * percentDecimal)), 0, totalCells);
     }
 
-    private void initializeTerrain(EtpetsGridModel model, Random random) {
+    private void initializeTerrain(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
         int rockCount = computePercentCount(totalCells, config().rockPercent());
         int waterCount = computePercentCount(totalCells, config().waterPercent());
@@ -74,15 +76,21 @@ public final class EtpetsSimulationManager
 
         int offset = 0;
         for (int i = 0; (i < rockCount) && ((offset + i) < coordinates.size()); i++) {
+            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
             model.terrainModel().setEntity(coordinates.get(offset + i), TerrainConstant.ROCK);
         }
         offset += rockCount;
         for (int i = 0; (i < waterCount) && ((offset + i) < coordinates.size()); i++) {
+            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
             model.terrainModel().setEntity(coordinates.get(offset + i), TerrainConstant.WATER);
         }
     }
 
-    private void initializeResources(EtpetsGridModel model, Random random) {
+    private void initializeResources(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
         int plantCount = computePercentCount(totalCells, config().plantPercent());
         int insectCount = computePercentCount(totalCells, config().insectPercent());
@@ -95,7 +103,7 @@ public final class EtpetsSimulationManager
         //     model.resourceModel().setEntity(new GridCoordinate(i, 5), new Insect(i, i, 100));
         // }
 
-        List<GridCoordinate> available = traversableCoordinates(model, random);
+        List<GridCoordinate> available = traversableCoordinates(model, random, cancellation);
         int requestedResources = plantCount + insectCount;
         if (requestedResources > available.size()) {
             throw new IllegalArgumentException("Invalid ET Pets resource initialization: requested "
@@ -108,6 +116,9 @@ public final class EtpetsSimulationManager
 
         int offset = 0;
         for (int i = 0; (i < plantCount) && ((offset + i) < available.size()); i++) {
+            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
             double maxAmount = EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MIN + random.nextInt(plantRange);
             double regenerationPerStep = EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE
                     + random.nextDouble(-EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA, EtpetsBalance.PLANT_REGENERATION_PER_STEP_DELTA);
@@ -116,6 +127,9 @@ public final class EtpetsSimulationManager
         }
         offset += plantCount;
         for (int i = 0; (i < insectCount) && ((offset + i) < available.size()); i++) {
+            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
             double maxAmount = EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MIN + random.nextInt(insectRange);
             double regenerationPerStep = EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE
                     + random.nextDouble(-EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA, EtpetsBalance.INSECT_REGENERATION_PER_STEP_DELTA);
@@ -124,7 +138,10 @@ public final class EtpetsSimulationManager
         }
     }
 
-    private void initializePets(EtpetsGridModel model, Random random, EtpetsIdSequence idSequence) {
+    private void initializePets(EtpetsGridModel model,
+                                Random random,
+                                EtpetsIdSequence idSequence,
+                                SimulationInitializationCancellation cancellation) {
         // Only for testing / debugging
         // for (int i = EtpetsBalance.PET_EGG_INCUBATION_REMAINING_RANGE_MIN; i <= EtpetsBalance.PET_EGG_INCUBATION_REMAINING_RANGE_MAX; i++) {
         //     model.agentModel().setEntity(new GridCoordinate(i, 7), new PetEgg(
@@ -141,7 +158,7 @@ public final class EtpetsSimulationManager
         //     ));
         // }
 
-        List<GridCoordinate> available = traversableCoordinates(model, random);
+        List<GridCoordinate> available = traversableCoordinates(model, random, cancellation);
         if (config().petCount() > available.size()) {
             throw new IllegalArgumentException("Invalid ET Pets pet initialization: requested "
                     + config().petCount() + " pets, but only " + available.size()
@@ -153,6 +170,9 @@ public final class EtpetsSimulationManager
         int initialEnergyReductionDelta = Math.max(0, EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA);
 
         for (int i = 0; i < config().petCount(); i++) {
+            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
             int maxEnergy = EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN + random.nextInt(maxEnergyRange);
             int initialAge = EtpetsBalance.PET_INITIAL_AGE_RANGE_MIN + random.nextInt(initialAgeRange);
             int stepIndexOfBirth = -1 - initialAge;
@@ -180,9 +200,16 @@ public final class EtpetsSimulationManager
         }
     }
 
-    private List<GridCoordinate> traversableCoordinates(EtpetsGridModel model, Random random) {
+    private List<GridCoordinate> traversableCoordinates(EtpetsGridModel model,
+                                                        Random random,
+                                                        SimulationInitializationCancellation cancellation) {
         List<GridCoordinate> available = new ArrayList<>();
-        for (GridCoordinate coordinate : structure.coordinatesList()) {
+        List<GridCoordinate> coordinates = structure.coordinatesList();
+        for (int index = 0; index < coordinates.size(); index++) {
+            if ((index & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
+            GridCoordinate coordinate = coordinates.get(index);
             if (model.terrainModel().isDefaultEntity(coordinate)
                     && model.resourceModel().isDefaultEntity(coordinate)
                     && model.agentModel().isDefaultEntity(coordinate)) {

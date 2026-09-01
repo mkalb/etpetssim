@@ -9,6 +9,8 @@ import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 
 import java.util.*;
 
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+
 public final class WatorSimulationManager
         extends AbstractTimedSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
         WatorStatistics> {
@@ -37,18 +39,23 @@ public final class WatorSimulationManager
         var terminationCondition = new WatorTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        initializeGrid(model, random);
+        initializeGrid(model, random, cancellation);
         cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(WritableGridModel<WatorEntity> model, Random random) {
+    private void initializeGrid(WritableGridModel<WatorEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
         var fishCount = Math.clamp(
                 Math.toIntExact(Math.round(config().fishPercent() * structure.cellCount())),
                 0, structure.cellCount());
         var fish = new ArrayList<WatorEntity>(fishCount);
         for (int i = 0; i < fishCount; i++) {
+            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
             fish.add(createInitialFish(random));
         }
 
@@ -57,11 +64,16 @@ public final class WatorSimulationManager
                 0, structure.cellCount() - fishCount);
         var sharks = new ArrayList<WatorEntity>(sharkCount);
         for (int i = 0; i < sharkCount; i++) {
+            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
             sharks.add(createInitialShark(random));
         }
 
-        GridInitializers.placeAllAtRandomPositions(fish, WatorEntity::isWater, random).initialize(model);
-        GridInitializers.placeAllAtRandomPositions(sharks, WatorEntity::isWater, random).initialize(model);
+        GridInitializers.placeAllAtRandomPositions(fish, WatorEntity::isWater, random, cancellation::checkCanceled)
+                        .initialize(model);
+        GridInitializers.placeAllAtRandomPositions(sharks, WatorEntity::isWater, random, cancellation::checkCanceled)
+                        .initialize(model);
     }
 
     public Fish createFish(int stepIndexOfBirth) {

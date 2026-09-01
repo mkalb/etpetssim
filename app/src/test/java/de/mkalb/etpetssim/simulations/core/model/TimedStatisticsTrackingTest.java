@@ -14,6 +14,7 @@ import de.mkalb.etpetssim.simulations.wator.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,15 +78,22 @@ final class TimedStatisticsTrackingTest {
     }
 
     private static EtpetsConfig createEtpetsConfig() {
+        return createEtpetsConfig(
+                EtpetsConstraints.GRID_WIDTH_DEFAULT,
+                EtpetsConstraints.GRID_HEIGHT_DEFAULT,
+                EtpetsConstraints.ROCK_PERCENT_DEFAULT);
+    }
+
+    private static EtpetsConfig createEtpetsConfig(int gridWidth, int gridHeight, double rockPercent) {
         return new EtpetsConfig(
                 EtpetsConstraints.CELL_SHAPE_DEFAULT,
                 EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                EtpetsConstraints.GRID_WIDTH_DEFAULT,
-                EtpetsConstraints.GRID_HEIGHT_DEFAULT,
+                gridWidth,
+                gridHeight,
                 EtpetsConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 EtpetsConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
-                EtpetsConstraints.ROCK_PERCENT_DEFAULT,
+                rockPercent,
                 EtpetsConstraints.WATER_PERCENT_DEFAULT,
                 EtpetsConstraints.PLANT_PERCENT_DEFAULT,
                 EtpetsConstraints.INSECT_PERCENT_DEFAULT,
@@ -153,6 +161,15 @@ final class TimedStatisticsTrackingTest {
         );
     }
 
+    private static SimulationInitializationCancellation cancellationOnCheck(int cancellationCheck) {
+        var checkCount = new AtomicInteger();
+        return () -> {
+            if (checkCount.incrementAndGet() == cancellationCheck) {
+                throw new SimulationInitializationCanceledException();
+            }
+        };
+    }
+
     private static LangtonConfig createLangtonConfig() {
         return new LangtonConfig(
                 LangtonConstraints.CELL_SHAPE_DEFAULT,
@@ -194,6 +211,36 @@ final class TimedStatisticsTrackingTest {
                 () -> assertEquals(0, history.getFirst().stepTimingStatistics().sumNanos()),
                 () -> assertEquals(expectedValues, history.getFirst().values())
         );
+    }
+
+    @Test
+    void testEtpetsInitializationHonorsCancellationDuringTerrainPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new EtpetsSimulationManager(
+                                createEtpetsConfig(200, 200, EtpetsConstraints.PERCENT_MAX),
+                                cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testWatorInitializationHonorsCancellationDuringFishPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new WatorSimulationManager(createWatorConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testSnakeInitializationHonorsCancellationDuringEligibleCoordinateSearch() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new SnakeSimulationManager(createSnakeConfig(), cancellationOnCheck(10))).getMessage());
+    }
+
+    @Test
+    void testReboundingInitializationHonorsCancellationDuringEligibleCoordinateSearch() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new ReboundingSimulationManager(createReboundingConfig(), cancellationOnCheck(6))).getMessage());
     }
 
     @Test
@@ -441,17 +488,17 @@ final class TimedStatisticsTrackingTest {
         }
 
         assertAll(
-                () -> assertEquals(3575, batch.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(3806, batch.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "batch: minAliveCells"),
-                () -> assertEquals(6945, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(6749, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "batch: maxAliveCells"),
-                () -> assertEquals(6475, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
+                () -> assertEquals(6353, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "batch: maxChangedCells"),
-                () -> assertEquals(3575, singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(3806, singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: minAliveCells"),
-                () -> assertEquals(6945, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(6749, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: maxAliveCells"),
-                () -> assertEquals(6475, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
+                () -> assertEquals(6353, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "singleStep: maxChangedCells")
         );
     }
@@ -473,17 +520,17 @@ final class TimedStatisticsTrackingTest {
                         "batch: maxEmptyCells"),
                 () -> assertEquals(1000, batch.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "batch: minTreeCells"),
-                () -> assertEquals(1037, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1069, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "batch: maxTreeCells"),
-                () -> assertEquals(17, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
+                () -> assertEquals(7, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
                         "batch: maxBurningCells"),
                 () -> assertEquals(4000, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).value(),
                         "singleStep: maxEmptyCells"),
                 () -> assertEquals(1000, singleStep.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "singleStep: minTreeCells"),
-                () -> assertEquals(1037, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1069, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "singleStep: maxTreeCells"),
-                () -> assertEquals(17, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
+                () -> assertEquals(7, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
                         "singleStep: maxBurningCells")
         );
     }
