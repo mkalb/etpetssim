@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import javafx.beans.property.*;
 
@@ -55,7 +56,9 @@ public interface SimulationMainViewModel {
      * Immediately stops the simulation and releases resources on the JavaFX Application Thread.
      *
      * <p>This operation is idempotent and must not wait for background work to terminate.
+     *
+     * @return termination handle for application-exit bookkeeping
      */
-    void shutdownSimulation();
+    SimulationTermination shutdownSimulation();
 
 }

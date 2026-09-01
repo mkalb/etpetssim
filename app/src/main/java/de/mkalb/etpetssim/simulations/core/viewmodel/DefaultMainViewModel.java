@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
@@ -61,6 +62,7 @@ public final class DefaultMainViewModel<
     private volatile @Nullable Thread batchThread;
     private long lifecycleGeneration;
     private boolean disposed;
+    private @Nullable SimulationTermination termination;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
@@ -261,9 +263,9 @@ public final class DefaultMainViewModel<
     }
 
     @Override
-    public void shutdownSimulation() {
+    public SimulationTermination shutdownSimulation() {
         if (disposed) {
-            return;
+            return Objects.requireNonNull(termination);
         }
         disposed = true;
         AppLogger.infof("%s: Shutting down simulation during state=%s", LOG_COMPONENT, getSimulationState());
@@ -287,6 +289,8 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
+        termination = new ExecutorSimulationTermination(lifecycleExecutor);
+        return termination;
     }
 
     @Override
@@ -825,6 +829,20 @@ public final class DefaultMainViewModel<
                     simulationManager.config(),
                     simulationManager.statistics());
         }
+    }
+
+    private record ExecutorSimulationTermination(ExecutorService executor) implements SimulationTermination {
+
+        @Override
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+            return executor.awaitTermination(timeout, unit);
+        }
+
+        @Override
+        public void shutdownNow() {
+            executor.shutdownNow();
+        }
+
     }
 
     private record SimulationStartRequest<CON extends SimulationConfig>(

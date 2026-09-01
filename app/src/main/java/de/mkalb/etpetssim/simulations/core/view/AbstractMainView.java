@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
@@ -137,8 +138,8 @@ public abstract class AbstractMainView<
     }
 
     @Override
-    public void shutdownSimulation() {
-        viewModel.shutdownSimulation();
+    public SimulationTermination shutdownSimulation() {
+        SimulationTermination termination = viewModel.shutdownSimulation();
         basePainter = null;
         dynamicPainter = null;
         overlayPainter = null;
@@ -146,6 +147,7 @@ public abstract class AbstractMainView<
         cellEmojiFont = null;
         clearNotification();
         editToolBar.clear();
+        return termination;
     }
 
     protected abstract void registerViewModelListeners();

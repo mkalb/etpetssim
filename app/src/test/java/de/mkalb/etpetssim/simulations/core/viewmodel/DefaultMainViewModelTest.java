@@ -70,7 +70,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testStartForwardsInitialHistoryAndExtrema() throws InterruptedException {
-        Fixture fixture = FxTestSupport.supplyAndWait(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         startAndAwaitInitialization(fixture);
 
         FxTestSupport.runAndWait(() -> assertAll(
@@ -90,7 +90,7 @@ final class DefaultMainViewModelTest {
         CountDownLatch releaseConstruction = new CountDownLatch(1);
         AtomicBoolean constructedOnFxThread = new AtomicBoolean();
         ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
-        Fixture fixture = FxTestSupport.supplyAndWait(() -> createFixture((config, cancellation) -> {
+        Fixture fixture = FxTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
             constructedOnFxThread.set(Platform.isFxApplicationThread());
             constructionStarted.countDown();
             try {
@@ -125,7 +125,7 @@ final class DefaultMainViewModelTest {
         CountDownLatch constructionStarted = new CountDownLatch(1);
         CountDownLatch releaseConstruction = new CountDownLatch(1);
         ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
-        Fixture fixture = FxTestSupport.supplyAndWait(() -> createFixture((config, cancellation) -> {
+        Fixture fixture = FxTestSupport.supplyAndWaitNonNull(() -> createFixture((config, cancellation) -> {
             constructionStarted.countDown();
             boolean interrupted = false;
             while (releaseConstruction.getCount() > 0L) {
@@ -158,7 +158,7 @@ final class DefaultMainViewModelTest {
 
     @Test
     void testShutdownClearsHistoryAndExtrema() throws InterruptedException {
-        Fixture fixture = FxTestSupport.supplyAndWait(DefaultMainViewModelTest::createFixture);
+        Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         startAndAwaitInitialization(fixture);
 
         FxTestSupport.runAndWait(() -> {

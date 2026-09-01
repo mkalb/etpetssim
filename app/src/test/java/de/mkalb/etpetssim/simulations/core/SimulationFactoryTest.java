@@ -27,17 +27,13 @@ final class SimulationFactoryTest {
     }
 
     private static Stage createStage() {
-        Stage stage = FxTestSupport.supplyAndWait(Stage::new);
-        assertNotNull(stage, "Stage must not be null after FX initialization");
-        return stage;
+        return FxTestSupport.supplyAndWaitNonNull(Stage::new);
     }
 
     private static SimulationInstance createInstance(SimulationType type) {
         Stage stage = createStage();
-        SimulationInstance instance = FxTestSupport.supplyAndWait(() ->
+        return FxTestSupport.supplyAndWaitNonNull(() ->
                 SimulationFactory.createInstance(type, stage, (_, _) -> {}));
-        assertNotNull(instance, "SimulationInstance must not be null for type: " + type);
-        return instance;
     }
 
     // --- createInstance() returns non-null for every SimulationType ---
