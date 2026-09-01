@@ -73,6 +73,7 @@ public abstract class AbstractDefaultMainView<
     @Override
     protected final void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(this::handleSimulationInitialized);
+        viewModel.setSimulationResetListener(this::handleSimulationReset);
         viewModel.setSimulationStepListener(this::handleSimulationStep);
         selectedGridCellListener = (_, oldGridCell, newGridCell) -> {
             if (overlayPainter != null) {
@@ -147,12 +148,10 @@ public abstract class AbstractDefaultMainView<
         drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());
     }
 
-    protected final void handleSimulationInitialized() {
+    private void handleSimulationInitialized() {
         int stepCount = viewModel.getStepCount();
 
-        if (DEBUG_MODE) {
-            AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
-        }
+        AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
 
         var cellDimension = createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
 
@@ -165,18 +164,19 @@ public abstract class AbstractDefaultMainView<
 
         initSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
 
-        if (DEBUG_MODE) {
-            AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
-        }
+        AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
 
         drawAndMeasureSimulationStep(stepCount);
 
-        if (DEBUG_MODE) {
-            AppLogger.infof("%s: Initial simulation view draw completed. step=%d", LOG_COMPONENT, stepCount);
-        }
+        AppLogger.infof("%s: Initial simulation view draw completed. step=%d", LOG_COMPONENT, stepCount);
     }
 
-    protected final void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
+    private void handleSimulationReset() {
+        AppLogger.infof("%s: Resetting simulation view.", LOG_COMPONENT);
+        observationView.initializeObservationLabels();
+    }
+
+    private void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             if (DEBUG_MODE) {

@@ -42,6 +42,7 @@ public final class DefaultMainViewModel<
     private static final String LOG_COMPONENT = "DefaultMainViewModel";
     private static final Runnable NO_OP_SIMULATION_INITIALIZED_LISTENER = () -> {};
     private static final Consumer<SimulationStepEvent> NO_OP_SIMULATION_STEP_LISTENER = _ -> {};
+    private static final Runnable NO_OP_SIMULATION_RESET_LISTENER = () -> {};
 
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
@@ -72,6 +73,7 @@ public final class DefaultMainViewModel<
     // Listener for view
     private Runnable simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
     private Consumer<SimulationStepEvent> simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
+    private Runnable simulationResetListener = NO_OP_SIMULATION_RESET_LISTENER;
 
     /**
      * Creates a main view model.
@@ -252,6 +254,19 @@ public final class DefaultMainViewModel<
         simulationStepListener = listener;
     }
 
+    /**
+     * Registers a callback invoked whenever statistics are reset, i.e. right after
+     * {@link DefaultObservationViewModel#resetStatistics()} is called on simulation restart or shutdown.
+     *
+     * <p>Use this to refresh observation labels/charts to their initial placeholder state so stale
+     * values from a previous or finished simulation do not linger until the next simulation initializes.
+     *
+     * @param listener callback invoked after statistics are reset
+     */
+    public void setSimulationResetListener(Runnable listener) {
+        simulationResetListener = listener;
+    }
+
     @Override
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
@@ -291,8 +306,10 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
+        simulationResetListener.run();
         simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
         simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
+        simulationResetListener = NO_OP_SIMULATION_RESET_LISTENER;
         termination = new ExecutorSimulationTermination(lifecycleExecutor);
         return termination;
     }
@@ -387,6 +404,7 @@ public final class DefaultMainViewModel<
         resetSelectedProperties();
         resetClickedCoordinateProperties();
         observationStateViewModel.resetStatistics();
+        simulationResetListener.run();
         simulationManager = null;
 
         SimulationStartRequest<CON> request = new SimulationStartRequest<>(config.get(), controlViewModel.isStartPaused(),
