@@ -393,13 +393,18 @@ public final class AppLogger {
 
     /**
      * Formatter for log records in the AppLogger.
-     * This formatter formats log records with a timestamp, log level, message, and exception stack trace (if any).
+     * This formatter formats log records with a timestamp, log level, thread name, message, and exception stack trace (if any).
      */
     private static class AppLogFormatter extends Formatter {
 
         private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
         private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used in formatting.
         private static final int LOG_LEVEL_PADDING_WIDTH = 7; // Padding for log level alignment.
+
+        private static String displayThreadName() {
+            String threadName = Thread.currentThread().getName();
+            return "JavaFX Application Thread".equals(threadName) ? "FX" : threadName;
+        }
 
         @SuppressWarnings("StringConcatenationMissingWhitespace")
         @Override
@@ -412,6 +417,9 @@ public final class AppLogger {
 
             // Log level.
             sb.append("[").append(String.format("%-" + LOG_LEVEL_PADDING_WIDTH + "s", record.getLevel().getName())).append("] ");
+
+            // Thread.
+            sb.append("[").append(displayThreadName()).append("] ");
 
             // Message.
             sb.append(formatMessage(record)).append(System.lineSeparator());

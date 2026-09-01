@@ -1,9 +1,13 @@
 package de.mkalb.etpetssim.core;
 
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
+import java.lang.reflect.Constructor;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
+import java.util.logging.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,6 +17,18 @@ final class AppLoggerTest {
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
+    }
+
+    private static String formatRecord(LogRecord record) {
+        try {
+            Class<?> formatterClass = Class.forName("de.mkalb.etpetssim.core.AppLogger$AppLogFormatter");
+            Constructor<?> constructor = formatterClass.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            Formatter formatter = (Formatter) constructor.newInstance();
+            return formatter.format(record);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError("Failed to format log record", e);
+        }
     }
 
     @BeforeEach
@@ -140,6 +156,29 @@ final class AppLoggerTest {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         Throwable t = new RuntimeException("Test exception");
         assertDoesNotThrow(() -> AppLogger.error(t, "Error with throwable"));
+    }
+
+    @Test
+    void testFormatterIncludesCurrentThreadNameAfterLogLevel() {
+        LogRecord record = new LogRecord(Level.INFO, "Info message");
+
+        String formatted = formatRecord(record);
+
+        assertTrue(formatted.contains("[INFO   ] [" + Thread.currentThread().getName() + "] Info message"));
+    }
+
+    @Test
+    void testFormatterAbbreviatesJavaFxApplicationThreadName() throws InterruptedException {
+        AtomicReference<@Nullable String> formattedReference = new AtomicReference<>();
+        Thread thread = Thread.ofPlatform().name("JavaFX Application Thread").start(
+                () -> formattedReference.set(formatRecord(new LogRecord(Level.INFO, "Info message")))
+        );
+
+        thread.join();
+
+        String s = formattedReference.get();
+        assertNotNull(s, "Formatted string should not be null");
+        assertTrue(s.contains("[INFO   ] [FX] Info message"));
     }
 
     @Test
