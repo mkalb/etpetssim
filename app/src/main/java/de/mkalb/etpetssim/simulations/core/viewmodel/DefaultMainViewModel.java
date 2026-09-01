@@ -350,8 +350,6 @@ public final class DefaultMainViewModel<
             throw new IllegalStateException("Simulation is running but state is not RUNNING_TIMED or RUNNING_BATCH: " + getSimulationState());
         }
 
-        resetClickedCoordinateProperties();
-
         if (getSimulationState().isStartable()) {
             handleStartAction();
         } else if (getSimulationState().isRunning()) {
@@ -372,12 +370,14 @@ public final class DefaultMainViewModel<
                 stopTimer();
                 setSimulationState(SimulationState.CANCELED);
                 logSimulationInfo("Simulation (timer) was canceled by the user.");
+
                 int stepCount = (simulationManager != null) ? simulationManager.stepCount() : 0;
                 simulationStepListener.accept(new SimulationStepEvent(false, stepCount, true));
             }
             case RUNNING_BATCH -> {
                 setSimulationState(SimulationState.CANCELLING_BATCH);
                 logSimulationInfo("Simulation (batch) was canceled by the user. Waiting for batch to finish.");
+
                 cancelBatch();
             }
             case PAUSED -> {
@@ -393,6 +393,13 @@ public final class DefaultMainViewModel<
 
     private void handleStartAction() {
         setNotificationType(SimulationNotificationType.NONE);
+        resetClickedCoordinateProperties();
+        resetSelectedProperties();
+
+        observationStateViewModel.resetStatistics();
+        simulationResetListener.run();
+        simulationManager = null;
+
         Optional<CON> config = createValidConfig();
         if (config.isEmpty()) {
             setSimulationState(SimulationState.ERROR);
@@ -401,23 +408,22 @@ public final class DefaultMainViewModel<
             return;
         }
 
-        resetSelectedProperties();
-        resetClickedCoordinateProperties();
-        observationStateViewModel.resetStatistics();
-        simulationResetListener.run();
-        simulationManager = null;
-
         SimulationStartRequest<CON> request = new SimulationStartRequest<>(config.get(), controlViewModel.isStartPaused(),
                 controlViewModel.isModeTimed(), controlViewModel.isModeBatchContinuous(),
                 controlViewModel.stepDurationProperty().getValue(), controlViewModel.stepCountProperty().getValue(),
                 controlViewModel.isTerminationChecked());
         ++lifecycleGeneration;
         long generation = lifecycleGeneration;
+
         setSimulationState(SimulationState.INITIALIZING);
+        logSimulationInfo("Simulation initialization started by the user. generation=" + generation + ", request=" + request);
+
         initializationFuture = lifecycleExecutor.submit(() -> initializeSimulation(request, generation, System.nanoTime()));
     }
 
     private void handlePauseAction() {
+        resetClickedCoordinateProperties();
+
         if (getSimulationState() == SimulationState.RUNNING_TIMED) {
             setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation (timer) was paused by the user.");
@@ -432,8 +438,8 @@ public final class DefaultMainViewModel<
     }
 
     private void handleResumeAction() {
-        // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
+        resetClickedCoordinateProperties();
 
         configureSimulationTimeout(controlViewModel.isModeTimed(), controlViewModel.stepDurationProperty().getValue());
         if (controlViewModel.isModeTimed()) {
