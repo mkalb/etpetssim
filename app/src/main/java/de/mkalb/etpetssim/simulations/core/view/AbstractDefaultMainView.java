@@ -150,6 +150,10 @@ public abstract class AbstractDefaultMainView<
     protected final void handleSimulationInitialized() {
         int stepCount = viewModel.getStepCount();
 
+        if (DEBUG_MODE) {
+            AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
+        }
+
         var cellDimension = createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
 
         updateCanvasBorderPane(viewModel.getStructure());
@@ -161,10 +165,14 @@ public abstract class AbstractDefaultMainView<
 
         initSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
 
+        if (DEBUG_MODE) {
+            AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
+        }
+
         drawAndMeasureSimulationStep(stepCount);
 
         if (DEBUG_MODE) {
-            AppLogger.infof("%s: Simulation initialized and drawn in the view. step=%d", LOG_COMPONENT, stepCount);
+            AppLogger.infof("%s: Initial simulation view draw completed. step=%d", LOG_COMPONENT, stepCount);
         }
     }
 
@@ -222,7 +230,7 @@ public abstract class AbstractDefaultMainView<
         } else {
             showSkipOverlay();
             if (DEBUG_MODE) {
-                AppLogger.warnf("%s: Skipping draw for step %d due to high average draw time. averageMillis=%d, thresholdMillis=%d",
+                AppLogger.infof("%s: Skipping draw for step %d due to high average draw time. averageMillis=%d, thresholdMillis=%d",
                         LOG_COMPONENT,
                         stepCount,
                         drawThrottler.getAverageDurationMillis(),
