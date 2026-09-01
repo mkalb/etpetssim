@@ -442,18 +442,24 @@ public final class DefaultMainViewModel<
 
     private void initializeSimulation(SimulationStartRequest<CON> request, long generation, long startNanos) {
         try {
+            AppLogger.infof("%s: Simulation initialization started. generation=%d, request=%s", LOG_COMPONENT, generation, request);
             SM manager = simulationManagerFactory.apply(request.config(), SimulationInitializationCancellation.interruptionAware());
             Objects.requireNonNull(manager, "Simulation manager factory returned null.");
+            AppLogger.infof("%s: Simulation manager was created; scheduling initialization completion. generation=%d, request=%s",
+                    LOG_COMPONENT, generation, request);
             Platform.runLater(() -> completeInitialization(request, generation, startNanos, manager));
         } catch (SimulationInitializationCanceledException e) {
-            AppLogger.debugf("%s: Simulation initialization was canceled.", LOG_COMPONENT);
+            AppLogger.infof("%s: Simulation initialization was canceled. generation=%d, request=%s",
+                    LOG_COMPONENT, generation, request);
         } catch (RuntimeException e) {
-            Platform.runLater(() -> failInitialization(generation, e));
+            Platform.runLater(() -> failInitialization(request, generation, e));
         }
     }
 
     private void completeInitialization(SimulationStartRequest<CON> request, long generation, long startNanos, SM manager) {
         if (!isInitializationActive(generation)) {
+            AppLogger.infof("%s: Discarding completed initialization because it is no longer active. generation=%d, activeGeneration=%d, state=%s",
+                    LOG_COMPONENT, generation, lifecycleGeneration, getSimulationState());
             return;
         }
 
@@ -478,7 +484,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void failInitialization(long generation, RuntimeException exception) {
+    private void failInitialization(SimulationStartRequest<CON> request, long generation, RuntimeException exception) {
         if (!isInitializationActive(generation)) {
             return;
         }
@@ -486,7 +492,8 @@ public final class DefaultMainViewModel<
         initializationFuture = null;
         setSimulationState(SimulationState.ERROR);
         setNotificationType(SimulationNotificationType.EXCEPTION);
-        AppLogger.errorf(exception, "%s: Failed to initialize simulation.", LOG_COMPONENT);
+        AppLogger.errorf(exception, "%s: Failed to initialize simulation. generation=%d, request=%s",
+                LOG_COMPONENT, generation, request);
     }
 
     private boolean isInitializationActive(long generation) {
@@ -709,16 +716,19 @@ public final class DefaultMainViewModel<
 
     private void cancelBatch() {
         if ((batchFuture != null) && !batchFuture.isDone()) {
+            AppLogger.infof("%s: Requesting batch cancellation. state=%s", LOG_COMPONENT, getSimulationState());
             batchFuture.cancel(true); // Attempts to interrupt
         }
         batchFuture = null;
     }
 
     private void cancelInitialization() {
-        lifecycleGeneration++;
         if ((initializationFuture != null) && !initializationFuture.isDone()) {
+            AppLogger.infof("%s: Requesting initialization cancellation. generation=%d, state=%s",
+                    LOG_COMPONENT, lifecycleGeneration, getSimulationState());
             initializationFuture.cancel(true);
         }
+        lifecycleGeneration++;
         initializationFuture = null;
     }
 
