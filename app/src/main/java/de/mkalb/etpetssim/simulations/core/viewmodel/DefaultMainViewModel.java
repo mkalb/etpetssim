@@ -56,8 +56,10 @@ public final class DefaultMainViewModel<
     private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
     private final SimulationEditToolBarViewModel<CTX> editToolBarViewModel;
     private @Nullable SM simulationManager;
+    private @Nullable Future<?> initializationFuture;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
+    private long initializationGeneration;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
@@ -275,6 +277,7 @@ public final class DefaultMainViewModel<
         resetSelectedProperties();
         resetClickedCoordinateProperties();
         stopTimer();
+        cancelInitialization();
         cancelBatch();
         shutdownBatchExecutor();
         simulationManager = null;
@@ -359,46 +362,28 @@ public final class DefaultMainViewModel<
     }
 
     private void handleStartAction() {
-        // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
-
-        resetSelectedProperties();
-
-        long startNanos = System.nanoTime();
-        try {
-            Optional<CON> config = createValidConfig();
-            if (config.isEmpty()) {
-                setSimulationState(SimulationState.ERROR);
-                AppLogger.warnf("%s: Cannot start simulation because configuration is invalid.", LOG_COMPONENT);
-                setNotificationType(SimulationNotificationType.INVALID_CONFIG);
-                return;
-            }
-
-            createAndInitSimulation(config.get());
-        } catch (IllegalArgumentException | IllegalStateException | NullPointerException
-                 | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
+        Optional<CON> config = createValidConfig();
+        if (config.isEmpty()) {
             setSimulationState(SimulationState.ERROR);
-            AppLogger.errorf(e, "%s: Failed to start simulation.", LOG_COMPONENT);
-            setNotificationType(SimulationNotificationType.EXCEPTION);
+            AppLogger.warnf("%s: Cannot start simulation because configuration is invalid.", LOG_COMPONENT);
+            setNotificationType(SimulationNotificationType.INVALID_CONFIG);
             return;
         }
-        long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
 
-        if (controlViewModel.isStartPaused()) {
-            setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation was started in paused state by the user. durationMillis=" + durationMillis);
-        } else if (controlViewModel.isModeTimed()) {
-            setSimulationState(SimulationState.RUNNING_TIMED);
-            logSimulationInfo("Simulation (timer) was started by the user. durationMillis=" + durationMillis);
+        resetSelectedProperties();
+        resetClickedCoordinateProperties();
+        observationStateViewModel.resetStatistics();
+        simulationManager = null;
 
-            startTimer();
-        } else if (controlViewModel.isModeBatch()) {
-            setSimulationState(SimulationState.RUNNING_BATCH);
-            logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
-
-            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
-                    controlViewModel.isModeBatchContinuous());
-        }
+        SimulationStartRequest<CON> request = new SimulationStartRequest<>(config.get(), controlViewModel.isStartPaused(),
+                controlViewModel.isModeTimed(), controlViewModel.isModeBatchContinuous(),
+                controlViewModel.stepDurationProperty().getValue(), controlViewModel.stepCountProperty().getValue(),
+                controlViewModel.isTerminationChecked());
+        ++initializationGeneration;
+        long generation = initializationGeneration;
+        setSimulationState(SimulationState.INITIALIZING);
+        initializationFuture = lifecycleExecutor.submit(() -> initializeSimulation(request, generation, System.nanoTime()));
     }
 
     private void handlePauseAction() {
@@ -419,12 +404,12 @@ public final class DefaultMainViewModel<
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
-        configureSimulationTimeout();
+        configureSimulationTimeout(controlViewModel.isModeTimed(), controlViewModel.stepDurationProperty().getValue());
         if (controlViewModel.isModeTimed()) {
             setSimulationState(SimulationState.RUNNING_TIMED);
             logSimulationInfo("Simulation (timer) was resumed by the user.");
 
-            startTimer();
+            startTimer(controlViewModel.stepDurationProperty().getValue());
         } else if (controlViewModel.isModeBatch()) {
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was resumed by the user.");
@@ -442,21 +427,62 @@ public final class DefaultMainViewModel<
         return Optional.of(config);
     }
 
-    private void createAndInitSimulation(CON config) {
-        simulationManager = simulationManagerFactory.apply(config, SimulationInitializationCancellation.none());
-        Objects.requireNonNull(simulationManager, "Simulation manager factory returned null.");
+    private void initializeSimulation(SimulationStartRequest<CON> request, long generation, long startNanos) {
+        try {
+            SM manager = simulationManagerFactory.apply(request.config(), SimulationInitializationCancellation.interruptionAware());
+            Objects.requireNonNull(manager, "Simulation manager factory returned null.");
+            Platform.runLater(() -> completeInitialization(request, generation, startNanos, manager));
+        } catch (SimulationInitializationCanceledException e) {
+            AppLogger.debugf("%s: Simulation initialization was canceled.", LOG_COMPONENT);
+        } catch (RuntimeException e) {
+            Platform.runLater(() -> failInitialization(generation, e));
+        }
+    }
 
-        configureSimulationTimeout();
+    private void completeInitialization(SimulationStartRequest<CON> request, long generation, long startNanos, SM manager) {
+        if (!isInitializationActive(generation)) {
+            return;
+        }
 
-        updateObservationStatistics(simulationManager.statistics());
-
+        initializationFuture = null;
+        simulationManager = manager;
+        configureSimulationTimeout(request.timedMode(), request.stepDurationMillis());
+        updateObservationStatistics(manager.statistics());
         simulationInitializedListener.run();
+
+        long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+        if (request.startPaused()) {
+            setSimulationState(SimulationState.PAUSED);
+            logSimulationInfo("Simulation was started in paused state by the user. durationMillis=" + durationMillis);
+        } else if (request.timedMode()) {
+            setSimulationState(SimulationState.RUNNING_TIMED);
+            logSimulationInfo("Simulation (timer) was started by the user. durationMillis=" + durationMillis);
+            startTimer(request.stepDurationMillis());
+        } else {
+            setSimulationState(SimulationState.RUNNING_BATCH);
+            logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
+            runBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
+        }
+    }
+
+    private void failInitialization(long generation, RuntimeException exception) {
+        if (!isInitializationActive(generation)) {
+            return;
+        }
+
+        initializationFuture = null;
+        setSimulationState(SimulationState.ERROR);
+        setNotificationType(SimulationNotificationType.EXCEPTION);
+        AppLogger.errorf(exception, "%s: Failed to initialize simulation.", LOG_COMPONENT);
+    }
+
+    private boolean isInitializationActive(long generation) {
+        return (initializationGeneration == generation) && (getSimulationState() == SimulationState.INITIALIZING);
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private void configureSimulationTimeout() {
-        if (controlViewModel.isModeTimed()) {
-            double stepDurationMillis = controlViewModel.stepDurationProperty().getValue();
+    private void configureSimulationTimeout(boolean timedMode, double stepDurationMillis) {
+        if (timedMode) {
             long timeoutExecuteMillis = Math.max(1L, (long) (stepDurationMillis * TIMEOUT_EXECUTE_FACTOR));
             timeoutExecuteNanos = TimeUnit.MILLISECONDS.toNanos(timeoutExecuteMillis);
             timeoutViewMillis = Math.max(1L, (long) (stepDurationMillis * TIMEOUT_VIEW_FACTOR));
@@ -641,8 +667,8 @@ public final class DefaultMainViewModel<
         return (thread != null) && thread.isAlive();
     }
 
-    private void startTimer() {
-        timer.start(Duration.millis(controlViewModel.stepDurationProperty().getValue()));
+    private void startTimer(double stepDurationMillis) {
+        timer.start(Duration.millis(stepDurationMillis));
     }
 
     private void stopTimer() {
@@ -661,6 +687,14 @@ public final class DefaultMainViewModel<
             batchFuture.cancel(true); // Attempts to interrupt
         }
         batchFuture = null;
+    }
+
+    private void cancelInitialization() {
+        initializationGeneration++;
+        if ((initializationFuture != null) && !initializationFuture.isDone()) {
+            initializationFuture.cancel(true);
+        }
+        initializationFuture = null;
     }
 
     private void shutdownBatchExecutor() {
@@ -782,6 +816,16 @@ public final class DefaultMainViewModel<
                     simulationManager.config(),
                     simulationManager.statistics());
         }
+    }
+
+    private record SimulationStartRequest<CON extends SimulationConfig>(
+            CON config,
+            boolean startPaused,
+            boolean timedMode,
+            boolean continuousBatchMode,
+            double stepDurationMillis,
+            int stepCount,
+            boolean terminationChecked) {
     }
 
 }

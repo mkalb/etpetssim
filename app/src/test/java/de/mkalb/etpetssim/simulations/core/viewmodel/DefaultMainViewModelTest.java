@@ -6,13 +6,17 @@ import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.conway.model.*;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
-import de.mkalb.etpetssim.simulations.core.model.StatisticExtrema;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +33,12 @@ final class DefaultMainViewModelTest {
     }
 
     private static Fixture createFixture() {
+        return createFixture(ConwaySimulationManager::new, Executors.newSingleThreadExecutor());
+    }
+
+    private static Fixture createFixture(
+            BiFunction<ConwayConfig, SimulationInitializationCancellation, ConwaySimulationManager> simulationManagerFactory,
+            ExecutorService lifecycleExecutor) {
         ObjectProperty<SimulationState> simulationState =
                 new SimpleObjectProperty<>(SimulationState.READY);
         var configViewModel = new ConwayConfigViewModel(simulationState);
@@ -41,37 +51,81 @@ final class DefaultMainViewModelTest {
                 configViewModel,
                 controlViewModel,
                 observationViewModel,
-                ConwaySimulationManager::new,
+                simulationManagerFactory,
                 ReadableGridModel::getGridCell,
-                new ConwayUserAction());
+                new ConwayUserAction(),
+                lifecycleExecutor);
         return new Fixture(mainViewModel, controlViewModel, observationViewModel);
     }
 
-    @Test
-    void testStartForwardsInitialHistoryAndExtrema() {
+    private static void startAndAwaitInitialization(Fixture fixture) throws InterruptedException {
+        CountDownLatch initializationCompleted = new CountDownLatch(1);
         FxTestSupport.runAndWait(() -> {
-            Fixture fixture = createFixture();
-
+            fixture.mainViewModel().setSimulationInitializedListener(initializationCompleted::countDown);
             fixture.controlViewModel().requestActionButton();
-
-            assertAll(
-                    () -> assertEquals(SimulationState.PAUSED, fixture.mainViewModel().getSimulationState()),
-                    () -> assertEquals(1, fixture.observationViewModel().getStatisticsHistory().size()),
-                    () -> assertEquals(0L, fixture.observationViewModel().getStatisticsHistory().getFirst().stepCount()),
-                    () -> assertFalse(fixture.observationViewModel().getStatisticsExtrema().minimumValues().isEmpty()),
-                    () -> assertFalse(fixture.observationViewModel().getStatisticsExtrema().maximumValues().isEmpty())
-            );
-
-            fixture.mainViewModel().shutdownSimulation();
+            assertEquals(SimulationState.INITIALIZING, fixture.mainViewModel().getSimulationState());
         });
+        assertTrue(initializationCompleted.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
     }
 
     @Test
-    void testShutdownClearsHistoryAndExtrema() {
-        FxTestSupport.runAndWait(() -> {
-            Fixture fixture = createFixture();
-            fixture.controlViewModel().requestActionButton();
+    void testStartForwardsInitialHistoryAndExtrema() throws InterruptedException {
+        Fixture fixture = FxTestSupport.supplyAndWait(DefaultMainViewModelTest::createFixture);
+        startAndAwaitInitialization(fixture);
 
+        FxTestSupport.runAndWait(() -> assertAll(
+                () -> assertEquals(SimulationState.PAUSED, fixture.mainViewModel().getSimulationState()),
+                () -> assertEquals(1, fixture.observationViewModel().getStatisticsHistory().size()),
+                () -> assertEquals(0L, fixture.observationViewModel().getStatisticsHistory().getFirst().stepCount()),
+                () -> assertFalse(fixture.observationViewModel().getStatisticsExtrema().minimumValues().isEmpty()),
+                () -> assertFalse(fixture.observationViewModel().getStatisticsExtrema().maximumValues().isEmpty())
+        ));
+
+        FxTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
+    @Test
+    void testStartInitializesOffJavaFxThread() throws InterruptedException {
+        CountDownLatch constructionStarted = new CountDownLatch(1);
+        CountDownLatch releaseConstruction = new CountDownLatch(1);
+        AtomicBoolean constructedOnFxThread = new AtomicBoolean();
+        ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
+        Fixture fixture = FxTestSupport.supplyAndWait(() -> createFixture((config, cancellation) -> {
+            constructedOnFxThread.set(Platform.isFxApplicationThread());
+            constructionStarted.countDown();
+            try {
+                releaseConstruction.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
+            return new ConwaySimulationManager(config, cancellation);
+        }, lifecycleExecutor));
+        CountDownLatch initializationCompleted = new CountDownLatch(1);
+
+        FxTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().setSimulationInitializedListener(initializationCompleted::countDown);
+            fixture.controlViewModel().requestActionButton();
+            assertAll(
+                    () -> assertEquals(SimulationState.INITIALIZING, fixture.mainViewModel().getSimulationState()),
+                    () -> assertFalse(fixture.mainViewModel().hasSimulationManager())
+            );
+        });
+
+        assertTrue(constructionStarted.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        assertFalse(constructedOnFxThread.get());
+        releaseConstruction.countDown();
+        assertTrue(initializationCompleted.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        FxTestSupport.runAndWait(() -> assertEquals(SimulationState.PAUSED, fixture.mainViewModel().getSimulationState()));
+        FxTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
+    @Test
+    void testShutdownClearsHistoryAndExtrema() throws InterruptedException {
+        Fixture fixture = FxTestSupport.supplyAndWait(DefaultMainViewModelTest::createFixture);
+        startAndAwaitInitialization(fixture);
+
+        FxTestSupport.runAndWait(() -> {
             fixture.mainViewModel().shutdownSimulation();
 
             assertAll(
