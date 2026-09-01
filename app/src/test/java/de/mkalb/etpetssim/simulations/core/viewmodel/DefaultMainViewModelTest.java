@@ -13,6 +13,7 @@ import javafx.beans.property.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
@@ -66,6 +67,26 @@ final class DefaultMainViewModelTest {
             assertEquals(SimulationState.INITIALIZING, fixture.mainViewModel().getSimulationState());
         });
         assertTrue(initializationCompleted.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+    }
+
+    private static Object getField(Object target, String fieldName) {
+        try {
+            Field field = DefaultMainViewModel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(target);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError("Failed to read field: " + fieldName, e);
+        }
+    }
+
+    private static Object getStaticField(String fieldName) {
+        try {
+            Field field = DefaultMainViewModel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(null);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError("Failed to read static field: " + fieldName, e);
+        }
     }
 
     @Test
@@ -170,6 +191,26 @@ final class DefaultMainViewModelTest {
                     () -> assertEquals(StatisticExtrema.empty(), fixture.observationViewModel().getStatisticsExtrema())
             );
         });
+    }
+
+    @Test
+    void testShutdownReleasesViewCallbacks() {
+        Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+
+        FxTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().setSimulationInitializedListener(() -> {});
+            fixture.mainViewModel().setSimulationStepListener(_ -> {});
+            fixture.mainViewModel().shutdownSimulation();
+        });
+
+        assertAll(
+                () -> assertSame(
+                        getStaticField("NO_OP_SIMULATION_INITIALIZED_LISTENER"),
+                        getField(fixture.mainViewModel(), "simulationInitializedListener")),
+                () -> assertSame(
+                        getStaticField("NO_OP_SIMULATION_STEP_LISTENER"),
+                        getField(fixture.mainViewModel(), "simulationStepListener"))
+        );
     }
 
     private record Fixture(

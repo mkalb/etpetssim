@@ -40,6 +40,8 @@ public final class DefaultMainViewModel<
     private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
     private static final double THROTTLE_DRAW_FACTOR = 0.3d;
     private static final String LOG_COMPONENT = "DefaultMainViewModel";
+    private static final Runnable NO_OP_SIMULATION_INITIALIZED_LISTENER = () -> {};
+    private static final Consumer<SimulationStepEvent> NO_OP_SIMULATION_STEP_LISTENER = _ -> {};
 
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
@@ -68,8 +70,8 @@ public final class DefaultMainViewModel<
     private long throttleDrawMillis = Long.MAX_VALUE;
 
     // Listener for view
-    private Runnable simulationInitializedListener = () -> {};
-    private Consumer<SimulationStepEvent> simulationStepListener = _ -> {};
+    private Runnable simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
+    private Consumer<SimulationStepEvent> simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
 
     /**
      * Creates a main view model.
@@ -289,8 +291,8 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
-        simulationInitializedListener = () -> {};
-        simulationStepListener = _ -> {};
+        simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
+        simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
         termination = new ExecutorSimulationTermination(lifecycleExecutor);
         return termination;
     }
