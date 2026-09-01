@@ -173,7 +173,22 @@ public abstract class AbstractDefaultMainView<
 
     private void handleSimulationReset() {
         AppLogger.infof("%s: Resetting simulation view.", LOG_COMPONENT);
+        clearCanvasLayers();
+        controlView.updateStepCount(0);
         observationView.initializeObservationLabels();
+    }
+
+    private void clearCanvasLayers() {
+        if (basePainter != null) {
+            basePainter.clearCanvasBackground();
+        }
+        if (dynamicPainter != null) {
+            dynamicPainter.clearCanvasBackground();
+        }
+        if (overlayPainter != null) {
+            overlayPainter.clearCanvasBackground();
+        }
+        skipOverlayActive = false;
     }
 
     private void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
