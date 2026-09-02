@@ -371,14 +371,20 @@ public final class GridInitializers {
             T fallback,
             Random random,
             Runnable cancellationCheck) {
-        cancellationCheck.run();
         if (percent <= 0.0d) {
-            return model -> fillWithConstant(model, fallback, cancellationCheck);
+            return model -> {
+                cancellationCheck.run();
+                fillWithConstant(model, fallback, cancellationCheck);
+            };
         }
         if (percent >= 1.0d) {
-            return model -> fillWithSupplier(model, entitySupplier, cancellationCheck);
+            return model -> {
+                cancellationCheck.run();
+                fillWithSupplier(model, entitySupplier, cancellationCheck);
+            };
         }
         return model -> {
+            cancellationCheck.run();
             int entityCount = (int) Math.round(percent * model.structure().size().area());
             if (percent <= 0.8d) {
                 fillWithConstant(model, fallback, cancellationCheck);
