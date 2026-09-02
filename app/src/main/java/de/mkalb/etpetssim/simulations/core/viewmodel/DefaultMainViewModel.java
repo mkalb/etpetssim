@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
@@ -39,12 +40,15 @@ public final class DefaultMainViewModel<
     private static final double TIMEOUT_VIEW_FACTOR = 0.5d;
     private static final double THROTTLE_DRAW_FACTOR = 0.3d;
     private static final String LOG_COMPONENT = "DefaultMainViewModel";
+    private static final Runnable NO_OP_SIMULATION_INITIALIZED_LISTENER = () -> {};
+    private static final Consumer<SimulationStepEvent> NO_OP_SIMULATION_STEP_LISTENER = _ -> {};
+    private static final Runnable NO_OP_SIMULATION_RESET_LISTENER = () -> {};
 
     private final DefaultControlViewModel controlViewModel;
     private final DefaultObservationViewModel<ENT, GC, STA> observationStateViewModel;
-    private final Function<CON, SM> simulationManagerFactory;
+    private final BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory;
     private final SimulationTimer timer;
-    private final ExecutorService batchExecutor;
+    private final ExecutorService lifecycleExecutor;
     private final ChangeListener<Boolean> actionButtonRequestedListener;
     private final ChangeListener<Boolean> cancelButtonRequestedListener;
     private final ChangeListener<SimulationState> simulationStateListener;
@@ -56,15 +60,20 @@ public final class DefaultMainViewModel<
     private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
     private final SimulationEditToolBarViewModel<CTX> editToolBarViewModel;
     private @Nullable SM simulationManager;
+    private @Nullable Future<?> initializationFuture;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
+    private long lifecycleGeneration;
+    private boolean disposed;
+    private @Nullable SimulationTermination termination;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
 
     // Listener for view
-    private Runnable simulationInitializedListener = () -> {};
-    private Consumer<SimulationStepEvent> simulationStepListener = _ -> {};
+    private Runnable simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
+    private Consumer<SimulationStepEvent> simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
+    private Runnable simulationResetListener = NO_OP_SIMULATION_RESET_LISTENER;
 
     /**
      * Creates a main view model.
@@ -81,9 +90,21 @@ public final class DefaultMainViewModel<
                                 SimulationConfigViewModel<CON> configViewModel,
                                 DefaultControlViewModel controlViewModel,
                                 DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
-                                Function<CON, SM> simulationManagerFactory,
+                                BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
                                 BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
                                 SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction) {
+        this(simulationState, configViewModel, controlViewModel, observationViewModel, simulationManagerFactory,
+                selectedGridCellProvider, simulationUserAction, createLifecycleExecutor());
+    }
+
+    DefaultMainViewModel(ObjectProperty<SimulationState> simulationState,
+                         SimulationConfigViewModel<CON> configViewModel,
+                         DefaultControlViewModel controlViewModel,
+                         DefaultObservationViewModel<ENT, GC, STA> observationViewModel,
+                         BiFunction<CON, SimulationInitializationCancellation, SM> simulationManagerFactory,
+                         BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider,
+                         SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction,
+                         ExecutorService lifecycleExecutor) {
         super(simulationState, configViewModel, observationViewModel);
         this.controlViewModel = controlViewModel;
         // Keep a concrete-typed reference because the inherited `observationViewModel`
@@ -95,11 +116,7 @@ public final class DefaultMainViewModel<
         this.simulationUserAction = simulationUserAction;
         editToolBarViewModel = new SimulationEditToolBarViewModel<>();
         timer = new SimulationTimer(this::runTimerStep);
-        batchExecutor = Executors.newSingleThreadExecutor(task -> {
-            var thread = new Thread(task, "simulation-batch-executor");
-            thread.setDaemon(true);
-            return thread;
-        });
+        this.lifecycleExecutor = lifecycleExecutor;
 
         actionButtonRequestedListener = (_, _, newVal) -> {
             if (newVal) {
@@ -136,10 +153,19 @@ public final class DefaultMainViewModel<
         lastClickedCoordinateProperty().addListener(lastClickedCoordinateListener);
     }
 
+    private static ExecutorService createLifecycleExecutor() {
+        return Executors.newSingleThreadExecutor(task -> {
+            var thread = new Thread(task, "simulation-lifecycle-executor");
+            thread.setDaemon(true);
+            return thread;
+        });
+    }
+
     private static boolean isSelectionState(SimulationState simulationState) {
         return switch (simulationState) {
             case PAUSED, CANCELED, FINISHED -> true;
-            case INITIAL, RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, ERROR, SHUTTING_DOWN -> false;
+            case READY, INITIALIZING, RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, ERROR,
+                 SHUTTING_DOWN -> false;
         };
     }
 
@@ -228,6 +254,19 @@ public final class DefaultMainViewModel<
         simulationStepListener = listener;
     }
 
+    /**
+     * Registers a callback invoked whenever statistics are reset, i.e. right after
+     * {@link DefaultObservationViewModel#resetStatistics()} is called on simulation restart or shutdown.
+     *
+     * <p>Use this to refresh observation labels/charts to their initial placeholder state so stale
+     * values from a previous or finished simulation do not linger until the next simulation initializes.
+     *
+     * @param listener callback invoked after statistics are reset
+     */
+    public void setSimulationResetListener(Runnable listener) {
+        simulationResetListener = listener;
+    }
+
     @Override
     public GridStructure getStructure() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
@@ -241,7 +280,11 @@ public final class DefaultMainViewModel<
     }
 
     @Override
-    public void shutdownSimulation() {
+    public SimulationTermination shutdownSimulation() {
+        if (disposed) {
+            return Objects.requireNonNull(termination);
+        }
+        disposed = true;
         AppLogger.infof("%s: Shutting down simulation during state=%s", LOG_COMPONENT, getSimulationState());
         setSimulationState(SimulationState.SHUTTING_DOWN);
 
@@ -258,10 +301,22 @@ public final class DefaultMainViewModel<
         resetSelectedProperties();
         resetClickedCoordinateProperties();
         stopTimer();
+        cancelInitialization();
         cancelBatch();
-        shutdownBatchExecutor();
+        shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
+        termination = new ExecutorSimulationTermination(lifecycleExecutor);
+        Runnable resetListener = simulationResetListener;
+        simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
+        simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
+        simulationResetListener = NO_OP_SIMULATION_RESET_LISTENER;
+        try {
+            resetListener.run();
+        } catch (RuntimeException e) {
+            AppLogger.error(e, LOG_COMPONENT + ": Failed to reset the simulation view during shutdown.");
+        }
+        return termination;
     }
 
     @Override
@@ -300,8 +355,6 @@ public final class DefaultMainViewModel<
             throw new IllegalStateException("Simulation is running but state is not RUNNING_TIMED or RUNNING_BATCH: " + getSimulationState());
         }
 
-        resetClickedCoordinateProperties();
-
         if (getSimulationState().isStartable()) {
             handleStartAction();
         } else if (getSimulationState().isRunning()) {
@@ -322,12 +375,14 @@ public final class DefaultMainViewModel<
                 stopTimer();
                 setSimulationState(SimulationState.CANCELED);
                 logSimulationInfo("Simulation (timer) was canceled by the user.");
+
                 int stepCount = (simulationManager != null) ? simulationManager.stepCount() : 0;
                 simulationStepListener.accept(new SimulationStepEvent(false, stepCount, true));
             }
             case RUNNING_BATCH -> {
                 setSimulationState(SimulationState.CANCELLING_BATCH);
                 logSimulationInfo("Simulation (batch) was canceled by the user. Waiting for batch to finish.");
+
                 cancelBatch();
             }
             case PAUSED -> {
@@ -342,49 +397,38 @@ public final class DefaultMainViewModel<
     }
 
     private void handleStartAction() {
-        // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
-
+        resetClickedCoordinateProperties();
         resetSelectedProperties();
 
-        long startNanos = System.nanoTime();
-        try {
-            Optional<CON> config = createValidConfig();
-            if (config.isEmpty()) {
-                setSimulationState(SimulationState.ERROR);
-                AppLogger.warnf("%s: Cannot start simulation because configuration is invalid.", LOG_COMPONENT);
-                setNotificationType(SimulationNotificationType.INVALID_CONFIG);
-                return;
-            }
+        observationStateViewModel.resetStatistics();
+        simulationResetListener.run();
+        simulationManager = null;
 
-            createAndInitSimulation(config.get());
-        } catch (IllegalArgumentException | IllegalStateException | NullPointerException
-                 | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
+        Optional<CON> config = createValidConfig();
+        if (config.isEmpty()) {
             setSimulationState(SimulationState.ERROR);
-            AppLogger.errorf(e, "%s: Failed to start simulation.", LOG_COMPONENT);
-            setNotificationType(SimulationNotificationType.EXCEPTION);
+            AppLogger.warnf("%s: Cannot start simulation because configuration is invalid.", LOG_COMPONENT);
+            setNotificationType(SimulationNotificationType.INVALID_CONFIG);
             return;
         }
-        long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
 
-        if (controlViewModel.isStartPaused()) {
-            setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation was started in paused state by the user. durationMillis=" + durationMillis);
-        } else if (controlViewModel.isModeTimed()) {
-            setSimulationState(SimulationState.RUNNING_TIMED);
-            logSimulationInfo("Simulation (timer) was started by the user. durationMillis=" + durationMillis);
+        SimulationStartRequest<CON> request = new SimulationStartRequest<>(config.get(), controlViewModel.isStartPaused(),
+                controlViewModel.isModeTimed(), controlViewModel.isModeBatchContinuous(),
+                controlViewModel.stepDurationProperty().getValue(), controlViewModel.stepCountProperty().getValue(),
+                controlViewModel.isTerminationChecked());
+        ++lifecycleGeneration;
+        long generation = lifecycleGeneration;
 
-            startTimer();
-        } else if (controlViewModel.isModeBatch()) {
-            setSimulationState(SimulationState.RUNNING_BATCH);
-            logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
+        setSimulationState(SimulationState.INITIALIZING);
+        logSimulationInfo("Simulation initialization started by the user. generation=" + generation + ", request=" + request);
 
-            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
-                    controlViewModel.isModeBatchContinuous());
-        }
+        initializationFuture = lifecycleExecutor.submit(() -> initializeSimulation(request, generation, System.nanoTime()));
     }
 
     private void handlePauseAction() {
+        resetClickedCoordinateProperties();
+
         if (getSimulationState() == SimulationState.RUNNING_TIMED) {
             setSimulationState(SimulationState.PAUSED);
             logSimulationInfo("Simulation (timer) was paused by the user.");
@@ -399,15 +443,15 @@ public final class DefaultMainViewModel<
     }
 
     private void handleResumeAction() {
-        // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
+        resetClickedCoordinateProperties();
 
-        configureSimulationTimeout();
+        configureSimulationTimeout(controlViewModel.isModeTimed(), controlViewModel.stepDurationProperty().getValue());
         if (controlViewModel.isModeTimed()) {
             setSimulationState(SimulationState.RUNNING_TIMED);
             logSimulationInfo("Simulation (timer) was resumed by the user.");
 
-            startTimer();
+            startTimer(controlViewModel.stepDurationProperty().getValue());
         } else if (controlViewModel.isModeBatch()) {
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was resumed by the user.");
@@ -425,21 +469,80 @@ public final class DefaultMainViewModel<
         return Optional.of(config);
     }
 
-    private void createAndInitSimulation(CON config) {
-        simulationManager = simulationManagerFactory.apply(config);
-        Objects.requireNonNull(simulationManager, "Simulation manager factory returned null.");
+    private void initializeSimulation(SimulationStartRequest<CON> request, long generation, long startNanos) {
+        try {
+            AppLogger.infof("%s: Simulation initialization started. generation=%d, request=%s", LOG_COMPONENT, generation, request);
+            SM manager = simulationManagerFactory.apply(request.config(), SimulationInitializationCancellation.interruptionAware());
+            Objects.requireNonNull(manager, "Simulation manager factory returned null.");
+            AppLogger.infof("%s: Simulation manager was created; scheduling initialization completion. generation=%d, request=%s",
+                    LOG_COMPONENT, generation, request);
+            Platform.runLater(() -> completeInitialization(request, generation, startNanos, manager));
+        } catch (SimulationInitializationCanceledException e) {
+            AppLogger.infof("%s: Simulation initialization was canceled. generation=%d, request=%s",
+                    LOG_COMPONENT, generation, request);
+        } catch (RuntimeException e) {
+            Platform.runLater(() -> failInitialization(request, generation, e));
+        }
+    }
 
-        configureSimulationTimeout();
+    private void completeInitialization(SimulationStartRequest<CON> request, long generation, long startNanos, SM manager) {
+        if (!isInitializationActive(generation)) {
+            AppLogger.infof("%s: Discarding completed initialization because it is no longer active. generation=%d, activeGeneration=%d, state=%s",
+                    LOG_COMPONENT, generation, lifecycleGeneration, getSimulationState());
+            return;
+        }
 
-        updateObservationStatistics(simulationManager.statistics());
+        try {
+            initializationFuture = null;
+            simulationManager = manager;
+            configureSimulationTimeout(request.timedMode(), request.stepDurationMillis());
+            updateObservationStatistics(manager.statistics());
+            simulationInitializedListener.run();
 
-        simulationInitializedListener.run();
+            long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+            if (request.startPaused()) {
+                setSimulationState(SimulationState.PAUSED);
+                logSimulationInfo("Simulation was started in paused state by the user. durationMillis=" + durationMillis);
+            } else if (request.timedMode()) {
+                setSimulationState(SimulationState.RUNNING_TIMED);
+                logSimulationInfo("Simulation (timer) was started by the user. durationMillis=" + durationMillis);
+                startTimer(request.stepDurationMillis());
+            } else {
+                setSimulationState(SimulationState.RUNNING_BATCH);
+                logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
+                runBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
+            }
+        } catch (RuntimeException e) {
+            if (isInitializationActive(generation)) {
+                simulationManager = null;
+                failInitialization(request, generation, e);
+            }
+        }
+    }
+
+    private void failInitialization(SimulationStartRequest<CON> request, long generation, RuntimeException exception) {
+        if (!isInitializationActive(generation)) {
+            return;
+        }
+
+        initializationFuture = null;
+        setSimulationState(SimulationState.ERROR);
+        setNotificationType(SimulationNotificationType.EXCEPTION);
+        AppLogger.errorf(exception, "%s: Failed to initialize simulation. generation=%d, request=%s",
+                LOG_COMPONENT, generation, request);
+    }
+
+    private boolean isInitializationActive(long generation) {
+        return isActiveTask(generation) && (getSimulationState() == SimulationState.INITIALIZING);
+    }
+
+    private boolean isActiveTask(long generation) {
+        return !disposed && (lifecycleGeneration == generation);
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private void configureSimulationTimeout() {
-        if (controlViewModel.isModeTimed()) {
-            double stepDurationMillis = controlViewModel.stepDurationProperty().getValue();
+    private void configureSimulationTimeout(boolean timedMode, double stepDurationMillis) {
+        if (timedMode) {
             long timeoutExecuteMillis = Math.max(1L, (long) (stepDurationMillis * TIMEOUT_EXECUTE_FACTOR));
             timeoutExecuteNanos = TimeUnit.MILLISECONDS.toNanos(timeoutExecuteMillis);
             timeoutViewMillis = Math.max(1L, (long) (stepDurationMillis * TIMEOUT_VIEW_FACTOR));
@@ -526,7 +629,9 @@ public final class DefaultMainViewModel<
     }
 
     private void runBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
-        batchFuture = batchExecutor.submit(() -> {
+        ++lifecycleGeneration;
+        long generation = lifecycleGeneration;
+        batchFuture = lifecycleExecutor.submit(() -> {
             batchThread = Thread.currentThread();
             try {
                 var manager = simulationManager;
@@ -540,7 +645,7 @@ public final class DefaultMainViewModel<
                     var stepEvent = new SimulationStepEvent(true, manager.stepCount(), false);
                     Platform.runLater(() -> {
                         // Check at JavaFX-Thread if it is still running.
-                        if (getSimulationState() == SimulationState.RUNNING_BATCH) {
+                        if (isActiveTask(generation) && (getSimulationState() == SimulationState.RUNNING_BATCH)) {
                             simulationStepListener.accept(stepEvent);
                         }
                     });
@@ -552,6 +657,9 @@ public final class DefaultMainViewModel<
                 boolean executorFinished = executionResult.isFinished() && manager.isExecutorFinished();
 
                 Platform.runLater(() -> {
+                    if (!isActiveTask(generation)) {
+                        return;
+                    }
                     if (getSimulationState() == SimulationState.RUNNING_BATCH) {
                         if (executorFinished) {
                             setSimulationState(SimulationState.FINISHED);
@@ -604,6 +712,9 @@ public final class DefaultMainViewModel<
             } catch (IllegalArgumentException | IllegalStateException | NullPointerException
                      | IndexOutOfBoundsException | NoSuchElementException | UnsupportedOperationException e) {
                 Platform.runLater(() -> {
+                    if (!isActiveTask(generation)) {
+                        return;
+                    }
                     setNotificationType(SimulationNotificationType.EXCEPTION);
 
                     setSimulationState(SimulationState.ERROR);
@@ -624,8 +735,8 @@ public final class DefaultMainViewModel<
         return (thread != null) && thread.isAlive();
     }
 
-    private void startTimer() {
-        timer.start(Duration.millis(controlViewModel.stepDurationProperty().getValue()));
+    private void startTimer(double stepDurationMillis) {
+        timer.start(Duration.millis(stepDurationMillis));
     }
 
     private void stopTimer() {
@@ -641,21 +752,24 @@ public final class DefaultMainViewModel<
 
     private void cancelBatch() {
         if ((batchFuture != null) && !batchFuture.isDone()) {
+            AppLogger.infof("%s: Requesting batch cancellation. state=%s", LOG_COMPONENT, getSimulationState());
             batchFuture.cancel(true); // Attempts to interrupt
         }
         batchFuture = null;
     }
 
-    private void shutdownBatchExecutor() {
-        batchExecutor.shutdown();
-        try {
-            if (!batchExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
-                batchExecutor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            batchExecutor.shutdownNow();
-            Thread.currentThread().interrupt();
+    private void cancelInitialization() {
+        if ((initializationFuture != null) && !initializationFuture.isDone()) {
+            AppLogger.infof("%s: Requesting initialization cancellation. generation=%d, state=%s",
+                    LOG_COMPONENT, lifecycleGeneration, getSimulationState());
+            initializationFuture.cancel(true);
         }
+        lifecycleGeneration++;
+        initializationFuture = null;
+    }
+
+    private void shutdownLifecycleExecutor() {
+        lifecycleExecutor.shutdown();
     }
 
     private void updateObservationStatistics(STA statistics) {
@@ -765,6 +879,30 @@ public final class DefaultMainViewModel<
                     simulationManager.config(),
                     simulationManager.statistics());
         }
+    }
+
+    private record ExecutorSimulationTermination(ExecutorService executor) implements SimulationTermination {
+
+        @Override
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+            return executor.awaitTermination(timeout, unit);
+        }
+
+        @Override
+        public void shutdownNow() {
+            executor.shutdownNow();
+        }
+
+    }
+
+    private record SimulationStartRequest<CON extends SimulationConfig>(
+            CON config,
+            boolean startPaused,
+            boolean timedMode,
+            boolean continuousBatchMode,
+            double stepDurationMillis,
+            int stepCount,
+            boolean terminationChecked) {
     }
 
 }

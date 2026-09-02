@@ -3,6 +3,16 @@ package de.mkalb.etpetssim.simulations.core;
 import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.core.AppLocalization;
+import de.mkalb.etpetssim.simulations.conway.view.ConwayMainView;
+import de.mkalb.etpetssim.simulations.etpets.view.EtpetsMainView;
+import de.mkalb.etpetssim.simulations.forest.view.ForestMainView;
+import de.mkalb.etpetssim.simulations.lab.view.LabMainView;
+import de.mkalb.etpetssim.simulations.langton.view.LangtonMainView;
+import de.mkalb.etpetssim.simulations.rebounding.view.ReboundingMainView;
+import de.mkalb.etpetssim.simulations.snake.view.SnakeMainView;
+import de.mkalb.etpetssim.simulations.start.StartMainView;
+import de.mkalb.etpetssim.simulations.sugar.view.SugarMainView;
+import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -18,6 +28,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @Execution(ExecutionMode.SAME_THREAD)
 final class SimulationFactoryTest {
 
+    private static final Map<SimulationType, Class<?>> EXPECTED_MAIN_VIEW_TYPES = Map.ofEntries(
+            Map.entry(SimulationType.STARTSCREEN, StartMainView.class),
+            Map.entry(SimulationType.ET_PETS, EtpetsMainView.class),
+            Map.entry(SimulationType.WATOR, WatorMainView.class),
+            Map.entry(SimulationType.CONWAYS_LIFE, ConwayMainView.class),
+            Map.entry(SimulationType.LANGTONS_ANT, LangtonMainView.class),
+            Map.entry(SimulationType.FOREST_FIRE, ForestMainView.class),
+            Map.entry(SimulationType.SUGARSCAPE, SugarMainView.class),
+            Map.entry(SimulationType.SNAKE, SnakeMainView.class),
+            Map.entry(SimulationType.REBOUNDING_ENTITIES, ReboundingMainView.class),
+            Map.entry(SimulationType.SIMULATION_LAB, LabMainView.class));
+
     @BeforeAll
     static void setUpBeforeAll() {
         if (!AppLocalization.isInitialized()) {
@@ -27,17 +49,13 @@ final class SimulationFactoryTest {
     }
 
     private static Stage createStage() {
-        Stage stage = FxTestSupport.supplyAndWait(Stage::new);
-        assertNotNull(stage, "Stage must not be null after FX initialization");
-        return stage;
+        return FxTestSupport.supplyAndWaitNonNull(Stage::new);
     }
 
     private static SimulationInstance createInstance(SimulationType type) {
         Stage stage = createStage();
-        SimulationInstance instance = FxTestSupport.supplyAndWait(() ->
+        return FxTestSupport.supplyAndWaitNonNull(() ->
                 SimulationFactory.createInstance(type, stage, (_, _) -> {}));
-        assertNotNull(instance, "SimulationInstance must not be null for type: " + type);
-        return instance;
     }
 
     // --- createInstance() returns non-null for every SimulationType ---
@@ -141,6 +159,19 @@ final class SimulationFactoryTest {
     void testCreateInstanceSimulationLab() {
         SimulationInstance instance = createInstance(SimulationType.SIMULATION_LAB);
         assertEquals(SimulationType.SIMULATION_LAB, instance.simulationType());
+    }
+
+    // --- Concrete main view mapping ---
+
+    @Test
+    void testCreateInstanceUsesExpectedMainViewForEverySimulationType() {
+        assertEquals(EnumSet.allOf(SimulationType.class), EXPECTED_MAIN_VIEW_TYPES.keySet());
+
+        for (SimulationType type : SimulationType.values()) {
+            Class<?> expectedMainViewType = EXPECTED_MAIN_VIEW_TYPES.get(type);
+            SimulationInstance instance = createInstance(type);
+            assertInstanceOf(expectedMainViewType, instance.simulationMainView());
+        }
     }
 
     // --- Enum coverage guard ---

@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 
 import java.util.*;
 
@@ -18,7 +18,12 @@ public final class ConwaySimulationManager
     private final TimedSimulationExecutor<ConwayEntity, WritableGridModel<ConwayEntity>> executor;
 
     public ConwaySimulationManager(ConwayConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public ConwaySimulationManager(ConwayConfig config, SimulationInitializationCancellation cancellation) {
         super(config, ConwayStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new ConwayStatistics(structure);
@@ -29,18 +34,22 @@ public final class ConwaySimulationManager
         var terminationCondition = new ConwayTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
-        initializeGrid(config, model, random);
-
+        initializeGrid(config, model, random, cancellation);
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(ConwayConfig config, WritableGridModel<ConwayEntity> model, Random random) {
+    private void initializeGrid(ConwayConfig config,
+                                WritableGridModel<ConwayEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
                 () -> ConwayEntity.ALIVE,
                 config.alivePercent(),
                 ConwayEntity.DEAD,
-                random);
+                random,
+                cancellation::checkCanceled);
         gridInitializer.initialize(model);
     }
 

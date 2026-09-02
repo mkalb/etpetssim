@@ -13,6 +13,7 @@ import javafx.stage.*;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Main JavaFX {@link Application} implementation.
@@ -37,8 +38,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private static final double FALLBACK_WINDOW_DECORATION_WIDTH = 16.0d;
     private static final double FALLBACK_WINDOW_DECORATION_HEIGHT = 39.0d;
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
-
+    private static final long TERMINATION_TIMEOUT_SECONDS = 5L;
+    private final List<SimulationTermination> pendingTerminations = new ArrayList<>();
     private @Nullable SimulationInstance currentSimulationInstance;
+    private boolean terminationAwaited;
 
     /**
      * Determines the initial simulation type from parsed arguments.
@@ -83,13 +86,13 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         Objects.requireNonNull(simulationType, "SimulationType must not be null");
 
         AppLogger.info("Application: Updating stage scene to simulation: " + simulationType);
+        shutdownCurrentSimulation();
 
         // Create new simulation instance with header and main region
         var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::switchToSimulation);
         var simulationHeaderNode = buildSimulationHeaderNode(stage, simulationInstance);
         var simulationMainRegion = simulationInstance.region();
 
-        shutdownCurrentSimulation();
         currentSimulationInstance = simulationInstance;
 
         // Create new root layout with header and main region
@@ -138,9 +141,36 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         try {
             AppLogger.info("Application: Shutting down simulation instance: " + simulationInstance.simulationType());
             simulationInstance.region().setDisable(true);
-            simulationInstance.simulationMainView().shutdownSimulation();
+            pendingTerminations.add(simulationInstance.simulationMainView().shutdownSimulation());
         } catch (Exception e) {
             AppLogger.error(e, "Application: Error during simulation shutdown: " + simulationInstance.simulationType());
+        }
+    }
+
+    private void awaitPendingTerminations() {
+        if (terminationAwaited) {
+            return;
+        }
+        terminationAwaited = true;
+
+        long deadlineNanos = System.nanoTime() + TimeUnit.SECONDS.toNanos(TERMINATION_TIMEOUT_SECONDS);
+        boolean interrupted = false;
+        for (SimulationTermination termination : pendingTerminations) {
+            long remainingNanos = deadlineNanos - System.nanoTime();
+            try {
+                if ((remainingNanos <= 0L) || !termination.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
+                    AppLogger.warn("Application: Simulation executor did not terminate before application shutdown timeout.");
+                    termination.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                interrupted = true;
+                pendingTerminations.forEach(SimulationTermination::shutdownNow);
+                break;
+            }
+        }
+        pendingTerminations.clear();
+        if (interrupted) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -374,6 +404,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     public void stop() {
         AppLogger.info("Application: Shutting down.");
         shutdownCurrentSimulation();
+        awaitPendingTerminations();
         AppLogger.shutdown();
     }
 

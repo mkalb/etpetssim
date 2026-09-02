@@ -7,6 +7,7 @@ import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationObservationViewModel;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -33,11 +34,14 @@ public abstract class AbstractObservationView<
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
+    private final List<StatisticHistoryChartView> statisticHistoryChartViews = new ArrayList<>();
     private @Nullable GC selectedGridCell;
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
     private @Nullable List<StatisticMetric<STA>> genericMetrics;
     private @Nullable List<MetricLabels> genericMetricLabels;
+    private @Nullable ReadOnlyObjectProperty<@Nullable GC> selectedGridCellProperty;
+    private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
 
     /**
      * Constructs a new observation view bound to the given view model and entity descriptor registry.
@@ -237,10 +241,26 @@ public abstract class AbstractObservationView<
      */
     protected final void registerSelectedCellListener(ReadOnlyObjectProperty<@Nullable GC> property) {
         selectedGridCell = property.get();
-        property.addListener((_, _, newCell) -> {
+        selectedGridCellProperty = property;
+        selectedGridCellListener = (_, _, newCell) -> {
             selectedGridCell = newCell;
             onSelectedCellChanged(newCell);
-        });
+        };
+        property.addListener(selectedGridCellListener);
+    }
+
+    @Override
+    public final void shutdownObservation() {
+        if ((selectedGridCellProperty != null) && (selectedGridCellListener != null)) {
+            selectedGridCellProperty.removeListener(selectedGridCellListener);
+        }
+        selectedGridCellProperty = null;
+        selectedGridCellListener = null;
+
+        for (StatisticHistoryChartView chartView : statisticHistoryChartViews) {
+            chartView.shutdown();
+        }
+        statisticHistoryChartViews.clear();
     }
 
     /**
@@ -494,10 +514,11 @@ public abstract class AbstractObservationView<
                 genericMetrics.stream().noneMatch(m -> m.chartGroup() != StatisticChartGroup.NONE)) {
             return null;
         }
-        return new StatisticHistoryChartView(
+        StatisticHistoryChartView chartView = new StatisticHistoryChartView(
                 genericMetrics,
-                viewModel.statisticsHistoryProperty())
-                .titledPane();
+                viewModel.statisticsHistoryProperty());
+        statisticHistoryChartViews.add(chartView);
+        return chartView.titledPane();
     }
 
     private record MetricLabels(

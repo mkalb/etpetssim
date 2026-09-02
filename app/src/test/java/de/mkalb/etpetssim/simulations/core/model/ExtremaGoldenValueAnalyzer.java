@@ -13,10 +13,10 @@ import java.util.*;
  *
  * <p>Current golden values (seed=1, 20 steps, default constraints):
  * <pre>
- *   Conway  - minAliveCells   : 3575 | maxAliveCells   : 6945
- *             maxChangedCells : 6475
+ *   Conway  - minAliveCells   : 3806 | maxAliveCells   : 6749
+ *             maxChangedCells : 6353
  *   Forest  - maxEmptyCells   : 4000
- *             minTreeCells    : 1000 | maxTreeCells    : 1037 | maxBurningCells : 17
+ *             minTreeCells    : 1000 | maxTreeCells    : 1069 | maxBurningCells : 7
  *   Wator   - minFishCells    : 1900 | maxFishCells    : 6127
  *             minSharkCells   : 1000 | maxSharkCells   : 3002
  * </pre>

@@ -19,4 +19,9 @@ public interface SimulationObservationView {
      */
     void initializeObservationLabels();
 
+    /**
+     * Releases listeners and bindings owned by the observation view.
+     */
+    void shutdownObservation();
+
 }

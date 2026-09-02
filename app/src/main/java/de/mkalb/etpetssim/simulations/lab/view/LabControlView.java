@@ -31,8 +31,8 @@ public final class LabControlView
         drawButtonModel.setOnAction(_ -> viewModel.requestDrawModel());
         drawButtonTest.setOnAction(_ -> viewModel.requestDrawTest());
 
-        drawButtonModel.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.INITIAL));
-        drawButtonTest.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.INITIAL));
+        drawButtonModel.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.READY));
+        drawButtonTest.disableProperty().bind(viewModel.simulationStateProperty().isEqualTo(SimulationState.READY));
 
         HBox buttonBox = new HBox(drawButton, drawButtonModel, drawButtonTest);
         buttonBox.getStyleClass().add(FXStyleClasses.CONTROL_BUTTON_HBOX);

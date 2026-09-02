@@ -4,11 +4,13 @@ import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.support.*;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.snake.model.entity.*;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
 
 import java.util.*;
+
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
 
 public final class SnakeSimulationManager
         extends AbstractTimedSimulationManager<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
@@ -38,7 +40,12 @@ public final class SnakeSimulationManager
     private int nextSnakeId;
 
     public SnakeSimulationManager(SnakeConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public SnakeSimulationManager(SnakeConfig config, SimulationInitializationCancellation cancellation) {
         super(config, SnakeStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new SnakeStatistics(structure);
@@ -50,9 +57,9 @@ public final class SnakeSimulationManager
         var terminationCondition = new SnakeTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
-        initializeGrid(config, model, random);
+        initializeGrid(config, model, random, cancellation);
         nextSnakeId = config.snakes();
-
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
@@ -65,13 +72,18 @@ public final class SnakeSimulationManager
         nextSnakeId++;
     }
 
-    private void initializeGrid(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
-        wallInitializer(config, random).initialize(model);
-        snakeInitializer(config, random).initialize(model);
-        foodInitializer(config, model, random).initialize(model);
+    private void initializeGrid(SnakeConfig config,
+                                WritableGridModel<SnakeEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
+        wallInitializer(config, random, cancellation).initialize(model);
+        snakeInitializer(config, random, cancellation).initialize(model);
+        foodInitializer(config, model, random, cancellation).initialize(model);
     }
 
-    private GridInitializer<SnakeEntity> wallInitializer(SnakeConfig config, Random random) {
+    private GridInitializer<SnakeEntity> wallInitializer(SnakeConfig config,
+                                                         Random random,
+                                                         SimulationInitializationCancellation cancellation) {
         int width = structure.size().width();
         int height = structure.size().height();
         int wallCount = config.verticalWalls();
@@ -94,38 +106,51 @@ public final class SnakeSimulationManager
             // Calculate wall y-positions and create wall cells
             List<GridCell<SnakeEntity>> cells = new ArrayList<>();
             for (int x : wallXPositions) {
+                cancellation.checkCanceled();
                 int yStart = random.nextInt(height);
                 int maxLength = Math.min(height - WALL_HEIGHT_MARGIN, height - yStart);
                 int length = random.nextInt(maxLength);
                 int yEnd = yStart + length;
 
                 for (int y = yStart; y <= yEnd; y++) {
+                    if ((y & CANCELLATION_CHECK_MASK) == 0) {
+                        cancellation.checkCanceled();
+                    }
                     cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
                 }
             }
-            return GridInitializers.fromList(cells);
+            return GridInitializers.fromList(cells, cancellation::checkCanceled);
         }
         return GridInitializers.identity();
     }
 
-    private GridInitializer<SnakeEntity> snakeInitializer(SnakeConfig config, Random random) {
+    private GridInitializer<SnakeEntity> snakeInitializer(SnakeConfig config,
+                                                          Random random,
+                                                          SimulationInitializationCancellation cancellation) {
         if (config.snakes() > 0) {
             var strategies = SnakeMoveStrategies.strategiesForConfig();
             List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
             for (int i = 0; i < config.snakes(); i++) {
+                if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                    cancellation.checkCanceled();
+                }
                 SnakeMoveStrategy strategy = strategies.get(i % strategies.size());
                 snakeHeads.add(new SnakeHead(i, strategy, config.initialPendingGrowth(), -1));
             }
             return GridInitializers.placeAllAtRandomPositions(
                     snakeHeads,
                     SnakeEntity::isGround,
-                    random);
+                    random,
+                    cancellation::checkCanceled);
         }
         return GridInitializers.identity();
     }
 
     @SuppressWarnings("NumericCastThatLosesPrecision")
-    private GridInitializer<SnakeEntity> foodInitializer(SnakeConfig config, WritableGridModel<SnakeEntity> model, Random random) {
+    private GridInitializer<SnakeEntity> foodInitializer(SnakeConfig config,
+                                                         WritableGridModel<SnakeEntity> model,
+                                                         Random random,
+                                                         SimulationInitializationCancellation cancellation) {
         if (config.foodCells() > 0) {
             int freeGroundCells = (int) model.countEntities(SnakeEntity::isGround);
             int foodCells = Math.min(config.foodCells(), freeGroundCells);
@@ -133,7 +158,8 @@ public final class SnakeSimulationManager
                     foodCells,
                     () -> TerrainConstant.GROWTH_FOOD,
                     SnakeEntity::isGround,
-                    random);
+                    random,
+                    cancellation::checkCanceled);
         }
         return GridInitializers.identity();
     }
