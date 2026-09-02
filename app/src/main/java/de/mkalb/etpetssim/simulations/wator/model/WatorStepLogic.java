@@ -40,15 +40,15 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
         }
 
         if (entity instanceof Fish fish) {
-            fishLogic(agentCell, model, stepIndex, statistics, fish, waterCells);
+            performFishStep(agentCell, model, stepIndex, statistics, fish, waterCells);
         } else if (entity instanceof Shark shark) {
-            sharkLogic(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
+            performSharkStep(agentCell, model, stepIndex, statistics, shark, fishCells, waterCells);
         }
     }
 
-    private void fishLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
-                           WatorStatistics statistics,
-                           Fish fish, List<GridCell<WatorEntity>> waterCells) {
+    private void performFishStep(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
+                                 WatorStatistics statistics,
+                                 Fish fish, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate fishOriginalCoordinate = agentCell.coordinate();
         GridCoordinate fishNewCoordinate = fishOriginalCoordinate;
 
@@ -84,9 +84,9 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
         }
     }
 
-    private void sharkLogic(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
-                            WatorStatistics statistics,
-                            Shark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
+    private void performSharkStep(GridCell<WatorEntity> agentCell, WritableGridModel<WatorEntity> model, int stepIndex,
+                                  WatorStatistics statistics,
+                                  Shark shark, List<GridCell<WatorEntity>> fishCells, List<GridCell<WatorEntity>> waterCells) {
         GridCoordinate sharkOriginalCoordinate = agentCell.coordinate();
         GridCoordinate sharkNewCoordinate = sharkOriginalCoordinate;
 
