@@ -223,6 +223,34 @@ final class TimedStatisticsTrackingTest {
     }
 
     @Test
+    void testConwayInitializationHonorsCancellationDuringGridPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new ConwaySimulationManager(createConwayConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testForestInitializationHonorsCancellationDuringGridPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new ForestSimulationManager(createForestConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testLangtonInitializationHonorsCancellationBeforeGridInitialization() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new LangtonSimulationManager(createLangtonConfig(), cancellationOnCheck(1))).getMessage());
+    }
+
+    @Test
+    void testSugarInitializationHonorsCancellationDuringRadiusMapCalculation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new SugarSimulationManager(createSugarConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
     void testWatorInitializationHonorsCancellationDuringFishPopulation() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
