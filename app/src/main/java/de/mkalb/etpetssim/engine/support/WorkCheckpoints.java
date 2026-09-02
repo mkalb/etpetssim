@@ -15,6 +15,9 @@ public final class WorkCheckpoints {
      */
     public static final int CANCELLATION_CHECK_MASK = CANCELLATION_CHECK_INTERVAL - 1;
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private WorkCheckpoints() {
     }
 
