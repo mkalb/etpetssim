@@ -21,6 +21,9 @@ import javax.tools.ToolProvider;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.ExpressionStatementTree;
+import com.sun.source.tree.IdentifierTree;
+import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TypeParameterTree;
@@ -253,7 +256,7 @@ public final class JavaMethodInventory {
                 constructor ? "<init>" : methodTree.getName().toString(),
                 memberKind.name(),
                 compactConstructor ? "" : parameterTypes(methodTree, compilationUnit, sourcePositions, source),
-                visibility(methodTree),
+                visibility(methodTree, declaringClass, constructor),
                 modifiers(methodTree),
                 constructor ? "" : methodTree.getReturnType().toString(),
                 methodTree.getThrows().stream().map(Tree::toString).collect(java.util.stream.Collectors.joining(", ")),
@@ -283,7 +286,24 @@ public final class JavaMethodInventory {
             return false;
         }
         String header = source.substring(Math.toIntExact(methodStart), Math.toIntExact(bodyStart));
-        return !header.matches("(?s).*\\b" + java.util.regex.Pattern.quote(declaringClass.getSimpleName().toString()) + "\\s*\\(.*");
+        return !hasConstructorParameterList(header, declaringClass.getSimpleName().toString());
+    }
+
+    private static boolean hasConstructorParameterList(String header, String constructorName) {
+        for (int position = 0; position < header.length(); ) {
+            SourceToken token = nextSourceToken(header, position);
+            if (token == null) {
+                return false;
+            }
+            if (token.text().equals(constructorName)) {
+                SourceToken followingToken = nextSourceToken(header, token.endPosition());
+                if ((followingToken != null) && followingToken.text().equals("(")) {
+                    return true;
+                }
+            }
+            position = token.endPosition();
+        }
+        return false;
     }
 
     private static String parameterTypes(
@@ -304,18 +324,38 @@ public final class JavaMethodInventory {
             String source
     ) {
         String type = parameter.getType().toString();
-        long parameterStart = sourcePositions.getStartPosition(compilationUnit, parameter);
-        long parameterEnd = sourcePositions.getEndPosition(compilationUnit, parameter);
-        if ((parameterStart < 0) || (parameterEnd < parameterStart)) {
+        long typeStart = sourcePositions.getStartPosition(compilationUnit, parameter.getType());
+        long typeEnd = sourcePositions.getEndPosition(compilationUnit, parameter.getType());
+        if ((typeStart < 0) || (typeEnd < typeStart)) {
             return type;
         }
-        String parameterSource = source.substring(Math.toIntExact(parameterStart), Math.toIntExact(parameterEnd));
-        return parameterSource.contains("...") && type.endsWith("[]")
+        boolean varargs = hasSourceToken(
+                source,
+                Math.toIntExact(typeStart),
+                Math.toIntExact(typeEnd),
+                "..."
+        );
+        SourceToken followingToken = nextSourceToken(source, Math.toIntExact(typeEnd));
+        return (varargs || ((followingToken != null) && followingToken.text().equals("..."))) && type.endsWith("[]")
                 ? type.substring(0, type.length() - 2) + "..."
                 : type;
     }
 
-    private static String visibility(MethodTree methodTree) {
+    private static boolean hasSourceToken(String source, int startPosition, int endPosition, String expectedToken) {
+        for (int position = startPosition; position < endPosition; ) {
+            SourceToken token = nextSourceToken(source, position);
+            if ((token == null) || (token.endPosition() > endPosition)) {
+                return false;
+            }
+            if (token.text().equals(expectedToken)) {
+                return true;
+            }
+            position = token.endPosition();
+        }
+        return false;
+    }
+
+    private static String visibility(MethodTree methodTree, ClassTree declaringClass, boolean constructor) {
         Set<Modifier> flags = methodTree.getModifiers().getFlags();
         if (flags.contains(Modifier.PUBLIC)) {
             return "public";
@@ -326,7 +366,115 @@ public final class JavaMethodInventory {
         if (flags.contains(Modifier.PRIVATE)) {
             return "private";
         }
+        if (constructor && (declaringClass.getKind() == Tree.Kind.ENUM)) {
+            return "private";
+        }
+        if (constructor && isCanonicalRecordConstructor(methodTree, declaringClass)) {
+            return visibility(declaringClass.getModifiers().getFlags());
+        }
+        if ((declaringClass.getKind() == Tree.Kind.INTERFACE)
+                || (declaringClass.getKind() == Tree.Kind.ANNOTATION_TYPE)) {
+            return "public";
+        }
         return "package-private";
+    }
+
+    private static boolean isCanonicalRecordConstructor(MethodTree methodTree, ClassTree declaringClass) {
+        if (declaringClass.getKind() != Tree.Kind.RECORD) {
+            return false;
+        }
+        if (methodTree.getBody().getStatements().isEmpty()) {
+            return true;
+        }
+        Tree firstStatement = methodTree.getBody().getStatements().getFirst();
+        return !(firstStatement instanceof ExpressionStatementTree expressionStatement
+                && expressionStatement.getExpression() instanceof MethodInvocationTree invocation
+                && invocation.getMethodSelect() instanceof IdentifierTree identifier
+                && identifier.getName().contentEquals("this"));
+    }
+
+    private static String visibility(Set<Modifier> flags) {
+        if (flags.contains(Modifier.PUBLIC)) {
+            return "public";
+        }
+        if (flags.contains(Modifier.PROTECTED)) {
+            return "protected";
+        }
+        if (flags.contains(Modifier.PRIVATE)) {
+            return "private";
+        }
+        return "package-private";
+    }
+
+    private static SourceToken nextSourceToken(String source, int startPosition) {
+        int position = startPosition;
+        while (position < source.length()) {
+            char character = source.charAt(position);
+            if (Character.isWhitespace(character)) {
+                position++;
+            } else if (source.startsWith("//", position)) {
+                position = skipLineComment(source, position + 2);
+            } else if (source.startsWith("/*", position)) {
+                position = skipBlockComment(source, position + 2);
+            } else if (source.startsWith("\"\"\"", position)) {
+                position = skipTextBlock(source, position + 3);
+            } else if (character == '"') {
+                position = skipQuotedLiteral(source, position + 1, '"');
+            } else if (character == '\'') {
+                position = skipQuotedLiteral(source, position + 1, '\'');
+            } else {
+                break;
+            }
+        }
+        if (position >= source.length()) {
+            return null;
+        }
+        if (Character.isJavaIdentifierStart(source.charAt(position))) {
+            int endPosition = position + 1;
+            while ((endPosition < source.length()) && Character.isJavaIdentifierPart(source.charAt(endPosition))) {
+                endPosition++;
+            }
+            return new SourceToken(source.substring(position, endPosition), endPosition);
+        }
+        if (source.startsWith("...", position)) {
+            return new SourceToken("...", position + 3);
+        }
+        return new SourceToken(Character.toString(source.charAt(position)), position + 1);
+    }
+
+    private static int skipLineComment(String source, int position) {
+        int lineEnd = source.indexOf('\n', position);
+        return lineEnd < 0 ? source.length() : lineEnd + 1;
+    }
+
+    private static int skipBlockComment(String source, int position) {
+        int commentEnd = source.indexOf("*/", position);
+        return commentEnd < 0 ? source.length() : commentEnd + 2;
+    }
+
+    private static int skipTextBlock(String source, int position) {
+        while (position < source.length()) {
+            if (source.startsWith("\"\"\"", position)) {
+                return position + 3;
+            }
+            if (source.charAt(position) == '\\') {
+                position++;
+            }
+            position++;
+        }
+        return source.length();
+    }
+
+    private static int skipQuotedLiteral(String source, int position, char delimiter) {
+        while (position < source.length()) {
+            char character = source.charAt(position++);
+            if (character == '\\') {
+                position++;
+            } else if (character == delimiter) {
+                break;
+            }
+        }
+        return Math.min(position, source.length());
     }
 
     private static String modifiers(MethodTree methodTree) {
@@ -376,6 +524,9 @@ public final class JavaMethodInventory {
     }
 
     private record SourceFile(String sourceSet, Path path, String repositoryPath) {
+    }
+
+    private record SourceToken(String text, int endPosition) {
     }
 
     private record MemberDeclaration(
