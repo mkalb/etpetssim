@@ -1,7 +1,9 @@
 ---
 name: i18n-consistency
-description: 'Checks the production bundles app/src/main/resources/i18n/messages_en_US.properties and messages_de_DE.properties for UTF-8 encoding without a byte order mark, invisible/non-printable characters, consistent LF or CRLF line endings with a single trailing newline, valid Java properties syntax, non-empty content, unique decoded keys, key parity, alphabetical ordering, = column alignment, decoded trailing whitespace, placeholder (%) count parity, and unwanted \uXXXX Unicode escapes in values or keys; optional auto-fix for stripping a BOM/literal invisible characters, normalizing line endings, semantic canonicalization, sorting, = column alignment, and safe escape conversion. Use when someone wants to check or clean up localization/i18n.'
+description: 'Explicitly check the production en_US and de_DE localization bundles for encoding, Java properties syntax, structural consistency, and formatting. Starts in read-only report mode; run its guided auto-fix only after the user confirms. Invoke to review or clean up localization/i18n.'
 argument-hint: "[report|fix]"
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # i18n Consistency
@@ -11,7 +13,7 @@ argument-hint: "[report|fix]"
 Run exactly one command from the repository root. Do not open, read, or compare
 the `.properties` files yourself first — the helper performs the full analysis.
 
-```powershell
+```text
 java .github/skills/i18n-consistency/I18nConsistencyCheck.java report
 ```
 
