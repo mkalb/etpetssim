@@ -111,6 +111,7 @@ final class ExtraterrestrialPetsSimulationTest {
         );
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testStopInterruptsTerminationWaitAndRestoresInterruptStatus() {
         CountingTermination termination = new CountingTermination(TerminationAwaitOutcome.INTERRUPTED);
@@ -133,6 +134,34 @@ final class ExtraterrestrialPetsSimulationTest {
                 () -> assertEquals(1, termination.awaitCount()),
                 () -> assertEquals(1, termination.shutdownNowCount()),
                 () -> assertTrue(interrupted.get(), "The interrupted status must be restored after termination waiting")
+        );
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Test
+    void testStopInterruptionEscalatesEveryPendingTermination() {
+        CountingTermination interruptedTermination = new CountingTermination(TerminationAwaitOutcome.INTERRUPTED);
+        CountingTermination pendingTermination = new CountingTermination(TerminationAwaitOutcome.TERMINATED);
+        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+
+        FxTestSupport.runAndWait(() -> {
+            try {
+                setCurrentSimulationInstance(application,
+                        new SimulationInstance(SimulationType.SUGARSCAPE, new CountingMainView(interruptedTermination), new Region()));
+                invokeShutdownCurrentSimulation(application);
+                setCurrentSimulationInstance(application,
+                        new SimulationInstance(SimulationType.WATOR, new CountingMainView(pendingTermination), new Region()));
+                application.stop();
+            } finally {
+                Thread.interrupted();
+            }
+        });
+
+        assertAll(
+                () -> assertEquals(1, interruptedTermination.awaitCount()),
+                () -> assertEquals(1, interruptedTermination.shutdownNowCount()),
+                () -> assertEquals(0, pendingTermination.awaitCount()),
+                () -> assertEquals(1, pendingTermination.shutdownNowCount())
         );
     }
 

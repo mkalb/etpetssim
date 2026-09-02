@@ -53,6 +53,17 @@ public final class EtpetsSimulationManager
         return Math.clamp(Math.round((totalCells * percentDecimal)), 0, totalCells);
     }
 
+    private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random,
+                                           SimulationInitializationCancellation cancellation) {
+        for (int index = 0; index < (coordinates.size() - 1); index++) {
+            if ((index & CANCELLATION_CHECK_MASK) == 0) {
+                cancellation.checkCanceled();
+            }
+            int coordinateIndex = coordinates.size() - index - 1;
+            Collections.swap(coordinates, coordinateIndex, random.nextInt(coordinateIndex + 1));
+        }
+    }
+
     private void initializeTerrain(EtpetsGridModel model, Random random, SimulationInitializationCancellation cancellation) {
         int totalCells = structure.cellCount();
         int rockCount = computePercentCount(totalCells, config().rockPercent());
@@ -71,8 +82,8 @@ public final class EtpetsSimulationManager
         // model.terrainModel().setEntity(new GridCoordinate(9, 1), new Trail(9_000));
         // model.terrainModel().setEntity(new GridCoordinate(10, 1), new Trail(EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX));
 
-        List<GridCoordinate> coordinates = new ArrayList<>(structure.coordinatesList());
-        Collections.shuffle(coordinates, random);
+        List<GridCoordinate> coordinates = createCoordinates(cancellation);
+        shuffleCoordinates(coordinates, random, cancellation);
 
         int offset = 0;
         for (int i = 0; (i < rockCount) && ((offset + i) < coordinates.size()); i++) {
@@ -204,20 +215,40 @@ public final class EtpetsSimulationManager
                                                         Random random,
                                                         SimulationInitializationCancellation cancellation) {
         List<GridCoordinate> available = new ArrayList<>();
-        List<GridCoordinate> coordinates = structure.coordinatesList();
-        for (int index = 0; index < coordinates.size(); index++) {
-            if ((index & CANCELLATION_CHECK_MASK) == 0) {
-                cancellation.checkCanceled();
-            }
-            GridCoordinate coordinate = coordinates.get(index);
-            if (model.terrainModel().isDefaultEntity(coordinate)
-                    && model.resourceModel().isDefaultEntity(coordinate)
-                    && model.agentModel().isDefaultEntity(coordinate)) {
-                available.add(coordinate);
+        GridSize size = structure.size();
+        int index = 0;
+        for (int y = 0; y < size.height(); y++) {
+            for (int x = 0; x < size.width(); x++) {
+                if ((index & CANCELLATION_CHECK_MASK) == 0) {
+                    cancellation.checkCanceled();
+                }
+                index++;
+                GridCoordinate coordinate = new GridCoordinate(x, y);
+                if (model.terrainModel().isDefaultEntity(coordinate)
+                        && model.resourceModel().isDefaultEntity(coordinate)
+                        && model.agentModel().isDefaultEntity(coordinate)) {
+                    available.add(coordinate);
+                }
             }
         }
-        Collections.shuffle(available, random);
+        shuffleCoordinates(available, random, cancellation);
         return available;
+    }
+
+    private List<GridCoordinate> createCoordinates(SimulationInitializationCancellation cancellation) {
+        List<GridCoordinate> coordinates = new ArrayList<>(structure.cellCount());
+        GridSize size = structure.size();
+        int index = 0;
+        for (int y = 0; y < size.height(); y++) {
+            for (int x = 0; x < size.width(); x++) {
+                if ((index & CANCELLATION_CHECK_MASK) == 0) {
+                    cancellation.checkCanceled();
+                }
+                index++;
+                coordinates.add(new GridCoordinate(x, y));
+            }
+        }
+        return coordinates;
     }
 
     @Override

@@ -516,17 +516,17 @@ final class TimedStatisticsTrackingTest {
         }
 
         assertAll(
-                () -> assertEquals(3806, batch.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(3575, batch.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "batch: minAliveCells"),
-                () -> assertEquals(6749, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(6945, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "batch: maxAliveCells"),
-                () -> assertEquals(6353, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
+                () -> assertEquals(6475, batch.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "batch: maxChangedCells"),
-                () -> assertEquals(3806, singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(3575, singleStep.statisticsExtrema().minimumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: minAliveCells"),
-                () -> assertEquals(6749, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
+                () -> assertEquals(6945, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_ALIVE_CELLS).value(),
                         "singleStep: maxAliveCells"),
-                () -> assertEquals(6353, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
+                () -> assertEquals(6475, singleStep.statisticsExtrema().maximumValues().get(ConwayStatistics.KEY_CHANGED_CELLS).value(),
                         "singleStep: maxChangedCells")
         );
     }
@@ -548,17 +548,17 @@ final class TimedStatisticsTrackingTest {
                         "batch: maxEmptyCells"),
                 () -> assertEquals(1000, batch.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "batch: minTreeCells"),
-                () -> assertEquals(1069, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1037, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "batch: maxTreeCells"),
-                () -> assertEquals(7, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
+                () -> assertEquals(17, batch.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
                         "batch: maxBurningCells"),
                 () -> assertEquals(4000, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_EMPTY_CELLS).value(),
                         "singleStep: maxEmptyCells"),
                 () -> assertEquals(1000, singleStep.statisticsExtrema().minimumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "singleStep: minTreeCells"),
-                () -> assertEquals(1069, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
+                () -> assertEquals(1037, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_TREE_CELLS).value(),
                         "singleStep: maxTreeCells"),
-                () -> assertEquals(7, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
+                () -> assertEquals(17, singleStep.statisticsExtrema().maximumValues().get(ForestStatistics.KEY_BURNING_CELLS).value(),
                         "singleStep: maxBurningCells")
         );
     }

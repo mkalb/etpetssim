@@ -306,11 +306,16 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
-        simulationResetListener.run();
+        termination = new ExecutorSimulationTermination(lifecycleExecutor);
+        Runnable resetListener = simulationResetListener;
         simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
         simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
         simulationResetListener = NO_OP_SIMULATION_RESET_LISTENER;
-        termination = new ExecutorSimulationTermination(lifecycleExecutor);
+        try {
+            resetListener.run();
+        } catch (RuntimeException e) {
+            AppLogger.error(e, LOG_COMPONENT + ": Failed to reset the simulation view during shutdown.");
+        }
         return termination;
     }
 

@@ -164,7 +164,8 @@ public final class ExtraterrestrialPetsSimulation extends Application {
                 }
             } catch (InterruptedException e) {
                 interrupted = true;
-                termination.shutdownNow();
+                pendingTerminations.forEach(SimulationTermination::shutdownNow);
+                break;
             }
         }
         pendingTerminations.clear();

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class SimulationTerminationTest {
 
+    @SuppressWarnings("EqualsWithItself")
     @Test
     void testCompletedReturnsSameInstance() {
         assertSame(SimulationTermination.completed(), SimulationTermination.completed());

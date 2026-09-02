@@ -217,14 +217,18 @@ public final class GridInitializers {
                                                                                       Runnable cancellationCheck) {
         return model -> {
             var freeCoordinates = new ArrayList<GridCoordinate>();
-            List<GridCoordinate> coordinates = model.structure().coordinatesList();
-            for (int index = 0; index < coordinates.size(); index++) {
-                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
-                    cancellationCheck.run();
-                }
-                GridCoordinate coordinate = coordinates.get(index);
-                if (canReplaceExisting.test(model.getEntity(coordinate))) {
-                    freeCoordinates.add(coordinate);
+            GridSize size = model.structure().size();
+            int index = 0;
+            for (int y = 0; y < size.height(); y++) {
+                for (int x = 0; x < size.width(); x++) {
+                    if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                        cancellationCheck.run();
+                    }
+                    index++;
+                    GridCoordinate coordinate = new GridCoordinate(x, y);
+                    if (canReplaceExisting.test(model.getEntity(coordinate))) {
+                        freeCoordinates.add(coordinate);
+                    }
                 }
             }
             if (freeCoordinates.size() < entities.size()) {
@@ -232,10 +236,9 @@ public final class GridInitializers {
                         + " replaceable cells, but found " + freeCoordinates.size() + ".");
             }
 
-            cancellationCheck.run();
-            Collections.shuffle(freeCoordinates, random);
+            shuffleCoordinates(freeCoordinates, random, cancellationCheck);
 
-            for (int index = 0; index < entities.size(); index++) {
+            for (index = 0; index < entities.size(); index++) {
                 if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
                     cancellationCheck.run();
                 }
@@ -269,29 +272,7 @@ public final class GridInitializers {
                                                                              Supplier<T> entitySupplier,
                                                                              Predicate<T> canReplaceExisting,
                                                                              Random random) {
-        return model -> {
-            int placed = 0;
-            int gridArea = model.structure().size().area();
-            int maxAttempts = Math.max(100, gridArea / 2); // Scales with grid size; minimum 100.
-            while (placed < count) {
-                T nextEntity = entitySupplier.get();
-                int attempts = 0;
-                boolean nextEntityPlaced = false;
-                while (!nextEntityPlaced && (attempts < maxAttempts)) {
-                    GridCoordinate coordinate = randomCoordinate(model.structure().size(), random);
-                    T existingEntity = model.getEntity(coordinate);
-                    if (canReplaceExisting.test(existingEntity)) {
-                        model.setEntity(coordinate, nextEntity);
-                        placed++;
-                        nextEntityPlaced = true;
-                    }
-                    attempts++;
-                }
-                if (!nextEntityPlaced) {
-                    throw new IllegalStateException("Unable to place all entities within the maximum number of attempts.");
-                }
-            }
-        };
+        return model -> placeRandomCount(model, count, entitySupplier, canReplaceExisting, random, () -> {});
     }
 
     /**
@@ -320,6 +301,38 @@ public final class GridInitializers {
                 entitySupplier, canReplaceExisting, random).initialize(model);
     }
 
+    private static <T extends GridEntity> void placeRandomCount(WritableGridModel<T> model, int count,
+                                                                Supplier<T> entitySupplier,
+                                                                Predicate<T> canReplaceExisting, Random random,
+                                                                Runnable cancellationCheck) {
+        int placed = 0;
+        int checkpointIndex = 0;
+        int gridArea = model.structure().size().area();
+        int maxAttempts = Math.max(100, gridArea / 2);
+        while (placed < count) {
+            T nextEntity = entitySupplier.get();
+            int attempts = 0;
+            boolean nextEntityPlaced = false;
+            while (!nextEntityPlaced && (attempts < maxAttempts)) {
+                if ((checkpointIndex & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                    cancellationCheck.run();
+                }
+                checkpointIndex++;
+                GridCoordinate coordinate = randomCoordinate(model.structure().size(), random);
+                T existingEntity = model.getEntity(coordinate);
+                if (canReplaceExisting.test(existingEntity)) {
+                    model.setEntity(coordinate, nextEntity);
+                    placed++;
+                    nextEntityPlaced = true;
+                }
+                attempts++;
+            }
+            if (!nextEntityPlaced) {
+                throw new IllegalStateException("Unable to place all entities within the maximum number of attempts.");
+            }
+        }
+    }
+
     /**
      * Returns an initializer that fills the entire grid either with entities produced by
      * {@code entitySupplier} or with the provided {@code fallback} so that approximately
@@ -341,12 +354,32 @@ public final class GridInitializers {
      * @return a {@link GridInitializer} that fills the grid according to the described policy
      * @throws IllegalStateException if an underlying placement (via {@code placeRandomPercent}) cannot place the requested entities
      */
+    @SuppressWarnings("MagicNumber")
     public static <T extends GridEntity> GridInitializer<T> fillRandomPercent(
             Supplier<T> entitySupplier,
             double percent,
             T fallback,
             Random random) {
-        return fillRandomPercent(entitySupplier, percent, fallback, random, () -> {});
+        if (percent <= 0.0d) {
+            return GridInitializers.constant(fallback);
+        }
+        if (percent >= 1.0d) {
+            return GridInitializers.supplier(entitySupplier);
+        }
+        if (percent <= 0.8d) {
+            return GridInitializers.constant(fallback)
+                                   .andThen(GridInitializers.placeRandomPercent(
+                                           entitySupplier,
+                                           fallback::equals,
+                                           percent,
+                                           random));
+        }
+        return GridInitializers.supplier(entitySupplier)
+                               .andThen(GridInitializers.placeRandomPercent(
+                                       () -> fallback,
+                                       Predicate.not(fallback::equals),
+                                       1.0d - percent,
+                                       random));
     }
 
     /**
@@ -388,49 +421,67 @@ public final class GridInitializers {
             int entityCount = (int) Math.round(percent * model.structure().size().area());
             if (percent <= 0.8d) {
                 fillWithConstant(model, fallback, cancellationCheck);
-                placeAtShuffledCoordinates(model, entityCount, entitySupplier, random, cancellationCheck);
+                placeRandomCount(model, entityCount, entitySupplier, fallback::equals, random, cancellationCheck);
             } else {
                 fillWithSupplier(model, entitySupplier, cancellationCheck);
-                placeAtShuffledCoordinates(model, model.structure().size().area() - entityCount,
-                        () -> fallback, random, cancellationCheck);
+                placeRandomCount(model, model.structure().size().area() - entityCount,
+                        () -> fallback, Predicate.not(fallback::equals), random, cancellationCheck);
             }
         };
     }
 
     private static <T extends GridEntity> void fillWithConstant(WritableGridModel<T> model, T entity,
                                                                 Runnable cancellationCheck) {
+        GridSize size = model.structure().size();
         int index = 0;
-        for (GridCoordinate coordinate : model.structure().coordinatesList()) {
-            if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
-                cancellationCheck.run();
+        for (int y = 0; y < size.height(); y++) {
+            for (int x = 0; x < size.width(); x++) {
+                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                    cancellationCheck.run();
+                }
+                index++;
+                model.setEntity(new GridCoordinate(x, y), entity);
             }
-            index++;
-            model.setEntity(coordinate, entity);
         }
     }
 
     private static <T extends GridEntity> void fillWithSupplier(WritableGridModel<T> model, Supplier<T> supplier,
                                                                 Runnable cancellationCheck) {
+        GridSize size = model.structure().size();
         int index = 0;
-        for (GridCoordinate coordinate : model.structure().coordinatesList()) {
-            if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
-                cancellationCheck.run();
+        for (int y = 0; y < size.height(); y++) {
+            for (int x = 0; x < size.width(); x++) {
+                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                    cancellationCheck.run();
+                }
+                index++;
+                model.setEntity(new GridCoordinate(x, y), supplier.get());
             }
-            index++;
-            model.setEntity(coordinate, supplier.get());
         }
     }
 
-    private static <T extends GridEntity> void placeAtShuffledCoordinates(WritableGridModel<T> model, int count,
-                                                                          Supplier<T> entitySupplier, Random random,
-                                                                          Runnable cancellationCheck) {
-        List<GridCoordinate> coordinates = model.structure().coordinatesList();
-        Collections.shuffle(coordinates, random);
-        for (int index = 0; index < count; index++) {
+    private static List<GridCoordinate> createCoordinates(GridSize size, Runnable cancellationCheck) {
+        List<GridCoordinate> coordinates = new ArrayList<>(size.area());
+        int index = 0;
+        for (int y = 0; y < size.height(); y++) {
+            for (int x = 0; x < size.width(); x++) {
+                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                    cancellationCheck.run();
+                }
+                index++;
+                coordinates.add(new GridCoordinate(x, y));
+            }
+        }
+        return coordinates;
+    }
+
+    private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random, Runnable cancellationCheck) {
+        for (int index = 0; index < (coordinates.size() - 1); index++) {
             if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
                 cancellationCheck.run();
             }
-            model.setEntity(coordinates.get(index), entitySupplier.get());
+            int coordinateIndex = coordinates.size() - index - 1;
+            Collections.swap(coordinates, coordinateIndex, random.nextInt(coordinateIndex + 1));
         }
     }
 
@@ -498,9 +549,8 @@ public final class GridInitializers {
         return model -> {
             int placed = 0;
             if (placed < count) {
-                List<GridCoordinate> coordinates = model.structure().coordinatesList();
-                cancellationCheck.run();
-                Collections.shuffle(coordinates, random);
+                List<GridCoordinate> coordinates = createCoordinates(model.structure().size(), cancellationCheck);
+                shuffleCoordinates(coordinates, random, cancellationCheck);
                 T nextEntity = entitySupplier.get();
                 for (int index = 0; index < coordinates.size(); index++) {
                     if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
