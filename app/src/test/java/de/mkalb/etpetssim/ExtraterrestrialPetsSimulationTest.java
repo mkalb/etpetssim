@@ -13,6 +13,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -92,8 +93,8 @@ final class ExtraterrestrialPetsSimulationTest {
     }
 
     @Test
-    void testStopEscalatesTerminationAfterTimeout() {
-        CountingTermination termination = new CountingTermination(false);
+    void testStopEscalatesWhenTerminationDoesNotComplete() {
+        CountingTermination termination = new CountingTermination(TerminationAwaitOutcome.INCOMPLETE);
         CountingMainView view = new CountingMainView(termination);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
@@ -110,13 +111,69 @@ final class ExtraterrestrialPetsSimulationTest {
         );
     }
 
+    @Test
+    void testStopInterruptsTerminationWaitAndRestoresInterruptStatus() {
+        CountingTermination termination = new CountingTermination(TerminationAwaitOutcome.INTERRUPTED);
+        CountingMainView view = new CountingMainView(termination);
+        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+        AtomicBoolean interrupted = new AtomicBoolean();
+
+        FxTestSupport.runAndWait(() -> {
+            try {
+                setCurrentSimulationInstance(application,
+                        new SimulationInstance(SimulationType.SUGARSCAPE, view, new Region()));
+                application.stop();
+                interrupted.set(Thread.currentThread().isInterrupted());
+            } finally {
+                Thread.interrupted();
+            }
+        });
+
+        assertAll(
+                () -> assertEquals(1, termination.awaitCount()),
+                () -> assertEquals(1, termination.shutdownNowCount()),
+                () -> assertTrue(interrupted.get(), "The interrupted status must be restored after termination waiting")
+        );
+    }
+
+    @Test
+    void testStopSharesTerminationTimeoutBudgetAcrossPendingTerminations() {
+        CountingTermination firstTermination = new CountingTermination(
+                TerminationAwaitOutcome.TERMINATED, TimeUnit.MILLISECONDS.toNanos(10));
+        CountingTermination secondTermination = new CountingTermination(TerminationAwaitOutcome.TERMINATED);
+        ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
+
+        FxTestSupport.runAndWait(() -> {
+            setCurrentSimulationInstance(application,
+                    new SimulationInstance(SimulationType.CONWAYS_LIFE, new CountingMainView(firstTermination), new Region()));
+            invokeShutdownCurrentSimulation(application);
+            setCurrentSimulationInstance(application,
+                    new SimulationInstance(SimulationType.WATOR, new CountingMainView(secondTermination), new Region()));
+            application.stop();
+        });
+
+        assertAll(
+                () -> assertEquals(1, firstTermination.awaitCount()),
+                () -> assertEquals(1, secondTermination.awaitCount()),
+                () -> assertTrue(secondTermination.awaitedTimeoutNanos() < firstTermination.awaitedTimeoutNanos(),
+                        "Each termination must receive the remaining shared timeout budget")
+        );
+    }
+
+    private enum TerminationAwaitOutcome {
+        TERMINATED,
+        INCOMPLETE,
+        INTERRUPTED
+
+    }
+
     private static final class CountingMainView implements SimulationMainView {
 
         private final AtomicInteger shutdownCount = new AtomicInteger();
         private final CountingTermination termination;
 
         private CountingMainView() {
-            this(new CountingTermination(true));
+            this(new CountingTermination(TerminationAwaitOutcome.TERMINATED));
         }
 
         private CountingMainView(CountingTermination termination) {
@@ -148,16 +205,31 @@ final class ExtraterrestrialPetsSimulationTest {
 
         private final AtomicInteger awaitCount = new AtomicInteger();
         private final AtomicInteger shutdownNowCount = new AtomicInteger();
-        private final boolean terminates;
+        private final AtomicLong awaitedTimeoutNanos = new AtomicLong(-1L);
+        private final TerminationAwaitOutcome awaitOutcome;
+        private final long awaitDelayNanos;
 
-        private CountingTermination(boolean terminates) {
-            this.terminates = terminates;
+        private CountingTermination(TerminationAwaitOutcome awaitOutcome) {
+            this(awaitOutcome, 0L);
+        }
+
+        private CountingTermination(TerminationAwaitOutcome awaitOutcome, long awaitDelayNanos) {
+            this.awaitOutcome = awaitOutcome;
+            this.awaitDelayNanos = awaitDelayNanos;
         }
 
         @Override
-        public boolean awaitTermination(long timeout, TimeUnit unit) {
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
             awaitCount.incrementAndGet();
-            return terminates;
+            awaitedTimeoutNanos.set(unit.toNanos(timeout));
+            if (awaitDelayNanos > 0L) {
+                LockSupport.parkNanos(awaitDelayNanos);
+            }
+            return switch (awaitOutcome) {
+                case TERMINATED -> true;
+                case INCOMPLETE -> false;
+                case INTERRUPTED -> throw new InterruptedException("Test interruption");
+            };
         }
 
         @Override
@@ -171,6 +243,10 @@ final class ExtraterrestrialPetsSimulationTest {
 
         int shutdownNowCount() {
             return shutdownNowCount.get();
+        }
+
+        long awaitedTimeoutNanos() {
+            return awaitedTimeoutNanos.get();
         }
 
     }
