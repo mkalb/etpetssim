@@ -203,6 +203,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
                 property.min(), property.max());
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected final String formatDoubleRangeTooltip(String key, InputDoublePropertyIntRange property) {
         return AppLocalization.getFormattedText(key,
                 property.min(), property.max());

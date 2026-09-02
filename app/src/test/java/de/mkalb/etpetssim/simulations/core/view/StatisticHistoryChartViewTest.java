@@ -150,6 +150,23 @@ final class StatisticHistoryChartViewTest {
         assertFalse(managed, "TitledPane must be hidden again after shutdown reset");
     }
 
+    @Test
+    void testShutdownUnregistersHistoryListener() {
+        var historyProp = new SimpleObjectProperty<>(List.<StatisticSample>of());
+
+        Boolean managed = FxTestSupport.supplyAndWaitNonNull(() -> {
+            var view = new StatisticHistoryChartView(WatorStatistics.metrics(), historyProp);
+            view.shutdown();
+            historyProp.set(List.of(sample(1, Map.of(
+                    WatorStatistics.KEY_FISH_CELLS, 200.0,
+                    WatorStatistics.KEY_SHARK_CELLS, 50.0))));
+
+            return view.titledPane().isManaged();
+        });
+
+        assertFalse(managed, "Chart section must not react to history changes after shutdown");
+    }
+
     // --- Data-point counts ---
 
     @Test

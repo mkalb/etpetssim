@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.ui.FXStyleClasses;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Side;
 import javafx.scene.chart.*;
 import javafx.scene.control.TitledPane;
@@ -30,10 +31,14 @@ final class StatisticHistoryChartView {
     private final Map<StatisticChartGroup, Integer> windowSizeByGroup;
     private final Map<StatisticChartGroup, Double> ceilingByGroup;
     private final TitledPane titledPane;
+    private final ReadOnlyObjectProperty<List<StatisticSample>> historyProperty;
+    private final ChangeListener<List<StatisticSample>> historyListener;
 
     StatisticHistoryChartView(
             List<? extends StatisticMetric<?>> metrics,
             ReadOnlyObjectProperty<List<StatisticSample>> historyProperty) {
+
+        this.historyProperty = historyProperty;
 
         distinctGroups = Arrays.stream(StatisticChartGroup.values())
                                .filter(g -> g != StatisticChartGroup.NONE)
@@ -107,7 +112,8 @@ final class StatisticHistoryChartView {
         titledPane.setManaged(false);
         titledPane.setVisible(false);
 
-        historyProperty.addListener((_, _, history) -> updateCharts(history));
+        historyListener = (_, _, history) -> updateCharts(history);
+        historyProperty.addListener(historyListener);
         updateCharts(historyProperty.get());
     }
 
@@ -152,6 +158,10 @@ final class StatisticHistoryChartView {
                    .mapToDouble(Double::doubleValue)
                    .max()
                    .orElse(0.0);
+    }
+
+    void shutdown() {
+        historyProperty.removeListener(historyListener);
     }
 
     TitledPane titledPane() {

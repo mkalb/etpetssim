@@ -11,6 +11,8 @@ public interface SimulationMainView {
     /**
      * Builds the root region for a simulation screen.
      *
+     * <p>Repeated calls for one view instance return the same root region.</p>
+     *
      * @return root region for the simulation view
      */
     Region buildMainRegion();

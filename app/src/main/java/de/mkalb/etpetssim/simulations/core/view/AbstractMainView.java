@@ -61,6 +61,7 @@ public abstract class AbstractMainView<
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
     private @Nullable ChangeListener<SimulationNotificationType> notificationListener;
+    private @Nullable Region mainRegion;
 
     protected AbstractMainView(VM viewModel,
                                CFV configView, CLV controlView, OV observationView,
@@ -113,6 +114,11 @@ public abstract class AbstractMainView<
 
     @Override
     public final Region buildMainRegion() {
+        Region cachedMainRegion = mainRegion;
+        if (cachedMainRegion != null) {
+            return cachedMainRegion;
+        }
+
         Region configRegion = configView.buildConfigRegion();
         Region controlRegion = controlView.buildControlRegion();
         Region observationRegion = observationView.buildObservationRegion();
@@ -136,6 +142,7 @@ public abstract class AbstractMainView<
         registerNotificationListener();
         registerOverlayPrimaryClickHandler();
 
+        mainRegion = borderPane;
         return borderPane;
     }
 
@@ -145,6 +152,7 @@ public abstract class AbstractMainView<
             viewModel.notificationTypeProperty().removeListener(notificationListener);
             notificationListener = null;
         }
+        observationView.shutdownObservation();
         SimulationTermination termination = viewModel.shutdownSimulation();
         basePainter = null;
         dynamicPainter = null;
