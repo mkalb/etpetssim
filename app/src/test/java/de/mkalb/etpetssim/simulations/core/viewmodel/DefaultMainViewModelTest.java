@@ -257,6 +257,33 @@ final class DefaultMainViewModelTest {
         FxTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
     }
 
+    @Test
+    void testInitializationListenerFailureTransitionsToError() throws InterruptedException {
+        Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
+        CountDownLatch failureHandled = new CountDownLatch(1);
+
+        FxTestSupport.runAndWait(() -> {
+            fixture.mainViewModel().setSimulationInitializedListener(() -> {
+                throw new IllegalStateException("Test initialized listener failure");
+            });
+            fixture.mainViewModel().simulationStateProperty().addListener((_, _, newState) -> {
+                if (newState == SimulationState.ERROR) {
+                    failureHandled.countDown();
+                }
+            });
+            fixture.controlViewModel().requestActionButton();
+        });
+
+        assertTrue(failureHandled.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        FxTestSupport.runAndWait(() -> assertAll(
+                () -> assertEquals(SimulationState.ERROR, fixture.mainViewModel().getSimulationState()),
+                () -> assertEquals(SimulationNotificationType.EXCEPTION,
+                        fixture.mainViewModel().notificationTypeProperty().get()),
+                () -> assertFalse(fixture.mainViewModel().hasSimulationManager())
+        ));
+        FxTestSupport.runAndWait(fixture.mainViewModel()::shutdownSimulation);
+    }
+
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testShutdownSuppressesStaleInitializationCompletion() throws InterruptedException {

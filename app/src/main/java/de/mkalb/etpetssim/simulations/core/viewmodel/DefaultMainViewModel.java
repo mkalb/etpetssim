@@ -492,24 +492,31 @@ public final class DefaultMainViewModel<
             return;
         }
 
-        initializationFuture = null;
-        simulationManager = manager;
-        configureSimulationTimeout(request.timedMode(), request.stepDurationMillis());
-        updateObservationStatistics(manager.statistics());
-        simulationInitializedListener.run();
+        try {
+            initializationFuture = null;
+            simulationManager = manager;
+            configureSimulationTimeout(request.timedMode(), request.stepDurationMillis());
+            updateObservationStatistics(manager.statistics());
+            simulationInitializedListener.run();
 
-        long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
-        if (request.startPaused()) {
-            setSimulationState(SimulationState.PAUSED);
-            logSimulationInfo("Simulation was started in paused state by the user. durationMillis=" + durationMillis);
-        } else if (request.timedMode()) {
-            setSimulationState(SimulationState.RUNNING_TIMED);
-            logSimulationInfo("Simulation (timer) was started by the user. durationMillis=" + durationMillis);
-            startTimer(request.stepDurationMillis());
-        } else {
-            setSimulationState(SimulationState.RUNNING_BATCH);
-            logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
-            runBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
+            long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+            if (request.startPaused()) {
+                setSimulationState(SimulationState.PAUSED);
+                logSimulationInfo("Simulation was started in paused state by the user. durationMillis=" + durationMillis);
+            } else if (request.timedMode()) {
+                setSimulationState(SimulationState.RUNNING_TIMED);
+                logSimulationInfo("Simulation (timer) was started by the user. durationMillis=" + durationMillis);
+                startTimer(request.stepDurationMillis());
+            } else {
+                setSimulationState(SimulationState.RUNNING_BATCH);
+                logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
+                runBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
+            }
+        } catch (RuntimeException e) {
+            if (isInitializationActive(generation)) {
+                simulationManager = null;
+                failInitialization(request, generation, e);
+            }
         }
     }
 
