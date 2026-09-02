@@ -38,6 +38,22 @@ final class GridInitializersTest {
     }
 
     @Test
+    void testCancellationAwareFillRandomPercentMatchesLegacySeededPlacementAtRoundingBoundary() {
+        GridStructure roundingBoundaryStructure = new GridStructure(
+                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(10, 11));
+        SparseGridModel<TestEntity> legacyModel = new SparseGridModel<>(roundingBoundaryStructure, TestEntity.EMPTY);
+        SparseGridModel<TestEntity> cancellationAwareModel = new SparseGridModel<>(roundingBoundaryStructure,
+                TestEntity.EMPTY);
+
+        GridInitializers.fillRandomPercent(() -> TestEntity.FILLED, 0.95d, TestEntity.EMPTY, new Random(42L))
+                        .initialize(legacyModel);
+        GridInitializers.fillRandomPercent(() -> TestEntity.FILLED, 0.95d, TestEntity.EMPTY, new Random(42L), () -> {})
+                        .initialize(cancellationAwareModel);
+
+        assertEquals(entities(legacyModel), entities(cancellationAwareModel));
+    }
+
+    @Test
     void testPlaceShuffledCountChecksCancellationDuringShuffle() {
         TrackingRandom random = new TrackingRandom();
         SparseGridModel<TestEntity> model = createModel();

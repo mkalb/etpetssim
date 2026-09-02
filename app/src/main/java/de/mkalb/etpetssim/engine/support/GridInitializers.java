@@ -418,13 +418,15 @@ public final class GridInitializers {
         }
         return model -> {
             cancellationCheck.run();
-            int entityCount = (int) Math.round(percent * model.structure().size().area());
+            int gridArea = model.structure().size().area();
             if (percent <= 0.8d) {
+                int entityCount = (int) Math.round(percent * gridArea);
                 fillWithConstant(model, fallback, cancellationCheck);
                 placeRandomCount(model, entityCount, entitySupplier, fallback::equals, random, cancellationCheck);
             } else {
+                int fallbackCount = (int) Math.round((1.0d - percent) * gridArea);
                 fillWithSupplier(model, entitySupplier, cancellationCheck);
-                placeRandomCount(model, model.structure().size().area() - entityCount,
+                placeRandomCount(model, fallbackCount,
                         () -> fallback, Predicate.not(fallback::equals), random, cancellationCheck);
             }
         };
