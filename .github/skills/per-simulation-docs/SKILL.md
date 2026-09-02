@@ -1,7 +1,9 @@
 ---
 name: per-simulation-docs
-description: 'Creates or updates the user-facing documentation for one simulation in docs/simulations/<package>.md (e.g. wator.md), derived from that simulation''s Java package and the en_US localization bundle. Use when someone wants to write, generate, refresh, or update the documentation / docs page for a specific simulation (Wa-Tor, Conway, Forest-fire, Langton, Sugarscape, Snake, ET Pets, Rebounding, etc.). Requires the simulation name up front.'
+description: 'Generate or refresh the user-facing Markdown page for one named simulation in docs/simulations/<package>.md from its Java implementation and en_US localization bundle. Invoke explicitly to document a specific simulation, such as Wa-Tor, Conway, Forest-fire, Langton, Sugarscape, Snake, ET Pets, or Rebounding.'
 argument-hint: "<simulation-name>"
+user-invocable: true
+disable-model-invocation: true
 ---
 
 # Per-simulation documentation
@@ -86,46 +88,46 @@ Read these sources for the matched simulation; do not invent values.
   | `view/<Name>MainView.java` | (a) Interactive edit tools available while the simulation runs, declared in `createUserActionDescriptors()` together with their localization keys (e.g. `sugar.toolbar.addsugar`) and their scope (`SimulationUserActionScope.CELL_SELECTED` vs. `GLOBAL`). (b) Option controls exposed by `createEditToolBarOptionPanel(...)`; trace each visible option from here to its actual data source. (c) Dynamic visual coding the user perceives but the entity catalog does not cover (brightness by value, markers for state transitions such as newly spawned agents). | Interactive editing, Entities |
   | Interactive-edit option sources reached from a visible `MainView` control (for example, catalogs, enums, choice records, or direction/strategy providers in `shared/`, `model/`, or another package) | Extract the selectable values, localized label keys, and configuration-dependent availability. If `MainView` delegates option population through `<Name>EditToolBarViewModel`, read that ViewModel only to follow the data flow to the actual option source; treat it as routing evidence, not as the authority for option meaning or behavior. | Interactive editing |
 
-    Resolve conflicting evidence by subject ownership:
+  Resolve conflicting evidence by subject ownership:
 
     1. For run-time behavior and step order, the code actually invoked by
-      `SimulationManager`, `StepRunner`, `StepLogic`, `UpdateStrategy`, and
-      `UserAction` is authoritative.
+       `SimulationManager`, `StepRunner`, `StepLogic`, `UpdateStrategy`, and
+       `UserAction` is authoritative.
     2. For which settings and tools users can access, their conceptual UI
-      grouping, and action scope, `ConfigView` and `MainView` are authoritative.
+       grouping, and action scope, `ConfigView` and `MainView` are authoritative.
     3. For defaults, ranges, and allowed values, use `Constraints` and `Config`
-      when they define the subject; otherwise use the actual option source
-      traced from the exposed control. Limit all such facts to controls
-      confirmed by `ConfigView`.
+       when they define the subject; otherwise use the actual option source
+       traced from the exposed control. Limit all such facts to controls
+       confirmed by `ConfigView`.
     4. For visible names, labels, summaries, tooltips, and URLs, resolved values
-      from `messages_en_US.properties` are authoritative.
+       from `messages_en_US.properties` are authoritative.
     5. Javadoc and the existing `docs/simulations/<package>.md` document are
-      supporting context only; they must not override the current authoritative
-      source for the subject.
+       supporting context only; they must not override the current authoritative
+       source for the subject.
 
-    If authoritative sources for the same subject still conflict, stop and
-    report the conflict instead of guessing or silently choosing one.
+  If authoritative sources for the same subject still conflict, stop and
+  report the conflict instead of guessing or silently choosing one.
 
   Do not list every parameter exhaustively; condense rules into 3-7
   plain-language bullets, and keep entities conceptual.
 
   Sources that are normally outside this document's scope:
 
-  - Unreferenced tuning and constant-holder classes are not documentation
-    sources. When an authoritative code path uses one, it may be read as
-    supporting evidence under the helper-source rule above.
-  - `model/<Name>TerminationCondition.java` — usually a one-line "stop when
-    empty" check; mention only if it implies something genuinely surprising to
-    the user.
-  - `model/<Name>Statistics.java` and `view/<Name>ObservationView.java` are
-    intentionally outside this document's scope. Do not add an **Observation**
-    or **Statistics** section or enumerate status metrics and selected-cell
-    readouts unless the user explicitly requests that coverage.
-  - `<Name>Factory.java` and `package-info.java` — infrastructure.
-  - `viewmodel/` — infrastructure, but a ViewModel or property class may be read
-    narrowly as routing evidence when tracing an exposed configuration or
-    interactive-edit option to its actual source. Do not treat it as the
-    authority for option meaning or run-time behavior.
+    - Unreferenced tuning and constant-holder classes are not documentation
+      sources. When an authoritative code path uses one, it may be read as
+      supporting evidence under the helper-source rule above.
+    - `model/<Name>TerminationCondition.java` — usually a one-line "stop when
+      empty" check; mention only if it implies something genuinely surprising to
+      the user.
+    - `model/<Name>Statistics.java` and `view/<Name>ObservationView.java` are
+      intentionally outside this document's scope. Do not add an **Observation**
+      or **Statistics** section or enumerate status metrics and selected-cell
+      readouts unless the user explicitly requests that coverage.
+    - `<Name>Factory.java` and `package-info.java` — infrastructure.
+    - `viewmodel/` — infrastructure, but a ViewModel or property class may be read
+      narrowly as routing evidence when tracing an exposed configuration or
+      interactive-edit option to its actual source. Do not treat it as the
+      authority for option meaning or run-time behavior.
 - **Category:** classify from the simulation's actual model semantics. Common
   categories include **Agent-based** (e.g. `wator`, `etpets`, `snake`) and
   **Cellular automaton** (e.g. `conway`, `forest`, `langton`). These examples
