@@ -285,7 +285,14 @@ public final class JavaMethodInventory {
         if ((methodStart < 0) || (bodyStart < methodStart)) {
             return false;
         }
-        String header = source.substring(Math.toIntExact(methodStart), Math.toIntExact(bodyStart));
+        long headerStart = methodStart;
+        for (AnnotationTree annotation : methodTree.getModifiers().getAnnotations()) {
+            long annotationEnd = sourcePositions.getEndPosition(compilationUnit, annotation);
+            if ((annotationEnd >= methodStart) && (annotationEnd <= bodyStart)) {
+                headerStart = Math.max(headerStart, annotationEnd);
+            }
+        }
+        String header = source.substring(Math.toIntExact(headerStart), Math.toIntExact(bodyStart));
         return !hasConstructorParameterList(header, declaringClass.getSimpleName().toString());
     }
 

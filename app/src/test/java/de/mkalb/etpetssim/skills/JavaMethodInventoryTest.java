@@ -201,6 +201,45 @@ final class JavaMethodInventoryTest {
     }
 
     @Test
+    void testRecognizesCompactConstructorAfterQualifiedSameNameAnnotation() throws Exception {
+        writeSource("main", "Sample.java", """
+                package example;
+                
+                final class audit {
+                    @interface Sample {
+                    }
+                }
+                
+                record Sample(int value) {
+                    @audit.Sample()
+                    Sample {
+                    }
+                }
+                """);
+        Files.createDirectories(temporaryDirectory.resolve("app/src/test/java"));
+        String expectedInventory = String.join(System.lineSeparator(), List.of(
+                "source_set,source_path,package_name,declaring_type,declaring_type_kind,member_name,member_kind,parameter_types,visibility,modifiers,return_type,throws_types,annotations,type_parameters,line_number",
+                "\"main\",\"app/src/main/java/example/Sample.java\",\"example\",\"Sample\",\"RECORD\",\"<init>\",\"COMPACT_CONSTRUCTOR\",\"\",\"package-private\",\"\",\"\",\"\",\"@audit.Sample\",\"\",\"9\""
+        )) + System.lineSeparator();
+
+        ProcessResult result = runHelper();
+        byte[] inventory = Files.readAllBytes(temporaryDirectory.resolve(OUTPUT_PATH));
+
+        assertAll(
+                () -> assertEquals(0, result.exitCode()),
+                () -> assertEquals(
+                        "Generated " + OUTPUT_PATH + " with 1 declarations." + System.lineSeparator(),
+                        result.output()
+                ),
+                () -> assertArrayEquals(
+                        expectedInventory.getBytes(StandardCharsets.UTF_8),
+                        inventory,
+                        () -> "Actual inventory:" + System.lineSeparator() + new String(inventory, StandardCharsets.UTF_8)
+                )
+        );
+    }
+
+    @Test
     void testRejectsParserErrorsWithoutReplacingExistingInventory() throws Exception {
         writeSource("main", "Broken.java", """
                 package example;
