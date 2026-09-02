@@ -3,10 +3,12 @@ package de.mkalb.etpetssim.simulations.core.view;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
+import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -58,6 +60,8 @@ public abstract class AbstractMainView<
     protected @Nullable FXGridCanvasPainter overlayPainter;
     protected @Nullable Font cellFont;
     protected @Nullable Font cellEmojiFont;
+    private @Nullable ChangeListener<SimulationNotificationType> notificationListener;
+    private @Nullable Region mainRegion;
 
     protected AbstractMainView(VM viewModel,
                                CFV configView, CLV controlView, OV observationView,
@@ -110,6 +114,11 @@ public abstract class AbstractMainView<
 
     @Override
     public final Region buildMainRegion() {
+        Region cachedMainRegion = mainRegion;
+        if (cachedMainRegion != null) {
+            return cachedMainRegion;
+        }
+
         Region configRegion = configView.buildConfigRegion();
         Region controlRegion = controlView.buildControlRegion();
         Region observationRegion = observationView.buildObservationRegion();
@@ -133,12 +142,18 @@ public abstract class AbstractMainView<
         registerNotificationListener();
         registerOverlayPrimaryClickHandler();
 
+        mainRegion = borderPane;
         return borderPane;
     }
 
     @Override
-    public void shutdownSimulation() {
-        viewModel.shutdownSimulation();
+    public SimulationTermination shutdownSimulation() {
+        if (notificationListener != null) {
+            viewModel.notificationTypeProperty().removeListener(notificationListener);
+            notificationListener = null;
+        }
+        observationView.shutdownObservation();
+        SimulationTermination termination = viewModel.shutdownSimulation();
         basePainter = null;
         dynamicPainter = null;
         overlayPainter = null;
@@ -146,6 +161,7 @@ public abstract class AbstractMainView<
         cellEmojiFont = null;
         clearNotification();
         editToolBar.clear();
+        return termination;
     }
 
     protected abstract void registerViewModelListeners();
@@ -170,13 +186,14 @@ public abstract class AbstractMainView<
     protected abstract void handleMouseClickedCoordinate(Point2D mousePoint, GridCoordinate mouseCoordinate, FXGridCanvasPainter painter);
 
     private void registerNotificationListener() {
-        viewModel.notificationTypeProperty().addListener((_, _, newVal) -> {
+        notificationListener = (_, _, newVal) -> {
             if (newVal == SimulationNotificationType.NONE) {
                 clearNotification();
             } else {
                 updateNotification(AppLocalization.getText(newVal.resourceKey()));
             }
-        });
+        };
+        viewModel.notificationTypeProperty().addListener(notificationListener);
     }
 
     private void updateNotification(String notification) {

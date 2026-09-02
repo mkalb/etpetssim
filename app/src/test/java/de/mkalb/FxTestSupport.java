@@ -3,6 +3,7 @@ package de.mkalb;
 import javafx.application.Platform;
 import org.jspecify.annotations.Nullable;
 
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -131,6 +132,18 @@ public final class FxTestSupport {
      */
     public static <T extends @Nullable Object> T supplyAndWait(Supplier<T> supplier) {
         return supplyAndWait(supplier, DEFAULT_TIMEOUT_SECONDS);
+    }
+
+    /**
+     * Runs the given non-null supplier on the JavaFX Application Thread and returns its non-null result.
+     *
+     * @param supplier supplier that must produce a result
+     * @param <T>      non-null type of the supplied result
+     * @return non-null result produced by the supplier
+     * @see #supplyAndWait(Supplier)
+     */
+    public static <T> T supplyAndWaitNonNull(Supplier<T> supplier) {
+        return Objects.requireNonNull(supplyAndWait(supplier), "JavaFX supplier returned null");
     }
 
     /**

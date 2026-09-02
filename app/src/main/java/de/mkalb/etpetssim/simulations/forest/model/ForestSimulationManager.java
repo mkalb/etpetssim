@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.GridStructure;
 import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.support.GridInitializers;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
 import java.util.*;
@@ -18,7 +18,12 @@ public final class ForestSimulationManager
     private final TimedSimulationExecutor<ForestEntity, WritableGridModel<ForestEntity>> executor;
 
     public ForestSimulationManager(ForestConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public ForestSimulationManager(ForestConfig config, SimulationInitializationCancellation cancellation) {
         super(config, ForestStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new ForestStatistics(structure);
@@ -29,18 +34,22 @@ public final class ForestSimulationManager
         var terminationCondition = new ForestTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 
-        initializeGrid(config, model, random);
-
+        initializeGrid(config, model, random, cancellation);
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }
 
-    private void initializeGrid(ForestConfig config, WritableGridModel<ForestEntity> model, Random random) {
+    private void initializeGrid(ForestConfig config,
+                                WritableGridModel<ForestEntity> model,
+                                Random random,
+                                SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
                 () -> ForestEntity.TREE,
                 config.treeDensity(),
                 ForestEntity.EMPTY,
-                random);
+                random,
+                cancellation::checkCanceled);
         gridInitializer.initialize(model);
     }
 

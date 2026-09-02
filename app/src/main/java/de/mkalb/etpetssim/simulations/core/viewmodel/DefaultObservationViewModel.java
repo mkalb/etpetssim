@@ -129,9 +129,9 @@ public final class DefaultObservationViewModel<
      * together with its extrema and history.
      */
     public void resetStatistics() {
-        statistics.set(null);
         statisticsExtremaWrapper.set(StatisticExtrema.empty());
         statisticsHistoryWrapper.set(List.of());
+        statistics.set(null);
     }
 
     /**

@@ -143,8 +143,8 @@ public final class DefaultControlViewModel
      */
     public boolean isControlConfigDisabled() {
         return switch (getSimulationState()) {
-            case INITIAL, PAUSED, CANCELED, FINISHED, ERROR -> false;
-            case RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, SHUTTING_DOWN -> true;
+            case READY, PAUSED, CANCELED, FINISHED, ERROR -> false;
+            case INITIALIZING, RUNNING_TIMED, RUNNING_BATCH, PAUSING_BATCH, CANCELLING_BATCH, SHUTTING_DOWN -> true;
         };
     }
 

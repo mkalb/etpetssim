@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.*;
+import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
@@ -72,6 +73,7 @@ public abstract class AbstractDefaultMainView<
     @Override
     protected final void registerViewModelListeners() {
         viewModel.setSimulationInitializedListener(this::handleSimulationInitialized);
+        viewModel.setSimulationResetListener(this::handleSimulationReset);
         viewModel.setSimulationStepListener(this::handleSimulationStep);
         selectedGridCellListener = (_, oldGridCell, newGridCell) -> {
             if (overlayPainter != null) {
@@ -82,12 +84,12 @@ public abstract class AbstractDefaultMainView<
     }
 
     @Override
-    public void shutdownSimulation() {
+    public SimulationTermination shutdownSimulation() {
         if (selectedGridCellListener != null) {
             viewModel.selectedGridCellProperty().removeListener(selectedGridCellListener);
             selectedGridCellListener = null;
         }
-        super.shutdownSimulation();
+        return super.shutdownSimulation();
     }
 
     @SuppressWarnings("MagicNumber")
@@ -146,8 +148,10 @@ public abstract class AbstractDefaultMainView<
         drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());
     }
 
-    protected final void handleSimulationInitialized() {
+    private void handleSimulationInitialized() {
         int stepCount = viewModel.getStepCount();
+
+        AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
 
         var cellDimension = createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
 
@@ -160,14 +164,34 @@ public abstract class AbstractDefaultMainView<
 
         initSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
 
+        AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
+
         drawAndMeasureSimulationStep(stepCount);
 
-        if (DEBUG_MODE) {
-            AppLogger.infof("%s: Simulation initialized and drawn in the view. step=%d", LOG_COMPONENT, stepCount);
-        }
+        AppLogger.infof("%s: Initial simulation view draw completed. step=%d", LOG_COMPONENT, stepCount);
     }
 
-    protected final void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
+    private void handleSimulationReset() {
+        AppLogger.infof("%s: Resetting simulation view.", LOG_COMPONENT);
+        clearCanvasLayers();
+        controlView.updateStepCount(0);
+        observationView.initializeObservationLabels();
+    }
+
+    private void clearCanvasLayers() {
+        if (basePainter != null) {
+            basePainter.clearCanvasBackground();
+        }
+        if (dynamicPainter != null) {
+            dynamicPainter.clearCanvasBackground();
+        }
+        if (overlayPainter != null) {
+            overlayPainter.clearCanvasBackground();
+        }
+        skipOverlayActive = false;
+    }
+
+    private void handleSimulationStep(SimulationStepEvent simulationStepEvent) {
         int stepCount = simulationStepEvent.stepCount();
         if (simulationStepEvent.batchModeRunning()) {
             if (DEBUG_MODE) {
@@ -221,7 +245,7 @@ public abstract class AbstractDefaultMainView<
         } else {
             showSkipOverlay();
             if (DEBUG_MODE) {
-                AppLogger.warnf("%s: Skipping draw for step %d due to high average draw time. averageMillis=%d, thresholdMillis=%d",
+                AppLogger.infof("%s: Skipping draw for step %d due to high average draw time. averageMillis=%d, thresholdMillis=%d",
                         LOG_COMPONENT,
                         stepCount,
                         drawThrottler.getAverageDurationMillis(),

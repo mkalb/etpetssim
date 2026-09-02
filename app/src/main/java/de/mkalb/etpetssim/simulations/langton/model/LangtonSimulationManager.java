@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.executor.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.core.model.AbstractTimedSimulationManager;
+import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.langton.model.entity.*;
 
 public final class LangtonSimulationManager
@@ -16,7 +16,12 @@ public final class LangtonSimulationManager
     private final TimedSimulationExecutor<LangtonEntity, LangtonGridModel> executor;
 
     public LangtonSimulationManager(LangtonConfig config) {
+        this(config, SimulationInitializationCancellation.none());
+    }
+
+    public LangtonSimulationManager(LangtonConfig config, SimulationInitializationCancellation cancellation) {
         super(config, LangtonStatistics.metrics());
+        cancellation.checkCanceled();
 
         structure = config.createGridStructure();
         statistics = new LangtonStatistics(structure);
@@ -29,7 +34,7 @@ public final class LangtonSimulationManager
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::model, terminationCondition, statistics));
 
         initializeGrid(model);
-
+        cancellation.checkCanceled();
         initializeStatistics(model);
         recordInitialStatisticsSample();
     }

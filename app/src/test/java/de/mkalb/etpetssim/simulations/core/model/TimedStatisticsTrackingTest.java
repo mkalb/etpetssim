@@ -14,6 +14,7 @@ import de.mkalb.etpetssim.simulations.wator.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,15 +78,22 @@ final class TimedStatisticsTrackingTest {
     }
 
     private static EtpetsConfig createEtpetsConfig() {
+        return createEtpetsConfig(
+                EtpetsConstraints.GRID_WIDTH_DEFAULT,
+                EtpetsConstraints.GRID_HEIGHT_DEFAULT,
+                EtpetsConstraints.ROCK_PERCENT_DEFAULT);
+    }
+
+    private static EtpetsConfig createEtpetsConfig(int gridWidth, int gridHeight, double rockPercent) {
         return new EtpetsConfig(
                 EtpetsConstraints.CELL_SHAPE_DEFAULT,
                 EtpetsConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                EtpetsConstraints.GRID_WIDTH_DEFAULT,
-                EtpetsConstraints.GRID_HEIGHT_DEFAULT,
+                gridWidth,
+                gridHeight,
                 EtpetsConstraints.CELL_EDGE_LENGTH_DEFAULT,
                 EtpetsConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
-                EtpetsConstraints.ROCK_PERCENT_DEFAULT,
+                rockPercent,
                 EtpetsConstraints.WATER_PERCENT_DEFAULT,
                 EtpetsConstraints.PLANT_PERCENT_DEFAULT,
                 EtpetsConstraints.INSECT_PERCENT_DEFAULT,
@@ -153,6 +161,15 @@ final class TimedStatisticsTrackingTest {
         );
     }
 
+    private static SimulationInitializationCancellation cancellationOnCheck(int cancellationCheck) {
+        var checkCount = new AtomicInteger();
+        return () -> {
+            if (checkCount.incrementAndGet() == cancellationCheck) {
+                throw new SimulationInitializationCanceledException();
+            }
+        };
+    }
+
     private static LangtonConfig createLangtonConfig() {
         return new LangtonConfig(
                 LangtonConstraints.CELL_SHAPE_DEFAULT,
@@ -194,6 +211,64 @@ final class TimedStatisticsTrackingTest {
                 () -> assertEquals(0, history.getFirst().stepTimingStatistics().sumNanos()),
                 () -> assertEquals(expectedValues, history.getFirst().values())
         );
+    }
+
+    @Test
+    void testEtpetsInitializationHonorsCancellationDuringTerrainPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new EtpetsSimulationManager(
+                                createEtpetsConfig(200, 200, EtpetsConstraints.PERCENT_MAX),
+                                cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testConwayInitializationHonorsCancellationDuringGridPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new ConwaySimulationManager(createConwayConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testForestInitializationHonorsCancellationDuringGridPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new ForestSimulationManager(createForestConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testLangtonInitializationHonorsCancellationBeforeGridInitialization() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new LangtonSimulationManager(createLangtonConfig(), cancellationOnCheck(1))).getMessage());
+    }
+
+    @Test
+    void testSugarInitializationHonorsCancellationDuringRadiusMapCalculation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new SugarSimulationManager(createSugarConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testWatorInitializationHonorsCancellationDuringFishPopulation() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new WatorSimulationManager(createWatorConfig(), cancellationOnCheck(3))).getMessage());
+    }
+
+    @Test
+    void testSnakeInitializationHonorsCancellationDuringEligibleCoordinateSearch() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new SnakeSimulationManager(createSnakeConfig(), cancellationOnCheck(10))).getMessage());
+    }
+
+    @Test
+    void testReboundingInitializationHonorsCancellationDuringEligibleCoordinateSearch() {
+        assertEquals("Simulation initialization was canceled.",
+                assertThrows(SimulationInitializationCanceledException.class,
+                        () -> new ReboundingSimulationManager(createReboundingConfig(), cancellationOnCheck(6))).getMessage());
     }
 
     @Test
