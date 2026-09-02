@@ -176,9 +176,9 @@ final class AppLoggerTest {
 
         thread.join();
 
-        String s = formattedReference.get();
-        assertNotNull(s, "Formatted string should not be null");
-        assertTrue(s.contains("[INFO   ] [FX] Info message"));
+        String formattedRecord = formattedReference.get();
+        assertNotNull(formattedRecord, "Formatted string should not be null");
+        assertTrue(formattedRecord.contains("[INFO   ] [FX] Info message"));
     }
 
     @Test
