@@ -91,7 +91,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void initSimulation(EtpetsConfig config, CellDimension cellDimension, EtpetsGridModel model) {
+    protected void initializeSimulation(EtpetsConfig config, CellDimension cellDimension, EtpetsGridModel model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

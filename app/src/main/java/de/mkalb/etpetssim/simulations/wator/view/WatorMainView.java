@@ -72,7 +72,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void initSimulation(WatorConfig config, CellDimension cellDimension, WritableGridModel<WatorEntity> model) {
+    protected void initializeSimulation(WatorConfig config, CellDimension cellDimension, WritableGridModel<WatorEntity> model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

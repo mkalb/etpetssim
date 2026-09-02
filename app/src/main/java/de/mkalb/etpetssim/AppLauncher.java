@@ -48,7 +48,7 @@ public final class AppLauncher {
      *
      * @param arguments parsed command-line arguments
      */
-    private static void initAppLogger(AppArgs arguments) {
+    private static void initializeAppLogger(AppArgs arguments) {
         var logLevel = arguments.getValue(AppArgs.Key.LOG_LEVEL)
                                 .flatMap(AppLogger.LogLevel::fromString)
                                 .orElse(AppLogger.DEFAULT_LOG_LEVEL);
@@ -71,7 +71,7 @@ public final class AppLauncher {
      *
      * @param arguments parsed command-line arguments
      */
-    private static void initAppLocalization(AppArgs arguments) {
+    private static void initializeAppLocalization(AppArgs arguments) {
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
         Locale.setDefault(AppLocalization.locale());
     }
@@ -86,8 +86,8 @@ public final class AppLauncher {
      */
     static void main(String[] args) {
         var arguments = parseArgumentsAndHandleHelp(args);
-        initAppLogger(arguments);
-        initAppLocalization(arguments);
+        initializeAppLogger(arguments);
+        initializeAppLocalization(arguments);
 
         AppLogger.infof("AppLauncher: Launching application with arguments: %s", arguments.argumentsAsString());
         Application.launch(ExtraterrestrialPetsSimulation.class, args);

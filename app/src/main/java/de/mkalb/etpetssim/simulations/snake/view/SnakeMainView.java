@@ -108,7 +108,7 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void initSimulation(SnakeConfig config, CellDimension cellDimension, WritableGridModel<SnakeEntity> model) {
+    protected void initializeSimulation(SnakeConfig config, CellDimension cellDimension, WritableGridModel<SnakeEntity> model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
