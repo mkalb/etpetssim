@@ -73,6 +73,12 @@ tasks.register<Test>("skillTest") {
     )
     inputs.file(i18nConsistencyCheckSource)
     systemProperty("i18nConsistencyCheck.source", i18nConsistencyCheckSource.asFile.absolutePath)
+
+    val javaMethodInventorySource = rootProject.layout.projectDirectory.file(
+        ".github/skills/java-method-inventory/JavaMethodInventory.java"
+    )
+    inputs.file(javaMethodInventorySource)
+    systemProperty("javaMethodInventory.source", javaMethodInventorySource.asFile.absolutePath)
 }
 
 distributions {
