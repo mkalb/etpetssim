@@ -44,7 +44,7 @@ public final class EtpetsObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
-                buildChartSection(),
+                createChartSection(),
                 selectedCellSection
         );
     }

@@ -37,7 +37,7 @@ public final class LangtonObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
-                buildChartSection(),
+                createChartSection(),
                 selectedCellSection
         );
     }

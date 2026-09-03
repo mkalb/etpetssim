@@ -509,7 +509,7 @@ public abstract class AbstractObservationView<
      * @return a {@link TitledPane} wrapping the history line charts, or {@code null}
      */
     @Nullable
-    protected final TitledPane buildChartSection() {
+    protected final TitledPane createChartSection() {
         if ((genericMetrics == null) ||
                 genericMetrics.stream().noneMatch(m -> m.chartGroup() != StatisticChartGroup.NONE)) {
             return null;
