@@ -66,7 +66,7 @@ public final class EtpetsAgentLogic {
                 }
 
                 // Passive energy loss and reproduction cooldown decrement.
-                pet.changeEnergy(-EtpetsBalance.PET_STEP_ENERGY_LOSS);
+                pet.adjustEnergy(-EtpetsBalance.PET_STEP_ENERGY_LOSS);
                 pet.tickReproductionCooldown();
 
                 // Check death conditions.
@@ -311,7 +311,7 @@ public final class EtpetsAgentLogic {
         // Movement energy cost (at least 1, scaled by movementCostModifier).
         long roundedMovementCost = Math.round(pet.traits().movementCostModifier());
         int movementCost = Math.max(1, Math.toIntExact(roundedMovementCost));
-        pet.changeEnergy(-movementCost);
+        pet.adjustEnergy(-movementCost);
 
         // Relocate pet.
         pet.recordMoveFrom(fromCoordinate);
@@ -335,7 +335,7 @@ public final class EtpetsAgentLogic {
 
         // Consume the resource, gain energy and update trail.
         resource.consume();
-        pet.changeEnergy(resource.energyGainPerAct());
+        pet.adjustEnergy(resource.energyGainPerAct());
         updateTrailAtCoordinate(gridModel, petCoordinate);
 
         return ActionEffect.none();
