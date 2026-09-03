@@ -13,7 +13,7 @@ import java.util.function.*;
  * Three {@link InputEnumProperty} instances hold shape-specific preset selections
  * (one per {@link de.mkalb.etpetssim.engine.CellShape}). Selecting a preset sets the
  * {@link #stringProperty()} to the corresponding S/B rule string, which in turn
- * triggers the registered {@link #setOnRulesChanged(Consumer) onRulesChanged} callback
+ * triggers the registered {@link #setRulesChangedListener(Consumer) rulesChangedListener} callback
  * so the ViewModel can update the checkbox grid.
  * <p>
  * Manual S/B text entered in the text field also triggers the callback; parsing errors
@@ -32,7 +32,7 @@ public final class ConwayRuleProperty {
     private final InputChoiceProperty<ConwayPresetSquare> presetSquareProperty;
     private final InputChoiceProperty<ConwayPresetHexagon> presetHexagonProperty;
 
-    private @Nullable Consumer<ConwayTransitionRules> onRulesChanged;
+    private @Nullable Consumer<ConwayTransitionRules> rulesChangedListener;
 
     public ConwayRuleProperty() {
         stringProperty = new SimpleStringProperty("");
@@ -55,8 +55,8 @@ public final class ConwayRuleProperty {
             }
             try {
                 ConwayTransitionRules rules = ConwayTransitionRules.of(newVal);
-                if (onRulesChanged != null) {
-                    onRulesChanged.accept(rules);
+                if (rulesChangedListener != null) {
+                    rulesChangedListener.accept(rules);
                 }
             } catch (IllegalArgumentException e) {
                 // Silently ignore invalid S/B input — checkbox grid remains unchanged
@@ -68,10 +68,10 @@ public final class ConwayRuleProperty {
      * Registers a callback that is invoked whenever a valid {@link ConwayTransitionRules} is
      * derived from a preset selection or a text-field change.
      *
-     * @param callback the consumer to call with the parsed rules
+     * @param listener the consumer to call with the parsed rules
      */
-    public void setOnRulesChanged(Consumer<ConwayTransitionRules> callback) {
-        onRulesChanged = callback;
+    public void setRulesChangedListener(Consumer<ConwayTransitionRules> listener) {
+        rulesChangedListener = listener;
     }
 
     /**
