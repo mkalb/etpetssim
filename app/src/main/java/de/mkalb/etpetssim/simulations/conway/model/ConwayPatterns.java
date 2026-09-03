@@ -178,7 +178,7 @@ public final class ConwayPatterns {
      */
     public static List<ConwayPatternChoice> availableChoices(ConwayConfig config) {
         return CATALOG_CHOICES.stream()
-                              .filter(choice -> choice.availableFor(config))
+                              .filter(choice -> choice.isAvailableFor(config))
                               .toList();
     }
 

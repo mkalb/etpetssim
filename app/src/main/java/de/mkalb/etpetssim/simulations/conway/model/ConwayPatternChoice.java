@@ -27,7 +27,7 @@ public record ConwayPatternChoice(
         return patternSupplier.get().normalized();
     }
 
-    public boolean availableFor(ConwayConfig config) {
+    public boolean isAvailableFor(ConwayConfig config) {
         return availabilityRule.test(config);
     }
 
