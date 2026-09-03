@@ -55,17 +55,17 @@ final class SimulationConfigTest {
     }
 
     @Test
-    void testComputeCellCountReturnsProduct() {
+    void testCellCountReturnsProduct() {
         TestSimulationConfig config = createConfig(GRID_WIDTH_SAMPLE, GRID_HEIGHT_SAMPLE, CELL_EDGE_LENGTH);
 
-        assertEquals(GRID_CELL_COUNT_SAMPLE, config.computeCellCount());
+        assertEquals(GRID_CELL_COUNT_SAMPLE, config.cellCount());
     }
 
     @Test
-    void testComputeCellCountRejectsOverflow() {
+    void testCellCountRejectsOverflow() {
         TestSimulationConfig config = createConfig(Integer.MAX_VALUE, 2, CELL_EDGE_LENGTH);
 
-        assertThrows(ArithmeticException.class, config::computeCellCount);
+        assertThrows(ArithmeticException.class, config::cellCount);
     }
 
     @Test
