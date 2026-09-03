@@ -57,7 +57,7 @@ public final class SugarUserAction
                                GridCoordinate coordinate,
                                SugarAddSugarLevel addSugarLevel) {
         int maxSugarAmount = manager.config().maxSugarAmount();
-        int sugarAmount = addSugarLevel.resolveSugarAmount(maxSugarAmount);
+        int sugarAmount = addSugarLevel.computeSugarAmount(maxSugarAmount);
         ResourceEntity currentResourceEntity = model.resourceModel().getEntity(coordinate);
         model.resourceModel().setEntity(coordinate, new Sugar(maxSugarAmount, sugarAmount));
         if (currentResourceEntity.isEmpty()) {

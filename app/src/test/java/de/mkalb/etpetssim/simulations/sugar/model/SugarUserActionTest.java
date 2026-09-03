@@ -53,7 +53,7 @@ final class SugarUserActionTest {
         assertAll(
                 () -> assertInstanceOf(Sugar.class, resourceEntity),
                 () -> assertEquals(
-                        SugarAddSugarLevel.HIGH.resolveSugarAmount(manager.config().maxSugarAmount()),
+                        SugarAddSugarLevel.HIGH.computeSugarAmount(manager.config().maxSugarAmount()),
                         ((Sugar) resourceEntity).currentAmount()),
                 () -> assertEquals(resourceCellsBefore + 1, manager.statistics().getResourceCells())
         );

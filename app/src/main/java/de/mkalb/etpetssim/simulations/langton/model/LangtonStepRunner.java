@@ -53,7 +53,7 @@ public final class LangtonStepRunner
                 removeAnt(agentCell, antModel, statistics);
                 continue;
             }
-            var groundEntity = determineGround(newCoordinate, statistics);
+            var groundEntity = resolveGroundAndCountVisit(newCoordinate, statistics);
             moveAnt(agentCell, newCoordinate, antModel, ant, groundEntity);
             switchGround(newCoordinate, groundEntity, groundModel);
         }
@@ -80,7 +80,7 @@ public final class LangtonStepRunner
         groundModel.setEntity(coordinate, TerrainConstant.requireByRuleIndex(newRuleIndex));
     }
 
-    TerrainConstant determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {
+    TerrainConstant resolveGroundAndCountVisit(GridCoordinate newCoordinate, LangtonStatistics statistics) {
         var groundModel = model.groundModel();
         TerrainConstant groundEntity = groundModel.getEntity(newCoordinate);
         if (groundEntity == TerrainConstant.UNVISITED) {
