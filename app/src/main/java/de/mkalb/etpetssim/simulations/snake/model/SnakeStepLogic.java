@@ -47,7 +47,7 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         if (snakeHead.isDead()) {
             removeAndRespawnDeadSnake(snakeHead, headCoordinate, model, stepIndex, statistics);
         } else {
-            var context = buildStrategyContext(snakeHead, headCoordinate, model);
+            var context = createMoveContext(snakeHead, headCoordinate, model);
 
             // Decide move by strategy and act accordingly (move or die)
             snakeHead.strategy().decideMove(context).ifPresentOrElse(
@@ -114,9 +114,9 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         statistics.incrementCumulativeSnakeDeathCount();
     }
 
-    private MoveContext buildStrategyContext(SnakeHead snakeHead,
-                                             GridCoordinate headCoordinate,
-                                             ReadableGridModel<SnakeEntity> model) {
+    private MoveContext createMoveContext(SnakeHead snakeHead,
+                                          GridCoordinate headCoordinate,
+                                          ReadableGridModel<SnakeEntity> model) {
         // Find ground neighbors and food neighbors
         List<CellNeighborWithEdgeBehavior> groundNeighbors = new ArrayList<>(maxNeighbors);
         List<CellNeighborWithEdgeBehavior> foodNeighbors = new ArrayList<>(maxNeighbors);
