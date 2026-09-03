@@ -134,7 +134,7 @@ final class ReboundingUserActionTest {
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate rebounderCoordinate = new GridCoordinate(0, 0);
         manager.currentModel().setEntity(rebounderCoordinate, new Rebounder(CompassDirection.N));
-        manager.statistics().increaseMovingEntityCells();
+        manager.statistics().incrementMovingEntityCells();
         int totalCells = manager.currentModel().allCells().size();
 
         userAction.apply(

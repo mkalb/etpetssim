@@ -41,8 +41,8 @@ public final class SnakeUserAction
                     model.setEntity(coordinate,
                             new SnakeHead(nextSnakeId, addSnake.strategy(), manager.config().initialPendingGrowth(), stepIndexOfSpawn));
                     manager.incrementNextSnakeId();
-                    statistics.increaseSnakeHeadCells();
-                    statistics.increaseLivingSnakeHeadCells();
+                    statistics.incrementSnakeHeadCells();
+                    statistics.incrementLivingSnakeHeadCells();
                 }
             }
         }
@@ -110,9 +110,9 @@ public final class SnakeUserAction
                              SnakeHead head) {
         model.setEntityToDefault(headCoordinate);
         head.currentSegments().forEach(model::setEntityToDefault);
-        statistics.decreaseSnakeHeadCells();
+        statistics.decrementSnakeHeadCells();
         if (!head.isDead()) {
-            statistics.decreaseLivingSnakeHeadCells();
+            statistics.decrementLivingSnakeHeadCells();
         }
     }
 

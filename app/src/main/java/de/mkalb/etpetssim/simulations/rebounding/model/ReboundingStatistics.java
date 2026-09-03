@@ -43,19 +43,19 @@ public final class ReboundingStatistics
         movingEntityCells = movingEntityCellsInitial;
     }
 
-    public void increaseWallCells() {
+    public void incrementWallCells() {
         wallCells += 1;
     }
 
-    public void decreaseWallCells() {
+    public void decrementWallCells() {
         wallCells -= 1;
     }
 
-    public void decreaseMovingEntityCells() {
+    public void decrementMovingEntityCells() {
         movingEntityCells -= 1;
     }
 
-    public void increaseMovingEntityCells() {
+    public void incrementMovingEntityCells() {
         movingEntityCells += 1;
     }
 

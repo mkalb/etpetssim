@@ -67,23 +67,23 @@ public final class SnakeStatistics
         foodCells = foodCellsInitial;
     }
 
-    public void decreaseSnakeHeadCells() {
+    public void decrementSnakeHeadCells() {
         snakeHeadCells--;
     }
 
-    public void increaseSnakeHeadCells() {
+    public void incrementSnakeHeadCells() {
         snakeHeadCells++;
     }
 
-    public void decreaseLivingSnakeHeadCells() {
+    public void decrementLivingSnakeHeadCells() {
         livingSnakeHeadCells--;
     }
 
-    public void increaseLivingSnakeHeadCells() {
+    public void incrementLivingSnakeHeadCells() {
         livingSnakeHeadCells++;
     }
 
-    public void decreaseFoodCells() {
+    public void decrementFoodCells() {
         foodCells--;
     }
 

@@ -67,17 +67,17 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
         snakeHead.currentSegments().forEach(model::setEntityToDefault);
 
         switch (config.deathMode()) {
-            case PERMADEATH -> statistics.decreaseSnakeHeadCells();
+            case PERMADEATH -> statistics.decrementSnakeHeadCells();
             case RESPAWN -> model.findRandomDefaultCoordinate(random)
                                  .ifPresentOrElse(
                                          // Respawn snake head as new living snake head at free cell
                                          freeCoordinate -> {
                                              model.setEntity(freeCoordinate, snakeHead);
                                              snakeHead.respawn(config.initialPendingGrowth(), stepIndex);
-                                             statistics.increaseLivingSnakeHeadCells();
+                                             statistics.incrementLivingSnakeHeadCells();
                                          },
                                          // No free cell to respawn. Remove snake head from statistics. Similar to PERMADEATH.
-                                         statistics::decreaseSnakeHeadCells);
+                                         statistics::decrementSnakeHeadCells);
         }
     }
 
@@ -103,14 +103,14 @@ public final class SnakeStepLogic implements AgentStepLogic<SnakeEntity, SnakeSt
             model.findRandomDefaultCoordinate(random)
                  .ifPresentOrElse(
                          freeCoordinate -> model.setEntity(freeCoordinate, TerrainConstant.GROWTH_FOOD),
-                         statistics::decreaseFoodCells);
+                         statistics::decrementFoodCells);
         }
     }
 
     private void killSnake(SnakeHead snakeHead,
                            SnakeStatistics statistics) {
         snakeHead.die();
-        statistics.decreaseLivingSnakeHeadCells();
+        statistics.decrementLivingSnakeHeadCells();
         statistics.incrementCumulativeSnakeDeathCount();
     }
 

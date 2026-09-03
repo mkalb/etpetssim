@@ -33,7 +33,7 @@ public final class ReboundingUserAction
                         var entity = model.getEntity(coordinate);
                         if (entity.isGround()) {
                             model.setEntity(coordinate, TerrainConstant.WALL);
-                            statistics.increaseWallCells();
+                            statistics.incrementWallCells();
                         }
                     }
                     case FILL_WALLS -> {
@@ -43,7 +43,7 @@ public final class ReboundingUserAction
                         }
                         for (var coordinate : groundCoordinates) {
                             model.setEntity(coordinate, TerrainConstant.WALL);
-                            statistics.increaseWallCells();
+                            statistics.incrementWallCells();
                         }
                     }
                     case REMOVE_WALL -> {
@@ -54,7 +54,7 @@ public final class ReboundingUserAction
                         var entity = model.getEntity(coordinate);
                         if (entity.isWall()) {
                             model.setEntityToDefault(coordinate);
-                            statistics.decreaseWallCells();
+                            statistics.decrementWallCells();
                         }
                     }
                     case REMOVE_REBOUNDER -> {
@@ -65,7 +65,7 @@ public final class ReboundingUserAction
                         var entity = model.getEntity(coordinate);
                         if (entity.isRebounder()) {
                             model.setEntityToDefault(coordinate);
-                            statistics.decreaseMovingEntityCells();
+                            statistics.decrementMovingEntityCells();
                         }
                     }
                 }
@@ -78,7 +78,7 @@ public final class ReboundingUserAction
                 var entity = model.getEntity(coordinate);
                 if (entity.isGround()) {
                     model.setEntity(coordinate, new Rebounder(addRebounder.direction()));
-                    statistics.increaseMovingEntityCells();
+                    statistics.incrementMovingEntityCells();
                 }
             }
         }

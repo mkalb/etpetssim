@@ -146,8 +146,8 @@ final class SnakeUserActionTest {
 
         manager.currentModel().setEntity(headCoordinate, head);
         manager.currentModel().setEntity(segmentCoordinate, TerrainConstant.SNAKE_SEGMENT);
-        manager.statistics().increaseSnakeHeadCells();
-        manager.statistics().increaseLivingSnakeHeadCells();
+        manager.statistics().incrementSnakeHeadCells();
+        manager.statistics().incrementLivingSnakeHeadCells();
 
         userAction.apply(
                 manager,

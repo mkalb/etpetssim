@@ -58,13 +58,13 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                         neighbor.mappedNeighborCoordinate()));
                 model.setEntityToDefault(neighbor.mappedNeighborCoordinate());
 
-                statistics.decreaseWallCells();
+                statistics.decrementWallCells();
             } else if (neighborEntity.isRebounder()) {
                 // Move into the neighbor cell, destroying the other rebounder
                 model.setEntity(neighbor.mappedNeighborCoordinate(), movingEntity);
                 model.setEntityToDefault(currentCoordinate);
 
-                statistics.decreaseMovingEntityCells();
+                statistics.decrementMovingEntityCells();
             }
         }
     }
