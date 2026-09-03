@@ -614,7 +614,7 @@ public final class EtpetsAgentLogic {
         if (terrain == TerrainConstant.GROUND) {
             gridModel.terrainModel().setEntity(coordinate, new Trail(EtpetsBalance.TRAIL_INTENSITY_DEFAULT));
         } else if (terrain instanceof Trail trail) {
-            trail.incrementIntensity(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
+            trail.adjustIntensity(EtpetsBalance.TRAIL_INTENSITY_INCREASE_PER_ENTRY);
         }
     }
 
