@@ -27,13 +27,17 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `to...`: convert a value to a target type or representation
 - `format...`: produce display text from values, usually localized
 - `as...`: expose existing data through an alternative type, view, property, or binding
-- `compute...`: calculate or derive a deterministic result from inputs or current state
-- `resolve...`: select which concrete result applies from selection state, configuration, context, or a fallback
+- `compute...`: perform a named calculation when that calculation is the primary API intent, typically from supplied
+  values or operational context
+- `resolve...`: determine the applicable result by interpreting input, selection state, configuration, precedence, or
+  fallback rules
+- `find...`: search existing candidates for one matching result; return `Optional<T>` when absence is expected
 - `is...`/`has...`/`can...`/`should...`/`contains...`/`are...`/`includes...`: query boolean state, validity, mode,
   presence, availability, capability, or policy
-- `get...`: retrieve or obtain state, data, or resources, including parameterized lookups and JavaBean-style accessors
+- `get...`: retrieve a value, resource, or property using a supplied lookup input, or expose it through a JavaBean-style
+  accessor
 - `set...`: assign or replace mutable state, property values, model or UI content, or callbacks
-- `update...`: refresh existing state, statistics, or UI content to match current data
+- `update...`: refresh state, statistics, or UI content to match current data
 - `apply...`: enact a rule, transformation, or action on input or mutable state
 - `perform...`: carry out one simulation, agent, or strategy step inside a step runner or step logic
 - `execute...`: run or orchestrate an operation, action, or sequence
@@ -47,7 +51,9 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `...And...`/`...Or...`: name a deliberately coordinated operation whose additional effect must stay visible to callers
 - `toDisplayString()`: short human-readable representation of a value or entity; keep it separate from `toString()`,
   which stays a technical diagnostic representation
-- Use concise noun-style names (`locale()`, `area()`, `opposite()`) for immutable value access and derived values.
+- Use concise noun-style names (`locale()`, `area()`, `opposite()`) for stored properties, intrinsic derived values, and
+  named catalog values. They are especially appropriate for records, enums, immutable value objects, data-focused types,
+  and components exposing owned state.
 - Keep generated Java record accessor names (`x()`, `y()`) unless a custom method adds distinct behavior.
 
 ## Java Records
