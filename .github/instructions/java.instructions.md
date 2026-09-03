@@ -17,18 +17,31 @@ Rules for all `.java` files; repository-wide instructions still apply.
 
 ## Naming Conventions
 
-Use these method naming patterns when they match the behavior:
+Use these method naming patterns when they match the method's primary behavior; test method names follow
+`junit.instructions.md`.
 
-- `create...`: instantiate/configure one object/control/view
-- `build...`: assemble multiple UI parts into one region/container
-- `of...`/`with...`: validating/configured static factory
-- `compute...`: deterministic calculation from input/state
-- `to...`/`from...`/`as...`: conversion or alternative view accessor
-- `is...`/`has...`: boolean state, validity, mode, presence, or availability query
-- `get...`/`set...`/`...Property`: JavaFX or mutable property accessors
-- `initialize...`/`reset...`/`shutdown...`: lifecycle setup, reset, and cleanup
-- `request...`: user-intent action trigger/flag
-- Use concise noun-style names (`locale()`, `area()`, `opposite()`) on utility/value APIs.
+- `create...`: instantiate and configure one coherent object, control, view, or value, including composed containers
+- `build...`: assemble a top-level simulation view region; reserved for the `build*Region()` methods
+- `of...`: create an instance through a validating or configured static factory
+- `from...`: create, parse, or derive a result from the source named in the method
+- `to...`: convert a value to a target type or representation
+- `as...`: expose existing data through an alternative type, view, property, or binding
+- `compute...`: calculate or derive a deterministic result from inputs or current state
+- `resolve...`: select which concrete result applies from selection state, configuration, context, or a fallback
+- `is...`/`has...`: query boolean state, validity, mode, presence, or availability
+- `get...`: retrieve or obtain state, data, or resources, including parameterized lookups and JavaBean-style accessors
+- `set...`: assign or replace mutable state, property values, model or UI content, or callbacks
+- `apply...`: enact a rule, transformation, or action on input or mutable state
+- `perform...`: carry out a defined simulation, agent, or strategy step, or fulfill a callback contract
+- `execute...`: run or orchestrate an operation, action, or sequence
+- `draw...`: render visual output
+- `initialize...`/`reset...`/`shutdown...`: perform lifecycle setup, state reset, or cleanup
+- `request...`: signal a user-intent action or set a corresponding flag
+- `increment...`/`decrement...`: change a counter by exactly `1` or `-1`, respectively
+- `adjust...`: adapt a value, property, or layout using a signed delta, factor, constraint, or contextual target
+- `...Property`: JavaFX property accessor; this suffix takes precedence over any prefix rule
+- `...And...`/`...Or...`: name a deliberately coordinated operation whose additional effect must stay visible to callers
+- Use concise noun-style names (`locale()`, `area()`, `opposite()`) for immutable value access and derived values.
 - Keep generated Java record accessor names (`x()`, `y()`) unless a custom method adds distinct behavior.
 
 ## Java Records
