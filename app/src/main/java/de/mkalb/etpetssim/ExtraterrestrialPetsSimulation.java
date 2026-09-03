@@ -44,14 +44,14 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private boolean terminationAwaited;
 
     /**
-     * Determines the initial simulation type from parsed arguments.
+     * Resolves the initial simulation type from parsed arguments.
      *
      * @param arguments       parsed application arguments
      * @param onlyImplemented whether to restrict matching to implemented simulations
      * @return an {@link Optional} containing the matching simulation type, or empty if none matches
      */
     @SuppressWarnings("SameParameterValue")
-    private Optional<SimulationType> determineSimulationType(AppArgs arguments, boolean onlyImplemented) {
+    private Optional<SimulationType> resolveSimulationType(AppArgs arguments, boolean onlyImplemented) {
         return arguments.getValue(AppArgs.Key.SIMULATION)
                         .flatMap(arg -> SimulationType.fromCliArgument(arg, onlyImplemented));
     }
@@ -90,7 +90,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         // Create new simulation instance with header and main region
         var simulationInstance = SimulationFactory.createInstance(simulationType, stage, this::switchToSimulation);
-        var simulationHeaderNode = buildSimulationHeaderNode(stage, simulationInstance);
+        var simulationHeaderNode = createSimulationHeaderNode(stage, simulationInstance);
         var simulationMainRegion = simulationInstance.region();
 
         currentSimulationInstance = simulationInstance;
@@ -311,13 +311,13 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Builds the simulation header shown above the main simulation region.
+     * Creates the simulation header shown above the main simulation region.
      *
      * @param stage    primary stage
      * @param instance active simulation instance
      * @return header node containing titles and navigation links
      */
-    private Node buildSimulationHeaderNode(Stage stage, SimulationInstance instance) {
+    private Node createSimulationHeaderNode(Stage stage, SimulationInstance instance) {
         SimulationType simulationType = instance.simulationType();
 
         VBox titleBox = new VBox(FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
@@ -386,7 +386,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         // Determine the simulation type from command-line arguments
         AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
-        SimulationType type = determineSimulationType(arguments, true)
+        SimulationType type = resolveSimulationType(arguments, true)
                 .orElse(SimulationType.STARTSCREEN); // Default to STARTSCREEN if no valid simulation type is found
         AppLogger.info("Application: Starting with simulation type: " + type.name());
 
