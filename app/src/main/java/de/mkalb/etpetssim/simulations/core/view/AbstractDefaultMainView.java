@@ -264,7 +264,7 @@ public abstract class AbstractDefaultMainView<
                     center,
                     SKIP_OVERLAY_SYMBOL,
                     SKIP_OVERLAY_TEXT_COLOR,
-                    getPreferredFont(SKIP_FONT_SIZE),
+                    resolvePreferredFont(SKIP_FONT_SIZE),
                     SKIP_OVERLAY_BACKGROUND_COLOR,
                     SKIP_PADDING
             );

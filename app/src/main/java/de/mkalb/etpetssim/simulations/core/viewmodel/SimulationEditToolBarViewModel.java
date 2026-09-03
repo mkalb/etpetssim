@@ -33,14 +33,14 @@ final class SimulationEditToolBarViewModel<CTX extends SimulationUserActionConte
         selectedUserActionToolId.set(SimulationUserActionDescriptor.SELECT_TOOL_ID);
     }
 
-    Optional<SimulationUserActionDescriptor<CTX>> getSelectedUserActionDescriptor(List<SimulationUserActionDescriptor<CTX>> descriptors) {
+    Optional<SimulationUserActionDescriptor<CTX>> findSelectedUserActionDescriptor(List<SimulationUserActionDescriptor<CTX>> descriptors) {
         return descriptors.stream()
                           .filter(descriptor -> selectedUserActionToolId.get().equals(descriptor.toolId()))
                           .findFirst();
     }
 
-    Optional<SimulationUserActionDescriptor<CTX>> getSelectedCellActionDescriptor(List<SimulationUserActionDescriptor<CTX>> descriptors) {
-        return getSelectedUserActionDescriptor(descriptors)
+    Optional<SimulationUserActionDescriptor<CTX>> findSelectedCellActionDescriptor(List<SimulationUserActionDescriptor<CTX>> descriptors) {
+        return findSelectedUserActionDescriptor(descriptors)
                 .filter(descriptor -> descriptor.scope() == SimulationUserActionScope.CELL_SELECTED);
     }
 

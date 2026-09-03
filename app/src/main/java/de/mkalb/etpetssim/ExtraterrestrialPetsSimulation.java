@@ -175,13 +175,13 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Finds the screen containing the stage center point.
+     * Resolves the screen containing the stage center point, with the primary screen as a fallback.
      *
      * @param stage stage to evaluate
      * @return matching screen, or the primary screen if none matches
      */
     @SuppressWarnings("MagicNumber")
-    private Screen findScreenContainingStage(Stage stage) {
+    private Screen resolveScreenContainingStage(Stage stage) {
         // Calculate center coordinates of the stage
         double cx = stage.getX() + (stage.getWidth() / 2.0d);
         double cy = stage.getY() + (stage.getHeight() / 2.0d);
@@ -221,7 +221,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         }
 
         // Visual screen bounds
-        Screen screen = findScreenContainingStage(stage);
+        Screen screen = resolveScreenContainingStage(stage);
         Rectangle2D visualBounds = screen.getVisualBounds();
         AppLogger.info("Application: Found screen and using visual bounds: " + visualBounds);
 
