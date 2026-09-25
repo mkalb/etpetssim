@@ -46,7 +46,7 @@ final class SnakeUserActionTest {
         userAction.apply(manager, SnakeUserActionContext.FixedAction.ADD_WALL, null);
 
         assertAll(
-                () -> assertEquals(0, manager.statistics().getWallCells()),
+                () -> assertEquals(0, manager.statistics().wallCells()),
                 () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
         );
     }
@@ -61,7 +61,7 @@ final class SnakeUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isWall()),
-                () -> assertEquals(1, manager.statistics().getWallCells())
+                () -> assertEquals(1, manager.statistics().wallCells())
         );
     }
 
@@ -77,7 +77,7 @@ final class SnakeUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isGround()),
-                () -> assertEquals(0, manager.statistics().getWallCells())
+                () -> assertEquals(0, manager.statistics().wallCells())
         );
     }
 
@@ -91,7 +91,7 @@ final class SnakeUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isFood()),
-                () -> assertEquals(1, manager.statistics().getFoodCells())
+                () -> assertEquals(1, manager.statistics().foodCells())
         );
     }
 
@@ -107,7 +107,7 @@ final class SnakeUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isGround()),
-                () -> assertEquals(0, manager.statistics().getFoodCells())
+                () -> assertEquals(0, manager.statistics().foodCells())
         );
     }
 
@@ -125,8 +125,8 @@ final class SnakeUserActionTest {
         SnakeEntity entity = manager.currentModel().getEntity(coordinate);
         assertAll(
                 () -> assertInstanceOf(SnakeHead.class, entity),
-                () -> assertEquals(1, manager.statistics().getSnakeHeadCells()),
-                () -> assertEquals(1, manager.statistics().getLivingSnakeHeadCells())
+                () -> assertEquals(1, manager.statistics().snakeHeadCells()),
+                () -> assertEquals(1, manager.statistics().livingSnakeHeadCells())
         );
     }
 
@@ -157,8 +157,8 @@ final class SnakeUserActionTest {
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(headCoordinate).isGround()),
                 () -> assertTrue(manager.currentModel().getEntity(segmentCoordinate).isGround()),
-                () -> assertEquals(0, manager.statistics().getSnakeHeadCells()),
-                () -> assertEquals(0, manager.statistics().getLivingSnakeHeadCells())
+                () -> assertEquals(0, manager.statistics().snakeHeadCells()),
+                () -> assertEquals(0, manager.statistics().livingSnakeHeadCells())
         );
     }
 

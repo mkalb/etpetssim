@@ -38,7 +38,7 @@ public final class WatorObservationView
         if (gridCell != null) {
             Optional<WatorStatistics> statistics = viewModel.getStatistics();
             if (statistics.isPresent() && (gridCell.entity() instanceof CreatureBase creature)) {
-                setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().getStepCount()));
+                setFormattedIntegerValue(ageLabel, creature.ageAtStepCount(statistics.get().stepCount()));
             }
         }
     }

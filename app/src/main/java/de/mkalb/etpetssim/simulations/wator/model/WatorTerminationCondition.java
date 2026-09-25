@@ -9,9 +9,9 @@ public final class WatorTerminationCondition implements SimulationTerminationCon
 
     @Override
     public boolean isFinished(ReadableGridModel<WatorEntity> model, int stepCount, WatorStatistics statistics) {
-        return (statistics.getSharkCells() == 0)
-                && ((statistics.getFishCells() == 0)
-                || (statistics.getFishCells() > (statistics.getTotalCells() * WatorBalance.TERMINATION_FISH_MAX_SHARE)));
+        return (statistics.sharkCells() == 0)
+                && ((statistics.fishCells() == 0)
+                || (statistics.fishCells() > (statistics.totalCells() * WatorBalance.TERMINATION_FISH_MAX_SHARE)));
     }
 
 }

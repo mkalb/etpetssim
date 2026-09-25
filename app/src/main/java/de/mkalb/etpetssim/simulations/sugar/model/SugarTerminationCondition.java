@@ -17,7 +17,7 @@ public final class SugarTerminationCondition
 
     @Override
     public boolean isFinished(SugarGridModel model, int stepCount, SugarStatistics statistics) {
-        return statistics.getAgentCells() == 0;
+        return statistics.agentCells() == 0;
     }
 
 }

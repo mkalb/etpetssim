@@ -237,16 +237,10 @@ final class DefaultObservationViewModelTest {
             DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, TestStatistics> viewModel) {
     }
 
-    @SuppressWarnings("SameParameterValue")
     private record TestStatistics(int stepCount) implements SimulationStatistics {
 
         @Override
-        public int getStepCount() {
-            return stepCount;
-        }
-
-        @Override
-        public GridStructure getGridStructure() {
+        public GridStructure gridStructure() {
             throw new AssertionError("Grid structure is not needed by this test fixture.");
         }
 

@@ -41,19 +41,19 @@ public final class SnakeStatistics
     public static List<StatisticMetric<SnakeStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
-                        SnakeStatistics::getSnakeHeadCells,
+                        SnakeStatistics::snakeHeadCells,
                         StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
-                        SnakeStatistics::getLivingSnakeHeadCells,
+                        SnakeStatistics::livingSnakeHeadCells,
                         StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS,
-                        SnakeStatistics::getWallCells,
+                        SnakeStatistics::wallCells,
                         StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS,
-                        SnakeStatistics::getFoodCells,
+                        SnakeStatistics::foodCells,
                         StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
-                        SnakeStatistics::getCumulativeSnakeDeathCount,
+                        SnakeStatistics::cumulativeSnakeDeathCount,
                         StatisticExtremaMode.NONE)
         );
     }
@@ -99,23 +99,23 @@ public final class SnakeStatistics
         cumulativeSnakeDeathCount++;
     }
 
-    public int getSnakeHeadCells() {
+    public int snakeHeadCells() {
         return snakeHeadCells;
     }
 
-    public int getLivingSnakeHeadCells() {
+    public int livingSnakeHeadCells() {
         return livingSnakeHeadCells;
     }
 
-    public int getFoodCells() {
+    public int foodCells() {
         return foodCells;
     }
 
-    public int getWallCells() {
+    public int wallCells() {
         return wallCells;
     }
 
-    public int getCumulativeSnakeDeathCount() {
+    public int cumulativeSnakeDeathCount() {
         return cumulativeSnakeDeathCount;
     }
 

@@ -25,7 +25,7 @@ public final class ForestStatistics
 
     public ForestStatistics(GridStructure gridStructure) {
         super(gridStructure);
-        emptyCells = getTotalCells();
+        emptyCells = totalCells();
         treeCells = 0;
         burningCells = 0;
     }
@@ -33,37 +33,37 @@ public final class ForestStatistics
     public static List<StatisticMetric<ForestStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_EMPTY_CELLS, FOREST_OBSERVATION_EMPTY_CELLS,
-                        ForestStatistics::getEmptyCells,
+                        ForestStatistics::emptyCells,
                         StatisticExtremaMode.MAX),
                 new StatisticMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS,
-                        ForestStatistics::getTreeCells,
+                        ForestStatistics::treeCells,
                         StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
                 new StatisticMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_BURNING_CELLS,
-                        ForestStatistics::getBurningCells,
+                        ForestStatistics::burningCells,
                         StatisticExtremaMode.MAX, StatisticChartGroup.SECONDARY)
         );
     }
 
     void initializeStartupCellCounts(int treeCellsInitial) {
-        emptyCells = getTotalCells() - treeCellsInitial;
+        emptyCells = totalCells() - treeCellsInitial;
         treeCells = treeCellsInitial;
     }
 
     void updateCellCounts(int newTreeCells, int newBurningCells) {
-        emptyCells = getTotalCells() - newTreeCells - newBurningCells;
+        emptyCells = totalCells() - newTreeCells - newBurningCells;
         treeCells = newTreeCells;
         burningCells = newBurningCells;
     }
 
-    public int getEmptyCells() {
+    public int emptyCells() {
         return emptyCells;
     }
 
-    public int getTreeCells() {
+    public int treeCells() {
         return treeCells;
     }
 
-    public int getBurningCells() {
+    public int burningCells() {
         return burningCells;
     }
 

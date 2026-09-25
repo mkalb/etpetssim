@@ -9,7 +9,7 @@ public final class ConwayTerminationCondition
 
     @Override
     public boolean isFinished(ReadableGridModel<ConwayEntity> model, int stepCount, ConwayStatistics statistics) {
-        return (statistics.getAliveCells() == 0) || (statistics.getChangedCells() == 0);
+        return (statistics.aliveCells() == 0) || (statistics.changedCells() == 0);
     }
 
 }

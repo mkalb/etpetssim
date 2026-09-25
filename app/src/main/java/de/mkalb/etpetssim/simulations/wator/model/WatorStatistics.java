@@ -30,10 +30,10 @@ public final class WatorStatistics
     public static List<StatisticMetric<WatorStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS,
-                        WatorStatistics::getFishCells,
+                        WatorStatistics::fishCells,
                         StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
                 new StatisticMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS,
-                        WatorStatistics::getSharkCells,
+                        WatorStatistics::sharkCells,
                         StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE)
         );
     }
@@ -78,11 +78,11 @@ public final class WatorStatistics
         sharkCells--;
     }
 
-    public int getFishCells() {
+    public int fishCells() {
         return fishCells;
     }
 
-    public int getSharkCells() {
+    public int sharkCells() {
         return sharkCells;
     }
 

@@ -47,8 +47,8 @@ final class WatorUserActionTest {
         userAction.apply(manager, WatorUserActionContext.ADD_FISH, null);
 
         assertAll(
-                () -> assertEquals(0, manager.statistics().getFishCells()),
-                () -> assertEquals(0, manager.statistics().getSharkCells()),
+                () -> assertEquals(0, manager.statistics().fishCells()),
+                () -> assertEquals(0, manager.statistics().sharkCells()),
                 () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
         );
     }
@@ -63,8 +63,8 @@ final class WatorUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isFish()),
-                () -> assertEquals(1, manager.statistics().getFishCells()),
-                () -> assertEquals(0, manager.statistics().getSharkCells())
+                () -> assertEquals(1, manager.statistics().fishCells()),
+                () -> assertEquals(0, manager.statistics().sharkCells())
         );
     }
 
@@ -78,8 +78,8 @@ final class WatorUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isShark()),
-                () -> assertEquals(0, manager.statistics().getFishCells()),
-                () -> assertEquals(1, manager.statistics().getSharkCells())
+                () -> assertEquals(0, manager.statistics().fishCells()),
+                () -> assertEquals(1, manager.statistics().sharkCells())
         );
     }
 
@@ -95,8 +95,8 @@ final class WatorUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isWater()),
-                () -> assertEquals(0, manager.statistics().getFishCells()),
-                () -> assertEquals(0, manager.statistics().getSharkCells())
+                () -> assertEquals(0, manager.statistics().fishCells()),
+                () -> assertEquals(0, manager.statistics().sharkCells())
         );
     }
 
@@ -112,8 +112,8 @@ final class WatorUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isWater()),
-                () -> assertEquals(0, manager.statistics().getFishCells()),
-                () -> assertEquals(0, manager.statistics().getSharkCells())
+                () -> assertEquals(0, manager.statistics().fishCells()),
+                () -> assertEquals(0, manager.statistics().sharkCells())
         );
     }
 

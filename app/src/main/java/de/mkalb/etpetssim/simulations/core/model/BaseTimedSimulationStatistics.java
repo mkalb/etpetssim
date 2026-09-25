@@ -36,12 +36,12 @@ public class BaseTimedSimulationStatistics
     }
 
     @Override
-    public final int getStepCount() {
+    public final int stepCount() {
         return stepCount;
     }
 
     @Override
-    public final GridStructure getGridStructure() {
+    public final GridStructure gridStructure() {
         return gridStructure;
     }
 

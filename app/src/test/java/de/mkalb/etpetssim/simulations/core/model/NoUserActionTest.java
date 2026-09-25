@@ -43,8 +43,8 @@ final class NoUserActionTest {
 
         assertAll(
                 () -> assertSame(ForestEntity.TREE, manager.currentModel().getEntity(coordinate)),
-                () -> assertEquals(0, manager.statistics().getTreeCells()),
-                () -> assertEquals(0, manager.statistics().getBurningCells())
+                () -> assertEquals(0, manager.statistics().treeCells()),
+                () -> assertEquals(0, manager.statistics().burningCells())
         );
     }
 
@@ -58,7 +58,7 @@ final class NoUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty()),
-                () -> assertEquals(manager.statistics().getTotalCells(), manager.statistics().getEmptyCells())
+                () -> assertEquals(manager.statistics().totalCells(), manager.statistics().emptyCells())
         );
     }
 

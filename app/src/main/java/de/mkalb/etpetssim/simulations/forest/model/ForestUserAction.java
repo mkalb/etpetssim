@@ -48,8 +48,8 @@ public final class ForestUserAction
             case ForestEntity.BURNING -> -1;
         };
         statistics.updateCellCounts(
-                statistics.getTreeCells() + treeDelta,
-                statistics.getBurningCells() + burningDelta
+                statistics.treeCells() + treeDelta,
+                statistics.burningCells() + burningDelta
         );
     }
 

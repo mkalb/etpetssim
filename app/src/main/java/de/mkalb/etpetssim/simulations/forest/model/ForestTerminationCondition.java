@@ -9,7 +9,7 @@ public final class ForestTerminationCondition
 
     @Override
     public boolean isFinished(ReadableGridModel<ForestEntity> model, int stepCount, ForestStatistics statistics) {
-        return (statistics.getTreeCells() == 0) && (statistics.getBurningCells() == 0);
+        return (statistics.treeCells() == 0) && (statistics.burningCells() == 0);
     }
 
 }

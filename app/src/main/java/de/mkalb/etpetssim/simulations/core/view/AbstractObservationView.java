@@ -125,7 +125,7 @@ public abstract class AbstractObservationView<
     private void updateGridSectionLabel() {
         Optional<STA> statistics = viewModel.getStatistics();
         if (statistics.isPresent()) {
-            setFormattedIntegerValue(totalCellsLabel, statistics.get().getTotalCells());
+            setFormattedIntegerValue(totalCellsLabel, statistics.get().totalCells());
         } else {
             setUnknownValues(totalCellsLabel);
         }
@@ -145,7 +145,7 @@ public abstract class AbstractObservationView<
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     protected final void updateStatusSectionLabel(Optional<STA> statistics) {
         if (statistics.isPresent()) {
-            setFormattedIntegerValue(stepCountLabel, statistics.get().getStepCount());
+            setFormattedIntegerValue(stepCountLabel, statistics.get().stepCount());
         } else {
             setUnknownValues(stepCountLabel);
         }
