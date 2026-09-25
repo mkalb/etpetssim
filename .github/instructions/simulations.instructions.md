@@ -161,7 +161,8 @@ Check `simulations.core` before adding simulation-local infrastructure. Relevant
 Each simulation package root must provide a factory:
 
 - Name `<SimulationName>Factory`, `public final`, private constructor.
-- Provide `public static SimulationMainView createMainView()`.
+- Regular simulations provide `public static SimulationMainView createMainView()`; `StartFactory` may accept its
+  `Stage` navigation dependencies.
 - Let `simulations.core.SimulationFactory` wrap the returned view in `SimulationInstance`.
 - Wire model, ViewModel, and view components; delegate complex construction to layer-specific builder methods.
 
@@ -169,7 +170,8 @@ Each simulation package root must provide a factory:
 
 Use `CellDrawer` from `simulations.core.view`:
 
-- Call `drawCell(...)` for supported shapes and `drawCenteredTextInCell(...)` for text or emoji overlays.
+- In `CellDrawer.draw(...)`, call `painter.drawCell(...)` for supported shapes and
+  `painter.drawCenteredTextInCell(...)` for text or emoji overlays.
 - Keep custom rendering in simulation-specific View classes.
 - Cache drawing parameters when possible.
 - Use `DrawCallThrottler` to avoid excessive redraws.
@@ -185,11 +187,9 @@ Use `CellDrawer` from `simulations.core.view`:
 
 ## Lifecycle
 
-Implement:
-
-- `initialize(...)`: one-time setup
-- `shutdown()`: cleanup, unbind listeners, release resources
-- `reset()`: return to initial state without full reconstruction
+- Implement `initializeSimulation(...)` for view-specific setup in `AbstractDefaultMainView` subclasses.
+- Use `shutdownSimulation()` to clean up, unbind listeners, and release view or ViewModel resources.
+- Keep reset behavior in the existing main ViewModel and control workflow; there is no shared `reset()` contract.
 
 Shutdown checklist:
 
@@ -215,14 +215,15 @@ Shutdown checklist:
 ### Main View Composition
 
 - Extend `AbstractDefaultMainView` for the standard observation/canvas/config layout.
-- Override `buildObservationRegion()`, `buildCanvasRegion()`, and `buildConfigRegion()` as needed.
+- Implement `buildObservationRegion()` and `buildConfigRegion()` in the corresponding Observation and Config Views.
+- `AbstractMainView` supplies the simulation canvas region through `createSimulationRegion()`.
 - Use `buildMainRegion()` as the UI composition entry point.
 - Keep layout in View classes, not ViewModel.
 
 ## Naming
 
 - Use `draw...` for canvas rendering methods.
-- Use `requestDraw()` as the standard redraw callback name.
+- Name user-triggered redraw callbacks `requestDraw...` (for example, `requestDraw()`).
 
 ## Anti-Patterns
 
