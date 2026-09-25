@@ -76,7 +76,7 @@ public final class LangtonStepRunner
     }
 
     void switchGround(GridCoordinate coordinate, TerrainConstant groundEntity, WritableGridModel<TerrainConstant> groundModel) {
-        int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getRuleCount();
+        int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().ruleCount();
         groundModel.setEntity(coordinate, TerrainConstant.requireByRuleIndex(newRuleIndex));
     }
 
@@ -92,7 +92,7 @@ public final class LangtonStepRunner
 
     @SuppressWarnings("SwitchExpressionCanBePushedDown")
     CompassDirection computeNewAntDirection(CompassDirection currentDirection, int ruleIndex) {
-        LangtonMovementRules.AntTurn turn = config.langtonMovementRules().getTurnForState(ruleIndex);
+        LangtonMovementRules.AntTurn turn = config.langtonMovementRules().turnForState(ruleIndex);
 
         CompassDirection newDirection = null;
         switch (structure.cellShape()) {

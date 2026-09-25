@@ -329,7 +329,7 @@ public final class CellNeighborhoods {
                                                                          NeighborhoodMode neighborhoodMode,
                                                                          CellShape cellShape) {
         List<CellNeighborConnection> cellNeighborConnections =
-                getCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
+                resolveCachedCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
 
         return cellNeighborConnections.stream()
                                       .map(neighborConnection -> new CellNeighbor(
@@ -360,7 +360,7 @@ public final class CellNeighborhoods {
                                                                                       CompassDirection direction,
                                                                                       GridStructure structure) {
         List<CellNeighborConnection> cellNeighborConnections =
-                getCellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
+                resolveCachedCellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
 
         for (CellNeighborConnection neighborConnection : cellNeighborConnections) {
             if (neighborConnection.direction() == direction) {
@@ -570,7 +570,7 @@ public final class CellNeighborhoods {
      * {@link CellShape}.
      *
      * <p>This method extracts the {@link CompassDirection} values from the internal neighbor
-     * connection list (via {@link #getCellNeighborConnections(GridCoordinate, NeighborhoodMode, CellShape)})
+     * connection list (via {@link #resolveCachedCellNeighborConnections(GridCoordinate, NeighborhoodMode, CellShape)})
      * and therefore does not perform any boundary checks or apply edge behavior. The returned
      * directions represent neighbors in an infinite grid. Note that {@code startCoordinate} is
      * relevant for triangle parity and hexagon Y-offsets but is effectively ignored for square cells
@@ -585,7 +585,7 @@ public final class CellNeighborhoods {
     public static Set<CompassDirection> cellNeighborDirections(GridCoordinate startCoordinate,
                                                                NeighborhoodMode neighborhoodMode,
                                                                CellShape cellShape) {
-        return getCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape)
+        return resolveCachedCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape)
                 .stream()
                 .map(CellNeighborConnection::direction)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(CompassDirection.class)));
@@ -602,9 +602,9 @@ public final class CellNeighborhoods {
      * @param cellShape        the cell shape to evaluate
      * @return an immutable list of relative neighbor connections for the configuration
      */
-    static List<CellNeighborConnection> getCellNeighborConnections(GridCoordinate startCoordinate,
-                                                                   NeighborhoodMode neighborhoodMode,
-                                                                   CellShape cellShape) {
+    static List<CellNeighborConnection> resolveCachedCellNeighborConnections(GridCoordinate startCoordinate,
+                                                                             NeighborhoodMode neighborhoodMode,
+                                                                             CellShape cellShape) {
         return CACHE.computeIfAbsent(
                 generateCacheKey(startCoordinate, neighborhoodMode, cellShape),
                 _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));

@@ -83,7 +83,7 @@ public record LangtonMovementRules(
      * @param state the visited-state index
      * @return the turn to apply for that state
      */
-    public AntTurn getTurnForState(int state) {
+    public AntTurn turnForState(int state) {
         return turns.get(state % turns.size());
     }
 
@@ -92,7 +92,7 @@ public record LangtonMovementRules(
      *
      * @return the rule count
      */
-    public int getRuleCount() {
+    public int ruleCount() {
         return turns.size();
     }
 

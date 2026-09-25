@@ -35,15 +35,15 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
         var neighbor = CellNeighborhoods.cellNeighborWithEdgeBehavior(
                 currentCoordinate,
                 config.neighborhoodMode(),
-                movingEntity.getDirection(),
+                movingEntity.direction(),
                 structure
         ).orElseThrow(() -> new IllegalStateException("Unexpected empty neighbor. This should not happen. Cell: " + agentCell));
 
         // Check edge behavior and neighbor cell entity to determine the action for the moving entity
         if ((neighbor.edgeBehaviorAction() == EdgeBehaviorAction.BLOCKED)) {
             // Change direction at blocked grid boundary
-            movingEntity.setDirection(computeBounceDirection(
-                    movingEntity.getDirection(),
+            movingEntity.changeDirection(computeBounceDirection(
+                    movingEntity.direction(),
                     neighbor.mappedNeighborCoordinate()));
         } else { // VALID
             var neighborEntity = model.getEntity(neighbor.mappedNeighborCoordinate());
@@ -53,8 +53,8 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
                 model.setEntityToDefault(currentCoordinate);
             } else if (neighborEntity == TerrainConstant.WALL) {
                 // Change direction at WALL and remove WALL (set to GROUND)
-                movingEntity.setDirection(computeBounceDirection(
-                        movingEntity.getDirection(),
+                movingEntity.changeDirection(computeBounceDirection(
+                        movingEntity.direction(),
                         neighbor.mappedNeighborCoordinate()));
                 model.setEntityToDefault(neighbor.mappedNeighborCoordinate());
 
