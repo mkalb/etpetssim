@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.lang.model.element.Modifier;
@@ -25,6 +26,8 @@ import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.ModifiersTree;
+import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TypeParameterTree;
 import com.sun.source.tree.VariableTree;
@@ -152,6 +155,7 @@ public final class JavaMethodInventory {
                             sourceFile,
                             packageName,
                             "",
+                            false,
                             declarations
                     );
                 }
@@ -194,6 +198,7 @@ public final class JavaMethodInventory {
             SourceFile sourceFile,
             String packageName,
             String enclosingType,
+            boolean memberOfInterface,
             List<MemberDeclaration> declarations
     ) {
         String simpleName = classTree.getSimpleName().toString();
@@ -201,6 +206,28 @@ public final class JavaMethodInventory {
             return;
         }
         String declaringType = enclosingType.isEmpty() ? simpleName : enclosingType + "." + simpleName;
+        collectImplicitConstructorDeclaration(
+                classTree,
+                compilationUnit,
+                sourcePositions,
+                source,
+                sourceFile,
+                packageName,
+                declaringType,
+                typeVisibility(classTree, memberOfInterface),
+                declarations
+        );
+        if (classTree.getKind() == Tree.Kind.RECORD) {
+            collectRecordAccessorDeclarations(
+                    classTree,
+                    compilationUnit,
+                    sourcePositions,
+                    sourceFile,
+                    packageName,
+                    declaringType,
+                    declarations
+            );
+        }
         for (Tree member : classTree.getMembers()) {
             switch (member) {
                 case MethodTree methodTree -> declarations.add(toMemberDeclaration(
@@ -221,12 +248,126 @@ public final class JavaMethodInventory {
                         sourceFile,
                         packageName,
                         declaringType,
+                        isInterfaceType(classTree),
                         declarations
                 );
                 default -> {
                 }
             }
         }
+    }
+
+    private static void collectRecordAccessorDeclarations(
+            ClassTree recordTree,
+            CompilationUnitTree compilationUnit,
+            SourcePositions sourcePositions,
+            SourceFile sourceFile,
+            String packageName,
+            String declaringType,
+            List<MemberDeclaration> declarations
+    ) {
+        Set<String> explicitAccessorNames = recordTree.getMembers().stream()
+                                                      .filter(MethodTree.class::isInstance)
+                                                      .map(MethodTree.class::cast)
+                                                      .filter(methodTree -> (methodTree.getReturnType() != null)
+                                                              && methodTree.getParameters().isEmpty())
+                                                      .map(methodTree -> methodTree.getName().toString())
+                                                      .collect(Collectors.toSet());
+        for (VariableTree component : recordComponents(recordTree)) {
+            if (!explicitAccessorNames.contains(component.getName().toString())) {
+                declarations.add(new MemberDeclaration(
+                        sourceFile.sourceSet(),
+                        sourceFile.repositoryPath(),
+                        packageName,
+                        declaringType,
+                        recordTree.getKind().name(),
+                        component.getName().toString(),
+                        MemberKind.RECORD_ACCESSOR.name(),
+                        "",
+                        "public",
+                        "",
+                        component.getType().toString(),
+                        "",
+                        annotations(component.getModifiers()),
+                        "",
+                        lineNumber(component, compilationUnit, sourcePositions)
+                ));
+            }
+        }
+    }
+
+    private static List<VariableTree> recordComponents(ClassTree recordTree) {
+        // Records cannot declare instance fields, so non-static fields are the record components.
+        return recordTree.getMembers().stream()
+                         .filter(VariableTree.class::isInstance)
+                         .map(VariableTree.class::cast)
+                         .filter(field -> !field.getModifiers().getFlags().contains(Modifier.STATIC))
+                         .toList();
+    }
+
+    private static void collectImplicitConstructorDeclaration(
+            ClassTree classTree,
+            CompilationUnitTree compilationUnit,
+            SourcePositions sourcePositions,
+            String source,
+            SourceFile sourceFile,
+            String packageName,
+            String declaringType,
+            String typeVisibility,
+            List<MemberDeclaration> declarations
+    ) {
+        List<MethodTree> constructors = classTree.getMembers().stream()
+                                                 .filter(MethodTree.class::isInstance)
+                                                 .map(MethodTree.class::cast)
+                                                 .filter(methodTree -> methodTree.getReturnType() == null)
+                                                 .toList();
+        MemberKind memberKind;
+        String visibility;
+        String parameterTypes = "";
+        switch (classTree.getKind()) {
+            case CLASS -> {
+                if (!constructors.isEmpty()) {
+                    return;
+                }
+                memberKind = MemberKind.DEFAULT_CONSTRUCTOR;
+                visibility = typeVisibility;
+            }
+            case ENUM -> {
+                if (!constructors.isEmpty()) {
+                    return;
+                }
+                memberKind = MemberKind.DEFAULT_CONSTRUCTOR;
+                visibility = "private";
+            }
+            case RECORD -> {
+                if (constructors.stream().anyMatch(JavaMethodInventory::isCanonicalRecordConstructor)) {
+                    return;
+                }
+                memberKind = MemberKind.CANONICAL_CONSTRUCTOR;
+                visibility = typeVisibility;
+                parameterTypes = parameterTypes(recordComponents(classTree), compilationUnit, sourcePositions, source);
+            }
+            default -> {
+                return;
+            }
+        }
+        declarations.add(new MemberDeclaration(
+                sourceFile.sourceSet(),
+                sourceFile.repositoryPath(),
+                packageName,
+                declaringType,
+                classTree.getKind().name(),
+                "<init>",
+                memberKind.name(),
+                parameterTypes,
+                visibility,
+                "",
+                "",
+                "",
+                "",
+                "",
+                lineNumber(classTree, compilationUnit, sourcePositions)
+        ));
     }
 
     private static MemberDeclaration toMemberDeclaration(
@@ -245,8 +386,6 @@ public final class JavaMethodInventory {
         MemberKind memberKind = constructor
                 ? (compactConstructor ? MemberKind.COMPACT_CONSTRUCTOR : MemberKind.CONSTRUCTOR)
                 : MemberKind.METHOD;
-        long startPosition = sourcePositions.getStartPosition(compilationUnit, methodTree);
-        int lineNumber = Math.toIntExact(compilationUnit.getLineMap().getLineNumber(startPosition));
         return new MemberDeclaration(
                 sourceFile.sourceSet(),
                 sourceFile.repositoryPath(),
@@ -255,19 +394,30 @@ public final class JavaMethodInventory {
                 declaringClass.getKind().name(),
                 constructor ? "<init>" : methodTree.getName().toString(),
                 memberKind.name(),
-                compactConstructor ? "" : parameterTypes(methodTree, compilationUnit, sourcePositions, source),
+                compactConstructor
+                        ? ""
+                        : parameterTypes(methodTree.getParameters(), compilationUnit, sourcePositions, source),
                 visibility(methodTree, declaringClass, constructor),
                 modifiers(methodTree),
                 constructor ? "" : methodTree.getReturnType().toString(),
-                methodTree.getThrows().stream().map(Tree::toString).collect(java.util.stream.Collectors.joining(", ")),
-                methodTree.getModifiers().getAnnotations().stream()
-                          .map(AnnotationTree::toString)
-                          .collect(java.util.stream.Collectors.joining(" | ")),
+                methodTree.getThrows().stream().map(Tree::toString).collect(Collectors.joining(", ")),
+                annotations(methodTree.getModifiers()),
                 methodTree.getTypeParameters().stream()
                           .map(TypeParameterTree::toString)
-                          .collect(java.util.stream.Collectors.joining(", ")),
-                lineNumber
+                          .collect(Collectors.joining(", ")),
+                lineNumber(methodTree, compilationUnit, sourcePositions)
         );
+    }
+
+    private static String annotations(ModifiersTree modifiers) {
+        return modifiers.getAnnotations().stream()
+                        .map(AnnotationTree::toString)
+                        .collect(Collectors.joining(" | "));
+    }
+
+    private static int lineNumber(Tree tree, CompilationUnitTree compilationUnit, SourcePositions sourcePositions) {
+        long startPosition = sourcePositions.getStartPosition(compilationUnit, tree);
+        return Math.toIntExact(compilationUnit.getLineMap().getLineNumber(startPosition));
     }
 
     private static boolean isCompactConstructor(
@@ -314,14 +464,14 @@ public final class JavaMethodInventory {
     }
 
     private static String parameterTypes(
-            MethodTree methodTree,
+            List<? extends VariableTree> parameters,
             CompilationUnitTree compilationUnit,
             SourcePositions sourcePositions,
             String source
     ) {
-        return methodTree.getParameters().stream()
+        return parameters.stream()
                          .map(parameter -> parameterType(parameter, compilationUnit, sourcePositions, source))
-                         .collect(java.util.stream.Collectors.joining(", "));
+                         .collect(Collectors.joining(", "));
     }
 
     private static String parameterType(
@@ -363,41 +513,40 @@ public final class JavaMethodInventory {
     }
 
     private static String visibility(MethodTree methodTree, ClassTree declaringClass, boolean constructor) {
-        Set<Modifier> flags = methodTree.getModifiers().getFlags();
-        if (flags.contains(Modifier.PUBLIC)) {
-            return "public";
-        }
-        if (flags.contains(Modifier.PROTECTED)) {
-            return "protected";
-        }
-        if (flags.contains(Modifier.PRIVATE)) {
-            return "private";
+        String visibility = visibility(methodTree.getModifiers().getFlags());
+        if (!visibility.equals("package-private")) {
+            return visibility;
         }
         if (constructor && (declaringClass.getKind() == Tree.Kind.ENUM)) {
             return "private";
         }
-        if (constructor && isCanonicalRecordConstructor(methodTree, declaringClass)) {
-            return visibility(declaringClass.getModifiers().getFlags());
-        }
-        if ((declaringClass.getKind() == Tree.Kind.INTERFACE)
-                || (declaringClass.getKind() == Tree.Kind.ANNOTATION_TYPE)) {
+        if (isInterfaceType(declaringClass)) {
             return "public";
         }
         return "package-private";
     }
 
-    private static boolean isCanonicalRecordConstructor(MethodTree methodTree, ClassTree declaringClass) {
-        if (declaringClass.getKind() != Tree.Kind.RECORD) {
-            return false;
-        }
-        if (methodTree.getBody().getStatements().isEmpty()) {
-            return true;
-        }
-        Tree firstStatement = methodTree.getBody().getStatements().getFirst();
-        return !(firstStatement instanceof ExpressionStatementTree expressionStatement
-                && expressionStatement.getExpression() instanceof MethodInvocationTree invocation
-                && invocation.getMethodSelect() instanceof IdentifierTree identifier
-                && identifier.getName().contentEquals("this"));
+    private static boolean isCanonicalRecordConstructor(MethodTree constructor) {
+        // Every non-canonical record constructor must contain a top-level this(...) invocation.
+        return constructor.getBody().getStatements().stream()
+                          .noneMatch(JavaMethodInventory::isThisConstructorInvocation);
+    }
+
+    private static boolean isThisConstructorInvocation(StatementTree statement) {
+        return (statement instanceof ExpressionStatementTree expressionStatement)
+                && (expressionStatement.getExpression() instanceof MethodInvocationTree invocation)
+                && (invocation.getMethodSelect() instanceof IdentifierTree identifier)
+                && identifier.getName().contentEquals("this");
+    }
+
+    private static boolean isInterfaceType(ClassTree classTree) {
+        return (classTree.getKind() == Tree.Kind.INTERFACE) || (classTree.getKind() == Tree.Kind.ANNOTATION_TYPE);
+    }
+
+    private static String typeVisibility(ClassTree classTree, boolean memberOfInterface) {
+        String visibility = visibility(classTree.getModifiers().getFlags());
+        // Member types of interfaces are implicitly public.
+        return (memberOfInterface && visibility.equals("package-private")) ? "public" : visibility;
     }
 
     private static String visibility(Set<Modifier> flags) {
@@ -492,7 +641,7 @@ public final class JavaMethodInventory {
                              && (modifier != Modifier.PROTECTED)
                              && (modifier != Modifier.PRIVATE))
                      .map(modifier -> modifier.toString().toLowerCase(Locale.ROOT))
-                     .collect(java.util.stream.Collectors.joining(" "));
+                     .collect(Collectors.joining(" "));
     }
 
     private static void writeInventory(Path repositoryRoot, List<MemberDeclaration> declarations) throws IOException {
@@ -527,7 +676,10 @@ public final class JavaMethodInventory {
     private enum MemberKind {
         METHOD,
         CONSTRUCTOR,
-        COMPACT_CONSTRUCTOR
+        COMPACT_CONSTRUCTOR,
+        DEFAULT_CONSTRUCTOR,
+        CANONICAL_CONSTRUCTOR,
+        RECORD_ACCESSOR
     }
 
     private record SourceFile(String sourceSet, Path path, String repositoryPath) {
@@ -571,7 +723,7 @@ public final class JavaMethodInventory {
                     annotations,
                     typeParameters,
                     Integer.toString(lineNumber)
-            ).stream().map(JavaMethodInventory::csvField).collect(java.util.stream.Collectors.joining(","));
+            ).stream().map(JavaMethodInventory::csvField).collect(Collectors.joining(","));
         }
 
     }
