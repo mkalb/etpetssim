@@ -15,15 +15,15 @@ import java.util.function.*;
  * The order in which agents are processed is determined by the provided
  * {@code agentOrderingStrategy}.
  *
- * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each simulation step
  */
-public final class AsynchronousStepRunner<T extends GridEntity, C> implements SimulationStepRunner<C> {
+public final class AsynchronousStepRunner<ENT extends GridEntity, C> implements SimulationStepRunner<C> {
 
-    private final WritableGridModel<T> model;
-    private final Predicate<T> agentPredicate;
-    private final Function<C, Comparator<GridCell<T>>> agentOrderingStrategyProvider;
-    private final AgentStepLogic<T, C> agentStepLogic;
+    private final WritableGridModel<ENT> model;
+    private final Predicate<ENT> agentPredicate;
+    private final Function<C, Comparator<GridCell<ENT>>> agentOrderingStrategyProvider;
+    private final AgentStepLogic<ENT, C> agentStepLogic;
 
     /**
      * Constructs a new {@code AsynchronousStepRunner} with the given grid model, agent predicate,
@@ -34,10 +34,10 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      * @param agentOrderingStrategyProvider function providing comparator defining the order in which agent cells are processed based on the context
      * @param agentStepLogic                logic to apply to each agent cell
      */
-    public AsynchronousStepRunner(WritableGridModel<T> model,
-                                  Predicate<T> agentPredicate,
-                                  Function<C, Comparator<GridCell<T>>> agentOrderingStrategyProvider,
-                                  AgentStepLogic<T, C> agentStepLogic) {
+    public AsynchronousStepRunner(WritableGridModel<ENT> model,
+                                  Predicate<ENT> agentPredicate,
+                                  Function<C, Comparator<GridCell<ENT>>> agentOrderingStrategyProvider,
+                                  AgentStepLogic<ENT, C> agentStepLogic) {
         this.model = model;
         this.agentPredicate = agentPredicate;
         this.agentOrderingStrategyProvider = agentOrderingStrategyProvider;
@@ -53,10 +53,10 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      * @param agentOrderingStrategy comparator defining the order in which agent cells are processed
      * @param agentStepLogic        logic to apply to each agent cell
      */
-    public AsynchronousStepRunner(WritableGridModel<T> model,
-                                  Predicate<T> agentPredicate,
-                                  Comparator<GridCell<T>> agentOrderingStrategy,
-                                  AgentStepLogic<T, C> agentStepLogic) {
+    public AsynchronousStepRunner(WritableGridModel<ENT> model,
+                                  Predicate<ENT> agentPredicate,
+                                  Comparator<GridCell<ENT>> agentOrderingStrategy,
+                                  AgentStepLogic<ENT, C> agentStepLogic) {
         this(model, agentPredicate, _ -> agentOrderingStrategy, agentStepLogic);
     }
 
@@ -71,9 +71,9 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      */
     @Override
     public void performStep(int stepIndex, C context) {
-        Comparator<GridCell<T>> agentOrderingStrategy = agentOrderingStrategyProvider.apply(context);
-        List<GridCell<T>> orderedAgentCells = model.filteredCellsSortedBy(agentPredicate, agentOrderingStrategy);
-        for (GridCell<T> agentCell : orderedAgentCells) {
+        Comparator<GridCell<ENT>> agentOrderingStrategy = agentOrderingStrategyProvider.apply(context);
+        List<GridCell<ENT>> orderedAgentCells = model.filteredCellsSortedBy(agentPredicate, agentOrderingStrategy);
+        for (GridCell<ENT> agentCell : orderedAgentCells) {
             agentStepLogic.performAgentStep(agentCell, model, stepIndex, context);
         }
     }
@@ -83,7 +83,7 @@ public final class AsynchronousStepRunner<T extends GridEntity, C> implements Si
      *
      * @return the current {@link WritableGridModel}
      */
-    public WritableGridModel<T> model() {
+    public WritableGridModel<ENT> model() {
         return model;
     }
 

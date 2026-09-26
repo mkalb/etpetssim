@@ -9,9 +9,9 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * This interface provides shared convenience methods for cell-like value types
  * (for example simple engine cells and simulation-specific composite cells).
  *
- * @param <T> the concrete entity type exposed by this cell view
+ * @param <ENT> the concrete entity type exposed by this cell view
  */
-public interface GridCellView<T extends GridEntity> {
+public interface GridCellView<ENT extends GridEntity> {
 
     /**
      * Returns the coordinate of this cell.
@@ -25,7 +25,7 @@ public interface GridCellView<T extends GridEntity> {
      *
      * @return the associated entity
      */
-    T entity();
+    ENT entity();
 
     /**
      * Returns the unique descriptor ID of the associated entity.

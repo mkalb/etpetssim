@@ -10,17 +10,17 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * This interface supports composition via the {@link #andThen(GridInitializer)} method, allowing multiple initializers
  * to be chained and applied in sequence.
  *
- * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  */
 @FunctionalInterface
-public interface GridInitializer<T extends GridEntity> {
+public interface GridInitializer<ENT extends GridEntity> {
 
     /**
      * Initializes the given {@link de.mkalb.etpetssim.engine.model.WritableGridModel} with entities or modifies its state.
      *
      * @param model the grid model to initialize
      */
-    void initialize(WritableGridModel<T> model);
+    void initialize(WritableGridModel<ENT> model);
 
     /**
      * Returns a composed {@code GridInitializer} that performs, in sequence, this initializer
@@ -29,8 +29,8 @@ public interface GridInitializer<T extends GridEntity> {
      * @param after the initializer to apply after this initializer
      * @return a composed {@code GridInitializer} that performs in sequence this initializer followed by the {@code after} initializer
      */
-    default GridInitializer<T> andThen(GridInitializer<T> after) {
-        return (WritableGridModel<T> model) -> {
+    default GridInitializer<ENT> andThen(GridInitializer<ENT> after) {
+        return (WritableGridModel<ENT> model) -> {
             initialize(model);
             after.initialize(model);
         };

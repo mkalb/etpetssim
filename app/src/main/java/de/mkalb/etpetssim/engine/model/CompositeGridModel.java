@@ -12,9 +12,9 @@ import java.util.*;
  * such as layered or composite grids. All layers must share the same grid structure.
  * </p>
  *
- * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
-public non-sealed interface CompositeGridModel<T extends GridEntity> extends GridModel<T> {
+public non-sealed interface CompositeGridModel<ENT extends GridEntity> extends GridModel<ENT> {
 
     /**
      * Returns the entities at the specified coordinate across all layers.
@@ -26,7 +26,7 @@ public non-sealed interface CompositeGridModel<T extends GridEntity> extends Gri
      * @return a list of entities at the coordinate, one entry per layer
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
-    List<T> getEntities(GridCoordinate coordinate);
+    List<ENT> getEntities(GridCoordinate coordinate);
 
     /**
      * Returns the number of layers contained in this composite grid model.

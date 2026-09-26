@@ -26,10 +26,10 @@ public final class GridPatterns {
     /**
      * Returns an empty {@code GridPattern} containing no entities.
      *
-     * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+     * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
      * @return an empty pattern
      */
-    public static <T extends GridEntity> GridPattern<T> empty() {
+    public static <ENT extends GridEntity> GridPattern<ENT> empty() {
         return Collections::emptyMap;
     }
 
@@ -42,11 +42,11 @@ public final class GridPatterns {
      * Modifications to the original map after calling this method do not affect the pattern.
      *
      * @param map the map of offsets to entities
-     * @param <T> the type of {@link GridEntity}
+     * @param <ENT> the type of {@link GridEntity}
      * @return a pattern containing the specified mapping
      */
-    public static <T extends GridEntity> GridPattern<T> of(Map<GridOffset, T> map) {
-        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+    public static <ENT extends GridEntity> GridPattern<ENT> of(Map<GridOffset, ENT> map) {
+        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
         return () -> mapCopy;
     }
 
@@ -60,15 +60,15 @@ public final class GridPatterns {
      *
      * @param entity  the entity to place at each offset
      * @param offsets the collection of offsets where the entity will be placed
-     * @param <T>     the type of {@link GridEntity}
+     * @param <ENT>     the type of {@link GridEntity}
      * @return a pattern containing the entity at the specified offsets
      */
-    public static <T extends GridEntity> GridPattern<T> of(T entity, Collection<GridOffset> offsets) {
-        Map<GridOffset, T> map = new HashMap<>();
+    public static <ENT extends GridEntity> GridPattern<ENT> of(ENT entity, Collection<GridOffset> offsets) {
+        Map<GridOffset, ENT> map = new HashMap<>();
         for (GridOffset offset : offsets) {
             map.put(offset, entity);
         }
-        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
         return () -> mapCopy;
     }
 
@@ -78,12 +78,12 @@ public final class GridPatterns {
      * The returned pattern contains exactly one entry at the given offset. The pattern is
      * <b>not guaranteed to be normalized</b>; the offset may be any value.
      *
-     * @param <T>    the type of {@link GridEntity}
+     * @param <ENT>    the type of {@link GridEntity}
      * @param entity the entity to place
      * @param offset the offset of the entity
      * @return a singleton pattern containing the entity at the specified offset
      */
-    public static <T extends GridEntity> GridPattern<T> singleton(T entity, GridOffset offset) {
+    public static <ENT extends GridEntity> GridPattern<ENT> singleton(ENT entity, GridOffset offset) {
         return () -> Map.of(offset, entity);
     }
 
@@ -96,16 +96,16 @@ public final class GridPatterns {
      * The resulting pattern is <b>not guaranteed to be normalized</b>.
      *
      * @param patterns the patterns to combine
-     * @param <T>      the type of {@link GridEntity}
+     * @param <ENT>      the type of {@link GridEntity}
      * @return a combined pattern containing all entries from the input patterns
      */
     @SafeVarargs
-    public static <T extends GridEntity> GridPattern<T> combine(GridPattern<T>... patterns) {
-        Map<GridOffset, T> combined = new HashMap<>();
-        for (GridPattern<T> pattern : patterns) {
+    public static <ENT extends GridEntity> GridPattern<ENT> combine(GridPattern<ENT>... patterns) {
+        Map<GridOffset, ENT> combined = new HashMap<>();
+        for (GridPattern<ENT> pattern : patterns) {
             combined.putAll(pattern.offsetMap());
         }
-        Map<GridOffset, T> mapCopy = Map.copyOf(combined);
+        Map<GridOffset, ENT> mapCopy = Map.copyOf(combined);
         return () -> mapCopy;
     }
 
@@ -118,15 +118,15 @@ public final class GridPatterns {
      *
      * @param entity the entity to place at each position in the line
      * @param length the length of the line (number of entities)
-     * @param <T>    the type of {@link GridEntity}
+     * @param <ENT>    the type of {@link GridEntity}
      * @return a pattern representing a horizontal line
      */
-    public static <T extends GridEntity> GridPattern<T> horizontalLine(T entity, int length) {
-        Map<GridOffset, T> map = new HashMap<>();
+    public static <ENT extends GridEntity> GridPattern<ENT> horizontalLine(ENT entity, int length) {
+        Map<GridOffset, ENT> map = new HashMap<>();
         for (int x = 0; x < length; x++) {
             map.put(new GridOffset(x, 0), entity);
         }
-        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
         return () -> mapCopy;
     }
 
@@ -139,15 +139,15 @@ public final class GridPatterns {
      *
      * @param entity the entity to place at each position in the line
      * @param length the length of the line (number of entities)
-     * @param <T>    the type of {@link GridEntity}
+     * @param <ENT>    the type of {@link GridEntity}
      * @return a pattern representing a vertical line
      */
-    public static <T extends GridEntity> GridPattern<T> verticalLine(T entity, int length) {
-        Map<GridOffset, T> map = new HashMap<>();
+    public static <ENT extends GridEntity> GridPattern<ENT> verticalLine(ENT entity, int length) {
+        Map<GridOffset, ENT> map = new HashMap<>();
         for (int y = 0; y < length; y++) {
             map.put(new GridOffset(0, y), entity);
         }
-        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
         return () -> mapCopy;
     }
 
@@ -162,11 +162,11 @@ public final class GridPatterns {
      * @param stroke the entity to place at each border position
      * @param width  the width of the rectangle (number of columns)
      * @param height the height of the rectangle (number of rows)
-     * @param <T>    the type of {@link GridEntity}
+     * @param <ENT>    the type of {@link GridEntity}
      * @return a pattern representing the rectangle border
      */
-    public static <T extends GridEntity> GridPattern<T> rectangle(T stroke, int width, int height) {
-        Map<GridOffset, T> map = new HashMap<>();
+    public static <ENT extends GridEntity> GridPattern<ENT> rectangle(ENT stroke, int width, int height) {
+        Map<GridOffset, ENT> map = new HashMap<>();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if ((y == 0) || (y == (height - 1)) || (x == 0) || (x == (width - 1))) {
@@ -174,7 +174,7 @@ public final class GridPatterns {
                 }
             }
         }
-        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
         return () -> mapCopy;
     }
 
@@ -188,10 +188,10 @@ public final class GridPatterns {
      *
      * @param stroke the entity to place at each border position
      * @param radius the radius of the circle (in grid units)
-     * @param <T>    the type of {@link GridEntity}
+     * @param <ENT>    the type of {@link GridEntity}
      * @return a pattern representing the circle border
      */
-    public static <T extends GridEntity> GridPattern<T> circle(T stroke, int radius) {
+    public static <ENT extends GridEntity> GridPattern<ENT> circle(ENT stroke, int radius) {
         Set<GridOffset> offsets = new HashSet<>();
         int x = radius;
         int y = 0;
@@ -219,11 +219,11 @@ public final class GridPatterns {
         // Normalize offsets so top-left is at (0, 0).
         int minDx = offsets.stream().mapToInt(GridOffset::dx).min().orElse(0);
         int minDy = offsets.stream().mapToInt(GridOffset::dy).min().orElse(0);
-        Map<GridOffset, T> map = new HashMap<>();
+        Map<GridOffset, ENT> map = new HashMap<>();
         for (GridOffset o : offsets) {
             map.put(new GridOffset(o.dx() - minDx, o.dy() - minDy), stroke);
         }
-        Map<GridOffset, T> mapCopy = Map.copyOf(map);
+        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
         return () -> mapCopy;
     }
 

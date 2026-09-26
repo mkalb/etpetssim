@@ -27,12 +27,12 @@ public final class GridEntityUtils {
      * @param coordinate               the coordinate to look up
      * @param model                    the grid model containing the entities
      * @param entityDescriptorRegistry the registry to resolve descriptors
-     * @param <T>                      the type of {@link GridEntity} in the model
+     * @param <ENT>                      the type of {@link GridEntity} in the model
      * @return an {@link Optional} containing the descriptor if present, or {@link Optional#empty()} if not found or invalid coordinate
      */
-    public static <T extends GridEntity> Optional<GridEntityDescriptor> descriptorAt(
+    public static <ENT extends GridEntity> Optional<GridEntityDescriptor> descriptorAt(
             GridCoordinate coordinate,
-            ReadableGridModel<T> model,
+            ReadableGridModel<ENT> model,
             GridEntityDescriptorRegistry entityDescriptorRegistry) {
         if (model.isCoordinateValid(coordinate)) {
             return entityDescriptorRegistry.findByDescriptorId(model.getEntity(coordinate).descriptorId());
@@ -48,11 +48,11 @@ public final class GridEntityUtils {
      * @param model                    the grid model containing the entities
      * @param entityDescriptorRegistry the registry to resolve descriptors
      * @param consumer                 the action to perform if a descriptor is present
-     * @param <T>                      the type of {@link GridEntity} in the model
+     * @param <ENT>                      the type of {@link GridEntity} in the model
      */
-    public static <T extends GridEntity> void consumeDescriptorAt(
+    public static <ENT extends GridEntity> void consumeDescriptorAt(
             GridCoordinate coordinate,
-            ReadableGridModel<T> model,
+            ReadableGridModel<ENT> model,
             GridEntityDescriptorRegistry entityDescriptorRegistry,
             Consumer<GridEntityDescriptor> consumer) {
         descriptorAt(coordinate, model, entityDescriptorRegistry).ifPresent(consumer);
@@ -69,11 +69,11 @@ public final class GridEntityUtils {
      * @param coordinate the anchor coordinate at which to place the pattern's origin
      * @param model      the grid model to modify
      * @param pattern    the pattern of entities to place
-     * @param <T>        the type of {@link GridEntity} in the model and pattern
+     * @param <ENT>        the type of {@link GridEntity} in the model and pattern
      */
-    public static <T extends GridEntity> void placePatternAt(GridCoordinate coordinate,
-                                                             WritableGridModel<T> model,
-                                                             GridPattern<T> pattern) {
+    public static <ENT extends GridEntity> void placePatternAt(GridCoordinate coordinate,
+                                                               WritableGridModel<ENT> model,
+                                                               GridPattern<ENT> pattern) {
         pattern.offsetMap()
                .forEach((offset, entity) -> {
                    GridCoordinate targetCoordinate = coordinate.offset(offset);

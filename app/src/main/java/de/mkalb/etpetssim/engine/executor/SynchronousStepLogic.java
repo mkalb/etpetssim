@@ -11,12 +11,12 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * The method receives the current model, the next model, the simulation step index, and a context object
  * for sharing or accumulating state across steps.
  *
- * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each simulation step
  * @see de.mkalb.etpetssim.engine.executor.SynchronousStepRunner
  */
 @FunctionalInterface
-public interface SynchronousStepLogic<T extends GridEntity, C> {
+public interface SynchronousStepLogic<ENT extends GridEntity, C> {
 
     /**
      * Performs the logic for a single synchronous simulation step.
@@ -28,6 +28,6 @@ public interface SynchronousStepLogic<T extends GridEntity, C> {
      * @param stepIndex    the index of the current simulation step
      * @param context      the context object used to share or accumulate state during the simulation
      */
-    void performSynchronousStep(ReadableGridModel<T> currentModel, WritableGridModel<T> nextModel, int stepIndex, C context);
+    void performSynchronousStep(ReadableGridModel<ENT> currentModel, WritableGridModel<ENT> nextModel, int stepIndex, C context);
 
 }

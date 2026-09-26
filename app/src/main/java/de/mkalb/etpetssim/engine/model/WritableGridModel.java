@@ -12,9 +12,9 @@ import java.util.function.*;
  * All read-only methods are defined in the {@link ReadableGridModel} interface.
  * </p>
  *
- * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
-public sealed interface WritableGridModel<T extends GridEntity> extends ReadableGridModel<T>
+public sealed interface WritableGridModel<ENT extends GridEntity> extends ReadableGridModel<ENT>
         permits ArrayGridModel, SparseGridModel {
 
     /**
@@ -25,14 +25,14 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      *
      * @return a copy of this grid model
      */
-    WritableGridModel<T> copy();
+    WritableGridModel<ENT> copy();
 
     /**
      * Creates a copy of this grid model with all entities set to the default entity.
      *
      * @return a blank copy of this grid model
      */
-    WritableGridModel<T> copyWithDefaultEntity();
+    WritableGridModel<ENT> copyWithDefaultEntity();
 
     /**
      * Sets the entity at the specified coordinate.
@@ -41,7 +41,7 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      * @param entity     the entity to set
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
-    void setEntity(GridCoordinate coordinate, T entity);
+    void setEntity(GridCoordinate coordinate, ENT entity);
 
     /**
      * Sets the entity in the grid using a {@link GridCell}.
@@ -52,7 +52,7 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      * @param cell the {@link GridCell} containing the coordinate and entity to set
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
-    default void setEntity(GridCell<T> cell) {
+    default void setEntity(GridCell<ENT> cell) {
         setEntity(cell.coordinate(), cell.entity());
     }
 
@@ -69,7 +69,7 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      *
      * @param entity the entity to set
      */
-    void fill(T entity);
+    void fill(ENT entity);
 
     /**
      * Sets all grid cells using a supplier that provides a new entity for each cell.
@@ -77,7 +77,7 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      *
      * @param supplier the supplier to generate entities for each coordinate
      */
-    void fill(Supplier<T> supplier);
+    void fill(Supplier<ENT> supplier);
 
     /**
      * Sets all grid cells using a mapping function from coordinate to entity.
@@ -85,7 +85,7 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      *
      * @param mapper the function to compute entities for each coordinate
      */
-    void fill(Function<GridCoordinate, T> mapper);
+    void fill(Function<GridCoordinate, ENT> mapper);
 
     /**
      * Sets all grid cells to the default entity.
@@ -104,6 +104,6 @@ public sealed interface WritableGridModel<T extends GridEntity> extends Readable
      * @param cellB the second input cell providing one coordinate and one entity value
      * @throws IndexOutOfBoundsException if either coordinate is not valid
      */
-    void swapInputCellEntities(GridCell<T> cellA, GridCell<T> cellB);
+    void swapInputCellEntities(GridCell<ENT> cellA, GridCell<ENT> cellB);
 
 }
