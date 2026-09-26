@@ -166,7 +166,7 @@ final class ConwayPatternChoiceTest {
     // --- Availability tests ---
 
     @Test
-    void testAvailableForDelegatesToPredicate() {
+    void testIsAvailableForDelegatesToPredicate() {
         AtomicInteger invocationCount = new AtomicInteger();
         ConwayConfig[] lastSeenConfig = {createConfig(CellShape.HEXAGON)};
         ConwayPatternChoice choice = new ConwayPatternChoice(
@@ -182,8 +182,8 @@ final class ConwayPatternChoiceTest {
         ConwayConfig triangleConfig = createConfig(CellShape.TRIANGLE);
 
         assertAll(
-                () -> assertTrue(choice.availableFor(squareConfig)),
-                () -> assertFalse(choice.availableFor(triangleConfig)),
+                () -> assertTrue(choice.isAvailableFor(squareConfig)),
+                () -> assertFalse(choice.isAvailableFor(triangleConfig)),
                 () -> assertEquals(2, invocationCount.get()),
                 () -> assertSame(triangleConfig, lastSeenConfig[0])
         );

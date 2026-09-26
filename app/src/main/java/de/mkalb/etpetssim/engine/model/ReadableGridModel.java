@@ -13,9 +13,9 @@ import java.util.function.*;
  * All mutating (write and update) methods are defined in the {@link WritableGridModel} interface.
  * </p>
  *
- * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
-public sealed interface ReadableGridModel<T extends GridEntity> extends GridModel<T>
+public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridModel<ENT>
         permits WritableGridModel {
 
     @Override
@@ -28,7 +28,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @return the default entity
      */
-    T defaultEntity();
+    ENT defaultEntity();
 
     /**
      * Returns the entity at the specified coordinate.
@@ -37,7 +37,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @return the entity at the coordinate
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
-    T getEntity(GridCoordinate coordinate);
+    ENT getEntity(GridCoordinate coordinate);
 
     /**
      * Returns a {@link GridCell} containing the specified coordinate and its associated entity.
@@ -46,7 +46,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @return a GridCell with the coordinate and its entity
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
-    default GridCell<T> getGridCell(GridCoordinate coordinate) {
+    default GridCell<ENT> getGridCell(GridCoordinate coordinate) {
         return new GridCell<>(coordinate, getEntity(coordinate));
     }
 
@@ -72,7 +72,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @param predicate the condition to test each entity against
      * @return the count of entities that match the predicate
      */
-    long countEntities(Predicate<? super T> predicate);
+    long countEntities(Predicate<? super ENT> predicate);
 
     /**
      * Returns a mutable set of all coordinates at which the entity is not
@@ -97,7 +97,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @param entityPredicate the predicate to filter entities
      * @return a list of matching coordinates
      */
-    List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate);
+    List<GridCoordinate> filteredCoordinates(Predicate<ENT> entityPredicate);
 
     /**
      * Selects a random coordinate from the grid that contains the default entity.
@@ -116,7 +116,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @return a mutable list of all {@link GridCell} instances in row-major order
      */
-    List<GridCell<T>> allCells();
+    List<GridCell<ENT>> allCells();
 
     /**
      * Returns a mutable list of all grid cells whose entity is not the default entity.
@@ -127,7 +127,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      *
      * @return a mutable list of {@link GridCell} instances with non-default entities
      */
-    List<GridCell<T>> nonDefaultCells();
+    List<GridCell<ENT>> nonDefaultCells();
 
     /**
      * Returns a mutable list of grid cells whose entities match the given predicate.
@@ -139,7 +139,7 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @param entityPredicate the predicate to filter grid cell entities
      * @return a mutable list of filtered {@link GridCell} instances
      */
-    List<GridCell<T>> filteredCells(Predicate<T> entityPredicate);
+    List<GridCell<ENT>> filteredCells(Predicate<ENT> entityPredicate);
 
     /**
      * Returns a mutable list of grid cells whose entities match the given predicate,
@@ -152,6 +152,6 @@ public sealed interface ReadableGridModel<T extends GridEntity> extends GridMode
      * @param cellOrdering    the comparator to define the order of the resulting grid cells
      * @return a mutable list of filtered and sorted {@link GridCell} instances
      */
-    List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering);
+    List<GridCell<ENT>> filteredCellsSortedBy(Predicate<ENT> entityPredicate, Comparator<GridCell<ENT>> cellOrdering);
 
 }

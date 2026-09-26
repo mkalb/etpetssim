@@ -859,7 +859,7 @@ public final class DefaultMainViewModel<
             return false;
         }
 
-        var descriptor = editToolBarViewModel.getSelectedCellActionDescriptor(descriptors);
+        var descriptor = editToolBarViewModel.findSelectedCellActionDescriptor(descriptors);
         if (descriptor.isEmpty()) {
             return false;
         }

@@ -37,7 +37,7 @@ public final class ReboundingObservationView
 
         if (gridCell != null) {
             if (gridCell.entity() instanceof Rebounder entity) {
-                directionLabel.setText(entity.getDirection().arrow());
+                directionLabel.setText(entity.direction().arrow());
             }
         }
     }
@@ -63,7 +63,7 @@ public final class ReboundingObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
-                buildChartSection(),
+                createChartSection(),
                 selectedCellSection
         );
     }

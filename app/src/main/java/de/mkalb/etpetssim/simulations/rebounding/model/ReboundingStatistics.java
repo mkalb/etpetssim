@@ -29,10 +29,10 @@ public final class ReboundingStatistics
     public static List<StatisticMetric<ReboundingStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_WALL_CELLS,
-                        ReboundingStatistics::getWallCells,
+                        ReboundingStatistics::wallCells,
                         StatisticExtremaMode.MAX),
                 new StatisticMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
-                        ReboundingStatistics::getMovingEntityCells,
+                        ReboundingStatistics::movingEntityCells,
                         StatisticExtremaMode.MAX)
         );
     }
@@ -43,27 +43,27 @@ public final class ReboundingStatistics
         movingEntityCells = movingEntityCellsInitial;
     }
 
-    public void increaseWallCells() {
+    public void incrementWallCells() {
         wallCells += 1;
     }
 
-    public void decreaseWallCells() {
+    public void decrementWallCells() {
         wallCells -= 1;
     }
 
-    public void decreaseMovingEntityCells() {
+    public void decrementMovingEntityCells() {
         movingEntityCells -= 1;
     }
 
-    public void increaseMovingEntityCells() {
+    public void incrementMovingEntityCells() {
         movingEntityCells += 1;
     }
 
-    public int getWallCells() {
+    public int wallCells() {
         return wallCells;
     }
 
-    public int getMovingEntityCells() {
+    public int movingEntityCells() {
         return movingEntityCells;
     }
 

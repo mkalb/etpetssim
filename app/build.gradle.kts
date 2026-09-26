@@ -74,11 +74,11 @@ tasks.register<Test>("skillTest") {
     inputs.file(i18nConsistencyCheckSource)
     systemProperty("i18nConsistencyCheck.source", i18nConsistencyCheckSource.asFile.absolutePath)
 
-    val javaMethodInventorySource = rootProject.layout.projectDirectory.file(
-        ".github/skills/java-method-inventory/JavaMethodInventory.java"
+    val javaCodeInventorySource = rootProject.layout.projectDirectory.file(
+        ".github/skills/java-code-inventory/JavaCodeInventory.java"
     )
-    inputs.file(javaMethodInventorySource)
-    systemProperty("javaMethodInventory.source", javaMethodInventorySource.asFile.absolutePath)
+    inputs.file(javaCodeInventorySource)
+    systemProperty("javaCodeInventory.source", javaCodeInventorySource.asFile.absolutePath)
 }
 
 distributions {

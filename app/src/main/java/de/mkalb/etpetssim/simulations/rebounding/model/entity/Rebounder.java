@@ -30,11 +30,11 @@ public final class Rebounder implements ReboundingEntity {
         return true;
     }
 
-    public CompassDirection getDirection() {
+    public CompassDirection direction() {
         return direction;
     }
 
-    public void setDirection(CompassDirection newDirection) {
+    public void changeDirection(CompassDirection newDirection) {
         direction = newDirection;
     }
 

@@ -361,7 +361,7 @@ public final class LabMainView
             return;
         }
 
-        Color color = colorModeGrayscale ? determineCheckerGrayscaleColor(coordinate) : determineCheckerColor(coordinate);
+        Color color = colorModeGrayscale ? resolveCheckerGrayscaleColor(coordinate) : resolveCheckerColor(coordinate);
         if (renderingModeCircle) {
             basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeType.CENTERED);
         } else {
@@ -434,7 +434,7 @@ public final class LabMainView
         basePainter.drawCellFrameSegment(new GridCoordinate(TEST_FRAME_SEGMENT_2_X, TEST_FRAME_SEGMENT_2_Y), Color.DARKBLUE, TEST_LINE_WIDTH, CellShapeSide.LEFT);
     }
 
-    private Color determineCheckerColor(GridCoordinate coordinate) {
+    private Color resolveCheckerColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
         int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
 
@@ -447,7 +447,7 @@ public final class LabMainView
         };
     }
 
-    private Color determineCheckerGrayscaleColor(GridCoordinate coordinate) {
+    private Color resolveCheckerGrayscaleColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
         int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
 

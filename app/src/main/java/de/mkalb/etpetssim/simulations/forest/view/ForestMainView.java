@@ -50,7 +50,7 @@ public final class ForestMainView
     }
 
     @Override
-    protected void initSimulation(ForestConfig config, CellDimension cellDimension, WritableGridModel<ForestEntity> model) {
+    protected void initializeSimulation(ForestConfig config, CellDimension cellDimension, WritableGridModel<ForestEntity> model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

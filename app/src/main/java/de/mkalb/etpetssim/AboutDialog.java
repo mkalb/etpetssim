@@ -45,7 +45,7 @@ public final class AboutDialog {
     public void showAboutDialog() {
         Tab tabManifest = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_VERSION),
-                buildManifestSummary());
+                formatManifestSummary());
         Tab tabReadme = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_README),
                 getResourceAsString("README.md"));
@@ -93,11 +93,11 @@ public final class AboutDialog {
     }
 
     /**
-     * Builds a textual summary of selected manifest attributes.
+     * Formats a textual summary of selected manifest attributes.
      *
      * @return formatted manifest summary text
      */
-    private String buildManifestSummary() {
+    private String formatManifestSummary() {
         Map<String, String> mf = readManifestInfo();
         String lineSeparator = System.lineSeparator();
         return AppLocalization.getFormattedText(

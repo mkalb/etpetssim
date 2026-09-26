@@ -162,7 +162,7 @@ public abstract class AbstractDefaultMainView<
         controlView.updateStepCount(stepCount);
         observationView.initializeObservationLabels();
 
-        initSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
+        initializeSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
 
         AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
 
@@ -264,7 +264,7 @@ public abstract class AbstractDefaultMainView<
                     center,
                     SKIP_OVERLAY_SYMBOL,
                     SKIP_OVERLAY_TEXT_COLOR,
-                    getPreferredFont(SKIP_FONT_SIZE),
+                    resolvePreferredFont(SKIP_FONT_SIZE),
                     SKIP_OVERLAY_BACKGROUND_COLOR,
                     SKIP_PADDING
             );
@@ -279,7 +279,7 @@ public abstract class AbstractDefaultMainView<
         skipOverlayActive = false;
     }
 
-    protected abstract void initSimulation(CON config, CellDimension cellDimension, GM model);
+    protected abstract void initializeSimulation(CON config, CellDimension cellDimension, GM model);
 
     @SuppressWarnings("ParameterHidesMemberVariable")
     protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);

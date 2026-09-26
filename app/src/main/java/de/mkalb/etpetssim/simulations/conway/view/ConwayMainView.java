@@ -70,7 +70,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void initSimulation(ConwayConfig config, CellDimension cellDimension, WritableGridModel<ConwayEntity> model) {
+    protected void initializeSimulation(ConwayConfig config, CellDimension cellDimension, WritableGridModel<ConwayEntity> model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

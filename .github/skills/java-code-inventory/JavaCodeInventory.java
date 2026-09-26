@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.lang.model.element.Modifier;
@@ -25,6 +27,8 @@ import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.ModifiersTree;
+import com.sun.source.tree.StatementTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TypeParameterTree;
 import com.sun.source.tree.VariableTree;
@@ -32,13 +36,14 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-public final class JavaMethodInventory {
+public final class JavaCodeInventory {
 
     private static final Path MAIN_SOURCE_ROOT = Path.of("app", "src", "main", "java");
     private static final Path TEST_SOURCE_ROOT = Path.of("app", "src", "test", "java");
-    private static final Path OUTPUT_PATH = Path.of("docs", "planning", "JavaMethodInventory.csv");
+    private static final Path MEMBER_OUTPUT_PATH = Path.of("docs", "planning", "JavaMethodInventory.csv");
+    private static final Path TYPE_OUTPUT_PATH = Path.of("docs", "planning", "JavaTypeInventory.csv");
     private static final String LINE_SEPARATOR = System.lineSeparator();
-    private static final List<String> CSV_COLUMNS = List.of(
+    private static final List<String> MEMBER_CSV_COLUMNS = List.of(
             "source_set",
             "source_path",
             "package_name",
@@ -55,8 +60,23 @@ public final class JavaMethodInventory {
             "type_parameters",
             "line_number"
     );
+    private static final List<String> TYPE_CSV_COLUMNS = List.of(
+            "source_set",
+            "source_path",
+            "package_name",
+            "type_name",
+            "type_kind",
+            "extends_types",
+            "implements_types",
+            "permits_types",
+            "visibility",
+            "modifiers",
+            "annotations",
+            "type_parameters",
+            "line_number"
+    );
 
-    private JavaMethodInventory() {
+    private JavaCodeInventory() {
     }
 
     public static void main(String[] arguments) {
@@ -66,15 +86,17 @@ public final class JavaMethodInventory {
             }
 
             Path repositoryRoot = findRepositoryRoot();
-            List<MemberDeclaration> declarations = collectDeclarations(repositoryRoot);
-            writeInventory(repositoryRoot, declarations);
-            System.out.printf(Locale.ROOT, "Generated %s with %d declarations.%n", OUTPUT_PATH, declarations.size());
+            InventoryResult inventory = collectDeclarations(repositoryRoot);
+            writeInventory(repositoryRoot, MEMBER_OUTPUT_PATH, MEMBER_CSV_COLUMNS, inventory.members(), MemberDeclaration::toCsvLine);
+            writeInventory(repositoryRoot, TYPE_OUTPUT_PATH, TYPE_CSV_COLUMNS, inventory.types(), TypeDeclaration::toCsvLine);
+            System.out.printf(Locale.ROOT, "Generated %s with %d declarations.%n", MEMBER_OUTPUT_PATH, inventory.members().size());
+            System.out.printf(Locale.ROOT, "Generated %s with %d declarations.%n", TYPE_OUTPUT_PATH, inventory.types().size());
         } catch (UsageException exception) {
             System.err.println("FAIL usage: " + exception.getMessage());
-            System.err.println("Usage: java .github/skills/java-method-inventory/JavaMethodInventory.java");
+            System.err.println("Usage: java .github/skills/java-code-inventory/JavaCodeInventory.java");
             System.exit(3);
         } catch (ParseException exception) {
-            exception.diagnostics().forEach(JavaMethodInventory::printDiagnostic);
+            exception.diagnostics().forEach(JavaCodeInventory::printDiagnostic);
             System.exit(2);
         } catch (IOException exception) {
             System.err.println("FAIL io: " + exception.getMessage());
@@ -96,7 +118,7 @@ public final class JavaMethodInventory {
         throw new IOException("could not locate repository root containing " + MAIN_SOURCE_ROOT + " and " + TEST_SOURCE_ROOT);
     }
 
-    private static List<MemberDeclaration> collectDeclarations(Path repositoryRoot) throws IOException, ParseException {
+    private static InventoryResult collectDeclarations(Path repositoryRoot) throws IOException, ParseException {
         List<SourceFile> sourceFiles = collectSourceFiles(repositoryRoot);
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         if (compiler == null) {
@@ -133,7 +155,8 @@ public final class JavaMethodInventory {
         }
 
         SourcePositions sourcePositions = trees.getSourcePositions();
-        List<MemberDeclaration> declarations = new ArrayList<>();
+        List<MemberDeclaration> memberDeclarations = new ArrayList<>();
+        List<TypeDeclaration> typeDeclarations = new ArrayList<>();
         for (CompilationUnitTree compilationUnit : compilationUnits) {
             Path sourcePath = Path.of(compilationUnit.getSourceFile().toUri()).toAbsolutePath().normalize();
             SourceFile sourceFile = sourceFiles.stream()
@@ -152,15 +175,20 @@ public final class JavaMethodInventory {
                             sourceFile,
                             packageName,
                             "",
-                            declarations
+                            false,
+                            memberDeclarations,
+                            typeDeclarations
                     );
                 }
             }
         }
-        declarations.sort(Comparator.comparing(MemberDeclaration::sourceSet)
-                                    .thenComparing(MemberDeclaration::sourcePath)
-                                    .thenComparingInt(MemberDeclaration::lineNumber));
-        return List.copyOf(declarations);
+        memberDeclarations.sort(Comparator.comparing(MemberDeclaration::sourceSet)
+                                          .thenComparing(MemberDeclaration::sourcePath)
+                                          .thenComparingInt(MemberDeclaration::lineNumber));
+        typeDeclarations.sort(Comparator.comparing(TypeDeclaration::sourceSet)
+                                        .thenComparing(TypeDeclaration::sourcePath)
+                                        .thenComparingInt(TypeDeclaration::lineNumber));
+        return new InventoryResult(List.copyOf(memberDeclarations), List.copyOf(typeDeclarations));
     }
 
     private static List<SourceFile> collectSourceFiles(Path repositoryRoot) throws IOException {
@@ -194,16 +222,50 @@ public final class JavaMethodInventory {
             SourceFile sourceFile,
             String packageName,
             String enclosingType,
-            List<MemberDeclaration> declarations
+            boolean memberOfInterface,
+            List<MemberDeclaration> memberDeclarations,
+            List<TypeDeclaration> typeDeclarations
     ) {
         String simpleName = classTree.getSimpleName().toString();
         if (simpleName.isEmpty()) {
             return;
         }
         String declaringType = enclosingType.isEmpty() ? simpleName : enclosingType + "." + simpleName;
+        String visibility = typeVisibility(classTree, memberOfInterface);
+        typeDeclarations.add(toTypeDeclaration(
+                classTree,
+                compilationUnit,
+                sourcePositions,
+                sourceFile,
+                packageName,
+                declaringType,
+                visibility
+        ));
+        collectImplicitConstructorDeclaration(
+                classTree,
+                compilationUnit,
+                sourcePositions,
+                source,
+                sourceFile,
+                packageName,
+                declaringType,
+                visibility,
+                memberDeclarations
+        );
+        if (classTree.getKind() == Tree.Kind.RECORD) {
+            collectRecordAccessorDeclarations(
+                    classTree,
+                    compilationUnit,
+                    sourcePositions,
+                    sourceFile,
+                    packageName,
+                    declaringType,
+                    memberDeclarations
+            );
+        }
         for (Tree member : classTree.getMembers()) {
             switch (member) {
-                case MethodTree methodTree -> declarations.add(toMemberDeclaration(
+                case MethodTree methodTree -> memberDeclarations.add(toMemberDeclaration(
                         methodTree,
                         classTree,
                         compilationUnit,
@@ -221,12 +283,171 @@ public final class JavaMethodInventory {
                         sourceFile,
                         packageName,
                         declaringType,
-                        declarations
+                        isInterfaceType(classTree),
+                        memberDeclarations,
+                        typeDeclarations
                 );
                 default -> {
                 }
             }
         }
+    }
+
+    private static TypeDeclaration toTypeDeclaration(
+            ClassTree classTree,
+            CompilationUnitTree compilationUnit,
+            SourcePositions sourcePositions,
+            SourceFile sourceFile,
+            String packageName,
+            String typeName,
+            String visibility
+    ) {
+        boolean interfaceType = isInterfaceType(classTree);
+        // For interface declarations, javac stores the extended super-interfaces in getImplementsClause();
+        // getExtendsClause() is always null for interfaces. See ClassTree.getImplementsClause() Javadoc.
+        String extendsTypes = interfaceType
+                ? joinTypeTrees(classTree.getImplementsClause())
+                : (classTree.getExtendsClause() == null ? "" : classTree.getExtendsClause().toString());
+        String implementsTypes = interfaceType ? "" : joinTypeTrees(classTree.getImplementsClause());
+        String permitsTypes = joinTypeTrees(classTree.getPermitsClause());
+        return new TypeDeclaration(
+                sourceFile.sourceSet(),
+                sourceFile.repositoryPath(),
+                packageName,
+                typeName,
+                classTree.getKind().name(),
+                extendsTypes,
+                implementsTypes,
+                permitsTypes,
+                visibility,
+                typeModifiers(classTree),
+                annotations(classTree.getModifiers()),
+                classTree.getTypeParameters().stream()
+                         .map(TypeParameterTree::toString)
+                         .collect(Collectors.joining(", ")),
+                lineNumber(classTree, compilationUnit, sourcePositions)
+        );
+    }
+
+    private static String joinTypeTrees(List<? extends Tree> typeTrees) {
+        return typeTrees == null ? "" : typeTrees.stream().map(Tree::toString).collect(Collectors.joining(", "));
+    }
+
+    private static String typeModifiers(ClassTree classTree) {
+        return modifiers(classTree.getModifiers().getFlags());
+    }
+
+    private static void collectRecordAccessorDeclarations(
+            ClassTree recordTree,
+            CompilationUnitTree compilationUnit,
+            SourcePositions sourcePositions,
+            SourceFile sourceFile,
+            String packageName,
+            String declaringType,
+            List<MemberDeclaration> declarations
+    ) {
+        Set<String> explicitAccessorNames = recordTree.getMembers().stream()
+                                                      .filter(MethodTree.class::isInstance)
+                                                      .map(MethodTree.class::cast)
+                                                      .filter(methodTree -> (methodTree.getReturnType() != null)
+                                                              && methodTree.getParameters().isEmpty())
+                                                      .map(methodTree -> methodTree.getName().toString())
+                                                      .collect(Collectors.toSet());
+        for (VariableTree component : recordComponents(recordTree)) {
+            if (!explicitAccessorNames.contains(component.getName().toString())) {
+                declarations.add(new MemberDeclaration(
+                        sourceFile.sourceSet(),
+                        sourceFile.repositoryPath(),
+                        packageName,
+                        declaringType,
+                        recordTree.getKind().name(),
+                        component.getName().toString(),
+                        MemberKind.RECORD_ACCESSOR.name(),
+                        "",
+                        "public",
+                        "",
+                        component.getType().toString(),
+                        "",
+                        annotations(component.getModifiers()),
+                        "",
+                        lineNumber(component, compilationUnit, sourcePositions)
+                ));
+            }
+        }
+    }
+
+    private static List<VariableTree> recordComponents(ClassTree recordTree) {
+        // Records cannot declare instance fields, so non-static fields are the record components.
+        return recordTree.getMembers().stream()
+                         .filter(VariableTree.class::isInstance)
+                         .map(VariableTree.class::cast)
+                         .filter(field -> !field.getModifiers().getFlags().contains(Modifier.STATIC))
+                         .toList();
+    }
+
+    private static void collectImplicitConstructorDeclaration(
+            ClassTree classTree,
+            CompilationUnitTree compilationUnit,
+            SourcePositions sourcePositions,
+            String source,
+            SourceFile sourceFile,
+            String packageName,
+            String declaringType,
+            String typeVisibility,
+            List<MemberDeclaration> declarations
+    ) {
+        List<MethodTree> constructors = classTree.getMembers().stream()
+                                                 .filter(MethodTree.class::isInstance)
+                                                 .map(MethodTree.class::cast)
+                                                 .filter(methodTree -> methodTree.getReturnType() == null)
+                                                 .toList();
+        MemberKind memberKind;
+        String visibility;
+        String parameterTypes = "";
+        switch (classTree.getKind()) {
+            case CLASS -> {
+                if (!constructors.isEmpty()) {
+                    return;
+                }
+                memberKind = MemberKind.DEFAULT_CONSTRUCTOR;
+                visibility = typeVisibility;
+            }
+            case ENUM -> {
+                if (!constructors.isEmpty()) {
+                    return;
+                }
+                memberKind = MemberKind.DEFAULT_CONSTRUCTOR;
+                visibility = "private";
+            }
+            case RECORD -> {
+                if (constructors.stream().anyMatch(JavaCodeInventory::isCanonicalRecordConstructor)) {
+                    return;
+                }
+                memberKind = MemberKind.CANONICAL_CONSTRUCTOR;
+                visibility = typeVisibility;
+                parameterTypes = parameterTypes(recordComponents(classTree), compilationUnit, sourcePositions, source);
+            }
+            default -> {
+                return;
+            }
+        }
+        declarations.add(new MemberDeclaration(
+                sourceFile.sourceSet(),
+                sourceFile.repositoryPath(),
+                packageName,
+                declaringType,
+                classTree.getKind().name(),
+                "<init>",
+                memberKind.name(),
+                parameterTypes,
+                visibility,
+                "",
+                "",
+                "",
+                "",
+                "",
+                lineNumber(classTree, compilationUnit, sourcePositions)
+        ));
     }
 
     private static MemberDeclaration toMemberDeclaration(
@@ -245,8 +466,6 @@ public final class JavaMethodInventory {
         MemberKind memberKind = constructor
                 ? (compactConstructor ? MemberKind.COMPACT_CONSTRUCTOR : MemberKind.CONSTRUCTOR)
                 : MemberKind.METHOD;
-        long startPosition = sourcePositions.getStartPosition(compilationUnit, methodTree);
-        int lineNumber = Math.toIntExact(compilationUnit.getLineMap().getLineNumber(startPosition));
         return new MemberDeclaration(
                 sourceFile.sourceSet(),
                 sourceFile.repositoryPath(),
@@ -255,19 +474,30 @@ public final class JavaMethodInventory {
                 declaringClass.getKind().name(),
                 constructor ? "<init>" : methodTree.getName().toString(),
                 memberKind.name(),
-                compactConstructor ? "" : parameterTypes(methodTree, compilationUnit, sourcePositions, source),
+                compactConstructor
+                        ? ""
+                        : parameterTypes(methodTree.getParameters(), compilationUnit, sourcePositions, source),
                 visibility(methodTree, declaringClass, constructor),
                 modifiers(methodTree),
                 constructor ? "" : methodTree.getReturnType().toString(),
-                methodTree.getThrows().stream().map(Tree::toString).collect(java.util.stream.Collectors.joining(", ")),
-                methodTree.getModifiers().getAnnotations().stream()
-                          .map(AnnotationTree::toString)
-                          .collect(java.util.stream.Collectors.joining(" | ")),
+                methodTree.getThrows().stream().map(Tree::toString).collect(Collectors.joining(", ")),
+                annotations(methodTree.getModifiers()),
                 methodTree.getTypeParameters().stream()
                           .map(TypeParameterTree::toString)
-                          .collect(java.util.stream.Collectors.joining(", ")),
-                lineNumber
+                          .collect(Collectors.joining(", ")),
+                lineNumber(methodTree, compilationUnit, sourcePositions)
         );
+    }
+
+    private static String annotations(ModifiersTree modifiers) {
+        return modifiers.getAnnotations().stream()
+                        .map(AnnotationTree::toString)
+                        .collect(Collectors.joining(" | "));
+    }
+
+    private static int lineNumber(Tree tree, CompilationUnitTree compilationUnit, SourcePositions sourcePositions) {
+        long startPosition = sourcePositions.getStartPosition(compilationUnit, tree);
+        return Math.toIntExact(compilationUnit.getLineMap().getLineNumber(startPosition));
     }
 
     private static boolean isCompactConstructor(
@@ -314,14 +544,14 @@ public final class JavaMethodInventory {
     }
 
     private static String parameterTypes(
-            MethodTree methodTree,
+            List<? extends VariableTree> parameters,
             CompilationUnitTree compilationUnit,
             SourcePositions sourcePositions,
             String source
     ) {
-        return methodTree.getParameters().stream()
+        return parameters.stream()
                          .map(parameter -> parameterType(parameter, compilationUnit, sourcePositions, source))
-                         .collect(java.util.stream.Collectors.joining(", "));
+                         .collect(Collectors.joining(", "));
     }
 
     private static String parameterType(
@@ -363,41 +593,40 @@ public final class JavaMethodInventory {
     }
 
     private static String visibility(MethodTree methodTree, ClassTree declaringClass, boolean constructor) {
-        Set<Modifier> flags = methodTree.getModifiers().getFlags();
-        if (flags.contains(Modifier.PUBLIC)) {
-            return "public";
-        }
-        if (flags.contains(Modifier.PROTECTED)) {
-            return "protected";
-        }
-        if (flags.contains(Modifier.PRIVATE)) {
-            return "private";
+        String visibility = visibility(methodTree.getModifiers().getFlags());
+        if (!visibility.equals("package-private")) {
+            return visibility;
         }
         if (constructor && (declaringClass.getKind() == Tree.Kind.ENUM)) {
             return "private";
         }
-        if (constructor && isCanonicalRecordConstructor(methodTree, declaringClass)) {
-            return visibility(declaringClass.getModifiers().getFlags());
-        }
-        if ((declaringClass.getKind() == Tree.Kind.INTERFACE)
-                || (declaringClass.getKind() == Tree.Kind.ANNOTATION_TYPE)) {
+        if (isInterfaceType(declaringClass)) {
             return "public";
         }
         return "package-private";
     }
 
-    private static boolean isCanonicalRecordConstructor(MethodTree methodTree, ClassTree declaringClass) {
-        if (declaringClass.getKind() != Tree.Kind.RECORD) {
-            return false;
-        }
-        if (methodTree.getBody().getStatements().isEmpty()) {
-            return true;
-        }
-        Tree firstStatement = methodTree.getBody().getStatements().getFirst();
-        return !(firstStatement instanceof ExpressionStatementTree expressionStatement
-                && expressionStatement.getExpression() instanceof MethodInvocationTree invocation
-                && invocation.getMethodSelect() instanceof IdentifierTree identifier
-                && identifier.getName().contentEquals("this"));
+    private static boolean isCanonicalRecordConstructor(MethodTree constructor) {
+        // Every non-canonical record constructor must contain a top-level this(...) invocation.
+        return constructor.getBody().getStatements().stream()
+                          .noneMatch(JavaCodeInventory::isThisConstructorInvocation);
+    }
+
+    private static boolean isThisConstructorInvocation(StatementTree statement) {
+        return (statement instanceof ExpressionStatementTree expressionStatement)
+                && (expressionStatement.getExpression() instanceof MethodInvocationTree invocation)
+                && (invocation.getMethodSelect() instanceof IdentifierTree identifier)
+                && identifier.getName().contentEquals("this");
+    }
+
+    private static boolean isInterfaceType(ClassTree classTree) {
+        return (classTree.getKind() == Tree.Kind.INTERFACE) || (classTree.getKind() == Tree.Kind.ANNOTATION_TYPE);
+    }
+
+    private static String typeVisibility(ClassTree classTree, boolean memberOfInterface) {
+        String visibility = visibility(classTree.getModifiers().getFlags());
+        // Member types of interfaces are implicitly public.
+        return (memberOfInterface && visibility.equals("package-private")) ? "public" : visibility;
     }
 
     private static String visibility(Set<Modifier> flags) {
@@ -485,23 +714,32 @@ public final class JavaMethodInventory {
     }
 
     private static String modifiers(MethodTree methodTree) {
-        Set<Modifier> flags = methodTree.getModifiers().getFlags();
+        return modifiers(methodTree.getModifiers().getFlags());
+    }
+
+    private static String modifiers(Set<Modifier> flags) {
         return Stream.of(Modifier.values())
                      .filter(flags::contains)
                      .filter(modifier -> (modifier != Modifier.PUBLIC)
                              && (modifier != Modifier.PROTECTED)
                              && (modifier != Modifier.PRIVATE))
                      .map(modifier -> modifier.toString().toLowerCase(Locale.ROOT))
-                     .collect(java.util.stream.Collectors.joining(" "));
+                     .collect(Collectors.joining(" "));
     }
 
-    private static void writeInventory(Path repositoryRoot, List<MemberDeclaration> declarations) throws IOException {
-        Path outputPath = repositoryRoot.resolve(OUTPUT_PATH);
-        Files.createDirectories(outputPath.getParent());
+    private static <T> void writeInventory(
+            Path repositoryRoot,
+            Path outputPath,
+            List<String> csvColumns,
+            List<T> declarations,
+            Function<T, String> toCsvLine
+    ) throws IOException {
+        Path resolvedOutputPath = repositoryRoot.resolve(outputPath);
+        Files.createDirectories(resolvedOutputPath.getParent());
         List<String> lines = new ArrayList<>(declarations.size() + 1);
-        lines.add(String.join(",", CSV_COLUMNS));
-        declarations.stream().map(MemberDeclaration::toCsvLine).forEach(lines::add);
-        Files.writeString(outputPath, String.join(LINE_SEPARATOR, lines) + LINE_SEPARATOR, StandardCharsets.UTF_8);
+        lines.add(String.join(",", csvColumns));
+        declarations.stream().map(toCsvLine).forEach(lines::add);
+        Files.writeString(resolvedOutputPath, String.join(LINE_SEPARATOR, lines) + LINE_SEPARATOR, StandardCharsets.UTF_8);
     }
 
     private static String toRepositoryPath(Path repositoryRoot, Path path) {
@@ -527,7 +765,10 @@ public final class JavaMethodInventory {
     private enum MemberKind {
         METHOD,
         CONSTRUCTOR,
-        COMPACT_CONSTRUCTOR
+        COMPACT_CONSTRUCTOR,
+        DEFAULT_CONSTRUCTOR,
+        CANONICAL_CONSTRUCTOR,
+        RECORD_ACCESSOR
     }
 
     private record SourceFile(String sourceSet, Path path, String repositoryPath) {
@@ -571,9 +812,48 @@ public final class JavaMethodInventory {
                     annotations,
                     typeParameters,
                     Integer.toString(lineNumber)
-            ).stream().map(JavaMethodInventory::csvField).collect(java.util.stream.Collectors.joining(","));
+            ).stream().map(JavaCodeInventory::csvField).collect(Collectors.joining(","));
         }
 
+    }
+
+    private record TypeDeclaration(
+            String sourceSet,
+            String sourcePath,
+            String packageName,
+            String typeName,
+            String typeKind,
+            String extendsTypes,
+            String implementsTypes,
+            String permitsTypes,
+            String visibility,
+            String modifiers,
+            String annotations,
+            String typeParameters,
+            int lineNumber
+    ) {
+
+        private String toCsvLine() {
+            return List.of(
+                    sourceSet,
+                    sourcePath,
+                    packageName,
+                    typeName,
+                    typeKind,
+                    extendsTypes,
+                    implementsTypes,
+                    permitsTypes,
+                    visibility,
+                    modifiers,
+                    annotations,
+                    typeParameters,
+                    Integer.toString(lineNumber)
+            ).stream().map(JavaCodeInventory::csvField).collect(Collectors.joining(","));
+        }
+
+    }
+
+    private record InventoryResult(List<MemberDeclaration> members, List<TypeDeclaration> types) {
     }
 
     private static final class ParseException extends Exception {

@@ -64,7 +64,7 @@ public final class ConwayConfigViewModel
         surviveProperties.forEach(p -> p.addListener(updateListener));
         birthProperties.forEach(p -> p.addListener(updateListener));
 
-        ruleProperty.setOnRulesChanged(this::updateCheckboxesFromRules);
+        ruleProperty.setRulesChangedListener(this::updateCheckboxesFromRules);
 
         maxNeighborCountProperty().addListener((_, _, _) -> disableUnusedNeighborProperties());
 

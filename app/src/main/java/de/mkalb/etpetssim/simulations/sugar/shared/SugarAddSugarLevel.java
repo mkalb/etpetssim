@@ -28,7 +28,7 @@ public enum SugarAddSugarLevel {
         return labelKey;
     }
 
-    public int resolveSugarAmount(int maxSugarAmount) {
+    public int computeSugarAmount(int maxSugarAmount) {
         return Math.max(1, Math.toIntExact(Math.round(maxSugarAmount * factorOfMaxSugarAmount)));
     }
 }

@@ -53,7 +53,7 @@ public final class LangtonStepRunner
                 removeAnt(agentCell, antModel, statistics);
                 continue;
             }
-            var groundEntity = determineGround(newCoordinate, statistics);
+            var groundEntity = resolveGroundAndCountVisit(newCoordinate, statistics);
             moveAnt(agentCell, newCoordinate, antModel, ant, groundEntity);
             switchGround(newCoordinate, groundEntity, groundModel);
         }
@@ -76,11 +76,11 @@ public final class LangtonStepRunner
     }
 
     void switchGround(GridCoordinate coordinate, TerrainConstant groundEntity, WritableGridModel<TerrainConstant> groundModel) {
-        int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().getRuleCount();
+        int newRuleIndex = (groundEntity.ruleIndex() + 1) % config.langtonMovementRules().ruleCount();
         groundModel.setEntity(coordinate, TerrainConstant.requireByRuleIndex(newRuleIndex));
     }
 
-    TerrainConstant determineGround(GridCoordinate newCoordinate, LangtonStatistics statistics) {
+    TerrainConstant resolveGroundAndCountVisit(GridCoordinate newCoordinate, LangtonStatistics statistics) {
         var groundModel = model.groundModel();
         TerrainConstant groundEntity = groundModel.getEntity(newCoordinate);
         if (groundEntity == TerrainConstant.UNVISITED) {
@@ -92,7 +92,7 @@ public final class LangtonStepRunner
 
     @SuppressWarnings("SwitchExpressionCanBePushedDown")
     CompassDirection computeNewAntDirection(CompassDirection currentDirection, int ruleIndex) {
-        LangtonMovementRules.AntTurn turn = config.langtonMovementRules().getTurnForState(ruleIndex);
+        LangtonMovementRules.AntTurn turn = config.langtonMovementRules().turnForState(ruleIndex);
 
         CompassDirection newDirection = null;
         switch (structure.cellShape()) {

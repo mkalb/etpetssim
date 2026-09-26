@@ -10,9 +10,9 @@ import java.util.function.*;
  * An implementation of {@link WritableGridModel} that stores grid entities in a two-dimensional array.
  * Efficient for dense grids with mostly non-default entities.
  *
- * @param <T> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
  */
-public final class ArrayGridModel<T extends GridEntity> implements WritableGridModel<T> {
+public final class ArrayGridModel<ENT extends GridEntity> implements WritableGridModel<ENT> {
 
     /**
      * The structure describing the grid's dimensions and valid coordinates.
@@ -22,7 +22,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     /**
      * The default entity for all grid cells.
      */
-    private final T defaultEntity;
+    private final ENT defaultEntity;
 
     /**
      * The two-dimensional array holding the grid entities.
@@ -36,7 +36,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
      * @param structure     the grid structure
      * @param defaultEntity the default entity for all cells
      */
-    public ArrayGridModel(GridStructure structure, T defaultEntity) {
+    public ArrayGridModel(GridStructure structure, ENT defaultEntity) {
         this.structure = structure;
         this.defaultEntity = defaultEntity;
         data = new Object[structure.size().height()][structure.size().width()];
@@ -49,17 +49,17 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public T defaultEntity() {
+    public ENT defaultEntity() {
         return defaultEntity;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public T getEntity(GridCoordinate coordinate) {
+    public ENT getEntity(GridCoordinate coordinate) {
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
-        return (T) data[coordinate.y()][coordinate.x()];
+        return (ENT) data[coordinate.y()][coordinate.x()];
     }
 
     @Override
@@ -76,14 +76,14 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public long countEntities(Predicate<? super T> predicate) {
+    public long countEntities(Predicate<? super ENT> predicate) {
         int width = structure.size().width();
         int height = structure.size().height();
         long count = 0;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
+                ENT entity = (ENT) data[y][x];
                 if (predicate.test(entity)) {
                     count++;
                 }
@@ -103,7 +103,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
+                ENT entity = (ENT) data[y][x];
                 if (!Objects.equals(entity, defaultEntity)) {
                     result.add(new GridCoordinate(x, y));
                 }
@@ -113,7 +113,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public List<GridCoordinate> filteredCoordinates(Predicate<T> entityPredicate) {
+    public List<GridCoordinate> filteredCoordinates(Predicate<ENT> entityPredicate) {
         int width = structure.size().width();
         int height = structure.size().height();
         // Pre-size with full grid area: ArrayGridModel is for dense grids where the predicate typically
@@ -122,7 +122,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
+                ENT entity = (ENT) data[y][x];
                 if (entityPredicate.test(entity)) {
                     result.add(new GridCoordinate(x, y));
                 }
@@ -142,7 +142,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
+                ENT entity = (ENT) data[y][x];
                 if (Objects.equals(entity, defaultEntity)) {
                     count++;
                     // Replace current candidate with probability 1/count.
@@ -156,17 +156,17 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public List<GridCell<T>> allCells() {
+    public List<GridCell<ENT>> allCells() {
         // Direct array access to skip the redundant bounds check of getEntity(),
         // which is safe because all (x, y) pairs produced here are guaranteed to be valid.
         // Pre-size with full grid area: ArrayGridModel is for dense grids, so all cells are included.
         int width = structure.size().width();
         int height = structure.size().height();
-        List<GridCell<T>> result = new ArrayList<>(width * height);
+        List<GridCell<ENT>> result = new ArrayList<>(width * height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
+                ENT entity = (ENT) data[y][x];
                 result.add(new GridCell<>(new GridCoordinate(x, y), entity));
             }
         }
@@ -174,18 +174,18 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public List<GridCell<T>> nonDefaultCells() {
+    public List<GridCell<ENT>> nonDefaultCells() {
         // Check entity before creating GridCell to avoid allocating objects for default cells.
         // Explicit nested loop also avoids the Integer boxing overhead of IntStream.boxed().flatMap(...).
         // No snapshot copy is needed: arrays have no fail-fast iterators, so there is no ConcurrentModificationException
         // risk if the caller mutates the model (via setEntity / setEntityToDefault) while iterating the returned list.
         int width = structure.size().width();
         int height = structure.size().height();
-        List<GridCell<T>> result = new ArrayList<>();
+        List<GridCell<ENT>> result = new ArrayList<>();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
+                ENT entity = (ENT) data[y][x];
                 if (!Objects.equals(entity, defaultEntity)) {
                     result.add(new GridCell<>(new GridCoordinate(x, y), entity));
                 }
@@ -195,16 +195,16 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public List<GridCell<T>> filteredCells(Predicate<T> entityPredicate) {
+    public List<GridCell<ENT>> filteredCells(Predicate<ENT> entityPredicate) {
         int width = structure.size().width();
         int height = structure.size().height();
         // Pre-size with full grid area: ArrayGridModel is for dense grids where the predicate typically
         // matches most cells, so pre-sizing avoids repeated ArrayList resizing (up to ~20 resizes for 1M cells).
-        List<GridCell<T>> result = new ArrayList<>(width * height);
+        List<GridCell<ENT>> result = new ArrayList<>(width * height);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
-                T entity = (T) data[y][x];
+                ENT entity = (ENT) data[y][x];
                 if (entityPredicate.test(entity)) {
                     result.add(new GridCell<>(new GridCoordinate(x, y), entity));
                 }
@@ -214,17 +214,17 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public List<GridCell<T>> filteredCellsSortedBy(Predicate<T> entityPredicate, Comparator<GridCell<T>> cellOrdering) {
-        List<GridCell<T>> result = filteredCells(entityPredicate);
+    public List<GridCell<ENT>> filteredCellsSortedBy(Predicate<ENT> entityPredicate, Comparator<GridCell<ENT>> cellOrdering) {
+        List<GridCell<ENT>> result = filteredCells(entityPredicate);
         result.sort(cellOrdering);
         return result;
     }
 
     @Override
-    public ArrayGridModel<T> copy() {
+    public ArrayGridModel<ENT> copy() {
         // Entity instances in the copy share the same references as this model (shallow copy).
         // This is safe because GridEntity implementations are treated as immutable value types.
-        ArrayGridModel<T> clone = new ArrayGridModel<>(structure, defaultEntity);
+        ArrayGridModel<ENT> clone = new ArrayGridModel<>(structure, defaultEntity);
         int width = structure.size().width();
         int height = structure.size().height();
         for (int y = 0; y < height; y++) {
@@ -234,12 +234,12 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public ArrayGridModel<T> copyWithDefaultEntity() {
+    public ArrayGridModel<ENT> copyWithDefaultEntity() {
         return new ArrayGridModel<>(structure, defaultEntity);
     }
 
     @Override
-    public void setEntity(GridCoordinate coordinate, T entity) {
+    public void setEntity(GridCoordinate coordinate, ENT entity) {
         if (!structure.isCoordinateValid(coordinate)) {
             throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
         }
@@ -255,14 +255,14 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public void fill(T entity) {
+    public void fill(ENT entity) {
         for (Object[] row : data) {
             Arrays.fill(row, entity);
         }
     }
 
     @Override
-    public void fill(Supplier<T> supplier) {
+    public void fill(Supplier<ENT> supplier) {
         int width = structure.size().width();
         int height = structure.size().height();
         for (int y = 0; y < height; y++) {
@@ -273,7 +273,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public void fill(Function<GridCoordinate, T> mapper) {
+    public void fill(Function<GridCoordinate, ENT> mapper) {
         int width = structure.size().width();
         int height = structure.size().height();
         for (int y = 0; y < height; y++) {
@@ -292,7 +292,7 @@ public final class ArrayGridModel<T extends GridEntity> implements WritableGridM
     }
 
     @Override
-    public void swapInputCellEntities(GridCell<T> cellA, GridCell<T> cellB) {
+    public void swapInputCellEntities(GridCell<ENT> cellA, GridCell<ENT> cellB) {
         GridCoordinate coordinateA = cellA.coordinate();
         GridCoordinate coordinateB = cellB.coordinate();
         if (!structure.isCoordinateValid(coordinateA)) {

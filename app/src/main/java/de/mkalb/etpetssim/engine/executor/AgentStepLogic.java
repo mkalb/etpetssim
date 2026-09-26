@@ -11,12 +11,12 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * The method receives the agent's cell, the complete grid model, the simulation step index,
  * and a context object for sharing or accumulating state across steps or agents.
  *
- * @param <T> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
+ * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
  * @param <C> the type of the context object provided to each agent step
  * @see de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner
  */
 @FunctionalInterface
-public interface AgentStepLogic<T extends GridEntity, C> {
+public interface AgentStepLogic<ENT extends GridEntity, C> {
 
     /**
      * Performs the logic for a single agent during a simulation step.
@@ -26,6 +26,6 @@ public interface AgentStepLogic<T extends GridEntity, C> {
      * @param stepIndex the index of the current simulation step
      * @param context   the context object used to share or accumulate state during the simulation
      */
-    void performAgentStep(GridCell<T> agentCell, WritableGridModel<T> model, int stepIndex, C context);
+    void performAgentStep(GridCell<ENT> agentCell, WritableGridModel<ENT> model, int stepIndex, C context);
 
 }

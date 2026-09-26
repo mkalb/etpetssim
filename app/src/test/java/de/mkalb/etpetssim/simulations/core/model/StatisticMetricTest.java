@@ -123,12 +123,12 @@ final class StatisticMetricTest {
     private record TestStatistics(int value) implements SimulationStatistics {
 
         @Override
-        public int getStepCount() {
+        public int stepCount() {
             return 0;
         }
 
         @Override
-        public GridStructure getGridStructure() {
+        public GridStructure gridStructure() {
             throw new UnsupportedOperationException();
         }
 

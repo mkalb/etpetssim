@@ -27,33 +27,33 @@ public final class ConwayStatistics
     public ConwayStatistics(GridStructure gridStructure) {
         super(gridStructure);
         aliveCells = 0;
-        deadCells = getTotalCells();
+        deadCells = totalCells();
         changedCells = 0;
     }
 
     public static List<StatisticMetric<ConwayStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS,
-                        ConwayStatistics::getAliveCells,
+                        ConwayStatistics::aliveCells,
                         StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
                 new StatisticMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS,
-                        ConwayStatistics::getDeadCells,
+                        ConwayStatistics::deadCells,
                         StatisticExtremaMode.MIN_AND_MAX),
                 new StatisticMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CHANGED_CELLS,
-                        ConwayStatistics::getChangedCells,
+                        ConwayStatistics::changedCells,
                         StatisticExtremaMode.MAX)
         );
     }
 
     void initializeStartupCellCounts(int aliveCellsInitial) {
         aliveCells = aliveCellsInitial;
-        deadCells = getTotalCells() - aliveCellsInitial;
+        deadCells = totalCells() - aliveCellsInitial;
     }
 
     void updateCellCounts(int newAliveCells,
                           int newChangedCells) {
         aliveCells = newAliveCells;
-        deadCells = getTotalCells() - newAliveCells;
+        deadCells = totalCells() - newAliveCells;
         changedCells = newChangedCells;
     }
 
@@ -61,19 +61,19 @@ public final class ConwayStatistics
                                  int changedCellsDelta) {
         int newAliveCells = aliveCells + aliveCellsDelta;
         aliveCells = newAliveCells;
-        deadCells = getTotalCells() - newAliveCells;
+        deadCells = totalCells() - newAliveCells;
         changedCells += changedCellsDelta;
     }
 
-    public int getAliveCells() {
+    public int aliveCells() {
         return aliveCells;
     }
 
-    public int getDeadCells() {
+    public int deadCells() {
         return deadCells;
     }
 
-    public int getChangedCells() {
+    public int changedCells() {
         return changedCells;
     }
 

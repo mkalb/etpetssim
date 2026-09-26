@@ -11,7 +11,7 @@ public final class ReboundingTerminationCondition implements SimulationTerminati
      * Checks whether the rebounding simulation has finished.
      * <p>
      * The simulation terminates once at most one entity-occupied cell remains,
-     * i.e. when {@code statistics.getMovingEntityCells() <= 1}.
+     * i.e. when {@code statistics.movingEntityCells() <= 1}.
      *
      * @param model      the current simulation model
      * @param stepCount  the number of simulation steps completed
@@ -20,7 +20,7 @@ public final class ReboundingTerminationCondition implements SimulationTerminati
      */
     @Override
     public boolean isFinished(ReadableGridModel<ReboundingEntity> model, int stepCount, ReboundingStatistics statistics) {
-        return (statistics.getMovingEntityCells() <= 1);
+        return (statistics.movingEntityCells() <= 1);
     }
 
 }

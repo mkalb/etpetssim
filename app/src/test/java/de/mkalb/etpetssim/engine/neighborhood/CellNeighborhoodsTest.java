@@ -550,15 +550,15 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticGetCellNeighborConnections() {
-        // getCellNeighborConnections returns the cached list of computeCellNeighborConnections
+    void testStaticResolveCachedCellNeighborConnections() {
+        // resolveCachedCellNeighborConnections returns the cached list of computeCellNeighborConnections
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 GridCoordinate coordinate = new GridCoordinate(x, y);
                 for (NeighborhoodMode neighborhoodMode : NeighborhoodMode.values()) {
                     for (CellShape cellShape : CellShape.values()) {
                         assertEquals(CellNeighborhoods.computeCellNeighborConnections(coordinate, neighborhoodMode, cellShape),
-                                CellNeighborhoods.getCellNeighborConnections(coordinate, neighborhoodMode, cellShape));
+                                CellNeighborhoods.resolveCachedCellNeighborConnections(coordinate, neighborhoodMode, cellShape));
                     }
                 }
             }

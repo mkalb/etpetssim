@@ -42,7 +42,7 @@ final class SugarUserActionTest {
                                            .stream()
                                            .findFirst()
                                            .orElseThrow();
-        int resourceCellsBefore = manager.statistics().getResourceCells();
+        int resourceCellsBefore = manager.statistics().resourceCells();
 
         userAction.apply(
                 manager,
@@ -53,9 +53,9 @@ final class SugarUserActionTest {
         assertAll(
                 () -> assertInstanceOf(Sugar.class, resourceEntity),
                 () -> assertEquals(
-                        SugarAddSugarLevel.HIGH.resolveSugarAmount(manager.config().maxSugarAmount()),
+                        SugarAddSugarLevel.HIGH.computeSugarAmount(manager.config().maxSugarAmount()),
                         ((Sugar) resourceEntity).currentAmount()),
-                () -> assertEquals(resourceCellsBefore + 1, manager.statistics().getResourceCells())
+                () -> assertEquals(resourceCellsBefore + 1, manager.statistics().resourceCells())
         );
     }
 
@@ -69,7 +69,7 @@ final class SugarUserActionTest {
                                            .stream()
                                            .findFirst()
                                            .orElseThrow();
-        int resourceCellsBefore = manager.statistics().getResourceCells();
+        int resourceCellsBefore = manager.statistics().resourceCells();
 
         userAction.apply(
                 manager,
@@ -78,7 +78,7 @@ final class SugarUserActionTest {
 
         assertAll(
                 () -> assertSame(NoResource.NO_RESOURCE, manager.currentModel().resourceModel().getEntity(coordinate)),
-                () -> assertEquals(resourceCellsBefore - 1, manager.statistics().getResourceCells())
+                () -> assertEquals(resourceCellsBefore - 1, manager.statistics().resourceCells())
         );
     }
 

@@ -9,7 +9,7 @@ public final class LangtonTerminationCondition
 
     @Override
     public boolean isFinished(LangtonGridModel model, int stepCount, LangtonStatistics statistics) {
-        return (statistics.getAntCells() == 0) || (statistics.getTotalCells() == statistics.getVisitedCells());
+        return (statistics.antCells() == 0) || (statistics.totalCells() == statistics.visitedCells());
     }
 
 }

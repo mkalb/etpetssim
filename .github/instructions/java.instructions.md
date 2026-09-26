@@ -1,6 +1,6 @@
 ---
 applyTo: "**/*.java"
-description: "Java rules for etpetssim: code style, records, enums, JSpecify nullability, and AppLogger usage."
+description: "Java rules for etpetssim: code style, naming, records, enums, JSpecify nullability, and AppLogger usage."
 ---
 
 # Java Coding Instructions
@@ -17,18 +17,43 @@ Rules for all `.java` files; repository-wide instructions still apply.
 
 ## Naming Conventions
 
-Use these method naming patterns when they match the behavior:
+Use these method naming patterns when they match the method's primary behavior; test method names follow
+`junit.instructions.md`.
 
-- `create...`: instantiate/configure one object/control/view
-- `build...`: assemble multiple UI parts into one region/container
-- `of...`/`with...`: validating/configured static factory
-- `compute...`: deterministic calculation from input/state
-- `to...`/`from...`/`as...`: conversion or alternative view accessor
-- `is...`/`has...`: boolean state, validity, mode, presence, or availability query
-- `get...`/`set...`/`...Property`: JavaFX or mutable property accessors
-- `initialize...`/`reset...`/`shutdown...`: lifecycle setup, reset, and cleanup
-- `request...`: user-intent action trigger/flag
-- Use concise noun-style names (`locale()`, `area()`, `opposite()`) on utility/value APIs.
+- `create...`: instantiate and configure one coherent object, control, view, or value, including composed containers
+- `build...`: assemble a top-level simulation view region; reserved for the `build*Region()` methods
+- `of...`: create an instance through a validating or configured static factory
+- `from...`: create, parse, or derive a result from the source named in the method
+- `to...`: convert a value to a target type or representation
+- `format...`: produce display text from values, usually localized
+- `as...`: expose existing data through an alternative type, view, property, or binding
+- `compute...`: perform a named calculation when that calculation is the primary API intent, typically from supplied
+  values or operational context
+- `resolve...`: determine the applicable result by interpreting input, selection state, configuration, precedence, or
+  fallback rules
+- `find...`: search existing candidates for one matching result; return `Optional<T>` when absence is expected
+- `is...`/`has...`/`can...`/`should...`/`contains...`/`are...`/`includes...`: query boolean state, validity, mode,
+  presence, availability, capability, or policy
+- `get...`: retrieve a value, resource, or property using a supplied lookup input, or expose it through a JavaBean-style
+  accessor
+- `set...`: assign or replace mutable state, property values, model or UI content, or callbacks
+- `update...`: refresh state, statistics, or UI content to match current data
+- `apply...`: enact a rule, transformation, or action on input or mutable state
+- `perform...`: carry out one simulation, agent, or strategy step inside a step runner or step logic
+- `execute...`: run or orchestrate an operation, action, or sequence
+- `draw...`: render visual output
+- `initialize...`/`reset...`/`shutdown...`: perform lifecycle setup, state reset, or cleanup
+- `clear...`: remove existing content and leave the target empty
+- `request...`: signal a user-intent action or set a corresponding flag
+- `increment...`/`decrement...`: change a mutable counter by exactly `1` or `-1`, respectively
+- `adjust...`: adapt a value, property, or layout using a signed delta, factor, constraint, or contextual target
+- `...Property`: JavaFX property accessor; this suffix takes precedence over any prefix rule
+- `...And...`/`...Or...`: name a deliberately coordinated operation whose additional effect must stay visible to callers
+- `toDisplayString()`: short human-readable representation of a value or entity; keep it separate from `toString()`,
+  which stays a technical diagnostic representation
+- Use concise noun-style names (`locale()`, `area()`, `opposite()`) for stored properties, intrinsic derived values, and
+  named catalog values. They are especially appropriate for records, enums, immutable value objects, data-focused types,
+  and components exposing owned state.
 - Keep generated Java record accessor names (`x()`, `y()`) unless a custom method adds distinct behavior.
 
 ## Java Records
@@ -44,6 +69,8 @@ Use these method naming patterns when they match the behavior:
 - Place enum behavior/metadata on the enum type itself.
 - Use exhaustive `switch` expressions for enum branching; do not add a `default` branch when all constants are known.
 - Use explicit stable codes/keys for external representations; never persist or exchange `ordinal()`.
+- Enums offered as a UI selection follow the existing `labelResourceKey()`/`resourceKey()` pair for their
+  localization keys.
 - Document declaration-order semantics in type Javadoc when order matters.
 
 ## Nullability (JSpecify)

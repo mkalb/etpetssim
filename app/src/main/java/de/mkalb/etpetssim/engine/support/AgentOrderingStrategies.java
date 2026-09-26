@@ -33,11 +33,11 @@ public final class AgentOrderingStrategies {
      * <p>
      * Cells are first compared by their y-coordinate, then by their x-coordinate.
      *
-     * @param <T> the type of entity stored in the grid cell
+     * @param <ENT> the type of entity stored in the grid cell
      * @return a comparator for ordering grid cells by position
      */
-    public static <T extends GridEntity> Comparator<GridCell<T>> byPosition() {
-        return Comparator.comparingInt((GridCell<T> cell) -> cell.coordinate().y())
+    public static <ENT extends GridEntity> Comparator<GridCell<ENT>> byPosition() {
+        return Comparator.comparingInt((GridCell<ENT> cell) -> cell.coordinate().y())
                          .thenComparingInt(cell -> cell.coordinate().x());
     }
 
@@ -46,11 +46,11 @@ public final class AgentOrderingStrategies {
      * <p>
      * This strategy groups cells by the type of entity they contain.
      *
-     * @param <T> the type of entity stored in the grid cell
+     * @param <ENT> the type of entity stored in the grid cell
      * @return a comparator for ordering grid cells by entity class name
      */
-    public static <T extends GridEntity> Comparator<GridCell<T>> byEntityClass() {
-        return Comparator.comparing((GridCell<T> cell) -> cell.entity().getClass().getSimpleName());
+    public static <ENT extends GridEntity> Comparator<GridCell<ENT>> byEntityClass() {
+        return Comparator.comparing((GridCell<ENT> cell) -> cell.entity().getClass().getSimpleName());
     }
 
     /**
@@ -58,10 +58,10 @@ public final class AgentOrderingStrategies {
      * <p>
      * This strategy sorts cells based on the unique descriptor ID of the contained entity.
      *
-     * @param <T> the type of entity stored in the grid cell
+     * @param <ENT> the type of entity stored in the grid cell
      * @return a comparator for ordering grid cells by entity descriptor ID
      */
-    public static <T extends GridEntity> Comparator<GridCell<T>> byDescriptorId() {
+    public static <ENT extends GridEntity> Comparator<GridCell<ENT>> byDescriptorId() {
         return Comparator.comparing(GridCell::descriptorId);
     }
 

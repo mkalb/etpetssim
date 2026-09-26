@@ -12,23 +12,23 @@ public interface SimulationStatistics {
      *
      * @return current step count
      */
-    int getStepCount();
+    int stepCount();
 
     /**
      * Returns the grid structure of the simulation snapshot.
      *
      * @return grid structure used by the simulation
      */
-    GridStructure getGridStructure();
+    GridStructure gridStructure();
 
     /**
      * Returns the total number of cells in the simulation grid.
-     * The default implementation derives the value from {@link #getGridStructure()}.
+     * The default implementation derives the value from {@link #gridStructure()}.
      *
      * @return total cell count
      */
-    default int getTotalCells() {
-        return getGridStructure().cellCount();
+    default int totalCells() {
+        return gridStructure().cellCount();
     }
 
 }

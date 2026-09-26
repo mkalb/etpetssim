@@ -58,7 +58,7 @@ public final class SnakeObservationView
             Optional<SnakeStatistics> statistics = viewModel.getStatistics();
             if (statistics.isPresent() && (gridCell.entity() instanceof SnakeHead snakeHead)) {
                 snakeIdLabel.setText("#" + snakeHead.id());
-                setFormattedIntegerValue(snakeAgeLabel, snakeHead.ageAtStepCount(statistics.get().getStepCount()));
+                setFormattedIntegerValue(snakeAgeLabel, snakeHead.ageAtStepCount(statistics.get().stepCount()));
                 setFormattedIntegerValue(snakeDeathsLabel, snakeHead.deaths());
                 snakeStrategyLabel.setText(snakeHead.strategy().name());
                 setFormattedIntegerValue(snakeSegmentCountLabel, snakeHead.segmentCount());
@@ -101,7 +101,7 @@ public final class SnakeObservationView
                 statusSection,
                 gridSection,
                 metricsSection,
-                buildChartSection(),
+                createChartSection(),
                 selectedCellSection
         );
     }

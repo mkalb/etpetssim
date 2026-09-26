@@ -36,7 +36,7 @@ final class ReboundingUserActionTest {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        int wallCellsBefore = manager.statistics().getWallCells();
+        int wallCellsBefore = manager.statistics().wallCells();
 
         userAction.apply(
                 manager,
@@ -45,7 +45,7 @@ final class ReboundingUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isWall()),
-                () -> assertEquals(wallCellsBefore + 1, manager.statistics().getWallCells())
+                () -> assertEquals(wallCellsBefore + 1, manager.statistics().wallCells())
         );
     }
 
@@ -58,7 +58,7 @@ final class ReboundingUserActionTest {
                               .stream()
                               .findFirst()
                               .orElseThrow();
-        int wallCellsBefore = manager.statistics().getWallCells();
+        int wallCellsBefore = manager.statistics().wallCells();
 
         userAction.apply(
                 manager,
@@ -67,7 +67,7 @@ final class ReboundingUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(wallCell.coordinate()).isGround()),
-                () -> assertEquals(wallCellsBefore - 1, manager.statistics().getWallCells())
+                () -> assertEquals(wallCellsBefore - 1, manager.statistics().wallCells())
         );
     }
 
@@ -80,7 +80,7 @@ final class ReboundingUserActionTest {
                                    .stream()
                                    .findFirst()
                                    .orElseThrow();
-        int movingEntityCellsBefore = manager.statistics().getMovingEntityCells();
+        int movingEntityCellsBefore = manager.statistics().movingEntityCells();
 
         userAction.apply(
                 manager,
@@ -89,7 +89,7 @@ final class ReboundingUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(rebounderCell.coordinate()).isGround()),
-                () -> assertEquals(movingEntityCellsBefore - 1, manager.statistics().getMovingEntityCells())
+                () -> assertEquals(movingEntityCellsBefore - 1, manager.statistics().movingEntityCells())
         );
     }
 
@@ -98,7 +98,7 @@ final class ReboundingUserActionTest {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        int movingEntityCellsBefore = manager.statistics().getMovingEntityCells();
+        int movingEntityCellsBefore = manager.statistics().movingEntityCells();
 
         userAction.apply(
                 manager,
@@ -107,7 +107,7 @@ final class ReboundingUserActionTest {
 
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(coordinate).isRebounder()),
-                () -> assertEquals(movingEntityCellsBefore + 1, manager.statistics().getMovingEntityCells())
+                () -> assertEquals(movingEntityCellsBefore + 1, manager.statistics().movingEntityCells())
         );
     }
 
@@ -124,7 +124,7 @@ final class ReboundingUserActionTest {
 
         assertAll(
                 () -> assertEquals(totalCells, manager.currentModel().countEntities(ReboundingEntity::isWall)),
-                () -> assertEquals(totalCells, manager.statistics().getWallCells())
+                () -> assertEquals(totalCells, manager.statistics().wallCells())
         );
     }
 
@@ -134,7 +134,7 @@ final class ReboundingUserActionTest {
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate rebounderCoordinate = new GridCoordinate(0, 0);
         manager.currentModel().setEntity(rebounderCoordinate, new Rebounder(CompassDirection.N));
-        manager.statistics().increaseMovingEntityCells();
+        manager.statistics().incrementMovingEntityCells();
         int totalCells = manager.currentModel().allCells().size();
 
         userAction.apply(
@@ -145,8 +145,8 @@ final class ReboundingUserActionTest {
         assertAll(
                 () -> assertTrue(manager.currentModel().getEntity(rebounderCoordinate).isRebounder()),
                 () -> assertEquals(totalCells - 1L, manager.currentModel().countEntities(ReboundingEntity::isWall)),
-                () -> assertEquals(totalCells - 1, manager.statistics().getWallCells()),
-                () -> assertEquals(1, manager.statistics().getMovingEntityCells())
+                () -> assertEquals(totalCells - 1, manager.statistics().wallCells()),
+                () -> assertEquals(1, manager.statistics().movingEntityCells())
         );
     }
 

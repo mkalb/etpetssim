@@ -18,12 +18,12 @@ public final class LabStatistics implements SimulationStatistics {
     }
 
     @Override
-    public int getStepCount() {
+    public int stepCount() {
         return stepCount;
     }
 
     @Override
-    public GridStructure getGridStructure() {
+    public GridStructure gridStructure() {
         return gridStructure;
     }
 

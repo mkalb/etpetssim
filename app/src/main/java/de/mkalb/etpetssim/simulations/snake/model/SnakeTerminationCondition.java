@@ -9,9 +9,9 @@ public final class SnakeTerminationCondition implements SimulationTerminationCon
 
     @Override
     public boolean isFinished(ReadableGridModel<SnakeEntity> model, int stepCount, SnakeStatistics statistics) {
-        return (statistics.getLivingSnakeHeadCells() <= 0)
-                || (statistics.getSnakeHeadCells() <= 0)
-                || (statistics.getCumulativeSnakeDeathCount() == Integer.MAX_VALUE);
+        return (statistics.livingSnakeHeadCells() <= 0)
+                || (statistics.snakeHeadCells() <= 0)
+                || (statistics.cumulativeSnakeDeathCount() == Integer.MAX_VALUE);
     }
 
 }

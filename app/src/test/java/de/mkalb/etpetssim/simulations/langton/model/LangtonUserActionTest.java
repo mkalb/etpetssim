@@ -43,8 +43,8 @@ final class LangtonUserActionTest {
                                            .filter(c -> manager.currentModel().antModel().getEntity(c) instanceof NoAgent)
                                            .findFirst()
                                            .orElseThrow();
-        int antCellsBefore = manager.statistics().getAntCells();
-        int visitedCellsBefore = manager.statistics().getVisitedCells();
+        int antCellsBefore = manager.statistics().antCells();
+        int visitedCellsBefore = manager.statistics().visitedCells();
 
         userAction.apply(
                 manager,
@@ -54,8 +54,8 @@ final class LangtonUserActionTest {
         assertAll(
                 () -> assertInstanceOf(Ant.class, manager.currentModel().antModel().getEntity(coordinate)),
                 () -> assertEquals(CompassDirection.W, ((Ant) manager.currentModel().antModel().getEntity(coordinate)).direction()),
-                () -> assertEquals(antCellsBefore + 1, manager.statistics().getAntCells()),
-                () -> assertEquals(visitedCellsBefore + 1, manager.statistics().getVisitedCells())
+                () -> assertEquals(antCellsBefore + 1, manager.statistics().antCells()),
+                () -> assertEquals(visitedCellsBefore + 1, manager.statistics().visitedCells())
         );
     }
 
@@ -82,8 +82,8 @@ final class LangtonUserActionTest {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig(CellShape.TRIANGLE));
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        int antCellsBefore = manager.statistics().getAntCells();
-        int visitedCellsBefore = manager.statistics().getVisitedCells();
+        int antCellsBefore = manager.statistics().antCells();
+        int visitedCellsBefore = manager.statistics().visitedCells();
 
         userAction.apply(
                 manager,
@@ -93,8 +93,8 @@ final class LangtonUserActionTest {
         assertAll(
                 () -> assertTrue(coordinate.isTriangleCellPointingDown()),
                 () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(antCellsBefore, manager.statistics().getAntCells()),
-                () -> assertEquals(visitedCellsBefore, manager.statistics().getVisitedCells())
+                () -> assertEquals(antCellsBefore, manager.statistics().antCells()),
+                () -> assertEquals(visitedCellsBefore, manager.statistics().visitedCells())
         );
     }
 
@@ -126,8 +126,8 @@ final class LangtonUserActionTest {
                                            .stream()
                                            .findFirst()
                                            .orElseThrow();
-        int antCellsBefore = manager.statistics().getAntCells();
-        int visitedCellsBefore = manager.statistics().getVisitedCells();
+        int antCellsBefore = manager.statistics().antCells();
+        int visitedCellsBefore = manager.statistics().visitedCells();
 
         userAction.apply(
                 manager,
@@ -136,8 +136,8 @@ final class LangtonUserActionTest {
 
         assertAll(
                 () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(antCellsBefore - 1, manager.statistics().getAntCells()),
-                () -> assertEquals(visitedCellsBefore, manager.statistics().getVisitedCells())
+                () -> assertEquals(antCellsBefore - 1, manager.statistics().antCells()),
+                () -> assertEquals(visitedCellsBefore, manager.statistics().visitedCells())
         );
     }
 
@@ -151,8 +151,8 @@ final class LangtonUserActionTest {
                                            .stream()
                                            .findFirst()
                                            .orElseThrow();
-        int antCellsBefore = manager.statistics().getAntCells();
-        int visitedCellsBefore = manager.statistics().getVisitedCells();
+        int antCellsBefore = manager.statistics().antCells();
+        int visitedCellsBefore = manager.statistics().visitedCells();
 
         userAction.apply(
                 manager,
@@ -161,8 +161,8 @@ final class LangtonUserActionTest {
 
         assertAll(
                 () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(antCellsBefore, manager.statistics().getAntCells()),
-                () -> assertEquals(visitedCellsBefore, manager.statistics().getVisitedCells())
+                () -> assertEquals(antCellsBefore, manager.statistics().antCells()),
+                () -> assertEquals(visitedCellsBefore, manager.statistics().visitedCells())
         );
     }
 

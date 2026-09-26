@@ -26,12 +26,9 @@ public final class Trail implements TerrainEntity {
         return intensity;
     }
 
-    public void incrementIntensity(int amount) {
-        intensity = Math.min(intensity + amount, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX);
-    }
-
-    public void decrementIntensity(int amount) {
-        intensity = intensity - amount; // Can be lower than MIN, but will be removed in that case
+    public void adjustIntensity(int delta) {
+        intensity = intensity + delta; // Can be lower than MIN, but will be removed in that case
+        intensity = Math.min(intensity, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX);
     }
 
     @Override

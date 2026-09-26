@@ -38,9 +38,9 @@ final class ForestUserActionTest {
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, null);
 
         assertAll(
-                () -> assertEquals(manager.statistics().getTotalCells(), manager.statistics().getEmptyCells()),
-                () -> assertEquals(0, manager.statistics().getTreeCells()),
-                () -> assertEquals(0, manager.statistics().getBurningCells())
+                () -> assertEquals(manager.statistics().totalCells(), manager.statistics().emptyCells()),
+                () -> assertEquals(0, manager.statistics().treeCells()),
+                () -> assertEquals(0, manager.statistics().burningCells())
         );
     }
 
@@ -54,9 +54,9 @@ final class ForestUserActionTest {
 
         assertAll(
                 () -> assertSame(ForestEntity.TREE, manager.currentModel().getEntity(coordinate)),
-                () -> assertEquals(manager.statistics().getTotalCells() - 1, manager.statistics().getEmptyCells()),
-                () -> assertEquals(1, manager.statistics().getTreeCells()),
-                () -> assertEquals(0, manager.statistics().getBurningCells())
+                () -> assertEquals(manager.statistics().totalCells() - 1, manager.statistics().emptyCells()),
+                () -> assertEquals(1, manager.statistics().treeCells()),
+                () -> assertEquals(0, manager.statistics().burningCells())
         );
     }
 
@@ -72,9 +72,9 @@ final class ForestUserActionTest {
 
         assertAll(
                 () -> assertSame(ForestEntity.BURNING, manager.currentModel().getEntity(coordinate)),
-                () -> assertEquals(manager.statistics().getTotalCells() - 1, manager.statistics().getEmptyCells()),
-                () -> assertEquals(0, manager.statistics().getTreeCells()),
-                () -> assertEquals(1, manager.statistics().getBurningCells())
+                () -> assertEquals(manager.statistics().totalCells() - 1, manager.statistics().emptyCells()),
+                () -> assertEquals(0, manager.statistics().treeCells()),
+                () -> assertEquals(1, manager.statistics().burningCells())
         );
     }
 
@@ -90,9 +90,9 @@ final class ForestUserActionTest {
 
         assertAll(
                 () -> assertSame(ForestEntity.EMPTY, manager.currentModel().getEntity(coordinate)),
-                () -> assertEquals(manager.statistics().getTotalCells(), manager.statistics().getEmptyCells()),
-                () -> assertEquals(0, manager.statistics().getTreeCells()),
-                () -> assertEquals(0, manager.statistics().getBurningCells())
+                () -> assertEquals(manager.statistics().totalCells(), manager.statistics().emptyCells()),
+                () -> assertEquals(0, manager.statistics().treeCells()),
+                () -> assertEquals(0, manager.statistics().burningCells())
         );
     }
 

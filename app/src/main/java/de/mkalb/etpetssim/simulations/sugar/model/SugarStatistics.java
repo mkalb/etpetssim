@@ -29,10 +29,10 @@ public final class SugarStatistics
     public static List<StatisticMetric<SugarStatistics>> metrics() {
         return List.of(
                 new StatisticMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_RESOURCE_CELLS,
-                        SugarStatistics::getResourceCells,
+                        SugarStatistics::resourceCells,
                         StatisticExtremaMode.NONE),
                 new StatisticMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_AGENT_CELLS,
-                        SugarStatistics::getAgentCells,
+                        SugarStatistics::agentCells,
                         StatisticExtremaMode.NONE)
         );
     }
@@ -51,11 +51,11 @@ public final class SugarStatistics
         resourceCells += resourceCellsDelta;
     }
 
-    public int getResourceCells() {
+    public int resourceCells() {
         return resourceCells;
     }
 
-    public int getAgentCells() {
+    public int agentCells() {
         return agentCells;
     }
 

@@ -334,7 +334,7 @@ public abstract class AbstractMainView<
         // Font
         double fontSize = computeCellFontSize(cellDimension, structure.cellShape());
         if (fontSize >= MIN_CELL_FONT_SIZE) {
-            cellFont = getPreferredFont(fontSize);
+            cellFont = resolvePreferredFont(fontSize);
             AppLogger.infof("%s: Cell font created. font=%s", LOG_COMPONENT, cellFont);
         } else {
             cellFont = null;
@@ -342,7 +342,7 @@ public abstract class AbstractMainView<
         }
         double fontSizeEmoji = computeCellEmojiFontSize(cellDimension, structure.cellShape());
         if (fontSizeEmoji >= MIN_EMOJI_FONT_SIZE) {
-            cellEmojiFont = getPreferredFont(fontSizeEmoji);
+            cellEmojiFont = resolvePreferredFont(fontSizeEmoji);
             AppLogger.infof("%s: Cell emoji font created. font=%s", LOG_COMPONENT, cellEmojiFont);
         } else {
             cellEmojiFont = null;
@@ -388,7 +388,7 @@ public abstract class AbstractMainView<
         return new Point2D(x, y);
     }
 
-    protected final Font getPreferredFont(double size) {
+    protected final Font resolvePreferredFont(double size) {
         return fontCache.computeIfAbsent(size, s -> {
             if (Font.getFamilies().contains(MAIN_FONT_FAMILY)) {
                 return Font.font(MAIN_FONT_FAMILY, s);

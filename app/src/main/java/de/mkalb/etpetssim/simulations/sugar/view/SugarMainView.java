@@ -82,7 +82,7 @@ public final class SugarMainView
     }
 
     @Override
-    protected void initSimulation(SugarConfig config, CellDimension cellDimension, SugarGridModel model) {
+    protected void initializeSimulation(SugarConfig config, CellDimension cellDimension, SugarGridModel model) {
         if (basePainter == null) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;

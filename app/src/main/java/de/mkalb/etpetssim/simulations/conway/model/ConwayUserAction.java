@@ -30,7 +30,7 @@ public final class ConwayUserAction
                 if (selectedCell == null) {
                     return;
                 }
-                if (!placePattern.patternChoice().availableFor(manager.config())) {
+                if (!placePattern.patternChoice().isAvailableFor(manager.config())) {
                     return;
                 }
                 applyPattern(model, statistics, selectedCell.coordinate(), placePattern.patternChoice().pattern());

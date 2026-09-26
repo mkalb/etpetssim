@@ -7,11 +7,12 @@ import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
  * Base class for simulation statistics that track step timing metrics.
  *
  * <p>Subclasses inherit the standard {@link TimedSimulationStatistics} implementation
- * and call {@link #update} to advance the shared counters. The constructor is
- * {@code protected} to signal that this class is intended to be extended rather
- * than instantiated directly.
+ * and call {@link #update} to advance the shared counters. This class is {@code abstract}
+ * to signal that it is intended to be extended rather than instantiated directly, even
+ * though it declares no abstract methods.
  */
-public class BaseTimedSimulationStatistics
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+public abstract class BaseTimedSimulationStatistics
         implements TimedSimulationStatistics {
 
     private final GridStructure gridStructure;
@@ -36,12 +37,12 @@ public class BaseTimedSimulationStatistics
     }
 
     @Override
-    public final int getStepCount() {
+    public final int stepCount() {
         return stepCount;
     }
 
     @Override
-    public final GridStructure getGridStructure() {
+    public final GridStructure gridStructure() {
         return gridStructure;
     }
 

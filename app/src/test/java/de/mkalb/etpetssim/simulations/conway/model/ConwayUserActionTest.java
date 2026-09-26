@@ -38,8 +38,8 @@ final class ConwayUserActionTest {
         userAction.apply(manager, ConwayUserActionContext.FixedAction.TOGGLE_CELL, null);
 
         assertAll(
-                () -> assertEquals(0, manager.statistics().getAliveCells()),
-                () -> assertEquals(0, manager.statistics().getChangedCells()),
+                () -> assertEquals(0, manager.statistics().aliveCells()),
+                () -> assertEquals(0, manager.statistics().changedCells()),
                 () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
         );
     }
@@ -53,16 +53,16 @@ final class ConwayUserActionTest {
         userAction.apply(manager, ConwayUserActionContext.FixedAction.TOGGLE_CELL, selectedCell(manager, 1, 0));
 
         assertAll(
-                () -> assertEquals(2, manager.statistics().getAliveCells()),
-                () -> assertEquals(2, manager.statistics().getChangedCells())
+                () -> assertEquals(2, manager.statistics().aliveCells()),
+                () -> assertEquals(2, manager.statistics().changedCells())
         );
 
         userAction.apply(manager, ConwayUserActionContext.FixedAction.CLEAR_GRID, null);
 
         assertAll(
-                () -> assertEquals(0, manager.statistics().getAliveCells()),
-                () -> assertEquals(manager.statistics().getTotalCells(), manager.statistics().getDeadCells()),
-                () -> assertEquals(4, manager.statistics().getChangedCells()),
+                () -> assertEquals(0, manager.statistics().aliveCells()),
+                () -> assertEquals(manager.statistics().totalCells(), manager.statistics().deadCells()),
+                () -> assertEquals(4, manager.statistics().changedCells()),
                 () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
         );
     }
@@ -86,8 +86,8 @@ final class ConwayUserActionTest {
                 selectedCell(manager, anchorCoordinate.x(), anchorCoordinate.y()));
 
         assertAll(
-                () -> assertEquals(expectedAliveCells, manager.statistics().getAliveCells()),
-                () -> assertEquals(expectedAliveCells, manager.statistics().getChangedCells())
+                () -> assertEquals(expectedAliveCells, manager.statistics().aliveCells()),
+                () -> assertEquals(expectedAliveCells, manager.statistics().changedCells())
         );
     }
 
