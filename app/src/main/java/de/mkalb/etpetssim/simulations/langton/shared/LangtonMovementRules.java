@@ -17,14 +17,14 @@ public record LangtonMovementRules(
 
     private static final int INITIAL_CAPACITY_DISPLAY_STRING = 32;
 
-    public LangtonMovementRules(List<AntTurn> turns) {
+    public LangtonMovementRules {
         if (turns.size() < MIN_RULE_COUNT) {
             throw new IllegalArgumentException("At least " + MIN_RULE_COUNT + " rules required, got: " + turns.size());
         }
         if (turns.size() > MAX_RULE_COUNT) {
             throw new IllegalArgumentException("At most " + MAX_RULE_COUNT + " rules allowed, got: " + turns.size());
         }
-        this.turns = List.copyOf(turns);
+        turns = List.copyOf(turns);
     }
 
     /**

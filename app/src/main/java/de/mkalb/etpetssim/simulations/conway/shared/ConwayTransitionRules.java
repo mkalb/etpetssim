@@ -46,8 +46,7 @@ public record ConwayTransitionRules(
      * @param birthCounts   the sorted set of neighbor counts for cell birth
      * @throws IllegalArgumentException if either set contains out-of-range values
      */
-    public ConwayTransitionRules(SortedSet<Integer> surviveCounts,
-                                 SortedSet<Integer> birthCounts) {
+    public ConwayTransitionRules {
         for (int n : surviveCounts) {
             if ((n < MIN_NEIGHBOR_COUNT) || (n > MAX_NEIGHBOR_COUNT)) {
                 throw new IllegalArgumentException("surviveCounts value out of range: " + n);
@@ -58,8 +57,8 @@ public record ConwayTransitionRules(
                 throw new IllegalArgumentException("birthCounts value out of range: " + n);
             }
         }
-        this.surviveCounts = Collections.unmodifiableSortedSet(new TreeSet<>(surviveCounts));
-        this.birthCounts = Collections.unmodifiableSortedSet(new TreeSet<>(birthCounts));
+        surviveCounts = Collections.unmodifiableSortedSet(new TreeSet<>(surviveCounts));
+        birthCounts = Collections.unmodifiableSortedSet(new TreeSet<>(birthCounts));
     }
 
     /**
