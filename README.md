@@ -140,7 +140,7 @@ This project uses the latest stable versions of all technologies whenever possib
 | Technology     | Version            | URL                                                       |
 |----------------|--------------------|-----------------------------------------------------------|
 | Java (OpenJDK) | Eclipse Temurin 26 | [adoptium.net](https://adoptium.net/)                     |
-| JavaFX         | 26                 | [openjfx.io](https://openjfx.io/)                         |
+| JavaFX         | 26.0.2             | [openjfx.io](https://openjfx.io/)                         |
 | Gradle         | 9.8.0              | [gradle.org](https://gradle.org/)                         |
 | IntelliJ IDEA  | 2026.1             | [www.jetbrains.com/idea](https://www.jetbrains.com/idea/) |
 
