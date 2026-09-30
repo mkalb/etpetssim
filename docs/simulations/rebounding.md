@@ -29,6 +29,7 @@ when collisions occur.
 - On hitting a wall, an entity stays in place, rebounds, and removes that wall.
 - On hitting another moving entity, the active entity moves into the occupied
   cell and removes the other entity.
+- The simulation ends automatically once at most one moving entity remains.
 
 ## Entities
 

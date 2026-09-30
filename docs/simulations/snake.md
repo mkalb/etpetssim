@@ -71,7 +71,7 @@ and how snakes grow, score, and recover from death.
 ### Structure
 
 Choose Hexagon or Square cells, select one of the four edge behaviors, and set
-the grid width and height from 12 to 1,000 cells. The defaults are Hexagon,
+the grid width and height from 8 to 1,000 cells. The defaults are Hexagon,
 Wrap X and Block Y, 80 cells wide, and 40 cells high.
 
 ### Layout

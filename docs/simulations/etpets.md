@@ -70,7 +70,7 @@ set the starting amounts of terrain, resources, and pets.
 
 The grid is fixed to hexagonal cells with blocked edges. Width and height can
 each range from 20 to 200 cells; the defaults are 50 by 20 cells, and width is
-adjusted in steps of four.
+adjusted in steps of two.
 
 ### Layout
 

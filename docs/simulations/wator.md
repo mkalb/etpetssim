@@ -32,6 +32,8 @@ the grid.
   energy reaches zero.
 - Creatures are processed by their positions during each step, so changes made
   by an earlier creature can affect a later creature in the same step.
+- The simulation ends on its own once all sharks are gone and the fish have
+  either died out or fill more than 90% of the grid.
 
 ## Entities
 

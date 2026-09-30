@@ -28,6 +28,8 @@ the state they enter, and leave a trail as those states advance.
   With absorbing edges, they leave the simulation instead.
 - If an ant tries to enter a cell already occupied by another ant, the moving
   ant is removed.
+- The simulation ends automatically when no ants remain or when every cell of
+  the grid has been visited.
 
 ## Entities
 

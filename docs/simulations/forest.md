@@ -50,7 +50,7 @@ probabilities that control growth and fire.
 ### Structure
 
 Choose Hexagon (default), Triangle, or Square cells; set the grid width and
-height from 4 to 1,000 cells, with defaults of 100 by 50; and choose between
+height from 8 to 1,000 cells, with defaults of 100 by 50; and choose between
 blocked edges (default) and edges that wrap in both directions.
 
 ### Layout
