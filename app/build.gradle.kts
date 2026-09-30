@@ -57,6 +57,40 @@ application {
     applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics")
 }
 
+// Tests share packages with the main code, so they are compiled and run patched into the application module.
+tasks.compileTestJava {
+    val moduleName = "de.mkalb.etpetssim"
+    val testCompileClasspath = sourceSets.test.get().compileClasspath
+    val testSourceDirs = sourceSets.test.get().java.sourceDirectories
+    inputs.files(testCompileClasspath).withNormalizer(ClasspathNormalizer::class)
+    classpath = files()
+    options.compilerArgumentProviders.add(CommandLineArgumentProvider {
+        listOf(
+            "--module-path", testCompileClasspath.asPath,
+            "--patch-module", "$moduleName=${testSourceDirs.asPath}",
+            "--add-modules", "org.junit.jupiter.api",
+            "--add-reads", "$moduleName=org.junit.jupiter.api"
+        )
+    })
+}
+
+tasks.withType<Test>().configureEach {
+    val moduleName = "de.mkalb.etpetssim"
+    val testRuntimeClasspath = sourceSets.test.get().runtimeClasspath
+    // Test outputs come first, so test resources override main resources with the same path.
+    val patchedDirs = sourceSets.test.get().output + files(sourceSets.main.get().output.resourcesDir)
+    inputs.files(testRuntimeClasspath).withNormalizer(ClasspathNormalizer::class)
+    classpath = files()
+    jvmArgumentProviders.add(CommandLineArgumentProvider {
+        listOf(
+            "--module-path", (testRuntimeClasspath - patchedDirs).asPath,
+            "--patch-module", "$moduleName=${patchedDirs.asPath}",
+            "--add-modules", "ALL-MODULE-PATH",
+            "--add-reads", "$moduleName=org.junit.jupiter.api"
+        )
+    })
+}
+
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform {
@@ -64,10 +98,12 @@ tasks.named<Test>("test") {
     }
     // Set JVM args for JavaFX headless testing
     jvmArgs(
-        "--enable-native-access=javafx.graphics,ALL-UNNAMED",
+        "--enable-native-access=javafx.graphics",
         "-Dprism.order=sw",
         "-Djavafx.headless=true"
     )
+    // Main resources are shadowed by test resources with the same path inside the patched module.
+    systemProperty("mainResources.dir", sourceSets.main.get().resources.srcDirs.single().absolutePath)
 }
 
 tasks.register<Test>("skillTest") {
@@ -76,7 +112,6 @@ tasks.register<Test>("skillTest") {
 
     dependsOn(tasks.testClasses)
     testClassesDirs = sourceSets.test.get().output.classesDirs
-    classpath = sourceSets.test.get().runtimeClasspath
 
     useJUnitPlatform {
         includeTags("skill")

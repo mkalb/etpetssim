@@ -10,9 +10,9 @@ import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.net.URL;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -21,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
 final class StatisticMetricLabelKeyTest {
 
     private static Set<String> loadMainPropertyKeys(String fileName) throws IOException {
-        String resourceName = "i18n/" + fileName;
-        List<URL> mainResources = Collections.list(
-                                                     StatisticMetricLabelKeyTest.class.getClassLoader().getResources(resourceName)
-                                             ).stream()
-                                             .filter(resource -> resource.toExternalForm().contains("/main/"))
-                                             .toList();
-        assertEquals(1, mainResources.size(), "Expected exactly one production bundle: " + fileName);
+        String configuredPath = System.getProperty("mainResources.dir");
+        assertTrue(
+                (configuredPath != null) && !configuredPath.isBlank(),
+                "Gradle must provide the mainResources.dir system property"
+        );
+        Path bundleFile = Path.of(configuredPath, "i18n", fileName);
+        assertTrue(Files.isRegularFile(bundleFile), "Production bundle not found: " + bundleFile);
 
         Properties props = new Properties();
-        try (var reader = new InputStreamReader(mainResources.getFirst().openStream(), StandardCharsets.UTF_8)) {
+        try (var reader = Files.newBufferedReader(bundleFile, StandardCharsets.UTF_8)) {
             props.load(reader);
         }
         return props.stringPropertyNames();
