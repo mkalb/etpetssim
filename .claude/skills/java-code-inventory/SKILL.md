@@ -12,7 +12,7 @@ disable-model-invocation: true
 Run this command from the repository root in a terminal:
 
 ```text
-java .github/skills/java-code-inventory/JavaCodeInventory.java
+java .claude/skills/java-code-inventory/JavaCodeInventory.java
 ```
 
 Requirements: Java 26 JDK on the `PATH`. The generator has no arguments.

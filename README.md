@@ -19,7 +19,7 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 ## Simulations
 
 | Simulation                                                                     | Type               | Description                                                                                          | Docs                                            |
-|--------------------------------------------------------------------------------|--------------------|--------------------------------------------------------------------------------------------------------|--------------------------------------------------|
+|--------------------------------------------------------------------------------|--------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------|
 | ET Pets                                                                        | Agent-Based Model  | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance | [etpets.md](docs/simulations/etpets.md)         |
 | [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent-Based Model  | Agents (fish and sharks) interact in a predator–prey system                                          | [wator.md](docs/simulations/wator.md)           |
 | [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automaton | Cells evolve based on simple local birth and survival rules                                          | [conway.md](docs/simulations/conway.md)         |
@@ -28,7 +28,7 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 | [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent-Based Model  | Agents collect and consume sugar resources                                                           | [sugar.md](docs/simulations/sugar.md)           |
 | [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Agent-Based Model  | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
 | Rebounding Entities                                                            | Agent-Based Model  | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
-| Simulation Lab                                                                 | Development Tool   | Testing environment for grid rendering and cell shapes                                               | —                                                |
+| Simulation Lab                                                                 | Development Tool   | Testing environment for grid rendering and cell shapes                                               | —                                               |
 
 For a detailed inventory of simulation entity types, see
 the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
@@ -67,7 +67,6 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 
 ![Rebounding Entities](assets/screenshots/screenshot_rebounding_01.png)
 
-
 #### Simulation Lab
 
 ![Simulation Lab — Hexagon](assets/screenshots/screenshot_lab_01.png)
@@ -83,17 +82,14 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 ## Development Approach
 
 Artificial intelligence (AI) tools are used during development to improve productivity and support code quality. In
-particular, Microsoft Copilot and GitHub Copilot are used for code generation, documentation support, refactoring and
-optimization tasks, and as a practical aid while learning and applying JavaFX and MVVM concepts. These tools also help
-accelerate exploration of implementation variants and architecture options during day-to-day development.
+particular, Microsoft Copilot, GitHub Copilot, and Claude Code are used for code generation, documentation support,
+refactoring and optimization tasks, and as a practical aid while learning and applying JavaFX and MVVM concepts. These
+tools also help accelerate exploration of implementation variants and architecture options during day-to-day
+development.
 
 At the same time, all generated content is reviewed and adapted in the context of the project goals, codebase
 consistency, and long-term maintainability. AI support is therefore treated as development assistance, while final
 technical decisions remain project-driven and under maintainer control.
-
-Project-specific AI instructions for coding assistants are available in
-[.github/copilot-instructions.md](.github/copilot-instructions.md) and
-[.github/instructions](.github/instructions).
 
 ## Feedback and Issues
 

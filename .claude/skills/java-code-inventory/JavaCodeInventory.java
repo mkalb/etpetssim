@@ -93,7 +93,7 @@ public final class JavaCodeInventory {
             System.out.printf(Locale.ROOT, "Generated %s with %d declarations.%n", TYPE_OUTPUT_PATH, inventory.types().size());
         } catch (UsageException exception) {
             System.err.println("FAIL usage: " + exception.getMessage());
-            System.err.println("Usage: java .github/skills/java-code-inventory/JavaCodeInventory.java");
+            System.err.println("Usage: JavaCodeInventory");
             System.exit(3);
         } catch (ParseException exception) {
             exception.diagnostics().forEach(JavaCodeInventory::printDiagnostic);

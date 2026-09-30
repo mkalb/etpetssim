@@ -14,7 +14,7 @@ Run exactly one command from the repository root. Do not open, read, or compare
 the `.properties` files yourself first — the helper performs the full analysis.
 
 ```text
-java .github/skills/i18n-consistency/I18nConsistencyCheck.java report
+java .claude/skills/i18n-consistency/I18nConsistencyCheck.java report
 ```
 
 `report` is the default, read-only mode. Requirements: Java 26 on the `PATH`.
@@ -135,7 +135,7 @@ Run this **only** after the user has confirmed it in answer to the question
 above. Run exactly this command; do not change the files in any other way.
 
 ```powershell
-java .github/skills/i18n-consistency/I18nConsistencyCheck.java fix
+java .claude/skills/i18n-consistency/I18nConsistencyCheck.java fix
 ```
 
 Fix mode writes only the two production bundles, then re-runs the report so any

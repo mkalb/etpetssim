@@ -22,3 +22,6 @@ Desktop.ini
 
 # Ignore Visual Studio Code settings
 .vscode/
+
+# Ignore Claude Code personal settings
+.claude/settings.local.json

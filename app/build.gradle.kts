@@ -69,13 +69,13 @@ tasks.register<Test>("skillTest") {
     }
 
     val i18nConsistencyCheckSource = rootProject.layout.projectDirectory.file(
-        ".github/skills/i18n-consistency/I18nConsistencyCheck.java"
+        ".claude/skills/i18n-consistency/I18nConsistencyCheck.java"
     )
     inputs.file(i18nConsistencyCheckSource)
     systemProperty("i18nConsistencyCheck.source", i18nConsistencyCheckSource.asFile.absolutePath)
 
     val javaCodeInventorySource = rootProject.layout.projectDirectory.file(
-        ".github/skills/java-code-inventory/JavaCodeInventory.java"
+        ".claude/skills/java-code-inventory/JavaCodeInventory.java"
     )
     inputs.file(javaCodeInventorySource)
     systemProperty("javaCodeInventory.source", javaCodeInventorySource.asFile.absolutePath)

@@ -89,7 +89,7 @@ public final class I18nConsistencyCheck {
             System.exit(report.exitCode());
         } catch (UsageException exception) {
             System.err.println("FAIL usage: " + exception.getMessage());
-            System.err.println("Usage: java .github/skills/i18n-consistency/I18nConsistencyCheck.java [report|fix]");
+            System.err.println("Usage: I18nConsistencyCheck [report|fix]");
             System.exit(3);
         } catch (IOException exception) {
             System.err.println("FAIL io: " + exception.getMessage());
