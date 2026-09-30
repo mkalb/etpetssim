@@ -52,8 +52,9 @@ java {
 
 application {
     applicationName = baseName
+    mainModule = "de.mkalb.etpetssim"
     mainClass = "de.mkalb.etpetssim.AppLauncher"
-    applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics,ALL-UNNAMED")
+    applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics")
 }
 
 tasks.named<Test>("test") {
