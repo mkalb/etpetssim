@@ -2,7 +2,6 @@ plugins {
     java
     application
     id("project-report")
-    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 group = "de.mkalb.etpetssim"
@@ -17,12 +16,31 @@ repositories {
     mavenCentral()
 }
 
+// JavaFX artifacts are platform-specific. The OpenJFX POMs select the platform through Maven OS profiles,
+// which Gradle does not evaluate, so each module is declared explicitly with its classifier and without transitive
+// dependencies, which would add empty placeholder jars without classifier.
+val javafxPlatform: String = run {
+    val osName = providers.systemProperty("os.name").get()
+    val osArch = providers.systemProperty("os.arch").get()
+    if (osName.startsWith("Windows") && osArch in setOf("amd64", "x86_64")) {
+        "win"
+    } else {
+        throw GradleException("Unsupported platform for JavaFX: os.name='$osName', os.arch='$osArch'. Only Windows x64 is supported.")
+    }
+}
+
 dependencies {
     testImplementation(libs.junit.jupiter)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     implementation(libs.jspecify)
+
+    listOf(libs.javafx.base, libs.javafx.graphics, libs.javafx.controls).forEach { javafxModule ->
+        implementation(variantOf(javafxModule) { classifier(javafxPlatform) }) {
+            isTransitive = false
+        }
+    }
 }
 
 java {
@@ -30,11 +48,6 @@ java {
         languageVersion = JavaLanguageVersion.of(26)
         vendor.set(JvmVendorSpec.ADOPTIUM)
     }
-}
-
-javafx {
-    version = "26.0.2"
-    modules = listOf("javafx.controls")
 }
 
 application {

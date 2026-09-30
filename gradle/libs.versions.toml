@@ -2,9 +2,13 @@
 # https://docs.gradle.org/current/userguide/platforms.html#sub::toml-dependencies-format
 
 [versions]
+javafx = "26.0.2"
 jspecify = "1.0.1"
 junit-jupiter = "5.14.4"
 
 [libraries]
+javafx-base = { module = "org.openjfx:javafx-base", version.ref = "javafx" }
+javafx-controls = { module = "org.openjfx:javafx-controls", version.ref = "javafx" }
+javafx-graphics = { module = "org.openjfx:javafx-graphics", version.ref = "javafx" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
