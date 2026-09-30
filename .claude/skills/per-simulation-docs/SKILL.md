@@ -50,6 +50,10 @@ stop.
 
 Read these sources for the matched simulation; do not invent values.
 
+Read source files individually and in parallel where possible; use targeted
+searches for constants, localization keys, and signatures instead of dumping
+many files in one shell command.
+
 - **Localization (en_US):** in
   `app/src/main/resources/i18n/messages_en_US.properties`, read the values for
   `simulation.<name>.title`, `simulation.<name>.subtitle`, and
