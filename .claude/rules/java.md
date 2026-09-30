@@ -75,7 +75,8 @@ Use these method naming patterns when they match the method's primary behavior; 
 
 ## Nullability (JSpecify)
 
-All packages use `@NullMarked` in `package-info.java` to establish non-null-by-default.
+The module declaration `module-info.java` uses `@NullMarked` to establish non-null-by-default for all packages,
+including test sources, which are patched into the module. Do not add `package-info.java` files.
 
 - Treat unannotated types as non-null under `@NullMarked`.
 - Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts.

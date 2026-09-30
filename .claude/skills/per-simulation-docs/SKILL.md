@@ -127,7 +127,7 @@ many files in one shell command.
       intentionally outside this document's scope. Do not add an **Observation**
       or **Statistics** section or enumerate status metrics and selected-cell
       readouts unless the user explicitly requests that coverage.
-    - `<Name>Factory.java` and `package-info.java` — infrastructure.
+    - `<Name>Factory.java` — infrastructure.
     - `viewmodel/` — infrastructure, but a ViewModel or property class may be read
       narrowly as routing evidence when tracing an exposed configuration or
       interactive-edit option to its actual source. Do not treat it as the
