@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.core;
 
 import de.mkalb.FxTestSupport;
 import javafx.scene.image.Image;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -79,7 +78,7 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImages() {
-        List<@Nullable Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
+        List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
                 "etpetssim32.png");
         assertEquals(3, images.size(), "Number of images should be 3");
         assertTrue(images.stream().allMatch(Objects::nonNull), "All images should be non-null");

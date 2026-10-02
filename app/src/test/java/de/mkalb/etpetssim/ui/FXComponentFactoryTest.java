@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.core.AppLogger;
 import javafx.beans.property.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -143,7 +142,7 @@ final class FXComponentFactoryTest {
                     "alpha",
                     List.of("alpha", "beta", "gamma"),
                     String::toUpperCase);
-            AtomicReference<@Nullable Runnable> cleanup = new AtomicReference<>();
+            AtomicReference<Runnable> cleanup = new AtomicReference<>();
 
             FXComponentFactory.LabeledControl<ComboBox<String>> control = FXComponentFactory.createLabeledChoiceComboBox(
                     property,

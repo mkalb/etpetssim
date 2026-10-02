@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.core;
 
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -169,7 +168,7 @@ final class AppLoggerTest {
 
     @Test
     void testFormatterAbbreviatesJavaFxApplicationThreadName() throws InterruptedException {
-        AtomicReference<@Nullable String> formattedReference = new AtomicReference<>();
+        AtomicReference<String> formattedReference = new AtomicReference<>();
         Thread thread = Thread.ofPlatform().name("JavaFX Application Thread").start(
                 () -> formattedReference.set(formatRecord(new LogRecord(Level.INFO, "Info message")))
         );

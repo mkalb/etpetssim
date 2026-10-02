@@ -1,7 +1,6 @@
 package de.mkalb;
 
 import javafx.application.Platform;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -77,7 +76,7 @@ public final class FxTestSupport {
      *
      * @param thrown the captured throwable, or {@code null} if none occurred
      */
-    private static void rethrowIfPresent(@Nullable Throwable thrown) {
+    private static void rethrowIfPresent(Throwable thrown) {
         switch (thrown) {
             case null -> {
                 // No throwable captured: nothing to re-throw.
@@ -99,13 +98,13 @@ public final class FxTestSupport {
      * @param <T>            the type of the supplied result
      * @return the result produced by the supplier
      */
-    public static <T extends @Nullable Object> T supplyAndWait(Supplier<T> supplier, long timeoutSeconds) {
+    public static <T> T supplyAndWait(Supplier<T> supplier, long timeoutSeconds) {
         if (Platform.isFxApplicationThread()) {
             return supplier.get();
         }
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<T> resultRef = new AtomicReference<>();
-        AtomicReference<@Nullable Throwable> throwableRef = new AtomicReference<>();
+        AtomicReference<Throwable> throwableRef = new AtomicReference<>();
         Platform.runLater(() -> {
             try {
                 resultRef.set(supplier.get());
@@ -130,7 +129,7 @@ public final class FxTestSupport {
      * @see #supplyAndWait(Supplier, long)
      * @see #DEFAULT_TIMEOUT_SECONDS
      */
-    public static <T extends @Nullable Object> T supplyAndWait(Supplier<T> supplier) {
+    public static <T> T supplyAndWait(Supplier<T> supplier) {
         return supplyAndWait(supplier, DEFAULT_TIMEOUT_SECONDS);
     }
 

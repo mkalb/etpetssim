@@ -22,7 +22,6 @@ final class I18nConsistencyCheckTest {
     );
     private static final Path HELPER_SOURCE = resolveHelperSource();
 
-    @SuppressWarnings("NotNullFieldNotInitialized")
     @TempDir
     Path temporaryDirectory;
 

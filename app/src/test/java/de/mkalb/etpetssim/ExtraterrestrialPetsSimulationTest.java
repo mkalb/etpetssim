@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.core.*;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -55,7 +55,7 @@ final class ExtraterrestrialPetsSimulationTest {
     void testStopShutsDownCurrentSimulationOnce() {
         CountingMainView view = new CountingMainView();
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
-        AtomicReference<@Nullable Region> regionRef = new AtomicReference<>();
+        AtomicReference<Region> regionRef = new AtomicReference<>();
 
         FxTestSupport.runAndWait(() -> {
             Region region = new Region();
@@ -209,11 +209,13 @@ final class ExtraterrestrialPetsSimulationTest {
             this.termination = termination;
         }
 
+        @NonNull
         @Override
         public Region buildMainRegion() {
             return new Region();
         }
 
+        @NonNull
         @Override
         public SimulationTermination shutdownSimulation() {
             shutdownCount.incrementAndGet();

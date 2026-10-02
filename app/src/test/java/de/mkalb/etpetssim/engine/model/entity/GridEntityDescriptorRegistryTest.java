@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.engine.model.entity;
 
 import de.mkalb.etpetssim.core.*;
 import javafx.scene.paint.Color;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -120,9 +119,9 @@ final class GridEntityDescriptorRegistryTest {
             String shortNameKey,
             String longNameKey,
             String descriptionKey,
-            @Nullable String emojiKey,
-            @Nullable Color color,
-            @Nullable Color borderColor
+            String emojiKey,
+            Color color,
+            Color borderColor
     ) implements GridEntityDescriptorProvider {
     }
 

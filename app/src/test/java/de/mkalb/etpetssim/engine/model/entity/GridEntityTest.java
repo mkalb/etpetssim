@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.engine.model.entity;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +28,7 @@ final class GridEntityTest {
     @SuppressWarnings("SameParameterValue")
     private record TestEntity(String descriptorId) implements GridEntity {
 
+        @NonNull
         @Override
         public String toString() {
             return "DYNAMIC";
@@ -37,6 +39,7 @@ final class GridEntityTest {
     @SuppressWarnings("SameParameterValue")
     private record TestConstantEntity(String descriptorId) implements ConstantGridEntity {
 
+        @NonNull
         @Override
         public String toString() {
             return "CONSTANT";

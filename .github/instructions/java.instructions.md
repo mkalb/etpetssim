@@ -75,8 +75,12 @@ Use these method naming patterns when they match the method's primary behavior; 
 
 ## Nullability (JSpecify)
 
-The module declaration `module-info.java` uses `@NullMarked` to establish non-null-by-default for all packages,
-including test sources, which are patched into the module. Do not add `package-info.java` files.
+The module declaration `module-info.java` uses `@NullMarked` to establish non-null-by-default for all packages. Do not
+add `package-info.java` files. IntelliJ does not apply the module-level `@NullMarked` to test sources, which are
+patched into the module only by Gradle; test code is therefore unspecified, while calls into main code are still
+checked. Do not use `@Nullable` in test sources. When a method declared in test sources overrides a method with a
+non-null reference return type (from main code or the JDK, e.g. `toString()`), annotate it with
+`@org.jspecify.annotations.NonNull` on its own line before `@Override`.
 
 - Treat unannotated types as non-null under `@NullMarked`.
 - Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts.

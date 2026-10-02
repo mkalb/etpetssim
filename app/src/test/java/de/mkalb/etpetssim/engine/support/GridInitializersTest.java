@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.engine.support;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.SparseGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -73,6 +74,7 @@ final class GridInitializersTest {
         EMPTY,
         FILLED;
 
+        @NonNull
         @Override
         public String descriptorId() {
             return name().toLowerCase(Locale.ROOT);

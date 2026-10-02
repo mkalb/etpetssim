@@ -21,7 +21,6 @@ final class JavaCodeInventoryTest {
     private static final String MEMBER_CSV_HEADER = "source_set,source_path,package_name,declaring_type,declaring_type_kind,member_name,member_kind,parameter_types,visibility,modifiers,return_type,throws_types,annotations,type_parameters,line_number";
     private static final String TYPE_CSV_HEADER = "source_set,source_path,package_name,type_name,type_kind,extends_types,implements_types,permits_types,visibility,modifiers,annotations,type_parameters,line_number";
 
-    @SuppressWarnings("NotNullFieldNotInitialized")
     @TempDir
     Path temporaryDirectory;
 

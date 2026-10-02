@@ -4,7 +4,7 @@ import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import javafx.scene.layout.Region;
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -21,7 +21,7 @@ final class SimulationInstanceTest {
         FxTestSupport.ensureStarted();
     }
 
-    private static <T> T requireValue(AtomicReference<@Nullable T> reference) {
+    private static <T> T requireValue(AtomicReference<T> reference) {
         return Objects.requireNonNull(reference.get(), "Expected test fixture value");
     }
 
@@ -38,8 +38,8 @@ final class SimulationInstanceTest {
 
     @Test
     void testRecordAccessorSimulationMainView() {
-        AtomicReference<@Nullable SimulationInstance> ref = new AtomicReference<>();
-        AtomicReference<@Nullable SimulationMainView> viewRef = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
+        AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> {
             Region region = new Region();
             StubMainView view = new StubMainView(region);
@@ -52,8 +52,8 @@ final class SimulationInstanceTest {
 
     @Test
     void testRecordAccessorRegion() {
-        AtomicReference<@Nullable SimulationInstance> ref = new AtomicReference<>();
-        AtomicReference<@Nullable Region> regionRef = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
+        AtomicReference<Region> regionRef = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> {
             Region region = new Region();
             regionRef.set(region);
@@ -76,8 +76,8 @@ final class SimulationInstanceTest {
 
     @Test
     void testOfFactoryAssignsView() {
-        AtomicReference<@Nullable SimulationInstance> ref = new AtomicReference<>();
-        AtomicReference<@Nullable SimulationMainView> viewRef = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
+        AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> {
             Region region = new Region();
             StubMainView view = new StubMainView(region);
@@ -90,8 +90,8 @@ final class SimulationInstanceTest {
 
     @Test
     void testOfFactoryDelegatesToBuildMainRegion() {
-        AtomicReference<@Nullable SimulationInstance> ref = new AtomicReference<>();
-        AtomicReference<@Nullable Region> builtRegionRef = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
+        AtomicReference<Region> builtRegionRef = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> {
             Region builtRegion = new Region();
             builtRegionRef.set(builtRegion);
@@ -158,8 +158,8 @@ final class SimulationInstanceTest {
 
     @Test
     void testRecordEqualityForSameComponents() {
-        AtomicReference<@Nullable SimulationInstance> ref1 = new AtomicReference<>();
-        AtomicReference<@Nullable SimulationInstance> ref2 = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> {
             Region region = new Region();
             StubMainView view = new StubMainView(region);
@@ -176,8 +176,8 @@ final class SimulationInstanceTest {
 
     @Test
     void testRecordInequalityForDifferentType() {
-        AtomicReference<@Nullable SimulationInstance> ref1 = new AtomicReference<>();
-        AtomicReference<@Nullable SimulationInstance> ref2 = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> {
             Region region = new Region();
             StubMainView view = new StubMainView(region);
@@ -189,8 +189,8 @@ final class SimulationInstanceTest {
 
     @Test
     void testRecordInequalityForDifferentRegion() {
-        AtomicReference<@Nullable SimulationInstance> ref1 = new AtomicReference<>();
-        AtomicReference<@Nullable SimulationInstance> ref2 = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
+        AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
         FxTestSupport.runAndWait(() -> {
             StubMainView view = new StubMainView(new Region());
             ref1.set(new SimulationInstance(SimulationType.WATOR, view, new Region()));
@@ -201,11 +201,13 @@ final class SimulationInstanceTest {
 
     private record StubMainView(Region region) implements SimulationMainView {
 
+        @NonNull
         @Override
         public Region buildMainRegion() {
             return region;
         }
 
+        @NonNull
         @Override
         public SimulationTermination shutdownSimulation() {
             return SimulationTermination.completed();
