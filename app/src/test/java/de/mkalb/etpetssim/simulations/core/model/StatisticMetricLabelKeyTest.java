@@ -16,7 +16,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class StatisticMetricLabelKeyTest {
 

@@ -124,41 +124,41 @@ final class JavaCodeInventoryTest {
     void testGeneratesCompleteIdempotentInventory() throws Exception {
         writeSource("main", "Sample.java", """
                 package example;
-
+                
                 import java.io.IOException;
-
+                
                 @interface Marker {
                     String value();
                 }
-
+                
                 public record Sample<T>(String value) {
                     @Marker("Sample(")
                     public Sample {
                     }
-
+                
                     @Marker("convert")
                     public static <R extends Number> R convert(java.util.List<String> values, @Marker("...") String[] names, String... labels) throws IOException {
                         return null;
                     }
-
+                
                     public static <R extends Number> R convert(String value) throws IOException {
                         return null;
                     }
-
+                
                     class Nested {
                         protected int convert(int value) {
                             return value;
                         }
                     }
                 }
-
+                
                 enum CellShape {
                     SQUARE(4, "square");
-
+                
                     CellShape(int sides, String label) {
                     }
                 }
-
+                
                 record Canonical(String value) {
                     @Marker("canonical")
                     Canonical /* comment */ (String value) {
@@ -167,7 +167,7 @@ final class JavaCodeInventoryTest {
                 """);
         writeSource("test", "TestFixture.java", """
                 package example;
-
+                
                 final class TestFixture {
                     TestFixture() {
                     }
@@ -218,7 +218,7 @@ final class JavaCodeInventoryTest {
     void testGeneratesImplicitConstructorsAndRecordAccessors() throws Exception {
         writeSource("main", "Implicit.java", """
                 package example;
-
+                
                 public class Implicit {
                     interface Holder {
                         record Point(int x, @Deprecated int... ys) {
@@ -226,18 +226,18 @@ final class JavaCodeInventoryTest {
                                 return x;
                             }
                         }
-
+                
                         class Detail {
                         }
                     }
-
+                
                     private record Pair(String left, String right) {
                         Pair() {
                             String value = "";
                             this(value, value);
                         }
                     }
-
+                
                     enum Color {
                         RED
                     }
@@ -281,15 +281,15 @@ final class JavaCodeInventoryTest {
     void testDistinguishesRecordConstructorVisibility() throws Exception {
         writeSource("main", "PublicRecord.java", """
                 package example;
-
+                
                 public record PublicRecord(String value) {
                     public PublicRecord {
                     }
-
+                
                     PublicRecord() {
                         this("");
                     }
-
+                
                     private record Hidden(int value) {
                         Hidden {
                         }
