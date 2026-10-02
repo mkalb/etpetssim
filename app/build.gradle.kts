@@ -62,8 +62,6 @@ tasks.compileTestJava {
     val moduleName = "de.mkalb.etpetssim"
     val testCompileClasspath = sourceSets.test.get().compileClasspath
     val testSourceDirs = sourceSets.test.get().java.sourceDirectories
-    inputs.files(testCompileClasspath).withNormalizer(ClasspathNormalizer::class)
-    classpath = files()
     options.compilerArgumentProviders.add(CommandLineArgumentProvider {
         listOf(
             "--module-path", testCompileClasspath.asPath,
