@@ -27,7 +27,7 @@ public final class GridEntityUtils {
      * @param coordinate               the coordinate to look up
      * @param model                    the grid model containing the entities
      * @param entityDescriptorRegistry the registry to resolve descriptors
-     * @param <ENT>                      the type of {@link GridEntity} in the model
+     * @param <ENT>                    the type of {@link GridEntity} in the model
      * @return an {@link Optional} containing the descriptor if present, or {@link Optional#empty()} if not found or invalid coordinate
      */
     public static <ENT extends GridEntity> Optional<GridEntityDescriptor> descriptorAt(
@@ -48,7 +48,7 @@ public final class GridEntityUtils {
      * @param model                    the grid model containing the entities
      * @param entityDescriptorRegistry the registry to resolve descriptors
      * @param consumer                 the action to perform if a descriptor is present
-     * @param <ENT>                      the type of {@link GridEntity} in the model
+     * @param <ENT>                    the type of {@link GridEntity} in the model
      */
     public static <ENT extends GridEntity> void consumeDescriptorAt(
             GridCoordinate coordinate,
@@ -69,7 +69,7 @@ public final class GridEntityUtils {
      * @param coordinate the anchor coordinate at which to place the pattern's origin
      * @param model      the grid model to modify
      * @param pattern    the pattern of entities to place
-     * @param <ENT>        the type of {@link GridEntity} in the model and pattern
+     * @param <ENT>      the type of {@link GridEntity} in the model and pattern
      */
     public static <ENT extends GridEntity> void placePatternAt(GridCoordinate coordinate,
                                                                WritableGridModel<ENT> model,

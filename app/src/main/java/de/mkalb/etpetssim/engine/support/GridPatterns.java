@@ -41,7 +41,7 @@ public final class GridPatterns {
      * <p>
      * Modifications to the original map after calling this method do not affect the pattern.
      *
-     * @param map the map of offsets to entities
+     * @param map   the map of offsets to entities
      * @param <ENT> the type of {@link GridEntity}
      * @return a pattern containing the specified mapping
      */
@@ -60,7 +60,7 @@ public final class GridPatterns {
      *
      * @param entity  the entity to place at each offset
      * @param offsets the collection of offsets where the entity will be placed
-     * @param <ENT>     the type of {@link GridEntity}
+     * @param <ENT>   the type of {@link GridEntity}
      * @return a pattern containing the entity at the specified offsets
      */
     public static <ENT extends GridEntity> GridPattern<ENT> of(ENT entity, Collection<GridOffset> offsets) {
@@ -78,7 +78,7 @@ public final class GridPatterns {
      * The returned pattern contains exactly one entry at the given offset. The pattern is
      * <b>not guaranteed to be normalized</b>; the offset may be any value.
      *
-     * @param <ENT>    the type of {@link GridEntity}
+     * @param <ENT>  the type of {@link GridEntity}
      * @param entity the entity to place
      * @param offset the offset of the entity
      * @return a singleton pattern containing the entity at the specified offset
@@ -96,7 +96,7 @@ public final class GridPatterns {
      * The resulting pattern is <b>not guaranteed to be normalized</b>.
      *
      * @param patterns the patterns to combine
-     * @param <ENT>      the type of {@link GridEntity}
+     * @param <ENT>    the type of {@link GridEntity}
      * @return a combined pattern containing all entries from the input patterns
      */
     @SafeVarargs
@@ -118,7 +118,7 @@ public final class GridPatterns {
      *
      * @param entity the entity to place at each position in the line
      * @param length the length of the line (number of entities)
-     * @param <ENT>    the type of {@link GridEntity}
+     * @param <ENT>  the type of {@link GridEntity}
      * @return a pattern representing a horizontal line
      */
     public static <ENT extends GridEntity> GridPattern<ENT> horizontalLine(ENT entity, int length) {
@@ -139,7 +139,7 @@ public final class GridPatterns {
      *
      * @param entity the entity to place at each position in the line
      * @param length the length of the line (number of entities)
-     * @param <ENT>    the type of {@link GridEntity}
+     * @param <ENT>  the type of {@link GridEntity}
      * @return a pattern representing a vertical line
      */
     public static <ENT extends GridEntity> GridPattern<ENT> verticalLine(ENT entity, int length) {
@@ -162,7 +162,7 @@ public final class GridPatterns {
      * @param stroke the entity to place at each border position
      * @param width  the width of the rectangle (number of columns)
      * @param height the height of the rectangle (number of rows)
-     * @param <ENT>    the type of {@link GridEntity}
+     * @param <ENT>  the type of {@link GridEntity}
      * @return a pattern representing the rectangle border
      */
     public static <ENT extends GridEntity> GridPattern<ENT> rectangle(ENT stroke, int width, int height) {
@@ -188,7 +188,7 @@ public final class GridPatterns {
      *
      * @param stroke the entity to place at each border position
      * @param radius the radius of the circle (in grid units)
-     * @param <ENT>    the type of {@link GridEntity}
+     * @param <ENT>  the type of {@link GridEntity}
      * @return a pattern representing the circle border
      */
     public static <ENT extends GridEntity> GridPattern<ENT> circle(ENT stroke, int radius) {

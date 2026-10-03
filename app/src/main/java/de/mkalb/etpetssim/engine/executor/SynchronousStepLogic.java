@@ -12,7 +12,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * for sharing or accumulating state across steps.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
- * @param <C> the type of the context object provided to each simulation step
+ * @param <C>   the type of the context object provided to each simulation step
  * @see de.mkalb.etpetssim.engine.executor.SynchronousStepRunner
  */
 @FunctionalInterface

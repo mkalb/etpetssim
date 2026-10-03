@@ -12,7 +12,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * for the following step.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
- * @param <C> the type of the context object provided to each simulation step
+ * @param <C>   the type of the context object provided to each simulation step
  * @see SynchronousStepLogic
  */
 public final class SynchronousStepRunner<ENT extends GridEntity, C> implements SimulationStepRunner<C> {
