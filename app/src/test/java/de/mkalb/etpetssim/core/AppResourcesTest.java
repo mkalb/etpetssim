@@ -53,9 +53,9 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetCssUrl() {
-        Optional<String> cssUrlOpt = AppResources.getCssUrl("etpetssim.css");
+        Optional<String> cssUrlOpt = AppResources.getCssUrl("test_style.css");
         assertTrue(cssUrlOpt.isPresent(), "CSS URL should be present");
-        assertTrue(cssUrlOpt.get().endsWith("etpetssim.css"), "CSS URL should end with 'etpetssim.css'");
+        assertTrue(cssUrlOpt.get().endsWith("test_style.css"), "CSS URL should end with 'test_style.css'");
 
         assertThrows(NullPointerException.class, () -> AppResources.getCssUrl(null));
     }
@@ -101,7 +101,7 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsStream() throws Exception {
-        try (InputStream stream = AppResources.getResourceAsStream("css/etpetssim.css").orElseThrow()) {
+        try (InputStream stream = AppResources.getResourceAsStream("css/test_style.css").orElseThrow()) {
             assertNotNull(stream, "InputStream should be present");
         }
 
@@ -133,7 +133,7 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsUrl() {
-        Optional<URL> urlOpt = AppResources.getResourceAsUrl("css/etpetssim.css");
+        Optional<URL> urlOpt = AppResources.getResourceAsUrl("css/test_style.css");
         assertTrue(urlOpt.isPresent(), "URL should be present");
 
         assertThrows(NullPointerException.class, () -> AppResources.getResourceAsUrl(null));
