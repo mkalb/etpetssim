@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
+import de.mkalb.etpetssim.core.AppResources;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
@@ -10,9 +11,8 @@ import de.mkalb.etpetssim.simulations.sugar.model.SugarStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -21,16 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 final class StatisticMetricLabelKeyTest {
 
     private static Set<String> loadMainPropertyKeys(String fileName) throws IOException {
-        String configuredPath = System.getProperty("mainResources.dir");
-        assertTrue(
-                (configuredPath != null) && !configuredPath.isBlank(),
-                "Gradle must provide the mainResources.dir system property"
-        );
-        Path bundleFile = Path.of(configuredPath, "i18n", fileName);
-        assertTrue(Files.isRegularFile(bundleFile), "Production bundle not found: " + bundleFile);
+        InputStream stream = AppResources.getResourceAsStream("i18n/" + fileName)
+                                         .orElseThrow(() -> new AssertionError("Production bundle not found: " + fileName));
 
         Properties props = new Properties();
-        try (var reader = Files.newBufferedReader(bundleFile, StandardCharsets.UTF_8)) {
+        try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             props.load(reader);
         }
         return props.stringPropertyNames();

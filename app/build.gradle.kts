@@ -80,7 +80,7 @@ tasks.withType<Test>().configureEach {
     val moduleName = applicationModuleName
     val readModules = junitModuleNames
     val testRuntimeClasspath = sourceSets.test.get().runtimeClasspath
-    // Test outputs come first, so test resources override main resources with the same path.
+    // Test resources use a test_ prefix, so they do not shadow main resources inside the patched module.
     val patchedDirs = sourceSets.test.get().output + files(sourceSets.main.get().output.resourcesDir)
     inputs.files(testRuntimeClasspath).withNormalizer(ClasspathNormalizer::class)
     classpath = files()
@@ -105,8 +105,6 @@ tasks.named<Test>("test") {
         "-Dprism.order=sw",
         "-Djavafx.headless=true"
     )
-    // Main resources are shadowed by test resources with the same path inside the patched module.
-    systemProperty("mainResources.dir", sourceSets.main.get().resources.srcDirs.single().absolutePath)
 }
 
 tasks.register<Test>("skillTest") {
