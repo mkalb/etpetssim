@@ -142,8 +142,8 @@ method that references individual `SimulationType` constants, following the exis
 
 ### Step 2 — Create simulation packages
 
-Create the package structure under `de.mkalb.etpetssim.simulations.<package name>` with a `package-info.java` in each
-package. Each `package-info.java` must use `@NullMarked` as specified in
+Create the package structure under `de.mkalb.etpetssim.simulations.<package name>`. Do not create `package-info.java`
+files; `@NullMarked` is declared on the module as specified in
 [java.instructions.md](../instructions/java.instructions.md):
 
 - `de.mkalb.etpetssim.simulations.<package name>` — simulation root
@@ -153,8 +153,7 @@ package. Each `package-info.java` must use `@NullMarked` as specified in
 - `de.mkalb.etpetssim.simulations.<package name>.viewmodel` — JavaFX properties, bindings, UI state
 
 Create `de.mkalb.etpetssim.simulations.<package name>.shared` only when the confirmed design needs layer-neutral types
-used by multiple layers, or when the reference simulation has a comparable `shared` package. Match the **reference
-simulation** for `package-info.java` content and style.
+used by multiple layers, or when the reference simulation has a comparable `shared` package.
 
 ### Step 3 — Create simulation classes
 

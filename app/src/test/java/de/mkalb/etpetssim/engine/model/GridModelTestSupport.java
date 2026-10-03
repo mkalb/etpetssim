@@ -2,6 +2,7 @@ package de.mkalb.etpetssim.engine.model;
 
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
+import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 
@@ -23,6 +24,7 @@ final class GridModelTestSupport {
         WALL,
         FOOD;
 
+        @NonNull
         @Override
         public String descriptorId() {
             return name().toLowerCase(Locale.ROOT);

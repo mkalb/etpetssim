@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
 import javafx.beans.property.SimpleObjectProperty;
-import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -190,7 +190,7 @@ final class DefaultObservationViewModelTest {
     @Test
     void testBindSelectedGridCellPropertyTracksSourceChanges() {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var source = new SimpleObjectProperty<@Nullable GridCell<ConwayEntity>>();
+        var source = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var selectedCell = new GridCell<>(new GridCoordinate(2, 3), ConwayEntity.ALIVE);
 
         FxTestSupport.runAndWait(() -> {
@@ -204,8 +204,8 @@ final class DefaultObservationViewModelTest {
     @Test
     void testBindSelectedGridCellPropertyReplacesPreviousBinding() {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var firstSource = new SimpleObjectProperty<@Nullable GridCell<ConwayEntity>>();
-        var secondSource = new SimpleObjectProperty<@Nullable GridCell<ConwayEntity>>();
+        var firstSource = new SimpleObjectProperty<GridCell<ConwayEntity>>();
+        var secondSource = new SimpleObjectProperty<GridCell<ConwayEntity>>();
         var firstCell = new GridCell<>(new GridCoordinate(2, 3), ConwayEntity.ALIVE);
         var secondCell = new GridCell<>(new GridCoordinate(4, 5), ConwayEntity.DEAD);
 
@@ -237,8 +237,10 @@ final class DefaultObservationViewModelTest {
             DefaultObservationViewModel<ConwayEntity, GridCell<ConwayEntity>, TestStatistics> viewModel) {
     }
 
+    @SuppressWarnings("SameParameterValue")
     private record TestStatistics(int stepCount) implements SimulationStatistics {
 
+        @NonNull
         @Override
         public GridStructure gridStructure() {
             throw new AssertionError("Grid structure is not needed by this test fixture.");

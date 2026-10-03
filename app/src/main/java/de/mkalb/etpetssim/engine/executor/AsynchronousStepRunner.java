@@ -16,7 +16,7 @@ import java.util.function.*;
  * {@code agentOrderingStrategy}.
  *
  * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
- * @param <C> the type of the context object provided to each simulation step
+ * @param <C>   the type of the context object provided to each simulation step
  */
 public final class AsynchronousStepRunner<ENT extends GridEntity, C> implements SimulationStepRunner<C> {
 

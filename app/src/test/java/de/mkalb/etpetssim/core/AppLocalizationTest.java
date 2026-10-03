@@ -11,6 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Execution(ExecutionMode.SAME_THREAD)
 final class AppLocalizationTest {
 
+    private static final String MAIN_BUNDLE_KEY = AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND;
+    private static final String TEST_BUNDLE_BASE_NAME = "i18n.test_messages";
+
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
@@ -36,8 +39,8 @@ final class AppLocalizationTest {
         assertFalse(AppLocalization.isInitialized());
         assertThrows(IllegalStateException.class, AppLocalization::locale);
         assertThrows(IllegalStateException.class, AppLocalization::bundle);
-        assertThrows(IllegalStateException.class, () -> AppLocalization.getText("greeting"));
-        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText("welcome", "John"));
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getText(MAIN_BUNDLE_KEY));
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John"));
     }
 
     @Test
@@ -116,11 +119,11 @@ final class AppLocalizationTest {
     @Test
     void testGetText() {
         AppLocalization.initialize("en_US");
-        assertEquals("Hello", AppLocalization.getText("greeting"));
+        assertEquals(AppLocalization.bundle().getString(MAIN_BUNDLE_KEY), AppLocalization.getText(MAIN_BUNDLE_KEY));
 
         AppLocalization.resetForTesting();
         AppLocalization.initialize("de_DE");
-        assertEquals("Hallo", AppLocalization.getText("greeting"));
+        assertEquals(AppLocalization.bundle().getString(MAIN_BUNDLE_KEY), AppLocalization.getText(MAIN_BUNDLE_KEY));
 
         assertEquals(AppLocalization.PLACEHOLDER_FOR_EXCEPTIONS, AppLocalization.getText("non_existent_key"));
         assertThrows(NullPointerException.class, () -> AppLocalization.getText(null));
@@ -129,13 +132,13 @@ final class AppLocalizationTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetOptionalText() {
-        AppLocalization.initialize("en_US");
+        AppLocalization.initializeForTesting(Locale.US, TEST_BUNDLE_BASE_NAME);
         assertEquals(Optional.of("Hello"), AppLocalization.getOptionalText("greeting"));
         assertEquals(Optional.empty(), AppLocalization.getOptionalText("empty"));
         assertEquals(Optional.of("OnlyUS"), AppLocalization.getOptionalText("onlyUS"));
 
         AppLocalization.resetForTesting();
-        AppLocalization.initialize("de_DE");
+        AppLocalization.initializeForTesting(Locale.GERMANY, TEST_BUNDLE_BASE_NAME);
         assertEquals(Optional.of("Hallo"), AppLocalization.getOptionalText("greeting"));
         assertEquals(Optional.empty(), AppLocalization.getOptionalText("empty"));
         assertEquals(Optional.empty(), AppLocalization.getOptionalText("onlyUS"));
@@ -148,11 +151,19 @@ final class AppLocalizationTest {
     @Test
     void testGetFormattedText() {
         AppLocalization.initialize("en_US");
-        assertEquals("Welcome, John!", AppLocalization.getFormattedText("welcome", "John"));
+        String englishText = AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John");
+        assertAll(
+                () -> assertTrue(englishText.contains("John")),
+                () -> assertFalse(englishText.contains("%1$s"))
+        );
 
         AppLocalization.resetForTesting();
         AppLocalization.initialize("de_DE");
-        assertEquals("Willkommen, John!", AppLocalization.getFormattedText("welcome", "John"));
+        String germanText = AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John");
+        assertAll(
+                () -> assertTrue(germanText.contains("John")),
+                () -> assertFalse(germanText.contains("%1$s"))
+        );
 
         assertEquals(AppLocalization.PLACEHOLDER_FOR_EXCEPTIONS, AppLocalization.getFormattedText("non_existent_key", "John"));
         assertThrows(NullPointerException.class, () -> AppLocalization.getFormattedText(null, "John"));

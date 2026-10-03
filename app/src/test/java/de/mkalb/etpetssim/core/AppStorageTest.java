@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.core;
 
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -20,8 +19,8 @@ final class AppStorageTest {
 
     private static final AppStorage.OperatingSystem OS = AppStorage.OperatingSystem.detect();
 
-    private @Nullable Path createdFile;
-    private @Nullable Path tempFile;
+    private Path createdFile;
+    private Path tempFile;
 
     @BeforeAll
     static void setUpBeforeAll() {

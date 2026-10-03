@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
  * This record is the canonical engine-level cell value for single-layer grid
  * models.
  *
- * @param <ENT>        the concrete entity type stored in the cell
+ * @param <ENT>      the concrete entity type stored in the cell
  * @param coordinate the grid coordinate of this cell
  * @param entity     the entity stored at {@code coordinate}
  */

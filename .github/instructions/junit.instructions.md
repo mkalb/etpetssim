@@ -47,6 +47,9 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Put test-only nested enums, records, and small fixture types at the bottom of the class.
 - Use method-level `@SuppressWarnings("DataFlowIssue")` for intentional null-passing tests.
 - Use class-level `@SuppressWarnings("MagicNumber")` only when many domain numbers are central to the cases.
+- Prefix test resources with `test_` (e.g., `css/test_style.css`, `i18n/test_messages_en_US.properties`) so they
+  never shadow main resources inside the patched module; prefer main resources when a test does not need special
+  content.
 
 ## Common Contract Patterns
 

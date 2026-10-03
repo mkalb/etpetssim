@@ -16,7 +16,6 @@ import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -198,8 +197,8 @@ final class SimulationFactoryTest {
     void testCreateInstanceStartscreenInvokesStageUpdater() {
         FxTestSupport.runAndWait(() -> {
             Stage stage = new Stage();
-            AtomicReference<@Nullable Stage> updatedStage = new AtomicReference<>();
-            AtomicReference<@Nullable SimulationType> updatedType = new AtomicReference<>();
+            AtomicReference<Stage> updatedStage = new AtomicReference<>();
+            AtomicReference<SimulationType> updatedType = new AtomicReference<>();
             SimulationType expectedType = Arrays.stream(SimulationType.values())
                                                 .filter(type -> type.isShownOnStartScreen() && type.isImplemented())
                                                 .findFirst()

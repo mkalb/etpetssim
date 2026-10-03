@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
 import de.mkalb.etpetssim.engine.GridStructure;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,6 +128,7 @@ final class StatisticMetricTest {
             return 0;
         }
 
+        @NonNull
         @Override
         public GridStructure gridStructure() {
             throw new UnsupportedOperationException();

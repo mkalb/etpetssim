@@ -8,7 +8,6 @@ import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -29,11 +28,11 @@ final class AbstractMainViewTest {
         FxTestSupport.ensureStarted();
     }
 
-    private static @Nullable Object getNullableField(Object target, String fieldName) {
+    private static Object getNullableField(Object target, String fieldName) {
         return getNullableField(target, AbstractMainView.class, fieldName);
     }
 
-    private static @Nullable Object getNullableField(Object target, Class<?> declaringClass, String fieldName) {
+    private static Object getNullableField(Object target, Class<?> declaringClass, String fieldName) {
         try {
             Field field = declaringClass.getDeclaredField(fieldName);
             field.setAccessible(true);

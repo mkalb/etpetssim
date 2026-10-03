@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("SameParameterValue")
 final class LangtonEditToolBarViewModelTest {
 
     private static LangtonConfig createConfig(CellShape cellShape) {

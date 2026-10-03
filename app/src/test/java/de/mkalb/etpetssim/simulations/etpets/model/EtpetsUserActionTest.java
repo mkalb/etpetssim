@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("MagicNumber")
+@SuppressWarnings("OverlyStrongTypeCast")
 final class EtpetsUserActionTest {
 
     private static EtpetsConfig createConfig() {

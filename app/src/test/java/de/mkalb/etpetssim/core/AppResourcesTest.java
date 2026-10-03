@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.core;
 
 import de.mkalb.FxTestSupport;
 import javafx.scene.image.Image;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -17,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class AppResourcesTest {
 
     private static final Locale TEST_LOCALE = Locale.GERMANY;
+    private static final String MAIN_BUNDLE_KEY = AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -29,7 +29,7 @@ final class AppResourcesTest {
     void testGetBundleDefaultWithLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(TEST_LOCALE);
         assertTrue(bundleOpt.isPresent(), "Default resource bundle should be present for locale");
-        assertTrue(bundleOpt.get().containsKey("greeting"), "Bundle should contain key 'greeting'");
+        assertTrue(bundleOpt.get().containsKey(MAIN_BUNDLE_KEY), "Bundle should contain key " + MAIN_BUNDLE_KEY);
 
         assertThrows(NullPointerException.class, () -> AppResources.getBundle(null));
     }
@@ -39,7 +39,7 @@ final class AppResourcesTest {
     void testGetBundleWithBaseNameAndLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, TEST_LOCALE);
         assertTrue(bundleOpt.isPresent(), "Resource bundle should be present for base name and locale");
-        assertTrue(bundleOpt.get().containsKey("greeting"), "Bundle should contain key 'greeting'");
+        assertTrue(bundleOpt.get().containsKey(MAIN_BUNDLE_KEY), "Bundle should contain key " + MAIN_BUNDLE_KEY);
 
         assertThrows(NullPointerException.class, () -> AppResources.getBundle(null, TEST_LOCALE));
         assertThrows(NullPointerException.class, () -> AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, null));
@@ -54,9 +54,9 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetCssUrl() {
-        Optional<String> cssUrlOpt = AppResources.getCssUrl("etpetssim.css");
+        Optional<String> cssUrlOpt = AppResources.getCssUrl("test_style.css");
         assertTrue(cssUrlOpt.isPresent(), "CSS URL should be present");
-        assertTrue(cssUrlOpt.get().endsWith("etpetssim.css"), "CSS URL should end with 'etpetssim.css'");
+        assertTrue(cssUrlOpt.get().endsWith("test_style.css"), "CSS URL should end with 'test_style.css'");
 
         assertThrows(NullPointerException.class, () -> AppResources.getCssUrl(null));
     }
@@ -79,7 +79,7 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetImages() {
-        List<@Nullable Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
+        List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
                 "etpetssim32.png");
         assertEquals(3, images.size(), "Number of images should be 3");
         assertTrue(images.stream().allMatch(Objects::nonNull), "All images should be non-null");
@@ -102,7 +102,7 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsStream() throws Exception {
-        try (InputStream stream = AppResources.getResourceAsStream("css/etpetssim.css").orElseThrow()) {
+        try (InputStream stream = AppResources.getResourceAsStream("css/test_style.css").orElseThrow()) {
             assertNotNull(stream, "InputStream should be present");
         }
 
@@ -134,7 +134,7 @@ final class AppResourcesTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetResourceAsUrl() {
-        Optional<URL> urlOpt = AppResources.getResourceAsUrl("css/etpetssim.css");
+        Optional<URL> urlOpt = AppResources.getResourceAsUrl("css/test_style.css");
         assertTrue(urlOpt.isPresent(), "URL should be present");
 
         assertThrows(NullPointerException.class, () -> AppResources.getResourceAsUrl(null));

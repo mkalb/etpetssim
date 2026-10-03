@@ -42,6 +42,22 @@ public final class AppLocalization {
     }
 
     /**
+     * Initializes localization with a test resource bundle.
+     * <p>
+     * Tests use this method to check text lookup against dedicated test keys
+     * instead of the application bundle.
+     *
+     * @param testLocale     locale of the test bundle
+     * @param bundleBaseName base name of the test bundle
+     * @throws IllegalStateException if the test bundle cannot be loaded
+     */
+    static synchronized void initializeForTesting(Locale testLocale, String bundleBaseName) {
+        locale = testLocale;
+        bundle = AppResources.getBundle(bundleBaseName, testLocale).orElseThrow(() ->
+                new IllegalStateException("Test ResourceBundle " + bundleBaseName + " could not be loaded."));
+    }
+
+    /**
      * Returns all supported locales.
      *
      * @return an immutable list containing all supported locale descriptors

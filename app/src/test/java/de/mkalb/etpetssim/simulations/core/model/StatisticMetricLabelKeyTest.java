@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.model;
 
+import de.mkalb.etpetssim.core.AppResources;
 import de.mkalb.etpetssim.simulations.conway.model.ConwayStatistics;
 import de.mkalb.etpetssim.simulations.etpets.model.EtpetsStatistics;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
@@ -11,26 +12,20 @@ import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class StatisticMetricLabelKeyTest {
 
     private static Set<String> loadMainPropertyKeys(String fileName) throws IOException {
-        String resourceName = "i18n/" + fileName;
-        List<URL> mainResources = Collections.list(
-                                                     StatisticMetricLabelKeyTest.class.getClassLoader().getResources(resourceName)
-                                             ).stream()
-                                             .filter(resource -> resource.toExternalForm().contains("/main/"))
-                                             .toList();
-        assertEquals(1, mainResources.size(), "Expected exactly one production bundle: " + fileName);
+        InputStream stream = AppResources.getResourceAsStream("i18n/" + fileName)
+                                         .orElseThrow(() -> new AssertionError("Production bundle not found: " + fileName));
 
         Properties props = new Properties();
-        try (var reader = new InputStreamReader(mainResources.getFirst().openStream(), StandardCharsets.UTF_8)) {
+        try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             props.load(reader);
         }
         return props.stringPropertyNames();

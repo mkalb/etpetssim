@@ -46,7 +46,7 @@ public final class GridInitializers {
      * Returns an initializer that fills the entire grid with the specified entity.
      *
      * @param entity the entity to fill the grid with
-     * @param <ENT>    the type of grid entity
+     * @param <ENT>  the type of grid entity
      * @return a grid initializer that fills the grid with the given entity
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> constant(ENT entity) {
@@ -57,7 +57,7 @@ public final class GridInitializers {
      * Returns an initializer that fills the entire grid using entities from the provided supplier.
      *
      * @param entitySupplier the supplier for entities to fill the grid
-     * @param <ENT>            the type of grid entity
+     * @param <ENT>          the type of grid entity
      * @return a grid initializer that fills the grid using the supplier
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> supplier(Supplier<ENT> entitySupplier) {
@@ -68,7 +68,7 @@ public final class GridInitializers {
      * Returns an initializer that sets the border cells of the grid to the specified entity.
      *
      * @param entity the entity to set at the border
-     * @param <ENT>    the type of grid entity
+     * @param <ENT>  the type of grid entity
      * @return a grid initializer that sets the border cells
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> border(ENT entity) {
@@ -89,7 +89,7 @@ public final class GridInitializers {
      *
      * @param entity1 the entity for even cells
      * @param entity2 the entity for odd cells
-     * @param <ENT>     the type of grid entity
+     * @param <ENT>   the type of grid entity
      * @return a grid initializer with a checkerboard pattern
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> checkerboard(ENT entity1, ENT entity2) {
@@ -107,7 +107,7 @@ public final class GridInitializers {
      * Returns an initializer that sets the grid cells according to the provided list of cells.
      *
      * @param cells the list of grid cells to set
-     * @param <ENT>   the type of grid entity
+     * @param <ENT> the type of grid entity
      * @return a grid initializer that sets the specified cells
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
@@ -124,11 +124,11 @@ public final class GridInitializers {
      *
      * @param cells             cells to set
      * @param cancellationCheck operation that may stop initialization
-     * @param <ENT>               the type of grid entity
+     * @param <ENT>             the type of grid entity
      * @return cancellation-aware initializer
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> fromList(List<GridCell<ENT>> cells,
-                                                                     Runnable cancellationCheck) {
+                                                                         Runnable cancellationCheck) {
         return model -> {
             for (int index = 0; index < cells.size(); index++) {
                 if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
@@ -157,7 +157,7 @@ public final class GridInitializers {
      *
      * @param generator the function to generate entities using the random object
      * @param random    the random number generator
-     * @param <ENT>       the type of grid entity
+     * @param <ENT>     the type of grid entity
      * @return a grid initializer that fills the grid randomly
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomly(Function<Random, ENT> generator, Random random) {
@@ -179,13 +179,13 @@ public final class GridInitializers {
      * @param entities           the entities to place; each list element is placed exactly once
      * @param canReplaceExisting predicate to determine if an existing entity can be replaced
      * @param random             the random number generator
-     * @param <ENT>                the grid entity type
+     * @param <ENT>              the grid entity type
      * @return a {@link GridInitializer} that places the given entities at random eligible positions
      * @throws IllegalStateException if the grid contains fewer eligible cells than {@code entities.size()}
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeAllAtRandomPositions(List<ENT> entities,
                                                                                           Predicate<ENT> canReplaceExisting,
-                                                                                      Random random) {
+                                                                                          Random random) {
         return model -> {
             var freeCoordinates = new ArrayList<>(model.filteredCoordinates(canReplaceExisting));
             if (freeCoordinates.size() < entities.size()) {
@@ -208,13 +208,13 @@ public final class GridInitializers {
      * @param canReplaceExisting predicate to determine whether an existing entity may be replaced
      * @param random             random number generator
      * @param cancellationCheck  operation that may stop initialization
-     * @param <ENT>                the type of grid entity
+     * @param <ENT>              the type of grid entity
      * @return cancellation-aware initializer
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeAllAtRandomPositions(List<ENT> entities,
                                                                                           Predicate<ENT> canReplaceExisting,
-                                                                                      Random random,
-                                                                                      Runnable cancellationCheck) {
+                                                                                          Random random,
+                                                                                          Runnable cancellationCheck) {
         return model -> {
             var freeCoordinates = new ArrayList<GridCoordinate>();
             GridSize size = model.structure().size();
@@ -264,14 +264,14 @@ public final class GridInitializers {
      * @param entitySupplier     the supplier for entities to place
      * @param canReplaceExisting predicate to determine if an existing entity can be replaced
      * @param random             the random number generator
-     * @param <ENT>                the type of grid entity
+     * @param <ENT>              the type of grid entity
      * @return a grid initializer that places entities at random positions, using the replacement predicate
      * @throws IllegalStateException if not all entities could be placed within the maximum number of attempts
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeRandomCount(int count,
                                                                                  Supplier<ENT> entitySupplier,
                                                                                  Predicate<ENT> canReplaceExisting,
-                                                                             Random random) {
+                                                                                 Random random) {
         return model -> placeRandomCount(model, count, entitySupplier, canReplaceExisting, random, () -> {});
     }
 
@@ -286,7 +286,7 @@ public final class GridInitializers {
      * @param canReplaceExisting predicate to determine if an existing entity can be replaced
      * @param percent            the percentage of positions to fill (0.0 to 1.0)
      * @param random             the random number generator
-     * @param <ENT>                the type of grid entity
+     * @param <ENT>              the type of grid entity
      * @return a grid initializer that places entities at a random percentage of positions, using the replacement predicate
      * @throws IllegalArgumentException if {@code percent} is outside the range [0.0, 1.0]
      * @throws IllegalStateException    if not all entities could be placed within the maximum number of attempts
@@ -294,8 +294,8 @@ public final class GridInitializers {
     @SuppressWarnings({"NumericCastThatLosesPrecision"})
     public static <ENT extends GridEntity> GridInitializer<ENT> placeRandomPercent(Supplier<ENT> entitySupplier,
                                                                                    Predicate<ENT> canReplaceExisting,
-                                                                               double percent,
-                                                                               Random random) {
+                                                                                   double percent,
+                                                                                   Random random) {
         validatePercent(percent);
         return model -> placeRandomCount((int) Math.round(percent * model.structure().size().area()),
                 entitySupplier, canReplaceExisting, random).initialize(model);
@@ -304,7 +304,7 @@ public final class GridInitializers {
     private static <ENT extends GridEntity> void placeRandomCount(WritableGridModel<ENT> model, int count,
                                                                   Supplier<ENT> entitySupplier,
                                                                   Predicate<ENT> canReplaceExisting, Random random,
-                                                                Runnable cancellationCheck) {
+                                                                  Runnable cancellationCheck) {
         int placed = 0;
         int checkpointIndex = 0;
         int gridArea = model.structure().size().area();
@@ -350,7 +350,7 @@ public final class GridInitializers {
      * @param percent        the desired fraction of cells populated from {@code entitySupplier} (0.0 to 1.0)
      * @param fallback       the entity used as fallback where the supplier is not applied
      * @param random         the random number generator used for random placement
-     * @param <ENT>            the type of grid entity
+     * @param <ENT>          the type of grid entity
      * @return a {@link GridInitializer} that fills the grid according to the described policy
      * @throws IllegalStateException if an underlying placement (via {@code placeRandomPercent}) cannot place the requested entities
      */
@@ -394,7 +394,7 @@ public final class GridInitializers {
      * @param fallback          entity used for remaining cells
      * @param random            random number generator used for placement
      * @param cancellationCheck operation that may stop initialization
-     * @param <ENT>               grid entity type
+     * @param <ENT>             grid entity type
      * @return cancellation-aware initializer
      */
     @SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
@@ -433,7 +433,7 @@ public final class GridInitializers {
     }
 
     private static <ENT extends GridEntity> void fillWithConstant(WritableGridModel<ENT> model, ENT entity,
-                                                                Runnable cancellationCheck) {
+                                                                  Runnable cancellationCheck) {
         GridSize size = model.structure().size();
         int index = 0;
         for (int y = 0; y < size.height(); y++) {
@@ -448,7 +448,7 @@ public final class GridInitializers {
     }
 
     private static <ENT extends GridEntity> void fillWithSupplier(WritableGridModel<ENT> model, Supplier<ENT> supplier,
-                                                                Runnable cancellationCheck) {
+                                                                  Runnable cancellationCheck) {
         GridSize size = model.structure().size();
         int index = 0;
         for (int y = 0; y < size.height(); y++) {
@@ -500,14 +500,14 @@ public final class GridInitializers {
      * @param entitySupplier     the supplier for entities to place
      * @param canReplaceExisting predicate to determine if an existing entity can be replaced
      * @param random             the random number generator
-     * @param <ENT>                the type of grid entity
+     * @param <ENT>              the type of grid entity
      * @return a grid initializer that places entities at shuffled positions, skipping blocked cells
      * @throws IllegalStateException if not all entities could be placed
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeShuffledCount(int count,
                                                                                    Supplier<ENT> entitySupplier,
                                                                                    Predicate<ENT> canReplaceExisting,
-                                                                               Random random) {
+                                                                                   Random random) {
         return model -> {
             int placed = 0;
             if (placed < count) {
@@ -540,14 +540,14 @@ public final class GridInitializers {
      * @param canReplaceExisting predicate to determine whether an existing entity may be replaced
      * @param random             random number generator
      * @param cancellationCheck  operation that may stop initialization
-     * @param <ENT>                the type of grid entity
+     * @param <ENT>              the type of grid entity
      * @return cancellation-aware initializer
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeShuffledCount(int count,
                                                                                    Supplier<ENT> entitySupplier,
                                                                                    Predicate<ENT> canReplaceExisting,
-                                                                               Random random,
-                                                                               Runnable cancellationCheck) {
+                                                                                   Random random,
+                                                                                   Runnable cancellationCheck) {
         return model -> {
             int placed = 0;
             if (placed < count) {
@@ -584,7 +584,7 @@ public final class GridInitializers {
      * @param probability the probability to place the entity (0.0 to 1.0)
      * @param fallback    the fallback entity to place otherwise
      * @param random      the random number generator
-     * @param <ENT>         the type of grid entity
+     * @param <ENT>       the type of grid entity
      * @return a grid initializer that places entities probabilistically
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeWithProbability(ENT entity, double probability, ENT fallback, Random random) {
@@ -598,7 +598,7 @@ public final class GridInitializers {
      * @param entitySupplier the supplier for entities to place
      * @param probability    the probability to place an entity (0.0 to 1.0)
      * @param random         the random number generator
-     * @param <ENT>            the type of grid entity
+     * @param <ENT>          the type of grid entity
      * @return a grid initializer that places entities probabilistically
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeWithProbability(Supplier<ENT> entitySupplier, double probability, Random random) {

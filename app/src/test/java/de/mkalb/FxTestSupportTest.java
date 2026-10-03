@@ -127,7 +127,6 @@ final class FxTestSupportTest {
     }
 
     @Test
-    @SuppressWarnings("DataFlowIssue")
     void testSupplyAndWaitNonNullRejectsNullResult() {
         NullPointerException exception = assertThrows(
                 NullPointerException.class,
@@ -143,7 +142,6 @@ final class FxTestSupportTest {
     }
 
     @Test
-    @SuppressWarnings("DataFlowIssue")
     void testSupplyAndWaitNonNullRejectsNullResultOnFxThread() {
         FxTestSupport.runAndWait(() -> {
             NullPointerException exception = assertThrows(

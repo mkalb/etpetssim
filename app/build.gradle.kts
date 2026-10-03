@@ -7,6 +7,9 @@ plugins {
 group = "de.mkalb.etpetssim"
 version = "0.0.1-SNAPSHOT"
 val baseName = "ExtraterrestrialPetsSimulation"
+val applicationModuleName = "de.mkalb.etpetssim"
+// JUnit modules that the application module reads when the tests are patched into it.
+val junitModuleNames = "org.junit.jupiter.api,org.junit.jupiter.params"
 
 base {
     archivesName = baseName
@@ -52,8 +55,43 @@ java {
 
 application {
     applicationName = baseName
+    mainModule = applicationModuleName
     mainClass = "de.mkalb.etpetssim.AppLauncher"
-    applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics,ALL-UNNAMED")
+    applicationDefaultJvmArgs = listOf("--enable-native-access=javafx.graphics")
+}
+
+// Tests share packages with the main code, so they are compiled and run patched into the application module.
+tasks.compileTestJava {
+    val moduleName = applicationModuleName
+    val readModules = junitModuleNames
+    val testCompileClasspath = sourceSets.test.get().compileClasspath
+    val testSourceDirs = sourceSets.test.get().java.sourceDirectories
+    options.compilerArgumentProviders.add(CommandLineArgumentProvider {
+        listOf(
+            "--module-path", testCompileClasspath.asPath,
+            "--patch-module", "$moduleName=${testSourceDirs.asPath}",
+            "--add-modules", readModules,
+            "--add-reads", "$moduleName=$readModules"
+        )
+    })
+}
+
+tasks.withType<Test>().configureEach {
+    val moduleName = applicationModuleName
+    val readModules = junitModuleNames
+    val testRuntimeClasspath = sourceSets.test.get().runtimeClasspath
+    // Test resources use a test_ prefix, so they do not shadow main resources inside the patched module.
+    val patchedDirs = sourceSets.test.get().output + files(sourceSets.main.get().output.resourcesDir)
+    inputs.files(testRuntimeClasspath).withNormalizer(ClasspathNormalizer::class)
+    classpath = files()
+    jvmArgumentProviders.add(CommandLineArgumentProvider {
+        listOf(
+            "--module-path", (testRuntimeClasspath - patchedDirs).asPath,
+            "--patch-module", "$moduleName=${patchedDirs.asPath}",
+            "--add-modules", "ALL-MODULE-PATH",
+            "--add-reads", "$moduleName=$readModules"
+        )
+    })
 }
 
 tasks.named<Test>("test") {
@@ -63,7 +101,7 @@ tasks.named<Test>("test") {
     }
     // Set JVM args for JavaFX headless testing
     jvmArgs(
-        "--enable-native-access=javafx.graphics,ALL-UNNAMED",
+        "--enable-native-access=javafx.graphics",
         "-Dprism.order=sw",
         "-Djavafx.headless=true"
     )
@@ -75,7 +113,6 @@ tasks.register<Test>("skillTest") {
 
     dependsOn(tasks.testClasses)
     testClassesDirs = sourceSets.test.get().output.classesDirs
-    classpath = sourceSets.test.get().runtimeClasspath
 
     useJUnitPlatform {
         includeTags("skill")
