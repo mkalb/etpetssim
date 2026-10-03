@@ -105,24 +105,59 @@ If possible, include:
 
 ## Run the App
 
-Use the Gradle Wrapper from the repository root. No global Gradle installation is required.
-Prerequisite: Java 26.
+### Platform Support
 
-### Windows (PowerShell)
+| Platform      | Status                                                                     |
+|---------------|----------------------------------------------------------------------------|
+| Windows (x64) | Supported                                                                  |
+| Linux         | Not supported yet (the Gradle build selects only the Windows JavaFX files) |
+| macOS         | Not supported yet (the Gradle build selects only the Windows JavaFX files) |
+
+JavaFX artifacts are platform-specific. `app/build.gradle.kts` currently resolves only the Windows x64 variant and fails
+with a clear error message on any other operating system or architecture.
+Supporting Linux or macOS would require extending the platform detection in that file.
+
+### Prerequisites
+
+- Windows x64
+- Java 26
+- Git (building the JAR reads the revision and commit date from the Git working tree)
+
+### Commands
+
+Use the Gradle Wrapper from the repository root. No global Gradle installation is required.
 
 ```powershell
+# Run the application
 .\gradlew.bat :app:run
-.\gradlew.bat test
+
+# Run the application with command-line arguments (English UI, log output on the console)
+.\gradlew.bat :app:run --args="--locale=en --log-console"
+
+# Run the unit tests (excludes skill tests)
+.\gradlew.bat :app:test
+
+# Run the tests for the repository skills in .claude/skills
+.\gradlew.bat :app:skillTest
+
+# Build the distribution ZIP
 .\gradlew.bat :app:distZip
 ```
 
-### macOS / Linux
+Supported application arguments:
 
-```bash
-./gradlew :app:run
-./gradlew test
-./gradlew :app:distZip
-```
+| Argument              | Description                                                                                                                |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `--help`              | Prints the list of arguments and exits                                                                                     |
+| `--locale=<locale>`   | Sets the UI language: `en`, `de`, `en_US`, or `de_DE` (case-sensitive); default: system locale, otherwise `en_US`          |
+| `--log-console`       | Enables logging to the console                                                                                             |
+| `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
+| `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
+| `--simulation=<name>` | Starts a simulation directly, e.g. `wator`, `conway`, `langton`, `forest`, `sugar`, `snake`, `rebounding`, `etpets`, `lab` |
+
+Flags can also take a boolean value, e.g. `--log-console=false`. Arguments must not contain spaces. Several arguments
+are
+passed to Gradle as one quoted string, separated by spaces.
 
 ## Technologies Used
 
