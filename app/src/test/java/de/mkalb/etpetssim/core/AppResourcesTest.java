@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class AppResourcesTest {
 
     private static final Locale TEST_LOCALE = Locale.GERMANY;
+    private static final String MAIN_BUNDLE_KEY = AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND;
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -28,7 +29,7 @@ final class AppResourcesTest {
     void testGetBundleDefaultWithLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(TEST_LOCALE);
         assertTrue(bundleOpt.isPresent(), "Default resource bundle should be present for locale");
-        assertTrue(bundleOpt.get().containsKey("greeting"), "Bundle should contain key 'greeting'");
+        assertTrue(bundleOpt.get().containsKey(MAIN_BUNDLE_KEY), "Bundle should contain key " + MAIN_BUNDLE_KEY);
 
         assertThrows(NullPointerException.class, () -> AppResources.getBundle(null));
     }
@@ -38,7 +39,7 @@ final class AppResourcesTest {
     void testGetBundleWithBaseNameAndLocale() {
         Optional<ResourceBundle> bundleOpt = AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, TEST_LOCALE);
         assertTrue(bundleOpt.isPresent(), "Resource bundle should be present for base name and locale");
-        assertTrue(bundleOpt.get().containsKey("greeting"), "Bundle should contain key 'greeting'");
+        assertTrue(bundleOpt.get().containsKey(MAIN_BUNDLE_KEY), "Bundle should contain key " + MAIN_BUNDLE_KEY);
 
         assertThrows(NullPointerException.class, () -> AppResources.getBundle(null, TEST_LOCALE));
         assertThrows(NullPointerException.class, () -> AppResources.getBundle(AppResources.BUNDLE_BASE_NAME, null));
