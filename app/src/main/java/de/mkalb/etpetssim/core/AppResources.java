@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 /**
- * Utility methods for loading classpath resources.
+ * Utility methods for loading resources of the application module.
  * <p>
  * Supported resource types include bundles, CSS files, images, streams, strings,
  * and URLs.
@@ -129,7 +129,7 @@ public final class AppResources {
     }
 
     /**
-     * Opens a classpath resource as stream.
+     * Opens a resource of the application module as stream.
      * <p>
      * The caller owns the returned stream and must close it.
      *
@@ -148,7 +148,7 @@ public final class AppResources {
     }
 
     /**
-     * Loads a classpath resource as text.
+     * Loads a resource of the application module as text.
      *
      * @param relativePath resource path without leading slash
      * @param charset      charset used to decode bytes
@@ -171,7 +171,7 @@ public final class AppResources {
     }
 
     /**
-     * Resolves a classpath resource to a URL.
+     * Resolves a resource of the application module to a URL.
      *
      * @param relativePath resource path without leading slash
      * @return an {@link Optional} containing the URL, or empty if missing

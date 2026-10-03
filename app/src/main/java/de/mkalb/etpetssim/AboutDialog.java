@@ -152,7 +152,7 @@ public final class AboutDialog {
     /**
      * Loads a text resource using UTF-8.
      *
-     * @param resourceRelativePath classpath-relative resource path
+     * @param resourceRelativePath resource path relative to the application module root
      * @return resource content, or a fallback message if the resource cannot be read
      */
     private String getResourceAsString(String resourceRelativePath) {
