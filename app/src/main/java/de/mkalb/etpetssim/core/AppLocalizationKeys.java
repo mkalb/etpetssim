@@ -10,9 +10,12 @@ package de.mkalb.etpetssim.core;
 public final class AppLocalizationKeys {
 
     public static final String ABOUT_MANIFEST_BUILD_JDK = "about.manifest.buildjdk";
-    public static final String ABOUT_MANIFEST_BUILD_TIMESTAMP = "about.manifest.buildtimestamp";
-    public static final String ABOUT_MANIFEST_BUILT_BY = "about.manifest.builtby";
+    public static final String ABOUT_MANIFEST_COMMIT_DATE = "about.manifest.commitdate";
+    public static final String ABOUT_MANIFEST_REVISION = "about.manifest.revision";
     public static final String ABOUT_MANIFEST_TITLE = "about.manifest.title";
+    public static final String ABOUT_MANIFEST_UNKNOWN = "about.manifest.unknown";
+    public static final String ABOUT_MANIFEST_URL = "about.manifest.url";
+    public static final String ABOUT_MANIFEST_VENDOR = "about.manifest.vendor";
     public static final String ABOUT_MANIFEST_VERSION = "about.manifest.version";
     public static final String ABOUT_RESOURCE_NOT_FOUND = "about.resource.notfound";
     public static final String ABOUT_TAB_LICENSE = "about.tab.license";

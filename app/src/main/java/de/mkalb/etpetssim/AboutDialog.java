@@ -22,6 +22,14 @@ public final class AboutDialog {
 
     private static final int DEFAULT_TEXT_AREA_COLUMNS = 120;
     private static final int DEFAULT_TEXT_AREA_ROWS = 30;
+    private static final List<ManifestLine> MANIFEST_LINES = List.of(
+            new ManifestLine("Implementation-Title", AppLocalizationKeys.ABOUT_MANIFEST_TITLE),
+            new ManifestLine("Implementation-Version", AppLocalizationKeys.ABOUT_MANIFEST_VERSION),
+            new ManifestLine("Build-Revision", AppLocalizationKeys.ABOUT_MANIFEST_REVISION),
+            new ManifestLine("Build-Commit-Date", AppLocalizationKeys.ABOUT_MANIFEST_COMMIT_DATE),
+            new ManifestLine("Build-Jdk-Spec", AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK),
+            new ManifestLine("Implementation-Vendor", AppLocalizationKeys.ABOUT_MANIFEST_VENDOR),
+            new ManifestLine("Implementation-URL", AppLocalizationKeys.ABOUT_MANIFEST_URL));
 
     private final List<Image> icons;
     private final Font monospacedFont;
@@ -94,31 +102,26 @@ public final class AboutDialog {
 
     /**
      * Formats a textual summary of selected manifest attributes.
+     * <p>
+     * Attributes missing from the manifest are shown as a localized placeholder.
      *
      * @return formatted manifest summary text
      */
     private String formatManifestSummary() {
         Map<String, String> mf = readManifestInfo();
         String lineSeparator = System.lineSeparator();
-        return AppLocalization.getFormattedText(
-                AppLocalizationKeys.ABOUT_MANIFEST_TITLE,
-                mf.getOrDefault("Implementation-Title", "")) + lineSeparator +
-                AppLocalization.getFormattedText(
-                        AppLocalizationKeys.ABOUT_MANIFEST_VERSION,
-                        mf.getOrDefault("Implementation-Version", "")) + lineSeparator +
-                AppLocalization.getFormattedText(
-                        AppLocalizationKeys.ABOUT_MANIFEST_BUILD_TIMESTAMP,
-                        mf.getOrDefault("Build-Timestamp", "")) + lineSeparator +
-                AppLocalization.getFormattedText(
-                        AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK,
-                        mf.getOrDefault("Build-Jdk", "")) + lineSeparator +
-                AppLocalization.getFormattedText(
-                        AppLocalizationKeys.ABOUT_MANIFEST_BUILT_BY,
-                        mf.getOrDefault("Built-By", "")) + lineSeparator;
+        StringBuilder summary = new StringBuilder();
+        for (ManifestLine line : MANIFEST_LINES) {
+            String value = mf.getOrDefault(line.attributeName(),
+                    AppLocalization.getText(AppLocalizationKeys.ABOUT_MANIFEST_UNKNOWN));
+            summary.append(AppLocalization.getFormattedText(line.localizationKey(), value))
+                   .append(lineSeparator);
+        }
+        return summary.toString();
     }
 
     /**
-     * Reads selected attributes from {@code META-INF/MANIFEST.MF}.
+     * Reads the displayed attributes from {@code META-INF/MANIFEST.MF}.
      *
      * @return map of manifest attribute names to values, or an empty map if unavailable
      */
@@ -130,16 +133,11 @@ public final class AboutDialog {
         try (InputStream is = resource.get()) {
             Manifest manifest = new Manifest(is);
             Attributes attributes = manifest.getMainAttributes();
-            Map<String, String> manifestInfo = HashMap.newHashMap(5);
-            for (String k : List.of(
-                    "Implementation-Title",
-                    "Implementation-Version",
-                    "Build-Timestamp",
-                    "Built-By",
-                    "Build-Jdk")) {
-                String v = attributes.getValue(k);
+            Map<String, String> manifestInfo = HashMap.newHashMap(MANIFEST_LINES.size());
+            for (ManifestLine line : MANIFEST_LINES) {
+                String v = attributes.getValue(line.attributeName());
                 if ((v != null) && !v.isBlank()) {
-                    manifestInfo.put(k, v);
+                    manifestInfo.put(line.attributeName(), v);
                 }
             }
             return manifestInfo;
@@ -160,6 +158,9 @@ public final class AboutDialog {
                            .orElse(AppLocalization.getFormattedText(
                                    AppLocalizationKeys.ABOUT_RESOURCE_NOT_FOUND,
                                    resourceRelativePath));
+    }
+
+    private record ManifestLine(String attributeName, String localizationKey) {
     }
 
 }

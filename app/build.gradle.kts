@@ -1,3 +1,7 @@
+import org.gradle.process.ExecOperations
+import java.io.ByteArrayOutputStream
+import javax.inject.Inject
+
 plugins {
     java
     application
@@ -154,14 +158,66 @@ tasks.processResources {
     )
 }
 
+// Runs a Git command and fails with a clear message if Git is unavailable or the command fails.
+abstract class GitOutputSource : ValueSource<String, GitOutputSource.Parameters> {
+    interface Parameters : ValueSourceParameters {
+        val arguments: ListProperty<String>
+        val workingDirectory: DirectoryProperty
+    }
+
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
+    override fun obtain(): String {
+        val description = "git ${parameters.arguments.get().joinToString(" ")}"
+        val failure = "Cannot read build information from Git ('$description'). " +
+                "Building the JAR requires Git and a Git working tree."
+        val stdout = ByteArrayOutputStream()
+        val stderr = ByteArrayOutputStream()
+        val exitValue = try {
+            execOperations.exec {
+                commandLine(listOf("git") + parameters.arguments.get())
+                workingDir = parameters.workingDirectory.get().asFile
+                standardOutput = stdout
+                errorOutput = stderr
+                isIgnoreExitValue = true
+            }.exitValue
+        } catch (e: Exception) {
+            throw GradleException("$failure Cause: ${e.cause?.message ?: e.message}", e)
+        }
+        val output = stdout.toString(Charsets.UTF_8).trim()
+        if (exitValue != 0 || output.isEmpty()) {
+            val errorText = stderr.toString(Charsets.UTF_8).trim()
+            throw GradleException(
+                "$failure Exit value: $exitValue." + if (errorText.isEmpty()) "" else " Git error: $errorText"
+            )
+        }
+        return output
+    }
+}
+
+// Git values are read lazily, so only the jar task requires Git.
+fun gitOutput(vararg arguments: String): Provider<String> =
+    providers.of(GitOutputSource::class) {
+        parameters.arguments.set(arguments.toList())
+        parameters.workingDirectory.set(rootProject.layout.projectDirectory)
+    }
+
 tasks.jar {
+    // Reproducible archive: identical content yields a byte-identical JAR.
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
     manifest {
         attributes(
             "Implementation-Title" to "Extraterrestrial Pets Simulation",
             "Implementation-Version" to archiveVersion,
             "Implementation-Vendor" to "Mathias Kalb",
             "Implementation-URL" to "https://github.com/mkalb/etpetssim",
-            "Main-Class" to application.mainClass
+            "Main-Class" to application.mainClass,
+            "Created-By" to "Gradle ${gradle.gradleVersion}",
+            "Build-Jdk-Spec" to java.toolchain.languageVersion.map { it.toString() },
+            "Build-Revision" to gitOutput("rev-parse", "--short", "HEAD"),
+            "Build-Commit-Date" to gitOutput("log", "-1", "--format=%cI")
             // Note: Class-Path is intentionally omitted; classpath is set by distribution start scripts
         )
     }
