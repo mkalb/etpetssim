@@ -1,4 +1,26 @@
-# Extraterrestrial Pets Simulation
+<p align="center">
+  <img src="assets/icon/etpetssim.svg" width="128" height="128" alt="Extraterrestrial Pets Simulation icon">
+</p>
+
+<h1 align="center">Extraterrestrial Pets Simulation</h1>
+
+<p align="center">
+  Simple 2D grid simulations (toy models, agent-based models, and cellular automata) built with Java and JavaFX.
+  <br>
+  <a href="#simulations">Simulations</a>
+  ·
+  <a href="#run-the-app">Run the App</a>
+  ·
+  <a href="docs/simulations">Docs</a>
+  ·
+  <a href="https://github.com/mkalb/etpetssim/issues">Report an issue</a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mkalb/etpetssim" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/Java-27-ED8B00?logo=openjdk&logoColor=white" alt="Java 27">
+  <img src="https://img.shields.io/badge/JavaFX-27-5382A1" alt="JavaFX 27">
+</p>
 
 ## Overview
 

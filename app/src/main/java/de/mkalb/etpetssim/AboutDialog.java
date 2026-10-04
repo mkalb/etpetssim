@@ -11,6 +11,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.jar.*;
+import java.util.regex.*;
 
 /**
  * Displays the application's About dialog.
@@ -30,6 +31,7 @@ public final class AboutDialog {
             new ManifestLine("Build-Jdk-Spec", AppLocalizationKeys.ABOUT_MANIFEST_BUILD_JDK),
             new ManifestLine("Implementation-Vendor", AppLocalizationKeys.ABOUT_MANIFEST_VENDOR),
             new ManifestLine("Implementation-URL", AppLocalizationKeys.ABOUT_MANIFEST_URL));
+    private static final Pattern README_FIRST_SECTION_PATTERN = Pattern.compile("^## ", Pattern.MULTILINE);
 
     private final List<Image> icons;
     private final Font monospacedFont;
@@ -45,6 +47,21 @@ public final class AboutDialog {
     }
 
     /**
+     * Formats the README for plain-text display.
+     * <p>
+     * The README starts with an HTML header (logo, title, links, and badges) that is only
+     * useful when rendered. The text is therefore shown from the first line starting with
+     * {@code "## "}; text without such a line is returned unchanged.
+     *
+     * @param readme the README text
+     * @return the README text from its first second-level heading
+     */
+    static String formatReadmeText(String readme) {
+        Matcher matcher = README_FIRST_SECTION_PATTERN.matcher(readme);
+        return matcher.find() ? readme.substring(matcher.start()) : readme;
+    }
+
+    /**
      * Shows the About dialog.
      * <p>
      * The dialog contains tabs for version information, the README, the project
@@ -56,7 +73,7 @@ public final class AboutDialog {
                 formatManifestSummary());
         Tab tabReadme = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_README),
-                getResourceAsString("README.md"));
+                formatReadmeText(getResourceAsString("README.md")));
         Tab tabLicense = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_LICENSE),
                 getResourceAsString("LICENSE"));
