@@ -2,5 +2,5 @@ Library     | License                     | Version    | URL
 ------------|-----------------------------|------------|----------------------------------------------------------------
 Gradle      | Apache License 2.0          | 9.8.0      | https://gradle.org/license
 JavaFX      | GPL + Classpath Exception   | 27         | https://openjfx.io/
-JUnit       | EPL 2.0                     | 5.14.4     | https://junit.org
+JUnit       | EPL 2.0                     | 6.1.3      | https://junit.org
 JSpecify    | Apache License 2.0          | 1.0.1      | https://github.com/jspecify/jspecify/blob/main/LICENSE
