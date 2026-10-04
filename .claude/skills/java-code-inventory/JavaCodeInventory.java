@@ -425,7 +425,7 @@ public final class JavaCodeInventory {
                 }
                 memberKind = MemberKind.CANONICAL_CONSTRUCTOR;
                 visibility = typeVisibility;
-                parameterTypes = parameterTypes(recordComponents(classTree), compilationUnit, sourcePositions, source);
+                parameterTypes = parameterTypes(recordComponents(classTree), sourcePositions, source);
             }
             default -> {
                 return;
@@ -462,7 +462,7 @@ public final class JavaCodeInventory {
     ) {
         boolean constructor = methodTree.getReturnType() == null;
         boolean compactConstructor = constructor
-                && isCompactConstructor(methodTree, declaringClass, compilationUnit, sourcePositions, source);
+                && isCompactConstructor(methodTree, declaringClass, sourcePositions, source);
         MemberKind memberKind = constructor
                 ? (compactConstructor ? MemberKind.COMPACT_CONSTRUCTOR : MemberKind.CONSTRUCTOR)
                 : MemberKind.METHOD;
@@ -476,7 +476,7 @@ public final class JavaCodeInventory {
                 memberKind.name(),
                 compactConstructor
                         ? ""
-                        : parameterTypes(methodTree.getParameters(), compilationUnit, sourcePositions, source),
+                        : parameterTypes(methodTree.getParameters(), sourcePositions, source),
                 visibility(methodTree, declaringClass, constructor),
                 modifiers(methodTree),
                 constructor ? "" : methodTree.getReturnType().toString(),
@@ -496,28 +496,27 @@ public final class JavaCodeInventory {
     }
 
     private static int lineNumber(Tree tree, CompilationUnitTree compilationUnit, SourcePositions sourcePositions) {
-        long startPosition = sourcePositions.getStartPosition(compilationUnit, tree);
+        long startPosition = sourcePositions.getStartPosition(tree);
         return Math.toIntExact(compilationUnit.getLineMap().getLineNumber(startPosition));
     }
 
     private static boolean isCompactConstructor(
             MethodTree methodTree,
             ClassTree declaringClass,
-            CompilationUnitTree compilationUnit,
             SourcePositions sourcePositions,
             String source
     ) {
         if (declaringClass.getKind() != Tree.Kind.RECORD) {
             return false;
         }
-        long methodStart = sourcePositions.getStartPosition(compilationUnit, methodTree);
-        long bodyStart = sourcePositions.getStartPosition(compilationUnit, methodTree.getBody());
+        long methodStart = sourcePositions.getStartPosition(methodTree);
+        long bodyStart = sourcePositions.getStartPosition(methodTree.getBody());
         if ((methodStart < 0) || (bodyStart < methodStart)) {
             return false;
         }
         long headerStart = methodStart;
         for (AnnotationTree annotation : methodTree.getModifiers().getAnnotations()) {
-            long annotationEnd = sourcePositions.getEndPosition(compilationUnit, annotation);
+            long annotationEnd = sourcePositions.getEndPosition(annotation);
             if ((annotationEnd >= methodStart) && (annotationEnd <= bodyStart)) {
                 headerStart = Math.max(headerStart, annotationEnd);
             }
@@ -545,24 +544,22 @@ public final class JavaCodeInventory {
 
     private static String parameterTypes(
             List<? extends VariableTree> parameters,
-            CompilationUnitTree compilationUnit,
             SourcePositions sourcePositions,
             String source
     ) {
         return parameters.stream()
-                         .map(parameter -> parameterType(parameter, compilationUnit, sourcePositions, source))
+                         .map(parameter -> parameterType(parameter, sourcePositions, source))
                          .collect(Collectors.joining(", "));
     }
 
     private static String parameterType(
             VariableTree parameter,
-            CompilationUnitTree compilationUnit,
             SourcePositions sourcePositions,
             String source
     ) {
         String type = parameter.getType().toString();
-        long typeStart = sourcePositions.getStartPosition(compilationUnit, parameter.getType());
-        long typeEnd = sourcePositions.getEndPosition(compilationUnit, parameter.getType());
+        long typeStart = sourcePositions.getStartPosition(parameter.getType());
+        long typeEnd = sourcePositions.getEndPosition(parameter.getType());
         if ((typeStart < 0) || (typeEnd < typeStart)) {
             return type;
         }

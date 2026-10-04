@@ -17,7 +17,7 @@ the `.properties` files yourself first — the helper performs the full analysis
 java .claude/skills/i18n-consistency/I18nConsistencyCheck.java report
 ```
 
-`report` is the default, read-only mode. Requirements: Java 26 on the `PATH`.
+`report` is the default, read-only mode. Requirements: Java 27 on the `PATH`.
 No compilation, Gradle, or `JAVA_HOME` setup is needed.
 
 ## Interpreting the result
@@ -151,5 +151,5 @@ Only these two production bundles are checked:
 
 Java constants, unused keys, string literals, and test bundles are out of scope.
 
-The deterministic work is done by the Java 26 single-file source program
+The deterministic work is done by the Java 27 single-file source program
 [I18nConsistencyCheck.java](./I18nConsistencyCheck.java).

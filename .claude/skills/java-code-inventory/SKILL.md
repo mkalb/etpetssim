@@ -15,7 +15,7 @@ Run this command from the repository root in a terminal:
 java .claude/skills/java-code-inventory/JavaCodeInventory.java
 ```
 
-Requirements: Java 26 JDK on the `PATH`. The generator has no arguments.
+Requirements: Java 27 JDK on the `PATH`. The generator has no arguments.
 
 Run the command exactly once, without prior exploration or searches. The generator is deterministic and tested; its
 exit code and output are the complete result:

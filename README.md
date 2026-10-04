@@ -84,7 +84,7 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 Artificial intelligence (AI) tools are used during development to improve productivity and support code quality. In
 particular, Microsoft Copilot, GitHub Copilot, and Claude Code are used for code generation, documentation support,
 refactoring and optimization tasks, the application icon (SVG), and as a practical aid while learning and applying
-JavaFX and MVVM concepts. These tools also help accelerate exploration of implementation variants and architecture 
+JavaFX and MVVM concepts. These tools also help accelerate exploration of implementation variants and architecture
 options during day-to-day development.
 
 At the same time, all generated content is reviewed and adapted in the context of the project goals, codebase
@@ -120,7 +120,7 @@ Supporting Linux or macOS would require extending the platform detection in that
 ### Prerequisites
 
 - Windows x64
-- Java 26
+- Java 27
 - Git (building the JAR reads the revision and commit date from the Git working tree)
 
 ### Commands
@@ -170,8 +170,8 @@ This project uses the latest stable versions of all technologies whenever possib
 
 | Technology     | Version            | URL                                                       |
 |----------------|--------------------|-----------------------------------------------------------|
-| Java (OpenJDK) | Eclipse Temurin 26 | [adoptium.net](https://adoptium.net/)                     |
-| JavaFX         | 26.0.2             | [openjfx.io](https://openjfx.io/)                         |
+| Java (OpenJDK) | Eclipse Temurin 27 | [adoptium.net](https://adoptium.net/)                     |
+| JavaFX         | 27                 | [openjfx.io](https://openjfx.io/)                         |
 | Gradle         | 9.8.0              | [gradle.org](https://gradle.org/)                         |
 | IntelliJ IDEA  | 2026.x             | [www.jetbrains.com/idea](https://www.jetbrains.com/idea/) |
 

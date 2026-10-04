@@ -1,6 +1,6 @@
 # etpetssim
 
-etpetssim is a Java 26 / JavaFX 26 MVVM application for 2D grid-based simulations (agent-based models, cellular
+etpetssim is a Java 27 / JavaFX 27 MVVM application for 2D grid-based simulations (agent-based models, cellular
 automata, and toy models). The engine models grids of triangle, square, or hexagon cells with configurable edge behavior
 and neighbor modes.
 
@@ -41,7 +41,7 @@ Other locations:
 
 ## Platform Baseline
 
-- Target Java 26 and JavaFX 26; do not use preview features.
+- Target Java 27 and JavaFX 27; do not use preview features.
 - Use the Gradle Wrapper from the repository root (`gradlew.bat` on Windows, `./gradlew` in POSIX shells):
     - `app:compileJava` for compile checks.
     - `app:test` for tests; it excludes `@Tag("skill")` tests.
