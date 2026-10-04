@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="32" height="32">
+	<title>Extraterrestrial Pets Simulation</title>
+	<metadata>
+		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#">
+			<cc:Work rdf:about="">
+				<dc:title>Extraterrestrial Pets Simulation</dc:title>
+				<dc:description>Application icon, simplified variant; export sizes 20 to 48 px</dc:description>
+				<dc:creator>
+					<cc:Agent>
+						<dc:title>Mathias Kalb</dc:title>
+					</cc:Agent>
+				</dc:creator>
+				<dc:contributor>
+					<cc:Agent>
+						<dc:title>Claude Code (Anthropic), AI assistance</dc:title>
+					</cc:Agent>
+				</dc:contributor>
+				<dc:rights>
+					<cc:Agent>
+						<dc:title>Copyright (c) 2026 Mathias Kalb</dc:title>
+					</cc:Agent>
+				</dc:rights>
+				<dc:date>2026-10-04</dc:date>
+				<dc:source>https://github.com/mkalb/etpetssim</dc:source>
+				<cc:license rdf:resource="https://opensource.org/license/mit"/>
+			</cc:Work>
+		</rdf:RDF>
+	</metadata>
+	<defs>
+		<clipPath id="frame">
+			<rect x="2" y="2" width="124" height="124" rx="20"/>
+		</clipPath>
+	</defs>
+	<g clip-path="url(#frame)">
+		<rect width="128" height="128" fill="#263a4d"/>
+		<g fill="#35516b" stroke="#347ca3" stroke-width="3" stroke-linejoin="round">
+			<polygon points="12.04,-48.00 36.29,-34.00 36.29,-6.00 12.04,8.00 -12.21,-6.00 -12.21,-34.00"/>
+			<polygon points="64.00,-48.00 88.25,-34.00 88.25,-6.00 64.00,8.00 39.75,-6.00 39.75,-34.00"/>
+			<polygon points="115.96,-48.00 140.21,-34.00 140.21,-6.00 115.96,8.00 91.71,-6.00 91.71,-34.00"/>
+			<polygon points="-13.94,-3.00 10.31,11.00 10.31,39.00 -13.94,53.00 -38.19,39.00 -38.19,11.00"/>
+			<polygon points="38.02,-3.00 62.27,11.00 62.27,39.00 38.02,53.00 13.77,39.00 13.77,11.00"/>
+			<polygon points="89.98,-3.00 114.23,11.00 114.23,39.00 89.98,53.00 65.73,39.00 65.73,11.00"/>
+			<polygon points="141.94,-3.00 166.19,11.00 166.19,39.00 141.94,53.00 117.69,39.00 117.69,11.00"/>
+			<polygon points="12.04,42.00 36.29,56.00 36.29,84.00 12.04,98.00 -12.21,84.00 -12.21,56.00"/>
+			<polygon points="64.00,42.00 88.25,56.00 88.25,84.00 64.00,98.00 39.75,84.00 39.75,56.00"/>
+			<polygon points="115.96,42.00 140.21,56.00 140.21,84.00 115.96,98.00 91.71,84.00 91.71,56.00"/>
+			<polygon points="-13.94,87.00 10.31,101.00 10.31,129.00 -13.94,143.00 -38.19,129.00 -38.19,101.00"/>
+			<polygon points="38.02,87.00 62.27,101.00 62.27,129.00 38.02,143.00 13.77,129.00 13.77,101.00"/>
+			<polygon points="89.98,87.00 114.23,101.00 114.23,129.00 89.98,143.00 65.73,129.00 65.73,101.00"/>
+			<polygon points="141.94,87.00 166.19,101.00 166.19,129.00 141.94,143.00 117.69,129.00 117.69,101.00"/>
+		</g>
+	</g>
+	<rect x="2" y="2" width="124" height="124" rx="20" fill="none" stroke="#00eaff" stroke-width="4"/>
+	<g transform="translate(64 74) scale(1.1) translate(-64 -66)">
+		<g stroke="#431240" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M53 33 Q46 21 41 16 M75 33 Q82 21 87 16" fill="none"/>
+			<path fill="#ec62d2" d="M34 70 C34 42 48 29 64 29 C80 29 94 42 94 70 L94 100 Q89 108 84 100 Q79 108 74 100 Q69 108 64 100 Q59 108 54 100 Q49 108 44 100 Q39 108 34 100 Z"/>
+			<circle cx="40" cy="15" r="6" fill="#fac2f2" stroke-width="4"/>
+			<circle cx="88" cy="15" r="6" fill="#fac2f2" stroke-width="4"/>
+			<circle cx="64" cy="61" r="17" fill="#ffffff" stroke-width="4"/>
+		</g>
+		<circle cx="66.5" cy="63.5" r="9" fill="#1a2233"/>
+		<circle cx="70.5" cy="58.5" r="3" fill="#ffffff"/>
+		<path d="M57 86 Q64 92 71 86" fill="none" stroke="#431240" stroke-width="5" stroke-linecap="round"/>
+	</g>
+</svg>

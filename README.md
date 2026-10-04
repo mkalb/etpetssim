@@ -83,8 +83,9 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 
 Artificial intelligence (AI) tools are used during development to improve productivity and support code quality. In
 particular, Microsoft Copilot, GitHub Copilot, and Claude Code are used for code generation, documentation support,
-refactoring and optimization tasks, and as a practical aid while learning and applying JavaFX and MVVM concepts. These
-tools also help accelerate exploration of implementation variants and architecture options during day-to-day
+refactoring and optimization tasks, the application icon (SVG), and as a practical aid while learning and applying
+JavaFX and MVVM concepts. These tools also help accelerate exploration of implementation variants and architecture
+options during day-to-day
 development.
 
 At the same time, all generated content is reviewed and adapted in the context of the project goals, codebase

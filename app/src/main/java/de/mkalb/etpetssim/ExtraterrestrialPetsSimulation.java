@@ -27,11 +27,16 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * The application icon image paths used in the JavaFX application.
      * They are loaded from the resources and set on the application stage.
-     * It contains standard sizes: 16x16, 32x32, 64x64, and 128x128 pixels.
+     * It contains the small and large window icon sizes for display scaling from 100% to 200%
+     * (16x16 to 64x64 pixels) and 128x128 pixels.
      */
     private static final String[] APP_ICON_PATHS = {
             "etpetssim16.png",
+            "etpetssim20.png",
+            "etpetssim24.png",
             "etpetssim32.png",
+            "etpetssim40.png",
+            "etpetssim48.png",
             "etpetssim64.png",
             "etpetssim128.png"
     };

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+	<title>Extraterrestrial Pets Simulation</title>
+	<metadata>
+		<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#">
+			<cc:Work rdf:about="">
+				<dc:title>Extraterrestrial Pets Simulation</dc:title>
+				<dc:description>Application icon, master variant; export sizes 64 px and larger</dc:description>
+				<dc:creator>
+					<cc:Agent>
+						<dc:title>Mathias Kalb</dc:title>
+					</cc:Agent>
+				</dc:creator>
+				<dc:contributor>
+					<cc:Agent>
+						<dc:title>Claude Code (Anthropic), AI assistance</dc:title>
+					</cc:Agent>
+				</dc:contributor>
+				<dc:rights>
+					<cc:Agent>
+						<dc:title>Copyright (c) 2026 Mathias Kalb</dc:title>
+					</cc:Agent>
+				</dc:rights>
+				<dc:date>2026-10-04</dc:date>
+				<dc:source>https://github.com/mkalb/etpetssim</dc:source>
+				<cc:license rdf:resource="https://opensource.org/license/mit"/>
+			</cc:Work>
+		</rdf:RDF>
+	</metadata>
+	<defs>
+		<clipPath id="frame">
+			<rect x="4" y="4" width="120" height="120" rx="22"/>
+		</clipPath>
+	</defs>
+	<g clip-path="url(#frame)">
+		<rect width="128" height="128" fill="#1a2233"/>
+		<g fill="#263a4d" stroke="#347ca3" stroke-width="1.5" stroke-linejoin="round">
+			<polygon points="-9.61,-18.30 4.07,-10.40 4.07,5.40 -9.61,13.30 -23.30,5.40 -23.30,-10.40"/>
+			<polygon points="19.83,-18.30 33.52,-10.40 33.52,5.40 19.83,13.30 6.15,5.40 6.15,-10.40"/>
+			<polygon points="49.28,-18.30 62.96,-10.40 62.96,5.40 49.28,13.30 35.59,5.40 35.59,-10.40"/>
+			<polygon points="78.72,-18.30 92.41,-10.40 92.41,5.40 78.72,13.30 65.04,5.40 65.04,-10.40"/>
+			<polygon points="108.17,-18.30 121.85,-10.40 121.85,5.40 108.17,13.30 94.48,5.40 94.48,-10.40"/>
+			<polygon points="137.61,-18.30 151.30,-10.40 151.30,5.40 137.61,13.30 123.93,5.40 123.93,-10.40"/>
+			<polygon points="5.11,7.20 18.79,15.10 18.79,30.90 5.11,38.80 -8.57,30.90 -8.57,15.10"/>
+			<polygon points="34.56,7.20 48.24,15.10 48.24,30.90 34.56,38.80 20.87,30.90 20.87,15.10"/>
+			<polygon points="64.00,7.20 77.68,15.10 77.68,30.90 64.00,38.80 50.32,30.90 50.32,15.10"/>
+			<polygon points="93.44,7.20 107.13,15.10 107.13,30.90 93.44,38.80 79.76,30.90 79.76,15.10"/>
+			<polygon points="122.89,7.20 136.57,15.10 136.57,30.90 122.89,38.80 109.21,30.90 109.21,15.10"/>
+			<polygon points="-9.61,32.70 4.07,40.60 4.07,56.40 -9.61,64.30 -23.30,56.40 -23.30,40.60"/>
+			<polygon points="19.83,32.70 33.52,40.60 33.52,56.40 19.83,64.30 6.15,56.40 6.15,40.60"/>
+			<polygon points="49.28,32.70 62.96,40.60 62.96,56.40 49.28,64.30 35.59,56.40 35.59,40.60"/>
+			<polygon points="78.72,32.70 92.41,40.60 92.41,56.40 78.72,64.30 65.04,56.40 65.04,40.60"/>
+			<polygon points="108.17,32.70 121.85,40.60 121.85,56.40 108.17,64.30 94.48,56.40 94.48,40.60"/>
+			<polygon points="137.61,32.70 151.30,40.60 151.30,56.40 137.61,64.30 123.93,56.40 123.93,40.60"/>
+			<polygon points="5.11,58.20 18.79,66.10 18.79,81.90 5.11,89.80 -8.57,81.90 -8.57,66.10"/>
+			<polygon points="34.56,58.20 48.24,66.10 48.24,81.90 34.56,89.80 20.87,81.90 20.87,66.10"/>
+			<polygon points="64.00,58.20 77.68,66.10 77.68,81.90 64.00,89.80 50.32,81.90 50.32,66.10"/>
+			<polygon points="93.44,58.20 107.13,66.10 107.13,81.90 93.44,89.80 79.76,81.90 79.76,66.10"/>
+			<polygon points="122.89,58.20 136.57,66.10 136.57,81.90 122.89,89.80 109.21,81.90 109.21,66.10"/>
+			<polygon points="-9.61,83.70 4.07,91.60 4.07,107.40 -9.61,115.30 -23.30,107.40 -23.30,91.60"/>
+			<polygon points="19.83,83.70 33.52,91.60 33.52,107.40 19.83,115.30 6.15,107.40 6.15,91.60"/>
+			<polygon points="49.28,83.70 62.96,91.60 62.96,107.40 49.28,115.30 35.59,107.40 35.59,91.60"/>
+			<polygon points="78.72,83.70 92.41,91.60 92.41,107.40 78.72,115.30 65.04,107.40 65.04,91.60"/>
+			<polygon points="108.17,83.70 121.85,91.60 121.85,107.40 108.17,115.30 94.48,107.40 94.48,91.60"/>
+			<polygon points="137.61,83.70 151.30,91.60 151.30,107.40 137.61,115.30 123.93,107.40 123.93,91.60"/>
+			<polygon points="5.11,109.20 18.79,117.10 18.79,132.90 5.11,140.80 -8.57,132.90 -8.57,117.10"/>
+			<polygon points="34.56,109.20 48.24,117.10 48.24,132.90 34.56,140.80 20.87,132.90 20.87,117.10"/>
+			<polygon points="64.00,109.20 77.68,117.10 77.68,132.90 64.00,140.80 50.32,132.90 50.32,117.10"/>
+			<polygon points="93.44,109.20 107.13,117.10 107.13,132.90 93.44,140.80 79.76,132.90 79.76,117.10"/>
+			<polygon points="122.89,109.20 136.57,117.10 136.57,132.90 122.89,140.80 109.21,132.90 109.21,117.10"/>
+		</g>
+		<polygon points="64.00,58.20 77.68,66.10 77.68,81.90 64.00,89.80 50.32,81.90 50.32,66.10" fill="#35516b" stroke="#00eaff" stroke-width="2.5"/>
+	</g>
+	<rect x="4" y="4" width="120" height="120" rx="22" fill="none" stroke="#00eaff" stroke-width="3"/>
+	<g transform="translate(0 4)">
+		<g stroke="#431240" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M53 33 Q46 21 41 16 M75 33 Q82 21 87 16" fill="none"/>
+			<path fill="#ec62d2" d="M34 70 C34 42 48 29 64 29 C80 29 94 42 94 70 L94 100 Q89 108 84 100 Q79 108 74 100 Q69 108 64 100 Q59 108 54 100 Q49 108 44 100 Q39 108 34 100 Z"/>
+		</g>
+		<circle cx="40" cy="15" r="5" fill="#fac2f2" stroke="#431240" stroke-width="3"/>
+		<circle cx="88" cy="15" r="5" fill="#fac2f2" stroke="#431240" stroke-width="3"/>
+		<path d="M42 56 C44 44 52 37 60 35" fill="none" stroke="#fac2f2" stroke-width="4" stroke-linecap="round"/>
+		<circle cx="64" cy="61" r="16" fill="#ffffff" stroke="#431240" stroke-width="3"/>
+		<circle cx="66.08" cy="63.08" r="8.0" fill="#1a2233"/>
+		<circle cx="69.76" cy="58.92" r="2.72" fill="#ffffff"/>
+		<path d="M58 85 Q64 90 70 85" fill="none" stroke="#431240" stroke-width="3" stroke-linecap="round"/>
+	</g>
+</svg>
