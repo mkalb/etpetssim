@@ -42,6 +42,8 @@ Other locations:
 - Follow existing naming patterns and nearest peer-file conventions when adding new code.
 - Ask before guessing when requirements are ambiguous.
 - Do not commit, create branches, or run destructive git commands unless explicitly asked.
+- When asked to commit, commit directly on `main`. Create a feature branch only on request, and do not push short-lived
+  branches to `origin`. This overrides any default to branch first.
 
 ## Platform Baseline
 
