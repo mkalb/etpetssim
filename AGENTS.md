@@ -18,6 +18,7 @@ Other locations:
 - `app/src/main/resources`: `css`, `i18n` (`messages_en_US`, `messages_de_DE`), and `images`.
 - `app/src/test/java`: JUnit tests and test support.
 - `docs/simulations`: user-facing simulation docs.
+- `docs/development`: developer documentation (versioning and releases).
 - `docs/planning`: planning documents and the generated `JavaTypeInventory.csv` and `JavaMethodInventory.csv`. The
   inventories may be outdated; do not update them with code changes. They are regenerated on demand with the
   `java-code-inventory` skill.
@@ -51,6 +52,14 @@ Other locations:
     - `app:skillTest` after changing skill scripts in `.claude/skills`.
     - `app:run` only when running the JavaFX application is necessary.
 - Run relevant checks when practical; if verification is skipped or blocked, say so briefly.
+
+## Versioning and Releases
+
+- The project version is derived from Git tags `vMAJOR.MINOR.PATCH[-prerelease]` (SemVer); never edit it in the build
+  files.
+- Create a release tag only on explicit request: annotated, on the merge commit in `main`, with a clean working tree.
+  Push it only after confirmation.
+- Read `docs/development/versioning-and-releases.md` before creating a release.
 
 ## Encoding and File Conventions
 

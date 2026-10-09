@@ -7,7 +7,6 @@ plugins {
 }
 
 group = "de.mkalb.etpetssim"
-version = "0.0.1-SNAPSHOT"
 val baseName = "ExtraterrestrialPetsSimulation"
 val applicationModuleName = "de.mkalb.etpetssim"
 // JUnit modules that the application module reads when the tests are patched into it.
@@ -161,6 +160,7 @@ abstract class GitOutputSource : ValueSource<String, GitOutputSource.Parameters>
     interface Parameters : ValueSourceParameters {
         val arguments: ListProperty<String>
         val workingDirectory: DirectoryProperty
+        val failureHint: Property<String>
     }
 
     @get:Inject
@@ -169,7 +169,7 @@ abstract class GitOutputSource : ValueSource<String, GitOutputSource.Parameters>
     override fun obtain(): String {
         val description = "git ${parameters.arguments.get().joinToString(" ")}"
         val failure = "Cannot read build information from Git ('$description'). " +
-                "Building the JAR requires Git and a Git working tree."
+                "Building the JAR or distribution requires Git and a Git working tree."
         val stdout = ByteArrayOutputStream()
         val stderr = ByteArrayOutputStream()
         val exitValue = try {
@@ -186,8 +186,11 @@ abstract class GitOutputSource : ValueSource<String, GitOutputSource.Parameters>
         val output = stdout.toString(Charsets.UTF_8).trim()
         if (exitValue != 0 || output.isEmpty()) {
             val errorText = stderr.toString(Charsets.UTF_8).trim()
+            val hint = parameters.failureHint.get()
             throw GradleException(
-                "$failure Exit value: $exitValue." + if (errorText.isEmpty()) "" else " Git error: $errorText"
+                "$failure Exit value: $exitValue." +
+                        (if (errorText.isEmpty()) "" else " Git error: $errorText") +
+                        (if (hint.isEmpty()) "" else " $hint")
             )
         }
         return output
@@ -195,11 +198,49 @@ abstract class GitOutputSource : ValueSource<String, GitOutputSource.Parameters>
 }
 
 // Git values are read lazily, so only the jar task requires Git.
-fun gitOutput(vararg arguments: String): Provider<String> =
+fun gitOutput(vararg arguments: String, failureHint: String = ""): Provider<String> =
     providers.of(GitOutputSource::class) {
         parameters.arguments.set(arguments.toList())
         parameters.workingDirectory.set(rootProject.layout.projectDirectory)
+        parameters.failureHint.set(failureHint)
     }
+
+// Project version: derived from the latest reachable release tag 'vMAJOR.MINOR.PATCH[-prerelease]' (SemVer).
+// See docs/development/versioning-and-releases.md.
+//   Tagged commit:    1.2.3 or 1.2.3-rc.1
+//   Untagged commit:  1.2.4-SNAPSHOT (next patch of the tag; the core version for a pre-release tag)
+//   Tracked changes:  '-dirty' is appended
+fun deriveVersion(describeOutput: String): String {
+    val describe = Regex("""^(.+)-(\d+)-g[0-9a-f]+(-dirty)?$""").matchEntire(describeOutput)
+        ?: throw GradleException("Unexpected output of 'git describe': '$describeOutput'.")
+    val (tag, commitsSinceTag, dirty) = describe.destructured
+    val number = """(0|[1-9]\d*)"""
+    val identifier = """[0-9A-Za-z-]+"""
+    val semVer = Regex("""^v$number\.$number\.$number(-$identifier(?:\.$identifier)*)?$""").matchEntire(tag)
+        ?: throw GradleException(
+            "Git tag '$tag' is not a valid release tag 'vMAJOR.MINOR.PATCH[-prerelease]'. " +
+                    "See docs/development/versioning-and-releases.md."
+        )
+    val (major, minor, patch, preRelease) = semVer.destructured
+    val version = when {
+        commitsSinceTag == "0" -> "$major.$minor.$patch$preRelease"
+        preRelease.isNotEmpty() -> "$major.$minor.$patch-SNAPSHOT"
+        else -> "$major.$minor.${patch.toInt() + 1}-SNAPSHOT"
+    }
+    return if (dirty.isEmpty()) version else "$version-dirty"
+}
+
+val projectVersion: Provider<String> = gitOutput(
+    "describe", "--tags", "--match", "v[0-9]*", "--long", "--dirty",
+    failureHint = "No release tag 'vMAJOR.MINOR.PATCH' is reachable from HEAD " +
+            "(shallow clones may lack tags). See docs/development/versioning-and-releases.md."
+).map { deriveVersion(it) }
+
+// The version is applied to the archive tasks (jar, distZip, distTar) instead of project.version, because Gradle reads
+// project.version for every dependency resolution. This way only the archive tasks require Git.
+tasks.withType<AbstractArchiveTask>().configureEach {
+    archiveVersion = projectVersion
+}
 
 tasks.jar {
     // Reproducible archive: identical content yields a byte-identical JAR.
