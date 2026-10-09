@@ -181,6 +181,19 @@ Flags can also take a boolean value, e.g. `--log-console=false`. Arguments must 
 are
 passed to Gradle as one quoted string, separated by spaces.
 
+### Run the Distribution
+
+The distribution ZIP built by `.\gradlew.bat :app:distZip` can be run without Gradle. It requires Java 27 on the `PATH`
+or in `JAVA_HOME`.
+
+1. Extract the ZIP.
+2. Open a terminal in the extracted directory (the one that contains `bin` and `lib`).
+3. Start the application from there, optionally with the arguments listed above:
+
+```powershell
+.\bin\ExtraterrestrialPetsSimulation.bat --locale=en --log-console
+```
+
 ## Technologies Used
 
 - **Java**: The primary programming language used throughout the project.
