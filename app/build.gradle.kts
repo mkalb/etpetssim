@@ -3,7 +3,6 @@ import java.io.ByteArrayOutputStream
 plugins {
     java
     application
-    id("project-report")
 }
 
 group = "de.mkalb.etpetssim"
@@ -132,27 +131,43 @@ tasks.register<Test>("skillTest") {
     systemProperty("javaCodeInventory.source", javaCodeInventorySource.asFile.absolutePath)
 }
 
+// Files that the application reads at runtime (About dialog) and that the distribution ships at its root.
+val rootDocumentFiles = files(
+    rootProject.file("README.md"),
+    rootProject.file("LICENSE"),
+    rootProject.file("THIRD-PARTY-LICENSES")
+)
+
 distributions {
     main {
         distributionBaseName.set(baseName)
         contents {
-            from(rootProject.file("README.md"))
-            from(rootProject.file("LICENSE"))
-            from(rootProject.file("THIRD-PARTY-LICENSES"))
-            from(rootProject.file("docs/simulations/")) {
-                into("docs/simulations/")
+            from(rootDocumentFiles)
+            // The simulation docs are a manual in the distribution only (not in the JAR).
+            from(rootProject.file("docs/simulations")) {
+                into("docs/simulations")
+            }
+            // Images referenced by relative links in README.md and docs/simulations/*.md.
+            from(rootProject.file("assets")) {
+                into("assets")
             }
         }
     }
 }
 
+// Only Windows x64 is supported, so the Unix start script is not needed.
+tasks.distZip {
+    val unixStartScriptName = baseName
+    exclude { it.name == unixStartScriptName }
+}
+
 tasks.processResources {
-    from(
-        rootProject.layout.projectDirectory.file("README.md"),
-        rootProject.layout.projectDirectory.file("LICENSE"),
-        rootProject.layout.projectDirectory.file("THIRD-PARTY-LICENSES"),
-        rootProject.layout.projectDirectory.dir("/docs/simulations/")
-    )
+    from(rootDocumentFiles)
+}
+
+// The distribution is shipped as ZIP only.
+tasks.distTar {
+    enabled = false
 }
 
 // Runs a Git command and fails with a clear message if Git is unavailable or the command fails.
@@ -257,7 +272,7 @@ tasks.jar {
             "Build-Jdk-Spec" to java.toolchain.languageVersion.map { it.toString() },
             "Build-Revision" to gitOutput("rev-parse", "--short", "HEAD"),
             "Build-Commit-Date" to gitOutput("log", "-1", "--format=%cI")
-            // Note: Class-Path is intentionally omitted; classpath is set by distribution start scripts
+            // Note: Class-Path is intentionally omitted; the distribution start scripts use the module path
         )
     }
 }
