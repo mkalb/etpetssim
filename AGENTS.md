@@ -90,3 +90,16 @@ Other locations:
 ## Reviews
 
 - For code reviews, lead with bugs, regressions, risks, and missing tests before summaries.
+- Do not run Gradle during a review unless explicitly asked; a review without code changes needs no build or test run.
+- Agents exchange reviews through `.review/review.md`. The `.review/` folder is ignored by Git; create the folder and
+  file if they are missing.
+- When asked to write a review to the file, only append one block at the end. Never change or remove existing blocks, and
+  do not modify source files or run `git add`, `git commit`, or `git stash`.
+- Start each block with the header `## Review YYYY-MM-DD - <agent and model> - <scope>`, where the scope is the staged
+  changes, a commit or range, or specific files. List findings by severity, each with file, symbol or quoted line,
+  problem, and suggested fix; line numbers may become outdated.
+- When asked to process the review file, verify each finding against the code, fix the valid ones, and report rejected
+  ones with a reason in the chat. Delete a block once all its findings are resolved or rejected; the file may become
+  empty.
+- When the user asks the editing agent to review its own changes directly, report the result in the chat and do not write
+  it to the file.
