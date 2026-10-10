@@ -1,6 +1,6 @@
 source_set,source_path,package_name,type_name,type_kind,extends_types,implements_types,permits_types,visibility,modifiers,annotations,type_parameters,line_number
-"main","app/src/main/java/de/mkalb/etpetssim/AboutDialog.java","de.mkalb.etpetssim","AboutDialog","CLASS","","","","public","final","","","21"
-"main","app/src/main/java/de/mkalb/etpetssim/AboutDialog.java","de.mkalb.etpetssim","AboutDialog.ManifestLine","RECORD","","","","private","","","","163"
+"main","app/src/main/java/de/mkalb/etpetssim/AboutDialog.java","de.mkalb.etpetssim","AboutDialog","CLASS","","","","public","final","","","22"
+"main","app/src/main/java/de/mkalb/etpetssim/AboutDialog.java","de.mkalb.etpetssim","AboutDialog.ManifestLine","RECORD","","","","private","","","","180"
 "main","app/src/main/java/de/mkalb/etpetssim/AppLauncher.java","de.mkalb.etpetssim","AppLauncher","CLASS","","","","public","final","","","17"
 "main","app/src/main/java/de/mkalb/etpetssim/ExtraterrestrialPetsSimulation.java","de.mkalb.etpetssim","ExtraterrestrialPetsSimulation","CLASS","Application","","","public","final","","","25"
 "main","app/src/main/java/de/mkalb/etpetssim/SimulationType.java","de.mkalb.etpetssim","SimulationType","ENUM","","","","public","","@SuppressWarnings(""SpellCheckingInspection"")","","14"
@@ -384,6 +384,7 @@ source_set,source_path,package_name,type_name,type_kind,extends_types,implements
 "main","app/src/main/java/de/mkalb/etpetssim/ui/SimulationTimer.java","de.mkalb.etpetssim.ui","SimulationTimer","CLASS","","","","public","final","","","20"
 "test","app/src/test/java/de/mkalb/FxTestSupport.java","de.mkalb","FxTestSupport","CLASS","","","","public","final","","","19"
 "test","app/src/test/java/de/mkalb/FxTestSupportTest.java","de.mkalb","FxTestSupportTest","CLASS","","","","package-private","final","@Execution(ExecutionMode.SAME_THREAD)","","11"
+"test","app/src/test/java/de/mkalb/etpetssim/AboutDialogTest.java","de.mkalb.etpetssim","AboutDialogTest","CLASS","","","","package-private","final","@SuppressWarnings(""HardcodedLineSeparator"")","","7"
 "test","app/src/test/java/de/mkalb/etpetssim/ExtraterrestrialPetsSimulationTest.java","de.mkalb.etpetssim","ExtraterrestrialPetsSimulationTest","CLASS","","","","package-private","final","@Execution(ExecutionMode.SAME_THREAD)","","20"
 "test","app/src/test/java/de/mkalb/etpetssim/ExtraterrestrialPetsSimulationTest.java","de.mkalb.etpetssim","ExtraterrestrialPetsSimulationTest.TerminationAwaitOutcome","ENUM","","","","private","","","","192"
 "test","app/src/test/java/de/mkalb/etpetssim/ExtraterrestrialPetsSimulationTest.java","de.mkalb.etpetssim","ExtraterrestrialPetsSimulationTest.CountingMainView","CLASS","","SimulationMainView","","private","static final","","","199"
