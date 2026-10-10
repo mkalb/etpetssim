@@ -83,6 +83,9 @@ Other locations:
 - Write all repository files (code comments, Javadoc, log and exception messages, Markdown, skills, prompts, and
   scripts, including their output) and all Git and GitHub text (e.g., commit messages, issues, and pull requests) in
   English (en_US), regardless of the language of the request. Chat replies may follow the request language.
+- Do not translate English repository or GitHub text into the chat language. When reporting such text in chat, either
+  quote it verbatim or give a short summary or explanation in the chat language; the user can read the file, diff,
+  or issue directly.
 - Keep user-facing text in `i18n.messages` resource bundles.
 - Use constants for localization keys instead of string literals: app-wide keys in `core.AppLocalizationKeys`,
   simulation-specific keys as constants in the class that uses them.
