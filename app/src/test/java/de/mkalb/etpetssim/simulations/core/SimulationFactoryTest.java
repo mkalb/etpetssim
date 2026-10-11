@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core;
 
 import de.mkalb.FxTestSupport;
-import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayMainView;
 import de.mkalb.etpetssim.simulations.etpets.view.EtpetsMainView;

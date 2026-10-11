@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.core;
 
 import de.mkalb.FxTestSupport;
-import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.NonNull;

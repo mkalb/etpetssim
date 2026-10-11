@@ -25,7 +25,7 @@ stop and ask for one — do **not** guess or document all simulations.
 
 Resolve the name to a simulation by matching it (case-insensitively) against the
 CLI aliases in
-[`SimulationType.java`](../../../app/src/main/java/de/mkalb/etpetssim/SimulationType.java)
+[`SimulationType.java`](../../../app/src/main/java/de/mkalb/etpetssim/simulations/core/SimulationType.java)
 (the `cliArguments` list of each constant) or the simulation package name under
 `app/src/main/java/de/mkalb/etpetssim/simulations/`.
 

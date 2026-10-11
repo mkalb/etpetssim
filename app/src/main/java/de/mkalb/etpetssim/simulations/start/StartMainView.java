@@ -1,8 +1,7 @@
 package de.mkalb.etpetssim.simulations.start;
 
-import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.core.AppLocalization;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.*;
 import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.ui.*;
 import javafx.scene.control.*;

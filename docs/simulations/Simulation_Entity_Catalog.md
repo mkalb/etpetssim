@@ -5,7 +5,7 @@ properties.
 
 `STARTSCREEN` is excluded because it has no entity package.
 
-Simulation types are defined in `app/src/main/java/de/mkalb/etpetssim/SimulationType.java`.
+Simulation types are defined in `app/src/main/java/de/mkalb/etpetssim/simulations/core/SimulationType.java`.
 
 ## ET_PETS - ET Pets
 
