@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.core;
 
-import de.mkalb.etpetssim.testsupport.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.image.Image;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
@@ -21,7 +21,7 @@ final class AppResourcesTest {
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     @SuppressWarnings("DataFlowIssue")

@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
 import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
-import de.mkalb.etpetssim.testsupport.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
@@ -25,7 +25,7 @@ final class AbstractMainViewTest {
         if (!AppLocalization.isInitialized()) {
             AppLocalization.initialize("en_US", Locale.US);
         }
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     private static Object getNullableField(Object target, String fieldName) {
@@ -49,7 +49,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testBuildMainRegionUsesObservationWidthSplit() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             BorderPane mainRegion = assertInstanceOf(BorderPane.class, view.buildMainRegion());
             SplitPane centerSplitPane = assertInstanceOf(SplitPane.class, mainRegion.getCenter());
@@ -65,7 +65,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testBuildMainRegionReturnsSameRegionWhenCalledRepeatedly() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
 
             var firstRegion = view.buildMainRegion();
@@ -77,7 +77,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testShutdownUnregistersNotificationListener() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             view.buildMainRegion();
 
@@ -89,7 +89,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testShutdownUnregistersObservationListener() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             AbstractObservationView<?, ?, ?, ?> observationView = assertInstanceOf(AbstractObservationView.class,
                     getNonNullField(view, "observationView"));
@@ -102,7 +102,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testShutdownForwardsViewModelTerminationHandle() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             SimulationMainViewModel viewModel = assertInstanceOf(SimulationMainViewModel.class,
                     getNonNullField(view, "viewModel"));
@@ -115,7 +115,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testShutdownRemainsIdempotentAfterRepeatedBuild() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             view.buildMainRegion();
             view.buildMainRegion();

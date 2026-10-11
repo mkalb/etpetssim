@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.simulations.core.shared.*;
-import de.mkalb.etpetssim.testsupport.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
@@ -16,12 +16,12 @@ final class DefaultControlViewModelTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     @Test
     void testControlConfigurationDisabledStates() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var state = new SimpleObjectProperty<>(SimulationState.READY);
             var viewModel = new DefaultControlViewModel(state);
 
@@ -40,7 +40,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testControlConfigurationEnabledStates() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var state = new SimpleObjectProperty<>(SimulationState.INITIALIZING);
             var viewModel = new DefaultControlViewModel(state);
 
@@ -58,7 +58,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testDefaultInputValues() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             assertAll(
@@ -73,7 +73,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testWithMinStepDuration() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var viewModel = DefaultControlViewModel.withMinStepDuration(
                     new SimpleObjectProperty<>(SimulationState.READY));
 
@@ -83,7 +83,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testRequestButtonsSetRequestFlags() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             assertAll(
@@ -102,7 +102,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testSimulationModePredicates() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             for (SimulationMode simulationMode : SimulationMode.values()) {
@@ -120,7 +120,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testStartPausedPredicate() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             for (SimulationStartMode startMode : SimulationStartMode.values()) {
@@ -132,7 +132,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testTerminationCheckedPredicate() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             for (SimulationTerminationCheckMode terminationCheckMode : SimulationTerminationCheckMode.values()) {
@@ -144,7 +144,7 @@ final class DefaultControlViewModelTest {
 
     @Test
     void testSimulationStatePropertyIsForwarded() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             var state = new SimpleObjectProperty<>(SimulationState.READY);
             var viewModel = new DefaultControlViewModel(state);
 

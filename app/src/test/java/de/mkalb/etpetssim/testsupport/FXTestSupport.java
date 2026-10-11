@@ -16,7 +16,7 @@ import java.util.function.*;
  * It is designed to be used in test environments where JavaFX components need to be
  * manipulated or tested.
  */
-public final class FxTestSupport {
+public final class FXTestSupport {
 
     /**
      * Default timeout in seconds for JavaFX operations.
@@ -29,7 +29,7 @@ public final class FxTestSupport {
     /**
      * Private constructor to prevent instantiation.
      */
-    private FxTestSupport() {
+    private FXTestSupport() {
     }
 
     /**

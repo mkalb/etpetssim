@@ -3,7 +3,7 @@ package de.mkalb.etpetssim;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.core.*;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
-import de.mkalb.etpetssim.testsupport.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
@@ -22,7 +22,7 @@ final class ExtraterrestrialPetsSimulationTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     private static void setCurrentSimulationInstance(ExtraterrestrialPetsSimulation application,
@@ -57,7 +57,7 @@ final class ExtraterrestrialPetsSimulationTest {
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
         AtomicReference<Region> regionRef = new AtomicReference<>();
 
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Region region = new Region();
             regionRef.set(region);
             setCurrentSimulationInstance(application,
@@ -80,7 +80,7 @@ final class ExtraterrestrialPetsSimulationTest {
         CountingMainView view = new CountingMainView();
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Region region = new Region();
             setCurrentSimulationInstance(application,
                     new SimulationInstance(SimulationType.SNAKE, view, region));
@@ -98,7 +98,7 @@ final class ExtraterrestrialPetsSimulationTest {
         CountingMainView view = new CountingMainView(termination);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Region region = new Region();
             setCurrentSimulationInstance(application,
                     new SimulationInstance(SimulationType.FOREST_FIRE, view, region));
@@ -119,7 +119,7 @@ final class ExtraterrestrialPetsSimulationTest {
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
         AtomicBoolean interrupted = new AtomicBoolean();
 
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             try {
                 setCurrentSimulationInstance(application,
                         new SimulationInstance(SimulationType.SUGARSCAPE, view, new Region()));
@@ -144,7 +144,7 @@ final class ExtraterrestrialPetsSimulationTest {
         CountingTermination pendingTermination = new CountingTermination(TerminationAwaitOutcome.TERMINATED);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             try {
                 setCurrentSimulationInstance(application,
                         new SimulationInstance(SimulationType.SUGARSCAPE, new CountingMainView(interruptedTermination), new Region()));
@@ -172,7 +172,7 @@ final class ExtraterrestrialPetsSimulationTest {
         CountingTermination secondTermination = new CountingTermination(TerminationAwaitOutcome.TERMINATED);
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             setCurrentSimulationInstance(application,
                     new SimulationInstance(SimulationType.CONWAYS_LIFE, new CountingMainView(firstTermination), new Region()));
             invokeShutdownCurrentSimulation(application);

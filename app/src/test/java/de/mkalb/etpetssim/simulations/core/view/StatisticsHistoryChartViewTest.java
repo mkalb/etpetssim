@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
-import de.mkalb.etpetssim.testsupport.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.chart.*;
 import org.junit.jupiter.api.*;
@@ -40,7 +40,7 @@ final class StatisticsHistoryChartViewTest {
         if (!AppLocalization.isInitialized()) {
             AppLocalization.initialize("en_US", Locale.US);
         }
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     // --- Structure: number of sub-charts and series ---
@@ -49,7 +49,7 @@ final class StatisticsHistoryChartViewTest {
     void testWatorMetricsProduceOneChartWithTwoSeries() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        List<LineChart<Number, Number>> charts = FxTestSupport.supplyAndWaitNonNull(() ->
+        List<LineChart<Number, Number>> charts = FXTestSupport.supplyAndWaitNonNull(() ->
                 new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp)
                         .chartsForTest());
 
@@ -62,7 +62,7 @@ final class StatisticsHistoryChartViewTest {
     void testForestMetricsProducesTwoChartsWithOneSeriesEach() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        List<LineChart<Number, Number>> charts = FxTestSupport.supplyAndWaitNonNull(() ->
+        List<LineChart<Number, Number>> charts = FXTestSupport.supplyAndWaitNonNull(() ->
                 new StatisticsHistoryChartView(ForestStatistics.metrics(), historyProp)
                         .chartsForTest());
 
@@ -78,7 +78,7 @@ final class StatisticsHistoryChartViewTest {
     void testSectionHiddenWhenNoData() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Boolean managed = FxTestSupport.supplyAndWaitNonNull(() ->
+        Boolean managed = FXTestSupport.supplyAndWaitNonNull(() ->
                 new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp)
                         .titledPane().isManaged());
 
@@ -90,7 +90,7 @@ final class StatisticsHistoryChartViewTest {
     void testSectionAndChartVisibleAfterDataArrives() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Boolean[] results = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Boolean[] results = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
 
             historyProp.set(List.of(sample(1, Map.of(
@@ -114,7 +114,7 @@ final class StatisticsHistoryChartViewTest {
     void testChartVisibleImmediatelyEvenWhenAllValuesAreZero() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Boolean managed = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(ForestStatistics.metrics(), historyProp);
 
             historyProp.set(List.of(sample(0, Map.of(
@@ -133,7 +133,7 @@ final class StatisticsHistoryChartViewTest {
     void testSectionHiddenAgainAfterReset() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Boolean managed = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
 
             historyProp.set(List.of(sample(1, Map.of(
@@ -154,7 +154,7 @@ final class StatisticsHistoryChartViewTest {
     void testShutdownUnregistersHistoryListener() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Boolean managed = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
             view.shutdown();
             historyProp.set(List.of(sample(1, Map.of(
@@ -178,7 +178,7 @@ final class StatisticsHistoryChartViewTest {
         );
         var historyProp = new SimpleObjectProperty<>(history);
 
-        Integer dataCount = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Integer dataCount = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
             // fishCells is the first series in the PRIMARY chart
             return view.chartsForTest().getFirst().getData().getFirst().getData().size();
@@ -196,7 +196,7 @@ final class StatisticsHistoryChartViewTest {
         );
         var historyProp = new SimpleObjectProperty<>(history);
 
-        Integer dataCount = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Integer dataCount = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
             return view.chartsForTest().getFirst().getData().getFirst().getData().size();
         });
@@ -213,7 +213,7 @@ final class StatisticsHistoryChartViewTest {
         );
         var historyProp = new SimpleObjectProperty<>(history);
 
-        List<Number> xValues = FxTestSupport.supplyAndWaitNonNull(() -> {
+        List<Number> xValues = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(2), historyProp);
             return view.chartsForTest().getFirst().getData().getFirst().getData().stream()
                        .map(XYChart.Data::getXValue)
@@ -232,7 +232,7 @@ final class StatisticsHistoryChartViewTest {
         );
         var historyProp = new SimpleObjectProperty<>(history);
 
-        Double[] xBounds = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double[] xBounds = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(2), historyProp);
             var xAxis = (ValueAxis<Number>) view.chartsForTest().getFirst().getXAxis();
             return new Double[]{xAxis.getLowerBound(), xAxis.getUpperBound()};
@@ -251,7 +251,7 @@ final class StatisticsHistoryChartViewTest {
                 WatorStatistics.KEY_SHARK_CELLS, 50.0)));
         var historyProp = new SimpleObjectProperty<>(history);
 
-        Double yUpper = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
             return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
         });
@@ -264,7 +264,7 @@ final class StatisticsHistoryChartViewTest {
         var history = List.of(sample(0, Map.of(TEST_KEY, 0.0)));
         var historyProp = new SimpleObjectProperty<>(history);
 
-        Double yUpper = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(100), historyProp);
             return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
         });
@@ -276,7 +276,7 @@ final class StatisticsHistoryChartViewTest {
     void testCeilingGrowsImmediatelyWhenWindowedMaxIncreases() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Double yUpper = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(100), historyProp);
 
             historyProp.set(List.of(sample(0, Map.of(TEST_KEY, 50.0))));
@@ -294,7 +294,7 @@ final class StatisticsHistoryChartViewTest {
     void testCeilingDoesNotShrinkWhenLatestValueAboveThreshold() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Double yUpper = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(100), historyProp);
 
             historyProp.set(List.of(sample(0, Map.of(TEST_KEY, 500.0))));
@@ -313,7 +313,7 @@ final class StatisticsHistoryChartViewTest {
     void testCeilingShrinksAfterLatestValueBelowThresholdAndPeakLeavesWindow() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Double yUpper = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(2), historyProp);
 
             historyProp.set(List.of(sample(0, Map.of(TEST_KEY, 500.0))));
@@ -341,7 +341,7 @@ final class StatisticsHistoryChartViewTest {
     void testCeilingResetsToFreshValueAfterHistoryEmptied() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
-        Double yUpper = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(100), historyProp);
 
             historyProp.set(List.of(sample(0, Map.of(TEST_KEY, 500.0))));
@@ -365,7 +365,7 @@ final class StatisticsHistoryChartViewTest {
                 WatorStatistics.KEY_SHARK_CELLS, 50.0)));
         var historyProp = new SimpleObjectProperty<>(history);
 
-        Double[] xBounds = FxTestSupport.supplyAndWaitNonNull(() -> {
+        Double[] xBounds = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
             var xAxis = (ValueAxis<Number>) view.chartsForTest().getFirst().getXAxis();
             return new Double[]{xAxis.getLowerBound(), xAxis.getUpperBound()};

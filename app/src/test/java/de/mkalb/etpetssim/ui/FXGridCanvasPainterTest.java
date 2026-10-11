@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.engine.*;
-import de.mkalb.etpetssim.testsupport.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.geometry.*;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
@@ -23,7 +23,7 @@ final class FXGridCanvasPainterTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -49,7 +49,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testConstructorInitializesAccessorsAndGridChecks() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             GridStructure structure = createStructure(CellShape.SQUARE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, structure, EDGE_LENGTH);
@@ -71,7 +71,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testConstructorRejectsTooSmallCellEdgeLength() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             GridStructure structure = createStructure(CellShape.SQUARE);
 
@@ -84,7 +84,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testFillAndClearCanvasBackgroundAffectSnapshotPixels() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
 
@@ -102,7 +102,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testFillAndClearGridBackgroundAffectOnlyGridArea() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
 
@@ -122,7 +122,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testDrawPixelDirectAndDrawPixelRectRespectBoundsAndNullPaint() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
 
@@ -143,7 +143,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testDrawRectangleCirclePolygonAndPolylineCanRenderVisiblePixels() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
 
@@ -163,7 +163,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testDrawCellAndShapeHelpersCanRenderCells() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
 
@@ -187,7 +187,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testDrawTriangleAndHexagonHelpersCanRenderVisiblePixels() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
 
@@ -207,7 +207,7 @@ final class FXGridCanvasPainterTest {
 
     @Test
     void testTextMeasurementAndDrawingProduceExpectedOffsetsAndPixels() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             FXGridCanvasPainter painter = new FXGridCanvasPainter(canvas, createStructure(CellShape.SQUARE), EDGE_LENGTH);
             Font font = Font.font("System", 12.0d);

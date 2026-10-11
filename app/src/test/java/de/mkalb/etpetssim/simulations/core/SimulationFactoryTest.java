@@ -11,7 +11,7 @@ import de.mkalb.etpetssim.simulations.snake.view.SnakeMainView;
 import de.mkalb.etpetssim.simulations.start.StartMainView;
 import de.mkalb.etpetssim.simulations.sugar.view.SugarMainView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
-import de.mkalb.etpetssim.testsupport.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -43,16 +43,16 @@ final class SimulationFactoryTest {
         if (!AppLocalization.isInitialized()) {
             AppLocalization.initialize("en_US", Locale.US);
         }
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     private static Stage createStage() {
-        return FxTestSupport.supplyAndWaitNonNull(Stage::new);
+        return FXTestSupport.supplyAndWaitNonNull(Stage::new);
     }
 
     private static SimulationInstance createInstance(SimulationType type) {
         Stage stage = createStage();
-        return FxTestSupport.supplyAndWaitNonNull(() ->
+        return FXTestSupport.supplyAndWaitNonNull(() ->
                 SimulationFactory.createInstance(type, stage, (_, _) -> {}));
     }
 
@@ -194,7 +194,7 @@ final class SimulationFactoryTest {
 
     @Test
     void testCreateInstanceStartscreenInvokesStageUpdater() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Stage stage = new Stage();
             AtomicReference<Stage> updatedStage = new AtomicReference<>();
             AtomicReference<SimulationType> updatedType = new AtomicReference<>();

@@ -66,10 +66,10 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 
 ## JavaFX Tests
 
-- Use `de.mkalb.etpetssim.testsupport.FxTestSupport`.
-- Call `FxTestSupport.ensureStarted()` once in `@BeforeAll`.
-- Create and mutate JavaFX components via `FxTestSupport.runAndWait(...)`; use the timeout overload only when needed.
-- Use `FxTestSupport.supplyAndWait(...)` to create a JavaFX object on the FX thread and return it for assertions on the
+- Use `de.mkalb.etpetssim.testsupport.FXTestSupport`.
+- Call `FXTestSupport.ensureStarted()` once in `@BeforeAll`.
+- Create and mutate JavaFX components via `FXTestSupport.runAndWait(...)`; use the timeout overload only when needed.
+- Use `FXTestSupport.supplyAndWait(...)` to create a JavaFX object on the FX thread and return it for assertions on the
   calling thread.
 - Throwables (including `AssertionError`) thrown inside `runAndWait`/`supplyAndWait` propagate to the calling thread, so
   assertions may be placed inside the runnable or made on returned values.

@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.SAME_THREAD)
-final class FxTestSupportTest {
+final class FXTestSupportTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     private static void awaitRelease(CountDownLatch releaseFxThread) {
@@ -26,17 +26,17 @@ final class FxTestSupportTest {
 
     @Test
     void testEnsureStartedIsIdempotent() {
-        assertDoesNotThrow(FxTestSupport::ensureStarted);
+        assertDoesNotThrow(FXTestSupport::ensureStarted);
     }
 
     @Test
     void testSupplyAndWaitReturnsSuppliedValue() {
-        assertEquals("result", FxTestSupport.supplyAndWait(() -> "result", 1));
+        assertEquals("result", FXTestSupport.supplyAndWait(() -> "result", 1));
     }
 
     @Test
     void testSupplyAndWaitAllowsNullResult() {
-        assertNull(FxTestSupport.supplyAndWait(() -> null, 1));
+        assertNull(FXTestSupport.supplyAndWait(() -> null, 1));
     }
 
     @Test
@@ -45,7 +45,7 @@ final class FxTestSupportTest {
 
         IllegalStateException actual = assertThrows(
                 IllegalStateException.class,
-                () -> FxTestSupport.supplyAndWait(() -> {
+                () -> FXTestSupport.supplyAndWait(() -> {
                     throw expected;
                 }, 1));
 
@@ -58,7 +58,7 @@ final class FxTestSupportTest {
 
         AssertionError actual = assertThrows(
                 AssertionError.class,
-                () -> FxTestSupport.supplyAndWait(() -> {
+                () -> FXTestSupport.supplyAndWait(() -> {
                     throw expected;
                 }, 1));
 
@@ -73,18 +73,18 @@ final class FxTestSupportTest {
             fxThreadBlocked.countDown();
             awaitRelease(releaseFxThread);
         });
-        assertTrue(fxThreadBlocked.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        assertTrue(fxThreadBlocked.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         try {
             IllegalStateException exception = assertThrows(
                     IllegalStateException.class,
-                    () -> FxTestSupport.supplyAndWait(() -> "result", 0));
+                    () -> FXTestSupport.supplyAndWait(() -> "result", 0));
 
             assertEquals("Timed out waiting for JavaFX action completion", exception.getMessage());
         } finally {
             releaseFxThread.countDown();
         }
-        FxTestSupport.runAndWait(() -> {});
+        FXTestSupport.runAndWait(() -> {});
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -96,57 +96,57 @@ final class FxTestSupportTest {
         try {
             IllegalStateException exception = assertThrows(
                     IllegalStateException.class,
-                    () -> FxTestSupport.supplyAndWait(() -> "result", 1));
+                    () -> FXTestSupport.supplyAndWait(() -> "result", 1));
 
             assertEquals("Interrupted while waiting on JavaFX thread", exception.getMessage());
             assertTrue(Thread.currentThread().isInterrupted());
         } finally {
             Thread.interrupted();
         }
-        FxTestSupport.runAndWait(() -> {});
+        FXTestSupport.runAndWait(() -> {});
     }
 
     @Test
     void testSupplyAndWaitUsesDefaultTimeout() {
-        assertEquals("result", FxTestSupport.supplyAndWait(() -> "result"));
+        assertEquals("result", FXTestSupport.supplyAndWait(() -> "result"));
     }
 
     @Test
     void testSupplyAndWaitReturnsSuppliedValueOnFxThread() {
-        FxTestSupport.runAndWait(() -> assertEquals("result", FxTestSupport.supplyAndWait(() -> "result", 1)));
+        FXTestSupport.runAndWait(() -> assertEquals("result", FXTestSupport.supplyAndWait(() -> "result", 1)));
     }
 
     @Test
     void testSupplyAndWaitAllowsNullResultOnFxThread() {
-        FxTestSupport.runAndWait(() -> assertNull(FxTestSupport.supplyAndWait(() -> null, 1)));
+        FXTestSupport.runAndWait(() -> assertNull(FXTestSupport.supplyAndWait(() -> null, 1)));
     }
 
     @Test
     void testSupplyAndWaitNonNullReturnsSuppliedValue() {
-        assertEquals("result", FxTestSupport.supplyAndWaitNonNull(() -> "result"));
+        assertEquals("result", FXTestSupport.supplyAndWaitNonNull(() -> "result"));
     }
 
     @Test
     void testSupplyAndWaitNonNullRejectsNullResult() {
         NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> FxTestSupport.supplyAndWaitNonNull(() -> null));
+                () -> FXTestSupport.supplyAndWaitNonNull(() -> null));
 
         assertEquals("JavaFX supplier returned null", exception.getMessage());
     }
 
     @Test
     void testSupplyAndWaitNonNullReturnsSuppliedValueOnFxThread() {
-        FxTestSupport.runAndWait(() ->
-                assertEquals("result", FxTestSupport.supplyAndWaitNonNull(() -> "result")));
+        FXTestSupport.runAndWait(() ->
+                assertEquals("result", FXTestSupport.supplyAndWaitNonNull(() -> "result")));
     }
 
     @Test
     void testSupplyAndWaitNonNullRejectsNullResultOnFxThread() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             NullPointerException exception = assertThrows(
                     NullPointerException.class,
-                    () -> FxTestSupport.supplyAndWaitNonNull(() -> null));
+                    () -> FXTestSupport.supplyAndWaitNonNull(() -> null));
 
             assertEquals("JavaFX supplier returned null", exception.getMessage());
         });
@@ -156,7 +156,7 @@ final class FxTestSupportTest {
     void testRunAndWaitRunsActionOnFxThread() {
         AtomicBoolean runsOnFxThread = new AtomicBoolean();
 
-        FxTestSupport.runAndWait(() -> runsOnFxThread.set(javafx.application.Platform.isFxApplicationThread()), 1);
+        FXTestSupport.runAndWait(() -> runsOnFxThread.set(javafx.application.Platform.isFxApplicationThread()), 1);
 
         assertTrue(runsOnFxThread.get());
     }
@@ -165,8 +165,8 @@ final class FxTestSupportTest {
     void testRunAndWaitRunsActionWhenAlreadyOnFxThread() {
         AtomicBoolean nestedActionRunsOnFxThread = new AtomicBoolean();
 
-        FxTestSupport.runAndWait(() ->
-                FxTestSupport.runAndWait(() ->
+        FXTestSupport.runAndWait(() ->
+                FXTestSupport.runAndWait(() ->
                         nestedActionRunsOnFxThread.set(javafx.application.Platform.isFxApplicationThread())));
 
         assertTrue(nestedActionRunsOnFxThread.get());
@@ -178,7 +178,7 @@ final class FxTestSupportTest {
 
         IllegalStateException actual = assertThrows(
                 IllegalStateException.class,
-                () -> FxTestSupport.runAndWait(() -> {
+                () -> FXTestSupport.runAndWait(() -> {
                     throw expected;
                 }, 1));
 
@@ -191,7 +191,7 @@ final class FxTestSupportTest {
 
         AssertionError actual = assertThrows(
                 AssertionError.class,
-                () -> FxTestSupport.runAndWait(() -> {
+                () -> FXTestSupport.runAndWait(() -> {
                     throw expected;
                 }, 1));
 
@@ -202,7 +202,7 @@ final class FxTestSupportTest {
     void testRunAndWaitUsesDefaultTimeout() {
         AtomicBoolean runsOnFxThread = new AtomicBoolean();
 
-        FxTestSupport.runAndWait(() -> runsOnFxThread.set(javafx.application.Platform.isFxApplicationThread()));
+        FXTestSupport.runAndWait(() -> runsOnFxThread.set(javafx.application.Platform.isFxApplicationThread()));
 
         assertTrue(runsOnFxThread.get());
     }
