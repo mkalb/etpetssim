@@ -17,10 +17,10 @@ import javafx.beans.property.*;
  * @param min      the minimum allowed value (inclusive)
  * @param max      the maximum allowed value (inclusive)
  */
-public record InputDoublePropertyIntRange(DoubleProperty property, int min, int max) {
+public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int max) {
 
     /**
-     * Constructs an {@code InputDoublePropertyIntRange} with the given property and range.
+     * Constructs an {@code InputDoubleIntRangeProperty} with the given property and range.
      * <p>
      * Validates that {@code min < max} and the property's value is valid.
      * The value is only required to be within the range; it need not be integer-valued.
@@ -30,7 +30,7 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
      * @param max      the maximum allowed value
      * @throws IllegalArgumentException if any argument is invalid
      */
-    public InputDoublePropertyIntRange {
+    public InputDoubleIntRangeProperty {
         if (min >= max) {
             throw new IllegalArgumentException("min must be less than max");
         }
@@ -40,29 +40,29 @@ public record InputDoublePropertyIntRange(DoubleProperty property, int min, int 
     }
 
     /**
-     * Creates a new {@code InputDoublePropertyIntRange} with the specified initial value and range.
+     * Creates a new {@code InputDoubleIntRangeProperty} with the specified initial value and range.
      * <p>
      * Validation is performed by the canonical constructor.
      *
      * @param initialValue the initial value
      * @param min          the minimum allowed value
      * @param max          the maximum allowed value
-     * @return a new {@code InputDoublePropertyIntRange}
+     * @return a new {@code InputDoubleIntRangeProperty}
      * @throws IllegalArgumentException if any argument is invalid
      */
-    public static InputDoublePropertyIntRange of(int initialValue, int min, int max) {
+    public static InputDoubleIntRangeProperty of(int initialValue, int min, int max) {
         var property = new SimpleDoubleProperty(initialValue) {
             @Override
             public void set(double newValue) {
                 if (isInvalidValue(newValue, min, max)) {
-                    AppLogger.error("InputDoublePropertyIntRange: Invalid value set: " + newValue +
+                    AppLogger.error("InputDoubleIntRangeProperty: Invalid value set: " + newValue +
                             " (min=" + min + ", max=" + max + ")");
                 }
                 // The value is set even if it is invalid.
                 super.set(newValue);
             }
         };
-        return new InputDoublePropertyIntRange(property, min, max);
+        return new InputDoubleIntRangeProperty(property, min, max);
     }
 
     /**

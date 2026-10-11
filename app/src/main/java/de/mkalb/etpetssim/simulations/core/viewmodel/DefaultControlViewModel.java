@@ -23,7 +23,7 @@ public final class DefaultControlViewModel
     private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.TIMED,
             SimulationMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
-    private final InputDoublePropertyIntRange stepDuration = InputDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
+    private final InputDoubleIntRangeProperty stepDuration = InputDoubleIntRangeProperty.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
@@ -105,7 +105,7 @@ public final class DefaultControlViewModel
      *
      * @return step-duration input property wrapper
      */
-    public InputDoublePropertyIntRange stepDurationProperty() {
+    public InputDoubleIntRangeProperty stepDurationProperty() {
         return stepDuration;
     }
 

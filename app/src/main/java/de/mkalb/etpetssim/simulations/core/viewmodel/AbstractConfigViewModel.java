@@ -27,7 +27,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
     private final InputChoiceProperty<GridEdgeBehavior> gridEdgeBehavior;
     private final InputIntegerProperty gridWidth;
     private final InputIntegerProperty gridHeight;
-    private final InputDoublePropertyIntRange cellEdgeLength;
+    private final InputDoubleIntRangeProperty cellEdgeLength;
     private final InputChoiceProperty<CellDisplayMode> cellDisplayMode;
     private final SeedProperty seed;
 
@@ -53,7 +53,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
                 commonConfigSettings.gridHeightMin(),
                 commonConfigSettings.gridHeightMax(),
                 commonConfigSettings.gridHeightStep());
-        cellEdgeLength = InputDoublePropertyIntRange.of(
+        cellEdgeLength = InputDoubleIntRangeProperty.of(
                 commonConfigSettings.cellEdgeLengthInitial(),
                 commonConfigSettings.cellEdgeLengthMin(),
                 commonConfigSettings.cellEdgeLengthMax());
@@ -115,7 +115,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
      *
      * @return cell-edge-length input property wrapper
      */
-    public final InputDoublePropertyIntRange cellEdgeLengthProperty() {
+    public final InputDoubleIntRangeProperty cellEdgeLengthProperty() {
         return cellEdgeLength;
     }
 

@@ -178,7 +178,7 @@ final class FXComponentFactoryTest {
     @Test
     void testCreateLabeledIntSliderBindsValueAndConfiguresSlider() {
         FxTestSupport.runAndWait(() -> {
-            InputDoublePropertyIntRange property = InputDoublePropertyIntRange.of(3, 0, 10);
+            InputDoubleIntRangeProperty property = InputDoubleIntRangeProperty.of(3, 0, 10);
 
             FXComponentFactory.LabeledControl<Slider> control = FXComponentFactory.createLabeledIntSlider(
                     property,
