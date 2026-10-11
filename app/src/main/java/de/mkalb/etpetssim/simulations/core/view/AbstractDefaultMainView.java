@@ -19,7 +19,9 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Default main view base with drawing and throttling support.
+ * Abstract base of the standard main view family for regular 2D simulations.
+ * <p>
+ * Binds {@link DefaultMainViewModel} and provides drawing and throttling support.
  */
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
