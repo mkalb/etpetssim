@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridStructure;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import javafx.beans.property.*;
 
@@ -59,6 +59,6 @@ public interface SimulationMainViewModel {
      *
      * @return termination handle for application-exit bookkeeping
      */
-    SimulationTermination shutdownSimulation();
+    SimulationTerminationHandle shutdownSimulation();
 
 }

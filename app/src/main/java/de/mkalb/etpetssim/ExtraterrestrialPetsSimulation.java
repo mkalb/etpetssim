@@ -44,7 +44,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private static final double FALLBACK_WINDOW_DECORATION_HEIGHT = 39.0d;
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
     private static final long TERMINATION_TIMEOUT_SECONDS = 5L;
-    private final List<SimulationTermination> pendingTerminations = new ArrayList<>();
+    private final List<SimulationTerminationHandle> pendingTerminations = new ArrayList<>();
     private @Nullable SimulationInstance currentSimulationInstance;
     private boolean terminationAwaited;
 
@@ -160,7 +160,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         long deadlineNanos = System.nanoTime() + TimeUnit.SECONDS.toNanos(TERMINATION_TIMEOUT_SECONDS);
         boolean interrupted = false;
-        for (SimulationTermination termination : pendingTerminations) {
+        for (SimulationTerminationHandle termination : pendingTerminations) {
             long remainingNanos = deadlineNanos - System.nanoTime();
             try {
                 if ((remainingNanos <= 0L) || !termination.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
@@ -169,7 +169,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
                 }
             } catch (InterruptedException e) {
                 interrupted = true;
-                pendingTerminations.forEach(SimulationTermination::shutdownNow);
+                pendingTerminations.forEach(SimulationTerminationHandle::shutdownNow);
                 break;
             }
         }

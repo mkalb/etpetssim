@@ -217,7 +217,7 @@ final class ExtraterrestrialPetsSimulationTest {
 
         @NonNull
         @Override
-        public SimulationTermination shutdownSimulation() {
+        public SimulationTerminationHandle shutdownSimulation() {
             shutdownCount.incrementAndGet();
             return termination;
         }
@@ -232,7 +232,7 @@ final class ExtraterrestrialPetsSimulationTest {
 
     }
 
-    private static final class CountingTermination implements SimulationTermination {
+    private static final class CountingTermination implements SimulationTerminationHandle {
 
         private final AtomicInteger awaitCount = new AtomicInteger();
         private final AtomicInteger shutdownNowCount = new AtomicInteger();

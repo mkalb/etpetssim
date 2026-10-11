@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
@@ -147,13 +147,13 @@ public abstract class AbstractMainView<
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         if (notificationListener != null) {
             viewModel.notificationTypeProperty().removeListener(notificationListener);
             notificationListener = null;
         }
         observationView.shutdownObservation();
-        SimulationTermination termination = viewModel.shutdownSimulation();
+        SimulationTerminationHandle termination = viewModel.shutdownSimulation();
         basePainter = null;
         dynamicPainter = null;
         overlayPainter = null;

@@ -6,22 +6,22 @@ import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-final class SimulationTerminationTest {
+final class SimulationTerminationHandleTest {
 
     @SuppressWarnings("EqualsWithItself")
     @Test
     void testCompletedReturnsSameInstance() {
-        assertSame(SimulationTermination.completed(), SimulationTermination.completed());
+        assertSame(SimulationTerminationHandle.completed(), SimulationTerminationHandle.completed());
     }
 
     @Test
     void testCompletedAwaitTerminationReturnsTrue() throws InterruptedException {
-        assertTrue(SimulationTermination.completed().awaitTermination(0L, TimeUnit.NANOSECONDS));
+        assertTrue(SimulationTerminationHandle.completed().awaitTermination(0L, TimeUnit.NANOSECONDS));
     }
 
     @Test
     void testCompletedShutdownNowDoesNothing() {
-        assertDoesNotThrow(() -> SimulationTermination.completed().shutdownNow());
+        assertDoesNotThrow(() -> SimulationTerminationHandle.completed().shutdownNow());
     }
 
 }

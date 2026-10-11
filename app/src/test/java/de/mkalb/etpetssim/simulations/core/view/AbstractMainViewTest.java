@@ -2,7 +2,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
 import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.geometry.Orientation;
@@ -107,7 +107,7 @@ final class AbstractMainViewTest {
             SimulationMainViewModel viewModel = assertInstanceOf(SimulationMainViewModel.class,
                     getNonNullField(view, "viewModel"));
 
-            SimulationTermination termination = view.shutdownSimulation();
+            SimulationTerminationHandle termination = view.shutdownSimulation();
 
             assertSame(termination, viewModel.shutdownSimulation());
         });
@@ -120,8 +120,8 @@ final class AbstractMainViewTest {
             view.buildMainRegion();
             view.buildMainRegion();
 
-            SimulationTermination firstTermination = view.shutdownSimulation();
-            SimulationTermination secondTermination = view.shutdownSimulation();
+            SimulationTerminationHandle firstTermination = view.shutdownSimulation();
+            SimulationTerminationHandle secondTermination = view.shutdownSimulation();
 
             assertSame(firstTermination, secondTermination);
         });

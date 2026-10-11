@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
@@ -84,7 +84,7 @@ public abstract class AbstractDefaultMainView<
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         if (selectedGridCellListener != null) {
             viewModel.selectedGridCellProperty().removeListener(selectedGridCellListener);
             selectedGridCellListener = null;

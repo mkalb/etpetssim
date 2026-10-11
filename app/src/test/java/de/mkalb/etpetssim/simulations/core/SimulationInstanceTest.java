@@ -208,8 +208,8 @@ final class SimulationInstanceTest {
 
         @NonNull
         @Override
-        public SimulationTermination shutdownSimulation() {
-            return SimulationTermination.completed();
+        public SimulationTerminationHandle shutdownSimulation() {
+            return SimulationTerminationHandle.completed();
         }
 
     }

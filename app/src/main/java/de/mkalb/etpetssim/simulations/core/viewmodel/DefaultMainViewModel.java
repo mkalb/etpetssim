@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
@@ -65,7 +65,7 @@ public final class DefaultMainViewModel<
     private volatile @Nullable Thread batchThread;
     private long lifecycleGeneration;
     private boolean disposed;
-    private @Nullable SimulationTermination termination;
+    private @Nullable SimulationTerminationHandle termination;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
@@ -280,7 +280,7 @@ public final class DefaultMainViewModel<
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         if (disposed) {
             return Objects.requireNonNull(termination);
         }
@@ -306,7 +306,7 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
-        termination = new ExecutorSimulationTermination(lifecycleExecutor);
+        termination = new ExecutorSimulationTerminationHandle(lifecycleExecutor);
         Runnable resetListener = simulationResetListener;
         simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
         simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
@@ -881,7 +881,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private record ExecutorSimulationTermination(ExecutorService executor) implements SimulationTermination {
+    private record ExecutorSimulationTerminationHandle(ExecutorService executor) implements SimulationTerminationHandle {
 
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {

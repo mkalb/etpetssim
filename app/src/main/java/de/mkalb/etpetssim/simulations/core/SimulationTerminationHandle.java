@@ -5,15 +5,15 @@ import java.util.concurrent.*;
 /**
  * Owns bounded termination of a simulation executor after immediate disposal.
  */
-public interface SimulationTermination {
+public interface SimulationTerminationHandle {
 
     /**
      * Returns a termination handle for simulations that do not own background work.
      *
      * @return completed termination handle
      */
-    static SimulationTermination completed() {
-        return CompletedSimulationTermination.INSTANCE;
+    static SimulationTerminationHandle completed() {
+        return CompletedSimulationTerminationHandle.INSTANCE;
     }
 
     /**
@@ -31,7 +31,7 @@ public interface SimulationTermination {
      */
     void shutdownNow();
 
-    enum CompletedSimulationTermination implements SimulationTermination {
+    enum CompletedSimulationTerminationHandle implements SimulationTerminationHandle {
         INSTANCE;
 
         @Override

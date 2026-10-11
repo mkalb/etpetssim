@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.lab.model.*;
@@ -84,7 +84,7 @@ public final class LabMainViewModel
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         AppLogger.infof("%s: Shutting down simulation", LOG_COMPONENT);
         setSimulationState(SimulationState.SHUTTING_DOWN);
 
@@ -100,7 +100,7 @@ public final class LabMainViewModel
         drawRequestedListener = () -> {};
         drawModelRequestedListener = () -> {};
         drawTestRequestedListener = () -> {};
-        return SimulationTermination.completed();
+        return SimulationTerminationHandle.completed();
     }
 
     @Override

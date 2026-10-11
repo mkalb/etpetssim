@@ -66,7 +66,7 @@ final class DefaultControlViewModelTest {
                     () -> assertEquals(700.0d, viewModel.stepDurationProperty().getValue()),
                     () -> assertEquals(100, viewModel.stepCountProperty().getValue()),
                     () -> assertEquals(SimulationStartMode.START_IMMEDIATELY, viewModel.startModeProperty().getValue()),
-                    () -> assertEquals(SimulationTerminationCheck.CHECKED, viewModel.terminationCheckProperty().getValue())
+                    () -> assertEquals(SimulationTerminationCheckMode.CHECKED, viewModel.terminationCheckProperty().getValue())
             );
         });
     }
@@ -135,9 +135,9 @@ final class DefaultControlViewModelTest {
         FxTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
-            for (SimulationTerminationCheck terminationCheck : SimulationTerminationCheck.values()) {
-                viewModel.terminationCheckProperty().setValue(terminationCheck);
-                assertEquals(terminationCheck == SimulationTerminationCheck.CHECKED, viewModel.isTerminationChecked());
+            for (SimulationTerminationCheckMode terminationCheckMode : SimulationTerminationCheckMode.values()) {
+                viewModel.terminationCheckProperty().setValue(terminationCheckMode);
+                assertEquals(terminationCheckMode == SimulationTerminationCheckMode.CHECKED, viewModel.isTerminationChecked());
             }
         });
     }

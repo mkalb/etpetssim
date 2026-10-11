@@ -28,7 +28,7 @@ public final class DefaultControlViewModel
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
     private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
-    private final InputEnumProperty<SimulationTerminationCheck> terminationCheck = InputEnumProperty.of(SimulationTerminationCheck.CHECKED, SimulationTerminationCheck.class, Enum::toString);
+    private final InputEnumProperty<SimulationTerminationCheckMode> terminationCheckMode = InputEnumProperty.of(SimulationTerminationCheckMode.CHECKED, SimulationTerminationCheckMode.class, Enum::toString);
 
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
@@ -132,8 +132,8 @@ public final class DefaultControlViewModel
      *
      * @return termination-check input property wrapper
      */
-    public InputEnumProperty<SimulationTerminationCheck> terminationCheckProperty() {
-        return terminationCheck;
+    public InputEnumProperty<SimulationTerminationCheckMode> terminationCheckProperty() {
+        return terminationCheckMode;
     }
 
     /**
@@ -199,7 +199,7 @@ public final class DefaultControlViewModel
      * @return {@code true} if termination checks are enabled
      */
     public boolean isTerminationChecked() {
-        return terminationCheck.getValue() == SimulationTerminationCheck.CHECKED;
+        return terminationCheckMode.getValue() == SimulationTerminationCheckMode.CHECKED;
     }
 
 }

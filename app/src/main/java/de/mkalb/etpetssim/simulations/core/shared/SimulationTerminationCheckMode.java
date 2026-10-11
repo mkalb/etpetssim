@@ -7,7 +7,7 @@ package de.mkalb.etpetssim.simulations.core.shared;
  * every step (or at configured intervals). Use {@code UNCHECKED} to skip termination
  * checks for runs where termination is managed externally or not required.
  */
-public enum SimulationTerminationCheck {
+public enum SimulationTerminationCheckMode {
 
     /**
      * Termination condition is evaluated during simulation execution.
