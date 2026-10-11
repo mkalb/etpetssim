@@ -17,6 +17,9 @@ Regular 2D simulations use:
 - `shared`: optional layer-neutral types used by two or more layers
 - Package-root `<SimulationName>Factory` exposing `createMainView()`
 
+Both `<simulation>.model` and `simulations.core.model` belong to the MVVM model layer and hold the
+simulation-specific part; `engine.model` is the generic grid model (`GridModel` and its implementations) they use.
+
 Special cases:
 
 - `start`: start screen only; no model/view/viewmodel structure
@@ -75,6 +78,8 @@ include:
 ### Shared
 
 - Contains only layer-neutral enums, records, or value objects used by multiple layers.
+- Exists because the view reads only `model.entity` directly and the model must not depend on `view` or `viewmodel`;
+  `simulations.core` uses the same sub-packages.
 - Must not depend on `model`, `view`, or `viewmodel`.
 - Must not import JavaFX UI/property/binding types; neutral value types such as `Color` are allowed.
 - Entity types stay in `model.entity`, even when views read them for rendering.
