@@ -228,6 +228,13 @@ Shutdown checklist:
 - Use `buildMainRegion()` as the UI composition entry point.
 - Keep layout in View classes, not ViewModel.
 
+### User Action Context
+
+- Use a plain enum implementing `SimulationUserActionContext` when no action has parameters (e.g.,
+  `WatorUserActionContext`).
+- Otherwise, use a sealed interface with a nested `FixedAction` enum and records for parameterized actions (e.g.,
+  `ConwayUserActionContext`).
+
 ## Naming
 
 - Use `draw...` for canvas rendering methods.
