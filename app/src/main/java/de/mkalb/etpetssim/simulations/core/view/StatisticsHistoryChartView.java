@@ -14,59 +14,59 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * Renders one {@link LineChart} per distinct non-{@code NONE} {@link StatisticChartGroup},
+ * Renders one {@link LineChart} per distinct non-{@code NONE} {@link StatisticsChartGroup},
  * driven entirely by the metric descriptors. Updated whenever the history property changes.
  */
-final class StatisticHistoryChartView {
+final class StatisticsHistoryChartView {
 
     private static final double TARGET_TICK_COUNT = 5.0;
     private static final double CHART_SPACING = 8.0;
     private static final double[] NICE_CEILING_FACTORS = {1.0, 2.0, 5.0, 10.0};
     private static final double SHRINK_THRESHOLD_RATIO = 0.2;
 
-    private final List<StatisticChartGroup> distinctGroups;
+    private final List<StatisticsChartGroup> distinctGroups;
     private final List<GroupChart> groupCharts;
     private final Map<String, XYChart.Series<Number, Number>> seriesByKey;
-    private final Map<StatisticChartGroup, List<String>> keysByGroup;
-    private final Map<StatisticChartGroup, Integer> windowSizeByGroup;
-    private final Map<StatisticChartGroup, Double> ceilingByGroup;
+    private final Map<StatisticsChartGroup, List<String>> keysByGroup;
+    private final Map<StatisticsChartGroup, Integer> windowSizeByGroup;
+    private final Map<StatisticsChartGroup, Double> ceilingByGroup;
     private final TitledPane titledPane;
-    private final ReadOnlyObjectProperty<List<StatisticSample>> historyProperty;
-    private final ChangeListener<List<StatisticSample>> historyListener;
+    private final ReadOnlyObjectProperty<List<StatisticsSample>> historyProperty;
+    private final ChangeListener<List<StatisticsSample>> historyListener;
 
-    StatisticHistoryChartView(
-            List<? extends StatisticMetric<?>> metrics,
-            ReadOnlyObjectProperty<List<StatisticSample>> historyProperty) {
+    StatisticsHistoryChartView(
+            List<? extends StatisticsMetric<?>> metrics,
+            ReadOnlyObjectProperty<List<StatisticsSample>> historyProperty) {
 
         this.historyProperty = historyProperty;
 
-        distinctGroups = Arrays.stream(StatisticChartGroup.values())
-                               .filter(g -> g != StatisticChartGroup.NONE)
+        distinctGroups = Arrays.stream(StatisticsChartGroup.values())
+                               .filter(g -> g != StatisticsChartGroup.NONE)
                                .filter(g -> metrics.stream().anyMatch(m -> m.chartGroup() == g))
                                .collect(Collectors.toList());
 
         keysByGroup = new LinkedHashMap<>();
         windowSizeByGroup = new LinkedHashMap<>();
-        for (StatisticChartGroup group : distinctGroups) {
+        for (StatisticsChartGroup group : distinctGroups) {
             List<String> keys = metrics.stream()
                                        .filter(m -> m.chartGroup() == group)
-                                       .map(StatisticMetric::key)
+                                       .map(StatisticsMetric::key)
                                        .collect(Collectors.toList());
             keysByGroup.put(group, keys);
-            // Guarded by StatisticMetricRowTest: metrics sharing a chartGroup use the same chartWindowSize.
+            // Guarded by StatisticsMetricRowTest: metrics sharing a chartGroup use the same chartWindowSize.
             int windowSize = metrics.stream()
                                     .filter(m -> m.chartGroup() == group)
-                                    .mapToInt(StatisticMetric::chartWindowSize)
+                                    .mapToInt(StatisticsMetric::chartWindowSize)
                                     .findFirst()
-                                    .orElse(StatisticMetric.DEFAULT_CHART_WINDOW_SIZE);
+                                    .orElse(StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE);
             windowSizeByGroup.put(group, windowSize);
         }
 
-        ceilingByGroup = new EnumMap<>(StatisticChartGroup.class);
+        ceilingByGroup = new EnumMap<>(StatisticsChartGroup.class);
 
         seriesByKey = new LinkedHashMap<>();
-        for (StatisticMetric<?> metric : metrics) {
-            if (metric.chartGroup() != StatisticChartGroup.NONE) {
+        for (StatisticsMetric<?> metric : metrics) {
+            if (metric.chartGroup() != StatisticsChartGroup.NONE) {
                 XYChart.Series<Number, Number> series = new XYChart.Series<>();
                 series.setName(AppLocalization.getText(metric.labelKey()));
                 seriesByKey.put(metric.key(), series);
@@ -77,7 +77,7 @@ final class StatisticHistoryChartView {
         VBox chartsBox = new VBox();
         chartsBox.setSpacing(CHART_SPACING);
 
-        for (StatisticChartGroup group : distinctGroups) {
+        for (StatisticsChartGroup group : distinctGroups) {
             NumberAxis xAxis = new NumberAxis();
             xAxis.setLabel(AppLocalization.getText(AppLocalizationKeys.OBSERVATION_CHART_AXIS_STEP));
             xAxis.setAutoRanging(false);
@@ -150,7 +150,7 @@ final class StatisticHistoryChartView {
      * Extracts the maximum finite value across the given metric keys for a single sample,
      * or {@code 0.0} if none of the keys have a finite value.
      */
-    private static double maxValueAcrossKeys(StatisticSample sample, List<String> keys) {
+    private static double maxValueAcrossKeys(StatisticsSample sample, List<String> keys) {
         return keys.stream()
                    .map(k -> sample.values().get(k))
                    .filter(Objects::nonNull)
@@ -175,7 +175,7 @@ final class StatisticHistoryChartView {
         return groupCharts.stream().map(GroupChart::chart).collect(Collectors.toList());
     }
 
-    private void updateCharts(List<StatisticSample> history) {
+    private void updateCharts(List<StatisticsSample> history) {
         if (history.isEmpty()) {
             ceilingByGroup.clear();
         }
@@ -183,7 +183,7 @@ final class StatisticHistoryChartView {
         boolean anyVisible = false;
 
         for (int i = 0; i < distinctGroups.size(); i++) {
-            StatisticChartGroup group = distinctGroups.get(i);
+            StatisticsChartGroup group = distinctGroups.get(i);
             GroupChart gc = groupCharts.get(i);
             List<String> keys = keysByGroup.get(group);
 
@@ -195,7 +195,7 @@ final class StatisticHistoryChartView {
                 anyVisible = true;
 
                 int windowSize = windowSizeByGroup.get(group);
-                List<StatisticSample> windowedHistory = (history.size() <= windowSize)
+                List<StatisticsSample> windowedHistory = (history.size() <= windowSize)
                         ? history
                         : history.subList(history.size() - windowSize, history.size());
 
@@ -230,7 +230,7 @@ final class StatisticHistoryChartView {
                 for (String key : keys) {
                     XYChart.Series<Number, Number> series = seriesByKey.get(key);
                     List<XYChart.Data<Number, Number>> data = new ArrayList<>(windowedHistory.size());
-                    for (StatisticSample sample : windowedHistory) {
+                    for (StatisticsSample sample : windowedHistory) {
                         Double value = sample.values().get(key);
                         if ((value != null) && Double.isFinite(value)) {
                             data.add(new XYChart.Data<>(sample.stepCount(), value));

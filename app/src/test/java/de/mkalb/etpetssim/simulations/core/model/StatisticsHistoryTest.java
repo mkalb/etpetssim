@@ -7,22 +7,22 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-final class StatisticHistoryTest {
+final class StatisticsHistoryTest {
 
-    private static StatisticSample sample(int stepCount) {
-        return new StatisticSample(stepCount, StepTimingStatistics.empty(), Map.of("a", (double) stepCount));
+    private static StatisticsSample sample(int stepCount) {
+        return new StatisticsSample(stepCount, StepTimingStatistics.empty(), Map.of("a", (double) stepCount));
     }
 
     @Test
     void testDefaultConstructorUsesDefaultCapacity() {
-        StatisticHistory history = new StatisticHistory();
+        StatisticsHistory history = new StatisticsHistory();
 
-        assertEquals(StatisticHistory.DEFAULT_CAPACITY, history.capacity());
+        assertEquals(StatisticsHistory.DEFAULT_CAPACITY, history.capacity());
     }
 
     @Test
     void testConstructorUsesCapacity() {
-        StatisticHistory history = new StatisticHistory(2);
+        StatisticsHistory history = new StatisticsHistory(2);
 
         assertEquals(2, history.capacity());
     }
@@ -30,14 +30,14 @@ final class StatisticHistoryTest {
     @Test
     void testConstructorRejectsNonPositiveCapacity() {
         assertAll(
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticHistory(0))),
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticHistory(-1)))
+                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(0))),
+                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(-1)))
         );
     }
 
     @Test
     void testInitialStateIsEmpty() {
-        StatisticHistory history = new StatisticHistory(2);
+        StatisticsHistory history = new StatisticsHistory(2);
 
         assertAll(
                 () -> assertEquals(0, history.size()),
@@ -47,7 +47,7 @@ final class StatisticHistoryTest {
 
     @Test
     void testAddEvictsOldestSampleAtCapacity() {
-        StatisticHistory history = new StatisticHistory(2);
+        StatisticsHistory history = new StatisticsHistory(2);
 
         history.add(sample(0));
         history.add(sample(1));
@@ -65,7 +65,7 @@ final class StatisticHistoryTest {
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testAsListReturnsImmutableSnapshot() {
-        StatisticHistory history = new StatisticHistory(2);
+        StatisticsHistory history = new StatisticsHistory(2);
         history.add(sample(0));
 
         var snapshot = history.asList();
@@ -75,7 +75,7 @@ final class StatisticHistoryTest {
 
     @Test
     void testAsListReturnsIndependentSnapshot() {
-        StatisticHistory history = new StatisticHistory(2);
+        StatisticsHistory history = new StatisticsHistory(2);
         history.add(sample(0));
         var snapshot = history.asList();
 
@@ -90,7 +90,7 @@ final class StatisticHistoryTest {
 
     @Test
     void testClearRemovesSamples() {
-        StatisticHistory history = new StatisticHistory(2);
+        StatisticsHistory history = new StatisticsHistory(2);
         history.add(sample(0));
 
         history.clear();

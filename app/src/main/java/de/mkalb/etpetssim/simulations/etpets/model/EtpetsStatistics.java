@@ -31,17 +31,17 @@ public final class EtpetsStatistics
         cumulativePetDeathCount = 0;
     }
 
-    public static List<StatisticMetric<EtpetsStatistics>> metrics() {
+    public static List<StatisticsMetric<EtpetsStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_ACTIVE_PET_CELLS, ETPETS_OBSERVATION_ACTIVE_PET_CELLS,
+                new StatisticsMetric<>(KEY_ACTIVE_PET_CELLS, ETPETS_OBSERVATION_ACTIVE_PET_CELLS,
                         EtpetsStatistics::activePetCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
-                new StatisticMetric<>(KEY_EGG_CELLS, ETPETS_OBSERVATION_EGG_CELLS,
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE),
+                new StatisticsMetric<>(KEY_EGG_CELLS, ETPETS_OBSERVATION_EGG_CELLS,
                         EtpetsStatistics::eggCells,
-                        StatisticExtremaMode.MAX),
-                new StatisticMetric<>(KEY_CUMULATIVE_PET_DEATH_COUNT, ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT,
+                        StatisticsExtremaMode.MAX),
+                new StatisticsMetric<>(KEY_CUMULATIVE_PET_DEATH_COUNT, ETPETS_OBSERVATION_CUMULATIVE_PET_DEATH_COUNT,
                         EtpetsStatistics::cumulativePetDeathCount,
-                        StatisticExtremaMode.NONE)
+                        StatisticsExtremaMode.NONE)
         );
     }
 

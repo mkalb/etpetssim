@@ -8,13 +8,13 @@ import java.util.*;
  * @param minimumValues minimum extrema by metric key
  * @param maximumValues maximum extrema by metric key
  */
-public record StatisticExtrema(
-        Map<String, StatisticExtremum> minimumValues,
-        Map<String, StatisticExtremum> maximumValues) {
+public record StatisticsExtrema(
+        Map<String, StatisticsExtremum> minimumValues,
+        Map<String, StatisticsExtremum> maximumValues) {
 
-    private static final StatisticExtrema EMPTY = new StatisticExtrema(Map.of(), Map.of());
+    private static final StatisticsExtrema EMPTY = new StatisticsExtrema(Map.of(), Map.of());
 
-    public StatisticExtrema {
+    public StatisticsExtrema {
         minimumValues = Collections.unmodifiableMap(new LinkedHashMap<>(minimumValues));
         maximumValues = Collections.unmodifiableMap(new LinkedHashMap<>(maximumValues));
     }
@@ -24,7 +24,7 @@ public record StatisticExtrema(
      *
      * @return the empty extrema snapshot
      */
-    public static StatisticExtrema empty() {
+    public static StatisticsExtrema empty() {
         return EMPTY;
     }
 

@@ -12,12 +12,12 @@ import java.util.*;
  * @param values               sampled metric values by metric key; {@link Double#NaN} represents a non-finite
  *                             extracted value and preserves a gap in the time series
  */
-public record StatisticSample(
+public record StatisticsSample(
         int stepCount,
         StepTimingStatistics stepTimingStatistics,
         Map<String, Double> values) {
 
-    public StatisticSample {
+    public StatisticsSample {
         if (stepCount < 0) {
             throw new IllegalArgumentException("stepCount must be >= 0");
         }

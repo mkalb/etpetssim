@@ -35,8 +35,8 @@ final class DefaultObservationViewModelTest {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
         FxTestSupport.runAndWait(() -> assertAll(
-                () -> assertEquals(StatisticExtrema.empty(), fixture.viewModel().statisticsExtremaProperty().get()),
-                () -> assertEquals(StatisticExtrema.empty(), fixture.viewModel().getStatisticsExtrema())
+                () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().statisticsExtremaProperty().get()),
+                () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema())
         ));
     }
 
@@ -78,8 +78,8 @@ final class DefaultObservationViewModelTest {
     @Test
     void testSetStatisticsExtremaUpdatesPropertyAndGetter() {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var extremum = new StatisticExtremum(42.0, 7L);
-        var extrema = new StatisticExtrema(Map.of("metric", extremum), Map.of());
+        var extremum = new StatisticsExtremum(42.0, 7L);
+        var extrema = new StatisticsExtrema(Map.of("metric", extremum), Map.of());
 
         FxTestSupport.runAndWait(() -> {
             fixture.viewModel().setStatisticsExtrema(extrema);
@@ -94,7 +94,7 @@ final class DefaultObservationViewModelTest {
     @Test
     void testSetStatisticsHistoryUpdatesPropertyAndGetter() {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var sample = new StatisticSample(1, StepTimingStatistics.empty(), Map.of("metric", 3.0));
+        var sample = new StatisticsSample(1, StepTimingStatistics.empty(), Map.of("metric", 3.0));
         var history = List.of(sample);
 
         FxTestSupport.runAndWait(() -> {
@@ -110,10 +110,10 @@ final class DefaultObservationViewModelTest {
     @Test
     void testStatisticsExtremaPropertyNotifiesListener() {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var extrema = new StatisticExtrema(
-                Map.of("metric", new StatisticExtremum(42.0, 7L)),
+        var extrema = new StatisticsExtrema(
+                Map.of("metric", new StatisticsExtremum(42.0, 7L)),
                 Map.of());
-        var observedValues = new ArrayList<StatisticExtrema>();
+        var observedValues = new ArrayList<StatisticsExtrema>();
 
         FxTestSupport.runAndWait(() -> {
             fixture.viewModel().statisticsExtremaProperty().addListener((_, _, value) -> observedValues.add(value));
@@ -126,11 +126,11 @@ final class DefaultObservationViewModelTest {
     @Test
     void testStatisticsHistoryPropertyNotifiesListener() {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var history = List.of(new StatisticSample(
+        var history = List.of(new StatisticsSample(
                 1,
                 StepTimingStatistics.empty(),
                 Map.of("metric", 3.0)));
-        var observedValues = new ArrayList<List<StatisticSample>>();
+        var observedValues = new ArrayList<List<StatisticsSample>>();
 
         FxTestSupport.runAndWait(() -> {
             fixture.viewModel().statisticsHistoryProperty().addListener((_, _, value) -> observedValues.add(value));
@@ -145,11 +145,11 @@ final class DefaultObservationViewModelTest {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
         FxTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatisticsExtrema(new StatisticExtrema(
-                    Map.of("x", new StatisticExtremum(1.0, 0L)), Map.of()));
-            fixture.viewModel().setStatisticsExtrema(StatisticExtrema.empty());
+            fixture.viewModel().setStatisticsExtrema(new StatisticsExtrema(
+                    Map.of("x", new StatisticsExtremum(1.0, 0L)), Map.of()));
+            fixture.viewModel().setStatisticsExtrema(StatisticsExtrema.empty());
 
-            assertEquals(StatisticExtrema.empty(), fixture.viewModel().statisticsExtremaProperty().get());
+            assertEquals(StatisticsExtrema.empty(), fixture.viewModel().statisticsExtremaProperty().get());
         });
     }
 
@@ -158,7 +158,7 @@ final class DefaultObservationViewModelTest {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
         FxTestSupport.runAndWait(() -> {
-            fixture.viewModel().setStatisticsHistory(List.of(new StatisticSample(
+            fixture.viewModel().setStatisticsHistory(List.of(new StatisticsSample(
                     1, StepTimingStatistics.empty(), Map.of())));
             fixture.viewModel().setStatisticsHistory(List.of());
 
@@ -170,8 +170,8 @@ final class DefaultObservationViewModelTest {
     void testResetStatisticsClearsStatisticsExtremaAndHistory() {
         Fixture fixture = FxTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
         var statistics = new TestStatistics(7);
-        var extrema = new StatisticExtrema(Map.of("metric", new StatisticExtremum(42.0d, 7L)), Map.of());
-        var history = List.of(new StatisticSample(7, StepTimingStatistics.empty(), Map.of("metric", 42.0d)));
+        var extrema = new StatisticsExtrema(Map.of("metric", new StatisticsExtremum(42.0d, 7L)), Map.of());
+        var history = List.of(new StatisticsSample(7, StepTimingStatistics.empty(), Map.of("metric", 42.0d)));
 
         FxTestSupport.runAndWait(() -> {
             fixture.viewModel().setStatistics(statistics);
@@ -181,7 +181,7 @@ final class DefaultObservationViewModelTest {
 
             assertAll(
                     () -> assertEquals(Optional.empty(), fixture.viewModel().getStatistics()),
-                    () -> assertEquals(StatisticExtrema.empty(), fixture.viewModel().getStatisticsExtrema()),
+                    () -> assertEquals(StatisticsExtrema.empty(), fixture.viewModel().getStatisticsExtrema()),
                     () -> assertEquals(List.of(), fixture.viewModel().getStatisticsHistory())
             );
         });

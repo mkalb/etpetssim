@@ -16,10 +16,10 @@ import java.util.stream.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("MagicNumber")
-final class StatisticMetricRowTest {
+final class StatisticsMetricRowTest {
 
     private static void assertMetricLayout(
-            List<? extends StatisticMetric<?>> metrics,
+            List<? extends StatisticsMetric<?>> metrics,
             ExpectedMetric... expectedMetrics) {
         List<ExpectedMetric> actualMetrics = metrics.stream()
                                                     .map(metric -> new ExpectedMetric(
@@ -29,10 +29,10 @@ final class StatisticMetricRowTest {
     }
 
     private static void assertChartWindowSizes(
-            List<? extends StatisticMetric<?>> metrics,
+            List<? extends StatisticsMetric<?>> metrics,
             int... expectedWindowSizes) {
         List<Integer> actualWindowSizes = metrics.stream()
-                                                 .map(StatisticMetric::chartWindowSize)
+                                                 .map(StatisticsMetric::chartWindowSize)
                                                  .toList();
         assertEquals(Arrays.stream(expectedWindowSizes).boxed().toList(), actualWindowSizes);
     }
@@ -42,11 +42,11 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 ConwayStatistics.metrics(),
                 new ExpectedMetric(ConwayStatistics.KEY_ALIVE_CELLS,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY),
                 new ExpectedMetric(ConwayStatistics.KEY_DEAD_CELLS,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.NONE),
                 new ExpectedMetric(ConwayStatistics.KEY_CHANGED_CELLS,
-                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE)
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.NONE)
         );
     }
 
@@ -55,11 +55,11 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 ForestStatistics.metrics(),
                 new ExpectedMetric(ForestStatistics.KEY_EMPTY_CELLS,
-                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.NONE),
                 new ExpectedMetric(ForestStatistics.KEY_TREE_CELLS,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY),
                 new ExpectedMetric(ForestStatistics.KEY_BURNING_CELLS,
-                        StatisticExtremaMode.MAX, StatisticChartGroup.SECONDARY)
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.SECONDARY)
         );
     }
 
@@ -68,9 +68,9 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 WatorStatistics.metrics(),
                 new ExpectedMetric(WatorStatistics.KEY_FISH_CELLS,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY),
                 new ExpectedMetric(WatorStatistics.KEY_SHARK_CELLS,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY)
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY)
         );
     }
 
@@ -79,11 +79,11 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 EtpetsStatistics.metrics(),
                 new ExpectedMetric(EtpetsStatistics.KEY_ACTIVE_PET_CELLS,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY),
                 new ExpectedMetric(EtpetsStatistics.KEY_EGG_CELLS,
-                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.NONE),
                 new ExpectedMetric(EtpetsStatistics.KEY_CUMULATIVE_PET_DEATH_COUNT,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE)
         );
     }
 
@@ -92,15 +92,15 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 SnakeStatistics.metrics(),
                 new ExpectedMetric(SnakeStatistics.KEY_SNAKE_HEAD_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE),
                 new ExpectedMetric(SnakeStatistics.KEY_LIVING_SNAKE_HEAD_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE),
                 new ExpectedMetric(SnakeStatistics.KEY_WALL_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE),
                 new ExpectedMetric(SnakeStatistics.KEY_FOOD_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE),
                 new ExpectedMetric(SnakeStatistics.KEY_CUMULATIVE_SNAKE_DEATH_COUNT,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE)
         );
     }
 
@@ -109,9 +109,9 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 SugarStatistics.metrics(),
                 new ExpectedMetric(SugarStatistics.KEY_RESOURCE_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE),
                 new ExpectedMetric(SugarStatistics.KEY_AGENT_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE)
         );
     }
 
@@ -120,9 +120,9 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 ReboundingStatistics.metrics(),
                 new ExpectedMetric(ReboundingStatistics.KEY_WALL_CELLS,
-                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.NONE),
                 new ExpectedMetric(ReboundingStatistics.KEY_MOVING_ENTITY_CELLS,
-                        StatisticExtremaMode.MAX, StatisticChartGroup.NONE)
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.NONE)
         );
     }
 
@@ -131,9 +131,9 @@ final class StatisticMetricRowTest {
         assertMetricLayout(
                 LangtonStatistics.metrics(),
                 new ExpectedMetric(LangtonStatistics.KEY_ANT_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE),
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE),
                 new ExpectedMetric(LangtonStatistics.KEY_VISITED_CELLS,
-                        StatisticExtremaMode.NONE, StatisticChartGroup.NONE)
+                        StatisticsExtremaMode.NONE, StatisticsChartGroup.NONE)
         );
     }
 
@@ -141,8 +141,8 @@ final class StatisticMetricRowTest {
     void testMetricChartWindowSizes() {
         assertChartWindowSizes(ConwayStatistics.metrics(), 50, 0, 0);
         assertChartWindowSizes(EtpetsStatistics.metrics(), 1_000, 0, 0);
-        assertChartWindowSizes(ForestStatistics.metrics(), 0, StatisticMetric.DEFAULT_CHART_WINDOW_SIZE,
-                StatisticMetric.DEFAULT_CHART_WINDOW_SIZE);
+        assertChartWindowSizes(ForestStatistics.metrics(), 0, StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE,
+                StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE);
         assertChartWindowSizes(LangtonStatistics.metrics(), 0, 0);
         assertChartWindowSizes(ReboundingStatistics.metrics(), 0, 0);
         assertChartWindowSizes(SnakeStatistics.metrics(), 0, 0, 0, 0, 0);
@@ -152,9 +152,9 @@ final class StatisticMetricRowTest {
 
     @Test
     void testChartedMetricsShareWindowSizeWithinGroup() {
-        // StatisticHistoryChartView is built per simulation, so the shared-window-size invariant
+        // StatisticsHistoryChartView is built per simulation, so the shared-window-size invariant
         // is scoped to one simulation's metrics() list, not across simulations reusing the same group.
-        Stream.<List<? extends StatisticMetric<?>>>of(
+        Stream.<List<? extends StatisticsMetric<?>>>of(
                 ConwayStatistics.metrics(),
                 EtpetsStatistics.metrics(),
                 ForestStatistics.metrics(),
@@ -164,11 +164,11 @@ final class StatisticMetricRowTest {
                 SugarStatistics.metrics(),
                 WatorStatistics.metrics()
         ).forEach(metrics -> {
-            Map<StatisticChartGroup, Set<Integer>> windowSizesByGroup = metrics.stream()
-                                                                               .filter(m -> m.chartGroup() != StatisticChartGroup.NONE)
+            Map<StatisticsChartGroup, Set<Integer>> windowSizesByGroup = metrics.stream()
+                                                                               .filter(m -> m.chartGroup() != StatisticsChartGroup.NONE)
                                                                                .collect(Collectors.groupingBy(
-                                                                                       StatisticMetric::chartGroup,
-                                                                                       Collectors.mapping(StatisticMetric::chartWindowSize, Collectors.toSet())));
+                                                                                       StatisticsMetric::chartGroup,
+                                                                                       Collectors.mapping(StatisticsMetric::chartWindowSize, Collectors.toSet())));
             windowSizesByGroup.forEach((group, windowSizes) -> assertEquals(1, windowSizes.size(),
                     "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found " + windowSizes));
         });
@@ -176,7 +176,7 @@ final class StatisticMetricRowTest {
 
     private record ExpectedMetric(
             String key,
-            StatisticExtremaMode extremaMode,
-            StatisticChartGroup chartGroup) {}
+            StatisticsExtremaMode extremaMode,
+            StatisticsChartGroup chartGroup) {}
 
 }

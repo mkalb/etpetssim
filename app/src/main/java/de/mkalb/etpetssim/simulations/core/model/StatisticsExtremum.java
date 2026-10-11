@@ -6,9 +6,9 @@ package de.mkalb.etpetssim.simulations.core.model;
  * @param value     the minimum or maximum metric value
  * @param stepCount the simulation step at which this extremum was first recorded
  */
-public record StatisticExtremum(double value, long stepCount) {
+public record StatisticsExtremum(double value, long stepCount) {
 
-    public StatisticExtremum {
+    public StatisticsExtremum {
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("value must be finite: " + value);
         }

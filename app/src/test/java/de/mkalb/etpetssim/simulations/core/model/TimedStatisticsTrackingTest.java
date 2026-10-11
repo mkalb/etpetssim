@@ -200,7 +200,7 @@ final class TimedStatisticsTrackingTest {
 
     private static <STA extends TimedSimulationStatistics> void assertStepZeroSample(
             AbstractTimedSimulationManager<?, ?, ?, STA> manager,
-            List<StatisticMetric<STA>> metrics) {
+            List<StatisticsMetric<STA>> metrics) {
         var history = manager.statisticsHistory();
         Map<String, Double> expectedValues = new LinkedHashMap<>();
         metrics.forEach(metric -> expectedValues.put(metric.key(), metric.extractor().applyAsDouble(manager.statistics())));
@@ -291,7 +291,7 @@ final class TimedStatisticsTrackingTest {
 
         assertAll(
                 () -> assertEquals(List.of(), manager.statisticsHistory()),
-                () -> assertEquals(StatisticExtrema.empty(), manager.statisticsExtrema())
+                () -> assertEquals(StatisticsExtrema.empty(), manager.statisticsExtrema())
         );
     }
 

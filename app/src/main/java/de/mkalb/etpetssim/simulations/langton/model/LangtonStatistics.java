@@ -26,14 +26,14 @@ public final class LangtonStatistics
         visitedCells = 0;
     }
 
-    public static List<StatisticMetric<LangtonStatistics>> metrics() {
+    public static List<StatisticsMetric<LangtonStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_ANT_CELLS,
+                new StatisticsMetric<>(KEY_ANT_CELLS, LANGTON_OBSERVATION_ANT_CELLS,
                         LangtonStatistics::antCells,
-                        StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_VISITED_CELLS,
+                        StatisticsExtremaMode.NONE),
+                new StatisticsMetric<>(KEY_VISITED_CELLS, LANGTON_OBSERVATION_VISITED_CELLS,
                         LangtonStatistics::visitedCells,
-                        StatisticExtremaMode.NONE)
+                        StatisticsExtremaMode.NONE)
         );
     }
 

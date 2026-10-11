@@ -26,14 +26,14 @@ public final class SugarStatistics
         agentCells = 0;
     }
 
-    public static List<StatisticMetric<SugarStatistics>> metrics() {
+    public static List<StatisticsMetric<SugarStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_RESOURCE_CELLS,
+                new StatisticsMetric<>(KEY_RESOURCE_CELLS, SUGAR_OBSERVATION_RESOURCE_CELLS,
                         SugarStatistics::resourceCells,
-                        StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_AGENT_CELLS,
+                        StatisticsExtremaMode.NONE),
+                new StatisticsMetric<>(KEY_AGENT_CELLS, SUGAR_OBSERVATION_AGENT_CELLS,
                         SugarStatistics::agentCells,
-                        StatisticExtremaMode.NONE)
+                        StatisticsExtremaMode.NONE)
         );
     }
 

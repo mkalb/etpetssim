@@ -34,11 +34,11 @@ public abstract class AbstractObservationView<
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
-    private final List<StatisticHistoryChartView> statisticHistoryChartViews = new ArrayList<>();
+    private final List<StatisticsHistoryChartView> statisticsHistoryChartViews = new ArrayList<>();
     private @Nullable GC selectedGridCell;
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
-    private @Nullable List<StatisticMetric<STA>> genericMetrics;
+    private @Nullable List<StatisticsMetric<STA>> genericMetrics;
     private @Nullable List<MetricLabels> genericMetricLabels;
     private @Nullable ReadOnlyObjectProperty<@Nullable GC> selectedGridCellProperty;
     private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
@@ -257,10 +257,10 @@ public abstract class AbstractObservationView<
         selectedGridCellProperty = null;
         selectedGridCellListener = null;
 
-        for (StatisticHistoryChartView chartView : statisticHistoryChartViews) {
+        for (StatisticsHistoryChartView chartView : statisticsHistoryChartViews) {
             chartView.shutdown();
         }
-        statisticHistoryChartViews.clear();
+        statisticsHistoryChartViews.clear();
     }
 
     /**
@@ -352,12 +352,12 @@ public abstract class AbstractObservationView<
      * <p>
      * When any metric tracks extrema, a "min" / "max" header row is prepended; step-count context
      * appears in a tooltip on each extremum value label on hover.
-     * Call {@link #updateGenericMetricSection(Optional, StatisticExtrema)} to refresh all values.
+     * Call {@link #updateGenericMetricSection(Optional, StatisticsExtrema)} to refresh all values.
      *
      * @param metrics ordered metric descriptors defining the row layout
      * @return a styled {@link VBox} containing the title and the metric grid
      */
-    protected final VBox createGenericMetricSection(List<StatisticMetric<STA>> metrics) {
+    protected final VBox createGenericMetricSection(List<StatisticsMetric<STA>> metrics) {
         genericMetrics = List.copyOf(metrics);
         List<MetricLabels> labels = new ArrayList<>(metrics.size());
         genericMetricLabels = labels;
@@ -391,7 +391,7 @@ public abstract class AbstractObservationView<
         }
 
         for (int i = 0; i < metrics.size(); i++) {
-            StatisticMetric<STA> metric = metrics.get(i);
+            StatisticsMetric<STA> metric = metrics.get(i);
             int row = i + rowOffset;
 
             Label nameLabel = new Label(AppLocalization.getText(metric.labelKey()) + LABEL_SEPARATOR);
@@ -455,14 +455,14 @@ public abstract class AbstractObservationView<
      * @param extrema    current extrema snapshot
      */
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "NumericCastThatLosesPrecision"})
-    protected final void updateGenericMetricSection(Optional<STA> statistics, StatisticExtrema extrema) {
+    protected final void updateGenericMetricSection(Optional<STA> statistics, StatisticsExtrema extrema) {
         if ((genericMetrics == null) || (genericMetricLabels == null)) {
             return;
         }
         String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
         String atStep = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_AT_STEP);
         for (int i = 0; i < genericMetrics.size(); i++) {
-            StatisticMetric<STA> metric = genericMetrics.get(i);
+            StatisticsMetric<STA> metric = genericMetrics.get(i);
             MetricLabels rowLabels = genericMetricLabels.get(i);
             if (statistics.isPresent()) {
                 double currentValue = metric.extractor().applyAsDouble(statistics.get());
@@ -511,13 +511,13 @@ public abstract class AbstractObservationView<
     @Nullable
     protected final TitledPane createChartSection() {
         if ((genericMetrics == null) ||
-                genericMetrics.stream().noneMatch(m -> m.chartGroup() != StatisticChartGroup.NONE)) {
+                genericMetrics.stream().noneMatch(m -> m.chartGroup() != StatisticsChartGroup.NONE)) {
             return null;
         }
-        StatisticHistoryChartView chartView = new StatisticHistoryChartView(
+        StatisticsHistoryChartView chartView = new StatisticsHistoryChartView(
                 genericMetrics,
                 viewModel.statisticsHistoryProperty());
-        statisticHistoryChartViews.add(chartView);
+        statisticsHistoryChartViews.add(chartView);
         return chartView.titledPane();
     }
 

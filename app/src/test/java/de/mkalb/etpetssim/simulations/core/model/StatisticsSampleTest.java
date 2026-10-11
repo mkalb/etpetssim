@@ -8,12 +8,12 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
-final class StatisticSampleTest {
+final class StatisticsSampleTest {
 
     @Test
     void testRecordComponents() {
         StepTimingStatistics timing = StepTimingStatistics.empty();
-        var sample = new StatisticSample(7, timing, Map.of("count", 42.0d));
+        var sample = new StatisticsSample(7, timing, Map.of("count", 42.0d));
 
         assertAll(
                 () -> assertEquals(7, sample.stepCount()),
@@ -24,7 +24,7 @@ final class StatisticSampleTest {
 
     @Test
     void testConstructorAcceptsZeroStepCount() {
-        var sample = new StatisticSample(0, StepTimingStatistics.empty(), Map.of());
+        var sample = new StatisticsSample(0, StepTimingStatistics.empty(), Map.of());
 
         assertEquals(0, sample.stepCount());
     }
@@ -33,7 +33,7 @@ final class StatisticSampleTest {
     void testConstructorRejectsNegativeStepCount() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> new StatisticSample(-1, StepTimingStatistics.empty(), Map.of())
+                () -> new StatisticsSample(-1, StepTimingStatistics.empty(), Map.of())
         );
 
         assertTrue(exception.getMessage().contains("stepCount"));
@@ -45,7 +45,7 @@ final class StatisticSampleTest {
         values.put("first", 1.0d);
         values.put("second", 2.0d);
 
-        var sample = new StatisticSample(0, StepTimingStatistics.empty(), values);
+        var sample = new StatisticsSample(0, StepTimingStatistics.empty(), values);
         values.clear();
 
         assertAll(
@@ -57,7 +57,7 @@ final class StatisticSampleTest {
 
     @Test
     void testValuesIsUnmodifiable() {
-        var sample = new StatisticSample(0, StepTimingStatistics.empty(), Map.of("count", 1.0d));
+        var sample = new StatisticsSample(0, StepTimingStatistics.empty(), Map.of("count", 1.0d));
 
         assertNotNull(assertThrows(
                 UnsupportedOperationException.class,
@@ -67,7 +67,7 @@ final class StatisticSampleTest {
 
     @Test
     void testConstructorPreservesNaNSentinel() {
-        var sample = new StatisticSample(0, StepTimingStatistics.empty(), Map.of("count", Double.NaN));
+        var sample = new StatisticsSample(0, StepTimingStatistics.empty(), Map.of("count", Double.NaN));
 
         assertTrue(Double.isNaN(sample.values().get("count")));
     }

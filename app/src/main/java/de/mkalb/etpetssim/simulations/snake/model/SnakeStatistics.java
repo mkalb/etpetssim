@@ -38,23 +38,23 @@ public final class SnakeStatistics
         cumulativeSnakeDeathCount = 0;
     }
 
-    public static List<StatisticMetric<SnakeStatistics>> metrics() {
+    public static List<StatisticsMetric<SnakeStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
+                new StatisticsMetric<>(KEY_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_SNAKE_HEAD_CELLS,
                         SnakeStatistics::snakeHeadCells,
-                        StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
+                        StatisticsExtremaMode.NONE),
+                new StatisticsMetric<>(KEY_LIVING_SNAKE_HEAD_CELLS, SNAKE_OBSERVATION_LIVING_SNAKE_HEAD_CELLS,
                         SnakeStatistics::livingSnakeHeadCells,
-                        StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS,
+                        StatisticsExtremaMode.NONE),
+                new StatisticsMetric<>(KEY_WALL_CELLS, SNAKE_OBSERVATION_WALL_CELLS,
                         SnakeStatistics::wallCells,
-                        StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS,
+                        StatisticsExtremaMode.NONE),
+                new StatisticsMetric<>(KEY_FOOD_CELLS, SNAKE_OBSERVATION_FOOD_CELLS,
                         SnakeStatistics::foodCells,
-                        StatisticExtremaMode.NONE),
-                new StatisticMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
+                        StatisticsExtremaMode.NONE),
+                new StatisticsMetric<>(KEY_CUMULATIVE_SNAKE_DEATH_COUNT, SNAKE_OBSERVATION_CUMULATIVE_SNAKE_DEATH_COUNT,
                         SnakeStatistics::cumulativeSnakeDeathCount,
-                        StatisticExtremaMode.NONE)
+                        StatisticsExtremaMode.NONE)
         );
     }
 

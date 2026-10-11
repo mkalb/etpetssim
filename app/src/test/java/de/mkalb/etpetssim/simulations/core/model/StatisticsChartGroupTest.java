@@ -4,29 +4,29 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-final class StatisticChartGroupTest {
+final class StatisticsChartGroupTest {
 
     @Test
     void testEnumValues() {
-        assertNotNull(StatisticChartGroup.valueOf("NONE"));
-        assertNotNull(StatisticChartGroup.valueOf("PRIMARY"));
-        assertNotNull(StatisticChartGroup.valueOf("SECONDARY"));
+        assertNotNull(StatisticsChartGroup.valueOf("NONE"));
+        assertNotNull(StatisticsChartGroup.valueOf("PRIMARY"));
+        assertNotNull(StatisticsChartGroup.valueOf("SECONDARY"));
     }
 
     @Test
     void testEnumCount() {
-        assertEquals(3, StatisticChartGroup.values().length, "There should be exactly 3 values");
+        assertEquals(3, StatisticsChartGroup.values().length, "There should be exactly 3 values");
     }
 
     @Test
     void testDeclarationOrder() {
         assertArrayEquals(
-                new StatisticChartGroup[]{
-                        StatisticChartGroup.NONE,
-                        StatisticChartGroup.PRIMARY,
-                        StatisticChartGroup.SECONDARY
+                new StatisticsChartGroup[]{
+                        StatisticsChartGroup.NONE,
+                        StatisticsChartGroup.PRIMARY,
+                        StatisticsChartGroup.SECONDARY
                 },
-                StatisticChartGroup.values()
+                StatisticsChartGroup.values()
         );
     }
 
@@ -34,7 +34,7 @@ final class StatisticChartGroupTest {
     void testValueOfInvalidThrows() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> StatisticChartGroup.valueOf("INVALID")
+                () -> StatisticsChartGroup.valueOf("INVALID")
         );
         assertTrue(exception.getMessage().contains("INVALID"));
     }
@@ -43,7 +43,7 @@ final class StatisticChartGroupTest {
     void testValueOfNullThrows() {
         NullPointerException exception = assertThrows(
                 NullPointerException.class,
-                () -> StatisticChartGroup.valueOf(null)
+                () -> StatisticsChartGroup.valueOf(null)
         );
         assertNotNull(exception.getMessage());
     }

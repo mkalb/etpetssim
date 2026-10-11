@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.core.model;
 /**
  * Defines whether a metric participates in minimum and/or maximum tracking.
  */
-public enum StatisticExtremaMode {
+public enum StatisticsExtremaMode {
 
     /**
      * Tracks neither minimum nor maximum values.
@@ -28,7 +28,7 @@ public enum StatisticExtremaMode {
     private final boolean tracksMinimum;
     private final boolean tracksMaximum;
 
-    StatisticExtremaMode(boolean tracksMinimum, boolean tracksMaximum) {
+    StatisticsExtremaMode(boolean tracksMinimum, boolean tracksMaximum) {
         this.tracksMinimum = tracksMinimum;
         this.tracksMaximum = tracksMaximum;
     }

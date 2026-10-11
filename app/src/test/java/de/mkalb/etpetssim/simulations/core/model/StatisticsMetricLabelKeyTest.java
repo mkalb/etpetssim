@@ -18,7 +18,7 @@ import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-final class StatisticMetricLabelKeyTest {
+final class StatisticsMetricLabelKeyTest {
 
     private static Set<String> loadMainPropertyKeys(String fileName) throws IOException {
         InputStream stream = AppResources.getResourceAsStream("i18n/" + fileName)
@@ -32,7 +32,7 @@ final class StatisticMetricLabelKeyTest {
     }
 
     private static List<String> allLabelKeys() {
-        return Stream.<List<? extends StatisticMetric<?>>>of(
+        return Stream.<List<? extends StatisticsMetric<?>>>of(
                              ConwayStatistics.metrics(),
                              EtpetsStatistics.metrics(),
                              ForestStatistics.metrics(),
@@ -42,7 +42,7 @@ final class StatisticMetricLabelKeyTest {
                              SugarStatistics.metrics(),
                              WatorStatistics.metrics()
                      ).flatMap(List::stream)
-                     .map(StatisticMetric::labelKey)
+                     .map(StatisticsMetric::labelKey)
                      .toList();
     }
 

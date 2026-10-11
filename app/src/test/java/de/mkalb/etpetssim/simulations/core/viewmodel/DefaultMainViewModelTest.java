@@ -420,7 +420,7 @@ final class DefaultMainViewModelTest {
             assertAll(
                     () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),
                     () -> assertEquals(List.of(), fixture.observationViewModel().getStatisticsHistory()),
-                    () -> assertEquals(StatisticExtrema.empty(), fixture.observationViewModel().getStatisticsExtrema())
+                    () -> assertEquals(StatisticsExtrema.empty(), fixture.observationViewModel().getStatisticsExtrema())
             );
         });
     }

@@ -26,14 +26,14 @@ public final class ReboundingStatistics
         movingEntityCells = 0;
     }
 
-    public static List<StatisticMetric<ReboundingStatistics>> metrics() {
+    public static List<StatisticsMetric<ReboundingStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_WALL_CELLS,
+                new StatisticsMetric<>(KEY_WALL_CELLS, REBOUNDING_OBSERVATION_WALL_CELLS,
                         ReboundingStatistics::wallCells,
-                        StatisticExtremaMode.MAX),
-                new StatisticMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
+                        StatisticsExtremaMode.MAX),
+                new StatisticsMetric<>(KEY_MOVING_ENTITY_CELLS, REBOUNDING_OBSERVATION_MOVING_ENTITY_CELLS,
                         ReboundingStatistics::movingEntityCells,
-                        StatisticExtremaMode.MAX)
+                        StatisticsExtremaMode.MAX)
         );
     }
 

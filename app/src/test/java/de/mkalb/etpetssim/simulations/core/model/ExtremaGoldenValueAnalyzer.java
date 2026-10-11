@@ -100,11 +100,11 @@ public final class ExtremaGoldenValueAnalyzer {
         );
     }
 
-    private static int minimumValue(StatisticExtrema extrema, String key) {
+    private static int minimumValue(StatisticsExtrema extrema, String key) {
         return extrema.minimumValues().get(key).intValue();
     }
 
-    private static int maximumValue(StatisticExtrema extrema, String key) {
+    private static int maximumValue(StatisticsExtrema extrema, String key) {
         return extrema.maximumValues().get(key).intValue();
     }
 

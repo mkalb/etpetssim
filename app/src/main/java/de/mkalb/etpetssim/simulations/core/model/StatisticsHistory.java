@@ -9,7 +9,7 @@ import java.util.*;
  * so that a JavaFX-thread consumer reading {@code asList()} does not race with a background
  * thread calling {@code add()}.
  */
-public final class StatisticHistory {
+public final class StatisticsHistory {
 
     /**
      * Default maximum number of retained samples.
@@ -17,12 +17,12 @@ public final class StatisticHistory {
     public static final int DEFAULT_CAPACITY = 1000;
 
     private final int capacity;
-    private final ArrayDeque<StatisticSample> samples;
+    private final ArrayDeque<StatisticsSample> samples;
 
     /**
      * Creates a history with {@link #DEFAULT_CAPACITY}.
      */
-    public StatisticHistory() {
+    public StatisticsHistory() {
         this(DEFAULT_CAPACITY);
     }
 
@@ -32,7 +32,7 @@ public final class StatisticHistory {
      * @param capacity maximum number of retained samples; must be positive
      * @throws IllegalArgumentException if {@code capacity} is not positive
      */
-    public StatisticHistory(int capacity) {
+    public StatisticsHistory(int capacity) {
         if (capacity <= 0) {
             throw new IllegalArgumentException("capacity must be > 0");
         }
@@ -70,7 +70,7 @@ public final class StatisticHistory {
      *
      * @param sample sample to append
      */
-    public synchronized void add(StatisticSample sample) {
+    public synchronized void add(StatisticsSample sample) {
         if (samples.size() == capacity) {
             samples.removeFirst();
         }
@@ -82,7 +82,7 @@ public final class StatisticHistory {
      *
      * @return the retained samples
      */
-    public synchronized List<StatisticSample> asList() {
+    public synchronized List<StatisticsSample> asList() {
         return List.copyOf(samples);
     }
 
