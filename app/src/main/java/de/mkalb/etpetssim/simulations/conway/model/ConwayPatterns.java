@@ -57,9 +57,9 @@ public final class ConwayPatterns {
     private static final String PATTERN_LABEL_KEY_TUB = "conway.pattern.tub";
 
     private static final ConwayTransitionRules CONWAYS_LIFE_TRANSITION_RULES = ConwayTransitionRules.of(
-            ConwayPresetSquare.CONWAYS_LIFE.toString());
+            ConwayRulePresetSquare.CONWAYS_LIFE.toString());
     private static final ConwayTransitionRules HIGHLIFE_TRANSITION_RULES = ConwayTransitionRules.of(
-            ConwayPresetSquare.HIGHLIFE.toString());
+            ConwayRulePresetSquare.HIGHLIFE.toString());
 
     private static final List<ConwayPatternChoice> CATALOG_CHOICES = List.of(
             new ConwayPatternChoice(

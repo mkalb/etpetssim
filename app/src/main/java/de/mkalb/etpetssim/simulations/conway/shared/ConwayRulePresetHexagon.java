@@ -11,7 +11,7 @@ package de.mkalb.etpetssim.simulations.conway.shared;
  * with {@link #EMPTY} first and all other presets sorted alphabetically by display name
  * (ASCII order: digit-prefixed names before letter-prefixed names).
  */
-public enum ConwayPresetHexagon implements ConwayPreset {
+public enum ConwayRulePresetHexagon implements ConwayRulePreset {
 
     EMPTY("", "", -1),
     HEX_34_LIFE("34/34", "Hex 34 Life", 40),
@@ -25,7 +25,7 @@ public enum ConwayPresetHexagon implements ConwayPreset {
     private final String displayName;
     private final int recommendedDensityPercent;
 
-    ConwayPresetHexagon(String ruleString, String displayName, int recommendedDensityPercent) {
+    ConwayRulePresetHexagon(String ruleString, String displayName, int recommendedDensityPercent) {
         this.ruleString = ruleString;
         this.displayName = displayName;
         this.recommendedDensityPercent = recommendedDensityPercent;

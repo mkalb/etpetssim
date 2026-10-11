@@ -4,12 +4,12 @@ package de.mkalb.etpetssim.simulations.conway.shared;
  * Common sealed interface for Conway-style preset rule sets.
  * <p>
  * Exactly three implementations are permitted, one per supported cell shape:
- * {@link ConwayPresetSquare}, {@link ConwayPresetTriangle}, and {@link ConwayPresetHexagon}.
+ * {@link ConwayRulePresetSquare}, {@link ConwayRulePresetTriangle}, and {@link ConwayRulePresetHexagon}.
  * Each implementation provides a well-known S/B rule string, a human-readable
  * display name, and a recommended initial cell density.
  */
-public sealed interface ConwayPreset
-        permits ConwayPresetHexagon, ConwayPresetSquare, ConwayPresetTriangle {
+public sealed interface ConwayRulePreset
+        permits ConwayRulePresetHexagon, ConwayRulePresetSquare, ConwayRulePresetTriangle {
 
     /**
      * Returns the human-readable display name for this preset, suitable for use in a ComboBox.

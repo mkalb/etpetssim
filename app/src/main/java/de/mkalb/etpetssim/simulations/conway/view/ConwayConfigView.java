@@ -67,7 +67,7 @@ public final class ConwayConfigView
         var hintBinding = Bindings.createStringBinding(
                 () -> {
                     var shape = viewModel.cellShapeProperty().property().getValue();
-                    ConwayPreset preset = (switch (shape) {
+                    ConwayRulePreset preset = (switch (shape) {
                         case SQUARE -> squarePresetProperty;
                         case TRIANGLE -> trianglePresetProperty;
                         case HEXAGON -> hexagonPresetProperty;

@@ -191,7 +191,7 @@ final class ConwayPatternsTest {
     void testAvailableChoicesIncludeHighLifeReplicatorForHighLifeRules() {
         ConwayConfig config = createConfig(
                 CellShape.SQUARE,
-                ConwayTransitionRules.of(ConwayPresetSquare.HIGHLIFE.toString()));
+                ConwayTransitionRules.of(ConwayRulePresetSquare.HIGHLIFE.toString()));
 
         List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
 
