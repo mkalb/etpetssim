@@ -5,7 +5,7 @@ paths:
 
 # UI Package Instructions
 
-Rules for production code in `de.mkalb.etpetssim.ui`; keep reusable UI infrastructure here, not simulation logic.
+Rules for production code in `de.mkalb.etpetssim.ui`; keep reusable UI infrastructure and application-level dialogs here, not simulation logic.
 
 ## Scope
 

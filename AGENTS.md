@@ -10,7 +10,7 @@ Single Gradle module `app`. Packages under `de.mkalb.etpetssim` in `app/src/main
 
 - `core`: cross-cutting `App*` utilities.
 - `engine`: grid, topology, model, neighborhood, and execution engine.
-- `ui`: reusable JavaFX UI infrastructure.
+- `ui`: reusable JavaFX UI infrastructure and application-level dialogs.
 - `simulations`: shared simulation infrastructure in `simulations.core` and one MVVM package per simulation.
 
 Other locations:

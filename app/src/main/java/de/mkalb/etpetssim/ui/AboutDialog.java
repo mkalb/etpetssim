@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim;
+package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.*;
 import javafx.scene.control.*;
