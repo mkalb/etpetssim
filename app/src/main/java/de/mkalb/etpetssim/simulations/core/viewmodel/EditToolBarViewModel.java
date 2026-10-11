@@ -10,7 +10,7 @@ import java.util.*;
  *
  * @param <CTX> simulation-specific action context type
  */
-final class SimulationEditToolBarViewModel<CTX extends SimulationUserActionContext> {
+final class EditToolBarViewModel<CTX extends SimulationUserActionContext> {
 
     private final BooleanProperty editModeActive = new SimpleBooleanProperty(false);
     private final ObjectProperty<String> selectedUserActionToolId =

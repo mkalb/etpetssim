@@ -58,7 +58,7 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
     private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
-    private final SimulationEditToolBarViewModel<CTX> editToolBarViewModel;
+    private final EditToolBarViewModel<CTX> editToolBarViewModel;
     private @Nullable SM simulationManager;
     private @Nullable Future<?> initializationFuture;
     private @Nullable Future<?> batchFuture;
@@ -114,7 +114,7 @@ public final class DefaultMainViewModel<
         this.simulationManagerFactory = simulationManagerFactory;
         this.selectedGridCellProvider = selectedGridCellProvider;
         this.simulationUserAction = simulationUserAction;
-        editToolBarViewModel = new SimulationEditToolBarViewModel<>();
+        editToolBarViewModel = new EditToolBarViewModel<>();
         timer = new SimulationTimer(this::runTimerStep);
         this.lifecycleExecutor = lifecycleExecutor;
 

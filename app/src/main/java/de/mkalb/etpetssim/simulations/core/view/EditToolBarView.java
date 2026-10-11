@@ -15,9 +15,9 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.function.*;
 
-final class SimulationEditToolBarView<CTX extends SimulationUserActionContext> {
+final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
-    private static final String LOG_COMPONENT = "SimulationEditToolBarView";
+    private static final String LOG_COMPONENT = "EditToolBarView";
 
     private final ScrollPane editAffordanceScrollPane;
     private final HBox editAffordanceBox;
@@ -26,7 +26,7 @@ final class SimulationEditToolBarView<CTX extends SimulationUserActionContext> {
     private @Nullable ObjectProperty<String> selectedToolIdProperty;
     private @Nullable ChangeListener<String> selectedToolIdListener;
 
-    SimulationEditToolBarView() {
+    EditToolBarView() {
         editAffordanceBox = new HBox();
         editAffordanceBox.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR);
 

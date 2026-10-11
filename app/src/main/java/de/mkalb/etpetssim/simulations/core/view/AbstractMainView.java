@@ -53,7 +53,7 @@ public abstract class AbstractMainView<
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
-    private final SimulationEditToolBarView<CTX> editToolBar = new SimulationEditToolBarView<>();
+    private final EditToolBarView<CTX> editToolBar = new EditToolBarView<>();
     private final Map<Double, Font> fontCache;
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter dynamicPainter;
