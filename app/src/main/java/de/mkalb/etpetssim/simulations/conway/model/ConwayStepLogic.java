@@ -8,12 +8,12 @@ import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
 import java.util.*;
 
-public final class ConwayUpdateStrategy implements SynchronousStepLogic<ConwayEntity, ConwayStatistics> {
+public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity, ConwayStatistics> {
 
     private final GridStructure structure;
     private final ConwayConfig config;
 
-    public ConwayUpdateStrategy(GridStructure structure, ConwayConfig config) {
+    public ConwayStepLogic(GridStructure structure, ConwayConfig config) {
         this.structure = structure;
         this.config = config;
     }

@@ -8,13 +8,13 @@ import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
 
 import java.util.*;
 
-public final class ForestUpdateStrategy implements SynchronousStepLogic<ForestEntity, ForestStatistics> {
+public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity, ForestStatistics> {
 
     private final GridStructure structure;
     private final ForestConfig config;
     private final Random random;
 
-    public ForestUpdateStrategy(GridStructure structure, ForestConfig config, Random random) {
+    public ForestStepLogic(GridStructure structure, ForestConfig config, Random random) {
         this.structure = structure;
         this.config = config;
         this.random = random;

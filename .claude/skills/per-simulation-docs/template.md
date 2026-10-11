@@ -39,7 +39,7 @@ idea, and what a user sees happening on the grid. Avoid implementation detail.>
 
 <Summarize the core per-step loop in plain language as a concise list of 3-7
 bullet points. Derive this from whichever step class the simulation provides
-(step-logic, update-strategy, or step-runner), its per-phase `*Logic` classes,
+(step-logic or step-runner), its per-phase `*Logic` classes,
 and the SimulationManager (starting conditions such as seeding and initial
 placement), but phrase it for a user, not a developer.>
 

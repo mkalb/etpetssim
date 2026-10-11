@@ -30,7 +30,7 @@ public final class ConwaySimulationManager
         var random = new Random(config.seed());
         var model = new SparseGridModel<>(structure, ConwayEntity.DEAD);
 
-        var runner = new SynchronousStepRunner<>(model, new ConwayUpdateStrategy(structure, config));
+        var runner = new SynchronousStepRunner<>(model, new ConwayStepLogic(structure, config));
         var terminationCondition = new ConwayTerminationCondition();
         executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
 

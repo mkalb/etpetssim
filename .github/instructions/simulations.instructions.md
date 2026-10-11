@@ -229,6 +229,9 @@ Shutdown checklist:
 
 - Use `draw...` for canvas rendering methods.
 - Name user-triggered redraw callbacks `requestDraw...` (for example, `requestDraw()`).
+- Name implementations of `SynchronousStepLogic` and `AgentStepLogic` with the suffix `StepLogic` (for example,
+  `ConwayStepLogic`, `WatorStepLogic`); name implementations of `SimulationStepRunner` with the suffix `StepRunner`
+  (for example, `SugarStepRunner`).
 
 ## Anti-Patterns
 

@@ -79,8 +79,7 @@ many files in one shell command.
   | `model/<Name>Config.java` | Configurable parameters (record components + Javadoc), grouped by the pane comments (Structure, Layout, Initialization, Rules) | Configuration |
   | `model/<Name>Constraints.java` | Defaults, valid ranges, and allowed choices (e.g. `CELL_SHAPE_VALUES`, `*_DEFAULT`); used for default-first `(default)` marking | Category and grid, Configuration |
   | `model/<Name>GridModel.java` | Whether the simulation uses one grid or multiple grids for distinct spatial components (e.g. resource and agent layers in Sugarscape / ET Pets). If there are multiple grids, name each conceptually. | Entities, Rules and mechanics |
-  | `model/<Name>StepLogic.java` | Per-agent step logic (implements `AgentStepLogic`): what happens to a single agent each tick — movement, neighbor interactions, reproduction, death (e.g. Wa-Tor, Snake) | Rules and mechanics |
-  | `model/<Name>UpdateStrategy.java` | Synchronous, double-buffered cellular-automaton step (implements `SynchronousStepLogic`): rules applied to every cell from the current grid into a next grid in one pass (e.g. Conway survival/birth thresholds) | Rules and mechanics |
+  | `model/<Name>StepLogic.java` | Per-agent step logic (implements `AgentStepLogic`): what happens to a single agent each tick — movement, neighbor interactions, reproduction, death (e.g. Wa-Tor, Snake). Or synchronous, double-buffered cellular-automaton step logic (implements `SynchronousStepLogic`): rules applied to every cell from the current grid into a next grid in one pass (e.g. Conway survival/birth thresholds) | Rules and mechanics |
   | `model/<Name>StepRunner.java` | Whole-step orchestration (implements `SimulationStepRunner`): the ordered sub-phases executed per tick (e.g. agent logic, then resource regrowth, then terrain updates in ET Pets / Sugarscape) | Rules and mechanics |
   | `model/<Name>AgentLogic.java`, `<Name>ResourceLogic.java`, and any other `*Logic.java` used by the simulation | Starting from `StepRunner`, trace each logic class it actually invokes, directly or through another invoked phase. Document only these used classes; do not include a `*Logic.java` class solely because it exists in the package. | Rules and mechanics |
   | `model/<Name>SimulationManager.java` | **Starting conditions** and overall run flow. Trace the methods, helper types, and constants actually used by the manager to determine placement, seeding, resource generation, randomization, and phase orchestration. Describe the resulting user-visible behavior. Do not assume that fixed implementation values are configurable or that all relevant facts are declared directly in the manager. | Rules and mechanics, Configuration (Initialization) |
@@ -95,7 +94,7 @@ many files in one shell command.
   Resolve conflicting evidence by subject ownership:
 
     1. For run-time behavior and step order, the code actually invoked by
-       `SimulationManager`, `StepRunner`, `StepLogic`, `UpdateStrategy`, and
+       `SimulationManager`, `StepRunner`, `StepLogic`, and
        `UserAction` is authoritative.
     2. For which settings and tools users can access, their conceptual UI
        grouping, and action scope, `ConfigView` and `MainView` are authoritative.

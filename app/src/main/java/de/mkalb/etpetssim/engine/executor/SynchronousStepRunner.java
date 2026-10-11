@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 /**
  * Executes synchronous simulation steps on a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}.
  * <p>
- * This runner applies a synchronous update strategy to the simulation model:
+ * This runner applies synchronous step logic to the simulation model:
  * it reads from the current model (as a {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}) and writes results
  * to the next model. After each step, the models are swapped, and the next model is cleared
  * for the following step.
@@ -22,8 +22,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
     private WritableGridModel<ENT> nextModel;
 
     /**
-     * Constructs a new {@code SynchronousStepRunner} with the given initial model and update strategy.
-     * The update strategy must not modify the {@code ReadableGridModel} parameter.
+     * Constructs a new {@code SynchronousStepRunner} with the given initial model and step logic.
+     * The step logic must not modify the {@code ReadableGridModel} parameter.
      *
      * @param initialModel the initial grid model
      * @param stepLogic    the logic to apply for each synchronous simulation step
@@ -38,7 +38,7 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
     /**
      * Performs a single synchronous simulation step.
      * <p>
-     * The update strategy reads from the current model and writes to the next model.
+     * The step logic reads from the current model and writes to the next model.
      * After the update, the models are swapped and the next model is cleared.
      *
      * @param stepIndex the index of the current simulation step
