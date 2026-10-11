@@ -69,7 +69,7 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
      * @param chartGroup  chart group assignment
      */
     public StatisticsMetric(String key, String labelKey, ToDoubleFunction<STA> extractor, StatisticsExtremaMode extremaMode,
-                           StatisticsChartGroup chartGroup) {
+                            StatisticsChartGroup chartGroup) {
         this(key, labelKey, extractor, extremaMode, chartGroup,
                 (chartGroup == StatisticsChartGroup.NONE) ? 0 : DEFAULT_CHART_WINDOW_SIZE);
     }

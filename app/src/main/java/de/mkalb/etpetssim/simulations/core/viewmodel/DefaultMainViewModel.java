@@ -881,7 +881,8 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private record ExecutorSimulationTerminationHandle(ExecutorService executor) implements SimulationTerminationHandle {
+    private record ExecutorSimulationTerminationHandle(ExecutorService executor)
+            implements SimulationTerminationHandle {
 
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {

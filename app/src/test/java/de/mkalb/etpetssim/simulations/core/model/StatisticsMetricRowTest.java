@@ -165,10 +165,10 @@ final class StatisticsMetricRowTest {
                 WatorStatistics.metrics()
         ).forEach(metrics -> {
             Map<StatisticsChartGroup, Set<Integer>> windowSizesByGroup = metrics.stream()
-                                                                               .filter(m -> m.chartGroup() != StatisticsChartGroup.NONE)
-                                                                               .collect(Collectors.groupingBy(
-                                                                                       StatisticsMetric::chartGroup,
-                                                                                       Collectors.mapping(StatisticsMetric::chartWindowSize, Collectors.toSet())));
+                                                                                .filter(m -> m.chartGroup() != StatisticsChartGroup.NONE)
+                                                                                .collect(Collectors.groupingBy(
+                                                                                        StatisticsMetric::chartGroup,
+                                                                                        Collectors.mapping(StatisticsMetric::chartWindowSize, Collectors.toSet())));
             windowSizesByGroup.forEach((group, windowSizes) -> assertEquals(1, windowSizes.size(),
                     "Metrics in chartGroup " + group + " must share the same chartWindowSize, but found " + windowSizes));
         });
