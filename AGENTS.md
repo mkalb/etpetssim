@@ -48,10 +48,14 @@ Other locations:
 ## Platform Baseline
 
 - Target Java 27 and JavaFX 27; do not use preview features.
-- Use the Gradle Wrapper from the repository root (`gradlew.bat` on Windows, `./gradlew` in POSIX shells):
-    - `app:compileJava` for compile checks.
-    - `app:test` for tests; it excludes `@Tag("skill")` tests.
-    - `app:skillTest` after changing skill scripts in `.claude/skills`.
+- Use the Gradle Wrapper from the repository root (`.\gradlew.bat` in PowerShell, `./gradlew` in POSIX shells). Use
+  these command forms without extra options:
+    - `app:compileJava` for compile checks; `app:compileTestJava` for test sources.
+    - `app:test` for tests; it excludes `@Tag("skill")` tests. Use `app:test --tests <pattern>` for selected tests and
+      `app:test --rerun` to force a rerun.
+    - `app:skillTest` after changing skill scripts in `.claude/skills`; `app:skillTest --tests <pattern>` for
+      selected tests.
+    - `app:build` for tests and distribution; `clean app:distZip` for a clean distribution ZIP.
     - `app:run` only when running the JavaFX application is necessary.
 - Run relevant checks when practical; if verification is skipped or blocked, say so briefly.
 
