@@ -1,4 +1,4 @@
-package de.mkalb;
+package de.mkalb.etpetssim.testsupport;
 
 import javafx.application.Platform;
 

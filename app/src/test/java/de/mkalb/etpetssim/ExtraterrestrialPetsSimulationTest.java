@@ -1,9 +1,9 @@
 package de.mkalb.etpetssim;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.simulations.core.*;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;

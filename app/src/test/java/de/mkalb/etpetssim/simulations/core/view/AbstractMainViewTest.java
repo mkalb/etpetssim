@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
 import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;

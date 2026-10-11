@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.core;
 
-import de.mkalb.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.scene.image.Image;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;

@@ -1,12 +1,12 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationState;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;

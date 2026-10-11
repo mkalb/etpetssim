@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.engine.*;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.geometry.*;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;

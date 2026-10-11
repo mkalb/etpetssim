@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.beans.property.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;

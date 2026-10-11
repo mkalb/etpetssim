@@ -1,11 +1,11 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.forest.model.ForestStatistics;
 import de.mkalb.etpetssim.simulations.wator.model.WatorStatistics;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.chart.*;
 import org.junit.jupiter.api.*;

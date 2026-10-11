@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.beans.property.SimpleObjectProperty;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;

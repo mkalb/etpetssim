@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.core.viewmodel;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.simulations.conway.model.*;
@@ -9,6 +8,7 @@ import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayConfigViewModel;
 import de.mkalb.etpetssim.simulations.core.SimulationTermination;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import org.junit.jupiter.api.*;

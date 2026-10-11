@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.util.Duration;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;

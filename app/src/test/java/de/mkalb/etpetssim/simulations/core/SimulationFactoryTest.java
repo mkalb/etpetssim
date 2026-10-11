@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.core;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.view.ConwayMainView;
 import de.mkalb.etpetssim.simulations.etpets.view.EtpetsMainView;
@@ -12,6 +11,7 @@ import de.mkalb.etpetssim.simulations.snake.view.SnakeMainView;
 import de.mkalb.etpetssim.simulations.start.StartMainView;
 import de.mkalb.etpetssim.simulations.sugar.view.SugarMainView;
 import de.mkalb.etpetssim.simulations.wator.view.WatorMainView;
+import de.mkalb.etpetssim.testsupport.FxTestSupport;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
