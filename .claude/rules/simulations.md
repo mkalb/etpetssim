@@ -99,7 +99,7 @@ include:
 - Prefer role-focused names instead of repeating the simulation prefix.
 - Prefer established names where applicable, including `NoAgent`, `NoResource`, `TerrainConstant`, and
   `EntityDescriptors`.
-- Use suffix `Base` for abstract bases.
+- Use suffix `Base` for abstract entity base classes (e.g., `CreatureBase`, `ResourceBase`).
 - Use concise domain names for value records (e.g., `PetGenome`, `PetTraits`).
 - Prefer domain-specific factories (e.g., `CreatureFactory`) over generic `EntityFactory`.
 
@@ -120,6 +120,9 @@ Check `simulations.core` before adding simulation-local infrastructure. Relevant
   `DefaultControlViewModel`, `DefaultObservationViewModel`
 - View helpers: `CellDrawer`, `CoordinateDrawer`, `DrawCallThrottler`, `DefaultControlView`
 - ViewModel/model helpers: `SeedProperty`, `SimulationConfig`
+
+Use prefix `Abstract` only for classes that must be abstract; use prefix `Base` for complete base implementations that
+are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 
 ## JavaFX UI Patterns
 
