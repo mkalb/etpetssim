@@ -67,7 +67,7 @@ public final class EtpetsAgentLogic {
 
                 // Passive energy loss and reproduction cooldown decrement.
                 pet.adjustEnergy(-EtpetsBalance.PET_STEP_ENERGY_LOSS);
-                pet.tickReproductionCooldown();
+                pet.decrementReproductionCooldownRemaining();
 
                 // Check death conditions.
                 boolean petDied = false;
@@ -430,20 +430,20 @@ public final class EtpetsAgentLogic {
     private static int computeWaitScore(Pet pet,
                                         int stepIndex,
                                         Random random) {
-        if (!pet.hasReachedAgeingEffectsAge(stepIndex)) {
+        if (!pet.hasReachedAgingEffectsAge(stepIndex)) {
             return 0;
         }
 
-        int ageingSteps = pet.ageingStepsAtStepIndex(stepIndex);
-        double rawWaitChance = EtpetsBalance.PET_AGEING_WAIT_CHANCE_BASE
-                + (ageingSteps * EtpetsBalance.PET_AGEING_WAIT_CHANCE_INCREASE_PER_STEP);
-        double waitChance = Math.clamp(rawWaitChance, 0.0d, EtpetsBalance.PET_AGEING_WAIT_CHANCE_MAX);
+        int agingSteps = pet.agingStepsAtStepIndex(stepIndex);
+        double rawWaitChance = EtpetsBalance.PET_AGING_WAIT_CHANCE_BASE
+                + (agingSteps * EtpetsBalance.PET_AGING_WAIT_CHANCE_INCREASE_PER_STEP);
+        double waitChance = Math.clamp(rawWaitChance, 0.0d, EtpetsBalance.PET_AGING_WAIT_CHANCE_MAX);
         if (random.nextDouble() >= waitChance) {
             return 0;
         }
 
-        int rawWaitScore = 1 + (ageingSteps / EtpetsBalance.PET_AGEING_WAIT_SCORE_INCREASE_STEP_SPAN);
-        return Math.clamp(rawWaitScore, 1, EtpetsBalance.PET_AGEING_WAIT_SCORE_MAX);
+        int rawWaitScore = 1 + (agingSteps / EtpetsBalance.PET_AGING_WAIT_SCORE_INCREASE_STEP_SPAN);
+        return Math.clamp(rawWaitScore, 1, EtpetsBalance.PET_AGING_WAIT_SCORE_MAX);
     }
 
     private static int computeReproduceScore(Pet pet,
@@ -486,14 +486,14 @@ public final class EtpetsAgentLogic {
 
     private static double computeAgeMortalityChance(Pet pet,
                                                     int stepIndex) {
-        if (!pet.hasReachedAgeingEffectsAge(stepIndex)) {
+        if (!pet.hasReachedAgingEffectsAge(stepIndex)) {
             return 0.0d;
         }
 
-        int ageingSteps = pet.ageingStepsAtStepIndex(stepIndex);
-        double rawChance = EtpetsBalance.PET_AGEING_MORTALITY_CHANCE_BASE
-                + (ageingSteps * EtpetsBalance.PET_AGEING_MORTALITY_CHANCE_INCREASE_PER_STEP);
-        return Math.clamp(rawChance, 0.0d, EtpetsBalance.PET_AGEING_MORTALITY_CHANCE_MAX);
+        int agingSteps = pet.agingStepsAtStepIndex(stepIndex);
+        double rawChance = EtpetsBalance.PET_AGING_MORTALITY_CHANCE_BASE
+                + (agingSteps * EtpetsBalance.PET_AGING_MORTALITY_CHANCE_INCREASE_PER_STEP);
+        return Math.clamp(rawChance, 0.0d, EtpetsBalance.PET_AGING_MORTALITY_CHANCE_MAX);
     }
 
     private static boolean isValidReproductionPartner(Pet pet,

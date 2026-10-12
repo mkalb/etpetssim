@@ -13,12 +13,8 @@ public final class Shark extends CreatureBase {
         return currentEnergy;
     }
 
-    public void reduceEnergy(int loss) {
-        currentEnergy = currentEnergy - loss;
-    }
-
-    public void gainEnergy(int gain) {
-        currentEnergy = currentEnergy + gain;
+    public void adjustEnergy(int delta) {
+        currentEnergy = currentEnergy + delta;
     }
 
     @Override
@@ -42,8 +38,8 @@ public final class Shark extends CreatureBase {
                 "descriptorId=" + descriptorId() +
                 ", sequenceId=" + sequenceId() +
                 ", stepIndexOfBirth=" + stepIndexOfBirth() +
-                ", numberOfReproductions=" + numberOfReproductions() +
-                ", timeOfLastReproduction=" + timeOfLastReproduction() +
+                ", reproductionCount=" + reproductionCount() +
+                ", stepIndexOfLastReproduction=" + stepIndexOfLastReproduction() +
                 ", currentEnergy=" + currentEnergy +
                 '}';
     }

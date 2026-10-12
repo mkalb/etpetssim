@@ -43,7 +43,7 @@ public final class SugarStatistics
         agentCells = agentCellsInitial;
     }
 
-    void adjustAgentsCells(int agentCellsDelta) {
+    void adjustAgentCells(int agentCellsDelta) {
         agentCells += agentCellsDelta;
     }
 

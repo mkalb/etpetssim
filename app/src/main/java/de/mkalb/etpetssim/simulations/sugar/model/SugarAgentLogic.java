@@ -58,15 +58,15 @@ public final class SugarAgentLogic {
                 ResourceEntity sugarResourceEntity = resourceModel.getEntity(finalCoordinate);
                 if (sugarResourceEntity instanceof Sugar sugar) {
                     int harvestedSugar = sugar.currentAmount();
-                    agent.gainEnergy(harvestedSugar);
-                    sugar.reduceAmount(harvestedSugar);
+                    agent.adjustEnergy(harvestedSugar);
+                    sugar.adjustAmount(-harvestedSugar);
                 }
 
                 // 1.5 Agent metabolism and death (consume sugar, die if energy <= 0 or age > maxAge)
-                agent.reduceEnergy(config.agentMetabolismRate());
+                agent.adjustEnergy(-config.agentMetabolismRate());
                 if ((agent.ageAtStepIndex(stepIndex) >= config.agentMaxAge()) || (agent.currentEnergy() <= 0)) {
                     agentModel.setEntityToDefault(finalCoordinate);
-                    statistics.adjustAgentsCells(-1);
+                    statistics.adjustAgentCells(-1);
                     diedAgents++;
                 }
             }
@@ -78,7 +78,7 @@ public final class SugarAgentLogic {
                 // Spawn new agent
                 Agent newAgent = new Agent(config.agentInitialEnergy(), stepIndex);
                 agentModel.setEntity(spawnCoordinate.get(), newAgent);
-                statistics.adjustAgentsCells(1);
+                statistics.adjustAgentCells(1);
             }
         }
     }

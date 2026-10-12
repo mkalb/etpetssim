@@ -39,32 +39,32 @@ final class AppLoggerTest {
     void testInitialize() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertTrue(AppLogger.isInitialized());
-        assertEquals(1, AppLogger.numberOfHandlersForTesting());
+        assertEquals(1, AppLogger.handlerCountForTesting());
     }
 
     @Test
     void testInitializeWithoutHandlers() {
-        int numHandlers = AppLogger.numberOfHandlersForTesting();
+        int numHandlers = AppLogger.handlerCountForTesting();
         AppLogger.initialize(AppLogger.LogLevel.INFO, false, null);
         assertTrue(AppLogger.isInitialized());
-        assertEquals(numHandlers, AppLogger.numberOfHandlersForTesting());
+        assertEquals(numHandlers, AppLogger.handlerCountForTesting());
     }
 
     @Test
     void testInitializeForTesting() {
         AppLogger.initializeForTesting();
         assertTrue(AppLogger.isInitialized());
-        assertEquals(1, AppLogger.numberOfHandlersForTesting());
+        assertEquals(1, AppLogger.handlerCountForTesting());
     }
 
     @Test
     void testResetForTesting() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertTrue(AppLogger.isInitialized());
-        assertEquals(1, AppLogger.numberOfHandlersForTesting());
+        assertEquals(1, AppLogger.handlerCountForTesting());
         AppLogger.resetForTesting();
         assertFalse(AppLogger.isInitialized());
-        assertEquals(0, AppLogger.numberOfHandlersForTesting());
+        assertEquals(0, AppLogger.handlerCountForTesting());
     }
 
     @Test

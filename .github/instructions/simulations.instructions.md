@@ -243,6 +243,10 @@ Shutdown checklist:
 - Name implementations of `SynchronousStepLogic` and `AgentStepLogic` with the suffix `StepLogic` (for example,
   `ConwayStepLogic`, `WatorStepLogic`); name implementations of `SimulationStepRunner` with the suffix `StepRunner`
   (for example, `SugarStepRunner`).
+- Static `<SimulationName><Layer>Logic` helper classes called from a step runner expose `apply(...)`;
+  `perform...` is reserved for implementations of the step contracts.
+- Model, entity, and strategy types may use domain verbs of their simulation (e.g. `move`, `die`, `reproduce`,
+  `consume`, `decideMove`) for state changes and decisions.
 
 ## Anti-Patterns
 
