@@ -76,7 +76,7 @@ public final class StartMainView implements SimulationMainView, SimulationContro
     }
 
     @Override
-    public void updateStepCount(int stepCount) {
+    public void setStepCount(int stepCount) {
         // Do nothing
     }
 

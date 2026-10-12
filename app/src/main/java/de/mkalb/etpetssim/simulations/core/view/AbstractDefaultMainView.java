@@ -155,13 +155,13 @@ public abstract class AbstractDefaultMainView<
 
         AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
 
-        var cellDimension = createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
+        var cellDimension = recreatePaintersAndResizeCanvases(viewModel.getStructure(), viewModel.getCellEdgeLength());
 
         updateCanvasBorderPane(viewModel.getStructure());
 
         rebuildEditToolBar();
 
-        controlView.updateStepCount(stepCount);
+        controlView.setStepCount(stepCount);
         observationView.initializeObservationLabels();
 
         initializeSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentGridModel());
@@ -176,7 +176,7 @@ public abstract class AbstractDefaultMainView<
     private void handleSimulationReset() {
         AppLogger.infof("%s: Resetting simulation view.", LOG_COMPONENT);
         clearCanvasLayers();
-        controlView.updateStepCount(0);
+        controlView.setStepCount(0);
         observationView.initializeObservationLabels();
     }
 
@@ -200,13 +200,13 @@ public abstract class AbstractDefaultMainView<
                 AppLogger.infof("%s: Handle simulation step in view for batch mode. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
-            controlView.updateStepCount(stepCount);
+            controlView.setStepCount(stepCount);
         } else {
             if (DEBUG_MODE) {
                 AppLogger.infof("%s: Handle simulation step in view. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
-            controlView.updateStepCount(stepCount);
+            controlView.setStepCount(stepCount);
 
             observationView.updateObservationLabels();
 

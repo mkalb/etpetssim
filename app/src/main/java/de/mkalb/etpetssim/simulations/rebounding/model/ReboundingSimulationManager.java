@@ -139,7 +139,7 @@ public final class ReboundingSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.update(
+        statistics.setStepData(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
     }

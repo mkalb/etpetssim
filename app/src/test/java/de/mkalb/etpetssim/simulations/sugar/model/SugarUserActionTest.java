@@ -47,7 +47,7 @@ final class SugarUserActionTest {
         userAction.apply(
                 manager,
                 new SugarUserActionContext.AddSugar(SugarAddSugarLevel.HIGH),
-                SugarCell.of(manager.currentGridModel(), coordinate));
+                SugarCell.from(manager.currentGridModel(), coordinate));
 
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
@@ -74,7 +74,7 @@ final class SugarUserActionTest {
         userAction.apply(
                 manager,
                 SugarUserActionContext.FixedAction.REMOVE_SUGAR,
-                SugarCell.of(manager.currentGridModel(), coordinate));
+                SugarCell.from(manager.currentGridModel(), coordinate));
 
         assertAll(
                 () -> assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate)),

@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
  * Base class for simulation statistics that track step timing metrics.
  *
  * <p>Subclasses inherit the standard {@link TimedSimulationStatistics} implementation
- * and call {@link #update} to advance the shared counters.
+ * and call {@link #setStepData} to advance the shared counters.
  */
 public class BaseTimedSimulationStatistics
         implements TimedSimulationStatistics {
@@ -49,13 +49,13 @@ public class BaseTimedSimulationStatistics
     }
 
     /**
-     * Updates the step count and timing statistics to the given values.
+     * Sets the step count and timing statistics to the given values.
      *
      * @param newStepCount            the current simulation step count; must be &gt;= 0
      * @param newStepTimingStatistics the current step timing statistics
      * @throws IllegalArgumentException if {@code newStepCount} is negative
      */
-    public final void update(int newStepCount,
+    public final void setStepData(int newStepCount,
                              StepTimingStatistics newStepTimingStatistics) {
         if (newStepCount < 0) {
             throw new IllegalArgumentException("newStepCount must be >= 0");

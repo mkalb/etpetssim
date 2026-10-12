@@ -76,7 +76,7 @@ public record ConwayTransitionRules(
     }
 
     /**
-     * Creates a new {@code ConwayTransitionRules} instance from a display string in S/B notation.
+     * Parses a display string in S/B notation into a new {@code ConwayTransitionRules} instance.
      * <p>
      * S/B notation (also called <em>traditional notation</em>) is one of two common rule string
      * formats for Conway-style cellular automata. It places survival counts before the slash and
@@ -95,7 +95,7 @@ public record ConwayTransitionRules(
      * @throws IllegalArgumentException if the format is invalid or contains out-of-range values
      * @see #toDisplayString()
      */
-    public static ConwayTransitionRules of(String displayString) {
+    public static ConwayTransitionRules parse(String displayString) {
         if (!displayString.contains("/")) {
             throw new IllegalArgumentException("Invalid format: must contain '/'");
         }
@@ -151,10 +151,10 @@ public record ConwayTransitionRules(
      * <br>
      * Examples: {@code 23/3} (Conway's Game of Life) or {@code 1257/1357}
      * <p>
-     * The returned string can be parsed back by {@link #of(String)}.
+     * The returned string can be parsed back by {@link #parse(String)}.
      *
      * @return a concise S/B notation rule string for these Conway rules
-     * @see #of(String)
+     * @see #parse(String)
      */
     public String toDisplayString() {
         String survive = surviveCounts.stream()

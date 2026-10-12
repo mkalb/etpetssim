@@ -237,7 +237,7 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Registers a callback invoked after simulation initialization.
+     * Sets the callback invoked after simulation initialization; replaces any previous callback.
      *
      * @param listener callback invoked after manager creation and initial statistics update
      */
@@ -246,7 +246,7 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Registers a callback invoked for simulation step notifications.
+     * Sets the callback invoked for simulation step notifications; replaces any previous callback.
      *
      * @param listener callback receiving step events
      */
@@ -255,7 +255,7 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Registers a callback invoked whenever statistics are reset, i.e. right after
+     * Sets the callback invoked whenever statistics are reset, i.e. right after
      * {@link DefaultObservationViewModel#resetStatistics()} is called on simulation restart or shutdown.
      *
      * <p>Use this to refresh observation labels/charts to their initial placeholder state so stale

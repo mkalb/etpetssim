@@ -114,7 +114,7 @@ public abstract class AbstractTimedSimulationManager<
 
     @Override
     public final List<StatisticsSample> statisticsHistory() {
-        return statisticsHistory.asList();
+        return statisticsHistory.toList();
     }
 
     @Override
@@ -156,7 +156,7 @@ public abstract class AbstractTimedSimulationManager<
 
         var sample = new StatisticsSample(stepCount(), stepTimingStatistics(), values);
         statisticsHistory.add(sample);
-        statisticsExtremaTracker.update(sample.values(), sample.stepCount());
+        statisticsExtremaTracker.recordSample(sample.values(), sample.stepCount());
     }
 
 }

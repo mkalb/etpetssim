@@ -28,8 +28,8 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(0, cli.keys().size());
-        assertFalse(cli.hasKey(AppArgs.Key.HELP));
-        assertFalse(cli.hasKey(AppArgs.Key.SIMULATION));
+        assertFalse(cli.containsKey(AppArgs.Key.HELP));
+        assertFalse(cli.containsKey(AppArgs.Key.SIMULATION));
         assertTrue(cli.getValue(AppArgs.Key.HELP).isEmpty());
         assertTrue(cli.getValue(AppArgs.Key.SIMULATION).isEmpty());
         assertFalse(cli.getBoolean(AppArgs.Key.HELP, false));
@@ -58,7 +58,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(1, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.HELP));
+        assertTrue(cli.containsKey(AppArgs.Key.HELP));
         assertEquals("true", cli.getValue(AppArgs.Key.HELP).orElseThrow());
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
@@ -70,7 +70,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(0, cli.keys().size());
-        assertFalse(cli.hasKey(AppArgs.Key.HELP));
+        assertFalse(cli.containsKey(AppArgs.Key.HELP));
         assertFalse(cli.getBoolean(AppArgs.Key.HELP, false));
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
     }
@@ -81,7 +81,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(1, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.HELP));
+        assertTrue(cli.containsKey(AppArgs.Key.HELP));
         assertEquals("true", cli.getValue(AppArgs.Key.HELP).orElseThrow());
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
@@ -93,7 +93,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(1, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.HELP));
+        assertTrue(cli.containsKey(AppArgs.Key.HELP));
         assertEquals("false", cli.getValue(AppArgs.Key.HELP).orElseThrow());
         assertFalse(cli.getBoolean(AppArgs.Key.HELP, false));
         assertFalse(cli.getBoolean(AppArgs.Key.HELP, true));
@@ -105,7 +105,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(1, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.HELP));
+        assertTrue(cli.containsKey(AppArgs.Key.HELP));
         assertEquals("true", cli.getValue(AppArgs.Key.HELP).orElseThrow());
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
@@ -117,7 +117,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(0, cli.keys().size());
-        assertFalse(cli.hasKey(AppArgs.Key.SIMULATION));
+        assertFalse(cli.containsKey(AppArgs.Key.SIMULATION));
         assertTrue(cli.getValue(AppArgs.Key.SIMULATION).isEmpty());
         assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
         assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
@@ -130,7 +130,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(0, cli.keys().size());
-        assertFalse(cli.hasKey(AppArgs.Key.SIMULATION));
+        assertFalse(cli.containsKey(AppArgs.Key.SIMULATION));
         assertTrue(cli.getValue(AppArgs.Key.SIMULATION).isEmpty());
         assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
         assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
@@ -143,7 +143,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(1, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.SIMULATION));
+        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
         assertEquals(Optional.of("testSim"), cli.getValue(AppArgs.Key.SIMULATION));
         assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
         assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
@@ -156,7 +156,7 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(1, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.SIMULATION));
+        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
         assertEquals(Optional.of("42"), cli.getValue(AppArgs.Key.SIMULATION));
         assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
         assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
@@ -169,8 +169,8 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(1, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.SIMULATION));
-        assertFalse(cli.hasKey(AppArgs.Key.HELP));
+        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
+        assertFalse(cli.containsKey(AppArgs.Key.HELP));
         assertEquals(Optional.of("second"), cli.getValue(AppArgs.Key.SIMULATION));
     }
 
@@ -180,8 +180,8 @@ final class AppArgsTest {
         AppArgs cli = new AppArgs(args);
 
         assertEquals(2, cli.keys().size());
-        assertTrue(cli.hasKey(AppArgs.Key.SIMULATION));
-        assertTrue(cli.hasKey(AppArgs.Key.HELP));
+        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
+        assertTrue(cli.containsKey(AppArgs.Key.HELP));
         assertEquals(Optional.of("first"), cli.getValue(AppArgs.Key.SIMULATION));
         assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
     }
@@ -352,15 +352,15 @@ final class AppArgsTest {
 
     @Test
     void testArgumentsAsString() {
-        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help", "--simulation=testSim"}).argumentsAsString());
-        assertEquals("--simulation=testSim", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).argumentsAsString());
-        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).argumentsAsString());
-        assertEquals("--help=false --simulation=testSim", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).argumentsAsString());
+        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help", "--simulation=testSim"}).toArgumentString());
+        assertEquals("--simulation=testSim", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).toArgumentString());
+        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).toArgumentString());
+        assertEquals("--help=false --simulation=testSim", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).toArgumentString());
 
-        assertEquals("", new AppArgs(new String[]{"--simulation"}).argumentsAsString());
-        assertEquals("", new AppArgs(new String[]{"--simulation="}).argumentsAsString());
-        assertEquals("--simulation=1", new AppArgs(new String[]{"--simulation=1"}).argumentsAsString());
-        assertEquals("--simulation=false", new AppArgs(new String[]{"--simulation=false"}).argumentsAsString());
+        assertEquals("", new AppArgs(new String[]{"--simulation"}).toArgumentString());
+        assertEquals("", new AppArgs(new String[]{"--simulation="}).toArgumentString());
+        assertEquals("--simulation=1", new AppArgs(new String[]{"--simulation=1"}).toArgumentString());
+        assertEquals("--simulation=false", new AppArgs(new String[]{"--simulation=false"}).toArgumentString());
     }
 
     @Test

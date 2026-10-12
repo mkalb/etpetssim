@@ -221,7 +221,7 @@ final class SimulationTypeTest {
                     return Optional.empty();
                 }
             });
-            assertEquals(expected, simulationType.urlAsUri());
+            assertEquals(expected, simulationType.uri());
         }
     }
 

@@ -143,7 +143,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
      * @param violatedCondition condition that evaluates to {@code true} when the rule is violated
      * @param messageProvider   provider for the localized violation message
      */
-    protected final void addConfigValidationRule(ObservableBooleanValue violatedCondition,
+    protected final void registerConfigValidationRule(ObservableBooleanValue violatedCondition,
                                                  Supplier<String> messageProvider) {
         configValidationRules.add(new ConfigValidationRule(violatedCondition, messageProvider));
         violatedCondition.addListener((_, _, _) -> updateConfigValidationState());

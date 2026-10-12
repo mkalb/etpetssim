@@ -41,7 +41,7 @@ final class StatisticsHistoryTest {
 
         assertAll(
                 () -> assertEquals(0, history.size()),
-                () -> assertTrue(history.asList().isEmpty())
+                () -> assertTrue(history.toList().isEmpty())
         );
     }
 
@@ -53,7 +53,7 @@ final class StatisticsHistoryTest {
         history.add(sample(1));
         history.add(sample(2));
 
-        var samples = history.asList();
+        var samples = history.toList();
         assertAll(
                 () -> assertEquals(2, history.size()),
                 () -> assertEquals(2, samples.size()),
@@ -68,7 +68,7 @@ final class StatisticsHistoryTest {
         StatisticsHistory history = new StatisticsHistory(2);
         history.add(sample(0));
 
-        var snapshot = history.asList();
+        var snapshot = history.toList();
 
         assertNotNull(assertThrows(UnsupportedOperationException.class, () -> snapshot.add(sample(1))));
     }
@@ -77,7 +77,7 @@ final class StatisticsHistoryTest {
     void testAsListReturnsIndependentSnapshot() {
         StatisticsHistory history = new StatisticsHistory(2);
         history.add(sample(0));
-        var snapshot = history.asList();
+        var snapshot = history.toList();
 
         history.add(sample(1));
 
@@ -97,7 +97,7 @@ final class StatisticsHistoryTest {
 
         assertAll(
                 () -> assertEquals(0, history.size()),
-                () -> assertTrue(history.asList().isEmpty())
+                () -> assertTrue(history.toList().isEmpty())
         );
     }
 

@@ -15,7 +15,7 @@ public interface SimulationControlView {
     Region buildControlRegion();
 
     /**
-     * Updates the displayed simulation step count.
+     * Sets the displayed simulation step count.
      * <p>
      * <strong>Threading:</strong> Must be called on the JavaFX Application Thread.
      * Callers originating from a background thread must marshal the call via
@@ -23,6 +23,6 @@ public interface SimulationControlView {
      *
      * @param stepCount current step count
      */
-    void updateStepCount(int stepCount);
+    void setStepCount(int stepCount);
 
 }

@@ -28,7 +28,7 @@ public record EtpetsCell(GridCoordinate coordinate,
      * @param coordinate the coordinate to read
      * @return the composed cell snapshot for the coordinate
      */
-    public static EtpetsCell of(EtpetsGridModel model, GridCoordinate coordinate) {
+    public static EtpetsCell from(EtpetsGridModel model, GridCoordinate coordinate) {
         return new EtpetsCell(coordinate,
                 model.terrainModel().getEntity(coordinate),
                 model.resourceModel().getEntity(coordinate),

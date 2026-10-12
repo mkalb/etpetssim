@@ -5,8 +5,8 @@ import java.util.*;
 /**
  * Bounded in-memory history of statistic samples.
  *
- * <p>Thread-safe: {@code size()}, {@code clear()}, {@code add()}, and {@code asList()} are {@code synchronized}
- * so that a JavaFX-thread consumer reading {@code asList()} does not race with a background
+ * <p>Thread-safe: {@code size()}, {@code clear()}, {@code add()}, and {@code toList()} are {@code synchronized}
+ * so that a JavaFX-thread consumer reading {@code toList()} does not race with a background
  * thread calling {@code add()}.
  */
 public final class StatisticsHistory {
@@ -82,7 +82,7 @@ public final class StatisticsHistory {
      *
      * @return the retained samples
      */
-    public synchronized List<StatisticsSample> asList() {
+    public synchronized List<StatisticsSample> toList() {
         return List.copyOf(samples);
     }
 

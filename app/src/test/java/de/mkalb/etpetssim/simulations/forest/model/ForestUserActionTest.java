@@ -66,7 +66,7 @@ final class ForestUserActionTest {
         ForestUserAction userAction = new ForestUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
         manager.currentGridModel().setEntity(coordinate, ForestEntity.TREE);
-        manager.statistics().updateCellCounts(1, 0);
+        manager.statistics().setCellCounts(1, 0);
 
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
 
@@ -84,7 +84,7 @@ final class ForestUserActionTest {
         ForestUserAction userAction = new ForestUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
         manager.currentGridModel().setEntity(coordinate, ForestEntity.BURNING);
-        manager.statistics().updateCellCounts(0, 1);
+        manager.statistics().setCellCounts(0, 1);
 
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
 

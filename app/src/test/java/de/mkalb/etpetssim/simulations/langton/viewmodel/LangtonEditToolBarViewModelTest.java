@@ -21,7 +21,7 @@ final class LangtonEditToolBarViewModelTest {
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString((cellShape == CellShape.TRIANGLE) ? "URR" : LangtonConstraints.RULE_DEFAULT)
+                LangtonMovementRules.parse((cellShape == CellShape.TRIANGLE) ? "URR" : LangtonConstraints.RULE_DEFAULT)
         );
     }
 

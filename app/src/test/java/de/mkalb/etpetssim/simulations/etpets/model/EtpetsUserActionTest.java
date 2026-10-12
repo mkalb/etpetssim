@@ -56,7 +56,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.ROCK),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         assertSame(TerrainConstant.ROCK, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
@@ -74,7 +74,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.WATER),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         assertSame(TerrainConstant.GROUND, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
@@ -89,7 +89,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.ROCK),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         assertSame(TerrainConstant.GROUND, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
@@ -103,7 +103,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.PLANT),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
@@ -123,7 +123,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.INSECT),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
@@ -147,7 +147,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.NONE),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate));
     }
@@ -162,7 +162,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.PLANT),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate));
     }
@@ -177,7 +177,7 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.PLANT),
-                EtpetsCell.of(manager.currentGridModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
         assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate));
     }

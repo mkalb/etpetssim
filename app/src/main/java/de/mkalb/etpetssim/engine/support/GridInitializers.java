@@ -567,17 +567,17 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that places the given entity at each position with a certain probability,
-     * otherwise places a fallback entity.
+     * Returns an initializer that fills every position with the given entity with a certain probability,
+     * otherwise with a fallback entity.
      *
      * @param entity      the entity to place with the given probability
      * @param probability the probability to place the entity (0.0 to 1.0)
      * @param fallback    the fallback entity to place otherwise
      * @param random      the random number generator
      * @param <ENT>       the type of grid entity
-     * @return a grid initializer that places entities probabilistically
+     * @return a grid initializer that fills the grid probabilistically
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeWithProbability(ENT entity, double probability, ENT fallback, Random random) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> fillWithProbability(ENT entity, double probability, ENT fallback, Random random) {
         return model ->
                 model.fill(() -> (random.nextDouble() < probability) ? entity : fallback);
     }

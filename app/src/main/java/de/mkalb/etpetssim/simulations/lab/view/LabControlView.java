@@ -50,7 +50,7 @@ public final class LabControlView
     }
 
     @Override
-    public void updateStepCount(int stepCount) {
+    public void setStepCount(int stepCount) {
         // Do nothing
     }
 

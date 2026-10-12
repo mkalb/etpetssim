@@ -153,7 +153,7 @@ public final class AppArgs {
      * @return {@code true} if the key is present, otherwise {@code false}
      * @throws NullPointerException if {@code key} is {@code null}
      */
-    public boolean hasKey(Key key) {
+    public boolean containsKey(Key key) {
         Objects.requireNonNull(key, "Key must not be null");
         return arguments.containsKey(key);
     }
@@ -172,7 +172,7 @@ public final class AppArgs {
      *
      * @return arguments formatted as {@code --key=value} or {@code --flag}
      */
-    public String argumentsAsString() {
+    public String toArgumentString() {
         StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
         for (Map.Entry<Key, String> entry : arguments.entrySet()) {
             if (!sb.isEmpty()) {

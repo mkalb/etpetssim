@@ -146,7 +146,7 @@ public final class DefaultControlView
     }
 
     @Override
-    public void updateStepCount(int stepCount) {
+    public void setStepCount(int stepCount) {
         stepNumberLabel.setText(AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
     }
 

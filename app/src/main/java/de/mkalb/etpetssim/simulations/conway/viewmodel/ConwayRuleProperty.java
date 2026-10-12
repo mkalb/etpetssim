@@ -54,7 +54,7 @@ public final class ConwayRuleProperty {
                 return;
             }
             try {
-                ConwayTransitionRules rules = ConwayTransitionRules.of(newVal);
+                ConwayTransitionRules rules = ConwayTransitionRules.parse(newVal);
                 if (rulesChangedListener != null) {
                     rulesChangedListener.accept(rules);
                 }
@@ -65,8 +65,8 @@ public final class ConwayRuleProperty {
     }
 
     /**
-     * Registers a callback that is invoked whenever a valid {@link ConwayTransitionRules} is
-     * derived from a preset selection or a text-field change.
+     * Sets the callback that is invoked whenever a valid {@link ConwayTransitionRules} is
+     * derived from a preset selection or a text-field change; replaces any previous callback.
      *
      * @param listener the consumer to call with the parsed rules
      */

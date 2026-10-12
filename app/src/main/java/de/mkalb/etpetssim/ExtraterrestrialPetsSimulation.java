@@ -351,10 +351,10 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         aboutLink.setOnAction(_ -> new AboutDialog(AppResources.getImages(APP_ICON_PATHS)).show());
         linkBox.getChildren().add(aboutLink);
 
-        simulationType.urlAsUri().ifPresent(url -> {
-            Hyperlink urlLink = new Hyperlink(url.toString());
+        simulationType.uri().ifPresent(uri -> {
+            Hyperlink urlLink = new Hyperlink(uri.toString());
             urlLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-            urlLink.setOnAction(_ -> getHostServices().showDocument(url.toString()));
+            urlLink.setOnAction(_ -> getHostServices().showDocument(uri.toString()));
             linkBox.getChildren().add(urlLink);
         });
 

@@ -300,7 +300,14 @@ public abstract class AbstractMainView<
         return vBox;
     }
 
-    protected final CellDimension createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
+    /**
+     * Replaces the base, dynamic, and overlay painters for the given structure and resizes their canvases.
+     *
+     * @param structure      grid structure to paint
+     * @param cellEdgeLength edge length of one cell in pixels
+     * @return the cell dimension of the new painters
+     */
+    protected final CellDimension recreatePaintersAndResizeCanvases(GridStructure structure, double cellEdgeLength) {
         if ((basePainter != null) && (dynamicPainter != null) && (overlayPainter != null)) {
             basePainter.clearCanvasBackground();
             dynamicPainter.clearCanvasBackground();

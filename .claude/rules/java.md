@@ -20,30 +20,43 @@ Rules for all `.java` files; repository-wide instructions still apply.
 Use these method naming patterns when they match the method's primary behavior; test method names follow
 `junit.md`.
 
-- `create...`: instantiate and configure one coherent object, control, view, or value, including composed containers
+- `create...`: build and configure a new object, control, view, value, or resource (e.g., a file), including composed
+  containers; a static factory on the created type uses `create...` when it presets state that is not given by its
+  parameters (`createWithMinStepDuration`)
 - `build...`: assemble a top-level simulation view region; reserved for the `build*Region()` methods
-- `of...`: create an instance through a validating or configured static factory
-- `from...`: create, parse, or derive a result from the source named in the method
-- `to...`: convert a value to a target type or representation
-- `toDisplayString()`: short human-readable representation of a value or entity; keep it separate from `toString()`,
-  which stays a technical diagnostic representation
-- `parse...`: convert text to a value, as in `Integer.parseInt`
-- `format...`: produce display text from values, usually localized
-- `as...`/`...As<Type>`: expose existing data through an alternative type, view, property, or binding
-- `compute...`: perform a named calculation when that calculation is the primary API intent, typically from supplied
-  values or operational context
-- `resolve...`: determine the applicable result by interpreting input, selection state, configuration, precedence, or
+- `of...`: build and validate an instance from component values in a static factory on the created type or its
+  companion utility class
+- `from...`: create or derive a result from the non-text source named in the method or given as parameter (e.g.,
+  `EtpetsCell.from(model, coordinate)`); `from<Code>(String)` looks up a constant by its external code and returns
+  `Optional<T>`
+- `to...`: convert a value to a target type or representation, typically as a new independent value or copy
+- `toDisplayString()`: short human-readable representation of the receiver (a value or entity); keep it separate from
+  `toString()`, which stays a technical diagnostic representation
+- `parse...`: convert text with a format or grammar to a value, as in `Integer.parseInt`; throw on invalid input or
+  return a supplied default
+- `format...`: produce display or log text from values, usually localized
+- `as...`/`...As<Type>`: expose existing data through an alternative type, view, property, or binding; use `to...` for
+  snapshots of mutable data and serialized forms
+- `compute...`: calculate a result that is fully determined by a formula or geometry from the inputs, when the
+  calculation is the primary intent and no more specific prefix (e.g., `clamp...`, `adjust...`, `to...`) or
+  noun-style query applies
+- `resolve...`: choose the applicable result among alternatives by selection state, configuration, precedence, or
   fallback rules
-- `find...`: search existing candidates for one matching result; return `Optional<T>` when absence is expected
-- `require...`: return a required value or throw if it is missing; counterpart of `find...`
-- `get...`: retrieve a value, resource, or property using a supplied lookup input, or expose it through a JavaBean-style
-  accessor
+- `find...`: search candidates, or look up a value that has a `require...` counterpart; return `Optional<T>` when
+  absence is expected
+- `require...`: return a required value or throw if it is missing; may have a `find...` counterpart
+- `get...`: retrieve a value, resource, or property by a supplied key or path (return `Optional<T>` when it may be
+  missing), or expose it through a JavaBean-style accessor
 - `check...`: verify an argument or state and throw on violation, as in `Objects.checkIndex`
-- `is...`/`has...`/`can...`/`should...`/`contains...`/`are...`/`includes...`: query boolean state, validity, mode,
-  presence, availability, capability, or policy
+- Boolean queries: `is...` for state, type, or validity; `has...` for an owned component or property, including a valid
+  or reached part (`hasValidRanges`, `hasReachedAgingEffectsAge`); `contains...` for membership of an element or key in
+  an owned collection; `includes...` for a mode or configuration that covers a category; `can...` for capability;
+  `should...` for a decision or policy; `are...` for a plural subject (`areDirectRelatives(a, b)`).
 - Action methods may return a boolean success flag; boolean prefixes are reserved for queries.
-- `set...`: assign or replace mutable state, property values, model or UI content, or callbacks
-- `update...`: refresh state, statistics, or UI content to match current data
+- `set...`: assign supplied or fixed values (e.g., a default or placeholder) to mutable state, properties, model or UI
+  content, or a single callback slot
+- `update...`: recompute or refresh state, statistics, or UI content from current data or a supplied source object
+  (e.g., a model, config, or coordinate)
 - `record...`: append a value or event to a history, sample, or tracking state
 - `register...`: attach a listener, handler, cleanup action, or provider to an owner or registry
 - `bind...`/`unbind...`: create or release JavaFX bindings
@@ -51,26 +64,36 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `fill...`: set every cell of a grid or paint a whole area
 - `place...`: put entities at selected coordinates of a grid
 - `increment...`/`decrement...`: change a mutable counter by exactly `1` or `-1`, respectively
-- `adjust...`: adapt a value, property, or layout using a signed delta, factor, constraint, or contextual target
-- `clamp...`: restrict a value to a range or bounds
+- `adjust...`: change mutable state by a signed delta, or return an adapted value (scaled by a factor, fitted to the
+  valid range and step of its owner, or with one component replaced)
+- `clamp...`: restrict a value to a named range or supplied bounds
 - `apply...`: enact a rule, transformation, or action on input or mutable state
-- `perform...`: carry out one simulation, agent, or strategy step inside a step runner or step logic
-- `execute...`: run or orchestrate an operation, action, or sequence
+- `perform...`: carry out one simulation or agent step in an implementation of a step contract (step runner or step
+  logic)
+- `execute...`: run or orchestrate simulation steps or another operation sequence
 - `draw...`: render visual output
 - `initialize...`/`reset...`/`shutdown...`: perform lifecycle setup, state reset, or cleanup
 - `request...`: signal a user-intent action or set a corresponding flag
 - `handle...`: react to a UI, listener, or lifecycle event; invoked from a listener or callback, not as a
   general-purpose API
-- `...Property`: JavaFX property accessor; this suffix takes precedence over any prefix rule
-- `...And...`/`...Or...`: name a deliberately coordinated operation whose additional effect must stay visible to callers
-- `...OrFallback`: return a value or a defined fallback when it is missing
+- `...Property`: accessor returning a JavaFX property or a repository property wrapper (`Input*Property`,
+  `SeedProperty`, `*RuleProperty`); this suffix takes precedence over any prefix rule, except for `as...Property()`
+  adapters, which follow `as...`
+- `...And...`: name a deliberately coordinated operation with two effects that must stay visible to callers
+- `...Or...`: name an alternative path when the primary result is missing, as in `getOrCreate...`; `...OrFallback`
+  returns a defined fallback value
+- Boolean predicates and combinators (`and`, `or`, `andThen`) are not affected by `...And...` and `...Or...`.
 - Use concise noun-style names (`locale()`, `area()`, `opposite()`) for stored properties, intrinsic derived values, and
   named catalog values. They are especially appropriate for records, enums, immutable value objects, data-focused types,
-  and components exposing owned state.
+  and components exposing owned state. Noun-style names may take qualifying parameters for pure queries whose name
+  describes the result (e.g., `turnForState(int)`, `boundingBoxAt(Point2D)`).
+- Keep JavaBean-style `getX()` for getters paired with a JavaFX `xProperty()`, for ViewModel accessors (see
+  `simulations.md`), and for existing JavaBean-style field accessors (e.g., `EditToolBarView.getNode()`,
+  `DrawCallThrottler.getAverageDurationMillis()`).
 - Keep generated Java record accessor names (`x()`, `y()`) unless a custom method adds distinct behavior.
 - Write acronyms in method and variable names in camel case (`Id`, `Url`, `Uri`, `Css`); the uppercase `FX` prefix
   applies only to class names.
-- Private and package-private helper methods may use other clear verbs (e.g. `log...`, `configure...`,
+- Private and package-private helper methods may use other clear verbs (e.g., `log...`, `configure...`,
   `normalize...`, `pick...`) when no pattern above fits.
 
 ## Java Records

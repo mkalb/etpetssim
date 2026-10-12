@@ -57,7 +57,7 @@ public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity,
             }
         }
 
-        statistics.updateCellCounts(aliveCells, changedCells);
+        statistics.setCellCounts(aliveCells, changedCells);
     }
 
 }

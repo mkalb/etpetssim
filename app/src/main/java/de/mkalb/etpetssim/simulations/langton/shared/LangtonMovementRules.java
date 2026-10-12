@@ -33,7 +33,7 @@ public record LangtonMovementRules(
      * @param ruleString the compact rule string to parse
      * @return the parsed movement rules
      */
-    public static LangtonMovementRules fromString(String ruleString) {
+    public static LangtonMovementRules parse(String ruleString) {
         String preparedString = ruleString.trim().toUpperCase(Locale.ROOT);
         List<AntTurn> result = new ArrayList<>();
         for (int i = 0; i < preparedString.length(); ) {

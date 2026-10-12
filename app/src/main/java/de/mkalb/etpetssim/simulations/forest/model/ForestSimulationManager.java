@@ -65,7 +65,7 @@ public final class ForestSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.update(
+        statistics.setStepData(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
     }

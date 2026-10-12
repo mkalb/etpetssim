@@ -33,7 +33,7 @@ public final class SugarFactory {
                 new DefaultObservationViewModel<SugarEntity, SugarCell, SugarStatistics>(readOnlySimulationState);
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
-                        SugarSimulationManager::new, SugarCell::of,
+                        SugarSimulationManager::new, SugarCell::from,
                         new SugarUserAction());
 
         // View

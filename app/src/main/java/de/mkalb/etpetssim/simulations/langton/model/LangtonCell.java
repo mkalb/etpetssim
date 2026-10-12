@@ -26,7 +26,7 @@ public record LangtonCell(GridCoordinate coordinate,
      * @param coordinate the coordinate to read
      * @return the composed cell snapshot for the coordinate
      */
-    public static LangtonCell of(LangtonGridModel model, GridCoordinate coordinate) {
+    public static LangtonCell from(LangtonGridModel model, GridCoordinate coordinate) {
         return new LangtonCell(coordinate,
                 model.groundModel().getEntity(coordinate),
                 model.antModel().getEntity(coordinate));

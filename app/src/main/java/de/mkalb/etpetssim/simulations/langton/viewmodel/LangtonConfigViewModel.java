@@ -41,7 +41,7 @@ public final class LangtonConfigViewModel
 
     public LangtonConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
-        addConfigValidationRule(
+        registerConfigValidationRule(
                 Bindings.createBooleanBinding(
                         () -> {
                             try {
@@ -49,7 +49,7 @@ public final class LangtonConfigViewModel
                                 if (ruleString == null) {
                                     return true;
                                 }
-                                LangtonMovementRules rules = LangtonMovementRules.fromString(ruleString);
+                                LangtonMovementRules rules = LangtonMovementRules.parse(ruleString);
                                 return !rules.isValidForCellShape(cellShapeProperty().getValue());
                             } catch (Exception e) {
                                 return true;

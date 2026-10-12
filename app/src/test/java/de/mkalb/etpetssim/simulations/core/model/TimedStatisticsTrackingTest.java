@@ -180,7 +180,7 @@ final class TimedStatisticsTrackingTest {
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString(LangtonConstraints.RULE_DEFAULT)
+                LangtonMovementRules.parse(LangtonConstraints.RULE_DEFAULT)
         );
     }
 

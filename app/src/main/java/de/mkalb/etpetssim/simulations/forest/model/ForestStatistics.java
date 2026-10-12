@@ -49,7 +49,7 @@ public final class ForestStatistics
         treeCells = treeCellsInitial;
     }
 
-    void updateCellCounts(int newTreeCells, int newBurningCells) {
+    void setCellCounts(int newTreeCells, int newBurningCells) {
         emptyCells = totalCells() - newTreeCells - newBurningCells;
         treeCells = newTreeCells;
         burningCells = newBurningCells;

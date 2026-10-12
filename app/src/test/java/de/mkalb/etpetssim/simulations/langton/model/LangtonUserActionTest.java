@@ -24,12 +24,12 @@ final class LangtonUserActionTest {
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString((cellShape == CellShape.TRIANGLE) ? "URR" : LangtonConstraints.RULE_DEFAULT)
+                LangtonMovementRules.parse((cellShape == CellShape.TRIANGLE) ? "URR" : LangtonConstraints.RULE_DEFAULT)
         );
     }
 
     private static LangtonCell selectedCell(LangtonSimulationManager manager, GridCoordinate coordinate) {
-        return LangtonCell.of(manager.currentGridModel(), coordinate);
+        return LangtonCell.from(manager.currentGridModel(), coordinate);
     }
 
     @Test

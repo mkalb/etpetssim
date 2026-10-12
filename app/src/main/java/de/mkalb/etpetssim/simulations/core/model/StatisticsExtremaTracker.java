@@ -22,7 +22,7 @@ final class StatisticsExtremaTracker {
         maximumValues = new LinkedHashMap<>();
     }
 
-    synchronized void update(Map<String, Double> values, long stepCount) {
+    synchronized void recordSample(Map<String, Double> values, long stepCount) {
         for (var entry : values.entrySet()) {
             String key = entry.getKey();
             StatisticsExtremaMode mode = extremaModesByKey.get(key);

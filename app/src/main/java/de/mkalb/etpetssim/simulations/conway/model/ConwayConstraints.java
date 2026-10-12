@@ -52,7 +52,7 @@ public final class ConwayConstraints {
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
 
     // Rules
-    public static final ConwayTransitionRules TRANSITION_RULES_DEFAULT = ConwayTransitionRules.of(
+    public static final ConwayTransitionRules TRANSITION_RULES_DEFAULT = ConwayTransitionRules.parse(
             ConwayRulePresetSquare.CONWAYS_LIFE.toString());
     public static final int BIRTH_NEIGHBOR_COUNT_MIN = 1;
 

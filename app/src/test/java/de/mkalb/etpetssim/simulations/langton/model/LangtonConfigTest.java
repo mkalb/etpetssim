@@ -35,7 +35,7 @@ final class LangtonConfigTest {
                 LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString("RL"));
+                LangtonMovementRules.parse("RL"));
 
         assertTrue(config.isValid());
     }
@@ -47,7 +47,7 @@ final class LangtonConfigTest {
                 LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 NeighborhoodMode.EDGES_AND_VERTICES,
-                LangtonMovementRules.fromString("RL"));
+                LangtonMovementRules.parse("RL"));
 
         assertFalse(config.isValid());
     }
@@ -59,7 +59,7 @@ final class LangtonConfigTest {
                 GridEdgeBehavior.BLOCK_XY,
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString("RL"));
+                LangtonMovementRules.parse("RL"));
 
         assertFalse(config.isValid());
     }
@@ -71,7 +71,7 @@ final class LangtonConfigTest {
                 LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 CellDisplayMode.CIRCLE,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString("RL"));
+                LangtonMovementRules.parse("RL"));
 
         assertFalse(config.isValid());
     }
@@ -83,7 +83,7 @@ final class LangtonConfigTest {
                 LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString("L2R"));
+                LangtonMovementRules.parse("L2R"));
 
         assertFalse(config.isValid());
     }
@@ -95,7 +95,7 @@ final class LangtonConfigTest {
                 LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString("URR"));
+                LangtonMovementRules.parse("URR"));
 
         assertTrue(config.isValid());
     }
