@@ -220,8 +220,8 @@ public abstract class AbstractDefaultMainView<
     }
 
     protected abstract void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                                   @Nullable GC oldGridCell,
-                                                   @Nullable GC newGridCell);
+                                                          @Nullable GC oldGridCell,
+                                                          @Nullable GC newGridCell);
 
     private void drawAndMeasureSimulationStep(int stepCount) {
         long startNanos = System.nanoTime();

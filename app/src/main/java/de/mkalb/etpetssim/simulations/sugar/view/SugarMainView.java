@@ -163,8 +163,8 @@ public final class SugarMainView
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable SugarCell oldGridCell,
-                                          @Nullable SugarCell newGridCell) {
+                                                 @Nullable SugarCell oldGridCell,
+                                                 @Nullable SugarCell newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

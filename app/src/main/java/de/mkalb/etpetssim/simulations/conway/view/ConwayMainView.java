@@ -120,8 +120,8 @@ public final class ConwayMainView
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<ConwayEntity> oldGridCell,
-                                          @Nullable GridCell<ConwayEntity> newGridCell) {
+                                                 @Nullable GridCell<ConwayEntity> oldGridCell,
+                                                 @Nullable GridCell<ConwayEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -146,8 +146,8 @@ public final class ConwayMainView
         dynamicPainter.clearCanvasBackground();
 
         currentGridModel.nonDefaultCoordinates()
-                    .forEach(coordinate -> coordinateDrawer.draw(
-                            dynamicPainter, coordinate, stepCount));
+                        .forEach(coordinate -> coordinateDrawer.draw(
+                                dynamicPainter, coordinate, stepCount));
     }
 
     @Override

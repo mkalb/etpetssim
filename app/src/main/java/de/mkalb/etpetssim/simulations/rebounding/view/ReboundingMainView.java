@@ -110,8 +110,8 @@ public final class ReboundingMainView
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<ReboundingEntity> oldGridCell,
-                                          @Nullable GridCell<ReboundingEntity> newGridCell) {
+                                                 @Nullable GridCell<ReboundingEntity> oldGridCell,
+                                                 @Nullable GridCell<ReboundingEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -136,9 +136,9 @@ public final class ReboundingMainView
         dynamicPainter.clearCanvasBackground();
 
         currentGridModel.nonDefaultCells()
-                    .forEach(cell -> cellDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            dynamicPainter, cell, stepCount));
+                        .forEach(cell -> cellDrawer.draw(
+                                entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                                dynamicPainter, cell, stepCount));
     }
 
     @Override

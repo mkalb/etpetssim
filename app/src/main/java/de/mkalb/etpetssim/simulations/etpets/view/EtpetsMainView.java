@@ -280,8 +280,8 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable EtpetsCell oldGridCell,
-                                          @Nullable EtpetsCell newGridCell) {
+                                                 @Nullable EtpetsCell oldGridCell,
+                                                 @Nullable EtpetsCell newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

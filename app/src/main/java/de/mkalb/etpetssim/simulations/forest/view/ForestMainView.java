@@ -111,8 +111,8 @@ public final class ForestMainView
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<ForestEntity> oldGridCell,
-                                          @Nullable GridCell<ForestEntity> newGridCell) {
+                                                 @Nullable GridCell<ForestEntity> oldGridCell,
+                                                 @Nullable GridCell<ForestEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -143,11 +143,11 @@ public final class ForestMainView
 
         // draw tree cells first
         currentGridModel.filteredCells(ForestEntity::isTree)
-                    .forEach(drawCell);
+                        .forEach(drawCell);
 
         // then draw burning cells on top for better visibility
         currentGridModel.filteredCells(ForestEntity::isBurning)
-                    .forEach(drawCell);
+                        .forEach(drawCell);
     }
 
     @Override

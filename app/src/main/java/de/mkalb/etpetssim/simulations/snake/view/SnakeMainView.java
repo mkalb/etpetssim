@@ -121,8 +121,8 @@ public final class SnakeMainView
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<SnakeEntity> oldGridCell,
-                                          @Nullable GridCell<SnakeEntity> newGridCell) {
+                                                 @Nullable GridCell<SnakeEntity> oldGridCell,
+                                                 @Nullable GridCell<SnakeEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -171,44 +171,44 @@ public final class SnakeMainView
         Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
         currentGridModel.filteredCoordinates(SnakeEntity::isWall)
-                    .forEach(coordinate ->
-                            dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
+                        .forEach(coordinate ->
+                                dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
         currentGridModel.filteredCoordinates(SnakeEntity::isFood)
-                    .forEach(coordinate ->
-                            dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
+                        .forEach(coordinate ->
+                                dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
         currentGridModel.filteredCells(e -> e instanceof SnakeHead)
-                    .forEach(cell -> {
-                        if (cell.entity() instanceof SnakeHead head) {
-                            boolean isDead = head.isDead();
-                            // Check if last selected entity is not null and is the same instance as the current head
-                            boolean isSelected = isSelected(head);
-                            Color snakeHeadColor;
-                            Color snakeHeadColorBorder;
-                            Color snakeSegmentColor;
-                            Color snakeSegmentColorBorder;
-                            if (isDead) {
-                                snakeHeadColor = headDeadColor;
-                                snakeHeadColorBorder = headDeadBorderColor;
-                                snakeSegmentColor = segmentDeadColor;
-                                snakeSegmentColorBorder = segmentDeadBorderColor;
-                            } else if (isSelected) {
-                                snakeHeadColor = headAliveSelectedColor;
-                                snakeHeadColorBorder = headAliveSelectedBorderColor;
-                                snakeSegmentColor = segmentAliveSelectedColor;
-                                snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
-                            } else {
-                                snakeHeadColor = headAliveColor;
-                                snakeHeadColorBorder = headAliveBorderColor;
-                                snakeSegmentColor = segmentAliveColor;
-                                snakeSegmentColorBorder = segmentAliveBorderColor;
+                        .forEach(cell -> {
+                            if (cell.entity() instanceof SnakeHead head) {
+                                boolean isDead = head.isDead();
+                                // Check if last selected entity is not null and is the same instance as the current head
+                                boolean isSelected = isSelected(head);
+                                Color snakeHeadColor;
+                                Color snakeHeadColorBorder;
+                                Color snakeSegmentColor;
+                                Color snakeSegmentColorBorder;
+                                if (isDead) {
+                                    snakeHeadColor = headDeadColor;
+                                    snakeHeadColorBorder = headDeadBorderColor;
+                                    snakeSegmentColor = segmentDeadColor;
+                                    snakeSegmentColorBorder = segmentDeadBorderColor;
+                                } else if (isSelected) {
+                                    snakeHeadColor = headAliveSelectedColor;
+                                    snakeHeadColorBorder = headAliveSelectedBorderColor;
+                                    snakeSegmentColor = segmentAliveSelectedColor;
+                                    snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
+                                } else {
+                                    snakeHeadColor = headAliveColor;
+                                    snakeHeadColorBorder = headAliveBorderColor;
+                                    snakeSegmentColor = segmentAliveColor;
+                                    snakeSegmentColorBorder = segmentAliveBorderColor;
+                                }
+                                for (GridCoordinate coordinate : head.currentSegments()) {
+                                    dynamicPainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
+                                }
+                                dynamicPainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
+                                        StrokeType.OUTSIDE);
                             }
-                            for (GridCoordinate coordinate : head.currentSegments()) {
-                                dynamicPainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
-                            }
-                            dynamicPainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
-                                    StrokeType.OUTSIDE);
-                        }
-                    });
+                        });
     }
 
     @Override

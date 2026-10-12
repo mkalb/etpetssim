@@ -120,8 +120,8 @@ public final class LangtonMainView
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable LangtonCell oldGridCell,
-                                          @Nullable LangtonCell newGridCell) {
+                                                 @Nullable LangtonCell oldGridCell,
+                                                 @Nullable LangtonCell newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }

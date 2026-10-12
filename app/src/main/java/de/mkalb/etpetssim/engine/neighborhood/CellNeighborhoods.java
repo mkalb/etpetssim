@@ -525,9 +525,9 @@ public final class CellNeighborhoods {
      * @throws IllegalArgumentException if the radius is greater than {@link #MAX_RADIUS}
      */
     public static Set<GridCoordinate> neighborCoordinatesWithinRadius(GridCoordinate startCoordinate,
-                                                             NeighborhoodMode neighborhoodMode,
-                                                             CellShape cellShape,
-                                                             int radius) {
+                                                                      NeighborhoodMode neighborhoodMode,
+                                                                      CellShape cellShape,
+                                                                      int radius) {
         if (radius <= 0) {
             return Collections.emptySet();
         }
@@ -623,8 +623,8 @@ public final class CellNeighborhoods {
      * @return a deterministic cache key for the given configuration
      */
     static String computeCacheKey(GridCoordinate startCoordinate,
-                                   NeighborhoodMode neighborhoodMode,
-                                   CellShape cellShape) {
+                                  NeighborhoodMode neighborhoodMode,
+                                  CellShape cellShape) {
         return switch (cellShape) {
             case TRIANGLE -> cellShape + "::" + neighborhoodMode + "::" + startCoordinate.isTriangleCellPointingDown();
             case SQUARE -> cellShape + "::" + neighborhoodMode;

@@ -158,8 +158,8 @@ public final class WatorMainView
 
     @Override
     protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<WatorEntity> oldGridCell,
-                                          @Nullable GridCell<WatorEntity> newGridCell) {
+                                                 @Nullable GridCell<WatorEntity> oldGridCell,
+                                                 @Nullable GridCell<WatorEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -184,9 +184,9 @@ public final class WatorMainView
         dynamicPainter.clearCanvasBackground();
 
         currentGridModel.nonDefaultCells()
-                    .forEach(cell -> cellDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            dynamicPainter, cell, stepCount));
+                        .forEach(cell -> cellDrawer.draw(
+                                entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                                dynamicPainter, cell, stepCount));
     }
 
     @Override

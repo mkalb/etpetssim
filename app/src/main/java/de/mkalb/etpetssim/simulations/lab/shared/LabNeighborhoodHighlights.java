@@ -14,7 +14,7 @@ import java.util.*;
  * @param ringCellsByRadius              cells grouped by radius ring, used for ring highlight rendering
  * @param validNeighborCoordinates       direct neighbor coordinates that lie within the grid
  * @param validNeighborsWithEdgeBehavior neighbors with edge-behavior details, keyed by coordinate
- * @param neighborEdgeBehaviorResults      edge-behavior results for all neighbors of the selected cell
+ * @param neighborEdgeBehaviorResults    edge-behavior results for all neighbors of the selected cell
  */
 public record LabNeighborhoodHighlights(
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadius,
