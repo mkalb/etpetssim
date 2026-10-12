@@ -313,10 +313,10 @@ final class DefaultMainViewModelTest {
         });
         assertTrue(constructionStarted.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-        SimulationTerminationHandle termination = FXTestSupport.supplyAndWaitNonNull(
+        SimulationTerminationHandle terminationHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
         releaseConstruction.countDown();
-        assertTrue(termination.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+        assertTrue(terminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         FXTestSupport.runAndWait(() -> assertAll(
                 () -> assertEquals(SimulationState.SHUTTING_DOWN, fixture.mainViewModel().getSimulationState()),

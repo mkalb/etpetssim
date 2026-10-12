@@ -44,7 +44,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private static final double FALLBACK_WINDOW_DECORATION_HEIGHT = 39.0d;
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
     private static final long TERMINATION_TIMEOUT_SECONDS = 5L;
-    private final List<SimulationTerminationHandle> pendingTerminations = new ArrayList<>();
+    private final List<SimulationTerminationHandle> pendingTerminationHandles = new ArrayList<>();
     private @Nullable SimulationInstance currentSimulationInstance;
     private boolean terminationAwaited;
 
@@ -146,7 +146,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         try {
             AppLogger.info("Application: Shutting down simulation instance: " + simulationInstance.simulationType());
             simulationInstance.region().setDisable(true);
-            pendingTerminations.add(simulationInstance.simulationMainView().shutdownSimulation());
+            pendingTerminationHandles.add(simulationInstance.simulationMainView().shutdownSimulation());
         } catch (Exception e) {
             AppLogger.error(e, "Application: Error during simulation shutdown: " + simulationInstance.simulationType());
         }
@@ -160,20 +160,20 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         long deadlineNanos = System.nanoTime() + TimeUnit.SECONDS.toNanos(TERMINATION_TIMEOUT_SECONDS);
         boolean interrupted = false;
-        for (SimulationTerminationHandle termination : pendingTerminations) {
+        for (SimulationTerminationHandle terminationHandle : pendingTerminationHandles) {
             long remainingNanos = deadlineNanos - System.nanoTime();
             try {
-                if ((remainingNanos <= 0L) || !termination.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
+                if ((remainingNanos <= 0L) || !terminationHandle.awaitTermination(remainingNanos, TimeUnit.NANOSECONDS)) {
                     AppLogger.warn("Application: Simulation executor did not terminate before application shutdown timeout.");
-                    termination.shutdownNow();
+                    terminationHandle.shutdownNow();
                 }
             } catch (InterruptedException e) {
                 interrupted = true;
-                pendingTerminations.forEach(SimulationTerminationHandle::shutdownNow);
+                pendingTerminationHandles.forEach(SimulationTerminationHandle::shutdownNow);
                 break;
             }
         }
-        pendingTerminations.clear();
+        pendingTerminationHandles.clear();
         if (interrupted) {
             Thread.currentThread().interrupt();
         }

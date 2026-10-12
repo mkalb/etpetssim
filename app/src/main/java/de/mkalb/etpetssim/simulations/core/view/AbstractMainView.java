@@ -153,7 +153,7 @@ public abstract class AbstractMainView<
             notificationListener = null;
         }
         observationView.shutdownObservation();
-        SimulationTerminationHandle termination = viewModel.shutdownSimulation();
+        SimulationTerminationHandle terminationHandle = viewModel.shutdownSimulation();
         basePainter = null;
         dynamicPainter = null;
         overlayPainter = null;
@@ -161,7 +161,7 @@ public abstract class AbstractMainView<
         cellEmojiFont = null;
         clearNotification();
         editToolBar.clear();
-        return termination;
+        return terminationHandle;
     }
 
     protected abstract void registerViewModelListeners();

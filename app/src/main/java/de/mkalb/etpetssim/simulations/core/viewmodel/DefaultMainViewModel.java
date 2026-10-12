@@ -65,7 +65,7 @@ public final class DefaultMainViewModel<
     private volatile @Nullable Thread batchThread;
     private long lifecycleGeneration;
     private boolean disposed;
-    private @Nullable SimulationTerminationHandle termination;
+    private @Nullable SimulationTerminationHandle terminationHandle;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
@@ -282,7 +282,7 @@ public final class DefaultMainViewModel<
     @Override
     public SimulationTerminationHandle shutdownSimulation() {
         if (disposed) {
-            return Objects.requireNonNull(termination);
+            return Objects.requireNonNull(terminationHandle);
         }
         disposed = true;
         AppLogger.infof("%s: Shutting down simulation during state=%s", LOG_COMPONENT, getSimulationState());
@@ -306,7 +306,7 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
-        termination = new ExecutorSimulationTerminationHandle(lifecycleExecutor);
+        terminationHandle = new ExecutorSimulationTerminationHandle(lifecycleExecutor);
         Runnable resetListener = simulationResetListener;
         simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
         simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
@@ -316,7 +316,7 @@ public final class DefaultMainViewModel<
         } catch (RuntimeException e) {
             AppLogger.error(e, LOG_COMPONENT + ": Failed to reset the simulation view during shutdown.");
         }
-        return termination;
+        return terminationHandle;
     }
 
     @Override

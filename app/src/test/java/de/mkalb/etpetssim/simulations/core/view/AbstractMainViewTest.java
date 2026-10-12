@@ -107,9 +107,9 @@ final class AbstractMainViewTest {
             SimulationMainViewModel viewModel = assertInstanceOf(SimulationMainViewModel.class,
                     getNonNullField(view, "viewModel"));
 
-            SimulationTerminationHandle termination = view.shutdownSimulation();
+            SimulationTerminationHandle terminationHandle = view.shutdownSimulation();
 
-            assertSame(termination, viewModel.shutdownSimulation());
+            assertSame(terminationHandle, viewModel.shutdownSimulation());
         });
     }
 
