@@ -173,7 +173,7 @@ Each simulation package root must provide a factory:
 - Regular simulations provide `public static SimulationMainView createMainView()`; `StartFactory` may accept its
   `Stage` navigation dependencies.
 - Let `simulations.core.SimulationFactory` wrap the returned view in `SimulationInstance`.
-- Wire model, ViewModel, and view components; delegate complex construction to layer-specific builder methods.
+- Wire model, ViewModel, and view components; delegate complex construction to layer-specific `create...` methods.
 
 ## Canvas Rendering
 
@@ -239,13 +239,14 @@ Shutdown checklist:
 ## Naming
 
 - Use `draw...` for canvas rendering methods.
-- Name user-triggered redraw callbacks `requestDraw...` (for example, `requestDraw()`).
+- Name user-triggered redraw requests `requestDraw...` (for example, `requestDraw()`); their handlers follow
+  `handle...`.
 - Name implementations of `SynchronousStepLogic` and `AgentStepLogic` with the suffix `StepLogic` (for example,
   `ConwayStepLogic`, `WatorStepLogic`); name implementations of `SimulationStepRunner` with the suffix `StepRunner`
   (for example, `SugarStepRunner`).
 - Static `<SimulationName><Layer>Logic` helper classes called from a step runner expose `apply(...)`;
   `perform...` is reserved for implementations of the step contracts.
-- Model, entity, and strategy types may use domain verbs of their simulation (e.g. `move`, `die`, `reproduce`,
+- Model, entity, and strategy types may use domain verbs of their simulation (e.g., `move`, `die`, `reproduce`,
   `consume`, `decideMove`) for state changes and decisions.
 
 ## Anti-Patterns
