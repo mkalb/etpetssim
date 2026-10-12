@@ -79,7 +79,7 @@ public abstract class AbstractDefaultMainView<
         viewModel.setSimulationStepListener(this::handleSimulationStep);
         selectedGridCellListener = (_, oldGridCell, newGridCell) -> {
             if (overlayPainter != null) {
-                handleGridCellSelected(overlayPainter, oldGridCell, newGridCell);
+                handleSelectedGridCellChanged(overlayPainter, oldGridCell, newGridCell);
             }
         };
         viewModel.selectedGridCellProperty().addListener(selectedGridCellListener);
@@ -159,7 +159,7 @@ public abstract class AbstractDefaultMainView<
 
         updateCanvasBorderPane(viewModel.getStructure());
 
-        rebuildActionToolBar();
+        rebuildEditToolBar();
 
         controlView.updateStepCount(stepCount);
         observationView.initializeObservationLabels();
@@ -219,7 +219,7 @@ public abstract class AbstractDefaultMainView<
         }
     }
 
-    protected abstract void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected abstract void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                                    @Nullable GC oldGridCell,
                                                    @Nullable GC newGridCell);
 

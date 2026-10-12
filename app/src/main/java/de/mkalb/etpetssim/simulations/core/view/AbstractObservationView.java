@@ -234,7 +234,7 @@ public abstract class AbstractObservationView<
 
     /**
      * Registers a listener on the provided selected-cell property that calls
-     * {@link #onSelectedCellChanged(GridCellView)} whenever the selection changes.
+     * {@link #handleSelectedGridCellChanged(GridCellView)} whenever the selection changes.
      * Call this in the subclass constructor to wire up the standard cell-selection behavior.
      *
      * @param property selected-cell property to listen on
@@ -244,7 +244,7 @@ public abstract class AbstractObservationView<
         selectedGridCellProperty = property;
         selectedGridCellListener = (_, _, newCell) -> {
             selectedGridCell = newCell;
-            onSelectedCellChanged(newCell);
+            handleSelectedGridCellChanged(newCell);
         };
         property.addListener(selectedGridCellListener);
     }
@@ -272,7 +272,7 @@ public abstract class AbstractObservationView<
      *
      * @param gridCell the newly selected grid cell, or {@code null} if no cell is selected
      */
-    protected void onSelectedCellChanged(@Nullable GC gridCell) {
+    protected void handleSelectedGridCellChanged(@Nullable GC gridCell) {
         if (selectedCellSection != null) {
             boolean hasSelectedCell = (gridCell != null);
             selectedCellSection.setManaged(hasSelectedCell);
@@ -297,7 +297,7 @@ public abstract class AbstractObservationView<
     /**
      * Creates a standard selected cell section displaying coordinate and cell type.
      * The standard coordinate and cell type labels are managed by this base class; visibility and
-     * label values are updated by {@link #onSelectedCellChanged(GridCellView)}.
+     * label values are updated by {@link #handleSelectedGridCellChanged(GridCellView)}.
      *
      * @return a VBox region containing the selected cell section with the standard labels
      */
@@ -313,7 +313,7 @@ public abstract class AbstractObservationView<
                         selectedCellTypeLabel
                 }
         );
-        onSelectedCellChanged(selectedGridCell);
+        handleSelectedGridCellChanged(selectedGridCell);
         return selectedCellSection;
     }
 
@@ -321,7 +321,7 @@ public abstract class AbstractObservationView<
      * Creates an extended selected cell section with coordinate and cell type as the first two rows,
      * followed by the provided simulation-specific extra rows.
      * The section is stored internally; its visibility and the standard label values are managed by
-     * {@link #onSelectedCellChanged(GridCellView)}.
+     * {@link #handleSelectedGridCellChanged(GridCellView)}.
      *
      * @param extraNameKeys    additional localization keys for the extra rows
      * @param extraValueLabels additional labels for the extra rows
@@ -343,7 +343,7 @@ public abstract class AbstractObservationView<
                 allNameKeys,
                 allValueLabels
         );
-        onSelectedCellChanged(selectedGridCell);
+        handleSelectedGridCellChanged(selectedGridCell);
         return selectedCellSection;
     }
 

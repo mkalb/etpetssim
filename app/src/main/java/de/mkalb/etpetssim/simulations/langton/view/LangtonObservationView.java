@@ -31,7 +31,7 @@ public final class LangtonObservationView
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(LangtonStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

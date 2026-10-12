@@ -119,7 +119,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable GridCell<ConwayEntity> oldGridCell,
                                           @Nullable GridCell<ConwayEntity> newGridCell) {
         if (oldGridCell != null) {
@@ -220,7 +220,7 @@ public final class ConwayMainView
                     availablePatternChoices);
             patternLabel.disableProperty().bind(enabledBinding.not());
             patternComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 patternLabel.disableProperty().unbind();
                 patternComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -228,7 +228,7 @@ public final class ConwayMainView
                 selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 patternComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
             });

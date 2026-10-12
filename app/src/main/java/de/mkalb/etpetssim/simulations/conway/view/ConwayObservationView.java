@@ -32,7 +32,7 @@ public final class ConwayObservationView
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(ConwayStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

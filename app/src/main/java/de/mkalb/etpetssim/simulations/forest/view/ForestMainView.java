@@ -110,7 +110,7 @@ public final class ForestMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable GridCell<ForestEntity> oldGridCell,
                                           @Nullable GridCell<ForestEntity> newGridCell) {
         if (oldGridCell != null) {

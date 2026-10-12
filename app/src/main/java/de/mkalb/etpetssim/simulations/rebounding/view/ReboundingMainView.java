@@ -109,7 +109,7 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable GridCell<ReboundingEntity> oldGridCell,
                                           @Nullable GridCell<ReboundingEntity> newGridCell) {
         if (oldGridCell != null) {
@@ -223,7 +223,7 @@ public final class ReboundingMainView
                     availableDirections);
             directionLabel.disableProperty().bind(enabledBinding.not());
             directionComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 directionLabel.disableProperty().unbind();
                 directionComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -231,7 +231,7 @@ public final class ReboundingMainView
                 selectedDirectionProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 directionComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedDirectionProperty.removeListener(viewModelSelectionListener);
             });

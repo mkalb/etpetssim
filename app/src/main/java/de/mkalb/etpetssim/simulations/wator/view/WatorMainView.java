@@ -157,7 +157,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable GridCell<WatorEntity> oldGridCell,
                                           @Nullable GridCell<WatorEntity> newGridCell) {
         if (oldGridCell != null) {

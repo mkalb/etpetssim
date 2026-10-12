@@ -208,7 +208,7 @@ public abstract class AbstractMainView<
         notificationLabel.setManaged(false);
     }
 
-    protected final void rebuildActionToolBar() {
+    protected final void rebuildEditToolBar() {
         editToolBar.rebuild(
                 createUserActionDescriptors(),
                 editModeActiveProperty(),
@@ -246,7 +246,7 @@ public abstract class AbstractMainView<
      *
      * @param cleanupAction cleanup action for listeners or bindings owned by simulation-specific option controls
      */
-    protected final void registerActionToolBarCleanup(Runnable cleanupAction) {
+    protected final void registerEditToolBarCleanup(Runnable cleanupAction) {
         editToolBar.registerCleanup(cleanupAction);
     }
 

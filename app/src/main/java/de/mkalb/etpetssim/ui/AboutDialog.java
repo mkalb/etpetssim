@@ -67,7 +67,7 @@ public final class AboutDialog {
      * The dialog contains tabs for version information, the README, the project
      * license, and third-party licenses.
      */
-    public void showAboutDialog() {
+    public void show() {
         Tab tabManifest = createTextAreaTab(
                 AppLocalization.getText(AppLocalizationKeys.ABOUT_TAB_VERSION),
                 formatManifestSummary());

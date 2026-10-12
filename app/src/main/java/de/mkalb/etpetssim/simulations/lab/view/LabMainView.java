@@ -302,7 +302,7 @@ public final class LabMainView
 
         updateCanvasBorderPane(structure);
 
-        rebuildActionToolBar();
+        rebuildEditToolBar();
 
         registerOverlayCanvasEvents();
     }

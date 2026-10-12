@@ -119,7 +119,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable LangtonCell oldGridCell,
                                           @Nullable LangtonCell newGridCell) {
         if (oldGridCell != null) {
@@ -242,7 +242,7 @@ public final class LangtonMainView
             directionLabel.managedProperty().bind(directionLabel.visibleProperty());
             directionComboBox.visibleProperty().bind(Bindings.isNotEmpty(availableDirections));
             directionComboBox.managedProperty().bind(directionComboBox.visibleProperty());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 directionLabel.disableProperty().unbind();
                 directionComboBox.disableProperty().unbind();
                 directionLabel.visibleProperty().unbind();
@@ -254,7 +254,7 @@ public final class LangtonMainView
                 selectedDirectionProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 directionComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedDirectionProperty.removeListener(viewModelSelectionListener);
             });

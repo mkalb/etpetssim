@@ -21,7 +21,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
     private final ScrollPane editAffordanceScrollPane;
     private final HBox editAffordanceBox;
-    private final List<Runnable> actionToolBarCleanupActions = new ArrayList<>();
+    private final List<Runnable> editToolBarCleanupActions = new ArrayList<>();
     private @Nullable Button editModeButton;
     private @Nullable ObjectProperty<String> selectedToolIdProperty;
     private @Nullable ChangeListener<String> selectedToolIdListener;
@@ -52,12 +52,12 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
     }
 
     void registerCleanup(Runnable cleanupAction) {
-        actionToolBarCleanupActions.add(cleanupAction);
+        editToolBarCleanupActions.add(cleanupAction);
     }
 
     void clear() {
         clearEditAffordanceToolBar();
-        clearActionToolBar();
+        clearEditToolBar();
     }
 
     void rebuild(
@@ -220,21 +220,21 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         button.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_BUTTON);
     }
 
-    private void clearActionToolBar() {
+    private void clearEditToolBar() {
         if ((selectedToolIdProperty != null) && (selectedToolIdListener != null)) {
             selectedToolIdProperty.removeListener(selectedToolIdListener);
         }
         selectedToolIdProperty = null;
         selectedToolIdListener = null;
 
-        for (var cleanupAction : actionToolBarCleanupActions) {
+        for (var cleanupAction : editToolBarCleanupActions) {
             try {
                 cleanupAction.run();
             } catch (RuntimeException e) {
                 AppLogger.errorf(e, "%s: Failed to clean up edit toolbar resources.", LOG_COMPONENT);
             }
         }
-        actionToolBarCleanupActions.clear();
+        editToolBarCleanupActions.clear();
     }
 
     private void clearEditAffordanceToolBar() {

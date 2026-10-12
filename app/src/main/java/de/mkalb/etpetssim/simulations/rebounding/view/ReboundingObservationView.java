@@ -31,8 +31,8 @@ public final class ReboundingObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCell<ReboundingEntity> gridCell) {
-        super.onSelectedCellChanged(gridCell);
+    protected void handleSelectedGridCellChanged(@Nullable GridCell<ReboundingEntity> gridCell) {
+        super.handleSelectedGridCellChanged(gridCell);
         setUnknownValues(directionLabel);
 
         if (gridCell != null) {
@@ -57,7 +57,7 @@ public final class ReboundingObservationView
                         directionLabel
                 }
         );
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

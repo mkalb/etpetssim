@@ -32,8 +32,8 @@ public final class SugarObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable SugarCell gridCell) {
-        super.onSelectedCellChanged(gridCell);
+    protected void handleSelectedGridCellChanged(@Nullable SugarCell gridCell) {
+        super.handleSelectedGridCellChanged(gridCell);
         setUnknownValues(
                 currentEnergyLabel,
                 currentAmountLabel);
@@ -65,7 +65,7 @@ public final class SugarObservationView
                         currentAmountLabel
                 }
         );
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

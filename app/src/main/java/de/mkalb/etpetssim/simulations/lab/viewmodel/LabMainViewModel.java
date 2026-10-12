@@ -148,14 +148,14 @@ public final class LabMainViewModel
         drawTestRequestedListener = listener;
     }
 
-    public void handleConfigChanged() {
+    private void handleConfigChanged() {
         setSimulationState(SimulationState.READY);
         reset();
 
         configChangedListener.run();
     }
 
-    public void handleDrawRequested() {
+    private void handleDrawRequested() {
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
@@ -179,11 +179,11 @@ public final class LabMainViewModel
         setSimulationState(SimulationState.PAUSED);
     }
 
-    public void handleDrawModelRequested() {
+    private void handleDrawModelRequested() {
         drawModelRequestedListener.run();
     }
 
-    public void handleDrawTestRequested() {
+    private void handleDrawTestRequested() {
         drawTestRequestedListener.run();
     }
 

@@ -282,7 +282,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable EtpetsCell oldGridCell,
                                           @Nullable EtpetsCell newGridCell) {
         if (oldGridCell != null) {
@@ -419,7 +419,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                     availableTerrainChoices);
             terrainLabel.disableProperty().bind(enabledBinding.not());
             terrainComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 terrainLabel.disableProperty().unbind();
                 terrainComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -427,7 +427,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 terrainComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
             });
@@ -484,7 +484,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                     availableResourceChoices);
             resourceLabel.disableProperty().bind(enabledBinding.not());
             resourceComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 resourceLabel.disableProperty().unbind();
                 resourceComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -492,7 +492,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 resourceComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
             });

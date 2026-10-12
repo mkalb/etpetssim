@@ -6,7 +6,6 @@ import de.mkalb.etpetssim.simulations.core.view.AbstractConfigView;
 import de.mkalb.etpetssim.simulations.langton.model.LangtonConfig;
 import de.mkalb.etpetssim.simulations.langton.viewmodel.LangtonConfigViewModel;
 import de.mkalb.etpetssim.ui.*;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 
 public final class LangtonConfigView
@@ -55,9 +54,9 @@ public final class LangtonConfigView
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
-        setupPresetControlBindings(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
-        setupPresetControlBindings(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
-        setupPresetControlBindings(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
+        bindVisibilityToCellShape(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
+        bindVisibilityToCellShape(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
+        bindVisibilityToCellShape(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
 
         var ruleControl = FXComponentFactory.createLabeledStringTextBox(
                 viewModel.ruleProperty().stringProperty(),
@@ -74,13 +73,6 @@ public final class LangtonConfigView
                 presetTriangleControl, presetSquareControl, presetHexagonControl, ruleControl);
 
         return createConfigMainBox(structurePane, layoutPane, rulesPane);
-    }
-
-    private void setupPresetControlBindings(Label label, Region controlRegion, CellShape shape) {
-        label.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
-        label.managedProperty().bind(label.visibleProperty());
-        controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
-        controlRegion.managedProperty().bind(controlRegion.visibleProperty());
     }
 
 }

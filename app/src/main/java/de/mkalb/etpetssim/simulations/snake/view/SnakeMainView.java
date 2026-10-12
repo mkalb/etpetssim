@@ -120,7 +120,7 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable GridCell<SnakeEntity> oldGridCell,
                                           @Nullable GridCell<SnakeEntity> newGridCell) {
         if (oldGridCell != null) {
@@ -261,7 +261,7 @@ public final class SnakeMainView
                 AppLocalization.getText(SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY),
                 AppLocalization.getText(SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY_TOOLTIP),
                 FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX,
-                this::registerActionToolBarCleanup);
+                this::registerEditToolBarCleanup);
         Label strategyLabel = strategyControl.label();
         strategyLabel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
         var strategyComboBox = strategyControl.controlRegion();
@@ -275,7 +275,7 @@ public final class SnakeMainView
             strategyComboBox.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
         }
 
-        registerActionToolBarCleanup(() -> {
+        registerEditToolBarCleanup(() -> {
             strategyLabel.disableProperty().unbind();
             strategyComboBox.disableProperty().unbind();
         });

@@ -162,7 +162,7 @@ public final class SugarMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
                                           @Nullable SugarCell oldGridCell,
                                           @Nullable SugarCell newGridCell) {
         if (oldGridCell != null) {
@@ -268,7 +268,7 @@ public final class SugarMainView
                     availableAddSugarLevels);
             levelLabel.disableProperty().bind(enabledBinding.not());
             levelComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 levelLabel.disableProperty().unbind();
                 levelComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -276,7 +276,7 @@ public final class SugarMainView
                 selectedLevelProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 levelComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedLevelProperty.removeListener(viewModelSelectionListener);
             });

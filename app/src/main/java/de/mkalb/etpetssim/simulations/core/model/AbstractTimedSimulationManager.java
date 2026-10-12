@@ -80,41 +80,16 @@ public abstract class AbstractTimedSimulationManager<
         timedExecutor.executeStep();
         updateStatistics();
         recordStatisticsSample();
-        afterStepExecuted();
     }
 
     @Override
     public final StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         var timedExecutor = executor();
-        var result = timedExecutor.executeSteps(count, checkTermination, () -> {
+        return timedExecutor.executeSteps(count, checkTermination, () -> {
             updateStatistics();
             recordStatisticsSample();
             onStep.run();
         });
-        afterStepsExecuted(result);
-        return result;
-    }
-
-    /**
-     * Hook invoked after a single step has been executed and statistics updated.
-     *
-     * <p>The default implementation does nothing. Subclasses may override this method
-     * to perform additional processing after each individual step.
-     */
-    @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass"})
-    protected void afterStepExecuted() {
-    }
-
-    /**
-     * Hook invoked after a multistep batch has been executed.
-     *
-     * <p>The default implementation does nothing. Subclasses may override this method
-     * to react to the aggregated {@link StepExecutionResult} of the completed batch.
-     *
-     * @param result the aggregated execution result of the completed batch
-     */
-    @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass", "unused"})
-    protected void afterStepsExecuted(StepExecutionResult result) {
     }
 
     @Override

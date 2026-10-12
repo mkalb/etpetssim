@@ -31,8 +31,8 @@ public final class WatorObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCell<WatorEntity> gridCell) {
-        super.onSelectedCellChanged(gridCell);
+    protected void handleSelectedGridCellChanged(@Nullable GridCell<WatorEntity> gridCell) {
+        super.handleSelectedGridCellChanged(gridCell);
         setUnknownValues(ageLabel);
 
         if (gridCell != null) {
@@ -58,7 +58,7 @@ public final class WatorObservationView
                         ageLabel
                 }
         );
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

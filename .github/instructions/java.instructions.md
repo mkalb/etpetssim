@@ -46,6 +46,8 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `draw...`: render visual output
 - `initialize...`/`reset...`/`shutdown...`: perform lifecycle setup, state reset, or cleanup
 - `clear...`: remove existing content and leave the target empty
+- `handle...`: react to a UI, listener, or lifecycle event; invoked from a listener or callback, not as a
+  general-purpose API
 - `request...`: signal a user-intent action or set a corresponding flag
 - `increment...`/`decrement...`: change a mutable counter by exactly `1` or `-1`, respectively
 - `adjust...`: adapt a value, property, or layout using a signed delta, factor, constraint, or contextual target

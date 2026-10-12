@@ -43,8 +43,8 @@ public final class SnakeObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable GridCell<SnakeEntity> gridCell) {
-        super.onSelectedCellChanged(gridCell);
+    protected void handleSelectedGridCellChanged(@Nullable GridCell<SnakeEntity> gridCell) {
+        super.handleSelectedGridCellChanged(gridCell);
         setUnknownValues(
                 snakeIdLabel,
                 snakeAgeLabel,
@@ -95,7 +95,7 @@ public final class SnakeObservationView
                         snakePointsLabel
                 }
         );
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,
