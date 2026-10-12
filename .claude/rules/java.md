@@ -25,8 +25,9 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `of...`: create an instance through a validating or configured static factory
 - `from...`: create, parse, or derive a result from the source named in the method
 - `to...`: convert a value to a target type or representation
+- `parse...`: convert text to a value, as in `Integer.parseInt`
 - `format...`: produce display text from values, usually localized
-- `as...`: expose existing data through an alternative type, view, property, or binding
+- `as...`/`...As<Type>`: expose existing data through an alternative type, view, property, or binding
 - `compute...`: perform a named calculation when that calculation is the primary API intent, typically from supplied
   values or operational context
 - `resolve...`: determine the applicable result by interpreting input, selection state, configuration, precedence, or
@@ -36,29 +37,41 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `check...`: verify an argument or state and throw on violation, as in `Objects.checkIndex`
 - `is...`/`has...`/`can...`/`should...`/`contains...`/`are...`/`includes...`: query boolean state, validity, mode,
   presence, availability, capability, or policy
+- Action methods may return a boolean success flag; boolean prefixes are reserved for queries.
 - `get...`: retrieve a value, resource, or property using a supplied lookup input, or expose it through a JavaBean-style
   accessor
 - `set...`: assign or replace mutable state, property values, model or UI content, or callbacks
+- `register...`: attach a listener, handler, cleanup action, or provider to an owner or registry
+- `bind...`/`unbind...`: create or release JavaFX bindings
 - `update...`: refresh state, statistics, or UI content to match current data
+- `record...`: append a value or event to a history, sample, or tracking state
 - `apply...`: enact a rule, transformation, or action on input or mutable state
 - `perform...`: carry out one simulation, agent, or strategy step inside a step runner or step logic
 - `execute...`: run or orchestrate an operation, action, or sequence
 - `draw...`: render visual output
 - `initialize...`/`reset...`/`shutdown...`: perform lifecycle setup, state reset, or cleanup
 - `clear...`: remove existing content and leave the target empty
+- `fill...`: set every cell of a grid or paint a whole area
+- `place...`: put entities at selected coordinates of a grid
 - `handle...`: react to a UI, listener, or lifecycle event; invoked from a listener or callback, not as a
   general-purpose API
 - `request...`: signal a user-intent action or set a corresponding flag
 - `increment...`/`decrement...`: change a mutable counter by exactly `1` or `-1`, respectively
 - `adjust...`: adapt a value, property, or layout using a signed delta, factor, constraint, or contextual target
+- `clamp...`: restrict a value to a range or bounds
 - `...Property`: JavaFX property accessor; this suffix takes precedence over any prefix rule
 - `...And...`/`...Or...`: name a deliberately coordinated operation whose additional effect must stay visible to callers
+- `...OrFallback`: return a value or a defined fallback when it is missing
 - `toDisplayString()`: short human-readable representation of a value or entity; keep it separate from `toString()`,
   which stays a technical diagnostic representation
 - Use concise noun-style names (`locale()`, `area()`, `opposite()`) for stored properties, intrinsic derived values, and
   named catalog values. They are especially appropriate for records, enums, immutable value objects, data-focused types,
   and components exposing owned state.
 - Keep generated Java record accessor names (`x()`, `y()`) unless a custom method adds distinct behavior.
+- Write acronyms in method and variable names in camel case (`Id`, `Url`, `Uri`, `Css`); the uppercase `FX` prefix
+  applies only to class names.
+- Private and package-private helper methods may use other clear verbs (e.g. `log...`, `configure...`,
+  `normalize...`, `pick...`) when no pattern above fits.
 
 ## Java Records
 
@@ -73,8 +86,8 @@ Use these method naming patterns when they match the method's primary behavior; 
 - Place enum behavior/metadata on the enum type itself.
 - Use exhaustive `switch` expressions for enum branching; do not add a `default` branch when all constants are known.
 - Use explicit stable codes/keys for external representations; never persist or exchange `ordinal()`.
-- Enums offered as a UI selection follow the existing `labelResourceKey()`/`resourceKey()` pair for their
-  localization keys.
+- Enums offered as a config selection follow the existing `labelResourceKey()`/`resourceKey()` pair for their
+  localization keys; edit toolbar choices and records expose the key of their own display text as `labelKey()`.
 - Document declaration-order semantics in type Javadoc when order matters.
 
 ## Nullability (JSpecify)

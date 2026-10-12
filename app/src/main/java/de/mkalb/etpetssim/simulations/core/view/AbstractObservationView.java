@@ -369,8 +369,8 @@ public abstract class AbstractObservationView<
         nameColumn.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().add(nameColumn);
 
-        boolean hasMin = metrics.stream().anyMatch(m -> m.extremaMode().tracksMinimum());
-        boolean hasMax = metrics.stream().anyMatch(m -> m.extremaMode().tracksMaximum());
+        boolean hasMin = metrics.stream().anyMatch(m -> m.extremaMode().includesMinimum());
+        boolean hasMax = metrics.stream().anyMatch(m -> m.extremaMode().includesMaximum());
         int minCol = 2;
         int maxCol = hasMin ? 3 : 2;
         int rowOffset = 0;
@@ -415,7 +415,7 @@ public abstract class AbstractObservationView<
             Tooltip maxTooltip = null;
 
             var mode = metric.extremaMode();
-            if (mode.tracksMinimum()) {
+            if (mode.includesMinimum()) {
                 minLabel = new Label();
                 minLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
                 minLabel.setAlignment(Pos.CENTER_RIGHT);
@@ -424,7 +424,7 @@ public abstract class AbstractObservationView<
                 grid.add(minLabel, minCol, row);
                 GridPane.setHalignment(minLabel, HPos.RIGHT);
             }
-            if (mode.tracksMaximum()) {
+            if (mode.includesMaximum()) {
                 maxLabel = new Label();
                 maxLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
                 maxLabel.setAlignment(Pos.CENTER_RIGHT);

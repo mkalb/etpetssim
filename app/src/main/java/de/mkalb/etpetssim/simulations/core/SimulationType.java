@@ -282,7 +282,7 @@ public enum SimulationType {
      *
      * @return an {@link Optional} containing the parsed URI, or empty if missing or invalid
      */
-    public Optional<URI> urlAsURI() {
+    public Optional<URI> urlAsUri() {
         return url().flatMap(text -> {
             try {
                 return Optional.of(URI.create(text));

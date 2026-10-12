@@ -204,22 +204,19 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         };
     }
 
-    private int normalizeDoubleValueForMapRange(double value,
-                                                int min,
-                                                int max) {
+    private int clampToMapRange(double value,
+                                int min,
+                                int max) {
         if (Double.isNaN(value)) {
             return min;
-        }
-        if (Double.isInfinite(value)) {
-            return max;
         }
 
         return Math.clamp(Math.round(value), min, max);
     }
 
-    private int normalizeIntValueForMapRange(int value,
-                                             int min,
-                                             int max) {
+    private int clampToMapRange(int value,
+                                int min,
+                                int max) {
         return Math.clamp(value, min, max);
     }
 
@@ -230,7 +227,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case Trail trail -> normalizeIntValueForMapRange(
+                case Trail trail -> clampToMapRange(
                         trail.intensity(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));
@@ -248,7 +245,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case ResourceBase resource -> normalizeDoubleValueForMapRange(
+                case ResourceBase resource -> clampToMapRange(
                         resource.currentAmount(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));
@@ -266,11 +263,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case Pet pet -> normalizeIntValueForMapRange(
+                case Pet pet -> clampToMapRange(
                         pet.currentEnergy(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));
-                case PetEgg egg -> normalizeIntValueForMapRange(
+                case PetEgg egg -> clampToMapRange(
                         egg.incubationRemaining(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));

@@ -34,11 +34,11 @@ final class StatisticsExtremaTracker {
                 continue;
             }
             var candidate = new StatisticsExtremum(value, stepCount);
-            if (mode.tracksMinimum()) {
+            if (mode.includesMinimum()) {
                 minimumValues.merge(key, candidate,
                         (existing, incoming) -> (incoming.value() < existing.value()) ? incoming : existing);
             }
-            if (mode.tracksMaximum()) {
+            if (mode.includesMaximum()) {
                 maximumValues.merge(key, candidate,
                         (existing, incoming) -> (incoming.value() > existing.value()) ? incoming : existing);
             }

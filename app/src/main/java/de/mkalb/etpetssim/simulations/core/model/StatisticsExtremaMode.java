@@ -25,12 +25,12 @@ public enum StatisticsExtremaMode {
      */
     MIN_AND_MAX(true, true);
 
-    private final boolean tracksMinimum;
-    private final boolean tracksMaximum;
+    private final boolean includesMinimum;
+    private final boolean includesMaximum;
 
-    StatisticsExtremaMode(boolean tracksMinimum, boolean tracksMaximum) {
-        this.tracksMinimum = tracksMinimum;
-        this.tracksMaximum = tracksMaximum;
+    StatisticsExtremaMode(boolean includesMinimum, boolean includesMaximum) {
+        this.includesMinimum = includesMinimum;
+        this.includesMaximum = includesMaximum;
     }
 
     /**
@@ -38,8 +38,8 @@ public enum StatisticsExtremaMode {
      *
      * @return {@code true} when minimum values are tracked
      */
-    public boolean tracksMinimum() {
-        return tracksMinimum;
+    public boolean includesMinimum() {
+        return includesMinimum;
     }
 
     /**
@@ -47,8 +47,8 @@ public enum StatisticsExtremaMode {
      *
      * @return {@code true} when maximum values are tracked
      */
-    public boolean tracksMaximum() {
-        return tracksMaximum;
+    public boolean includesMaximum() {
+        return includesMaximum;
     }
 
 }

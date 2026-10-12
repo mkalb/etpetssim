@@ -115,7 +115,7 @@ public final class DefaultMainViewModel<
         this.selectedGridCellProvider = selectedGridCellProvider;
         this.simulationUserAction = simulationUserAction;
         editToolBarViewModel = new EditToolBarViewModel<>();
-        timer = new SimulationTimer(this::runTimerStep);
+        timer = new SimulationTimer(this::executeTimerStep);
         this.lifecycleExecutor = lifecycleExecutor;
 
         actionButtonRequestedListener = (_, _, newVal) -> {
@@ -456,7 +456,7 @@ public final class DefaultMainViewModel<
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was resumed by the user.");
 
-            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
+            executeBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
                     controlViewModel.isModeBatchContinuous());
         }
     }
@@ -510,7 +510,7 @@ public final class DefaultMainViewModel<
             } else {
                 setSimulationState(SimulationState.RUNNING_BATCH);
                 logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
-                runBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
+                executeBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
             }
         } catch (RuntimeException e) {
             if (isInitializationActive(generation)) {
@@ -550,7 +550,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void runTimerStep() {
+    private void executeTimerStep() {
         if (simulationManager == null) {
             AppLogger.errorf("%s: Simulation manager is not initialized; cannot execute timer step.", LOG_COMPONENT);
             stopTimer();
@@ -628,7 +628,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void runBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
+    private void executeBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
         ++lifecycleGeneration;
         long generation = lifecycleGeneration;
         batchFuture = lifecycleExecutor.submit(() -> {
@@ -679,7 +679,7 @@ public final class DefaultMainViewModel<
                             if (count >= 100) {
                                 logSimulationInfo("Simulation (batch) finished. Restart new batch. RUNNING_BATCH -> RUNNING_BATCH count=" + count + ", executionResult=" + executionResult);
                             }
-                            runBatchSteps(count, checkTermination, true);
+                            executeBatchSteps(count, checkTermination, true);
                         }
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         if (executorFinished) {

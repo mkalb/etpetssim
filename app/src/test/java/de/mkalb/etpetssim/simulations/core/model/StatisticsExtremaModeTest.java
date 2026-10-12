@@ -53,20 +53,20 @@ final class StatisticsExtremaModeTest {
     @Test
     void testTracksMinimum() {
         assertAll(
-                () -> assertFalse(StatisticsExtremaMode.NONE.tracksMinimum()),
-                () -> assertTrue(StatisticsExtremaMode.MIN.tracksMinimum()),
-                () -> assertFalse(StatisticsExtremaMode.MAX.tracksMinimum()),
-                () -> assertTrue(StatisticsExtremaMode.MIN_AND_MAX.tracksMinimum())
+                () -> assertFalse(StatisticsExtremaMode.NONE.includesMinimum()),
+                () -> assertTrue(StatisticsExtremaMode.MIN.includesMinimum()),
+                () -> assertFalse(StatisticsExtremaMode.MAX.includesMinimum()),
+                () -> assertTrue(StatisticsExtremaMode.MIN_AND_MAX.includesMinimum())
         );
     }
 
     @Test
     void testTracksMaximum() {
         assertAll(
-                () -> assertFalse(StatisticsExtremaMode.NONE.tracksMaximum()),
-                () -> assertFalse(StatisticsExtremaMode.MIN.tracksMaximum()),
-                () -> assertTrue(StatisticsExtremaMode.MAX.tracksMaximum()),
-                () -> assertTrue(StatisticsExtremaMode.MIN_AND_MAX.tracksMaximum())
+                () -> assertFalse(StatisticsExtremaMode.NONE.includesMaximum()),
+                () -> assertFalse(StatisticsExtremaMode.MIN.includesMaximum()),
+                () -> assertTrue(StatisticsExtremaMode.MAX.includesMaximum()),
+                () -> assertTrue(StatisticsExtremaMode.MIN_AND_MAX.includesMaximum())
         );
     }
 
