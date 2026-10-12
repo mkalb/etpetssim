@@ -82,7 +82,7 @@ public final class LabConfigViewModel
     }
 
     @Override
-    public LabConfig getConfig() {
+    public LabConfig createConfig() {
         return new LabConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

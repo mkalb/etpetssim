@@ -63,7 +63,7 @@ public final class LangtonConfigViewModel
     }
 
     @Override
-    public LangtonConfig getConfig() {
+    public LangtonConfig createConfig() {
         return new LangtonConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

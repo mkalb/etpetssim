@@ -85,7 +85,7 @@ public final class LabSimulationManager
     }
 
     @Override
-    public WritableGridModel<LabEntity> currentModel() {
+    public WritableGridModel<LabEntity> currentGridModel() {
         return model;
     }
 

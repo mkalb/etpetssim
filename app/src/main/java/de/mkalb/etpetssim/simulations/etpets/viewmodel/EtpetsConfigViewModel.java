@@ -70,7 +70,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     }
 
     @Override
-    public EtpetsConfig getConfig() {
+    public EtpetsConfig createConfig() {
         return new EtpetsConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

@@ -176,7 +176,7 @@ public final class SugarMainView
     }
 
     @Override
-    protected void drawSimulation(SugarGridModel currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(SugarGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -188,8 +188,8 @@ public final class SugarMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        var resourceModel = currentModel.resourceModel();
-        var agentModel = currentModel.agentModel();
+        var resourceModel = currentGridModel.resourceModel();
+        var agentModel = currentGridModel.agentModel();
 
         resourceModel.nonDefaultCells()
                      .forEach(resourceCell -> cellResourceDrawer.draw(

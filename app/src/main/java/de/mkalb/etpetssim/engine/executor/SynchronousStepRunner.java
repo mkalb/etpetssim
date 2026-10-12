@@ -18,8 +18,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 public final class SynchronousStepRunner<ENT extends GridEntity, C> implements SimulationStepRunner<C> {
 
     private final SynchronousStepLogic<ENT, C> stepLogic;
-    private WritableGridModel<ENT> currentModel;
-    private WritableGridModel<ENT> nextModel;
+    private WritableGridModel<ENT> currentGridModel;
+    private WritableGridModel<ENT> nextGridModel;
 
     /**
      * Constructs a new {@code SynchronousStepRunner} with the given initial model and step logic.
@@ -30,8 +30,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      */
     public SynchronousStepRunner(WritableGridModel<ENT> initialModel,
                                  SynchronousStepLogic<ENT, C> stepLogic) {
-        currentModel = initialModel;
-        nextModel = currentModel.copyWithDefaultEntity();
+        currentGridModel = initialModel;
+        nextGridModel = currentGridModel.copyWithDefaultEntity();
         this.stepLogic = stepLogic;
     }
 
@@ -46,11 +46,11 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      */
     @Override
     public void performStep(int stepIndex, C context) {
-        stepLogic.performSynchronousStep(currentModel, nextModel, stepIndex, context);
-        WritableGridModel<ENT> tempModel = currentModel;
-        currentModel = nextModel;
-        nextModel = tempModel;
-        nextModel.clear();
+        stepLogic.performSynchronousStep(currentGridModel, nextGridModel, stepIndex, context);
+        WritableGridModel<ENT> tempModel = currentGridModel;
+        currentGridModel = nextGridModel;
+        nextGridModel = tempModel;
+        nextGridModel.clear();
     }
 
     /**
@@ -58,8 +58,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      *
      * @return the current {@link WritableGridModel}
      */
-    public WritableGridModel<ENT> currentModel() {
-        return currentModel;
+    public WritableGridModel<ENT> currentGridModel() {
+        return currentGridModel;
     }
 
     /**
@@ -67,8 +67,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      *
      * @return the next {@link WritableGridModel}
      */
-    public WritableGridModel<ENT> nextModel() {
-        return nextModel;
+    public WritableGridModel<ENT> nextGridModel() {
+        return nextGridModel;
     }
 
 }

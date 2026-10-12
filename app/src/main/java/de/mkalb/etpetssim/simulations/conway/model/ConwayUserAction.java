@@ -20,7 +20,7 @@ public final class ConwayUserAction
     public void apply(ConwaySimulationManager manager,
                       ConwayUserActionContext context,
                       @Nullable GridCellView<ConwayEntity> selectedCell) {
-        var model = manager.currentModel();
+        var model = manager.currentGridModel();
         var statistics = manager.statistics();
 
         switch (context) {

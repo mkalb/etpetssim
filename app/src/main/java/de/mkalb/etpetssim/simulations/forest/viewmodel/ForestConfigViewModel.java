@@ -71,7 +71,7 @@ public final class ForestConfigViewModel
     }
 
     @Override
-    public ForestConfig getConfig() {
+    public ForestConfig createConfig() {
         return new ForestConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

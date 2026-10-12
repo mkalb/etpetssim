@@ -145,7 +145,7 @@ public final class DefaultMainViewModel<
         observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
         lastClickedCoordinateListener = ((_, _, newValue) -> {
             if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
-                refreshSelectedGridCell(getCurrentModel(), newValue);
+                refreshSelectedGridCell(getCurrentGridModel(), newValue);
             } else {
                 selectedGridCell.set(null);
             }
@@ -169,9 +169,9 @@ public final class DefaultMainViewModel<
         };
     }
 
-    private void refreshSelectedGridCell(GM currentModel, GridCoordinate coordinate) {
+    private void refreshSelectedGridCell(GM currentGridModel, GridCoordinate coordinate) {
         try {
-            var cell = selectedGridCellProvider.apply(currentModel, coordinate);
+            var cell = selectedGridCellProvider.apply(currentGridModel, coordinate);
             selectedGridCell.set(cell);
             lastSelectedCoordinate.set(cell.coordinate());
             lastSelectedEntity.set(cell.entity());
@@ -331,9 +331,9 @@ public final class DefaultMainViewModel<
     }
 
     @Override
-    public GM getCurrentModel() {
+    public GM getCurrentGridModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentModel();
+        return simulationManager.currentGridModel();
     }
 
     public int getStepCount() {
@@ -462,7 +462,7 @@ public final class DefaultMainViewModel<
     }
 
     private Optional<CON> createValidConfig() {
-        CON config = configViewModel.getConfig();
+        CON config = configViewModel.createConfig();
         if (!config.isValid()) {
             return Optional.empty();
         }
@@ -820,7 +820,7 @@ public final class DefaultMainViewModel<
                     + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
             simulationUserAction.apply(manager, context, currentSelectedCell);
             if (currentSelectedCell != null) {
-                refreshSelectedGridCell(manager.currentModel(), currentSelectedCell.coordinate());
+                refreshSelectedGridCell(manager.currentGridModel(), currentSelectedCell.coordinate());
             }
             return true;
         } else {

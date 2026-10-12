@@ -171,7 +171,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<WatorEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<WatorEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -183,7 +183,7 @@ public final class WatorMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        currentModel.nonDefaultCells()
+        currentGridModel.nonDefaultCells()
                     .forEach(cell -> cellDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             dynamicPainter, cell, stepCount));

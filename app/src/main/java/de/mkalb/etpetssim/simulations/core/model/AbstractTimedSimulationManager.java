@@ -133,8 +133,8 @@ public abstract class AbstractTimedSimulationManager<
     }
 
     @Override
-    public final GM currentModel() {
-        return executor().currentModel();
+    public final GM currentGridModel() {
+        return executor().currentGridModel();
     }
 
     @Override

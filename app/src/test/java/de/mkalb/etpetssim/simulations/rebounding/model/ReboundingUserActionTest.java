@@ -28,7 +28,7 @@ final class ReboundingUserActionTest {
     }
 
     private static GridCell<ReboundingEntity> selectedCell(ReboundingSimulationManager manager, GridCoordinate coordinate) {
-        return new GridCell<>(coordinate, manager.currentModel().getEntity(coordinate));
+        return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 
     @Test
@@ -44,7 +44,7 @@ final class ReboundingUserActionTest {
                 selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(coordinate).isWall()),
+                () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isWall()),
                 () -> assertEquals(wallCellsBefore + 1, manager.statistics().wallCells())
         );
     }
@@ -53,7 +53,7 @@ final class ReboundingUserActionTest {
     void testRemoveWallRemovesSelectedWallCell() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(1, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
-        var wallCell = manager.currentModel()
+        var wallCell = manager.currentGridModel()
                               .filteredCells(ReboundingEntity::isWall)
                               .stream()
                               .findFirst()
@@ -66,7 +66,7 @@ final class ReboundingUserActionTest {
                 selectedCell(manager, wallCell.coordinate()));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(wallCell.coordinate()).isGround()),
+                () -> assertTrue(manager.currentGridModel().getEntity(wallCell.coordinate()).isGround()),
                 () -> assertEquals(wallCellsBefore - 1, manager.statistics().wallCells())
         );
     }
@@ -75,7 +75,7 @@ final class ReboundingUserActionTest {
     void testRemoveRebounderRemovesSelectedRebounderCell() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.02d));
         ReboundingUserAction userAction = new ReboundingUserAction();
-        var rebounderCell = manager.currentModel()
+        var rebounderCell = manager.currentGridModel()
                                    .filteredCells(ReboundingEntity::isRebounder)
                                    .stream()
                                    .findFirst()
@@ -88,7 +88,7 @@ final class ReboundingUserActionTest {
                 selectedCell(manager, rebounderCell.coordinate()));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(rebounderCell.coordinate()).isGround()),
+                () -> assertTrue(manager.currentGridModel().getEntity(rebounderCell.coordinate()).isGround()),
                 () -> assertEquals(movingEntityCellsBefore - 1, manager.statistics().movingEntityCells())
         );
     }
@@ -106,7 +106,7 @@ final class ReboundingUserActionTest {
                 selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(coordinate).isRebounder()),
+                () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isRebounder()),
                 () -> assertEquals(movingEntityCellsBefore + 1, manager.statistics().movingEntityCells())
         );
     }
@@ -115,7 +115,7 @@ final class ReboundingUserActionTest {
     void testFillWallsFillsAllGroundCells() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
-        int totalCells = manager.currentModel().allCells().size();
+        int totalCells = manager.currentGridModel().allCells().size();
 
         userAction.apply(
                 manager,
@@ -123,7 +123,7 @@ final class ReboundingUserActionTest {
                 null);
 
         assertAll(
-                () -> assertEquals(totalCells, manager.currentModel().countEntities(ReboundingEntity::isWall)),
+                () -> assertEquals(totalCells, manager.currentGridModel().countEntities(ReboundingEntity::isWall)),
                 () -> assertEquals(totalCells, manager.statistics().wallCells())
         );
     }
@@ -133,9 +133,9 @@ final class ReboundingUserActionTest {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate rebounderCoordinate = new GridCoordinate(0, 0);
-        manager.currentModel().setEntity(rebounderCoordinate, new Rebounder(CompassDirection.N));
+        manager.currentGridModel().setEntity(rebounderCoordinate, new Rebounder(CompassDirection.N));
         manager.statistics().incrementMovingEntityCells();
-        int totalCells = manager.currentModel().allCells().size();
+        int totalCells = manager.currentGridModel().allCells().size();
 
         userAction.apply(
                 manager,
@@ -143,8 +143,8 @@ final class ReboundingUserActionTest {
                 null);
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(rebounderCoordinate).isRebounder()),
-                () -> assertEquals(totalCells - 1L, manager.currentModel().countEntities(ReboundingEntity::isWall)),
+                () -> assertTrue(manager.currentGridModel().getEntity(rebounderCoordinate).isRebounder()),
+                () -> assertEquals(totalCells - 1L, manager.currentGridModel().countEntities(ReboundingEntity::isWall)),
                 () -> assertEquals(totalCells - 1, manager.statistics().wallCells()),
                 () -> assertEquals(1, manager.statistics().movingEntityCells())
         );

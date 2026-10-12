@@ -36,7 +36,7 @@ final class SugarUserActionTest {
     void testAddSugarAddsResourceWithSelectedLevel() {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
         SugarUserAction userAction = new SugarUserAction();
-        GridCoordinate coordinate = manager.currentModel()
+        GridCoordinate coordinate = manager.currentGridModel()
                                            .resourceModel()
                                            .filteredCoordinates(ResourceEntity::isEmpty)
                                            .stream()
@@ -47,9 +47,9 @@ final class SugarUserActionTest {
         userAction.apply(
                 manager,
                 new SugarUserActionContext.AddSugar(SugarAddSugarLevel.HIGH),
-                SugarCell.of(manager.currentModel(), coordinate));
+                SugarCell.of(manager.currentGridModel(), coordinate));
 
-        ResourceEntity resourceEntity = manager.currentModel().resourceModel().getEntity(coordinate);
+        ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
                 () -> assertInstanceOf(Sugar.class, resourceEntity),
                 () -> assertEquals(
@@ -63,7 +63,7 @@ final class SugarUserActionTest {
     void testRemoveSugarRemovesSelectedResourceCell() {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
         SugarUserAction userAction = new SugarUserAction();
-        GridCoordinate coordinate = manager.currentModel()
+        GridCoordinate coordinate = manager.currentGridModel()
                                            .resourceModel()
                                            .filteredCoordinates(ResourceEntity::isNotEmpty)
                                            .stream()
@@ -74,10 +74,10 @@ final class SugarUserActionTest {
         userAction.apply(
                 manager,
                 SugarUserActionContext.FixedAction.REMOVE_SUGAR,
-                SugarCell.of(manager.currentModel(), coordinate));
+                SugarCell.of(manager.currentGridModel(), coordinate));
 
         assertAll(
-                () -> assertSame(NoResource.NO_RESOURCE, manager.currentModel().resourceModel().getEntity(coordinate)),
+                () -> assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate)),
                 () -> assertEquals(resourceCellsBefore - 1, manager.statistics().resourceCells())
         );
     }

@@ -101,6 +101,6 @@ public interface SimulationManager<
      *
      * @return current simulation model
      */
-    GM currentModel();
+    GM currentGridModel();
 
 }

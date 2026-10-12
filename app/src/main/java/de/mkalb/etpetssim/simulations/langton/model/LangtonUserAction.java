@@ -26,7 +26,7 @@ public final class LangtonUserAction
             return;
         }
 
-        var model = manager.currentModel();
+        var model = manager.currentGridModel();
         var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
         var antEntity = model.antModel().getEntity(coordinate);

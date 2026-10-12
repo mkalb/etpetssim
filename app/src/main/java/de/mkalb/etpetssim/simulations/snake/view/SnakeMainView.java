@@ -140,7 +140,7 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<SnakeEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<SnakeEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -170,13 +170,13 @@ public final class SnakeMainView
         Color headDeadColor = toDeadFillColor(headAliveColor, DEAD_HEAD_HUE);
         Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
-        currentModel.filteredCoordinates(SnakeEntity::isWall)
+        currentGridModel.filteredCoordinates(SnakeEntity::isWall)
                     .forEach(coordinate ->
                             dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
-        currentModel.filteredCoordinates(SnakeEntity::isFood)
+        currentGridModel.filteredCoordinates(SnakeEntity::isFood)
                     .forEach(coordinate ->
                             dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
-        currentModel.filteredCells(e -> e instanceof SnakeHead)
+        currentGridModel.filteredCells(e -> e instanceof SnakeHead)
                     .forEach(cell -> {
                         if (cell.entity() instanceof SnakeHead head) {
                             boolean isDead = head.isDead();

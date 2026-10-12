@@ -133,7 +133,7 @@ public final class LangtonMainView
     }
 
     @Override
-    protected void drawSimulation(LangtonGridModel currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(LangtonGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -145,8 +145,8 @@ public final class LangtonMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        var groundModel = currentModel.groundModel();
-        var antModel = currentModel.antModel();
+        var groundModel = currentGridModel.groundModel();
+        var antModel = currentGridModel.antModel();
 
         if ((lastDrawnStepCount + 1) < stepCount) {
             // draw ground

@@ -123,7 +123,7 @@ public final class ReboundingMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<ReboundingEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<ReboundingEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -135,7 +135,7 @@ public final class ReboundingMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        currentModel.nonDefaultCells()
+        currentGridModel.nonDefaultCells()
                     .forEach(cell -> cellDrawer.draw(
                             entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
                             dynamicPainter, cell, stepCount));

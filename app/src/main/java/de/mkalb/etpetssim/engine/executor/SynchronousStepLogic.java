@@ -23,11 +23,11 @@ public interface SynchronousStepLogic<ENT extends GridEntity, C> {
      * <p>
      * Reads from the current model and writes results to the next model.
      *
-     * @param currentModel the current (read-only) grid model representing the simulation state
-     * @param nextModel    the grid model to write the updated state to
+     * @param currentGridModel the current (read-only) grid model representing the simulation state
+     * @param nextGridModel    the grid model to write the updated state to
      * @param stepIndex    the index of the current simulation step
      * @param context      the context object used to share or accumulate state during the simulation
      */
-    void performSynchronousStep(ReadableGridModel<ENT> currentModel, WritableGridModel<ENT> nextModel, int stepIndex, C context);
+    void performSynchronousStep(ReadableGridModel<ENT> currentGridModel, WritableGridModel<ENT> nextGridModel, int stepIndex, C context);
 
 }

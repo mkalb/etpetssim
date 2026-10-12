@@ -27,7 +27,7 @@ final class ForestUserActionTest {
     }
 
     private static GridCell<ForestEntity> selectedCell(ForestSimulationManager manager, GridCoordinate coordinate) {
-        return new GridCell<>(coordinate, manager.currentModel().getEntity(coordinate));
+        return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 
     @Test
@@ -53,7 +53,7 @@ final class ForestUserActionTest {
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertSame(ForestEntity.TREE, manager.currentModel().getEntity(coordinate)),
+                () -> assertSame(ForestEntity.TREE, manager.currentGridModel().getEntity(coordinate)),
                 () -> assertEquals(manager.statistics().totalCells() - 1, manager.statistics().emptyCells()),
                 () -> assertEquals(1, manager.statistics().treeCells()),
                 () -> assertEquals(0, manager.statistics().burningCells())
@@ -65,13 +65,13 @@ final class ForestUserActionTest {
         ForestSimulationManager manager = new ForestSimulationManager(createConfig());
         ForestUserAction userAction = new ForestUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().setEntity(coordinate, ForestEntity.TREE);
+        manager.currentGridModel().setEntity(coordinate, ForestEntity.TREE);
         manager.statistics().updateCellCounts(1, 0);
 
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertSame(ForestEntity.BURNING, manager.currentModel().getEntity(coordinate)),
+                () -> assertSame(ForestEntity.BURNING, manager.currentGridModel().getEntity(coordinate)),
                 () -> assertEquals(manager.statistics().totalCells() - 1, manager.statistics().emptyCells()),
                 () -> assertEquals(0, manager.statistics().treeCells()),
                 () -> assertEquals(1, manager.statistics().burningCells())
@@ -83,13 +83,13 @@ final class ForestUserActionTest {
         ForestSimulationManager manager = new ForestSimulationManager(createConfig());
         ForestUserAction userAction = new ForestUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().setEntity(coordinate, ForestEntity.BURNING);
+        manager.currentGridModel().setEntity(coordinate, ForestEntity.BURNING);
         manager.statistics().updateCellCounts(0, 1);
 
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertSame(ForestEntity.EMPTY, manager.currentModel().getEntity(coordinate)),
+                () -> assertSame(ForestEntity.EMPTY, manager.currentGridModel().getEntity(coordinate)),
                 () -> assertEquals(manager.statistics().totalCells(), manager.statistics().emptyCells()),
                 () -> assertEquals(0, manager.statistics().treeCells()),
                 () -> assertEquals(0, manager.statistics().burningCells())

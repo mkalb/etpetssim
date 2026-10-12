@@ -296,7 +296,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void drawSimulation(EtpetsGridModel currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -308,9 +308,9 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
         dynamicPainter.clearCanvasBackground();
 
-        var terrainModel = currentModel.terrainModel();
-        var resourceModel = currentModel.resourceModel();
-        var agentModel = currentModel.agentModel();
+        var terrainModel = currentGridModel.terrainModel();
+        var resourceModel = currentGridModel.resourceModel();
+        var agentModel = currentGridModel.agentModel();
 
         var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))

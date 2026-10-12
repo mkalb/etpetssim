@@ -19,8 +19,8 @@ public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity,
     }
 
     @Override
-    public void performSynchronousStep(ReadableGridModel<ConwayEntity> currentModel,
-                                       WritableGridModel<ConwayEntity> nextModel,
+    public void performSynchronousStep(ReadableGridModel<ConwayEntity> currentGridModel,
+                                       WritableGridModel<ConwayEntity> nextGridModel,
                                        int stepIndex,
                                        ConwayStatistics statistics) {
         // Counter for ConwayStatistics
@@ -28,7 +28,7 @@ public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity,
         int changedCells = 0;
 
         Map<GridCoordinate, Integer> deadNeighborCounts = new HashMap<>();
-        Set<GridCoordinate> alive = currentModel.nonDefaultCoordinates();
+        Set<GridCoordinate> alive = currentGridModel.nonDefaultCoordinates();
 
         for (var coordinate : alive) {
             int aliveNeighbors = 0;
@@ -42,7 +42,7 @@ public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity,
                 }
             }
             if (config.transitionRules().shouldSurvive(aliveNeighbors)) {
-                nextModel.setEntity(coordinate, ConwayEntity.ALIVE);
+                nextGridModel.setEntity(coordinate, ConwayEntity.ALIVE);
                 aliveCells++;
             } else {
                 changedCells++;
@@ -51,7 +51,7 @@ public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity,
 
         for (var entry : deadNeighborCounts.entrySet()) {
             if (config.transitionRules().shouldBeBorn(entry.getValue())) {
-                nextModel.setEntity(entry.getKey(), ConwayEntity.ALIVE);
+                nextGridModel.setEntity(entry.getKey(), ConwayEntity.ALIVE);
                 aliveCells++;
                 changedCells++;
             }

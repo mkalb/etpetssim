@@ -21,17 +21,17 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
     }
 
     @Override
-    public void performSynchronousStep(ReadableGridModel<ForestEntity> currentModel,
-                                       WritableGridModel<ForestEntity> nextModel,
+    public void performSynchronousStep(ReadableGridModel<ForestEntity> currentGridModel,
+                                       WritableGridModel<ForestEntity> nextGridModel,
                                        int stepIndex,
                                        ForestStatistics statistics) {
-        currentModel.allCells()
+        currentGridModel.allCells()
                     .stream()
-                    .map(c -> processCell(c, currentModel))
+                    .map(c -> processCell(c, currentGridModel))
                     .filter(c -> !c.entity().isEmpty())
-                    .forEach(nextModel::setEntity);
-        int treeCells = Math.toIntExact(nextModel.countEntities(ForestEntity::isTree));
-        int burningCells = Math.toIntExact(nextModel.countEntities(ForestEntity::isBurning));
+                    .forEach(nextGridModel::setEntity);
+        int treeCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isTree));
+        int burningCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isBurning));
 
         statistics.updateCellCounts(treeCells, burningCells);
     }

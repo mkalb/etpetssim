@@ -35,8 +35,8 @@ public final class TimedSimulationExecutor<
     }
 
     @Override
-    public GM currentModel() {
-        return delegate.currentModel();
+    public GM currentGridModel() {
+        return delegate.currentGridModel();
     }
 
     @Override

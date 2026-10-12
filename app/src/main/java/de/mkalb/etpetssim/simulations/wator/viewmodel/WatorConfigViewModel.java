@@ -113,7 +113,7 @@ public final class WatorConfigViewModel
     }
 
     @Override
-    public WatorConfig getConfig() {
+    public WatorConfig createConfig() {
         return new WatorConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

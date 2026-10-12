@@ -73,6 +73,7 @@ include:
 - Contains UI state, formatting, and interaction logic only; delegate domain computation to `model`.
 - Expose state as JavaFX `Property`/`ObservableValue` or repository input wrappers.
 - Marshal model/background updates to the JavaFX Application Thread via `Platform.runLater(...)`.
+- Expose plain values through `getX()` accessors; model and engine types use noun-style accessors.
 - May depend on same-simulation `shared`.
 
 ### Shared

@@ -122,9 +122,9 @@ public final class LabMainViewModel
     }
 
     @Override
-    public WritableGridModel<LabEntity> getCurrentModel() {
+    public WritableGridModel<LabEntity> getCurrentGridModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentModel();
+        return simulationManager.currentGridModel();
     }
 
     @Override
@@ -163,7 +163,7 @@ public final class LabMainViewModel
 
         reset();
 
-        LabConfig config = configViewModel.getConfig();
+        LabConfig config = configViewModel.createConfig();
         if (!config.isValid()) {
             setSimulationState(SimulationState.ERROR);
             AppLogger.warnf("%s: Cannot start simulation because configuration is invalid.", LOG_COMPONENT);
@@ -193,7 +193,7 @@ public final class LabMainViewModel
         }
 
         NeighborhoodMode neighborhoodMode = simulationManager.config().neighborhoodMode();
-        WritableGridModel<LabEntity> model = simulationManager.currentModel();
+        WritableGridModel<LabEntity> model = simulationManager.currentGridModel();
 
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadius =
                 CellNeighborhoods.cellsByRadiusRings(center,
@@ -234,7 +234,7 @@ public final class LabMainViewModel
             labObservationViewModel.selectedGridCellProperty().set(null);
             return;
         }
-        LabEntity entity = simulationManager.currentModel().getEntity(coordinate);
+        LabEntity entity = simulationManager.currentGridModel().getEntity(coordinate);
         labObservationViewModel.selectedGridCellProperty().set(new GridCell<>(coordinate, entity));
     }
 

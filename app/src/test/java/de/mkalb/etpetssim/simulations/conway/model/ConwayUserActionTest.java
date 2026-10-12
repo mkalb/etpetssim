@@ -27,7 +27,7 @@ final class ConwayUserActionTest {
 
     private static GridCell<ConwayEntity> selectedCell(ConwaySimulationManager manager, int x, int y) {
         GridCoordinate coordinate = new GridCoordinate(x, y);
-        return new GridCell<>(coordinate, manager.currentModel().getEntity(coordinate));
+        return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 
     @Test
@@ -40,7 +40,7 @@ final class ConwayUserActionTest {
         assertAll(
                 () -> assertEquals(0, manager.statistics().aliveCells()),
                 () -> assertEquals(0, manager.statistics().changedCells()),
-                () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
+                () -> assertTrue(manager.currentGridModel().nonDefaultCoordinates().isEmpty())
         );
     }
 
@@ -63,7 +63,7 @@ final class ConwayUserActionTest {
                 () -> assertEquals(0, manager.statistics().aliveCells()),
                 () -> assertEquals(manager.statistics().totalCells(), manager.statistics().deadCells()),
                 () -> assertEquals(4, manager.statistics().changedCells()),
-                () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
+                () -> assertTrue(manager.currentGridModel().nonDefaultCoordinates().isEmpty())
         );
     }
 

@@ -133,7 +133,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<ConwayEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<ConwayEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -145,7 +145,7 @@ public final class ConwayMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        currentModel.nonDefaultCoordinates()
+        currentGridModel.nonDefaultCoordinates()
                     .forEach(coordinate -> coordinateDrawer.draw(
                             dynamicPainter, coordinate, stepCount));
     }

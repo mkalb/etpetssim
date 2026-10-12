@@ -147,7 +147,7 @@ public abstract class AbstractDefaultMainView<
 
     private void redrawAfterUserAction() {
         observationView.updateObservationLabels();
-        drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());
+        drawSimulation(viewModel.getCurrentGridModel(), viewModel.getStepCount(), viewModel.getStepCount());
     }
 
     private void handleSimulationInitialized() {
@@ -164,7 +164,7 @@ public abstract class AbstractDefaultMainView<
         controlView.updateStepCount(stepCount);
         observationView.initializeObservationLabels();
 
-        initializeSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
+        initializeSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentGridModel());
 
         AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
 
@@ -225,7 +225,7 @@ public abstract class AbstractDefaultMainView<
 
     private void drawAndMeasureSimulationStep(int stepCount) {
         long startNanos = System.nanoTime();
-        drawSimulation(viewModel.getCurrentModel(), stepCount, lastDrawnStepCount);
+        drawSimulation(viewModel.getCurrentGridModel(), stepCount, lastDrawnStepCount);
         long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
         drawThrottler.recordDurationMillis(durationMillis);
 
@@ -284,6 +284,6 @@ public abstract class AbstractDefaultMainView<
     protected abstract void initializeSimulation(CON config, CellDimension cellDimension, GM model);
 
     @SuppressWarnings("ParameterHidesMemberVariable")
-    protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);
+    protected abstract void drawSimulation(GM currentGridModel, int stepCount, int lastDrawnStepCount);
 
 }

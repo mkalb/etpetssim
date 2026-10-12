@@ -115,7 +115,7 @@ public final class ConwayConfigViewModel
     }
 
     @Override
-    public ConwayConfig getConfig() {
+    public ConwayConfig createConfig() {
         return new ConwayConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

@@ -261,7 +261,7 @@ public final class LabMainView
         if (cellFont == null) {
             return;
         }
-        GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentModel(), entityDescriptorRegistry,
+        GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentGridModel(), entityDescriptorRegistry,
                 descriptor -> localOverlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, cellFont));
     }
 
@@ -379,7 +379,7 @@ public final class LabMainView
         }
 
         Color fillColor = FXPaintFactory.adjustColorAlpha(Color.RED, MODEL_FILL_ALPHA);
-        viewModel.getCurrentModel()
+        viewModel.getCurrentGridModel()
                  .nonDefaultCells()
                  .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, NO_STROKE_LINE_WIDTH));
     }
