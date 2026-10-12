@@ -107,30 +107,30 @@ final class CellNeighborhoodsTest {
                         new GridTopology(cellShape, edgeBehavior),
                         new GridSize(20, 10));
 
-                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(0, 0), structure));
-                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(19, 0), structure));
-                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(0, 9), structure));
-                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(19, 9), structure));
-                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(5, 5), structure));
 
-                assertEquals(expectedAction, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(expectedAction, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(-1, -1), structure));
-                assertEquals(expectedAction, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(expectedAction, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(-1, 5), structure));
-                assertEquals(expectedAction, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(expectedAction, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(20, 5), structure));
-                assertEquals(expectedAction, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(expectedAction, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(5, -1), structure));
-                assertEquals(expectedAction, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(expectedAction, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(5, 10), structure));
-                assertEquals(expectedAction, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(expectedAction, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(20, 10), structure));
-                assertEquals(expectedAction, CellNeighborhoods.edgeActionForCoordinate(
+                assertEquals(expectedAction, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                         new GridCoordinate(25, 15), structure));
             }
         }
@@ -141,30 +141,30 @@ final class CellNeighborhoodsTest {
                     new GridTopology(cellShape, GridEdgeBehavior.BLOCK_X_WRAP_Y),
                     new GridSize(20, 10));
 
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(0, 0), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(19, 0), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(0, 9), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(19, 9), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(5, 5), structure));
 
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(-1, -1), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(-1, 5), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(20, 5), structure));
-            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(5, -1), structure));
-            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(5, 10), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(20, 10), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(25, 15), structure));
         }
 
@@ -174,30 +174,30 @@ final class CellNeighborhoodsTest {
                     new GridTopology(cellShape, GridEdgeBehavior.WRAP_X_BLOCK_Y),
                     new GridSize(20, 10));
 
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(0, 0), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(19, 0), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(0, 9), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(19, 9), structure));
-            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.VALID, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(5, 5), structure));
 
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(-1, -1), structure));
-            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(-1, 5), structure));
-            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.WRAPPED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(20, 5), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(5, -1), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(5, 10), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(20, 10), structure));
-            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeActionForCoordinate(
+            assertEquals(EdgeBehaviorAction.BLOCKED, CellNeighborhoods.edgeBehaviorActionForCoordinate(
                     new GridCoordinate(25, 15), structure));
         }
     }
@@ -211,15 +211,15 @@ final class CellNeighborhoodsTest {
                 GridStructure structure = new GridStructure(
                         new GridTopology(cellShape, gridEdgeBehavior),
                         new GridSize(20, 10));
-                assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(0, 0), structure));
-                assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, 5), structure));
-                assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 9), structure));
-                assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, -1), structure));
-                assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, 5), structure));
-                assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, -1), structure));
-                assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 10), structure));
-                assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 9), structure));
-                assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 10), structure));
+                assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(0, 0), structure));
+                assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, 5), structure));
+                assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 9), structure));
+                assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, -1), structure));
+                assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, 5), structure));
+                assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, -1), structure));
+                assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 10), structure));
+                assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 9), structure));
+                assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 10), structure));
             }
         }
         // WRAP_XY
@@ -227,45 +227,45 @@ final class CellNeighborhoodsTest {
             GridStructure structure = new GridStructure(
                     new GridTopology(cellShape, GridEdgeBehavior.WRAP_XY),
                     new GridSize(20, 10));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(0, 0), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, 5), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 9), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, -1), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, 5), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, -1), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 10), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 9), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 10), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(0, 0), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, 5), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 9), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, -1), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, 5), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, -1), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 10), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 9), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 10), structure));
         }
         // WRAP_X_BLOCK_Y
         for (CellShape cellShape : CellShape.values()) {
             GridStructure structure = new GridStructure(
                     new GridTopology(cellShape, GridEdgeBehavior.WRAP_X_BLOCK_Y),
                     new GridSize(20, 10));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(0, 0), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, 5), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 9), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, -1), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, 5), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, -1), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 10), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 9), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 10), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(0, 0), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, 5), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 9), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, -1), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, 5), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, -1), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 10), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 9), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 10), structure));
         }
         // BLOCK_X_WRAP_Y
         for (CellShape cellShape : CellShape.values()) {
             GridStructure structure = new GridStructure(
                     new GridTopology(cellShape, GridEdgeBehavior.BLOCK_X_WRAP_Y),
                     new GridSize(20, 10));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(0, 0), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, 5), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 9), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, -1), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(-1, 5), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(5, -1), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 10), structure));
-            assertFalse(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(20, 9), structure));
-            assertTrue(CellNeighborhoods.isValidEdgeCoordinate(new GridCoordinate(19, 10), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(0, 0), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, 5), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 9), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, -1), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(-1, 5), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(5, -1), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 10), structure));
+            assertFalse(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(20, 9), structure));
+            assertTrue(CellNeighborhoods.isValidWithEdgeBehavior(new GridCoordinate(19, 10), structure));
         }
     }
 
@@ -567,27 +567,27 @@ final class CellNeighborhoodsTest {
 
     @Test
     void testStaticGenerateCacheKey() {
-        assertEquals("SQUARE::EDGES_ONLY", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE));
-        assertEquals("SQUARE::EDGES_AND_VERTICES", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.SQUARE));
+        assertEquals("SQUARE::EDGES_ONLY", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE));
+        assertEquals("SQUARE::EDGES_AND_VERTICES", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.SQUARE));
 
-        assertEquals("HEXAGON::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
-        assertEquals("HEXAGON::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
-        assertEquals("HEXAGON::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 2), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
-        assertEquals("HEXAGON::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 2), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
-        assertEquals("HEXAGON::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 5), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
-        assertEquals("HEXAGON::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
-        assertEquals("HEXAGON::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
-        assertEquals("HEXAGON::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
+        assertEquals("HEXAGON::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
+        assertEquals("HEXAGON::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
+        assertEquals("HEXAGON::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 2), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
+        assertEquals("HEXAGON::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 2), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
+        assertEquals("HEXAGON::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 5), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
+        assertEquals("HEXAGON::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
+        assertEquals("HEXAGON::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
+        assertEquals("HEXAGON::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
 
-        assertEquals("TRIANGLE::EDGES_ONLY::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
-        assertEquals("TRIANGLE::EDGES_AND_VERTICES::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
-        assertEquals("TRIANGLE::EDGES_ONLY::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
-        assertEquals("TRIANGLE::EDGES_AND_VERTICES::true", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_ONLY::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_AND_VERTICES::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_ONLY::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_AND_VERTICES::true", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
 
-        assertEquals("TRIANGLE::EDGES_ONLY::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 3), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
-        assertEquals("TRIANGLE::EDGES_AND_VERTICES::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(2, 3), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
-        assertEquals("TRIANGLE::EDGES_ONLY::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 4), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
-        assertEquals("TRIANGLE::EDGES_AND_VERTICES::false", CellNeighborhoods.generateCacheKey(new GridCoordinate(3, 4), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_ONLY::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 3), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_AND_VERTICES::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 3), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_ONLY::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 4), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
+        assertEquals("TRIANGLE::EDGES_AND_VERTICES::false", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 4), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
 
     }
 

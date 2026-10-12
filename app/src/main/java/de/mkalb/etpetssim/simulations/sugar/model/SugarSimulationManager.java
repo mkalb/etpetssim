@@ -147,7 +147,7 @@ public final class SugarSimulationManager
                     cancellation.checkCanceled();
                 }
                 GridCoordinate current = queue.remove();
-                for (var result : CellNeighborhoods.neighborEdgeResults(current, config.neighborhoodMode(), structure)) {
+                for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config.neighborhoodMode(), structure)) {
                     if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
                         GridCoordinate mapped = result.mapped();
                         if (!visited.contains(mapped)) {

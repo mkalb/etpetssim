@@ -27,7 +27,7 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
                                        ForestStatistics statistics) {
         currentGridModel.allCells()
                     .stream()
-                    .map(c -> processCell(c, currentGridModel))
+                    .map(c -> computeNextCell(c, currentGridModel))
                     .filter(c -> !c.entity().isEmpty())
                     .forEach(nextGridModel::setEntity);
         int treeCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isTree));
@@ -36,7 +36,7 @@ public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity,
         statistics.updateCellCounts(treeCells, burningCells);
     }
 
-    private GridCell<ForestEntity> processCell(GridCell<ForestEntity> cell,
+    private GridCell<ForestEntity> computeNextCell(GridCell<ForestEntity> cell,
                                                ReadableGridModel<ForestEntity> model) {
         return switch (cell.entity()) {
             case EMPTY -> {

@@ -574,7 +574,7 @@ public final class EtpetsAgentLogic {
     private static List<GridCoordinate> computeValidNeighborCoordinates(GridStructure gridStructure,
                                                                         GridCoordinate originCoordinate) {
         Collection<EdgeBehaviorResult> results =
-                CellNeighborhoods.neighborEdgeResults(originCoordinate, NeighborhoodMode.EDGES_ONLY, gridStructure);
+                CellNeighborhoods.neighborEdgeBehaviorResults(originCoordinate, NeighborhoodMode.EDGES_ONLY, gridStructure);
         List<GridCoordinate> valid = new ArrayList<>(results.size());
         for (EdgeBehaviorResult r : results) {
             if (r.action() == EdgeBehaviorAction.VALID) {

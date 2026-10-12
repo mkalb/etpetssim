@@ -135,7 +135,7 @@ public final class LabMainView
         drawRing(highlights.ringCellsByRadius(), INNER_HIGHLIGHT_RING_RADIUS, Color.TOMATO, painter);
         drawNeighborCoordinates(highlights.validNeighborCoordinates(), painter);
         drawNeighborsWithEdgeBehavior(highlights.validNeighborsWithEdgeBehavior(), painter);
-        drawNeighborEdgeResults(highlights.neighborEdgeResults(), painter);
+        drawNeighborEdgeBehaviorResults(highlights.neighborEdgeBehaviorResults(), painter);
     }
 
     private void drawRing(SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCells,
@@ -181,8 +181,8 @@ public final class LabMainView
         painter.drawCenteredTextInCell(coordinate, builder.toString(), Color.BLACK, cellFont);
     }
 
-    private void drawNeighborEdgeResults(Collection<EdgeBehaviorResult> edgeResults,
-                                         FXGridCanvasPainter painter) {
+    private void drawNeighborEdgeBehaviorResults(Collection<EdgeBehaviorResult> edgeResults,
+                                                 FXGridCanvasPainter painter) {
         edgeResults.forEach(edgeResult -> {
             switch (edgeResult.action()) {
                 case VALID -> painter.drawCell(edgeResult.mapped(), null, Color.DARKORANGE, EDGE_RESULT_STROKE_WIDTH);

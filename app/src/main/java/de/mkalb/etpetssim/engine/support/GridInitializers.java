@@ -247,7 +247,7 @@ public final class GridInitializers {
         };
     }
 
-    private static void validatePercent(double value) {
+    private static void checkPercent(double value) {
         if ((value < 0.0d) || (value > 1.0d)) {
             throw new IllegalArgumentException("percent must be in range [0.0, 1.0], but was " + value + '.');
         }
@@ -296,7 +296,7 @@ public final class GridInitializers {
                                                                                    Predicate<ENT> canReplaceExisting,
                                                                                    double percent,
                                                                                    Random random) {
-        validatePercent(percent);
+        checkPercent(percent);
         return model -> placeRandomCount((int) Math.round(percent * model.structure().size().area()),
                 entitySupplier, canReplaceExisting, random).initialize(model);
     }

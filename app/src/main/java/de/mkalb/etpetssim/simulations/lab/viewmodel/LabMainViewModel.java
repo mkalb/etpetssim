@@ -202,7 +202,7 @@ public final class LabMainViewModel
                         NEIGHBORHOOD_RING_MAX_RADIUS,
                         coordinate -> new GridCell<>(coordinate, model.getEntity(coordinate)));
 
-        List<GridCoordinate> validNeighborCoordinates = CellNeighborhoods.coordinatesOfNeighbors(
+        List<GridCoordinate> validNeighborCoordinates = CellNeighborhoods.neighborCoordinatesWithinRadius(
                                                                                  center,
                                                                                  neighborhoodMode,
                                                                                  gridStructure.cellShape(),
@@ -219,14 +219,14 @@ public final class LabMainViewModel
                              }
                          });
 
-        List<EdgeBehaviorResult> neighborEdgeResults = List.copyOf(
-                CellNeighborhoods.neighborEdgeResults(center, neighborhoodMode, gridStructure));
+        List<EdgeBehaviorResult> neighborEdgeBehaviorResults = List.copyOf(
+                CellNeighborhoods.neighborEdgeBehaviorResults(center, neighborhoodMode, gridStructure));
 
         return Optional.of(new LabNeighborhoodHighlights(
                 ringCellsByRadius,
                 validNeighborCoordinates,
                 validNeighborsWithEdgeBehavior,
-                neighborEdgeResults));
+                neighborEdgeBehaviorResults));
     }
 
     public void updateSelectedGridCell(@Nullable GridCoordinate coordinate) {

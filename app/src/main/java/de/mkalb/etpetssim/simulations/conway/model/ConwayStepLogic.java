@@ -32,7 +32,7 @@ public final class ConwayStepLogic implements SynchronousStepLogic<ConwayEntity,
 
         for (var coordinate : alive) {
             int aliveNeighbors = 0;
-            for (var result : CellNeighborhoods.neighborEdgeResults(coordinate, config.neighborhoodMode(), structure)) {
+            for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(coordinate, config.neighborhoodMode(), structure)) {
                 if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
                     if (alive.contains(result.mapped())) {
                         aliveNeighbors++;

@@ -266,7 +266,7 @@ final class ArrayGridModelTest {
         GridCoordinate coordinateA = coordinate(0, 0);
         GridCoordinate coordinateB = coordinate(1, 0);
 
-        model.swapInputCellEntities(
+        model.setSwappedEntities(
                 new GridCell<>(coordinateA, TestEntity.WALL),
                 new GridCell<>(coordinateB, TestEntity.FOOD));
 
@@ -283,7 +283,7 @@ final class ArrayGridModelTest {
         model.setEntity(coordinateA, TestEntity.WALL);
         model.setEntity(coordinateB, TestEntity.FOOD);
 
-        model.swapInputCellEntities(
+        model.setSwappedEntities(
                 new GridCell<>(coordinateA, TestEntity.EMPTY),
                 new GridCell<>(coordinateB, TestEntity.EMPTY));
 
@@ -301,11 +301,11 @@ final class ArrayGridModelTest {
 
         assertAll(
                 () -> assertThrows(IndexOutOfBoundsException.class,
-                        () -> model.swapInputCellEntities(
+                        () -> model.setSwappedEntities(
                                 new GridCell<>(invalid, TestEntity.FOOD),
                                 new GridCell<>(valid, TestEntity.EMPTY))),
                 () -> assertThrows(IndexOutOfBoundsException.class,
-                        () -> model.swapInputCellEntities(
+                        () -> model.setSwappedEntities(
                                 new GridCell<>(valid, TestEntity.EMPTY),
                                 new GridCell<>(invalid, TestEntity.FOOD)))
         );

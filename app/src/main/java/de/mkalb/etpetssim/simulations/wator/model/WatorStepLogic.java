@@ -28,7 +28,7 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
         List<GridCell<WatorEntity>> fishCells = new ArrayList<>();
         List<GridCell<WatorEntity>> waterCells = new ArrayList<>();
 
-        for (var result : CellNeighborhoods.neighborEdgeResults(agentCell.coordinate(), config.neighborhoodMode(), model.structure())) {
+        for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(agentCell.coordinate(), config.neighborhoodMode(), model.structure())) {
             if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
                 WatorEntity neighborEntity = model.getEntity(result.mapped());
                 if (neighborEntity.isFish()) {
@@ -60,7 +60,7 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
         // Move fish, if possible
         if (!waterCells.isEmpty()) {
             GridCell<WatorEntity> waterCell = chooseRandomCell(waterCells);
-            model.swapInputCellEntities(agentCell, waterCell);
+            model.setSwappedEntities(agentCell, waterCell);
             fishNewCoordinate = waterCell.coordinate();
 
             // Reproduce, if conditions are met
@@ -103,7 +103,7 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
             // AppLogger.info("WatorStepLogic - Shark at coordinate: " + sharkOriginalCoordinate + " ate fish at: " + sharkNewCoordinate);
         } else if (!waterCells.isEmpty()) {
             GridCell<WatorEntity> waterCell = chooseRandomCell(waterCells);
-            model.swapInputCellEntities(agentCell, waterCell);
+            model.setSwappedEntities(agentCell, waterCell);
             sharkNewCoordinate = waterCell.coordinate();
             //    // AppLogger.info("WatorStepLogic - Moving shark from coordinate: " + coordinate + " to: " + sharkCoordinate);
         }

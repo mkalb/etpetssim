@@ -292,7 +292,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     }
 
     @Override
-    public void swapInputCellEntities(GridCell<ENT> cellA, GridCell<ENT> cellB) {
+    public void setSwappedEntities(GridCell<ENT> cellA, GridCell<ENT> cellB) {
         GridCoordinate coordinateA = cellA.coordinate();
         GridCoordinate coordinateB = cellB.coordinate();
         if (!structure.isCoordinateValid(coordinateA)) {

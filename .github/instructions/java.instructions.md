@@ -32,6 +32,8 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `resolve...`: determine the applicable result by interpreting input, selection state, configuration, precedence, or
   fallback rules
 - `find...`: search existing candidates for one matching result; return `Optional<T>` when absence is expected
+- `require...`: return a required value or throw if it is missing; counterpart of `find...`
+- `check...`: verify an argument or state and throw on violation, as in `Objects.checkIndex`
 - `is...`/`has...`/`can...`/`should...`/`contains...`/`are...`/`includes...`: query boolean state, validity, mode,
   presence, availability, capability, or policy
 - `get...`: retrieve a value, resource, or property using a supplied lookup input, or expose it through a JavaBean-style
