@@ -74,7 +74,7 @@ final class DefaultControlViewModelTest {
     @Test
     void testWithMinStepDuration() {
         FXTestSupport.runAndWait(() -> {
-            var viewModel = DefaultControlViewModel.withMinStepDuration(
+            var viewModel = DefaultControlViewModel.createWithMinStepDuration(
                     new SimpleObjectProperty<>(SimulationState.READY));
 
             assertEquals(viewModel.stepDurationProperty().min(), viewModel.stepDurationProperty().getValue());

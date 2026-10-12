@@ -423,10 +423,10 @@ public final class LabMainView
 
         // draw shapes
         basePainter.drawTriangle(new GridCoordinate(TEST_TRIANGLE_X, TEST_TRIANGLE_Y),
-                GridGeometry.convertEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.TRIANGLE),
+                GridGeometry.computeEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.TRIANGLE),
                 Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
         basePainter.drawHexagon(new GridCoordinate(TEST_HEXAGON_X, TEST_HEXAGON_Y),
-                GridGeometry.convertEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.HEXAGON),
+                GridGeometry.computeEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.HEXAGON),
                 Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
 
         // draw frame segment

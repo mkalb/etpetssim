@@ -51,7 +51,7 @@ final class StatisticsHistoryChartViewTest {
 
         List<LineChart<Number, Number>> charts = FXTestSupport.supplyAndWaitNonNull(() ->
                 new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp)
-                        .chartsForTest());
+                        .chartsForTesting());
 
         assertNotNull(charts, "charts must not be null");
         assertEquals(1, charts.size(), "Wator PRIMARY group → one sub-chart");
@@ -64,7 +64,7 @@ final class StatisticsHistoryChartViewTest {
 
         List<LineChart<Number, Number>> charts = FXTestSupport.supplyAndWaitNonNull(() ->
                 new StatisticsHistoryChartView(ForestStatistics.metrics(), historyProp)
-                        .chartsForTest());
+                        .chartsForTesting());
 
         assertNotNull(charts, "charts must not be null");
         assertEquals(2, charts.size(), "Forest PRIMARY+SECONDARY → two sub-charts");
@@ -99,7 +99,7 @@ final class StatisticsHistoryChartViewTest {
 
             return new Boolean[]{
                     view.titledPane().isManaged(),
-                    view.chartsForTest().getFirst().isManaged()
+                    view.chartsForTesting().getFirst().isManaged()
             };
         });
 
@@ -122,7 +122,7 @@ final class StatisticsHistoryChartViewTest {
                     ForestStatistics.KEY_BURNING_CELLS, 0.0))));
 
             // SECONDARY chart (burningCells) is the second sub-chart.
-            return view.chartsForTest().get(1).isManaged();
+            return view.chartsForTesting().get(1).isManaged();
         });
 
         assertNotNull(managed, "Managed flag must not be null");
@@ -181,7 +181,7 @@ final class StatisticsHistoryChartViewTest {
         Integer dataCount = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
             // fishCells is the first series in the PRIMARY chart
-            return view.chartsForTest().getFirst().getData().getFirst().getData().size();
+            return view.chartsForTesting().getFirst().getData().getFirst().getData().size();
         });
 
         assertEquals(3, dataCount, "All 3 history samples must appear as data points");
@@ -198,7 +198,7 @@ final class StatisticsHistoryChartViewTest {
 
         Integer dataCount = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
-            return view.chartsForTest().getFirst().getData().getFirst().getData().size();
+            return view.chartsForTesting().getFirst().getData().getFirst().getData().size();
         });
 
         assertEquals(2, dataCount, "NaN step must be skipped; only 2 finite data points expected");
@@ -215,7 +215,7 @@ final class StatisticsHistoryChartViewTest {
 
         List<Number> xValues = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(2), historyProp);
-            return view.chartsForTest().getFirst().getData().getFirst().getData().stream()
+            return view.chartsForTesting().getFirst().getData().getFirst().getData().stream()
                        .map(XYChart.Data::getXValue)
                        .toList();
         });
@@ -234,7 +234,7 @@ final class StatisticsHistoryChartViewTest {
 
         Double[] xBounds = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(2), historyProp);
-            var xAxis = (ValueAxis<Number>) view.chartsForTest().getFirst().getXAxis();
+            var xAxis = (ValueAxis<Number>) view.chartsForTesting().getFirst().getXAxis();
             return new Double[]{xAxis.getLowerBound(), xAxis.getUpperBound()};
         });
 
@@ -253,7 +253,7 @@ final class StatisticsHistoryChartViewTest {
 
         Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
-            return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
+            return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
         assertEquals(200.0, yUpper, "Y upper bound must be the 1-2-5 nice ceiling of 100.3, i.e. 200");
@@ -266,7 +266,7 @@ final class StatisticsHistoryChartViewTest {
 
         Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(singleMetric(100), historyProp);
-            return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
+            return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
         assertEquals(1.0, yUpper, "Y upper bound must never be 0, so an all-zero group still renders a [0, 1] axis");
@@ -284,10 +284,10 @@ final class StatisticsHistoryChartViewTest {
                     sample(0, Map.of(TEST_KEY, 50.0)),
                     sample(1, Map.of(TEST_KEY, 80.0))));
 
-            return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
+            return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(100.0, yUpper, "Ceiling must grow immediately from niceCeiling(50)=50 to niceCeiling(80)=100");
+        assertEquals(100.0, yUpper, "Ceiling must grow immediately from computeNiceCeiling(50)=50 to computeNiceCeiling(80)=100");
     }
 
     @Test
@@ -303,7 +303,7 @@ final class StatisticsHistoryChartViewTest {
                     sample(0, Map.of(TEST_KEY, 500.0)),
                     sample(1, Map.of(TEST_KEY, 150.0))));
 
-            return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
+            return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
         assertEquals(500.0, yUpper, "Ceiling must stay at 500 since the latest value did not drop below the 20% threshold");
@@ -331,10 +331,10 @@ final class StatisticsHistoryChartViewTest {
                     sample(2, Map.of(TEST_KEY, 50.0)),
                     sample(3, Map.of(TEST_KEY, 40.0))));
 
-            return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
+            return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(50.0, yUpper, "Once the peak leaves the window and the latest value stays low, the ceiling must shrink to niceCeiling(50)=50");
+        assertEquals(50.0, yUpper, "Once the peak leaves the window and the latest value stays low, the ceiling must shrink to computeNiceCeiling(50)=50");
     }
 
     @Test
@@ -350,10 +350,10 @@ final class StatisticsHistoryChartViewTest {
             historyProp.set(List.of());
             historyProp.set(List.of(sample(0, Map.of(TEST_KEY, 150.0))));
 
-            return ((ValueAxis<Number>) view.chartsForTest().getFirst().getYAxis()).getUpperBound();
+            return ((ValueAxis<Number>) view.chartsForTesting().getFirst().getYAxis()).getUpperBound();
         });
 
-        assertEquals(200.0, yUpper, "After a reset, the ceiling must be computed fresh (niceCeiling(150)=200), not inherited from the previous run");
+        assertEquals(200.0, yUpper, "After a reset, the ceiling must be computed fresh (computeNiceCeiling(150)=200), not inherited from the previous run");
     }
 
     // --- X-axis single-sample guard ---
@@ -367,7 +367,7 @@ final class StatisticsHistoryChartViewTest {
 
         Double[] xBounds = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
-            var xAxis = (ValueAxis<Number>) view.chartsForTest().getFirst().getXAxis();
+            var xAxis = (ValueAxis<Number>) view.chartsForTesting().getFirst().getXAxis();
             return new Double[]{xAxis.getLowerBound(), xAxis.getUpperBound()};
         });
 

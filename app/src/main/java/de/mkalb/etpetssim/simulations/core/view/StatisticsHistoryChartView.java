@@ -132,7 +132,7 @@ final class StatisticsHistoryChartView {
      * {@code 1}, so an all-zero group still renders a usable {@code [0, 1]} axis.
      */
     @SuppressWarnings("MagicNumber")
-    private static double niceCeiling(double value) {
+    private static double computeNiceCeiling(double value) {
         if (value <= 1.0) {
             return 1.0;
         }
@@ -171,7 +171,7 @@ final class StatisticsHistoryChartView {
     /**
      * Package-private for testing.
      */
-    List<LineChart<Number, Number>> chartsForTest() {
+    List<LineChart<Number, Number>> chartsForTesting() {
         return groupCharts.stream().map(GroupChart::chart).collect(Collectors.toList());
     }
 
@@ -207,9 +207,9 @@ final class StatisticsHistoryChartView {
                 double currentCeiling = ceilingByGroup.getOrDefault(group, 0.0);
                 double newCeiling;
                 if ((currentCeiling <= 0.0) || (windowedMax > currentCeiling)) {
-                    newCeiling = niceCeiling(windowedMax); // initial ceiling or immediate growth
+                    newCeiling = computeNiceCeiling(windowedMax); // initial ceiling or immediate growth
                 } else if (latestMax < (SHRINK_THRESHOLD_RATIO * currentCeiling)) {
-                    newCeiling = niceCeiling(windowedMax); // gated shrink
+                    newCeiling = computeNiceCeiling(windowedMax); // gated shrink
                 } else {
                     newCeiling = currentCeiling; // no change
                 }

@@ -33,16 +33,6 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that clears the grid, setting all cells to the default entity.
-     *
-     * @param <ENT> the type of grid entity
-     * @return a grid initializer that clears the grid
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> clear() {
-        return WritableGridModel::clear;
-    }
-
-    /**
      * Returns an initializer that fills the entire grid with the specified entity.
      *
      * @param entity the entity to fill the grid with

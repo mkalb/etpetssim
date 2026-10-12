@@ -49,38 +49,38 @@ final class GridGeometryTest {
         );
     }
 
-    // --- convertEdgeLengthToMatchWidth tests ---
+    // --- computeEdgeLengthToMatchWidth tests ---
 
     @Test
     void testConvertEdgeLengthToMatchWidthForSameShape() {
         assertAll(
-                () -> assertEquals(EDGE_LENGTH, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.TRIANGLE), DELTA),
-                () -> assertEquals(EDGE_LENGTH, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.SQUARE), DELTA),
-                () -> assertEquals(EDGE_LENGTH, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.HEXAGON), DELTA)
+                () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.TRIANGLE), DELTA),
+                () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.SQUARE), DELTA),
+                () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.HEXAGON), DELTA)
         );
     }
 
     @Test
     void testConvertEdgeLengthToMatchWidthFromHexagon() {
         assertAll(
-                () -> assertEquals(EDGE_LENGTH * 2, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.TRIANGLE), DELTA),
-                () -> assertEquals(EDGE_LENGTH * 2, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.SQUARE), DELTA)
+                () -> assertEquals(EDGE_LENGTH * 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.TRIANGLE), DELTA),
+                () -> assertEquals(EDGE_LENGTH * 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.SQUARE), DELTA)
         );
     }
 
     @Test
     void testConvertEdgeLengthToMatchWidthToHexagon() {
         assertAll(
-                () -> assertEquals(EDGE_LENGTH / 2, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.HEXAGON), DELTA),
-                () -> assertEquals(EDGE_LENGTH / 2, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.HEXAGON), DELTA)
+                () -> assertEquals(EDGE_LENGTH / 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.HEXAGON), DELTA),
+                () -> assertEquals(EDGE_LENGTH / 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.HEXAGON), DELTA)
         );
     }
 
     @Test
     void testConvertEdgeLengthToMatchWidthBetweenTriangleAndSquare() {
         assertAll(
-                () -> assertEquals(EDGE_LENGTH, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.SQUARE), DELTA),
-                () -> assertEquals(EDGE_LENGTH, GridGeometry.convertEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.TRIANGLE), DELTA)
+                () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.SQUARE), DELTA),
+                () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.TRIANGLE), DELTA)
         );
     }
 

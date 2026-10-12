@@ -43,7 +43,7 @@ public final class DefaultControlViewModel
      * @param simulationState shared simulation state
      * @return configured control view model
      */
-    public static DefaultControlViewModel withMinStepDuration(ReadOnlyObjectProperty<SimulationState> simulationState) {
+    public static DefaultControlViewModel createWithMinStepDuration(ReadOnlyObjectProperty<SimulationState> simulationState) {
         DefaultControlViewModel controlViewModel = new DefaultControlViewModel(simulationState);
         controlViewModel.stepDuration.setValue(STEP_DURATION_MIN);
         return controlViewModel;

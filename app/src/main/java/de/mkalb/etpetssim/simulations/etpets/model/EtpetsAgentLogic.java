@@ -392,7 +392,7 @@ public final class EtpetsAgentLogic {
                                         Set<GridCoordinate> ring1HasLowMobilityPenalty,
                                         Set<GridCoordinate> ring1HasCrowdingPenalty,
                                         Random random) {
-        double energyRatio = clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy());
+        double energyRatio = EtpetsScoreMath.clampToUnitRange((double) pet.currentEnergy() / pet.traits().maxEnergy());
         boolean isGroundWithoutTrail = false;
         int trailIntensity = 0;
         TerrainEntity terrain = cell.terrainEntity();
@@ -666,10 +666,6 @@ public final class EtpetsAgentLogic {
                 pet.toDisplayString(),
                 coordinate.toDisplayString(),
                 mortalityChance);
-    }
-
-    private static double clampToUnitRange(double value) {
-        return Math.clamp(value, 0.0d, 1.0d);
     }
 
     private static String toDisplayString(List<ActionCandidate> candidates) {

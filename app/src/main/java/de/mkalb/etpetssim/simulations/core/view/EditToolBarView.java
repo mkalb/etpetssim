@@ -43,7 +43,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         clear();
     }
 
-    private static double clampZeroToOne(double value) {
+    private static double clampToUnitRange(double value) {
         return Math.clamp(value, 0.0d, 1.0d);
     }
 
@@ -120,7 +120,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
                 return;
             }
 
-            double nextHValue = clampZeroToOne(editAffordanceScrollPane.getHvalue() + (delta / maxX));
+            double nextHValue = clampToUnitRange(editAffordanceScrollPane.getHvalue() + (delta / maxX));
             editAffordanceScrollPane.setHvalue(nextHValue);
             event.consume();
         });
