@@ -55,7 +55,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   precede one or more assertions when it explains something important that is not immediately evident; `//noinspection`
   directives are allowed. Do not comment helpers, fixtures, constants, or fields; a better name carries the intent.
 - Add Javadoc to test sources very sparingly and only where it adds clear value; test classes and test methods
-  normally have none. Shared support APIs such as `FXTestSupport` document only contract-relevant behavior.
+  normally have none. Shared support classes such as `FXTestSupport` and manual test utilities keep Javadoc for the
+  class and its public API (a manual utility's `main()`).
 - Prefer one behavior per test; group related checks with `assertAll(...)`.
 - Use `assertThrows(...)` for exception contracts and `assertDoesNotThrow(...)` only for meaningful valid-operation
   checks.
@@ -126,7 +127,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Do not add JUnit annotations.
 - Set `Locale.setDefault(Locale.ROOT)` at the start of `main()`.
 - Prefer `System.out.printf(Locale.ROOT, ...)` for formatted output and stable columns.
-- Document purpose and manual usage in class Javadoc; keep computation helpers private and deterministic.
+- Document purpose and manual usage in class Javadoc and document `main()`; keep computation helpers private and
+  deterministic.
 
 ## Organization
 
