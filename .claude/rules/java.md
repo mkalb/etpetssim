@@ -142,6 +142,7 @@ non-null reference return type (from main code or the JDK, e.g. `toString()`), a
 - Do not add Javadoc to pure `@Override` methods unless the override adds constraints, side effects, or surprising
   semantics.
 - Do not add routine `NullPointerException` notes for non-null-by-default contracts.
+- Test sources follow `junit.md` for comments and Javadoc.
 
 ## Logging with AppLogger
 
