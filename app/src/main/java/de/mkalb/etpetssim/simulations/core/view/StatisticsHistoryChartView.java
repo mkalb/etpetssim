@@ -53,7 +53,7 @@ final class StatisticsHistoryChartView {
                                        .map(StatisticsMetric::key)
                                        .collect(Collectors.toList());
             keysByGroup.put(group, keys);
-            // Guarded by StatisticsMetricRowTest: metrics sharing a chartGroup use the same chartWindowSize.
+            // Guarded by StatisticsMetricLayoutTest: metrics sharing a chartGroup use the same chartWindowSize.
             int windowSize = metrics.stream()
                                     .filter(m -> m.chartGroup() == group)
                                     .mapToInt(StatisticsMetric::chartWindowSize)

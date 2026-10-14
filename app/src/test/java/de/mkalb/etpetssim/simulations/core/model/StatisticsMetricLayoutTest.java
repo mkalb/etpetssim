@@ -16,7 +16,7 @@ import java.util.stream.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("MagicNumber")
-final class StatisticsMetricRowTest {
+final class StatisticsMetricLayoutTest {
 
     private static void assertMetricLayout(
             List<? extends StatisticsMetric<?>> metrics,
@@ -38,7 +38,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testConwayMetricRowLayout() {
+    void testConwayLayout() {
         assertMetricLayout(
                 ConwayStatistics.metrics(),
                 new ExpectedMetric(ConwayStatistics.KEY_ALIVE_CELLS,
@@ -51,7 +51,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testForestMetricRowLayout() {
+    void testForestLayout() {
         assertMetricLayout(
                 ForestStatistics.metrics(),
                 new ExpectedMetric(ForestStatistics.KEY_EMPTY_CELLS,
@@ -64,7 +64,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testWatorMetricRowLayout() {
+    void testWatorLayout() {
         assertMetricLayout(
                 WatorStatistics.metrics(),
                 new ExpectedMetric(WatorStatistics.KEY_FISH_CELLS,
@@ -75,7 +75,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testEtpetsMetricRowLayout() {
+    void testEtpetsLayout() {
         assertMetricLayout(
                 EtpetsStatistics.metrics(),
                 new ExpectedMetric(EtpetsStatistics.KEY_ACTIVE_PET_CELLS,
@@ -88,7 +88,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testSnakeMetricRowLayout() {
+    void testSnakeLayout() {
         assertMetricLayout(
                 SnakeStatistics.metrics(),
                 new ExpectedMetric(SnakeStatistics.KEY_SNAKE_HEAD_CELLS,
@@ -105,7 +105,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testSugarMetricRowLayout() {
+    void testSugarLayout() {
         assertMetricLayout(
                 SugarStatistics.metrics(),
                 new ExpectedMetric(SugarStatistics.KEY_RESOURCE_CELLS,
@@ -116,7 +116,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testReboundingMetricRowLayout() {
+    void testReboundingLayout() {
         assertMetricLayout(
                 ReboundingStatistics.metrics(),
                 new ExpectedMetric(ReboundingStatistics.KEY_WALL_CELLS,
@@ -127,7 +127,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testLangtonMetricRowLayout() {
+    void testLangtonLayout() {
         assertMetricLayout(
                 LangtonStatistics.metrics(),
                 new ExpectedMetric(LangtonStatistics.KEY_ANT_CELLS,
@@ -138,7 +138,7 @@ final class StatisticsMetricRowTest {
     }
 
     @Test
-    void testMetricChartWindowSizes() {
+    void testChartWindowSizes() {
         assertChartWindowSizes(ConwayStatistics.metrics(), 50, 0, 0);
         assertChartWindowSizes(EtpetsStatistics.metrics(), 1_000, 0, 0);
         assertChartWindowSizes(ForestStatistics.metrics(), 0, StatisticsMetric.DEFAULT_CHART_WINDOW_SIZE,
