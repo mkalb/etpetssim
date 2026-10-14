@@ -120,10 +120,10 @@ final class AbstractMainViewTest {
             view.buildMainRegion();
             view.buildMainRegion();
 
-            SimulationTerminationHandle firstTermination = view.shutdownSimulation();
-            SimulationTerminationHandle secondTermination = view.shutdownSimulation();
+            SimulationTerminationHandle firstTerminationHandle = view.shutdownSimulation();
+            SimulationTerminationHandle secondTerminationHandle = view.shutdownSimulation();
 
-            assertSame(firstTermination, secondTermination);
+            assertSame(firstTerminationHandle, secondTerminationHandle);
         });
     }
 

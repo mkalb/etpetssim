@@ -343,14 +343,14 @@ final class DefaultMainViewModelTest {
     void testShutdownReturnsSameTerminationHandle() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
 
-        SimulationTerminationHandle firstTermination = FXTestSupport.supplyAndWaitNonNull(
+        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
-        SimulationTerminationHandle secondTermination = FXTestSupport.supplyAndWaitNonNull(
+        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
 
         assertAll(
-                () -> assertSame(firstTermination, secondTermination),
-                () -> assertTrue(firstTermination.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
+                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
+                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
         );
     }
 
@@ -362,14 +362,14 @@ final class DefaultMainViewModelTest {
                 () -> {
                     throw new IllegalStateException("Test reset listener failure");
                 }));
-        SimulationTerminationHandle firstTermination = FXTestSupport.supplyAndWaitNonNull(
+        SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
-        SimulationTerminationHandle secondTermination = FXTestSupport.supplyAndWaitNonNull(
+        SimulationTerminationHandle secondTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
                 fixture.mainViewModel()::shutdownSimulation);
 
         assertAll(
-                () -> assertSame(firstTermination, secondTermination),
-                () -> assertTrue(firstTermination.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
+                () -> assertSame(firstTerminationHandle, secondTerminationHandle),
+                () -> assertTrue(firstTerminationHandle.awaitTermination(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS))
         );
     }
 
