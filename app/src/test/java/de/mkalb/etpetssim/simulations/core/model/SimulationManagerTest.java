@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("MagicNumber")
-final class TimedStatisticsTrackingTest {
+final class SimulationManagerTest {
 
     private static ConwayConfig createConwayConfig() {
         return new ConwayConfig(

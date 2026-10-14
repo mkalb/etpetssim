@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Manual utility to re-capture extrema golden values for Conway, Forest, and Wator
  * using seed 1L and 20 steps. Run once when simulation logic changes to refresh the
- * hard-coded expectations in TimedStatisticsTrackingTest (testConway/Forest/WatorGoldenExtremaExactValues).
+ * hard-coded expectations in SimulationManagerTest (testConway/Forest/WatorGoldenExtremaExactValues).
  *
  * <p>Current golden values (seed=1, 20 steps, default constraints):
  * <pre>
