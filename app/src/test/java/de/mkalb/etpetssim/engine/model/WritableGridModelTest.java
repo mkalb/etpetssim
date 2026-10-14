@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-final class WritableGridModelDefaultMethodsTest {
+final class WritableGridModelTest {
 
     @Test
     void testIsCompositeReturnsFalseForSparseModel() {
