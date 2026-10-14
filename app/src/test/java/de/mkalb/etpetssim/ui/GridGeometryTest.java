@@ -19,8 +19,6 @@ final class GridGeometryTest {
     private static final GridSize TEST_GRID_SIZE = new GridSize(GRID_WIDTH, GRID_HEIGHT);
     private static final GridCoordinate TEST_COORDINATE = new GridCoordinate(3, 4);
 
-    // --- Constants tests ---
-
     @Test
     void testMathConstants() {
         assertAll(
@@ -48,8 +46,6 @@ final class GridGeometryTest {
                 () -> assertEquals(1_024.0d, GridGeometry.MAX_EDGE_LENGTH, DELTA)
         );
     }
-
-    // --- computeEdgeLengthToMatchWidth tests ---
 
     @Test
     void testConvertEdgeLengthToMatchWidthForSameShape() {
@@ -83,8 +79,6 @@ final class GridGeometryTest {
                 () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.TRIANGLE), DELTA)
         );
     }
-
-    // --- computeCellDimension tests ---
 
     @Test
     void testComputeCellDimensionForTriangle() {
@@ -153,8 +147,6 @@ final class GridGeometryTest {
         );
     }
 
-    // --- computeGridDimension tests ---
-
     @Test
     void testComputeGridDimensionForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
@@ -206,8 +198,6 @@ final class GridGeometryTest {
         );
     }
 
-    // --- isPointInTriangle tests ---
-
     @Test
     void testIsPointInTriangleForPointInsideTriangle() {
         Point2D a = new Point2D(0, 0);
@@ -250,8 +240,6 @@ final class GridGeometryTest {
 
         assertTrue(GridGeometry.isPointInTriangle(p, a, b, c));
     }
-
-    // --- toCanvasPosition tests ---
 
     @Test
     void testToCanvasPositionForSquare() {
@@ -303,8 +291,6 @@ final class GridGeometryTest {
         );
     }
 
-    // --- estimateGridCoordinate tests ---
-
     @Test
     void testEstimateGridCoordinateForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
@@ -335,8 +321,6 @@ final class GridGeometryTest {
                 () -> assertTrue(GridGeometry.estimateGridCoordinate(new Point2D(0, gridDimension.getHeight()), cellDimension, gridDimension, structure).isIllegal())
         );
     }
-
-    // --- fromCanvasPosition tests ---
 
     @Test
     void testFromCanvasPositionForSquare() {
@@ -380,8 +364,6 @@ final class GridGeometryTest {
 
         assertTrue(coordinate.isIllegal());
     }
-
-    // --- computeCellCenter tests ---
 
     @Test
     void testComputeCellCenterForSquare() {
@@ -447,8 +429,6 @@ final class GridGeometryTest {
         );
     }
 
-    // --- computeCellBounds tests ---
-
     @Test
     void testComputeCellBounds() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
@@ -463,8 +443,6 @@ final class GridGeometryTest {
                 () -> assertEquals(cellDimension.height(), bounds.getHeight(), DELTA)
         );
     }
-
-    // --- computeCellPolygon tests ---
 
     @Test
     void testComputeSquarePolygon() {
@@ -521,8 +499,6 @@ final class GridGeometryTest {
                 () -> assertEquals(6, polygon[1].length)
         );
     }
-
-    // --- computeCellFrameSegmentPolyline tests ---
 
     @Test
     void testComputeSquareFrameSegmentPolylineForAllSides() {
@@ -623,8 +599,6 @@ final class GridGeometryTest {
                 }
         );
     }
-
-    // --- Helper method tests ---
 
     @Test
     void testComputeTrianglePolygonDirectly() {

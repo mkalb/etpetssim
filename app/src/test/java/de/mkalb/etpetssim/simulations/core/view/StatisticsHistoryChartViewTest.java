@@ -26,10 +26,6 @@ final class StatisticsHistoryChartViewTest {
         return new StatisticsSample(step, StepTimingStatistics.empty(), values);
     }
 
-    /**
-     * A single-metric list with a configurable chart window size, for tests that need
-     * precise control over which samples are still inside the trailing window.
-     */
     private static List<StatisticsMetric<WatorStatistics>> singleMetric(int windowSize) {
         return List.of(new StatisticsMetric<>(TEST_KEY, "wator.observation.cells.fish",
                 s -> 0.0, StatisticsExtremaMode.NONE, StatisticsChartGroup.PRIMARY, windowSize));
@@ -42,8 +38,6 @@ final class StatisticsHistoryChartViewTest {
         }
         FXTestSupport.ensureStarted();
     }
-
-    // --- Structure: number of sub-charts and series ---
 
     @Test
     void testWatorMetricsProduceOneChartWithTwoSeries() {
@@ -71,8 +65,6 @@ final class StatisticsHistoryChartViewTest {
         assertEquals(1, charts.getFirst().getData().size(), "PRIMARY: treeCells only");
         assertEquals(1, charts.get(1).getData().size(), "SECONDARY: burningCells only");
     }
-
-    // --- Visibility toggling ---
 
     @Test
     void testSectionHiddenWhenNoData() {
@@ -121,7 +113,6 @@ final class StatisticsHistoryChartViewTest {
                     ForestStatistics.KEY_TREE_CELLS, 500.0,
                     ForestStatistics.KEY_BURNING_CELLS, 0.0))));
 
-            // SECONDARY chart (burningCells) is the second sub-chart.
             return view.chartsForTesting().get(1).isManaged();
         });
 
@@ -140,7 +131,6 @@ final class StatisticsHistoryChartViewTest {
                     WatorStatistics.KEY_FISH_CELLS, 200.0,
                     WatorStatistics.KEY_SHARK_CELLS, 50.0))));
 
-            // Simulate shutdown reset (Step 8 contract)
             historyProp.set(List.of());
 
             return view.titledPane().isManaged();
@@ -167,8 +157,6 @@ final class StatisticsHistoryChartViewTest {
         assertFalse(managed, "Chart section must not react to history changes after shutdown");
     }
 
-    // --- Data-point counts ---
-
     @Test
     void testDataPointCountMatchesHistorySize() {
         var history = List.of(
@@ -180,7 +168,6 @@ final class StatisticsHistoryChartViewTest {
 
         Integer dataCount = FXTestSupport.supplyAndWaitNonNull(() -> {
             var view = new StatisticsHistoryChartView(WatorStatistics.metrics(), historyProp);
-            // fishCells is the first series in the PRIMARY chart
             return view.chartsForTesting().getFirst().getData().getFirst().getData().size();
         });
 
@@ -241,8 +228,6 @@ final class StatisticsHistoryChartViewTest {
         assertArrayEquals(new Double[]{1.0, 2.0}, xBounds,
                 "X-axis bounds must span only the two trailing samples");
     }
-
-    // --- Y-axis bounds: nice ceiling, minimum, growth, shrink, reset ---
 
     @Test
     void testYAxisUpperBoundIsNiceCeilingOfWindowedMax() {
@@ -355,8 +340,6 @@ final class StatisticsHistoryChartViewTest {
 
         assertEquals(200.0, yUpper, "After a reset, the ceiling must be computed fresh (computeNiceCeiling(150)=200), not inherited from the previous run");
     }
-
-    // --- X-axis single-sample guard ---
 
     @Test
     void testSingleSampleXAxisUpperIsLowerPlusOne() {

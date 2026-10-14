@@ -26,9 +26,6 @@ public final class FXTestSupport {
     @SuppressWarnings("FieldNamingConvention")
     private static volatile boolean started = false;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private FXTestSupport() {
     }
 
@@ -79,7 +76,6 @@ public final class FXTestSupport {
     private static void rethrowIfPresent(Throwable thrown) {
         switch (thrown) {
             case null -> {
-                // No throwable captured: nothing to re-throw.
             }
             case RuntimeException runtimeException -> throw runtimeException;
             case Error error -> throw error;
@@ -108,7 +104,7 @@ public final class FXTestSupport {
         Platform.runLater(() -> {
             try {
                 resultRef.set(supplier.get());
-            } catch (Throwable t) { // Capture AssertionError and any other throwable from the FX thread.
+            } catch (Throwable t) {
                 throwableRef.set(t);
             } finally {
                 latch.countDown();

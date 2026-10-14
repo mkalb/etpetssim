@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ConwayTransitionRulesTest {
 
-    // --- Construction via collections ---
-
     @Test
     void testOfCollectionsCreatesCorrectRules() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(2, 3), List.of(3));
@@ -84,8 +82,6 @@ final class ConwayTransitionRulesTest {
         assertThrows(UnsupportedOperationException.class, () -> rules.birthCounts().add(1));
     }
 
-    // --- Construction via display string ---
-
     @Test
     void testOfDisplayStringParsesConwayLifeRules() {
         ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
@@ -132,8 +128,6 @@ final class ConwayTransitionRulesTest {
         assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse("2/3/4"));
     }
 
-    // --- shouldSurvive ---
-
     @Test
     void testShouldSurviveReturnsTrueForMatchingCount() {
         ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
@@ -159,8 +153,6 @@ final class ConwayTransitionRulesTest {
         assertFalse(rules.shouldSurvive(2));
     }
 
-    // --- shouldBeBorn ---
-
     @Test
     void testShouldBeBornReturnsTrueForMatchingCount() {
         ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
@@ -182,8 +174,6 @@ final class ConwayTransitionRulesTest {
         ConwayTransitionRules rules = ConwayTransitionRules.parse("23/");
         assertFalse(rules.shouldBeBorn(3));
     }
-
-    // --- toDisplayString ---
 
     @Test
     void testToDisplayStringReturnsCorrectFormat() {
@@ -224,8 +214,6 @@ final class ConwayTransitionRulesTest {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(5, 2, 3), List.of(6, 3));
         assertEquals("235/36", rules.toDisplayString());
     }
-
-    // --- equals and hashCode (record semantics) ---
 
     @Test
     void testEqualRulesAreEqual() {

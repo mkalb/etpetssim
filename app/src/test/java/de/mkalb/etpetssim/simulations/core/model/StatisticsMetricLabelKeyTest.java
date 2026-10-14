@@ -46,8 +46,6 @@ final class StatisticsMetricLabelKeyTest {
                      .toList();
     }
 
-    // --- LabelKey resolution tests ---
-
     @Test
     void testAllLabelKeysResolveInEnglishBundle() throws IOException {
         Set<String> enKeys = loadMainPropertyKeys("messages_en_US.properties");

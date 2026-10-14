@@ -21,6 +21,10 @@ public final class EtpetsScoreTuningRunner {
     private EtpetsScoreTuningRunner() {
     }
 
+    /**
+     * Prints raw move, reproduce, and eat scores for various input combinations.
+     * Intended for manual invocation from the IDE to iteratively tune the score calculation.
+     */
     static void main() {
         Locale.setDefault(Locale.ROOT);
 

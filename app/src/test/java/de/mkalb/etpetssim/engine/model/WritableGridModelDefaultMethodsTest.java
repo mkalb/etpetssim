@@ -6,18 +6,7 @@ import org.junit.jupiter.api.Test;
 import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Tests the interface default methods that remain in {@link ReadableGridModel},
- * {@link WritableGridModel}, and {@link GridModel}:
- * {@code isComposite()}, {@code isCoordinateValid()}, {@code getGridCell()},
- * and {@code setEntity(GridCell)}.
- * <p>
- * Both {@link SparseGridModel} and {@link ArrayGridModel} are used to verify that
- * the default implementations behave correctly for all concrete models.
- */
 final class WritableGridModelDefaultMethodsTest {
-
-    // --- isComposite() ---
 
     @Test
     void testIsCompositeReturnsFalseForSparseModel() {
@@ -28,8 +17,6 @@ final class WritableGridModelDefaultMethodsTest {
     void testIsCompositeReturnsFalseForArrayModel() {
         assertFalse(new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY).isComposite());
     }
-
-    // --- isCoordinateValid() ---
 
     @Test
     void testIsCoordinateValidDelegatesToStructureForSparseModel() {
@@ -52,8 +39,6 @@ final class WritableGridModelDefaultMethodsTest {
                 () -> assertFalse(model.isCoordinateValid(coordinate(-1, 0)))
         );
     }
-
-    // --- getGridCell() ---
 
     @Test
     void testGetGridCellReturnsCoordinateAndEntityForSparseModel() {
@@ -106,8 +91,6 @@ final class WritableGridModelDefaultMethodsTest {
                 () -> assertEquals(TestEntity.EMPTY, cell.entity())
         );
     }
-
-    // --- setEntity(GridCell) ---
 
     @Test
     void testSetEntityWithGridCellUsesCellValuesForSparseModel() {

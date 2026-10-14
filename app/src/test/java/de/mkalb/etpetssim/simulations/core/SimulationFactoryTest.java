@@ -56,8 +56,6 @@ final class SimulationFactoryTest {
                 SimulationFactory.createInstance(type, stage, (_, _) -> {}));
     }
 
-    // --- createInstance() returns non-null for every SimulationType ---
-
     @Test
     void testCreateInstanceAllTypesReturnNonNull() {
         for (SimulationType type : SimulationType.values()) {
@@ -65,8 +63,6 @@ final class SimulationFactoryTest {
             assertNotNull(instance, "Expected non-null SimulationInstance for type: " + type);
         }
     }
-
-    // --- simulationType() of the returned instance must match the requested type ---
 
     @Test
     void testCreateInstanceTypeMatchesRequestedType() {
@@ -76,8 +72,6 @@ final class SimulationFactoryTest {
                     "simulationType() mismatch for requested type: " + type);
         }
     }
-
-    // --- Non-null view and region for every SimulationType ---
 
     @Test
     void testCreateInstanceViewIsNonNull() {
@@ -96,8 +90,6 @@ final class SimulationFactoryTest {
                     "Expected non-null region() for type: " + type);
         }
     }
-
-    // --- Individual type coverage ---
 
     @Test
     void testCreateInstanceStartscreen() {
@@ -159,8 +151,6 @@ final class SimulationFactoryTest {
         assertEquals(SimulationType.SIMULATION_LAB, instance.simulationType());
     }
 
-    // --- Concrete main view mapping ---
-
     @Test
     void testCreateInstanceUsesExpectedMainViewForEverySimulationType() {
         assertEquals(EnumSet.allOf(SimulationType.class), EXPECTED_MAIN_VIEW_TYPES.keySet());
@@ -171,8 +161,6 @@ final class SimulationFactoryTest {
             assertInstanceOf(expectedMainViewType, instance.simulationMainView());
         }
     }
-
-    // --- Enum coverage guard ---
 
     @Test
     void testAllSimulationTypesAreCoveredByFactory() {
@@ -189,8 +177,6 @@ final class SimulationFactoryTest {
                 }
         );
     }
-
-    // --- Stage updater callback wiring (STARTSCREEN) ---
 
     @Test
     void testCreateInstanceStartscreenInvokesStageUpdater() {

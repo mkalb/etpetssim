@@ -137,10 +137,8 @@ final class SparseGridModelTest {
         model.setEntity(coordinate(2, 2), TestEntity.FOOD);
 
         Set<GridCoordinate> snapshot = model.nonDefaultCoordinates();
-        // Mutate the model after obtaining the snapshot.
         model.setEntityToDefault(coordinate(1, 1));
 
-        // Snapshot must still reflect the state at the time of the call.
         assertEquals(2, snapshot.size());
     }
 

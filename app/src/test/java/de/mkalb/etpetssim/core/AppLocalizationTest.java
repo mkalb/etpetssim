@@ -7,7 +7,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// Keep this class single-threaded because AppLocalization holds shared static state.
 @Execution(ExecutionMode.SAME_THREAD)
 final class AppLocalizationTest {
 

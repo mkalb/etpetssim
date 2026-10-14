@@ -105,8 +105,6 @@ final class ConwayPatternsTest {
         );
     }
 
-    // --- Choice registration tests ---
-
     private static void assertPattern(GridPattern<ConwayEntity> pattern, int width, int height, long aliveCount) {
         Map<GridOffset, ConwayEntity> offsetMap = pattern.offsetMap();
         long expectedCellCount = (long) width * height;
@@ -151,8 +149,6 @@ final class ConwayPatternsTest {
                         "Pattern choice ids must stay separate from localization keys")
         );
     }
-
-    // --- Pattern structure tests ---
 
     @Test
     void testAvailableChoicesMatchChoicesForClassicSquareConfig() {

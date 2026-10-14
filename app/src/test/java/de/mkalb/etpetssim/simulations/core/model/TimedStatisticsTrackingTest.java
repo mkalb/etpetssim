@@ -498,11 +498,6 @@ final class TimedStatisticsTrackingTest {
         );
     }
 
-    // --- Golden-value regression tests ---
-    // Expected values captured with seed=1, 20 steps, default constraints.
-    // Both the batch path (executeSteps(20)) and the single-step path
-    // (executeSteps(1) x20) must produce identical extrema.
-
     @Test
     void testConwayGoldenExtremaExactValues() {
         ConwaySimulationManager batch = new ConwaySimulationManager(createConwayConfig());

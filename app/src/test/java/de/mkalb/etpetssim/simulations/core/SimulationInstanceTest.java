@@ -24,8 +24,6 @@ final class SimulationInstanceTest {
         return Objects.requireNonNull(reference.get(), "Expected test fixture value");
     }
 
-    // --- Direct constructor / record accessor tests ---
-
     @Test
     void testRecordAccessorSimulationType() {
         SimulationInstance instance = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -62,8 +60,6 @@ final class SimulationInstanceTest {
         assertSame(regionRef.get(), instance.region());
     }
 
-    // --- SimulationInstance.of() factory tests ---
-
     @Test
     void testOfFactoryAssignsType() {
         SimulationInstance instance = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -96,7 +92,6 @@ final class SimulationInstanceTest {
             builtRegionRef.set(builtRegion);
             ref.set(SimulationInstance.of(SimulationType.FOREST_FIRE, new StubMainView(builtRegion)));
         });
-        // The region stored in the instance must be exactly the one returned by buildMainRegion()
         SimulationInstance instance = ref.get();
         assertNotNull(instance);
         assertSame(builtRegionRef.get(), instance.region());
@@ -110,8 +105,6 @@ final class SimulationInstanceTest {
         });
         assertNotNull(instance.region());
     }
-
-    // --- toDisplayString() tests ---
 
     @Test
     void testToDisplayStringFormat() {
@@ -152,8 +145,6 @@ final class SimulationInstanceTest {
         });
         assertNotNull(result);
     }
-
-    // --- Record equality and hashCode ---
 
     @Test
     void testRecordEqualityForSameComponents() {

@@ -35,8 +35,6 @@ final class ConwayPatternChoiceTest {
         return () -> () -> offsetMap;
     }
 
-    // --- Construction tests ---
-
     @Test
     void testConstructorWithValidArguments() {
         Supplier<GridPattern<ConwayEntity>> supplier = createPatternSupplier(
@@ -119,8 +117,6 @@ final class ConwayPatternChoiceTest {
         assertNotNull(exception);
     }
 
-    // --- Pattern tests ---
-
     @Test
     void testPatternReturnsNormalizedPattern() {
         ConwayPatternChoice choice = new ConwayPatternChoice(
@@ -162,8 +158,6 @@ final class ConwayPatternChoiceTest {
 
         assertEquals(2, invocationCount.get());
     }
-
-    // --- Availability tests ---
 
     @Test
     void testIsAvailableForDelegatesToPredicate() {
