@@ -48,7 +48,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testConvertEdgeLengthToMatchWidthForSameShape() {
+    void testComputeEdgeLengthToMatchWidthForSameShape() {
         assertAll(
                 () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.TRIANGLE), DELTA),
                 () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.SQUARE), DELTA),
@@ -57,7 +57,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testConvertEdgeLengthToMatchWidthFromHexagon() {
+    void testComputeEdgeLengthToMatchWidthFromHexagon() {
         assertAll(
                 () -> assertEquals(EDGE_LENGTH * 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.TRIANGLE), DELTA),
                 () -> assertEquals(EDGE_LENGTH * 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.HEXAGON, CellShape.SQUARE), DELTA)
@@ -65,7 +65,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testConvertEdgeLengthToMatchWidthToHexagon() {
+    void testComputeEdgeLengthToMatchWidthToHexagon() {
         assertAll(
                 () -> assertEquals(EDGE_LENGTH / 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.HEXAGON), DELTA),
                 () -> assertEquals(EDGE_LENGTH / 2, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.HEXAGON), DELTA)
@@ -73,7 +73,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testConvertEdgeLengthToMatchWidthBetweenTriangleAndSquare() {
+    void testComputeEdgeLengthToMatchWidthBetweenTriangleAndSquare() {
         assertAll(
                 () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.SQUARE), DELTA),
                 () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.SQUARE, CellShape.TRIANGLE), DELTA)
@@ -81,7 +81,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeCellDimensionForTriangle() {
+    void testComputeCellDimensionReturnsValuesForTriangle() {
         CellDimension dimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
 
         assertAll(
@@ -95,7 +95,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeCellDimensionForSquare() {
+    void testComputeCellDimensionReturnsValuesForSquare() {
         CellDimension dimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
 
         assertAll(
@@ -111,7 +111,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeCellDimensionForHexagon() {
+    void testComputeCellDimensionReturnsValuesForHexagon() {
         CellDimension dimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
 
         assertAll(
@@ -148,7 +148,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeGridDimensionForSquare() {
+    void testComputeGridDimensionReturnsSizeForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Dimension2D gridDimension = GridGeometry.computeGridDimension(TEST_GRID_SIZE, cellDimension, CellShape.SQUARE);
 
@@ -159,7 +159,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeGridDimensionForTriangle() {
+    void testComputeGridDimensionReturnsSizeForTriangle() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
         Dimension2D gridDimension = GridGeometry.computeGridDimension(TEST_GRID_SIZE, cellDimension, CellShape.TRIANGLE);
 
@@ -173,7 +173,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeGridDimensionForHexagon() {
+    void testComputeGridDimensionReturnsSizeForHexagon() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
         Dimension2D gridDimension = GridGeometry.computeGridDimension(TEST_GRID_SIZE, cellDimension, CellShape.HEXAGON);
 
@@ -187,7 +187,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeGridDimensionConvenienceMethodWithEdgeLength() {
+    void testComputeGridDimensionWithEdgeLengthMatchesCellDimensionVariant() {
         Dimension2D directResult = GridGeometry.computeGridDimension(TEST_GRID_SIZE, EDGE_LENGTH, CellShape.SQUARE);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Dimension2D expectedResult = GridGeometry.computeGridDimension(TEST_GRID_SIZE, cellDimension, CellShape.SQUARE);
@@ -199,7 +199,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testIsPointInTriangleForPointInsideTriangle() {
+    void testIsPointInTriangleReturnsTrueForPointInside() {
         Point2D a = new Point2D(0, 0);
         Point2D b = new Point2D(10, 0);
         Point2D c = new Point2D(5, 10);
@@ -209,7 +209,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testIsPointInTriangleForPointOutsideTriangle() {
+    void testIsPointInTriangleReturnsFalseForPointOutside() {
         Point2D a = new Point2D(0, 0);
         Point2D b = new Point2D(10, 0);
         Point2D c = new Point2D(5, 10);
@@ -219,7 +219,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testIsPointInTriangleForPointOnVertex() {
+    void testIsPointInTriangleReturnsTrueForPointOnVertex() {
         Point2D a = new Point2D(0, 0);
         Point2D b = new Point2D(10, 0);
         Point2D c = new Point2D(5, 10);
@@ -232,7 +232,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testIsPointInTriangleForPointOnEdge() {
+    void testIsPointInTriangleReturnsTrueForPointOnEdge() {
         Point2D a = new Point2D(0, 0);
         Point2D b = new Point2D(10, 0);
         Point2D c = new Point2D(5, 10);
@@ -242,7 +242,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testToCanvasPositionForSquare() {
+    void testToCanvasPositionReturnsPositionForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Point2D position = GridGeometry.toCanvasPosition(TEST_COORDINATE, cellDimension, CellShape.SQUARE);
 
@@ -253,7 +253,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testToCanvasPositionForTriangle() {
+    void testToCanvasPositionReturnsPositionForTriangle() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
         Point2D position = GridGeometry.toCanvasPosition(TEST_COORDINATE, cellDimension, CellShape.TRIANGLE);
 
@@ -264,7 +264,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testToCanvasPositionForHexagonWithoutYOffset() {
+    void testToCanvasPositionReturnsPositionForHexagonWithoutYOffset() {
         GridCoordinate evenXCoordinate = new GridCoordinate(2, 3);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
         Point2D position = GridGeometry.toCanvasPosition(evenXCoordinate, cellDimension, CellShape.HEXAGON);
@@ -277,7 +277,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testToCanvasPositionForHexagonWithYOffset() {
+    void testToCanvasPositionReturnsPositionForHexagonWithYOffset() {
         GridCoordinate oddXCoordinate = new GridCoordinate(3, 3);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
         Point2D position = GridGeometry.toCanvasPosition(oddXCoordinate, cellDimension, CellShape.HEXAGON);
@@ -292,7 +292,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testEstimateGridCoordinateForSquare() {
+    void testEstimateGridCoordinateReturnsCoordinateForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Dimension2D gridDimension = GridGeometry.computeGridDimension(TEST_GRID_SIZE, cellDimension, CellShape.SQUARE);
         GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY);
@@ -323,7 +323,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testFromCanvasPositionForSquare() {
+    void testFromCanvasPositionReturnsCoordinateForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Dimension2D gridDimension = GridGeometry.computeGridDimension(TEST_GRID_SIZE, cellDimension, CellShape.SQUARE);
         GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY);
@@ -339,7 +339,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testFromCanvasPositionRoundTripForSquare() {
+    void testFromCanvasPositionRoundTripsForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Dimension2D gridDimension = GridGeometry.computeGridDimension(TEST_GRID_SIZE, cellDimension, CellShape.SQUARE);
         GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY);
@@ -366,7 +366,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeCellCenterForSquare() {
+    void testComputeCellCenterReturnsCenterForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         Point2D center = GridGeometry.computeCellCenter(TEST_COORDINATE, cellDimension, CellShape.SQUARE);
 
@@ -381,7 +381,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeCellCenterForTrianglePointingUp() {
+    void testComputeCellCenterReturnsCenterForTrianglePointingUp() {
         GridCoordinate upTriangle = new GridCoordinate(1, 0);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
         Point2D center = GridGeometry.computeCellCenter(upTriangle, cellDimension, CellShape.TRIANGLE);
@@ -398,7 +398,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeCellCenterForTrianglePointingDown() {
+    void testComputeCellCenterReturnsCenterForTrianglePointingDown() {
         GridCoordinate downTriangle = new GridCoordinate(0, 0);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
         Point2D center = GridGeometry.computeCellCenter(downTriangle, cellDimension, CellShape.TRIANGLE);
@@ -415,7 +415,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeCellCenterForHexagon() {
+    void testComputeCellCenterReturnsCenterForHexagon() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
         Point2D center = GridGeometry.computeCellCenter(TEST_COORDINATE, cellDimension, CellShape.HEXAGON);
 
@@ -445,7 +445,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeSquarePolygon() {
+    void testComputeCellPolygonReturnsSquarePolygon() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
         double[][] polygon = GridGeometry.computeCellPolygon(TEST_COORDINATE, cellDimension, CellShape.SQUARE);
 
@@ -468,7 +468,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeTrianglePolygonForPointingDown() {
+    void testComputeCellPolygonReturnsTrianglePolygonPointingDown() {
         GridCoordinate downTriangle = new GridCoordinate(0, 0);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
         double[][] polygon = GridGeometry.computeCellPolygon(downTriangle, cellDimension, CellShape.TRIANGLE);
@@ -479,7 +479,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeTrianglePolygonForPointingUp() {
+    void testComputeCellPolygonReturnsTrianglePolygonPointingUp() {
         GridCoordinate upTriangle = new GridCoordinate(1, 0);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
         double[][] polygon = GridGeometry.computeCellPolygon(upTriangle, cellDimension, CellShape.TRIANGLE);
@@ -490,7 +490,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeHexagonPolygon() {
+    void testComputeCellPolygonReturnsHexagonPolygon() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
         double[][] polygon = GridGeometry.computeCellPolygon(TEST_COORDINATE, cellDimension, CellShape.HEXAGON);
 
@@ -501,7 +501,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeSquareFrameSegmentPolylineForAllSides() {
+    void testComputeCellFrameSegmentPolylineReturnsSidesForSquare() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
 
         assertAll(
@@ -529,7 +529,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeTriangleFrameSegmentPolylineForPointingDown() {
+    void testComputeCellFrameSegmentPolylineReturnsSidesForTriangleDown() {
         GridCoordinate downTriangle = new GridCoordinate(0, 0);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
 
@@ -555,7 +555,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeTriangleFrameSegmentPolylineForPointingUp() {
+    void testComputeCellFrameSegmentPolylineReturnsSidesForTriangleUp() {
         GridCoordinate upTriangle = new GridCoordinate(1, 0);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
 
@@ -573,7 +573,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeHexagonFrameSegmentPolylineForAllSides() {
+    void testComputeCellFrameSegmentPolylineReturnsSidesForHexagon() {
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
 
         assertAll(
@@ -601,7 +601,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeTrianglePolygonDirectly() {
+    void testComputeTrianglePolygon() {
         Point2D topLeft = new Point2D(10, 20);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.TRIANGLE);
 
@@ -617,7 +617,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeSquarePolygonDirectly() {
+    void testComputeSquarePolygon() {
         Point2D topLeft = new Point2D(10, 20);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.SQUARE);
 
@@ -632,7 +632,7 @@ final class GridGeometryTest {
     }
 
     @Test
-    void testComputeHexagonPolygonDirectly() {
+    void testComputeHexagonPolygon() {
         Point2D topLeft = new Point2D(10, 20);
         CellDimension cellDimension = GridGeometry.computeCellDimension(EDGE_LENGTH, CellShape.HEXAGON);
 

@@ -33,7 +33,7 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testSetInvalidValueUpdatesProperty() {
+    void testSetValueUpdatesPropertyForInvalidValue() {
         InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
@@ -49,7 +49,7 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testSetValidValueUpdatesProperty() {
+    void testSetValueUpdatesPropertyForValidValue() {
         InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
@@ -65,7 +65,7 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testGetValidValuesReturnsUnmodifiableList() {
+    void testValidValuesReturnsUnmodifiableList() {
         InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
@@ -76,7 +76,7 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testSingletonValidValuesListReportsNoMultipleValues() {
+    void testHasMultipleValidValuesReturnsFalseForSingletonList() {
         InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha"),
@@ -106,7 +106,7 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testOfRejectsEmptyValidValuesList() {
+    void testOfListRejectsEmptyValidValuesList() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> InputChoiceProperty.ofList("alpha", List.of(), String::toUpperCase));
 
@@ -114,7 +114,7 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testOfRejectsInitialValueOutsideValidValuesList() {
+    void testOfListRejectsInitialValueOutsideValidValuesList() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> InputChoiceProperty.ofList("gamma",
                         List.of("alpha", "beta"),
@@ -124,7 +124,7 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testOfRejectsDuplicateValidValuesList() {
+    void testOfListRejectsDuplicateValidValuesList() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> InputChoiceProperty.ofList("alpha",
                         List.of("alpha", "alpha"),

@@ -28,13 +28,13 @@ final class CellShapeSideTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> CellShapeSide.valueOf("INVALID"));
         assertThrows(IllegalArgumentException.class, () -> CellShapeSide.valueOf("top"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> CellShapeSide.valueOf(null));
     }
 

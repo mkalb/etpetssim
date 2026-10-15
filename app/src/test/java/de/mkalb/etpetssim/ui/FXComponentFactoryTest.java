@@ -136,7 +136,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledChoiceComboBoxSynchronizesValuesAndCleanupStopsSynchronization() {
+    void testCreateLabeledChoiceComboBoxSynchronizesValuesAndStopsOnCleanup() {
         FXTestSupport.runAndWait(() -> {
             InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                     "alpha",
@@ -327,7 +327,7 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledStringTextBoxWithAdoptCopiesValueAndTracksDisableState() {
+    void testCreateLabeledStringTextBoxWithAdoptCopiesValueAndTracksDisabled() {
         FXTestSupport.runAndWait(() -> {
             StringProperty inputProperty = new SimpleStringProperty("initial");
             StringProperty labelProperty = new SimpleStringProperty("label");
