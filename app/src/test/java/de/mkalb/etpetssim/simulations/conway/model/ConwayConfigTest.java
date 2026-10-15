@@ -46,7 +46,7 @@ final class ConwayConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         ConwayConfig config = createConfig(
                 ConwayConstraints.CELL_SHAPE_DEFAULT,
                 ConwayConstraints.ALIVE_PERCENT_DEFAULT,

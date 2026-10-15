@@ -47,7 +47,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetTerrainReplacesTrailWhenResourceAndAgentAreEmpty() {
+    void testApplySetTerrainReplacesTrailWhenResourceAndAgentAreEmpty() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -62,7 +62,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetTerrainDoesNothingWhenResourceExists() {
+    void testApplySetTerrainDoesNothingWhenResourceExists() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -80,7 +80,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetTerrainDoesNothingWhenAgentExists() {
+    void testApplySetTerrainDoesNothingWhenAgentExists() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -95,7 +95,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetResourcePlantUsesDeterministicFullDefaults() {
+    void testApplySetResourcePlantUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -115,7 +115,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetResourceInsectUsesDeterministicFullDefaults() {
+    void testApplySetResourceInsectUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -135,7 +135,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetResourceNoneClearsResourceOnGroundWithoutAgent() {
+    void testApplySetResourceNoneClearsResourceOnGroundWithoutAgent() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -153,7 +153,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetResourceDoesNothingWhenTerrainIsNotGround() {
+    void testApplySetResourceDoesNothingWhenTerrainIsNotGround() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -168,7 +168,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetResourceDoesNothingWhenAgentExists() {
+    void testApplySetResourceDoesNothingWhenAgentExists() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);

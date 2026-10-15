@@ -36,7 +36,7 @@ final class ConwayPatternChoiceTest {
     }
 
     @Test
-    void testConstructorWithValidArguments() {
+    void testConstructorAcceptsValidArguments() {
         Supplier<GridPattern<ConwayEntity>> supplier = createPatternSupplier(
                 Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE));
         Predicate<ConwayConfig> predicate = _ -> true;

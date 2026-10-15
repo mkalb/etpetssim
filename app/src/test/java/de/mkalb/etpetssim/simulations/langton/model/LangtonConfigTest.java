@@ -29,7 +29,7 @@ final class LangtonConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         LangtonConfig config = createConfig(
                 LangtonConstraints.CELL_SHAPE_DEFAULT,
                 LangtonConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,

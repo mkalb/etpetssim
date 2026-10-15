@@ -83,7 +83,7 @@ final class WatorConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         WatorConfig config = createConfig(
                 WatorConstraints.FISH_PERCENT_DEFAULT,
                 WatorConstraints.SHARK_PERCENT_DEFAULT,

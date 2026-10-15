@@ -33,7 +33,7 @@ final class SugarUserActionTest {
     }
 
     @Test
-    void testAddSugarAddsResourceWithSelectedLevel() {
+    void testApplyAddSugarAddsResourceWithSelectedLevel() {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
         SugarUserAction userAction = new SugarUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
@@ -60,7 +60,7 @@ final class SugarUserActionTest {
     }
 
     @Test
-    void testRemoveSugarRemovesSelectedResourceCell() {
+    void testApplyRemoveSugarRemovesSelectedResourceCell() {
         SugarSimulationManager manager = new SugarSimulationManager(createConfig());
         SugarUserAction userAction = new SugarUserAction();
         GridCoordinate coordinate = manager.currentGridModel()

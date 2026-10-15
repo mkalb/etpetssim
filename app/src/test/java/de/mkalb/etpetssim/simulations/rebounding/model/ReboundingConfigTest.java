@@ -30,7 +30,7 @@ final class ReboundingConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         ReboundingConfig config = createConfig(
                 ReboundingConstraints.CELL_SHAPE_DEFAULT,
                 ReboundingConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,

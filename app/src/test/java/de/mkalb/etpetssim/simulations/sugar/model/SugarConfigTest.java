@@ -46,7 +46,7 @@ final class SugarConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         SugarConfig config = createConfig(
                 SugarConstraints.CELL_SHAPE_DEFAULT,
                 SugarConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,

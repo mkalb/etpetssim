@@ -196,7 +196,7 @@ final class ConwayPatternsTest {
     }
 
     @Test
-    void testChoicePatternsMatchExpectedShapes() {
+    void testChoicesPatternsMatchExpectedShapes() {
         List<ConwayPatternChoice> choices = ConwayPatterns.choices();
 
         assertAll(choices.stream()
@@ -216,77 +216,77 @@ final class ConwayPatternsTest {
     }
 
     @Test
-    void testBeehivePatternHasDeadBorderAndExpectedDimensions() {
+    void testBeehiveHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.beehive(), 6, 5, 6);
     }
 
     @Test
-    void testBlockPatternHasDeadBorderAndExpectedDimensions() {
+    void testBlockHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.block(), 4, 4, 4);
     }
 
     @Test
-    void testBoatPatternHasDeadBorderAndExpectedDimensions() {
+    void testBoatHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.boat(), 5, 5, 5);
     }
 
     @Test
-    void testLoafPatternHasDeadBorderAndExpectedDimensions() {
+    void testLoafHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.loaf(), 6, 6, 7);
     }
 
     @Test
-    void testTubPatternHasDeadBorderAndExpectedDimensions() {
+    void testTubHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.tub(), 5, 5, 4);
     }
 
     @Test
-    void testBeaconPatternHasDeadBorderAndExpectedDimensions() {
+    void testBeaconHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.beacon(), 6, 6, 6);
     }
 
     @Test
-    void testBlinkerPatternHasDeadBorderAndExpectedDimensions() {
+    void testBlinkerHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.blinker(), 5, 5, 3);
     }
 
     @Test
-    void testPentadecathlonPatternHasDeadBorderAndExpectedDimensions() {
+    void testPentadecathlonHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.pentadecathlon(), 12, 5, 12);
     }
 
     @Test
-    void testPulsarPatternHasDeadBorderAndExpectedDimensions() {
+    void testPulsarHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.pulsar(), 15, 15, 48);
     }
 
     @Test
-    void testToadPatternHasDeadBorderAndExpectedDimensions() {
+    void testToadHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.toad(), 6, 4, 6);
     }
 
     @Test
-    void testAcornPatternHasDeadBorderAndExpectedDimensions() {
+    void testAcornHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.acorn(), 9, 5, 7);
     }
 
     @Test
-    void testRPentominoPatternHasDeadBorderAndExpectedDimensions() {
+    void testRPentominoHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.rPentomino(), 5, 5, 5);
     }
 
     @Test
-    void testHighLifeReplicatorPatternHasDeadBorderAndExpectedDimensions() {
+    void testHighlifeReplicatorHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.highlifeReplicator(), 7, 7, 12);
     }
 
     @Test
-    void testGliderPatternHasDeadBorderAndExpectedDimensions() {
+    void testGliderHasDeadBorderAndExpectedDimensions() {
         assertPattern(ConwayPatterns.glider(), 5, 5, 5);
     }
 
     @Test
-    void testLightweightSpaceshipPatternMatchesExpectedShape() {
+    void testLightweightSpaceshipMatchesExpectedShape() {
         assertPattern(ConwayPatterns.lightweightSpaceship(), 7, 6, 9);
     }
 

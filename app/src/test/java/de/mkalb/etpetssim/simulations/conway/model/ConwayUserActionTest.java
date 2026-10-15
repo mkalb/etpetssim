@@ -68,7 +68,7 @@ final class ConwayUserActionTest {
     }
 
     @Test
-    void testPlacePatternAppliesAvailablePatternAtSelectedCell() {
+    void testApplyPlacesAvailablePatternAtSelectedCell() {
         ConwaySimulationManager manager = new ConwaySimulationManager(createConfig(0.0d));
         ConwayUserAction userAction = new ConwayUserAction();
         ConwayPatternChoice patternChoice = ConwayPatterns.availableChoices(manager.config())

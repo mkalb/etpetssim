@@ -52,7 +52,7 @@ final class SnakeUserActionTest {
     }
 
     @Test
-    void testAddWallAddsWallToSelectedGroundCell() {
+    void testApplyAddWallAddsWallToSelectedGroundCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -66,7 +66,7 @@ final class SnakeUserActionTest {
     }
 
     @Test
-    void testRemoveWallRemovesSelectedWallCell() {
+    void testApplyRemoveWallRemovesSelectedWallCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -82,7 +82,7 @@ final class SnakeUserActionTest {
     }
 
     @Test
-    void testAddFoodAddsFoodToSelectedGroundCell() {
+    void testApplyAddFoodAddsFoodToSelectedGroundCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -96,7 +96,7 @@ final class SnakeUserActionTest {
     }
 
     @Test
-    void testRemoveFoodRemovesSelectedFoodCell() {
+    void testApplyRemoveFoodRemovesSelectedFoodCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -112,7 +112,7 @@ final class SnakeUserActionTest {
     }
 
     @Test
-    void testAddSnakeAddsSnakeHeadToSelectedGroundCell() {
+    void testApplyAddSnakeAddsSnakeHeadToSelectedGroundCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -131,7 +131,7 @@ final class SnakeUserActionTest {
     }
 
     @Test
-    void testRemoveSnakeRemovesHeadAndSegmentsWhenSegmentIsSelected() {
+    void testApplyRemoveSnakeRemovesHeadAndSegmentsWhenSegmentIsSelected() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate segmentCoordinate = new GridCoordinate(2, 2);

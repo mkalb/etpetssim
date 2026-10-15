@@ -32,7 +32,7 @@ final class ReboundingUserActionTest {
     }
 
     @Test
-    void testAddWallAddsWallToSelectedGroundCell() {
+    void testApplyAddWallAddsWallToSelectedGroundCell() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -50,7 +50,7 @@ final class ReboundingUserActionTest {
     }
 
     @Test
-    void testRemoveWallRemovesSelectedWallCell() {
+    void testApplyRemoveWallRemovesSelectedWallCell() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(1, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         var wallCell = manager.currentGridModel()
@@ -72,7 +72,7 @@ final class ReboundingUserActionTest {
     }
 
     @Test
-    void testRemoveRebounderRemovesSelectedRebounderCell() {
+    void testApplyRemoveRebounderRemovesSelectedRebounderCell() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.02d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         var rebounderCell = manager.currentGridModel()
@@ -94,7 +94,7 @@ final class ReboundingUserActionTest {
     }
 
     @Test
-    void testAddRebounderAddsSelectedDirectionToGroundCell() {
+    void testApplyAddRebounderAddsSelectedDirectionToGroundCell() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -112,7 +112,7 @@ final class ReboundingUserActionTest {
     }
 
     @Test
-    void testFillWallsFillsAllGroundCells() {
+    void testApplyFillWallsFillsAllGroundCells() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         int totalCells = manager.currentGridModel().allCells().size();
@@ -129,7 +129,7 @@ final class ReboundingUserActionTest {
     }
 
     @Test
-    void testFillWallsKeepsExistingRebounderCells() {
+    void testApplyFillWallsKeepsExistingRebounderCells() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createConfig(0, 0.0d));
         ReboundingUserAction userAction = new ReboundingUserAction();
         GridCoordinate rebounderCoordinate = new GridCoordinate(0, 0);

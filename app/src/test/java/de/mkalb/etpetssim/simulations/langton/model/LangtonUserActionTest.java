@@ -33,7 +33,7 @@ final class LangtonUserActionTest {
     }
 
     @Test
-    void testAddAntUsesSelectedDirectionOnUnvisitedCell() {
+    void testApplyAddAntUsesSelectedDirectionOnUnvisitedCell() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
@@ -60,7 +60,7 @@ final class LangtonUserActionTest {
     }
 
     @Test
-    void testAddAntUsesValidDirectionForTriangleCellPointingDown() {
+    void testApplyAddAntUsesValidDirectionForTriangleCellPointingDown() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig(CellShape.TRIANGLE));
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -78,7 +78,7 @@ final class LangtonUserActionTest {
     }
 
     @Test
-    void testAddAntIgnoresInvalidDirectionForTriangleCellPointingDown() {
+    void testApplyAddAntIgnoresInvalidDirectionForTriangleCellPointingDown() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig(CellShape.TRIANGLE));
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -99,7 +99,7 @@ final class LangtonUserActionTest {
     }
 
     @Test
-    void testAddAntUsesValidDirectionForTriangleCellPointingUp() {
+    void testApplyAddAntUsesValidDirectionForTriangleCellPointingUp() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig(CellShape.TRIANGLE));
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = new GridCoordinate(1, 0);
@@ -117,7 +117,7 @@ final class LangtonUserActionTest {
     }
 
     @Test
-    void testRemoveAntRemovesSelectedAntCell() {
+    void testApplyRemoveAntRemovesSelectedAntCell() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
@@ -142,7 +142,7 @@ final class LangtonUserActionTest {
     }
 
     @Test
-    void testRemoveAntOnCellWithoutAntDoesNothing() {
+    void testApplyRemoveAntOnCellWithoutAntDoesNothing() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()

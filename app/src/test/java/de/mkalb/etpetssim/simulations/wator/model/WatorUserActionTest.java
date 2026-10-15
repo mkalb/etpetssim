@@ -54,7 +54,7 @@ final class WatorUserActionTest {
     }
 
     @Test
-    void testAddFishAddsFishToSelectedWaterCell() {
+    void testApplyAddFishAddsFishToSelectedWaterCell() {
         WatorSimulationManager manager = new WatorSimulationManager(createConfig());
         WatorUserAction userAction = new WatorUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -69,7 +69,7 @@ final class WatorUserActionTest {
     }
 
     @Test
-    void testAddSharkAddsSharkToSelectedWaterCell() {
+    void testApplyAddSharkAddsSharkToSelectedWaterCell() {
         WatorSimulationManager manager = new WatorSimulationManager(createConfig());
         WatorUserAction userAction = new WatorUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -84,7 +84,7 @@ final class WatorUserActionTest {
     }
 
     @Test
-    void testRemoveCreatureRemovesFishFromSelectedCell() {
+    void testApplyRemoveCreatureRemovesFishFromSelectedCell() {
         WatorSimulationManager manager = new WatorSimulationManager(createConfig());
         WatorUserAction userAction = new WatorUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -101,7 +101,7 @@ final class WatorUserActionTest {
     }
 
     @Test
-    void testRemoveCreatureRemovesSharkFromSelectedCell() {
+    void testApplyRemoveCreatureRemovesSharkFromSelectedCell() {
         WatorSimulationManager manager = new WatorSimulationManager(createConfig());
         WatorUserAction userAction = new WatorUserAction();
         GridCoordinate coordinate = new GridCoordinate(1, 0);
