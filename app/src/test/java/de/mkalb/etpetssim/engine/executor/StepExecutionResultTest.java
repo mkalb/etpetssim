@@ -11,7 +11,7 @@ final class StepExecutionResultTest {
     private static final int NEGATIVE_VALUE = -1;
 
     @Test
-    void testRecordAccessors() {
+    void testRecord() {
         StepExecutionResult result = new StepExecutionResult(STEP_COUNT, EXECUTED_STEPS, true, false);
 
         assertAll(

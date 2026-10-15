@@ -23,7 +23,7 @@ final class GridStructureTest {
     }
 
     @Test
-    void testInvalidWidthMultipleThrowsException() {
+    void testConstructorRejectsInvalidWidthMultiple() {
         GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 new GridStructure(hexTopology, new GridSize(9, 8)));
@@ -31,7 +31,7 @@ final class GridStructureTest {
     }
 
     @Test
-    void testInvalidHeightMultipleThrowsException() {
+    void testConstructorRejectsInvalidHeightMultiple() {
         GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 new GridStructure(triTopology, new GridSize(8, 9)));
@@ -40,7 +40,7 @@ final class GridStructureTest {
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void testNullArgumentsThrowException() {
+    void testConstructorRejectsNullArguments() {
         GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY);
         GridSize size = new GridSize(8, 8);
 
@@ -50,7 +50,7 @@ final class GridStructureTest {
     }
 
     @Test
-    void testValidMultiplesForAllCellShapes() {
+    void testConstructorAcceptsValidMultiplesForAllCellShapes() {
         assertDoesNotThrow(() -> new GridStructure(
                 new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY),
                 new GridSize(9, 11)));
@@ -84,7 +84,7 @@ final class GridStructureTest {
     }
 
     @Test
-    void testStaticIsValid() {
+    void testIsValid() {
         assertTrue(GridStructure.isValid(new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
         assertTrue(GridStructure.isValid(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));
         assertTrue(GridStructure.isValid(new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11)));

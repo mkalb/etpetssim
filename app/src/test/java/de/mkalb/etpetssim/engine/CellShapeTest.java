@@ -27,17 +27,17 @@ final class CellShapeTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> CellShape.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> CellShape.valueOf(null));
     }
 
     @Test
-    void testStaticLabelResourceKey() {
+    void testLabelResourceKey() {
         assertEquals("cellshape.label", CellShape.labelResourceKey(), "CellShape should have the correct resource key");
     }
 

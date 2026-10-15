@@ -26,17 +26,17 @@ final class CellConnectionTypeTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> CellConnectionType.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> CellConnectionType.valueOf(null));
     }
 
     @Test
-    void testStaticLabelResourceKey() {
+    void testLabelResourceKey() {
         assertEquals("cellconnectiontype.label", CellConnectionType.labelResourceKey());
     }
 

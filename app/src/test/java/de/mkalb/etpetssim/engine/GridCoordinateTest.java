@@ -49,7 +49,7 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testIsWithinBoundsInt() {
+    void testIsWithinBoundsWithInts() {
         GridCoordinate coordinate = new GridCoordinate(5, 5);
         assertTrue(coordinate.isWithinBounds(0, 0, 10, 10));
         assertFalse(coordinate.isWithinBounds(0, 0, 5, 5));
@@ -150,7 +150,7 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testClampToBoundsInt() {
+    void testClampToBoundsWithInts() {
         GridCoordinate coordinate = new GridCoordinate(15, -5);
         GridCoordinate clamped = coordinate.clampToBounds(0, 0, 10, 10);
         assertEquals(new GridCoordinate(9, 0), clamped);
@@ -183,7 +183,7 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testOffsetInt() {
+    void testOffsetWithInts() {
         GridCoordinate coordinate = new GridCoordinate(3, 4);
         assertEquals(new GridCoordinate(5, 1), coordinate.offset(2, -3));
         assertEquals(new GridCoordinate(1, 7), coordinate.offset(-2, 3));

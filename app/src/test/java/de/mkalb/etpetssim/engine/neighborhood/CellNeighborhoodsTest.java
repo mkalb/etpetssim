@@ -27,7 +27,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticMaxNeighborCount() {
+    void testMaxNeighborCount() {
         assertEquals(3, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY));
         assertEquals(12, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_AND_VERTICES));
         assertEquals(4, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY));
@@ -37,7 +37,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticMaxNeighborCountRadius() {
+    void testMaxNeighborCountWithRadius() {
         assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY, 0));
         assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY, -1));
         assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY, 0));
@@ -59,7 +59,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticIsCellNeighbor() {
+    void testIsCellNeighbor() {
         GridCoordinate coordinate0 = new GridCoordinate(2, 2);
         GridCoordinate coordinate1 = new GridCoordinate(2, 1);
         GridCoordinate coordinate2 = new GridCoordinate(1, 2);
@@ -89,7 +89,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticEdgeActionForCoordinate() {
+    void testEdgeBehaviorActionForCoordinate() {
         var actionMap = Map.of(
                 GridEdgeBehavior.BLOCK_XY, EdgeBehaviorAction.BLOCKED,
                 GridEdgeBehavior.ABSORB_XY, EdgeBehaviorAction.ABSORBED,
@@ -197,7 +197,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticIsValidEdgeCoordinate() {
+    void testIsValidWithEdgeBehavior() {
         var invalid = Set.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.ABSORB_XY);
         for (GridEdgeBehavior gridEdgeBehavior : invalid) {
             for (CellShape cellShape : CellShape.values()) {
@@ -260,7 +260,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticApplyEdgeBehaviorToCoordinate() {
+    void testApplyEdgeBehaviorToCoordinate() {
         for (GridEdgeBehavior gridEdgeBehavior : GridEdgeBehavior.values()) {
             for (CellShape cellShape : CellShape.values()) {
                 GridStructure structure = new GridStructure(
@@ -373,7 +373,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticCellsByRadiusRingsRadius0AndUnmodifiable() {
+    void testCellsByRadiusRingsReturnsUnmodifiableResultForRadiusZero() {
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
                 GridSize.EXTRA_SMALL_SQUARE);
@@ -402,7 +402,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticCellsByRadiusRingsInvalidRadiusOrInvalidCoordinate() {
+    void testCellsByRadiusRingsRejectsInvalidRadiusOrCoordinate() {
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
                 GridSize.EXTRA_SMALL_SQUARE);
@@ -428,7 +428,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticCellsByRadiusRingsWrapBehaviorAndUniqueness() {
+    void testCellsByRadiusRingsWrapsAndReturnsUniqueCells() {
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
                 GridSize.EXTRA_SMALL_SQUARE);
@@ -494,7 +494,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticCellsByRadiusRingsFiltersBlockedAndAbsorbedNeighbors() {
+    void testCellsByRadiusRingsFiltersBlockedAndAbsorbedNeighbors() {
         GridCoordinate startCoordinate = new GridCoordinate(0, 0);
 
         for (GridEdgeBehavior edgeBehavior : List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.ABSORB_XY)) {
@@ -534,7 +534,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticResolveCachedCellNeighborConnections() {
+    void testGetOrComputeCellNeighborConnections() {
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 GridCoordinate coordinate = new GridCoordinate(x, y);
@@ -549,7 +549,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticGenerateCacheKey() {
+    void testComputeCacheKey() {
         assertEquals("SQUARE::EDGES_ONLY", CellNeighborhoods.computeCacheKey(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE));
         assertEquals("SQUARE::EDGES_AND_VERTICES", CellNeighborhoods.computeCacheKey(new GridCoordinate(3, 5), NeighborhoodMode.EDGES_AND_VERTICES, CellShape.SQUARE));
 
@@ -575,7 +575,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticComputeCellNeighborConnections() {
+    void testComputeCellNeighborConnections() {
         assertEquals(CellNeighborhoods.computeTriangleCellNeighborConnections(NeighborhoodMode.EDGES_ONLY, true),
                 CellNeighborhoods.computeCellNeighborConnections(new GridCoordinate(2, 2), NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
         assertEquals(CellNeighborhoods.computeTriangleCellNeighborConnections(NeighborhoodMode.EDGES_AND_VERTICES, true),
@@ -597,7 +597,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticComputeSquareCellNeighborConnections() {
+    void testComputeSquareCellNeighborConnections() {
         {
             var connections = CellNeighborhoods.computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_ONLY);
             assertEquals(4, connections.size());
@@ -621,7 +621,7 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testStaticComputeHexagonCellNeighborConnections() {
+    void testComputeHexagonCellNeighborConnections() {
         {
             var connections = CellNeighborhoods.computeHexagonCellNeighborConnections(true);
             assertEquals(6, connections.size());

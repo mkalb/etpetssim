@@ -259,7 +259,7 @@ final class ArrayGridModelTest {
     }
 
     @Test
-    void testSwapInputCellEntitiesWritesInputEntityValues() {
+    void testSetSwappedEntitiesWritesGivenEntities() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate coordinateA = coordinate(0, 0);
         GridCoordinate coordinateB = coordinate(1, 0);
@@ -273,7 +273,7 @@ final class ArrayGridModelTest {
     }
 
     @Test
-    void testSwapInputCellEntitiesIgnoresCurrentModelState() {
+    void testSetSwappedEntitiesIgnoresCurrentModelState() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate coordinateA = coordinate(0, 0);
         GridCoordinate coordinateB = coordinate(1, 0);
@@ -290,7 +290,7 @@ final class ArrayGridModelTest {
     }
 
     @Test
-    void testSwapInputCellEntitiesThrowsForInvalidCoordinate() {
+    void testSetSwappedEntitiesThrowsForInvalidCoordinate() {
         ArrayGridModel<TestEntity> model = new ArrayGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate valid = coordinate(0, 0);
         GridCoordinate invalid = coordinate(8, 0);

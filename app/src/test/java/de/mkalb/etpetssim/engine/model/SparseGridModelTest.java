@@ -243,7 +243,7 @@ final class SparseGridModelTest {
     }
 
     @Test
-    void testSwapInputCellEntitiesWritesInputEntityValues() {
+    void testSetSwappedEntitiesWritesGivenEntities() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate coordinateA = coordinate(0, 0);
         GridCoordinate coordinateB = coordinate(2, 1);
@@ -257,7 +257,7 @@ final class SparseGridModelTest {
     }
 
     @Test
-    void testSwapInputCellEntitiesIgnoresCurrentModelState() {
+    void testSetSwappedEntitiesIgnoresCurrentModelState() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate coordinateA = coordinate(0, 0);
         GridCoordinate coordinateB = coordinate(2, 1);
@@ -274,7 +274,7 @@ final class SparseGridModelTest {
     }
 
     @Test
-    void testSwapInputCellEntitiesThrowsForInvalidCoordinate() {
+    void testSetSwappedEntitiesThrowsForInvalidCoordinate() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         GridCoordinate valid = coordinate(0, 0);
         GridCoordinate invalid = coordinate(8, 0);

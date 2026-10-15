@@ -60,17 +60,17 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> CompassDirection.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> CompassDirection.valueOf(null));
     }
 
     @Test
-    void testStaticLabelResourceKey() {
+    void testLabelResourceKey() {
         assertEquals("compass.label", CompassDirection.labelResourceKey());
     }
 
@@ -333,7 +333,7 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testDistanceOnRing() {
+    void testDistanceOnRingReturnsDistance() {
         List<CompassDirection> squareRing = List.of(
                 CompassDirection.N,
                 CompassDirection.E,
@@ -389,7 +389,7 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testDistanceOnRingWithMissingDirection() {
+    void testDistanceOnRingRejectsMissingDirection() {
         List<CompassDirection> squareRing = List.of(
                 CompassDirection.N,
                 CompassDirection.E,
@@ -403,7 +403,7 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testDistanceOnRingWithEmptyRing() {
+    void testDistanceOnRingRejectsEmptyRing() {
         assertThrows(IllegalArgumentException.class, () -> CompassDirection.distanceOnRing(CompassDirection.N, CompassDirection.E, List.of()));
     }
 

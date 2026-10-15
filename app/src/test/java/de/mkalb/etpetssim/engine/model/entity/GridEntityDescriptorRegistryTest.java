@@ -106,7 +106,7 @@ final class GridEntityDescriptorRegistryTest {
     }
 
     @Test
-    void testGetRequiredThrowsForUnknownDescriptorId() {
+    void testRequireByDescriptorIdThrowsForUnknownId() {
         GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(1);
 
         assertThrows(NoSuchElementException.class, () -> registry.requireByDescriptorId("missing"));
