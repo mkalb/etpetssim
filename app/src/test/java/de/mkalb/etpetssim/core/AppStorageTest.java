@@ -62,7 +62,7 @@ final class AppStorageTest {
     }
 
     @Test
-    void testGetAppDataFilePath() throws IOException {
+    void testGetAppDataFile() throws IOException {
         String uniqueAppFileName = createUniqueAppFileName();
 
         Path path = AppStorage.getAppDataFile(uniqueAppFileName, OS);
@@ -71,14 +71,14 @@ final class AppStorageTest {
     }
 
     @Test
-    void testDeleteNonExistentFileReturnsFalse() throws IOException {
+    void testDeleteAppDataFileReturnsFalseForMissingFile() throws IOException {
         assertFalse(Files.exists(AppStorage.getAppDataFile("nonexistent.txt", OS)));
         boolean deleted = AppStorage.deleteAppDataFile("nonexistent.txt", OS);
         assertFalse(deleted, "Deleting a non-existent file should return false");
     }
 
     @Test
-    void testGetLogFilePath() throws IOException {
+    void testGetLogFileReturnsPath() throws IOException {
         Path path = AppStorage.getLogFile(LOG_FILE_NAME, OS);
         assertNotNull(path);
         assertTrue(path.toString().endsWith(LOG_FILE_NAME));
@@ -131,7 +131,7 @@ final class AppStorageTest {
     }
 
     @Test
-    void testLogFileRejectsAbsolutePath() {
+    void testGetLogFileRejectsAbsolutePath() {
         String absolutePathName = Path.of(System.getProperty("java.io.tmpdir"), "outside.log").toString();
         assertThrows(IOException.class, () -> AppStorage.getLogFile(absolutePathName, OS));
     }

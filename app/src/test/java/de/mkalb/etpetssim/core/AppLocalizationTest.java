@@ -43,7 +43,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testInitializeTwoParameters() {
+    void testInitializeWithDefaultLocaleSetsLocaleAndBundle() {
         AppLocalization.initialize("en_US", Locale.GERMANY);
         assertTrue(AppLocalization.isInitialized());
         assertEquals(Locale.US, AppLocalization.locale());
@@ -59,7 +59,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testInitializeOneParameter() {
+    void testInitializeSetsLocaleAndBundle() {
         AppLocalization.initialize("en_US");
         assertTrue(AppLocalization.isInitialized());
         assertEquals(Locale.US, AppLocalization.locale());
@@ -75,7 +75,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testInitializeTwice() {
+    void testInitializeThrowsWhenInitializedTwice() {
         AppLocalization.initialize("en_US");
         assertTrue(AppLocalization.isInitialized());
         assertThrows(IllegalStateException.class, () -> AppLocalization.initialize("de_DE"));
@@ -191,17 +191,17 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> AppLocalization.CountryLocale.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> AppLocalization.CountryLocale.valueOf(null));
     }
 
     @Test
-    void testEnumCountryLocale() {
+    void testCountryLocale() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             Locale country = locale.countryLocale();
             assertNotNull(country);
@@ -212,7 +212,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumDisplayName() {
+    void testDisplayName() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String displayName = locale.displayName();
             assertNotNull(displayName);
@@ -224,7 +224,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumLanguageCode() {
+    void testLanguageCode() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.languageCode();
             assertNotNull(code);
@@ -237,7 +237,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumCountryCode() {
+    void testCountryCode() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.countryCode();
             assertNotNull(code);
@@ -250,7 +250,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumLocaleCode() {
+    void testLocaleCode() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.localeCode();
             assertNotNull(code);

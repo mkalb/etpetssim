@@ -76,7 +76,7 @@ final class ExtraterrestrialPetsSimulationTest {
     }
 
     @Test
-    void testCloseRequestShutdownThenStopDoesNotShutDownTwice() {
+    void testStopDoesNotShutDownTwiceAfterCloseRequest() {
         CountingMainView view = new CountingMainView();
         ExtraterrestrialPetsSimulation application = new ExtraterrestrialPetsSimulation();
 

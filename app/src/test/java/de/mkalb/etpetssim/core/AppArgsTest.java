@@ -18,12 +18,12 @@ final class AppArgsTest {
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void testNullArgumentsThrowsException() {
+    void testConstructorRejectsNullArguments() {
         assertThrows(NullPointerException.class, () -> new AppArgs(null));
     }
 
     @Test
-    void testEmptyArguments() {
+    void testConstructorAcceptsEmptyArguments() {
         String[] args = {};
         AppArgs cli = new AppArgs(args);
 
@@ -37,7 +37,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testUnknownFlagsIsIgnored() {
+    void testConstructorIgnoresUnknownFlag() {
         String[] args = {"--unknownFlag"};
         AppArgs cli = new AppArgs(args);
 
@@ -45,7 +45,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testUnknownNonFlagIsIgnored() {
+    void testConstructorIgnoresUnknownKeyValue() {
         String[] args = {"--unknownKey=unknownValue"};
         AppArgs cli = new AppArgs(args);
 
@@ -53,7 +53,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testFlagMissingValue() {
+    void testConstructorTreatsFlagWithoutValueAsTrue() {
         String[] args = {"--help"};
         AppArgs cli = new AppArgs(args);
 
@@ -65,7 +65,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testFlagEmptyValue() {
+    void testConstructorIgnoresFlagWithEmptyValue() {
         String[] args = {"--help="};
         AppArgs cli = new AppArgs(args);
 
@@ -76,7 +76,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testFlagValidTrueValue() {
+    void testConstructorParsesFlagTrueValue() {
         String[] args = {"--help=true"};
         AppArgs cli = new AppArgs(args);
 
@@ -88,7 +88,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testFlagValidFalseValue() {
+    void testConstructorParsesFlagFalseValue() {
         String[] args = {"--help=false"};
         AppArgs cli = new AppArgs(args);
 
@@ -100,7 +100,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testFlagInvalidValue() {
+    void testConstructorTreatsInvalidFlagValueAsTrue() {
         String[] args = {"--help=maybe"};
         AppArgs cli = new AppArgs(args);
 
@@ -112,7 +112,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testNonFlagMissingValue() {
+    void testConstructorIgnoresNonFlagWithoutValue() {
         String[] args = {"--simulation"};
         AppArgs cli = new AppArgs(args);
 
@@ -125,7 +125,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testNonFlagEmptyValue() {
+    void testConstructorIgnoresNonFlagWithEmptyValue() {
         String[] args = {"--simulation="};
         AppArgs cli = new AppArgs(args);
 
@@ -138,7 +138,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testNonFlagValidStringValue() {
+    void testConstructorParsesNonFlagStringValue() {
         String[] args = {"--simulation=testSim"};
         AppArgs cli = new AppArgs(args);
 
@@ -151,7 +151,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testNonFlagValidIntValue() {
+    void testConstructorParsesNonFlagIntValue() {
         String[] args = {"--simulation=42"};
         AppArgs cli = new AppArgs(args);
 
@@ -164,7 +164,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testTwoArgumentsWithSameKey() {
+    void testConstructorKeepsLastValueForDuplicateKey() {
         String[] args = {"--simulation=first", "--simulation=second"};
         AppArgs cli = new AppArgs(args);
 
@@ -175,7 +175,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testTwoValidArgumentsWithDifferentKeys() {
+    void testConstructorParsesDifferentKeys() {
         String[] args = {"--simulation=first", "--help"};
         AppArgs cli = new AppArgs(args);
 
@@ -187,7 +187,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testIsFlagActiveTrue() {
+    void testIsFlagActiveReturnsTrue() {
         String[] args = {"--help"};
         AppArgs cli = new AppArgs(args);
 
@@ -196,7 +196,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testIsFlagActiveFalse() {
+    void testIsFlagActiveReturnsFalse() {
         String[] args = {"--help=false"};
         AppArgs cli = new AppArgs(args);
 
@@ -205,7 +205,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testKeysPrintHelp() {
+    void testPrintHelp() {
         Appendable appendable = new StringBuilder(512);
         AppArgs.Key.printHelp(appendable);
         String result = appendable.toString();
@@ -260,7 +260,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testEnumKeyValues() {
+    void testKey() {
         for (AppArgs.Key key : AppArgs.Key.values()) {
             assertNotNull(key.key(), "Key name should not be null: " + key);
             assertFalse(key.key().isBlank(), "Key name should not be blank: " + key);
@@ -275,7 +275,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testEnumKeyDescriptions() {
+    void testDescription() {
         for (AppArgs.Key key : AppArgs.Key.values()) {
             assertNotNull(key.description(), "Key description should not be null: " + key);
             assertFalse(key.description().isBlank(), "Key description should not be blank: " + key);
@@ -283,7 +283,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testEnumFromString() {
+    void testFromString() {
         assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("help").orElseThrow());
         assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("HELP").orElseThrow());
         assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("Help").orElseThrow());
@@ -316,12 +316,12 @@ final class AppArgsTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> AppArgs.Key.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> AppArgs.Key.valueOf(null));
     }
 
@@ -351,7 +351,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testArgumentsAsString() {
+    void testToArgumentString() {
         assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help", "--simulation=testSim"}).toArgumentString());
         assertEquals("--simulation=testSim", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).toArgumentString());
         assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).toArgumentString());

@@ -36,14 +36,14 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testInitialize() {
+    void testInitializeAddsConsoleHandler() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertTrue(AppLogger.isInitialized());
         assertEquals(1, AppLogger.handlerCountForTesting());
     }
 
     @Test
-    void testInitializeWithoutHandlers() {
+    void testInitializeAddsNoHandlerWithoutConsole() {
         int numHandlers = AppLogger.handlerCountForTesting();
         AppLogger.initialize(AppLogger.LogLevel.INFO, false, null);
         assertTrue(AppLogger.isInitialized());
@@ -68,83 +68,83 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testDebugLogging() {
+    void testDebug() {
         AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
         assertDoesNotThrow(() -> AppLogger.debug("Debug message"));
     }
 
     @Test
-    void testDebugfLogging() {
+    void testDebugf() {
         AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
         assertDoesNotThrow(() -> AppLogger.debugf("Debug %s %d", "message", 1));
     }
 
     @Test
-    void testInfoLogging() {
+    void testInfo() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertDoesNotThrow(() -> AppLogger.info("Info message"));
     }
 
     @Test
-    void testInfofLogging() {
+    void testInfof() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertDoesNotThrow(() -> AppLogger.infof("Info %s %d", "message", 2));
     }
 
     @Test
-    void testWarnLogging() {
+    void testWarn() {
         AppLogger.initialize(AppLogger.LogLevel.WARN, true, null);
         assertDoesNotThrow(() -> AppLogger.warn("Warn message"));
     }
 
     @Test
-    void testWarnfLogging() {
+    void testWarnf() {
         AppLogger.initialize(AppLogger.LogLevel.WARN, true, null);
         assertDoesNotThrow(() -> AppLogger.warnf("Warn %s %d", "message", 3));
     }
 
     @Test
-    void testErrorLogging() {
+    void testError() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         assertDoesNotThrow(() -> AppLogger.error("Error message"));
     }
 
     @Test
-    void testErrorfLogging() {
+    void testErrorf() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         assertDoesNotThrow(() -> AppLogger.errorf("Error %s %d", "message", 4));
     }
 
     @Test
-    void testErrorfWithThrowableLogging() {
+    void testErrorfWithThrowable() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         Throwable t = new RuntimeException("Test exception");
         assertDoesNotThrow(() -> AppLogger.errorf(t, "Error %s %d", "message", 5));
     }
 
     @Test
-    void testDebugSupplierLogging() {
+    void testDebugWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
         Supplier<String> supplier = () -> "Debug from supplier";
         assertDoesNotThrow(() -> AppLogger.debug(supplier));
     }
 
     @Test
-    void testInfoSupplierLogging() {
+    void testInfoWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         Supplier<String> supplier = () -> "Info from supplier";
         assertDoesNotThrow(() -> AppLogger.info(supplier));
     }
 
     @Test
-    void testWarnSupplierLogging() {
+    void testWarnWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.WARN, true, null);
         Supplier<String> supplier = () -> "Warn from supplier";
         assertDoesNotThrow(() -> AppLogger.warn(supplier));
     }
 
     @Test
-    void testErrorSupplierLogging() {
+    void testErrorWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         Supplier<String> supplier = () -> "Error from supplier";
         assertDoesNotThrow(() -> AppLogger.error(supplier));
@@ -158,7 +158,7 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testFormatterIncludesCurrentThreadNameAfterLogLevel() {
+    void testFormatIncludesCurrentThreadNameAfterLogLevel() {
         LogRecord record = new LogRecord(Level.INFO, "Info message");
 
         String formatted = formatRecord(record);
@@ -167,7 +167,7 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testFormatterAbbreviatesJavaFxApplicationThreadName() throws InterruptedException {
+    void testFormatAbbreviatesJavaFxApplicationThreadName() throws InterruptedException {
         AtomicReference<String> formattedReference = new AtomicReference<>();
         Thread thread = Thread.ofPlatform().name("JavaFX Application Thread").start(
                 () -> formattedReference.set(formatRecord(new LogRecord(Level.INFO, "Info message")))
@@ -181,7 +181,7 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testInitializeTwiceThrowsException() {
+    void testInitializeThrowsWhenInitializedTwice() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertThrows(IllegalStateException.class, () ->
                 AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null));
