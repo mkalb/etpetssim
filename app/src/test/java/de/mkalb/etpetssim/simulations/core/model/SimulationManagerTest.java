@@ -214,7 +214,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testEtpetsInitializationHonorsCancellationDuringTerrainPopulation() {
+    void testConstructorHonorsCancellationForEtpetsDuringTerrainPopulation() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new EtpetsSimulationManager(
@@ -223,56 +223,56 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testConwayInitializationHonorsCancellationDuringGridPopulation() {
+    void testConstructorHonorsCancellationForConwayDuringGridPopulation() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new ConwaySimulationManager(createConwayConfig(), cancellationOnCheck(3))).getMessage());
     }
 
     @Test
-    void testForestInitializationHonorsCancellationDuringGridPopulation() {
+    void testConstructorHonorsCancellationForForestDuringGridPopulation() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new ForestSimulationManager(createForestConfig(), cancellationOnCheck(3))).getMessage());
     }
 
     @Test
-    void testLangtonInitializationHonorsCancellationBeforeGridInitialization() {
+    void testConstructorHonorsCancellationForLangtonBeforeGridInitialization() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new LangtonSimulationManager(createLangtonConfig(), cancellationOnCheck(1))).getMessage());
     }
 
     @Test
-    void testSugarInitializationHonorsCancellationDuringRadiusMapCalculation() {
+    void testConstructorHonorsCancellationForSugarDuringRadiusMapCalculation() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new SugarSimulationManager(createSugarConfig(), cancellationOnCheck(3))).getMessage());
     }
 
     @Test
-    void testWatorInitializationHonorsCancellationDuringFishPopulation() {
+    void testConstructorHonorsCancellationForWatorDuringFishPopulation() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new WatorSimulationManager(createWatorConfig(), cancellationOnCheck(3))).getMessage());
     }
 
     @Test
-    void testSnakeInitializationHonorsCancellationDuringEligibleCoordinateSearch() {
+    void testConstructorHonorsCancellationForSnakeDuringCoordinateSearch() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new SnakeSimulationManager(createSnakeConfig(), cancellationOnCheck(10))).getMessage());
     }
 
     @Test
-    void testReboundingInitializationHonorsCancellationDuringEligibleCoordinateSearch() {
+    void testConstructorHonorsCancellationForReboundingDuringCoordinateSearch() {
         assertEquals("Simulation initialization was canceled.",
                 assertThrows(SimulationInitializationCanceledException.class,
                         () -> new ReboundingSimulationManager(createReboundingConfig(), cancellationOnCheck(6))).getMessage());
     }
 
     @Test
-    void testAllTimedManagerConstructorsRecordStepZeroSample() {
+    void testConstructorRecordsStepZeroSampleForAllTimedManagers() {
         assertAll(
                 () -> assertStepZeroSample(new ConwaySimulationManager(createConwayConfig()), ConwayStatistics.metrics()),
                 () -> assertStepZeroSample(new EtpetsSimulationManager(createEtpetsConfig()), EtpetsStatistics.metrics()),
@@ -328,7 +328,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testExecuteZeroStepsDoesNotRecordSample() {
+    void testExecuteStepsDoesNotRecordSampleForZeroSteps() {
         ConwaySimulationManager manager = new ConwaySimulationManager(createConwayConfig());
         var historyBefore = manager.statisticsHistory();
 
@@ -344,7 +344,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testConwayGenericExtremaMaxAliveCellsIsFiniteAndPositive() {
+    void testStatisticsExtremaForConwayHasFinitePositiveMaxAliveCells() {
         ConwaySimulationManager manager = new ConwaySimulationManager(createConwayConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -364,7 +364,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testForestGenericExtremaMaximaAreFiniteAndNonNegative() {
+    void testStatisticsExtremaForForestHasFiniteNonNegativeMaxima() {
         ForestSimulationManager manager = new ForestSimulationManager(createForestConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -387,7 +387,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testWatorGenericExtremaMinMaxAreFinite() {
+    void testStatisticsExtremaForWatorHasFiniteMinMax() {
         WatorSimulationManager manager = new WatorSimulationManager(createWatorConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -407,7 +407,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testEtpetsGenericExtremaPresenceAndNoneAbsence() {
+    void testStatisticsExtremaForEtpetsHasPresenceAndNoneAbsence() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createEtpetsConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -428,7 +428,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testSnakeGenericExtremaPresenceAndNoneAbsence() {
+    void testStatisticsExtremaForSnakeHasPresenceAndNoneAbsence() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createSnakeConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -450,7 +450,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testSugarGenericExtremaPresence() {
+    void testStatisticsExtremaForSugarHasPresence() {
         SugarSimulationManager manager = new SugarSimulationManager(createSugarConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -466,7 +466,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testReboundingGenericExtremaPresenceAndStaticWalls() {
+    void testStatisticsExtremaForReboundingHasPresenceAndStaticWalls() {
         ReboundingSimulationManager manager = new ReboundingSimulationManager(createReboundingConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -483,7 +483,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testLangtonGenericMaxPresenceAndNoneAbsence() {
+    void testStatisticsExtremaForLangtonHasMaxPresenceAndNoneAbsence() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createLangtonConfig());
 
         manager.executeSteps(20, false, () -> {
@@ -499,7 +499,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testConwayGoldenExtremaExactValues() {
+    void testStatisticsExtremaForConwayMatchesGoldenValues() {
         ConwaySimulationManager batch = new ConwaySimulationManager(createConwayConfig());
         batch.executeSteps(20, false, () -> {
         });
@@ -527,7 +527,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testForestGoldenExtremaExactValues() {
+    void testStatisticsExtremaForForestMatchesGoldenValues() {
         ForestSimulationManager batch = new ForestSimulationManager(createForestConfig());
         batch.executeSteps(20, false, () -> {
         });
@@ -559,7 +559,7 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testWatorGoldenExtremaExactValues() {
+    void testStatisticsExtremaForWatorMatchesGoldenValues() {
         WatorSimulationManager batch = new WatorSimulationManager(createWatorConfig());
         batch.executeSteps(20, false, () -> {
         });

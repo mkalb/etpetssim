@@ -16,7 +16,7 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
-    void testUpdateRespectsExtremaModes() {
+    void testRecordSampleRespectsExtremaModes() {
         StatisticsExtremaTracker tracker = new StatisticsExtremaTracker(List.of(
                 new StatisticsMetric<>("none", "none.key", _ -> 0.0d, StatisticsExtremaMode.NONE),
                 new StatisticsMetric<>("min", "min.key", _ -> 0.0d, StatisticsExtremaMode.MIN),
@@ -54,7 +54,7 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
-    void testEqualValuesKeepFirstStepCount() {
+    void testRecordSampleKeepsFirstStepCountForEqualValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
         tracker.recordSample(Map.of("count", 5.0d), 1L);
@@ -68,7 +68,7 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
-    void testSnapshotIsUnaffectedByLaterUpdates() {
+    void testSnapshotIsUnaffectedByLaterSamples() {
         StatisticsExtremaTracker tracker = createCountTracker();
         tracker.recordSample(Map.of("count", 5.0d), 1L);
         StatisticsExtrema snapshot = tracker.snapshot();
@@ -83,7 +83,7 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
-    void testUpdateSkipsNaNValues() {
+    void testRecordSampleSkipsNaNValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
         tracker.recordSample(Map.of("count", 5.0d), 1L);
@@ -99,7 +99,7 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
-    void testUpdateSkipsPositiveInfinityValues() {
+    void testRecordSampleSkipsPositiveInfinityValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
         tracker.recordSample(Map.of("count", 3.0d), 1L);
@@ -115,7 +115,7 @@ final class StatisticsExtremaTrackerTest {
     }
 
     @Test
-    void testUpdateSkipsNegativeInfinityValues() {
+    void testRecordSampleSkipsNegativeInfinityValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
         tracker.recordSample(Map.of("count", 7.0d), 1L);

@@ -286,7 +286,7 @@ final class DefaultMainViewModelTest {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
-    void testShutdownSuppressesStaleInitializationCompletion() throws InterruptedException {
+    void testShutdownSimulationSuppressesStaleInitializationCompletion() throws InterruptedException {
         CountDownLatch constructionStarted = new CountDownLatch(1);
         CountDownLatch releaseConstruction = new CountDownLatch(1);
         AtomicBoolean initializationCompleted = new AtomicBoolean();
@@ -326,7 +326,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testSimulationResetListenerRunsOnStartAndShutdown() throws InterruptedException {
+    void testSetSimulationResetListenerRunsOnStartAndShutdown() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         AtomicInteger resetCallCount = new AtomicInteger();
 
@@ -340,7 +340,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testShutdownReturnsSameTerminationHandle() {
+    void testShutdownSimulationReturnsSameTerminationHandle() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
 
         SimulationTerminationHandle firstTerminationHandle = FXTestSupport.supplyAndWaitNonNull(
@@ -355,7 +355,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testShutdownRemainsIdempotentWhenResetListenerFails() {
+    void testShutdownSimulationRemainsIdempotentWhenResetListenerFails() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
 
         FXTestSupport.runAndWait(() -> fixture.mainViewModel().setSimulationResetListener(
@@ -374,7 +374,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testShutdownDoesNotWaitForInitializationWorker() throws InterruptedException {
+    void testShutdownSimulationDoesNotWaitForInitializationWorker() throws InterruptedException {
         CountDownLatch constructionStarted = new CountDownLatch(1);
         CountDownLatch releaseConstruction = new CountDownLatch(1);
         ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
@@ -410,7 +410,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testShutdownClearsHistoryAndExtrema() throws InterruptedException {
+    void testShutdownSimulationClearsHistoryAndExtrema() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         startAndAwaitInitialization(fixture);
 
@@ -426,7 +426,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testShutdownReleasesViewCallbacks() {
+    void testShutdownSimulationReleasesViewCallbacks() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
 
         FXTestSupport.runAndWait(() -> {

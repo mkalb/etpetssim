@@ -25,7 +25,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordAccessorSimulationType() {
+    void testSimulationType() {
         SimulationInstance instance = FXTestSupport.supplyAndWaitNonNull(() -> {
             Region region = new Region();
             return new SimulationInstance(SimulationType.CONWAYS_LIFE, new StubMainView(region), region);
@@ -34,7 +34,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordAccessorSimulationMainView() {
+    void testSimulationMainView() {
         AtomicReference<SimulationInstance> ref = new AtomicReference<>();
         AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
         FXTestSupport.runAndWait(() -> {
@@ -48,7 +48,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordAccessorRegion() {
+    void testRegion() {
         AtomicReference<SimulationInstance> ref = new AtomicReference<>();
         AtomicReference<Region> regionRef = new AtomicReference<>();
         FXTestSupport.runAndWait(() -> {
@@ -61,7 +61,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testOfFactoryAssignsType() {
+    void testOfAssignsType() {
         SimulationInstance instance = FXTestSupport.supplyAndWaitNonNull(() -> {
             Region region = new Region();
             return SimulationInstance.of(SimulationType.ET_PETS, new StubMainView(region));
@@ -70,7 +70,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testOfFactoryAssignsView() {
+    void testOfAssignsView() {
         AtomicReference<SimulationInstance> ref = new AtomicReference<>();
         AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
         FXTestSupport.runAndWait(() -> {
@@ -84,7 +84,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testOfFactoryDelegatesToBuildMainRegion() {
+    void testOfDelegatesToBuildMainRegion() {
         AtomicReference<SimulationInstance> ref = new AtomicReference<>();
         AtomicReference<Region> builtRegionRef = new AtomicReference<>();
         FXTestSupport.runAndWait(() -> {
@@ -98,7 +98,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testOfFactoryRegionIsNonNull() {
+    void testOfCreatesNonNullRegion() {
         SimulationInstance instance = FXTestSupport.supplyAndWaitNonNull(() -> {
             Region region = new Region();
             return SimulationInstance.of(SimulationType.SIMULATION_LAB, new StubMainView(region));
@@ -107,7 +107,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testToDisplayStringFormat() {
+    void testToDisplayStringReturnsExpectedFormat() {
         String result = FXTestSupport.supplyAndWaitNonNull(() -> {
             Region region = new Region();
             SimulationInstance instance = SimulationInstance.of(SimulationType.CONWAYS_LIFE, new StubMainView(region));
@@ -137,7 +137,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testToDisplayStringIsNonNull() {
+    void testToDisplayStringReturnsNonNull() {
         String result = FXTestSupport.supplyAndWait(() -> {
             Region region = new Region();
             SimulationInstance instance = SimulationInstance.of(SimulationType.WATOR, new StubMainView(region));
@@ -147,7 +147,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordEqualityForSameComponents() {
+    void testEqualsReturnsTrueForSameComponents() {
         AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
         AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
         FXTestSupport.runAndWait(() -> {
@@ -165,7 +165,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordInequalityForDifferentType() {
+    void testEqualsReturnsFalseForDifferentType() {
         AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
         AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
         FXTestSupport.runAndWait(() -> {
@@ -178,7 +178,7 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordInequalityForDifferentRegion() {
+    void testEqualsReturnsFalseForDifferentRegion() {
         AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
         AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
         FXTestSupport.runAndWait(() -> {

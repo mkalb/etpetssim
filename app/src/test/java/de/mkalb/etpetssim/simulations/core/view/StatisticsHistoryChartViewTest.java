@@ -40,7 +40,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testWatorMetricsProduceOneChartWithTwoSeries() {
+    void testConstructorCreatesOneChartWithTwoSeriesForWator() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         List<LineChart<Number, Number>> charts = FXTestSupport.supplyAndWaitNonNull(() ->
@@ -53,7 +53,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testForestMetricsProducesTwoChartsWithOneSeriesEach() {
+    void testConstructorCreatesTwoChartsWithOneSeriesEachForForest() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         List<LineChart<Number, Number>> charts = FXTestSupport.supplyAndWaitNonNull(() ->
@@ -67,7 +67,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testSectionHiddenWhenNoData() {
+    void testTitledPaneIsHiddenWhenNoData() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Boolean managed = FXTestSupport.supplyAndWaitNonNull(() ->
@@ -79,7 +79,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testSectionAndChartVisibleAfterDataArrives() {
+    void testTitledPaneAndChartAreVisibleAfterDataArrives() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Boolean[] results = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -121,7 +121,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testSectionHiddenAgainAfterReset() {
+    void testTitledPaneIsHiddenAgainAfterReset() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {

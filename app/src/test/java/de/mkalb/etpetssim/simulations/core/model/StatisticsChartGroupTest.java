@@ -31,7 +31,7 @@ final class StatisticsChartGroupTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> StatisticsChartGroup.valueOf("INVALID")
@@ -40,7 +40,7 @@ final class StatisticsChartGroupTest {
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         NullPointerException exception = assertThrows(
                 NullPointerException.class,
                 () -> StatisticsChartGroup.valueOf(null)

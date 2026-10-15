@@ -64,7 +64,7 @@ final class StatisticsHistoryTest {
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void testAsListReturnsImmutableSnapshot() {
+    void testToListReturnsImmutableSnapshot() {
         StatisticsHistory history = new StatisticsHistory(2);
         history.add(sample(0));
 
@@ -74,7 +74,7 @@ final class StatisticsHistoryTest {
     }
 
     @Test
-    void testAsListReturnsIndependentSnapshot() {
+    void testToListReturnsIndependentSnapshot() {
         StatisticsHistory history = new StatisticsHistory(2);
         history.add(sample(0));
         var snapshot = history.toList();

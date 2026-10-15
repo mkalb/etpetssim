@@ -20,7 +20,7 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
-    void testControlConfigurationDisabledStates() {
+    void testIsControlConfigDisabledReturnsTrueForBusyStates() {
         FXTestSupport.runAndWait(() -> {
             var state = new SimpleObjectProperty<>(SimulationState.READY);
             var viewModel = new DefaultControlViewModel(state);
@@ -39,7 +39,7 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
-    void testControlConfigurationEnabledStates() {
+    void testIsControlConfigDisabledReturnsFalseForIdleStates() {
         FXTestSupport.runAndWait(() -> {
             var state = new SimpleObjectProperty<>(SimulationState.INITIALIZING);
             var viewModel = new DefaultControlViewModel(state);
@@ -57,7 +57,7 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
-    void testDefaultInputValues() {
+    void testConstructorSetsDefaultInputValues() {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
@@ -72,7 +72,7 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
-    void testWithMinStepDuration() {
+    void testCreateWithMinStepDuration() {
         FXTestSupport.runAndWait(() -> {
             var viewModel = DefaultControlViewModel.createWithMinStepDuration(
                     new SimpleObjectProperty<>(SimulationState.READY));
@@ -119,7 +119,7 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
-    void testStartPausedPredicate() {
+    void testIsStartPaused() {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
@@ -131,7 +131,7 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
-    void testTerminationCheckedPredicate() {
+    void testIsTerminationChecked() {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 

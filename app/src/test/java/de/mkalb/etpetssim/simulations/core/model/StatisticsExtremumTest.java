@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class StatisticsExtremumTest {
 
     @Test
-    void testRecordComponents() {
+    void testRecord() {
         var extremum = new StatisticsExtremum(42.5d, 7L);
 
         assertAll(

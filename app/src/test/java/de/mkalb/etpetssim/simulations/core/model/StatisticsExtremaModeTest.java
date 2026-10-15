@@ -33,7 +33,7 @@ final class StatisticsExtremaModeTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> StatisticsExtremaMode.valueOf("INVALID")
@@ -42,7 +42,7 @@ final class StatisticsExtremaModeTest {
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         NullPointerException exception = assertThrows(
                 NullPointerException.class,
                 () -> StatisticsExtremaMode.valueOf(null)
@@ -51,7 +51,7 @@ final class StatisticsExtremaModeTest {
     }
 
     @Test
-    void testTracksMinimum() {
+    void testIncludesMinimum() {
         assertAll(
                 () -> assertFalse(StatisticsExtremaMode.NONE.includesMinimum()),
                 () -> assertTrue(StatisticsExtremaMode.MIN.includesMinimum()),
@@ -61,7 +61,7 @@ final class StatisticsExtremaModeTest {
     }
 
     @Test
-    void testTracksMaximum() {
+    void testIncludesMaximum() {
         assertAll(
                 () -> assertFalse(StatisticsExtremaMode.NONE.includesMaximum()),
                 () -> assertFalse(StatisticsExtremaMode.MIN.includesMaximum()),

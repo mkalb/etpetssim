@@ -76,7 +76,7 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownUnregistersNotificationListener() {
+    void testShutdownSimulationUnregistersNotificationListener() {
         FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             view.buildMainRegion();
@@ -88,7 +88,7 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownUnregistersObservationListener() {
+    void testShutdownSimulationUnregistersObservationListener() {
         FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             AbstractObservationView<?, ?, ?, ?> observationView = assertInstanceOf(AbstractObservationView.class,
@@ -101,7 +101,7 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownForwardsViewModelTerminationHandle() {
+    void testShutdownSimulationForwardsViewModelTerminationHandle() {
         FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             SimulationMainViewModel viewModel = assertInstanceOf(SimulationMainViewModel.class,
@@ -114,7 +114,7 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownRemainsIdempotentAfterRepeatedBuild() {
+    void testShutdownSimulationRemainsIdempotentAfterRepeatedBuild() {
         FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             view.buildMainRegion();

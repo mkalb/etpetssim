@@ -51,7 +51,7 @@ final class DefaultObservationViewModelTest {
     }
 
     @Test
-    void testStatisticsIsInitiallyEmpty() {
+    void testGetStatisticsReturnsEmptyInitially() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
 
         FXTestSupport.runAndWait(() -> assertAll(

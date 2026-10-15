@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class StatisticsMetricTest {
 
     @Test
-    void testCanonicalConstructorStoresComponentsAndExtractsValue() {
+    void testRecord() {
         var metric = new StatisticsMetric<>(
                 "count",
                 "count.label",
@@ -32,7 +32,7 @@ final class StatisticsMetricTest {
     }
 
     @Test
-    void testFourArgumentConstructorCreatesUnchartedMetric() {
+    void testConstructorWithoutChartGroupCreatesUnchartedMetric() {
         var metric = new StatisticsMetric<>(
                 "count", "count.label", TestStatistics::value, StatisticsExtremaMode.NONE
         );
@@ -44,7 +44,7 @@ final class StatisticsMetricTest {
     }
 
     @Test
-    void testFiveArgumentConstructorUsesDefaultWindowForChartedMetric() {
+    void testConstructorWithChartGroupUsesDefaultWindowForChartedMetric() {
         var metric = new StatisticsMetric<>(
                 "count",
                 "count.label",
@@ -57,7 +57,7 @@ final class StatisticsMetricTest {
     }
 
     @Test
-    void testFiveArgumentConstructorUsesZeroWindowForUnchartedMetric() {
+    void testConstructorWithChartGroupUsesZeroWindowForUnchartedMetric() {
         var metric = new StatisticsMetric<>(
                 "count",
                 "count.label",

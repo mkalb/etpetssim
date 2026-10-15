@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class StatisticsSampleTest {
 
     @Test
-    void testRecordComponents() {
+    void testRecord() {
         StepTimingStatistics timing = StepTimingStatistics.empty();
         var sample = new StatisticsSample(7, timing, Map.of("count", 42.0d));
 
@@ -56,7 +56,7 @@ final class StatisticsSampleTest {
     }
 
     @Test
-    void testValuesIsUnmodifiable() {
+    void testValuesReturnsUnmodifiableMap() {
         var sample = new StatisticsSample(0, StepTimingStatistics.empty(), Map.of("count", 1.0d));
 
         assertNotNull(assertThrows(

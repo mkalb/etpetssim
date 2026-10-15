@@ -60,17 +60,17 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> SimulationType.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> SimulationType.valueOf(null));
     }
 
     @Test
-    void testStaticLabelResourceKey() {
+    void testLabelResourceKey() {
         assertEquals("simulationtype.label", SimulationType.labelResourceKey());
     }
 
@@ -159,7 +159,7 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testCliArguments() {
+    void testCliArgumentsReturnsExpectedValues() {
         assertEquals(List.of("startscreen", "start"), SimulationType.STARTSCREEN.cliArguments());
         assertEquals(List.of("etpets"), SimulationType.ET_PETS.cliArguments());
         assertEquals(List.of("wator", "wa-tor"), SimulationType.WATOR.cliArguments());
@@ -173,7 +173,7 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testCliArgumentsAreImmutable() {
+    void testCliArgumentsReturnsUnmodifiableList() {
         assertThrows(UnsupportedOperationException.class, () -> SimulationType.STARTSCREEN.cliArguments().add("other"));
     }
 
@@ -212,7 +212,7 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testUrlAsURI() {
+    void testUri() {
         for (SimulationType simulationType : SimulationType.values()) {
             Optional<URI> expected = simulationType.url().flatMap(text -> {
                 try {

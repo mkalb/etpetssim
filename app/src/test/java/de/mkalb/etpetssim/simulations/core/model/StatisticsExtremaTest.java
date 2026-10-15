@@ -33,7 +33,7 @@ final class StatisticsExtremaTest {
     }
 
     @Test
-    void testMinimumValuesIsUnmodifiable() {
+    void testMinimumValuesReturnsUnmodifiableMap() {
         var extrema = new StatisticsExtrema(Map.of("metric", new StatisticsExtremum(1.0d, 1L)), Map.of());
 
         assertNotNull(assertThrows(
@@ -43,7 +43,7 @@ final class StatisticsExtremaTest {
     }
 
     @Test
-    void testMaximumValuesIsUnmodifiable() {
+    void testMaximumValuesReturnsUnmodifiableMap() {
         var extrema = new StatisticsExtrema(Map.of(), Map.of("metric", new StatisticsExtremum(1.0d, 1L)));
 
         assertNotNull(assertThrows(
@@ -53,7 +53,7 @@ final class StatisticsExtremaTest {
     }
 
     @Test
-    void testEmptyHasNoValues() {
+    void testEmptyReturnsInstanceWithoutValues() {
         var extrema = StatisticsExtrema.empty();
 
         assertAll(
