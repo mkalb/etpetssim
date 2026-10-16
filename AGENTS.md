@@ -18,11 +18,11 @@ Other locations:
 
 - `app/src/main/resources`: `css`, `i18n` (`messages_en_US`, `messages_de_DE`), and `images`.
 - `app/src/test/java`: JUnit tests and test support.
-- `docs/simulations`: user-facing simulation docs.
-- `docs/development`: developer documentation (versioning and releases).
-- `docs/planning`: planning documents and the generated `JavaTypeInventory.csv` and `JavaMethodInventory.csv`. The
-  inventories may be outdated; do not update them with code changes. They are regenerated on demand with the
-  `java-code-inventory` skill.
+- `docs/simulations`: user-facing simulation docs; copied into the distribution ZIP.
+- `docs/development`: lasting developer documentation (e.g., versioning and releases, cross-cutting architecture).
+- `docs/planning`: open plans and idea collections; see "Planning Documents".
+- `docs/generated`: the generated `JavaTypeInventory.csv` and `JavaMethodInventory.csv`. They may be outdated; do not
+  update them with code changes. They are regenerated on demand with the `java-code-inventory` skill.
 - `assets`: screenshots and SVG icons.
 - `.claude/rules`: path-scoped coding rules; `.claude/skills`: agent skills.
 - `.github/instructions`: GitHub Copilot copies of `.claude/rules`; keep both in sync when changing a rule.
@@ -94,6 +94,14 @@ Other locations:
 - Keep user-facing text in `i18n.messages` resource bundles.
 - Use constants for localization keys instead of string literals: app-wide keys in `core.AppLocalizationKeys`,
   simulation-specific keys as constants in the class that uses them.
+
+## Planning Documents
+
+- Track concrete, bounded work as a GitHub issue. Write a plan in `docs/planning` only for work that needs research
+  or design first and leads to several issues later.
+- Start each plan with a `**Status:**` line (`idea`, `planned`, or `in progress`) and a `**Related issues:**` line.
+- When a plan is completed or all its open work is tracked in issues, move lasting architecture facts into Javadoc
+  (type-specific) or `docs/development` (cross-cutting), then delete the plan; Git history keeps it.
 
 ## Reviews
 
