@@ -1,7 +1,8 @@
 # Grid Cell Aggregation Idea
 
-**Status:** idea only, not planned. Priority: later or never. No issue exists; create one only when a concrete
-simulation needs this feature.
+**Status:** idea (not planned; priority: later or never)
+
+**Related issues:** none; create one only when a concrete simulation needs this feature.
 
 ## Idea
 
