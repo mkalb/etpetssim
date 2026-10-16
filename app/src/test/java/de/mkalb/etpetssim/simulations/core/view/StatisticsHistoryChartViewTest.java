@@ -67,7 +67,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testTitledPaneIsHiddenWhenNoData() {
+    void testUpdateChartsHidesTitledPaneWithoutData() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Boolean managed = FXTestSupport.supplyAndWaitNonNull(() ->
@@ -79,7 +79,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testTitledPaneAndChartAreVisibleAfterDataArrives() {
+    void testUpdateChartsShowsTitledPaneAndChartWithData() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Boolean[] results = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -103,7 +103,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testChartVisibleImmediatelyEvenWhenAllValuesAreZero() {
+    void testUpdateChartsShowsChartWithAllZeroValues() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -121,7 +121,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testTitledPaneIsHiddenAgainAfterReset() {
+    void testUpdateChartsHidesTitledPaneAfterReset() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Boolean managed = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -158,7 +158,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testDataPointCountMatchesHistorySize() {
+    void testUpdateChartsAddsDataPointPerSample() {
         var history = List.of(
                 sample(0, Map.of(WatorStatistics.KEY_FISH_CELLS, 100.0, WatorStatistics.KEY_SHARK_CELLS, 10.0)),
                 sample(1, Map.of(WatorStatistics.KEY_FISH_CELLS, 120.0, WatorStatistics.KEY_SHARK_CELLS, 12.0)),
@@ -175,7 +175,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testNaNPointsAreSkipped() {
+    void testUpdateChartsSkipsNaNValues() {
         var history = List.of(
                 sample(0, Map.of(WatorStatistics.KEY_FISH_CELLS, 100.0, WatorStatistics.KEY_SHARK_CELLS, 10.0)),
                 sample(1, Map.of(WatorStatistics.KEY_FISH_CELLS, Double.NaN, WatorStatistics.KEY_SHARK_CELLS, 12.0)),
@@ -192,7 +192,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testSeriesUsesTrailingChartWindow() {
+    void testUpdateChartsLimitsSeriesToChartWindow() {
         var history = List.of(
                 sample(0, Map.of(TEST_KEY, 10.0)),
                 sample(1, Map.of(TEST_KEY, 20.0)),
@@ -211,7 +211,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testXAxisUsesTrailingChartWindow() {
+    void testUpdateChartsLimitsXAxisToChartWindow() {
         var history = List.of(
                 sample(0, Map.of(TEST_KEY, 10.0)),
                 sample(1, Map.of(TEST_KEY, 20.0)),
@@ -230,7 +230,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testYAxisUpperBoundIsNiceCeilingOfWindowedMax() {
+    void testUpdateChartsSetsYAxisToNiceCeiling() {
         var history = List.of(sample(1, Map.of(
                 WatorStatistics.KEY_FISH_CELLS, 100.3,
                 WatorStatistics.KEY_SHARK_CELLS, 50.0)));
@@ -245,7 +245,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testYAxisMinimumCeilingIsOneWhenAllValuesAreZero() {
+    void testUpdateChartsSetsMinimumYAxisCeilingToOne() {
         var history = List.of(sample(0, Map.of(TEST_KEY, 0.0)));
         var historyProp = new SimpleObjectProperty<>(history);
 
@@ -258,7 +258,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testCeilingGrowsImmediatelyWhenWindowedMaxIncreases() {
+    void testUpdateChartsGrowsCeilingImmediately() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -276,7 +276,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testCeilingDoesNotShrinkWhenLatestValueAboveThreshold() {
+    void testUpdateChartsKeepsCeilingAboveShrinkThreshold() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -295,7 +295,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testCeilingShrinksAfterLatestValueBelowThresholdAndPeakLeavesWindow() {
+    void testUpdateChartsShrinksCeilingAfterPeakLeavesWindow() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -323,7 +323,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testCeilingResetsToFreshValueAfterHistoryEmptied() {
+    void testUpdateChartsResetsCeilingAfterEmptyHistory() {
         var historyProp = new SimpleObjectProperty<>(List.<StatisticsSample>of());
 
         Double yUpper = FXTestSupport.supplyAndWaitNonNull(() -> {
@@ -342,7 +342,7 @@ final class StatisticsHistoryChartViewTest {
     }
 
     @Test
-    void testSingleSampleXAxisUpperIsLowerPlusOne() {
+    void testUpdateChartsWidensXAxisForSingleSample() {
         var history = List.of(sample(5, Map.of(
                 WatorStatistics.KEY_FISH_CELLS, 100.0,
                 WatorStatistics.KEY_SHARK_CELLS, 50.0)));

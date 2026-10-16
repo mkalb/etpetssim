@@ -92,7 +92,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testStartForwardsInitialHistoryAndExtrema() throws InterruptedException {
+    void testHandleStartActionForwardsInitialHistoryAndExtrema() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         startAndAwaitInitialization(fixture);
 
@@ -108,7 +108,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testStartInitializesOffJavaFxThread() throws InterruptedException {
+    void testHandleStartActionInitializesOffJavaFxThread() throws InterruptedException {
         CountDownLatch constructionStarted = new CountDownLatch(1);
         CountDownLatch releaseConstruction = new CountDownLatch(1);
         AtomicBoolean constructedOnFxThread = new AtomicBoolean();
@@ -144,7 +144,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testTimedStartRetainsCapturedModeAndDurationDuringInitialization() throws InterruptedException {
+    void testHandleStartActionRetainsCapturedTimedSettings() throws InterruptedException {
         CountDownLatch constructionStarted = new CountDownLatch(1);
         CountDownLatch releaseConstruction = new CountDownLatch(1);
         CountDownLatch initializationCompleted = new CountDownLatch(1);
@@ -184,7 +184,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testBatchStartRetainsCapturedExecutionSettingsDuringInitialization() throws InterruptedException {
+    void testHandleStartActionRetainsCapturedBatchSettings() throws InterruptedException {
         CountDownLatch constructionStarted = new CountDownLatch(1);
         CountDownLatch releaseConstruction = new CountDownLatch(1);
         CountDownLatch batchCompleted = new CountDownLatch(1);
@@ -231,7 +231,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testInitializationFailureTransitionsToError() throws InterruptedException {
+    void testHandleStartActionTransitionsToErrorWhenManagerFails() throws InterruptedException {
         ExecutorService lifecycleExecutor = Executors.newSingleThreadExecutor();
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(() -> createFixture((_, _) -> {
             throw new IllegalStateException("Test initialization failure");
@@ -258,7 +258,7 @@ final class DefaultMainViewModelTest {
     }
 
     @Test
-    void testInitializationListenerFailureTransitionsToError() throws InterruptedException {
+    void testHandleStartActionTransitionsToErrorWhenListenerFails() throws InterruptedException {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultMainViewModelTest::createFixture);
         CountDownLatch failureHandled = new CountDownLatch(1);
 

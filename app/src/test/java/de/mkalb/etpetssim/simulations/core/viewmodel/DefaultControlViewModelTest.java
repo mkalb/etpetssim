@@ -82,38 +82,73 @@ final class DefaultControlViewModelTest {
     }
 
     @Test
-    void testRequestButtonsSetRequestFlags() {
+    void testRequestActionButton() {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
-            assertAll(
-                    () -> assertFalse(viewModel.actionButtonRequestedProperty().get()),
-                    () -> assertFalse(viewModel.cancelButtonRequestedProperty().get())
-            );
+            assertFalse(viewModel.actionButtonRequestedProperty().get());
             viewModel.requestActionButton();
-            viewModel.requestCancelButton();
 
-            assertAll(
-                    () -> assertTrue(viewModel.actionButtonRequestedProperty().get()),
-                    () -> assertTrue(viewModel.cancelButtonRequestedProperty().get())
-            );
+            assertTrue(viewModel.actionButtonRequestedProperty().get());
         });
     }
 
     @Test
-    void testSimulationModePredicates() {
+    void testRequestCancelButton() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
+
+            assertFalse(viewModel.cancelButtonRequestedProperty().get());
+            viewModel.requestCancelButton();
+
+            assertTrue(viewModel.cancelButtonRequestedProperty().get());
+        });
+    }
+
+    @Test
+    void testIsModeTimed() {
         FXTestSupport.runAndWait(() -> {
             var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
 
             for (SimulationMode simulationMode : SimulationMode.values()) {
                 viewModel.simulationModeProperty().setValue(simulationMode);
-                assertAll(
-                        simulationMode.name(),
-                        () -> assertEquals(simulationMode == SimulationMode.TIMED, viewModel.isModeTimed()),
-                        () -> assertEquals(simulationMode != SimulationMode.TIMED, viewModel.isModeBatch()),
-                        () -> assertEquals(simulationMode == SimulationMode.BATCH_SINGLE, viewModel.isModeBatchSingle()),
-                        () -> assertEquals(simulationMode == SimulationMode.BATCH_CONTINUOUS, viewModel.isModeBatchContinuous())
-                );
+                assertEquals(simulationMode == SimulationMode.TIMED, viewModel.isModeTimed(), simulationMode.name());
+            }
+        });
+    }
+
+    @Test
+    void testIsModeBatch() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
+
+            for (SimulationMode simulationMode : SimulationMode.values()) {
+                viewModel.simulationModeProperty().setValue(simulationMode);
+                assertEquals(simulationMode != SimulationMode.TIMED, viewModel.isModeBatch(), simulationMode.name());
+            }
+        });
+    }
+
+    @Test
+    void testIsModeBatchSingle() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
+
+            for (SimulationMode simulationMode : SimulationMode.values()) {
+                viewModel.simulationModeProperty().setValue(simulationMode);
+                assertEquals(simulationMode == SimulationMode.BATCH_SINGLE, viewModel.isModeBatchSingle(), simulationMode.name());
+            }
+        });
+    }
+
+    @Test
+    void testIsModeBatchContinuous() {
+        FXTestSupport.runAndWait(() -> {
+            var viewModel = new DefaultControlViewModel(new SimpleObjectProperty<>(SimulationState.READY));
+
+            for (SimulationMode simulationMode : SimulationMode.values()) {
+                viewModel.simulationModeProperty().setValue(simulationMode);
+                assertEquals(simulationMode == SimulationMode.BATCH_CONTINUOUS, viewModel.isModeBatchContinuous(), simulationMode.name());
             }
         });
     }
