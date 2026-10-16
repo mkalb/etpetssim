@@ -362,14 +362,14 @@ public final class AppLogger {
         /**
          * Parses a log level name.
          *
-         * @param level level name (case-insensitive)
+         * @param levelName level name (case-insensitive)
          * @return an {@link Optional} with the parsed level, or empty if invalid
-         * @throws NullPointerException if {@code level} is {@code null}
+         * @throws NullPointerException if {@code levelName} is {@code null}
          */
-        public static Optional<LogLevel> fromString(String level) {
-            Objects.requireNonNull(level, "Level must not be null");
+        public static Optional<LogLevel> fromString(String levelName) {
+            Objects.requireNonNull(levelName, "Level name must not be null");
             try {
-                return Optional.of(LogLevel.valueOf(level.toUpperCase(Locale.ROOT)));
+                return Optional.of(LogLevel.valueOf(levelName.toUpperCase(Locale.ROOT)));
             } catch (IllegalArgumentException e) {
                 return Optional.empty();
             }

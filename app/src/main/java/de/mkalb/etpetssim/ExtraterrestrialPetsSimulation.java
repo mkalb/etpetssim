@@ -318,12 +318,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * Creates the simulation header shown above the main simulation region.
      *
-     * @param stage    primary stage
-     * @param instance active simulation instance
+     * @param stage              primary stage
+     * @param simulationInstance active simulation instance
      * @return header node containing titles and navigation links
      */
-    private Node createSimulationHeaderNode(Stage stage, SimulationInstance instance) {
-        SimulationType simulationType = instance.simulationType();
+    private Node createSimulationHeaderNode(Stage stage, SimulationInstance simulationInstance) {
+        SimulationType simulationType = simulationInstance.simulationType();
 
         VBox titleBox = new VBox(FXComponentFactory.createLabel(simulationType.title(), FXStyleClasses.HEADER_TITLE_LABEL));
         titleBox.getStyleClass().add(FXStyleClasses.HEADER_TITLE_VBOX);
@@ -340,7 +340,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             Hyperlink startScreenLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_STARTSCREEN_LINK));
             startScreenLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
             startScreenLink.setOnAction(_ -> {
-                AppLogger.info("Application: Switching to start screen from simulation: " + instance.simulationType());
+                AppLogger.info("Application: Switching to start screen from simulation: " + simulationInstance.simulationType());
                 switchToSimulation(stage, SimulationType.STARTSCREEN);
             });
             linkBox.getChildren().add(startScreenLink);
