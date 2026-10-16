@@ -56,7 +56,7 @@ public class BaseTimedSimulationStatistics
      * @throws IllegalArgumentException if {@code newStepCount} is negative
      */
     public final void setStepData(int newStepCount,
-                             StepTimingStatistics newStepTimingStatistics) {
+                                  StepTimingStatistics newStepTimingStatistics) {
         if (newStepCount < 0) {
             throw new IllegalArgumentException("newStepCount must be >= 0");
         }

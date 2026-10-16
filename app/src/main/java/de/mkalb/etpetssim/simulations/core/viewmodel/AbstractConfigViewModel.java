@@ -144,7 +144,7 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
      * @param messageProvider   provider for the localized violation message
      */
     protected final void registerConfigValidationRule(ObservableBooleanValue violatedCondition,
-                                                 Supplier<String> messageProvider) {
+                                                      Supplier<String> messageProvider) {
         configValidationRules.add(new ConfigValidationRule(violatedCondition, messageProvider));
         violatedCondition.addListener((_, _, _) -> updateConfigValidationState());
         updateConfigValidationState();

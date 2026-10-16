@@ -603,8 +603,8 @@ public final class CellNeighborhoods {
      * @return an immutable list of relative neighbor connections for the configuration
      */
     static List<CellNeighborConnection> getOrComputeCellNeighborConnections(GridCoordinate startCoordinate,
-                                                                             NeighborhoodMode neighborhoodMode,
-                                                                             CellShape cellShape) {
+                                                                            NeighborhoodMode neighborhoodMode,
+                                                                            CellShape cellShape) {
         return CACHE.computeIfAbsent(
                 computeCacheKey(startCoordinate, neighborhoodMode, cellShape),
                 _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));

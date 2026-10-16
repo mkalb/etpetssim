@@ -105,12 +105,12 @@ public final class EtpetsAgentLogic {
     }
 
     private static ActionEffect selectAndApplyAction(Pet pet,
-                                                       GridCoordinate currentCoordinate,
-                                                       EtpetsGridModel gridModel,
-                                                       GridStructure structure,
-                                                       int stepIndex,
-                                                       Random random,
-                                                       EtpetsIdSequence idSequence) {
+                                                     GridCoordinate currentCoordinate,
+                                                     EtpetsGridModel gridModel,
+                                                     GridStructure structure,
+                                                     int stepIndex,
+                                                     Random random,
+                                                     EtpetsIdSequence idSequence) {
         List<ActionCandidate> actionCandidates = collectActionCandidates(
                 pet,
                 currentCoordinate,
@@ -281,12 +281,12 @@ public final class EtpetsAgentLogic {
     }
 
     private static ActionEffect applyActionCandidate(ActionCandidate actionCandidate,
-                                                       Pet pet,
-                                                       GridCoordinate currentCoordinate,
-                                                       EtpetsGridModel gridModel,
-                                                       int stepIndex,
-                                                       Random random,
-                                                       EtpetsIdSequence idSequence) {
+                                                     Pet pet,
+                                                     GridCoordinate currentCoordinate,
+                                                     EtpetsGridModel gridModel,
+                                                     int stepIndex,
+                                                     Random random,
+                                                     EtpetsIdSequence idSequence) {
         pet.recordLastAction(actionCandidate.type(), actionCandidate.score());
         return switch (actionCandidate.type()) {
             case WAIT -> applyWaitAction(currentCoordinate, gridModel);
@@ -298,16 +298,16 @@ public final class EtpetsAgentLogic {
     }
 
     private static ActionEffect applyWaitAction(GridCoordinate petCoordinate,
-                                                  EtpetsGridModel gridModel) {
+                                                EtpetsGridModel gridModel) {
         updateTrailAtCoordinate(gridModel, petCoordinate);
 
         return ActionEffect.none();
     }
 
     private static ActionEffect applyMoveAction(Pet pet,
-                                                  GridCoordinate fromCoordinate,
-                                                  GridCoordinate toCoordinate,
-                                                  EtpetsGridModel gridModel) {
+                                                GridCoordinate fromCoordinate,
+                                                GridCoordinate toCoordinate,
+                                                EtpetsGridModel gridModel) {
         // Movement energy cost (at least 1, scaled by movementCostModifier).
         long roundedMovementCost = Math.round(pet.traits().movementCostModifier());
         int movementCost = Math.max(1, Math.toIntExact(roundedMovementCost));
@@ -324,10 +324,10 @@ public final class EtpetsAgentLogic {
     }
 
     private static ActionEffect applyEatAction(ActionCandidate actionCandidate,
-                                                 Pet pet,
-                                                 GridCoordinate petCoordinate,
-                                                 GridCoordinate resourceCoordinate,
-                                                 EtpetsGridModel gridModel) {
+                                               Pet pet,
+                                               GridCoordinate petCoordinate,
+                                               GridCoordinate resourceCoordinate,
+                                               EtpetsGridModel gridModel) {
         if (!(gridModel.resourceModel().getEntity(resourceCoordinate) instanceof ResourceBase resource)
                 || !resource.canConsume()) {
             throw new IllegalStateException("EtpetsAgentLogic: EAT precondition failed for action " + actionCandidate + ".");
@@ -342,11 +342,11 @@ public final class EtpetsAgentLogic {
     }
 
     private static ActionEffect applyReproduceAction(ActionCandidate actionCandidate,
-                                                       Pet pet,
-                                                       EtpetsGridModel gridModel,
-                                                       int stepIndex,
-                                                       Random random,
-                                                       EtpetsIdSequence idSequence) {
+                                                     Pet pet,
+                                                     EtpetsGridModel gridModel,
+                                                     int stepIndex,
+                                                     Random random,
+                                                     EtpetsIdSequence idSequence) {
         if (!(gridModel.agentModel().getEntity(actionCandidate.interactionTarget()) instanceof Pet partnerPet)
                 || !canReproduce(pet, partnerPet, stepIndex)) {
             throw new IllegalStateException("EtpetsAgentLogic: REPRODUCE precondition failed for action " + actionCandidate + ".");
@@ -533,9 +533,9 @@ public final class EtpetsAgentLogic {
     }
 
     private static Optional<GridCoordinate> findEggPlacementCoordinate(GridStructure gridStructure,
-                                                                          GridCoordinate sourceCoordinate,
-                                                                          GridCoordinate partnerCoordinate,
-                                                                          Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
+                                                                       GridCoordinate sourceCoordinate,
+                                                                       GridCoordinate partnerCoordinate,
+                                                                       Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
         // TODO Optimize method
         List<GridCoordinate> sourceNeighbors = computeValidNeighborCoordinates(gridStructure, sourceCoordinate);
         Set<GridCoordinate> sourceNeighborSet = new HashSet<>(sourceNeighbors);

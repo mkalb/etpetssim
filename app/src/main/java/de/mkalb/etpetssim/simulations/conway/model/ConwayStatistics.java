@@ -51,7 +51,7 @@ public final class ConwayStatistics
     }
 
     void setCellCounts(int newAliveCells,
-                          int newChangedCells) {
+                       int newChangedCells) {
         aliveCells = newAliveCells;
         deadCells = totalCells() - newAliveCells;
         changedCells = newChangedCells;
