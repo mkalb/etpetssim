@@ -43,6 +43,11 @@ Rules for test sources only; repository-wide and Java instructions still apply.
     `When...`, or `With...` (e.g., `testConstructorRejectsNegativeWidth`).
   - `testRecord` is the fixed name for the basic test of a record: canonical constructor, accessors, and `toString()`.
   - The fixed enum test names (`testEnumValues`, `testEnumCount`, `testDeclarationOrder`) remain.
+  - Tests of a nested type put its simple name before a fixed name (e.g., `testFixedActionDeclarationOrder`).
+  - A constant has one test named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a check
+    across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
+  - When the tested behavior is triggered indirectly (e.g., through a listener), `<Subject>` is the private or
+    package-private method that implements the reaction (e.g., `testHandleStartActionRetainsCapturedTimedSettings`).
 - Name overload tests `test<Subject>[With<Parameter>][<Behavior>[<Condition>]]`. `With<Parameter>` follows `<Subject>`
   directly and names only the parameter that distinguishes the overload, by role or, if clearer, by type
   (`WithSupplier`, `WithThrowable`); no count such as `OneParameter`. The base overload (the simplest or most common
@@ -58,6 +63,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   normally have none. Shared support classes such as `FXTestSupport` and manual test utilities keep Javadoc for the
   class and its public API (a manual utility's `main()`).
 - Prefer one behavior per test; group related checks with `assertAll(...)`.
+- Do not write tests that only check what the compiler guarantees (e.g., `assertInstanceOf` on a statically typed
+  value).
 - Use `assertThrows(...)` for exception contracts and `assertDoesNotThrow(...)` only for meaningful valid-operation
   checks.
 - Prefer specific assertions; add assertion messages only when the failure would otherwise be ambiguous.
@@ -90,6 +97,9 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Collection/model tests should cover mutation rejection, defensive copies, empty/sparse cases, and representative
   domain
   entities via small test fixtures.
+- Test an interface contract shared by several implementations in `<Interface>Test` with `@ParameterizedTest` and
+  `@EnumSource` over a package-private fixture enum that creates the implementations; keep implementation-specific
+  behavior in `<Implementation>Test`.
 - CLI/localization/resource tests should check accepted variants, ignored invalid input, stable output fragments, and
   missing/invalid key behavior without relying on unrelated full text.
 
