@@ -154,7 +154,7 @@ final class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getOptionalText(null));
     }
 
-    @SuppressWarnings({"SpellCheckingInspection", "DataFlowIssue", "GrazieInspectionRunner"})
+    @SuppressWarnings({"DataFlowIssue", "GrazieInspectionRunner"})
     @Test
     void testGetFormattedText() {
         assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John"));

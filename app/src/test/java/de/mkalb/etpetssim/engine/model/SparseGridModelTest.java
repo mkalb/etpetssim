@@ -8,7 +8,6 @@ import java.util.*;
 import static de.mkalb.etpetssim.engine.model.GridModelTestSupport.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("MagicNumber")
 final class SparseGridModelTest {
 
     @Test
