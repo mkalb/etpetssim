@@ -7,9 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class GridEntityDescriptorTest {
 
-    @Test
-    void testOptionalViewsReflectNullableFields() {
-        GridEntityDescriptor withValues = new GridEntityDescriptor(
+    private static GridEntityDescriptor createDescriptorWithValues() {
+        return new GridEntityDescriptor(
                 "id-1",
                 true,
                 "Short",
@@ -19,7 +18,10 @@ final class GridEntityDescriptorTest {
                 Color.GREEN,
                 Color.BLUE
         );
-        GridEntityDescriptor withoutValues = new GridEntityDescriptor(
+    }
+
+    private static GridEntityDescriptor createDescriptorWithoutValues() {
+        return new GridEntityDescriptor(
                 "id-2",
                 false,
                 "Short",
@@ -29,31 +31,34 @@ final class GridEntityDescriptorTest {
                 null,
                 null
         );
-
-        assertEquals("🙂", withValues.emojiAsOptional().orElseThrow());
-        assertEquals(Color.GREEN, withValues.colorAsOptional().orElseThrow());
-        assertEquals(Color.BLUE, withValues.borderColorAsOptional().orElseThrow());
-
-        assertTrue(withoutValues.emojiAsOptional().isEmpty());
-        assertTrue(withoutValues.colorAsOptional().isEmpty());
-        assertTrue(withoutValues.borderColorAsOptional().isEmpty());
     }
 
     @Test
-    void testFallbackColorsUseDefaultsWhenUnset() {
-        GridEntityDescriptor descriptor = new GridEntityDescriptor(
-                "id-1",
-                true,
-                "Short",
-                "Long",
-                "Description",
-                null,
-                null,
-                null
-        );
+    void testEmojiAsOptional() {
+        assertEquals("🙂", createDescriptorWithValues().emojiAsOptional().orElseThrow());
+        assertTrue(createDescriptorWithoutValues().emojiAsOptional().isEmpty());
+    }
 
-        assertEquals(Color.BLACK, descriptor.colorOrFallback());
-        assertEquals(Color.BLACK, descriptor.borderColorOrFallback());
+    @Test
+    void testColorAsOptional() {
+        assertEquals(Color.GREEN, createDescriptorWithValues().colorAsOptional().orElseThrow());
+        assertTrue(createDescriptorWithoutValues().colorAsOptional().isEmpty());
+    }
+
+    @Test
+    void testBorderColorAsOptional() {
+        assertEquals(Color.BLUE, createDescriptorWithValues().borderColorAsOptional().orElseThrow());
+        assertTrue(createDescriptorWithoutValues().borderColorAsOptional().isEmpty());
+    }
+
+    @Test
+    void testColorOrFallback() {
+        assertEquals(Color.BLACK, createDescriptorWithoutValues().colorOrFallback());
+    }
+
+    @Test
+    void testBorderColorOrFallback() {
+        assertEquals(Color.BLACK, createDescriptorWithoutValues().borderColorOrFallback());
     }
 
     @Test

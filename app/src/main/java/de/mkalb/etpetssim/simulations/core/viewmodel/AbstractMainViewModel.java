@@ -96,7 +96,7 @@ public abstract class AbstractMainViewModel<
      *
      * @return current model snapshot
      */
-    public abstract GM getCurrentModel();
+    public abstract GM getCurrentGridModel();
 
     /**
      * Exposes the most recently clicked coordinate.

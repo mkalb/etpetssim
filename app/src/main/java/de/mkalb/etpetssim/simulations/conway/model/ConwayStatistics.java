@@ -31,17 +31,17 @@ public final class ConwayStatistics
         changedCells = 0;
     }
 
-    public static List<StatisticMetric<ConwayStatistics>> metrics() {
+    public static List<StatisticsMetric<ConwayStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS,
+                new StatisticsMetric<>(KEY_ALIVE_CELLS, CONWAY_OBSERVATION_ALIVE_CELLS,
                         ConwayStatistics::aliveCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
-                new StatisticMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS,
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE),
+                new StatisticsMetric<>(KEY_DEAD_CELLS, CONWAY_OBSERVATION_DEAD_CELLS,
                         ConwayStatistics::deadCells,
-                        StatisticExtremaMode.MIN_AND_MAX),
-                new StatisticMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CHANGED_CELLS,
+                        StatisticsExtremaMode.MIN_AND_MAX),
+                new StatisticsMetric<>(KEY_CHANGED_CELLS, CONWAY_OBSERVATION_CHANGED_CELLS,
                         ConwayStatistics::changedCells,
-                        StatisticExtremaMode.MAX)
+                        StatisticsExtremaMode.MAX)
         );
     }
 
@@ -50,7 +50,7 @@ public final class ConwayStatistics
         deadCells = totalCells() - aliveCellsInitial;
     }
 
-    void updateCellCounts(int newAliveCells,
+    void setCellCounts(int newAliveCells,
                           int newChangedCells) {
         aliveCells = newAliveCells;
         deadCells = totalCells() - newAliveCells;

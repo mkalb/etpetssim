@@ -24,7 +24,7 @@ public final class WatorUserAction
             return;
         }
 
-        var model = manager.currentModel();
+        var model = manager.currentGridModel();
         var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
         var entity = model.getEntity(coordinate);

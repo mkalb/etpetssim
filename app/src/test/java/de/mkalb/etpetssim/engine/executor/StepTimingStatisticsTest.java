@@ -19,7 +19,7 @@ final class StepTimingStatisticsTest {
     private static final long HUNDRED_TWENTY = 120L;
 
     @Test
-    void testEmptyFactoryReturnsAllZeros() {
+    void testEmptyReturnsAllZeros() {
         StepTimingStatistics statistics = StepTimingStatistics.empty();
 
         assertAll(

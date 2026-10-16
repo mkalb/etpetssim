@@ -47,26 +47,26 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetTerrainReplacesTrailWhenResourceAndAgentAreEmpty() {
+    void testApplySetTerrainReplacesTrailWhenResourceAndAgentAreEmpty() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().terrainModel().setEntity(coordinate, new Trail(EtpetsBalance.TRAIL_INTENSITY_DEFAULT));
+        manager.currentGridModel().terrainModel().setEntity(coordinate, new Trail(EtpetsBalance.TRAIL_INTENSITY_DEFAULT));
 
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.ROCK),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        assertSame(TerrainConstant.ROCK, manager.currentModel().terrainModel().getEntity(coordinate));
+        assertSame(TerrainConstant.ROCK, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
 
     @Test
-    void testSetTerrainDoesNothingWhenResourceExists() {
+    void testApplySetTerrainDoesNothingWhenResourceExists() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().resourceModel().setEntity(coordinate, new Plant(
+        manager.currentGridModel().resourceModel().setEntity(coordinate, new Plant(
                 EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX,
                 EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX,
                 EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE));
@@ -74,28 +74,28 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.WATER),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        assertSame(TerrainConstant.GROUND, manager.currentModel().terrainModel().getEntity(coordinate));
+        assertSame(TerrainConstant.GROUND, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
 
     @Test
-    void testSetTerrainDoesNothingWhenAgentExists() {
+    void testApplySetTerrainDoesNothingWhenAgentExists() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().agentModel().setEntity(coordinate, createPet());
+        manager.currentGridModel().agentModel().setEntity(coordinate, createPet());
 
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.ROCK),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        assertSame(TerrainConstant.GROUND, manager.currentModel().terrainModel().getEntity(coordinate));
+        assertSame(TerrainConstant.GROUND, manager.currentGridModel().terrainModel().getEntity(coordinate));
     }
 
     @Test
-    void testSetResourcePlantUsesDeterministicFullDefaults() {
+    void testApplySetResourcePlantUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -103,9 +103,9 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.PLANT),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        ResourceEntity resourceEntity = manager.currentModel().resourceModel().getEntity(coordinate);
+        ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
                 () -> assertInstanceOf(Plant.class, resourceEntity),
                 () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX, ((Plant) resourceEntity).currentAmount()),
@@ -115,7 +115,7 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetResourceInsectUsesDeterministicFullDefaults() {
+    void testApplySetResourceInsectUsesDeterministicFullDefaults() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -123,9 +123,9 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.INSECT),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        ResourceEntity resourceEntity = manager.currentModel().resourceModel().getEntity(coordinate);
+        ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
                 () -> assertInstanceOf(Insect.class, resourceEntity),
                 () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX, ((Insect) resourceEntity).currentAmount()),
@@ -135,11 +135,11 @@ final class EtpetsUserActionTest {
     }
 
     @Test
-    void testSetResourceNoneClearsResourceOnGroundWithoutAgent() {
+    void testApplySetResourceNoneClearsResourceOnGroundWithoutAgent() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().resourceModel().setEntity(coordinate, new Insect(
+        manager.currentGridModel().resourceModel().setEntity(coordinate, new Insect(
                 EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX,
                 EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX,
                 EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE));
@@ -147,39 +147,39 @@ final class EtpetsUserActionTest {
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.NONE),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        assertSame(NoResource.NO_RESOURCE, manager.currentModel().resourceModel().getEntity(coordinate));
+        assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate));
     }
 
     @Test
-    void testSetResourceDoesNothingWhenTerrainIsNotGround() {
+    void testApplySetResourceDoesNothingWhenTerrainIsNotGround() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().terrainModel().setEntity(coordinate, TerrainConstant.ROCK);
+        manager.currentGridModel().terrainModel().setEntity(coordinate, TerrainConstant.ROCK);
 
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.PLANT),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        assertSame(NoResource.NO_RESOURCE, manager.currentModel().resourceModel().getEntity(coordinate));
+        assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate));
     }
 
     @Test
-    void testSetResourceDoesNothingWhenAgentExists() {
+    void testApplySetResourceDoesNothingWhenAgentExists() {
         EtpetsSimulationManager manager = new EtpetsSimulationManager(createConfig());
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().agentModel().setEntity(coordinate, createPet());
+        manager.currentGridModel().agentModel().setEntity(coordinate, createPet());
 
         userAction.apply(
                 manager,
                 new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.PLANT),
-                EtpetsCell.of(manager.currentModel(), coordinate));
+                EtpetsCell.from(manager.currentGridModel(), coordinate));
 
-        assertSame(NoResource.NO_RESOURCE, manager.currentModel().resourceModel().getEntity(coordinate));
+        assertSame(NoResource.NO_RESOURCE, manager.currentGridModel().resourceModel().getEntity(coordinate));
     }
 
 }

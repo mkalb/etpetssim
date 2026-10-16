@@ -5,7 +5,8 @@ description: "JavaFX UI-package rules for reusable controls, input wrappers, can
 
 # UI Package Instructions
 
-Rules for production code in `de.mkalb.etpetssim.ui`; keep reusable UI infrastructure here, not simulation logic.
+Rules for production code in `de.mkalb.etpetssim.ui`; keep reusable UI infrastructure and application-level dialogs
+here, not simulation logic.
 
 ## Scope
 
@@ -15,6 +16,8 @@ Rules for production code in `de.mkalb.etpetssim.ui`; keep reusable UI infrastru
 
 ## UI Factories and Styles
 
+- Use the prefix `FX` (uppercase) for helper classes whose main purpose is to create, style, or paint JavaFX scene
+  graph objects; value types and property wrappers carry no prefix.
 - `FXComponentFactory` creates styled controls and returns `LabeledControl<R>` when a label/control pair is needed.
 - Keep labels connected with `setLabelFor(...)`; share tooltips between labels and controls when the factory pattern
   does so.

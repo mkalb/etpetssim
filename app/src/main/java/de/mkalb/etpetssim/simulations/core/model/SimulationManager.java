@@ -47,7 +47,7 @@ public interface SimulationManager<
      *
      * @return sampled statistics history
      */
-    default List<StatisticSample> statisticsHistory() {
+    default List<StatisticsSample> statisticsHistory() {
         return List.of();
     }
 
@@ -56,8 +56,8 @@ public interface SimulationManager<
      *
      * @return tracked metric extrema
      */
-    default StatisticExtrema statisticsExtrema() {
-        return StatisticExtrema.empty();
+    default StatisticsExtrema statisticsExtrema() {
+        return StatisticsExtrema.empty();
     }
 
     /**
@@ -101,6 +101,6 @@ public interface SimulationManager<
      *
      * @return current simulation model
      */
-    GM currentModel();
+    GM currentGridModel();
 
 }

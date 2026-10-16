@@ -86,7 +86,7 @@ public final class SnakeConfigViewModel
     }
 
     @Override
-    public SnakeConfig getConfig() {
+    public SnakeConfig createConfig() {
         return new SnakeConfig(
                 // Structure
                 cellShapeProperty().property().getValue(),

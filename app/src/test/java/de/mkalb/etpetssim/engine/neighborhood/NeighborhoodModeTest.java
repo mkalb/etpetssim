@@ -26,17 +26,17 @@ final class NeighborhoodModeTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> NeighborhoodMode.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> NeighborhoodMode.valueOf(null));
     }
 
     @Test
-    void testStaticLabelResourceKey() {
+    void testLabelResourceKey() {
         assertEquals("neighborhoodmode.label", NeighborhoodMode.labelResourceKey());
     }
 

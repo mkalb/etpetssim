@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.AppLocalization;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationMainViewModel;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
@@ -25,7 +25,7 @@ final class AbstractMainViewTest {
         if (!AppLocalization.isInitialized()) {
             AppLocalization.initialize("en_US", Locale.US);
         }
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     private static Object getNullableField(Object target, String fieldName) {
@@ -49,7 +49,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testBuildMainRegionUsesObservationWidthSplit() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             BorderPane mainRegion = assertInstanceOf(BorderPane.class, view.buildMainRegion());
             SplitPane centerSplitPane = assertInstanceOf(SplitPane.class, mainRegion.getCenter());
@@ -65,7 +65,7 @@ final class AbstractMainViewTest {
 
     @Test
     void testBuildMainRegionReturnsSameRegionWhenCalledRepeatedly() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
 
             var firstRegion = view.buildMainRegion();
@@ -76,8 +76,8 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownUnregistersNotificationListener() {
-        FxTestSupport.runAndWait(() -> {
+    void testShutdownSimulationUnregistersNotificationListener() {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             view.buildMainRegion();
 
@@ -88,8 +88,8 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownUnregistersObservationListener() {
-        FxTestSupport.runAndWait(() -> {
+    void testShutdownSimulationUnregistersObservationListener() {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             AbstractObservationView<?, ?, ?, ?> observationView = assertInstanceOf(AbstractObservationView.class,
                     getNonNullField(view, "observationView"));
@@ -101,29 +101,29 @@ final class AbstractMainViewTest {
     }
 
     @Test
-    void testShutdownForwardsViewModelTerminationHandle() {
-        FxTestSupport.runAndWait(() -> {
+    void testShutdownSimulationForwardsViewModelTerminationHandle() {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             SimulationMainViewModel viewModel = assertInstanceOf(SimulationMainViewModel.class,
                     getNonNullField(view, "viewModel"));
 
-            SimulationTermination termination = view.shutdownSimulation();
+            SimulationTerminationHandle terminationHandle = view.shutdownSimulation();
 
-            assertSame(termination, viewModel.shutdownSimulation());
+            assertSame(terminationHandle, viewModel.shutdownSimulation());
         });
     }
 
     @Test
-    void testShutdownRemainsIdempotentAfterRepeatedBuild() {
-        FxTestSupport.runAndWait(() -> {
+    void testShutdownSimulationRemainsIdempotentAfterRepeatedBuild() {
+        FXTestSupport.runAndWait(() -> {
             SimulationMainView view = ConwayFactory.createMainView();
             view.buildMainRegion();
             view.buildMainRegion();
 
-            SimulationTermination firstTermination = view.shutdownSimulation();
-            SimulationTermination secondTermination = view.shutdownSimulation();
+            SimulationTerminationHandle firstTerminationHandle = view.shutdownSimulation();
+            SimulationTerminationHandle secondTerminationHandle = view.shutdownSimulation();
 
-            assertSame(firstTermination, secondTermination);
+            assertSame(firstTerminationHandle, secondTerminationHandle);
         });
     }
 

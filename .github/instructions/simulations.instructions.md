@@ -17,6 +17,9 @@ Regular 2D simulations use:
 - `shared`: optional layer-neutral types used by two or more layers
 - Package-root `<SimulationName>Factory` exposing `createMainView()`
 
+Both `<simulation>.model` and `simulations.core.model` belong to the MVVM model layer and hold the
+simulation-specific part; `engine.model` is the generic grid model (`GridModel` and its implementations) they use.
+
 Special cases:
 
 - `start`: start screen only; no model/view/viewmodel structure
@@ -70,11 +73,14 @@ include:
 - Contains UI state, formatting, and interaction logic only; delegate domain computation to `model`.
 - Expose state as JavaFX `Property`/`ObservableValue` or repository input wrappers.
 - Marshal model/background updates to the JavaFX Application Thread via `Platform.runLater(...)`.
+- Expose plain values through `getX()` accessors; model and engine types use noun-style accessors.
 - May depend on same-simulation `shared`.
 
 ### Shared
 
 - Contains only layer-neutral enums, records, or value objects used by multiple layers.
+- Exists because the view reads only `model.entity` directly and the model must not depend on `view` or `viewmodel`;
+  `simulations.core` uses the same sub-packages.
 - Must not depend on `model`, `view`, or `viewmodel`.
 - Must not import JavaFX UI/property/binding types; neutral value types such as `Color` are allowed.
 - Entity types stay in `model.entity`, even when views read them for rendering.
@@ -94,7 +100,7 @@ include:
 - Prefer role-focused names instead of repeating the simulation prefix.
 - Prefer established names where applicable, including `NoAgent`, `NoResource`, `TerrainConstant`, and
   `EntityDescriptors`.
-- Use suffix `Base` for abstract bases.
+- Use suffix `Base` for abstract entity base classes (e.g., `CreatureBase`, `ResourceBase`).
 - Use concise domain names for value records (e.g., `PetGenome`, `PetTraits`).
 - Prefer domain-specific factories (e.g., `CreatureFactory`) over generic `EntityFactory`.
 
@@ -115,6 +121,9 @@ Check `simulations.core` before adding simulation-local infrastructure. Relevant
   `DefaultControlViewModel`, `DefaultObservationViewModel`
 - View helpers: `CellDrawer`, `CoordinateDrawer`, `DrawCallThrottler`, `DefaultControlView`
 - ViewModel/model helpers: `SeedProperty`, `SimulationConfig`
+
+Use prefix `Abstract` only for classes that must be abstract; use prefix `Base` for complete base implementations that
+are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 
 ## JavaFX UI Patterns
 
@@ -164,7 +173,7 @@ Each simulation package root must provide a factory:
 - Regular simulations provide `public static SimulationMainView createMainView()`; `StartFactory` may accept its
   `Stage` navigation dependencies.
 - Let `simulations.core.SimulationFactory` wrap the returned view in `SimulationInstance`.
-- Wire model, ViewModel, and view components; delegate complex construction to layer-specific builder methods.
+- Wire model, ViewModel, and view components; delegate complex construction to layer-specific `create...` methods.
 
 ## Canvas Rendering
 
@@ -220,10 +229,25 @@ Shutdown checklist:
 - Use `buildMainRegion()` as the UI composition entry point.
 - Keep layout in View classes, not ViewModel.
 
+### User Action Context
+
+- Use a plain enum implementing `SimulationUserActionContext` when no action has parameters (e.g.,
+  `WatorUserActionContext`).
+- Otherwise, use a sealed interface with a nested `FixedAction` enum and records for parameterized actions (e.g.,
+  `ConwayUserActionContext`).
+
 ## Naming
 
 - Use `draw...` for canvas rendering methods.
-- Name user-triggered redraw callbacks `requestDraw...` (for example, `requestDraw()`).
+- Name user-triggered redraw requests `requestDraw...` (for example, `requestDraw()`); their handlers follow
+  `handle...`.
+- Name implementations of `SynchronousStepLogic` and `AgentStepLogic` with the suffix `StepLogic` (for example,
+  `ConwayStepLogic`, `WatorStepLogic`); name implementations of `SimulationStepRunner` with the suffix `StepRunner`
+  (for example, `SugarStepRunner`).
+- Static `<SimulationName><Layer>Logic` helper classes called from a step runner expose `apply(...)`;
+  `perform...` is reserved for implementations of the step contracts.
+- Model, entity, and strategy types may use domain verbs of their simulation (e.g., `move`, `die`, `reproduce`,
+  `consume`, `decideMove`) for state changes and decisions.
 
 ## Anti-Patterns
 

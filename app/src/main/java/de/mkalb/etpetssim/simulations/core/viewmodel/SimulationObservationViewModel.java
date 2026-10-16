@@ -64,13 +64,13 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
      *
      * @return read-only property containing the latest extrema
      */
-    ReadOnlyObjectProperty<StatisticExtrema> statisticsExtremaProperty();
+    ReadOnlyObjectProperty<StatisticsExtrema> statisticsExtremaProperty();
 
     /**
      * Exposes the current statistics history snapshot as an observable property.
      *
      * @return read-only property containing an immutable ordered list of samples, oldest first
      */
-    ReadOnlyObjectProperty<List<StatisticSample>> statisticsHistoryProperty();
+    ReadOnlyObjectProperty<List<StatisticsSample>> statisticsHistoryProperty();
 
 }

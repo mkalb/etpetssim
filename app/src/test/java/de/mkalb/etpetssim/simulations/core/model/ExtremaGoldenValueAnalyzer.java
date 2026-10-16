@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Manual utility to re-capture extrema golden values for Conway, Forest, and Wator
  * using seed 1L and 20 steps. Run once when simulation logic changes to refresh the
- * hard-coded expectations in TimedStatisticsTrackingTest (testConway/Forest/WatorGoldenExtremaExactValues).
+ * hard-coded expectations in SimulationManagerTest (testConway/Forest/WatorGoldenExtremaExactValues).
  *
  * <p>Current golden values (seed=1, 20 steps, default constraints):
  * <pre>
@@ -31,6 +31,10 @@ public final class ExtremaGoldenValueAnalyzer {
     private ExtremaGoldenValueAnalyzer() {
     }
 
+    /**
+     * Runs the Conway, Forest, and Wator simulations and prints the captured extrema golden values.
+     * Intended for manual invocation from the IDE when the simulation logic changes.
+     */
     static void main() {
         Locale.setDefault(Locale.ROOT);
         System.out.printf(Locale.ROOT, "%s", captureValues());
@@ -100,11 +104,11 @@ public final class ExtremaGoldenValueAnalyzer {
         );
     }
 
-    private static int minimumValue(StatisticExtrema extrema, String key) {
+    private static int minimumValue(StatisticsExtrema extrema, String key) {
         return extrema.minimumValues().get(key).intValue();
     }
 
-    private static int maximumValue(StatisticExtrema extrema, String key) {
+    private static int maximumValue(StatisticsExtrema extrema, String key) {
         return extrema.maximumValues().get(key).intValue();
     }
 

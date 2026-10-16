@@ -27,14 +27,14 @@ public final class WatorStatistics
         sharkCells = 0;
     }
 
-    public static List<StatisticMetric<WatorStatistics>> metrics() {
+    public static List<StatisticsMetric<WatorStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS,
+                new StatisticsMetric<>(KEY_FISH_CELLS, WATOR_OBSERVATION_FISH_CELLS,
                         WatorStatistics::fishCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE),
-                new StatisticMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS,
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE),
+                new StatisticsMetric<>(KEY_SHARK_CELLS, WATOR_OBSERVATION_SHARK_CELLS,
                         WatorStatistics::sharkCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY, CHART_WINDOW_SIZE)
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY, CHART_WINDOW_SIZE)
         );
     }
 

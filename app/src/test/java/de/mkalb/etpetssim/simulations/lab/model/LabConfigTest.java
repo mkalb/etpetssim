@@ -29,7 +29,7 @@ final class LabConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         LabConfig config = createConfig(
                 LabConstraints.CELL_SHAPE_DEFAULT,
                 LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,

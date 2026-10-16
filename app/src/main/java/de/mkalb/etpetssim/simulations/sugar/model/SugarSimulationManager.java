@@ -62,7 +62,7 @@ public final class SugarSimulationManager
      * @return clamped index in [0, size - 1]
      */
     @SuppressWarnings({"MagicNumber", "NumericCastThatLosesPrecision"})
-    private int percentToClampedIndex(int size, double percent) {
+    private int computeClampedIndex(int size, double percent) {
         int count = (int) ((percent < 0.5d) ? Math.floor(size * percent) : Math.ceil(size * percent));
         return Math.clamp(count, 0, size - 1);
     }
@@ -75,24 +75,24 @@ public final class SugarSimulationManager
         if (config().sugarPeaks() > 0) {
             if ((config().sugarPeaks() % 2) == 1) {
                 peakCoordinates.add(new GridCoordinate(
-                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_CENTER),
-                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_CENTER)));
+                        computeClampedIndex(width, SugarBalance.PEAK_POSITION_CENTER),
+                        computeClampedIndex(height, SugarBalance.PEAK_POSITION_CENTER)));
             }
             if (config().sugarPeaks() >= 2) {
                 peakCoordinates.add(new GridCoordinate(
-                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_THREE_QUARTERS),
-                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_QUARTER)));
+                        computeClampedIndex(width, SugarBalance.PEAK_POSITION_THREE_QUARTERS),
+                        computeClampedIndex(height, SugarBalance.PEAK_POSITION_QUARTER)));
                 peakCoordinates.add(new GridCoordinate(
-                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_QUARTER),
-                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_THREE_QUARTERS)));
+                        computeClampedIndex(width, SugarBalance.PEAK_POSITION_QUARTER),
+                        computeClampedIndex(height, SugarBalance.PEAK_POSITION_THREE_QUARTERS)));
             }
             if (config().sugarPeaks() >= 4) {
                 peakCoordinates.add(new GridCoordinate(
-                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_QUARTER),
-                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_QUARTER)));
+                        computeClampedIndex(width, SugarBalance.PEAK_POSITION_QUARTER),
+                        computeClampedIndex(height, SugarBalance.PEAK_POSITION_QUARTER)));
                 peakCoordinates.add(new GridCoordinate(
-                        percentToClampedIndex(width, SugarBalance.PEAK_POSITION_THREE_QUARTERS),
-                        percentToClampedIndex(height, SugarBalance.PEAK_POSITION_THREE_QUARTERS)));
+                        computeClampedIndex(width, SugarBalance.PEAK_POSITION_THREE_QUARTERS),
+                        computeClampedIndex(height, SugarBalance.PEAK_POSITION_THREE_QUARTERS)));
             }
         }
 
@@ -147,7 +147,7 @@ public final class SugarSimulationManager
                     cancellation.checkCanceled();
                 }
                 GridCoordinate current = queue.remove();
-                for (var result : CellNeighborhoods.neighborEdgeResults(current, config.neighborhoodMode(), structure)) {
+                for (var result : CellNeighborhoods.neighborEdgeBehaviorResults(current, config.neighborhoodMode(), structure)) {
                     if ((result.action() == EdgeBehaviorAction.VALID) || (result.action() == EdgeBehaviorAction.WRAPPED)) {
                         GridCoordinate mapped = result.mapped();
                         if (!visited.contains(mapped)) {
@@ -205,7 +205,7 @@ public final class SugarSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.update(
+        statistics.setStepData(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
     }

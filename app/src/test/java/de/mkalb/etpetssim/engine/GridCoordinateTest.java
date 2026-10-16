@@ -29,9 +29,13 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testConstants() {
+    void testOrigin() {
         assertEquals(0, GridCoordinate.ORIGIN.x());
         assertEquals(0, GridCoordinate.ORIGIN.y());
+    }
+
+    @Test
+    void testIllegal() {
         assertTrue(GridCoordinate.ILLEGAL.isIllegal());
         assertEquals(Integer.MIN_VALUE, GridCoordinate.ILLEGAL.x());
         assertEquals(Integer.MIN_VALUE, GridCoordinate.ILLEGAL.y());
@@ -49,7 +53,7 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testIsWithinBoundsInt() {
+    void testIsWithinBoundsWithInts() {
         GridCoordinate coordinate = new GridCoordinate(5, 5);
         assertTrue(coordinate.isWithinBounds(0, 0, 10, 10));
         assertFalse(coordinate.isWithinBounds(0, 0, 5, 5));
@@ -98,30 +102,38 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testBooleanEvenOddChecks() {
+    void testIsEvenColumn() {
         assertTrue(new GridCoordinate(0, 0).isEvenColumn());
-        assertFalse(new GridCoordinate(0, 0).isOddColumn());
-        assertTrue(new GridCoordinate(0, 0).isEvenRow());
-        assertFalse(new GridCoordinate(0, 0).isOddRow());
-
         assertTrue(new GridCoordinate(2, 3).isEvenColumn());
-        assertFalse(new GridCoordinate(2, 3).isOddColumn());
-        assertFalse(new GridCoordinate(2, 3).isEvenRow());
-        assertTrue(new GridCoordinate(2, 3).isOddRow());
-
         assertFalse(new GridCoordinate(1, 4).isEvenColumn());
-        assertTrue(new GridCoordinate(1, 4).isOddColumn());
-        assertTrue(new GridCoordinate(1, 4).isEvenRow());
-        assertFalse(new GridCoordinate(1, 4).isOddRow());
-
         assertTrue(new GridCoordinate(6, 8).isEvenColumn());
-        assertFalse(new GridCoordinate(6, 8).isOddColumn());
-        assertTrue(new GridCoordinate(6, 8).isEvenRow());
-        assertFalse(new GridCoordinate(6, 8).isOddRow());
-
         assertFalse(new GridCoordinate(7, 9).isEvenColumn());
+    }
+
+    @Test
+    void testIsOddColumn() {
+        assertFalse(new GridCoordinate(0, 0).isOddColumn());
+        assertFalse(new GridCoordinate(2, 3).isOddColumn());
+        assertTrue(new GridCoordinate(1, 4).isOddColumn());
+        assertFalse(new GridCoordinate(6, 8).isOddColumn());
         assertTrue(new GridCoordinate(7, 9).isOddColumn());
+    }
+
+    @Test
+    void testIsEvenRow() {
+        assertTrue(new GridCoordinate(0, 0).isEvenRow());
+        assertFalse(new GridCoordinate(2, 3).isEvenRow());
+        assertTrue(new GridCoordinate(1, 4).isEvenRow());
+        assertTrue(new GridCoordinate(6, 8).isEvenRow());
         assertFalse(new GridCoordinate(7, 9).isEvenRow());
+    }
+
+    @Test
+    void testIsOddRow() {
+        assertFalse(new GridCoordinate(0, 0).isOddRow());
+        assertTrue(new GridCoordinate(2, 3).isOddRow());
+        assertFalse(new GridCoordinate(1, 4).isOddRow());
+        assertFalse(new GridCoordinate(6, 8).isOddRow());
         assertTrue(new GridCoordinate(7, 9).isOddRow());
     }
 
@@ -150,7 +162,7 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testClampToBoundsInt() {
+    void testClampToBoundsWithInts() {
         GridCoordinate coordinate = new GridCoordinate(15, -5);
         GridCoordinate clamped = coordinate.clampToBounds(0, 0, 10, 10);
         assertEquals(new GridCoordinate(9, 0), clamped);
@@ -183,7 +195,7 @@ final class GridCoordinateTest {
     }
 
     @Test
-    void testOffsetInt() {
+    void testOffsetWithInts() {
         GridCoordinate coordinate = new GridCoordinate(3, 4);
         assertEquals(new GridCoordinate(5, 1), coordinate.offset(2, -3));
         assertEquals(new GridCoordinate(1, 7), coordinate.offset(-2, 3));

@@ -1,0 +1,68 @@
+package de.mkalb.etpetssim.simulations.forest.model;
+
+import de.mkalb.etpetssim.engine.GridStructure;
+import de.mkalb.etpetssim.engine.executor.SynchronousStepLogic;
+import de.mkalb.etpetssim.engine.model.*;
+import de.mkalb.etpetssim.engine.neighborhood.*;
+import de.mkalb.etpetssim.simulations.forest.model.entity.ForestEntity;
+
+import java.util.*;
+
+public final class ForestStepLogic implements SynchronousStepLogic<ForestEntity, ForestStatistics> {
+
+    private final GridStructure structure;
+    private final ForestConfig config;
+    private final Random random;
+
+    public ForestStepLogic(GridStructure structure, ForestConfig config, Random random) {
+        this.structure = structure;
+        this.config = config;
+        this.random = random;
+    }
+
+    @Override
+    public void performSynchronousStep(ReadableGridModel<ForestEntity> currentGridModel,
+                                       WritableGridModel<ForestEntity> nextGridModel,
+                                       int stepIndex,
+                                       ForestStatistics statistics) {
+        currentGridModel.allCells()
+                        .stream()
+                        .map(c -> computeNextCell(c, currentGridModel))
+                        .filter(c -> !c.entity().isEmpty())
+                        .forEach(nextGridModel::setEntity);
+        int treeCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isTree));
+        int burningCells = Math.toIntExact(nextGridModel.countEntities(ForestEntity::isBurning));
+
+        statistics.setCellCounts(treeCells, burningCells);
+    }
+
+    private GridCell<ForestEntity> computeNextCell(GridCell<ForestEntity> cell,
+                                                   ReadableGridModel<ForestEntity> model) {
+        return switch (cell.entity()) {
+            case EMPTY -> {
+                if (random.nextDouble() < config.treeGrowthProbability()) {
+                    yield new GridCell<>(cell.coordinate(), ForestEntity.TREE);
+                }
+                yield cell;
+            }
+            case TREE -> {
+                if (hasBurningNeighbor(cell, model)
+                        || (random.nextDouble() < config.lightningIgnitionProbability())) {
+                    yield new GridCell<>(cell.coordinate(), ForestEntity.BURNING);
+                }
+                yield cell;
+            }
+            case BURNING -> new GridCell<>(cell.coordinate(), ForestEntity.EMPTY);
+        };
+    }
+
+    private boolean hasBurningNeighbor(GridCell<ForestEntity> cell, ReadableGridModel<ForestEntity> model) {
+        return CellNeighborhoods.cellNeighborsIgnoringEdgeBehavior(cell.coordinate(), config.neighborhoodMode(), structure.cellShape())
+                                .map(neighbor -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(neighbor.neighborCoordinate(), structure))
+                                .filter(r -> (r.action() == EdgeBehaviorAction.VALID) || (r.action() == EdgeBehaviorAction.WRAPPED))
+                                .map(EdgeBehaviorResult::mapped)
+                                .map(model::getEntity)
+                                .anyMatch(ForestEntity::isBurning);
+    }
+
+}

@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 /**
  * Executes synchronous simulation steps on a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}.
  * <p>
- * This runner applies a synchronous update strategy to the simulation model:
+ * This runner applies synchronous step logic to the simulation model:
  * it reads from the current model (as a {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}) and writes results
  * to the next model. After each step, the models are swapped, and the next model is cleared
  * for the following step.
@@ -18,27 +18,27 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 public final class SynchronousStepRunner<ENT extends GridEntity, C> implements SimulationStepRunner<C> {
 
     private final SynchronousStepLogic<ENT, C> stepLogic;
-    private WritableGridModel<ENT> currentModel;
-    private WritableGridModel<ENT> nextModel;
+    private WritableGridModel<ENT> currentGridModel;
+    private WritableGridModel<ENT> nextGridModel;
 
     /**
-     * Constructs a new {@code SynchronousStepRunner} with the given initial model and update strategy.
-     * The update strategy must not modify the {@code ReadableGridModel} parameter.
+     * Constructs a new {@code SynchronousStepRunner} with the given initial model and step logic.
+     * The step logic must not modify the {@code ReadableGridModel} parameter.
      *
      * @param initialModel the initial grid model
      * @param stepLogic    the logic to apply for each synchronous simulation step
      */
     public SynchronousStepRunner(WritableGridModel<ENT> initialModel,
                                  SynchronousStepLogic<ENT, C> stepLogic) {
-        currentModel = initialModel;
-        nextModel = currentModel.copyWithDefaultEntity();
+        currentGridModel = initialModel;
+        nextGridModel = currentGridModel.copyWithDefaultEntity();
         this.stepLogic = stepLogic;
     }
 
     /**
      * Performs a single synchronous simulation step.
      * <p>
-     * The update strategy reads from the current model and writes to the next model.
+     * The step logic reads from the current model and writes to the next model.
      * After the update, the models are swapped and the next model is cleared.
      *
      * @param stepIndex the index of the current simulation step
@@ -46,11 +46,11 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      */
     @Override
     public void performStep(int stepIndex, C context) {
-        stepLogic.performSynchronousStep(currentModel, nextModel, stepIndex, context);
-        WritableGridModel<ENT> tempModel = currentModel;
-        currentModel = nextModel;
-        nextModel = tempModel;
-        nextModel.clear();
+        stepLogic.performSynchronousStep(currentGridModel, nextGridModel, stepIndex, context);
+        WritableGridModel<ENT> tempModel = currentGridModel;
+        currentGridModel = nextGridModel;
+        nextGridModel = tempModel;
+        nextGridModel.clear();
     }
 
     /**
@@ -58,8 +58,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      *
      * @return the current {@link WritableGridModel}
      */
-    public WritableGridModel<ENT> currentModel() {
-        return currentModel;
+    public WritableGridModel<ENT> currentGridModel() {
+        return currentGridModel;
     }
 
     /**
@@ -67,8 +67,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      *
      * @return the next {@link WritableGridModel}
      */
-    public WritableGridModel<ENT> nextModel() {
-        return nextModel;
+    public WritableGridModel<ENT> nextGridModel() {
+        return nextGridModel;
     }
 
 }

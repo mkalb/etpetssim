@@ -33,30 +33,8 @@ final class SpecBackedGridEntityDescriptorProviderTest {
         );
     }
 
-    @Test
-    void testConstantSpecBackedProviderIsRecognizedAsConstantEntity() {
-        GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
-                "constant-id",
-                false,
-                "short.key",
-                "long.key",
-                "description.key",
-                null,
-                null,
-                null
-        );
-        ConstantGridEntityDescriptorProvider provider = new TestConstantSpecBackedProvider(spec);
-
-        assertEquals("constant-id", provider.descriptorId());
-        assertTrue(GridEntity.isConstant(provider));
-    }
-
     private record TestSpecBackedProvider(GridEntityDescriptorSpec descriptorSpec)
             implements SpecBackedGridEntityDescriptorProvider {
-    }
-
-    private record TestConstantSpecBackedProvider(GridEntityDescriptorSpec descriptorSpec)
-            implements ConstantGridEntityDescriptorProvider {
     }
 
 }

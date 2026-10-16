@@ -24,7 +24,7 @@ public final class ForestUserAction
             return;
         }
 
-        var model = manager.currentModel();
+        var model = manager.currentGridModel();
         var statistics = manager.statistics();
         var coordinate = selectedCell.coordinate();
         var entity = model.getEntity(coordinate);
@@ -47,7 +47,7 @@ public final class ForestUserAction
             case ForestEntity.TREE -> 1;
             case ForestEntity.BURNING -> -1;
         };
-        statistics.updateCellCounts(
+        statistics.setCellCounts(
                 statistics.treeCells() + treeDelta,
                 statistics.burningCells() + burningDelta
         );

@@ -24,23 +24,23 @@ final class LangtonUserActionTest {
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.fromString((cellShape == CellShape.TRIANGLE) ? "URR" : LangtonConstraints.RULE_DEFAULT)
+                LangtonMovementRules.parse((cellShape == CellShape.TRIANGLE) ? "URR" : LangtonConstraints.RULE_DEFAULT)
         );
     }
 
     private static LangtonCell selectedCell(LangtonSimulationManager manager, GridCoordinate coordinate) {
-        return LangtonCell.of(manager.currentModel(), coordinate);
+        return LangtonCell.from(manager.currentGridModel(), coordinate);
     }
 
     @Test
-    void testAddAntUsesSelectedDirectionOnUnvisitedCell() {
+    void testApplyAddAntUsesSelectedDirectionOnUnvisitedCell() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
-        GridCoordinate coordinate = manager.currentModel()
+        GridCoordinate coordinate = manager.currentGridModel()
                                            .groundModel()
                                            .filteredCoordinates(e -> e == TerrainConstant.UNVISITED)
                                            .stream()
-                                           .filter(c -> manager.currentModel().antModel().getEntity(c) instanceof NoAgent)
+                                           .filter(c -> manager.currentGridModel().antModel().getEntity(c) instanceof NoAgent)
                                            .findFirst()
                                            .orElseThrow();
         int antCellsBefore = manager.statistics().antCells();
@@ -52,15 +52,15 @@ final class LangtonUserActionTest {
                 selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertInstanceOf(Ant.class, manager.currentModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(CompassDirection.W, ((Ant) manager.currentModel().antModel().getEntity(coordinate)).direction()),
+                () -> assertInstanceOf(Ant.class, manager.currentGridModel().antModel().getEntity(coordinate)),
+                () -> assertEquals(CompassDirection.W, ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction()),
                 () -> assertEquals(antCellsBefore + 1, manager.statistics().antCells()),
                 () -> assertEquals(visitedCellsBefore + 1, manager.statistics().visitedCells())
         );
     }
 
     @Test
-    void testAddAntUsesValidDirectionForTriangleCellPointingDown() {
+    void testApplyAddAntUsesValidDirectionForTriangleCellPointingDown() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig(CellShape.TRIANGLE));
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -72,13 +72,13 @@ final class LangtonUserActionTest {
 
         assertAll(
                 () -> assertTrue(coordinate.isTriangleCellPointingDown()),
-                () -> assertInstanceOf(Ant.class, manager.currentModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(CompassDirection.N, ((Ant) manager.currentModel().antModel().getEntity(coordinate)).direction())
+                () -> assertInstanceOf(Ant.class, manager.currentGridModel().antModel().getEntity(coordinate)),
+                () -> assertEquals(CompassDirection.N, ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction())
         );
     }
 
     @Test
-    void testAddAntIgnoresInvalidDirectionForTriangleCellPointingDown() {
+    void testApplyAddAntIgnoresInvalidDirectionForTriangleCellPointingDown() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig(CellShape.TRIANGLE));
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -92,14 +92,14 @@ final class LangtonUserActionTest {
 
         assertAll(
                 () -> assertTrue(coordinate.isTriangleCellPointingDown()),
-                () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
+                () -> assertInstanceOf(NoAgent.class, manager.currentGridModel().antModel().getEntity(coordinate)),
                 () -> assertEquals(antCellsBefore, manager.statistics().antCells()),
                 () -> assertEquals(visitedCellsBefore, manager.statistics().visitedCells())
         );
     }
 
     @Test
-    void testAddAntUsesValidDirectionForTriangleCellPointingUp() {
+    void testApplyAddAntUsesValidDirectionForTriangleCellPointingUp() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig(CellShape.TRIANGLE));
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = new GridCoordinate(1, 0);
@@ -111,16 +111,16 @@ final class LangtonUserActionTest {
 
         assertAll(
                 () -> assertFalse(coordinate.isTriangleCellPointingDown()),
-                () -> assertInstanceOf(Ant.class, manager.currentModel().antModel().getEntity(coordinate)),
-                () -> assertEquals(CompassDirection.S, ((Ant) manager.currentModel().antModel().getEntity(coordinate)).direction())
+                () -> assertInstanceOf(Ant.class, manager.currentGridModel().antModel().getEntity(coordinate)),
+                () -> assertEquals(CompassDirection.S, ((Ant) manager.currentGridModel().antModel().getEntity(coordinate)).direction())
         );
     }
 
     @Test
-    void testRemoveAntRemovesSelectedAntCell() {
+    void testApplyRemoveAntRemovesSelectedAntCell() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
-        GridCoordinate coordinate = manager.currentModel()
+        GridCoordinate coordinate = manager.currentGridModel()
                                            .antModel()
                                            .filteredCoordinates(LangtonEntity::isAgent)
                                            .stream()
@@ -135,17 +135,17 @@ final class LangtonUserActionTest {
                 selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
+                () -> assertInstanceOf(NoAgent.class, manager.currentGridModel().antModel().getEntity(coordinate)),
                 () -> assertEquals(antCellsBefore - 1, manager.statistics().antCells()),
                 () -> assertEquals(visitedCellsBefore, manager.statistics().visitedCells())
         );
     }
 
     @Test
-    void testRemoveAntOnCellWithoutAntDoesNothing() {
+    void testApplyRemoveAntOnCellWithoutAntDoesNothing() {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
-        GridCoordinate coordinate = manager.currentModel()
+        GridCoordinate coordinate = manager.currentGridModel()
                                            .groundModel()
                                            .filteredCoordinates(TerrainConstant::isUnvisited)
                                            .stream()
@@ -160,7 +160,7 @@ final class LangtonUserActionTest {
                 selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertInstanceOf(NoAgent.class, manager.currentModel().antModel().getEntity(coordinate)),
+                () -> assertInstanceOf(NoAgent.class, manager.currentGridModel().antModel().getEntity(coordinate)),
                 () -> assertEquals(antCellsBefore, manager.statistics().antCells()),
                 () -> assertEquals(visitedCellsBefore, manager.statistics().visitedCells())
         );

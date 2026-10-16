@@ -37,20 +37,38 @@ final class SimulationConfigTest {
     }
 
     @Test
-    void testCreateDerivedGridValues() {
+    void testCreateGridTopology() {
         TestSimulationConfig config = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE + 1, CELL_EDGE_LENGTH);
 
         GridTopology topology = config.createGridTopology();
-        GridSize size = config.createGridSize();
-        GridStructure structure = config.createGridStructure();
 
         assertAll(
                 () -> assertEquals(config.cellShape(), topology.cellShape()),
-                () -> assertEquals(config.gridEdgeBehavior(), topology.gridEdgeBehavior()),
+                () -> assertEquals(config.gridEdgeBehavior(), topology.gridEdgeBehavior())
+        );
+    }
+
+    @Test
+    void testCreateGridSize() {
+        TestSimulationConfig config = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE + 1, CELL_EDGE_LENGTH);
+
+        GridSize size = config.createGridSize();
+
+        assertAll(
                 () -> assertEquals(config.gridWidth(), size.width()),
-                () -> assertEquals(config.gridHeight(), size.height()),
-                () -> assertEquals(topology, structure.topology()),
-                () -> assertEquals(size, structure.size())
+                () -> assertEquals(config.gridHeight(), size.height())
+        );
+    }
+
+    @Test
+    void testCreateGridStructure() {
+        TestSimulationConfig config = createConfig(GridSize.MIN_SIZE, GridSize.MIN_SIZE + 1, CELL_EDGE_LENGTH);
+
+        GridStructure structure = config.createGridStructure();
+
+        assertAll(
+                () -> assertEquals(config.createGridTopology(), structure.topology()),
+                () -> assertEquals(config.createGridSize(), structure.size())
         );
     }
 

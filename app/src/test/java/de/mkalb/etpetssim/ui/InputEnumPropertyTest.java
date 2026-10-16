@@ -31,7 +31,7 @@ final class InputEnumPropertyTest {
     }
 
     @Test
-    void testSetInvalidValueUpdatesProperty() {
+    void testSetValueUpdatesPropertyForInvalidValue() {
         InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA,
                 List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
                 Enum::name);
@@ -46,7 +46,7 @@ final class InputEnumPropertyTest {
     }
 
     @Test
-    void testSetValidValueUpdatesProperty() {
+    void testSetValueUpdatesPropertyForValidValue() {
         InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA,
                 List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
                 Enum::name);
@@ -61,7 +61,7 @@ final class InputEnumPropertyTest {
     }
 
     @Test
-    void testGetValidValuesReturnsUnmodifiableList() {
+    void testValidValuesReturnsUnmodifiableList() {
         InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA,
                 List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
                 Enum::name);
@@ -86,7 +86,7 @@ final class InputEnumPropertyTest {
     }
 
     @Test
-    void testSingletonValidValuesListReportsNoMultipleValues() {
+    void testHasMultipleValidValuesReturnsFalseForSingletonList() {
         InputEnumProperty<TestMode> property = InputEnumProperty.of(
                 TestMode.MODE_ALPHA,
                 List.of(TestMode.MODE_ALPHA),

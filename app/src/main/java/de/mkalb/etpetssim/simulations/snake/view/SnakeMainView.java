@@ -120,9 +120,9 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<SnakeEntity> oldGridCell,
-                                          @Nullable GridCell<SnakeEntity> newGridCell) {
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                 @Nullable GridCell<SnakeEntity> oldGridCell,
+                                                 @Nullable GridCell<SnakeEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -140,7 +140,7 @@ public final class SnakeMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<SnakeEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<SnakeEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -170,45 +170,45 @@ public final class SnakeMainView
         Color headDeadColor = toDeadFillColor(headAliveColor, DEAD_HEAD_HUE);
         Color headDeadBorderColor = toDeadBorderColor(headAliveBorderColor, DEAD_HEAD_HUE);
 
-        currentModel.filteredCoordinates(SnakeEntity::isWall)
-                    .forEach(coordinate ->
-                            dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
-        currentModel.filteredCoordinates(SnakeEntity::isFood)
-                    .forEach(coordinate ->
-                            dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
-        currentModel.filteredCells(e -> e instanceof SnakeHead)
-                    .forEach(cell -> {
-                        if (cell.entity() instanceof SnakeHead head) {
-                            boolean isDead = head.isDead();
-                            // Check if last selected entity is not null and is the same instance as the current head
-                            boolean isSelected = isSelected(head);
-                            Color snakeHeadColor;
-                            Color snakeHeadColorBorder;
-                            Color snakeSegmentColor;
-                            Color snakeSegmentColorBorder;
-                            if (isDead) {
-                                snakeHeadColor = headDeadColor;
-                                snakeHeadColorBorder = headDeadBorderColor;
-                                snakeSegmentColor = segmentDeadColor;
-                                snakeSegmentColorBorder = segmentDeadBorderColor;
-                            } else if (isSelected) {
-                                snakeHeadColor = headAliveSelectedColor;
-                                snakeHeadColorBorder = headAliveSelectedBorderColor;
-                                snakeSegmentColor = segmentAliveSelectedColor;
-                                snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
-                            } else {
-                                snakeHeadColor = headAliveColor;
-                                snakeHeadColorBorder = headAliveBorderColor;
-                                snakeSegmentColor = segmentAliveColor;
-                                snakeSegmentColorBorder = segmentAliveBorderColor;
+        currentGridModel.filteredCoordinates(SnakeEntity::isWall)
+                        .forEach(coordinate ->
+                                dynamicPainter.drawCell(coordinate, wallDescriptor.color(), wallDescriptor.borderColor(), WALL_STROKE_LINE_WIDTH));
+        currentGridModel.filteredCoordinates(SnakeEntity::isFood)
+                        .forEach(coordinate ->
+                                dynamicPainter.drawCellInnerCircle(coordinate, growthFoodDescriptor.color(), growthFoodDescriptor.borderColor(), FOOD_STROKE_LINE_WIDTH, StrokeType.INSIDE));
+        currentGridModel.filteredCells(e -> e instanceof SnakeHead)
+                        .forEach(cell -> {
+                            if (cell.entity() instanceof SnakeHead head) {
+                                boolean isDead = head.isDead();
+                                // Check if last selected entity is not null and is the same instance as the current head
+                                boolean isSelected = isSelected(head);
+                                Color snakeHeadColor;
+                                Color snakeHeadColorBorder;
+                                Color snakeSegmentColor;
+                                Color snakeSegmentColorBorder;
+                                if (isDead) {
+                                    snakeHeadColor = headDeadColor;
+                                    snakeHeadColorBorder = headDeadBorderColor;
+                                    snakeSegmentColor = segmentDeadColor;
+                                    snakeSegmentColorBorder = segmentDeadBorderColor;
+                                } else if (isSelected) {
+                                    snakeHeadColor = headAliveSelectedColor;
+                                    snakeHeadColorBorder = headAliveSelectedBorderColor;
+                                    snakeSegmentColor = segmentAliveSelectedColor;
+                                    snakeSegmentColorBorder = segmentAliveSelectedBorderColor;
+                                } else {
+                                    snakeHeadColor = headAliveColor;
+                                    snakeHeadColorBorder = headAliveBorderColor;
+                                    snakeSegmentColor = segmentAliveColor;
+                                    snakeSegmentColorBorder = segmentAliveBorderColor;
+                                }
+                                for (GridCoordinate coordinate : head.currentSegments()) {
+                                    dynamicPainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
+                                }
+                                dynamicPainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
+                                        StrokeType.OUTSIDE);
                             }
-                            for (GridCoordinate coordinate : head.currentSegments()) {
-                                dynamicPainter.drawCell(coordinate, snakeSegmentColor, snakeSegmentColorBorder, SNAKE_SEGMENT_STROKE_LINE_WIDTH);
-                            }
-                            dynamicPainter.drawCellInnerCircle(cell.coordinate(), snakeHeadColor, snakeHeadColorBorder, SNAKE_HEAD_STROKE_LINE_WIDTH,
-                                    StrokeType.OUTSIDE);
-                        }
-                    });
+                        });
     }
 
     @Override
@@ -261,7 +261,7 @@ public final class SnakeMainView
                 AppLocalization.getText(SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY),
                 AppLocalization.getText(SNAKE_TOOLBAR_ADD_SNAKE_STRATEGY_TOOLTIP),
                 FXStyleClasses.SIMULATION_EDIT_TOOLBAR_COMBOBOX,
-                this::registerActionToolBarCleanup);
+                this::registerEditToolBarCleanup);
         Label strategyLabel = strategyControl.label();
         strategyLabel.getStyleClass().add(FXStyleClasses.SIMULATION_EDIT_TOOLBAR_OPTION_LABEL);
         var strategyComboBox = strategyControl.controlRegion();
@@ -275,7 +275,7 @@ public final class SnakeMainView
             strategyComboBox.disableProperty().bind(disableWhenNoAddSnakeToolSelected);
         }
 
-        registerActionToolBarCleanup(() -> {
+        registerEditToolBarCleanup(() -> {
             strategyLabel.disableProperty().unbind();
             strategyComboBox.disableProperty().unbind();
         });

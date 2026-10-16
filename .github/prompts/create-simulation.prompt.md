@@ -124,7 +124,7 @@ after the code-producing steps (Steps 1–4) to catch errors early.
 ### Step 1 — Register `SimulationType` enum constant and tests
 
 Add a constant using the **enum constant** name in
-`app/src/main/java/de/mkalb/etpetssim/SimulationType.java` with all constructor arguments:
+`app/src/main/java/de/mkalb/etpetssim/simulations/core/SimulationType.java` with all constructor arguments:
 
 - `implemented` flag — use `true`
 - `showOnStartScreen` flag — use `true`
@@ -137,7 +137,7 @@ Add a constant using the **enum constant** name in
 If a **Wikipedia URL** was provided, add a Javadoc `@see` or `<a href="...">` link matching existing constants. Follow
 the declaration order and Javadoc style of existing constants.
 
-Then update `app/src/test/java/de/mkalb/etpetssim/SimulationTypeTest.java`: add the new **enum constant** to every test
+Then update `app/src/test/java/de/mkalb/etpetssim/simulations/core/SimulationTypeTest.java`: add the new **enum constant** to every test
 method that references individual `SimulationType` constants, following the existing pattern in each method.
 
 ### Step 2 — Create simulation packages

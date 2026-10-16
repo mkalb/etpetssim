@@ -12,6 +12,27 @@ import static org.junit.jupiter.api.Assertions.*;
 @Execution(ExecutionMode.SAME_THREAD)
 final class GridEntityDescriptorRegistryTest {
 
+    private static final GridEntityDescriptorProvider PROVIDER_A = new TestDescriptorProvider(
+            "entity.a",
+            true,
+            "conway.entity.alive.short",
+            "conway.entity.alive.long",
+            "conway.entity.alive.description",
+            null,
+            Color.GREEN,
+            null
+    );
+    private static final GridEntityDescriptorProvider PROVIDER_B = new TestDescriptorProvider(
+            "entity.b",
+            false,
+            "conway.entity.dead.short",
+            "conway.entity.dead.long",
+            "conway.entity.dead.description",
+            "forest.entity.tree.emoji",
+            Color.DARKGRAY,
+            Color.GRAY
+    );
+
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
@@ -39,38 +60,28 @@ final class GridEntityDescriptorRegistryTest {
     }
 
     @Test
-    void testFactoryMethodsRegisterProviders() {
-        GridEntityDescriptorProvider providerA = new TestDescriptorProvider(
-                "entity.a",
-                true,
-                "conway.entity.alive.short",
-                "conway.entity.alive.long",
-                "conway.entity.alive.description",
-                null,
-                Color.GREEN,
-                null
-        );
-        GridEntityDescriptorProvider providerB = new TestDescriptorProvider(
-                "entity.b",
-                false,
-                "conway.entity.dead.short",
-                "conway.entity.dead.long",
-                "conway.entity.dead.description",
-                "forest.entity.tree.emoji",
-                Color.DARKGRAY,
-                Color.GRAY
-        );
+    void testOf() {
+        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.of(PROVIDER_A, PROVIDER_B);
 
-        GridEntityDescriptorRegistry fromVarargs = GridEntityDescriptorRegistry.of(providerA, providerB);
-        GridEntityDescriptorRegistry fromArray = GridEntityDescriptorRegistry.ofArray(new GridEntityDescriptorProvider[]{providerA, providerB});
-        GridEntityDescriptorRegistry fromCollection = GridEntityDescriptorRegistry.ofCollection(List.of(providerA, providerB));
+        assertRegisteredDescriptor(registry, PROVIDER_A);
+        assertRegisteredDescriptor(registry, PROVIDER_B);
+    }
 
-        assertRegisteredDescriptor(fromVarargs, providerA);
-        assertRegisteredDescriptor(fromVarargs, providerB);
-        assertRegisteredDescriptor(fromArray, providerA);
-        assertRegisteredDescriptor(fromArray, providerB);
-        assertRegisteredDescriptor(fromCollection, providerA);
-        assertRegisteredDescriptor(fromCollection, providerB);
+    @Test
+    void testOfArray() {
+        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.ofArray(
+                new GridEntityDescriptorProvider[]{PROVIDER_A, PROVIDER_B});
+
+        assertRegisteredDescriptor(registry, PROVIDER_A);
+        assertRegisteredDescriptor(registry, PROVIDER_B);
+    }
+
+    @Test
+    void testOfCollection() {
+        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.ofCollection(List.of(PROVIDER_A, PROVIDER_B));
+
+        assertRegisteredDescriptor(registry, PROVIDER_A);
+        assertRegisteredDescriptor(registry, PROVIDER_B);
     }
 
     @Test
@@ -106,10 +117,16 @@ final class GridEntityDescriptorRegistryTest {
     }
 
     @Test
-    void testGetRequiredThrowsForUnknownDescriptorId() {
+    void testRequireByDescriptorIdThrowsForUnknownId() {
         GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(1);
 
         assertThrows(NoSuchElementException.class, () -> registry.requireByDescriptorId("missing"));
+    }
+
+    @Test
+    void testFindByDescriptorIdReturnsEmptyForUnknownId() {
+        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(1);
+
         assertTrue(registry.findByDescriptorId("missing").isEmpty());
     }
 

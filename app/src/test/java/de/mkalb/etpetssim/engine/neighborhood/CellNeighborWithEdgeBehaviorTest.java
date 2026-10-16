@@ -27,7 +27,7 @@ final class CellNeighborWithEdgeBehaviorTest {
     }
 
     @Test
-    void testStaticOf() {
+    void testOf() {
         CellNeighborWithEdgeBehavior cellNeighborWithEdgeBehavior = CellNeighborWithEdgeBehavior.of(
                 new CellNeighbor(new GridCoordinate(1, 1), CompassDirection.W, CellConnectionType.VERTEX, new GridCoordinate(0, 1)),
                 new EdgeBehaviorResult(new GridCoordinate(0, 1), new GridCoordinate(0, 1), EdgeBehaviorAction.VALID)

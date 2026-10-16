@@ -180,7 +180,7 @@ final class CellDimensionTest {
     }
 
     @Test
-    void testBoundingBoxAtCoordinates() {
+    void testBoundingBoxAtWithDoubles() {
         CellDimension dimension = createValidCellDimension();
 
         assertEquals(new Rectangle2D(TOP_LEFT_X, TOP_LEFT_Y, WIDTH, HEIGHT),
@@ -188,7 +188,7 @@ final class CellDimensionTest {
     }
 
     @Test
-    void testBoundingBoxAtPoint() {
+    void testBoundingBoxAt() {
         CellDimension dimension = createValidCellDimension();
         Point2D topLeftPoint = new Point2D(TOP_LEFT_X, TOP_LEFT_Y);
 

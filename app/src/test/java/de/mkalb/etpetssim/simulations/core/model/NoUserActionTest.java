@@ -28,7 +28,7 @@ final class NoUserActionTest {
     }
 
     private static GridCell<ForestEntity> selectedCell(ForestSimulationManager manager, GridCoordinate coordinate) {
-        return new GridCell<>(coordinate, manager.currentModel().getEntity(coordinate));
+        return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 
     @Test
@@ -37,12 +37,12 @@ final class NoUserActionTest {
         NoUserAction<ForestEntity, WritableGridModel<ForestEntity>, ForestConfig, ForestStatistics, ForestSimulationManager> userAction =
                 new NoUserAction<>();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().setEntity(coordinate, ForestEntity.TREE);
+        manager.currentGridModel().setEntity(coordinate, ForestEntity.TREE);
 
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertSame(ForestEntity.TREE, manager.currentModel().getEntity(coordinate)),
+                () -> assertSame(ForestEntity.TREE, manager.currentGridModel().getEntity(coordinate)),
                 () -> assertEquals(0, manager.statistics().treeCells()),
                 () -> assertEquals(0, manager.statistics().burningCells())
         );
@@ -57,7 +57,7 @@ final class NoUserActionTest {
         userAction.apply(manager, NoUserActionContext.NO_CONTEXT, null);
 
         assertAll(
-                () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty()),
+                () -> assertTrue(manager.currentGridModel().nonDefaultCoordinates().isEmpty()),
                 () -> assertEquals(manager.statistics().totalCells(), manager.statistics().emptyCells())
         );
     }

@@ -106,14 +106,14 @@ public final class WatorConfigViewModel
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
-        addConfigValidationRule(
+        registerConfigValidationRule(
                 fishPercent.property().add(sharkPercent.property()).greaterThan(POPULATION_SHARE_SUM_MAX_INCLUSIVE),
                 () -> AppLocalization.getText(WATOR_CONFIG_VALIDATION_POPULATION_SHARE)
         );
     }
 
     @Override
-    public WatorConfig getConfig() {
+    public WatorConfig createConfig() {
         return new WatorConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

@@ -8,10 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class ConwayTransitionRulesTest {
 
-    // --- Construction via collections ---
-
     @Test
-    void testOfCollectionsCreatesCorrectRules() {
+    void testOfCreatesCorrectRules() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(2, 3), List.of(3));
         assertAll(
                 () -> assertEquals(new TreeSet<>(List.of(2, 3)), rules.surviveCounts()),
@@ -20,7 +18,7 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testConstructorWithEmptySetsIsAllowed() {
+    void testConstructorAcceptsEmptySets() {
         ConwayTransitionRules rules = new ConwayTransitionRules(new TreeSet<>(), new TreeSet<>());
         assertAll(
                 () -> assertTrue(rules.surviveCounts().isEmpty()),
@@ -29,7 +27,7 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testConstructorStoresSurviveAndBirthCountsInSortedOrder() {
+    void testOfStoresCountsInSortedOrder() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(3, 2, 5), List.of(6, 1));
         assertAll(
                 () -> assertEquals(List.of(2, 3, 5), new ArrayList<>(rules.surviveCounts())),
@@ -73,22 +71,20 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testSurviveCountsIsUnmodifiable() {
+    void testSurviveCountsReturnsUnmodifiableSet() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(2, 3), List.of(3));
         assertThrows(UnsupportedOperationException.class, () -> rules.surviveCounts().add(1));
     }
 
     @Test
-    void testBirthCountsIsUnmodifiable() {
+    void testBirthCountsReturnsUnmodifiableSet() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(2, 3), List.of(3));
         assertThrows(UnsupportedOperationException.class, () -> rules.birthCounts().add(1));
     }
 
-    // --- Construction via display string ---
-
     @Test
-    void testOfDisplayStringParsesConwayLifeRules() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("23/3");
+    void testParseParsesConwayLifeRules() {
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
         assertAll(
                 () -> assertEquals(new TreeSet<>(List.of(2, 3)), rules.surviveCounts()),
                 () -> assertEquals(new TreeSet<>(List.of(3)), rules.birthCounts())
@@ -96,8 +92,8 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testOfDisplayStringParsesMultiDigitRules() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("1257/1357");
+    void testParseParsesMultiDigitRules() {
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("1257/1357");
         assertAll(
                 () -> assertEquals(new TreeSet<>(List.of(1, 2, 5, 7)), rules.surviveCounts()),
                 () -> assertEquals(new TreeSet<>(List.of(1, 3, 5, 7)), rules.birthCounts())
@@ -105,8 +101,8 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testOfDisplayStringParsesEmptyParts() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("/");
+    void testParseParsesEmptyParts() {
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("/");
         assertAll(
                 () -> assertTrue(rules.surviveCounts().isEmpty()),
                 () -> assertTrue(rules.birthCounts().isEmpty())
@@ -114,8 +110,8 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testOfDisplayStringDeduplicatesDigits() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("223/33");
+    void testParseDeduplicatesDigits() {
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("223/33");
         assertAll(
                 () -> assertEquals(new TreeSet<>(List.of(2, 3)), rules.surviveCounts()),
                 () -> assertEquals(new TreeSet<>(List.of(3)), rules.birthCounts())
@@ -123,20 +119,18 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testOfDisplayStringRejectsMissingSlash() {
-        assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.of("23"));
+    void testParseRejectsMissingSlash() {
+        assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse("23"));
     }
 
     @Test
-    void testOfDisplayStringRejectsMultipleSlashes() {
-        assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.of("2/3/4"));
+    void testParseRejectsMultipleSlashes() {
+        assertThrows(IllegalArgumentException.class, () -> ConwayTransitionRules.parse("2/3/4"));
     }
-
-    // --- shouldSurvive ---
 
     @Test
     void testShouldSurviveReturnsTrueForMatchingCount() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("23/3");
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
         assertAll(
                 () -> assertTrue(rules.shouldSurvive(2)),
                 () -> assertTrue(rules.shouldSurvive(3))
@@ -145,7 +139,7 @@ final class ConwayTransitionRulesTest {
 
     @Test
     void testShouldSurviveReturnsFalseForNonMatchingCount() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("23/3");
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
         assertAll(
                 () -> assertFalse(rules.shouldSurvive(0)),
                 () -> assertFalse(rules.shouldSurvive(1)),
@@ -155,21 +149,19 @@ final class ConwayTransitionRulesTest {
 
     @Test
     void testShouldSurviveReturnsFalseForEmptyRules() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("/3");
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("/3");
         assertFalse(rules.shouldSurvive(2));
     }
 
-    // --- shouldBeBorn ---
-
     @Test
     void testShouldBeBornReturnsTrueForMatchingCount() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("23/3");
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
         assertTrue(rules.shouldBeBorn(3));
     }
 
     @Test
     void testShouldBeBornReturnsFalseForNonMatchingCount() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("23/3");
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
         assertAll(
                 () -> assertFalse(rules.shouldBeBorn(0)),
                 () -> assertFalse(rules.shouldBeBorn(2)),
@@ -179,72 +171,68 @@ final class ConwayTransitionRulesTest {
 
     @Test
     void testShouldBeBornReturnsFalseForEmptyRules() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("23/");
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("23/");
         assertFalse(rules.shouldBeBorn(3));
     }
 
-    // --- toDisplayString ---
-
     @Test
     void testToDisplayStringReturnsCorrectFormat() {
-        ConwayTransitionRules rules = ConwayTransitionRules.of("23/3");
+        ConwayTransitionRules rules = ConwayTransitionRules.parse("23/3");
         assertEquals("23/3", rules.toDisplayString());
     }
 
     @Test
     void testToDisplayStringIsRoundTrippable() {
         String original = "1257/1357";
-        ConwayTransitionRules rules = ConwayTransitionRules.of(original);
+        ConwayTransitionRules rules = ConwayTransitionRules.parse(original);
         assertEquals(original, rules.toDisplayString());
     }
 
     @Test
-    void testOfDisplayStringRoundTripsFromRules() {
+    void testParseRoundTripsToDisplayString() {
         ConwayTransitionRules original = ConwayTransitionRules.of(List.of(2, 3), List.of(3));
-        ConwayTransitionRules reparsed = ConwayTransitionRules.of(original.toDisplayString());
+        ConwayTransitionRules reparsed = ConwayTransitionRules.parse(original.toDisplayString());
         assertEquals(original, reparsed);
     }
 
     @Test
-    void testOfDisplayStringSilentlyIgnoresNonDigitCharacters() {
+    void testParseIgnoresNonDigitCharacters() {
         // Non-digit characters are silently skipped; same result as "23/3"
-        ConwayTransitionRules withNoise = ConwayTransitionRules.of("2 3/3!");
-        ConwayTransitionRules canonical = ConwayTransitionRules.of("23/3");
+        ConwayTransitionRules withNoise = ConwayTransitionRules.parse("2 3/3!");
+        ConwayTransitionRules canonical = ConwayTransitionRules.parse("23/3");
         assertEquals(canonical, withNoise);
     }
 
     @Test
-    void testToDisplayStringWithEmptySets() {
+    void testToDisplayStringReturnsEmptyPartsForEmptySets() {
         ConwayTransitionRules rules = new ConwayTransitionRules(new TreeSet<>(), new TreeSet<>());
         assertEquals("/", rules.toDisplayString());
     }
 
     @Test
-    void testToDisplayStringDigitsAreSorted() {
+    void testToDisplayStringSortsDigits() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(5, 2, 3), List.of(6, 3));
         assertEquals("235/36", rules.toDisplayString());
     }
 
-    // --- equals and hashCode (record semantics) ---
-
     @Test
-    void testEqualRulesAreEqual() {
-        ConwayTransitionRules a = ConwayTransitionRules.of("23/3");
-        ConwayTransitionRules b = ConwayTransitionRules.of("23/3");
+    void testEqualsReturnsTrueForEqualRules() {
+        ConwayTransitionRules a = ConwayTransitionRules.parse("23/3");
+        ConwayTransitionRules b = ConwayTransitionRules.parse("23/3");
         assertEquals(a, b);
     }
 
     @Test
-    void testDifferentRulesAreNotEqual() {
-        ConwayTransitionRules a = ConwayTransitionRules.of("23/3");
-        ConwayTransitionRules b = ConwayTransitionRules.of("23/36");
+    void testEqualsReturnsFalseForDifferentRules() {
+        ConwayTransitionRules a = ConwayTransitionRules.parse("23/3");
+        ConwayTransitionRules b = ConwayTransitionRules.parse("23/36");
         assertNotEquals(a, b);
     }
 
     @Test
-    void testEqualRulesHaveSameHashCode() {
-        ConwayTransitionRules a = ConwayTransitionRules.of("23/3");
-        ConwayTransitionRules b = ConwayTransitionRules.of("23/3");
+    void testHashCodeIsEqualForEqualRules() {
+        ConwayTransitionRules a = ConwayTransitionRules.parse("23/3");
+        ConwayTransitionRules b = ConwayTransitionRules.parse("23/3");
         assertEquals(a.hashCode(), b.hashCode());
     }
 

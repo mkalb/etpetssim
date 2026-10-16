@@ -32,7 +32,7 @@ public final class ForestObservationView
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(ForestStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

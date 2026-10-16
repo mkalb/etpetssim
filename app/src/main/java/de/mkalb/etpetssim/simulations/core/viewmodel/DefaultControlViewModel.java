@@ -23,12 +23,12 @@ public final class DefaultControlViewModel
     private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.TIMED,
             SimulationMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
-    private final InputDoublePropertyIntRange stepDuration = InputDoublePropertyIntRange.of(STEP_DURATION_INITIAL,
+    private final InputDoubleIntRangeProperty stepDuration = InputDoubleIntRangeProperty.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
     private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
-    private final InputEnumProperty<SimulationTerminationCheck> terminationCheck = InputEnumProperty.of(SimulationTerminationCheck.CHECKED, SimulationTerminationCheck.class, Enum::toString);
+    private final InputEnumProperty<SimulationTerminationCheckMode> terminationCheckMode = InputEnumProperty.of(SimulationTerminationCheckMode.CHECKED, SimulationTerminationCheckMode.class, Enum::toString);
 
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
@@ -43,7 +43,7 @@ public final class DefaultControlViewModel
      * @param simulationState shared simulation state
      * @return configured control view model
      */
-    public static DefaultControlViewModel withMinStepDuration(ReadOnlyObjectProperty<SimulationState> simulationState) {
+    public static DefaultControlViewModel createWithMinStepDuration(ReadOnlyObjectProperty<SimulationState> simulationState) {
         DefaultControlViewModel controlViewModel = new DefaultControlViewModel(simulationState);
         controlViewModel.stepDuration.setValue(STEP_DURATION_MIN);
         return controlViewModel;
@@ -105,7 +105,7 @@ public final class DefaultControlViewModel
      *
      * @return step-duration input property wrapper
      */
-    public InputDoublePropertyIntRange stepDurationProperty() {
+    public InputDoubleIntRangeProperty stepDurationProperty() {
         return stepDuration;
     }
 
@@ -132,8 +132,8 @@ public final class DefaultControlViewModel
      *
      * @return termination-check input property wrapper
      */
-    public InputEnumProperty<SimulationTerminationCheck> terminationCheckProperty() {
-        return terminationCheck;
+    public InputEnumProperty<SimulationTerminationCheckMode> terminationCheckProperty() {
+        return terminationCheckMode;
     }
 
     /**
@@ -199,7 +199,7 @@ public final class DefaultControlViewModel
      * @return {@code true} if termination checks are enabled
      */
     public boolean isTerminationChecked() {
-        return terminationCheck.getValue() == SimulationTerminationCheck.CHECKED;
+        return terminationCheckMode.getValue() == SimulationTerminationCheckMode.CHECKED;
     }
 
 }

@@ -135,7 +135,7 @@ public final class LabMainView
         drawRing(highlights.ringCellsByRadius(), INNER_HIGHLIGHT_RING_RADIUS, Color.TOMATO, painter);
         drawNeighborCoordinates(highlights.validNeighborCoordinates(), painter);
         drawNeighborsWithEdgeBehavior(highlights.validNeighborsWithEdgeBehavior(), painter);
-        drawNeighborEdgeResults(highlights.neighborEdgeResults(), painter);
+        drawNeighborEdgeBehaviorResults(highlights.neighborEdgeBehaviorResults(), painter);
     }
 
     private void drawRing(SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCells,
@@ -181,8 +181,8 @@ public final class LabMainView
         painter.drawCenteredTextInCell(coordinate, builder.toString(), Color.BLACK, cellFont);
     }
 
-    private void drawNeighborEdgeResults(Collection<EdgeBehaviorResult> edgeResults,
-                                         FXGridCanvasPainter painter) {
+    private void drawNeighborEdgeBehaviorResults(Collection<EdgeBehaviorResult> edgeResults,
+                                                 FXGridCanvasPainter painter) {
         edgeResults.forEach(edgeResult -> {
             switch (edgeResult.action()) {
                 case VALID -> painter.drawCell(edgeResult.mapped(), null, Color.DARKORANGE, EDGE_RESULT_STROKE_WIDTH);
@@ -261,7 +261,7 @@ public final class LabMainView
         if (cellFont == null) {
             return;
         }
-        GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentModel(), entityDescriptorRegistry,
+        GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentGridModel(), entityDescriptorRegistry,
                 descriptor -> localOverlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, cellFont));
     }
 
@@ -298,11 +298,11 @@ public final class LabMainView
         double cellEdgeLength = viewModel.getCellEdgeLength();
         GridStructure structure = viewModel.getStructure();
 
-        createPainterAndUpdateCanvas(structure, cellEdgeLength);
+        recreatePaintersAndResizeCanvases(structure, cellEdgeLength);
 
         updateCanvasBorderPane(structure);
 
-        rebuildActionToolBar();
+        rebuildEditToolBar();
 
         registerOverlayCanvasEvents();
     }
@@ -361,7 +361,7 @@ public final class LabMainView
             return;
         }
 
-        Color color = colorModeGrayscale ? resolveCheckerGrayscaleColor(coordinate) : resolveCheckerColor(coordinate);
+        Color color = colorModeGrayscale ? computeCheckerGrayscaleColor(coordinate) : computeCheckerColor(coordinate);
         if (renderingModeCircle) {
             basePainter.drawCellInnerCircle(coordinate, color, strokeColor, strokeLineWidth, StrokeType.CENTERED);
         } else {
@@ -379,7 +379,7 @@ public final class LabMainView
         }
 
         Color fillColor = FXPaintFactory.adjustColorAlpha(Color.RED, MODEL_FILL_ALPHA);
-        viewModel.getCurrentModel()
+        viewModel.getCurrentGridModel()
                  .nonDefaultCells()
                  .forEach((GridCell<LabEntity> cell) -> basePainter.drawCell(cell.coordinate(), fillColor, null, NO_STROKE_LINE_WIDTH));
     }
@@ -423,10 +423,10 @@ public final class LabMainView
 
         // draw shapes
         basePainter.drawTriangle(new GridCoordinate(TEST_TRIANGLE_X, TEST_TRIANGLE_Y),
-                GridGeometry.convertEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.TRIANGLE),
+                GridGeometry.computeEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.TRIANGLE),
                 Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
         basePainter.drawHexagon(new GridCoordinate(TEST_HEXAGON_X, TEST_HEXAGON_Y),
-                GridGeometry.convertEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.HEXAGON),
+                GridGeometry.computeEdgeLengthToMatchWidth(basePainter.cellDimension().edgeLength(), basePainter.gridStructure().cellShape(), CellShape.HEXAGON),
                 Color.WHITE, Color.BLACK, TEST_LINE_WIDTH);
 
         // draw frame segment
@@ -434,7 +434,7 @@ public final class LabMainView
         basePainter.drawCellFrameSegment(new GridCoordinate(TEST_FRAME_SEGMENT_2_X, TEST_FRAME_SEGMENT_2_Y), Color.DARKBLUE, TEST_LINE_WIDTH, CellShapeSide.LEFT);
     }
 
-    private Color resolveCheckerColor(GridCoordinate coordinate) {
+    private Color computeCheckerColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
         int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
 
@@ -447,7 +447,7 @@ public final class LabMainView
         };
     }
 
-    private Color resolveCheckerGrayscaleColor(GridCoordinate coordinate) {
+    private Color computeCheckerGrayscaleColor(GridCoordinate coordinate) {
         int columnGroup = coordinate.x() % CHECKER_GROUP_SIZE;
         int rowGroup = coordinate.y() % CHECKER_GROUP_SIZE;
 

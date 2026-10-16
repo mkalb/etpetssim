@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.core;
 
-import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.simulations.conway.ConwayFactory;
 import de.mkalb.etpetssim.simulations.etpets.EtpetsFactory;
 import de.mkalb.etpetssim.simulations.forest.ForestFactory;

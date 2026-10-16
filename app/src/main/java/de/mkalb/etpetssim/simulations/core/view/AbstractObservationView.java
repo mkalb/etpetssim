@@ -34,11 +34,11 @@ public abstract class AbstractObservationView<
     private final Label totalCellsLabel = new Label();
     private final Label selectedCellCoordinateLabel = new Label();
     private final Label selectedCellTypeLabel = new Label();
-    private final List<StatisticHistoryChartView> statisticHistoryChartViews = new ArrayList<>();
+    private final List<StatisticsHistoryChartView> statisticsHistoryChartViews = new ArrayList<>();
     private @Nullable GC selectedGridCell;
     private @Nullable VBox selectedCellSection;
     private @Nullable NumberFormat integerFormat;
-    private @Nullable List<StatisticMetric<STA>> genericMetrics;
+    private @Nullable List<StatisticsMetric<STA>> genericMetrics;
     private @Nullable List<MetricLabels> genericMetricLabels;
     private @Nullable ReadOnlyObjectProperty<@Nullable GC> selectedGridCellProperty;
     private @Nullable ChangeListener<@Nullable GC> selectedGridCellListener;
@@ -234,7 +234,7 @@ public abstract class AbstractObservationView<
 
     /**
      * Registers a listener on the provided selected-cell property that calls
-     * {@link #onSelectedCellChanged(GridCellView)} whenever the selection changes.
+     * {@link #handleSelectedGridCellChanged(GridCellView)} whenever the selection changes.
      * Call this in the subclass constructor to wire up the standard cell-selection behavior.
      *
      * @param property selected-cell property to listen on
@@ -244,7 +244,7 @@ public abstract class AbstractObservationView<
         selectedGridCellProperty = property;
         selectedGridCellListener = (_, _, newCell) -> {
             selectedGridCell = newCell;
-            onSelectedCellChanged(newCell);
+            handleSelectedGridCellChanged(newCell);
         };
         property.addListener(selectedGridCellListener);
     }
@@ -257,10 +257,10 @@ public abstract class AbstractObservationView<
         selectedGridCellProperty = null;
         selectedGridCellListener = null;
 
-        for (StatisticHistoryChartView chartView : statisticHistoryChartViews) {
+        for (StatisticsHistoryChartView chartView : statisticsHistoryChartViews) {
             chartView.shutdown();
         }
-        statisticHistoryChartViews.clear();
+        statisticsHistoryChartViews.clear();
     }
 
     /**
@@ -272,7 +272,7 @@ public abstract class AbstractObservationView<
      *
      * @param gridCell the newly selected grid cell, or {@code null} if no cell is selected
      */
-    protected void onSelectedCellChanged(@Nullable GC gridCell) {
+    protected void handleSelectedGridCellChanged(@Nullable GC gridCell) {
         if (selectedCellSection != null) {
             boolean hasSelectedCell = (gridCell != null);
             selectedCellSection.setManaged(hasSelectedCell);
@@ -297,7 +297,7 @@ public abstract class AbstractObservationView<
     /**
      * Creates a standard selected cell section displaying coordinate and cell type.
      * The standard coordinate and cell type labels are managed by this base class; visibility and
-     * label values are updated by {@link #onSelectedCellChanged(GridCellView)}.
+     * label values are updated by {@link #handleSelectedGridCellChanged(GridCellView)}.
      *
      * @return a VBox region containing the selected cell section with the standard labels
      */
@@ -313,7 +313,7 @@ public abstract class AbstractObservationView<
                         selectedCellTypeLabel
                 }
         );
-        onSelectedCellChanged(selectedGridCell);
+        handleSelectedGridCellChanged(selectedGridCell);
         return selectedCellSection;
     }
 
@@ -321,7 +321,7 @@ public abstract class AbstractObservationView<
      * Creates an extended selected cell section with coordinate and cell type as the first two rows,
      * followed by the provided simulation-specific extra rows.
      * The section is stored internally; its visibility and the standard label values are managed by
-     * {@link #onSelectedCellChanged(GridCellView)}.
+     * {@link #handleSelectedGridCellChanged(GridCellView)}.
      *
      * @param extraNameKeys    additional localization keys for the extra rows
      * @param extraValueLabels additional labels for the extra rows
@@ -343,7 +343,7 @@ public abstract class AbstractObservationView<
                 allNameKeys,
                 allValueLabels
         );
-        onSelectedCellChanged(selectedGridCell);
+        handleSelectedGridCellChanged(selectedGridCell);
         return selectedCellSection;
     }
 
@@ -352,12 +352,12 @@ public abstract class AbstractObservationView<
      * <p>
      * When any metric tracks extrema, a "min" / "max" header row is prepended; step-count context
      * appears in a tooltip on each extremum value label on hover.
-     * Call {@link #updateGenericMetricSection(Optional, StatisticExtrema)} to refresh all values.
+     * Call {@link #updateGenericMetricSection(Optional, StatisticsExtrema)} to refresh all values.
      *
      * @param metrics ordered metric descriptors defining the row layout
      * @return a styled {@link VBox} containing the title and the metric grid
      */
-    protected final VBox createGenericMetricSection(List<StatisticMetric<STA>> metrics) {
+    protected final VBox createGenericMetricSection(List<StatisticsMetric<STA>> metrics) {
         genericMetrics = List.copyOf(metrics);
         List<MetricLabels> labels = new ArrayList<>(metrics.size());
         genericMetricLabels = labels;
@@ -369,8 +369,8 @@ public abstract class AbstractObservationView<
         nameColumn.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().add(nameColumn);
 
-        boolean hasMin = metrics.stream().anyMatch(m -> m.extremaMode().tracksMinimum());
-        boolean hasMax = metrics.stream().anyMatch(m -> m.extremaMode().tracksMaximum());
+        boolean hasMin = metrics.stream().anyMatch(m -> m.extremaMode().includesMinimum());
+        boolean hasMax = metrics.stream().anyMatch(m -> m.extremaMode().includesMaximum());
         int minCol = 2;
         int maxCol = hasMin ? 3 : 2;
         int rowOffset = 0;
@@ -391,7 +391,7 @@ public abstract class AbstractObservationView<
         }
 
         for (int i = 0; i < metrics.size(); i++) {
-            StatisticMetric<STA> metric = metrics.get(i);
+            StatisticsMetric<STA> metric = metrics.get(i);
             int row = i + rowOffset;
 
             Label nameLabel = new Label(AppLocalization.getText(metric.labelKey()) + LABEL_SEPARATOR);
@@ -415,7 +415,7 @@ public abstract class AbstractObservationView<
             Tooltip maxTooltip = null;
 
             var mode = metric.extremaMode();
-            if (mode.tracksMinimum()) {
+            if (mode.includesMinimum()) {
                 minLabel = new Label();
                 minLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
                 minLabel.setAlignment(Pos.CENTER_RIGHT);
@@ -424,7 +424,7 @@ public abstract class AbstractObservationView<
                 grid.add(minLabel, minCol, row);
                 GridPane.setHalignment(minLabel, HPos.RIGHT);
             }
-            if (mode.tracksMaximum()) {
+            if (mode.includesMaximum()) {
                 maxLabel = new Label();
                 maxLabel.getStyleClass().add(FXStyleClasses.OBSERVATION_VALUE_LABEL);
                 maxLabel.setAlignment(Pos.CENTER_RIGHT);
@@ -455,14 +455,14 @@ public abstract class AbstractObservationView<
      * @param extrema    current extrema snapshot
      */
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "NumericCastThatLosesPrecision"})
-    protected final void updateGenericMetricSection(Optional<STA> statistics, StatisticExtrema extrema) {
+    protected final void updateGenericMetricSection(Optional<STA> statistics, StatisticsExtrema extrema) {
         if ((genericMetrics == null) || (genericMetricLabels == null)) {
             return;
         }
         String unknown = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_VALUE_UNKNOWN);
         String atStep = AppLocalization.getText(AppLocalizationKeys.OBSERVATION_EXTREMUM_AT_STEP);
         for (int i = 0; i < genericMetrics.size(); i++) {
-            StatisticMetric<STA> metric = genericMetrics.get(i);
+            StatisticsMetric<STA> metric = genericMetrics.get(i);
             MetricLabels rowLabels = genericMetricLabels.get(i);
             if (statistics.isPresent()) {
                 double currentValue = metric.extractor().applyAsDouble(statistics.get());
@@ -511,13 +511,13 @@ public abstract class AbstractObservationView<
     @Nullable
     protected final TitledPane createChartSection() {
         if ((genericMetrics == null) ||
-                genericMetrics.stream().noneMatch(m -> m.chartGroup() != StatisticChartGroup.NONE)) {
+                genericMetrics.stream().noneMatch(m -> m.chartGroup() != StatisticsChartGroup.NONE)) {
             return null;
         }
-        StatisticHistoryChartView chartView = new StatisticHistoryChartView(
+        StatisticsHistoryChartView chartView = new StatisticsHistoryChartView(
                 genericMetrics,
                 viewModel.statisticsHistoryProperty());
-        statisticHistoryChartViews.add(chartView);
+        statisticsHistoryChartViews.add(chartView);
         return chartView.titledPane();
     }
 

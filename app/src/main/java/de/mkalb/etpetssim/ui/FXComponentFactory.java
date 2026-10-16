@@ -334,38 +334,38 @@ public final class FXComponentFactory {
     /**
      * Creates a labeled integer slider with a bound double value, formatted label, tooltip, and custom style class.
      * <p>
-     * The slider is configured for integer values in the range defined by the given InputDoublePropertyIntRange.
+     * The slider is configured for integer values in the range defined by the given InputDoubleIntRangeProperty.
      * The slider's value is bidirectionally bound to the underlying DoubleProperty of the record.
      * The label displays the current value using the provided format string. Both the label and the slider share
      * the same tooltip for improved accessibility.
      * <p>
      * This method is suitable for sliders with a moderate integer value range.
      *
-     * @param inputDoublePropertyIntRange the InputDoublePropertyIntRange defining the integer range and value binding
+     * @param inputDoubleIntRangeProperty the InputDoubleIntRangeProperty defining the integer range and value binding
      * @param labelFormatString           the format string for the label (e.g., "%d px")
      * @param tooltip                     the tooltip text for both the label and the slider
      * @param styleClass                  the CSS style class to apply to the slider
      * @return a LabeledControl containing the label and the slider
      */
     public static LabeledControl<Slider> createLabeledIntSlider(
-            InputDoublePropertyIntRange inputDoublePropertyIntRange,
+            InputDoubleIntRangeProperty inputDoubleIntRangeProperty,
             String labelFormatString,
             String tooltip,
             String styleClass) {
 
-        Slider slider = new Slider(inputDoublePropertyIntRange.min(), inputDoublePropertyIntRange.max(),
-                inputDoublePropertyIntRange.getValue());
+        Slider slider = new Slider(inputDoubleIntRangeProperty.min(), inputDoubleIntRangeProperty.max(),
+                inputDoubleIntRangeProperty.getValue());
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
-        slider.setMajorTickUnit(inputDoublePropertyIntRange.max() - inputDoublePropertyIntRange.min());
-        slider.setMinorTickCount(inputDoublePropertyIntRange.max() - inputDoublePropertyIntRange.min() - 1);
+        slider.setMajorTickUnit(inputDoubleIntRangeProperty.max() - inputDoubleIntRangeProperty.min());
+        slider.setMinorTickCount(inputDoubleIntRangeProperty.max() - inputDoubleIntRangeProperty.min() - 1);
         slider.setBlockIncrement(1.0d);
         slider.setSnapToTicks(true);
         slider.getStyleClass().add(styleClass);
-        slider.valueProperty().bindBidirectional(inputDoublePropertyIntRange.property());
+        slider.valueProperty().bindBidirectional(inputDoubleIntRangeProperty.property());
 
         Label label = new Label();
-        label.textProperty().bind(inputDoublePropertyIntRange.asStringBinding(labelFormatString));
+        label.textProperty().bind(inputDoubleIntRangeProperty.asStringBinding(labelFormatString));
         label.setLabelFor(slider);
 
         Tooltip tooltipValue = new Tooltip(tooltip);

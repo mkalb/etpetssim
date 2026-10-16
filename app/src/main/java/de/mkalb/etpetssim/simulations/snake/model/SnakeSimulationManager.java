@@ -176,7 +176,7 @@ public final class SnakeSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.update(
+        statistics.setStepData(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
     }

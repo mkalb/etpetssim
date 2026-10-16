@@ -1,8 +1,7 @@
 package de.mkalb.etpetssim.simulations.core;
 
-import de.mkalb.FxTestSupport;
-import de.mkalb.etpetssim.SimulationType;
 import de.mkalb.etpetssim.simulations.core.view.SimulationMainView;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.scene.layout.Region;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.*;
@@ -18,105 +17,58 @@ final class SimulationInstanceTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     private static <T> T requireValue(AtomicReference<T> reference) {
         return Objects.requireNonNull(reference.get(), "Expected test fixture value");
     }
 
-    // --- Direct constructor / record accessor tests ---
-
     @Test
-    void testRecordAccessorSimulationType() {
-        SimulationInstance instance = FxTestSupport.supplyAndWaitNonNull(() -> {
-            Region region = new Region();
-            return new SimulationInstance(SimulationType.CONWAYS_LIFE, new StubMainView(region), region);
-        });
-        assertEquals(SimulationType.CONWAYS_LIFE, instance.simulationType());
-    }
-
-    @Test
-    void testRecordAccessorSimulationMainView() {
+    void testRecord() {
         AtomicReference<SimulationInstance> ref = new AtomicReference<>();
         AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> {
-            Region region = new Region();
-            StubMainView view = new StubMainView(region);
-            viewRef.set(view);
-            ref.set(new SimulationInstance(SimulationType.WATOR, view, region));
-        });
-        SimulationInstance instance = requireValue(ref);
-        assertSame(viewRef.get(), instance.simulationMainView());
-    }
-
-    @Test
-    void testRecordAccessorRegion() {
-        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
         AtomicReference<Region> regionRef = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> {
-            Region region = new Region();
-            regionRef.set(region);
-            ref.set(new SimulationInstance(SimulationType.SNAKE, new StubMainView(region), region));
-        });
-        SimulationInstance instance = requireValue(ref);
-        assertSame(regionRef.get(), instance.region());
-    }
-
-    // --- SimulationInstance.of() factory tests ---
-
-    @Test
-    void testOfFactoryAssignsType() {
-        SimulationInstance instance = FxTestSupport.supplyAndWaitNonNull(() -> {
-            Region region = new Region();
-            return SimulationInstance.of(SimulationType.ET_PETS, new StubMainView(region));
-        });
-        assertEquals(SimulationType.ET_PETS, instance.simulationType());
-    }
-
-    @Test
-    void testOfFactoryAssignsView() {
-        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
-        AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Region region = new Region();
             StubMainView view = new StubMainView(region);
+            regionRef.set(region);
+            viewRef.set(view);
+            ref.set(new SimulationInstance(SimulationType.CONWAYS_LIFE, view, region));
+        });
+        SimulationInstance instance = requireValue(ref);
+
+        assertAll(
+                () -> assertEquals(SimulationType.CONWAYS_LIFE, instance.simulationType()),
+                () -> assertSame(viewRef.get(), instance.simulationMainView()),
+                () -> assertSame(regionRef.get(), instance.region())
+        );
+    }
+
+    @Test
+    void testOf() {
+        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
+        AtomicReference<SimulationMainView> viewRef = new AtomicReference<>();
+        AtomicReference<Region> builtRegionRef = new AtomicReference<>();
+        FXTestSupport.runAndWait(() -> {
+            Region builtRegion = new Region();
+            StubMainView view = new StubMainView(builtRegion);
+            builtRegionRef.set(builtRegion);
             viewRef.set(view);
             ref.set(SimulationInstance.of(SimulationType.ET_PETS, view));
         });
         SimulationInstance instance = requireValue(ref);
-        assertSame(viewRef.get(), instance.simulationMainView());
+
+        assertAll(
+                () -> assertEquals(SimulationType.ET_PETS, instance.simulationType()),
+                () -> assertSame(viewRef.get(), instance.simulationMainView()),
+                () -> assertSame(builtRegionRef.get(), instance.region())
+        );
     }
 
     @Test
-    void testOfFactoryDelegatesToBuildMainRegion() {
-        AtomicReference<SimulationInstance> ref = new AtomicReference<>();
-        AtomicReference<Region> builtRegionRef = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> {
-            Region builtRegion = new Region();
-            builtRegionRef.set(builtRegion);
-            ref.set(SimulationInstance.of(SimulationType.FOREST_FIRE, new StubMainView(builtRegion)));
-        });
-        // The region stored in the instance must be exactly the one returned by buildMainRegion()
-        SimulationInstance instance = ref.get();
-        assertNotNull(instance);
-        assertSame(builtRegionRef.get(), instance.region());
-    }
-
-    @Test
-    void testOfFactoryRegionIsNonNull() {
-        SimulationInstance instance = FxTestSupport.supplyAndWaitNonNull(() -> {
-            Region region = new Region();
-            return SimulationInstance.of(SimulationType.SIMULATION_LAB, new StubMainView(region));
-        });
-        assertNotNull(instance.region());
-    }
-
-    // --- toDisplayString() tests ---
-
-    @Test
-    void testToDisplayStringFormat() {
-        String result = FxTestSupport.supplyAndWaitNonNull(() -> {
+    void testToDisplayString() {
+        String result = FXTestSupport.supplyAndWaitNonNull(() -> {
             Region region = new Region();
             SimulationInstance instance = SimulationInstance.of(SimulationType.CONWAYS_LIFE, new StubMainView(region));
             return instance.toDisplayString();
@@ -125,42 +77,10 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testToDisplayStringContainsTypeName() {
-        String result = FxTestSupport.supplyAndWaitNonNull(() -> {
-            Region region = new Region();
-            SimulationInstance instance = SimulationInstance.of(SimulationType.LANGTONS_ANT, new StubMainView(region));
-            return instance.toDisplayString();
-        });
-        assertTrue(result.contains("LANGTONS_ANT"), "Expected type name in display string: " + result);
-    }
-
-    @Test
-    void testToDisplayStringContainsViewClassName() {
-        String result = FxTestSupport.supplyAndWaitNonNull(() -> {
-            Region region = new Region();
-            SimulationInstance instance = SimulationInstance.of(SimulationType.SUGARSCAPE, new StubMainView(region));
-            return instance.toDisplayString();
-        });
-        assertTrue(result.contains("StubMainView"), "Expected view class name in display string: " + result);
-    }
-
-    @Test
-    void testToDisplayStringIsNonNull() {
-        String result = FxTestSupport.supplyAndWait(() -> {
-            Region region = new Region();
-            SimulationInstance instance = SimulationInstance.of(SimulationType.WATOR, new StubMainView(region));
-            return instance.toDisplayString();
-        });
-        assertNotNull(result);
-    }
-
-    // --- Record equality and hashCode ---
-
-    @Test
-    void testRecordEqualityForSameComponents() {
+    void testEqualsReturnsTrueForSameComponents() {
         AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
         AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Region region = new Region();
             StubMainView view = new StubMainView(region);
             ref1.set(new SimulationInstance(SimulationType.SNAKE, view, region));
@@ -175,10 +95,10 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordInequalityForDifferentType() {
+    void testEqualsReturnsFalseForDifferentType() {
         AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
         AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             Region region = new Region();
             StubMainView view = new StubMainView(region);
             ref1.set(new SimulationInstance(SimulationType.WATOR, view, region));
@@ -188,10 +108,10 @@ final class SimulationInstanceTest {
     }
 
     @Test
-    void testRecordInequalityForDifferentRegion() {
+    void testEqualsReturnsFalseForDifferentRegion() {
         AtomicReference<SimulationInstance> ref1 = new AtomicReference<>();
         AtomicReference<SimulationInstance> ref2 = new AtomicReference<>();
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             StubMainView view = new StubMainView(new Region());
             ref1.set(new SimulationInstance(SimulationType.WATOR, view, new Region()));
             ref2.set(new SimulationInstance(SimulationType.WATOR, view, new Region()));
@@ -209,8 +129,8 @@ final class SimulationInstanceTest {
 
         @NonNull
         @Override
-        public SimulationTermination shutdownSimulation() {
-            return SimulationTermination.completed();
+        public SimulationTerminationHandle shutdownSimulation() {
+            return SimulationTerminationHandle.completed();
         }
 
     }

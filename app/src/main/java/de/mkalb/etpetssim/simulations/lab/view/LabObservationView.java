@@ -31,7 +31,7 @@ public final class LabObservationView
         Region statusSection = createStatusSection();
         Region gridSection = createGridSection();
         Region selectedCellSection = createSelectedCellSection();
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

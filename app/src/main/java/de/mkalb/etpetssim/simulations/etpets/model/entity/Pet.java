@@ -92,12 +92,12 @@ public final class Pet implements AgentEntity {
         return ageAtStepIndex(stepCount - 1);
     }
 
-    public boolean hasReachedAgeingEffectsAge(int stepIndex) {
-        return ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_AGEING_EFFECTS_AGE_MIN;
+    public boolean hasReachedAgingEffectsAge(int stepIndex) {
+        return ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_AGING_EFFECTS_AGE_MIN;
     }
 
-    public int ageingStepsAtStepIndex(int stepIndex) {
-        return Math.max(0, ageAtStepIndex(stepIndex) - EtpetsBalance.PET_AGEING_EFFECTS_AGE_MIN);
+    public int agingStepsAtStepIndex(int stepIndex) {
+        return Math.max(0, ageAtStepIndex(stepIndex) - EtpetsBalance.PET_AGING_EFFECTS_AGE_MIN);
     }
 
     public void adjustEnergy(int delta) {
@@ -130,7 +130,7 @@ public final class Pet implements AgentEntity {
         }
     }
 
-    public void tickReproductionCooldown() {
+    public void decrementReproductionCooldownRemaining() {
         reproductionCooldownRemaining = Math.max(
                 EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN,
                 reproductionCooldownRemaining - 1

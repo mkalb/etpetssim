@@ -36,129 +36,150 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testInitialize() {
+    void testInitializeAddsConsoleHandler() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertTrue(AppLogger.isInitialized());
-        assertEquals(1, AppLogger.numberOfHandlersForTesting());
+        assertEquals(1, AppLogger.handlerCountForTesting());
     }
 
     @Test
-    void testInitializeWithoutHandlers() {
-        int numHandlers = AppLogger.numberOfHandlersForTesting();
+    void testInitializeAddsNoHandlerWithoutConsole() {
+        int numHandlers = AppLogger.handlerCountForTesting();
         AppLogger.initialize(AppLogger.LogLevel.INFO, false, null);
         assertTrue(AppLogger.isInitialized());
-        assertEquals(numHandlers, AppLogger.numberOfHandlersForTesting());
+        assertEquals(numHandlers, AppLogger.handlerCountForTesting());
     }
 
     @Test
     void testInitializeForTesting() {
         AppLogger.initializeForTesting();
         assertTrue(AppLogger.isInitialized());
-        assertEquals(1, AppLogger.numberOfHandlersForTesting());
+        assertEquals(1, AppLogger.handlerCountForTesting());
     }
 
     @Test
     void testResetForTesting() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertTrue(AppLogger.isInitialized());
-        assertEquals(1, AppLogger.numberOfHandlersForTesting());
+        assertEquals(1, AppLogger.handlerCountForTesting());
         AppLogger.resetForTesting();
         assertFalse(AppLogger.isInitialized());
-        assertEquals(0, AppLogger.numberOfHandlersForTesting());
+        assertEquals(0, AppLogger.handlerCountForTesting());
     }
 
     @Test
-    void testDebugLogging() {
+    void testDebug() {
         AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
         assertDoesNotThrow(() -> AppLogger.debug("Debug message"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testDebugfLogging() {
+    void testDebugf() {
         AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
         assertDoesNotThrow(() -> AppLogger.debugf("Debug %s %d", "message", 1));
+        assertThrows(NullPointerException.class, () -> AppLogger.debugf(null, "x"));
     }
 
     @Test
-    void testInfoLogging() {
+    void testInfo() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertDoesNotThrow(() -> AppLogger.info("Info message"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testInfofLogging() {
+    void testInfof() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertDoesNotThrow(() -> AppLogger.infof("Info %s %d", "message", 2));
+        assertThrows(NullPointerException.class, () -> AppLogger.infof(null, "x"));
     }
 
     @Test
-    void testWarnLogging() {
+    void testWarn() {
         AppLogger.initialize(AppLogger.LogLevel.WARN, true, null);
         assertDoesNotThrow(() -> AppLogger.warn("Warn message"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testWarnfLogging() {
+    void testWarnf() {
         AppLogger.initialize(AppLogger.LogLevel.WARN, true, null);
         assertDoesNotThrow(() -> AppLogger.warnf("Warn %s %d", "message", 3));
+        assertThrows(NullPointerException.class, () -> AppLogger.warnf(null, "x"));
     }
 
     @Test
-    void testErrorLogging() {
+    void testError() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         assertDoesNotThrow(() -> AppLogger.error("Error message"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testErrorfLogging() {
+    void testErrorf() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         assertDoesNotThrow(() -> AppLogger.errorf("Error %s %d", "message", 4));
+        assertThrows(NullPointerException.class, () -> AppLogger.errorf((String) null, "x"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testErrorfWithThrowableLogging() {
+    void testErrorfWithThrowable() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         Throwable t = new RuntimeException("Test exception");
         assertDoesNotThrow(() -> AppLogger.errorf(t, "Error %s %d", "message", 5));
+        assertThrows(NullPointerException.class, () -> AppLogger.errorf(t, null, "x"));
+        assertThrows(NullPointerException.class, () -> AppLogger.errorf((Throwable) null, "msg %s", "x"));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testDebugSupplierLogging() {
+    void testDebugWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null);
         Supplier<String> supplier = () -> "Debug from supplier";
         assertDoesNotThrow(() -> AppLogger.debug(supplier));
+        assertThrows(NullPointerException.class, () -> AppLogger.debug((Supplier<String>) null));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testInfoSupplierLogging() {
+    void testInfoWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         Supplier<String> supplier = () -> "Info from supplier";
         assertDoesNotThrow(() -> AppLogger.info(supplier));
+        assertThrows(NullPointerException.class, () -> AppLogger.info((Supplier<String>) null));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testWarnSupplierLogging() {
+    void testWarnWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.WARN, true, null);
         Supplier<String> supplier = () -> "Warn from supplier";
         assertDoesNotThrow(() -> AppLogger.warn(supplier));
+        assertThrows(NullPointerException.class, () -> AppLogger.warn((Supplier<String>) null));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testErrorSupplierLogging() {
+    void testErrorWithSupplier() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         Supplier<String> supplier = () -> "Error from supplier";
         assertDoesNotThrow(() -> AppLogger.error(supplier));
+        assertThrows(NullPointerException.class, () -> AppLogger.error((Supplier<String>) null));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testErrorWithThrowable() {
         AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
         Throwable t = new RuntimeException("Test exception");
         assertDoesNotThrow(() -> AppLogger.error(t, "Error with throwable"));
+        assertThrows(NullPointerException.class, () -> AppLogger.error(null, "msg"));
     }
 
     @Test
-    void testFormatterIncludesCurrentThreadNameAfterLogLevel() {
+    void testFormatIncludesCurrentThreadNameAfterLogLevel() {
         LogRecord record = new LogRecord(Level.INFO, "Info message");
 
         String formatted = formatRecord(record);
@@ -167,7 +188,7 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testFormatterAbbreviatesJavaFxApplicationThreadName() throws InterruptedException {
+    void testFormatAbbreviatesJavaFxApplicationThreadName() throws InterruptedException {
         AtomicReference<String> formattedReference = new AtomicReference<>();
         Thread thread = Thread.ofPlatform().name("JavaFX Application Thread").start(
                 () -> formattedReference.set(formatRecord(new LogRecord(Level.INFO, "Info message")))
@@ -181,45 +202,10 @@ final class AppLoggerTest {
     }
 
     @Test
-    void testInitializeTwiceThrowsException() {
+    void testInitializeThrowsWhenInitializedTwice() {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertThrows(IllegalStateException.class, () ->
                 AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null));
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testNullSupplierThrowsException() {
-        AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
-        assertAll(
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.debug((Supplier<String>) null)),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.info((Supplier<String>) null)),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.warn((Supplier<String>) null)),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.error((Supplier<String>) null))
-        );
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testNullFormatThrowsException() {
-        AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
-        assertAll(
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.debugf(null, "x")),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.infof(null, "x")),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.warnf(null, "x")),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf((String) null, "x")),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf(new RuntimeException("x"), null, "x"))
-        );
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testNullThrowableThrowsException() {
-        AppLogger.initialize(AppLogger.LogLevel.ERROR, true, null);
-        assertAll(
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.error(null, "msg")),
-                () -> assertThrows(NullPointerException.class, () -> AppLogger.errorf((Throwable) null, "msg %s", "x"))
-        );
     }
 
 }

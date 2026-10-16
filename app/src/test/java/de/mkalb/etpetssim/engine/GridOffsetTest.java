@@ -26,7 +26,7 @@ final class GridOffsetTest {
     }
 
     @Test
-    void testStaticBetween() {
+    void testBetween() {
         assertEquals(new GridOffset(0, 9), GridOffset.between(new GridCoordinate(0, 0), new GridCoordinate(0, 9)));
         assertEquals(new GridOffset(3, 4), GridOffset.between(new GridCoordinate(1, 2), new GridCoordinate(4, 6)));
     }

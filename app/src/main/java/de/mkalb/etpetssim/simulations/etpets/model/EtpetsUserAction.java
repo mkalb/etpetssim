@@ -24,7 +24,7 @@ public final class EtpetsUserAction
             return;
         }
 
-        var model = manager.currentModel();
+        var model = manager.currentGridModel();
         GridCoordinate coordinate = selectedCell.coordinate();
 
         switch (context) {

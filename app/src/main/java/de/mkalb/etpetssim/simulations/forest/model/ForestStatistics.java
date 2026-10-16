@@ -30,17 +30,17 @@ public final class ForestStatistics
         burningCells = 0;
     }
 
-    public static List<StatisticMetric<ForestStatistics>> metrics() {
+    public static List<StatisticsMetric<ForestStatistics>> metrics() {
         return List.of(
-                new StatisticMetric<>(KEY_EMPTY_CELLS, FOREST_OBSERVATION_EMPTY_CELLS,
+                new StatisticsMetric<>(KEY_EMPTY_CELLS, FOREST_OBSERVATION_EMPTY_CELLS,
                         ForestStatistics::emptyCells,
-                        StatisticExtremaMode.MAX),
-                new StatisticMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS,
+                        StatisticsExtremaMode.MAX),
+                new StatisticsMetric<>(KEY_TREE_CELLS, FOREST_OBSERVATION_TREE_CELLS,
                         ForestStatistics::treeCells,
-                        StatisticExtremaMode.MIN_AND_MAX, StatisticChartGroup.PRIMARY),
-                new StatisticMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_BURNING_CELLS,
+                        StatisticsExtremaMode.MIN_AND_MAX, StatisticsChartGroup.PRIMARY),
+                new StatisticsMetric<>(KEY_BURNING_CELLS, FOREST_OBSERVATION_BURNING_CELLS,
                         ForestStatistics::burningCells,
-                        StatisticExtremaMode.MAX, StatisticChartGroup.SECONDARY)
+                        StatisticsExtremaMode.MAX, StatisticsChartGroup.SECONDARY)
         );
     }
 
@@ -49,7 +49,7 @@ public final class ForestStatistics
         treeCells = treeCellsInitial;
     }
 
-    void updateCellCounts(int newTreeCells, int newBurningCells) {
+    void setCellCounts(int newTreeCells, int newBurningCells) {
         emptyCells = totalCells() - newTreeCells - newBurningCells;
         treeCells = newTreeCells;
         burningCells = newBurningCells;

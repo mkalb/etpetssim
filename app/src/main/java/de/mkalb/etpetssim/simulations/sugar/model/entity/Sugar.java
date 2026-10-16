@@ -28,12 +28,8 @@ public final class Sugar implements ResourceEntity {
         return currentAmount;
     }
 
-    public void reduceAmount(int loss) {
-        currentAmount = Math.max(currentAmount - loss, 0);
-    }
-
-    public void gainAmount(int gain) {
-        currentAmount = Math.min(currentAmount + gain, maxAmount);
+    public void adjustAmount(int delta) {
+        currentAmount = Math.clamp(currentAmount + delta, 0, maxAmount);
     }
 
     @Override

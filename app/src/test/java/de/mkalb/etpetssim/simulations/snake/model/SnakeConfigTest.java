@@ -43,7 +43,7 @@ final class SnakeConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         SnakeConfig config = createConfig(
                 SnakeConstraints.CELL_SHAPE_DEFAULT,
                 SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,

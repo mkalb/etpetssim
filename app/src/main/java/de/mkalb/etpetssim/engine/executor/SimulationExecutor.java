@@ -22,7 +22,7 @@ public interface SimulationExecutor<
      *
      * @return the current model instance
      */
-    GM currentModel();
+    GM currentGridModel();
 
     /**
      * Returns the number of simulation steps completed so far.

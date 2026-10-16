@@ -59,7 +59,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
 
     public EtpetsConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
-        addConfigValidationRule(
+        registerConfigValidationRule(
                 rockPercent.property()
                            .add(waterPercent.property())
                            .add(plantPercent.property())
@@ -70,7 +70,7 @@ public final class EtpetsConfigViewModel extends AbstractConfigViewModel<EtpetsC
     }
 
     @Override
-    public EtpetsConfig getConfig() {
+    public EtpetsConfig createConfig() {
         return new EtpetsConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

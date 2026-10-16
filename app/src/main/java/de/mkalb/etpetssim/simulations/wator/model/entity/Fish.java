@@ -27,8 +27,8 @@ public final class Fish extends CreatureBase {
                 "descriptorId=" + descriptorId() +
                 ", sequenceId=" + sequenceId() +
                 ", stepIndexOfBirth=" + stepIndexOfBirth() +
-                ", numberOfReproductions=" + numberOfReproductions() +
-                ", timeOfLastReproduction=" + timeOfLastReproduction() +
+                ", reproductionCount=" + reproductionCount() +
+                ", stepIndexOfLastReproduction=" + stepIndexOfLastReproduction() +
                 '}';
     }
 

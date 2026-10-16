@@ -75,6 +75,21 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         return pane;
     }
 
+    /**
+     * Binds the visibility of a label and its control region to the selected cell shape.
+     * Both nodes are visible and managed only while the cell shape equals the given shape.
+     *
+     * @param label         the label to show or hide
+     * @param controlRegion the control region to show or hide
+     * @param shape         the cell shape for which both nodes are visible
+     */
+    protected final void bindVisibilityToCellShape(Label label, Region controlRegion, CellShape shape) {
+        label.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+        label.managedProperty().bind(label.visibleProperty());
+        controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+        controlRegion.managedProperty().bind(controlRegion.visibleProperty());
+    }
+
     @SuppressWarnings("unchecked")
     protected final FXComponentFactory.LabeledControl<? extends Region>[] toLabeledControlArray(
             List<FXComponentFactory.LabeledControl<? extends Region>> content) {
@@ -204,7 +219,7 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
     }
 
     @SuppressWarnings("SameParameterValue")
-    protected final String formatDoubleRangeTooltip(String key, InputDoublePropertyIntRange property) {
+    protected final String formatDoubleRangeTooltip(String key, InputDoubleIntRangeProperty property) {
         return AppLocalization.getFormattedText(key,
                 property.min(), property.max());
     }

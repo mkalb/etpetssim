@@ -162,9 +162,9 @@ public final class SugarMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable SugarCell oldGridCell,
-                                          @Nullable SugarCell newGridCell) {
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                 @Nullable SugarCell oldGridCell,
+                                                 @Nullable SugarCell newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -176,7 +176,7 @@ public final class SugarMainView
     }
 
     @Override
-    protected void drawSimulation(SugarGridModel currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(SugarGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -188,8 +188,8 @@ public final class SugarMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        var resourceModel = currentModel.resourceModel();
-        var agentModel = currentModel.agentModel();
+        var resourceModel = currentGridModel.resourceModel();
+        var agentModel = currentGridModel.agentModel();
 
         resourceModel.nonDefaultCells()
                      .forEach(resourceCell -> cellResourceDrawer.draw(
@@ -268,7 +268,7 @@ public final class SugarMainView
                     availableAddSugarLevels);
             levelLabel.disableProperty().bind(enabledBinding.not());
             levelComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 levelLabel.disableProperty().unbind();
                 levelComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -276,7 +276,7 @@ public final class SugarMainView
                 selectedLevelProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 levelComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedLevelProperty.removeListener(viewModelSelectionListener);
             });

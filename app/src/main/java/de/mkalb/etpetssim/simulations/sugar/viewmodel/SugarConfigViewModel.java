@@ -85,7 +85,7 @@ public final class SugarConfigViewModel
     }
 
     @Override
-    public SugarConfig getConfig() {
+    public SugarConfig createConfig() {
         return new SugarConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

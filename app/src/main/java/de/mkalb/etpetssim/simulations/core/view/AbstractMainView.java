@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.core.view;
 import de.mkalb.etpetssim.core.*;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.ui.*;
@@ -53,7 +53,7 @@ public abstract class AbstractMainView<
     private final ScrollPane canvasScrollPane;
     private final BorderPane canvasBorderPane;
     private final Label notificationLabel;
-    private final SimulationEditToolBarView<CTX> editToolBar = new SimulationEditToolBarView<>();
+    private final EditToolBarView<CTX> editToolBar = new EditToolBarView<>();
     private final Map<Double, Font> fontCache;
     protected @Nullable FXGridCanvasPainter basePainter;
     protected @Nullable FXGridCanvasPainter dynamicPainter;
@@ -147,13 +147,13 @@ public abstract class AbstractMainView<
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         if (notificationListener != null) {
             viewModel.notificationTypeProperty().removeListener(notificationListener);
             notificationListener = null;
         }
         observationView.shutdownObservation();
-        SimulationTermination termination = viewModel.shutdownSimulation();
+        SimulationTerminationHandle terminationHandle = viewModel.shutdownSimulation();
         basePainter = null;
         dynamicPainter = null;
         overlayPainter = null;
@@ -161,7 +161,7 @@ public abstract class AbstractMainView<
         cellEmojiFont = null;
         clearNotification();
         editToolBar.clear();
-        return termination;
+        return terminationHandle;
     }
 
     protected abstract void registerViewModelListeners();
@@ -208,7 +208,7 @@ public abstract class AbstractMainView<
         notificationLabel.setManaged(false);
     }
 
-    protected final void rebuildActionToolBar() {
+    protected final void rebuildEditToolBar() {
         editToolBar.rebuild(
                 createUserActionDescriptors(),
                 editModeActiveProperty(),
@@ -246,7 +246,7 @@ public abstract class AbstractMainView<
      *
      * @param cleanupAction cleanup action for listeners or bindings owned by simulation-specific option controls
      */
-    protected final void registerActionToolBarCleanup(Runnable cleanupAction) {
+    protected final void registerEditToolBarCleanup(Runnable cleanupAction) {
         editToolBar.registerCleanup(cleanupAction);
     }
 
@@ -300,7 +300,14 @@ public abstract class AbstractMainView<
         return vBox;
     }
 
-    protected final CellDimension createPainterAndUpdateCanvas(GridStructure structure, double cellEdgeLength) {
+    /**
+     * Replaces the base, dynamic, and overlay painters for the given structure and resizes their canvases.
+     *
+     * @param structure      grid structure to paint
+     * @param cellEdgeLength edge length of one cell in pixels
+     * @return the cell dimension of the new painters
+     */
+    protected final CellDimension recreatePaintersAndResizeCanvases(GridStructure structure, double cellEdgeLength) {
         if ((basePainter != null) && (dynamicPainter != null) && (overlayPainter != null)) {
             basePainter.clearCanvasBackground();
             dynamicPainter.clearCanvasBackground();

@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.FxTestSupport;
 import de.mkalb.etpetssim.core.AppLogger;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.beans.property.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -23,28 +23,42 @@ final class FXComponentFactoryTest {
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     @Test
-    void testCreateLabelHBoxAndVBoxApplyTextAndStyleClass() {
-        FxTestSupport.runAndWait(() -> {
+    void testCreateLabel() {
+        FXTestSupport.runAndWait(() -> {
             Label label = FXComponentFactory.createLabel("Label", STYLE_CLASS);
-            HBox hBox = FXComponentFactory.createHBox(STYLE_CLASS);
-            VBox vBox = FXComponentFactory.createVBox(STYLE_CLASS);
 
             assertAll(
                     () -> assertEquals("Label", label.getText()),
-                    () -> assertTrue(label.getStyleClass().contains(STYLE_CLASS)),
-                    () -> assertTrue(hBox.getStyleClass().contains(STYLE_CLASS)),
-                    () -> assertTrue(vBox.getStyleClass().contains(STYLE_CLASS))
+                    () -> assertTrue(label.getStyleClass().contains(STYLE_CLASS))
             );
         });
     }
 
     @Test
+    void testCreateHBox() {
+        FXTestSupport.runAndWait(() -> {
+            HBox hBox = FXComponentFactory.createHBox(STYLE_CLASS);
+
+            assertTrue(hBox.getStyleClass().contains(STYLE_CLASS));
+        });
+    }
+
+    @Test
+    void testCreateVBox() {
+        FXTestSupport.runAndWait(() -> {
+            VBox vBox = FXComponentFactory.createVBox(STYLE_CLASS);
+
+            assertTrue(vBox.getStyleClass().contains(STYLE_CLASS));
+        });
+    }
+
+    @Test
     void testCreateLabeledEnumRadioButtonsSynchronizesSelectionAndProperty() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             InputEnumProperty<TestMode> property = InputEnumProperty.of(
                     TestMode.ALPHA,
                     TestMode.class,
@@ -81,7 +95,7 @@ final class FXComponentFactoryTest {
 
     @Test
     void testCreateLabeledEnumCheckBoxSynchronizesSelectionAndProperty() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             InputEnumProperty<TestToggle> property = InputEnumProperty.of(
                     TestToggle.OFF,
                     TestToggle.class,
@@ -114,7 +128,7 @@ final class FXComponentFactoryTest {
 
     @Test
     void testCreateLabeledEnumCheckBoxRejectsInvalidMappings() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             InputEnumProperty<TestMode> threeValueProperty = InputEnumProperty.of(
                     TestMode.ALPHA,
                     TestMode.class,
@@ -136,8 +150,8 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledChoiceComboBoxSynchronizesValuesAndCleanupStopsSynchronization() {
-        FxTestSupport.runAndWait(() -> {
+    void testCreateLabeledChoiceComboBoxSynchronizesValuesAndStopsOnCleanup() {
+        FXTestSupport.runAndWait(() -> {
             InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                     "alpha",
                     List.of("alpha", "beta", "gamma"),
@@ -177,8 +191,8 @@ final class FXComponentFactoryTest {
 
     @Test
     void testCreateLabeledIntSliderBindsValueAndConfiguresSlider() {
-        FxTestSupport.runAndWait(() -> {
-            InputDoublePropertyIntRange property = InputDoublePropertyIntRange.of(3, 0, 10);
+        FXTestSupport.runAndWait(() -> {
+            InputDoubleIntRangeProperty property = InputDoubleIntRangeProperty.of(3, 0, 10);
 
             FXComponentFactory.LabeledControl<Slider> control = FXComponentFactory.createLabeledIntSlider(
                     property,
@@ -209,7 +223,7 @@ final class FXComponentFactoryTest {
 
     @Test
     void testCreateLabeledIntSpinnerNormalizesEditorInputAndSyncsProperty() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             InputIntegerProperty property = InputIntegerProperty.of(10, 0, 20, 5);
 
             FXComponentFactory.LabeledControl<Spinner<Integer>> control = FXComponentFactory.createLabeledIntSpinner(
@@ -240,7 +254,7 @@ final class FXComponentFactoryTest {
 
     @Test
     void testCreateLabeledPercentSliderRoundsValueAndBindsLabel() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             InputDoubleProperty property = InputDoubleProperty.of(0.255d, 0.0d, 1.0d);
 
             FXComponentFactory.LabeledControl<Slider> control = FXComponentFactory.createLabeledPercentSlider(
@@ -266,7 +280,7 @@ final class FXComponentFactoryTest {
 
     @Test
     void testCreateLabeledDoubleSliderRoundsValueAndBindsLabel() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             InputDoubleProperty property = InputDoubleProperty.of(0.255d, 0.0d, 1.0d);
 
             FXComponentFactory.LabeledControl<Slider> control = FXComponentFactory.createLabeledDoubleSlider(
@@ -294,7 +308,7 @@ final class FXComponentFactoryTest {
 
     @Test
     void testCreateLabeledStringTextBoxBindsTextAndClearButton() {
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             StringProperty inputProperty = new SimpleStringProperty("initial");
             StringProperty labelProperty = new SimpleStringProperty("label");
 
@@ -327,8 +341,8 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledStringTextBoxWithAdoptCopiesValueAndTracksDisableState() {
-        FxTestSupport.runAndWait(() -> {
+    void testCreateLabeledStringTextBoxWithAdoptCopiesValueAndTracksDisabled() {
+        FXTestSupport.runAndWait(() -> {
             StringProperty inputProperty = new SimpleStringProperty("initial");
             StringProperty labelProperty = new SimpleStringProperty("label");
             StringProperty adoptValueProperty = new SimpleStringProperty("adopted");

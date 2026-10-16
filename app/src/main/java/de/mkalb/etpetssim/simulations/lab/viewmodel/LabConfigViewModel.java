@@ -53,7 +53,7 @@ public final class LabConfigViewModel
 
     public LabConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
-        addConfigValidationRule(
+        registerConfigValidationRule(
                 Bindings.createBooleanBinding(
                         () -> !GridStructure.isValid(
                                 new GridTopology(cellShapeProperty().getValue(), gridEdgeBehaviorProperty().getValue()),
@@ -82,7 +82,7 @@ public final class LabConfigViewModel
     }
 
     @Override
-    public LabConfig getConfig() {
+    public LabConfig createConfig() {
         return new LabConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

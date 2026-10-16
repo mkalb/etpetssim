@@ -25,8 +25,8 @@ public final class EtpetsObservationView
     }
 
     @Override
-    protected void onSelectedCellChanged(@Nullable EtpetsCell gridCell) {
-        super.onSelectedCellChanged(gridCell);
+    protected void handleSelectedGridCellChanged(@Nullable EtpetsCell gridCell) {
+        super.handleSelectedGridCellChanged(gridCell);
         // TODO EtpetsObservationView: Add and update more labels for selected cell
     }
 
@@ -38,7 +38,7 @@ public final class EtpetsObservationView
         Region gridSection = createGridSection();
         Region metricsSection = createGenericMetricSection(EtpetsStatistics.metrics());
         Region selectedCellSection = createSelectedCellSection();
-        onSelectedCellChanged(viewModel.selectedGridCellProperty().get());
+        handleSelectedGridCellChanged(viewModel.selectedGridCellProperty().get());
 
         return createObservationScrollPane(
                 statusSection,

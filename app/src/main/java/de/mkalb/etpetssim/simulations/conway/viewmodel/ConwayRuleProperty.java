@@ -22,15 +22,15 @@ import java.util.function.*;
  */
 public final class ConwayRuleProperty {
 
-    private static final ConwayPresetTriangle PRESET_TRIANGLE_INITIAL = ConwayPresetTriangle.EMPTY;
-    private static final ConwayPresetSquare PRESET_SQUARE_INITIAL = ConwayPresetSquare.EMPTY;
-    private static final ConwayPresetHexagon PRESET_HEXAGON_INITIAL = ConwayPresetHexagon.EMPTY;
+    private static final ConwayRulePresetTriangle PRESET_TRIANGLE_INITIAL = ConwayRulePresetTriangle.EMPTY;
+    private static final ConwayRulePresetSquare PRESET_SQUARE_INITIAL = ConwayRulePresetSquare.EMPTY;
+    private static final ConwayRulePresetHexagon PRESET_HEXAGON_INITIAL = ConwayRulePresetHexagon.EMPTY;
 
     private final StringProperty stringProperty;
     private final StringProperty labelProperty;
-    private final InputChoiceProperty<ConwayPresetTriangle> presetTriangleProperty;
-    private final InputChoiceProperty<ConwayPresetSquare> presetSquareProperty;
-    private final InputChoiceProperty<ConwayPresetHexagon> presetHexagonProperty;
+    private final InputChoiceProperty<ConwayRulePresetTriangle> presetTriangleProperty;
+    private final InputChoiceProperty<ConwayRulePresetSquare> presetSquareProperty;
+    private final InputChoiceProperty<ConwayRulePresetHexagon> presetHexagonProperty;
 
     private @Nullable Consumer<ConwayTransitionRules> rulesChangedListener;
 
@@ -38,12 +38,12 @@ public final class ConwayRuleProperty {
         stringProperty = new SimpleStringProperty("");
         labelProperty = new SimpleStringProperty("");
 
-        presetTriangleProperty = InputChoiceProperty.ofEnum(PRESET_TRIANGLE_INITIAL, ConwayPresetTriangle.class,
-                ConwayPresetTriangle::displayName);
-        presetSquareProperty = InputChoiceProperty.ofEnum(PRESET_SQUARE_INITIAL, ConwayPresetSquare.class,
-                ConwayPresetSquare::displayName);
-        presetHexagonProperty = InputChoiceProperty.ofEnum(PRESET_HEXAGON_INITIAL, ConwayPresetHexagon.class,
-                ConwayPresetHexagon::displayName);
+        presetTriangleProperty = InputChoiceProperty.ofEnum(PRESET_TRIANGLE_INITIAL, ConwayRulePresetTriangle.class,
+                ConwayRulePresetTriangle::displayName);
+        presetSquareProperty = InputChoiceProperty.ofEnum(PRESET_SQUARE_INITIAL, ConwayRulePresetSquare.class,
+                ConwayRulePresetSquare::displayName);
+        presetHexagonProperty = InputChoiceProperty.ofEnum(PRESET_HEXAGON_INITIAL, ConwayRulePresetHexagon.class,
+                ConwayRulePresetHexagon::displayName);
 
         presetTriangleProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.toString()));
         presetSquareProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.toString()));
@@ -54,7 +54,7 @@ public final class ConwayRuleProperty {
                 return;
             }
             try {
-                ConwayTransitionRules rules = ConwayTransitionRules.of(newVal);
+                ConwayTransitionRules rules = ConwayTransitionRules.parse(newVal);
                 if (rulesChangedListener != null) {
                     rulesChangedListener.accept(rules);
                 }
@@ -65,8 +65,8 @@ public final class ConwayRuleProperty {
     }
 
     /**
-     * Registers a callback that is invoked whenever a valid {@link ConwayTransitionRules} is
-     * derived from a preset selection or a text-field change.
+     * Sets the callback that is invoked whenever a valid {@link ConwayTransitionRules} is
+     * derived from a preset selection or a text-field change; replaces any previous callback.
      *
      * @param listener the consumer to call with the parsed rules
      */
@@ -92,15 +92,15 @@ public final class ConwayRuleProperty {
         return labelProperty;
     }
 
-    public InputChoiceProperty<ConwayPresetTriangle> presetTriangleProperty() {
+    public InputChoiceProperty<ConwayRulePresetTriangle> presetTriangleProperty() {
         return presetTriangleProperty;
     }
 
-    public InputChoiceProperty<ConwayPresetSquare> presetSquareProperty() {
+    public InputChoiceProperty<ConwayRulePresetSquare> presetSquareProperty() {
         return presetSquareProperty;
     }
 
-    public InputChoiceProperty<ConwayPresetHexagon> presetHexagonProperty() {
+    public InputChoiceProperty<ConwayRulePresetHexagon> presetHexagonProperty() {
         return presetHexagonProperty;
     }
 

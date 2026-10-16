@@ -110,9 +110,9 @@ public final class ForestMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<ForestEntity> oldGridCell,
-                                          @Nullable GridCell<ForestEntity> newGridCell) {
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                 @Nullable GridCell<ForestEntity> oldGridCell,
+                                                 @Nullable GridCell<ForestEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -124,7 +124,7 @@ public final class ForestMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<ForestEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<ForestEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -142,12 +142,12 @@ public final class ForestMainView
                 dynamicPainter, cell, stepCount);
 
         // draw tree cells first
-        currentModel.filteredCells(ForestEntity::isTree)
-                    .forEach(drawCell);
+        currentGridModel.filteredCells(ForestEntity::isTree)
+                        .forEach(drawCell);
 
         // then draw burning cells on top for better visibility
-        currentModel.filteredCells(ForestEntity::isBurning)
-                    .forEach(drawCell);
+        currentGridModel.filteredCells(ForestEntity::isBurning)
+                        .forEach(drawCell);
     }
 
     @Override

@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.lab.model.*;
@@ -84,7 +84,7 @@ public final class LabMainViewModel
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         AppLogger.infof("%s: Shutting down simulation", LOG_COMPONENT);
         setSimulationState(SimulationState.SHUTTING_DOWN);
 
@@ -100,7 +100,7 @@ public final class LabMainViewModel
         drawRequestedListener = () -> {};
         drawModelRequestedListener = () -> {};
         drawTestRequestedListener = () -> {};
-        return SimulationTermination.completed();
+        return SimulationTerminationHandle.completed();
     }
 
     @Override
@@ -122,9 +122,9 @@ public final class LabMainViewModel
     }
 
     @Override
-    public WritableGridModel<LabEntity> getCurrentModel() {
+    public WritableGridModel<LabEntity> getCurrentGridModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentModel();
+        return simulationManager.currentGridModel();
     }
 
     @Override
@@ -148,14 +148,14 @@ public final class LabMainViewModel
         drawTestRequestedListener = listener;
     }
 
-    public void handleConfigChanged() {
+    private void handleConfigChanged() {
         setSimulationState(SimulationState.READY);
         reset();
 
         configChangedListener.run();
     }
 
-    public void handleDrawRequested() {
+    private void handleDrawRequested() {
         // Reset notification type.
         setNotificationType(SimulationNotificationType.NONE);
 
@@ -163,7 +163,7 @@ public final class LabMainViewModel
 
         reset();
 
-        LabConfig config = configViewModel.getConfig();
+        LabConfig config = configViewModel.createConfig();
         if (!config.isValid()) {
             setSimulationState(SimulationState.ERROR);
             AppLogger.warnf("%s: Cannot start simulation because configuration is invalid.", LOG_COMPONENT);
@@ -179,11 +179,11 @@ public final class LabMainViewModel
         setSimulationState(SimulationState.PAUSED);
     }
 
-    public void handleDrawModelRequested() {
+    private void handleDrawModelRequested() {
         drawModelRequestedListener.run();
     }
 
-    public void handleDrawTestRequested() {
+    private void handleDrawTestRequested() {
         drawTestRequestedListener.run();
     }
 
@@ -193,7 +193,7 @@ public final class LabMainViewModel
         }
 
         NeighborhoodMode neighborhoodMode = simulationManager.config().neighborhoodMode();
-        WritableGridModel<LabEntity> model = simulationManager.currentModel();
+        WritableGridModel<LabEntity> model = simulationManager.currentGridModel();
 
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCell<LabEntity>>>> ringCellsByRadius =
                 CellNeighborhoods.cellsByRadiusRings(center,
@@ -202,7 +202,7 @@ public final class LabMainViewModel
                         NEIGHBORHOOD_RING_MAX_RADIUS,
                         coordinate -> new GridCell<>(coordinate, model.getEntity(coordinate)));
 
-        List<GridCoordinate> validNeighborCoordinates = CellNeighborhoods.coordinatesOfNeighbors(
+        List<GridCoordinate> validNeighborCoordinates = CellNeighborhoods.neighborCoordinatesWithinRadius(
                                                                                  center,
                                                                                  neighborhoodMode,
                                                                                  gridStructure.cellShape(),
@@ -219,14 +219,14 @@ public final class LabMainViewModel
                              }
                          });
 
-        List<EdgeBehaviorResult> neighborEdgeResults = List.copyOf(
-                CellNeighborhoods.neighborEdgeResults(center, neighborhoodMode, gridStructure));
+        List<EdgeBehaviorResult> neighborEdgeBehaviorResults = List.copyOf(
+                CellNeighborhoods.neighborEdgeBehaviorResults(center, neighborhoodMode, gridStructure));
 
         return Optional.of(new LabNeighborhoodHighlights(
                 ringCellsByRadius,
                 validNeighborCoordinates,
                 validNeighborsWithEdgeBehavior,
-                neighborEdgeResults));
+                neighborEdgeBehaviorResults));
     }
 
     public void updateSelectedGridCell(@Nullable GridCoordinate coordinate) {
@@ -234,7 +234,7 @@ public final class LabMainViewModel
             labObservationViewModel.selectedGridCellProperty().set(null);
             return;
         }
-        LabEntity entity = simulationManager.currentModel().getEntity(coordinate);
+        LabEntity entity = simulationManager.currentGridModel().getEntity(coordinate);
         labObservationViewModel.selectedGridCellProperty().set(new GridCell<>(coordinate, entity));
     }
 

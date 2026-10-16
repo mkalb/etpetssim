@@ -114,7 +114,7 @@ public final class AppLogger {
      *
      * @return number of active handlers
      */
-    static synchronized int numberOfHandlersForTesting() {
+    static synchronized int handlerCountForTesting() {
         return APP_LOGGER.logger.getHandlers().length;
     }
 

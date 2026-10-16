@@ -18,34 +18,34 @@ final class GridSizeTest {
     }
 
     @Test
-    void testMinAndMaxSizeAreValid() {
+    void testConstructorAcceptsMinAndMaxSize() {
         assertDoesNotThrow(() -> new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE));
         assertDoesNotThrow(() -> new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE));
     }
 
     @Test
-    void testNegativeSizeThrowsException() {
+    void testConstructorRejectsNegativeSize() {
         assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, 8));
         assertThrows(IllegalArgumentException.class, () -> new GridSize(8, -1));
         assertThrows(IllegalArgumentException.class, () -> new GridSize(-1, -1));
     }
 
     @Test
-    void testTooSmallSizeThrowsException() {
+    void testConstructorRejectsTooSmallSize() {
         assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 8));
         assertThrows(IllegalArgumentException.class, () -> new GridSize(8, 7));
         assertThrows(IllegalArgumentException.class, () -> new GridSize(7, 7));
     }
 
     @Test
-    void testTooLargeSizeThrowsException() {
+    void testConstructorRejectsTooLargeSize() {
         assertThrows(IllegalArgumentException.class, () -> new GridSize(20_000, 16));
         assertThrows(IllegalArgumentException.class, () -> new GridSize(16, 20_000));
         assertThrows(IllegalArgumentException.class, () -> new GridSize(20_000, 20_000));
     }
 
     @Test
-    void testStaticIsInvalidSize() {
+    void testIsInvalidSize() {
         assertFalse(GridSize.isInvalidSize(8));
         assertFalse(GridSize.isInvalidSize(15));
         assertFalse(GridSize.isInvalidSize(32));
@@ -58,7 +58,7 @@ final class GridSizeTest {
     }
 
     @Test
-    void testStaticSquare() {
+    void testSquare() {
         GridSize square = GridSize.square(64);
         assertEquals(64, square.width());
         assertEquals(64, square.height());
@@ -108,10 +108,8 @@ final class GridSizeTest {
     void testToDisplayString() {
         assertEquals("32 × 64", new GridSize(32, 64).toDisplayString());
         assertEquals("1024 × 2048", new GridSize(1_024, 2_048).toDisplayString());
-        // Boundary values (min/max).
         assertEquals("8 × 8", new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE).toDisplayString());
         assertEquals("16384 × 16384", new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE).toDisplayString());
-        // Square and rectangle examples.
         assertEquals("16 × 16", GridSize.square(16).toDisplayString());
         assertEquals("16 × 8", new GridSize(16, 8).toDisplayString());
         assertEquals("8 × 16", new GridSize(8, 16).toDisplayString());

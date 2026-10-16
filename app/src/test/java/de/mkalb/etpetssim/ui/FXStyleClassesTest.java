@@ -28,7 +28,7 @@ final class FXStyleClassesTest {
     }
 
     @Test
-    void testStyleClassConstantsAreUniqueAndNonBlank() {
+    void testConstantsAreUniqueAndNonBlank() {
         List<String> values = getStyleClassConstantValues();
 
         assertAll(
@@ -39,14 +39,14 @@ final class FXStyleClassesTest {
     }
 
     @Test
-    void testStyleClassConstantsUseCssTokenFormat() {
+    void testConstantsUseCssTokenFormat() {
         List<String> values = getStyleClassConstantValues();
 
         assertTrue(values.stream().allMatch(value -> value.matches("[a-z][a-z0-9-]*")));
     }
 
     @Test
-    void testStyleClassConstantNamesAreAlphabeticallySorted() {
+    void testConstantNamesAreAlphabeticallySorted() {
         List<String> names = Arrays.stream(FXStyleClasses.class.getDeclaredFields())
                                    .filter(field -> Modifier.isPublic(field.getModifiers()))
                                    .filter(field -> Modifier.isStatic(field.getModifiers()))

@@ -26,7 +26,7 @@ public record SugarCell(GridCoordinate coordinate,
      * @param coordinate the coordinate to read
      * @return the composed cell snapshot for the coordinate
      */
-    public static SugarCell of(SugarGridModel model, GridCoordinate coordinate) {
+    public static SugarCell from(SugarGridModel model, GridCoordinate coordinate) {
         return new SugarCell(coordinate,
                 model.resourceModel().getEntity(coordinate),
                 model.agentModel().getEntity(coordinate));

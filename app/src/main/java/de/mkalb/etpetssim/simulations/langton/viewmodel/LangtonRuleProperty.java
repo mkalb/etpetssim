@@ -68,13 +68,13 @@ public final class LangtonRuleProperty {
     public LangtonMovementRules computeRuleAndUpdateProperties(CellShape cellShape) {
         LangtonMovementRules rules;
         try {
-            rules = LangtonMovementRules.fromString(stringProperty.get());
+            rules = LangtonMovementRules.parse(stringProperty.get());
             if (!rules.isValidForCellShape(cellShape)) {
                 throw new IllegalArgumentException("Rule not valid for cell shape! cellShape=" + cellShape + ", input=" + stringProperty.get());
             }
         } catch (IllegalArgumentException e) {
             AppLogger.errorf(e, "Invalid Langton rule string '%s', falling back to '%s'", stringProperty.get(), RULE_DEFAULT);
-            rules = LangtonMovementRules.fromString(RULE_DEFAULT);
+            rules = LangtonMovementRules.parse(RULE_DEFAULT);
         }
         String rulesDisplayString = rules.toDisplayString();
         stringProperty.set(rulesDisplayString);

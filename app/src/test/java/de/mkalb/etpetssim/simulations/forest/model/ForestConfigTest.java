@@ -32,7 +32,7 @@ final class ForestConfigTest {
     }
 
     @Test
-    void testIsValidWithDefaultConstraints() {
+    void testIsValidAcceptsDefaultConstraints() {
         ForestConfig config = createConfig(
                 ForestConstraints.CELL_SHAPE_DEFAULT,
                 ForestConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,

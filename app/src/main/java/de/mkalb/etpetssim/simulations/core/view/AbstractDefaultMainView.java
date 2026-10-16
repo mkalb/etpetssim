@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.*;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
@@ -19,7 +19,9 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Default main view base with drawing and throttling support.
+ * Abstract base of the standard main view family for regular 2D simulations.
+ * <p>
+ * Binds {@link DefaultMainViewModel} and provides drawing and throttling support.
  */
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
@@ -77,14 +79,14 @@ public abstract class AbstractDefaultMainView<
         viewModel.setSimulationStepListener(this::handleSimulationStep);
         selectedGridCellListener = (_, oldGridCell, newGridCell) -> {
             if (overlayPainter != null) {
-                handleGridCellSelected(overlayPainter, oldGridCell, newGridCell);
+                handleSelectedGridCellChanged(overlayPainter, oldGridCell, newGridCell);
             }
         };
         viewModel.selectedGridCellProperty().addListener(selectedGridCellListener);
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         if (selectedGridCellListener != null) {
             viewModel.selectedGridCellProperty().removeListener(selectedGridCellListener);
             selectedGridCellListener = null;
@@ -145,7 +147,7 @@ public abstract class AbstractDefaultMainView<
 
     private void redrawAfterUserAction() {
         observationView.updateObservationLabels();
-        drawSimulation(viewModel.getCurrentModel(), viewModel.getStepCount(), viewModel.getStepCount());
+        drawSimulation(viewModel.getCurrentGridModel(), viewModel.getStepCount(), viewModel.getStepCount());
     }
 
     private void handleSimulationInitialized() {
@@ -153,16 +155,16 @@ public abstract class AbstractDefaultMainView<
 
         AppLogger.infof("%s: Starting simulation view initialization. step=%d", LOG_COMPONENT, stepCount);
 
-        var cellDimension = createPainterAndUpdateCanvas(viewModel.getStructure(), viewModel.getCellEdgeLength());
+        var cellDimension = recreatePaintersAndResizeCanvases(viewModel.getStructure(), viewModel.getCellEdgeLength());
 
         updateCanvasBorderPane(viewModel.getStructure());
 
-        rebuildActionToolBar();
+        rebuildEditToolBar();
 
-        controlView.updateStepCount(stepCount);
+        controlView.setStepCount(stepCount);
         observationView.initializeObservationLabels();
 
-        initializeSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentModel());
+        initializeSimulation(viewModel.getCurrentConfig(), cellDimension, viewModel.getCurrentGridModel());
 
         AppLogger.infof("%s: Simulation initialized in the view. step=%d", LOG_COMPONENT, stepCount);
 
@@ -174,7 +176,7 @@ public abstract class AbstractDefaultMainView<
     private void handleSimulationReset() {
         AppLogger.infof("%s: Resetting simulation view.", LOG_COMPONENT);
         clearCanvasLayers();
-        controlView.updateStepCount(0);
+        controlView.setStepCount(0);
         observationView.initializeObservationLabels();
     }
 
@@ -198,13 +200,13 @@ public abstract class AbstractDefaultMainView<
                 AppLogger.infof("%s: Handle simulation step in view for batch mode. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
-            controlView.updateStepCount(stepCount);
+            controlView.setStepCount(stepCount);
         } else {
             if (DEBUG_MODE) {
                 AppLogger.infof("%s: Handle simulation step in view. event=%s", LOG_COMPONENT, simulationStepEvent);
             }
 
-            controlView.updateStepCount(stepCount);
+            controlView.setStepCount(stepCount);
 
             observationView.updateObservationLabels();
 
@@ -217,13 +219,13 @@ public abstract class AbstractDefaultMainView<
         }
     }
 
-    protected abstract void handleGridCellSelected(FXGridCanvasPainter painter,
-                                                   @Nullable GC oldGridCell,
-                                                   @Nullable GC newGridCell);
+    protected abstract void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                          @Nullable GC oldGridCell,
+                                                          @Nullable GC newGridCell);
 
     private void drawAndMeasureSimulationStep(int stepCount) {
         long startNanos = System.nanoTime();
-        drawSimulation(viewModel.getCurrentModel(), stepCount, lastDrawnStepCount);
+        drawSimulation(viewModel.getCurrentGridModel(), stepCount, lastDrawnStepCount);
         long durationMillis = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
         drawThrottler.recordDurationMillis(durationMillis);
 
@@ -282,6 +284,6 @@ public abstract class AbstractDefaultMainView<
     protected abstract void initializeSimulation(CON config, CellDimension cellDimension, GM model);
 
     @SuppressWarnings("ParameterHidesMemberVariable")
-    protected abstract void drawSimulation(GM currentModel, int stepCount, int lastDrawnStepCount);
+    protected abstract void drawSimulation(GM currentGridModel, int stepCount, int lastDrawnStepCount);
 
 }

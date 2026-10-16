@@ -30,9 +30,9 @@ public final class ForestSimulationManager
         var random = new Random(config.seed());
         var model = new ArrayGridModel<>(structure, ForestEntity.EMPTY);
 
-        var runner = new SynchronousStepRunner<>(model, new ForestUpdateStrategy(structure, config, random));
+        var runner = new SynchronousStepRunner<>(model, new ForestStepLogic(structure, config, random));
         var terminationCondition = new ForestTerminationCondition();
-        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentModel, terminationCondition, statistics));
+        executor = new TimedSimulationExecutor<>(new DefaultSimulationExecutor<>(runner, runner::currentGridModel, terminationCondition, statistics));
 
         initializeGrid(config, model, random, cancellation);
         cancellation.checkCanceled();
@@ -65,7 +65,7 @@ public final class ForestSimulationManager
 
     @Override
     protected void updateStatistics() {
-        statistics.update(
+        statistics.setStepData(
                 executor.stepCount(),
                 executor.stepTimingStatistics());
     }

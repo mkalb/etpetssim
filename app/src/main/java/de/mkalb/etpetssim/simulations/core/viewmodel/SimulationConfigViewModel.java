@@ -28,6 +28,6 @@ public interface SimulationConfigViewModel<CON extends SimulationConfig> {
      *
      * @return simulation configuration
      */
-    CON getConfig();
+    CON createConfig();
 
 }

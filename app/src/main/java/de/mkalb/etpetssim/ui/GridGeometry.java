@@ -95,7 +95,7 @@ public final class GridGeometry {
      * @param toCellShape    the shape of the target cell
      * @return the edge length required for the target cell shape to match the width of the original cell shape
      */
-    public static double convertEdgeLengthToMatchWidth(double fromEdgeLength, CellShape fromCellShape, CellShape toCellShape) {
+    public static double computeEdgeLengthToMatchWidth(double fromEdgeLength, CellShape fromCellShape, CellShape toCellShape) {
         if (fromCellShape == toCellShape) {
             return fromEdgeLength;
         }

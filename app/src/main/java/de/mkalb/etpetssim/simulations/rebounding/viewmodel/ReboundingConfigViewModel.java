@@ -56,7 +56,7 @@ public final class ReboundingConfigViewModel
     }
 
     @Override
-    public ReboundingConfig getConfig() {
+    public ReboundingConfig createConfig() {
         return new ReboundingConfig(
                 cellShapeProperty().property().getValue(),
                 gridEdgeBehaviorProperty().property().getValue(),

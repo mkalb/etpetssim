@@ -78,33 +78,53 @@ final class FXPaintFactoryTest {
     }
 
     @Test
-    void testCreateGradientsUseExpectedStopsAndDirection() {
+    void testCreateHorizontalGradient() {
         LinearGradient horizontal = (LinearGradient) FXPaintFactory.createHorizontalGradient(Color.RED, Color.BLUE);
-        LinearGradient vertical = (LinearGradient) FXPaintFactory.createVerticalGradient(Color.RED, Color.BLUE);
-        RadialGradient radial = (RadialGradient) FXPaintFactory.createRadialGradient(Color.RED, Color.BLUE);
 
         assertAll(
                 () -> assertEquals(0.0d, horizontal.getStartX(), DELTA),
                 () -> assertEquals(1.0d, horizontal.getEndX(), DELTA),
+                () -> assertEquals(List.of(new Stop(0, Color.RED), new Stop(1, Color.BLUE)), horizontal.getStops())
+        );
+    }
+
+    @Test
+    void testCreateVerticalGradient() {
+        LinearGradient vertical = (LinearGradient) FXPaintFactory.createVerticalGradient(Color.RED, Color.BLUE);
+
+        assertAll(
                 () -> assertEquals(0.0d, vertical.getStartY(), DELTA),
                 () -> assertEquals(1.0d, vertical.getEndY(), DELTA),
+                () -> assertEquals(List.of(new Stop(0, Color.RED), new Stop(1, Color.BLUE)), vertical.getStops())
+        );
+    }
+
+    @Test
+    void testCreateRadialGradient() {
+        RadialGradient radial = (RadialGradient) FXPaintFactory.createRadialGradient(Color.RED, Color.BLUE);
+
+        assertAll(
                 () -> assertEquals(0.5d, radial.getCenterX(), DELTA),
                 () -> assertEquals(0.5d, radial.getCenterY(), DELTA),
-                () -> assertEquals(List.of(new Stop(0, Color.RED), new Stop(1, Color.BLUE)), horizontal.getStops()),
-                () -> assertEquals(List.of(new Stop(0, Color.RED), new Stop(1, Color.BLUE)), vertical.getStops()),
                 () -> assertEquals(List.of(new Stop(0, Color.RED), new Stop(1, Color.BLUE)), radial.getStops())
         );
     }
 
     @Test
-    void testAdjustColorAlphaPreservesRgbAndRejectsInvalidAlpha() {
+    void testAdjustColorAlphaPreservesRgb() {
         Color adjusted = FXPaintFactory.adjustColorAlpha(BASE_COLOR, 0.25d);
 
         assertAll(
                 () -> assertEquals(BASE_COLOR.getRed(), adjusted.getRed(), DELTA),
                 () -> assertEquals(BASE_COLOR.getGreen(), adjusted.getGreen(), DELTA),
                 () -> assertEquals(BASE_COLOR.getBlue(), adjusted.getBlue(), DELTA),
-                () -> assertEquals(0.25d, adjusted.getOpacity(), DELTA),
+                () -> assertEquals(0.25d, adjusted.getOpacity(), DELTA)
+        );
+    }
+
+    @Test
+    void testAdjustColorAlphaRejectsInvalidAlpha() {
+        assertAll(
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> FXPaintFactory.adjustColorAlpha(BASE_COLOR, -0.1d)),
                 () -> assertThrows(IllegalArgumentException.class,

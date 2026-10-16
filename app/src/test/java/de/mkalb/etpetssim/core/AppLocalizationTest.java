@@ -7,7 +7,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// Keep this class single-threaded because AppLocalization holds shared static state.
 @Execution(ExecutionMode.SAME_THREAD)
 final class AppLocalizationTest {
 
@@ -35,16 +34,12 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testBeforeInitialization() {
+    void testIsInitializedReturnsFalseBeforeInitialization() {
         assertFalse(AppLocalization.isInitialized());
-        assertThrows(IllegalStateException.class, AppLocalization::locale);
-        assertThrows(IllegalStateException.class, AppLocalization::bundle);
-        assertThrows(IllegalStateException.class, () -> AppLocalization.getText(MAIN_BUNDLE_KEY));
-        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John"));
     }
 
     @Test
-    void testInitializeTwoParameters() {
+    void testInitializeWithDefaultLocaleSetsLocaleAndBundle() {
         AppLocalization.initialize("en_US", Locale.GERMANY);
         assertTrue(AppLocalization.isInitialized());
         assertEquals(Locale.US, AppLocalization.locale());
@@ -60,7 +55,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testInitializeOneParameter() {
+    void testInitializeSetsLocaleAndBundle() {
         AppLocalization.initialize("en_US");
         assertTrue(AppLocalization.isInitialized());
         assertEquals(Locale.US, AppLocalization.locale());
@@ -76,7 +71,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testInitializeTwice() {
+    void testInitializeThrowsWhenInitializedTwice() {
         AppLocalization.initialize("en_US");
         assertTrue(AppLocalization.isInitialized());
         assertThrows(IllegalStateException.class, () -> AppLocalization.initialize("de_DE"));
@@ -115,9 +110,21 @@ final class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.resolveLocaleFromDefault(null));
     }
 
+    @Test
+    void testLocaleThrowsBeforeInitialization() {
+        assertThrows(IllegalStateException.class, AppLocalization::locale);
+    }
+
+    @Test
+    void testBundleThrowsBeforeInitialization() {
+        assertThrows(IllegalStateException.class, AppLocalization::bundle);
+    }
+
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetText() {
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getText(MAIN_BUNDLE_KEY));
+
         AppLocalization.initialize("en_US");
         assertEquals(AppLocalization.bundle().getString(MAIN_BUNDLE_KEY), AppLocalization.getText(MAIN_BUNDLE_KEY));
 
@@ -147,9 +154,11 @@ final class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.getOptionalText(null));
     }
 
-    @SuppressWarnings({"SpellCheckingInspection", "DataFlowIssue", "GrazieInspectionRunner"})
+    @SuppressWarnings({"DataFlowIssue", "GrazieInspectionRunner"})
     @Test
     void testGetFormattedText() {
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John"));
+
         AppLocalization.initialize("en_US");
         String englishText = AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John");
         assertAll(
@@ -192,17 +201,17 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testValueOfInvalidThrows() {
+    void testValueOfRejectsInvalidName() {
         assertThrows(IllegalArgumentException.class, () -> AppLocalization.CountryLocale.valueOf("INVALID"));
     }
 
     @Test
-    void testValueOfNullThrows() {
+    void testValueOfRejectsNull() {
         assertThrows(NullPointerException.class, () -> AppLocalization.CountryLocale.valueOf(null));
     }
 
     @Test
-    void testEnumCountryLocale() {
+    void testCountryLocale() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             Locale country = locale.countryLocale();
             assertNotNull(country);
@@ -213,7 +222,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumDisplayName() {
+    void testDisplayName() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String displayName = locale.displayName();
             assertNotNull(displayName);
@@ -225,7 +234,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumLanguageCode() {
+    void testLanguageCode() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.languageCode();
             assertNotNull(code);
@@ -238,7 +247,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumCountryCode() {
+    void testCountryCode() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.countryCode();
             assertNotNull(code);
@@ -251,7 +260,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumLocaleCode() {
+    void testLocaleCode() {
         for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
             String code = locale.localeCode();
             assertNotNull(code);

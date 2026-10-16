@@ -104,6 +104,6 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
      * @param cellB the second input cell providing one coordinate and one entity value
      * @throws IndexOutOfBoundsException if either coordinate is not valid
      */
-    void swapInputCellEntities(GridCell<ENT> cellA, GridCell<ENT> cellB);
+    void setSwappedEntities(GridCell<ENT> cellA, GridCell<ENT> cellB);
 
 }

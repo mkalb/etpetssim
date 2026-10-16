@@ -8,7 +8,7 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
     private final String descriptorId;
     private final long sequenceId;
     private final int stepIndexOfBirth;
-    private final List<Integer> timeOfReproduction;
+    private final List<Integer> reproductionStepIndices;
 
     protected CreatureBase(
             String descriptorId,
@@ -19,7 +19,7 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
         this.sequenceId = sequenceId;
         this.stepIndexOfBirth = stepIndexOfBirth;
 
-        timeOfReproduction = new ArrayList<>();
+        reproductionStepIndices = new ArrayList<>();
     }
 
     @Override
@@ -62,16 +62,16 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
         return ageAtStepIndex(stepCount - 1);
     }
 
-    public final int numberOfReproductions() {
-        return timeOfReproduction.size();
+    public final int reproductionCount() {
+        return reproductionStepIndices.size();
     }
 
-    public final OptionalInt timeOfLastReproduction() {
-        return timeOfReproduction.isEmpty() ? OptionalInt.empty() : OptionalInt.of(timeOfReproduction.getLast());
+    public final OptionalInt stepIndexOfLastReproduction() {
+        return reproductionStepIndices.isEmpty() ? OptionalInt.empty() : OptionalInt.of(reproductionStepIndices.getLast());
     }
 
     public final void reproduce(CreatureBase child) {
-        timeOfReproduction.add(child.stepIndexOfBirth);
+        reproductionStepIndices.add(child.stepIndexOfBirth);
     }
 
     @Override

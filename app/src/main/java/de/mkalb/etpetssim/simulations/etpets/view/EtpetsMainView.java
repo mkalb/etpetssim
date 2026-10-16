@@ -204,22 +204,19 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         };
     }
 
-    private int normalizeDoubleValueForMapRange(double value,
-                                                int min,
-                                                int max) {
+    private int clampToMapRange(double value,
+                                int min,
+                                int max) {
         if (Double.isNaN(value)) {
             return min;
-        }
-        if (Double.isInfinite(value)) {
-            return max;
         }
 
         return Math.clamp(Math.round(value), min, max);
     }
 
-    private int normalizeIntValueForMapRange(int value,
-                                             int min,
-                                             int max) {
+    private int clampToMapRange(int value,
+                                int min,
+                                int max) {
         return Math.clamp(value, min, max);
     }
 
@@ -230,7 +227,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case Trail trail -> normalizeIntValueForMapRange(
+                case Trail trail -> clampToMapRange(
                         trail.intensity(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));
@@ -248,7 +245,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case ResourceBase resource -> normalizeDoubleValueForMapRange(
+                case ResourceBase resource -> clampToMapRange(
                         resource.currentAmount(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));
@@ -266,11 +263,11 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
         Map<Integer, Color> colorMap = entityColors.get(descriptorId);
         if (colorMap != null) {
             Integer value = switch (entity) {
-                case Pet pet -> normalizeIntValueForMapRange(
+                case Pet pet -> clampToMapRange(
                         pet.currentEnergy(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));
-                case PetEgg egg -> normalizeIntValueForMapRange(
+                case PetEgg egg -> clampToMapRange(
                         egg.incubationRemaining(),
                         minByDescriptorId(descriptorId),
                         maxByDescriptorId(descriptorId));
@@ -282,9 +279,9 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable EtpetsCell oldGridCell,
-                                          @Nullable EtpetsCell newGridCell) {
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                 @Nullable EtpetsCell oldGridCell,
+                                                 @Nullable EtpetsCell newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -296,7 +293,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
     }
 
     @Override
-    protected void drawSimulation(EtpetsGridModel currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(EtpetsGridModel currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -308,9 +305,9 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
 
         dynamicPainter.clearCanvasBackground();
 
-        var terrainModel = currentModel.terrainModel();
-        var resourceModel = currentModel.resourceModel();
-        var agentModel = currentModel.agentModel();
+        var terrainModel = currentGridModel.terrainModel();
+        var resourceModel = currentGridModel.resourceModel();
+        var agentModel = currentGridModel.agentModel();
 
         var rockDescriptor = entityDescriptorRegistry.requireByDescriptorId(EtpetsEntity.DESCRIPTOR_ID_ROCK);
         terrainModel.filteredCoordinates(e -> EtpetsEntity.DESCRIPTOR_ID_ROCK.equals(e.descriptorId()))
@@ -419,7 +416,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                     availableTerrainChoices);
             terrainLabel.disableProperty().bind(enabledBinding.not());
             terrainComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 terrainLabel.disableProperty().unbind();
                 terrainComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -427,7 +424,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 terrainComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedTerrainChoiceProperty.removeListener(viewModelSelectionListener);
             });
@@ -484,7 +481,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                     availableResourceChoices);
             resourceLabel.disableProperty().bind(enabledBinding.not());
             resourceComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 resourceLabel.disableProperty().unbind();
                 resourceComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -492,7 +489,7 @@ public final class EtpetsMainView extends AbstractDefaultMainView<
                 selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 resourceComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedResourceChoiceProperty.removeListener(viewModelSelectionListener);
             });

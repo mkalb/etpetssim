@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.ui;
 
-import de.mkalb.FxTestSupport;
+import de.mkalb.etpetssim.testsupport.FXTestSupport;
 import javafx.util.Duration;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
@@ -17,7 +17,7 @@ final class SimulationTimerTest {
 
     @BeforeAll
     static void setUpBeforeAll() {
-        FxTestSupport.ensureStarted();
+        FXTestSupport.ensureStarted();
     }
 
     @Test
@@ -38,19 +38,19 @@ final class SimulationTimerTest {
         SimulationTimer timer = new SimulationTimer(() -> {
         });
 
-        FxTestSupport.runAndWait(timer::stop);
+        FXTestSupport.runAndWait(timer::stop);
 
         assertFalse(timer.isRunning());
     }
 
     @Test
-    void testStartAndStopUpdatesRunningState() {
+    void testIsRunning() {
         SimulationTimer timer = new SimulationTimer(() -> {
         });
         AtomicBoolean runningAfterStart = new AtomicBoolean(false);
         AtomicBoolean runningAfterStop = new AtomicBoolean(true);
 
-        FxTestSupport.runAndWait(() -> {
+        FXTestSupport.runAndWait(() -> {
             timer.start(Duration.millis(10));
             runningAfterStart.set(timer.isRunning());
             timer.stop();
@@ -73,10 +73,10 @@ final class SimulationTimerTest {
         });
 
         try {
-            FxTestSupport.runAndWait(() -> timer.start(Duration.millis(STEP_INTERVAL_MILLIS)));
-            assertTrue(stepLatch.await(FxTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+            FXTestSupport.runAndWait(() -> timer.start(Duration.millis(STEP_INTERVAL_MILLIS)));
+            assertTrue(stepLatch.await(FXTestSupport.DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
         } finally {
-            FxTestSupport.runAndWait(timer::stop);
+            FXTestSupport.runAndWait(timer::stop);
         }
 
         assertAll(

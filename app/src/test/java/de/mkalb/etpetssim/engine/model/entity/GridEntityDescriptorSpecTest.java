@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class GridEntityDescriptorSpecTest {
 
     @Test
-    void testRecordStoresAllValues() {
+    void testRecord() {
         GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
                 "wall",
                 true,
@@ -33,7 +33,7 @@ final class GridEntityDescriptorSpecTest {
     }
 
     @Test
-    void testRecordAllowsNullableOptionalFields() {
+    void testConstructorAllowsNullOptionalFields() {
         GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
                 "food",
                 false,

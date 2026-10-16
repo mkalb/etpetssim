@@ -157,9 +157,9 @@ public final class WatorMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<WatorEntity> oldGridCell,
-                                          @Nullable GridCell<WatorEntity> newGridCell) {
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                 @Nullable GridCell<WatorEntity> oldGridCell,
+                                                 @Nullable GridCell<WatorEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -171,7 +171,7 @@ public final class WatorMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<WatorEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<WatorEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -183,10 +183,10 @@ public final class WatorMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        currentModel.nonDefaultCells()
-                    .forEach(cell -> cellDrawer.draw(
-                            entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
-                            dynamicPainter, cell, stepCount));
+        currentGridModel.nonDefaultCells()
+                        .forEach(cell -> cellDrawer.draw(
+                                entityDescriptorRegistry.requireByDescriptorId(cell.descriptorId()),
+                                dynamicPainter, cell, stepCount));
     }
 
     @Override

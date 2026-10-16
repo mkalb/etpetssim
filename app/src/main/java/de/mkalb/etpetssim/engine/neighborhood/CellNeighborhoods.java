@@ -184,7 +184,7 @@ public final class CellNeighborhoods {
      * @return the resulting {@link EdgeBehaviorAction} for the coordinate
      * @throws IllegalArgumentException if an unknown edge behavior is encountered
      */
-    public static EdgeBehaviorAction edgeActionForCoordinate(GridCoordinate coordinate, GridStructure structure) {
+    public static EdgeBehaviorAction edgeBehaviorActionForCoordinate(GridCoordinate coordinate, GridStructure structure) {
         if (structure.isCoordinateValid(coordinate)) {
             return EdgeBehaviorAction.VALID;
         }
@@ -229,8 +229,8 @@ public final class CellNeighborhoods {
      * @param structure  the grid structure defining size and edge behavior
      * @return {@code true} if the coordinate is valid after edge behavior, {@code false} otherwise
      */
-    public static boolean isValidEdgeCoordinate(GridCoordinate coordinate, GridStructure structure) {
-        EdgeBehaviorAction action = edgeActionForCoordinate(coordinate, structure);
+    public static boolean isValidWithEdgeBehavior(GridCoordinate coordinate, GridStructure structure) {
+        EdgeBehaviorAction action = edgeBehaviorActionForCoordinate(coordinate, structure);
         return (action == EdgeBehaviorAction.VALID)
                 || (action == EdgeBehaviorAction.WRAPPED);
     }
@@ -250,7 +250,7 @@ public final class CellNeighborhoods {
      * @return an {@link EdgeBehaviorResult} containing the original coordinate, the mapped coordinate, and the action taken
      */
     public static EdgeBehaviorResult applyEdgeBehaviorToCoordinate(GridCoordinate original, GridStructure structure) {
-        EdgeBehaviorAction action = edgeActionForCoordinate(original, structure);
+        EdgeBehaviorAction action = edgeBehaviorActionForCoordinate(original, structure);
         return new EdgeBehaviorResult(
                 original,
                 switch (action) {
@@ -287,7 +287,7 @@ public final class CellNeighborhoods {
      * @param structure        the grid structure defining size and topology
      * @return an unmodifiable collection of {@link EdgeBehaviorResult} for all unique mapped neighbor coordinates (with edge behavior applied)
      */
-    public static Collection<EdgeBehaviorResult> neighborEdgeResults(
+    public static Collection<EdgeBehaviorResult> neighborEdgeBehaviorResults(
             GridCoordinate startCoordinate,
             NeighborhoodMode neighborhoodMode,
             GridStructure structure) {
@@ -329,7 +329,7 @@ public final class CellNeighborhoods {
                                                                          NeighborhoodMode neighborhoodMode,
                                                                          CellShape cellShape) {
         List<CellNeighborConnection> cellNeighborConnections =
-                resolveCachedCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
+                getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape);
 
         return cellNeighborConnections.stream()
                                       .map(neighborConnection -> new CellNeighbor(
@@ -360,7 +360,7 @@ public final class CellNeighborhoods {
                                                                                       CompassDirection direction,
                                                                                       GridStructure structure) {
         List<CellNeighborConnection> cellNeighborConnections =
-                resolveCachedCellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
+                getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
 
         for (CellNeighborConnection neighborConnection : cellNeighborConnections) {
             if (neighborConnection.direction() == direction) {
@@ -473,7 +473,7 @@ public final class CellNeighborhoods {
             SortedMap<GridCoordinate, SortedSet<GridCoordinate>> nextRingAccumulator = new TreeMap<>();
 
             for (GridCoordinate currentCoordinate : currentRingCoordinates) {
-                for (EdgeBehaviorResult edgeBehaviorResult : neighborEdgeResults(currentCoordinate, neighborhoodMode, structure)) {
+                for (EdgeBehaviorResult edgeBehaviorResult : neighborEdgeBehaviorResults(currentCoordinate, neighborhoodMode, structure)) {
                     if ((edgeBehaviorResult.action() != EdgeBehaviorAction.VALID)
                             && (edgeBehaviorResult.action() != EdgeBehaviorAction.WRAPPED)) {
                         continue;
@@ -524,10 +524,10 @@ public final class CellNeighborhoods {
      * @return a set of {@link GridCoordinate} objects representing all neighbor coordinates within the given radius
      * @throws IllegalArgumentException if the radius is greater than {@link #MAX_RADIUS}
      */
-    public static Set<GridCoordinate> coordinatesOfNeighbors(GridCoordinate startCoordinate,
-                                                             NeighborhoodMode neighborhoodMode,
-                                                             CellShape cellShape,
-                                                             int radius) {
+    public static Set<GridCoordinate> neighborCoordinatesWithinRadius(GridCoordinate startCoordinate,
+                                                                      NeighborhoodMode neighborhoodMode,
+                                                                      CellShape cellShape,
+                                                                      int radius) {
         if (radius <= 0) {
             return Collections.emptySet();
         }
@@ -570,7 +570,7 @@ public final class CellNeighborhoods {
      * {@link CellShape}.
      *
      * <p>This method extracts the {@link CompassDirection} values from the internal neighbor
-     * connection list (via {@link #resolveCachedCellNeighborConnections(GridCoordinate, NeighborhoodMode, CellShape)})
+     * connection list (via {@link #getOrComputeCellNeighborConnections(GridCoordinate, NeighborhoodMode, CellShape)})
      * and therefore does not perform any boundary checks or apply edge behavior. The returned
      * directions represent neighbors in an infinite grid. Note that {@code startCoordinate} is
      * relevant for triangle parity and hexagon Y-offsets but is effectively ignored for square cells
@@ -585,7 +585,7 @@ public final class CellNeighborhoods {
     public static Set<CompassDirection> cellNeighborDirections(GridCoordinate startCoordinate,
                                                                NeighborhoodMode neighborhoodMode,
                                                                CellShape cellShape) {
-        return resolveCachedCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape)
+        return getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape)
                 .stream()
                 .map(CellNeighborConnection::direction)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(CompassDirection.class)));
@@ -594,7 +594,7 @@ public final class CellNeighborhoods {
     /**
      * Returns cached neighbor connection definitions for the specified configuration.
      * <p>
-     * The cache key is generated by {@link #generateCacheKey(GridCoordinate, NeighborhoodMode, CellShape)}
+     * The cache key is generated by {@link #computeCacheKey(GridCoordinate, NeighborhoodMode, CellShape)}
      * and includes only parity/offset information that affects the geometry.
      *
      * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)
@@ -602,11 +602,11 @@ public final class CellNeighborhoods {
      * @param cellShape        the cell shape to evaluate
      * @return an immutable list of relative neighbor connections for the configuration
      */
-    static List<CellNeighborConnection> resolveCachedCellNeighborConnections(GridCoordinate startCoordinate,
+    static List<CellNeighborConnection> getOrComputeCellNeighborConnections(GridCoordinate startCoordinate,
                                                                              NeighborhoodMode neighborhoodMode,
                                                                              CellShape cellShape) {
         return CACHE.computeIfAbsent(
-                generateCacheKey(startCoordinate, neighborhoodMode, cellShape),
+                computeCacheKey(startCoordinate, neighborhoodMode, cellShape),
                 _ -> computeCellNeighborConnections(startCoordinate, neighborhoodMode, cellShape));
     }
 
@@ -622,9 +622,9 @@ public final class CellNeighborhoods {
      * @param cellShape        the cell shape
      * @return a deterministic cache key for the given configuration
      */
-    static String generateCacheKey(GridCoordinate startCoordinate,
-                                   NeighborhoodMode neighborhoodMode,
-                                   CellShape cellShape) {
+    static String computeCacheKey(GridCoordinate startCoordinate,
+                                  NeighborhoodMode neighborhoodMode,
+                                  CellShape cellShape) {
         return switch (cellShape) {
             case TRIANGLE -> cellShape + "::" + neighborhoodMode + "::" + startCoordinate.isTriangleCellPointingDown();
             case SQUARE -> cellShape + "::" + neighborhoodMode;

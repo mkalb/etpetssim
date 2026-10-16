@@ -99,8 +99,8 @@ public final class DefaultControlView
         bindNotStartableDisabled(startModeControl.controlRegion());
 
         var terminationCheckControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.terminationCheckProperty(),
-                SimulationTerminationCheck.CHECKED,
-                SimulationTerminationCheck.UNCHECKED,
+                SimulationTerminationCheckMode.CHECKED,
+                SimulationTerminationCheckMode.UNCHECKED,
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_TERMINATION_CHECK),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_TERMINATION_CHECK_TOOLTIP),
                 FXStyleClasses.CONFIG_CHECKBOX
@@ -146,7 +146,7 @@ public final class DefaultControlView
     }
 
     @Override
-    public void updateStepCount(int stepCount) {
+    public void setStepCount(int stepCount) {
         stepNumberLabel.setText(AppLocalization.getFormattedText(AppLocalizationKeys.CONTROL_STEP_NUMBER, stepCount));
     }
 

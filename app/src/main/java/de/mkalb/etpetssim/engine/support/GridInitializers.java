@@ -33,16 +33,6 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that clears the grid, setting all cells to the default entity.
-     *
-     * @param <ENT> the type of grid entity
-     * @return a grid initializer that clears the grid
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> clear() {
-        return WritableGridModel::clear;
-    }
-
-    /**
      * Returns an initializer that fills the entire grid with the specified entity.
      *
      * @param entity the entity to fill the grid with
@@ -247,7 +237,7 @@ public final class GridInitializers {
         };
     }
 
-    private static void validatePercent(double value) {
+    private static void checkPercent(double value) {
         if ((value < 0.0d) || (value > 1.0d)) {
             throw new IllegalArgumentException("percent must be in range [0.0, 1.0], but was " + value + '.');
         }
@@ -296,7 +286,7 @@ public final class GridInitializers {
                                                                                    Predicate<ENT> canReplaceExisting,
                                                                                    double percent,
                                                                                    Random random) {
-        validatePercent(percent);
+        checkPercent(percent);
         return model -> placeRandomCount((int) Math.round(percent * model.structure().size().area()),
                 entitySupplier, canReplaceExisting, random).initialize(model);
     }
@@ -577,17 +567,17 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that places the given entity at each position with a certain probability,
-     * otherwise places a fallback entity.
+     * Returns an initializer that fills every position with the given entity with a certain probability,
+     * otherwise with a fallback entity.
      *
      * @param entity      the entity to place with the given probability
      * @param probability the probability to place the entity (0.0 to 1.0)
      * @param fallback    the fallback entity to place otherwise
      * @param random      the random number generator
      * @param <ENT>       the type of grid entity
-     * @return a grid initializer that places entities probabilistically
+     * @return a grid initializer that fills the grid probabilistically
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeWithProbability(ENT entity, double probability, ENT fallback, Random random) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> fillWithProbability(ENT entity, double probability, ENT fallback, Random random) {
         return model ->
                 model.fill(() -> (random.nextDouble() < probability) ? entity : fallback);
     }

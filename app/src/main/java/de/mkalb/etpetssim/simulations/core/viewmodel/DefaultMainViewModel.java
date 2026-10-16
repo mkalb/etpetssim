@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.core.AppLogger;
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import de.mkalb.etpetssim.simulations.core.model.*;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.ui.SimulationTimer;
@@ -58,14 +58,14 @@ public final class DefaultMainViewModel<
     private final ObjectProperty<@Nullable ENT> lastSelectedEntity = new SimpleObjectProperty<>();
     private final BiFunction<GM, GridCoordinate, GC> selectedGridCellProvider;
     private final SimulationUserAction<ENT, GM, CON, STA, SM, CTX> simulationUserAction;
-    private final SimulationEditToolBarViewModel<CTX> editToolBarViewModel;
+    private final EditToolBarViewModel<CTX> editToolBarViewModel;
     private @Nullable SM simulationManager;
     private @Nullable Future<?> initializationFuture;
     private @Nullable Future<?> batchFuture;
     private volatile @Nullable Thread batchThread;
     private long lifecycleGeneration;
     private boolean disposed;
-    private @Nullable SimulationTermination termination;
+    private @Nullable SimulationTerminationHandle terminationHandle;
     private long timeoutExecuteNanos = Long.MAX_VALUE;
     private long timeoutViewMillis = Long.MAX_VALUE;
     private long throttleDrawMillis = Long.MAX_VALUE;
@@ -114,8 +114,8 @@ public final class DefaultMainViewModel<
         this.simulationManagerFactory = simulationManagerFactory;
         this.selectedGridCellProvider = selectedGridCellProvider;
         this.simulationUserAction = simulationUserAction;
-        editToolBarViewModel = new SimulationEditToolBarViewModel<>();
-        timer = new SimulationTimer(this::runTimerStep);
+        editToolBarViewModel = new EditToolBarViewModel<>();
+        timer = new SimulationTimer(this::executeTimerStep);
         this.lifecycleExecutor = lifecycleExecutor;
 
         actionButtonRequestedListener = (_, _, newVal) -> {
@@ -145,7 +145,7 @@ public final class DefaultMainViewModel<
         observationViewModel.bindSelectedGridCellProperty(selectedGridCell);
         lastClickedCoordinateListener = ((_, _, newValue) -> {
             if ((newValue != null) && hasSimulationManager() && isSelectionState(getSimulationState())) {
-                refreshSelectedGridCell(getCurrentModel(), newValue);
+                refreshSelectedGridCell(getCurrentGridModel(), newValue);
             } else {
                 selectedGridCell.set(null);
             }
@@ -169,9 +169,9 @@ public final class DefaultMainViewModel<
         };
     }
 
-    private void refreshSelectedGridCell(GM currentModel, GridCoordinate coordinate) {
+    private void refreshSelectedGridCell(GM currentGridModel, GridCoordinate coordinate) {
         try {
-            var cell = selectedGridCellProvider.apply(currentModel, coordinate);
+            var cell = selectedGridCellProvider.apply(currentGridModel, coordinate);
             selectedGridCell.set(cell);
             lastSelectedCoordinate.set(cell.coordinate());
             lastSelectedEntity.set(cell.entity());
@@ -237,7 +237,7 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Registers a callback invoked after simulation initialization.
+     * Sets the callback invoked after simulation initialization; replaces any previous callback.
      *
      * @param listener callback invoked after manager creation and initial statistics update
      */
@@ -246,7 +246,7 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Registers a callback invoked for simulation step notifications.
+     * Sets the callback invoked for simulation step notifications; replaces any previous callback.
      *
      * @param listener callback receiving step events
      */
@@ -255,7 +255,7 @@ public final class DefaultMainViewModel<
     }
 
     /**
-     * Registers a callback invoked whenever statistics are reset, i.e. right after
+     * Sets the callback invoked whenever statistics are reset, i.e. right after
      * {@link DefaultObservationViewModel#resetStatistics()} is called on simulation restart or shutdown.
      *
      * <p>Use this to refresh observation labels/charts to their initial placeholder state so stale
@@ -280,9 +280,9 @@ public final class DefaultMainViewModel<
     }
 
     @Override
-    public SimulationTermination shutdownSimulation() {
+    public SimulationTerminationHandle shutdownSimulation() {
         if (disposed) {
-            return Objects.requireNonNull(termination);
+            return Objects.requireNonNull(terminationHandle);
         }
         disposed = true;
         AppLogger.infof("%s: Shutting down simulation during state=%s", LOG_COMPONENT, getSimulationState());
@@ -306,7 +306,7 @@ public final class DefaultMainViewModel<
         shutdownLifecycleExecutor();
         simulationManager = null;
         observationStateViewModel.resetStatistics();
-        termination = new ExecutorSimulationTermination(lifecycleExecutor);
+        terminationHandle = new ExecutorSimulationTerminationHandle(lifecycleExecutor);
         Runnable resetListener = simulationResetListener;
         simulationInitializedListener = NO_OP_SIMULATION_INITIALIZED_LISTENER;
         simulationStepListener = NO_OP_SIMULATION_STEP_LISTENER;
@@ -316,7 +316,7 @@ public final class DefaultMainViewModel<
         } catch (RuntimeException e) {
             AppLogger.error(e, LOG_COMPONENT + ": Failed to reset the simulation view during shutdown.");
         }
-        return termination;
+        return terminationHandle;
     }
 
     @Override
@@ -331,9 +331,9 @@ public final class DefaultMainViewModel<
     }
 
     @Override
-    public GM getCurrentModel() {
+    public GM getCurrentGridModel() {
         Objects.requireNonNull(simulationManager, "Simulation manager is not initialized.");
-        return simulationManager.currentModel();
+        return simulationManager.currentGridModel();
     }
 
     public int getStepCount() {
@@ -456,13 +456,13 @@ public final class DefaultMainViewModel<
             setSimulationState(SimulationState.RUNNING_BATCH);
             logSimulationInfo("Simulation (batch) was resumed by the user.");
 
-            runBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
+            executeBatchSteps(controlViewModel.stepCountProperty().getValue(), controlViewModel.isTerminationChecked(),
                     controlViewModel.isModeBatchContinuous());
         }
     }
 
     private Optional<CON> createValidConfig() {
-        CON config = configViewModel.getConfig();
+        CON config = configViewModel.createConfig();
         if (!config.isValid()) {
             return Optional.empty();
         }
@@ -510,7 +510,7 @@ public final class DefaultMainViewModel<
             } else {
                 setSimulationState(SimulationState.RUNNING_BATCH);
                 logSimulationInfo("Simulation (batch) was started by the user. durationMillis=" + durationMillis);
-                runBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
+                executeBatchSteps(request.stepCount(), request.terminationChecked(), request.continuousBatchMode());
             }
         } catch (RuntimeException e) {
             if (isInitializationActive(generation)) {
@@ -550,7 +550,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void runTimerStep() {
+    private void executeTimerStep() {
         if (simulationManager == null) {
             AppLogger.errorf("%s: Simulation manager is not initialized; cannot execute timer step.", LOG_COMPONENT);
             stopTimer();
@@ -628,7 +628,7 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private void runBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
+    private void executeBatchSteps(int count, boolean checkTermination, boolean restartBatchIfPossible) {
         ++lifecycleGeneration;
         long generation = lifecycleGeneration;
         batchFuture = lifecycleExecutor.submit(() -> {
@@ -679,7 +679,7 @@ public final class DefaultMainViewModel<
                             if (count >= 100) {
                                 logSimulationInfo("Simulation (batch) finished. Restart new batch. RUNNING_BATCH -> RUNNING_BATCH count=" + count + ", executionResult=" + executionResult);
                             }
-                            runBatchSteps(count, checkTermination, true);
+                            executeBatchSteps(count, checkTermination, true);
                         }
                     } else if (getSimulationState() == SimulationState.PAUSING_BATCH) {
                         if (executorFinished) {
@@ -820,7 +820,7 @@ public final class DefaultMainViewModel<
                     + ((currentSelectedCell != null) ? currentSelectedCell.toDisplayString() : "null"));
             simulationUserAction.apply(manager, context, currentSelectedCell);
             if (currentSelectedCell != null) {
-                refreshSelectedGridCell(manager.currentModel(), currentSelectedCell.coordinate());
+                refreshSelectedGridCell(manager.currentGridModel(), currentSelectedCell.coordinate());
             }
             return true;
         } else {
@@ -881,7 +881,8 @@ public final class DefaultMainViewModel<
         }
     }
 
-    private record ExecutorSimulationTermination(ExecutorService executor) implements SimulationTermination {
+    private record ExecutorSimulationTerminationHandle(ExecutorService executor)
+            implements SimulationTerminationHandle {
 
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {

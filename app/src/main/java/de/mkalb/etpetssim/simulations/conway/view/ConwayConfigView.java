@@ -67,7 +67,7 @@ public final class ConwayConfigView
         var hintBinding = Bindings.createStringBinding(
                 () -> {
                     var shape = viewModel.cellShapeProperty().property().getValue();
-                    ConwayPreset preset = (switch (shape) {
+                    ConwayRulePreset preset = (switch (shape) {
                         case SQUARE -> squarePresetProperty;
                         case TRIANGLE -> trianglePresetProperty;
                         case HEXAGON -> hexagonPresetProperty;
@@ -114,9 +114,9 @@ public final class ConwayConfigView
                 FXStyleClasses.CONFIG_COMBOBOX
         );
 
-        setupPresetControlBindings(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
-        setupPresetControlBindings(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
-        setupPresetControlBindings(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
+        bindVisibilityToCellShape(presetTriangleControl.label(), presetTriangleControl.controlRegion(), CellShape.TRIANGLE);
+        bindVisibilityToCellShape(presetSquareControl.label(), presetSquareControl.controlRegion(), CellShape.SQUARE);
+        bindVisibilityToCellShape(presetHexagonControl.label(), presetHexagonControl.controlRegion(), CellShape.HEXAGON);
 
         var inputControl = FXComponentFactory.createLabeledStringTextBox(
                 viewModel.ruleProperty().stringProperty(),
@@ -219,13 +219,6 @@ public final class ConwayConfigView
         }
 
         return new FXComponentFactory.LabeledControl<>(label, gridPane);
-    }
-
-    private void setupPresetControlBindings(Label label, Region controlRegion, CellShape shape) {
-        label.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
-        label.managedProperty().bind(label.visibleProperty());
-        controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
-        controlRegion.managedProperty().bind(controlRegion.visibleProperty());
     }
 
 }

@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 import de.mkalb.etpetssim.engine.model.entity.*;
 import javafx.scene.paint.Color;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
@@ -67,16 +66,6 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
                 null,
                 color,
                 null);
-    }
-
-    /**
-     * Returns the {@link TerrainConstant} associated with the given rule index, or {@code null} if none exists.
-     *
-     * @param ruleIndex the rule index to look up
-     * @return the matching {@link TerrainConstant}, or {@code null} if not found
-     */
-    public static @Nullable TerrainConstant byRuleIndex(int ruleIndex) {
-        return BY_RULE_INDEX.get(ruleIndex);
     }
 
     /**

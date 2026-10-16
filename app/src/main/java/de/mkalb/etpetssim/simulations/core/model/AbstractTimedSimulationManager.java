@@ -28,9 +28,9 @@ public abstract class AbstractTimedSimulationManager<
         implements SimulationManager<ENT, GM, CON, STA> {
 
     private final CON config;
-    private final List<StatisticMetric<STA>> metrics;
-    private final StatisticHistory statisticsHistory;
-    private final StatisticExtremaTracker statisticsExtremaTracker;
+    private final List<StatisticsMetric<STA>> metrics;
+    private final StatisticsHistory statisticsHistory;
+    private final StatisticsExtremaTracker statisticsExtremaTracker;
 
     /**
      * Initializes the base manager with the given immutable configuration.
@@ -49,11 +49,11 @@ public abstract class AbstractTimedSimulationManager<
      * @param metrics metric descriptors sampled after each executed step
      */
     protected AbstractTimedSimulationManager(CON config,
-                                             List<StatisticMetric<STA>> metrics) {
+                                             List<StatisticsMetric<STA>> metrics) {
         this.config = config;
         this.metrics = List.copyOf(metrics);
-        statisticsHistory = new StatisticHistory();
-        statisticsExtremaTracker = new StatisticExtremaTracker(metrics);
+        statisticsHistory = new StatisticsHistory();
+        statisticsExtremaTracker = new StatisticsExtremaTracker(metrics);
     }
 
     /**
@@ -80,41 +80,16 @@ public abstract class AbstractTimedSimulationManager<
         timedExecutor.executeStep();
         updateStatistics();
         recordStatisticsSample();
-        afterStepExecuted();
     }
 
     @Override
     public final StepExecutionResult executeSteps(int count, boolean checkTermination, Runnable onStep) {
         var timedExecutor = executor();
-        var result = timedExecutor.executeSteps(count, checkTermination, () -> {
+        return timedExecutor.executeSteps(count, checkTermination, () -> {
             updateStatistics();
             recordStatisticsSample();
             onStep.run();
         });
-        afterStepsExecuted(result);
-        return result;
-    }
-
-    /**
-     * Hook invoked after a single step has been executed and statistics updated.
-     *
-     * <p>The default implementation does nothing. Subclasses may override this method
-     * to perform additional processing after each individual step.
-     */
-    @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass"})
-    protected void afterStepExecuted() {
-    }
-
-    /**
-     * Hook invoked after a multistep batch has been executed.
-     *
-     * <p>The default implementation does nothing. Subclasses may override this method
-     * to react to the aggregated {@link StepExecutionResult} of the completed batch.
-     *
-     * @param result the aggregated execution result of the completed batch
-     */
-    @SuppressWarnings({"EmptyMethod", "NoopMethodInAbstractClass", "unused"})
-    protected void afterStepsExecuted(StepExecutionResult result) {
     }
 
     @Override
@@ -133,17 +108,17 @@ public abstract class AbstractTimedSimulationManager<
     }
 
     @Override
-    public final GM currentModel() {
-        return executor().currentModel();
+    public final GM currentGridModel() {
+        return executor().currentGridModel();
     }
 
     @Override
-    public final List<StatisticSample> statisticsHistory() {
-        return statisticsHistory.asList();
+    public final List<StatisticsSample> statisticsHistory() {
+        return statisticsHistory.toList();
     }
 
     @Override
-    public final StatisticExtrema statisticsExtrema() {
+    public final StatisticsExtrema statisticsExtrema() {
         return statisticsExtremaTracker.snapshot();
     }
 
@@ -179,9 +154,9 @@ public abstract class AbstractTimedSimulationManager<
             values.put(metric.key(), value);
         }
 
-        var sample = new StatisticSample(stepCount(), stepTimingStatistics(), values);
+        var sample = new StatisticsSample(stepCount(), stepTimingStatistics(), values);
         statisticsHistory.add(sample);
-        statisticsExtremaTracker.update(sample.values(), sample.stepCount());
+        statisticsExtremaTracker.recordSample(sample.values(), sample.stepCount());
     }
 
 }

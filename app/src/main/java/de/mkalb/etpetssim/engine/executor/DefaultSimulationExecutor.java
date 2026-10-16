@@ -54,7 +54,7 @@ public final class DefaultSimulationExecutor<
     }
 
     @Override
-    public GM currentModel() {
+    public GM currentGridModel() {
         return modelSupplier.get();
     }
 
@@ -65,7 +65,7 @@ public final class DefaultSimulationExecutor<
 
     @Override
     public boolean isFinished() {
-        return terminationCondition.isFinished(currentModel(), stepCount, context);
+        return terminationCondition.isFinished(currentGridModel(), stepCount, context);
     }
 
     @Override

@@ -35,7 +35,7 @@ final class SnakeUserActionTest {
     }
 
     private static GridCell<SnakeEntity> selectedCell(SnakeSimulationManager manager, GridCoordinate coordinate) {
-        return new GridCell<>(coordinate, manager.currentModel().getEntity(coordinate));
+        return new GridCell<>(coordinate, manager.currentGridModel().getEntity(coordinate));
     }
 
     @Test
@@ -47,12 +47,12 @@ final class SnakeUserActionTest {
 
         assertAll(
                 () -> assertEquals(0, manager.statistics().wallCells()),
-                () -> assertTrue(manager.currentModel().nonDefaultCoordinates().isEmpty())
+                () -> assertTrue(manager.currentGridModel().nonDefaultCoordinates().isEmpty())
         );
     }
 
     @Test
-    void testAddWallAddsWallToSelectedGroundCell() {
+    void testApplyAddWallAddsWallToSelectedGroundCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -60,29 +60,29 @@ final class SnakeUserActionTest {
         userAction.apply(manager, SnakeUserActionContext.FixedAction.ADD_WALL, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(coordinate).isWall()),
+                () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isWall()),
                 () -> assertEquals(1, manager.statistics().wallCells())
         );
     }
 
     @Test
-    void testRemoveWallRemovesSelectedWallCell() {
+    void testApplyRemoveWallRemovesSelectedWallCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().setEntity(coordinate, TerrainConstant.WALL);
+        manager.currentGridModel().setEntity(coordinate, TerrainConstant.WALL);
         manager.statistics().adjustWallCells(1);
 
         userAction.apply(manager, SnakeUserActionContext.FixedAction.REMOVE_WALL, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(coordinate).isGround()),
+                () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isGround()),
                 () -> assertEquals(0, manager.statistics().wallCells())
         );
     }
 
     @Test
-    void testAddFoodAddsFoodToSelectedGroundCell() {
+    void testApplyAddFoodAddsFoodToSelectedGroundCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -90,29 +90,29 @@ final class SnakeUserActionTest {
         userAction.apply(manager, SnakeUserActionContext.FixedAction.ADD_FOOD, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(coordinate).isFood()),
+                () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isFood()),
                 () -> assertEquals(1, manager.statistics().foodCells())
         );
     }
 
     @Test
-    void testRemoveFoodRemovesSelectedFoodCell() {
+    void testApplyRemoveFoodRemovesSelectedFoodCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
-        manager.currentModel().setEntity(coordinate, TerrainConstant.GROWTH_FOOD);
+        manager.currentGridModel().setEntity(coordinate, TerrainConstant.GROWTH_FOOD);
         manager.statistics().adjustFoodCells(1);
 
         userAction.apply(manager, SnakeUserActionContext.FixedAction.REMOVE_FOOD, selectedCell(manager, coordinate));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(coordinate).isGround()),
+                () -> assertTrue(manager.currentGridModel().getEntity(coordinate).isGround()),
                 () -> assertEquals(0, manager.statistics().foodCells())
         );
     }
 
     @Test
-    void testAddSnakeAddsSnakeHeadToSelectedGroundCell() {
+    void testApplyAddSnakeAddsSnakeHeadToSelectedGroundCell() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
@@ -122,7 +122,7 @@ final class SnakeUserActionTest {
                 new SnakeUserActionContext.AddSnake(SnakeMoveStrategies.MOMENTUM),
                 selectedCell(manager, coordinate));
 
-        SnakeEntity entity = manager.currentModel().getEntity(coordinate);
+        SnakeEntity entity = manager.currentGridModel().getEntity(coordinate);
         assertAll(
                 () -> assertInstanceOf(SnakeHead.class, entity),
                 () -> assertEquals(1, manager.statistics().snakeHeadCells()),
@@ -131,7 +131,7 @@ final class SnakeUserActionTest {
     }
 
     @Test
-    void testRemoveSnakeRemovesHeadAndSegmentsWhenSegmentIsSelected() {
+    void testApplyRemoveSnakeRemovesHeadAndSegmentsWhenSegmentIsSelected() {
         SnakeSimulationManager manager = new SnakeSimulationManager(createConfig());
         SnakeUserAction userAction = new SnakeUserAction();
         GridCoordinate segmentCoordinate = new GridCoordinate(2, 2);
@@ -144,8 +144,8 @@ final class SnakeUserActionTest {
                 0);
         head.move(segmentCoordinate, CompassDirection.E, 0, 0);
 
-        manager.currentModel().setEntity(headCoordinate, head);
-        manager.currentModel().setEntity(segmentCoordinate, TerrainConstant.SNAKE_SEGMENT);
+        manager.currentGridModel().setEntity(headCoordinate, head);
+        manager.currentGridModel().setEntity(segmentCoordinate, TerrainConstant.SNAKE_SEGMENT);
         manager.statistics().incrementSnakeHeadCells();
         manager.statistics().incrementLivingSnakeHeadCells();
 
@@ -155,8 +155,8 @@ final class SnakeUserActionTest {
                 selectedCell(manager, segmentCoordinate));
 
         assertAll(
-                () -> assertTrue(manager.currentModel().getEntity(headCoordinate).isGround()),
-                () -> assertTrue(manager.currentModel().getEntity(segmentCoordinate).isGround()),
+                () -> assertTrue(manager.currentGridModel().getEntity(headCoordinate).isGround()),
+                () -> assertTrue(manager.currentGridModel().getEntity(segmentCoordinate).isGround()),
                 () -> assertEquals(0, manager.statistics().snakeHeadCells()),
                 () -> assertEquals(0, manager.statistics().livingSnakeHeadCells())
         );

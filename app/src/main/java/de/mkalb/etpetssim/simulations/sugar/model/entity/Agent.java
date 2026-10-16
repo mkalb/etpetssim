@@ -24,12 +24,8 @@ public final class Agent implements AgentEntity {
         return currentEnergy;
     }
 
-    public void reduceEnergy(int loss) {
-        currentEnergy = currentEnergy - loss;
-    }
-
-    public void gainEnergy(int gain) {
-        currentEnergy = currentEnergy + gain;
+    public void adjustEnergy(int delta) {
+        currentEnergy = currentEnergy + delta;
     }
 
     public int stepIndexOfSpawn() {

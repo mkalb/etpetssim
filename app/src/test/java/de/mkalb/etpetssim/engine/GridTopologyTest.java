@@ -17,7 +17,7 @@ final class GridTopologyTest {
     }
 
     @Test
-    void testToDisplayStringFormat() {
+    void testToDisplayStringReturnsShapeAndEdgeBehavior() {
         assertEquals("[SQUARE BLOCK/WRAP]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y).toDisplayString());
         assertEquals("[HEXAGON WRAP/BLOCK]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_X_BLOCK_Y).toDisplayString());
         assertEquals("[SQUARE BLOCK]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY).toDisplayString());
@@ -26,7 +26,7 @@ final class GridTopologyTest {
     }
 
     @Test
-    void testStaticRequiredWidthMultiple() {
+    void testRequiredWidthMultipleWithCellShape() {
         assertEquals(1, GridTopology.requiredWidthMultiple(CellShape.TRIANGLE, EdgeBehavior.BLOCK));
         assertEquals(1, GridTopology.requiredWidthMultiple(CellShape.SQUARE, EdgeBehavior.BLOCK));
         assertEquals(1, GridTopology.requiredWidthMultiple(CellShape.HEXAGON, EdgeBehavior.BLOCK));
@@ -41,7 +41,7 @@ final class GridTopologyTest {
     }
 
     @Test
-    void testStaticRequiredHeightMultiple() {
+    void testRequiredHeightMultipleWithCellShape() {
         assertEquals(1, GridTopology.requiredHeightMultiple(CellShape.TRIANGLE, EdgeBehavior.BLOCK));
         assertEquals(1, GridTopology.requiredHeightMultiple(CellShape.SQUARE, EdgeBehavior.BLOCK));
         assertEquals(1, GridTopology.requiredHeightMultiple(CellShape.HEXAGON, EdgeBehavior.BLOCK));
@@ -89,7 +89,7 @@ final class GridTopologyTest {
     }
 
     @Test
-    void testToDisplayString() {
+    void testToDisplayStringForMoreCombinations() {
         assertEquals("[SQUARE ABSORB]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY).toDisplayString());
         assertEquals("[HEXAGON BLOCK/WRAP]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_X_WRAP_Y).toDisplayString());
     }

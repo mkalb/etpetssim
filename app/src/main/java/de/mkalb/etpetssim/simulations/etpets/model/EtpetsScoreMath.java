@@ -155,7 +155,7 @@ final class EtpetsScoreMath {
                 * Math.exp(-(double) age / PET_EAT_SCORE_AGE_DECAY_STEPS);
     }
 
-    private static double clampToUnitRange(double value) {
+    static double clampToUnitRange(double value) {
         return Math.clamp(value, 0.0d, 1.0d);
     }
 

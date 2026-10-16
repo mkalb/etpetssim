@@ -119,9 +119,9 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void handleGridCellSelected(FXGridCanvasPainter painter,
-                                          @Nullable GridCell<ConwayEntity> oldGridCell,
-                                          @Nullable GridCell<ConwayEntity> newGridCell) {
+    protected void handleSelectedGridCellChanged(FXGridCanvasPainter painter,
+                                                 @Nullable GridCell<ConwayEntity> oldGridCell,
+                                                 @Nullable GridCell<ConwayEntity> newGridCell) {
         if (oldGridCell != null) {
             painter.clearCanvasBackground();
         }
@@ -133,7 +133,7 @@ public final class ConwayMainView
     }
 
     @Override
-    protected void drawSimulation(WritableGridModel<ConwayEntity> currentModel, int stepCount, int lastDrawnStepCount) {
+    protected void drawSimulation(WritableGridModel<ConwayEntity> currentGridModel, int stepCount, int lastDrawnStepCount) {
         if ((basePainter == null) || (dynamicPainter == null) || (overlayPainter == null)) {
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
@@ -145,9 +145,9 @@ public final class ConwayMainView
 
         dynamicPainter.clearCanvasBackground();
 
-        currentModel.nonDefaultCoordinates()
-                    .forEach(coordinate -> coordinateDrawer.draw(
-                            dynamicPainter, coordinate, stepCount));
+        currentGridModel.nonDefaultCoordinates()
+                        .forEach(coordinate -> coordinateDrawer.draw(
+                                dynamicPainter, coordinate, stepCount));
     }
 
     @Override
@@ -220,7 +220,7 @@ public final class ConwayMainView
                     availablePatternChoices);
             patternLabel.disableProperty().bind(enabledBinding.not());
             patternComboBox.disableProperty().bind(enabledBinding.not());
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 patternLabel.disableProperty().unbind();
                 patternComboBox.disableProperty().unbind();
                 enabledBinding.dispose();
@@ -228,7 +228,7 @@ public final class ConwayMainView
                 selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
             });
         } else {
-            registerActionToolBarCleanup(() -> {
+            registerEditToolBarCleanup(() -> {
                 patternComboBox.valueProperty().removeListener(comboSelectionListener);
                 selectedPatternChoiceProperty.removeListener(viewModelSelectionListener);
             });

@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.sugar.shared;
 
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,10 +29,7 @@ final class SugarUserActionContextTest {
     void testAddSugarStoresLevel() {
         SugarUserActionContext.AddSugar context = new SugarUserActionContext.AddSugar(SugarAddSugarLevel.HIGH);
 
-        assertAll(
-                () -> assertInstanceOf(SimulationUserActionContext.class, context),
-                () -> assertSame(SugarAddSugarLevel.HIGH, context.level())
-        );
+        assertSame(SugarAddSugarLevel.HIGH, context.level());
     }
 
 }

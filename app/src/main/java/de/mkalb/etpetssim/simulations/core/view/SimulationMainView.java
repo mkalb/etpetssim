@@ -1,6 +1,6 @@
 package de.mkalb.etpetssim.simulations.core.view;
 
-import de.mkalb.etpetssim.simulations.core.SimulationTermination;
+import de.mkalb.etpetssim.simulations.core.SimulationTerminationHandle;
 import javafx.scene.layout.Region;
 
 /**
@@ -22,6 +22,6 @@ public interface SimulationMainView {
      *
      * @return termination handle for application-exit bookkeeping
      */
-    SimulationTermination shutdownSimulation();
+    SimulationTerminationHandle shutdownSimulation();
 
 }

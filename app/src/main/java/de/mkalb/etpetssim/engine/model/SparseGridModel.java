@@ -338,7 +338,7 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     }
 
     @Override
-    public void swapInputCellEntities(GridCell<ENT> cellA, GridCell<ENT> cellB) {
+    public void setSwappedEntities(GridCell<ENT> cellA, GridCell<ENT> cellB) {
         GridCoordinate coordinateA = cellA.coordinate();
         GridCoordinate coordinateB = cellB.coordinate();
         if (!structure.isCoordinateValid(coordinateA)) {

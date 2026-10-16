@@ -341,7 +341,7 @@ public final class FXGridCanvasPainter {
     public void drawTriangleMatchingCellWidth(GridCoordinate coordinate,
                                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                               double strokeLineWidth) {
-        double convertedEdgeLength = GridGeometry.convertEdgeLengthToMatchWidth(cellDimension.edgeLength(), structure.cellShape(), CellShape.TRIANGLE);
+        double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(), structure.cellShape(), CellShape.TRIANGLE);
         drawTriangle(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
     }
 
@@ -380,7 +380,7 @@ public final class FXGridCanvasPainter {
     public void drawHexagonMatchingCellWidth(GridCoordinate coordinate,
                                              @Nullable Paint fillColor, @Nullable Paint strokeColor,
                                              double strokeLineWidth) {
-        double convertedEdgeLength = GridGeometry.convertEdgeLengthToMatchWidth(cellDimension.edgeLength(), structure.cellShape(), CellShape.HEXAGON);
+        double convertedEdgeLength = GridGeometry.computeEdgeLengthToMatchWidth(cellDimension.edgeLength(), structure.cellShape(), CellShape.HEXAGON);
         drawHexagon(coordinate, convertedEdgeLength, fillColor, strokeColor, strokeLineWidth);
     }
 
