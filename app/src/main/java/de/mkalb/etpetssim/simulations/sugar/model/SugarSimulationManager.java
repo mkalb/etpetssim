@@ -168,12 +168,12 @@ public final class SugarSimulationManager
     }
 
     @SuppressWarnings({"NumericCastThatLosesPrecision"})
-    private int computeSugarAmount(int minSugar, int sugarRange, int radiusLimit, int radiusLevel, Random random) {
+    private int computeSugarAmount(int minSugarAmount, int sugarRange, int radiusLimit, int radiusLevel, Random random) {
         // linear interpolation: near peaks -> max, at edge -> min
         if (radiusLimit <= 0) {
-            return minSugar;
+            return minSugarAmount;
         }
-        return (int) Math.floor(minSugar
+        return (int) Math.floor(minSugarAmount
                 + (((double) sugarRange * (radiusLimit - radiusLevel)) / radiusLimit)
                 + random.nextDouble(SugarBalance.SUGAR_NOISE_MIN, SugarBalance.SUGAR_NOISE_MAX));
     }

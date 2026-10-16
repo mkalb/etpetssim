@@ -24,12 +24,12 @@ public record SimulationInstance(
      * Intended for use by {@code SimulationFactory}.
      * </p>
      *
-     * @param type               the simulation type
+     * @param simulationType     the simulation type
      * @param simulationMainView the main view responsible for building the UI
      * @return a new instance bundling type, view, and its main region
      */
-    static SimulationInstance of(SimulationType type, SimulationMainView simulationMainView) {
-        return new SimulationInstance(type, simulationMainView, simulationMainView.buildMainRegion());
+    static SimulationInstance of(SimulationType simulationType, SimulationMainView simulationMainView) {
+        return new SimulationInstance(simulationType, simulationMainView, simulationMainView.buildMainRegion());
     }
 
     /**

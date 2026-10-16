@@ -63,8 +63,8 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
     void rebuild(
             List<SimulationUserActionDescriptor<CTX>> descriptors,
             @Nullable BooleanProperty editModeProperty,
-            @Nullable ObjectProperty<String> currentSelectedToolIdProperty,
-            ReadOnlyObjectProperty<SimulationState> simulationStateProperty,
+            @Nullable ObjectProperty<String> selectedToolId,
+            ReadOnlyObjectProperty<SimulationState> simulationState,
             Function<@Nullable ObjectProperty<String>, @Nullable Node> optionPanelFactory,
             Consumer<SimulationUserActionDescriptor<CTX>> globalActionHandler) {
 
@@ -75,7 +75,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
         List<Node> nodes = createEditToolBarNodes(descriptors,
                 editModeProperty,
-                currentSelectedToolIdProperty,
+                selectedToolId,
                 optionPanelFactory,
                 globalActionHandler);
         if (nodes.isEmpty()) {
@@ -96,7 +96,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
         toolbarNodes.add(editButton);
         toolbarNodes.addAll(nodes);
         editAffordanceBox.getChildren().setAll(toolbarNodes);
-        editAffordanceScrollPane.disableProperty().bind(simulationStateProperty.isNotEqualTo(SimulationState.PAUSED));
+        editAffordanceScrollPane.disableProperty().bind(simulationState.isNotEqualTo(SimulationState.PAUSED));
         editAffordanceScrollPane.setVisible(true);
         editAffordanceScrollPane.setManaged(true);
     }
@@ -129,7 +129,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
     private List<Node> createEditToolBarNodes(
             List<SimulationUserActionDescriptor<CTX>> descriptors,
             BooleanProperty editModeProperty,
-            @Nullable ObjectProperty<String> currentSelectedToolIdProperty,
+            @Nullable ObjectProperty<String> selectedToolId,
             Function<@Nullable ObjectProperty<String>, @Nullable Node> optionPanelFactory,
             Consumer<SimulationUserActionDescriptor<CTX>> globalActionHandler) {
 
@@ -140,7 +140,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
         Map<Toggle, SimulationUserActionDescriptor<CTX>> descriptorByToggle = new HashMap<>();
 
-        if (currentSelectedToolIdProperty != null) {
+        if (selectedToolId != null) {
             selectButton = new ToggleButton(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT));
             configureEditToolBarButton(selectButton);
             selectButton.setTooltip(new Tooltip(AppLocalization.getText(AppLocalizationKeys.SIMULATION_TOOLBAR_SELECT_TOOLTIP)));
@@ -152,7 +152,7 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
 
         for (var descriptor : descriptors) {
             if ((descriptor.scope() == SimulationUserActionScope.CELL_SELECTED)
-                    && (currentSelectedToolIdProperty != null)) {
+                    && (selectedToolId != null)) {
                 ToggleButton actionButton = new ToggleButton(AppLocalization.getText(descriptor.labelKey()));
                 configureEditToolBarButton(actionButton);
                 actionButton.setTooltip(new Tooltip(AppLocalization.getText(descriptor.tooltipKey())));
@@ -172,15 +172,15 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
             }
         }
 
-        Node optionPanelNode = optionPanelFactory.apply(currentSelectedToolIdProperty);
+        Node optionPanelNode = optionPanelFactory.apply(selectedToolId);
         if (optionPanelNode != null) {
             optionPanelNode.visibleProperty().bind(editModeProperty);
             optionPanelNode.managedProperty().bind(editModeProperty);
             nodes.add(optionPanelNode);
         }
 
-        if (currentSelectedToolIdProperty != null) {
-            selectedToolIdProperty = currentSelectedToolIdProperty;
+        if (selectedToolId != null) {
+            selectedToolIdProperty = selectedToolId;
             var finalSelectButton = selectButton;
 
             selectedToolIdListener = (_, _, toolId) -> {
@@ -196,18 +196,18 @@ final class EditToolBarView<CTX extends SimulationUserActionContext> {
                 }
                 cellActionToggleGroup.selectToggle(finalSelectButton);
             };
-            currentSelectedToolIdProperty.addListener(selectedToolIdListener);
+            selectedToolId.addListener(selectedToolIdListener);
 
-            String currentToolId = currentSelectedToolIdProperty.get();
-            selectedToolIdListener.changed(currentSelectedToolIdProperty, currentToolId, currentToolId);
+            String currentToolId = selectedToolId.get();
+            selectedToolIdListener.changed(selectedToolId, currentToolId, currentToolId);
         }
 
         cellActionToggleGroup.selectedToggleProperty().addListener((_, _, selectedToggle) -> {
-            if (currentSelectedToolIdProperty == null) {
+            if (selectedToolId == null) {
                 return;
             }
             var descriptor = descriptorByToggle.get(selectedToggle);
-            currentSelectedToolIdProperty.set(
+            selectedToolId.set(
                     (descriptor != null)
                             ? descriptor.toolId()
                             : SimulationUserActionDescriptor.SELECT_TOOL_ID);

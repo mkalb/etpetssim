@@ -532,14 +532,14 @@ public final class EtpetsAgentLogic {
         return (secondPet.parentBId() != null) && idsA.contains(secondPet.parentBId());
     }
 
-    private static Optional<GridCoordinate> findEggPlacementCoordinate(GridStructure gridStructure,
+    private static Optional<GridCoordinate> findEggPlacementCoordinate(GridStructure structure,
                                                                        GridCoordinate sourceCoordinate,
                                                                        GridCoordinate partnerCoordinate,
                                                                        Map<GridCoordinate, RadiusRingCell<EtpetsCell>> snapshotCellsByCoordinate) {
         // TODO Optimize method
-        List<GridCoordinate> sourceNeighbors = computeValidNeighborCoordinates(gridStructure, sourceCoordinate);
+        List<GridCoordinate> sourceNeighbors = computeValidNeighborCoordinates(structure, sourceCoordinate);
         Set<GridCoordinate> sourceNeighborSet = new HashSet<>(sourceNeighbors);
-        List<GridCoordinate> partnerNeighbors = computeValidNeighborCoordinates(gridStructure, partnerCoordinate);
+        List<GridCoordinate> partnerNeighbors = computeValidNeighborCoordinates(structure, partnerCoordinate);
 
         List<GridCoordinate> candidates = new ArrayList<>();
         for (GridCoordinate coordinate : partnerNeighbors) {
@@ -571,10 +571,10 @@ public final class EtpetsAgentLogic {
         return Optional.of(candidates.getFirst());
     }
 
-    private static List<GridCoordinate> computeValidNeighborCoordinates(GridStructure gridStructure,
+    private static List<GridCoordinate> computeValidNeighborCoordinates(GridStructure structure,
                                                                         GridCoordinate originCoordinate) {
         Collection<EdgeBehaviorResult> results =
-                CellNeighborhoods.neighborEdgeBehaviorResults(originCoordinate, NeighborhoodMode.EDGES_ONLY, gridStructure);
+                CellNeighborhoods.neighborEdgeBehaviorResults(originCoordinate, NeighborhoodMode.EDGES_ONLY, structure);
         List<GridCoordinate> valid = new ArrayList<>(results.size());
         for (EdgeBehaviorResult r : results) {
             if (r.action() == EdgeBehaviorAction.VALID) {
@@ -668,25 +668,25 @@ public final class EtpetsAgentLogic {
                 mortalityChance);
     }
 
-    private static String formatActionCandidates(List<ActionCandidate> candidates) {
-        StringBuilder sb = new StringBuilder(candidates.size() * DISPLAY_STRING_CAPACITY_HINT);
-        for (int i = 0; i < candidates.size(); i++) {
+    private static String formatActionCandidates(List<ActionCandidate> actionCandidates) {
+        StringBuilder sb = new StringBuilder(actionCandidates.size() * DISPLAY_STRING_CAPACITY_HINT);
+        for (int i = 0; i < actionCandidates.size(); i++) {
             if (i > 0) {
                 sb.append(" | ");
             }
-            sb.append(formatActionCandidate(candidates.get(i)));
+            sb.append(formatActionCandidate(actionCandidates.get(i)));
         }
         return sb.toString();
     }
 
-    private static String formatActionCandidate(ActionCandidate candidate) {
-        String egg = (candidate.eggTarget() != null) ? candidate.eggTarget().toDisplayString() : "-";
+    private static String formatActionCandidate(ActionCandidate actionCandidate) {
+        String egg = (actionCandidate.eggTarget() != null) ? actionCandidate.eggTarget().toDisplayString() : "-";
         return String.format(Locale.ROOT,
                 "%s(score=%d, move=%s, target=%s, egg=%s)",
-                candidate.type(),
-                candidate.score(),
-                candidate.moveTarget().toDisplayString(),
-                candidate.interactionTarget().toDisplayString(),
+                actionCandidate.type(),
+                actionCandidate.score(),
+                actionCandidate.moveTarget().toDisplayString(),
+                actionCandidate.interactionTarget().toDisplayString(),
                 egg);
     }
 

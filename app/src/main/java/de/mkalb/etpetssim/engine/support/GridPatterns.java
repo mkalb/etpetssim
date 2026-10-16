@@ -159,18 +159,18 @@ public final class GridPatterns {
      * (top, bottom, left, and right edges) of the rectangle. The pattern is <b>normalized</b>
      * with its top-left at (0, 0).
      *
-     * @param stroke the entity to place at each border position
-     * @param width  the width of the rectangle (number of columns)
-     * @param height the height of the rectangle (number of rows)
-     * @param <ENT>  the type of {@link GridEntity}
+     * @param borderEntity the entity to place at each border position
+     * @param width        the width of the rectangle (number of columns)
+     * @param height       the height of the rectangle (number of rows)
+     * @param <ENT>        the type of {@link GridEntity}
      * @return a pattern representing the rectangle border
      */
-    public static <ENT extends GridEntity> GridPattern<ENT> rectangle(ENT stroke, int width, int height) {
+    public static <ENT extends GridEntity> GridPattern<ENT> rectangle(ENT borderEntity, int width, int height) {
         Map<GridOffset, ENT> map = new HashMap<>();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if ((y == 0) || (y == (height - 1)) || (x == 0) || (x == (width - 1))) {
-                    map.put(new GridOffset(x, y), stroke);
+                    map.put(new GridOffset(x, y), borderEntity);
                 }
             }
         }
@@ -186,12 +186,12 @@ public final class GridPatterns {
      * of a circle centered at (radius, radius). The pattern is <b>normalized</b>
      * so that the top-left of its bounding box is at offset (0, 0).
      *
-     * @param stroke the entity to place at each border position
-     * @param radius the radius of the circle (in grid units)
-     * @param <ENT>  the type of {@link GridEntity}
+     * @param borderEntity the entity to place at each border position
+     * @param radius       the radius of the circle (in grid units)
+     * @param <ENT>        the type of {@link GridEntity}
      * @return a pattern representing the circle border
      */
-    public static <ENT extends GridEntity> GridPattern<ENT> circle(ENT stroke, int radius) {
+    public static <ENT extends GridEntity> GridPattern<ENT> circle(ENT borderEntity, int radius) {
         Set<GridOffset> offsets = new HashSet<>();
         int x = radius;
         int y = 0;
@@ -221,7 +221,7 @@ public final class GridPatterns {
         int minDy = offsets.stream().mapToInt(GridOffset::dy).min().orElse(0);
         Map<GridOffset, ENT> map = new HashMap<>();
         for (GridOffset o : offsets) {
-            map.put(new GridOffset(o.dx() - minDx, o.dy() - minDy), stroke);
+            map.put(new GridOffset(o.dx() - minDx, o.dy() - minDy), borderEntity);
         }
         Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
         return () -> mapCopy;

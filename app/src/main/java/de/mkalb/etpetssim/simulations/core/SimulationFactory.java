@@ -31,16 +31,16 @@ public final class SimulationFactory {
      * If the provided simulation type is not supported, this method throws an {@link IllegalArgumentException}.
      * </p>
      *
-     * @param type         the type of simulation to create
-     * @param stage        the primary stage where the simulation will be displayed
-     * @param stageUpdater a callback to switch the stage content to a different simulation type
+     * @param simulationType the type of simulation to create
+     * @param stage          the primary stage where the simulation will be displayed
+     * @param stageUpdater   a callback to switch the stage content to a different simulation type
      * @return a new {@link SimulationInstance} for the specified type
      * @throws IllegalArgumentException if the simulation type is not supported
      */
-    public static SimulationInstance createInstance(SimulationType type,
+    public static SimulationInstance createInstance(SimulationType simulationType,
                                                     Stage stage,
                                                     BiConsumer<Stage, SimulationType> stageUpdater) {
-        return SimulationInstance.of(type, switch (type) {
+        return SimulationInstance.of(simulationType, switch (simulationType) {
             case STARTSCREEN -> StartFactory.createMainView(stage, stageUpdater);
             case ET_PETS -> EtpetsFactory.createMainView();
             case WATOR -> WatorFactory.createMainView();

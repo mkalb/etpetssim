@@ -81,12 +81,12 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
      *
      * @param label         the label to show or hide
      * @param controlRegion the control region to show or hide
-     * @param shape         the cell shape for which both nodes are visible
+     * @param cellShape     the cell shape for which both nodes are visible
      */
-    protected final void bindVisibilityToCellShape(Label label, Region controlRegion, CellShape shape) {
-        label.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+    protected final void bindVisibilityToCellShape(Label label, Region controlRegion, CellShape cellShape) {
+        label.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(cellShape));
         label.managedProperty().bind(label.visibleProperty());
-        controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(shape));
+        controlRegion.visibleProperty().bind(viewModel.cellShapeProperty().property().isEqualTo(cellShape));
         controlRegion.managedProperty().bind(controlRegion.visibleProperty());
     }
 

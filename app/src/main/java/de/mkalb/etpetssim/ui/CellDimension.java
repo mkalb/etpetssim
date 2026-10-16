@@ -97,11 +97,11 @@ public record CellDimension(
      * The bounding box is a rectangle that fully contains the cell shape.
      * The given point specifies the top-left corner of this bounding box.
      *
-     * @param topLeftPoint the top-left point of the bounding box
+     * @param topLeft the top-left point of the bounding box
      * @return a {@code Rectangle2D} representing the bounding box of the cell at the specified position
      */
-    public Rectangle2D boundingBoxAt(Point2D topLeftPoint) {
-        return new Rectangle2D(topLeftPoint.getX(), topLeftPoint.getY(), width, height);
+    public Rectangle2D boundingBoxAt(Point2D topLeft) {
+        return new Rectangle2D(topLeft.getX(), topLeft.getY(), width, height);
     }
 
     /**

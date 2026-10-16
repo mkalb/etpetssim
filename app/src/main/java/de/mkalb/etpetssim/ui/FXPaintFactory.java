@@ -86,18 +86,18 @@ public final class FXPaintFactory {
      * <p>
      * A factor greater than 1.0 brightens the color, less than 1.0 darkens it.
      *
-     * @param color  the base color to adjust
-     * @param factor the brightness factor
+     * @param baseColor the base color to adjust
+     * @param factor    the brightness factor
      * @return a new color with adjusted brightness
      */
-    public static Color adjustBrightness(Color color, double factor) {
+    public static Color adjustBrightness(Color baseColor, double factor) {
         if (!Double.isFinite(factor)) {
             throw new IllegalArgumentException("factor must be finite: " + factor);
         }
-        double r = Math.clamp(color.getRed() * factor, 0.0d, 1.0d);
-        double g = Math.clamp(color.getGreen() * factor, 0.0d, 1.0d);
-        double b = Math.clamp(color.getBlue() * factor, 0.0d, 1.0d);
-        return new Color(r, g, b, color.getOpacity());
+        double r = Math.clamp(baseColor.getRed() * factor, 0.0d, 1.0d);
+        double g = Math.clamp(baseColor.getGreen() * factor, 0.0d, 1.0d);
+        double b = Math.clamp(baseColor.getBlue() * factor, 0.0d, 1.0d);
+        return new Color(r, g, b, baseColor.getOpacity());
     }
 
     /**

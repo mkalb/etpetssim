@@ -42,8 +42,8 @@ public abstract sealed class CreatureBase implements WatorEntity, Comparable<Cre
     }
 
     @Override
-    public final int compareTo(CreatureBase o) {
-        return Long.compare(sequenceId(), o.sequenceId());
+    public final int compareTo(CreatureBase other) {
+        return Long.compare(sequenceId(), other.sequenceId());
     }
 
     public final long sequenceId() {

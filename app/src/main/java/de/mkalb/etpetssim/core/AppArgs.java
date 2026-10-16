@@ -223,14 +223,14 @@ public final class AppArgs {
         /**
          * Resolves a key identifier to an enum constant.
          *
-         * @param key the key name to resolve (case-insensitive)
+         * @param keyName the key name to resolve (case-insensitive)
          * @return an {@link Optional} containing the matching key, or empty if unknown
-         * @throws NullPointerException if {@code key} is {@code null}
+         * @throws NullPointerException if {@code keyName} is {@code null}
          */
-        public static Optional<Key> fromString(String key) {
-            Objects.requireNonNull(key, "Key must not be null");
+        public static Optional<Key> fromString(String keyName) {
+            Objects.requireNonNull(keyName, "Key name must not be null");
             return Arrays.stream(values())
-                         .filter(argument -> argument.key.equalsIgnoreCase(key))
+                         .filter(argument -> argument.key.equalsIgnoreCase(keyName))
                          .findFirst();
         }
 

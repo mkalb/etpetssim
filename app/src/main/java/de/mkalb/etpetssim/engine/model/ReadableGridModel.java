@@ -69,10 +69,10 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     /**
      * Counts the number of entities that match the given predicate.
      *
-     * @param predicate the condition to test each entity against
+     * @param entityPredicate the condition to test each entity against
      * @return the count of entities that match the predicate
      */
-    long countEntities(Predicate<? super ENT> predicate);
+    long countEntities(Predicate<? super ENT> entityPredicate);
 
     /**
      * Returns a mutable set of all coordinates at which the entity is not
