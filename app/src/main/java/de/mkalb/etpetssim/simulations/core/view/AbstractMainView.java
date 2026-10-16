@@ -22,6 +22,9 @@ import java.util.*;
 
 /**
  * Generic base view that composes config, control and observation regions.
+ * <p>
+ * Thin common base of all main views. Regular simulations extend {@link AbstractDefaultMainView}, which adds the
+ * timed-step rendering flow; the lab view extends this class directly because it draws on explicit requests instead.
  */
 public abstract class AbstractMainView<
         VM extends SimulationMainViewModel,

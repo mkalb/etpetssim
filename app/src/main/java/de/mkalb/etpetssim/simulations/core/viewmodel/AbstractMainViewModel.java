@@ -12,6 +12,9 @@ import java.util.*;
 
 /**
  * Base class for main view models that coordinate config, observation and selection state.
+ * <p>
+ * Thin common base of all main view models. Regular simulations use {@link DefaultMainViewModel}, which adds the timed
+ * and batch execution lifecycle; the lab view model extends this class directly because it does not run timed steps.
  *
  * @param <ENT> entity type stored in grid cells
  * @param <GM>  grid model type exposed by the simulation
