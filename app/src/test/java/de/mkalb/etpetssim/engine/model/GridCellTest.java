@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 final class GridCellTest {
 
     @Test
-    void testDescriptorIdDelegatesToEntity() {
+    void testDescriptorId() {
         GridCell<TestEntity> cell = new GridCell<>(coordinate(4, 5), TestEntity.WALL);
         assertEquals("wall", cell.descriptorId());
     }

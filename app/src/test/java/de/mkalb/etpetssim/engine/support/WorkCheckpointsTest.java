@@ -12,22 +12,22 @@ final class WorkCheckpointsTest {
 
     @SuppressWarnings("ConstantValue")
     @Test
-    void testCancellationCheckIntervalIsPowerOfTwo() {
+    void testCancellationCheckInterval() {
         int interval = WorkCheckpoints.CANCELLATION_CHECK_INTERVAL;
 
         assertAll(
                 () -> assertTrue(interval > 0),
-                () -> assertEquals(0, interval & (interval - 1)),
-                () -> assertEquals(interval - 1, WorkCheckpoints.CANCELLATION_CHECK_MASK)
+                () -> assertEquals(0, interval & (interval - 1))
         );
     }
 
     @Test
-    void testCancellationCheckMaskIdentifiesZeroBasedCheckpoints() {
+    void testCancellationCheckMask() {
         int interval = WorkCheckpoints.CANCELLATION_CHECK_INTERVAL;
         int mask = WorkCheckpoints.CANCELLATION_CHECK_MASK;
 
         assertAll(
+                () -> assertEquals(interval - 1, mask),
                 () -> assertTrue(isCancellationCheckpoint(0, mask)),
                 () -> assertFalse(isCancellationCheckpoint(1, mask)),
                 () -> assertFalse(isCancellationCheckpoint(interval - 1, mask)),

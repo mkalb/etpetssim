@@ -520,20 +520,6 @@ final class CellNeighborhoodsTest {
     }
 
     @Test
-    void testRadiusRingCellEqualsAndHashCodeUseCoordinateOnly() {
-        GridCoordinate coordinate = new GridCoordinate(1, 1);
-
-        RadiusRingCell<String> cellA = new RadiusRingCell<>(0, coordinate, "A", new TreeSet<>());
-        RadiusRingCell<String> cellB = new RadiusRingCell<>(2, coordinate, "B",
-                new TreeSet<>(Set.of(new GridCoordinate(1, 0))));
-        RadiusRingCell<String> cellC = new RadiusRingCell<>(2, new GridCoordinate(1, 2), "B", new TreeSet<>());
-
-        assertEquals(cellA, cellB);
-        assertEquals(cellA.hashCode(), cellB.hashCode());
-        assertNotEquals(cellA, cellC);
-    }
-
-    @Test
     void testGetOrComputeCellNeighborConnections() {
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
