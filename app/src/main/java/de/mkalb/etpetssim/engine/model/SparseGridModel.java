@@ -80,17 +80,17 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     }
 
     @Override
-    public long countEntities(Predicate<? super ENT> predicate) {
+    public long countEntities(Predicate<? super ENT> entityPredicate) {
         // Sparse optimization: only iterate the non-default entries stored in the map (O(non-default)).
         // All cells not present in the map hold the default entity; their count is derived arithmetically.
         // This avoids iterating all cells (e.g. 1_000_000 for a 1000x1000 grid) when only a few are non-default.
         long count = 0;
         for (ENT entity : data.values()) {
-            if (predicate.test(entity)) {
+            if (entityPredicate.test(entity)) {
                 count++;
             }
         }
-        if (predicate.test(defaultEntity)) {
+        if (entityPredicate.test(defaultEntity)) {
             count += (long) structure.size().area() - data.size();
         }
         return count;
@@ -300,14 +300,14 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     }
 
     @Override
-    public void fill(Supplier<ENT> supplier) {
+    public void fill(Supplier<ENT> entitySupplier) {
         // Inline nested loop avoids the intermediate ArrayList created by coordinatesList().
         data.clear();
         int width = structure.size().width();
         int height = structure.size().height();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                ENT entity = supplier.get();
+                ENT entity = entitySupplier.get();
                 if (!entity.equals(defaultEntity)) {
                     data.put(new GridCoordinate(x, y), entity);
                 }

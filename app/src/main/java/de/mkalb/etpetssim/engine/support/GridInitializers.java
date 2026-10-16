@@ -437,7 +437,7 @@ public final class GridInitializers {
         }
     }
 
-    private static <ENT extends GridEntity> void fillWithSupplier(WritableGridModel<ENT> model, Supplier<ENT> supplier,
+    private static <ENT extends GridEntity> void fillWithSupplier(WritableGridModel<ENT> model, Supplier<ENT> entitySupplier,
                                                                   Runnable cancellationCheck) {
         GridSize size = model.structure().size();
         int index = 0;
@@ -447,7 +447,7 @@ public final class GridInitializers {
                     cancellationCheck.run();
                 }
                 index++;
-                model.setEntity(new GridCoordinate(x, y), supplier.get());
+                model.setEntity(new GridCoordinate(x, y), entitySupplier.get());
             }
         }
     }

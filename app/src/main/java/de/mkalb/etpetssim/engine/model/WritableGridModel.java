@@ -75,9 +75,9 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
      * Sets all grid cells using a supplier that provides a new entity for each cell.
      * The supplier is invoked exactly once per cell; invocation order is implementation-defined.
      *
-     * @param supplier the supplier to generate entities for each coordinate
+     * @param entitySupplier the supplier to generate entities for each coordinate
      */
-    void fill(Supplier<ENT> supplier);
+    void fill(Supplier<ENT> entitySupplier);
 
     /**
      * Sets all grid cells using a mapping function from coordinate to entity.

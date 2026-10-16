@@ -40,18 +40,18 @@ public record CellNeighborWithEdgeBehavior(
      * This factory method combines the geometric neighbor relationship with the outcome of edge behavior processing,
      * producing a record that contains both the original and mapped neighbor coordinates, as well as the edge behavior action.
      *
-     * @param neighbor   the theoretical neighbor relationship (ignoring edge behavior)
-     * @param edgeResult the result of applying edge behavior to the neighbor coordinate
+     * @param neighbor           the theoretical neighbor relationship (ignoring edge behavior)
+     * @param edgeBehaviorResult the result of applying edge behavior to the neighbor coordinate
      * @return a new {@link CellNeighborWithEdgeBehavior} representing the neighbor relationship with edge behavior applied
      */
-    public static CellNeighborWithEdgeBehavior of(CellNeighbor neighbor, EdgeBehaviorResult edgeResult) {
+    public static CellNeighborWithEdgeBehavior of(CellNeighbor neighbor, EdgeBehaviorResult edgeBehaviorResult) {
         return new CellNeighborWithEdgeBehavior(
                 neighbor.startCoordinate(),
                 neighbor.direction(),
                 neighbor.connection(),
-                edgeResult.original(),
-                edgeResult.mapped(),
-                edgeResult.action()
+                edgeBehaviorResult.original(),
+                edgeBehaviorResult.mapped(),
+                edgeBehaviorResult.action()
         );
     }
 

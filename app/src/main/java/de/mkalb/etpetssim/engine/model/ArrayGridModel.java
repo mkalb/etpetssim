@@ -76,7 +76,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     }
 
     @Override
-    public long countEntities(Predicate<? super ENT> predicate) {
+    public long countEntities(Predicate<? super ENT> entityPredicate) {
         int width = structure.size().width();
         int height = structure.size().height();
         long count = 0;
@@ -84,7 +84,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
             for (int x = 0; x < width; x++) {
                 @SuppressWarnings("unchecked")
                 ENT entity = (ENT) data[y][x];
-                if (predicate.test(entity)) {
+                if (entityPredicate.test(entity)) {
                     count++;
                 }
             }
@@ -262,12 +262,12 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     }
 
     @Override
-    public void fill(Supplier<ENT> supplier) {
+    public void fill(Supplier<ENT> entitySupplier) {
         int width = structure.size().width();
         int height = structure.size().height();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                data[y][x] = supplier.get();
+                data[y][x] = entitySupplier.get();
             }
         }
     }
