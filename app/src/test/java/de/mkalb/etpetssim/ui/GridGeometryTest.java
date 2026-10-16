@@ -20,31 +20,53 @@ final class GridGeometryTest {
     private static final GridCoordinate TEST_COORDINATE = new GridCoordinate(3, 4);
 
     @Test
-    void testMathConstants() {
-        assertAll(
-                () -> assertEquals(Math.sqrt(2), GridGeometry.SQRT_TWO, DELTA),
-                () -> assertEquals(Math.sqrt(3), GridGeometry.SQRT_THREE, DELTA),
-                () -> assertEquals(0.0d, GridGeometry.ZERO, DELTA),
-                () -> assertEquals(2.0d, GridGeometry.TWO, DELTA)
-        );
+    void testSqrtTwo() {
+        assertEquals(Math.sqrt(2), GridGeometry.SQRT_TWO, DELTA);
     }
 
     @Test
-    void testFractionConstants() {
-        assertAll(
-                () -> assertEquals(1.0d / 3.0d, GridGeometry.ONE_THIRD, DELTA),
-                () -> assertEquals(2.0d / 3.0d, GridGeometry.TWO_THIRDS, DELTA),
-                () -> assertEquals(0.5d, GridGeometry.ONE_HALF, DELTA),
-                () -> assertEquals(1.5d, GridGeometry.THREE_HALVES, DELTA)
-        );
+    void testSqrtThree() {
+        assertEquals(Math.sqrt(3), GridGeometry.SQRT_THREE, DELTA);
     }
 
     @Test
-    void testEdgeLengthBoundaryConstants() {
-        assertAll(
-                () -> assertEquals(1.0d, GridGeometry.MIN_EDGE_LENGTH, DELTA),
-                () -> assertEquals(1_024.0d, GridGeometry.MAX_EDGE_LENGTH, DELTA)
-        );
+    void testZero() {
+        assertEquals(0.0d, GridGeometry.ZERO, DELTA);
+    }
+
+    @Test
+    void testTwo() {
+        assertEquals(2.0d, GridGeometry.TWO, DELTA);
+    }
+
+    @Test
+    void testOneThird() {
+        assertEquals(1.0d / 3.0d, GridGeometry.ONE_THIRD, DELTA);
+    }
+
+    @Test
+    void testTwoThirds() {
+        assertEquals(2.0d / 3.0d, GridGeometry.TWO_THIRDS, DELTA);
+    }
+
+    @Test
+    void testOneHalf() {
+        assertEquals(0.5d, GridGeometry.ONE_HALF, DELTA);
+    }
+
+    @Test
+    void testThreeHalves() {
+        assertEquals(1.5d, GridGeometry.THREE_HALVES, DELTA);
+    }
+
+    @Test
+    void testMinEdgeLength() {
+        assertEquals(1.0d, GridGeometry.MIN_EDGE_LENGTH, DELTA);
+    }
+
+    @Test
+    void testMaxEdgeLength() {
+        assertEquals(1_024.0d, GridGeometry.MAX_EDGE_LENGTH, DELTA);
     }
 
     @Test

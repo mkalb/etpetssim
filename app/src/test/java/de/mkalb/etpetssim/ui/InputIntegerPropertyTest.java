@@ -106,7 +106,7 @@ final class InputIntegerPropertyTest {
     }
 
     @Test
-    void testOfWithStepOneCreatesInstanceAndAcceptsValue() {
+    void testOfAcceptsStepOne() {
         InputIntegerProperty property = InputIntegerProperty.of(3, 0, 4, 1);
 
         assertAll(

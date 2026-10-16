@@ -44,7 +44,7 @@ final class SimulationTimerTest {
     }
 
     @Test
-    void testStartAndStopUpdatesRunningState() {
+    void testIsRunning() {
         SimulationTimer timer = new SimulationTimer(() -> {
         });
         AtomicBoolean runningAfterStart = new AtomicBoolean(false);

@@ -27,18 +27,32 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabelHBoxAndVBoxApplyTextAndStyleClass() {
+    void testCreateLabel() {
         FXTestSupport.runAndWait(() -> {
             Label label = FXComponentFactory.createLabel("Label", STYLE_CLASS);
-            HBox hBox = FXComponentFactory.createHBox(STYLE_CLASS);
-            VBox vBox = FXComponentFactory.createVBox(STYLE_CLASS);
 
             assertAll(
                     () -> assertEquals("Label", label.getText()),
-                    () -> assertTrue(label.getStyleClass().contains(STYLE_CLASS)),
-                    () -> assertTrue(hBox.getStyleClass().contains(STYLE_CLASS)),
-                    () -> assertTrue(vBox.getStyleClass().contains(STYLE_CLASS))
+                    () -> assertTrue(label.getStyleClass().contains(STYLE_CLASS))
             );
+        });
+    }
+
+    @Test
+    void testCreateHBox() {
+        FXTestSupport.runAndWait(() -> {
+            HBox hBox = FXComponentFactory.createHBox(STYLE_CLASS);
+
+            assertTrue(hBox.getStyleClass().contains(STYLE_CLASS));
+        });
+    }
+
+    @Test
+    void testCreateVBox() {
+        FXTestSupport.runAndWait(() -> {
+            VBox vBox = FXComponentFactory.createVBox(STYLE_CLASS);
+
+            assertTrue(vBox.getStyleClass().contains(STYLE_CLASS));
         });
     }
 
