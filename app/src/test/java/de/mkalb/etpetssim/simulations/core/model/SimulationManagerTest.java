@@ -286,13 +286,17 @@ final class SimulationManagerTest {
     }
 
     @Test
-    void testNonTimedManagerUsesEmptyTrackingDefaults() {
+    void testStatisticsHistoryReturnsEmptyForNonTimedManager() {
         SimulationManager<?, ?, ?, ?> manager = new LabSimulationManager(createLabConfig());
 
-        assertAll(
-                () -> assertEquals(List.of(), manager.statisticsHistory()),
-                () -> assertEquals(StatisticsExtrema.empty(), manager.statisticsExtrema())
-        );
+        assertEquals(List.of(), manager.statisticsHistory());
+    }
+
+    @Test
+    void testStatisticsExtremaReturnsEmptyForNonTimedManager() {
+        SimulationManager<?, ?, ?, ?> manager = new LabSimulationManager(createLabConfig());
+
+        assertEquals(StatisticsExtrema.empty(), manager.statisticsExtrema());
     }
 
     @Test

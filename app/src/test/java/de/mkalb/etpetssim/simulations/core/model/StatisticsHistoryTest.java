@@ -14,21 +14,21 @@ final class StatisticsHistoryTest {
     }
 
     @Test
-    void testDefaultConstructorUsesDefaultCapacity() {
+    void testConstructorUsesDefaultCapacity() {
         StatisticsHistory history = new StatisticsHistory();
 
         assertEquals(StatisticsHistory.DEFAULT_CAPACITY, history.capacity());
     }
 
     @Test
-    void testConstructorUsesCapacity() {
+    void testConstructorWithCapacityUsesCapacity() {
         StatisticsHistory history = new StatisticsHistory(2);
 
         assertEquals(2, history.capacity());
     }
 
     @Test
-    void testConstructorRejectsNonPositiveCapacity() {
+    void testConstructorWithCapacityRejectsNonPositiveCapacity() {
         assertAll(
                 () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(0))),
                 () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(-1)))
@@ -36,7 +36,7 @@ final class StatisticsHistoryTest {
     }
 
     @Test
-    void testInitialStateIsEmpty() {
+    void testConstructorWithCapacityCreatesEmptyHistory() {
         StatisticsHistory history = new StatisticsHistory(2);
 
         assertAll(

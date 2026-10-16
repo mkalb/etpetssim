@@ -57,98 +57,17 @@ final class SimulationFactoryTest {
     }
 
     @Test
-    void testCreateInstanceAllTypesReturnNonNull() {
+    void testCreateInstanceReturnsCompleteInstanceForEveryType() {
         for (SimulationType type : SimulationType.values()) {
             SimulationInstance instance = createInstance(type);
-            assertNotNull(instance, "Expected non-null SimulationInstance for type: " + type);
+            assertAll(
+                    type.name(),
+                    () -> assertNotNull(instance),
+                    () -> assertEquals(type, instance.simulationType()),
+                    () -> assertNotNull(instance.simulationMainView()),
+                    () -> assertNotNull(instance.region())
+            );
         }
-    }
-
-    @Test
-    void testCreateInstanceTypeMatchesRequestedType() {
-        for (SimulationType type : SimulationType.values()) {
-            SimulationInstance instance = createInstance(type);
-            assertEquals(type, instance.simulationType(),
-                    "simulationType() mismatch for requested type: " + type);
-        }
-    }
-
-    @Test
-    void testCreateInstanceViewIsNonNull() {
-        for (SimulationType type : SimulationType.values()) {
-            SimulationInstance instance = createInstance(type);
-            assertNotNull(instance.simulationMainView(),
-                    "Expected non-null simulationMainView() for type: " + type);
-        }
-    }
-
-    @Test
-    void testCreateInstanceRegionIsNonNull() {
-        for (SimulationType type : SimulationType.values()) {
-            SimulationInstance instance = createInstance(type);
-            assertNotNull(instance.region(),
-                    "Expected non-null region() for type: " + type);
-        }
-    }
-
-    @Test
-    void testCreateInstanceStartscreen() {
-        SimulationInstance instance = createInstance(SimulationType.STARTSCREEN);
-        assertEquals(SimulationType.STARTSCREEN, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceEtPets() {
-        SimulationInstance instance = createInstance(SimulationType.ET_PETS);
-        assertEquals(SimulationType.ET_PETS, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceWator() {
-        SimulationInstance instance = createInstance(SimulationType.WATOR);
-        assertEquals(SimulationType.WATOR, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceConwaysLife() {
-        SimulationInstance instance = createInstance(SimulationType.CONWAYS_LIFE);
-        assertEquals(SimulationType.CONWAYS_LIFE, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceLangtonsAnt() {
-        SimulationInstance instance = createInstance(SimulationType.LANGTONS_ANT);
-        assertEquals(SimulationType.LANGTONS_ANT, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceForestFire() {
-        SimulationInstance instance = createInstance(SimulationType.FOREST_FIRE);
-        assertEquals(SimulationType.FOREST_FIRE, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceSugarscape() {
-        SimulationInstance instance = createInstance(SimulationType.SUGARSCAPE);
-        assertEquals(SimulationType.SUGARSCAPE, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceSnake() {
-        SimulationInstance instance = createInstance(SimulationType.SNAKE);
-        assertEquals(SimulationType.SNAKE, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceReboundingEntities() {
-        SimulationInstance instance = createInstance(SimulationType.REBOUNDING_ENTITIES);
-        assertEquals(SimulationType.REBOUNDING_ENTITIES, instance.simulationType());
-    }
-
-    @Test
-    void testCreateInstanceSimulationLab() {
-        SimulationInstance instance = createInstance(SimulationType.SIMULATION_LAB);
-        assertEquals(SimulationType.SIMULATION_LAB, instance.simulationType());
     }
 
     @Test
@@ -160,22 +79,6 @@ final class SimulationFactoryTest {
             SimulationInstance instance = createInstance(type);
             assertInstanceOf(expectedMainViewType, instance.simulationMainView());
         }
-    }
-
-    @Test
-    void testAllSimulationTypesAreCoveredByFactory() {
-        // Ensures that createInstance() handles every declared SimulationType constant
-        // without throwing. If a new type is added to the enum without updating
-        // SimulationFactory, the exhaustive switch will cause a compile error;
-        // this test serves as an explicit runtime guard.
-        assertAll(
-                () -> {
-                    for (SimulationType type : SimulationType.values()) {
-                        assertDoesNotThrow(() -> createInstance(type),
-                                "createInstance() threw for type: " + type);
-                    }
-                }
-        );
     }
 
     @Test

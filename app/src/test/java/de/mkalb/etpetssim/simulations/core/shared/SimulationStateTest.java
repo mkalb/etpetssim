@@ -61,22 +61,33 @@ final class SimulationStateTest {
     }
 
     @Test
-    void testValueOfRejectsInvalidOrNull() {
-        assertAll(
-                () -> assertThrows(IllegalArgumentException.class, () -> SimulationState.valueOf("UNKNOWN")),
-                () -> assertThrows(NullPointerException.class, () -> SimulationState.valueOf(null))
-        );
+    void testValueOfRejectsInvalidName() {
+        assertThrows(IllegalArgumentException.class, () -> SimulationState.valueOf("UNKNOWN"));
     }
 
     @Test
-    void testStatePredicates() {
+    void testValueOfRejectsNull() {
+        assertThrows(NullPointerException.class, () -> SimulationState.valueOf(null));
+    }
+
+    @Test
+    void testIsStartable() {
         for (SimulationState state : SimulationState.values()) {
-            assertAll(
-                    state.name(),
-                    () -> assertEquals(STARTABLE_STATES.contains(state), state.isStartable()),
-                    () -> assertEquals(RUNNING_STATES.contains(state), state.isRunning()),
-                    () -> assertEquals(PAUSED_STATES.contains(state), state.isPaused())
-            );
+            assertEquals(STARTABLE_STATES.contains(state), state.isStartable(), state.name());
+        }
+    }
+
+    @Test
+    void testIsRunning() {
+        for (SimulationState state : SimulationState.values()) {
+            assertEquals(RUNNING_STATES.contains(state), state.isRunning(), state.name());
+        }
+    }
+
+    @Test
+    void testIsPaused() {
+        for (SimulationState state : SimulationState.values()) {
+            assertEquals(PAUSED_STATES.contains(state), state.isPaused(), state.name());
         }
     }
 

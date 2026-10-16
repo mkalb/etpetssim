@@ -13,9 +13,4 @@ final class NoUserActionContextTest {
                 NoUserActionContext.values());
     }
 
-    @Test
-    void testNoContextImplementsSimulationUserActionContext() {
-        assertInstanceOf(SimulationUserActionContext.class, NoUserActionContext.NO_CONTEXT);
-    }
-
 }
