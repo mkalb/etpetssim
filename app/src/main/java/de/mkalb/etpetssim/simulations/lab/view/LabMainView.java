@@ -185,9 +185,12 @@ public final class LabMainView
                                                  FXGridCanvasPainter painter) {
         edgeBehaviorResults.forEach(edgeBehaviorResult -> {
             switch (edgeBehaviorResult.action()) {
-                case VALID -> painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKORANGE, EDGE_RESULT_STROKE_WIDTH);
-                case WRAPPED -> painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKRED, EDGE_RESULT_STROKE_WIDTH);
-                case BLOCKED -> painter.drawCell(edgeBehaviorResult.mapped(), Color.DARKRED, null, NO_STROKE_LINE_WIDTH);
+                case VALID ->
+                        painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKORANGE, EDGE_RESULT_STROKE_WIDTH);
+                case WRAPPED ->
+                        painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKRED, EDGE_RESULT_STROKE_WIDTH);
+                case BLOCKED ->
+                        painter.drawCell(edgeBehaviorResult.mapped(), Color.DARKRED, null, NO_STROKE_LINE_WIDTH);
                 case ABSORBED -> {
                     // nothing to render
                 }
