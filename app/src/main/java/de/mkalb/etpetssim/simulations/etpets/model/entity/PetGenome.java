@@ -55,12 +55,12 @@ public record PetGenome(PetTraits traits) {
         return new PetGenome(new PetTraits(maxEnergy, movCost, reproEnergy, reproCooldown));
     }
 
-    private static double mutate(double avg, Random random, double chance, double delta) {
-        if (random.nextDouble() < chance) {
+    private static double mutate(double averageValue, Random random, double mutationChance, double mutationDelta) {
+        if (random.nextDouble() < mutationChance) {
             double sign = random.nextBoolean() ? 1.0d : -1.0d;
-            return avg + (sign * delta * avg);
+            return averageValue + (sign * mutationDelta * averageValue);
         }
-        return avg;
+        return averageValue;
     }
 
 }

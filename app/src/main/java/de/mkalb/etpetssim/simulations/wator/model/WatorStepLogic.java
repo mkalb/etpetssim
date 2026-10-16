@@ -12,12 +12,12 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
 
     private final WatorConfig config;
     private final Random random;
-    private final CreatureFactory entityFactory;
+    private final CreatureFactory creatureFactory;
 
-    public WatorStepLogic(WatorConfig config, Random random, CreatureFactory entityFactory) {
+    public WatorStepLogic(WatorConfig config, Random random, CreatureFactory creatureFactory) {
         this.config = config;
         this.random = random;
-        this.entityFactory = entityFactory;
+        this.creatureFactory = creatureFactory;
     }
 
     @Override
@@ -67,7 +67,7 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
             if (fish.ageAtStepIndex(stepIndex) >= config.fishMinReproductionAge()) {
                 if (fish.stepIndexOfLastReproduction().isEmpty() ||
                         ((stepIndex - fish.stepIndexOfLastReproduction().getAsInt()) >= config.fishMinReproductionInterval())) {
-                    Fish childFish = entityFactory.createFish(stepIndex);
+                    Fish childFish = creatureFactory.createFish(stepIndex);
                     statistics.incrementFishCells();
                     fish.reproduce(childFish);
                     model.setEntity(fishOriginalCoordinate, childFish);
@@ -113,7 +113,7 @@ public final class WatorStepLogic implements AgentStepLogic<WatorEntity, WatorSt
                 if (shark.currentEnergy() >= config.sharkMinReproductionEnergy()) {
                     if (shark.stepIndexOfLastReproduction().isEmpty() ||
                             ((stepIndex - shark.stepIndexOfLastReproduction().getAsInt()) >= config.sharkMinReproductionInterval())) {
-                        Shark childShark = entityFactory.createShark(stepIndex, config.sharkBirthEnergy());
+                        Shark childShark = creatureFactory.createShark(stepIndex, config.sharkBirthEnergy());
                         statistics.incrementSharkCells();
                         shark.reproduce(childShark);
                         model.setEntity(sharkOriginalCoordinate, childShark);

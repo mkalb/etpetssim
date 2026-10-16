@@ -181,13 +181,13 @@ public final class LabMainView
         painter.drawCenteredTextInCell(coordinate, builder.toString(), Color.BLACK, cellFont);
     }
 
-    private void drawNeighborEdgeBehaviorResults(Collection<EdgeBehaviorResult> edgeResults,
+    private void drawNeighborEdgeBehaviorResults(Collection<EdgeBehaviorResult> edgeBehaviorResults,
                                                  FXGridCanvasPainter painter) {
-        edgeResults.forEach(edgeResult -> {
-            switch (edgeResult.action()) {
-                case VALID -> painter.drawCell(edgeResult.mapped(), null, Color.DARKORANGE, EDGE_RESULT_STROKE_WIDTH);
-                case WRAPPED -> painter.drawCell(edgeResult.mapped(), null, Color.DARKRED, EDGE_RESULT_STROKE_WIDTH);
-                case BLOCKED -> painter.drawCell(edgeResult.mapped(), Color.DARKRED, null, NO_STROKE_LINE_WIDTH);
+        edgeBehaviorResults.forEach(edgeBehaviorResult -> {
+            switch (edgeBehaviorResult.action()) {
+                case VALID -> painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKORANGE, EDGE_RESULT_STROKE_WIDTH);
+                case WRAPPED -> painter.drawCell(edgeBehaviorResult.mapped(), null, Color.DARKRED, EDGE_RESULT_STROKE_WIDTH);
+                case BLOCKED -> painter.drawCell(edgeBehaviorResult.mapped(), Color.DARKRED, null, NO_STROKE_LINE_WIDTH);
                 case ABSORBED -> {
                     // nothing to render
                 }

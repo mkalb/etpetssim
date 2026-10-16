@@ -142,25 +142,25 @@ public final class ConwayConfigView
         return createConfigMainBox(structurePane, layoutPane, initializationPane, rulesPane);
     }
 
-    private Label createRulesLabel(String text, Tooltip tooltipValue, HPos pos, String styleClass) {
+    private Label createRulesLabel(String text, Tooltip tooltip, HPos horizontalAlignment, String styleClass) {
         Label label = new Label(text);
         label.getStyleClass().add(styleClass);
-        label.setTooltip(tooltipValue);
-        GridPane.setHalignment(label, pos);
+        label.setTooltip(tooltip);
+        GridPane.setHalignment(label, horizontalAlignment);
 
         return label;
     }
 
     private FXComponentFactory.LabeledControl<GridPane> createTransitionRulesControl(List<BooleanProperty> surviveProperties,
                                                                                      List<BooleanProperty> birthProperties,
-                                                                                     ObjectProperty<ConwayTransitionRules> conwayRulesProperty,
+                                                                                     ObjectProperty<ConwayTransitionRules> transitionRulesProperty,
                                                                                      IntegerProperty maxNeighborCountProperty,
                                                                                      String labelFormatString,
                                                                                      String tooltipFormatString) {
         Label label = new Label();
         label.textProperty().bind(Bindings.createStringBinding(
-                () -> String.format(labelFormatString, conwayRulesProperty.get().toDisplayString()),
-                conwayRulesProperty
+                () -> String.format(labelFormatString, transitionRulesProperty.get().toDisplayString()),
+                transitionRulesProperty
         ));
         Tooltip tooltip = new Tooltip(tooltipFormatString);
         tooltip.textProperty().bind(
