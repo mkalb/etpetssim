@@ -235,6 +235,10 @@ Shutdown checklist:
   `WatorUserActionContext`).
 - Otherwise, use a sealed interface with a nested `FixedAction` enum and records for parameterized actions (e.g.,
   `ConwayUserActionContext`).
+- Keep the validity check of a user action in the model-side `SimulationUserAction`; the toolbar and views do not
+  check per-cell applicability.
+- Add user actions that support experiments on the current simulation state; do not add actions that only repeat a
+  restart with the same or an adjusted configuration.
 
 ## Naming
 

@@ -807,8 +807,8 @@ public final class DefaultMainViewModel<
      * {@link SimulationUserAction}. If a cell was selected before the action, the selection is refreshed afterward.
      *
      * @param context simulation-specific action context
-     * @return {@code true} if the user action was applied; {@code false} if no active manager exists or the
-     * simulation is not paused
+     * @return {@code true} if the user action was applied, which does not mean that the model changed; {@code false} if
+     * no active manager exists or the simulation is not paused
      */
     @SuppressWarnings("DataFlowIssue")
     public boolean applyUserAction(CTX context) {

@@ -8,6 +8,9 @@ import java.util.function.*;
 /**
  * UI-facing descriptor for a simulation user action.
  *
+ * <p>The descriptor holds metadata and context resolution only; it does not own JavaFX nodes. Simulation-specific
+ * option controls are created by the simulation view. An empty resolved context means the action is not applied.
+ *
  * @param <CTX>           simulation-specific action context type
  * @param toolId          stable tool identifier used for selection and matching
  * @param scope           action scope that determines UI behavior
