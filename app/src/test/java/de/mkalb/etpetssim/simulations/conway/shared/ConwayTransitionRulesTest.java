@@ -27,7 +27,7 @@ final class ConwayTransitionRulesTest {
     }
 
     @Test
-    void testConstructorStoresSurviveAndBirthCountsInSortedOrder() {
+    void testOfStoresCountsInSortedOrder() {
         ConwayTransitionRules rules = ConwayTransitionRules.of(List.of(3, 2, 5), List.of(6, 1));
         assertAll(
                 () -> assertEquals(List.of(2, 3, 5), new ArrayList<>(rules.surviveCounts())),

@@ -1,7 +1,6 @@
 package de.mkalb.etpetssim.simulations.rebounding.shared;
 
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,10 +33,7 @@ final class ReboundingUserActionContextTest {
     void testAddRebounderStoresDirection() {
         ReboundingUserActionContext.AddRebounder context = new ReboundingUserActionContext.AddRebounder(CompassDirection.SE);
 
-        assertAll(
-                () -> assertInstanceOf(SimulationUserActionContext.class, context),
-                () -> assertSame(CompassDirection.SE, context.direction())
-        );
+        assertSame(CompassDirection.SE, context.direction());
     }
 
 }

@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.conway.model;
 
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,10 +35,7 @@ final class ConwayUserActionContextTest {
                 config -> true);
         ConwayUserActionContext.PlacePattern context = new ConwayUserActionContext.PlacePattern(patternChoice);
 
-        assertAll(
-                () -> assertInstanceOf(SimulationUserActionContext.class, context),
-                () -> assertSame(patternChoice, context.patternChoice())
-        );
+        assertSame(patternChoice, context.patternChoice());
     }
 
 }

@@ -1,6 +1,5 @@
 package de.mkalb.etpetssim.simulations.snake.shared;
 
-import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
 import org.junit.jupiter.api.Test;
 
@@ -35,10 +34,7 @@ final class SnakeUserActionContextTest {
     void testAddSnakeStoresStrategy() {
         SnakeUserActionContext.AddSnake context = new SnakeUserActionContext.AddSnake(SnakeMoveStrategies.MOMENTUM);
 
-        assertAll(
-                () -> assertInstanceOf(SimulationUserActionContext.class, context),
-                () -> assertSame(SnakeMoveStrategies.MOMENTUM, context.strategy())
-        );
+        assertSame(SnakeMoveStrategies.MOMENTUM, context.strategy());
     }
 
 }
