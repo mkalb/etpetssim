@@ -34,12 +34,8 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testBeforeInitialization() {
+    void testIsInitializedReturnsFalseBeforeInitialization() {
         assertFalse(AppLocalization.isInitialized());
-        assertThrows(IllegalStateException.class, AppLocalization::locale);
-        assertThrows(IllegalStateException.class, AppLocalization::bundle);
-        assertThrows(IllegalStateException.class, () -> AppLocalization.getText(MAIN_BUNDLE_KEY));
-        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John"));
     }
 
     @Test
@@ -114,9 +110,21 @@ final class AppLocalizationTest {
         assertThrows(NullPointerException.class, () -> AppLocalization.resolveLocaleFromDefault(null));
     }
 
+    @Test
+    void testLocaleThrowsBeforeInitialization() {
+        assertThrows(IllegalStateException.class, AppLocalization::locale);
+    }
+
+    @Test
+    void testBundleThrowsBeforeInitialization() {
+        assertThrows(IllegalStateException.class, AppLocalization::bundle);
+    }
+
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetText() {
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getText(MAIN_BUNDLE_KEY));
+
         AppLocalization.initialize("en_US");
         assertEquals(AppLocalization.bundle().getString(MAIN_BUNDLE_KEY), AppLocalization.getText(MAIN_BUNDLE_KEY));
 
@@ -149,6 +157,8 @@ final class AppLocalizationTest {
     @SuppressWarnings({"SpellCheckingInspection", "DataFlowIssue", "GrazieInspectionRunner"})
     @Test
     void testGetFormattedText() {
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John"));
+
         AppLocalization.initialize("en_US");
         String englishText = AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John");
         assertAll(

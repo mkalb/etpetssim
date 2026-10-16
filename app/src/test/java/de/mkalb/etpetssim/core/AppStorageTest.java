@@ -48,26 +48,54 @@ final class AppStorageTest {
     }
 
     @Test
-    void testCreateAndDeleteAppDataFile() throws IOException {
-        String uniqueAppFileName = createUniqueAppFileName();
-
-        createdFile = AppStorage.createAppDataFile(uniqueAppFileName, OS);
-        assertTrue(Files.exists(createdFile), "File should exist after creation");
-        assertTrue(Files.isRegularFile(createdFile), "File should be a regular file");
-        assertTrue(Files.isWritable(createdFile), "File should be writable");
-
-        boolean deleted = AppStorage.deleteAppDataFile(uniqueAppFileName, OS);
-        assertTrue(deleted, "File should be deleted successfully");
-        assertFalse(Files.exists(createdFile), "File should no longer exist");
-    }
-
-    @Test
-    void testGetAppDataFile() throws IOException {
+    void testGetAppDataFileReturnsPath() throws IOException {
         String uniqueAppFileName = createUniqueAppFileName();
 
         Path path = AppStorage.getAppDataFile(uniqueAppFileName, OS);
         assertNotNull(path);
         assertTrue(path.toString().endsWith(uniqueAppFileName));
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testGetAppDataFileRejectsInvalidFileName() {
+        String pathTraversalName = Path.of("..", "outside.txt").toString();
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> AppStorage.getAppDataFile(null, OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("   ", OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.getAppDataFile(pathTraversalName, OS))
+        );
+    }
+
+    @Test
+    void testCreateAppDataFileCreatesWritableFile() throws IOException {
+        createdFile = AppStorage.createAppDataFile(createUniqueAppFileName(), OS);
+        assertTrue(Files.exists(createdFile), "File should exist after creation");
+        assertTrue(Files.isRegularFile(createdFile), "File should be a regular file");
+        assertTrue(Files.isWritable(createdFile), "File should be writable");
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testCreateAppDataFileRejectsInvalidFileName() {
+        String pathTraversalName = Path.of("..", "outside.txt").toString();
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> AppStorage.createAppDataFile(null, OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("   ", OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.createAppDataFile(pathTraversalName, OS))
+        );
+    }
+
+    @Test
+    void testDeleteAppDataFileReturnsTrueForExistingFile() throws IOException {
+        String uniqueAppFileName = createUniqueAppFileName();
+        createdFile = AppStorage.createAppDataFile(uniqueAppFileName, OS);
+
+        boolean deleted = AppStorage.deleteAppDataFile(uniqueAppFileName, OS);
+        assertTrue(deleted, "File should be deleted successfully");
+        assertFalse(Files.exists(createdFile), "File should no longer exist");
     }
 
     @Test
@@ -77,6 +105,18 @@ final class AppStorageTest {
         assertFalse(deleted, "Deleting a non-existent file should return false");
     }
 
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testDeleteAppDataFileRejectsInvalidFileName() {
+        String pathTraversalName = Path.of("..", "outside.txt").toString();
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> AppStorage.deleteAppDataFile(null, OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("   ", OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.deleteAppDataFile(pathTraversalName, OS))
+        );
+    }
+
     @Test
     void testGetLogFileReturnsPath() throws IOException {
         Path path = AppStorage.getLogFile(LOG_FILE_NAME, OS);
@@ -84,8 +124,24 @@ final class AppStorageTest {
         assertTrue(path.toString().endsWith(LOG_FILE_NAME));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Test
-    void testCreateTempCacheFile() throws IOException {
+    void testGetLogFileRejectsInvalidFileName() {
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> AppStorage.getLogFile(null, OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("", OS)),
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("   ", OS))
+        );
+    }
+
+    @Test
+    void testGetLogFileRejectsAbsolutePath() {
+        String absolutePathName = Path.of(System.getProperty("java.io.tmpdir"), "outside.log").toString();
+        assertThrows(IOException.class, () -> AppStorage.getLogFile(absolutePathName, OS));
+    }
+
+    @Test
+    void testCreateTempCacheFileCreatesWritableFile() throws IOException {
         String uniqueFilePrefix = FILE_PREFIX + UUID.randomUUID();
 
         tempFile = AppStorage.createTempCacheFile(uniqueFilePrefix, TEMP_SUFFIX, OS);
@@ -100,40 +156,8 @@ final class AppStorageTest {
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void testNullParametersThrowException() {
-        assertThrows(NullPointerException.class, () -> AppStorage.getAppDataFile(null, OS));
-        assertThrows(NullPointerException.class, () -> AppStorage.createAppDataFile(null, OS));
-        assertThrows(NullPointerException.class, () -> AppStorage.deleteAppDataFile(null, OS));
-        assertThrows(NullPointerException.class, () -> AppStorage.getLogFile(null, OS));
+    void testCreateTempCacheFileRejectsNullPrefix() {
         assertThrows(NullPointerException.class, () -> AppStorage.createTempCacheFile(null, TEMP_SUFFIX, OS));
-    }
-
-    @Test
-    void testFileNameRejectsEmptyOrBlank() {
-        assertAll(
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getAppDataFile("   ", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.createAppDataFile("   ", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.deleteAppDataFile("   ", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("   ", OS))
-        );
-    }
-
-    @Test
-    void testAppDataFileRejectsPathTraversal() {
-        String pathTraversalName = Path.of("..", "outside.txt").toString();
-        assertThrows(IOException.class, () -> AppStorage.getAppDataFile(pathTraversalName, OS));
-        assertThrows(IOException.class, () -> AppStorage.createAppDataFile(pathTraversalName, OS));
-        assertThrows(IOException.class, () -> AppStorage.deleteAppDataFile(pathTraversalName, OS));
-    }
-
-    @Test
-    void testGetLogFileRejectsAbsolutePath() {
-        String absolutePathName = Path.of(System.getProperty("java.io.tmpdir"), "outside.log").toString();
-        assertThrows(IOException.class, () -> AppStorage.getLogFile(absolutePathName, OS));
     }
 
 }
