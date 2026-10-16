@@ -48,9 +48,9 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
     /**
      * Updates the statistics snapshot shown by the view model.
      *
-     * @param stats non-null statistics snapshot
+     * @param statistics non-null statistics snapshot
      */
-    void setStatistics(STA stats);
+    void setStatistics(STA statistics);
 
     /**
      * Exposes the last clicked grid coordinate.

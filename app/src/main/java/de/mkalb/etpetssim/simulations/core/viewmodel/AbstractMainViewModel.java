@@ -61,10 +61,10 @@ public abstract class AbstractMainViewModel<
     /**
      * Updates the current simulation state.
      *
-     * @param state next simulation state
+     * @param simulationState next simulation state
      */
-    protected final void setSimulationState(SimulationState state) {
-        simulationState.set(state);
+    protected final void setSimulationState(SimulationState simulationState) {
+        this.simulationState.set(simulationState);
     }
 
     @Override

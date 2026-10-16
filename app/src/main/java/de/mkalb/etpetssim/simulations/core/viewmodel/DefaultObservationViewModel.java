@@ -59,8 +59,8 @@ public final class DefaultObservationViewModel<
     }
 
     @Override
-    public void setStatistics(STA stats) {
-        statistics.set(stats);
+    public void setStatistics(STA statistics) {
+        this.statistics.set(statistics);
     }
 
     /**
