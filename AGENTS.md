@@ -95,6 +95,46 @@ Other locations:
 - Use constants for localization keys instead of string literals: app-wide keys in `core.AppLocalizationKeys`,
   simulation-specific keys as constants in the class that uses them.
 
+## Issues and Labels
+
+- Give each issue exactly one kind label and any number of area and process labels:
+
+| Label              | Group   | Meaning                                                                     |
+|--------------------|---------|-----------------------------------------------------------------------------|
+| `bug`              | kind    | Something does not work as intended.                                        |
+| `enhancement`      | kind    | New functionality, including executable agent tools (skills, hooks).        |
+| `refactoring`      | kind    | Code cleanup or restructuring without new functionality.                    |
+| `documentation`    | kind    | Documentation, including agent instructions (`AGENTS.md`, rules).           |
+| `build`            | area    | Gradle build, CI, packaging, and code checks.                               |
+| `styling`          | area    | JavaFX CSS, layout, and visual design.                                      |
+| `agents`           | area    | Agent instructions, rules, skills, and hooks.                               |
+| `needs-refinement` | process | Not ready for implementation; needs refinement with the maintainer.         |
+| `release-1.0`      | process | Required before the first 1.0 release.                                      |
+
+- The GitHub default labels `question`, `duplicate`, `invalid`, `wontfix`, `good first issue`, and `help wanted` keep
+  their default meaning. `question` is for questions from outside that expect an answer, not an implementation; if
+  one turns into work, retitle it and add `needs-refinement`, or create a new issue.
+- Do not create, rename, or delete labels without confirmation by the maintainer.
+- Do not implement an issue labeled `needs-refinement`. Analyze it, answer the agent questions, and present the
+  results and the open decisions to the maintainer in the chat.
+- Structure the open questions of a `needs-refinement` issue as follows:
+
+  ```markdown
+  ## Open questions
+
+  ### Analysis (agent)
+
+  - [ ] ...
+
+  ### Decisions (user)
+
+  - [ ] ...
+  ```
+
+- Update the issue body or labels, and create follow-up issues, only after confirmation by the maintainer. When all
+  questions are resolved, replace `## Open questions` with a `## Decisions` section that lists each answer and
+  decision, and remove the `needs-refinement` label.
+
 ## Planning Documents
 
 - Track concrete, bounded work as a GitHub issue. Write a plan in `docs/planning` only for work that needs research
