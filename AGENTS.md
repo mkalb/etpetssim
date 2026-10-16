@@ -99,6 +99,8 @@ Other locations:
 
 - Track concrete, bounded work as a GitHub issue. Write a plan in `docs/planning` only for work that needs research
   or design first and leads to several issues later.
+- Name a plan in lowercase kebab-case with an area prefix and its topic, not its status (e.g.,
+  `simulation-etpets-extensions.md`, `engine-grid-cell-aggregation.md`).
 - Start each plan with a `**Status:**` line (`idea`, `planned`, or `in progress`) and a `**Related issues:**` line.
 - When a plan is completed or all its open work is tracked in issues, move lasting architecture facts into Javadoc
   (type-specific) or `docs/development` (cross-cutting), then delete the plan; Git history keeps it.
