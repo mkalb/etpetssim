@@ -12,52 +12,38 @@ public final class GridGeometry {
 
     /**
      * Square root of 2, used for various geometric calculations.
-     * This constant is approximately 1.4142135623730951.
      */
     public static final double SQRT_TWO = Math.sqrt(2);
     /**
      * Square root of 3, used for various geometric calculations.
-     * This constant is approximately 1.7320508075688772.
      */
     public static final double SQRT_THREE = Math.sqrt(3);
 
-    /**
-     * Number zero, as primitive double.
-     */
     public static final double ZERO = 0.0d;
-    /**
-     * Number two, as primitive double.
-     */
     public static final double TWO = 2.0d;
     /**
      * One third, used for fractional calculations.
-     * This constant is approximately 0.3333333333333333.
      */
     public static final double ONE_THIRD = 1.0d / 3.0d;
     /**
      * Two thirds, used for fractional calculations.
-     * This constant is approximately 0.6666666666666666.
      */
     public static final double TWO_THIRDS = 2.0d / 3.0d;
     /**
      * One half, used for fractional calculations.
-     * This constant is approximately 0.5.
      */
     public static final double ONE_HALF = 1.0d / 2.0d;
     /**
      * Three halves, used for fractional calculations.
-     * This constant is approximately 1.5.
      */
     public static final double THREE_HALVES = 3.0d / 2.0d;
 
     /**
      * Minimum edge length of a cell in pixels.
-     * This constant is 1.0.
      */
     public static final double MIN_EDGE_LENGTH = 1.0d;
     /**
      * Maximum edge length of a cell in pixels.
-     * This constant is 1,024.0.
      */
     public static final double MAX_EDGE_LENGTH = 1_024.0d;
 
@@ -80,15 +66,12 @@ public final class GridGeometry {
             new int[]{-1, 1}
     );
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private GridGeometry() {
     }
 
     /**
      * Converts the edge length of a cell to match the width of another cell shape.
-     * This method ensures that the resulting cell shape has the same width as the original cell shape.
+     * Ensures that the resulting cell shape has the same width as the original cell shape.
      *
      * @param fromEdgeLength the edge length of the original cell shape
      * @param fromCellShape  the shape of the original cell
@@ -120,8 +103,6 @@ public final class GridGeometry {
      * @return a CellDimension object representing the dimensions of the cell
      * @throws IllegalArgumentException if {@code edgeLength} is outside the inclusive range
      *                                  [{@link #MIN_EDGE_LENGTH}, {@link #MAX_EDGE_LENGTH}]
-     * @see de.mkalb.etpetssim.ui.GridGeometry#MIN_EDGE_LENGTH
-     * @see de.mkalb.etpetssim.ui.GridGeometry#MAX_EDGE_LENGTH
      */
     public static CellDimension computeCellDimension(double edgeLength, CellShape cellShape) {
         if ((edgeLength < MIN_EDGE_LENGTH) || (edgeLength > MAX_EDGE_LENGTH)) {
@@ -214,8 +195,8 @@ public final class GridGeometry {
      *                   and  {@link #MAX_EDGE_LENGTH}
      * @param cellShape  the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
-     * @see de.mkalb.etpetssim.ui.GridGeometry#computeCellDimension(double, de.mkalb.etpetssim.engine.CellShape)
-     * @see de.mkalb.etpetssim.ui.GridGeometry#computeGridDimension(de.mkalb.etpetssim.engine.GridSize, de.mkalb.etpetssim.ui.CellDimension, de.mkalb.etpetssim.engine.CellShape)
+     * @see GridGeometry#computeCellDimension(double, CellShape)
+     * @see GridGeometry#computeGridDimension(GridSize, CellDimension, CellShape)
      */
     public static Dimension2D computeGridDimension(GridSize gridSize, double edgeLength, CellShape cellShape) {
         return computeGridDimension(gridSize, computeCellDimension(edgeLength, cellShape), cellShape);
@@ -248,7 +229,7 @@ public final class GridGeometry {
      * @param point         the point to test
      * @param coordinate    the grid coordinate of the triangle cell
      * @param cellDimension the dimensions of the triangle cell
-     * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
+     * @return {@code true} if the point lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
      */
     public static boolean isPointInTriangleCell(Point2D point, GridCoordinate coordinate, CellDimension cellDimension) {
         double[][] polygon = computeCellPolygon(coordinate, cellDimension, CellShape.TRIANGLE);
@@ -277,7 +258,7 @@ public final class GridGeometry {
      * canvas position, based on the cell dimensions and grid structure. For {@code SQUARE} cells, the conversion
      * is exact. For {@code TRIANGLE} and {@code HEXAGON} cells, the result is an initial estimate that may not
      * always match the actual cell containing the point, due to staggered or interlocking layouts. For precise
-     * mapping, use {@link #fromCanvasPosition(javafx.geometry.Point2D, de.mkalb.etpetssim.ui.CellDimension, javafx.geometry.Dimension2D, de.mkalb.etpetssim.engine.GridStructure)}.</p>
+     * mapping, use {@link #fromCanvasPosition(Point2D, CellDimension, Dimension2D, GridStructure)}.</p>
      *
      * @param point         the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell

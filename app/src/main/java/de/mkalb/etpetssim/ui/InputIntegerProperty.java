@@ -7,9 +7,11 @@ import javafx.beans.property.*;
 /**
  * Represents an integer property with a defined range and step size.
  * <p>
- * This record encapsulates a {@link IntegerProperty} and enforces value constraints:
- * - The value must be between {@code min} and {@code max} (inclusive).
- * - The value must be a multiple of {@code step} starting from {@code min}.
+ * Encapsulates a {@link IntegerProperty} and enforces value constraints:
+ * <ul>
+ *   <li>The value must be between {@code min} and {@code max} (inclusive).</li>
+ *   <li>The value must be a multiple of {@code step} starting from {@code min}.</li>
+ * </ul>
  * <p>
  * Use {@link #of(int, int, int, int)} to create instances with validation.
  *
@@ -106,17 +108,14 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
         return property.asString(format);
     }
 
-    /**
-     * Gets the current value of the property.
-     *
-     * @return the current value
-     */
     public int getValue() {
         return property.get();
     }
 
     /**
      * Sets the property value.
+     * <p>
+     * An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory method.
      *
      * @param value the value to set
      */
@@ -125,7 +124,8 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
     }
 
     /**
-     * Adjusts a value using the current range and step.
+     * Clamps a value to the range and rounds it to the nearest multiple of {@code step} starting from {@code min}.
+     * If the value is exactly between two multiples, the lower one is chosen.
      *
      * @param newValue the value to adjust
      * @return the adjusted value

@@ -11,12 +11,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * A utility class for drawing grids, cells, polygons and text on a JavaFX Canvas.
- * The parameter {@code cellEdgeLength} defines the length of each edge of the cell (TRIANGLE, SQUARE, HEXAGON)
- * in pixels.
+ * The cell edge length given at construction defines the length of each edge of the cell
+ * (TRIANGLE, SQUARE, HEXAGON) in pixels.
  *
- * @see de.mkalb.etpetssim.engine.CellShape
- * @see de.mkalb.etpetssim.engine.GridSize
- * @see de.mkalb.etpetssim.engine.GridCoordinate
+ * @see CellShape
+ * @see GridSize
+ * @see GridCoordinate
  */
 @SuppressWarnings("MagicNumber")
 public final class FXGridCanvasPainter {
@@ -90,38 +90,18 @@ public final class FXGridCanvasPainter {
                 '}';
     }
 
-    /**
-     * Returns the JavaFX Canvas on which the grid will be drawn.
-     *
-     * @return the canvas used for drawing the grid
-     */
     public Canvas canvas() {
         return canvas;
     }
 
-    /**
-     * Returns the structure of the grid, defining its cell shape and size.
-     *
-     * @return the structure of the grid, defining its cell shape and size
-     */
     public GridStructure gridStructure() {
         return structure;
     }
 
-    /**
-     * Returns the GraphicsContext used for drawing on the canvas.
-     *
-     * @return the GraphicsContext for the canvas
-     */
     public GraphicsContext graphicsContext2D() {
         return graphicsContext2D;
     }
 
-    /**
-     * Returns the cell dimensions in pixels.
-     *
-     * @return the cell dimensions in pixels
-     */
     public CellDimension cellDimension() {
         return cellDimension;
     }
@@ -140,8 +120,8 @@ public final class FXGridCanvasPainter {
      *
      * @param coordinate the grid coordinate to check
      * @return true if the coordinate is inside the grid area, false otherwise
-     * @see de.mkalb.etpetssim.engine.GridStructure#isCoordinateValid(de.mkalb.etpetssim.engine.GridCoordinate)
-     * @see #isOutsideGrid(de.mkalb.etpetssim.engine.GridCoordinate)
+     * @see GridStructure#isCoordinateValid(GridCoordinate)
+     * @see #isOutsideGrid(GridCoordinate)
      */
     public boolean isInsideGrid(GridCoordinate coordinate) {
         return structure.isCoordinateValid(coordinate);
@@ -154,8 +134,8 @@ public final class FXGridCanvasPainter {
      *
      * @param coordinate the grid coordinate to check
      * @return true if the coordinate is outside the grid area, false otherwise
-     * @see de.mkalb.etpetssim.engine.GridStructure#isCoordinateValid(de.mkalb.etpetssim.engine.GridCoordinate)
-     * @see #isInsideGrid(de.mkalb.etpetssim.engine.GridCoordinate)
+     * @see GridStructure#isCoordinateValid(GridCoordinate)
+     * @see #isInsideGrid(GridCoordinate)
      */
     public boolean isOutsideGrid(GridCoordinate coordinate) {
         return !isInsideGrid(coordinate);
@@ -172,7 +152,7 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Clear the entire canvas background.
+     * Clears the entire canvas background.
      */
     public void clearCanvasBackground() {
         graphicsContext2D.clearRect(0.0d, 0.0d, canvas.getWidth(), canvas.getHeight());
@@ -191,7 +171,7 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Clear the background of the grid area.
+     * Clears the background of the grid area.
      * The grid area is defined by the grid size, cell shape and cell edge length.
      *
      * @see #gridDimension2D
@@ -483,7 +463,7 @@ public final class FXGridCanvasPainter {
 
     /**
      * Draws a polygon on the canvas with optional fill and stroke properties.
-     * The stroke can be adjusted to be inside, outside, or centered relative to the polygon's outline.
+     * Nothing is drawn if the arrays are empty or differ in length.
      *
      * @param xPoints         an array of x-coordinates for the vertices of the polygon
      * @param yPoints         an array of y-coordinates for the vertices of the polygon
@@ -510,6 +490,7 @@ public final class FXGridCanvasPainter {
     /**
      * Draws a polyline (an open series of connected line segments) on the canvas.
      * The polyline is defined by arrays of x- and y-coordinates for its vertices.
+     * Nothing is drawn if the arrays are empty or differ in length.
      *
      * @param xPoints         an array of x-coordinates for the vertices of the polyline
      * @param yPoints         an array of y-coordinates for the vertices of the polyline
@@ -530,7 +511,7 @@ public final class FXGridCanvasPainter {
 
     /**
      * Draws a single pixel directly on the canvas using the PixelWriter.
-     * This method checks if the given coordinates are within the canvas bounds
+     * Checks if the given coordinates are within the canvas bounds
      * and if a valid color is provided before drawing the pixel.
      *
      * @param x         the x-coordinate of the pixel
@@ -549,7 +530,7 @@ public final class FXGridCanvasPainter {
 
     /**
      * Draws a single pixel on the canvas by filling a 1x1 rectangle at the specified position.
-     * This method checks if the given coordinates are within the canvas bounds
+     * Checks if the given coordinates are within the canvas bounds
      * and if a valid color is provided before drawing the pixel.
      *
      * @param x         the x-coordinate of the pixel

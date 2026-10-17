@@ -8,7 +8,7 @@ import java.util.*;
  * Describes the geometric pixel dimensions of a single cell shape
  * (e.g. triangle, square, hexagon) used in a 2D grid layout.
  * <p>
- * This record provides precomputed values derived from the cell's edge length,
+ * Provides precomputed values derived from the cell's edge length,
  * including full and half dimensions, inner and outer radius,
  * and spacing between adjacent cell centers in both directions.
  * <p>
@@ -111,7 +111,7 @@ public record CellDimension(
      * <br>
      * Example: {@code [10.0, 20.0 × 30.0]}
      * <p>
-     * Uses {@link java.util.Locale#US} to ensure a dot as decimal separator and no thousands' separator.
+     * Uses {@link Locale#US} to ensure a dot as decimal separator and no thousands' separator.
      *
      * @return a concise display string for this cell dimension
      */

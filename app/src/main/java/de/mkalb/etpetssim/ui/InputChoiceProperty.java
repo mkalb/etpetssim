@@ -10,7 +10,7 @@ import java.util.function.*;
 /**
  * Represents a property with a defined set of valid values and a display name provider.
  * <p>
- * This record encapsulates an {@link ObjectProperty} for a single selected value and provides
+ * Encapsulates an {@link ObjectProperty} for a single selected value and provides
  * validation against a specified list of valid values.
  * <p>
  * Invalid values are logged via {@link AppLogger} and still set on the property.
@@ -87,7 +87,7 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
     /**
      * Creates a new {@code InputChoiceProperty} with all values of the given enum type and a display name provider.
      * <p>
-     * This method uses {@code enumClass.getEnumConstants()} to determine the valid values.
+     * Uses {@code enumClass.getEnumConstants()} to determine the valid values.
      *
      * @param initialValue        the initial selected enum value
      * @param enumClass           the {@link Class} object of the enum type
@@ -124,17 +124,14 @@ public record InputChoiceProperty<T>(ObjectProperty<T> property,
         return Bindings.createStringBinding(() -> format.formatted(displayNameProvider.apply(property.get())), property);
     }
 
-    /**
-     * Gets the current value of the property.
-     *
-     * @return the current value
-     */
     public T getValue() {
         return property.get();
     }
 
     /**
      * Sets the property value.
+     * <p>
+     * An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory method.
      *
      * @param value the value to set
      */
