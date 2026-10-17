@@ -8,18 +8,9 @@ import java.util.*;
 
 /**
  * Manual utility to re-capture extrema golden values for Conway, Forest, and Wator
- * using seed 1L and 20 steps. Run once when simulation logic changes to refresh the
- * hard-coded expectations in SimulationManagerTest (testConway/Forest/WatorGoldenExtremaExactValues).
- *
- * <p>Current golden values (seed=1, 20 steps, default constraints):
- * <pre>
- *   Conway  - minAliveCells   : 3806 | maxAliveCells   : 6749
- *             maxChangedCells : 6353
- *   Forest  - maxEmptyCells   : 4000
- *             minTreeCells    : 1000 | maxTreeCells    : 1069 | maxBurningCells : 7
- *   Wator   - minFishCells    : 1900 | maxFishCells    : 6127
- *             minSharkCells   : 1000 | maxSharkCells   : 3002
- * </pre>
+ * using seed 1L and 20 steps with default constraints. Run once when simulation logic changes
+ * to refresh the hard-coded expectations in {@code SimulationManagerTest}
+ * ({@code testStatisticsExtremaFor<Simulation>MatchesGoldenValues}).
  */
 @SuppressWarnings("HardcodedLineSeparator")
 public final class ExtremaGoldenValueAnalyzer {

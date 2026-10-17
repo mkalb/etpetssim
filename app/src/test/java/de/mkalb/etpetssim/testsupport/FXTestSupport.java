@@ -64,15 +64,6 @@ public final class FXTestSupport {
         }
     }
 
-    /**
-     * Re-throws a throwable that was captured on the JavaFX Application Thread.
-     * <p>
-     * {@link RuntimeException} and {@link Error} (including {@link AssertionError}) are re-thrown
-     * unchanged so that JUnit assertions made on the JavaFX thread fail the test as expected.
-     * Any other throwable is wrapped in an {@link IllegalStateException}.
-     *
-     * @param thrown the captured throwable, or {@code null} if none occurred
-     */
     private static void rethrowIfPresent(Throwable thrown) {
         switch (thrown) {
             case null -> {

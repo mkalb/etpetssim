@@ -97,9 +97,9 @@ final class I18nConsistencyCheckTest {
         Files.write(temporaryDirectory.resolve(DE_DE_RELATIVE_PATH), deDeBytes);
     }
 
+    @SuppressWarnings("UseOfProcessBuilder")
     private ProcessResult runHelper(String mode) throws IOException, InterruptedException {
         Path outputPath = Files.createTempFile(temporaryDirectory, "i18n-consistency-", ".log");
-        // noinspection UseOfProcessBuilder
         Process process = new ProcessBuilder(javaExecutable().toString(), HELPER_SOURCE.toString(), mode)
                 .directory(temporaryDirectory.toFile())
                 .redirectErrorStream(true)

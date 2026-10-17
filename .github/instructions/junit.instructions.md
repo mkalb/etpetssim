@@ -61,7 +61,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   directives are allowed. Do not comment helpers, fixtures, constants, or fields; a better name carries the intent.
 - Add Javadoc to test sources very sparingly and only where it adds clear value; test classes and test methods
   normally have none. Shared support classes such as `FXTestSupport` and manual test utilities keep Javadoc for the
-  class and its public API (a manual utility's `main()`).
+  class and its public API (a manual utility's `main()`). Package-local `*TestSupport` classes and all private
+  helpers have no Javadoc.
 - Prefer one behavior per test; group related checks with `assertAll(...)`.
 - Do not write tests that only check what the compiler guarantees (e.g., `assertInstanceOf` on a statically typed
   value).
