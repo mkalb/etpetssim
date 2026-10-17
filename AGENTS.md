@@ -116,6 +116,10 @@ Other locations:
   their default meaning. `question` is for questions from outside that expect an answer, not an implementation; if
   one turns into work, retitle it and add `needs-refinement`, or create a new issue.
 - Do not create, rename, or delete labels without confirmation by the maintainer.
+- When creating or editing an issue, make it complete enough for another agent to implement it alone and
+  successfully; otherwise, label it `needs-refinement`.
+- When working on an issue whose title or labels do not, or no longer, match its content, propose a change to the
+  maintainer.
 - Do not implement an issue labeled `needs-refinement`. Analyze it, answer the agent questions, and present the
   results and the open decisions to the maintainer in the chat.
 - Structure the open questions of a `needs-refinement` issue as follows:
