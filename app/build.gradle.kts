@@ -76,6 +76,14 @@ tasks.compileTestJava {
     })
 }
 
+// Missing comments are not reported; every other doclint warning fails the build.
+tasks.javadoc {
+    (options as StandardJavadocDocletOptions).apply {
+        addBooleanOption("Xdoclint:all,-missing", true)
+        addBooleanOption("Werror", true)
+    }
+}
+
 tasks.withType<Test>().configureEach {
     val moduleName = applicationModuleName
     val readModules = junitModuleNames
