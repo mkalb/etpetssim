@@ -85,11 +85,6 @@ include:
 - Must not import JavaFX UI/property/binding types; neutral value types such as `Color` are allowed.
 - Entity types stay in `model.entity`, even when views read them for rendering.
 
-## Javadoc
-
-- `simulations.core` and subpackages are shared infrastructure: document public/protected types, members, and constants.
-- Simulation-specific packages are internal: add Javadoc only for complex domain logic or non-obvious behavior.
-
 ## Entity Design
 
 ### Naming

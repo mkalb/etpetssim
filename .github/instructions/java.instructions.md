@@ -134,15 +134,40 @@ non-null reference return type (from main code or the JDK, e.g. `toString()`), a
 
 ## Javadoc
 
-- Document public types at API/module boundaries and public types with non-obvious responsibilities.
-- Document public methods at API boundaries and non-obvious behavior; cover intent, inputs, outputs, and significant
-  side
-  effects.
-- Describe behavior; avoid implementation detail unless it is contract-relevant.
+Rules for main sources; `core.instructions.md` adds stricter rules for `core`, and test sources follow
+`junit.instructions.md`.
+
+### Coverage
+
+- Any type may have Javadoc; public and protected types (classes, interfaces, enums, records, and annotations,
+  including nested types) must have it.
+- Constructors, methods, fields, constants, and enum constants of any visibility may have Javadoc only when it
+  explains something that the name, signature, and types do not show, such as valid ranges and units, the meaning of
+  empty, `Optional`, or `@Nullable` results, contract-relevant exceptions, side effects, threading requirements,
+  order or priority, lifecycle, or domain rules.
+- Do not add Javadoc that only restates the name (e.g., "Private constructor to prevent instantiation." or
+  "Returns the value." on `getValue()`).
 - Do not add Javadoc to pure `@Override` methods unless the override adds constraints, side effects, or surprising
   semantics.
-- Do not add routine `NullPointerException` notes for non-null-by-default contracts.
-- Test sources follow `junit.instructions.md` for comments and Javadoc.
+- Remove existing Javadoc only when it clearly adds no value; keep it when in doubt.
+
+### Tags
+
+- When a constructor or method has Javadoc, document every parameter and type parameter with `@param` and every
+  non-void result with `@return` or `{@return ...}`.
+- Document every record component with `@param` in the record Javadoc, and every type parameter of a generic type.
+- Document contract-relevant unchecked exceptions with `@throws`; do not add routine `NullPointerException` notes
+  for non-null-by-default contracts.
+
+### Style
+
+- Start with a summary sentence in the third person (e.g., "Returns ...", "Creates ...").
+- Describe behavior; avoid implementation detail unless it is contract-relevant.
+- Use `{@link}` only when the target helps the reader, without fully qualified names where a simple name resolves;
+  otherwise write code elements with `{@code}`.
+- Start paragraphs with `<p>` and write lists with `<ul>` and `<li>`, not with `- `.
+- Modern Javadoc features such as `{@return ...}` and `{@snippet}` are welcome but not required; do not use
+  Markdown documentation comments (`///`).
 
 ## Logging with AppLogger
 

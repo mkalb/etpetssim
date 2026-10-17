@@ -41,6 +41,8 @@ Core overrides the general Java rule for `Objects.requireNonNull(...)`.
 
 ## Documentation and Tests
 
+Core overrides the general Java rule that constructors and methods have Javadoc only when it adds value.
+
 - Public classes require class-level Javadoc describing purpose and responsibilities.
 - Public methods require Javadoc covering intent, parameters, return values, and contract-relevant exceptions.
 - Core classes require comprehensive JUnit 5 coverage.
