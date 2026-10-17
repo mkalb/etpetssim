@@ -87,11 +87,6 @@ public record LangtonMovementRules(
         return turns.get(state % turns.size());
     }
 
-    /**
-     * Returns the number of configured movement rules.
-     *
-     * @return the rule count
-     */
     public int ruleCount() {
         return turns.size();
     }

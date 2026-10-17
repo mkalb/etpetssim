@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
  * Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
  *
- * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
+ * @see GridEntityDescriptorRegistry
  */
 public enum LabEntity implements ConstantGridEntityDescriptorProvider {
     NORMAL(
@@ -60,20 +60,10 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
         return spec;
     }
 
-    /**
-     * Checks if this entity represents the normal cell state.
-     *
-     * @return {@code true} if this entity is {@link #NORMAL}, {@code false} otherwise
-     */
     public boolean isNormal() {
         return this == NORMAL;
     }
 
-    /**
-     * Checks if this entity represents the highlighted cell state.
-     *
-     * @return {@code true} if this entity is {@link #HIGHLIGHTED}, {@code false} otherwise
-     */
     public boolean isHighlighted() {
         return this == HIGHLIGHTED;
     }

@@ -56,9 +56,6 @@ public final class ConwayConstraints {
             ConwayRulePresetSquare.CONWAYS_LIFE.toString());
     public static final int BIRTH_NEIGHBOR_COUNT_MIN = 1;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private ConwayConstraints() {
     }
 

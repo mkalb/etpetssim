@@ -21,11 +21,6 @@ public sealed interface LangtonEntity extends GridEntity
                      .collect(Collectors.toUnmodifiableList());
     }
 
-    /**
-     * Indicates whether this entity is an agent.
-     *
-     * @return {@code true} when this entity represents an agent
-     */
     boolean isAgent();
 
 }

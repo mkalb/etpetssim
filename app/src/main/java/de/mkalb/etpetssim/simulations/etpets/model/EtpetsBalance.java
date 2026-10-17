@@ -120,9 +120,6 @@ public final class EtpetsBalance {
     public static final double PET_EAT_SCORE_AGE_WEIGHT = 10.0d;
     public static final double PET_EAT_SCORE_AGE_DECAY_STEPS = 200.0d;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private EtpetsBalance() {
     }
 

@@ -14,13 +14,13 @@ import java.util.*;
  * represent the 16 color states used by Langton's Ant rule sets.
  * </p>
  * <p>
- * Every constant carries a {@link de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorSpec}
+ * Every constant carries a {@link GridEntityDescriptorSpec}
  * for descriptor-registry registration and rendering.
  * </p>
  *
  * @see LangtonEntity
- * @see de.mkalb.etpetssim.engine.model.entity.ConstantGridEntityDescriptorProvider
- * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
+ * @see ConstantGridEntityDescriptorProvider
+ * @see GridEntityDescriptorRegistry
  */
 public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescriptorProvider {
 
@@ -83,11 +83,6 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
         return result;
     }
 
-    /**
-     * Checks if this terrain constant represents an unvisited cell.
-     *
-     * @return {@code true} if this constant is {@link #UNVISITED}, {@code false} otherwise
-     */
     public boolean isUnvisited() {
         return this == UNVISITED;
     }

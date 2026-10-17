@@ -21,20 +21,10 @@ public sealed interface SnakeEntity extends GridEntity
      */
     boolean isAgent();
 
-    /**
-     * Indicates whether this entity represents plain ground.
-     *
-     * @return {@code true} when this entity is ground
-     */
     default boolean isGround() {
         return DESCRIPTOR_ID_GROUND.equals(descriptorId());
     }
 
-    /**
-     * Indicates whether this entity represents a wall.
-     *
-     * @return {@code true} when this entity is a wall
-     */
     default boolean isWall() {
         return DESCRIPTOR_ID_WALL.equals(descriptorId());
     }

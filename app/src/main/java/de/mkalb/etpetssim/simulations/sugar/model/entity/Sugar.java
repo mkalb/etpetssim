@@ -10,11 +10,6 @@ public final class Sugar implements ResourceEntity {
         this.currentAmount = currentAmount;
     }
 
-    /**
-     * Returns the unique descriptor ID for this entity.
-     *
-     * @return the descriptor ID string
-     */
     @Override
     public String descriptorId() {
         return SugarEntity.DESCRIPTOR_ID_SUGAR;

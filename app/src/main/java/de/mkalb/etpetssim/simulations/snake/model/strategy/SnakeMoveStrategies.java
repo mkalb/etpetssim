@@ -54,9 +54,6 @@ public final class SnakeMoveStrategies {
             "F M C-",
             (context) -> scoreAndPick(context, 0, 3, 0, 2, 1, -2));
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private SnakeMoveStrategies() {
     }
 

@@ -12,9 +12,6 @@ import javafx.beans.property.*;
 
 public final class LangtonFactory {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private LangtonFactory() {
     }
 

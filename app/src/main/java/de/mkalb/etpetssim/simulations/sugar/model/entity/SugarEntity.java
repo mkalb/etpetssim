@@ -14,18 +14,8 @@ public sealed interface SugarEntity extends GridEntity
     String DESCRIPTOR_ID_SUGAR = "sugar";
     String DESCRIPTOR_ID_TERRAIN = "terrain";
 
-    /**
-     * Indicates whether this entity belongs to the resource category.
-     *
-     * @return {@code true} when this entity is a resource
-     */
     boolean isResource();
 
-    /**
-     * Indicates whether this entity belongs to the agent category.
-     *
-     * @return {@code true} when this entity is an agent
-     */
     boolean isAgent();
 
     /**
@@ -35,11 +25,6 @@ public sealed interface SugarEntity extends GridEntity
      */
     boolean isEmpty();
 
-    /**
-     * Indicates whether this entity is not considered empty.
-     *
-     * @return {@code true} when this entity is not empty
-     */
     default boolean isNotEmpty() {
         return !isEmpty();
     }

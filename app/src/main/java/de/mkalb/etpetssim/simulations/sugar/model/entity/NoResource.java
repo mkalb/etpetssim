@@ -11,11 +11,6 @@ public enum NoResource implements ResourceEntity, ConstantGridEntity {
 
     NO_RESOURCE;
 
-    /**
-     * Returns the unique descriptor ID for this entity.
-     *
-     * @return the descriptor ID string
-     */
     @Override
     public String descriptorId() {
         return DESCRIPTOR_ID_NO_RESOURCE;

@@ -12,14 +12,12 @@ import java.util.*;
  * used in Conway's Game of Life.
  * <p>
  * Each method returns a normalized pattern (top-left at (0, 0)), fully filled with
- * {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#ALIVE} and {@link de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity#DEAD} cells, representing classic
+ * {@link ConwayEntity#ALIVE} and {@link ConwayEntity#DEAD} cells, representing classic
  * Game of Life configurations grouped into the well-known categories Still Life, Oscillator,
  * Methuselah, Replicator, and Spaceship. The exposed choice order follows these groups.
- * <p>
- * This class cannot be instantiated.
  *
- * @see de.mkalb.etpetssim.engine.support.GridPattern
- * @see de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity
+ * @see GridPattern
+ * @see ConwayEntity
  */
 @SuppressWarnings("SpellCheckingInspection")
 public final class ConwayPatterns {
@@ -139,9 +137,6 @@ public final class ConwayPatterns {
                     ConwayPatterns::isAvailableForClassicSquareRules)
     );
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private ConwayPatterns() {
     }
 
@@ -214,6 +209,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 6x5 beehive pattern with DEAD border
@@ -242,6 +238,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 4x4 block pattern with DEAD border
@@ -270,6 +267,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 boat pattern with DEAD border
@@ -300,6 +298,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 6x6 loaf pattern with DEAD border
@@ -330,6 +329,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 tub pattern with DEAD border
@@ -360,6 +360,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 6x6 beacon pattern with DEAD border
@@ -391,6 +392,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 blinker pattern with DEAD border (horizontal phase)
@@ -420,6 +422,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 12x5 pentadecathlon pattern with DEAD border
@@ -459,6 +462,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 15x15 pulsar pattern with DEAD border
@@ -497,6 +501,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 6x4 toad pattern with DEAD border
@@ -525,6 +530,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 9x5 acorn pattern with DEAD border
@@ -554,6 +560,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 R-pentomino pattern with DEAD border
@@ -585,6 +592,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0). This pattern is intended for the HighLife rule
      * ({@code 23/36}).
      *
@@ -618,6 +626,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 5x5 glider pattern with DEAD border
@@ -649,6 +658,7 @@ public final class ConwayPatterns {
      *   <li>D = {@link ConwayEntity#DEAD}</li>
      *   <li>A = {@link ConwayEntity#ALIVE}</li>
      * </ul>
+     * <p>
      * The top-left of the pattern is at offset (0, 0).
      *
      * @return a normalized 7x6 lightweight spaceship pattern with DEAD border

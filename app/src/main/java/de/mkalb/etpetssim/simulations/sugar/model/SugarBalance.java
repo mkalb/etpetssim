@@ -33,9 +33,6 @@ public final class SugarBalance {
      */
     public static final double PEAK_POSITION_THREE_QUARTERS = 0.75d;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private SugarBalance() {
     }
 
