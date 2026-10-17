@@ -18,9 +18,6 @@ public final class AppStorage {
      */
     public static final String APP_NAME = "ExtraterrestrialPetsSimulation";
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private AppStorage() {
     }
 
@@ -102,7 +99,11 @@ public final class AppStorage {
     /**
      * Resolves a file name against a directory and enforces that the normalized result stays within that directory.
      *
+     * @param directory base directory
+     * @param fileName  file name relative to {@code directory}
+     * @return the normalized absolute file path
      * @throws IllegalArgumentException if {@code fileName} is empty or blank
+     * @throws IOException              if {@code fileName} resolves outside of {@code directory}
      */
     private static Path resolveFileInDirectory(Path directory, String fileName) throws IOException {
         Objects.requireNonNull(directory, "Directory must not be null");

@@ -91,9 +91,6 @@ public final class AppLocalizationKeys {
     public static final String SIMULATION_TOOLBAR_SELECT_TOOLTIP = "simulation.toolbar.select.tooltip";
     public static final String WINDOW_TITLE = "window.title";
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private AppLocalizationKeys() {
     }
 

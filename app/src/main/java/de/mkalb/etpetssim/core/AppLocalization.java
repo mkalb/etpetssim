@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * Provides application-wide localization services.
  * <p>
- * This class manages the active {@link Locale} and its corresponding
+ * Manages the active {@link Locale} and its corresponding
  * {@link ResourceBundle}. It must be initialized exactly once during startup.
  */
 public final class AppLocalization {
@@ -27,9 +27,6 @@ public final class AppLocalization {
     @SuppressWarnings("FieldNamingConvention")
     private static @Nullable ResourceBundle bundle;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private AppLocalization() {
     }
 
