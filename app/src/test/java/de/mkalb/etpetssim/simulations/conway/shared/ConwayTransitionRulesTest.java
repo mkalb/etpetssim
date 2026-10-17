@@ -197,7 +197,6 @@ final class ConwayTransitionRulesTest {
 
     @Test
     void testParseIgnoresNonDigitCharacters() {
-        // Non-digit characters are silently skipped; same result as "23/3"
         ConwayTransitionRules withNoise = ConwayTransitionRules.parse("2 3/3!");
         ConwayTransitionRules canonical = ConwayTransitionRules.parse("23/3");
         assertEquals(canonical, withNoise);
