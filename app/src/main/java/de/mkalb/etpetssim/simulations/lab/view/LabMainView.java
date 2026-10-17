@@ -5,7 +5,6 @@ import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.engine.neighborhood.*;
-import de.mkalb.etpetssim.engine.support.GridEntityUtils;
 import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.view.AbstractMainView;
 import de.mkalb.etpetssim.simulations.core.viewmodel.SimulationUserActionDescriptor;
@@ -264,8 +263,10 @@ public final class LabMainView
         if (cellFont == null) {
             return;
         }
-        GridEntityUtils.consumeDescriptorAt(coordinate, viewModel.getCurrentGridModel(), entityDescriptorRegistry,
-                descriptor -> localOverlayPainter.drawCenteredTextInCell(coordinate, descriptor.shortName(), Color.RED, cellFont));
+        LabEntity entity = viewModel.getCurrentGridModel().getEntity(coordinate);
+        entityDescriptorRegistry.findByDescriptorId(entity.descriptorId())
+                                .ifPresent(descriptor -> localOverlayPainter.drawCenteredTextInCell(
+                                        coordinate, descriptor.shortName(), Color.RED, cellFont));
     }
 
     private void drawLastClickedCoordinate(FXGridCanvasPainter localOverlayPainter) {

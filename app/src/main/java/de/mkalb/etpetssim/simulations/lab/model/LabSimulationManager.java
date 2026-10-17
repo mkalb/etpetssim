@@ -31,16 +31,16 @@ public final class LabSimulationManager
                                 () -> LabEntity.HIGHLIGHTED,
                                 e -> e == LabEntity.NORMAL,
                                 new Random(config.seed()))
+                        // Place a symmetric small cross pattern of highlighted entities
+                        .andThen(GridInitializers.placePattern(
+                                GridPatterns.of(LabEntity.HIGHLIGHTED, List.of(
+                                        new GridOffset(0, 1),
+                                        new GridOffset(1, 0),
+                                        new GridOffset(2, 1),
+                                        new GridOffset(1, 2)
+                                )),
+                                new GridCoordinate(5, 5)))
                         .initialize(model);
-
-        // Place a symmetric small cross pattern of highlighted entities
-        GridEntityUtils.placePatternAt(new GridCoordinate(5, 5), model,
-                GridPatterns.of(LabEntity.HIGHLIGHTED, List.of(
-                        new GridOffset(0, 1),
-                        new GridOffset(1, 0),
-                        new GridOffset(2, 1),
-                        new GridOffset(1, 2)
-                )));
     }
 
     @Override

@@ -26,6 +26,57 @@ final class GridInitializersTest {
     }
 
     @Test
+    void testPlacePatternOffsetsEntriesByAnchor() {
+        SparseGridModel<TestEntity> model = createModel();
+        GridPattern<TestEntity> pattern = GridPatterns.of(TestEntity.FILLED,
+                List.of(new GridOffset(0, 0), new GridOffset(1, 2)));
+
+        GridInitializers.placePattern(pattern, new GridCoordinate(5, 7)).initialize(model);
+
+        assertAll(
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(5, 7))),
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(6, 9))),
+                () -> assertEquals(2, entities(model).stream().filter(TestEntity.FILLED::equals).count())
+        );
+    }
+
+    @Test
+    void testPlacePatternSkipsEntriesOutsideGrid() {
+        SparseGridModel<TestEntity> model = createModel();
+        GridPattern<TestEntity> pattern = GridPatterns.of(TestEntity.FILLED,
+                List.of(new GridOffset(0, 0), new GridOffset(-1, -1), new GridOffset(1, 0), new GridOffset(0, 1)));
+
+        assertDoesNotThrow(() -> GridInitializers.placePattern(pattern, new GridCoordinate(63, 63)).initialize(model));
+
+        assertAll(
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(63, 63))),
+                () -> assertEquals(TestEntity.FILLED, model.getEntity(new GridCoordinate(62, 62))),
+                () -> assertEquals(2, entities(model).stream().filter(TestEntity.FILLED::equals).count())
+        );
+    }
+
+    @Test
+    void testPlacePatternOverwritesExistingEntities() {
+        SparseGridModel<TestEntity> model = createModel();
+        GridCoordinate target = new GridCoordinate(10, 10);
+        model.setEntity(target, TestEntity.OTHER);
+
+        GridInitializers.placePattern(GridPatterns.singleton(TestEntity.FILLED, new GridOffset(0, 0)), target)
+                        .initialize(model);
+
+        assertEquals(TestEntity.FILLED, model.getEntity(target));
+    }
+
+    @Test
+    void testPlacePatternWithEmptyPatternLeavesModelUnchanged() {
+        SparseGridModel<TestEntity> model = createModel();
+
+        GridInitializers.<TestEntity>placePattern(GridPatterns.empty(), new GridCoordinate(5, 5)).initialize(model);
+
+        assertTrue(entities(model).stream().allMatch(TestEntity.EMPTY::equals));
+    }
+
+    @Test
     void testFillRandomPercentWithCancellationMatchesSeededPlacement() {
         SparseGridModel<TestEntity> withoutCancellationModel = createModel();
         SparseGridModel<TestEntity> withCancellationModel = createModel();
@@ -72,7 +123,8 @@ final class GridInitializersTest {
 
     private enum TestEntity implements GridEntity {
         EMPTY,
-        FILLED;
+        FILLED,
+        OTHER;
 
         @NonNull
         @Override

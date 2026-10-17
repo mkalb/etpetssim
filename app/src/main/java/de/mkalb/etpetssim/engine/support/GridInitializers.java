@@ -127,6 +127,28 @@ public final class GridInitializers {
     }
 
     /**
+     * Returns an initializer that places the entities of the given pattern relative to an anchor coordinate.
+     * <p>
+     * Each pattern entry is placed at the anchor plus its offset. Entries whose target coordinate lies outside
+     * the grid are skipped, and existing entities at valid target coordinates are overwritten.
+     * </p>
+     *
+     * @param pattern the pattern of entities to place
+     * @param anchor  the coordinate at which the origin of the pattern is placed
+     * @param <ENT>   the type of grid entity
+     * @return a grid initializer that places the pattern
+     */
+    public static <ENT extends GridEntity> GridInitializer<ENT> placePattern(GridPattern<ENT> pattern,
+                                                                             GridCoordinate anchor) {
+        return model -> pattern.offsetMap().forEach((offset, entity) -> {
+            GridCoordinate target = anchor.offset(offset);
+            if (model.isCoordinateValid(target)) {
+                model.setEntity(target, entity);
+            }
+        });
+    }
+
+    /**
      * Returns a random coordinate within the given grid size.
      *
      * @param size   the grid size
