@@ -22,6 +22,16 @@ import java.util.concurrent.*;
  * Abstract base of the standard main view family for regular 2D simulations.
  * <p>
  * Binds {@link DefaultMainViewModel} and provides drawing and throttling support.
+ *
+ * @param <ENT> entity type stored in grid cells
+ * @param <GC>  grid cell type used for cell selection
+ * @param <GM>  grid model type managed by the simulation
+ * @param <CON> immutable simulation config type
+ * @param <STA> timed statistics type
+ * @param <SM>  concrete simulation manager type
+ * @param <CTX> simulation-specific user action context type
+ * @param <CFV> config view type
+ * @param <OV>  observation view type
  */
 public abstract class AbstractDefaultMainView<
         ENT extends GridEntity,
@@ -102,6 +112,17 @@ public abstract class AbstractDefaultMainView<
         return Math.log(cellDimension.innerRadius());
     }
 
+    /**
+     * Computes brightness variants of the descriptor color for value groups between {@code min} and {@code max}.
+     *
+     * @param descriptor     descriptor whose color is varied
+     * @param min            lower bound of the values (inclusive)
+     * @param max            upper bound of the values (inclusive)
+     * @param groupCount     number of brightness groups
+     * @param maxFactorDelta total brightness change (positive to brighten, negative to darken)
+     * @return the color variants by value, or {@code null} if the descriptor color is not a {@link Color}
+     * @see FXPaintFactory#computeBrightnessVariantsMap(Color, int, int, int, double)
+     */
     @Nullable
     protected final Map<Integer, Color> computeBrightnessVariantsMap(GridEntityDescriptor descriptor,
                                                                      int min,
@@ -283,6 +304,15 @@ public abstract class AbstractDefaultMainView<
 
     protected abstract void initializeSimulation(CON config, CellDimension cellDimension, GM model);
 
+    /**
+     * Draws the current simulation state.
+     *
+     * @param currentGridModel   the grid model to draw
+     * @param stepCount          the step count of the grid model
+     * @param lastDrawnStepCount the step count of the previous draw, {@link Integer#MIN_VALUE} before the first draw,
+     *                           or {@code stepCount} when the same step is redrawn after a user action; a gap greater
+     *                           than {@code 1} means that intermediate steps were not drawn
+     */
     @SuppressWarnings("ParameterHidesMemberVariable")
     protected abstract void drawSimulation(GM currentGridModel, int stepCount, int lastDrawnStepCount);
 

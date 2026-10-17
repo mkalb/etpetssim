@@ -19,23 +19,16 @@ import java.util.function.*;
  */
 public final class SimulationFactory {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private SimulationFactory() {
     }
 
     /**
      * Creates a new instance of a simulation based on the provided type, stage, and stage updater.
-     * <p>
-     * If the provided simulation type is not supported, this method throws an {@link IllegalArgumentException}.
-     * </p>
      *
      * @param simulationType the type of simulation to create
      * @param stage          the primary stage where the simulation will be displayed
      * @param stageUpdater   a callback to switch the stage content to a different simulation type
      * @return a new {@link SimulationInstance} for the specified type
-     * @throws IllegalArgumentException if the simulation type is not supported
      */
     public static SimulationInstance createInstance(SimulationType simulationType,
                                                     Stage stage,

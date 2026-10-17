@@ -12,8 +12,7 @@ import java.util.*;
  *
  * <p>Subclasses must supply the concrete {@link TimedSimulationExecutor} via {@link #executor()}
  * and update the statistics snapshot after each step via {@link #updateStatistics()}.
- * Optional hook methods allow subclasses to react after step execution without overriding
- * the final step-dispatch methods.
+ * After each step, the manager records a sample of the given metrics in its history and extrema.
  *
  * @param <ENT> entity type used by the simulation model
  * @param <GM>  model type used for simulation execution
@@ -58,7 +57,8 @@ public abstract class AbstractTimedSimulationManager<
 
     /**
      * Updates the statistics snapshot after each simulation step.
-     * Called by {@link #executeStep()} and within the per-step callback of {@link #executeSteps}.
+     * Called by {@link #executeStep()}, within the per-step callback of {@link #executeSteps}, and by
+     * {@link #recordInitialStatisticsSample()}.
      */
     protected abstract void updateStatistics();
 

@@ -28,6 +28,12 @@ final class DrawCallThrottler {
 
     /**
      * Returns whether a draw call should be skipped for the current step.
+     * <p>
+     * A draw is skipped only when the history window is full, its average duration exceeds the threshold, and fewer
+     * than {@code maxSkips} draws were skipped in a row.
+     *
+     * @param thresholdMillis the maximum average draw duration in milliseconds without skipping
+     * @return {@code true} if the draw should be skipped
      */
     boolean shouldSkip(long thresholdMillis) {
         if ((averageDurationMillis > thresholdMillis)
@@ -44,6 +50,8 @@ final class DrawCallThrottler {
 
     /**
      * Records one draw duration and refreshes the moving average.
+     *
+     * @param durationMillis the draw duration in milliseconds
      */
     void recordDurationMillis(long durationMillis) {
         if (durationsMillis.size() >= historySize) {
@@ -59,6 +67,8 @@ final class DrawCallThrottler {
 
     /**
      * Returns the current moving average over the configured history window.
+     *
+     * @return the average draw duration in whole milliseconds, or {@code 0} before the first recorded draw
      */
     long getAverageDurationMillis() {
         return averageDurationMillis;

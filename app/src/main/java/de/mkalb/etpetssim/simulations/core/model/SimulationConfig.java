@@ -15,18 +15,8 @@ import java.util.*;
  */
 public interface SimulationConfig {
 
-    /**
-     * Returns the configured cell shape.
-     *
-     * @return cell shape
-     */
     CellShape cellShape();
 
-    /**
-     * Returns the configured edge behavior of the grid.
-     *
-     * @return grid edge behavior
-     */
     GridEdgeBehavior gridEdgeBehavior();
 
     /**
@@ -50,11 +40,6 @@ public interface SimulationConfig {
      */
     double cellEdgeLength();
 
-    /**
-     * Returns the configured display mode for cells.
-     *
-     * @return cell display mode
-     */
     CellDisplayMode cellDisplayMode();
 
     /**
@@ -187,7 +172,7 @@ public interface SimulationConfig {
      * Validates whether this configuration can be used to construct a simulation grid.
      * <p>
      * Implementations should override this method when additional simulation-specific
-     * validation is required. Such overrides should call {@code isBaseValid()}
+     * validation is required. Such overrides should call {@link #isBaseValid()}
      * first and then apply their own constraints.
      * </p>
      *

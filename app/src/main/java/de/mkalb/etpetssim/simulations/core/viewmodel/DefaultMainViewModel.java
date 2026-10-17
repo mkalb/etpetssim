@@ -22,9 +22,12 @@ import java.util.function.*;
  * Default main view-model implementation that orchestrates timed and batch execution.
  *
  * @param <ENT> entity type stored in grid cells
+ * @param <GC>  grid cell type used for cell selection
  * @param <GM>  grid model type managed by the simulation
  * @param <CON> immutable simulation config type
  * @param <STA> timed statistics type exposed to observation views
+ * @param <SM>  concrete simulation manager type
+ * @param <CTX> simulation-specific user action context type
  */
 public final class DefaultMainViewModel<
         ENT extends GridEntity,
@@ -209,20 +212,10 @@ public final class DefaultMainViewModel<
         return lastSelectedEntity;
     }
 
-    /**
-     * Exposes whether edit mode is currently active.
-     *
-     * @return edit-mode property
-     */
     public BooleanProperty editModeActiveProperty() {
         return editToolBarViewModel.editModeActiveProperty();
     }
 
-    /**
-     * Exposes the currently selected stable user-action tool id.
-     *
-     * @return selected tool-id property
-     */
     public ObjectProperty<String> selectedUserActionToolIdProperty() {
         return editToolBarViewModel.selectedUserActionToolIdProperty();
     }
@@ -803,7 +796,7 @@ public final class DefaultMainViewModel<
      * Applies the configured user action to the current simulation state.
      *
      * <p>The action is only applied when a simulation manager is active and the simulation is currently paused.
-     * The current model, statistics, configuration, context, and selected cell are passed to the configured
+     * The active simulation manager, the context, and the selected cell are passed to the configured
      * {@link SimulationUserAction}. If a cell was selected before the action, the selection is refreshed afterward.
      *
      * @param context simulation-specific action context
@@ -837,7 +830,7 @@ public final class DefaultMainViewModel<
      * Applies the resolved user action described by the given descriptor.
      *
      * @param descriptor descriptor whose current context should be resolved and applied
-     * @return {@code true} if the action context resolved and was applied; {@code false} otherwise
+     * @return {@code true} if the action context resolved and the action was applied; {@code false} otherwise
      */
     public boolean applyUserAction(SimulationUserActionDescriptor<CTX> descriptor) {
         var context = descriptor.resolveContext();
@@ -851,8 +844,9 @@ public final class DefaultMainViewModel<
      * Applies the currently selected cell-scoped action descriptor.
      *
      * @param descriptors descriptors currently available in the toolbar
-     * @return {@code true} when an action was applied; {@code false} when edit mode is inactive, no cell action is
-     * selected, or the simulation state does not allow applying actions
+     * @return {@code true} when an action was applied; {@code false} when edit mode is inactive, no cell action or
+     * no grid cell is selected, the action context does not resolve, or the simulation state does not allow applying
+     * actions
      */
     public boolean applySelectedCellUserAction(List<SimulationUserActionDescriptor<CTX>> descriptors) {
         if (!editToolBarViewModel.isEditModeActive()) {

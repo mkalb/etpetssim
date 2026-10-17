@@ -120,6 +120,9 @@ final class StatisticsHistoryChartView {
     /**
      * Computes an axis tick unit that yields roughly {@link #TARGET_TICK_COUNT} major ticks
      * for the given span, without affecting the axis bounds.
+     *
+     * @param span the axis span
+     * @return the tick unit; at least {@code 1}
      */
     private static double tickUnit(double span) {
         return Math.max(1.0, Math.ceil(span / TARGET_TICK_COUNT));
@@ -130,6 +133,9 @@ final class StatisticsHistoryChartView {
      * to the given value, so the Y-axis ceiling stays stable and human-readable as the group
      * maximum grows (e.g. {@code 12 -> 20}, {@code 2495 -> 5000}). Never returns less than
      * {@code 1}, so an all-zero group still renders a usable {@code [0, 1]} axis.
+     *
+     * @param value the group maximum
+     * @return the rounded-up ceiling
      */
     @SuppressWarnings("MagicNumber")
     private static double computeNiceCeiling(double value) {
@@ -147,8 +153,11 @@ final class StatisticsHistoryChartView {
     }
 
     /**
-     * Extracts the maximum finite value across the given metric keys for a single sample,
-     * or {@code 0.0} if none of the keys have a finite value.
+     * Extracts the maximum finite value across the given metric keys for a single sample.
+     *
+     * @param sample the sample to read
+     * @param keys   the metric keys of one chart group
+     * @return the maximum finite value, or {@code 0.0} if none of the keys have a finite value
      */
     private static double maxValueAcrossKeys(StatisticsSample sample, List<String> keys) {
         return keys.stream()
@@ -168,9 +177,6 @@ final class StatisticsHistoryChartView {
         return titledPane;
     }
 
-    /**
-     * Package-private for testing.
-     */
     List<LineChart<Number, Number>> chartsForTesting() {
         return groupCharts.stream().map(GroupChart::chart).collect(Collectors.toList());
     }

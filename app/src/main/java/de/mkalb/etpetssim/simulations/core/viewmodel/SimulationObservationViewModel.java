@@ -15,41 +15,26 @@ import java.util.*;
  */
 public interface SimulationObservationViewModel<STA extends SimulationStatistics> {
 
-    /**
-     * Exposes the current simulation state as read-only JavaFX property.
-     *
-     * @return read-only simulation state property
-     */
     ReadOnlyObjectProperty<SimulationState> simulationStateProperty();
 
-    /**
-     * Returns the current simulation state.
-     *
-     * @return current simulation state
-     */
     SimulationState getSimulationState();
 
     /**
      * Exposes the current statistics snapshot.
      * <p>
-     * The value is nullable before first initialization.
+     * The value is {@code null} before initialization or after a reset.
      *
      * @return read-only property containing the current statistics or {@code null}
      */
     ReadOnlyObjectProperty<@Nullable STA> statisticsProperty();
 
     /**
-     * Returns the current statistics snapshot as optional value.
+     * Returns the current statistics snapshot.
      *
-     * @return optional statistics snapshot
+     * @return the statistics snapshot, or empty before initialization or after a reset
      */
     Optional<STA> getStatistics();
 
-    /**
-     * Updates the statistics snapshot shown by the view model.
-     *
-     * @param statistics non-null statistics snapshot
-     */
     void setStatistics(STA statistics);
 
     /**

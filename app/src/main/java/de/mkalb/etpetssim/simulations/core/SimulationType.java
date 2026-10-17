@@ -187,20 +187,10 @@ public enum SimulationType {
         return AppLocalizationKeys.ENUM_LABEL_SIMULATIONTYPE;
     }
 
-    /**
-     * Returns whether this simulation is implemented.
-     *
-     * @return {@code true} if implemented, otherwise {@code false}
-     */
     public boolean isImplemented() {
         return implemented;
     }
 
-    /**
-     * Returns whether this simulation should appear on the start screen.
-     *
-     * @return {@code true} if shown on the start screen, otherwise {@code false}
-     */
     public boolean isShownOnStartScreen() {
         return showOnStartScreen;
     }

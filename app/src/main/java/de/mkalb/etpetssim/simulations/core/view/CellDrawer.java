@@ -6,6 +6,8 @@ import de.mkalb.etpetssim.ui.FXGridCanvasPainter;
 
 /**
  * Draw callback for rendering a single grid cell.
+ *
+ * @param <ENT> entity type stored in grid cells
  */
 @FunctionalInterface
 public interface CellDrawer<ENT extends GridEntity> {

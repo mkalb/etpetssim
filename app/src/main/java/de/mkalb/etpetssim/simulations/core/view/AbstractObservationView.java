@@ -18,6 +18,11 @@ import java.util.*;
 
 /**
  * Base class for simulation observation views.
+ *
+ * @param <ENT> entity type stored in grid cells
+ * @param <GC>  grid cell type used for cell selection
+ * @param <STA> statistics type shown by the view
+ * @param <VM>  observation view model type
  */
 public abstract class AbstractObservationView<
         ENT extends GridEntity,
@@ -83,11 +88,10 @@ public abstract class AbstractObservationView<
     }
 
     /**
-     * Creates a standard grid section displaying the total cell count.
-     * This section displays the total number of cells in the simulation grid.
-     * The provided label is initialized with the unknown placeholder and populated during simulation initialization.
+     * Creates the standard grid section displaying the total cell count.
+     * The value shows the unknown placeholder until the simulation is initialized.
      *
-     * @return a VBox region containing the grid section with the provided label
+     * @return a VBox region containing the grid section
      */
     protected final VBox createGridSection() {
         setUnknownValues(totalCellsLabel);
@@ -264,7 +268,7 @@ public abstract class AbstractObservationView<
     }
 
     /**
-     * Called whenever the selected grid cell changes.
+     * Handles a change of the selected grid cell.
      * <p>
      * The default implementation updates the selected cell section visibility
      * and the standard coordinate and cell type labels.
@@ -289,8 +293,8 @@ public abstract class AbstractObservationView<
 
     /**
      * Updates all simulation-specific observation labels with the latest state.
-     * Called by {@link #initializeObservationLabels()} on simulation creation and by subclasses
-     * whenever a step has been executed and labels need to reflect the new statistics.
+     * Called by {@link #initializeObservationLabels()} on simulation creation and by the main view
+     * whenever a step has been executed or a user action has changed the simulation state.
      */
     protected abstract void updateObservationLabels();
 
@@ -503,10 +507,10 @@ public abstract class AbstractObservationView<
 
     /**
      * Creates the chart section for simulations that have at least one charted metric.
-     * Returns {@code null} when no metric in the current {@code metrics()} list has a non-{@code NONE} chart group.
-     * Must be called after {@link #createGenericMetricSection}.
+     * Must be called after {@link #createGenericMetricSection}, whose metrics define the charts.
      *
-     * @return a {@link TitledPane} wrapping the history line charts, or {@code null}
+     * @return a {@link TitledPane} wrapping the history line charts, or {@code null} if no generic metric section
+     * was created or none of its metrics is charted
      */
     @Nullable
     protected final TitledPane createChartSection() {

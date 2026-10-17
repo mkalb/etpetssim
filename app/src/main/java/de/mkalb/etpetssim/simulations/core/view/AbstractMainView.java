@@ -25,6 +25,12 @@ import java.util.*;
  * <p>
  * Thin common base of all main views. Regular simulations extend {@link AbstractDefaultMainView}, which adds the
  * timed-step rendering flow; the lab view extends this class directly because it draws on explicit requests instead.
+ *
+ * @param <VM>  main view model type
+ * @param <CTX> simulation-specific user action context type
+ * @param <CFV> config view type
+ * @param <CLV> control view type
+ * @param <OV>  observation view type
  */
 public abstract class AbstractMainView<
         VM extends SimulationMainViewModel,
@@ -236,7 +242,8 @@ public abstract class AbstractMainView<
      * <p>The returned node is managed by the common edit-toolbar lifecycle and will be made visible/managed only while
      * edit mode is active. Implementations should keep descriptor metadata and JavaFX node creation separate.
      *
-     * @param selectedToolId selected stable tool id used for enablement bindings
+     * @param selectedToolId property of the selected stable tool id used for enablement bindings, or {@code null}
+     *                       when tool selection is not supported
      * @return option-panel node, or {@code null} when the simulation has no option controls
      */
     @SuppressWarnings("unused")
@@ -305,6 +312,10 @@ public abstract class AbstractMainView<
 
     /**
      * Replaces the base, dynamic, and overlay painters for the given structure and resizes their canvases.
+     * <p>
+     * The canvas size is limited; if the grid does not fit, the {@link SimulationNotificationType#CANVAS_SIZE_LIMIT}
+     * notification is set. Also recreates {@link #cellFont} and {@link #cellEmojiFont}, which are {@code null} when
+     * the cells are too small for readable text.
      *
      * @param structure      grid structure to paint
      * @param cellEdgeLength edge length of one cell in pixels

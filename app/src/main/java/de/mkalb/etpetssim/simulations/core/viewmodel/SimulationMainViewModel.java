@@ -10,32 +10,18 @@ import javafx.beans.property.*;
  */
 public interface SimulationMainViewModel {
 
-    /**
-     * Exposes the current simulation state as read-only JavaFX property.
-     *
-     * @return read-only simulation state property
-     */
     ReadOnlyObjectProperty<SimulationState> simulationStateProperty();
 
-    /**
-     * Returns the current simulation state.
-     *
-     * @return current simulation state
-     */
     SimulationState getSimulationState();
 
     /**
-     * Exposes the notification type used by the main view.
+     * Exposes the notification type shown by the main view; {@link SimulationNotificationType#NONE} hides the
+     * notification.
      *
      * @return mutable notification type property
      */
     ObjectProperty<SimulationNotificationType> notificationTypeProperty();
 
-    /**
-     * Updates the current notification type.
-     *
-     * @param notificationType new notification type
-     */
     void setNotificationType(SimulationNotificationType notificationType);
 
     /**
@@ -46,7 +32,7 @@ public interface SimulationMainViewModel {
     GridStructure getStructure();
 
     /**
-     * Returns the configured visual edge length of one cell.
+     * Returns the configured visual edge length of one cell of the active simulation.
      *
      * @return edge length in pixels
      */

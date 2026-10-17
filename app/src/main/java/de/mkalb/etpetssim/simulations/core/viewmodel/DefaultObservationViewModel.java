@@ -12,6 +12,10 @@ import java.util.*;
 
 /**
  * Default implementation of observation-related view-model state.
+ *
+ * @param <ENT> entity type stored in grid cells
+ * @param <GC>  grid cell type used for cell selection
+ * @param <STA> statistics type exposed to observation views
  */
 public final class DefaultObservationViewModel<
         ENT extends GridEntity,
@@ -63,11 +67,6 @@ public final class DefaultObservationViewModel<
         this.statistics.set(statistics);
     }
 
-    /**
-     * Exposes the current statistic extrema snapshot as an observable property.
-     *
-     * @return read-only property containing the latest extrema
-     */
     @Override
     public ReadOnlyObjectProperty<StatisticsExtrema> statisticsExtremaProperty() {
         return statisticsExtremaWrapper.getReadOnlyProperty();
@@ -91,11 +90,6 @@ public final class DefaultObservationViewModel<
         statisticsExtremaWrapper.set(extrema);
     }
 
-    /**
-     * Exposes the current statistics history snapshot as an observable property.
-     *
-     * @return read-only property containing an immutable ordered list of samples, oldest first
-     */
     @Override
     public ReadOnlyObjectProperty<List<StatisticsSample>> statisticsHistoryProperty() {
         return statisticsHistoryWrapper.getReadOnlyProperty();
@@ -124,9 +118,9 @@ public final class DefaultObservationViewModel<
     /**
      * Resets the statistics snapshot, extrema, and history to their initial empty state.
      *
-     * <p>Call this during shutdown so a stale statistics snapshot (which may keep a
-     * {@link de.mkalb.etpetssim.engine.GridStructure} of a finished simulation strongly reachable) is released,
-     * together with its extrema and history.
+     * <p>Call this on restart and during shutdown so a stale statistics snapshot (which may keep a
+     * {@code GridStructure} of a finished simulation strongly reachable) is released, together with its extrema and
+     * history.
      */
     public void resetStatistics() {
         statisticsExtremaWrapper.set(StatisticsExtrema.empty());
@@ -135,7 +129,8 @@ public final class DefaultObservationViewModel<
     }
 
     /**
-     * Binds the selected-cell property from the main view model.
+     * Binds the selected-cell property to the given property of the main view model, replacing any previous
+     * binding.
      *
      * @param property source property to bind from
      */
@@ -146,11 +141,6 @@ public final class DefaultObservationViewModel<
         selectedGridCell.bind(property);
     }
 
-    /**
-     * Exposes the currently selected grid cell.
-     *
-     * @return selected grid cell property
-     */
     public ObjectProperty<@Nullable GC> selectedGridCellProperty() {
         return selectedGridCell;
     }
