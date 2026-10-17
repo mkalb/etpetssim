@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conway.model;
+package de.mkalb.etpetssim.simulations.conway.shared;
 
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 

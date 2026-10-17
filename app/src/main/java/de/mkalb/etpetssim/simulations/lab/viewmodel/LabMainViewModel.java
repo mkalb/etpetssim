@@ -9,7 +9,6 @@ import de.mkalb.etpetssim.simulations.core.shared.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import de.mkalb.etpetssim.simulations.lab.model.*;
 import de.mkalb.etpetssim.simulations.lab.model.entity.LabEntity;
-import de.mkalb.etpetssim.simulations.lab.shared.LabNeighborhoodHighlights;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ChangeListener;
 import org.jspecify.annotations.Nullable;

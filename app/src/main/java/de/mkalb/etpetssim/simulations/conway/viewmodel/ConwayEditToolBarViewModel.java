@@ -1,6 +1,7 @@
 package de.mkalb.etpetssim.simulations.conway.viewmodel;
 
 import de.mkalb.etpetssim.simulations.conway.model.*;
+import de.mkalb.etpetssim.simulations.conway.shared.*;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import org.jspecify.annotations.Nullable;

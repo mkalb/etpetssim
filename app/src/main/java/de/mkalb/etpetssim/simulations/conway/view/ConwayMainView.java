@@ -5,6 +5,7 @@ import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry;
 import de.mkalb.etpetssim.simulations.conway.model.*;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.shared.*;
 import de.mkalb.etpetssim.simulations.conway.viewmodel.ConwayEditToolBarViewModel;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionScope;
 import de.mkalb.etpetssim.simulations.core.view.*;

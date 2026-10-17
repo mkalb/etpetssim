@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.lab.shared;
+package de.mkalb.etpetssim.simulations.lab.viewmodel;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;

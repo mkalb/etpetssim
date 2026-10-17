@@ -1,4 +1,4 @@
-package de.mkalb.etpetssim.simulations.conway.model;
+package de.mkalb.etpetssim.simulations.conway.shared;
 
 import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.support.GridPattern;
@@ -16,21 +16,6 @@ final class ConwayPatternChoiceTest {
     private static final String CHOICE_ID_SAMPLE = "conway.sample";
     private static final String LABEL_KEY_SAMPLE = "conway.pattern.sample";
 
-    private static ConwayConfig createConfig(CellShape cellShape) {
-        return new ConwayConfig(
-                cellShape,
-                ConwayConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                ConwayConstraints.GRID_WIDTH_DEFAULT,
-                ConwayConstraints.GRID_HEIGHT_DEFAULT,
-                ConwayConstraints.CELL_EDGE_LENGTH_DEFAULT,
-                ConwayConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                1L,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayConstraints.TRANSITION_RULES_DEFAULT
-        );
-    }
-
     private static Supplier<GridPattern<ConwayEntity>> createPatternSupplier(Map<GridOffset, ConwayEntity> offsetMap) {
         return () -> () -> offsetMap;
     }
@@ -39,7 +24,7 @@ final class ConwayPatternChoiceTest {
     void testConstructorAcceptsValidArguments() {
         Supplier<GridPattern<ConwayEntity>> supplier = createPatternSupplier(
                 Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE));
-        Predicate<ConwayConfig> predicate = _ -> true;
+        BiPredicate<CellShape, ConwayTransitionRules> predicate = (_, _) -> true;
 
         ConwayPatternChoice choice = new ConwayPatternChoice(
                 CHOICE_ID_SAMPLE,
@@ -62,7 +47,7 @@ final class ConwayPatternChoiceTest {
                         " ",
                         LABEL_KEY_SAMPLE,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                        _ -> true));
+                        (_, _) -> true));
 
         assertEquals("choiceId must not be blank", exception.getMessage());
     }
@@ -74,7 +59,7 @@ final class ConwayPatternChoiceTest {
                         CHOICE_ID_SAMPLE,
                         " ",
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                        _ -> true));
+                        (_, _) -> true));
 
         assertEquals("labelKey must not be blank", exception.getMessage());
     }
@@ -86,7 +71,7 @@ final class ConwayPatternChoiceTest {
                         LABEL_KEY_SAMPLE,
                         LABEL_KEY_SAMPLE,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                        _ -> true));
+                        (_, _) -> true));
 
         assertEquals("choiceId must differ from labelKey", exception.getMessage());
     }
@@ -99,7 +84,7 @@ final class ConwayPatternChoiceTest {
                         null,
                         LABEL_KEY_SAMPLE,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                        _ -> true));
+                        (_, _) -> true));
 
         assertNotNull(exception);
     }
@@ -112,7 +97,7 @@ final class ConwayPatternChoiceTest {
                         CHOICE_ID_SAMPLE,
                         null,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                        _ -> true));
+                        (_, _) -> true));
 
         assertNotNull(exception);
     }
@@ -125,7 +110,7 @@ final class ConwayPatternChoiceTest {
                 createPatternSupplier(Map.of(
                         new GridOffset(2, 3), ConwayEntity.ALIVE,
                         new GridOffset(3, 4), ConwayEntity.DEAD)),
-                _ -> true);
+                (_, _) -> true);
 
         GridPattern<ConwayEntity> pattern = choice.pattern();
         Map<GridOffset, ConwayEntity> offsetMap = pattern.offsetMap();
@@ -151,7 +136,7 @@ final class ConwayPatternChoiceTest {
                     invocationCount.incrementAndGet();
                     return () -> Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE);
                 },
-                _ -> true);
+                (_, _) -> true);
 
         choice.pattern();
         choice.pattern();
@@ -162,24 +147,27 @@ final class ConwayPatternChoiceTest {
     @Test
     void testIsAvailableForDelegatesToPredicate() {
         AtomicInteger invocationCount = new AtomicInteger();
-        ConwayConfig[] lastSeenConfig = {createConfig(CellShape.HEXAGON)};
+        CellShape[] lastSeenCellShape = {CellShape.HEXAGON};
+        ConwayTransitionRules[] lastSeenTransitionRules = {null};
         ConwayPatternChoice choice = new ConwayPatternChoice(
                 CHOICE_ID_SAMPLE,
                 LABEL_KEY_SAMPLE,
                 createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                config -> {
+                (cellShape, transitionRules) -> {
                     invocationCount.incrementAndGet();
-                    lastSeenConfig[0] = config;
-                    return config.cellShape() == CellShape.SQUARE;
+                    lastSeenCellShape[0] = cellShape;
+                    lastSeenTransitionRules[0] = transitionRules;
+                    return cellShape == CellShape.SQUARE;
                 });
-        ConwayConfig squareConfig = createConfig(CellShape.SQUARE);
-        ConwayConfig triangleConfig = createConfig(CellShape.TRIANGLE);
+        ConwayTransitionRules firstRules = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3));
+        ConwayTransitionRules secondRules = ConwayTransitionRules.of(Set.of(4, 5, 6), Set.of(4));
 
         assertAll(
-                () -> assertTrue(choice.isAvailableFor(squareConfig)),
-                () -> assertFalse(choice.isAvailableFor(triangleConfig)),
+                () -> assertTrue(choice.isAvailableFor(CellShape.SQUARE, firstRules)),
+                () -> assertFalse(choice.isAvailableFor(CellShape.TRIANGLE, secondRules)),
                 () -> assertEquals(2, invocationCount.get()),
-                () -> assertSame(triangleConfig, lastSeenConfig[0])
+                () -> assertSame(CellShape.TRIANGLE, lastSeenCellShape[0]),
+                () -> assertSame(secondRules, lastSeenTransitionRules[0])
         );
     }
 

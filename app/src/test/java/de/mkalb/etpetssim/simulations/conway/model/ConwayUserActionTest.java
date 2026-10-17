@@ -3,6 +3,7 @@ package de.mkalb.etpetssim.simulations.conway.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCell;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.shared.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

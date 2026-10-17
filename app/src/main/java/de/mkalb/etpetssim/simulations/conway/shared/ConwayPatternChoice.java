@@ -1,5 +1,6 @@
-package de.mkalb.etpetssim.simulations.conway.model;
+package de.mkalb.etpetssim.simulations.conway.shared;
 
+import de.mkalb.etpetssim.engine.CellShape;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 
@@ -9,7 +10,7 @@ public record ConwayPatternChoice(
         String choiceId,
         String labelKey,
         Supplier<GridPattern<ConwayEntity>> patternSupplier,
-        Predicate<ConwayConfig> availabilityRule) {
+        BiPredicate<CellShape, ConwayTransitionRules> availabilityRule) {
 
     public ConwayPatternChoice {
         if (choiceId.isBlank()) {
@@ -27,8 +28,8 @@ public record ConwayPatternChoice(
         return patternSupplier.get().normalized();
     }
 
-    public boolean isAvailableFor(ConwayConfig config) {
-        return availabilityRule.test(config);
+    public boolean isAvailableFor(CellShape cellShape, ConwayTransitionRules transitionRules) {
+        return availabilityRule.test(cellShape, transitionRules);
     }
 
 }

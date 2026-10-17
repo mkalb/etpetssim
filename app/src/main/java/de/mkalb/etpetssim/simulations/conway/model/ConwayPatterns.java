@@ -140,14 +140,16 @@ public final class ConwayPatterns {
     private ConwayPatterns() {
     }
 
-    private static boolean isAvailableForClassicSquareRules(ConwayConfig config) {
-        return (config.cellShape() == CellShape.SQUARE)
-                && CONWAYS_LIFE_TRANSITION_RULES.equals(config.transitionRules());
+    private static boolean isAvailableForClassicSquareRules(CellShape cellShape,
+                                                            ConwayTransitionRules transitionRules) {
+        return (cellShape == CellShape.SQUARE)
+                && CONWAYS_LIFE_TRANSITION_RULES.equals(transitionRules);
     }
 
-    private static boolean isAvailableForHighLifeSquareRules(ConwayConfig config) {
-        return (config.cellShape() == CellShape.SQUARE)
-                && HIGHLIFE_TRANSITION_RULES.equals(config.transitionRules());
+    private static boolean isAvailableForHighLifeSquareRules(CellShape cellShape,
+                                                             ConwayTransitionRules transitionRules) {
+        return (cellShape == CellShape.SQUARE)
+                && HIGHLIFE_TRANSITION_RULES.equals(transitionRules);
     }
 
     /**
@@ -173,7 +175,7 @@ public final class ConwayPatterns {
      */
     public static List<ConwayPatternChoice> availableChoices(ConwayConfig config) {
         return CATALOG_CHOICES.stream()
-                              .filter(choice -> choice.isAvailableFor(config))
+                              .filter(choice -> choice.isAvailableFor(config.cellShape(), config.transitionRules()))
                               .toList();
     }
 

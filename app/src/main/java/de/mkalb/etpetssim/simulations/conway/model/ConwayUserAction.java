@@ -4,6 +4,7 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
+import de.mkalb.etpetssim.simulations.conway.shared.ConwayUserActionContext;
 import de.mkalb.etpetssim.simulations.core.model.SimulationUserAction;
 import org.jspecify.annotations.Nullable;
 
@@ -30,7 +31,8 @@ public final class ConwayUserAction
                 if (selectedCell == null) {
                     return;
                 }
-                if (!placePattern.patternChoice().isAvailableFor(manager.config())) {
+                ConwayConfig config = manager.config();
+                if (!placePattern.patternChoice().isAvailableFor(config.cellShape(), config.transitionRules())) {
                     return;
                 }
                 applyPattern(model, statistics, selectedCell.coordinate(), placePattern.patternChoice().pattern());

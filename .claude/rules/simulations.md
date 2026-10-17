@@ -14,7 +14,7 @@ Regular 2D simulations use:
 - `model`: domain state, business rules, grid entities
 - `view`: JavaFX scene graph, rendering, UI components
 - `viewmodel`: JavaFX properties, bindings, UI state
-- `shared`: optional layer-neutral types used by two or more layers
+- `shared`: optional layer-neutral types used by the model and by `view` or `viewmodel`
 - Package-root `<SimulationName>Factory` exposing `createMainView()`
 
 Both `<simulation>.model` and `simulations.core.model` belong to the MVVM model layer and hold the
@@ -78,10 +78,13 @@ include:
 
 ### Shared
 
-- Contains only layer-neutral enums, records, or value objects used by multiple layers.
-- Exists because the view reads only `model.entity` directly and the model must not depend on `view` or `viewmodel`;
-  `simulations.core` uses the same sub-packages.
-- Must not depend on `model`, `view`, or `viewmodel`.
+- Contains layer-neutral enums, records, or value objects that the model uses together with `view` or `viewmodel`.
+- Exists because the model must not depend on `view` or `viewmodel`; `simulations.core` uses the same sub-packages.
+- Put a `<Simulation>UserActionContext` and its parameter types in `shared`.
+- Put types used only by `view` and `viewmodel` in `viewmodel`; rule preset families (`*RulePreset*`) stay in
+  `shared` next to the rule type they describe.
+- May depend on the same simulation's `model.entity` and `model.strategy`; must not depend on the `model` package
+  itself, `view`, or `viewmodel`.
 - Must not import JavaFX UI/property/binding types; neutral value types such as `Color` are allowed.
 - Entity types stay in `model.entity`, even when views read them for rendering.
 

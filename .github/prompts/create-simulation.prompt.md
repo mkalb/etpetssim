@@ -153,7 +153,7 @@ files; `@NullMarked` is declared on the module as specified in
 - `de.mkalb.etpetssim.simulations.<package name>.viewmodel` — JavaFX properties, bindings, UI state
 
 Create `de.mkalb.etpetssim.simulations.<package name>.shared` only when the confirmed design needs layer-neutral types
-used by multiple layers, or when the reference simulation has a comparable `shared` package.
+used by the model and by the view or viewmodel, or when the reference simulation has a comparable `shared` package.
 
 ### Step 3 — Create simulation classes
 
@@ -179,9 +179,8 @@ Then create the corresponding classes, applying the **Phase 4 archetype** chosen
 - **View classes** — main view, config view, and observation view extending the appropriate abstract base classes.
   Render a basic grid with terrain only; domain-specific rendering comes later.
 - **ViewModel classes** — config viewmodel exposing the config record's parameters as properties.
-- **Shared classes** — only if the confirmed design needs layer-neutral types, or the reference simulation has
-  comparable
-  shared types.
+- **Shared classes** — only if the confirmed design needs layer-neutral types used by the model and by the view or
+  viewmodel, or the reference simulation has comparable shared types.
 
 Use the confirmed **class name prefix** for all infrastructure classes. Keep everything compilable — no `TODO` method
 bodies, no unresolved references. Use the simplest working implementation for each method (return defaults, empty
