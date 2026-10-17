@@ -15,6 +15,9 @@ import java.util.*;
 
 /**
  * Base class for building simulation configuration views.
+ *
+ * @param <CON> immutable simulation config type
+ * @param <VM>  config view model type
  */
 public abstract class AbstractConfigView<CON extends SimulationConfig, VM extends AbstractConfigViewModel<CON>>
         implements SimulationConfigView {
@@ -52,6 +55,17 @@ public abstract class AbstractConfigView<CON extends SimulationConfig, VM extend
         return configScrollPane;
     }
 
+    /**
+     * Creates a titled config pane that stacks the labels and control regions of the given controls.
+     * <p>
+     * A pane without controls is disabled and not collapsible.
+     *
+     * @param title                                         the pane title
+     * @param configControlsEnabledOnlyIfSimulationCanStart whether the control regions are disabled while the
+     *                                                      simulation state is not startable
+     * @param content                                       the labeled controls in display order
+     * @return the titled pane
+     */
     @SafeVarargs
     protected final TitledPane createConfigTitledPane(String title, boolean configControlsEnabledOnlyIfSimulationCanStart,
                                                       FXComponentFactory.LabeledControl<? extends Region>... content) {

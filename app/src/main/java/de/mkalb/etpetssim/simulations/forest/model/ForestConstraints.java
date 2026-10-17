@@ -59,9 +59,6 @@ public final class ForestConstraints {
     public static final double LIGHTNING_IGNITION_PROBABILITY_MIN = 0.00d;
     public static final double LIGHTNING_IGNITION_PROBABILITY_MAX = 0.02d;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private ForestConstraints() {
     }
 

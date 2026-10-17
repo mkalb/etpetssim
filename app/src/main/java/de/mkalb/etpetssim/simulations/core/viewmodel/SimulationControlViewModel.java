@@ -8,18 +8,8 @@ import javafx.beans.property.ReadOnlyObjectProperty;
  */
 public interface SimulationControlViewModel {
 
-    /**
-     * Exposes the current simulation state as read-only JavaFX property.
-     *
-     * @return read-only simulation state property
-     */
     ReadOnlyObjectProperty<SimulationState> simulationStateProperty();
 
-    /**
-     * Returns the current simulation state.
-     *
-     * @return current simulation state
-     */
     SimulationState getSimulationState();
 
 }

@@ -56,6 +56,7 @@ Other locations:
       `app:test --rerun` to force a rerun.
     - `app:skillTest` after changing skill scripts in `.claude/skills`; `app:skillTest --tests <pattern>` for
       selected tests.
+    - `app:javadoc` after changing Javadoc in main sources; it fails on any warning except missing comments.
     - `app:build` for tests and distribution; `clean app:distZip` for a clean distribution ZIP.
     - `app:run` only when running the JavaFX application is necessary.
 - Run relevant checks when practical; if verification is skipped or blocked, say so briefly.

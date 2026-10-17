@@ -14,8 +14,7 @@ import java.util.stream.*;
 /**
  * A utility class for creating JavaFX UI components with specific styles.
  * <p>
- * This class provides methods to create commonly used UI components with predefined styles.
- * It will grow during the development of the Extraterrestrial Pets Simulation application.
+ * Provides methods to create commonly used UI components with predefined styles.
  */
 @SuppressWarnings("MagicNumber")
 public final class FXComponentFactory {
@@ -23,9 +22,6 @@ public final class FXComponentFactory {
     private static final String BUTTON_TEXT_ADOPT = "↩";
     private static final String BUTTON_TEXT_CLEAR = "✕";
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private FXComponentFactory() {
     }
 
@@ -159,6 +155,7 @@ public final class FXComponentFactory {
      * @param labelFormatString  the format string for the label (e.g., "%s")
      * @param tooltip            the tooltip text for both the label and the checkbox
      * @param styleClass         the CSS style class to apply to the checkbox
+     * @param <E>                the enum type
      * @return a LabeledControl containing the label and the checkbox
      * @throws IllegalArgumentException if the property does not define exactly two valid values,
      *                                  if either mapping value is not valid, or if both mapping values are equal
@@ -502,6 +499,8 @@ public final class FXComponentFactory {
      * the provided format string. Both the label and the slider share the same tooltip for improved accessibility.
      * <p>
      * This method is suitable for percent values between 0.0 and 1.0 (inclusive).
+     * The range is limited to 0.0..1.0 and rounded to two decimal places. As a side effect, the current
+     * value of the property is rounded and clamped to this range.
      *
      * @param inputDoubleProperty the InputDoubleProperty defining range and value binding
      * @param labelFormatString   the format string for the label (e.g., "%.2f %%")
@@ -556,7 +555,7 @@ public final class FXComponentFactory {
     /**
      * Computes the number of minor tick marks for a percent slider based on the given range.
      * <p>
-     * This method determines the number of minor ticks by checking if the range is divisible
+     * Determines the number of minor ticks by checking if the range is divisible
      * by specific divisors. If a divisor matches, the method returns the divisor minus one.
      * If no divisor matches, it returns 0.
      * <p>
@@ -592,6 +591,7 @@ public final class FXComponentFactory {
      * Both the label and the slider share the same tooltip for improved accessibility.
      * <p>
      * This method is suitable for sliders requiring decimal precision and a continuous value range.
+     * As a side effect, the current value of the property is rounded and clamped to the property range.
      *
      * @param inputDoubleProperty the InputDoubleProperty defining range and value binding
      * @param decimalPlaces       the requested number of decimal places to round the slider's value to; will be clamped to the range 0..9
@@ -769,6 +769,7 @@ public final class FXComponentFactory {
      * or a Region that itself contains one or more controls (e.g., HBox, VBox).
      * This record is typically used to return both the label and the associated region as a pair.
      *
+     * @param <R>           the type of the control region
      * @param label         the label describing the control or region
      * @param controlRegion the UI region (control or container) associated with the label
      */

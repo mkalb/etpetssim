@@ -7,8 +7,8 @@ import java.util.*;
 /**
  * Utility class for creating various JavaFX {@link Paint} objects such as gradients and solid colors.
  * <p>
- * This class provides static factory methods to simplify the creation of common paint patterns
- * for JavaFX components. It cannot be instantiated.
+ * Provides static factory methods to simplify the creation of common paint patterns
+ * for JavaFX components.
  */
 @SuppressWarnings({"MagicNumber"})
 public final class FXPaintFactory {
@@ -16,9 +16,6 @@ public final class FXPaintFactory {
     public static final Color BACKGROUND_COLOR = Color.web("#1a2233");
     public static final Color BORDER_COLOR = Color.web("#00eaff");
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private FXPaintFactory() {
     }
 
@@ -89,6 +86,7 @@ public final class FXPaintFactory {
      * @param baseColor the base color to adjust
      * @param factor    the brightness factor
      * @return a new color with adjusted brightness
+     * @throws IllegalArgumentException if {@code factor} is not finite
      */
     public static Color adjustBrightness(Color baseColor, double factor) {
         if (!Double.isFinite(factor)) {

@@ -6,12 +6,12 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 /**
  * Executes simulation steps for a given model until a specified termination condition is met.
  * <p>
- * This interface defines the contract for managing the simulation lifecycle,
+ * Defines the contract for managing the simulation lifecycle,
  * including stepwise and batch execution. It also provides access to the current model state
  * and the simulation step count.
  *
- * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM>  the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
+ * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <GM>  the type of {@link GridModel} in the simulation
  */
 public interface SimulationExecutor<
         ENT extends GridEntity,

@@ -6,16 +6,17 @@ package de.mkalb.etpetssim.engine;
  * All cell shapes used in this topology are regular polygons
  * and are rendered with a consistent orientation strategy for visual clarity and simplicity.
  * <p>
- * <strong>Orientation:</strong><br>
- * - {@link CellShape#HEXAGON} is always rendered with a <strong>flat-top</strong> orientation,
- * meaning one of its edges is aligned horizontally at the top.<br>
- * - {@link CellShape#SQUARE} is axis-aligned and does not require orientation logic.<br>
- * - {@link CellShape#TRIANGLE} alternates orientation by coordinate parity
- * ({@code x + y} even/odd), creating a checkerboard-style up/down pattern
- * that supports consistent neighbor relationships and visual symmetry.
+ * <strong>Orientation:</strong>
+ * <ul>
+ *   <li>{@link CellShape#HEXAGON} is always rendered with a <strong>flat-top</strong> orientation,
+ *   meaning one of its edges is aligned horizontally at the top.</li>
+ *   <li>{@link CellShape#SQUARE} is axis-aligned and does not require orientation logic.</li>
+ *   <li>{@link CellShape#TRIANGLE} alternates orientation by coordinate parity
+ *   ({@code x + y} even/odd), creating a checkerboard-style up/down pattern
+ *   that supports consistent neighbor relationships and visual symmetry.</li>
+ * </ul>
  * <p>
- * This orientation design simplifies rendering logic and ensures a uniform appearance across different grid types,
- * especially when displayed in graphical environments.
+ * The orientation design simplifies rendering logic and ensures a uniform appearance across different grid types.
  *
  * @param cellShape        the shape of each cell in the grid
  * @param gridEdgeBehavior the type of boundary behavior for the grid edges
@@ -120,27 +121,17 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
         return requiredHeightMultiple(cellShape, edgeBehaviorY());
     }
 
-    /**
-     * Returns the edge behavior for the X-axis of the grid.
-     *
-     * @return the edge behavior for the X-axis
-     */
     public EdgeBehavior edgeBehaviorX() {
         return gridEdgeBehavior.edgeBehaviorX();
     }
 
-    /**
-     * Returns the edge behavior for the Y-axis of the grid.
-     *
-     * @return the edge behavior for the Y-axis
-     */
     public EdgeBehavior edgeBehaviorY() {
         return gridEdgeBehavior.edgeBehaviorY();
     }
 
     /**
-     * Returns the number of vertices of each individual cell shape.
-     * This is also equal to the number of edges, since the shape is regular.
+     * Returns the number of vertices of each individual cell shape, which equals the number of edges
+     * since the shape is regular.
      * <p>
      * For example: TRIANGLE has 3, SQUARE has 4, HEXAGON has 6.
      * <p>

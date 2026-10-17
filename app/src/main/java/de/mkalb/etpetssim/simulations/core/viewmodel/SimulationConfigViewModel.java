@@ -6,25 +6,19 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 
 /**
  * Contract for exposing simulation configuration state to the view layer.
+ *
+ * @param <CON> immutable simulation config type
  */
 public interface SimulationConfigViewModel<CON extends SimulationConfig> {
 
-    /**
-     * Exposes the current simulation state as read-only JavaFX property.
-     *
-     * @return read-only simulation state property
-     */
     ReadOnlyObjectProperty<SimulationState> simulationStateProperty();
 
-    /**
-     * Returns the current simulation state.
-     *
-     * @return current simulation state
-     */
     SimulationState getSimulationState();
 
     /**
-     * Returns the immutable simulation configuration.
+     * Creates an immutable simulation configuration from the current input values.
+     * <p>
+     * The configuration may be invalid; callers check it with {@link SimulationConfig#isValid()}.
      *
      * @return simulation configuration
      */

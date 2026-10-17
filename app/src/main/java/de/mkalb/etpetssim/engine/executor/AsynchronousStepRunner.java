@@ -7,15 +7,15 @@ import java.util.*;
 import java.util.function.*;
 
 /**
- * Executes asynchronous simulation steps on a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}.
+ * Executes asynchronous simulation steps on a {@link WritableGridModel}.
  * <p>
- * This runner applies agent-specific logic to all entities in the grid model
+ * Applies agent-specific logic to all entities in the grid model
  * that satisfy the given {@code agentPredicate}. The agent logic is applied to each
  * agent cell, using the provided context object for state sharing or accumulation.
  * The order in which agents are processed is determined by the provided
  * {@code agentOrderingStrategy}.
  *
- * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
+ * @param <ENT> the type of {@link GridEntity} contained in the grid model
  * @param <C>   the type of the context object provided to each simulation step
  */
 public final class AsynchronousStepRunner<ENT extends GridEntity, C> implements SimulationStepRunner<C> {

@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 /**
  * Main JavaFX {@link Application} implementation.
  * <p>
- * This class creates the primary stage content, switches between simulations,
+ * Creates the primary stage content, switches between simulations,
  * and coordinates startup and shutdown behavior. Command-line parsing, logging,
  * and localization are initialized by {@link AppLauncher} before launch.
  */
@@ -83,7 +83,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      *
      * @param stage          primary application stage
      * @param simulationType simulation type to display
-     * @see de.mkalb.etpetssim.simulations.core.SimulationFactory
+     * @see SimulationFactory
      * @see de.mkalb.etpetssim.simulations.start.StartMainView
      */
     private void switchToSimulation(Stage stage, SimulationType simulationType) {
@@ -207,7 +207,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * and maximized or normal stages are resized and repositioned with decoration and
      * margin handling.
      * <p>
-     * This method is intended to run from {@link Platform#runLater(Runnable)} after
+     * Intended to run from {@link Platform#runLater(Runnable)} after
      * JavaFX has completed the initial layout pass.
      *
      * @param stage stage to adjust
@@ -370,7 +370,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     /**
      * Starts the JavaFX application.
      * <p>
-     * This method installs uncaught-exception handling, resolves the requested
+     * Installs uncaught-exception handling, resolves the requested
      * simulation type, and shows the primary stage.
      *
      * @param stage primary stage created by JavaFX

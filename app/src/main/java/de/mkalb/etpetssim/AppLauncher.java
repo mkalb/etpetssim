@@ -10,15 +10,12 @@ import java.util.*;
 /**
  * Application launcher and bootstrap entry point.
  * <p>
- * This class parses command-line arguments, initializes logging and localization,
+ * Parses command-line arguments, initializes logging and localization,
  * and launches {@link ExtraterrestrialPetsSimulation}. It is intentionally separate
  * from the JavaFX {@link Application} subclass.
  */
 public final class AppLauncher {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private AppLauncher() {
     }
 

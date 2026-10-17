@@ -13,7 +13,7 @@ import java.util.function.*;
  * All mutating (write and update) methods are defined in the {@link WritableGridModel} interface.
  * </p>
  *
- * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
 public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridModel<ENT>
         permits WritableGridModel {

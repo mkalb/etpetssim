@@ -27,23 +27,11 @@ public enum LangtonRulePresetSquare implements LangtonRulePreset {
         this.ruleString = ruleString;
     }
 
-    /**
-     * Returns the human-readable display name for this preset, suitable for use in a ComboBox.
-     * Returns an empty string for {@link #EMPTY}.
-     *
-     * @return the display name
-     */
     @Override
     public String displayName() {
         return ruleString;
     }
 
-    /**
-     * Returns the compact turn-sequence rule string for this preset,
-     * or an empty string for {@link #EMPTY}.
-     *
-     * @return the rule string
-     */
     @Override
     public String toString() {
         return ruleString;

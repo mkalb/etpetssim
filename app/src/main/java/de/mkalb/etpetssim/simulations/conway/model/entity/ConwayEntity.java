@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
  * Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
  *
- * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
+ * @see GridEntityDescriptorRegistry
  */
 public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
     DEAD(
@@ -60,20 +60,10 @@ public enum ConwayEntity implements ConstantGridEntityDescriptorProvider {
         return spec;
     }
 
-    /**
-     * Checks if this entity represents a dead cell.
-     *
-     * @return {@code true} if this entity is {@link #DEAD}, {@code false} otherwise
-     */
     public boolean isDead() {
         return this == DEAD;
     }
 
-    /**
-     * Checks if this entity represents a living cell.
-     *
-     * @return {@code true} if this entity is {@link #ALIVE}, {@code false} otherwise
-     */
     public boolean isAlive() {
         return this == ALIVE;
     }

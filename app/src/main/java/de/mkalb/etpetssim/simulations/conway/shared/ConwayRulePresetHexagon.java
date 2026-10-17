@@ -31,33 +31,16 @@ public enum ConwayRulePresetHexagon implements ConwayRulePreset {
         this.recommendedDensityPercent = recommendedDensityPercent;
     }
 
-    /**
-     * Returns the human-readable display name for this preset, suitable for use in a ComboBox.
-     *
-     * @return the display name
-     */
     @Override
     public String displayName() {
         return displayName;
     }
 
-    /**
-     * Returns the S/B rule string for this preset, or an empty string for {@link #EMPTY}.
-     *
-     * @return the S/B rule string
-     */
     @Override
     public String toString() {
         return ruleString;
     }
 
-    /**
-     * Returns the recommended initial density of alive cells as a percentage (0–100),
-     * based on the birth and survival conditions of this rule.
-     * Returns {@code -1} for {@link #EMPTY}.
-     *
-     * @return the recommended starting density in percent
-     */
     @Override
     public int recommendedDensityPercent() {
         return recommendedDensityPercent;

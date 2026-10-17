@@ -15,9 +15,6 @@ public final class WatorBalance {
      */
     public static final double TERMINATION_FISH_MAX_SHARE = 0.9d;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private WatorBalance() {
     }
 

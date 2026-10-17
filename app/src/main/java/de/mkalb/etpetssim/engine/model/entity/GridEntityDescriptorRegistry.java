@@ -9,14 +9,14 @@ import java.util.*;
 /**
  * Registry for managing and looking up {@link GridEntityDescriptor} instances.
  * <p>
- * This class provides centralized registration and retrieval of entity descriptors,
+ * Provides centralized registration and retrieval of entity descriptors,
  * supporting lookup by unique identifier.
  * It also handles the resolution of localized strings using {@link AppLocalization}
  * during descriptor creation.
  * </p>
  * <p>
  * The registry is intended to be used as a central point for descriptor management
- * within the application, ensuring consistent access and avoiding duplicate registrations.
+ * within the application. Registering a descriptor ID again replaces the earlier descriptor.
  * </p>
  */
 public final class GridEntityDescriptorRegistry {
@@ -146,8 +146,8 @@ public final class GridEntityDescriptorRegistry {
     /**
      * Returns the {@link GridEntityDescriptor} for the given descriptor ID.
      * <p>
-     * This is the required-lookup variant of {@link #findByDescriptorId(String)}.
-     * If no descriptor is registered for the specified ID, a {@link NoSuchElementException} is thrown.
+     * Unlike {@link #findByDescriptorId(String)}, this method throws a {@link NoSuchElementException}
+     * if no descriptor is registered for the specified ID.
      * </p>
      *
      * @param descriptorId the unique descriptor identifier

@@ -20,21 +20,9 @@ import java.util.logging.Formatter;
  */
 public final class AppLogger {
 
-    /**
-     * The name of the log file used by the AppLogger.
-     */
     public static final String LOG_FILE_NAME = "ExtraterrestrialPetsSimulation.log";
-    /**
-     * The default log level for the AppLogger.
-     */
     public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
-    /**
-     * Singleton instance of the AppLogger.
-     */
     private static final AppLogger APP_LOGGER = new AppLogger();
-    /**
-     * The root logger for the application.
-     */
     private final Logger logger;
     private boolean initialized;
 
@@ -376,7 +364,7 @@ public final class AppLogger {
         }
 
         /**
-         * Converts this level to {@link java.util.logging.Level}.
+         * Converts this level to {@link Level}.
          *
          * @return mapped JUL level
          */

@@ -17,9 +17,6 @@ public final class AppArgs {
     private static final Pattern ARGUMENT_PATTERN = Pattern.compile("--([a-zA-Z0-9\\-]+)(=(\\S+))?");
     private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used to build the arguments string
 
-    /**
-     * Map to store parsed command-line arguments.
-     */
     private final EnumMap<Key, String> arguments = new EnumMap<>(Key.class);
 
     /**

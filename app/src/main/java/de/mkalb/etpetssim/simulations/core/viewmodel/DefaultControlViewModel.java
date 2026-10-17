@@ -91,17 +91,12 @@ public final class DefaultControlViewModel
         cancelButtonRequested.set(true);
     }
 
-    /**
-     * Exposes the selected simulation mode input.
-     *
-     * @return simulation mode input property wrapper
-     */
     public InputEnumProperty<SimulationMode> simulationModeProperty() {
         return simulationMode;
     }
 
     /**
-     * Exposes the timed-step duration input.
+     * Exposes the timed-step duration input in milliseconds.
      *
      * @return step-duration input property wrapper
      */
@@ -118,20 +113,10 @@ public final class DefaultControlViewModel
         return stepCount;
     }
 
-    /**
-     * Exposes the simulation start-mode input.
-     *
-     * @return start-mode input property wrapper
-     */
     public InputEnumProperty<SimulationStartMode> startModeProperty() {
         return startMode;
     }
 
-    /**
-     * Exposes the termination-check mode input.
-     *
-     * @return termination-check input property wrapper
-     */
     public InputEnumProperty<SimulationTerminationCheckMode> terminationCheckProperty() {
         return terminationCheckMode;
     }
@@ -148,11 +133,6 @@ public final class DefaultControlViewModel
         };
     }
 
-    /**
-     * Returns whether the timed execution mode is selected.
-     *
-     * @return {@code true} if timed mode is selected
-     */
     public boolean isModeTimed() {
         return simulationMode.getValue() == SimulationMode.TIMED;
     }
@@ -166,20 +146,10 @@ public final class DefaultControlViewModel
         return isModeBatchSingle() || isModeBatchContinuous();
     }
 
-    /**
-     * Returns whether single-batch execution mode is selected.
-     *
-     * @return {@code true} if single-batch mode is selected
-     */
     public boolean isModeBatchSingle() {
         return simulationMode.getValue() == SimulationMode.BATCH_SINGLE;
     }
 
-    /**
-     * Returns whether continuous-batch execution mode is selected.
-     *
-     * @return {@code true} if continuous-batch mode is selected
-     */
     public boolean isModeBatchContinuous() {
         return simulationMode.getValue() == SimulationMode.BATCH_CONTINUOUS;
     }
@@ -193,11 +163,6 @@ public final class DefaultControlViewModel
         return startMode.getValue() == SimulationStartMode.START_PAUSED;
     }
 
-    /**
-     * Returns whether termination checks are enabled.
-     *
-     * @return {@code true} if termination checks are enabled
-     */
     public boolean isTerminationChecked() {
         return terminationCheckMode.getValue() == SimulationTerminationCheckMode.CHECKED;
     }

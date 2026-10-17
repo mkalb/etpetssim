@@ -50,30 +50,18 @@ public final class WatorStatistics
         sharkCells += sharkCellsDelta;
     }
 
-    /**
-     * Increments the fish cell count by one.
-     */
     void incrementFishCells() {
         fishCells++;
     }
 
-    /**
-     * Decrements the fish cell count by one.
-     */
     void decrementFishCells() {
         fishCells--;
     }
 
-    /**
-     * Increments the shark cell count by one.
-     */
     void incrementSharkCells() {
         sharkCells++;
     }
 
-    /**
-     * Decrements the shark cell count by one.
-     */
     void decrementSharkCells() {
         sharkCells--;
     }

@@ -4,14 +4,14 @@ import de.mkalb.etpetssim.engine.model.WritableGridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * Executes synchronous simulation steps on a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}.
+ * Executes synchronous simulation steps on a {@link WritableGridModel}.
  * <p>
- * This runner applies synchronous step logic to the simulation model:
+ * Applies synchronous step logic to the simulation model:
  * it reads from the current model (as a {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}) and writes results
  * to the next model. After each step, the models are swapped, and the next model is cleared
  * for the following step.
  *
- * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} contained in the grid model
+ * @param <ENT> the type of {@link GridEntity} contained in the grid model
  * @param <C>   the type of the context object provided to each simulation step
  * @see SynchronousStepLogic
  */

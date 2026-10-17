@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.engine.CellShape;
 /**
  * Specifies the side of a {@link CellShape} as viewed within the grid.
  * <p>
- * This enum standardizes directional logic for rendering and interaction
+ * Standardizes directional logic for rendering and interaction
  * across different cell shapes.
  * <p>
  * For {@link CellShape#SQUARE}, each side corresponds to two vertices and one edge.

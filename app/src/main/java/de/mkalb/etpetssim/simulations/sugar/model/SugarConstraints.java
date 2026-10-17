@@ -86,9 +86,6 @@ public final class SugarConstraints {
     public static final int AGENT_MAX_AGE_MAX = 1_000;
     public static final int AGENT_MAX_AGE_STEP = RULE_STEP;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private SugarConstraints() {
     }
 

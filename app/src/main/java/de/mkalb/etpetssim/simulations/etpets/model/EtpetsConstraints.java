@@ -54,9 +54,6 @@ public final class EtpetsConstraints {
     // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private EtpetsConstraints() {
     }
 

@@ -75,7 +75,7 @@ public enum CellDisplayMode {
     /**
      * Indicates whether this display mode includes a border.
      *
-     * @return true if the mode includes a border, false otherwise
+     * @return {@code true} if the mode includes a border, {@code false} otherwise
      */
     public boolean hasBorder() {
         return switch (this) {

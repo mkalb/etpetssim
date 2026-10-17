@@ -12,7 +12,7 @@ import java.util.function.*;
  * All read-only methods are defined in the {@link ReadableGridModel} interface.
  * </p>
  *
- * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
 public sealed interface WritableGridModel<ENT extends GridEntity> extends ReadableGridModel<ENT>
         permits ArrayGridModel, SparseGridModel {
@@ -45,9 +45,6 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
 
     /**
      * Sets the entity in the grid using a {@link GridCell}.
-     * <p>
-     * This method extracts the coordinate and entity from the provided {@link GridCell}
-     * and sets the entity at the corresponding coordinate in the grid.
      *
      * @param cell the {@link GridCell} containing the coordinate and entity to set
      * @throws IndexOutOfBoundsException if the coordinate is not valid

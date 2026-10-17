@@ -13,9 +13,6 @@ import javafx.beans.property.*;
 
 public final class LabFactory {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private LabFactory() {
     }
 

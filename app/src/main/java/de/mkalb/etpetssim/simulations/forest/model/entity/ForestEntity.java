@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
  * Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
  *
- * @see de.mkalb.etpetssim.engine.model.entity.GridEntityDescriptorRegistry
+ * @see GridEntityDescriptorRegistry
  */
 public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
     EMPTY(
@@ -70,29 +70,14 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
         return spec;
     }
 
-    /**
-     * Checks if this entity represents an empty cell.
-     *
-     * @return {@code true} if this entity is {@link #EMPTY}, {@code false} otherwise
-     */
     public boolean isEmpty() {
         return this == EMPTY;
     }
 
-    /**
-     * Checks if this entity represents a tree cell.
-     *
-     * @return {@code true} if this entity is {@link #TREE}, {@code false} otherwise
-     */
     public boolean isTree() {
         return this == TREE;
     }
 
-    /**
-     * Checks if this entity represents a burning cell.
-     *
-     * @return {@code true} if this entity is {@link #BURNING}, {@code false} otherwise
-     */
     public boolean isBurning() {
         return this == BURNING;
     }

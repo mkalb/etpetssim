@@ -10,7 +10,7 @@ import java.util.function.*;
 /**
  * Represents an enum property with a defined set of valid values and a display name provider.
  * <p>
- * This record encapsulates an {@link ObjectProperty} for an enum type and provides
+ * Encapsulates an {@link ObjectProperty} for an enum type and provides
  * validation against a specified list of valid values.
  * <p>
  * Invalid values are logged via {@link AppLogger} and still set on the property.
@@ -62,6 +62,7 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
      * @param initialValue        the initial enum value
      * @param validValues         the list of valid enum values
      * @param displayNameProvider a function mapping enum values to their display names
+     * @param <E>                 the enum type
      * @return a new {@code InputEnumProperty}
      * @throws IllegalArgumentException if any argument is invalid
      */
@@ -86,11 +87,12 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
     /**
      * Creates a new {@code InputEnumProperty} with all values of the given enum type and a display name provider.
      * <p>
-     * This method uses {@code enumClass.getEnumConstants()} to determine the valid values.
+     * Uses {@code enumClass.getEnumConstants()} to determine the valid values.
      *
      * @param initialValue        the initial enum value
      * @param enumClass           the {@link Class} object of the enum type
      * @param displayNameProvider a function mapping enum values to their display names
+     * @param <E>                 the enum type
      * @return a new {@code InputEnumProperty} with all enum values as valid values
      * @throws IllegalArgumentException if any argument is invalid
      */
@@ -105,6 +107,7 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
      *
      * @param value       the value to check
      * @param validValues the list of valid values
+     * @param <E>         the enum type
      * @return {@code true} if the value is invalid, {@code false} otherwise
      */
     static <E extends Enum<E>> boolean isInvalidValue(E value, List<E> validValues) {
@@ -121,17 +124,14 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
         return Bindings.createStringBinding(() -> format.formatted(displayNameProvider.apply(property.get())), property);
     }
 
-    /**
-     * Gets the current value of the property.
-     *
-     * @return the current value
-     */
     public E getValue() {
         return property.get();
     }
 
     /**
      * Sets the property value.
+     * <p>
+     * An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory method.
      *
      * @param value the value to set
      */

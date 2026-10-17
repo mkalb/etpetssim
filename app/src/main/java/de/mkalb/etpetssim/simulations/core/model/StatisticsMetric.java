@@ -25,8 +25,7 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
         int chartWindowSize) {
 
     /**
-     * Default number of trailing history samples rendered on a chart, close to the previous
-     * (pre-history-capacity-increase) {@code StatisticsHistory} capacity.
+     * Default number of trailing history samples rendered on a chart.
      */
     public static final int DEFAULT_CHART_WINDOW_SIZE = 100;
 

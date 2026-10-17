@@ -56,8 +56,7 @@ public record GridEntityDescriptor(
     /**
      * Returns the configured fill color, or a default of {@link Color#BLACK} if none is set.
      * <p>
-     * This method guarantees a non-null value for rendering code that requires a
-     * concrete {@link Color} without optional handling.
+     * Intended for rendering code that requires a concrete {@link Color} without optional handling.
      * </p>
      *
      * @return the configured fill color, or {@link Color#BLACK} as fallback
@@ -78,8 +77,7 @@ public record GridEntityDescriptor(
     /**
      * Returns the configured border color, or a default of {@link Color#BLACK} if none is set.
      * <p>
-     * This method guarantees a non-null {@link Color} for callers that always need a
-     * border color value during rendering.
+     * Intended for rendering code that always needs a border color.
      * </p>
      *
      * @return the configured border color, or {@link Color#BLACK} as fallback

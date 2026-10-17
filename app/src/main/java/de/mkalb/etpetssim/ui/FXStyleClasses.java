@@ -6,8 +6,6 @@ package de.mkalb.etpetssim.ui;
  * <p>This class provides a centralized location for managing style class names, ensuring
  * consistency and reducing the risk of typos. The constants are grouped by their usage
  * context, such as configuration, control, observation, and simulation.</p>
- *
- * <p>Note: This class is not meant to be instantiated.</p>
  */
 @SuppressWarnings("SpellCheckingInspection")
 public final class FXStyleClasses {
@@ -69,9 +67,6 @@ public final class FXStyleClasses {
     public static final String START_CONTROL_VBOX = "start-control-vbox";
     public static final String START_TITLE_LABEL = "start-title-label";
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private FXStyleClasses() {
     }
 

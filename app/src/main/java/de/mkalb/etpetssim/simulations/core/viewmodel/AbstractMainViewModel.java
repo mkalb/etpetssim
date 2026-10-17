@@ -61,11 +61,6 @@ public abstract class AbstractMainViewModel<
         return simulationState.get();
     }
 
-    /**
-     * Updates the current simulation state.
-     *
-     * @param simulationState next simulation state
-     */
     protected final void setSimulationState(SimulationState simulationState) {
         this.simulationState.set(simulationState);
     }
@@ -101,20 +96,10 @@ public abstract class AbstractMainViewModel<
      */
     public abstract GM getCurrentGridModel();
 
-    /**
-     * Exposes the most recently clicked coordinate.
-     *
-     * @return mutable coordinate property
-     */
     public final ObjectProperty<@Nullable GridCoordinate> lastClickedCoordinateProperty() {
         return lastClickedCoordinate;
     }
 
-    /**
-     * Exposes the coordinate that was clicked before the last click.
-     *
-     * @return mutable coordinate property
-     */
     public final ObjectProperty<@Nullable GridCoordinate> previousClickedCoordinateProperty() {
         return previousClickedCoordinate;
     }
@@ -122,7 +107,7 @@ public abstract class AbstractMainViewModel<
     /**
      * Returns the most recently clicked coordinate.
      *
-     * @return optional coordinate
+     * @return the coordinate, or empty if no click is stored or the last click was cleared
      */
     public Optional<GridCoordinate> getLastClickedCoordinate() {
         return Optional.ofNullable(lastClickedCoordinate.get());
@@ -131,7 +116,7 @@ public abstract class AbstractMainViewModel<
     /**
      * Returns the coordinate clicked before the most recent click.
      *
-     * @return optional coordinate
+     * @return the coordinate, or empty if no previous click is stored
      */
     public Optional<GridCoordinate> getPreviousClickedCoordinate() {
         return Optional.ofNullable(previousClickedCoordinate.get());

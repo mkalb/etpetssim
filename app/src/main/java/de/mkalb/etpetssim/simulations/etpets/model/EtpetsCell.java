@@ -72,10 +72,10 @@ public record EtpetsCell(GridCoordinate coordinate,
     }
 
     /**
-     * Returns true if the cell is traversable and currently unoccupied:
+     * Returns whether the cell is traversable and currently unoccupied:
      * walkable terrain, no resource, no agent.
      *
-     * @return true if the cell can be walked on by an agent
+     * @return {@code true} if the cell can be walked on by an agent
      */
     public boolean isWalkable() {
         return terrainEntity.isWalkable() && resourceEntity.isEmpty() && agentEntity.isEmpty();

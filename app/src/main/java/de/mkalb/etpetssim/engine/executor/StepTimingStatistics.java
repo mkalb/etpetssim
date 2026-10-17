@@ -2,15 +2,15 @@ package de.mkalb.etpetssim.engine.executor;
 
 /**
  * Immutable timing statistics for simulation steps (in nanoseconds).
+ * <p>
+ * The canonical constructor enforces non-negative values and validates
+ * cross-field consistency (for example, {@code minNanos <= maxNanos}).
  *
  * @param currentNanos duration of the most recent step
  * @param minNanos     minimum step duration
  * @param maxNanos     maximum step duration
  * @param sumNanos     sum of all step durations
  * @param avgNanos     average step duration
- *                     <p>
- *                     The canonical constructor enforces non-negative values and validates
- *                     cross-field consistency (for example, {@code minNanos <= maxNanos}).
  */
 public record StepTimingStatistics(
         long currentNanos,

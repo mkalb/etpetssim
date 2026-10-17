@@ -6,7 +6,7 @@ package de.mkalb.etpetssim.engine;
  * Each coordinate is defined by its non-negative {@code x} (horizontal) and {@code y} (vertical) values.
  * Negative values are considered illegal and indicate an invalid or uninitialized state.
  * <p>
- * This record provides utility methods for bounds checking, coordinate arithmetic, and
+ * Provides methods for bounds checking, coordinate arithmetic, and
  * grid-specific queries (such as cell orientation and offset for different cell shapes).
  * <p>
  * The natural ordering of this type is lexicographic: first by {@code x}, then by {@code y}.
@@ -22,19 +22,17 @@ package de.mkalb.etpetssim.engine;
 public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate> {
 
     /**
-     * A constant for the minimum valid coordinate value.
-     * Only non-negative coordinates are valid in the grid.
+     * The minimum valid coordinate value; only non-negative coordinates are valid in the grid.
      */
     public static final int MIN_VALID_COORDINATE = 0;
 
     /**
-     * A constant for the origin coordinate (0, 0).
+     * The origin coordinate (0, 0).
      */
     public static final GridCoordinate ORIGIN = new GridCoordinate(MIN_VALID_COORDINATE, MIN_VALID_COORDINATE);
 
     /**
-     * A constant for an illegal coordinate.
-     * This coordinate is used to represent an invalid or uninitialized state.
+     * Represents an invalid or uninitialized coordinate.
      */
     public static final GridCoordinate ILLEGAL = new GridCoordinate(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
@@ -170,7 +168,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * Only meaningful if the cell shape is {@code TRIANGLE}.
      *
      * @return {@code true} if the triangle would point down, {@code false} if up
-     * @see de.mkalb.etpetssim.engine.CellShape#TRIANGLE
+     * @see CellShape#TRIANGLE
      */
     public boolean isTriangleCellPointingDown() {
         return isOddColumn() == isOddRow();

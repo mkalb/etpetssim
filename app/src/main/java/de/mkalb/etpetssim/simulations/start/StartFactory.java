@@ -6,11 +6,11 @@ import javafx.stage.Stage;
 
 import java.util.function.*;
 
+/**
+ * Factory for the start screen main view.
+ */
 public final class StartFactory {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private StartFactory() {
     }
 

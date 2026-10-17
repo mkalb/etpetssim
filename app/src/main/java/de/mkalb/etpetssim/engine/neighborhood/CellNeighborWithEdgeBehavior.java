@@ -8,7 +8,7 @@ import java.util.*;
  * Represents the relationship between a cell and one of its neighbors in a two-dimensional grid,
  * including the result of applying edge behavior to the neighbor coordinate.
  * <p>
- * This record extends the information of {@link CellNeighbor} by including both the original
+ * Extends the information of {@link CellNeighbor} by including both the original
  * (theoretical) neighbor coordinate and the mapped coordinate after applying the grid's edge behavior,
  * as well as the resulting {@link EdgeBehaviorAction}.
  * <p>
@@ -37,7 +37,7 @@ public record CellNeighborWithEdgeBehavior(
     /**
      * Creates a {@link CellNeighborWithEdgeBehavior} from a given {@link CellNeighbor} and the result of applying edge behavior.
      * <p>
-     * This factory method combines the geometric neighbor relationship with the outcome of edge behavior processing,
+     * Combines the geometric neighbor relationship with the outcome of edge behavior processing,
      * producing a record that contains both the original and mapped neighbor coordinates, as well as the edge behavior action.
      *
      * @param neighbor           the theoretical neighbor relationship (ignoring edge behavior)

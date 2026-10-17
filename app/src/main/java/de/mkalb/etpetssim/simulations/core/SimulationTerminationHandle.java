@@ -31,6 +31,9 @@ public interface SimulationTerminationHandle {
      */
     void shutdownNow();
 
+    /**
+     * Termination handle without background work; it reports immediate termination.
+     */
     enum CompletedSimulationTerminationHandle implements SimulationTerminationHandle {
         INSTANCE;
 

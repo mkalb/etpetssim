@@ -11,14 +11,14 @@ import java.util.stream.*;
  * Provides static utility methods for determining the arrangement and neighbor relationships of cells
  * in a two-dimensional grid, based on cell shape, neighborhood mode, and cell position.
  * <p>
- * This class centralizes the calculation of neighbor directions for different grid types
+ * Centralizes the calculation of neighbor directions for different grid types
  * (triangular, square, hexagonal) and supports both edge-only and edge-and-vertex neighborhood modes.
  *
- * @see de.mkalb.etpetssim.engine.CellShape
+ * @see CellShape
  * @see NeighborhoodMode
- * @see de.mkalb.etpetssim.engine.neighborhood.CellNeighbor
- * @see de.mkalb.etpetssim.engine.GridOffset
- * @see de.mkalb.etpetssim.engine.GridCoordinate
+ * @see CellNeighbor
+ * @see GridOffset
+ * @see GridCoordinate
  */
 @SuppressWarnings("MagicNumber")
 public final class CellNeighborhoods {
@@ -27,8 +27,9 @@ public final class CellNeighborhoods {
      * The maximum allowed neighborhood radius for neighbor calculations in the grid.
      * <p>
      * This value is used as an upper bound to prevent excessive computation and memory usage
-     * when determining neighbors within a given radius. Methods that accept a radius parameter
-     * will throw an {@link IllegalArgumentException} if the provided value exceeds this limit.
+     * when determining neighbors within a given radius. {@link #cellsByRadiusRings} and
+     * {@link #neighborCoordinatesWithinRadius} throw an {@link IllegalArgumentException}
+     * if the provided radius exceeds this limit.
      */
     public static final int MAX_RADIUS = 100;
 
@@ -37,7 +38,7 @@ public final class CellNeighborhoods {
      * <p>
      * Clockwise order starting at North: N, E, S, W.
      * Matches the ordering used by {@code computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_ONLY)}.
-     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, java.util.List)}.
+     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, List)}.
      */
     public static final List<CompassDirection> SQUARE_EDGES_DIRECTION_RING =
             List.of(CompassDirection.N, CompassDirection.E, CompassDirection.S, CompassDirection.W);
@@ -47,7 +48,7 @@ public final class CellNeighborhoods {
      * <p>
      * Clockwise order starting at North: N, NE, E, SE, S, SW, W, NW.
      * Matches the ordering used by {@code computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_AND_VERTICES)}.
-     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, java.util.List)}.
+     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, List)}.
      */
     public static final List<CompassDirection> SQUARE_EDGES_AND_VERTICES_DIRECTION_RING =
             List.of(
@@ -60,7 +61,7 @@ public final class CellNeighborhoods {
      * <p>
      * Clockwise order starting at North: N, NE, SE, S, SW, NW.
      * Matches the ordering used by {@code computeHexagonCellNeighborConnections(...)}.
-     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, java.util.List)}.
+     * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, List)}.
      */
     public static final List<CompassDirection> HEXAGON_DIRECTION_RING =
             List.of(CompassDirection.N, CompassDirection.NE, CompassDirection.SE, CompassDirection.S, CompassDirection.SW, CompassDirection.NW);
@@ -72,9 +73,6 @@ public final class CellNeighborhoods {
      */
     private static final Map<String, List<CellNeighborConnection>> CACHE = new ConcurrentHashMap<>(INITIAL_CACHE_CAPACITY);
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private CellNeighborhoods() {
     }
 
@@ -106,7 +104,8 @@ public final class CellNeighborhoods {
      * represent an exact neighbor count for all configurations.
      * For {@code radius == 1}, the returned value equals the direct neighbor count from
      * {@link #maxNeighborCount(CellShape, NeighborhoodMode)}.
-     * For larger radii, this method returns a conservative value derived from shape-specific formulas.
+     * For larger radii, this method returns a conservative value derived from shape-specific formulas
+     * that also covers the start cell.
      * <p>
      * If {@code radius <= 0}, this method returns {@code 0}.
      *
@@ -174,9 +173,9 @@ public final class CellNeighborhoods {
      * Returns {@code VALID} if the coordinate is within bounds. If out of bounds,
      * applies the configured edge behavior for each axis (X and Y) and prioritizes actions:
      * <ol>
-     *   <li>{@code BLOCKED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#BLOCK}</li>
-     *   <li>{@code ABSORBED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#ABSORB}</li>
-     *   <li>{@code WRAPPED} if either axis uses {@link de.mkalb.etpetssim.engine.EdgeBehavior#WRAP}</li>
+     *   <li>{@code BLOCKED} if either axis uses {@link EdgeBehavior#BLOCK}</li>
+     *   <li>{@code ABSORBED} if either axis uses {@link EdgeBehavior#ABSORB}</li>
+     *   <li>{@code WRAPPED} if either axis uses {@link EdgeBehavior#WRAP}</li>
      * </ol>
      *
      * @param coordinate the grid coordinate to check
@@ -344,7 +343,7 @@ public final class CellNeighborhoods {
      * Returns an {@link Optional} containing a {@link CellNeighborWithEdgeBehavior} for the neighbor of a cell
      * in the specified compass direction, applying the grid's edge behavior to the neighbor coordinate.
      * <p>
-     * This method determines the theoretical neighbor in the given direction (based on cell shape and neighborhood mode),
+     * Determines the theoretical neighbor in the given direction (based on cell shape and neighborhood mode),
      * applies the grid's edge behavior to the neighbor coordinate, and returns a record describing the relationship
      * and edge behavior outcome. If no neighbor exists in the specified direction, an empty {@link Optional} is returned.
      *
@@ -385,7 +384,7 @@ public final class CellNeighborhoods {
      * to each neighbor coordinate and grouping the results by the mapped (post-edge-behavior) coordinate.
      * <p>
      * For each theoretical neighbor (as determined by cell shape and neighborhood mode, ignoring boundaries),
-     * the grid's edge behavior is applied. The resulting {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records
+     * the grid's edge behavior is applied. The resulting {@link CellNeighborWithEdgeBehavior} records
      * contain both the original (theoretical) and mapped neighbor coordinates, as well as the edge behavior action
      * (e.g., VALID, WRAPPED, BLOCKED, ABSORBED).
      * <p>
@@ -396,7 +395,7 @@ public final class CellNeighborhoods {
      * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined (must be valid in the grid)
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param structure        the grid structure defining size, boundaries, and edge behavior
-     * @return a map from mapped neighbor coordinates to lists of {@link de.mkalb.etpetssim.engine.neighborhood.CellNeighborWithEdgeBehavior} records,
+     * @return a map from mapped neighbor coordinates to lists of {@link CellNeighborWithEdgeBehavior} records,
      * each describing the relationship and edge behavior outcome for that neighbor
      */
     public static Map<GridCoordinate, List<CellNeighborWithEdgeBehavior>> cellNeighborsWithEdgeBehavior(
@@ -512,7 +511,7 @@ public final class CellNeighborhoods {
     /**
      * Returns a set of all neighbor coordinates within the given radius for a cell,
      * based on the specified neighborhood mode and cell shape, ignoring grid boundaries.
-     * Uses breadth-first search to avoid redundant visits and ensure efficiency.
+     * The start coordinate itself is not included.
      * <p>
      * If {@code radius <= 0}, this method returns an empty set. If {@code radius > MAX_RADIUS}, an
      * {@link IllegalArgumentException} is thrown.
@@ -569,17 +568,14 @@ public final class CellNeighborhoods {
      * the given {@link GridCoordinate}, according to the specified {@link NeighborhoodMode} and
      * {@link CellShape}.
      *
-     * <p>This method extracts the {@link CompassDirection} values from the internal neighbor
-     * connection list (via {@link #getOrComputeCellNeighborConnections(GridCoordinate, NeighborhoodMode, CellShape)})
-     * and therefore does not perform any boundary checks or apply edge behavior. The returned
+     * <p>This method does not perform any boundary checks or apply edge behavior. The returned
      * directions represent neighbors in an infinite grid. Note that {@code startCoordinate} is
-     * relevant for triangle parity and hexagon Y-offsets but is effectively ignored for square cells
-     * (consistent with the cache key strategy).
+     * relevant for triangle parity and hexagon Y-offsets but is ignored for square cells.
      *
      * @param startCoordinate  the coordinate of the cell whose neighbor directions are requested (not validated)
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
      * @param cellShape        the shape of the cell (triangle, square, hexagon)
-     * @return a modifiable {@link java.util.EnumSet} of {@link CompassDirection} containing the
+     * @return a modifiable {@link EnumSet} of {@link CompassDirection} containing the
      * directions of all theoretical direct neighbors for the given configuration
      */
     public static Set<CompassDirection> cellNeighborDirections(GridCoordinate startCoordinate,
@@ -635,7 +631,7 @@ public final class CellNeighborhoods {
     /**
      * Computes the relative neighbor connections for the given configuration.
      * <p>
-     * This method performs shape-specific dispatch and returns only geometric neighbor
+     * Performs shape-specific dispatch and returns only geometric neighbor
      * relations (without boundary checks or edge behavior mapping).
      *
      * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)

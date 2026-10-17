@@ -28,9 +28,6 @@ public final class AppResources {
      */
     public static final String FOLDER_IMAGES = "images/";
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private AppResources() {
     }
 

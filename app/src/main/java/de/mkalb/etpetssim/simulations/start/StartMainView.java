@@ -13,10 +13,10 @@ import java.util.function.*;
 /**
  * Main view for the start screen of the Extraterrestrial Pets Simulation application.
  * <p>
- * Implements {@link SimulationMainView} and {@link SimulationControlView}. It builds a vertical list of
+ * Implements {@link SimulationMainView} and {@link SimulationControlView} and builds a vertical list of
  * buttons for each {@link SimulationType} that is configured to be shown on the start screen. Implemented
  * simulations are clickable and switch the stage to the selected type; unimplemented ones are disabled.
- * This class encapsulates both the view and minimal control behavior; no dedicated ViewModel is required.
+ * The class encapsulates both the view and minimal control behavior; no dedicated ViewModel is required.
  * </p>
  */
 public final class StartMainView implements SimulationMainView, SimulationControlView {

@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 /**
  * Base interface for grid models, providing access to grid structure and coordinate validation.
  *
- * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
 public sealed interface GridModel<ENT extends GridEntity>
         permits ReadableGridModel, CompositeGridModel {

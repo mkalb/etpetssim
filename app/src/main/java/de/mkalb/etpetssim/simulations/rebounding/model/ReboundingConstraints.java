@@ -52,9 +52,6 @@ public final class ReboundingConstraints {
     // Rules - NeighborhoodMode
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private ReboundingConstraints() {
     }
 

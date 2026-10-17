@@ -81,9 +81,6 @@ public final class SnakeConstraints {
     public static final double SEGMENT_LENGTH_MULTIPLIER_MIN = 0.0d;
     public static final double SEGMENT_LENGTH_MULTIPLIER_MAX = 5.0d;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private SnakeConstraints() {
     }
 

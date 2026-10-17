@@ -6,7 +6,7 @@ import org.jspecify.annotations.Nullable;
 /**
  * Immutable descriptor spec used by {@link GridEntityDescriptorProvider} implementations.
  * <p>
- * This value object stores localization keys and rendering hints before they are
+ * Stores localization keys and rendering hints before they are
  * resolved to a {@link GridEntityDescriptor} by {@link GridEntityDescriptorRegistry}.
  * </p>
  *

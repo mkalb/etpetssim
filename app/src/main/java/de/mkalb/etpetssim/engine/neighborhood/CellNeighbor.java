@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * Represents the relationship between a cell and one of its neighbors in a two-dimensional grid.
  * <p>
- * This record encapsulates the start cell's coordinate, the direction and type of the connection,
+ * Encapsulates the start cell's coordinate, the direction and type of the connection,
  * and the neighbor cell's coordinate. It is used to describe how a cell is connected to its neighbor,
  * including whether the connection is via a shared edge or vertex.
  *
@@ -15,7 +15,7 @@ import java.util.*;
  * @param direction          the compass direction from the start cell to the neighbor
  * @param connection         the type of connection (edge or vertex) between the cells
  * @param neighborCoordinate the coordinate of the neighboring cell
- * @see de.mkalb.etpetssim.engine.GridCoordinate
+ * @see GridCoordinate
  * @see CompassDirection
  * @see CellConnectionType
  */

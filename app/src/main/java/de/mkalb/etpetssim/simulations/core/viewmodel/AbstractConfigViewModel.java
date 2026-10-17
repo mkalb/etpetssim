@@ -13,6 +13,8 @@ import java.util.function.*;
 
 /**
  * Base implementation for configuration view models.
+ *
+ * @param <CON> immutable simulation config type
  */
 public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         implements SimulationConfigViewModel<CON> {
@@ -74,56 +76,26 @@ public abstract class AbstractConfigViewModel<CON extends SimulationConfig>
         return simulationState.get();
     }
 
-    /**
-     * Exposes the editable cell-shape input.
-     *
-     * @return cell-shape input property wrapper
-     */
     public final InputChoiceProperty<CellShape> cellShapeProperty() {
         return cellShape;
     }
 
-    /**
-     * Exposes the editable grid-edge behavior input.
-     *
-     * @return grid-edge behavior input property wrapper
-     */
     public final InputChoiceProperty<GridEdgeBehavior> gridEdgeBehaviorProperty() {
         return gridEdgeBehavior;
     }
 
-    /**
-     * Exposes the editable grid width input.
-     *
-     * @return grid-width input property wrapper
-     */
     public final InputIntegerProperty gridWidthProperty() {
         return gridWidth;
     }
 
-    /**
-     * Exposes the editable grid height input.
-     *
-     * @return grid-height input property wrapper
-     */
     public final InputIntegerProperty gridHeightProperty() {
         return gridHeight;
     }
 
-    /**
-     * Exposes the editable cell edge length input.
-     *
-     * @return cell-edge-length input property wrapper
-     */
     public final InputDoubleIntRangeProperty cellEdgeLengthProperty() {
         return cellEdgeLength;
     }
 
-    /**
-     * Exposes the editable cell display mode input.
-     *
-     * @return cell-display-mode input property wrapper
-     */
     public final InputChoiceProperty<CellDisplayMode> cellDisplayModeProperty() {
         return cellDisplayMode;
     }

@@ -11,9 +11,8 @@ import java.util.stream.*;
  *   <li>{@code surviveCounts}: neighbor counts for which a living cell survives</li>
  *   <li>{@code birthCounts}: neighbor counts for which a dead cell becomes alive</li>
  * </ul>
- * Both sets must contain non-negative integers and are stored in sorted order for display and logic purposes.
  * <p>
- * This record provides utility methods for rule evaluation and display formatting.
+ * Both sets must contain non-negative integers and are stored in sorted order for display and logic purposes.
  *
  * @param surviveCounts the sorted set of neighbor counts for cell survival
  * @param birthCounts   the sorted set of neighbor counts for cell birth

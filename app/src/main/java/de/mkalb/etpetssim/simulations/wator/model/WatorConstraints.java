@@ -88,9 +88,6 @@ public final class WatorConstraints {
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private WatorConstraints() {
     }
 

@@ -9,14 +9,11 @@ import java.util.function.*;
 
 /**
  * Utility class with static helper methods for working with {@link GridEntity},
- * {@link de.mkalb.etpetssim.engine.model.GridCell}, {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}, {@link de.mkalb.etpetssim.engine.model.WritableGridModel},
- * {@link de.mkalb.etpetssim.engine.support.GridPattern}, {@link GridEntityDescriptor}, and {@link GridEntityDescriptorRegistry}.
+ * {@link GridCell}, {@link ReadableGridModel}, {@link WritableGridModel},
+ * {@link GridPattern}, {@link GridEntityDescriptor}, and {@link GridEntityDescriptorRegistry}.
  */
 public final class GridEntityUtils {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private GridEntityUtils() {
     }
 
@@ -59,7 +56,7 @@ public final class GridEntityUtils {
     }
 
     /**
-     * Places all entities from the given {@link de.mkalb.etpetssim.engine.support.GridPattern} into the specified {@link de.mkalb.etpetssim.engine.model.WritableGridModel},
+     * Places all entities from the given {@link GridPattern} into the specified {@link WritableGridModel},
      * offsetting each entity's position by the provided anchor coordinate.
      * <p>
      * For each entry in the pattern, the entity is placed at the coordinate computed by adding

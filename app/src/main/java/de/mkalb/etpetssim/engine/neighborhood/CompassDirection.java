@@ -160,7 +160,7 @@ public enum CompassDirection {
      * <p>
      * The distance is determined by the minimum number of steps needed to traverse
      * from one direction to the other, either clockwise or counterclockwise on the provided ring.
-     * The result is always between 0 and half the ring size (rounded up).
+     * The result is always between 0 and half the ring size (rounded down).
      * </p>
      *
      * @param from the starting direction (must be part of the ring)
@@ -206,13 +206,13 @@ public enum CompassDirection {
 
     /**
      * Returns the granularity level of this direction.
+     * <ul>
+     *   <li>Level 0: Main directions (N, E, S, W)</li>
+     *   <li>Level 1: Intercardinal directions (NE, SE, SW, NW)</li>
+     *   <li>Level 2: Secondary intercardinal directions (e.g., NNE, ENE)</li>
+     * </ul>
      * <p>
-     * Level 0: Main directions (N, E, S, W)<br>
-     * Level 1: Intercardinal directions (NE, SE, SW, NW)<br>
-     * Level 2: Secondary intercardinal directions (e.g., NNE, ENE)
-     * </p>
-     * In everyday language, a lower level means a more general direction,
-     * while a higher level is more specific.
+     * A lower level means a more general direction, while a higher level is more specific.
      *
      * @return the level of this direction (0, 1, or 2)
      */
