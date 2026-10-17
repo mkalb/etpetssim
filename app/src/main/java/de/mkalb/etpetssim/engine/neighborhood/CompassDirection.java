@@ -206,12 +206,12 @@ public enum CompassDirection {
 
     /**
      * Returns the granularity level of this direction.
-     * <p>
      * <ul>
      *   <li>Level 0: Main directions (N, E, S, W)</li>
      *   <li>Level 1: Intercardinal directions (NE, SE, SW, NW)</li>
      *   <li>Level 2: Secondary intercardinal directions (e.g., NNE, ENE)</li>
      * </ul>
+     * <p>
      * A lower level means a more general direction, while a higher level is more specific.
      *
      * @return the level of this direction (0, 1, or 2)
