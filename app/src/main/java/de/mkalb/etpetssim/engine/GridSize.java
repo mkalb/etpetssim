@@ -6,7 +6,7 @@ package de.mkalb.etpetssim.engine;
  * The grid size is defined by its {@code width} (number of columns) and {@code height} (number of rows).
  * Both values must be within the valid range from {@value #MIN_SIZE} to {@value #MAX_SIZE}.
  * <p>
- * This record provides utility methods for size validation, area and perimeter calculation,
+ * Provides methods for size validation, area and perimeter calculation,
  * aspect ratio, orientation checks, and standard grid sizes.
  *
  * @param width  the number of columns (horizontal cells), must be within valid range
@@ -23,13 +23,11 @@ package de.mkalb.etpetssim.engine;
 public record GridSize(int width, int height) {
 
     /**
-     * The minimum valid size for grid dimensions.
-     * This is set to 8 (2^3), which is the lower bound for width and height.
+     * The minimum valid size for width and height: 8 (2^3).
      */
     public static final int MIN_SIZE = 8;
     /**
-     * The maximum valid size for grid dimensions.
-     * This is set to 16384 (2^14), which is the upper bound for width and height.
+     * The maximum valid size for width and height: 16384 (2^14).
      */
     public static final int MAX_SIZE = 16_384; // equals 2^14.
 

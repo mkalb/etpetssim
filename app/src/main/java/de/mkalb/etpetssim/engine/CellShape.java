@@ -10,10 +10,12 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
  * Constants are ordered by increasing vertex count (TRIANGLE=3, SQUARE=4, HEXAGON=6);
  * this order is not semantically significant for external contracts.
  * <p>
- * <strong>Terminology:</strong><br>
- * - {@code vertex} (plural: {@code vertices}): a corner point of the polygon.<br>
- * - {@code edge} (plural: {@code edges}): a straight line connecting two vertices.<br>
- * These terms are used consistently throughout the framework for clarity and precision.
+ * <strong>Terminology:</strong>
+ * <ul>
+ *   <li>{@code vertex} (plural: {@code vertices}): a corner point of the polygon.</li>
+ *   <li>{@code edge} (plural: {@code edges}): a straight line connecting two vertices.</li>
+ * </ul>
+ * These terms are used consistently throughout the framework.
  */
 public enum CellShape {
 
@@ -55,8 +57,8 @@ public enum CellShape {
     }
 
     /**
-     * Returns the number of vertices of this cell shape.
-     * This value is also equal to the number of edges, since the shape is regular.
+     * Returns the number of vertices of this cell shape, which equals the number of edges
+     * since the shape is regular.
      * <p>
      * For example: {@link #TRIANGLE} has 3, {@link #SQUARE} has 4, {@link #HEXAGON} has 6.
      *

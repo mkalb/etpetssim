@@ -10,7 +10,7 @@ import java.util.function.*;
  * An implementation of {@link WritableGridModel} that stores only non-default entities in a map.
  * Efficient for sparse grids where most cells contain the default entity.
  *
- * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
 public final class SparseGridModel<ENT extends GridEntity> implements WritableGridModel<ENT> {
 
@@ -20,19 +20,10 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
      */
     private static final int MAX_RANDOM_DEFAULT_SAMPLING_ATTEMPTS = 64;
 
-    /**
-     * The structure describing the grid's dimensions and valid coordinates.
-     */
     private final GridStructure structure;
 
-    /**
-     * The default entity for all grid cells.
-     */
     private final ENT defaultEntity;
 
-    /**
-     * The map holding non-default grid entities, keyed by coordinate.
-     */
     private final Map<GridCoordinate, ENT> data;
 
     /**

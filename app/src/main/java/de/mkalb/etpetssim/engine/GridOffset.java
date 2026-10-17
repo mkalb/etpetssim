@@ -81,7 +81,7 @@ public record GridOffset(int dx, int dy) {
     /**
      * Returns the Manhattan length (L1 norm) of this offset.
      * <p>
-     * This method is only meaningful for grids with {@link CellShape#SQUARE}.
+     * Only meaningful for grids with {@link CellShape#SQUARE}.
      *
      * @return the sum of the absolute values of dx and dy
      */
@@ -92,7 +92,7 @@ public record GridOffset(int dx, int dy) {
     /**
      * Returns the Euclidean length (L2 norm) of this offset.
      * <p>
-     * This method is only meaningful for grids with {@link CellShape#SQUARE}.
+     * Only meaningful for grids with {@link CellShape#SQUARE}.
      *
      * @return the Euclidean distance represented by this offset
      */

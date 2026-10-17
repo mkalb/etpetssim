@@ -10,15 +10,12 @@ import java.util.function.*;
 /**
  * Utility class providing various static factory methods for creating {@link GridInitializer} instances.
  * <p>
- * These initializers can be used to set up or modify the contents of a {@link de.mkalb.etpetssim.engine.model.WritableGridModel}
+ * These initializers can be used to set up or modify the contents of a {@link WritableGridModel}
  * in different ways, such as filling, mapping, or placing entities with specific patterns or randomness.
  * </p>
  */
 public final class GridInitializers {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private GridInitializers() {
     }
 
@@ -247,7 +244,8 @@ public final class GridInitializers {
      * Returns an initializer that places a fixed number of entities at random positions.
      * <p>
      * Placement is only performed if the {@code canReplaceExisting} predicate returns {@code true}
-     * for the entity currently at the chosen position.
+     * for the entity currently at the chosen position. For each entity, random positions are tried
+     * up to a maximum number of attempts (at least 100, or half of the grid area if larger).
      * </p>
      *
      * @param count              the number of entities to place

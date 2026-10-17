@@ -10,23 +10,14 @@ import java.util.function.*;
  * An implementation of {@link WritableGridModel} that stores grid entities in a two-dimensional array.
  * Efficient for dense grids with mostly non-default entities.
  *
- * @param <ENT> the type of entities stored in the grid, must implement {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+ * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
 public final class ArrayGridModel<ENT extends GridEntity> implements WritableGridModel<ENT> {
 
-    /**
-     * The structure describing the grid's dimensions and valid coordinates.
-     */
     private final GridStructure structure;
 
-    /**
-     * The default entity for all grid cells.
-     */
     private final ENT defaultEntity;
 
-    /**
-     * The two-dimensional array holding the grid entities.
-     */
     private final Object[][] data;
 
     /**

@@ -12,7 +12,7 @@ import java.util.stream.*;
  * The {@link GridSize} determines the grid's logical dimensions, i.e., the number of columns (width)
  * and rows (height). These values represent cell counts, not pixel sizes.
  * <p>
- * This record provides utility methods for accessing cell shape, edge behavior, coordinate bounds,
+ * Provides methods for accessing cell shape, edge behavior, coordinate bounds,
  * and for iterating over all valid cell positions within the grid.
  *
  * @param topology the grid topology (cell shape and edge behavior)
@@ -52,7 +52,6 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * Checks whether the specified {@link GridSize} is valid for the given {@link GridTopology}.
      * <p>
      * The grid width and height must be multiples of the required values as defined by the topology.
-     * This method returns {@code true} if both dimensions are valid, otherwise {@code false}.
      *
      * @param topology the grid topology (cell shape and edge behavior)
      * @param size     the grid size (width and height in cells)
@@ -64,18 +63,12 @@ public record GridStructure(GridTopology topology, GridSize size) {
         return ((size.width() % widthMultiple) == 0) && ((size.height() % heightMultiple) == 0);
     }
 
-    /**
-     * Returns the shape of each cell in the grid (TRIANGLE, SQUARE, HEXAGON).
-     *
-     * @return the shape of each cell in the grid
-     */
     public CellShape cellShape() {
         return topology.cellShape();
     }
 
     /**
-     * Returns the total number of cells in the grid.
-     * This is equivalent to width × height.
+     * Returns the total number of cells in the grid (width × height).
      *
      * @return the total number of cells in the grid
      * @see GridSize#area()
@@ -84,27 +77,16 @@ public record GridStructure(GridTopology topology, GridSize size) {
         return size().area();
     }
 
-    /**
-     * Returns the edge behavior for the X-axis of the grid.
-     *
-     * @return the edge behavior for the X-axis
-     */
     public EdgeBehavior edgeBehaviorX() {
         return topology.edgeBehaviorX();
     }
 
-    /**
-     * Returns the edge behavior for the Y-axis of the grid.
-     *
-     * @return the edge behavior for the Y-axis
-     */
     public EdgeBehavior edgeBehaviorY() {
         return topology.edgeBehaviorY();
     }
 
     /**
-     * Returns the minimum coordinate of the grid, which is always inclusive.
-     * This represents the origin of the grid at (0, 0).
+     * Returns the inclusive minimum coordinate of the grid, which is the origin (0, 0).
      *
      * @return the inclusive minimum coordinate of the grid
      */
@@ -114,8 +96,8 @@ public record GridStructure(GridTopology topology, GridSize size) {
     }
 
     /**
-     * Returns the maximum coordinate of the grid, which is exclusive.
-     * This coordinate lies just outside the valid grid area and is useful for iteration boundaries.
+     * Returns the exclusive maximum coordinate of the grid.
+     * It lies just outside the valid grid area and is useful for iteration boundaries.
      *
      * @return the exclusive maximum coordinate of the grid
      */
@@ -124,8 +106,7 @@ public record GridStructure(GridTopology topology, GridSize size) {
     }
 
     /**
-     * Returns the maximum coordinate of the grid, which is inclusive.
-     * This represents the last valid coordinate within the grid.
+     * Returns the inclusive maximum coordinate of the grid, which is the last valid coordinate.
      *
      * @return the inclusive maximum coordinate of the grid
      */

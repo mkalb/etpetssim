@@ -4,14 +4,14 @@ import de.mkalb.etpetssim.engine.model.GridModel;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
- * Decorator for {@link de.mkalb.etpetssim.engine.executor.SimulationExecutor} that measures the execution time of each simulation step.
+ * Decorator for {@link SimulationExecutor} that measures the execution time of each simulation step.
  * <p>
- * This executor tracks the minimum, maximum, and most recent step durations in nanoseconds.
+ * Tracks the minimum, maximum, and most recent step durations in nanoseconds.
  * <p>
  * Timing statistics are accessible via {@link #stepTimingStatistics()} and {@link #currentStepNanos()}.
  *
- * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} in the simulation
- * @param <GM>  the type of {@link de.mkalb.etpetssim.engine.model.GridModel} in the simulation
+ * @param <ENT> the type of {@link GridEntity} in the simulation
+ * @param <GM>  the type of {@link GridModel} in the simulation
  */
 public final class TimedSimulationExecutor<
         ENT extends GridEntity,
@@ -78,6 +78,10 @@ public final class TimedSimulationExecutor<
      * <p>
      * The statistics include the minimum, maximum, and most recent step durations,
      * as well as the sum and average of all step durations in nanoseconds.
+     * <p>
+     * The average is the sum divided by {@link #stepCount()}, which counts all steps of the delegate.
+     * Steps executed by the delegate before it was wrapped are counted but not timed,
+     * so the average is only exact if this executor is created before the first step.
      * <p>
      * If no steps have been executed yet, all values in the returned record are {@code 0}.
      *

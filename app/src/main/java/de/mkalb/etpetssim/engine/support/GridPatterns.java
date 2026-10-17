@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Utility class providing various static factory methods for creating {@link GridPattern} instances.
  * <p>
- * A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link de.mkalb.etpetssim.engine.model.entity.GridEntity} instances,
+ * A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link GridEntity} instances,
  * describing how entities are arranged relative to an origin (0, 0).
  * <p>
  * <b>Normalization:</b> It is recommended that all patterns are created in normalized form,
@@ -17,16 +17,13 @@ import java.util.*;
  */
 public final class GridPatterns {
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
     private GridPatterns() {
     }
 
     /**
      * Returns an empty {@code GridPattern} containing no entities.
      *
-     * @param <ENT> the type of {@link de.mkalb.etpetssim.engine.model.entity.GridEntity}
+     * @param <ENT> the type of {@link GridEntity}
      * @return an empty pattern
      */
     public static <ENT extends GridEntity> GridPattern<ENT> empty() {
