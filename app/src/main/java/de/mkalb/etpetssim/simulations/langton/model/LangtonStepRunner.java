@@ -202,7 +202,7 @@ public final class LangtonStepRunner
                     case CompassDirection.NW -> CompassDirection.SE;
                     default -> null;
                 };
-                default -> null;
+                case LEFT2, RIGHT2, NONE -> null;
             };
         }
 
