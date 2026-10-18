@@ -17,7 +17,7 @@ public final class SnakeEditToolBarViewModel {
         selectedStrategy = InputChoiceProperty.ofList(
                 availableStrategies.getFirst(),
                 availableStrategies,
-                SnakeMoveStrategy::toString);
+                SnakeMoveStrategy::displayName);
     }
 
     public List<SnakeMoveStrategy> availableStrategies() {

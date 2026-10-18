@@ -4,14 +4,14 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategy;
 
 /**
- * Identifies which modification the user wants to apply to the selected cell.
+ * Identifies which Snake edit action should be applied.
  */
 @SuppressWarnings("MarkerInterface")
 public sealed interface SnakeUserActionContext extends SimulationUserActionContext
         permits SnakeUserActionContext.FixedAction, SnakeUserActionContext.AddSnake {
 
     /**
-     * Fixed edit tools that do not require additional parameters.
+     * Fixed actions that do not require additional parameters.
      */
     enum FixedAction implements SnakeUserActionContext {
         ADD_WALL,

@@ -7,10 +7,9 @@ import java.util.*;
 
 /**
  * Represents a grid model composed of multiple layers.
- * <p>
- * Provides a unified interface for grid models that aggregate or combine other grid models,
+ *
+ * <p>Provides a unified interface for grid models that aggregate or combine other grid models,
  * such as layered or composite grids. All layers must share the same grid structure.
- * </p>
  *
  * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
@@ -18,9 +17,8 @@ public non-sealed interface CompositeGridModel<ENT extends GridEntity> extends G
 
     /**
      * Returns the entities at the specified coordinate across all layers.
-     * <p>
-     * The list ordering is implementation-defined and should be documented by each implementation.
-     * </p>
+     *
+     * <p>The list ordering is implementation-defined and should be documented by each implementation.
      *
      * @param coordinate the grid coordinate
      * @return a list of entities at the coordinate, one entry per layer
@@ -34,10 +32,5 @@ public non-sealed interface CompositeGridModel<ENT extends GridEntity> extends G
      * @return the count of layers
      */
     int layerCount();
-
-    @Override
-    default boolean isComposite() {
-        return true;
-    }
 
 }

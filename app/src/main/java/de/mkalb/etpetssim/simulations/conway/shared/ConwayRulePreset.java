@@ -21,13 +21,14 @@ public sealed interface ConwayRulePreset
 
     /**
      * Returns the human-readable display name for this preset, suitable for use in a ComboBox.
+     * Returns an empty string for the {@code EMPTY} preset (no selection).
      *
      * @return the display name
      */
     String displayName();
 
     /**
-     * Returns the recommended initial density of alive cells as a percentage (0–100),
+     * Returns the recommended initial density of alive cells as a percentage (0-100),
      * based on the birth and survival conditions of this rule.
      * Returns {@code -1} for the {@code EMPTY} preset (no selection).
      *

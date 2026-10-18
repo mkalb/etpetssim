@@ -7,10 +7,9 @@ import java.util.function.*;
 
 /**
  * Represents a writable grid model that stores entities at grid coordinates.
- * <p>
- * Provides mutating (write and update) methods for grid entities.
+ *
+ * <p>Provides mutating (write and update) methods for grid entities.
  * All read-only methods are defined in the {@link ReadableGridModel} interface.
- * </p>
  *
  * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
@@ -19,8 +18,8 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
 
     /**
      * Creates a copy of this grid model, including the current grid state.
-     * <p>
-     * The returned model has independent internal storage, but entity instances may be shared,
+     *
+     * <p>The returned model has independent internal storage, but entity instances may be shared,
      * depending on the concrete model and entity type.
      *
      * @return a copy of this grid model
@@ -42,16 +41,6 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
      * @throws IndexOutOfBoundsException if the coordinate is not valid
      */
     void setEntity(GridCoordinate coordinate, ENT entity);
-
-    /**
-     * Sets the entity in the grid using a {@link GridCell}.
-     *
-     * @param cell the {@link GridCell} containing the coordinate and entity to set
-     * @throws IndexOutOfBoundsException if the coordinate is not valid
-     */
-    default void setEntity(GridCell<ENT> cell) {
-        setEntity(cell.coordinate(), cell.entity());
-    }
 
     /**
      * Sets the entity at the specified coordinate to the default entity.
@@ -91,8 +80,8 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
 
     /**
      * Writes swapped entity values from the two given {@link GridCell} objects.
-     * <p>
-     * Uses {@code cellA.entity()} and {@code cellB.entity()} as input values and writes them to the
+     *
+     * <p>Uses {@code cellA.entity()} and {@code cellB.entity()} as input values and writes them to the
      * opposite coordinates ({@code cellA.coordinate()} receives {@code cellB.entity()}, and vice versa).
      * Both coordinates are validated before any write is performed.
      * The current model state at those coordinates is not read.
@@ -102,5 +91,15 @@ public sealed interface WritableGridModel<ENT extends GridEntity> extends Readab
      * @throws IndexOutOfBoundsException if either coordinate is not valid
      */
     void setSwappedEntities(GridCell<ENT> cellA, GridCell<ENT> cellB);
+
+    /**
+     * Sets the entity in the grid using a {@link GridCell}.
+     *
+     * @param cell the {@link GridCell} containing the coordinate and entity to set
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
+     */
+    default void setEntity(GridCell<ENT> cell) {
+        setEntity(cell.coordinate(), cell.entity());
+    }
 
 }

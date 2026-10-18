@@ -50,6 +50,21 @@ public final class SnakeHead implements SnakeEntity {
         return true;
     }
 
+    @Override
+    public boolean isGround() {
+        return false;
+    }
+
+    @Override
+    public boolean isWall() {
+        return false;
+    }
+
+    @Override
+    public boolean isFood() {
+        return false;
+    }
+
     public int id() {
         return id;
     }

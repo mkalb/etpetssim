@@ -33,6 +33,28 @@ final class SpecBackedGridEntityDescriptorProviderTest {
         );
     }
 
+    @Test
+    void testDefaultAccessorsReturnNullForUnsetOptionalValues() {
+        GridEntityDescriptorSpec spec = new GridEntityDescriptorSpec(
+                "entity-id",
+                false,
+                "short.key",
+                "long.key",
+                "description.key",
+                null,
+                null,
+                null
+        );
+        SpecBackedGridEntityDescriptorProvider provider = new TestSpecBackedProvider(spec);
+
+        assertAll(
+                () -> assertFalse(provider.visible()),
+                () -> assertNull(provider.emojiKey()),
+                () -> assertNull(provider.color()),
+                () -> assertNull(provider.borderColor())
+        );
+    }
+
     private record TestSpecBackedProvider(GridEntityDescriptorSpec descriptorSpec)
             implements SpecBackedGridEntityDescriptorProvider {
     }

@@ -15,8 +15,8 @@ final class WritableGridModelTest {
 
     @ParameterizedTest
     @EnumSource
-    void testIsComposite(GridModelImplementation implementation) {
-        assertFalse(implementation.createModel().isComposite());
+    void testStructure(GridModelImplementation implementation) {
+        assertEquals(SQUARE_STRUCTURE_8X8, implementation.createModel().structure());
     }
 
     @ParameterizedTest
@@ -33,6 +33,12 @@ final class WritableGridModelTest {
 
     @ParameterizedTest
     @EnumSource
+    void testDefaultEntity(GridModelImplementation implementation) {
+        assertEquals(TestEntity.EMPTY, implementation.createModel().defaultEntity());
+    }
+
+    @ParameterizedTest
+    @EnumSource
     void testGetEntityThrowsForInvalidCoordinate(GridModelImplementation implementation) {
         WritableGridModel<TestEntity> model = implementation.createModel();
         assertThrows(IndexOutOfBoundsException.class, () -> model.getEntity(coordinate(8, 0)));
@@ -40,37 +46,15 @@ final class WritableGridModelTest {
 
     @ParameterizedTest
     @EnumSource
-    void testGetGridCellReturnsCoordinateAndEntity(GridModelImplementation implementation) {
-        WritableGridModel<TestEntity> model = implementation.createModel();
-        GridCoordinate coordinate = coordinate(2, 3);
-        model.setEntity(coordinate, TestEntity.WALL);
-
-        GridCell<TestEntity> cell = model.getGridCell(coordinate);
-
-        assertAll(
-                () -> assertEquals(coordinate, cell.coordinate()),
-                () -> assertEquals(TestEntity.WALL, cell.entity())
-        );
-    }
-
-    @ParameterizedTest
-    @EnumSource
-    void testGetGridCellReturnsDefaultEntity(GridModelImplementation implementation) {
-        WritableGridModel<TestEntity> model = implementation.createModel();
-
-        GridCell<TestEntity> cell = model.getGridCell(coordinate(4, 4));
-
-        assertAll(
-                () -> assertEquals(coordinate(4, 4), cell.coordinate()),
-                () -> assertEquals(TestEntity.EMPTY, cell.entity())
-        );
-    }
-
-    @ParameterizedTest
-    @EnumSource
     void testIsDefaultEntityThrowsForInvalidCoordinate(GridModelImplementation implementation) {
         WritableGridModel<TestEntity> model = implementation.createModel();
         assertThrows(IndexOutOfBoundsException.class, () -> model.isDefaultEntity(coordinate(8, 0)));
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    void testIsSparse(GridModelImplementation implementation) {
+        assertEquals(implementation == GridModelImplementation.SPARSE, implementation.createModel().isSparse());
     }
 
     @ParameterizedTest
@@ -112,6 +96,22 @@ final class WritableGridModelTest {
         model.setEntityToDefault(coordinate(1, 1));
 
         assertEquals(2, snapshot.size());
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    void testFilteredCoordinates(GridModelImplementation implementation) {
+        WritableGridModel<TestEntity> model = implementation.createModel();
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(2, 2), TestEntity.FOOD);
+
+        List<GridCoordinate> walls = model.filteredCoordinates(entity -> entity == TestEntity.WALL);
+        List<GridCoordinate> defaults = model.filteredCoordinates(entity -> entity == TestEntity.EMPTY);
+
+        assertAll(
+                () -> assertEquals(List.of(coordinate(1, 1)), walls),
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount() - 2, defaults.size())
+        );
     }
 
     @ParameterizedTest
@@ -197,6 +197,22 @@ final class WritableGridModelTest {
 
     @ParameterizedTest
     @EnumSource
+    void testFilteredCells(GridModelImplementation implementation) {
+        WritableGridModel<TestEntity> model = implementation.createModel();
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+        model.setEntity(coordinate(2, 2), TestEntity.FOOD);
+
+        List<GridCell<TestEntity>> walls = model.filteredCells(entity -> entity == TestEntity.WALL);
+        List<GridCell<TestEntity>> defaults = model.filteredCells(entity -> entity == TestEntity.EMPTY);
+
+        assertAll(
+                () -> assertEquals(List.of(new GridCell<>(coordinate(1, 1), TestEntity.WALL)), walls),
+                () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount() - 2, defaults.size())
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource
     void testFilteredCellsSortedBy(GridModelImplementation implementation) {
         WritableGridModel<TestEntity> model = implementation.createModel();
         model.setEntity(coordinate(3, 3), TestEntity.WALL);
@@ -212,6 +228,34 @@ final class WritableGridModelTest {
                         new GridCell<>(coordinate(3, 3), TestEntity.WALL)
                 ),
                 sorted
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    void testGetGridCellReturnsCoordinateAndEntity(GridModelImplementation implementation) {
+        WritableGridModel<TestEntity> model = implementation.createModel();
+        GridCoordinate coordinate = coordinate(2, 3);
+        model.setEntity(coordinate, TestEntity.WALL);
+
+        GridCell<TestEntity> cell = model.getGridCell(coordinate);
+
+        assertAll(
+                () -> assertEquals(coordinate, cell.coordinate()),
+                () -> assertEquals(TestEntity.WALL, cell.entity())
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    void testGetGridCellReturnsDefaultEntity(GridModelImplementation implementation) {
+        WritableGridModel<TestEntity> model = implementation.createModel();
+
+        GridCell<TestEntity> cell = model.getGridCell(coordinate(4, 4));
+
+        assertAll(
+                () -> assertEquals(coordinate(4, 4), cell.coordinate()),
+                () -> assertEquals(TestEntity.EMPTY, cell.entity())
         );
     }
 

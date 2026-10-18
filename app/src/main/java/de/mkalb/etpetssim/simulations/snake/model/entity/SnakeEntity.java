@@ -21,21 +21,10 @@ public sealed interface SnakeEntity extends GridEntity
      */
     boolean isAgent();
 
-    default boolean isGround() {
-        return DESCRIPTOR_ID_GROUND.equals(descriptorId());
-    }
+    boolean isGround();
 
-    default boolean isWall() {
-        return DESCRIPTOR_ID_WALL.equals(descriptorId());
-    }
+    boolean isWall();
 
-    /**
-     * Indicates whether this entity represents growth food.
-     *
-     * @return {@code true} when this entity is growth food
-     */
-    default boolean isFood() {
-        return DESCRIPTOR_ID_GROWTH_FOOD.equals(descriptorId());
-    }
+    boolean isFood();
 
 }

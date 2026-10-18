@@ -30,4 +30,19 @@ public enum TerrainConstant implements SnakeEntity, ConstantGridEntity {
         return false;
     }
 
+    @Override
+    public boolean isGround() {
+        return this == GROUND;
+    }
+
+    @Override
+    public boolean isWall() {
+        return this == WALL;
+    }
+
+    @Override
+    public boolean isFood() {
+        return this == GROWTH_FOOD;
+    }
+
 }

@@ -6,10 +6,9 @@ import org.jspecify.annotations.Nullable;
 /**
  * Convenience interface for {@link GridEntityDescriptorProvider} implementations
  * backed by a {@link GridEntityDescriptorSpec}.
- * <p>
- * Implementations provide one {@link GridEntityDescriptorSpec} and reuse the default
+ *
+ * <p>Implementations provide one {@link GridEntityDescriptorSpec} and reuse the default
  * descriptor accessors from this interface.
- * </p>
  *
  * @see GridEntityDescriptorProvider
  * @see GridEntityDescriptorSpec

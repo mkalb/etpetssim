@@ -7,21 +7,15 @@ import java.util.*;
 import java.util.function.*;
 
 /**
- * Read-only view of a {@link WritableGridModel}.
- * <p>
- * Provides methods for accessing grid entities and querying grid state.
+ * Read-only access to the entities of a grid model.
+ *
+ * <p>Provides methods for accessing grid entities and querying grid state.
  * All mutating (write and update) methods are defined in the {@link WritableGridModel} interface.
- * </p>
  *
  * @param <ENT> the type of entities stored in the grid, must implement {@link GridEntity}
  */
 public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridModel<ENT>
         permits WritableGridModel {
-
-    @Override
-    default boolean isComposite() {
-        return false;
-    }
 
     /**
      * Returns the default entity for grid cells.
@@ -40,17 +34,6 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     ENT getEntity(GridCoordinate coordinate);
 
     /**
-     * Returns a {@link GridCell} containing the specified coordinate and its associated entity.
-     *
-     * @param coordinate the grid coordinate
-     * @return a GridCell with the coordinate and its entity
-     * @throws IndexOutOfBoundsException if the coordinate is not valid
-     */
-    default GridCell<ENT> getGridCell(GridCoordinate coordinate) {
-        return new GridCell<>(coordinate, getEntity(coordinate));
-    }
-
-    /**
      * Checks whether the entity at the specified coordinate is equal to the default entity.
      *
      * @param coordinate the grid coordinate to check
@@ -62,7 +45,7 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     /**
      * Indicates whether this grid model is sparse (optimized for mostly default entities).
      *
-     * @return true if the grid is sparse, false otherwise
+     * @return {@code true} if the grid is sparse, {@code false} otherwise
      */
     boolean isSparse();
 
@@ -72,13 +55,13 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
      * @param entityPredicate the condition to test each entity against
      * @return the count of entities that match the predicate
      */
-    long countEntities(Predicate<? super ENT> entityPredicate);
+    long countEntities(Predicate<ENT> entityPredicate);
 
     /**
      * Returns a mutable set of all coordinates at which the entity is not
      * the default entity.
-     * <p>
-     * The set is a snapshot of the model state taken at the time of this call
+     *
+     * <p>The set is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
      * Iteration order is implementation-defined.
      *
@@ -89,8 +72,8 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     /**
      * Returns a list of grid coordinates whose entities match the given predicate.
      * Avoids creating intermediate {@link GridCell} instances compared to {@link #filteredCells}.
-     * <p>
-     * The list is a snapshot of the model state taken at the time of this call
+     *
+     * <p>The list is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
      * Iteration order is implementation-defined.
      *
@@ -110,8 +93,8 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     /**
      * Returns a mutable list of all grid cells, in row-major order
      * (x-coordinate varies fastest within each row, y-coordinate varies slowest).
-     * <p>
-     * The list is a snapshot of the model state taken at the time of this call
+     *
+     * <p>The list is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
      *
      * @return a mutable list of all {@link GridCell} instances in row-major order
@@ -120,8 +103,8 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
 
     /**
      * Returns a mutable list of all grid cells whose entity is not the default entity.
-     * <p>
-     * The list is a snapshot of the model state taken at the time of this call
+     *
+     * <p>The list is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
      * Iteration order is implementation-defined.
      *
@@ -131,8 +114,8 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
 
     /**
      * Returns a mutable list of grid cells whose entities match the given predicate.
-     * <p>
-     * The list is a snapshot of the model state taken at the time of this call
+     *
+     * <p>The list is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
      * Iteration order is implementation-defined.
      *
@@ -144,8 +127,8 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     /**
      * Returns a mutable list of grid cells whose entities match the given predicate,
      * ordered according to the provided comparator.
-     * <p>
-     * The list is a snapshot of the model state taken at the time of this call
+     *
+     * <p>The list is a snapshot of the model state taken at the time of this call
      * and is not affected by subsequent mutations to the model.
      *
      * @param entityPredicate the predicate to filter grid cell entities
@@ -153,5 +136,16 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
      * @return a mutable list of filtered and sorted {@link GridCell} instances
      */
     List<GridCell<ENT>> filteredCellsSortedBy(Predicate<ENT> entityPredicate, Comparator<GridCell<ENT>> cellOrdering);
+
+    /**
+     * Returns a {@link GridCell} containing the specified coordinate and its associated entity.
+     *
+     * @param coordinate the grid coordinate
+     * @return a GridCell with the coordinate and its entity
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
+     */
+    default GridCell<ENT> getGridCell(GridCoordinate coordinate) {
+        return new GridCell<>(coordinate, getEntity(coordinate));
+    }
 
 }

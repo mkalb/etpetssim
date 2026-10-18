@@ -107,6 +107,8 @@ include:
 - Keep entity types in `model.entity`.
 - Use sealed interfaces/classes for closed entity sets.
 - Implement `GridEntity` or `ConstantGridEntity` as appropriate.
+- Declare the `DESCRIPTOR_ID_*` constants of a simulation in its root entity contract (e.g., `SnakeEntity`), not in
+  sub-interfaces or implementations.
 - Use records for immutable value carriers; use classes for stateful agents/resources.
 
 ## Reusable Infrastructure
@@ -231,8 +233,9 @@ Shutdown checklist:
 
 - Use a plain enum implementing `SimulationUserActionContext` when no action has parameters (e.g.,
   `WatorUserActionContext`).
-- Otherwise, use a sealed interface with a nested `FixedAction` enum and records for parameterized actions (e.g.,
-  `ConwayUserActionContext`).
+- Otherwise, use a sealed interface with records for parameterized actions and, only if actions without parameters
+  exist, a nested `FixedAction` enum for them (e.g., `ConwayUserActionContext`; `EtpetsUserActionContext` has no
+  `FixedAction`).
 - Keep the validity check of a user action in the model-side `SimulationUserAction`; the toolbar and views do not
   check per-cell applicability.
 - Add user actions that support experiments on the current simulation state; do not add actions that only repeat a

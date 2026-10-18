@@ -11,6 +11,9 @@ import java.util.stream.*;
 public sealed interface LangtonEntity extends GridEntity
         permits AntEntity, TerrainConstant {
 
+    String DESCRIPTOR_ID_ANT = "ant";
+    String DESCRIPTOR_ID_NO_AGENT = "no_agent";
+
     /**
      * Returns all descriptor providers used by the Langton simulation.
      *

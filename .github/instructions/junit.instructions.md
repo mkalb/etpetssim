@@ -110,6 +110,10 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Test an interface contract shared by several implementations in `<Interface>Test` with `@ParameterizedTest` and
   `@EnumSource` over a package-private fixture enum that creates the implementations; keep implementation-specific
   behavior in `<Implementation>Test`.
+- Test the default and static methods of an interface in `<Interface>Test`, using a minimal `Test<Type>` fixture or a
+  real implementer, or in the contract test of a sub-interface that covers the whole hierarchy (e.g.,
+  `WritableGridModelTest`); interfaces without default or static methods (markers, pure contracts) need no test of
+  their own.
 - CLI/localization/resource tests should check accepted variants, ignored invalid input, stable output fragments, and
   missing/invalid key behavior without relying on unrelated full text.
 

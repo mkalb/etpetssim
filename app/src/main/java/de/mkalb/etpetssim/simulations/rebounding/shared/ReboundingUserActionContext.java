@@ -4,7 +4,7 @@ import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 
 /**
- * Identifies which edit action should be applied to the selected Rebounding cell.
+ * Identifies which Rebounding edit action should be applied.
  */
 @SuppressWarnings("MarkerInterface")
 public sealed interface ReboundingUserActionContext extends SimulationUserActionContext

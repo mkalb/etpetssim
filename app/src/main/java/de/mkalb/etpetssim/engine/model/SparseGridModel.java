@@ -71,7 +71,7 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     }
 
     @Override
-    public long countEntities(Predicate<? super ENT> entityPredicate) {
+    public long countEntities(Predicate<ENT> entityPredicate) {
         // Sparse optimization: only iterate the non-default entries stored in the map (O(non-default)).
         // All cells not present in the map hold the default entity; their count is derived arithmetically.
         // This avoids iterating all cells (e.g. 1_000_000 for a 1000x1000 grid) when only a few are non-default.

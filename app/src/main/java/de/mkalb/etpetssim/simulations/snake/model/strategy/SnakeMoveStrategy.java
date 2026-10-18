@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Strategy contract for selecting the next snake move.
  */
-public interface SnakeMoveStrategy {
+public sealed interface SnakeMoveStrategy permits AnonymousMoveStrategy, NamedMoveStrategy {
 
     /**
      * Computes the next move decision for the given simulation context.
@@ -18,8 +18,8 @@ public interface SnakeMoveStrategy {
     /**
      * Returns the display name of this strategy.
      *
-     * @return strategy name
+     * @return strategy display name
      */
-    String name();
+    String displayName();
 
 }

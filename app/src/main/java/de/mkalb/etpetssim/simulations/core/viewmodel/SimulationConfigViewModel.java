@@ -17,8 +17,8 @@ public interface SimulationConfigViewModel<CON extends SimulationConfig> {
 
     /**
      * Creates an immutable simulation configuration from the current input values.
-     * <p>
-     * The configuration may be invalid; callers check it with {@link SimulationConfig#isValid()}.
+     *
+     * <p>The configuration may be invalid; callers check it with {@link SimulationConfig#isValid()}.
      *
      * @return simulation configuration
      */

@@ -11,7 +11,7 @@ public interface SimulationMainView {
     /**
      * Builds the root region for a simulation screen.
      *
-     * <p>Repeated calls for one view instance return the same root region.</p>
+     * <p>Repeated calls for one view instance return the same root region.
      *
      * @return root region for the simulation view
      */
@@ -19,6 +19,8 @@ public interface SimulationMainView {
 
     /**
      * Stops active simulation-related work and releases view-side resources.
+     *
+     * <p>This operation is idempotent and must not wait for background work to terminate.
      *
      * @return termination handle for application-exit bookkeeping
      */

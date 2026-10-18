@@ -38,4 +38,3 @@ public enum LangtonRulePresetSquare implements LangtonRulePreset {
     }
 
 }
-

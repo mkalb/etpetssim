@@ -14,6 +14,8 @@ Rules for all `.java` files; repository-wide instructions still apply.
 - Keep existing wildcard imports unless a concrete change requires otherwise.
 - Prefer modern Java 27 APIs and language features when they improve clarity; avoid novelty.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
+- Order interface members as constants, static methods (including private static helpers), abstract methods, then
+  default methods.
 
 ## Naming Conventions
 
@@ -131,6 +133,8 @@ non-null reference return type (from main code or the JDK, e.g. `toString()`), a
   where a more specific instruction allows it.
 - Valid `@Nullable` locations include fields, parameters, return types, and type arguments
   (`ObjectProperty<@Nullable GC>`).
+- Place `@Nullable` directly before the annotated type on the same line (`@Nullable String emojiKey()`), because it is
+  a type-use annotation.
 
 ## Javadoc
 

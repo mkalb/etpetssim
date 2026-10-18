@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.snake.model.strategy;
 import java.util.*;
 
 record NamedMoveStrategy(
-        String name,
+        String displayName,
         AnonymousMoveStrategy strategy) implements SnakeMoveStrategy {
 
     @Override
@@ -13,7 +13,7 @@ record NamedMoveStrategy(
 
     @Override
     public String toString() {
-        return name;
+        return displayName;
     }
 
 }

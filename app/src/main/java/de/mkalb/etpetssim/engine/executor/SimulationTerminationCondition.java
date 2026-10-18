@@ -5,8 +5,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Functional interface for determining whether a simulation has finished.
- * <p>
- * Implementations define the termination condition based on the current state
+ *
+ * <p>Implementations define the termination condition based on the current state
  * of the simulation model, the simulation step count, and a context object.
  *
  * @param <ENT> the type of {@link GridEntity} in the simulation

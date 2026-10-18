@@ -5,8 +5,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Defines the logic to be executed for a single agent during an asynchronous simulation step.
- * <p>
- * Implementations of this interface specify how an agent, represented by a {@link GridCell},
+ *
+ * <p>Implementations of this interface specify how an agent, represented by a {@link GridCell},
  * should update its state or interact with the simulation environment at each step.
  * The method receives the agent's cell, the complete grid model, the simulation step index,
  * and a context object for sharing or accumulating state across steps or agents.

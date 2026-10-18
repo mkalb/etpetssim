@@ -5,8 +5,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Read-only view of a grid cell that exposes its coordinate and associated entity.
- * <p>
- * Provides shared convenience methods for cell-like value types
+ *
+ * <p>Provides shared convenience methods for cell-like value types
  * (for example simple engine cells and simulation-specific composite cells).
  *
  * @param <ENT> the concrete entity type exposed by this cell view
@@ -19,8 +19,8 @@ public interface GridCellView<ENT extends GridEntity> {
 
     /**
      * Returns the unique descriptor ID of the associated entity.
-     * <p>
-     * Convenience shortcut for {@link GridEntity#descriptorId()}.
+     *
+     * <p>Convenience shortcut for {@link GridEntity#descriptorId()}.
      *
      * @return the entity descriptor ID
      */
@@ -30,10 +30,8 @@ public interface GridCellView<ENT extends GridEntity> {
 
     /**
      * Returns a short, human-readable display string for this cell.
-     * <p>
-     * Format: {@code <coordinate-display> <entity-display>}.
-     * <br>
-     * Example: {@code (10, 20) [WALL]}
+     *
+     * <p>Format: {@code <coordinate-display> <entity-display>}, for example {@code (10, 20) [WALL]}.
      *
      * @return a concise display string for this cell
      */

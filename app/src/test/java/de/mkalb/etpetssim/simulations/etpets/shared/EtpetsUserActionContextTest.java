@@ -7,16 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 final class EtpetsUserActionContextTest {
 
     @Test
-    void testPermittedSubclasses() {
-        assertArrayEquals(
-                new Class<?>[]{
-                        EtpetsUserActionContext.SetTerrain.class,
-                        EtpetsUserActionContext.SetResource.class
-                },
-                EtpetsUserActionContext.class.getPermittedSubclasses());
-    }
-
-    @Test
     void testSetTerrainRecord() {
         EtpetsUserActionContext.SetTerrain context = new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.ROCK);
 

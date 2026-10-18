@@ -19,17 +19,10 @@ public sealed interface GridModel<ENT extends GridEntity>
     GridStructure structure();
 
     /**
-     * Indicates whether this grid model is a composite model that aggregates multiple sub-models or layers.
-     *
-     * @return {@code true} if the grid model is composite, {@code false} otherwise
-     */
-    boolean isComposite();
-
-    /**
      * Checks if the given coordinate is valid within the grid structure.
      *
      * @param coordinate the grid coordinate
-     * @return true if the coordinate is valid, false otherwise
+     * @return {@code true} if the coordinate is valid, {@code false} otherwise
      */
     default boolean isCoordinateValid(GridCoordinate coordinate) {
         return structure().isCoordinateValid(coordinate);

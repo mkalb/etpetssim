@@ -5,14 +5,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Provider interface for descriptor keys used by {@link GridEntityDescriptorRegistry}.
- * <p>
- * Unlike {@link GridEntityDescriptor}, this interface does not provide direct values (such as names or descriptions),
- * but instead supplies keys (e.g., {@code shortNameKey}, {@code longNameKey}, {@code descriptionKey}) for accessing
- * localized resources from a {@link java.util.ResourceBundle}.
- * </p>
- * <p>
- * This interface is primarily intended for use with {@link GridEntityDescriptorRegistry}.
- * </p>
+ *
+ * <p>Unlike {@link GridEntityDescriptor}, this interface does not provide direct values (such as names or
+ * descriptions), but instead supplies keys (e.g., {@code shortNameKey}, {@code longNameKey}, {@code descriptionKey})
+ * for accessing localized resources from a {@link java.util.ResourceBundle}.
+ *
+ * <p>This interface is primarily intended for use with {@link GridEntityDescriptorRegistry}.
  *
  * @see GridEntityDescriptorRegistry
  * @see GridEntityDescriptor
@@ -59,23 +57,20 @@ public interface GridEntityDescriptorProvider {
      *
      * @return the localization key for the emoji, or {@code null}
      */
-    @Nullable
-    String emojiKey();
+    @Nullable String emojiKey();
 
     /**
      * Returns the primary color used to display this entity, or {@code null} if not specified.
      *
      * @return the color, or {@code null}
      */
-    @Nullable
-    Color color();
+    @Nullable Color color();
 
     /**
      * Returns the border color for this entity, or {@code null} if not specified.
      *
      * @return the border color, or {@code null}
      */
-    @Nullable
-    Color borderColor();
+    @Nullable Color borderColor();
 
 }

@@ -60,7 +60,7 @@ public final class SnakeObservationView
                 snakeIdLabel.setText("#" + snakeHead.id());
                 setFormattedIntegerValue(snakeAgeLabel, snakeHead.ageAtStepCount(statistics.get().stepCount()));
                 setFormattedIntegerValue(snakeDeathsLabel, snakeHead.deaths());
-                snakeStrategyLabel.setText(snakeHead.strategy().name());
+                snakeStrategyLabel.setText(snakeHead.strategy().displayName());
                 setFormattedIntegerValue(snakeSegmentCountLabel, snakeHead.segmentCount());
                 setFormattedIntegerValue(snakeMaxSegmentCountLabel, snakeHead.maxSegmentCount());
                 setFormattedIntegerValue(snakePointsLabel, snakeHead.points());

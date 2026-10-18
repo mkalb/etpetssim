@@ -67,7 +67,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     }
 
     @Override
-    public long countEntities(Predicate<? super ENT> entityPredicate) {
+    public long countEntities(Predicate<ENT> entityPredicate) {
         int width = structure.size().width();
         int height = structure.size().height();
         long count = 0;

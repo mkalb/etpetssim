@@ -18,7 +18,7 @@ public enum NoAgent implements AntEntity, ConstantGridEntity {
 
     @Override
     public String descriptorId() {
-        return AntEntity.DESCRIPTOR_ID_NO_AGENT;
+        return LangtonEntity.DESCRIPTOR_ID_NO_AGENT;
     }
 
 }

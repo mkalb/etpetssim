@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
  */
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     ANT(
-            AntEntity.DESCRIPTOR_ID_ANT,
+            LangtonEntity.DESCRIPTOR_ID_ANT,
             true,
             "langton.entity.ant.short",
             "langton.entity.ant.long",

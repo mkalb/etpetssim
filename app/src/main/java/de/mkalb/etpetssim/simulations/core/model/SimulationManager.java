@@ -43,24 +43,6 @@ public interface SimulationManager<
     STA statistics();
 
     /**
-     * Returns immutable sampled statistics history ordered from oldest to newest.
-     *
-     * @return sampled statistics history
-     */
-    default List<StatisticsSample> statisticsHistory() {
-        return List.of();
-    }
-
-    /**
-     * Returns tracked minimum and maximum metric values.
-     *
-     * @return tracked metric extrema
-     */
-    default StatisticsExtrema statisticsExtrema() {
-        return StatisticsExtrema.empty();
-    }
-
-    /**
      * Executes a single simulation step.
      */
     void executeStep();
@@ -102,5 +84,23 @@ public interface SimulationManager<
      * @return current simulation model
      */
     GM currentGridModel();
+
+    /**
+     * Returns immutable sampled statistics history ordered from oldest to newest.
+     *
+     * @return sampled statistics history
+     */
+    default List<StatisticsSample> statisticsHistory() {
+        return List.of();
+    }
+
+    /**
+     * Returns tracked minimum and maximum metric values.
+     *
+     * @return tracked metric extrema
+     */
+    default StatisticsExtrema statisticsExtrema() {
+        return StatisticsExtrema.empty();
+    }
 
 }

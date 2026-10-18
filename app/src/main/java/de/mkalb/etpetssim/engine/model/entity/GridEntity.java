@@ -3,6 +3,10 @@ package de.mkalb.etpetssim.engine.model.entity;
 /**
  * Represents a grid entity in the simulation engine.
  *
+ * <p>Every entity exposes a {@linkplain #descriptorId() descriptor ID} that resolves its
+ * {@link GridEntityDescriptor}. Entities whose state does not change implement {@link ConstantGridEntity}.
+ *
+ * @see ConstantGridEntity
  * @see de.mkalb.etpetssim.engine.model.GridModel
  * @see de.mkalb.etpetssim.engine.model.GridCell
  */
@@ -22,10 +26,9 @@ public interface GridEntity {
 
     /**
      * Returns the unique descriptor ID of this entity.
-     * <p>
-     * The descriptor ID is used to resolve the corresponding
+     *
+     * <p>The descriptor ID is used to resolve the corresponding
      * {@link GridEntityDescriptor} in the {@link GridEntityDescriptorRegistry}.
-     * </p>
      *
      * @return the descriptor ID
      * @see GridEntityDescriptorRegistry
@@ -34,14 +37,11 @@ public interface GridEntity {
 
     /**
      * Returns a short, human-readable string representation of this grid entity.
-     * <p>
-     * Implementations may override this method to provide a concise display string.
+     *
+     * <p>Implementations may override this method to provide a concise display string.
      * The default implementation formats the result of {@code toString()}.
-     * </p>
-     * <p>
-     * Format: {@code [short readable content]}
-     * <br>
-     * Example: {@code [WALL]}
+     *
+     * <p>Format: {@code [short readable content]}, for example {@code [WALL]}.
      *
      * @return a concise display string for this grid entity
      */

@@ -5,7 +5,7 @@ package de.mkalb.etpetssim.simulations.conway.shared;
  *
  * <p>Each constant provides a well-known S/B rule string for triangular grids.
  * In triangular grids with edge-and-vertex neighborhood each cell has up to 12 neighbors;
- * however, the S/B notation is limited to single digits (0–9), so neighbor counts 10–12
+ * however, the S/B notation is limited to single digits (0-9), so neighbor counts 10-12
  * cannot be specified in the rule string.
  * {@link #EMPTY} represents no preset selection.
  *

@@ -22,4 +22,28 @@ final class TerrainConstantTest {
         assertAll(checks);
     }
 
+    @Test
+    void testIsGround() {
+        assertAll(
+                () -> assertTrue(TerrainConstant.GROUND.isGround()),
+                () -> assertFalse(TerrainConstant.WALL.isGround())
+        );
+    }
+
+    @Test
+    void testIsWall() {
+        assertAll(
+                () -> assertTrue(TerrainConstant.WALL.isWall()),
+                () -> assertFalse(TerrainConstant.GROUND.isWall())
+        );
+    }
+
+    @Test
+    void testIsFood() {
+        assertAll(
+                () -> assertTrue(TerrainConstant.GROWTH_FOOD.isFood()),
+                () -> assertFalse(TerrainConstant.SNAKE_SEGMENT.isFood())
+        );
+    }
+
 }

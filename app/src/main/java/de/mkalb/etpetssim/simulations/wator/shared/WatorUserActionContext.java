@@ -3,7 +3,7 @@ package de.mkalb.etpetssim.simulations.wator.shared;
 import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
 
 /**
- * Identifies which Wa-Tor edit action should be applied to the selected cell.
+ * Identifies which Wa-Tor edit action should be applied.
  */
 public enum WatorUserActionContext implements SimulationUserActionContext {
 

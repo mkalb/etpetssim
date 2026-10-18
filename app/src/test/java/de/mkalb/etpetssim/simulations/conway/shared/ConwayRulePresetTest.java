@@ -35,6 +35,20 @@ final class ConwayRulePresetTest {
 
     @ParameterizedTest
     @EnumSource(PresetFamily.class)
+    void testRuleStringRespectsMaxNeighborCount(PresetFamily family) {
+        Stream<Executable> checks = family.selectablePresets().stream()
+                                          .map(preset -> () -> {
+                                              ConwayTransitionRules rules = ConwayTransitionRules.parse(preset.ruleString());
+                                              assertTrue(
+                                                      rules.surviveCounts().stream().allMatch(n -> n <= family.maxNeighborCount())
+                                                              && rules.birthCounts().stream().allMatch(n -> n <= family.maxNeighborCount()),
+                                                      preset.displayName());
+                                          });
+        assertAll(checks);
+    }
+
+    @ParameterizedTest
+    @EnumSource(PresetFamily.class)
     void testDisplayNameIsUnique(PresetFamily family) {
         List<String> displayNames = family.selectablePresets().stream().map(ConwayRulePreset::displayName).toList();
         assertAll(
@@ -68,17 +82,20 @@ final class ConwayRulePresetTest {
     }
 
     enum PresetFamily {
-        HEXAGON(ConwayRulePresetHexagon.values(), List.of(ConwayRulePresetHexagon.EMPTY)),
+        HEXAGON(ConwayRulePresetHexagon.values(), List.of(ConwayRulePresetHexagon.EMPTY), 6),
         SQUARE(ConwayRulePresetSquare.values(),
-                List.of(ConwayRulePresetSquare.EMPTY, ConwayRulePresetSquare.CONWAYS_LIFE)),
-        TRIANGLE(ConwayRulePresetTriangle.values(), List.of(ConwayRulePresetTriangle.EMPTY));
+                List.of(ConwayRulePresetSquare.EMPTY, ConwayRulePresetSquare.CONWAYS_LIFE), 8),
+        TRIANGLE(ConwayRulePresetTriangle.values(), List.of(ConwayRulePresetTriangle.EMPTY),
+                ConwayTransitionRules.MAX_NEIGHBOR_COUNT);
 
         private final List<ConwayRulePreset> presets;
         private final List<ConwayRulePreset> leadingPresets;
+        private final int maxNeighborCount;
 
-        PresetFamily(ConwayRulePreset[] presets, List<ConwayRulePreset> leadingPresets) {
+        PresetFamily(ConwayRulePreset[] presets, List<ConwayRulePreset> leadingPresets, int maxNeighborCount) {
             this.presets = List.of(presets);
             this.leadingPresets = leadingPresets;
+            this.maxNeighborCount = maxNeighborCount;
         }
 
         List<ConwayRulePreset> presets() {
@@ -91,6 +108,10 @@ final class ConwayRulePresetTest {
 
         List<ConwayRulePreset> leadingPresets() {
             return leadingPresets;
+        }
+
+        int maxNeighborCount() {
+            return maxNeighborCount;
         }
     }
 

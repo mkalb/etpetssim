@@ -2,8 +2,8 @@ package de.mkalb.etpetssim.engine.executor;
 
 /**
  * Represents a runner for a single step in a simulation.
- * <p>
- * Implementations define how a simulation step is performed,
+ *
+ * <p>Implementations define how a simulation step is performed,
  * using a context object to maintain or update simulation state across steps.
  *
  * @param <C> the type of the context object provided to the simulation step

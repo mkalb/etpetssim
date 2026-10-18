@@ -21,8 +21,8 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
 
     /**
      * Exposes the current statistics snapshot.
-     * <p>
-     * The value is {@code null} before initialization or after a reset.
+     *
+     * <p>The value is {@code null} before initialization or after a reset.
      *
      * @return read-only property containing the current statistics or {@code null}
      */
@@ -35,6 +35,11 @@ public interface SimulationObservationViewModel<STA extends SimulationStatistics
      */
     Optional<STA> getStatistics();
 
+    /**
+     * Replaces the current statistics snapshot.
+     *
+     * @param statistics the new statistics snapshot, never {@code null}
+     */
     void setStatistics(STA statistics);
 
     /**

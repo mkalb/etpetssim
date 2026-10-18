@@ -36,4 +36,3 @@ public enum LangtonRulePresetTriangle implements LangtonRulePreset {
     }
 
 }
-

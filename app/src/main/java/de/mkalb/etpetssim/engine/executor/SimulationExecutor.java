@@ -5,8 +5,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Executes simulation steps for a given model until a specified termination condition is met.
- * <p>
- * Defines the contract for managing the simulation lifecycle,
+ *
+ * <p>Defines the contract for managing the simulation lifecycle,
  * including stepwise and batch execution. It also provides access to the current model state
  * and the simulation step count.
  *
@@ -34,8 +34,8 @@ public interface SimulationExecutor<
 
     /**
      * Checks whether the simulation has finished.
-     * <p>
-     * Returns {@code true} if the simulation has reached its termination condition;
+     *
+     * <p>Returns {@code true} if the simulation has reached its termination condition;
      * further calls to {@code executeStep} or {@code executeSteps} may still be possible.
      *
      * @return {@code true} if the simulation is finished, {@code false} otherwise
@@ -43,12 +43,17 @@ public interface SimulationExecutor<
     boolean isFinished();
 
     /**
+     * Executes a single simulation step and increments the step counter.
+     */
+    void executeStep();
+
+    /**
      * Checks whether the executor has reached its technical termination condition.
-     * <p>
-     * Returns {@code true} if the number of executed steps equals {@link Integer#MAX_VALUE}.
+     *
+     * <p>Returns {@code true} if the number of executed steps equals {@link Integer#MAX_VALUE}.
      * This is independent of the simulation's logical termination condition ({@link #isFinished()}).
-     * <p>
-     * This method can be used to detect overflow or to prevent further execution
+     *
+     * <p>This method can be used to detect overflow or to prevent further execution
      * when the step counter has reached its maximum value.
      *
      * @return {@code true} if the executor is finished due to step count overflow, {@code false} otherwise
@@ -58,18 +63,13 @@ public interface SimulationExecutor<
     }
 
     /**
-     * Executes a single simulation step and increments the step counter.
-     */
-    void executeStep();
-
-    /**
      * Executes up to the specified number of simulation steps.
-     * <p>
-     * Execution can terminate early if the thread is interrupted, if the executor reaches
+     *
+     * <p>Execution can terminate early if the thread is interrupted, if the executor reaches
      * its technical limit ({@link #isExecutorFinished()}), or (optionally) if
      * {@code checkTermination} is {@code true} and {@link #isFinished()} becomes {@code true}.
-     * <p>
-     * After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track progress,
+     *
+     * <p>After each executed step, the provided {@code onStep} callback is invoked. This allows external code to track progress,
      * update the UI, or perform other actions after each step.
      *
      * @param count            the maximum number of steps to execute

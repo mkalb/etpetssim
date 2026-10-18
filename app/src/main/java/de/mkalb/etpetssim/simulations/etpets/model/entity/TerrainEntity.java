@@ -6,6 +6,13 @@ package de.mkalb.etpetssim.simulations.etpets.model.entity;
 public sealed interface TerrainEntity extends EtpetsEntity
         permits TerrainConstant, Trail {
 
+    /**
+     * Indicates whether an agent can move onto this terrain entity.
+     *
+     * @return {@code true} when the terrain is walkable
+     */
+    boolean isWalkable();
+
     @Override
     default boolean isTerrain() {
         return true;
@@ -25,12 +32,5 @@ public sealed interface TerrainEntity extends EtpetsEntity
     default boolean isEmpty() {
         return false;
     }
-
-    /**
-     * Indicates whether an agent can move onto this terrain entity.
-     *
-     * @return {@code true} when the terrain is walkable
-     */
-    boolean isWalkable();
 
 }
