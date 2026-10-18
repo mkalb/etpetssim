@@ -128,8 +128,45 @@ public record LangtonMovementRules(
         return sb.toString();
     }
 
+    /**
+     * Turn that an ant makes before its next move.
+     *
+     * <p>One direction step is 90 degrees on square cells and 60 degrees on hexagon and triangle cells.
+     */
     public enum AntTurn {
-        LEFT, RIGHT, LEFT2, RIGHT2, NONE, U_TURN
+
+        /**
+         * Turns one direction step counterclockwise.
+         */
+        LEFT,
+
+        /**
+         * Turns one direction step clockwise.
+         */
+        RIGHT,
+
+        /**
+         * Turns two direction steps counterclockwise; acts as {@link #U_TURN} on square cells and is not supported
+         * on triangle cells.
+         */
+        LEFT2,
+
+        /**
+         * Turns two direction steps clockwise; acts as {@link #U_TURN} on square cells and is not supported
+         * on triangle cells.
+         */
+        RIGHT2,
+
+        /**
+         * Keeps the current direction; not supported on triangle cells.
+         */
+        NONE,
+
+        /**
+         * Reverses the current direction; supported on all cell shapes.
+         */
+        U_TURN
+
     }
 
 }

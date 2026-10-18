@@ -6,6 +6,7 @@ import de.mkalb.etpetssim.simulations.core.shared.SimulationUserActionContext;
  * Identifies which Wa-Tor edit action should be applied to the selected cell.
  */
 public enum WatorUserActionContext implements SimulationUserActionContext {
+
     /**
      * Add a fish to the selected cell.
      */
@@ -20,4 +21,5 @@ public enum WatorUserActionContext implements SimulationUserActionContext {
      * Remove a fish or shark from the selected cell.
      */
     REMOVE_CREATURE
+
 }

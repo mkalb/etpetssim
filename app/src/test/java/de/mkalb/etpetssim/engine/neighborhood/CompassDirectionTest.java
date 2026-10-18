@@ -4,35 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("MagicNumber")
 final class CompassDirectionTest {
-
-    @Test
-    void testEnumValues() {
-        assertNotNull(CompassDirection.valueOf("N"));
-        assertNotNull(CompassDirection.valueOf("NNE"));
-        assertNotNull(CompassDirection.valueOf("NE"));
-        assertNotNull(CompassDirection.valueOf("ENE"));
-        assertNotNull(CompassDirection.valueOf("E"));
-        assertNotNull(CompassDirection.valueOf("ESE"));
-        assertNotNull(CompassDirection.valueOf("SE"));
-        assertNotNull(CompassDirection.valueOf("SSE"));
-        assertNotNull(CompassDirection.valueOf("S"));
-        assertNotNull(CompassDirection.valueOf("SSW"));
-        assertNotNull(CompassDirection.valueOf("SW"));
-        assertNotNull(CompassDirection.valueOf("WSW"));
-        assertNotNull(CompassDirection.valueOf("W"));
-        assertNotNull(CompassDirection.valueOf("WNW"));
-        assertNotNull(CompassDirection.valueOf("NW"));
-        assertNotNull(CompassDirection.valueOf("NNW"));
-    }
-
-    @Test
-    void testEnumCount() {
-        assertEquals(16, CompassDirection.values().length, "There should be exactly 16 values");
-    }
 
     @Test
     void testDeclarationOrder() {
@@ -60,58 +35,22 @@ final class CompassDirectionTest {
     }
 
     @Test
-    void testValueOfRejectsInvalidName() {
-        assertThrows(IllegalArgumentException.class, () -> CompassDirection.valueOf("INVALID"));
-    }
-
-    @Test
-    void testValueOfRejectsNull() {
-        assertThrows(NullPointerException.class, () -> CompassDirection.valueOf(null));
-    }
-
-    @Test
     void testLabelResourceKey() {
-        assertEquals("compass.label", CompassDirection.labelResourceKey());
+        assertKeysInAllBundles(List.of(CompassDirection.labelResourceKey()));
     }
 
     @Test
     void testAbbreviationResourceKey() {
-        assertEquals("compass.abbreviation.n", CompassDirection.N.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.nne", CompassDirection.NNE.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.ne", CompassDirection.NE.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.ene", CompassDirection.ENE.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.e", CompassDirection.E.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.ese", CompassDirection.ESE.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.se", CompassDirection.SE.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.sse", CompassDirection.SSE.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.s", CompassDirection.S.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.ssw", CompassDirection.SSW.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.sw", CompassDirection.SW.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.wsw", CompassDirection.WSW.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.w", CompassDirection.W.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.wnw", CompassDirection.WNW.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.nw", CompassDirection.NW.abbreviationResourceKey());
-        assertEquals("compass.abbreviation.nnw", CompassDirection.NNW.abbreviationResourceKey());
+        assertKeysInAllBundles(Arrays.stream(CompassDirection.values())
+                                     .map(CompassDirection::abbreviationResourceKey)
+                                     .toList());
     }
 
     @Test
     void testNameResourceKey() {
-        assertEquals("compass.name.n", CompassDirection.N.nameResourceKey());
-        assertEquals("compass.name.nne", CompassDirection.NNE.nameResourceKey());
-        assertEquals("compass.name.ne", CompassDirection.NE.nameResourceKey());
-        assertEquals("compass.name.ene", CompassDirection.ENE.nameResourceKey());
-        assertEquals("compass.name.e", CompassDirection.E.nameResourceKey());
-        assertEquals("compass.name.ese", CompassDirection.ESE.nameResourceKey());
-        assertEquals("compass.name.se", CompassDirection.SE.nameResourceKey());
-        assertEquals("compass.name.sse", CompassDirection.SSE.nameResourceKey());
-        assertEquals("compass.name.s", CompassDirection.S.nameResourceKey());
-        assertEquals("compass.name.ssw", CompassDirection.SSW.nameResourceKey());
-        assertEquals("compass.name.sw", CompassDirection.SW.nameResourceKey());
-        assertEquals("compass.name.wsw", CompassDirection.WSW.nameResourceKey());
-        assertEquals("compass.name.w", CompassDirection.W.nameResourceKey());
-        assertEquals("compass.name.wnw", CompassDirection.WNW.nameResourceKey());
-        assertEquals("compass.name.nw", CompassDirection.NW.nameResourceKey());
-        assertEquals("compass.name.nnw", CompassDirection.NNW.nameResourceKey());
+        assertKeysInAllBundles(Arrays.stream(CompassDirection.values())
+                                     .map(CompassDirection::nameResourceKey)
+                                     .toList());
     }
 
     @Test

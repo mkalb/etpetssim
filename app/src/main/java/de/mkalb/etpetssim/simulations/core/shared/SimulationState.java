@@ -2,89 +2,89 @@ package de.mkalb.etpetssim.simulations.core.shared;
 
 /**
  * Defines the possible states in the lifecycle of a simulation.
- * <p>
- * Each constant represents a distinct phase or control state, used to manage simulation execution
+ *
+ * <p>Each constant represents a distinct phase or control state, used to manage simulation execution
  * and UI control availability in the application.
- * <p>
- * The state determines which actions (start, pause, resume, cancel) are available and
+ *
+ * <p>The state determines which actions (start, pause, resume, cancel) are available and
  * whether configuration controls are enabled or disabled.
  */
 public enum SimulationState {
 
     /**
      * The simulation is ready to be started.
-     * <p>
-     * Configuration controls are enabled. Simulation can be started.
+     *
+     * <p>Configuration controls are enabled. Simulation can be started.
      */
     READY,
 
     /**
      * A simulation manager is being initialized in the background.
-     * <p>
-     * All simulation controls and configuration controls are disabled.
+     *
+     * <p>All simulation controls and configuration controls are disabled.
      */
     INITIALIZING,
 
     /**
      * Simulation is running in timed mode (stepwise execution with UI updates).
-     * <p>
-     * Configuration controls are disabled. Pause and cancel actions are available.
+     *
+     * <p>Configuration controls are disabled. Pause and cancel actions are available.
      */
     RUNNING_TIMED,
 
     /**
      * Simulation is running in batch mode (continuous execution without intermediate UI updates).
-     * <p>
-     * Configuration controls are disabled. Pause and cancel actions are available.
+     *
+     * <p>Configuration controls are disabled. Pause and cancel actions are available.
      */
     RUNNING_BATCH,
 
     /**
      * Pause requested during batch mode; waiting for a safe point to pause.
-     * <p>
-     * Configuration controls are disabled. Cancel action is available.
+     *
+     * <p>Configuration controls are disabled. Cancel action is available.
      */
     PAUSING_BATCH,
 
     /**
      * Simulation is fully paused (applies to both timed and batch modes).
-     * <p>
-     * Configuration controls are enabled. Resume and cancel actions are available.
+     *
+     * <p>Configuration controls are enabled. Resume and cancel actions are available.
      */
     PAUSED,
 
     /**
      * Cancellation requested during batch mode; waiting for a safe point to cancel.
-     * <p>
-     * Configuration controls are disabled. No further actions available until cancellation completes.
+     *
+     * <p>Configuration controls are disabled. No further actions available until cancellation completes.
      */
     CANCELLING_BATCH,
 
     /**
      * Simulation was canceled by the user.
-     * <p>
-     * Configuration controls are enabled. Simulation can be started again.
+     *
+     * <p>Configuration controls are enabled. Simulation can be started again.
      */
     CANCELED,
 
     /**
      * Simulation completed successfully.
-     * <p>
-     * Configuration controls are enabled. Simulation can be started again.
+     *
+     * <p>Configuration controls are enabled. Simulation can be started again.
      */
     FINISHED,
 
     /**
      * Error state: Simulation could not be started or was terminated due to an error.
-     * <p>
-     * Configuration controls are enabled. Simulation can be started again.
+     *
+     * <p>Configuration controls are enabled. Simulation can be started again.
      */
     ERROR,
 
     /**
      * Global shutdown initiated; simulation and resources are being terminated.
-     * <p>
-     * All controls are disabled.
+     *
+     * <p>All controls are disabled.
      */
     SHUTTING_DOWN;
 

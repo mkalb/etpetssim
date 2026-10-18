@@ -4,6 +4,11 @@ import de.mkalb.etpetssim.engine.model.entity.*;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Entity descriptors for the ET Pets simulation.
+ *
+ * <p>Provides visual and metadata specifications for terrain, resources, pets, and pet eggs.
+ */
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
 
     GROUND(
@@ -89,6 +94,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
                       boolean visible,
                       String shortNameKey,

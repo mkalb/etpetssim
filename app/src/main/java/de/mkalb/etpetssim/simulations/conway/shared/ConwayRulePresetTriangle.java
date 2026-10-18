@@ -2,20 +2,19 @@ package de.mkalb.etpetssim.simulations.conway.shared;
 
 /**
  * Preset rule sets for Conway-style cellular automata with triangle cells.
- * <p>
- * Each constant provides a well-known S/B rule string for triangular grids.
+ *
+ * <p>Each constant provides a well-known S/B rule string for triangular grids.
  * In triangular grids with edge-and-vertex neighborhood each cell has up to 12 neighbors;
  * however, the S/B notation is limited to single digits (0–9), so neighbor counts 10–12
  * cannot be specified in the rule string.
  * {@link #EMPTY} represents no preset selection.
- * <p>
- * Named rules for triangular grids are rare in the CA community due to the asymmetric
+ *
+ * <p>Named rules for triangular grids are rare in the CA community due to the asymmetric
  * topology (alternating upward/downward triangles). The presets below are the most
  * widely cited rule families adapted to the 12-neighbor triangular model.
- * <p>
- * Constants are ordered from no selection to increasingly complex rule sets,
- * with {@link #EMPTY} first and all other presets sorted alphabetically by display name
- * (ASCII order: digit-prefixed names before letter-prefixed names).
+ *
+ * <p>Declaration order: {@link #EMPTY} is first (no selection), followed by all other presets
+ * sorted alphabetically by display name (ASCII order: digit-prefixed names before letter-prefixed names).
  */
 public enum ConwayRulePresetTriangle implements ConwayRulePreset {
 
@@ -37,13 +36,13 @@ public enum ConwayRulePresetTriangle implements ConwayRulePreset {
     }
 
     @Override
-    public String displayName() {
-        return displayName;
+    public String ruleString() {
+        return ruleString;
     }
 
     @Override
-    public String toString() {
-        return ruleString;
+    public String displayName() {
+        return displayName;
     }
 
     @Override

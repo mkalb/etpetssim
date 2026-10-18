@@ -2,48 +2,20 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.*;
+
+import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
 
 final class CellConnectionTypeTest {
 
     @Test
-    void testEnumValues() {
-        assertNotNull(CellConnectionType.valueOf("EDGE"));
-        assertNotNull(CellConnectionType.valueOf("VERTEX"));
-    }
-
-    @Test
-    void testEnumCount() {
-        assertEquals(2, CellConnectionType.values().length, "There should be exactly 2 values");
-    }
-
-    @Test
-    void testDeclarationOrder() {
-        assertArrayEquals(
-                new CellConnectionType[]{CellConnectionType.EDGE, CellConnectionType.VERTEX},
-                CellConnectionType.values()
-        );
-    }
-
-    @Test
-    void testValueOfRejectsInvalidName() {
-        assertThrows(IllegalArgumentException.class, () -> CellConnectionType.valueOf("INVALID"));
-    }
-
-    @Test
-    void testValueOfRejectsNull() {
-        assertThrows(NullPointerException.class, () -> CellConnectionType.valueOf(null));
-    }
-
-    @Test
     void testLabelResourceKey() {
-        assertEquals("cellconnectiontype.label", CellConnectionType.labelResourceKey());
+        assertKeysInAllBundles(List.of(CellConnectionType.labelResourceKey()));
     }
 
     @Test
     void testResourceKey() {
-        assertEquals("cellconnectiontype.edge", CellConnectionType.EDGE.resourceKey());
-        assertEquals("cellconnectiontype.vertex", CellConnectionType.VERTEX.resourceKey());
+        assertKeysInAllBundles(Arrays.stream(CellConnectionType.values()).map(CellConnectionType::resourceKey).toList());
     }
 
 }

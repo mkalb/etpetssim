@@ -6,10 +6,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Entity descriptors for the Wa-Tor predator-prey simulation.
- * <p>
- * Provides visual and metadata specifications for water, fish, and shark entities.
+ *
+ * <p>Provides visual and metadata specifications for water, fish, and shark entities.
  */
-@SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     WATER(
             WatorEntity.DESCRIPTOR_ID_WATER,
@@ -44,6 +43,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
                       boolean visible,
                       String shortNameKey,

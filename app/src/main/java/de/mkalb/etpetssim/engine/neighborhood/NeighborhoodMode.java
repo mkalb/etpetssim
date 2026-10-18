@@ -28,12 +28,9 @@ public enum NeighborhoodMode {
     }
 
     /**
-     * Returns the resource-bundle key for the display label of this enum type.
+     * Returns the resource key of the label for this enum type as a whole.
      *
-     * <p>The returned key is intended for localized lookup of the enum type name
-     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
-     *
-     * @return the resource bundle key for this enum type label
+     * @return the resource key of the type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -43,18 +40,16 @@ public enum NeighborhoodMode {
     /**
      * Returns whether this neighborhood mode includes neighbors that share only a vertex (not just an edge).
      *
-     * @return true if neighbors sharing a vertex are included, false otherwise
+     * @return {@code true} if neighbors sharing a vertex are included, {@code false} otherwise
      */
     public boolean includesVertexNeighbors() {
         return this == EDGES_AND_VERTICES;
     }
 
     /**
-     * Returns the resource bundle key associated with this enum constant.
-     * <p>
-     * The resource key can be used for localized message lookup via {@code AppLocalization}.
+     * Returns the resource key of the display text for this constant.
      *
-     * @return the resource bundle key for this enum constant
+     * @return the resource key of this constant
      */
     public String resourceKey() {
         return resourceKey;

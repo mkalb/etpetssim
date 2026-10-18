@@ -2,50 +2,20 @@ package de.mkalb.etpetssim.engine;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.*;
+
+import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
 
 final class EdgeBehaviorTest {
 
     @Test
-    void testEnumValues() {
-        assertNotNull(EdgeBehavior.valueOf("BLOCK"));
-        assertNotNull(EdgeBehavior.valueOf("WRAP"));
-        assertNotNull(EdgeBehavior.valueOf("ABSORB"));
-    }
-
-    @Test
-    void testEnumCount() {
-        assertEquals(3, EdgeBehavior.values().length, "There should be exactly 3 values");
-    }
-
-    @Test
-    void testDeclarationOrder() {
-        assertArrayEquals(
-                new EdgeBehavior[]{EdgeBehavior.BLOCK, EdgeBehavior.WRAP, EdgeBehavior.ABSORB},
-                EdgeBehavior.values()
-        );
-    }
-
-    @Test
-    void testValueOfRejectsInvalidName() {
-        assertThrows(IllegalArgumentException.class, () -> EdgeBehavior.valueOf("INVALID"));
-    }
-
-    @Test
-    void testValueOfRejectsNull() {
-        assertThrows(NullPointerException.class, () -> EdgeBehavior.valueOf(null));
-    }
-
-    @Test
     void testLabelResourceKey() {
-        assertEquals("edgebehavior.label", EdgeBehavior.labelResourceKey(), "EdgeBehavior should have the correct resource key");
+        assertKeysInAllBundles(List.of(EdgeBehavior.labelResourceKey()));
     }
 
     @Test
     void testResourceKey() {
-        assertEquals("edgebehavior.block", EdgeBehavior.BLOCK.resourceKey(), "BLOCK should have the correct resource key");
-        assertEquals("edgebehavior.wrap", EdgeBehavior.WRAP.resourceKey(), "WRAP should have the correct resource key");
-        assertEquals("edgebehavior.absorb", EdgeBehavior.ABSORB.resourceKey(), "ABSORB should have the correct resource key");
+        assertKeysInAllBundles(Arrays.stream(EdgeBehavior.values()).map(EdgeBehavior::resourceKey).toList());
     }
 
 }

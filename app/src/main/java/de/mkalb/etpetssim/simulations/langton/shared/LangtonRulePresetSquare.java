@@ -2,11 +2,11 @@ package de.mkalb.etpetssim.simulations.langton.shared;
 
 /**
  * Preset rule sets for Langton-style ant simulations with square cells.
- * <p>
- * Each constant provides a compact turn-sequence rule string for square grids.
+ *
+ * <p>Each constant provides a compact turn-sequence rule string for square grids.
  * {@link #EMPTY} represents no preset selection.
- * <p>
- * Declaration order: {@link #EMPTY} is first (no selection), followed by all other presets
+ *
+ * <p>Declaration order: {@link #EMPTY} is first (no selection), followed by all other presets
  * sorted by increasing rule string length, then alphabetically.
  */
 @SuppressWarnings("SpellCheckingInspection")
@@ -16,8 +16,8 @@ public enum LangtonRulePresetSquare implements LangtonRulePreset {
     RL("RL"),
     RLR("RLR"),
     RLLR("RLLR"),
-    RRLL("RRLL"),
     RNNU("RNNU"),
+    RRLL("RRLL"),
     RLLLLLRRL("RLLLLLRRL"),
     RRLLLRLLLRRR("RRLLLRLLLRRR");
 
@@ -28,12 +28,12 @@ public enum LangtonRulePresetSquare implements LangtonRulePreset {
     }
 
     @Override
-    public String displayName() {
+    public String ruleString() {
         return ruleString;
     }
 
     @Override
-    public String toString() {
+    public String displayName() {
         return ruleString;
     }
 

@@ -6,29 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 final class ConwayUserActionContextTest {
-
-    @Test
-    void testPermittedSubclasses() {
-        assertArrayEquals(
-                new Class<?>[]{
-                        ConwayUserActionContext.FixedAction.class,
-                        ConwayUserActionContext.PlacePattern.class
-                },
-                ConwayUserActionContext.class.getPermittedSubclasses());
-    }
-
-    @Test
-    void testFixedActionDeclarationOrder() {
-        assertArrayEquals(
-                new ConwayUserActionContext.FixedAction[]{
-                        ConwayUserActionContext.FixedAction.CLEAR_GRID,
-                        ConwayUserActionContext.FixedAction.TOGGLE_CELL
-                },
-                ConwayUserActionContext.FixedAction.values());
-    }
 
     @Test
     void testPlacePatternStoresPatternChoice() {

@@ -4,8 +4,8 @@ import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 /**
  * Terrain cell state for the Wa-Tor simulation.
- * <p>
- * Represents water, the base terrain in which fish and sharks exist.
+ *
+ * <p>Represents water, the base terrain in which fish and sharks exist.
  */
 public enum TerrainConstant implements WatorEntity, ConstantGridEntity {
 
@@ -39,7 +39,7 @@ public enum TerrainConstant implements WatorEntity, ConstantGridEntity {
     }
 
     @Override
-    public final boolean isWater() {
+    public boolean isWater() {
         return this == WATER;
     }
 

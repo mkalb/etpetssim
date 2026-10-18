@@ -6,10 +6,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Entity descriptors for the Sugarscape simulation.
- * <p>
- * Provides visual and metadata specifications for terrain, sugar resources, and agents.
+ *
+ * <p>Provides visual and metadata specifications for terrain, sugar resources, and agents.
  */
-@SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     TERRAIN(
             SugarEntity.DESCRIPTOR_ID_TERRAIN,
@@ -44,6 +43,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
                       boolean visible,
                       String shortNameKey,

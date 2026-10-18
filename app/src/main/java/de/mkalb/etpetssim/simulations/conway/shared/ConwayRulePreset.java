@@ -2,14 +2,22 @@ package de.mkalb.etpetssim.simulations.conway.shared;
 
 /**
  * Common sealed interface for Conway-style preset rule sets.
- * <p>
- * Exactly three implementations are permitted, one per supported cell shape:
+ *
+ * <p>Exactly three implementations are permitted, one per supported cell shape:
  * {@link ConwayRulePresetSquare}, {@link ConwayRulePresetTriangle}, and {@link ConwayRulePresetHexagon}.
  * Each implementation provides a well-known S/B rule string, a human-readable
  * display name, and a recommended initial cell density.
  */
 public sealed interface ConwayRulePreset
         permits ConwayRulePresetHexagon, ConwayRulePresetSquare, ConwayRulePresetTriangle {
+
+    /**
+     * Returns the S/B rule string for this preset, or an empty string for the {@code EMPTY} preset.
+     *
+     * @return the S/B rule string
+     * @see ConwayTransitionRules#parse(String)
+     */
+    String ruleString();
 
     /**
      * Returns the human-readable display name for this preset, suitable for use in a ComboBox.
@@ -27,13 +35,4 @@ public sealed interface ConwayRulePreset
      */
     int recommendedDensityPercent();
 
-    /**
-     * Returns the S/B rule string for this preset, or an empty string for the {@code EMPTY} preset.
-     *
-     * @return the S/B rule string
-     */
-    @Override
-    String toString();
-
 }
-

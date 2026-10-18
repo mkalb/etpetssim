@@ -4,18 +4,19 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
 
 /**
  * Defines the possible shapes for a cell in a regular two-dimensional grid.
- * <p>
- * Each shape is a regular polygon, meaning it is convex, symmetrical, and all edges (sides) and angles are equal.
+ *
+ * <p>Each shape is a regular polygon, meaning it is convex, symmetrical, and all edges (sides) and angles are equal.
  * The number of {@code vertices} (corner points) is always equal to the number of {@code edges} (sides).
  * Constants are ordered by increasing vertex count (TRIANGLE=3, SQUARE=4, HEXAGON=6);
  * this order is not semantically significant for external contracts.
- * <p>
- * <strong>Terminology:</strong>
+ *
+ * <p><strong>Terminology:</strong>
  * <ul>
  *   <li>{@code vertex} (plural: {@code vertices}): a corner point of the polygon.</li>
  *   <li>{@code edge} (plural: {@code edges}): a straight line connecting two vertices.</li>
  * </ul>
- * These terms are used consistently throughout the framework.
+ *
+ * <p>These terms are used consistently throughout the framework.
  */
 public enum CellShape {
 
@@ -44,12 +45,9 @@ public enum CellShape {
     }
 
     /**
-     * Returns the resource-bundle key for the display label of this enum type.
+     * Returns the resource key of the label for this enum type as a whole.
      *
-     * <p>The returned key is intended for localized lookup of the enum type name
-     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
-     *
-     * @return the resource bundle key for this enum type label
+     * @return the resource key of the type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -59,8 +57,8 @@ public enum CellShape {
     /**
      * Returns the number of vertices of this cell shape, which equals the number of edges
      * since the shape is regular.
-     * <p>
-     * For example: {@link #TRIANGLE} has 3, {@link #SQUARE} has 4, {@link #HEXAGON} has 6.
+     *
+     * <p>For example: {@link #TRIANGLE} has 3, {@link #SQUARE} has 4, {@link #HEXAGON} has 6.
      *
      * @return the number of vertices (and edges) of this cell shape
      */
@@ -69,11 +67,9 @@ public enum CellShape {
     }
 
     /**
-     * Returns the resource bundle key associated with this enum constant.
-     * <p>
-     * The resource key can be used for localized message lookup via {@code AppLocalization}.
+     * Returns the resource key of the display text for this constant.
      *
-     * @return the resource bundle key for this enum constant
+     * @return the resource key of this constant
      */
     public String resourceKey() {
         return resourceKey;

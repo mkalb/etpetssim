@@ -45,9 +45,9 @@ public final class ConwayRuleProperty {
         presetHexagonProperty = InputChoiceProperty.ofEnum(PRESET_HEXAGON_INITIAL, ConwayRulePresetHexagon.class,
                 ConwayRulePresetHexagon::displayName);
 
-        presetTriangleProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.toString()));
-        presetSquareProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.toString()));
-        presetHexagonProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.toString()));
+        presetTriangleProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.ruleString()));
+        presetSquareProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.ruleString()));
+        presetHexagonProperty.property().addListener((_, _, newVal) -> stringProperty.set(newVal.ruleString()));
 
         stringProperty.addListener((_, _, newVal) -> {
             if ((newVal == null) || newVal.isBlank()) {

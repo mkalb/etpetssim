@@ -4,8 +4,8 @@ import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 /**
  * Represents the absence of an agent in the Sugarscape simulation.
- * <p>
- * This singleton enum is used as a placeholder when a cell does not contain any agent entity.
+ *
+ * <p>This singleton enum is used as a placeholder when a cell does not contain any agent entity.
  */
 public enum NoAgent implements AgentEntity, ConstantGridEntity {
 
@@ -13,7 +13,7 @@ public enum NoAgent implements AgentEntity, ConstantGridEntity {
 
     @Override
     public String descriptorId() {
-        return DESCRIPTOR_ID_NO_AGENT;
+        return SugarEntity.DESCRIPTOR_ID_NO_AGENT;
     }
 
     @Override

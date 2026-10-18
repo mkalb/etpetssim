@@ -208,7 +208,9 @@ public final class AppStorage {
      * Operating systems supported by storage path resolution.
      */
     public enum OperatingSystem {
-        WINDOWS, MAC, LINUX;
+        WINDOWS,
+        MAC,
+        LINUX;
 
         /**
          * Detects the current operating system from {@code os.name}.

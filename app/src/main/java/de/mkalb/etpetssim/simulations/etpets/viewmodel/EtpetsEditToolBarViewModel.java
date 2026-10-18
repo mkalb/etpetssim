@@ -42,7 +42,7 @@ public final class EtpetsEditToolBarViewModel {
     }
 
     public void setSelectedTerrainChoice(@Nullable EtpetsTerrainChoice terrainChoice) {
-        if ((terrainChoice == null) || containsTerrainChoiceId(terrainChoice.choiceId())) {
+        if ((terrainChoice == null) || availableTerrainChoices.contains(terrainChoice)) {
             selectedTerrainChoice.set(terrainChoice);
         }
     }
@@ -52,14 +52,14 @@ public final class EtpetsEditToolBarViewModel {
     }
 
     public void setSelectedResourceChoice(@Nullable EtpetsResourceChoice resourceChoice) {
-        if ((resourceChoice == null) || containsResourceChoiceId(resourceChoice.choiceId())) {
+        if ((resourceChoice == null) || availableResourceChoices.contains(resourceChoice)) {
             selectedResourceChoice.set(resourceChoice);
         }
     }
 
     public Optional<EtpetsUserActionContext.SetTerrain> resolveSelectedTerrainContext() {
         EtpetsTerrainChoice terrainChoice = selectedTerrainChoice.get();
-        if ((terrainChoice == null) || !containsTerrainChoiceId(terrainChoice.choiceId())) {
+        if ((terrainChoice == null) || !availableTerrainChoices.contains(terrainChoice)) {
             return Optional.empty();
         }
         return Optional.of(new EtpetsUserActionContext.SetTerrain(terrainChoice));
@@ -67,22 +67,10 @@ public final class EtpetsEditToolBarViewModel {
 
     public Optional<EtpetsUserActionContext.SetResource> resolveSelectedResourceContext() {
         EtpetsResourceChoice resourceChoice = selectedResourceChoice.get();
-        if ((resourceChoice == null) || !containsResourceChoiceId(resourceChoice.choiceId())) {
+        if ((resourceChoice == null) || !availableResourceChoices.contains(resourceChoice)) {
             return Optional.empty();
         }
         return Optional.of(new EtpetsUserActionContext.SetResource(resourceChoice));
-    }
-
-    private boolean containsTerrainChoiceId(String choiceId) {
-        return availableTerrainChoices.stream()
-                                      .map(EtpetsTerrainChoice::choiceId)
-                                      .anyMatch(choiceId::equals);
-    }
-
-    private boolean containsResourceChoiceId(String choiceId) {
-        return availableResourceChoices.stream()
-                                       .map(EtpetsResourceChoice::choiceId)
-                                       .anyMatch(choiceId::equals);
     }
 
 }

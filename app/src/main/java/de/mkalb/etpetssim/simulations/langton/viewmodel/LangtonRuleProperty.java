@@ -32,15 +32,15 @@ public final class LangtonRuleProperty {
                 LangtonRulePresetHexagon::displayName);
 
         presetTriangleProperty.property().addListener((_, _, newVal) -> {
-            stringProperty.set(newVal.toString());
+            stringProperty.set(newVal.ruleString());
             labelProperty.set("");
         });
         presetSquareProperty.property().addListener((_, _, newVal) -> {
-            stringProperty.set(newVal.toString());
+            stringProperty.set(newVal.ruleString());
             labelProperty.set("");
         });
         presetHexagonProperty.property().addListener((_, _, newVal) -> {
-            stringProperty.set(newVal.toString());
+            stringProperty.set(newVal.ruleString());
             labelProperty.set("");
         });
     }

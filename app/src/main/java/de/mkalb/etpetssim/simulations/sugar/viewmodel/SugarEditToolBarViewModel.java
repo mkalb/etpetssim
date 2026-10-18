@@ -30,23 +30,17 @@ public final class SugarEditToolBarViewModel {
     }
 
     public void setSelectedAddSugarLevel(@Nullable SugarAddSugarLevel level) {
-        if ((level == null) || containsLevelId(level.levelId())) {
+        if ((level == null) || availableAddSugarLevels.contains(level)) {
             selectedAddSugarLevel.set(level);
         }
     }
 
     public Optional<SugarUserActionContext.AddSugar> resolveSelectedAddSugarContext() {
         SugarAddSugarLevel level = selectedAddSugarLevel.get();
-        if ((level == null) || !containsLevelId(level.levelId())) {
+        if ((level == null) || !availableAddSugarLevels.contains(level)) {
             return Optional.empty();
         }
         return Optional.of(new SugarUserActionContext.AddSugar(level));
-    }
-
-    private boolean containsLevelId(String levelId) {
-        return availableAddSugarLevels.stream()
-                                      .map(SugarAddSugarLevel::levelId)
-                                      .anyMatch(levelId::equals);
     }
 
 }

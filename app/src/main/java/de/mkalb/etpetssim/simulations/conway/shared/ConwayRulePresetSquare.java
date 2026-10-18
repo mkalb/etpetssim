@@ -2,11 +2,11 @@ package de.mkalb.etpetssim.simulations.conway.shared;
 
 /**
  * Preset rule sets for Conway-style cellular automata with square cells.
- * <p>
- * Each constant provides a well-known S/B rule string for square grids.
+ *
+ * <p>Each constant provides a well-known S/B rule string for square grids.
  * {@link #EMPTY} represents no preset selection.
- * <p>
- * Declaration order: {@link #EMPTY} is first (no selection), {@link #CONWAYS_LIFE} is second,
+ *
+ * <p>Declaration order: {@link #EMPTY} is first (no selection), {@link #CONWAYS_LIFE} is second,
  * followed by all other presets sorted alphabetically by display name
  * (ASCII order: digit-prefixed names before letter-prefixed names).
  */
@@ -43,13 +43,13 @@ public enum ConwayRulePresetSquare implements ConwayRulePreset {
     }
 
     @Override
-    public String displayName() {
-        return displayName;
+    public String ruleString() {
+        return ruleString;
     }
 
     @Override
-    public String toString() {
-        return ruleString;
+    public String displayName() {
+        return displayName;
     }
 
     @Override

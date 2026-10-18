@@ -164,7 +164,10 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
 - Describe behavior; avoid implementation detail unless it is contract-relevant.
 - Use `{@link}` only when the target helps the reader, without fully qualified names where a simple name resolves;
   otherwise write code elements with `{@code}`.
-- Start paragraphs with `<p>` and write lists with `<ul>` and `<li>`, not with `- `.
+- Separate paragraphs with an empty `*` line and start each paragraph after the first with `<p>` directly before its
+  first word (`<p>Text`); do not write `</p>`, and do not put `<p>` before block elements such as `<ul>`, `<pre>`, or
+  `{@snippet}`.
+- Write lists with `<ul>` and `<li>`, not with `- `.
 - Modern Javadoc features such as `{@return ...}` and `{@snippet}` are welcome but not required; do not use
   Markdown documentation comments (`///`).
 

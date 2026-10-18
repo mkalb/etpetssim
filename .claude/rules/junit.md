@@ -38,11 +38,14 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   `@DisplayName`.
   - `<Subject>` is the exact name of the tested production method, or `Constructor`, so that renames stay searchable.
   - When a production method has a single test method, `test<Subject>` is enough, even if it checks several aspects.
-  - When a production method has several test methods, each adds a `<Behavior>`, a verb phrase such as `Returns...`,
-    `Rejects...`, `Throws...`, `Records...`, or `Ignores...`, and, if needed, a `<Condition>` such as `For...`,
-    `When...`, or `With...` (e.g., `testConstructorRejectsNegativeWidth`).
+  - When a production method has several test methods, the test of the main case may stay `test<Subject>`; each other
+    test adds a `<Behavior>`, a verb phrase such as `Returns...`, `Rejects...`, `Throws...`, `Records...`, or
+    `Ignores...`, and, if needed, a `<Condition>` such as `For...`, `When...`, or `With...` (e.g.,
+    `testConstructorRejectsNegativeWidth`).
   - `testRecord` is the fixed name for the basic test of a record: canonical constructor, accessors, and `toString()`.
-  - The fixed enum test names (`testEnumValues`, `testEnumCount`, `testDeclarationOrder`) remain.
+  - The fixed enum test name `testDeclarationOrder` remains; it names the declaration-order test of one enum. An
+    `<Interface>Test` names order checks across the constants of its implementing enums freely (e.g.,
+    `testConstantsAreSortedByDisplayName`).
   - Tests of a nested type put its simple name before a fixed name (e.g., `testFixedActionDeclarationOrder`).
   - A constant has one test named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a check
     across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
@@ -83,15 +86,21 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Prefer immutable test data; verify defensive copies and unmodifiable views where they are part of the contract.
 - Put test-only nested enums, records, and small fixture types at the bottom of the class.
 - Use method-level `@SuppressWarnings("DataFlowIssue")` for intentional null-passing tests.
-- Use class-level `@SuppressWarnings("MagicNumber")` only when many domain numbers are central to the cases.
+- Use class-level `@SuppressWarnings("MagicNumber")` when test cases use literal domain numbers; in test sources, the
+  class is the intended scope.
 - Prefix test resources with `test_` (e.g., `css/test_style.css`, `i18n/test_messages_en_US.properties`) so they
   never shadow main resources inside the patched module; prefer main resources when a test does not need special
   content.
 
 ## Common Contract Patterns
 
-- Enum tests should cover, in order: `testEnumValues`, `testEnumCount`, `testDeclarationOrder`, invalid/null
-  `valueOf(...)`, resource-key methods, then enum-specific behavior such as `testVertexCount()`.
+- Enum tests cover the enum's own contract, in this order: `testDeclarationOrder` only when the type Javadoc
+  documents declaration-order semantics, resource-key methods, then enum-specific behavior such as
+  `testVertexCount()`. Do not test what the JDK generates for every enum (`values()`, `valueOf(...)`, the number
+  of constants).
+- Resource-key tests check that each returned key exists in all main resource bundles, not the literal key value;
+  use `de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles(...)`, or
+  `assertDescriptorKeysInAllBundles(...)` for the keys of entity descriptor providers.
 - Configuration and factory tests should cover valid defaults, each rejected unsupported option, and boundary values
   just
   inside/outside configured ranges.

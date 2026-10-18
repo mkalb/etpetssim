@@ -7,25 +7,23 @@ import java.util.stream.*;
 
 /**
  * Represents the 16-point compass directions in a fixed, clockwise order.
- * <p>
- * This enum is used throughout the grid framework to describe directions between cells,
+ *
+ * <p>This enum is used throughout the grid framework to describe directions between cells,
  * supporting both edge and vertex neighbor relationships (see {@link CellNeighbor} and {@link CellConnectionType}).
  * The values are intentionally ordered clockwise, starting from North (N), to allow for efficient navigation
  * and sorting based on compass direction. This order enables methods like {@link #nextClockwise()} and {@link #listClockwise()}
  * to traverse the compass directions in their natural sequence.
- * </p>
- * <p>
- * Each direction has an associated abbreviation resource key, name resource key,
+ *
+ * <p>Each direction has an associated abbreviation resource key, name resource key,
  * a "level", and a Unicode arrow symbol. The {@code level} indicates the granularity
  * of the direction: 0 for main directions (N, E, S, W), 1 for intercardinal (NE, SE, SW, NW),
  * and 2 for secondary intercardinal directions (e.g., NNE, ENE). In everyday terms,
  * a lower level means a more general direction, while a higher level is more specific.
- * </p>
  *
  * @see CellNeighbor
  * @see CellConnectionType
  */
-@SuppressWarnings({"MagicNumber", "FieldNamingConvention"})
+@SuppressWarnings("FieldNamingConvention")
 public enum CompassDirection {
 
     /**
@@ -126,12 +124,9 @@ public enum CompassDirection {
     }
 
     /**
-     * Returns the resource-bundle key for the display label of this enum type.
+     * Returns the resource key of the label for this enum type as a whole.
      *
-     * <p>The returned key is intended for localized lookup of the enum type name
-     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
-     *
-     * @return the resource bundle key for this enum type label
+     * @return the resource key of the type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -140,11 +135,10 @@ public enum CompassDirection {
 
     /**
      * Calculates the shortest distance between two compass directions.
-     * <p>
-     * The distance is determined by the minimum number of steps needed to traverse
+     *
+     * <p>The distance is determined by the minimum number of steps needed to traverse
      * from one direction to the other, either clockwise or counterclockwise.
      * The result is always between 0 and 8 (half the total of 16 directions).
-     * </p>
      *
      * @param from the starting direction
      * @param to   the target direction
@@ -157,11 +151,10 @@ public enum CompassDirection {
 
     /**
      * Calculates the shortest distance between two compass directions on a given direction ring.
-     * <p>
-     * The distance is determined by the minimum number of steps needed to traverse
+     *
+     * <p>The distance is determined by the minimum number of steps needed to traverse
      * from one direction to the other, either clockwise or counterclockwise on the provided ring.
      * The result is always between 0 and half the ring size (rounded down).
-     * </p>
      *
      * @param from the starting direction (must be part of the ring)
      * @param to   the target direction (must be part of the ring)
@@ -211,8 +204,8 @@ public enum CompassDirection {
      *   <li>Level 1: Intercardinal directions (NE, SE, SW, NW)</li>
      *   <li>Level 2: Secondary intercardinal directions (e.g., NNE, ENE)</li>
      * </ul>
-     * <p>
-     * A lower level means a more general direction, while a higher level is more specific.
+     *
+     * <p>A lower level means a more general direction, while a higher level is more specific.
      *
      * @return the level of this direction (0, 1, or 2)
      */
@@ -222,13 +215,12 @@ public enum CompassDirection {
 
     /**
      * Returns the Unicode arrow symbol(s) representing this direction.
-     * <p>
-     * For directions with {@code level} 0 or 1, a single Unicode arrow character is used,
+     *
+     * <p>For directions with {@code level} 0 or 1, a single Unicode arrow character is used,
      * matching the exact compass direction (e.g., ↑, →, ↗, ↘, etc.).
      * For {@code level} 2 directions, where no single Unicode character exists,
      * a combination of two arrows is used as a substitute (e.g., ↑↗ for NNE).
      * The returned string therefore contains either one or two Unicode arrow characters.
-     * </p>
      *
      * @return the arrow symbol(s) for this direction
      */
@@ -242,7 +234,7 @@ public enum CompassDirection {
      * @return the opposite compass direction
      */
     public CompassDirection opposite() {
-        return VALUES[(ordinal() + 8) % 16];
+        return VALUES[(ordinal() + (VALUES.length / 2)) % VALUES.length];
     }
 
     /**
@@ -251,7 +243,7 @@ public enum CompassDirection {
      * @return the next clockwise direction
      */
     public CompassDirection nextClockwise() {
-        return VALUES[(ordinal() + 1) % 16];
+        return VALUES[(ordinal() + 1) % VALUES.length];
     }
 
     /**
@@ -260,7 +252,7 @@ public enum CompassDirection {
      * @return the next counterclockwise direction
      */
     public CompassDirection nextCounterClockwise() {
-        return VALUES[(ordinal() + 15) % 16];
+        return VALUES[((ordinal() + VALUES.length) - 1) % VALUES.length];
     }
 
     /**

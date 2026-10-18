@@ -4,16 +4,6 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
 
 /**
  * Defines the available display modes for drawing a grid cell on the canvas.
- * <p>
- * Each mode determines how a cell is visually represented:
- * <ul>
- *   <li>{@link #SHAPE}: Draws the cell shape without a border.</li>
- *   <li>{@link #SHAPE_BORDERED}: Draws the cell shape with a border.</li>
- *   <li>{@link #CIRCLE}: Draws an inner circle without a border.</li>
- *   <li>{@link #CIRCLE_BORDERED}: Draws an inner circle with a border.</li>
- *   <li>{@link #EMOJI}: Draws a single emoji character in the cell.</li>
- * </ul>
- * The {@code resourceKey} field allows for resource lookup, such as internationalized labels.
  */
 public enum CellDisplayMode {
 
@@ -49,12 +39,9 @@ public enum CellDisplayMode {
     }
 
     /**
-     * Returns the resource-bundle key for the display label of this enum type.
+     * Returns the resource key of the label for this enum type as a whole.
      *
-     * <p>The returned key is intended for localized lookup of the enum type name
-     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
-     *
-     * @return the resource bundle key for this enum type label
+     * @return the resource key of the type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -62,11 +49,9 @@ public enum CellDisplayMode {
     }
 
     /**
-     * Returns the resource bundle key associated with this enum constant.
-     * <p>
-     * The resource key can be used for localized message lookup via {@code AppLocalization}.
+     * Returns the resource key of the display text for this constant.
      *
-     * @return the resource bundle key for this enum constant
+     * @return the resource key of this constant
      */
     public String resourceKey() {
         return resourceKey;

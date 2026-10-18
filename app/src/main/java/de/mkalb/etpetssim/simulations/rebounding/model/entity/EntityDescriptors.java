@@ -4,7 +4,11 @@ import de.mkalb.etpetssim.engine.model.entity.*;
 import javafx.scene.paint.Color;
 import org.jspecify.annotations.Nullable;
 
-@SuppressWarnings("SameParameterValue")
+/**
+ * Entity descriptors for the Rebounding Entities simulation.
+ *
+ * <p>Provides visual and metadata specifications for ground, walls, and rebounders.
+ */
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     GROUND(
             ReboundingEntity.DESCRIPTOR_ID_GROUND,
@@ -39,6 +43,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
                       boolean visible,
                       String shortNameKey,

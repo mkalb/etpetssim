@@ -4,9 +4,9 @@ import de.mkalb.etpetssim.core.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
-import java.net.URI;
 import java.util.*;
 
+import static de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.SAME_THREAD)
@@ -19,25 +19,6 @@ final class SimulationTypeTest {
         if (!AppLocalization.isInitialized()) {
             AppLocalization.initialize("en_US", Locale.US);
         }
-    }
-
-    @Test
-    void testEnumValues() {
-        assertNotNull(SimulationType.valueOf("STARTSCREEN"));
-        assertNotNull(SimulationType.valueOf("ET_PETS"));
-        assertNotNull(SimulationType.valueOf("WATOR"));
-        assertNotNull(SimulationType.valueOf("CONWAYS_LIFE"));
-        assertNotNull(SimulationType.valueOf("LANGTONS_ANT"));
-        assertNotNull(SimulationType.valueOf("FOREST_FIRE"));
-        assertNotNull(SimulationType.valueOf("SUGARSCAPE"));
-        assertNotNull(SimulationType.valueOf("SNAKE"));
-        assertNotNull(SimulationType.valueOf("REBOUNDING_ENTITIES"));
-        assertNotNull(SimulationType.valueOf("SIMULATION_LAB"));
-    }
-
-    @Test
-    void testEnumCount() {
-        assertEquals(10, SimulationType.values().length, "There should be exactly 10 values");
     }
 
     @Test
@@ -60,18 +41,13 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testValueOfRejectsInvalidName() {
-        assertThrows(IllegalArgumentException.class, () -> SimulationType.valueOf("INVALID"));
-    }
-
-    @Test
-    void testValueOfRejectsNull() {
-        assertThrows(NullPointerException.class, () -> SimulationType.valueOf(null));
-    }
-
-    @Test
     void testLabelResourceKey() {
-        assertEquals("simulationtype.label", SimulationType.labelResourceKey());
+        assertKeysInAllBundles(List.of(SimulationType.labelResourceKey()));
+    }
+
+    @Test
+    void testTitleKey() {
+        assertKeysInAllBundles(Arrays.stream(SimulationType.values()).map(SimulationType::titleKey).toList());
     }
 
     @Test
@@ -103,62 +79,6 @@ final class SimulationTypeTest {
     }
 
     @Test
-    void testTitleKey() {
-        assertEquals("simulation.start.title", SimulationType.STARTSCREEN.titleKey());
-        assertEquals("simulation.etpets.title", SimulationType.ET_PETS.titleKey());
-        assertEquals("simulation.wator.title", SimulationType.WATOR.titleKey());
-        assertEquals("simulation.conway.title", SimulationType.CONWAYS_LIFE.titleKey());
-        assertEquals("simulation.langton.title", SimulationType.LANGTONS_ANT.titleKey());
-        assertEquals("simulation.forest.title", SimulationType.FOREST_FIRE.titleKey());
-        assertEquals("simulation.sugar.title", SimulationType.SUGARSCAPE.titleKey());
-        assertEquals("simulation.snake.title", SimulationType.SNAKE.titleKey());
-        assertEquals("simulation.rebounding.title", SimulationType.REBOUNDING_ENTITIES.titleKey());
-        assertEquals("simulation.lab.title", SimulationType.SIMULATION_LAB.titleKey());
-    }
-
-    @Test
-    void testSubtitleKey() {
-        assertEquals("simulation.start.subtitle", SimulationType.STARTSCREEN.subtitleKey());
-        assertEquals("simulation.etpets.subtitle", SimulationType.ET_PETS.subtitleKey());
-        assertEquals("simulation.wator.subtitle", SimulationType.WATOR.subtitleKey());
-        assertEquals("simulation.conway.subtitle", SimulationType.CONWAYS_LIFE.subtitleKey());
-        assertEquals("simulation.langton.subtitle", SimulationType.LANGTONS_ANT.subtitleKey());
-        assertEquals("simulation.forest.subtitle", SimulationType.FOREST_FIRE.subtitleKey());
-        assertEquals("simulation.sugar.subtitle", SimulationType.SUGARSCAPE.subtitleKey());
-        assertEquals("simulation.snake.subtitle", SimulationType.SNAKE.subtitleKey());
-        assertEquals("simulation.rebounding.subtitle", SimulationType.REBOUNDING_ENTITIES.subtitleKey());
-        assertEquals("simulation.lab.subtitle", SimulationType.SIMULATION_LAB.subtitleKey());
-    }
-
-    @Test
-    void testUrlKey() {
-        assertEquals("simulation.start.url", SimulationType.STARTSCREEN.urlKey());
-        assertEquals("simulation.etpets.url", SimulationType.ET_PETS.urlKey());
-        assertEquals("simulation.wator.url", SimulationType.WATOR.urlKey());
-        assertEquals("simulation.conway.url", SimulationType.CONWAYS_LIFE.urlKey());
-        assertEquals("simulation.langton.url", SimulationType.LANGTONS_ANT.urlKey());
-        assertEquals("simulation.forest.url", SimulationType.FOREST_FIRE.urlKey());
-        assertEquals("simulation.sugar.url", SimulationType.SUGARSCAPE.urlKey());
-        assertEquals("simulation.snake.url", SimulationType.SNAKE.urlKey());
-        assertEquals("simulation.rebounding.url", SimulationType.REBOUNDING_ENTITIES.urlKey());
-        assertEquals("simulation.lab.url", SimulationType.SIMULATION_LAB.urlKey());
-    }
-
-    @Test
-    void testCssPath() {
-        assertEquals("", SimulationType.STARTSCREEN.cssPath());
-        assertEquals("etpets.css", SimulationType.ET_PETS.cssPath());
-        assertEquals("", SimulationType.WATOR.cssPath());
-        assertEquals("conway.css", SimulationType.CONWAYS_LIFE.cssPath());
-        assertEquals("", SimulationType.LANGTONS_ANT.cssPath());
-        assertEquals("", SimulationType.FOREST_FIRE.cssPath());
-        assertEquals("", SimulationType.SUGARSCAPE.cssPath());
-        assertEquals("", SimulationType.SNAKE.cssPath());
-        assertEquals("", SimulationType.REBOUNDING_ENTITIES.cssPath());
-        assertEquals("lab.css", SimulationType.SIMULATION_LAB.cssPath());
-    }
-
-    @Test
     void testCliArgumentsReturnsExpectedValues() {
         assertEquals(List.of("startscreen", "start"), SimulationType.STARTSCREEN.cliArguments());
         assertEquals(List.of("etpets"), SimulationType.ET_PETS.cliArguments());
@@ -178,6 +98,17 @@ final class SimulationTypeTest {
     }
 
     @Test
+    void testCliArgumentsAreUniqueAndLowercase() {
+        List<String> allArguments = Arrays.stream(SimulationType.values())
+                                          .flatMap(simulationType -> simulationType.cliArguments().stream())
+                                          .toList();
+        assertAll(
+                () -> assertEquals(allArguments.size(), Set.copyOf(allArguments).size()),
+                () -> assertTrue(allArguments.stream().allMatch(argument -> argument.equals(argument.toLowerCase(Locale.ROOT))))
+        );
+    }
+
+    @Test
     void testFromCliArgument() {
         assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("start", false));
         assertEquals(Optional.of(SimulationType.STARTSCREEN), SimulationType.fromCliArgument("START", false));
@@ -193,51 +124,22 @@ final class SimulationTypeTest {
     @Test
     void testTitle() {
         for (SimulationType simulationType : SimulationType.values()) {
-            assertEquals(AppLocalization.getText(simulationType.titleKey()), simulationType.title());
-        }
-    }
-
-    @Test
-    void testSubtitle() {
-        for (SimulationType simulationType : SimulationType.values()) {
-            assertEquals(AppLocalization.getOptionalText(simulationType.subtitleKey()), simulationType.subtitle());
-        }
-    }
-
-    @Test
-    void testUrl() {
-        for (SimulationType simulationType : SimulationType.values()) {
-            assertEquals(AppLocalization.getOptionalText(simulationType.urlKey()), simulationType.url());
+            assertFalse(simulationType.title().isBlank(), simulationType.name());
         }
     }
 
     @Test
     void testUri() {
         for (SimulationType simulationType : SimulationType.values()) {
-            Optional<URI> expected = simulationType.url().flatMap(text -> {
-                try {
-                    return Optional.of(URI.create(text));
-                } catch (IllegalArgumentException ignored) {
-                    return Optional.empty();
-                }
-            });
-            assertEquals(expected, simulationType.uri());
+            assertEquals(simulationType.url().isPresent(), simulationType.uri().isPresent(), simulationType.name());
         }
     }
 
     @Test
     void testCssUrl() {
-        assertTrue(SimulationType.ET_PETS.cssUrl().isPresent());
-        assertTrue(SimulationType.CONWAYS_LIFE.cssUrl().isPresent());
-        assertTrue(SimulationType.SIMULATION_LAB.cssUrl().isPresent());
-
-        assertTrue(SimulationType.STARTSCREEN.cssUrl().isEmpty());
-        assertTrue(SimulationType.WATOR.cssUrl().isEmpty());
-        assertTrue(SimulationType.LANGTONS_ANT.cssUrl().isEmpty());
-        assertTrue(SimulationType.FOREST_FIRE.cssUrl().isEmpty());
-        assertTrue(SimulationType.SUGARSCAPE.cssUrl().isEmpty());
-        assertTrue(SimulationType.SNAKE.cssUrl().isEmpty());
-        assertTrue(SimulationType.REBOUNDING_ENTITIES.cssUrl().isEmpty());
+        for (SimulationType simulationType : SimulationType.values()) {
+            assertEquals(!simulationType.cssPath().isBlank(), simulationType.cssUrl().isPresent(), simulationType.name());
+        }
     }
 
 }

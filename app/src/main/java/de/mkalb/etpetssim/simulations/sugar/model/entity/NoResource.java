@@ -4,8 +4,8 @@ import de.mkalb.etpetssim.engine.model.entity.ConstantGridEntity;
 
 /**
  * Represents the absence of a resource in the Sugarscape simulation.
- * <p>
- * This singleton enum is used as a placeholder when a cell does not contain any resource entity.
+ *
+ * <p>This singleton enum is used as a placeholder when a cell does not contain any resource entity.
  */
 public enum NoResource implements ResourceEntity, ConstantGridEntity {
 
@@ -13,7 +13,7 @@ public enum NoResource implements ResourceEntity, ConstantGridEntity {
 
     @Override
     public String descriptorId() {
-        return DESCRIPTOR_ID_NO_RESOURCE;
+        return SugarEntity.DESCRIPTOR_ID_NO_RESOURCE;
     }
 
     @Override

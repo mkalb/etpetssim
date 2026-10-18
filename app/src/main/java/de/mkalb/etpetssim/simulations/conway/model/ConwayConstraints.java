@@ -53,7 +53,7 @@ public final class ConwayConstraints {
 
     // Rules
     public static final ConwayTransitionRules TRANSITION_RULES_DEFAULT = ConwayTransitionRules.parse(
-            ConwayRulePresetSquare.CONWAYS_LIFE.toString());
+            ConwayRulePresetSquare.CONWAYS_LIFE.ruleString());
     public static final int BIRTH_NEIGHBOR_COUNT_MIN = 1;
 
     private ConwayConstraints() {

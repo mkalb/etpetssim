@@ -4,17 +4,6 @@ import de.mkalb.etpetssim.core.AppLocalizationKeys;
 
 /**
  * Defines the available simulation modes for running a simulation.
- * <p>
- * Each mode represents a distinct way of executing the simulation:
- * <ul>
- *   <li>{@link #TIMED}: Executes simulation steps at a fixed interval using a timer.
- *   Drawing may be throttled if rendering is slow.</li>
- *   <li>{@link #BATCH_SINGLE}: Executes a fixed number of steps in a background thread, then pauses.
- *   Drawing occurs only after the batch completes.</li>
- *   <li>{@link #BATCH_CONTINUOUS}: Continuously executes batches of steps in a background thread,
- *   drawing after each batch, and automatically starts the next batch until paused or canceled.</li>
- * </ul>
- * The {@code resourceKey} field allows for resource lookup, such as internationalized labels.
  */
 public enum SimulationMode {
 
@@ -43,12 +32,9 @@ public enum SimulationMode {
     }
 
     /**
-     * Returns the resource-bundle key for the display label of this enum type.
+     * Returns the resource key of the label for this enum type as a whole.
      *
-     * <p>The returned key is intended for localized lookup of the enum type name
-     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
-     *
-     * @return the resource bundle key for this enum type label
+     * @return the resource key of the type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -56,11 +42,9 @@ public enum SimulationMode {
     }
 
     /**
-     * Returns the resource bundle key associated with this enum constant.
-     * <p>
-     * The resource key can be used for localized message lookup via {@code AppLocalization}.
+     * Returns the resource key of the display text for this constant.
      *
-     * @return the resource bundle key for this enum constant
+     * @return the resource key of this constant
      */
     public String resourceKey() {
         return resourceKey;

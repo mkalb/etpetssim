@@ -179,18 +179,7 @@ final class AppLocalizationTest {
     }
 
     @Test
-    void testEnumValues() {
-        assertNotNull(AppLocalization.CountryLocale.valueOf("EN_US"));
-        assertNotNull(AppLocalization.CountryLocale.valueOf("DE_DE"));
-    }
-
-    @Test
-    void testEnumCount() {
-        assertEquals(2, AppLocalization.CountryLocale.values().length, "There should be exactly 2 values");
-    }
-
-    @Test
-    void testDeclarationOrder() {
+    void testCountryLocaleDeclarationOrder() {
         assertArrayEquals(
                 new AppLocalization.CountryLocale[]{
                         AppLocalization.CountryLocale.EN_US,
@@ -198,16 +187,6 @@ final class AppLocalizationTest {
                 },
                 AppLocalization.CountryLocale.values()
         );
-    }
-
-    @Test
-    void testValueOfRejectsInvalidName() {
-        assertThrows(IllegalArgumentException.class, () -> AppLocalization.CountryLocale.valueOf("INVALID"));
-    }
-
-    @Test
-    void testValueOfRejectsNull() {
-        assertThrows(NullPointerException.class, () -> AppLocalization.CountryLocale.valueOf(null));
     }
 
     @Test

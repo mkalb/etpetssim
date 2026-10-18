@@ -279,8 +279,8 @@ public final class AppLocalization {
 
     /**
      * Supported locales with display labels.
-     * <p>
-     * Declaration order defines matching precedence.
+     *
+     * <p>Declaration order defines matching precedence.
      * Display labels are intentionally hardcoded here because this enum is
      * bootstrap localization metadata and must not depend on already-loaded
      * i18n resource bundles.
@@ -325,7 +325,7 @@ public final class AppLocalization {
         /**
          * Returns the display name.
          *
-         * @return the localized display label
+         * @return the display label in the locale's own language
          */
         public String displayName() {
             return displayName;

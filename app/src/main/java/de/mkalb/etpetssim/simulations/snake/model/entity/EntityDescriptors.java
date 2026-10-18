@@ -6,10 +6,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Entity descriptors for the Snake simulation.
- * <p>
- * Provides visual and metadata specifications for ground, walls, food, snake heads, and snake segments.
+ *
+ * <p>Provides visual and metadata specifications for ground, walls, food, snake heads, and snake segments.
  */
-@SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     GROUND(
             SnakeEntity.DESCRIPTOR_ID_GROUND,
@@ -64,6 +63,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
                       boolean visible,
                       String shortNameKey,

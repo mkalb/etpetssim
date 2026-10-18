@@ -7,9 +7,11 @@ import java.util.*;
 
 /**
  * Available simulation types.
- * <p>
- * Each constant describes availability, start-screen visibility, localization keys,
+ *
+ * <p>Each constant describes availability, start-screen visibility, localization keys,
  * an optional CSS resource, and accepted command-line aliases.
+ *
+ * <p>The declaration order defines the order of the simulations on the start screen.
  */
 @SuppressWarnings("SpellCheckingInspection")
 public enum SimulationType {
@@ -26,6 +28,7 @@ public enum SimulationType {
             "",
             List.of("startscreen", "start")
     ),
+
     /**
      * Custom extraterrestrial pets simulation.
      */
@@ -38,6 +41,7 @@ public enum SimulationType {
             "etpets.css",
             List.of("etpets")
     ),
+
     /**
      * <a href="https://en.wikipedia.org/wiki/Wa-Tor">Wa-Tor</a> predator-prey simulation.
      */
@@ -50,6 +54,7 @@ public enum SimulationType {
             "",
             List.of("wator", "wa-tor")
     ),
+
     /**
      * <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>.
      */
@@ -62,6 +67,7 @@ public enum SimulationType {
             "conway.css",
             List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol")
     ),
+
     /**
      * <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton's ant</a>.
      */
@@ -74,6 +80,7 @@ public enum SimulationType {
             "",
             List.of("langton", "langtonsant", "langtons-ant", "ant")
     ),
+
     /**
      * <a href="https://en.wikipedia.org/wiki/Forest-fire_model">Forest-fire model</a>.
      */
@@ -86,6 +93,7 @@ public enum SimulationType {
             "",
             List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel")
     ),
+
     /**
      * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>.
      */
@@ -98,6 +106,7 @@ public enum SimulationType {
             "",
             List.of("sugarscape", "sugar")
     ),
+
     /**
      * <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">Snake</a> simulation.
      */
@@ -110,6 +119,7 @@ public enum SimulationType {
             "",
             List.of("snake", "snakes")
     ),
+
     /**
      * Custom rebounding-entities simulation.
      */
@@ -122,6 +132,7 @@ public enum SimulationType {
             "",
             List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders")
     ),
+
     /**
      * Development-oriented simulation laboratory.
      */
@@ -175,12 +186,9 @@ public enum SimulationType {
     }
 
     /**
-     * Returns the resource-bundle key for the display label of this enum type.
+     * Returns the resource key of the label for this enum type as a whole.
      *
-     * <p>The returned key is intended for localized lookup of the enum type name
-     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
-     *
-     * @return the resource bundle key for this enum type label
+     * @return the resource key of the type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -215,6 +223,8 @@ public enum SimulationType {
 
     /**
      * Returns the localization key for the external URL.
+     *
+     * <p>The key may be missing in any resource bundle; {@link #url()} is then empty.
      *
      * @return URL resource key
      */

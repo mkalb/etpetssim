@@ -4,9 +4,11 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
 import java.lang.reflect.Constructor;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.logging.*;
+import java.util.logging.Formatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -206,6 +208,33 @@ final class AppLoggerTest {
         AppLogger.initialize(AppLogger.LogLevel.INFO, true, null);
         assertThrows(IllegalStateException.class, () ->
                 AppLogger.initialize(AppLogger.LogLevel.DEBUG, true, null));
+    }
+
+    @Test
+    void testLogLevelFromString() {
+        assertAll(
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.DEBUG), AppLogger.LogLevel.fromString("debug")),
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.INFO), AppLogger.LogLevel.fromString("INFO")),
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.WARN), AppLogger.LogLevel.fromString("Warn")),
+                () -> assertEquals(Optional.of(AppLogger.LogLevel.ERROR), AppLogger.LogLevel.fromString("error")),
+                () -> assertEquals(Optional.empty(), AppLogger.LogLevel.fromString("verbose"))
+        );
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testLogLevelFromStringRejectsNull() {
+        assertThrows(NullPointerException.class, () -> AppLogger.LogLevel.fromString(null));
+    }
+
+    @Test
+    void testLogLevelToJavaLogLevel() {
+        assertAll(
+                () -> assertEquals(Level.FINE, AppLogger.LogLevel.DEBUG.toJavaLogLevel()),
+                () -> assertEquals(Level.INFO, AppLogger.LogLevel.INFO.toJavaLogLevel()),
+                () -> assertEquals(Level.WARNING, AppLogger.LogLevel.WARN.toJavaLogLevel()),
+                () -> assertEquals(Level.SEVERE, AppLogger.LogLevel.ERROR.toJavaLogLevel())
+        );
     }
 
 }

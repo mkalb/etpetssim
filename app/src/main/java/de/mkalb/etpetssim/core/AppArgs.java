@@ -198,6 +198,8 @@ public final class AppArgs {
 
     /**
      * Supported command-line keys.
+     *
+     * <p>The declaration order defines the order of the keys in the help output.
      */
     public enum Key {
         HELP("help", "Shows this help message", true),

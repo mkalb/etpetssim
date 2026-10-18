@@ -6,8 +6,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Cell states for the forest-fire simulation.
- * <p>
- * Each enum constant represents one grid cell state and carries descriptor metadata
+ *
+ * <p>Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
  *
  * @see GridEntityDescriptorRegistry
@@ -46,6 +46,7 @@ public enum ForestEntity implements ConstantGridEntityDescriptorProvider {
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     ForestEntity(String descriptorId,
                  boolean visible,
                  String shortNameKey,

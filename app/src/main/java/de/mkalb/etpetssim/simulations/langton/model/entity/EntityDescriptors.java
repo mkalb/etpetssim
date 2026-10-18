@@ -6,10 +6,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Entity descriptor for the Langton's Ant simulation.
- * <p>
- * Provides visual and metadata specifications for the ant entity.
+ *
+ * <p>Provides visual and metadata specifications for the ant entity.
  */
-@SuppressWarnings("SameParameterValue")
 public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider {
     ANT(
             AntEntity.DESCRIPTOR_ID_ANT,
@@ -24,6 +23,7 @@ public enum EntityDescriptors implements SpecBackedGridEntityDescriptorProvider 
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     EntityDescriptors(String descriptorId,
                       boolean visible,
                       String shortNameKey,

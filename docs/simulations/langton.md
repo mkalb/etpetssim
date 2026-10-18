@@ -71,8 +71,8 @@ left and right, `L2` and `R2` for double turns, `N` for no turn, and `U` for a
 U-turn; triangle cells accept only `L`, `R`, and `U`.
 
 Shape-specific presets are available: triangle offers `RL`, `RLL`, and `URR`;
-square offers `RL`, `RLR`, `RLLR`, `RRLL`, `RNNU`, `RLLLLLRRL`, and
-`RRLLLRLLLRRR`; hexagon offers `RL`, `NR`, `R2N`, `RL2`, `NR2`, `R2RR`,
+square offers `RL`, `RLR`, `RLLR`, `RNNU`, `RRLL`, `RLLLLLRRL`, and
+`RRLLLRLLLRRR`; hexagon offers `NR`, `RL`, `NR2`, `R2N`, `RL2`, `R2RR`,
 `R2NNRR2R`, and `RR2NUR2RL2`. Each preset menu also has a blank selection for
 entering a custom rule.
 

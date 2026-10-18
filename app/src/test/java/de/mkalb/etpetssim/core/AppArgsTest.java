@@ -230,22 +230,7 @@ final class AppArgsTest {
     }
 
     @Test
-    void testEnumValues() {
-        assertNotNull(AppArgs.Key.valueOf("HELP"));
-        assertNotNull(AppArgs.Key.valueOf("LOCALE"));
-        assertNotNull(AppArgs.Key.valueOf("LOG_CONSOLE"));
-        assertNotNull(AppArgs.Key.valueOf("LOG_FILE"));
-        assertNotNull(AppArgs.Key.valueOf("LOG_LEVEL"));
-        assertNotNull(AppArgs.Key.valueOf("SIMULATION"));
-    }
-
-    @Test
-    void testEnumCount() {
-        assertEquals(6, AppArgs.Key.values().length, "There should be exactly 6 values");
-    }
-
-    @Test
-    void testDeclarationOrder() {
+    void testKeyDeclarationOrder() {
         assertArrayEquals(
                 new AppArgs.Key[]{
                         AppArgs.Key.HELP,
@@ -313,16 +298,6 @@ final class AppArgsTest {
         assertFalse(AppArgs.Key.fromString(" help").isPresent());
         assertFalse(AppArgs.Key.fromString(" ").isPresent());
         assertFalse(AppArgs.Key.fromString("").isPresent());
-    }
-
-    @Test
-    void testValueOfRejectsInvalidName() {
-        assertThrows(IllegalArgumentException.class, () -> AppArgs.Key.valueOf("INVALID"));
-    }
-
-    @Test
-    void testValueOfRejectsNull() {
-        assertThrows(NullPointerException.class, () -> AppArgs.Key.valueOf(null));
     }
 
     @SuppressWarnings("DataFlowIssue")

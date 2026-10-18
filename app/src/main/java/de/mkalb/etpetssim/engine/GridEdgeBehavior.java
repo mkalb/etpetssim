@@ -49,12 +49,9 @@ public enum GridEdgeBehavior {
     }
 
     /**
-     * Returns the resource-bundle key for the display label of this enum type.
+     * Returns the resource key of the label for this enum type as a whole.
      *
-     * <p>The returned key is intended for localized lookup of the enum type name
-     * (that is, the label for the enum as a whole, not for an individual enum constant).</p>
-     *
-     * @return the resource bundle key for this enum type label
+     * @return the resource key of the type label
      */
     @SuppressWarnings("SameReturnValue")
     public static String labelResourceKey() {
@@ -82,18 +79,16 @@ public enum GridEdgeBehavior {
     /**
      * Checks if both X and Y edges use the same edge behavior.
      *
-     * @return true if both edge behaviors are identical, false otherwise
+     * @return {@code true} if both edge behaviors are identical, {@code false} otherwise
      */
     public boolean hasEqualEdgeBehaviors() {
         return edgeBehaviorX == edgeBehaviorY;
     }
 
     /**
-     * Returns the resource bundle key associated with this enum constant.
-     * <p>
-     * The resource key can be used for localized message lookup via {@code AppLocalization}.
+     * Returns the resource key of the display text for this constant.
      *
-     * @return the resource bundle key for this enum constant
+     * @return the resource key of this constant
      */
     public String resourceKey() {
         return resourceKey;

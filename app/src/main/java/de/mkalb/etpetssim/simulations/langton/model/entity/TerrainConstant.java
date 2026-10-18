@@ -7,16 +7,14 @@ import java.util.*;
 
 /**
  * Terrain cell states for the Langton's Ant simulation.
- * <p>
- * Each constant represents one ground cell state identified by a {@code ruleIndex}.
+ *
+ * <p>Each constant represents one ground cell state identified by a {@code ruleIndex}.
  * The special value {@link #UNVISITED} (rule index {@code -1}) marks cells that have
  * not yet been visited by any ant. Constants {@link #COLOR_0} through {@link #COLOR_15}
  * represent the 16 color states used by Langton's Ant rule sets.
- * </p>
- * <p>
- * Every constant carries a {@link GridEntityDescriptorSpec}
+ *
+ * <p>Every constant carries a {@link GridEntityDescriptorSpec}
  * for descriptor-registry registration and rendering.
- * </p>
  *
  * @see LangtonEntity
  * @see ConstantGridEntityDescriptorProvider
@@ -89,10 +87,9 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
 
     /**
      * Returns the rule index of this terrain constant.
-     * <p>
-     * The value {@code -1} is used for {@link #UNVISITED}; values {@code 0}–{@code 15}
+     *
+     * <p>The value {@code -1} is used for {@link #UNVISITED}; values {@code 0}–{@code 15}
      * correspond to the color states used in Langton's Ant rule sets.
-     * </p>
      *
      * @return the rule index
      */

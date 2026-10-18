@@ -6,8 +6,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Cell states for the simulation lab.
- * <p>
- * Each enum constant represents one grid cell state and carries descriptor metadata
+ *
+ * <p>Each enum constant represents one grid cell state and carries descriptor metadata
  * used for descriptor registry registration and rendering.
  *
  * @see GridEntityDescriptorRegistry
@@ -36,6 +36,7 @@ public enum LabEntity implements ConstantGridEntityDescriptorProvider {
 
     private final GridEntityDescriptorSpec spec;
 
+    @SuppressWarnings("SameParameterValue")
     LabEntity(String descriptorId,
               boolean visible,
               String shortNameKey,

@@ -2,21 +2,9 @@ package de.mkalb.etpetssim.simulations.core.model;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 final class StatisticsChartGroupTest {
-
-    @Test
-    void testEnumValues() {
-        assertNotNull(StatisticsChartGroup.valueOf("NONE"));
-        assertNotNull(StatisticsChartGroup.valueOf("PRIMARY"));
-        assertNotNull(StatisticsChartGroup.valueOf("SECONDARY"));
-    }
-
-    @Test
-    void testEnumCount() {
-        assertEquals(3, StatisticsChartGroup.values().length, "There should be exactly 3 values");
-    }
 
     @Test
     void testDeclarationOrder() {
@@ -28,24 +16,6 @@ final class StatisticsChartGroupTest {
                 },
                 StatisticsChartGroup.values()
         );
-    }
-
-    @Test
-    void testValueOfRejectsInvalidName() {
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> StatisticsChartGroup.valueOf("INVALID")
-        );
-        assertTrue(exception.getMessage().contains("INVALID"));
-    }
-
-    @Test
-    void testValueOfRejectsNull() {
-        NullPointerException exception = assertThrows(
-                NullPointerException.class,
-                () -> StatisticsChartGroup.valueOf(null)
-        );
-        assertNotNull(exception.getMessage());
     }
 
 }

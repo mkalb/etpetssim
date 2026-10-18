@@ -2,14 +2,13 @@ package de.mkalb.etpetssim.simulations.conway.shared;
 
 /**
  * Preset rule sets for Conway-style cellular automata with hexagon cells.
- * <p>
- * Each constant provides a well-known S/B rule string for hexagonal grids.
+ *
+ * <p>Each constant provides a well-known S/B rule string for hexagonal grids.
  * In hexagonal grids each cell has at most 6 neighbors, so valid digit range is 0–6.
  * {@link #EMPTY} represents no preset selection.
- * <p>
- * Constants are ordered from no selection to increasingly complex rule sets,
- * with {@link #EMPTY} first and all other presets sorted alphabetically by display name
- * (ASCII order: digit-prefixed names before letter-prefixed names).
+ *
+ * <p>Declaration order: {@link #EMPTY} is first (no selection), followed by all other presets
+ * sorted alphabetically by display name (ASCII order: digit-prefixed names before letter-prefixed names).
  */
 public enum ConwayRulePresetHexagon implements ConwayRulePreset {
 
@@ -32,13 +31,13 @@ public enum ConwayRulePresetHexagon implements ConwayRulePreset {
     }
 
     @Override
-    public String displayName() {
-        return displayName;
+    public String ruleString() {
+        return ruleString;
     }
 
     @Override
-    public String toString() {
-        return ruleString;
+    public String displayName() {
+        return displayName;
     }
 
     @Override

@@ -345,7 +345,10 @@ public final class AppLogger {
      * Log levels supported by {@link AppLogger}.
      */
     public enum LogLevel {
-        DEBUG, INFO, WARN, ERROR;
+        DEBUG,
+        INFO,
+        WARN,
+        ERROR;
 
         /**
          * Parses a log level name.

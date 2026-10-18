@@ -4,7 +4,6 @@ package de.mkalb.etpetssim.simulations.core.shared;
  * Notification categories emitted during a simulation lifecycle.
  *
  * <p>Each constant maps to a resource bundle key usable for localized user messages.
- * The string value held by each enum constant is the lookup key.
  */
 public enum SimulationNotificationType {
 
@@ -40,11 +39,9 @@ public enum SimulationNotificationType {
     }
 
     /**
-     * Returns the resource bundle key associated with this enum constant.
-     * <p>
-     * The resource key can be used for localized message lookup via {@code AppLocalization}.
+     * Returns the resource key of the display text for this constant.
      *
-     * @return the resource bundle key for this enum constant
+     * @return the resource key of this constant
      */
     public String resourceKey() {
         return resourceKey;
