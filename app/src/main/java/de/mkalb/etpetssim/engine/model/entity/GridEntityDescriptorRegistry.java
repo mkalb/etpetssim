@@ -8,16 +8,14 @@ import java.util.*;
 
 /**
  * Registry for managing and looking up {@link GridEntityDescriptor} instances.
- * <p>
- * Provides centralized registration and retrieval of entity descriptors,
+ *
+ * <p>Provides centralized registration and retrieval of entity descriptors,
  * supporting lookup by unique identifier.
  * It also handles the resolution of localized strings using {@link AppLocalization}
  * during descriptor creation.
- * </p>
- * <p>
- * The registry is intended to be used as a central point for descriptor management
+ *
+ * <p>The registry is intended to be used as a central point for descriptor management
  * within the application. Registering a descriptor ID again replaces the earlier descriptor.
- * </p>
  */
 public final class GridEntityDescriptorRegistry {
 
@@ -92,10 +90,9 @@ public final class GridEntityDescriptorRegistry {
 
     /**
      * Registers a new {@link GridEntityDescriptor} in the registry.
-     * <p>
-     * Localized strings are resolved using {@link AppLocalization#getText(String)}.
+     *
+     * <p>Localized strings are resolved using {@link AppLocalization#getText(String)}.
      * The descriptor is stored for lookup by its unique descriptor ID.
-     * </p>
      *
      * @param descriptorId   unique identifier for the descriptor
      * @param visible        whether the entity should be visible in the UI
@@ -145,10 +142,9 @@ public final class GridEntityDescriptorRegistry {
 
     /**
      * Returns the {@link GridEntityDescriptor} for the given descriptor ID.
-     * <p>
-     * Unlike {@link #findByDescriptorId(String)}, this method throws a {@link NoSuchElementException}
+     *
+     * <p>Unlike {@link #findByDescriptorId(String)}, this method throws a {@link NoSuchElementException}
      * if no descriptor is registered for the specified ID.
-     * </p>
      *
      * @param descriptorId the unique descriptor identifier
      * @return the {@link GridEntityDescriptor} associated with the given ID
