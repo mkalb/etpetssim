@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class ConwayUserActionContextTest {
 
     @Test
-    void testPlacePatternStoresPatternChoice() {
+    void testPlacePatternRecord() {
         ConwayPatternChoice patternChoice = new ConwayPatternChoice(
                 "test.block",
                 "test.pattern.block",
@@ -19,7 +19,9 @@ final class ConwayUserActionContextTest {
                 (_, _) -> true);
         ConwayUserActionContext.PlacePattern context = new ConwayUserActionContext.PlacePattern(patternChoice);
 
-        assertSame(patternChoice, context.patternChoice());
+        assertAll(
+                () -> assertSame(patternChoice, context.patternChoice()),
+                () -> assertTrue(context.toString().contains("patternChoice=" + patternChoice)));
     }
 
 }

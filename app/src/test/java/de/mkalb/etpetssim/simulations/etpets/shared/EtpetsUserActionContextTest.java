@@ -17,17 +17,21 @@ final class EtpetsUserActionContextTest {
     }
 
     @Test
-    void testSetTerrainStoresTerrainChoice() {
+    void testSetTerrainRecord() {
         EtpetsUserActionContext.SetTerrain context = new EtpetsUserActionContext.SetTerrain(EtpetsTerrainChoice.ROCK);
 
-        assertSame(EtpetsTerrainChoice.ROCK, context.terrainChoice());
+        assertAll(
+                () -> assertSame(EtpetsTerrainChoice.ROCK, context.terrainChoice()),
+                () -> assertTrue(context.toString().contains("terrainChoice=ROCK")));
     }
 
     @Test
-    void testSetResourceStoresResourceChoice() {
+    void testSetResourceRecord() {
         EtpetsUserActionContext.SetResource context = new EtpetsUserActionContext.SetResource(EtpetsResourceChoice.PLANT);
 
-        assertSame(EtpetsResourceChoice.PLANT, context.resourceChoice());
+        assertAll(
+                () -> assertSame(EtpetsResourceChoice.PLANT, context.resourceChoice()),
+                () -> assertTrue(context.toString().contains("resourceChoice=PLANT")));
     }
 
 }
