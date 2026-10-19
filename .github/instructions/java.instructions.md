@@ -100,10 +100,19 @@ Use these method naming patterns when they match the method's primary behavior; 
 
 ## Java Records
 
-- Use records for small immutable value carriers; move derived/convenience behavior to small methods.
+- Use records for small immutable value carriers and holders; move derived/convenience behavior to small methods.
 - Use canonical/compact constructors to enforce invariants and to defensively copy mutable inputs (collections, maps,
   arrays) before storing.
-- Do not use records for mutable JavaFX state, properties, or classes with identity/lifecycle semantics.
+- Records are shallowly immutable: they may group references to mutable objects (JavaFX properties or nodes, grid
+  models, entities, `Random`) as a wrapper, holder, snapshot, or parameter object (e.g., `MoveContext`). Use a class
+  instead when the type itself owns changing state or controls a lifecycle.
+- Prefer plain adjectives or noun phrases for boolean record components (`visible`, `finalStep`); boolean query names
+  (`isFinished`, `hasTarget`) are allowed. Their generated accessors are exempt from the boolean query prefixes in
+  "Naming Conventions". Use one style within a record, and use the name of an implemented interface method where one
+  exists (e.g., `MoveDecision.isFoodTarget()`).
+- Declare `toDisplayString()` on a record whose values are shown to users or in logs (e.g., coordinates, sizes,
+  neighborhood results, cells, descriptors, rules); results, statistics, configs, user action contexts, and private
+  records do not need one. Do not add it only for completeness.
 
 ## Enums
 

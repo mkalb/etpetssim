@@ -36,21 +36,22 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 
 - Test method names follow `test<Subject>[<Behavior>[<Condition>]]` in UpperCamelCase; no underscores and no
   `@DisplayName`.
-  - `<Subject>` is the exact name of the tested production method, or `Constructor`, so that renames stay searchable.
-  - When a production method has a single test method, `test<Subject>` is enough, even if it checks several aspects.
-  - When a production method has several test methods, the test of the main case may stay `test<Subject>`; each other
-    test adds a `<Behavior>`, a verb phrase such as `Returns...`, `Rejects...`, `Throws...`, `Records...`, or
-    `Ignores...`, and, if needed, a `<Condition>` such as `For...`, `When...`, or `With...` (e.g.,
-    `testConstructorRejectsNegativeWidth`).
-  - `testRecord` is the fixed name for the basic test of a record: canonical constructor, accessors, and `toString()`.
-  - The fixed enum test name `testDeclarationOrder` remains; it names the declaration-order test of one enum. An
-    `<Interface>Test` names order checks across the constants of its implementing enums freely (e.g.,
-    `testConstantsAreSortedByDisplayName`).
-  - Tests of a nested type put its simple name before a fixed name (e.g., `testFixedActionDeclarationOrder`).
-  - A constant has one test named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a check
-    across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
-  - When the tested behavior is triggered indirectly (e.g., through a listener), `<Subject>` is the private or
-    package-private method that implements the reaction (e.g., `testHandleStartActionRetainsCapturedTimedSettings`).
+    - `<Subject>` is the exact name of the tested production method, or `Constructor`, so that renames stay searchable.
+    - When a production method has a single test method, `test<Subject>` is enough, even if it checks several aspects.
+    - When a production method has several test methods, the test of the main case may stay `test<Subject>`; each other
+      test adds a `<Behavior>`, a verb phrase such as `Returns...`, `Rejects...`, `Throws...`, `Records...`, or
+      `Ignores...`, and, if needed, a `<Condition>` such as `For...`, `When...`, or `With...` (e.g.,
+      `testConstructorRejectsNegativeWidth`).
+    - `testRecord` is the fixed name for the basic test of a record: canonical constructor and accessors, and
+      `toString()` when the record overrides it; "Common Contract Patterns" defines which records have one.
+    - The fixed enum test name `testDeclarationOrder` remains; it names the declaration-order test of one enum. An
+      `<Interface>Test` names order checks across the constants of its implementing enums freely (e.g.,
+      `testConstantsAreSortedByDisplayName`).
+    - Tests of a nested type put its simple name before a fixed name (e.g., `testFixedActionDeclarationOrder`).
+    - A constant has one test named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a check
+      across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
+    - When the tested behavior is triggered indirectly (e.g., through a listener), `<Subject>` is the private or
+      package-private method that implements the reaction (e.g., `testHandleStartActionRetainsCapturedTimedSettings`).
 - Name overload tests `test<Subject>[With<Parameter>][<Behavior>[<Condition>]]`. `With<Parameter>` follows `<Subject>`
   directly and names only the parameter that distinguishes the overload, by role or, if clearer, by type
   (`WithSupplier`, `WithThrowable`); no count such as `OneParameter`. The base overload (the simplest or most common
@@ -101,6 +102,16 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Resource-key tests check that each returned key exists in all main resource bundles, not the literal key value;
   use `de.mkalb.etpetssim.testsupport.LocalizationTestSupport.assertKeysInAllBundles(...)`, or
   `assertDescriptorKeysInAllBundles(...)` for the keys of entity descriptor providers.
+- Record tests depend on what the record adds to the generated code:
+    - A record with a constructor body (compact or explicit canonical) or an override of `toString()`, `equals(Object)`,
+      or `hashCode()` has a `testRecord`: the positive constructor case with the stored values, including normalization
+      and defensive copies. Rejected arguments are tested in `testConstructorRejects...`, an overridden
+      `equals(Object)` or `hashCode()` in its own tests; its own methods are tested as usual.
+    - A record with own methods (including static factories and additional constructors) but without a constructor body
+      or such an override tests these methods and has no `testRecord`.
+    - A pure data carrier without a constructor body, own methods, or overrides has no test of its own; its accessors
+      and `toString()` are generated.
+    - A private nested record is tested through its enclosing type.
 - Configuration and factory tests should cover valid defaults, each rejected unsupported option, and boundary values
   just
   inside/outside configured ranges.

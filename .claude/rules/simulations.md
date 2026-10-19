@@ -193,6 +193,8 @@ Use `CellDrawer` from `simulations.core.view`:
 - Expose config as JavaFX properties or repository input wrappers (`InputDoubleProperty`, `InputIntegerProperty`,
   `InputEnumProperty`).
 - Provide sensible defaults and validate before passing config to the Model layer.
+- `*Config` records are created from unvalidated input and have no validating constructor; check them with `isValid()`
+  (which calls `isBaseValid()` first) before passing them to the Model layer.
 
 ## Lifecycle
 
