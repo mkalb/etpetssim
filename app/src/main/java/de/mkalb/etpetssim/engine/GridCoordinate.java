@@ -1,15 +1,17 @@
 package de.mkalb.etpetssim.engine;
 
+import java.util.*;
+
 /**
  * Represents an immutable coordinate in a two-dimensional simulation grid.
- * <p>
- * Each coordinate is defined by its non-negative {@code x} (horizontal) and {@code y} (vertical) values.
+ *
+ * <p>Each coordinate is defined by its non-negative {@code x} (horizontal) and {@code y} (vertical) values.
  * Negative values are considered illegal and indicate an invalid or uninitialized state.
- * <p>
- * Provides methods for bounds checking, coordinate arithmetic, and
+ *
+ * <p>Provides methods for bounds checking, coordinate arithmetic, and
  * grid-specific queries (such as cell orientation and offset for different cell shapes).
- * <p>
- * The natural ordering of this type is lexicographic: first by {@code x}, then by {@code y}.
+ *
+ * <p>The natural ordering of this type is lexicographic: first by {@code x}, then by {@code y}.
  *
  * @param x the x-coordinate (horizontal position, must be non-negative for valid coordinates)
  * @param y the y-coordinate (vertical position, must be non-negative for valid coordinates)
@@ -39,7 +41,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
     /**
      * Checks if the coordinate is illegal.
      *
-     * @return true if the coordinate is illegal, false otherwise
+     * @return {@code true} if the coordinate is illegal, {@code false} otherwise
      */
     @SuppressWarnings("ObjectEquality")
     public boolean isIllegal() {
@@ -55,7 +57,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * @param minY the minimum y-coordinate (inclusive)
      * @param maxX the maximum x-coordinate (exclusive)
      * @param maxY the maximum y-coordinate (exclusive)
-     * @return true if the coordinate lies within the specified bounds, false otherwise
+     * @return {@code true} if the coordinate lies within the specified bounds, {@code false} otherwise
      */
     public boolean isWithinBounds(int minX, int minY, int maxX, int maxY) {
         return (x >= minX) && (x < maxX) && (y >= minY) && (y < maxY);
@@ -67,7 +69,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      *
      * @param minCorner the minimum corner (inclusive)
      * @param maxCorner the maximum corner (exclusive)
-     * @return true if this coordinate lies within the bounds, false otherwise
+     * @return {@code true} if this coordinate lies within the bounds, {@code false} otherwise
      */
     public boolean isWithinBounds(GridCoordinate minCorner, GridCoordinate maxCorner) {
         return isWithinBounds(minCorner.x, minCorner.y, maxCorner.x, maxCorner.y);
@@ -78,7 +80,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * and the given exclusive corner coordinate.
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
-     * @return true if this coordinate lies within the defined bounds, false otherwise
+     * @return {@code true} if this coordinate lies within the defined bounds, {@code false} otherwise
      * @see #ORIGIN
      */
     public boolean isWithinOriginBounds(GridCoordinate exclusiveCorner) {
@@ -90,13 +92,11 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * Origin bounds are defined by (0, 0) inclusive and the given exclusive corner.
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
-     * @return true if x is within origin bounds and y is out of origin bounds, false otherwise
+     * @return {@code true} if x is within origin bounds and y is out of origin bounds, {@code false} otherwise
      * @see #ORIGIN
      */
     public boolean isXWithinAndYOutOfOriginBounds(GridCoordinate exclusiveCorner) {
-        boolean xWithin = (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
-        boolean yWithin = (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
-        return xWithin && !yWithin;
+        return isXWithinOriginBounds(exclusiveCorner) && !isYWithinOriginBounds(exclusiveCorner);
     }
 
     /**
@@ -104,13 +104,11 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * Origin bounds are defined by (0, 0) inclusive and the given exclusive corner.
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
-     * @return true if x is out of origin bounds and y is within origin bounds, false otherwise
+     * @return {@code true} if x is out of origin bounds and y is within origin bounds, {@code false} otherwise
      * @see #ORIGIN
      */
     public boolean isYWithinAndXOutOfOriginBounds(GridCoordinate exclusiveCorner) {
-        boolean xWithin = (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
-        boolean yWithin = (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
-        return !xWithin && yWithin;
+        return !isXWithinOriginBounds(exclusiveCorner) && isYWithinOriginBounds(exclusiveCorner);
     }
 
     /**
@@ -118,13 +116,19 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * Origin bounds are defined by (0, 0) inclusive and the given exclusive corner.
      *
      * @param exclusiveCorner the exclusive corner coordinate defining the bounds
-     * @return true if both x and y are out of origin bounds, false otherwise
+     * @return {@code true} if both x and y are out of origin bounds, {@code false} otherwise
      * @see #ORIGIN
      */
     public boolean isXAndYOutOfOriginBounds(GridCoordinate exclusiveCorner) {
-        boolean xWithin = (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
-        boolean yWithin = (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
-        return !xWithin && !yWithin;
+        return !isXWithinOriginBounds(exclusiveCorner) && !isYWithinOriginBounds(exclusiveCorner);
+    }
+
+    private boolean isXWithinOriginBounds(GridCoordinate exclusiveCorner) {
+        return (x >= MIN_VALID_COORDINATE) && (x < exclusiveCorner.x);
+    }
+
+    private boolean isYWithinOriginBounds(GridCoordinate exclusiveCorner) {
+        return (y >= MIN_VALID_COORDINATE) && (y < exclusiveCorner.y);
     }
 
     /**
@@ -182,7 +186,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
      * @return {@code true} if the hexagon cell at this coordinate is vertically offset, {@code false} otherwise
      */
     public boolean hasHexagonCellYOffset() {
-        return (x % 2) != 0;
+        return isOddColumn();
     }
 
     /**
@@ -272,8 +276,8 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
 
     /**
      * Returns the offset (delta) from this coordinate to the specified target coordinate.
-     * <p>
-     * The offset is computed as (target.x - this.x, target.y - this.y).
+     *
+     * <p>The offset is computed as (target.x - this.x, target.y - this.y).
      *
      * @param target the target coordinate
      * @return a new GridOffset representing the difference from this to the target coordinate
@@ -302,12 +306,9 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
 
     /**
      * Returns a short, human-readable string representation of this coordinate.
-     * <p>
-     * Format: {@code (x, y)}
-     * <br>
-     * Example: {@code (15, 20)}
-     * <br>
-     * Returns {@code (illegal)} if this coordinate is the constant {@link #ILLEGAL}.
+     *
+     * <p>Format: {@code (x, y)}, e.g., {@code (15, 20)}. Returns {@code (illegal)} if this coordinate is the
+     * constant {@link #ILLEGAL}.
      *
      * @return a concise display string for this coordinate
      */
@@ -316,7 +317,7 @@ public record GridCoordinate(int x, int y) implements Comparable<GridCoordinate>
         if (this == ILLEGAL) {
             return "(illegal)";
         }
-        return String.format("(%d, %d)", x, y);
+        return String.format(Locale.ROOT, "(%d, %d)", x, y);
     }
 
 }

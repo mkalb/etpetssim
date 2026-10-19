@@ -8,27 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 final class GridCoordinateTest {
 
     @Test
-    void testRecord() {
-        GridCoordinate coordinate = new GridCoordinate(5, 10);
-        assertEquals(5, coordinate.x());
-        assertEquals(10, coordinate.y());
-
-        assertTrue(coordinate.toString().contains("x=5"));
-        assertTrue(coordinate.toString().contains("y=10"));
-    }
-
-    @Test
-    void testCompareTo() {
-        assertEquals(0, new GridCoordinate(5, 10).compareTo(new GridCoordinate(5, 10)));
-
-        assertTrue(new GridCoordinate(4, 100).compareTo(new GridCoordinate(5, 0)) < 0);
-        assertTrue(new GridCoordinate(6, 0).compareTo(new GridCoordinate(5, 100)) > 0);
-
-        assertTrue(new GridCoordinate(5, 9).compareTo(new GridCoordinate(5, 10)) < 0);
-        assertTrue(new GridCoordinate(5, 11).compareTo(new GridCoordinate(5, 10)) > 0);
-    }
-
-    @Test
     void testOrigin() {
         assertEquals(0, GridCoordinate.ORIGIN.x());
         assertEquals(0, GridCoordinate.ORIGIN.y());
@@ -213,6 +192,17 @@ final class GridCoordinateTest {
         GridCoordinate coordinate = new GridCoordinate(3, 4);
         assertEquals(new GridOffset(-1, 3), coordinate.offsetTo(new GridCoordinate(2, 7)));
         assertEquals(new GridOffset(-3, -4), coordinate.offsetTo(new GridCoordinate(0, 0)));
+    }
+
+    @Test
+    void testCompareTo() {
+        assertEquals(0, new GridCoordinate(5, 10).compareTo(new GridCoordinate(5, 10)));
+
+        assertTrue(new GridCoordinate(4, 100).compareTo(new GridCoordinate(5, 0)) < 0);
+        assertTrue(new GridCoordinate(6, 0).compareTo(new GridCoordinate(5, 100)) > 0);
+
+        assertTrue(new GridCoordinate(5, 9).compareTo(new GridCoordinate(5, 10)) < 0);
+        assertTrue(new GridCoordinate(5, 11).compareTo(new GridCoordinate(5, 10)) > 0);
     }
 
     @Test

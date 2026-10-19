@@ -1,12 +1,14 @@
 package de.mkalb.etpetssim.engine;
 
+import java.util.*;
+
 /**
  * Represents an immutable offset (delta) in a two-dimensional simulation grid.
- * <p>
- * Each offset is defined by its {@code dx} (horizontal delta) and {@code dy} (vertical delta) values.
+ *
+ * <p>Each offset is defined by its {@code dx} (horizontal delta) and {@code dy} (vertical delta) values.
  * Positive and negative values indicate direction along each axis.
- * <p>
- * The interpretation of an offset depends on the {@link CellShape}
+ *
+ * <p>The interpretation of an offset depends on the {@link CellShape}
  * and may also be affected by the position on the grid (e.g., for hexagonal or triangular grids).
  *
  * @param dx the change in the x-coordinate (horizontal direction)
@@ -18,8 +20,8 @@ public record GridOffset(int dx, int dy) {
 
     /**
      * Calculates the offset (delta) between two {@link GridCoordinate} instances.
-     * <p>
-     * The offset is computed as the difference of the x and y coordinates:
+     *
+     * <p>The offset is computed as the difference of the x and y coordinates:
      * dx = to.x - from.x, dy = to.y - from.y.
      *
      * @param from the starting coordinate
@@ -72,7 +74,7 @@ public record GridOffset(int dx, int dy) {
     /**
      * Checks if this offset is zero (no movement).
      *
-     * @return true if dx and dy are both zero, false otherwise
+     * @return {@code true} if dx and dy are both zero, {@code false} otherwise
      */
     public boolean isZero() {
         return (dx == 0) && (dy == 0);
@@ -80,8 +82,8 @@ public record GridOffset(int dx, int dy) {
 
     /**
      * Returns the Manhattan length (L1 norm) of this offset.
-     * <p>
-     * Only meaningful for grids with {@link CellShape#SQUARE}.
+     *
+     * <p>Only meaningful for grids with {@link CellShape#SQUARE}.
      *
      * @return the sum of the absolute values of dx and dy
      */
@@ -91,8 +93,8 @@ public record GridOffset(int dx, int dy) {
 
     /**
      * Returns the Euclidean length (L2 norm) of this offset.
-     * <p>
-     * Only meaningful for grids with {@link CellShape#SQUARE}.
+     *
+     * <p>Only meaningful for grids with {@link CellShape#SQUARE}.
      *
      * @return the Euclidean distance represented by this offset
      */
@@ -102,15 +104,13 @@ public record GridOffset(int dx, int dy) {
 
     /**
      * Returns a short, human-readable string representation of this offset.
-     * <p>
-     * Format: {@code [dx, dy]}
-     * <br>
-     * Example: {@code [+1, -1]}
+     *
+     * <p>Format: {@code [dx, dy]} with explicit signs, e.g., {@code [+1, -1]}.
      *
      * @return a concise display string for this offset
      */
     public String toDisplayString() {
-        return String.format("[%+d, %+d]", dx, dy);
+        return String.format(Locale.ROOT, "[%+d, %+d]", dx, dy);
     }
 
 }

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class SimulationTerminationConditionTest {
 
     private static final GridStructure STRUCTURE = new GridStructure(
-            new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), GridSize.EXTRA_SMALL_SQUARE);
+            new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), GridSize.square(GridSize.MIN_SIZE));
     private static final SparseGridModel<TestEntity> MODEL = new SparseGridModel<>(STRUCTURE, TestEntity.EMPTY);
     private static final String CONTEXT = "context";
 

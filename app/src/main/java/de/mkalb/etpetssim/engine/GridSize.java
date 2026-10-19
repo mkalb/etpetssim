@@ -1,13 +1,15 @@
 package de.mkalb.etpetssim.engine;
 
+import java.util.*;
+
 /**
  * Represents the logical size of a two-dimensional simulation grid.
- * <p>
- * The grid size is defined by its {@code width} (number of columns) and {@code height} (number of rows).
+ *
+ * <p>The grid size is defined by its {@code width} (number of columns) and {@code height} (number of rows).
  * Both values must be within the valid range from {@value #MIN_SIZE} to {@value #MAX_SIZE}.
- * <p>
- * Provides methods for size validation, area and perimeter calculation,
- * aspect ratio, orientation checks, and standard grid sizes.
+ *
+ * <p>Provides methods for size validation, area and perimeter calculation,
+ * aspect ratio, and orientation checks.
  *
  * @param width  the number of columns (horizontal cells), must be within valid range
  * @param height the number of rows (vertical cells), must be within valid range
@@ -29,35 +31,20 @@ public record GridSize(int width, int height) {
     /**
      * The maximum valid size for width and height: 16384 (2^14).
      */
-    public static final int MAX_SIZE = 16_384; // equals 2^14.
-
-    public static final GridSize EXTRA_SMALL_SQUARE = square(MIN_SIZE);
-    public static final GridSize SMALL_SQUARE = square(MIN_SIZE * 2);
-    public static final GridSize MEDIUM_SQUARE = square(MIN_SIZE * 4);
-    public static final GridSize LARGE_SQUARE = square(MIN_SIZE * 8);
-    public static final GridSize EXTRA_LARGE_SQUARE = square(MIN_SIZE * 16);
-
-    public static final GridSize EXTRA_SMALL_RECTANGLE = new GridSize(MIN_SIZE * 2, MIN_SIZE);
-    public static final GridSize SMALL_RECTANGLE = new GridSize(MIN_SIZE * 4, MIN_SIZE * 2);
-    public static final GridSize MEDIUM_RECTANGLE = new GridSize(MIN_SIZE * 8, MIN_SIZE * 4);
-    public static final GridSize LARGE_RECTANGLE = new GridSize(MIN_SIZE * 16, MIN_SIZE * 8);
-    public static final GridSize EXTRA_LARGE_RECTANGLE = new GridSize(MIN_SIZE * 32, MIN_SIZE * 16);
+    public static final int MAX_SIZE = 16_384;
 
     /**
-     * Constructs a new {@code GridSize} with the specified width and height.
-     * <p>
-     * Both values must be within the valid range defined by {@link #MIN_SIZE} and {@link #MAX_SIZE}.
+     * Validates that width and height are within the valid range.
      *
-     * @param width  the number of columns (horizontal cells)
-     * @param height the number of rows (vertical cells)
-     * @throws IllegalArgumentException if width or height is out of bounds
+     * @throws IllegalArgumentException if width or height is less than {@link #MIN_SIZE} or greater than
+     *                                  {@link #MAX_SIZE}
      */
     public GridSize {
         if (isInvalidSize(width)) {
-            throw new IllegalArgumentException(String.format("Width must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, "Width must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, width));
         }
         if (isInvalidSize(height)) {
-            throw new IllegalArgumentException(String.format("Height must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
+            throw new IllegalArgumentException(String.format(Locale.ROOT, "Height must be between %d and %d, but was: %d", MIN_SIZE, MAX_SIZE, height));
         }
     }
 
@@ -104,7 +91,7 @@ public record GridSize(int width, int height) {
     /**
      * Checks if the grid is a square.
      *
-     * @return true if the grid is a square (width equals height), false otherwise
+     * @return {@code true} if the grid is a square (width equals height), {@code false} otherwise
      */
     public boolean isSquare() {
         return width == height;
@@ -113,7 +100,7 @@ public record GridSize(int width, int height) {
     /**
      * Checks if the grid is in landscape orientation.
      *
-     * @return true if the grid is landscape (width greater than height), false otherwise
+     * @return {@code true} if the grid is landscape (width greater than height), {@code false} otherwise
      */
     public boolean isLandscape() {
         return width > height;
@@ -122,7 +109,7 @@ public record GridSize(int width, int height) {
     /**
      * Checks if the grid is in portrait orientation.
      *
-     * @return true if the grid is portrait (height greater than width), false otherwise
+     * @return {@code true} if the grid is portrait (height greater than width), {@code false} otherwise
      */
     public boolean isPortrait() {
         return height > width;
@@ -130,8 +117,8 @@ public record GridSize(int width, int height) {
 
     /**
      * Computes the aspect ratio of the grid.
-     * <p>
-     * The aspect ratio is defined as {@code width / height}.
+     *
+     * <p>The aspect ratio is defined as {@code width / height}.
      * A square grid has an aspect ratio of 1.0.
      *
      * @return the aspect ratio of the grid as a double
@@ -142,15 +129,13 @@ public record GridSize(int width, int height) {
 
     /**
      * Returns a short, human-readable string representation of this grid size.
-     * <p>
-     * Format: {@code width × height}
-     * <br>
-     * Example: {@code 10 × 20}
+     *
+     * <p>Format: {@code width × height}, e.g., {@code 10 × 20}.
      *
      * @return a concise display string for this grid size
      */
     public String toDisplayString() {
-        return String.format("%d × %d", width, height);
+        return String.format(Locale.ROOT, "%d × %d", width, height);
     }
 
 }

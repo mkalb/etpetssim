@@ -28,7 +28,7 @@ final class FXGridCanvasPainterTest {
 
     @SuppressWarnings("SameParameterValue")
     private static GridStructure createStructure(CellShape shape) {
-        return new GridStructure(new GridTopology(shape, GridEdgeBehavior.ABSORB_XY), GridSize.EXTRA_SMALL_SQUARE);
+        return new GridStructure(new GridTopology(shape, GridEdgeBehavior.ABSORB_XY), GridSize.square(GridSize.MIN_SIZE));
     }
 
     private static FXGridCanvasPainter createPainter(Canvas canvas) {
@@ -116,6 +116,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testFillCanvasBackground() {
         FXTestSupport.runAndWait(() -> {
@@ -169,6 +170,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawCell() {
         FXTestSupport.runAndWait(() -> {
@@ -181,6 +183,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawScaledCell() {
         FXTestSupport.runAndWait(() -> {
@@ -205,6 +208,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawCellBoundingBox() {
         FXTestSupport.runAndWait(() -> {
@@ -217,6 +221,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawCellInnerCircle() {
         FXTestSupport.runAndWait(() -> {
@@ -289,6 +294,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawRectangle() {
         FXTestSupport.runAndWait(() -> {
@@ -301,6 +307,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawCircle() {
         FXTestSupport.runAndWait(() -> {
@@ -313,6 +320,7 @@ final class FXGridCanvasPainterTest {
         });
     }
 
+    @SuppressWarnings("TestMethodWithoutAssertion")
     @Test
     void testDrawPolygon() {
         FXTestSupport.runAndWait(() -> {

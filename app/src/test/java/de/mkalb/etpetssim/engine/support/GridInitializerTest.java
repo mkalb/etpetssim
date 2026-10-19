@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class GridInitializerTest {
 
     private static final GridStructure STRUCTURE = new GridStructure(
-            new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), GridSize.EXTRA_SMALL_SQUARE);
+            new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), GridSize.square(GridSize.MIN_SIZE));
 
     @Test
     void testAndThenAppliesInitializersInOrder() {

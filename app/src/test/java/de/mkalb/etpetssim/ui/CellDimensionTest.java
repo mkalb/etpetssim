@@ -56,10 +56,28 @@ final class CellDimensionTest {
                 () -> assertEquals(INNER_RADIUS, dimension.innerRadius()),
                 () -> assertEquals(OUTER_RADIUS, dimension.outerRadius()),
                 () -> assertEquals(COLUMN_WIDTH, dimension.columnWidth()),
-                () -> assertEquals(ROW_HEIGHT, dimension.rowHeight()),
-                () -> assertTrue(dimension.toString().contains("edgeLength=" + EDGE_LENGTH)),
-                () -> assertTrue(dimension.toString().contains("width=" + WIDTH)),
-                () -> assertTrue(dimension.toString().contains("height=" + HEIGHT))
+                () -> assertEquals(ROW_HEIGHT, dimension.rowHeight())
+        );
+    }
+
+    @Test
+    void testConstructorRejectsNonFiniteValues() {
+        assertAll(
+                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                        Double.NaN, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
+                        INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
+                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                        EDGE_LENGTH, Double.POSITIVE_INFINITY, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
+                        INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
+                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                        EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, Double.NaN,
+                        INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
+                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                        EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
+                        INNER_RADIUS, Double.POSITIVE_INFINITY, COLUMN_WIDTH, ROW_HEIGHT)),
+                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                        EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
+                        INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, Double.NaN))
         );
     }
 
@@ -196,7 +214,7 @@ final class CellDimensionTest {
     }
 
     @Test
-    void testToDisplayStringUsesUsLocaleFormatting() {
+    void testToDisplayString() {
         Locale.setDefault(Locale.GERMANY);
         CellDimension dimension = createCellDimension(
                 DISPLAY_EDGE_LENGTH,
@@ -211,6 +229,11 @@ final class CellDimensionTest {
                 ROW_HEIGHT);
 
         assertEquals("[1234.5, 2345.6 × 3456.7]", dimension.toDisplayString());
+    }
+
+    private void assertFiniteDimensionValidationFailure(Executable executable) {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, executable);
+        assertTrue(exception.getMessage().contains("All dimensions must be finite."));
     }
 
     private void assertPositiveDimensionValidationFailure(Executable executable) {

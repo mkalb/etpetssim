@@ -12,9 +12,6 @@ final class GridSizeTest {
         GridSize size = new GridSize(32, 64);
         assertEquals(32, size.width());
         assertEquals(64, size.height());
-
-        assertTrue(size.toString().contains("width=32"));
-        assertTrue(size.toString().contains("height=64"));
     }
 
     @Test

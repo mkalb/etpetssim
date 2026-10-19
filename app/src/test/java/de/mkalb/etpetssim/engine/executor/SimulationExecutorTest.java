@@ -125,7 +125,7 @@ final class SimulationExecutorTest {
 
         private final SparseGridModel<TestEntity> model = new SparseGridModel<>(
                 new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                        GridSize.EXTRA_SMALL_SQUARE),
+                        GridSize.square(GridSize.MIN_SIZE)),
                 TestEntity.EMPTY);
         private final int finishedAtStep;
         private int stepCount;

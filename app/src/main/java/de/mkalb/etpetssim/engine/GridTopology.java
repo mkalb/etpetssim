@@ -1,12 +1,14 @@
 package de.mkalb.etpetssim.engine;
 
+import java.util.*;
+
 /**
  * Represents the topological configuration of a grid, including its cell shape and boundary behavior.
- * <p>
- * All cell shapes used in this topology are regular polygons
+ *
+ * <p>All cell shapes used in this topology are regular polygons
  * and are rendered with a consistent orientation strategy for visual clarity and simplicity.
- * <p>
- * <strong>Orientation:</strong>
+ *
+ * <p><strong>Orientation:</strong>
  * <ul>
  *   <li>{@link CellShape#HEXAGON} is always rendered with a <strong>flat-top</strong> orientation,
  *   meaning one of its edges is aligned horizontally at the top.</li>
@@ -15,8 +17,8 @@ package de.mkalb.etpetssim.engine;
  *   ({@code x + y} even/odd), creating a checkerboard-style up/down pattern
  *   that supports consistent neighbor relationships and visual symmetry.</li>
  * </ul>
- * <p>
- * The orientation design simplifies rendering logic and ensures a uniform appearance across different grid types.
+ *
+ * <p>The orientation design simplifies rendering logic and ensures a uniform appearance across different grid types.
  *
  * @param cellShape        the shape of each cell in the grid
  * @param gridEdgeBehavior the type of boundary behavior for the grid edges
@@ -36,32 +38,32 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
     public static final int MAX_REQUIRED_HEIGHT_MULTIPLE = 2;
 
     /**
-     * The required width multiple for square cell shapes.
+     * The maximum required width multiple for square cell shapes, needed with {@link EdgeBehavior#WRAP}.
      */
     public static final int SQUARE_MAX_REQUIRED_WIDTH_MULTIPLE = 1;
 
     /**
-     * The required height multiple for square cell shapes.
+     * The maximum required height multiple for square cell shapes, needed with {@link EdgeBehavior#WRAP}.
      */
     public static final int SQUARE_MAX_REQUIRED_HEIGHT_MULTIPLE = 1;
 
     /**
-     * The required width multiple for triangle cell shapes.
+     * The maximum required width multiple for triangle cell shapes, needed with {@link EdgeBehavior#WRAP}.
      */
     public static final int TRIANGLE_MAX_REQUIRED_WIDTH_MULTIPLE = 2;
 
     /**
-     * The required height multiple for triangle cell shapes.
+     * The maximum required height multiple for triangle cell shapes, needed with {@link EdgeBehavior#WRAP}.
      */
     public static final int TRIANGLE_MAX_REQUIRED_HEIGHT_MULTIPLE = 2;
 
     /**
-     * The required width multiple for hexagon cell shapes.
+     * The maximum required width multiple for hexagon cell shapes, needed with {@link EdgeBehavior#WRAP}.
      */
     public static final int HEXAGON_MAX_REQUIRED_WIDTH_MULTIPLE = 2;
 
     /**
-     * The required height multiple for hexagon cell shapes.
+     * The maximum required height multiple for hexagon cell shapes, needed with {@link EdgeBehavior#WRAP}.
      */
     public static final int HEXAGON_MAX_REQUIRED_HEIGHT_MULTIPLE = 1;
 
@@ -132,10 +134,10 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
     /**
      * Returns the number of vertices of each individual cell shape, which equals the number of edges
      * since the shape is regular.
-     * <p>
-     * For example: TRIANGLE has 3, SQUARE has 4, HEXAGON has 6.
-     * <p>
-     * Note: This refers to the geometry of a single cell, not the grid as a whole.
+     *
+     * <p>For example: TRIANGLE has 3, SQUARE has 4, HEXAGON has 6.
+     *
+     * <p>Note: This refers to the geometry of a single cell, not the grid as a whole.
      *
      * @return the number of vertices (and edges) of a single cell shape
      */
@@ -145,21 +147,20 @@ public record GridTopology(CellShape cellShape, GridEdgeBehavior gridEdgeBehavio
 
     /**
      * Returns a short, human-readable string representation of this grid topology.
-     * <p>
-     * Format: {@code [SHAPE EDGE_BEHAVIOR]} if both edge behaviors are identical,
-     * or {@code [SHAPE EDGE_BEHAVIOR_X/EDGE_BEHAVIOR_Y]} if they differ.
-     * <br>
-     * Example: {@code [SQUARE ABSORB]} or {@code [HEXAGON BLOCK/WRAP]}
+     *
+     * <p>Format: {@code [SHAPE EDGE_BEHAVIOR]} if both edge behaviors are identical,
+     * or {@code [SHAPE EDGE_BEHAVIOR_X/EDGE_BEHAVIOR_Y]} if they differ, e.g., {@code [SQUARE ABSORB]} or
+     * {@code [HEXAGON BLOCK/WRAP]}.
      *
      * @return a concise display string for this grid topology
      */
     public String toDisplayString() {
         if (gridEdgeBehavior.hasEqualEdgeBehaviors()) {
-            return String.format("[%s %s]",
+            return String.format(Locale.ROOT, "[%s %s]",
                     cellShape.name(),
                     gridEdgeBehavior.edgeBehaviorX().name());
         }
-        return String.format("[%s %s/%s]",
+        return String.format(Locale.ROOT, "[%s %s/%s]",
                 cellShape.name(),
                 gridEdgeBehavior.edgeBehaviorX().name(),
                 gridEdgeBehavior.edgeBehaviorY().name());

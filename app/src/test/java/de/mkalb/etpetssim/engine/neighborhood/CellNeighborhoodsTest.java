@@ -376,7 +376,7 @@ final class CellNeighborhoodsTest {
     void testCellsByRadiusRingsReturnsUnmodifiableResultForRadiusZero() {
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                GridSize.EXTRA_SMALL_SQUARE);
+                GridSize.square(GridSize.MIN_SIZE));
         GridCoordinate startCoordinate = new GridCoordinate(1, 1);
 
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>>> radiusRings =
@@ -405,7 +405,7 @@ final class CellNeighborhoodsTest {
     void testCellsByRadiusRingsRejectsInvalidRadiusOrCoordinate() {
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                GridSize.EXTRA_SMALL_SQUARE);
+                GridSize.square(GridSize.MIN_SIZE));
 
         assertThrows(IllegalArgumentException.class, () -> CellNeighborhoods.cellsByRadiusRings(
                 new GridCoordinate(1, 1),
@@ -431,7 +431,7 @@ final class CellNeighborhoodsTest {
     void testCellsByRadiusRingsWrapsAndReturnsUniqueCells() {
         GridStructure structure = new GridStructure(
                 new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
-                GridSize.EXTRA_SMALL_SQUARE);
+                GridSize.square(GridSize.MIN_SIZE));
         GridCoordinate startCoordinate = new GridCoordinate(0, 0);
 
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>>> radiusRings =
@@ -500,7 +500,7 @@ final class CellNeighborhoodsTest {
         for (GridEdgeBehavior edgeBehavior : List.of(GridEdgeBehavior.BLOCK_XY, GridEdgeBehavior.ABSORB_XY)) {
             GridStructure structure = new GridStructure(
                     new GridTopology(CellShape.SQUARE, edgeBehavior),
-                    GridSize.EXTRA_SMALL_SQUARE);
+                    GridSize.square(GridSize.MIN_SIZE));
 
             SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<GridCoordinate>>> radiusRings =
                     CellNeighborhoods.cellsByRadiusRings(

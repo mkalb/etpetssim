@@ -2,28 +2,9 @@ package de.mkalb.etpetssim.engine;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 final class GridTopologyTest {
-
-    @Test
-    void testRecord() {
-        GridTopology topology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
-        assertEquals(CellShape.HEXAGON, topology.cellShape());
-        assertEquals(GridEdgeBehavior.WRAP_XY, topology.gridEdgeBehavior());
-
-        assertTrue(topology.toString().contains("cellShape=HEXAGON"));
-        assertTrue(topology.toString().contains("gridEdgeBehavior=WRAP_XY"));
-    }
-
-    @Test
-    void testToDisplayStringReturnsShapeAndEdgeBehavior() {
-        assertEquals("[SQUARE BLOCK/WRAP]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y).toDisplayString());
-        assertEquals("[HEXAGON WRAP/BLOCK]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_X_BLOCK_Y).toDisplayString());
-        assertEquals("[SQUARE BLOCK]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY).toDisplayString());
-        assertEquals("[HEXAGON WRAP]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY).toDisplayString());
-        assertEquals("[TRIANGLE ABSORB]", new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY).toDisplayString());
-    }
 
     @Test
     void testRequiredWidthMultipleWithCellShape() {
@@ -89,9 +70,14 @@ final class GridTopologyTest {
     }
 
     @Test
-    void testToDisplayStringForMoreCombinations() {
-        assertEquals("[SQUARE ABSORB]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY).toDisplayString());
+    void testToDisplayString() {
+        assertEquals("[SQUARE BLOCK/WRAP]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_X_WRAP_Y).toDisplayString());
+        assertEquals("[HEXAGON WRAP/BLOCK]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_X_BLOCK_Y).toDisplayString());
         assertEquals("[HEXAGON BLOCK/WRAP]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_X_WRAP_Y).toDisplayString());
+        assertEquals("[SQUARE BLOCK]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY).toDisplayString());
+        assertEquals("[HEXAGON WRAP]", new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY).toDisplayString());
+        assertEquals("[TRIANGLE ABSORB]", new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.ABSORB_XY).toDisplayString());
+        assertEquals("[SQUARE ABSORB]", new GridTopology(CellShape.SQUARE, GridEdgeBehavior.ABSORB_XY).toDisplayString());
     }
 
 }

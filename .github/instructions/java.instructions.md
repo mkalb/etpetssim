@@ -33,7 +33,8 @@ Use these method naming patterns when they match the method's primary behavior; 
   `Optional<T>`
 - `to...`: convert a value to a target type or representation, typically as a new independent value or copy
 - `toDisplayString()`: short human-readable representation of the receiver (a value or entity); keep it separate from
-  `toString()`, which stays a technical diagnostic representation
+  `toString()`, which stays a technical diagnostic representation. It is locale-independent: format numbers with
+  `Locale.ROOT`; localized UI text uses `AppLocalization` or `NumberFormat` instead
 - `parse...`: convert text with a format or grammar to a value, as in `Integer.parseInt`; throw on invalid input or
   return a supplied default
 - `format...`: produce display or log text from values, usually localized
@@ -169,6 +170,7 @@ Rules for main sources; `core.instructions.md` adds stricter rules for `core`, a
 - When a constructor or method has Javadoc, document every parameter and type parameter with `@param` and every
   non-void result with `@return` or `{@return ...}`.
 - Document every record component with `@param` in the record Javadoc, and every type parameter of a generic type.
+  The Javadoc of a compact constructor documents its invariants with `@throws` and has no `@param` tags.
 - Document contract-relevant unchecked exceptions with `@throws`; do not add routine `NullPointerException` notes
   for non-null-by-default contracts.
 

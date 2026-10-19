@@ -5,14 +5,14 @@ import java.util.stream.*;
 
 /**
  * Represents the logical structure of a two-dimensional simulation grid.
- * <p>
- * The grid is defined by its {@link GridTopology}, which specifies the cell shape
+ *
+ * <p>The grid is defined by its {@link GridTopology}, which specifies the cell shape
  * and edge behavior for both axes.
- * <p>
- * The {@link GridSize} determines the grid's logical dimensions, i.e., the number of columns (width)
+ *
+ * <p>The {@link GridSize} determines the grid's logical dimensions, i.e., the number of columns (width)
  * and rows (height). These values represent cell counts, not pixel sizes.
- * <p>
- * Provides methods for accessing cell shape, edge behavior, coordinate bounds,
+ *
+ * <p>Provides methods for accessing cell shape, edge behavior, coordinate bounds,
  * and for iterating over all valid cell positions within the grid.
  *
  * @param topology the grid topology (cell shape and edge behavior)
@@ -27,40 +27,45 @@ public record GridStructure(GridTopology topology, GridSize size) {
 
     /**
      * Validates that the provided {@link GridSize} is compatible with the given {@link GridTopology}.
-     * <p>
-     * The grid width and height must be multiples of the required values as specified by the topology.
-     * If these constraints are not met, an {@link IllegalArgumentException} is thrown.
+     *
+     * <p>The grid width and height must be multiples of the required values as specified by the topology.
      *
      * @throws IllegalArgumentException if the grid width or height is not a valid multiple for the topology
      */
     public GridStructure {
-        int widthMultiple = topology.requiredWidthMultiple();
-        int heightMultiple = topology.requiredHeightMultiple();
-        if ((size.width() % widthMultiple) != 0) {
+        if (!hasValidWidthMultiple(topology, size)) {
             throw new IllegalArgumentException(
-                    String.format("Grid width (%d) must be a multiple of %d for topology %s", size.width(), widthMultiple, topology.toDisplayString())
+                    String.format(Locale.ROOT, "Grid width (%d) must be a multiple of %d for topology %s",
+                            size.width(), topology.requiredWidthMultiple(), topology.toDisplayString())
             );
         }
-        if ((size.height() % heightMultiple) != 0) {
+        if (!hasValidHeightMultiple(topology, size)) {
             throw new IllegalArgumentException(
-                    String.format("Grid height (%d) must be a multiple of %d for topology %s", size.height(), heightMultiple, topology.toDisplayString())
+                    String.format(Locale.ROOT, "Grid height (%d) must be a multiple of %d for topology %s",
+                            size.height(), topology.requiredHeightMultiple(), topology.toDisplayString())
             );
         }
     }
 
     /**
      * Checks whether the specified {@link GridSize} is valid for the given {@link GridTopology}.
-     * <p>
-     * The grid width and height must be multiples of the required values as defined by the topology.
+     *
+     * <p>The grid width and height must be multiples of the required values as defined by the topology.
      *
      * @param topology the grid topology (cell shape and edge behavior)
      * @param size     the grid size (width and height in cells)
      * @return {@code true} if the size is valid for the topology, {@code false} otherwise
      */
     public static boolean isValid(GridTopology topology, GridSize size) {
-        int widthMultiple = topology.requiredWidthMultiple();
-        int heightMultiple = topology.requiredHeightMultiple();
-        return ((size.width() % widthMultiple) == 0) && ((size.height() % heightMultiple) == 0);
+        return hasValidWidthMultiple(topology, size) && hasValidHeightMultiple(topology, size);
+    }
+
+    private static boolean hasValidWidthMultiple(GridTopology topology, GridSize size) {
+        return (size.width() % topology.requiredWidthMultiple()) == 0;
+    }
+
+    private static boolean hasValidHeightMultiple(GridTopology topology, GridSize size) {
+        return (size.height() % topology.requiredHeightMultiple()) == 0;
     }
 
     public CellShape cellShape() {
@@ -74,7 +79,7 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * @see GridSize#area()
      */
     public int cellCount() {
-        return size().area();
+        return size.area();
     }
 
     public EdgeBehavior edgeBehaviorX() {
@@ -118,7 +123,7 @@ public record GridStructure(GridTopology topology, GridSize size) {
      * Checks whether the given coordinate lies within the valid bounds of the grid.
      *
      * @param coordinate the coordinate to check
-     * @return true if the coordinate is within the grid bounds, false otherwise
+     * @return {@code true} if the coordinate is within the grid bounds, {@code false} otherwise
      * @see GridCoordinate#isWithinBounds(GridCoordinate, GridCoordinate)
      */
     public boolean isCoordinateValid(GridCoordinate coordinate) {
@@ -127,8 +132,8 @@ public record GridStructure(GridTopology topology, GridSize size) {
 
     /**
      * Returns a stream of all valid coordinates in the grid.
-     * <p>
-     * The coordinates are produced in row-major order: for each row from top to bottom,
+     *
+     * <p>The coordinates are produced in row-major order: for each row from top to bottom,
      * all columns from left to right are included, starting at (0, 0) and ending at the bottom-right corner.
      *
      * @return a stream of all valid grid coordinates in row-major order
@@ -142,16 +147,16 @@ public record GridStructure(GridTopology topology, GridSize size) {
 
     /**
      * Returns a list of all valid coordinates in the grid.
-     * <p>
-     * The coordinates are ordered row by row: for each row from top to bottom,
+     *
+     * <p>The coordinates are ordered row by row: for each row from top to bottom,
      * all columns from left to right are included, starting at (0, 0) and ending at the bottom-right corner.
      *
      * @return a list of all valid grid coordinates in row-major order
      */
     public List<GridCoordinate> coordinatesList() {
-        List<GridCoordinate> coordinates = new ArrayList<>(size().area());
-        for (int y = 0; y < size().height(); y++) {
-            for (int x = 0; x < size().width(); x++) {
+        List<GridCoordinate> coordinates = new ArrayList<>(size.area());
+        for (int y = 0; y < size.height(); y++) {
+            for (int x = 0; x < size.width(); x++) {
                 coordinates.add(new GridCoordinate(x, y));
             }
         }
@@ -160,15 +165,13 @@ public record GridStructure(GridTopology topology, GridSize size) {
 
     /**
      * Returns a short, human-readable string representation of this grid structure.
-     * <p>
-     * Format: {@code TOPOLOGY SIZE}
-     * <br>
-     * Example: {@code [SQUARE ABSORB] 10 × 20}
+     *
+     * <p>Format: {@code TOPOLOGY SIZE}, e.g., {@code [SQUARE ABSORB] 10 × 20}.
      *
      * @return a concise display string for this grid structure
      */
     public String toDisplayString() {
-        return String.format("%s %s", topology.toDisplayString(), size.toDisplayString());
+        return String.format(Locale.ROOT, "%s %s", topology.toDisplayString(), size.toDisplayString());
     }
 
 }

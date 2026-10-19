@@ -3,16 +3,17 @@ package de.mkalb.etpetssim.ui;
 import javafx.geometry.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * Describes the geometric pixel dimensions of a single cell shape
  * (e.g. triangle, square, hexagon) used in a 2D grid layout.
- * <p>
- * Provides precomputed values derived from the cell's edge length,
+ *
+ * <p>Provides precomputed values derived from the cell's edge length,
  * including full and half dimensions, inner and outer radius,
  * and spacing between adjacent cell centers in both directions.
- * <p>
- * The {@code width} and {@code height} refer to the bounding box
+ *
+ * <p>The {@code width} and {@code height} refer to the bounding box
  * that fully encloses the polygonal cell shape, aligned with the axes.
  *
  * @param edgeLength     the length of one edge of the cell in pixels
@@ -44,11 +45,15 @@ public record CellDimension(
     /**
      * Validates the provided dimensions and derived values for consistency and positivity.
      *
-     * @throws IllegalArgumentException if any required dimension is non-positive, if half-dimensions
-     *                                  do not match half of their corresponding full dimensions, or if
-     *                                  outerRadius is not greater than innerRadius
+     * @throws IllegalArgumentException if any value is not finite, if any required dimension is non-positive,
+     *                                  if half-dimensions do not match half of their corresponding full
+     *                                  dimensions, or if outerRadius is not greater than innerRadius
      */
     public CellDimension {
+        if (!DoubleStream.of(edgeLength, width, height, halfEdgeLength, halfWidth, halfHeight,
+                innerRadius, outerRadius, columnWidth, rowHeight).allMatch(Double::isFinite)) {
+            throw new IllegalArgumentException("All dimensions must be finite.");
+        }
         if ((edgeLength <= 0) || (width <= 0) || (height <= 0)
                 || (innerRadius <= 0) || (outerRadius <= 0)
                 || (columnWidth <= 0) || (rowHeight <= 0)) {
@@ -66,8 +71,8 @@ public record CellDimension(
 
     /**
      * Returns the dimensions of the bounding box that fully contains the cell shape.
-     * <p>
-     * The bounding box is a rectangle aligned with the axes, defined by the full
+     *
+     * <p>The bounding box is a rectangle aligned with the axes, defined by the full
      * {@code width} and {@code height} of the cell. It does not necessarily match
      * the actual polygonal shape but encloses it completely.
      *
@@ -79,8 +84,8 @@ public record CellDimension(
 
     /**
      * Returns the bounding box of the cell positioned at the specified top-left coordinates.
-     * <p>
-     * The bounding box is a rectangle that fully contains the cell shape.
+     *
+     * <p>The bounding box is a rectangle that fully contains the cell shape.
      * The given coordinates specify the top-left corner of this bounding box.
      *
      * @param topLeftX the x-coordinate of the top-left corner of the bounding box
@@ -93,8 +98,8 @@ public record CellDimension(
 
     /**
      * Returns the bounding box of the cell positioned at the specified top-left point.
-     * <p>
-     * The bounding box is a rectangle that fully contains the cell shape.
+     *
+     * <p>The bounding box is a rectangle that fully contains the cell shape.
      * The given point specifies the top-left corner of this bounding box.
      *
      * @param topLeft the top-left point of the bounding box
@@ -105,18 +110,15 @@ public record CellDimension(
     }
 
     /**
-     * Returns a concise string representation of this cell dimension.
-     * <p>
-     * Format: {@code [edgeLength, width × height]}
-     * <br>
-     * Example: {@code [10.0, 20.0 × 30.0]}
-     * <p>
-     * Uses {@link Locale#US} to ensure a dot as decimal separator and no thousands' separator.
+     * Returns a short, human-readable string representation of this cell dimension.
+     *
+     * <p>Format: {@code [edgeLength, width × height]} with one decimal place, a dot as decimal separator, and no
+     * thousands separator, e.g., {@code [10.0, 20.0 × 30.0]}.
      *
      * @return a concise display string for this cell dimension
      */
     public String toDisplayString() {
-        return String.format(Locale.US, "[%.1f, %.1f × %.1f]", edgeLength, width, height);
+        return String.format(Locale.ROOT, "[%.1f, %.1f × %.1f]", edgeLength, width, height);
     }
 
 }

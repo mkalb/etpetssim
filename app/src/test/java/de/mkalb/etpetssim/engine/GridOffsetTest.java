@@ -8,24 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 final class GridOffsetTest {
 
     @Test
-    void testRecord() {
-        GridOffset offset = new GridOffset(3, -5);
-        assertEquals(3, offset.dx());
-        assertEquals(-5, offset.dy());
-
-        assertTrue(offset.toString().contains("dx=3"));
-        assertTrue(offset.toString().contains("dy=-5"));
-
-        GridOffset zero = new GridOffset(0, 0);
-        assertEquals(0, zero.dx());
-        assertEquals(0, zero.dy());
-
-        GridOffset negative = new GridOffset(-100, -200);
-        assertEquals(-100, negative.dx());
-        assertEquals(-200, negative.dy());
-    }
-
-    @Test
     void testBetween() {
         assertEquals(new GridOffset(0, 9), GridOffset.between(new GridCoordinate(0, 0), new GridCoordinate(0, 9)));
         assertEquals(new GridOffset(3, 4), GridOffset.between(new GridCoordinate(1, 2), new GridCoordinate(4, 6)));

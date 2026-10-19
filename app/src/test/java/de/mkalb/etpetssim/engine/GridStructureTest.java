@@ -11,15 +11,12 @@ final class GridStructureTest {
 
     @Test
     void testRecord() {
-        GridStructure structure = new GridStructure(new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_X_BLOCK_Y),
-                new GridSize(20, 30));
+        GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_X_BLOCK_Y);
+        GridSize size = new GridSize(20, 30);
+        GridStructure structure = new GridStructure(topology, size);
 
-        assertEquals(CellShape.SQUARE, structure.cellShape());
-        assertEquals(EdgeBehavior.WRAP, structure.edgeBehaviorX());
-        assertEquals(EdgeBehavior.BLOCK, structure.edgeBehaviorY());
-
-        assertTrue(structure.toString().contains("size=GridSize[width=20, height=30]"));
-        assertTrue(structure.toString().contains("topology=GridTopology[cellShape=SQUARE, gridEdgeBehavior=WRAP_X_BLOCK_Y]"));
+        assertEquals(topology, structure.topology());
+        assertEquals(size, structure.size());
     }
 
     @Test
@@ -36,17 +33,6 @@ final class GridStructureTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 new GridStructure(triTopology, new GridSize(8, 9)));
         assertTrue(ex.getMessage().contains("multiple of 2"));
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testConstructorRejectsNullArguments() {
-        GridTopology topology = new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY);
-        GridSize size = new GridSize(8, 8);
-
-        assertThrows(NullPointerException.class, () -> new GridStructure(null, size));
-        assertThrows(NullPointerException.class, () -> new GridStructure(topology, null));
-        assertThrows(NullPointerException.class, () -> new GridStructure(null, null));
     }
 
     @Test
