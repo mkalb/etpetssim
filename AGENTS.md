@@ -118,6 +118,8 @@ Other locations:
 - Do not create, rename, or delete labels without confirmation by the maintainer.
 - When creating or editing an issue, make it complete enough for another agent to implement it alone and
   successfully; otherwise, label it `needs-refinement`.
+- Track follow-up issues as GitHub sub-issues of their parent (`gh issue edit <parent> --add-sub-issue <numbers>`)
+  instead of a hand-maintained list in the body; the body lists only planned follow-ups that are not created yet.
 - When working on an issue whose title or labels do not, or no longer, match its content, propose a change to the
   maintainer.
 - Do not implement an issue labeled `needs-refinement`. Analyze it, answer the agent questions, and present the
@@ -174,6 +176,8 @@ maintainer (GitHub login `mkalb`), including bots, are external contributions.
 - Name a plan in lowercase kebab-case with an area prefix and its topic, not its status (e.g.,
   `simulation-etpets-extensions.md`, `engine-grid-cell-aggregation.md`).
 - Start each plan with a `**Status:**` line (`idea`, `planned`, or `in progress`) and a `**Related issues:**` line.
+- Keep vague ideas for the distant future, which may never be implemented, as plans with status `idea` and a short
+  note on priority (e.g. `idea (not planned; after the 1.0 release, possibly never)`), not as issues.
 - When a plan is completed or all its open work is tracked in issues, move lasting architecture facts into Javadoc
   (type-specific) or `docs/development` (cross-cutting), then delete the plan; Git history keeps it.
 
