@@ -5,8 +5,8 @@ Simulate Langton's Ant
 ## Overview
 
 Langton's Ant explores how a simple set of movement rules can produce complex
-patterns. Ants travel across a grid of changing ground states, turn according to
-the state they enter, and leave a trail as those states advance.
+patterns. Ants travel across a grid of changing terrain states, turn according
+to the state they enter, and leave a trail as those states advance.
 
 ## Category and grid
 
@@ -17,11 +17,11 @@ the state they enter, and leave a trail as those states advance.
 
 ## Rules and mechanics
 
-- A run starts with one north-facing ant near the center of the grid, on ground
+- A run starts with one north-facing ant near the center of the grid, on terrain
   state 1.
 - On each step, an ant moves to the adjacent cell in its current direction.
-- The ant turns according to the rule assigned to the ground state it enters,
-  then that ground advances to the next state in the rule cycle.
+- The ant turns according to the rule assigned to the terrain state it enters,
+  then that terrain advances to the next state in the rule cycle.
 - A previously unvisited destination begins at state 0 before its rule is
   applied.
 - With wrapping edges, ants crossing a boundary reappear on the opposite side.
@@ -34,19 +34,19 @@ the state they enter, and leave a trail as those states advance.
 ## Entities
 
 - **Langton's Ant:** A moving agent whose direction changes according to the
-  ground state it enters. At larger cell sizes, an arrow shows its direction.
-- **Ground cells:** Initially unvisited cells that cycle through one state per
+  terrain state it enters. At larger cell sizes, an arrow shows its direction.
+- **Terrain cells:** Initially unvisited cells that cycle through one state per
   configured turn. The visible trail records where ants have traveled.
 
 ## Interactive editing
 
 - **Add Ant:** Adds an ant to the selected unvisited, unoccupied cell and sets
-  that cell to ground state 1. For square cells, choose North, East, South, or
+  that cell to terrain state 1. For square cells, choose North, East, South, or
   West; for hexagon cells, choose North, Northeast, Southeast, South,
   Southwest, or Northwest. Triangle cells choose North or South automatically
   from the selected triangle's orientation.
 - **Remove Ant:** Removes an ant from the selected cell without changing its
-  ground state.
+  terrain state.
 
 ## Configuration
 

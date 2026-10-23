@@ -8,36 +8,19 @@ import static org.junit.jupiter.api.Assertions.*;
 final class CellNeighborWithEdgeBehaviorTest {
 
     @Test
-    void testRecord() {
-        GridCoordinate start = new GridCoordinate(0, 0);
-        GridCoordinate orig = new GridCoordinate(1, 0);
-        GridCoordinate mapped = new GridCoordinate(1, 0);
-        CellNeighbor neighbor = new CellNeighbor(start, CompassDirection.E, CellConnectionType.EDGE, orig);
-        EdgeBehaviorResult edgeResult = new EdgeBehaviorResult(orig, mapped, EdgeBehaviorAction.VALID);
-
-        CellNeighborWithEdgeBehavior n1 = CellNeighborWithEdgeBehavior.of(neighbor, edgeResult);
-        CellNeighborWithEdgeBehavior n2 = new CellNeighborWithEdgeBehavior(
-                start, CompassDirection.E, CellConnectionType.EDGE, orig, mapped, EdgeBehaviorAction.VALID);
-
-        assertEquals(n1, n2);
-        assertEquals(start, n1.startCoordinate());
-        assertEquals(orig, n1.originalNeighborCoordinate());
-        assertEquals(mapped, n1.mappedNeighborCoordinate());
-        assertEquals(EdgeBehaviorAction.VALID, n1.edgeBehaviorAction());
-    }
-
-    @Test
     void testOf() {
         CellNeighborWithEdgeBehavior cellNeighborWithEdgeBehavior = CellNeighborWithEdgeBehavior.of(
-                new CellNeighbor(new GridCoordinate(1, 1), CompassDirection.W, CellConnectionType.VERTEX, new GridCoordinate(0, 1)),
-                new EdgeBehaviorResult(new GridCoordinate(0, 1), new GridCoordinate(0, 1), EdgeBehaviorAction.VALID)
+                new CellNeighbor(new GridCoordinate(0, 1), CompassDirection.W, CellConnectionType.VERTEX, new GridCoordinate(-1, 1)),
+                new EdgeBehaviorResult(new GridCoordinate(-1, 1), new GridCoordinate(9, 1), EdgeBehaviorAction.WRAPPED)
         );
-        assertEquals(new GridCoordinate(1, 1), cellNeighborWithEdgeBehavior.startCoordinate());
-        assertEquals(CompassDirection.W, cellNeighborWithEdgeBehavior.direction());
-        assertEquals(CellConnectionType.VERTEX, cellNeighborWithEdgeBehavior.connection());
-        assertEquals(new GridCoordinate(0, 1), cellNeighborWithEdgeBehavior.originalNeighborCoordinate());
-        assertEquals(new GridCoordinate(0, 1), cellNeighborWithEdgeBehavior.mappedNeighborCoordinate());
-        assertEquals(EdgeBehaviorAction.VALID, cellNeighborWithEdgeBehavior.edgeBehaviorAction());
+        assertAll(
+                () -> assertEquals(new GridCoordinate(0, 1), cellNeighborWithEdgeBehavior.startCoordinate()),
+                () -> assertEquals(CompassDirection.W, cellNeighborWithEdgeBehavior.direction()),
+                () -> assertEquals(CellConnectionType.VERTEX, cellNeighborWithEdgeBehavior.connection()),
+                () -> assertEquals(new GridCoordinate(-1, 1), cellNeighborWithEdgeBehavior.originalNeighborCoordinate()),
+                () -> assertEquals(new GridCoordinate(9, 1), cellNeighborWithEdgeBehavior.mappedNeighborCoordinate()),
+                () -> assertEquals(EdgeBehaviorAction.WRAPPED, cellNeighborWithEdgeBehavior.edgeBehaviorAction())
+        );
     }
 
     @Test
@@ -72,17 +55,17 @@ final class CellNeighborWithEdgeBehaviorTest {
 
     @Test
     void testToDisplayString() {
-        GridCoordinate start = new GridCoordinate(2, 3);
-        GridCoordinate orig = new GridCoordinate(2, 4);
-        GridCoordinate mapped = new GridCoordinate(2, 4);
-        CellNeighborWithEdgeBehavior n = new CellNeighborWithEdgeBehavior(
-                start, CompassDirection.N, CellConnectionType.EDGE, orig, mapped, EdgeBehaviorAction.VALID);
-        String display = n.toDisplayString();
-        assertTrue(display.contains(start.toDisplayString()));
-        assertTrue(display.contains(orig.toDisplayString()));
-        assertTrue(display.contains(mapped.toDisplayString()));
-        assertTrue(display.contains("edge"));
-        assertTrue(display.contains("valid"));
+        CellNeighborWithEdgeBehavior validNeighbor = new CellNeighborWithEdgeBehavior(new GridCoordinate(2, 3),
+                CompassDirection.N, CellConnectionType.EDGE, new GridCoordinate(2, 2), new GridCoordinate(2, 2),
+                EdgeBehaviorAction.VALID);
+        CellNeighborWithEdgeBehavior wrappedNeighbor = new CellNeighborWithEdgeBehavior(new GridCoordinate(0, 0),
+                CompassDirection.N, CellConnectionType.EDGE, new GridCoordinate(0, -1), new GridCoordinate(0, 9),
+                EdgeBehaviorAction.WRAPPED);
+
+        assertAll(
+                () -> assertEquals("(2, 3) ↑ (2, 2) → (2, 2) (edge, valid)", validNeighbor.toDisplayString()),
+                () -> assertEquals("(0, 0) ↑ (0, -1) → (0, 9) (edge, wrapped)", wrappedNeighbor.toDisplayString())
+        );
     }
 
 }

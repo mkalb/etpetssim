@@ -9,7 +9,10 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
 
 /**
- * Immutable configuration for a simulation.
+ * Immutable configuration of the Conway's Game of Life simulation.
+ *
+ * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
+ * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
  * @param cellShape        the configured cell shape
  * @param gridEdgeBehavior the configured grid edge behavior
@@ -18,7 +21,7 @@ import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
  * @param cellEdgeLength   the rendered cell edge length in pixels
  * @param cellDisplayMode  the cell display mode used by the UI
  * @param seed             the random seed used for initialization
- * @param alivePercent     the initial alive-cell percentage in the range {@code 0.0} to {@code 1.0}
+ * @param alivePercent     the initial share of alive cells as a fraction of all cells
  * @param neighborhoodMode the neighborhood mode used for transition evaluation
  * @param transitionRules  the survive/birth rule set
  */
@@ -51,7 +54,7 @@ public record ConwayConfig(
     }
 
     /**
-     * Validates the common simulation settings and the Conway-specific initialization and transition rules.
+     * Validates the common simulation settings and the Conway-specific selections, ranges, and transition rules.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
      */

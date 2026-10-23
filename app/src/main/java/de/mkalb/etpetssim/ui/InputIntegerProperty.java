@@ -6,14 +6,16 @@ import javafx.beans.property.*;
 
 /**
  * Represents an integer property with a defined range and step size.
- * <p>
- * Encapsulates a {@link IntegerProperty} and enforces value constraints:
+ *
+ * <p>Encapsulates an {@link IntegerProperty} and enforces value constraints:
  * <ul>
  *   <li>The value must be between {@code min} and {@code max} (inclusive).</li>
  *   <li>The value must be a multiple of {@code step} starting from {@code min}.</li>
  * </ul>
- * <p>
- * Use {@link #of(int, int, int, int)} to create instances with validation.
+ *
+ * <p>Use {@link #of(int, int, int, int)} to create instances with validation.
+ *
+ * <p>The record wraps the given property without copying it; bindings and listeners on the property stay effective.
  *
  * @param property the underlying {@link IntegerProperty}
  * @param min      the minimum allowed value (inclusive)
@@ -23,16 +25,11 @@ import javafx.beans.property.*;
 public record InputIntegerProperty(IntegerProperty property, int min, int max, int step) {
 
     /**
-     * Constructs an {@code InputIntegerProperty} with the given property, range, and step.
-     * <p>
-     * Validates that {@code min < max}, {@code step > 0}, the range is divisible by {@code step},
-     * and the property's value is valid.
+     * Creates an input property with a range and step size.
      *
-     * @param property the underlying {@link IntegerProperty}
-     * @param min      the minimum allowed value
-     * @param max      the maximum allowed value
-     * @param step     the step size
-     * @throws IllegalArgumentException if any argument is invalid
+     * @throws IllegalArgumentException if {@code min} is not less than {@code max}, if {@code step} is not positive,
+     *                                  if {@code max - min} is not divisible by {@code step}, or if the value of
+     *                                  {@code property} is not valid
      */
     public InputIntegerProperty {
         if (min >= max) {
@@ -51,8 +48,8 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
 
     /**
      * Creates a new {@code InputIntegerProperty} with the specified initial value, range, and step.
-     * <p>
-     * Validation is performed by the canonical constructor.
+     *
+     * <p>Validation is performed by the canonical constructor.
      *
      * @param initialValue the initial value
      * @param min          the minimum allowed value
@@ -114,8 +111,9 @@ public record InputIntegerProperty(IntegerProperty property, int min, int max, i
 
     /**
      * Sets the property value.
-     * <p>
-     * An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory method.
+     *
+     * <p>An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory
+     * method.
      *
      * @param value the value to set
      */

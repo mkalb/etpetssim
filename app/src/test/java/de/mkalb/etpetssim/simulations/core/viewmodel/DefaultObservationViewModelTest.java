@@ -78,7 +78,7 @@ final class DefaultObservationViewModelTest {
     @Test
     void testSetStatisticsExtremaUpdatesPropertyAndGetter() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
-        var extremum = new StatisticsExtremum(42.0, 7L);
+        var extremum = new StatisticsExtremum(42.0, 7);
         var extrema = new StatisticsExtrema(Map.of("metric", extremum), Map.of());
 
         FXTestSupport.runAndWait(() -> {
@@ -111,7 +111,7 @@ final class DefaultObservationViewModelTest {
     void testStatisticsExtremaPropertyNotifiesListener() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
         var extrema = new StatisticsExtrema(
-                Map.of("metric", new StatisticsExtremum(42.0, 7L)),
+                Map.of("metric", new StatisticsExtremum(42.0, 7)),
                 Map.of());
         var observedValues = new ArrayList<StatisticsExtrema>();
 
@@ -146,7 +146,7 @@ final class DefaultObservationViewModelTest {
 
         FXTestSupport.runAndWait(() -> {
             fixture.viewModel().setStatisticsExtrema(new StatisticsExtrema(
-                    Map.of("x", new StatisticsExtremum(1.0, 0L)), Map.of()));
+                    Map.of("x", new StatisticsExtremum(1.0, 0)), Map.of()));
             fixture.viewModel().setStatisticsExtrema(StatisticsExtrema.empty());
 
             assertEquals(StatisticsExtrema.empty(), fixture.viewModel().statisticsExtremaProperty().get());
@@ -170,7 +170,7 @@ final class DefaultObservationViewModelTest {
     void testResetStatisticsClearsStatisticsExtremaAndHistory() {
         Fixture fixture = FXTestSupport.supplyAndWaitNonNull(DefaultObservationViewModelTest::createFixture);
         var statistics = new TestStatistics(7);
-        var extrema = new StatisticsExtrema(Map.of("metric", new StatisticsExtremum(42.0d, 7L)), Map.of());
+        var extrema = new StatisticsExtrema(Map.of("metric", new StatisticsExtremum(42.0d, 7)), Map.of());
         var history = List.of(new StatisticsSample(7, StepTimingStatistics.empty(), Map.of("metric", 42.0d)));
 
         FXTestSupport.runAndWait(() -> {

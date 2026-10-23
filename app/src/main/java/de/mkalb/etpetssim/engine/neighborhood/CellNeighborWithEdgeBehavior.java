@@ -7,12 +7,12 @@ import java.util.*;
 /**
  * Represents the relationship between a cell and one of its neighbors in a two-dimensional grid,
  * including the result of applying edge behavior to the neighbor coordinate.
- * <p>
- * Extends the information of {@link CellNeighbor} by including both the original
+ *
+ * <p>Extends the information of {@link CellNeighbor} by including both the original
  * (theoretical) neighbor coordinate and the mapped coordinate after applying the grid's edge behavior,
  * as well as the resulting {@link EdgeBehaviorAction}.
- * <p>
- * This is useful for simulations where it is important to know not only the geometric neighbor
+ *
+ * <p>This is useful for simulations where it is important to know not only the geometric neighbor
  * relationship but also how the grid's edge rules affect neighbor access (e.g., wrapping, blocking).
  *
  * @param startCoordinate            the coordinate of the start (source) cell
@@ -36,8 +36,8 @@ public record CellNeighborWithEdgeBehavior(
 
     /**
      * Creates a {@link CellNeighborWithEdgeBehavior} from a given {@link CellNeighbor} and the result of applying edge behavior.
-     * <p>
-     * Combines the geometric neighbor relationship with the outcome of edge behavior processing,
+     *
+     * <p>Combines the geometric neighbor relationship with the outcome of edge behavior processing,
      * producing a record that contains both the original and mapped neighbor coordinates, as well as the edge behavior action.
      *
      * @param neighbor           the theoretical neighbor relationship (ignoring edge behavior)
@@ -76,13 +76,15 @@ public record CellNeighborWithEdgeBehavior(
     /**
      * Returns a concise, human-readable string representation of this cell neighbor relationship,
      * including edge behavior action and mapped coordinate.
-     * <p>
-     * Format: [start] [arrow] [originalNeighbor] → [mappedNeighbor] ([connection type], [edgeBehaviorAction])
+     *
+     * <p>Format:
+     * {@code [start] [arrow] [originalNeighbor] → [mappedNeighbor] ([connection type], [edgeBehaviorAction])}
      *
      * @return a display string describing this cell neighbor with edge behavior
      */
     public String toDisplayString() {
         return String.format(
+                Locale.ROOT,
                 "%s %s %s → %s (%s, %s)",
                 startCoordinate.toDisplayString(),
                 direction.arrow(),

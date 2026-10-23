@@ -1,108 +1,107 @@
 package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Execution(ExecutionMode.SAME_THREAD)
 final class InputEnumPropertyTest {
 
+    private static final List<TestMode> VALID_VALUES = List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA);
+
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
     }
 
-    @Test
-    void testConstructorMakesDefensiveCopyOfValidValues() {
-        List<TestMode> validValues = new ArrayList<>(List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA));
-        InputEnumProperty<TestMode> property = new InputEnumProperty<>(
-                new SimpleObjectProperty<>(TestMode.MODE_ALPHA),
-                validValues,
-                Enum::name);
+    private static InputEnumProperty<TestMode> createProperty() {
+        return InputEnumProperty.of(TestMode.MODE_ALPHA, VALID_VALUES, Enum::name);
+    }
 
+    @Test
+    void testRecord() {
+        ObjectProperty<TestMode> objectProperty = new SimpleObjectProperty<>(TestMode.MODE_ALPHA);
+        List<TestMode> validValues = new ArrayList<>(VALID_VALUES);
+        Function<TestMode, String> displayNameProvider = Enum::name;
+
+        InputEnumProperty<TestMode> property = new InputEnumProperty<>(objectProperty, validValues,
+                displayNameProvider);
         validValues.clear();
 
-        assertEquals(List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA), property.validValues());
-    }
-
-    @Test
-    void testSetValueUpdatesPropertyForInvalidValue() {
-        InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA,
-                List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
-                Enum::name);
-
-        property.setValue(TestMode.MODE_GAMMA);
-
         assertAll(
-                () -> assertEquals(TestMode.MODE_GAMMA, property.getValue()),
-                () -> assertFalse(property.isValue(TestMode.MODE_ALPHA)),
-                () -> assertTrue(property.hasMultipleValidValues())
+                () -> assertSame(objectProperty, property.property()),
+                () -> assertEquals(VALID_VALUES, property.validValues()),
+                () -> assertThrows(UnsupportedOperationException.class,
+                        () -> property.validValues().add(TestMode.MODE_GAMMA)),
+                () -> assertSame(displayNameProvider, property.displayNameProvider())
         );
     }
 
     @Test
-    void testSetValueUpdatesPropertyForValidValue() {
-        InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA,
-                List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
-                Enum::name);
-
-        property.setValue(TestMode.MODE_BETA);
-
-        assertAll(
-                () -> assertEquals(TestMode.MODE_BETA, property.getValue()),
-                () -> assertTrue(property.isValue(TestMode.MODE_BETA)),
-                () -> assertTrue(property.hasMultipleValidValues())
-        );
+    void testConstructorRejectsEmptyValidValues() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new InputEnumProperty<>(new SimpleObjectProperty<>(TestMode.MODE_ALPHA), List.of(),
+                        Enum::name));
     }
 
     @Test
-    void testValidValuesReturnsUnmodifiableList() {
-        InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA,
-                List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
-                Enum::name);
-
-        assertThrows(UnsupportedOperationException.class,
-                () -> property.validValues().add(TestMode.MODE_GAMMA));
+    void testConstructorRejectsDuplicateValidValues() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new InputEnumProperty<>(new SimpleObjectProperty<>(TestMode.MODE_ALPHA),
+                        List.of(TestMode.MODE_ALPHA, TestMode.MODE_ALPHA), Enum::name));
     }
 
     @Test
-    void testOfWithEnumClassUsesAllEnumConstants() {
-        InputEnumProperty<TestMode> property = InputEnumProperty.of(
-                TestMode.MODE_BETA,
-                TestMode.class,
+    void testConstructorRejectsInvalidInitialValue() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new InputEnumProperty<>(new SimpleObjectProperty<>(TestMode.MODE_GAMMA), VALID_VALUES,
+                        Enum::name));
+    }
+
+    @Test
+    void testOf() {
+        List<TestMode> validValues = new ArrayList<>(VALID_VALUES);
+
+        InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_BETA, validValues,
                 mode -> "display-" + mode.name());
+        validValues.clear();
 
         assertAll(
                 () -> assertEquals(TestMode.MODE_BETA, property.getValue()),
-                () -> assertEquals(List.of(TestMode.values()), property.validValues()),
-                () -> assertTrue(property.hasMultipleValidValues()),
+                () -> assertEquals(VALID_VALUES, property.validValues()),
                 () -> assertEquals("display-MODE_BETA", property.displayNameProvider().apply(property.getValue()))
         );
     }
 
     @Test
-    void testHasMultipleValidValuesReturnsFalseForSingletonList() {
-        InputEnumProperty<TestMode> property = InputEnumProperty.of(
-                TestMode.MODE_ALPHA,
-                List.of(TestMode.MODE_ALPHA),
-                Enum::name);
+    void testOfWithEnumClass() {
+        InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_BETA, TestMode.class,
+                mode -> "display-" + mode.name());
 
         assertAll(
-                () -> assertFalse(property.hasMultipleValidValues()),
-                () -> assertTrue(property.isValue(TestMode.MODE_ALPHA))
+                () -> assertEquals(TestMode.MODE_BETA, property.getValue()),
+                () -> assertEquals(List.of(TestMode.values()), property.validValues()),
+                () -> assertEquals("display-MODE_BETA", property.displayNameProvider().apply(property.getValue()))
         );
     }
 
     @Test
-    void testAsStringBindingUsesDisplayNameProviderAndTracksUpdates() {
-        InputEnumProperty<TestMode> property = InputEnumProperty.of(
-                TestMode.MODE_ALPHA,
-                List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
+    void testIsInvalidValue() {
+        assertAll(
+                () -> assertFalse(InputEnumProperty.isInvalidValue(TestMode.MODE_ALPHA, VALID_VALUES)),
+                () -> assertTrue(InputEnumProperty.isInvalidValue(TestMode.MODE_GAMMA, VALID_VALUES))
+        );
+    }
+
+    @Test
+    void testAsStringBinding() {
+        InputEnumProperty<TestMode> property = InputEnumProperty.of(TestMode.MODE_ALPHA, VALID_VALUES,
                 mode -> "display-" + mode.name());
 
         var binding = property.asStringBinding("Selected: %s");
@@ -116,43 +115,40 @@ final class InputEnumPropertyTest {
     }
 
     @Test
-    void testOfRejectsEmptyValidValuesList() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputEnumProperty.of(TestMode.MODE_ALPHA, List.of(), Enum::name));
+    void testSetValue() {
+        InputEnumProperty<TestMode> property = createProperty();
 
-        assertTrue(exception.getMessage().contains("validValues must not be empty"));
+        property.setValue(TestMode.MODE_BETA);
+
+        assertEquals(TestMode.MODE_BETA, property.getValue());
     }
 
     @Test
-    void testOfRejectsInitialValueOutsideValidValuesList() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputEnumProperty.of(TestMode.MODE_GAMMA,
-                        List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA),
-                        Enum::name));
+    void testSetValueAcceptsInvalidValue() {
+        InputEnumProperty<TestMode> property = createProperty();
 
-        assertTrue(exception.getMessage().startsWith("Initial value is not valid: "));
+        property.setValue(TestMode.MODE_GAMMA);
+
+        assertEquals(TestMode.MODE_GAMMA, property.getValue());
     }
 
     @Test
-    void testOfRejectsDuplicateValidValuesList() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputEnumProperty.of(TestMode.MODE_ALPHA,
-                        List.of(TestMode.MODE_ALPHA, TestMode.MODE_ALPHA),
-                        Enum::name));
+    void testIsValue() {
+        InputEnumProperty<TestMode> property = createProperty();
 
-        assertTrue(exception.getMessage().contains("validValues must not contain duplicates"));
+        assertAll(
+                () -> assertTrue(property.isValue(TestMode.MODE_ALPHA)),
+                () -> assertFalse(property.isValue(TestMode.MODE_BETA))
+        );
     }
 
     @Test
-    void testIsInvalidValueReturnsFalseForContainedValue() {
-        assertFalse(InputEnumProperty.isInvalidValue(TestMode.MODE_ALPHA,
-                List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA)));
-    }
-
-    @Test
-    void testIsInvalidValueReturnsTrueForValueOutsideList() {
-        assertTrue(InputEnumProperty.isInvalidValue(TestMode.MODE_GAMMA,
-                List.of(TestMode.MODE_ALPHA, TestMode.MODE_BETA)));
+    void testHasMultipleValidValues() {
+        assertAll(
+                () -> assertTrue(createProperty().hasMultipleValidValues()),
+                () -> assertFalse(InputEnumProperty.of(TestMode.MODE_ALPHA, List.of(TestMode.MODE_ALPHA), Enum::name)
+                                                   .hasMultipleValidValues())
+        );
     }
 
     private enum TestMode {

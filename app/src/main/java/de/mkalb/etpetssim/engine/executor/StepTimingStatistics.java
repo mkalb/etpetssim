@@ -2,9 +2,6 @@ package de.mkalb.etpetssim.engine.executor;
 
 /**
  * Immutable timing statistics for simulation steps (in nanoseconds).
- * <p>
- * The canonical constructor enforces non-negative values and validates
- * cross-field consistency (for example, {@code minNanos <= maxNanos}).
  *
  * @param currentNanos duration of the most recent step
  * @param minNanos     minimum step duration
@@ -20,6 +17,14 @@ public record StepTimingStatistics(
         long avgNanos
 ) {
 
+    /**
+     * Creates timing statistics with consistent values.
+     *
+     * @throws IllegalArgumentException if a value is negative, if {@code minNanos > maxNanos}, if
+     *                                  {@code sumNanos} is {@code 0} but another value is not, or if
+     *                                  {@code currentNanos} or {@code avgNanos} is outside
+     *                                  {@code minNanos..maxNanos}
+     */
     public StepTimingStatistics {
         if ((currentNanos < 0) || (minNanos < 0) || (maxNanos < 0) || (sumNanos < 0) || (avgNanos < 0)) {
             throw new IllegalArgumentException("timing values must be >= 0");
@@ -43,9 +48,9 @@ public record StepTimingStatistics(
 
     /**
      * Returns a {@code StepTimingStatistics} instance with all values set to {@code 0}.
-     * <p>
-     * This can be used to represent the absence of any timing data,
-     * for example before any simulation steps have been executed.
+     *
+     * <p>This can be used to represent the absence of any timing data, for example before any simulation steps have
+     * been executed.
      *
      * @return a {@code StepTimingStatistics} record with all fields set to {@code 0} nanoseconds
      */

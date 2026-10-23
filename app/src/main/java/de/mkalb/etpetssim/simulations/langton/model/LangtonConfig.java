@@ -9,7 +9,10 @@ import de.mkalb.etpetssim.simulations.langton.shared.LangtonMovementRules;
 import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
 
 /**
- * Immutable configuration for a simulation.
+ * Immutable configuration of the Langton's Ant simulation.
+ *
+ * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
+ * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
  * @param cellShape            the configured cell shape
  * @param gridEdgeBehavior     the configured grid edge behavior
@@ -19,7 +22,7 @@ import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.*;
  * @param cellDisplayMode      the cell display mode used by the UI
  * @param seed                 the random seed used for initialization
  * @param neighborhoodMode     the neighborhood mode used for movement
- * @param langtonMovementRules the cyclic movement rule set for visited states
+ * @param movementRules        the cyclic movement rule set for visited states
  */
 public record LangtonConfig(
         // Structure
@@ -34,15 +37,15 @@ public record LangtonConfig(
         long seed,
         // Rules
         NeighborhoodMode neighborhoodMode,
-        LangtonMovementRules langtonMovementRules)
+        LangtonMovementRules movementRules)
         implements SimulationConfig {
 
     private boolean hasValidMovementRules() {
-        return langtonMovementRules.isValidForCellShape(cellShape);
+        return movementRules.isValidForCellShape(cellShape);
     }
 
     /**
-     * Validates the common simulation settings and the Langton-specific supported selections and movement rules.
+     * Validates the common simulation settings and the Langton-specific selections and movement rules.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
      */

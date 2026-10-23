@@ -38,6 +38,8 @@ public record SimulationUserActionDescriptor<CTX extends SimulationUserActionCon
      * @param scope      action scope that determines UI behavior
      * @param labelKey   localization key for the control label
      * @param tooltipKey localization key for the control tooltip
+     * @throws IllegalArgumentException if {@code toolId}, {@code labelKey}, or {@code tooltipKey} is blank, or if
+     *                                  {@code toolId} is {@link #SELECT_TOOL_ID}
      */
     public SimulationUserActionDescriptor(String toolId,
                                           CTX context,
@@ -47,6 +49,12 @@ public record SimulationUserActionDescriptor<CTX extends SimulationUserActionCon
         this(toolId, scope, labelKey, tooltipKey, () -> Optional.of(context));
     }
 
+    /**
+     * Creates a descriptor with an apply-time context resolver.
+     *
+     * @throws IllegalArgumentException if {@code toolId}, {@code labelKey}, or {@code tooltipKey} is blank, or if
+     *                                  {@code toolId} is {@link #SELECT_TOOL_ID}
+     */
     public SimulationUserActionDescriptor {
         if (toolId.isBlank()) {
             throw new IllegalArgumentException("toolId must not be blank");

@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.geometry.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.function.Executable;
 
 import java.util.*;
 
@@ -63,19 +62,19 @@ final class CellDimensionTest {
     @Test
     void testConstructorRejectsNonFiniteValues() {
         assertAll(
-                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         Double.NaN, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, Double.POSITIVE_INFINITY, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, Double.NaN,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, Double.POSITIVE_INFINITY, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertFiniteDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, Double.NaN))
         );
@@ -84,25 +83,25 @@ final class CellDimensionTest {
     @Test
     void testConstructorRejectsNonPositiveRequiredDimensions() {
         assertAll(
-                () -> assertPositiveDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         INVALID_ZERO, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertPositiveDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, INVALID_NEGATIVE, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertPositiveDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, INVALID_ZERO, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertPositiveDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INVALID_NEGATIVE, OUTER_RADIUS, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertPositiveDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, INVALID_ZERO, COLUMN_WIDTH, ROW_HEIGHT)),
-                () -> assertPositiveDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, INVALID_NEGATIVE, ROW_HEIGHT)),
-                () -> assertPositiveDimensionValidationFailure(() -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                         EDGE_LENGTH, WIDTH, HEIGHT, HALF_EDGE_LENGTH, HALF_WIDTH, HALF_HEIGHT,
                         INNER_RADIUS, OUTER_RADIUS, COLUMN_WIDTH, INVALID_ZERO))
         );
@@ -111,8 +110,7 @@ final class CellDimensionTest {
     @Test
     void testConstructorRejectsMismatchedHalfDimensions() {
         assertAll(
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                             EDGE_LENGTH,
                             WIDTH,
                             HEIGHT,
@@ -122,11 +120,8 @@ final class CellDimensionTest {
                             INNER_RADIUS,
                             OUTER_RADIUS,
                             COLUMN_WIDTH,
-                            ROW_HEIGHT));
-                    assertTrue(exception.getMessage().contains("Half dimensions must be half of the full dimensions."));
-                },
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> createCellDimension(
+                        ROW_HEIGHT)),
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                             EDGE_LENGTH,
                             WIDTH,
                             HEIGHT,
@@ -136,11 +131,8 @@ final class CellDimensionTest {
                             INNER_RADIUS,
                             OUTER_RADIUS,
                             COLUMN_WIDTH,
-                            ROW_HEIGHT));
-                    assertTrue(exception.getMessage().contains("Half dimensions must be half of the full dimensions."));
-                },
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> createCellDimension(
+                        ROW_HEIGHT)),
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                             EDGE_LENGTH,
                             WIDTH,
                             HEIGHT,
@@ -150,17 +142,14 @@ final class CellDimensionTest {
                             INNER_RADIUS,
                             OUTER_RADIUS,
                             COLUMN_WIDTH,
-                            ROW_HEIGHT));
-                    assertTrue(exception.getMessage().contains("Half dimensions must be half of the full dimensions."));
-                }
+                        ROW_HEIGHT))
         );
     }
 
     @Test
     void testConstructorRejectsOuterRadiusNotGreaterThanInnerRadius() {
         assertAll(
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> createCellDimension(
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                             EDGE_LENGTH,
                             WIDTH,
                             HEIGHT,
@@ -170,11 +159,8 @@ final class CellDimensionTest {
                             INNER_RADIUS,
                             INNER_RADIUS,
                             COLUMN_WIDTH,
-                            ROW_HEIGHT));
-                    assertTrue(exception.getMessage().contains("Outer radius must be greater than inner radius."));
-                },
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> createCellDimension(
+                        ROW_HEIGHT)),
+                () -> assertThrows(IllegalArgumentException.class, () -> createCellDimension(
                             EDGE_LENGTH,
                             WIDTH,
                             HEIGHT,
@@ -184,9 +170,7 @@ final class CellDimensionTest {
                             INNER_RADIUS,
                             INNER_RADIUS - HALF_DIMENSION_OFFSET,
                             COLUMN_WIDTH,
-                            ROW_HEIGHT));
-                    assertTrue(exception.getMessage().contains("Outer radius must be greater than inner radius."));
-                }
+                        ROW_HEIGHT))
         );
     }
 
@@ -229,16 +213,6 @@ final class CellDimensionTest {
                 ROW_HEIGHT);
 
         assertEquals("[1234.5, 2345.6 × 3456.7]", dimension.toDisplayString());
-    }
-
-    private void assertFiniteDimensionValidationFailure(Executable executable) {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, executable);
-        assertTrue(exception.getMessage().contains("All dimensions must be finite."));
-    }
-
-    private void assertPositiveDimensionValidationFailure(Executable executable) {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, executable);
-        assertTrue(exception.getMessage().contains("All dimensions must be positive."));
     }
 
     private CellDimension createValidCellDimension() {

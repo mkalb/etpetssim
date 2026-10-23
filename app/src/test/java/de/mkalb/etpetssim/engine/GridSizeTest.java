@@ -10,14 +10,15 @@ final class GridSizeTest {
     @Test
     void testRecord() {
         GridSize size = new GridSize(32, 64);
-        assertEquals(32, size.width());
-        assertEquals(64, size.height());
-    }
+        GridSize minSize = new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE);
+        GridSize maxSize = new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE);
 
-    @Test
-    void testConstructorAcceptsMinAndMaxSize() {
-        assertDoesNotThrow(() -> new GridSize(GridSize.MIN_SIZE, GridSize.MIN_SIZE));
-        assertDoesNotThrow(() -> new GridSize(GridSize.MAX_SIZE, GridSize.MAX_SIZE));
+        assertAll(
+                () -> assertEquals(32, size.width()),
+                () -> assertEquals(64, size.height()),
+                () -> assertEquals(GridSize.MIN_SIZE, minSize.width()),
+                () -> assertEquals(GridSize.MAX_SIZE, maxSize.height())
+        );
     }
 
     @Test

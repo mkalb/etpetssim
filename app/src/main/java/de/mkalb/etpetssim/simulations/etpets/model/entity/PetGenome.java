@@ -14,6 +14,9 @@ public record PetGenome(PetTraits traits) {
     /**
      * Creates a child genome by averaging the parent traits and applying optional mutation.
      *
+     * <p>Each trait mutates with {@code mutationChancePerTrait} by {@code mutationDelta} times its average, in a random
+     * direction; the result is rounded for integer traits and clamped to the trait ranges in {@link EtpetsBalance}.
+     *
      * @param parentA                the first parent genome
      * @param parentB                the second parent genome
      * @param random                 the random source used for mutation

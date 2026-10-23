@@ -3,6 +3,8 @@ package de.mkalb.etpetssim.engine.model;
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
+import java.util.*;
+
 /**
  * Read-only view of a grid cell that exposes its coordinate and associated entity.
  *
@@ -36,7 +38,7 @@ public interface GridCellView<ENT extends GridEntity> {
      * @return a concise display string for this cell
      */
     default String toDisplayString() {
-        return String.format("%s %s",
+        return String.format(Locale.ROOT, "%s %s",
                 coordinate().toDisplayString(),
                 entity().toDisplayString());
     }

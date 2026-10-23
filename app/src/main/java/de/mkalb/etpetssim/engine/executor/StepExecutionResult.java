@@ -2,9 +2,6 @@ package de.mkalb.etpetssim.engine.executor;
 
 /**
  * Result object returned by {@link SimulationExecutor#executeSteps(int, boolean, Runnable)}.
- * <p>
- * The canonical constructor rejects negative values and also rejects
- * {@code executedSteps > stepCount}.
  *
  * @param stepCount     the step counter after execution
  * @param executedSteps the number of steps executed in this call
@@ -19,6 +16,12 @@ public record StepExecutionResult(
         boolean isInterrupted
 ) {
 
+    /**
+     * Creates a step execution result.
+     *
+     * @throws IllegalArgumentException if {@code stepCount} or {@code executedSteps} is negative, or if
+     *                                  {@code executedSteps} is greater than {@code stepCount}
+     */
     public StepExecutionResult {
         if (stepCount < 0) {
             throw new IllegalArgumentException("stepCount must be >= 0");

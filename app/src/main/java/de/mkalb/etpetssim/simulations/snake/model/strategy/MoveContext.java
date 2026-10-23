@@ -9,7 +9,10 @@ import de.mkalb.etpetssim.simulations.snake.model.entity.*;
 import java.util.*;
 
 /**
- * Immutable decision context passed to snake move strategies.
+ * Decision context passed to snake move strategies.
+ *
+ * <p>The record groups the references for one move decision without copying them; the snake head, the model, the
+ * lists, and the random source are shared with the caller.
  *
  * @param snakeHead             the moving snake head entity
  * @param headCoordinate        the current coordinate of the snake head
@@ -32,4 +35,5 @@ public record MoveContext(
         GridStructure structure,
         List<CompassDirection> neighborDirectionRing,
         SnakeConfig config,
-        Random random) {}
+        Random random) {
+}

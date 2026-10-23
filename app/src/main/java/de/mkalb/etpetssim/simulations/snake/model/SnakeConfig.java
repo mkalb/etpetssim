@@ -9,7 +9,10 @@ import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.*;
 
 /**
- * Immutable configuration for a simulation.
+ * Immutable configuration of the Snake simulation.
+ *
+ * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
+ * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
  * @param cellShape               the configured cell shape
  * @param gridEdgeBehavior        the configured grid edge behavior
@@ -62,7 +65,7 @@ public record SnakeConfig(
     }
 
     /**
-     * Validates the common simulation settings and the snake-specific supported selections and ranges.
+     * Validates the common simulation settings and the Snake-specific selections and ranges.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
      */

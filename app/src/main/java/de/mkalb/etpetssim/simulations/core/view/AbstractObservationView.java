@@ -525,11 +525,21 @@ public abstract class AbstractObservationView<
         return chartView.titledPane();
     }
 
+    /**
+     * Labels and tooltips of one metric row.
+     *
+     * @param currentLabel the label of the current value
+     * @param minLabel     the label of the minimum, or {@code null} if the metric tracks no minimum
+     * @param minTooltip   the tooltip of the minimum, or {@code null} if the metric tracks no minimum
+     * @param maxLabel     the label of the maximum, or {@code null} if the metric tracks no maximum
+     * @param maxTooltip   the tooltip of the maximum, or {@code null} if the metric tracks no maximum
+     */
     private record MetricLabels(
             Label currentLabel,
             @Nullable Label minLabel,
             @Nullable Tooltip minTooltip,
             @Nullable Label maxLabel,
-            @Nullable Tooltip maxTooltip) {}
+            @Nullable Tooltip maxTooltip) {
+    }
 
 }

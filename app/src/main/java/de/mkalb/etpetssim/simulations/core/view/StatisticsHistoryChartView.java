@@ -251,6 +251,7 @@ final class StatisticsHistoryChartView {
         titledPane.setVisible(anyVisible);
     }
 
-    private record GroupChart(LineChart<Number, Number> chart, NumberAxis xAxis, NumberAxis yAxis) {}
+    private record GroupChart(LineChart<Number, Number> chart, NumberAxis xAxis, NumberAxis yAxis) {
+    }
 
 }

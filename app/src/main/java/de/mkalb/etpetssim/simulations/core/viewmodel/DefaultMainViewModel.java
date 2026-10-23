@@ -875,6 +875,13 @@ public final class DefaultMainViewModel<
         }
     }
 
+    /**
+     * Termination handle for the lifecycle executor.
+     *
+     * <p>The ViewModel shuts the executor down; this handle only waits for its termination or forces it.
+     *
+     * @param executor the lifecycle executor
+     */
     private record ExecutorSimulationTerminationHandle(ExecutorService executor)
             implements SimulationTerminationHandle {
 

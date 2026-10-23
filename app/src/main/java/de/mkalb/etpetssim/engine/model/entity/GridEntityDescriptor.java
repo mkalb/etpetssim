@@ -7,11 +7,10 @@ import java.util.*;
 
 /**
  * Represents a fully resolved descriptor for a grid entity, containing display-ready values.
- * <p>
- * Instances are created by {@link GridEntityDescriptorRegistry}, which resolves the localization
- * keys supplied by a {@link GridEntityDescriptorProvider} (for example {@code shortNameKey} and
- * {@code longNameKey}) into concrete display strings via {@code AppLocalization}.
- * </p>
+ *
+ * <p>Instances are created by {@link GridEntityDescriptorRegistry}, which resolves the localization keys supplied by
+ * a {@link GridEntityDescriptorProvider} (for example {@code shortNameKey} and {@code longNameKey}) into concrete
+ * display strings via {@code AppLocalization}.
  *
  * @param descriptorId unique identifier for the entity descriptor
  * @param visible      whether the entity should be visible in the UI
@@ -23,6 +22,7 @@ import java.util.*;
  * @param borderColor  optional border color for rendering, or {@code null} if not set
  * @see GridEntityDescriptorProvider
  * @see GridEntityDescriptorRegistry
+ * @see GridEntityDescriptorSpec
  */
 public record GridEntityDescriptor(
         String descriptorId,
@@ -55,9 +55,8 @@ public record GridEntityDescriptor(
 
     /**
      * Returns the configured fill color, or a default of {@link Color#BLACK} if none is set.
-     * <p>
-     * Intended for rendering code that requires a concrete {@link Color} without optional handling.
-     * </p>
+     *
+     * <p>Intended for rendering code that requires a concrete {@link Color} without optional handling.
      *
      * @return the configured fill color, or {@link Color#BLACK} as fallback
      */
@@ -76,9 +75,8 @@ public record GridEntityDescriptor(
 
     /**
      * Returns the configured border color, or a default of {@link Color#BLACK} if none is set.
-     * <p>
-     * Intended for rendering code that always needs a border color.
-     * </p>
+     *
+     * <p>Intended for rendering code that always needs a border color.
      *
      * @return the configured border color, or {@link Color#BLACK} as fallback
      */
@@ -88,10 +86,8 @@ public record GridEntityDescriptor(
 
     /**
      * Returns a short, human-readable string representation of this grid entity descriptor.
-     * <p>
-     * Format: {@code [short readable content]}
-     * <br>
-     * Example: {@code [WALL]}
+     *
+     * <p>Format: {@code [<short-name>]}, for example {@code [Wall]}.
      *
      * @return a concise display string for this grid entity descriptor
      */

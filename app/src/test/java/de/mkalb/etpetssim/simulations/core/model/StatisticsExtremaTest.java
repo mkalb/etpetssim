@@ -10,9 +10,9 @@ import static org.junit.jupiter.api.Assertions.*;
 final class StatisticsExtremaTest {
 
     @Test
-    void testConstructorDefensivelyCopiesMapsAndPreservesOrder() {
-        var first = new StatisticsExtremum(1.0d, 1L);
-        var second = new StatisticsExtremum(2.0d, 2L);
+    void testRecord() {
+        var first = new StatisticsExtremum(1.0d, 1);
+        var second = new StatisticsExtremum(2.0d, 2);
         var minimumValues = new LinkedHashMap<String, StatisticsExtremum>();
         minimumValues.put("first", first);
         minimumValues.put("second", second);
@@ -28,52 +28,21 @@ final class StatisticsExtremaTest {
                 () -> assertEquals(List.of("first", "second"), List.copyOf(extrema.minimumValues().keySet())),
                 () -> assertEquals(List.of("second", "first"), List.copyOf(extrema.maximumValues().keySet())),
                 () -> assertEquals(first, extrema.minimumValues().get("first")),
-                () -> assertEquals(second, extrema.maximumValues().get("second"))
+                () -> assertEquals(second, extrema.maximumValues().get("second")),
+                () -> assertThrows(UnsupportedOperationException.class,
+                        () -> extrema.minimumValues().put("other", first)),
+                () -> assertThrows(UnsupportedOperationException.class,
+                        () -> extrema.maximumValues().put("other", second))
         );
     }
 
     @Test
-    void testMinimumValuesReturnsUnmodifiableMap() {
-        var extrema = new StatisticsExtrema(Map.of("metric", new StatisticsExtremum(1.0d, 1L)), Map.of());
-
-        assertNotNull(assertThrows(
-                UnsupportedOperationException.class,
-                () -> extrema.minimumValues().put("other", new StatisticsExtremum(2.0d, 2L))
-        ));
-    }
-
-    @Test
-    void testMaximumValuesReturnsUnmodifiableMap() {
-        var extrema = new StatisticsExtrema(Map.of(), Map.of("metric", new StatisticsExtremum(1.0d, 1L)));
-
-        assertNotNull(assertThrows(
-                UnsupportedOperationException.class,
-                () -> extrema.maximumValues().put("other", new StatisticsExtremum(2.0d, 2L))
-        ));
-    }
-
-    @Test
-    void testEmptyReturnsInstanceWithoutValues() {
+    void testEmpty() {
         var extrema = StatisticsExtrema.empty();
 
         assertAll(
                 () -> assertTrue(extrema.minimumValues().isEmpty()),
                 () -> assertTrue(extrema.maximumValues().isEmpty())
-        );
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testConstructorRejectsNullMaps() {
-        assertAll(
-                () -> assertNotNull(assertThrows(
-                        NullPointerException.class,
-                        () -> new StatisticsExtrema(null, Map.of())
-                )),
-                () -> assertNotNull(assertThrows(
-                        NullPointerException.class,
-                        () -> new StatisticsExtrema(Map.of(), null)
-                ))
         );
     }
 

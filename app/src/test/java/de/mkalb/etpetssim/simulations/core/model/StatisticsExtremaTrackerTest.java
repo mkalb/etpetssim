@@ -24,8 +24,8 @@ final class StatisticsExtremaTrackerTest {
                 new StatisticsMetric<>("both", "both.key", _ -> 0.0d, StatisticsExtremaMode.MIN_AND_MAX)
         ));
 
-        tracker.recordSample(Map.of("none", 5.0d, "min", 5.0d, "max", 5.0d, "both", 5.0d), 1L);
-        tracker.recordSample(Map.of("none", 1.0d, "min", 1.0d, "max", 9.0d, "both", 9.0d), 2L);
+        tracker.recordSample(Map.of("none", 5.0d, "min", 5.0d, "max", 5.0d, "both", 5.0d), 1);
+        tracker.recordSample(Map.of("none", 1.0d, "min", 1.0d, "max", 9.0d, "both", 9.0d), 2);
 
         var extrema = tracker.snapshot();
         assertAll(
@@ -57,8 +57,8 @@ final class StatisticsExtremaTrackerTest {
     void testRecordSampleKeepsFirstStepCountForEqualValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
-        tracker.recordSample(Map.of("count", 5.0d), 1L);
-        tracker.recordSample(Map.of("count", 5.0d), 2L);
+        tracker.recordSample(Map.of("count", 5.0d), 1);
+        tracker.recordSample(Map.of("count", 5.0d), 2);
 
         var extrema = tracker.snapshot();
         assertAll(
@@ -70,15 +70,15 @@ final class StatisticsExtremaTrackerTest {
     @Test
     void testSnapshotIsUnaffectedByLaterSamples() {
         StatisticsExtremaTracker tracker = createCountTracker();
-        tracker.recordSample(Map.of("count", 5.0d), 1L);
+        tracker.recordSample(Map.of("count", 5.0d), 1);
         StatisticsExtrema snapshot = tracker.snapshot();
 
-        tracker.recordSample(Map.of("count", 1.0d), 2L);
-        tracker.recordSample(Map.of("count", 9.0d), 3L);
+        tracker.recordSample(Map.of("count", 1.0d), 2);
+        tracker.recordSample(Map.of("count", 9.0d), 3);
 
         assertAll(
-                () -> assertEquals(new StatisticsExtremum(5.0d, 1L), snapshot.minimumValues().get("count")),
-                () -> assertEquals(new StatisticsExtremum(5.0d, 1L), snapshot.maximumValues().get("count"))
+                () -> assertEquals(new StatisticsExtremum(5.0d, 1), snapshot.minimumValues().get("count")),
+                () -> assertEquals(new StatisticsExtremum(5.0d, 1), snapshot.maximumValues().get("count"))
         );
     }
 
@@ -86,8 +86,8 @@ final class StatisticsExtremaTrackerTest {
     void testRecordSampleSkipsNaNValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
-        tracker.recordSample(Map.of("count", 5.0d), 1L);
-        tracker.recordSample(Map.of("count", Double.NaN), 2L);
+        tracker.recordSample(Map.of("count", 5.0d), 1);
+        tracker.recordSample(Map.of("count", Double.NaN), 2);
 
         var extrema = tracker.snapshot();
         assertAll(
@@ -102,8 +102,8 @@ final class StatisticsExtremaTrackerTest {
     void testRecordSampleSkipsPositiveInfinityValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
-        tracker.recordSample(Map.of("count", 3.0d), 1L);
-        tracker.recordSample(Map.of("count", Double.POSITIVE_INFINITY), 2L);
+        tracker.recordSample(Map.of("count", 3.0d), 1);
+        tracker.recordSample(Map.of("count", Double.POSITIVE_INFINITY), 2);
 
         var extrema = tracker.snapshot();
         assertAll(
@@ -118,8 +118,8 @@ final class StatisticsExtremaTrackerTest {
     void testRecordSampleSkipsNegativeInfinityValues() {
         StatisticsExtremaTracker tracker = createCountTracker();
 
-        tracker.recordSample(Map.of("count", 7.0d), 1L);
-        tracker.recordSample(Map.of("count", Double.NEGATIVE_INFINITY), 2L);
+        tracker.recordSample(Map.of("count", 7.0d), 1);
+        tracker.recordSample(Map.of("count", Double.NEGATIVE_INFINITY), 2);
 
         var extrema = tracker.snapshot();
         assertAll(

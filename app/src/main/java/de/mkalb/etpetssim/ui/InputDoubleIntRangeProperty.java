@@ -6,14 +6,16 @@ import javafx.beans.property.*;
 
 /**
  * Represents a double property with a defined range specified by integer bounds.
- * <p>
- * Encapsulates a {@link DoubleProperty} and enforces value constraints:
+ *
+ * <p>Encapsulates a {@link DoubleProperty} and enforces value constraints:
  * <ul>
  *   <li>The value must be between {@code min} and {@code max} (inclusive).</li>
  *   <li>Validation is range-based only; integer-valued doubles are not required.</li>
  * </ul>
- * <p>
- * Use {@link #of(int, int, int)} to create instances.
+ *
+ * <p>Use {@link #of(int, int, int)} to create instances.
+ *
+ * <p>The record wraps the given property without copying it; bindings and listeners on the property stay effective.
  *
  * @param property the underlying {@link DoubleProperty}
  * @param min      the minimum allowed value (inclusive)
@@ -22,15 +24,10 @@ import javafx.beans.property.*;
 public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int max) {
 
     /**
-     * Constructs an {@code InputDoubleIntRangeProperty} with the given property and range.
-     * <p>
-     * Validates that {@code min < max} and the property's value is valid.
-     * The value is only required to be within the range; it need not be integer-valued.
+     * Creates an input property with a range; the value need not be integer-valued.
      *
-     * @param property the underlying {@link DoubleProperty}
-     * @param min      the minimum allowed value
-     * @param max      the maximum allowed value
-     * @throws IllegalArgumentException if any argument is invalid
+     * @throws IllegalArgumentException if {@code min} is not less than {@code max}, or if the value of
+     *                                  {@code property} is not within the range
      */
     public InputDoubleIntRangeProperty {
         if (min >= max) {
@@ -43,8 +40,8 @@ public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int 
 
     /**
      * Creates a new {@code InputDoubleIntRangeProperty} with the specified initial value and range.
-     * <p>
-     * Validation is performed by the canonical constructor.
+     *
+     * <p>Validation is performed by the canonical constructor.
      *
      * @param initialValue the initial value
      * @param min          the minimum allowed value
@@ -69,8 +66,8 @@ public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int 
 
     /**
      * Checks if a value is invalid for the given range.
-     * <p>
-     * Validation is range-based only; integer-valued doubles are not required.
+     *
+     * <p>Validation is range-based only; integer-valued doubles are not required.
      *
      * @param value the value to check
      * @param min   the minimum allowed value
@@ -106,8 +103,9 @@ public record InputDoubleIntRangeProperty(DoubleProperty property, int min, int 
 
     /**
      * Sets the property value.
-     * <p>
-     * An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory method.
+     *
+     * <p>An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory
+     * method.
      *
      * @param value the value to set
      */

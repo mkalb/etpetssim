@@ -9,13 +9,15 @@ import java.util.function.*;
 
 /**
  * Represents an enum property with a defined set of valid values and a display name provider.
- * <p>
- * Encapsulates an {@link ObjectProperty} for an enum type and provides
+ *
+ * <p>Encapsulates an {@link ObjectProperty} for an enum type and provides
  * validation against a specified list of valid values.
- * <p>
- * Invalid values are logged via {@link AppLogger} and still set on the property.
- * <p>
- * Use {@link #of(Enum, List, Function)} or {@link #of(Enum, Class, Function)} to create instances.
+ *
+ * <p>Invalid values are logged via {@link AppLogger} and still set on the property.
+ *
+ * <p>Use {@link #of(Enum, List, Function)} or {@link #of(Enum, Class, Function)} to create instances.
+ *
+ * <p>The record wraps the given property without copying it; bindings and listeners on the property stay effective.
  *
  * @param <E>                 the enum type
  * @param property            the underlying {@link ObjectProperty} for the enum
@@ -27,16 +29,10 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
                                                    Function<E, String> displayNameProvider) {
 
     /**
-     * Constructs an {@code InputEnumProperty} with the given property, valid values, and display name provider.
-     * <p>
-     * Validates that {@code validValues} is not empty, does not contain duplicates,
-     * and that the property's value is valid.
-     * Makes a defensive copy of {@code validValues}.
+     * Creates an input property with an unmodifiable copy of {@code validValues}.
      *
-     * @param property            the underlying {@link ObjectProperty} for the enum
-     * @param validValues         the list of valid enum values
-     * @param displayNameProvider a function mapping enum values to their display names
-     * @throws IllegalArgumentException if any argument is invalid
+     * @throws IllegalArgumentException if {@code validValues} is empty or contains duplicates, or if the value of
+     *                                  {@code property} is not one of {@code validValues}
      */
     public InputEnumProperty {
         if (validValues.isEmpty()) {
@@ -56,8 +52,8 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
 
     /**
      * Creates a new {@code InputEnumProperty} with the specified initial value, valid values, and display name provider.
-     * <p>
-     * Validation is performed by the canonical constructor.
+     *
+     * <p>Validation is performed by the canonical constructor.
      *
      * @param initialValue        the initial enum value
      * @param validValues         the list of valid enum values
@@ -86,8 +82,8 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
 
     /**
      * Creates a new {@code InputEnumProperty} with all values of the given enum type and a display name provider.
-     * <p>
-     * Uses {@code enumClass.getEnumConstants()} to determine the valid values.
+     *
+     * <p>Uses {@code enumClass.getEnumConstants()} to determine the valid values.
      *
      * @param initialValue        the initial enum value
      * @param enumClass           the {@link Class} object of the enum type
@@ -130,8 +126,9 @@ public record InputEnumProperty<E extends Enum<E>>(ObjectProperty<E> property,
 
     /**
      * Sets the property value.
-     * <p>
-     * An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory method.
+     *
+     * <p>An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory
+     * method.
      *
      * @param value the value to set
      */

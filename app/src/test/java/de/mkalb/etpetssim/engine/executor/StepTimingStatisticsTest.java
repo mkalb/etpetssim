@@ -19,20 +19,7 @@ final class StepTimingStatisticsTest {
     private static final long HUNDRED_TWENTY = 120L;
 
     @Test
-    void testEmptyReturnsAllZeros() {
-        StepTimingStatistics statistics = StepTimingStatistics.empty();
-
-        assertAll(
-                () -> assertEquals(ZERO, statistics.currentNanos()),
-                () -> assertEquals(ZERO, statistics.minNanos()),
-                () -> assertEquals(ZERO, statistics.maxNanos()),
-                () -> assertEquals(ZERO, statistics.sumNanos()),
-                () -> assertEquals(ZERO, statistics.avgNanos())
-        );
-    }
-
-    @Test
-    void testConstructorAcceptsConsistentNonEmptyValues() {
+    void testRecord() {
         StepTimingStatistics statistics = new StepTimingStatistics(TWELVE, TEN, TWENTY, HUNDRED_TWENTY, FIFTEEN);
 
         assertAll(
@@ -87,6 +74,19 @@ final class StepTimingStatisticsTest {
                         () -> new StepTimingStatistics(ZERO, ZERO, ONE, ZERO, ZERO)),
                 () -> assertThrows(IllegalArgumentException.class,
                         () -> new StepTimingStatistics(ZERO, ZERO, ZERO, ZERO, ONE))
+        );
+    }
+
+    @Test
+    void testEmpty() {
+        StepTimingStatistics statistics = StepTimingStatistics.empty();
+
+        assertAll(
+                () -> assertEquals(ZERO, statistics.currentNanos()),
+                () -> assertEquals(ZERO, statistics.minNanos()),
+                () -> assertEquals(ZERO, statistics.maxNanos()),
+                () -> assertEquals(ZERO, statistics.sumNanos()),
+                () -> assertEquals(ZERO, statistics.avgNanos())
         );
     }
 

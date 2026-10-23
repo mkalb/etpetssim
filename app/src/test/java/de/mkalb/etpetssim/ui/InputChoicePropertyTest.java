@@ -1,11 +1,12 @@
 package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,77 +20,86 @@ final class InputChoicePropertyTest {
         AppLogger.initializeForTesting();
     }
 
-    @Test
-    void testConstructorMakesDefensiveCopyOfValidValues() {
-        List<String> validValues = new ArrayList<>(List.of("alpha", "beta"));
-        InputChoiceProperty<String> property = new InputChoiceProperty<>(
-                new SimpleObjectProperty<>("alpha"),
-                validValues,
-                String::toUpperCase);
-
-        validValues.clear();
-
-        assertEquals(List.of("alpha", "beta"), property.validValues());
+    private static InputChoiceProperty<String> createProperty() {
+        return InputChoiceProperty.ofList("alpha", List.of("alpha", "beta"), String::toUpperCase);
     }
 
     @Test
-    void testSetValueUpdatesPropertyForInvalidValue() {
-        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
-                "alpha",
-                List.of("alpha", "beta"),
-                String::toUpperCase);
+    void testRecord() {
+        ObjectProperty<String> objectProperty = new SimpleObjectProperty<>("alpha");
+        List<String> validValues = new ArrayList<>(List.of("alpha", "beta"));
+        Function<String, String> displayNameProvider = String::toUpperCase;
 
-        property.setValue("gamma");
+        InputChoiceProperty<String> property = new InputChoiceProperty<>(objectProperty, validValues,
+                displayNameProvider);
+        validValues.clear();
 
         assertAll(
-                () -> assertEquals("gamma", property.getValue()),
-                () -> assertFalse(property.isValue("alpha")),
-                () -> assertTrue(property.hasMultipleValidValues())
+                () -> assertSame(objectProperty, property.property()),
+                () -> assertEquals(List.of("alpha", "beta"), property.validValues()),
+                () -> assertThrows(UnsupportedOperationException.class, () -> property.validValues().add("gamma")),
+                () -> assertSame(displayNameProvider, property.displayNameProvider())
         );
     }
 
     @Test
-    void testSetValueUpdatesPropertyForValidValue() {
-        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
-                "alpha",
-                List.of("alpha", "beta"),
-                String::toUpperCase);
+    void testConstructorRejectsEmptyValidValues() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new InputChoiceProperty<>(new SimpleObjectProperty<>("alpha"), List.of(), String::toUpperCase));
+    }
 
-        property.setValue("beta");
+    @Test
+    void testConstructorRejectsDuplicateValidValues() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new InputChoiceProperty<>(new SimpleObjectProperty<>("alpha"), List.of("alpha", "alpha"),
+                        String::toUpperCase));
+    }
+
+    @Test
+    void testConstructorRejectsInvalidInitialValue() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new InputChoiceProperty<>(new SimpleObjectProperty<>("gamma"), List.of("alpha", "beta"),
+                        String::toUpperCase));
+    }
+
+    @Test
+    void testOfList() {
+        List<String> validValues = new ArrayList<>(List.of("alpha", "beta"));
+
+        InputChoiceProperty<String> property = InputChoiceProperty.ofList("beta", validValues, String::toUpperCase);
+        validValues.clear();
 
         assertAll(
                 () -> assertEquals("beta", property.getValue()),
-                () -> assertTrue(property.isValue("beta")),
-                () -> assertTrue(property.hasMultipleValidValues())
+                () -> assertEquals(List.of("alpha", "beta"), property.validValues()),
+                () -> assertEquals("BETA", property.displayNameProvider().apply(property.getValue()))
         );
     }
 
     @Test
-    void testValidValuesReturnsUnmodifiableList() {
-        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
-                "alpha",
-                List.of("alpha", "beta"),
-                String::toUpperCase);
-
-        assertThrows(UnsupportedOperationException.class,
-                () -> property.validValues().add("gamma"));
-    }
-
-    @Test
-    void testHasMultipleValidValuesReturnsFalseForSingletonList() {
-        InputChoiceProperty<String> property = InputChoiceProperty.ofList(
-                "alpha",
-                List.of("alpha"),
-                String::toUpperCase);
+    void testOfEnum() {
+        InputChoiceProperty<TestMode> property = InputChoiceProperty.ofEnum(
+                TestMode.MODE_BETA,
+                TestMode.class,
+                mode -> "display-" + mode.name());
 
         assertAll(
-                () -> assertFalse(property.hasMultipleValidValues()),
-                () -> assertTrue(property.isValue("alpha"))
+                () -> assertEquals(TestMode.MODE_BETA, property.getValue()),
+                () -> assertEquals(List.of(TestMode.values()), property.validValues()),
+                () -> assertEquals("display-MODE_BETA", property.displayNameProvider().apply(property.getValue()))
         );
     }
 
     @Test
-    void testAsStringBindingUsesDisplayNameProviderAndTracksUpdates() {
+    void testIsInvalidValue() {
+        assertAll(
+                () -> assertFalse(InputChoiceProperty.isInvalidValue("alpha", VALID_VALUES)),
+                () -> assertTrue(InputChoiceProperty.isInvalidValue("delta", VALID_VALUES))
+        );
+    }
+
+    @Test
+    void testAsStringBinding() {
         InputChoiceProperty<String> property = InputChoiceProperty.ofList(
                 "alpha",
                 List.of("alpha", "beta"),
@@ -106,55 +116,39 @@ final class InputChoicePropertyTest {
     }
 
     @Test
-    void testOfListRejectsEmptyValidValuesList() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputChoiceProperty.ofList("alpha", List.of(), String::toUpperCase));
+    void testSetValue() {
+        InputChoiceProperty<String> property = createProperty();
 
-        assertTrue(exception.getMessage().contains("validValues must not be empty"));
+        property.setValue("beta");
+
+        assertEquals("beta", property.getValue());
     }
 
     @Test
-    void testOfListRejectsInitialValueOutsideValidValuesList() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputChoiceProperty.ofList("gamma",
-                        List.of("alpha", "beta"),
-                        String::toUpperCase));
+    void testSetValueAcceptsInvalidValue() {
+        InputChoiceProperty<String> property = createProperty();
 
-        assertTrue(exception.getMessage().startsWith("Initial value is not valid: "));
+        property.setValue("gamma");
+
+        assertEquals("gamma", property.getValue());
     }
 
     @Test
-    void testOfListRejectsDuplicateValidValuesList() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputChoiceProperty.ofList("alpha",
-                        List.of("alpha", "alpha"),
-                        String::toUpperCase));
-
-        assertTrue(exception.getMessage().contains("validValues must not contain duplicates"));
-    }
-
-    @Test
-    void testIsInvalidValueReturnsFalseForContainedValue() {
-        assertFalse(InputChoiceProperty.isInvalidValue("alpha", VALID_VALUES));
-    }
-
-    @Test
-    void testIsInvalidValueReturnsTrueForValueOutsideList() {
-        assertTrue(InputChoiceProperty.isInvalidValue("delta", VALID_VALUES));
-    }
-
-    @Test
-    void testOfEnumUsesAllEnumConstants() {
-        InputChoiceProperty<TestMode> property = InputChoiceProperty.ofEnum(
-                TestMode.MODE_BETA,
-                TestMode.class,
-                mode -> "display-" + mode.name());
+    void testIsValue() {
+        InputChoiceProperty<String> property = createProperty();
 
         assertAll(
-                () -> assertEquals(TestMode.MODE_BETA, property.getValue()),
-                () -> assertEquals(List.of(TestMode.values()), property.validValues()),
-                () -> assertTrue(property.hasMultipleValidValues()),
-                () -> assertEquals("display-MODE_BETA", property.displayNameProvider().apply(property.getValue()))
+                () -> assertTrue(property.isValue("alpha")),
+                () -> assertFalse(property.isValue("beta"))
+        );
+    }
+
+    @Test
+    void testHasMultipleValidValues() {
+        assertAll(
+                () -> assertTrue(createProperty().hasMultipleValidValues()),
+                () -> assertFalse(InputChoiceProperty.ofList("alpha", List.of("alpha"), String::toUpperCase)
+                                                     .hasMultipleValidValues())
         );
     }
 

@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Terrain cell states for the Langton's Ant simulation.
  *
- * <p>Each constant represents one ground cell state identified by a {@code ruleIndex}.
+ * <p>Each constant represents one terrain cell state identified by a {@code ruleIndex}.
  * The special value {@link #UNVISITED} (rule index {@code -1}) marks cells that have
  * not yet been visited by any ant. Constants {@link #COLOR_0} through {@link #COLOR_15}
  * represent the 16 color states used by Langton's Ant rule sets.
@@ -43,8 +43,8 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
     private static final Map<Integer, TerrainConstant> BY_RULE_INDEX = HashMap.newHashMap(TerrainConstant.values().length);
 
     static {
-        for (TerrainConstant ground : values()) {
-            BY_RULE_INDEX.put(ground.ruleIndex(), ground);
+        for (TerrainConstant constant : values()) {
+            BY_RULE_INDEX.put(constant.ruleIndex(), constant);
         }
     }
 
@@ -56,11 +56,11 @@ public enum TerrainConstant implements LangtonEntity, ConstantGridEntityDescript
         this.ruleIndex = ruleIndex;
         String id = (ruleIndex < 0) ? "unvisited" : String.valueOf(ruleIndex);
         spec = new GridEntityDescriptorSpec(
-                "ground" + id,
+                "terrain" + id,
                 true,
-                "langton.entity.ground." + id + ".short",
-                "langton.entity.ground." + id + ".long",
-                "langton.entity.ground." + id + ".description",
+                "langton.entity.terrain." + id + ".short",
+                "langton.entity.terrain." + id + ".long",
+                "langton.entity.terrain." + id + ".description",
                 null,
                 color,
                 null);

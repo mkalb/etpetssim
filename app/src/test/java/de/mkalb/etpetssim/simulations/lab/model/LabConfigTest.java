@@ -6,62 +6,53 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.*;
+
+import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 final class LabConfigTest {
 
-    private static LabConfig createConfig(CellShape cellShape,
-                                          GridEdgeBehavior gridEdgeBehavior,
-                                          CellDisplayMode cellDisplayMode,
-                                          LabColorMode colorMode,
-                                          NeighborhoodMode neighborhoodMode) {
-        return new LabConfig(
-                cellShape,
-                gridEdgeBehavior,
-                LabConstraints.GRID_WIDTH_DEFAULT,
-                LabConstraints.GRID_HEIGHT_DEFAULT,
-                LabConstraints.CELL_EDGE_LENGTH_DEFAULT,
-                cellDisplayMode,
-                colorMode,
-                1L,
-                neighborhoodMode
-        );
+    private static boolean isValidWith(Consumer<ConfigValues> change) {
+        ConfigValues values = new ConfigValues();
+        change.accept(values);
+        return values.toConfig().isValid();
     }
 
     @Test
     void testIsValidAcceptsDefaultConstraints() {
-        LabConfig config = createConfig(
-                LabConstraints.CELL_SHAPE_DEFAULT,
-                LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                LabConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                LabConstraints.COLOR_MODE_DEFAULT,
-                LabConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertTrue(config.isValid());
+        assertTrue(isValidWith(_ -> {}));
     }
 
     @Test
-    void testIsValidAcceptsAlternativeAllowedSelections() {
-        LabConfig config = createConfig(
-                CellShape.SQUARE,
-                GridEdgeBehavior.BLOCK_X_WRAP_Y,
-                CellDisplayMode.CIRCLE,
-                LabColorMode.GRAYSCALE,
-                NeighborhoodMode.EDGES_ONLY);
-
-        assertTrue(config.isValid());
+    void testIsValidAcceptsSupportedAlternativeSelections() {
+        assertTrue(isValidWith(v -> {
+            v.cellShape = CellShape.SQUARE;
+            v.gridEdgeBehavior = GridEdgeBehavior.BLOCK_X_WRAP_Y;
+            v.cellDisplayMode = CellDisplayMode.CIRCLE;
+            v.colorMode = LabColorMode.GRAYSCALE;
+            v.neighborhoodMode = NeighborhoodMode.EDGES_ONLY;
+        }));
     }
 
     @Test
     void testIsValidRejectsUnsupportedCellDisplayMode() {
-        LabConfig config = createConfig(
-                LabConstraints.CELL_SHAPE_DEFAULT,
-                LabConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                CellDisplayMode.EMOJI,
-                LabConstraints.COLOR_MODE_DEFAULT,
-                LabConstraints.NEIGHBORHOOD_MODE_DEFAULT);
+        assertFalse(isValidWith(v -> v.cellDisplayMode = CellDisplayMode.EMOJI));
+    }
 
-        assertFalse(config.isValid());
+    private static final class ConfigValues {
+
+        CellShape cellShape = CELL_SHAPE_DEFAULT;
+        GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
+        CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
+        LabColorMode colorMode = COLOR_MODE_DEFAULT;
+        NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
+
+        LabConfig toConfig() {
+            return new LabConfig(cellShape, gridEdgeBehavior, GRID_WIDTH_DEFAULT, GRID_HEIGHT_DEFAULT,
+                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, colorMode, 1L, neighborhoodMode);
+        }
+
     }
 
 }

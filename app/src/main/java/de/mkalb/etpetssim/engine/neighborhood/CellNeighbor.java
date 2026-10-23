@@ -6,8 +6,8 @@ import java.util.*;
 
 /**
  * Represents the relationship between a cell and one of its neighbors in a two-dimensional grid.
- * <p>
- * Encapsulates the start cell's coordinate, the direction and type of the connection,
+ *
+ * <p>Encapsulates the start cell's coordinate, the direction and type of the connection,
  * and the neighbor cell's coordinate. It is used to describe how a cell is connected to its neighbor,
  * including whether the connection is via a shared edge or vertex.
  *
@@ -45,13 +45,14 @@ public record CellNeighbor(
 
     /**
      * Returns a concise, human-readable string representation of this cell neighbor relationship.
-     * <p>
-     * Format: {@code [start] [arrow] [neighbor] ([connection type])}
+     *
+     * <p>Format: {@code [start] [arrow] [neighbor] ([connection type])}
      *
      * @return a display string describing this cell neighbor
      */
     public String toDisplayString() {
         return String.format(
+                Locale.ROOT,
                 "%s %s %s (%s)",
                 startCoordinate.toDisplayString(),
                 direction.arrow(),

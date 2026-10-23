@@ -5,9 +5,9 @@ import de.mkalb.etpetssim.engine.executor.StepTimingStatistics;
 import java.util.*;
 
 /**
- * Immutable sampled statistics at one step index.
+ * Immutable sampled statistics at one step count.
  *
- * @param stepCount            non-negative simulation step index of this sample
+ * @param stepCount            non-negative simulation step count at which this sample was taken
  * @param stepTimingStatistics timing snapshot for the sampled step
  * @param values               sampled metric values by metric key; {@link Double#NaN} represents a non-finite
  *                             extracted value and preserves a gap in the time series
@@ -17,6 +17,11 @@ public record StatisticsSample(
         StepTimingStatistics stepTimingStatistics,
         Map<String, Double> values) {
 
+    /**
+     * Creates a sample with an unmodifiable copy of {@code values} in their iteration order.
+     *
+     * @throws IllegalArgumentException if {@code stepCount} is negative
+     */
     public StatisticsSample {
         if (stepCount < 0) {
             throw new IllegalArgumentException("stepCount must be >= 0");

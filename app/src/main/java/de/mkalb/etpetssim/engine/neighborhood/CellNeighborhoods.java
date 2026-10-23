@@ -334,7 +334,7 @@ public final class CellNeighborhoods {
                                       .map(neighborConnection -> new CellNeighbor(
                                               startCoordinate,
                                               neighborConnection.direction(),
-                                              neighborConnection.connectionType(),
+                                              neighborConnection.connection(),
                                               startCoordinate.offset(neighborConnection.offset())
                                       ));
     }
@@ -369,7 +369,7 @@ public final class CellNeighborhoods {
                 return Optional.of(new CellNeighborWithEdgeBehavior(
                         startCoordinate,
                         neighborConnection.direction(),
-                        neighborConnection.connectionType(),
+                        neighborConnection.connection(),
                         neighborCoordinate,
                         edgeResult.mapped(),
                         edgeResult.action()
@@ -778,14 +778,15 @@ public final class CellNeighborhoods {
 
     /**
      * Internal record representing a single neighbor connection for calculation and caching purposes.
-     * <p>
-     * Encapsulates the relative offset, compass direction, and connection type (edge or vertex)
+     *
+     * <p>Encapsulates the relative offset, compass direction, and connection type (edge or vertex)
      * between a cell and one of its neighbors.
      *
-     * @param offset         the relative offset to the neighbor cell
-     * @param direction      the compass direction to the neighbor
-     * @param connectionType the type of connection (edge or vertex)
+     * @param offset     the relative offset to the neighbor cell
+     * @param direction  the compass direction to the neighbor
+     * @param connection the type of connection (edge or vertex)
      */
-    record CellNeighborConnection(GridOffset offset, CompassDirection direction, CellConnectionType connectionType) {}
+    record CellNeighborConnection(GridOffset offset, CompassDirection direction, CellConnectionType connection) {
+    }
 
 }

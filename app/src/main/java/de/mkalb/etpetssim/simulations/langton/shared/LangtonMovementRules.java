@@ -17,6 +17,12 @@ public record LangtonMovementRules(
 
     private static final int INITIAL_CAPACITY_DISPLAY_STRING = 32;
 
+    /**
+     * Creates movement rules with an unmodifiable copy of the turn sequence.
+     *
+     * @throws IllegalArgumentException if the sequence has fewer than {@link #MIN_RULE_COUNT} or more than
+     *                                  {@link #MAX_RULE_COUNT} turns
+     */
     public LangtonMovementRules {
         if (turns.size() < MIN_RULE_COUNT) {
             throw new IllegalArgumentException("At least " + MIN_RULE_COUNT + " rules required, got: " + turns.size());
@@ -30,8 +36,13 @@ public record LangtonMovementRules(
     /**
      * Parses a compact turn string such as {@code LR}, {@code L2R2}, or {@code LRU}.
      *
+     * <p>The string is trimmed and case-insensitive. {@code L} and {@code R} may be followed by {@code 1} (one
+     * direction step) or {@code 2} (two direction steps); {@code N}, {@code C}, and {@code F} keep the direction, and
+     * {@code U} and {@code B} reverse it.
+     *
      * @param ruleString the compact rule string to parse
      * @return the parsed movement rules
+     * @throws IllegalArgumentException if the string contains an unknown character or too few or too many turns
      */
     public static LangtonMovementRules parse(String ruleString) {
         String preparedString = ruleString.trim().toUpperCase(Locale.ROOT);

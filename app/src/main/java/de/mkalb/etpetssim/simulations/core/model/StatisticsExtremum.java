@@ -4,10 +4,15 @@ package de.mkalb.etpetssim.simulations.core.model;
  * Immutable point-in-time record of a single extremum: the metric value and the step at which it occurred.
  *
  * @param value     the minimum or maximum metric value
- * @param stepCount the simulation step at which this extremum was first recorded
+ * @param stepCount the simulation step count at which this extremum was first recorded
  */
-public record StatisticsExtremum(double value, long stepCount) {
+public record StatisticsExtremum(double value, int stepCount) {
 
+    /**
+     * Creates an extremum.
+     *
+     * @throws IllegalArgumentException if {@code value} is not finite or {@code stepCount} is negative
+     */
     public StatisticsExtremum {
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("value must be finite: " + value);

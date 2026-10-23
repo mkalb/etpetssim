@@ -6,12 +6,12 @@ import java.util.*;
 
 /**
  * Represents a cell snapshot within a specific radius ring around a start coordinate.
- * <p>
- * Besides the ring index and coordinate, this record stores the generic cell value and
+ *
+ * <p>Besides the ring index and coordinate, this record stores the generic cell value and
  * the sorted set of coordinates from the previous ring through which this cell was reached.
  * The predecessor set is always exposed as an unmodifiable sorted set.
- * <p>
- * Equality and hash code are intentionally based on the {@link #coordinate()} only.
+ *
+ * <p>Equality and hash code are intentionally based on the {@link #coordinate()} only.
  * This allows instances to be used as map keys when a coordinate should be treated as
  * globally unique across all radius rings.
  *
@@ -28,9 +28,14 @@ public record RadiusRingCell<C>(int ring,
                                 SortedSet<GridCoordinate> reachedFromPreviousRing) {
 
     /**
-     * Canonical constructor creating a defensive, sorted, unmodifiable copy of the predecessor set.
+     * Validates the ring index and stores an unmodifiable copy of the predecessor set.
+     *
+     * @throws IllegalArgumentException if {@code ring} is negative
      */
     public RadiusRingCell {
+        if (ring < 0) {
+            throw new IllegalArgumentException("Ring must be greater than or equal to 0, but was: " + ring);
+        }
         reachedFromPreviousRing = Collections.unmodifiableSortedSet(new TreeSet<>(reachedFromPreviousRing));
     }
 

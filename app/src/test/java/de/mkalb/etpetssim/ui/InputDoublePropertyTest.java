@@ -1,7 +1,7 @@
 package de.mkalb.etpetssim.ui;
 
 import de.mkalb.etpetssim.core.AppLogger;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.*;
 
@@ -16,137 +16,134 @@ final class InputDoublePropertyTest {
     private static final double FRACTIONAL_IN_RANGE = 6.6d;
     private static final double ABOVE_MAX = 99.0d;
     private static final double BELOW_MIN = -99.0d;
+    private static final double TOLERANCE = 1.0e-9d;
 
     @BeforeAll
     static void setUpBeforeAll() {
         AppLogger.initializeForTesting();
     }
 
+    private static InputDoubleProperty createProperty() {
+        return InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+    }
+
+    private static InputDoubleProperty createRecord(double initialValue, double min, double max) {
+        return new InputDoubleProperty(new SimpleDoubleProperty(initialValue), min, max);
+    }
+
     @Test
-    void testConstructorAcceptsValidInitialValueAndExposesAccessors() {
-        InputDoubleProperty property = new InputDoubleProperty(new SimpleDoubleProperty(INITIAL_VALUE), MIN_VALUE, MAX_VALUE);
+    void testRecord() {
+        DoubleProperty doubleProperty = new SimpleDoubleProperty(INITIAL_VALUE);
+
+        InputDoubleProperty property = new InputDoubleProperty(doubleProperty, MIN_VALUE, MAX_VALUE);
 
         assertAll(
-                () -> assertEquals(INITIAL_VALUE, property.getValue()),
-                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE)),
-                () -> assertEquals(INITIAL_VALUE, property.asObjectProperty().get()),
-                () -> assertEquals(String.format("%.1f", INITIAL_VALUE), property.asStringBinding("%.1f").get())
+                () -> assertSame(doubleProperty, property.property()),
+                () -> assertEquals(MIN_VALUE, property.min(), TOLERANCE),
+                () -> assertEquals(MAX_VALUE, property.max(), TOLERANCE),
+                () -> assertEquals(MIN_VALUE, createRecord(MIN_VALUE, MIN_VALUE, MAX_VALUE).getValue(), TOLERANCE),
+                () -> assertEquals(MAX_VALUE, createRecord(MAX_VALUE, MIN_VALUE, MAX_VALUE).getValue(), TOLERANCE)
         );
     }
 
     @Test
-    void testAdjustValueKeepsAlreadyValidValues() {
-        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+    void testConstructorRejectsMinNotLessThanMax() {
+        assertThrows(IllegalArgumentException.class, () -> createRecord(INITIAL_VALUE, MIN_VALUE, MIN_VALUE));
+    }
 
+    @Test
+    void testConstructorRejectsInvalidInitialValue() {
         assertAll(
-                () -> assertEquals(MIN_VALUE, property.adjustValue(MIN_VALUE)),
-                () -> assertEquals(MAX_VALUE, property.adjustValue(MAX_VALUE)),
-                () -> assertEquals(INITIAL_VALUE, property.adjustValue(INITIAL_VALUE)),
-                () -> assertEquals(FRACTIONAL_IN_RANGE, property.adjustValue(FRACTIONAL_IN_RANGE))
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> createRecord(ABOVE_MAX, MIN_VALUE, MAX_VALUE)),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> createRecord(BELOW_MIN, MIN_VALUE, MAX_VALUE)),
+                () -> assertThrows(IllegalArgumentException.class,
+                        () -> createRecord(Double.NaN, MIN_VALUE, MAX_VALUE))
         );
     }
 
     @Test
-    void testAdjustValueClampsOutOfRangeValues() {
-        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+    void testOf() {
+        InputDoubleProperty property = createProperty();
 
         assertAll(
-                () -> assertEquals(MAX_VALUE, property.adjustValue(ABOVE_MAX)),
-                () -> assertEquals(MIN_VALUE, property.adjustValue(BELOW_MIN))
+                () -> assertEquals(INITIAL_VALUE, property.getValue(), TOLERANCE),
+                () -> assertEquals(MIN_VALUE, property.min(), TOLERANCE),
+                () -> assertEquals(MAX_VALUE, property.max(), TOLERANCE)
         );
     }
 
     @Test
-    void testSetValueAcceptsValidValuesWithinRange() {
-        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+    void testIsInvalidValue() {
+        assertAll(
+                () -> assertFalse(InputDoubleProperty.isInvalidValue(MIN_VALUE, MIN_VALUE, MAX_VALUE)),
+                () -> assertFalse(InputDoubleProperty.isInvalidValue(FRACTIONAL_IN_RANGE, MIN_VALUE, MAX_VALUE)),
+                () -> assertFalse(InputDoubleProperty.isInvalidValue(MAX_VALUE, MIN_VALUE, MAX_VALUE)),
+                () -> assertTrue(InputDoubleProperty.isInvalidValue(ABOVE_MAX, MIN_VALUE, MAX_VALUE)),
+                () -> assertTrue(InputDoubleProperty.isInvalidValue(BELOW_MIN, MIN_VALUE, MAX_VALUE)),
+                () -> assertTrue(InputDoubleProperty.isInvalidValue(Double.NaN, MIN_VALUE, MAX_VALUE))
+        );
+    }
 
+    @Test
+    void testAsObjectProperty() {
+        InputDoubleProperty property = createProperty();
+
+        ObjectProperty<Double> objectProperty = property.asObjectProperty();
+        property.setValue(FRACTIONAL_IN_RANGE);
+
+        assertEquals(FRACTIONAL_IN_RANGE, objectProperty.get(), TOLERANCE);
+    }
+
+    @Test
+    void testAsStringBinding() {
+        InputDoubleProperty property = createProperty();
+
+        var binding = property.asStringBinding("%.1f");
+        String initialBinding = binding.get();
         property.setValue(FRACTIONAL_IN_RANGE);
 
         assertAll(
-                () -> assertEquals(FRACTIONAL_IN_RANGE, property.getValue()),
-                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE))
+                () -> assertEquals(String.format("%.1f", INITIAL_VALUE), initialBinding),
+                () -> assertEquals(String.format("%.1f", FRACTIONAL_IN_RANGE), binding.get())
         );
     }
 
     @Test
-    void testSetValueAcceptsRangeBoundaries() {
-        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+    void testSetValue() {
+        InputDoubleProperty property = createProperty();
 
-        property.setValue(MIN_VALUE);
-        assertAll(
-                () -> assertEquals(MIN_VALUE, property.getValue()),
-                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE))
-        );
+        property.setValue(FRACTIONAL_IN_RANGE);
 
-        property.setValue(MAX_VALUE);
-        assertAll(
-                () -> assertEquals(MAX_VALUE, property.getValue()),
-                () -> assertFalse(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE))
-        );
+        assertEquals(FRACTIONAL_IN_RANGE, property.getValue(), TOLERANCE);
     }
 
     @Test
-    void testSetValueAllowsInvalidValuesOutsideRange() {
-        InputDoubleProperty property = InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MAX_VALUE);
+    void testSetValueAcceptsInvalidValue() {
+        InputDoubleProperty property = createProperty();
 
         property.setValue(ABOVE_MAX);
-        assertEquals(ABOVE_MAX, property.getValue());
-        assertTrue(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE));
-
+        double aboveMax = property.getValue();
         property.setValue(BELOW_MIN);
-        assertEquals(BELOW_MIN, property.getValue());
-        assertTrue(InputDoubleProperty.isInvalidValue(property.getValue(), MIN_VALUE, MAX_VALUE));
-    }
+        double belowMin = property.getValue();
 
-    @Test
-    void testConstructorRejectsMinGreaterThanOrEqualToMax() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new InputDoubleProperty(new SimpleDoubleProperty(INITIAL_VALUE), MIN_VALUE, MIN_VALUE));
-
-        assertTrue(exception.getMessage().contains("min must be less than max"));
-    }
-
-    @Test
-    void testConstructorRejectsInitialValueOutsideRange() {
         assertAll(
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                            () -> new InputDoubleProperty(new SimpleDoubleProperty(ABOVE_MAX), MIN_VALUE, MAX_VALUE));
-
-                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
-                },
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                            () -> new InputDoubleProperty(new SimpleDoubleProperty(BELOW_MIN), MIN_VALUE, MAX_VALUE));
-
-                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
-                }
+                () -> assertEquals(ABOVE_MAX, aboveMax, TOLERANCE),
+                () -> assertEquals(BELOW_MIN, belowMin, TOLERANCE)
         );
     }
 
     @Test
-    void testOfRejectsMinGreaterThanOrEqualToMax() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> InputDoubleProperty.of(INITIAL_VALUE, MIN_VALUE, MIN_VALUE));
+    void testAdjustValue() {
+        InputDoubleProperty property = createProperty();
 
-        assertTrue(exception.getMessage().contains("min must be less than max"));
-    }
-
-    @Test
-    void testOfRejectsInitialValueOutsideRange() {
         assertAll(
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                            () -> InputDoubleProperty.of(ABOVE_MAX, MIN_VALUE, MAX_VALUE));
-
-                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
-                },
-                () -> {
-                    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                            () -> InputDoubleProperty.of(BELOW_MIN, MIN_VALUE, MAX_VALUE));
-
-                    assertTrue(exception.getMessage().contains("Initial value is not valid"));
-                }
+                () -> assertEquals(MIN_VALUE, property.adjustValue(MIN_VALUE), TOLERANCE),
+                () -> assertEquals(MAX_VALUE, property.adjustValue(MAX_VALUE), TOLERANCE),
+                () -> assertEquals(FRACTIONAL_IN_RANGE, property.adjustValue(FRACTIONAL_IN_RANGE), TOLERANCE),
+                () -> assertEquals(MAX_VALUE, property.adjustValue(ABOVE_MAX), TOLERANCE),
+                () -> assertEquals(MIN_VALUE, property.adjustValue(BELOW_MIN), TOLERANCE)
         );
     }
 

@@ -9,7 +9,10 @@ import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import static de.mkalb.etpetssim.simulations.lab.model.LabConstraints.*;
 
 /**
- * Immutable configuration for a simulation.
+ * Immutable configuration of the Simulation Lab simulation.
+ *
+ * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
+ * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
  * @param cellShape        the configured cell shape
  * @param gridEdgeBehavior the configured grid edge behavior
@@ -38,7 +41,7 @@ public record LabConfig(
         implements SimulationConfig {
 
     /**
-     * Validates the common simulation settings and the lab-specific selectable inspection settings.
+     * Validates the common simulation settings and the Lab-specific selections.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
      */

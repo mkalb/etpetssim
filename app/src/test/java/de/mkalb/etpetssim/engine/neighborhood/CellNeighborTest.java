@@ -8,20 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 final class CellNeighborTest {
 
     @Test
-    void testRecord() {
-        GridCoordinate start = new GridCoordinate(0, 0);
-        GridCoordinate neighbor = new GridCoordinate(1, 0);
-        CellNeighbor n1 = new CellNeighbor(start, CompassDirection.E, CellConnectionType.EDGE, neighbor);
-        CellNeighbor n2 = new CellNeighbor(start, CompassDirection.E, CellConnectionType.EDGE, neighbor);
-
-        assertEquals(start, n1.startCoordinate());
-        assertEquals(CompassDirection.E, n1.direction());
-        assertEquals(CellConnectionType.EDGE, n1.connection());
-        assertEquals(neighbor, n1.neighborCoordinate());
-        assertEquals(n1, n2);
-    }
-
-    @Test
     void testIsEdgeConnection() {
         GridCoordinate start = new GridCoordinate(0, 0);
         GridCoordinate neighbor = new GridCoordinate(0, 1);
@@ -45,13 +31,15 @@ final class CellNeighborTest {
 
     @Test
     void testToDisplayString() {
-        GridCoordinate start = new GridCoordinate(2, 3);
-        GridCoordinate neighbor = new GridCoordinate(2, 4);
-        CellNeighbor n = new CellNeighbor(start, CompassDirection.N, CellConnectionType.EDGE, neighbor);
-        String display = n.toDisplayString();
-        assertTrue(display.contains(start.toDisplayString()));
-        assertTrue(display.contains(neighbor.toDisplayString()));
-        assertTrue(display.contains("edge"));
+        CellNeighbor edgeNeighbor = new CellNeighbor(
+                new GridCoordinate(2, 3), CompassDirection.N, CellConnectionType.EDGE, new GridCoordinate(2, 2));
+        CellNeighbor vertexNeighbor = new CellNeighbor(
+                new GridCoordinate(2, 3), CompassDirection.SE, CellConnectionType.VERTEX, new GridCoordinate(3, 4));
+
+        assertAll(
+                () -> assertEquals("(2, 3) ↑ (2, 2) (edge)", edgeNeighbor.toDisplayString()),
+                () -> assertEquals("(2, 3) ↘ (3, 4) (vertex)", vertexNeighbor.toDisplayString())
+        );
     }
 
 }

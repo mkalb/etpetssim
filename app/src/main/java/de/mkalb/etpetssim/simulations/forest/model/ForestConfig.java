@@ -8,7 +8,10 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
 
 /**
- * Immutable configuration for a simulation.
+ * Immutable configuration of the Forest-fire model simulation.
+ *
+ * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
+ * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
  * @param cellShape                    the configured cell shape
  * @param gridEdgeBehavior             the configured grid edge behavior
@@ -17,7 +20,7 @@ import static de.mkalb.etpetssim.simulations.forest.model.ForestConstraints.*;
  * @param cellEdgeLength               the rendered cell edge length in pixels
  * @param cellDisplayMode              the cell display mode used by the UI
  * @param seed                         the random seed used for initialization
- * @param treeDensity                  the initial tree density
+ * @param treeDensity                  the initial share of tree cells as a fraction of all cells
  * @param neighborhoodMode             the neighborhood mode used during updates
  * @param treeGrowthProbability        the probability that an empty cell grows a tree
  * @param lightningIgnitionProbability the probability that a tree ignites spontaneously
@@ -47,7 +50,7 @@ public record ForestConfig(
     }
 
     /**
-     * Validates the common simulation settings and the forest-specific supported selections and probability ranges.
+     * Validates the common simulation settings and the Forest-specific selections and ranges.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
      */

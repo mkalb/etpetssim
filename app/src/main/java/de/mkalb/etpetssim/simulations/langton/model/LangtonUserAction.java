@@ -38,7 +38,7 @@ public final class LangtonUserAction
                 }
             }
             case LangtonUserActionContext.AddAnt addAnt -> {
-                var terrainEntity = model.groundModel().getEntity(coordinate);
+                var terrainEntity = model.terrainModel().getEntity(coordinate);
                 if ((terrainEntity != TerrainConstant.UNVISITED) || !(antEntity instanceof NoAgent)) {
                     return;
                 }
@@ -48,7 +48,7 @@ public final class LangtonUserAction
                 }
                 Ant ant = new Ant(direction);
                 model.antModel().setEntity(coordinate, ant);
-                model.groundModel().setEntity(coordinate, TerrainConstant.COLOR_1);
+                model.terrainModel().setEntity(coordinate, TerrainConstant.COLOR_1);
                 statistics.adjustCellCounts(1, 1);
             }
         }

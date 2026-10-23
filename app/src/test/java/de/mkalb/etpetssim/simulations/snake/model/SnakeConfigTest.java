@@ -6,268 +6,153 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.*;
+
+import static de.mkalb.etpetssim.simulations.snake.model.SnakeConstraints.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 final class SnakeConfigTest {
 
-    private static SnakeConfig createConfig(CellShape cellShape,
-                                            GridEdgeBehavior gridEdgeBehavior,
-                                            CellDisplayMode cellDisplayMode,
-                                            int verticalWalls,
-                                            int foodCells,
-                                            int snakes,
-                                            int initialPendingGrowth,
-                                            SnakeDeathMode deathMode,
-                                            int growthPerFood,
-                                            int basePointsPerFood,
-                                            double segmentLengthMultiplier,
-                                            NeighborhoodMode neighborhoodMode) {
-        return new SnakeConfig(
-                cellShape,
-                gridEdgeBehavior,
-                SnakeConstraints.GRID_WIDTH_DEFAULT,
-                SnakeConstraints.GRID_HEIGHT_DEFAULT,
-                SnakeConstraints.CELL_EDGE_LENGTH_DEFAULT,
-                cellDisplayMode,
-                1L,
-                verticalWalls,
-                foodCells,
-                snakes,
-                initialPendingGrowth,
-                neighborhoodMode,
-                deathMode,
-                growthPerFood,
-                basePointsPerFood,
-                segmentLengthMultiplier
-        );
+    private static boolean isValidWith(Consumer<ConfigValues> change) {
+        ConfigValues values = new ConfigValues();
+        change.accept(values);
+        return values.toConfig().isValid();
     }
 
     @Test
     void testIsValidAcceptsDefaultConstraints() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertTrue(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsUnsupportedCellShape() {
-        SnakeConfig config = createConfig(
-                CellShape.TRIANGLE,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsUnsupportedCellDisplayMode() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                CellDisplayMode.SHAPE,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsUnexpectedNeighborhoodMode() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                NeighborhoodMode.EDGES_AND_VERTICES);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsVerticalWallsOutsideRange() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_MAX + 1,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsFoodCellsOutsideRange() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_MAX + 1,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsSnakesOutsideRange() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_MAX + 1,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsInitialPendingGrowthOutsideRange() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_MAX + 1,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsGrowthPerFoodOutsideRange() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_MAX + 1,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsBasePointsPerFoodOutsideRange() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_MAX + 1,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsSegmentLengthMultiplierOutsideRange() {
-        SnakeConfig config = createConfig(
-                SnakeConstraints.CELL_SHAPE_DEFAULT,
-                SnakeConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeConstraints.SNAKE_DEATH_MODE_DEFAULT,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                Math.nextUp(SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_MAX),
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
-
-        assertFalse(config.isValid());
+        assertTrue(isValidWith(_ -> {}));
     }
 
     @Test
     void testIsValidAcceptsSupportedAlternativeSelections() {
-        SnakeConfig config = createConfig(
-                CellShape.SQUARE,
-                GridEdgeBehavior.BLOCK_XY,
-                SnakeConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                SnakeConstraints.VERTICAL_WALLS_DEFAULT,
-                SnakeConstraints.FOOD_CELLS_DEFAULT,
-                SnakeConstraints.SNAKES_DEFAULT,
-                SnakeConstraints.INITIAL_PENDING_GROWTH_DEFAULT,
-                SnakeDeathMode.PERMADEATH,
-                SnakeConstraints.GROWTH_PER_FOOD_DEFAULT,
-                SnakeConstraints.BASE_POINTS_PER_FOOD_DEFAULT,
-                SnakeConstraints.SEGMENT_LENGTH_MULTIPLIER_DEFAULT,
-                SnakeConstraints.NEIGHBORHOOD_MODE_DEFAULT);
+        assertTrue(isValidWith(v -> {
+            v.cellShape = CellShape.SQUARE;
+            v.gridEdgeBehavior = GridEdgeBehavior.BLOCK_XY;
+            v.deathMode = SnakeDeathMode.PERMADEATH;
+        }));
+    }
 
-        assertTrue(config.isValid());
+    @Test
+    void testIsValidAcceptsBoundaryValues() {
+        assertAll(
+                () -> assertTrue(isValidWith(v -> v.verticalWalls = VERTICAL_WALLS_MIN)),
+                () -> assertTrue(isValidWith(v -> v.verticalWalls = VERTICAL_WALLS_MAX)),
+                () -> assertTrue(isValidWith(v -> v.foodCells = FOOD_CELLS_MIN)),
+                () -> assertTrue(isValidWith(v -> v.foodCells = FOOD_CELLS_MAX)),
+                () -> assertTrue(isValidWith(v -> v.snakes = SNAKES_MIN)),
+                () -> assertTrue(isValidWith(v -> v.snakes = SNAKES_MAX)),
+                () -> assertTrue(isValidWith(v -> v.initialPendingGrowth = INITIAL_PENDING_GROWTH_MIN)),
+                () -> assertTrue(isValidWith(v -> v.initialPendingGrowth = INITIAL_PENDING_GROWTH_MAX)),
+                () -> assertTrue(isValidWith(v -> v.growthPerFood = GROWTH_PER_FOOD_MIN)),
+                () -> assertTrue(isValidWith(v -> v.growthPerFood = GROWTH_PER_FOOD_MAX)),
+                () -> assertTrue(isValidWith(v -> v.basePointsPerFood = BASE_POINTS_PER_FOOD_MIN)),
+                () -> assertTrue(isValidWith(v -> v.basePointsPerFood = BASE_POINTS_PER_FOOD_MAX)),
+                () -> assertTrue(isValidWith(v -> v.segmentLengthMultiplier = SEGMENT_LENGTH_MULTIPLIER_MIN)),
+                () -> assertTrue(isValidWith(v -> v.segmentLengthMultiplier = SEGMENT_LENGTH_MULTIPLIER_MAX))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsUnsupportedCellShape() {
+        assertFalse(isValidWith(v -> v.cellShape = CellShape.TRIANGLE));
+    }
+
+    @Test
+    void testIsValidRejectsUnsupportedGridEdgeBehavior() {
+        assertFalse(isValidWith(v -> v.gridEdgeBehavior = GridEdgeBehavior.ABSORB_XY));
+    }
+
+    @Test
+    void testIsValidRejectsUnsupportedCellDisplayMode() {
+        assertFalse(isValidWith(v -> v.cellDisplayMode = CellDisplayMode.SHAPE));
+    }
+
+    @Test
+    void testIsValidRejectsUnexpectedNeighborhoodMode() {
+        assertFalse(isValidWith(v -> v.neighborhoodMode = NeighborhoodMode.EDGES_AND_VERTICES));
+    }
+
+    @Test
+    void testIsValidRejectsVerticalWallsOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.verticalWalls = VERTICAL_WALLS_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.verticalWalls = VERTICAL_WALLS_MAX + 1))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsFoodCellsOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.foodCells = FOOD_CELLS_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.foodCells = FOOD_CELLS_MAX + 1))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsSnakesOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.snakes = SNAKES_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.snakes = SNAKES_MAX + 1))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsInitialPendingGrowthOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.initialPendingGrowth = INITIAL_PENDING_GROWTH_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.initialPendingGrowth = INITIAL_PENDING_GROWTH_MAX + 1))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsGrowthPerFoodOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.growthPerFood = GROWTH_PER_FOOD_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.growthPerFood = GROWTH_PER_FOOD_MAX + 1))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsBasePointsPerFoodOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.basePointsPerFood = BASE_POINTS_PER_FOOD_MIN - 1)),
+                () -> assertFalse(isValidWith(v -> v.basePointsPerFood = BASE_POINTS_PER_FOOD_MAX + 1))
+        );
+    }
+
+    @Test
+    void testIsValidRejectsSegmentLengthMultiplierOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(
+                        v -> v.segmentLengthMultiplier = Math.nextDown(SEGMENT_LENGTH_MULTIPLIER_MIN))),
+                () -> assertFalse(isValidWith(
+                        v -> v.segmentLengthMultiplier = Math.nextUp(SEGMENT_LENGTH_MULTIPLIER_MAX)))
+        );
+    }
+
+    private static final class ConfigValues {
+
+        CellShape cellShape = CELL_SHAPE_DEFAULT;
+        GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
+        CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
+        int verticalWalls = VERTICAL_WALLS_DEFAULT;
+        int foodCells = FOOD_CELLS_DEFAULT;
+        int snakes = SNAKES_DEFAULT;
+        int initialPendingGrowth = INITIAL_PENDING_GROWTH_DEFAULT;
+        NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
+        SnakeDeathMode deathMode = SNAKE_DEATH_MODE_DEFAULT;
+        int growthPerFood = GROWTH_PER_FOOD_DEFAULT;
+        int basePointsPerFood = BASE_POINTS_PER_FOOD_DEFAULT;
+        double segmentLengthMultiplier = SEGMENT_LENGTH_MULTIPLIER_DEFAULT;
+
+        SnakeConfig toConfig() {
+            return new SnakeConfig(cellShape, gridEdgeBehavior, GRID_WIDTH_DEFAULT, GRID_HEIGHT_DEFAULT,
+                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, 1L, verticalWalls, foodCells, snakes,
+                    initialPendingGrowth, neighborhoodMode, deathMode, growthPerFood, basePointsPerFood,
+                    segmentLengthMultiplier);
+        }
+
     }
 
 }

@@ -4,11 +4,16 @@ import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.model.GridCellView;
 import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 
+import java.util.*;
+
 /**
  * Snapshot of all Sugar layers for a single grid coordinate.
- * <p>
- * The record stores both layer entities (resource, agent) and
- * exposes an effective top-most entity via {@link #entity()}.
+ *
+ * <p>The record stores both layer entities (resource, agent) and exposes an effective top-most entity via
+ * {@link #entity()}.
+ *
+ * <p>The record holds the entity references read at creation without copying the entities; later changes to a
+ * mutable entity ({@link Sugar}, {@link Agent}) are visible through the record.
  *
  * @param coordinate     coordinate of this snapshot
  * @param resourceEntity resource layer entity
@@ -34,35 +39,33 @@ public record SugarCell(GridCoordinate coordinate,
 
     /**
      * Returns the effective entity visible for this cell.
-     * <p>
-     * Priority order is: agent, then resource.
      *
-     * @return the top-most non-empty Sugar entity
+     * <p>Priority order is: agent, then resource.
+     *
+     * @return the agent if present, otherwise the resource entity
      */
     @Override
     public SugarEntity entity() {
-        if (agentEntity instanceof Agent) {
+        if (agentEntity.isNotEmpty()) {
             return agentEntity;
         }
         return resourceEntity;
     }
 
     /**
-     * Returns a display string containing the coordinate and both layer
-     * entities (resource, agent).
-     * <p>
-     * Format:
-     * {@code <coordinate> <resource-display> <agent-display>}
+     * Returns a display string containing the coordinate and both layer entities (resource, agent).
+     *
+     * <p>Format: {@code <coordinate-display> <resource-display> <agent-display>}, for example
+     * {@code (1, 2) [SUGAR 3/4] [NO_AGENT]}.
      *
      * @return a layer-complete display string for this Sugar cell
      */
     @Override
     public String toDisplayString() {
-        return String.format("%s %s %s",
+        return String.format(Locale.ROOT, "%s %s %s",
                 coordinate.toDisplayString(),
                 resourceEntity.toDisplayString(),
                 agentEntity.toDisplayString());
     }
 
 }
-

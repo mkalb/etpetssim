@@ -44,7 +44,7 @@ public final class LangtonSimulationManager
         // Start at the middle of the grid but round down to an even number. This avoids problems with TRIANGLE.
         GridCoordinate coordinate = new GridCoordinate(halveToEven(structure.size().width()), halveToEven(structure.size().height()));
         model.antModel().setEntity(coordinate, ant);
-        model.groundModel().setEntity(coordinate, TerrainConstant.COLOR_1);
+        model.terrainModel().setEntity(coordinate, TerrainConstant.COLOR_1);
     }
 
     int halveToEven(int n) {

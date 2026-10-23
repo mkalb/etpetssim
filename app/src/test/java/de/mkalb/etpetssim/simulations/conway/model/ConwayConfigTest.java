@@ -7,142 +7,104 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.function.*;
 
+import static de.mkalb.etpetssim.simulations.conway.model.ConwayConstraints.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 final class ConwayConfigTest {
 
-    private static ConwayConfig createConfig(CellShape cellShape,
-                                             GridEdgeBehavior gridEdgeBehavior,
-                                             CellDisplayMode cellDisplayMode,
-                                             double alivePercent,
-                                             NeighborhoodMode neighborhoodMode,
-                                             ConwayTransitionRules transitionRules) {
-        return new ConwayConfig(
-                cellShape,
-                gridEdgeBehavior,
-                ConwayConstraints.GRID_WIDTH_DEFAULT,
-                ConwayConstraints.GRID_HEIGHT_DEFAULT,
-                ConwayConstraints.CELL_EDGE_LENGTH_DEFAULT,
-                cellDisplayMode,
-                1L,
-                alivePercent,
-                neighborhoodMode,
-                transitionRules
-        );
-    }
-
-    private static ConwayConfig createConfig(CellShape cellShape,
-                                             double alivePercent,
-                                             NeighborhoodMode neighborhoodMode,
-                                             ConwayTransitionRules transitionRules) {
-        return createConfig(
-                cellShape,
-                ConwayConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                ConwayConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                alivePercent,
-                neighborhoodMode,
-                transitionRules);
+    private static boolean isValidWith(Consumer<ConfigValues> change) {
+        ConfigValues values = new ConfigValues();
+        change.accept(values);
+        return values.toConfig().isValid();
     }
 
     @Test
     void testIsValidAcceptsDefaultConstraints() {
-        ConwayConfig config = createConfig(
-                ConwayConstraints.CELL_SHAPE_DEFAULT,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayConstraints.TRANSITION_RULES_DEFAULT);
-
-        assertTrue(config.isValid());
+        assertTrue(isValidWith(_ -> {}));
     }
 
     @Test
-    void testIsValidRejectsAlivePercentOutsideRange() {
-        ConwayConfig config = createConfig(
-                ConwayConstraints.CELL_SHAPE_DEFAULT,
-                Math.nextUp(ConwayConstraints.ALIVE_PERCENT_MAX),
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayConstraints.TRANSITION_RULES_DEFAULT);
-
-        assertFalse(config.isValid());
+    void testIsValidAcceptsSupportedAlternativeSelections() {
+        assertTrue(isValidWith(v -> {
+            v.cellShape = CellShape.TRIANGLE;
+            v.gridEdgeBehavior = GridEdgeBehavior.BLOCK_XY;
+            v.cellDisplayMode = CellDisplayMode.CIRCLE;
+        }));
     }
 
     @Test
-    void testIsValidRejectsUnexpectedNeighborhoodMode() {
-        ConwayConfig config = createConfig(
-                ConwayConstraints.CELL_SHAPE_DEFAULT,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                NeighborhoodMode.EDGES_ONLY,
-                ConwayConstraints.TRANSITION_RULES_DEFAULT);
-
-        assertFalse(config.isValid());
+    void testIsValidAcceptsBoundaryValues() {
+        assertAll(
+                () -> assertTrue(isValidWith(v -> v.alivePercent = ALIVE_PERCENT_MIN)),
+                () -> assertTrue(isValidWith(v -> v.alivePercent = ALIVE_PERCENT_MAX))
+        );
     }
 
     @Test
     void testIsValidRejectsUnsupportedGridEdgeBehavior() {
-        ConwayConfig config = createConfig(
-                ConwayConstraints.CELL_SHAPE_DEFAULT,
-                GridEdgeBehavior.ABSORB_XY,
-                ConwayConstraints.CELL_DISPLAY_MODE_DEFAULT,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayConstraints.TRANSITION_RULES_DEFAULT);
-
-        assertFalse(config.isValid());
+        assertFalse(isValidWith(v -> v.gridEdgeBehavior = GridEdgeBehavior.ABSORB_XY));
     }
 
     @Test
     void testIsValidRejectsUnsupportedCellDisplayMode() {
-        ConwayConfig config = createConfig(
-                ConwayConstraints.CELL_SHAPE_DEFAULT,
-                ConwayConstraints.GRID_EDGE_BEHAVIOR_DEFAULT,
-                CellDisplayMode.EMOJI,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayConstraints.TRANSITION_RULES_DEFAULT);
+        assertFalse(isValidWith(v -> v.cellDisplayMode = CellDisplayMode.EMOJI));
+    }
 
-        assertFalse(config.isValid());
+    @Test
+    void testIsValidRejectsUnexpectedNeighborhoodMode() {
+        assertFalse(isValidWith(v -> v.neighborhoodMode = NeighborhoodMode.EDGES_ONLY));
+    }
+
+    @Test
+    void testIsValidRejectsAlivePercentOutsideRange() {
+        assertAll(
+                () -> assertFalse(isValidWith(v -> v.alivePercent = Math.nextDown(ALIVE_PERCENT_MIN))),
+                () -> assertFalse(isValidWith(v -> v.alivePercent = Math.nextUp(ALIVE_PERCENT_MAX)))
+        );
     }
 
     @Test
     void testIsValidRejectsBirthRuleWithoutNeighbors() {
-        ConwayConfig config = createConfig(
-                ConwayConstraints.CELL_SHAPE_DEFAULT,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayTransitionRules.of(
-                        ConwayConstraints.TRANSITION_RULES_DEFAULT.surviveCounts(),
-                        Set.of(ConwayTransitionRules.MIN_NEIGHBOR_COUNT)));
-
-        assertFalse(config.isValid());
-    }
-
-    @Test
-    void testIsValidRejectsTransitionRulesAboveShapeNeighborLimit() {
-        int invalidBirthCount = CellNeighborhoods.maxNeighborCount(
-                CellShape.HEXAGON,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT) + 1;
-
-        ConwayConfig config = createConfig(
-                CellShape.HEXAGON,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayTransitionRules.of(
-                        ConwayConstraints.TRANSITION_RULES_DEFAULT.surviveCounts(),
-                        Set.of(invalidBirthCount)));
-
-        assertFalse(config.isValid());
+        assertFalse(isValidWith(v -> v.transitionRules = ConwayTransitionRules.of(
+                TRANSITION_RULES_DEFAULT.surviveCounts(),
+                Set.of(ConwayTransitionRules.MIN_NEIGHBOR_COUNT))));
     }
 
     @Test
     void testIsValidAcceptsHexagonRulesWithinShapeNeighborLimit() {
-        ConwayConfig config = createConfig(
-                CellShape.HEXAGON,
-                ConwayConstraints.ALIVE_PERCENT_DEFAULT,
-                ConwayConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                ConwayTransitionRules.of(Set.of(2, 3), Set.of(3, 4)));
+        assertTrue(isValidWith(v -> {
+            v.cellShape = CellShape.HEXAGON;
+            v.transitionRules = ConwayTransitionRules.of(Set.of(2, 3), Set.of(3, 4));
+        }));
+    }
 
-        assertTrue(config.isValid());
+    @Test
+    void testIsValidRejectsTransitionRulesAboveShapeNeighborLimit() {
+        int invalidBirthCount = CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NEIGHBORHOOD_MODE_DEFAULT) + 1;
+
+        assertFalse(isValidWith(v -> {
+            v.cellShape = CellShape.HEXAGON;
+            v.transitionRules = ConwayTransitionRules.of(TRANSITION_RULES_DEFAULT.surviveCounts(),
+                    Set.of(invalidBirthCount));
+        }));
+    }
+
+    private static final class ConfigValues {
+
+        CellShape cellShape = CELL_SHAPE_DEFAULT;
+        GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
+        CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
+        double alivePercent = ALIVE_PERCENT_DEFAULT;
+        NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
+        ConwayTransitionRules transitionRules = TRANSITION_RULES_DEFAULT;
+
+        ConwayConfig toConfig() {
+            return new ConwayConfig(cellShape, gridEdgeBehavior, GRID_WIDTH_DEFAULT, GRID_HEIGHT_DEFAULT,
+                    CELL_EDGE_LENGTH_DEFAULT, cellDisplayMode, 1L, alivePercent, neighborhoodMode, transitionRules);
+        }
+
     }
 
 }

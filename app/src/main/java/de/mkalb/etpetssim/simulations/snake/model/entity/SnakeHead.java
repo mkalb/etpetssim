@@ -154,7 +154,7 @@ public final class SnakeHead implements SnakeEntity {
                 dead ? ("†" + deaths) : ("*" + stepIndexOfSpawn),
                 (pendingGrowth > 0) ? (snakeSegments.size() + "+" + pendingGrowth) : String.valueOf(snakeSegments.size()),
                 points,
-                strategy);
+                strategy.displayName());
     }
 
     @Override

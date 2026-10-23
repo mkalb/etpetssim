@@ -235,9 +235,9 @@ public final class EtpetsAgentLogic {
             for (ReproductionOption option : ring0ReproductionOptions) {
                 int reproduceScore = computeReproduceScore(
                         pet,
-                        option.partnerCell);
+                        option.partnerCell());
                 candidates.add(new ActionCandidate(PetActionType.REPRODUCE, reproduceScore,
-                        currentCoordinate, option.partnerCell.coordinate(), option.eggCoordinate()));
+                        currentCoordinate, option.partnerCell().coordinate(), option.eggCoordinate()));
             }
         }
 
@@ -690,12 +690,29 @@ public final class EtpetsAgentLogic {
                 egg);
     }
 
+    /**
+     * Candidate action of a pet with its score.
+     *
+     * @param type              the type of the action
+     * @param score             the non-negative score of the action
+     * @param moveTarget        the coordinate the pet occupies after the action (its current coordinate unless it
+     *                          moves)
+     * @param interactionTarget the coordinate of the cell the action targets (the move target, the resource, or the
+     *                          partner)
+     * @param eggTarget         the coordinate of the new egg for {@code REPRODUCE}, otherwise {@code null}
+     */
     private record ActionCandidate(PetActionType type,
                                    int score,
                                    GridCoordinate moveTarget,
                                    GridCoordinate interactionTarget,
                                    @Nullable GridCoordinate eggTarget) {
 
+        /**
+         * Creates an action candidate.
+         *
+         * @throws IllegalArgumentException if {@code score} is negative, or if {@code eggTarget} is missing for
+         *                                  {@code REPRODUCE} or present for another type
+         */
         private ActionCandidate {
             if (score < 0) {
                 throw new IllegalArgumentException("EtpetsAgentLogic: ActionCandidate score must be >= 0 (actual=" + score + ").");

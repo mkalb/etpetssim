@@ -186,6 +186,12 @@ public final class Pet implements AgentEntity {
                 '}';
     }
 
+    /**
+     * Last action that a pet chose, with the score that decided the choice.
+     *
+     * @param type  the type of the chosen action
+     * @param score the score of the chosen action
+     */
     public record PetLastAction(PetActionType type, int score) {
     }
 

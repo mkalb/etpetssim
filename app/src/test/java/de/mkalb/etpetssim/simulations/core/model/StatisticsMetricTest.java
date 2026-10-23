@@ -72,52 +72,52 @@ final class StatisticsMetricTest {
     @Test
     void testConstructorRejectsBlankKey() {
         assertAll(
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "", "count.label", TestStatistics::value, StatisticsExtremaMode.NONE
-                ))),
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                )),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "  ", "count.label", TestStatistics::value, StatisticsExtremaMode.NONE
-                )))
+                ))
         );
     }
 
     @Test
     void testConstructorRejectsBlankLabelKey() {
         assertAll(
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "count", "", TestStatistics::value, StatisticsExtremaMode.NONE
-                ))),
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                )),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "count", "  ", TestStatistics::value, StatisticsExtremaMode.NONE
-                )))
+                ))
         );
     }
 
     @Test
     void testConstructorRejectsNonZeroWindowForUnchartedMetric() {
         assertAll(
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "count", "count.label", TestStatistics::value, StatisticsExtremaMode.NONE,
                         StatisticsChartGroup.NONE, -1
-                ))),
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                )),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "count", "count.label", TestStatistics::value, StatisticsExtremaMode.NONE,
                         StatisticsChartGroup.NONE, 1
-                )))
+                ))
         );
     }
 
     @Test
     void testConstructorRejectsNonPositiveWindowForChartedMetric() {
         assertAll(
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "count", "count.label", TestStatistics::value, StatisticsExtremaMode.MAX,
                         StatisticsChartGroup.PRIMARY, -1
-                ))),
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
+                )),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsMetric<>(
                         "count", "count.label", TestStatistics::value, StatisticsExtremaMode.MAX,
                         StatisticsChartGroup.PRIMARY, 0
-                )))
+                ))
         );
     }
 

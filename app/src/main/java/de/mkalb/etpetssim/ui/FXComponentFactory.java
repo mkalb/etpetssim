@@ -764,15 +764,18 @@ public final class FXComponentFactory {
 
     /**
      * Bundles a Label and a Region for use in UIs.
-     * <p>
-     * The control region can be either a direct Control (e.g., Slider, Spinner)
+     *
+     * <p>The control region can be either a direct Control (e.g., Slider, Spinner)
      * or a Region that itself contains one or more controls (e.g., HBox, VBox).
      * This record is typically used to return both the label and the associated region as a pair.
+     *
+     * <p>The record groups the label and the control region without copying them.
      *
      * @param <R>           the type of the control region
      * @param label         the label describing the control or region
      * @param controlRegion the UI region (control or container) associated with the label
      */
-    public record LabeledControl<R extends Region>(Label label, R controlRegion) {}
+    public record LabeledControl<R extends Region>(Label label, R controlRegion) {
+    }
 
 }

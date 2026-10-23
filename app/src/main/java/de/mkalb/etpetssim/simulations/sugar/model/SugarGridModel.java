@@ -9,8 +9,11 @@ import java.util.*;
 /**
  * Composite grid model for Sugarscape with resource and agent layers.
  *
- * @param structure     the shared grid structure of all sub-models
- * @param resourceModel the terrain/resource layer
+ * <p>The record groups the writable layers of a running simulation without copying them; it has no state of its
+ * own.
+ *
+ * @param structure     the shared grid structure of all layers
+ * @param resourceModel the resource layer
  * @param agentModel    the agent layer
  */
 public record SugarGridModel(
@@ -19,12 +22,24 @@ public record SugarGridModel(
         WritableGridModel<AgentEntity> agentModel)
         implements CompositeGridModel<SugarEntity> {
 
+    /**
+     * Creates a composite grid model from layers with the given structure.
+     *
+     * @throws IllegalArgumentException if the structure of a layer differs from {@code structure}
+     */
     public SugarGridModel {
         if (!structure.equals(resourceModel.structure()) || !structure.equals(agentModel.structure())) {
             throw new IllegalArgumentException("All structures must be the same");
         }
     }
 
+    /**
+     * Returns the entities at the specified coordinate in the order resource, agent.
+     *
+     * @param coordinate the grid coordinate
+     * @return the two layer entities at the coordinate
+     * @throws IndexOutOfBoundsException if the coordinate is not valid
+     */
     @Override
     public List<SugarEntity> getEntities(GridCoordinate coordinate) {
         return List.of(resourceModel.getEntity(coordinate), agentModel.getEntity(coordinate));

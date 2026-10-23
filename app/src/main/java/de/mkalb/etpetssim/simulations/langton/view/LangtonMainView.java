@@ -53,7 +53,7 @@ public final class LangtonMainView
     private static final double SELECTED_STROKE_LINE_WIDTH = 1.5d;
 
     private final LangtonEditToolBarViewModel editToolBarViewModel;
-    private @Nullable CellDrawer<TerrainConstant> cellGroundDrawer;
+    private @Nullable CellDrawer<TerrainConstant> cellTerrainDrawer;
     private @Nullable CellDrawer<AntEntity> cellAntDrawer;
     private @Nullable LangtonConfig currentConfig;
 
@@ -87,7 +87,7 @@ public final class LangtonMainView
 
         double strokeLineWidth = computeStrokeLineWidth(cellDimension);
 
-        cellGroundDrawer = switch (config.cellDisplayMode()) {
+        cellTerrainDrawer = switch (config.cellDisplayMode()) {
             case CellDisplayMode.SHAPE -> (descriptor, painter, cell, _) ->
                     painter.drawCell(
                             cell.coordinate(),
@@ -138,22 +138,22 @@ public final class LangtonMainView
             AppLogger.warn("Painter is not initialized, cannot draw canvas.");
             return;
         }
-        if ((cellGroundDrawer == null) || (cellAntDrawer == null)) {
+        if ((cellTerrainDrawer == null) || (cellAntDrawer == null)) {
             AppLogger.warn("CellDrawer is not initialized, cannot draw canvas.");
             return;
         }
 
         dynamicPainter.clearCanvasBackground();
 
-        var groundModel = currentGridModel.groundModel();
+        var terrainModel = currentGridModel.terrainModel();
         var antModel = currentGridModel.antModel();
 
         if ((lastDrawnStepCount + 1) < stepCount) {
-            // draw ground
-            groundModel.nonDefaultCells()
-                       .forEach(groundCell -> cellGroundDrawer.draw(
-                               entityDescriptorRegistry.requireByDescriptorId(groundCell.descriptorId()),
-                               basePainter, groundCell, stepCount));
+            // draw terrain
+            terrainModel.nonDefaultCells()
+                        .forEach(terrainCell -> cellTerrainDrawer.draw(
+                                entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
+                                basePainter, terrainCell, stepCount));
             // draw ant
             antModel.nonDefaultCells()
                     .forEach(antCell -> cellAntDrawer.draw(
@@ -162,11 +162,11 @@ public final class LangtonMainView
         } else {
             antModel.nonDefaultCells()
                     .forEach(antCell -> {
-                        GridCell<TerrainConstant> groundCell = groundModel.getGridCell(antCell.coordinate());
-                        // draw ground
-                        cellGroundDrawer.draw(
-                                entityDescriptorRegistry.requireByDescriptorId(groundCell.descriptorId()),
-                                basePainter, groundCell, stepCount);
+                        GridCell<TerrainConstant> terrainCell = terrainModel.getGridCell(antCell.coordinate());
+                        // draw terrain
+                        cellTerrainDrawer.draw(
+                                entityDescriptorRegistry.requireByDescriptorId(terrainCell.descriptorId()),
+                                basePainter, terrainCell, stepCount);
                         // draw ant
                         cellAntDrawer.draw(
                                 entityDescriptorRegistry.requireByDescriptorId(antCell.descriptorId()),

@@ -8,7 +8,10 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstraints.*;
 
 /**
- * Immutable configuration for a simulation.
+ * Immutable configuration of the Rebounding Entities simulation.
+ *
+ * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
+ * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
  * @param cellShape           the configured cell shape
  * @param gridEdgeBehavior    the configured grid edge behavior
@@ -18,7 +21,7 @@ import static de.mkalb.etpetssim.simulations.rebounding.model.ReboundingConstrai
  * @param cellDisplayMode     the cell display mode used by the UI
  * @param seed                the random seed used for initialization
  * @param verticalWalls       the number of generated vertical wall segments
- * @param movingEntityPercent the initial percentage of moving entities
+ * @param movingEntityPercent the initial share of moving entity cells as a fraction of all cells
  * @param neighborhoodMode    the neighborhood mode used for motion and collisions
  */
 public record ReboundingConfig(
@@ -44,7 +47,7 @@ public record ReboundingConfig(
     }
 
     /**
-     * Validates the common simulation settings and the rebounding-specific supported selections and ranges.
+     * Validates the common simulation settings and the Rebounding-specific selections and ranges.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
      */

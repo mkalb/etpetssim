@@ -11,9 +11,9 @@ final class GridEntityDescriptorTest {
         return new GridEntityDescriptor(
                 "id-1",
                 true,
-                "Short",
-                "Long",
-                "Description",
+                "Wall",
+                "Wall Cell",
+                "An obstacle",
                 "🙂",
                 Color.GREEN,
                 Color.BLUE
@@ -35,47 +35,47 @@ final class GridEntityDescriptorTest {
 
     @Test
     void testEmojiAsOptional() {
-        assertEquals("🙂", createDescriptorWithValues().emojiAsOptional().orElseThrow());
-        assertTrue(createDescriptorWithoutValues().emojiAsOptional().isEmpty());
+        assertAll(
+                () -> assertEquals("🙂", createDescriptorWithValues().emojiAsOptional().orElseThrow()),
+                () -> assertTrue(createDescriptorWithoutValues().emojiAsOptional().isEmpty())
+        );
     }
 
     @Test
     void testColorAsOptional() {
-        assertEquals(Color.GREEN, createDescriptorWithValues().colorAsOptional().orElseThrow());
-        assertTrue(createDescriptorWithoutValues().colorAsOptional().isEmpty());
-    }
-
-    @Test
-    void testBorderColorAsOptional() {
-        assertEquals(Color.BLUE, createDescriptorWithValues().borderColorAsOptional().orElseThrow());
-        assertTrue(createDescriptorWithoutValues().borderColorAsOptional().isEmpty());
+        assertAll(
+                () -> assertEquals(Color.GREEN, createDescriptorWithValues().colorAsOptional().orElseThrow()),
+                () -> assertTrue(createDescriptorWithoutValues().colorAsOptional().isEmpty())
+        );
     }
 
     @Test
     void testColorOrFallback() {
-        assertEquals(Color.BLACK, createDescriptorWithoutValues().colorOrFallback());
+        assertAll(
+                () -> assertEquals(Color.GREEN, createDescriptorWithValues().colorOrFallback()),
+                () -> assertEquals(Color.BLACK, createDescriptorWithoutValues().colorOrFallback())
+        );
+    }
+
+    @Test
+    void testBorderColorAsOptional() {
+        assertAll(
+                () -> assertEquals(Color.BLUE, createDescriptorWithValues().borderColorAsOptional().orElseThrow()),
+                () -> assertTrue(createDescriptorWithoutValues().borderColorAsOptional().isEmpty())
+        );
     }
 
     @Test
     void testBorderColorOrFallback() {
-        assertEquals(Color.BLACK, createDescriptorWithoutValues().borderColorOrFallback());
+        assertAll(
+                () -> assertEquals(Color.BLUE, createDescriptorWithValues().borderColorOrFallback()),
+                () -> assertEquals(Color.BLACK, createDescriptorWithoutValues().borderColorOrFallback())
+        );
     }
 
     @Test
-    void testToDisplayStringUsesShortName() {
-        GridEntityDescriptor descriptor = new GridEntityDescriptor(
-                "id-1",
-                true,
-                "Wall",
-                "Wall Cell",
-                "An obstacle",
-                null,
-                null,
-                null
-        );
-
-        assertEquals("[Wall]", descriptor.toDisplayString());
+    void testToDisplayString() {
+        assertEquals("[Wall]", createDescriptorWithValues().toDisplayString());
     }
 
 }
-

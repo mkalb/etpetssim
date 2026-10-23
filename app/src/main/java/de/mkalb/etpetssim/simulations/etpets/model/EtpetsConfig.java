@@ -8,7 +8,10 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
 
 /**
- * Immutable configuration for a simulation.
+ * Immutable configuration of the ET Pets simulation.
+ *
+ * <p>The components are grouped into structure, layout, initialization, and rules. Instances are created
+ * from unvalidated input; check them with {@link #isValid()} before passing them to the model.
  *
  * @param cellShape        the configured cell shape
  * @param gridEdgeBehavior the configured grid edge behavior
@@ -17,10 +20,10 @@ import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsConstraints.*;
  * @param cellEdgeLength   the rendered cell edge length in pixels
  * @param cellDisplayMode  the cell display mode used by the UI
  * @param seed             the random seed used for initialization
- * @param rockPercent      the initial rock terrain percentage
- * @param waterPercent     the initial water terrain percentage
- * @param plantPercent     the initial plant resource percentage
- * @param insectPercent    the initial insect resource percentage
+ * @param rockPercent      the initial share of rock terrain cells as a fraction of all cells
+ * @param waterPercent     the initial share of water terrain cells as a fraction of all cells
+ * @param plantPercent     the initial share of plant resource cells as a fraction of all cells
+ * @param insectPercent    the initial share of insect resource cells as a fraction of all cells
  * @param petCount         the number of pets to spawn initially
  * @param neighborhoodMode the neighborhood mode used for movement and interaction
  */
@@ -52,12 +55,12 @@ public record EtpetsConfig(
                 && isInRangeInt(petCount, PET_COUNT_MIN, PET_COUNT_MAX);
     }
 
-    private boolean hasValidCombinedPercents() {
+    private boolean hasValidCombinedRanges() {
         return (rockPercent + waterPercent + plantPercent + insectPercent) <= TOTAL_PERCENT_MAX;
     }
 
     /**
-     * Validates the common simulation settings and the ET-Pets-specific placement constraints.
+     * Validates the common simulation settings and the ET Pets-specific selections, ranges, and combined ranges.
      *
      * @return {@code true} if this configuration is valid, otherwise {@code false}
      */
@@ -67,7 +70,7 @@ public record EtpetsConfig(
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
                 && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
                 && hasValidRanges()
-                && hasValidCombinedPercents();
+                && hasValidCombinedRanges();
     }
 
 }

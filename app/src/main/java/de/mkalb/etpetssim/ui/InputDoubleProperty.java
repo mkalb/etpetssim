@@ -6,13 +6,15 @@ import javafx.beans.property.*;
 
 /**
  * Represents a double property with a defined range.
- * <p>
- * Encapsulates a {@link DoubleProperty} and enforces value constraints:
+ *
+ * <p>Encapsulates a {@link DoubleProperty} and enforces value constraints:
  * <ul>
  *   <li>The value must be between {@code min} and {@code max} (inclusive).</li>
  * </ul>
- * <p>
- * Use {@link #of(double, double, double)} to create instances.
+ *
+ * <p>Use {@link #of(double, double, double)} to create instances.
+ *
+ * <p>The record wraps the given property without copying it; bindings and listeners on the property stay effective.
  *
  * @param property the underlying {@link DoubleProperty}
  * @param min      the minimum allowed value (inclusive)
@@ -21,14 +23,10 @@ import javafx.beans.property.*;
 public record InputDoubleProperty(DoubleProperty property, double min, double max) {
 
     /**
-     * Constructs an {@code InputDoubleProperty} with the given property and range.
-     * <p>
-     * Validates that {@code min < max} and the property's value is valid.
+     * Creates an input property with a range.
      *
-     * @param property the underlying {@link DoubleProperty}
-     * @param min      the minimum allowed value
-     * @param max      the maximum allowed value
-     * @throws IllegalArgumentException if any argument is invalid
+     * @throws IllegalArgumentException if {@code min} is not less than {@code max}, or if the value of
+     *                                  {@code property} is not within the range
      */
     public InputDoubleProperty {
         if (min >= max) {
@@ -41,8 +39,8 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
 
     /**
      * Creates a new {@code InputDoubleProperty} with the specified initial value and range.
-     * <p>
-     * Validation is performed by the canonical constructor.
+     *
+     * <p>Validation is performed by the canonical constructor.
      *
      * @param initialValue the initial value
      * @param min          the minimum allowed value
@@ -102,8 +100,9 @@ public record InputDoubleProperty(DoubleProperty property, double min, double ma
 
     /**
      * Sets the property value.
-     * <p>
-     * An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory method.
+     *
+     * <p>An invalid value is logged via {@link AppLogger} and still set, if this instance was created by a factory
+     * method.
      *
      * @param value the value to set
      */

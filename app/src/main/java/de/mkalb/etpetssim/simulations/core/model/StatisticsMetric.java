@@ -29,6 +29,13 @@ public record StatisticsMetric<STA extends SimulationStatistics>(
      */
     public static final int DEFAULT_CHART_WINDOW_SIZE = 100;
 
+    /**
+     * Creates a metric description.
+     *
+     * @throws IllegalArgumentException if {@code key} or {@code labelKey} is blank, or if {@code chartWindowSize} is
+     *                                  not {@code 0} for {@link StatisticsChartGroup#NONE} or not positive for another
+     *                                  chart group
+     */
     public StatisticsMetric {
         if (key.isBlank()) {
             throw new IllegalArgumentException("key must not be blank");

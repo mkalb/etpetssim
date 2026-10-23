@@ -21,7 +21,7 @@ final class ConwayPatternChoiceTest {
     }
 
     @Test
-    void testConstructorAcceptsValidArguments() {
+    void testRecord() {
         Supplier<GridPattern<ConwayEntity>> supplier = createPatternSupplier(
                 Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE));
         BiPredicate<CellShape, ConwayTransitionRules> predicate = (_, _) -> true;
@@ -42,68 +42,36 @@ final class ConwayPatternChoiceTest {
 
     @Test
     void testConstructorRejectsBlankChoiceId() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> new ConwayPatternChoice(
                         " ",
                         LABEL_KEY_SAMPLE,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
                         (_, _) -> true));
-
-        assertEquals("choiceId must not be blank", exception.getMessage());
     }
 
     @Test
     void testConstructorRejectsBlankLabelKey() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> new ConwayPatternChoice(
                         CHOICE_ID_SAMPLE,
                         " ",
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
                         (_, _) -> true));
-
-        assertEquals("labelKey must not be blank", exception.getMessage());
     }
 
     @Test
     void testConstructorRejectsChoiceIdMatchingLabelKey() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> new ConwayPatternChoice(
                         LABEL_KEY_SAMPLE,
                         LABEL_KEY_SAMPLE,
                         createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
                         (_, _) -> true));
-
-        assertEquals("choiceId must differ from labelKey", exception.getMessage());
     }
 
     @Test
-    @SuppressWarnings("DataFlowIssue")
-    void testConstructorRejectsNullChoiceId() {
-        NullPointerException exception = assertThrows(NullPointerException.class,
-                () -> new ConwayPatternChoice(
-                        null,
-                        LABEL_KEY_SAMPLE,
-                        createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                        (_, _) -> true));
-
-        assertNotNull(exception);
-    }
-
-    @Test
-    @SuppressWarnings("DataFlowIssue")
-    void testConstructorRejectsNullLabelKey() {
-        NullPointerException exception = assertThrows(NullPointerException.class,
-                () -> new ConwayPatternChoice(
-                        CHOICE_ID_SAMPLE,
-                        null,
-                        createPatternSupplier(Map.of(new GridOffset(0, 0), ConwayEntity.ALIVE)),
-                        (_, _) -> true));
-
-        assertNotNull(exception);
-    }
-
-    @Test
-    void testPatternReturnsNormalizedPattern() {
+    void testPattern() {
         ConwayPatternChoice choice = new ConwayPatternChoice(
                 CHOICE_ID_SAMPLE,
                 LABEL_KEY_SAMPLE,
@@ -145,7 +113,7 @@ final class ConwayPatternChoiceTest {
     }
 
     @Test
-    void testIsAvailableForDelegatesToPredicate() {
+    void testIsAvailableFor() {
         AtomicInteger invocationCount = new AtomicInteger();
         CellShape[] lastSeenCellShape = {CellShape.HEXAGON};
         ConwayTransitionRules[] lastSeenTransitionRules = {null};

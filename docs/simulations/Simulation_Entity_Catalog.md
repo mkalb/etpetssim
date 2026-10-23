@@ -113,26 +113,26 @@ Inner circle with dark purple border (`#4B3A66`, stroke 1.0) on terrain layer.
 
 ### Display Catalog
 
-| Descriptor ID     | Long Name (en_US)     | Long Name Key                          | Emoji        | Fill Color                    | Border Color              | Default In Layer(s) |
-|-------------------|-----------------------|----------------------------------------|--------------|-------------------------------|---------------------------|---------------------|
-| `ant`             | Langton's Ant         | `langton.entity.ant.long`              | - [^lantdir] | `#FF0000` / `Color.RED`       | `#000000` / `Color.BLACK` | -                   |
-| `groundunvisited` | Unvisited Ground Cell | `langton.entity.ground.unvisited.long` | -            | `#FFFFFF` / `Color.WHITE`     | -                         | `ground`            |
-| `ground0`         | Ground Cell 0         | `langton.entity.ground.0.long`         | -            | `#D3D3D3` / `Color.LIGHTGRAY` | -                         | -                   |
-| `ground1`         | Ground Cell 1         | `langton.entity.ground.1.long`         | -            | `#000000` / `Color.BLACK`     | -                         | -                   |
-| `ground2`         | Ground Cell 2         | `langton.entity.ground.2.long`         | -            | `#FFA500` / `Color.ORANGE`    | -                         | -                   |
-| `ground3`         | Ground Cell 3         | `langton.entity.ground.3.long`         | -            | `#FFFF00` / `Color.YELLOW`    | -                         | -                   |
-| `ground4`         | Ground Cell 4         | `langton.entity.ground.4.long`         | -            | `#008000` / `Color.GREEN`     | -                         | -                   |
-| `ground5`         | Ground Cell 5         | `langton.entity.ground.5.long`         | -            | `#006400` / `Color.DARKGREEN` | -                         | -                   |
-| `ground6`         | Ground Cell 6         | `langton.entity.ground.6.long`         | -            | `#0000FF` / `Color.BLUE`      | -                         | -                   |
-| `ground7`         | Ground Cell 7         | `langton.entity.ground.7.long`         | -            | `#00008B` / `Color.DARKBLUE`  | -                         | -                   |
-| `ground8`         | Ground Cell 8         | `langton.entity.ground.8.long`         | -            | `#800080` / `Color.PURPLE`    | -                         | -                   |
-| `ground9`         | Ground Cell 9         | `langton.entity.ground.9.long`         | -            | `#EE82EE` / `Color.VIOLET`    | -                         | -                   |
-| `ground10`        | Ground Cell 10        | `langton.entity.ground.10.long`        | -            | `#FFC0CB` / `Color.PINK`      | -                         | -                   |
-| `ground11`        | Ground Cell 11        | `langton.entity.ground.11.long`        | -            | `#A52A2A` / `Color.BROWN`     | -                         | -                   |
-| `ground12`        | Ground Cell 12        | `langton.entity.ground.12.long`        | -            | `#00FFFF` / `Color.CYAN`      | -                         | -                   |
-| `ground13`        | Ground Cell 13        | `langton.entity.ground.13.long`        | -            | `#FF00FF` / `Color.MAGENTA`   | -                         | -                   |
-| `ground14`        | Ground Cell 14        | `langton.entity.ground.14.long`        | -            | `#FF1493` / `Color.DEEPPINK`  | -                         | -                   |
-| `ground15`        | Ground Cell 15        | `langton.entity.ground.15.long`        | -            | `#FFD700` / `Color.GOLD`      | -                         | -                   |
+| Descriptor ID      | Long Name (en_US)      | Long Name Key                           | Emoji        | Fill Color                    | Border Color              | Default In Layer(s) |
+|--------------------|------------------------|-----------------------------------------|--------------|-------------------------------|---------------------------|---------------------|
+| `ant`              | Langton's Ant          | `langton.entity.ant.long`               | - [^lantdir] | `#FF0000` / `Color.RED`       | `#000000` / `Color.BLACK` | -                   |
+| `terrainunvisited` | Unvisited Terrain Cell | `langton.entity.terrain.unvisited.long` | -            | `#FFFFFF` / `Color.WHITE`     | -                         | `terrain`           |
+| `terrain0`         | Terrain Cell 0         | `langton.entity.terrain.0.long`         | -            | `#D3D3D3` / `Color.LIGHTGRAY` | -                         | -                   |
+| `terrain1`         | Terrain Cell 1         | `langton.entity.terrain.1.long`         | -            | `#000000` / `Color.BLACK`     | -                         | -                   |
+| `terrain2`         | Terrain Cell 2         | `langton.entity.terrain.2.long`         | -            | `#FFA500` / `Color.ORANGE`    | -                         | -                   |
+| `terrain3`         | Terrain Cell 3         | `langton.entity.terrain.3.long`         | -            | `#FFFF00` / `Color.YELLOW`    | -                         | -                   |
+| `terrain4`         | Terrain Cell 4         | `langton.entity.terrain.4.long`         | -            | `#008000` / `Color.GREEN`     | -                         | -                   |
+| `terrain5`         | Terrain Cell 5         | `langton.entity.terrain.5.long`         | -            | `#006400` / `Color.DARKGREEN` | -                         | -                   |
+| `terrain6`         | Terrain Cell 6         | `langton.entity.terrain.6.long`         | -            | `#0000FF` / `Color.BLUE`      | -                         | -                   |
+| `terrain7`         | Terrain Cell 7         | `langton.entity.terrain.7.long`         | -            | `#00008B` / `Color.DARKBLUE`  | -                         | -                   |
+| `terrain8`         | Terrain Cell 8         | `langton.entity.terrain.8.long`         | -            | `#800080` / `Color.PURPLE`    | -                         | -                   |
+| `terrain9`         | Terrain Cell 9         | `langton.entity.terrain.9.long`         | -            | `#EE82EE` / `Color.VIOLET`    | -                         | -                   |
+| `terrain10`        | Terrain Cell 10        | `langton.entity.terrain.10.long`        | -            | `#FFC0CB` / `Color.PINK`      | -                         | -                   |
+| `terrain11`        | Terrain Cell 11        | `langton.entity.terrain.11.long`        | -            | `#A52A2A` / `Color.BROWN`     | -                         | -                   |
+| `terrain12`        | Terrain Cell 12        | `langton.entity.terrain.12.long`        | -            | `#00FFFF` / `Color.CYAN`      | -                         | -                   |
+| `terrain13`        | Terrain Cell 13        | `langton.entity.terrain.13.long`        | -            | `#FF00FF` / `Color.MAGENTA`   | -                         | -                   |
+| `terrain14`        | Terrain Cell 14        | `langton.entity.terrain.14.long`        | -            | `#FF1493` / `Color.DEEPPINK`  | -                         | -                   |
+| `terrain15`        | Terrain Cell 15        | `langton.entity.terrain.15.long`        | -            | `#FFD700` / `Color.GOLD`      | -                         | -                   |
 
 [^lantdir]: No emoji key. View renders `ant.direction().arrow()` as centered text in border color — Unicode arrows
 (↑ ↗ → ↘ ↓ ↙ ← ↖), two-char combos for secondary intercardinals (e.g., ↑↗). Requires emoji font and

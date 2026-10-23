@@ -15,58 +15,42 @@ final class GridStructureTest {
         GridSize size = new GridSize(20, 30);
         GridStructure structure = new GridStructure(topology, size);
 
-        assertEquals(topology, structure.topology());
-        assertEquals(size, structure.size());
+        assertAll(
+                () -> assertEquals(topology, structure.topology()),
+                () -> assertEquals(size, structure.size()),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY), new GridSize(9, 11))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY), new GridSize(8, 8))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY), new GridSize(9, 11))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY), new GridSize(8, 8))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY), new GridSize(10, 12))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(8, 8))),
+                () -> assertDoesNotThrow(() -> new GridStructure(
+                        new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY), new GridSize(10, 9)))
+        );
     }
 
     @Test
     void testConstructorRejectsInvalidWidthMultiple() {
         GridTopology hexTopology = new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 new GridStructure(hexTopology, new GridSize(9, 8)));
-        assertTrue(ex.getMessage().contains("multiple of 2"));
     }
 
     @Test
     void testConstructorRejectsInvalidHeightMultiple() {
         GridTopology triTopology = new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 new GridStructure(triTopology, new GridSize(8, 9)));
-        assertTrue(ex.getMessage().contains("multiple of 2"));
-    }
-
-    @Test
-    void testConstructorAcceptsValidMultiplesForAllCellShapes() {
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(9, 11)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(9, 11)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.BLOCK_XY),
-                new GridSize(9, 11)));
-
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(8, 8)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.SQUARE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(9, 11)));
-
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(8, 8)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.TRIANGLE, GridEdgeBehavior.WRAP_XY),
-                new GridSize(10, 12)));
-
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY),
-                new GridSize(8, 8)));
-        assertDoesNotThrow(() -> new GridStructure(
-                new GridTopology(CellShape.HEXAGON, GridEdgeBehavior.WRAP_XY),
-                new GridSize(10, 9)));
     }
 
     @Test

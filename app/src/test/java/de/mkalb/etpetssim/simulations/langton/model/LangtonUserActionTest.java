@@ -37,7 +37,7 @@ final class LangtonUserActionTest {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
-                                           .groundModel()
+                                           .terrainModel()
                                            .filteredCoordinates(e -> e == TerrainConstant.UNVISITED)
                                            .stream()
                                            .filter(c -> manager.currentGridModel().antModel().getEntity(c) instanceof NoAgent)
@@ -146,7 +146,7 @@ final class LangtonUserActionTest {
         LangtonSimulationManager manager = new LangtonSimulationManager(createConfig());
         LangtonUserAction userAction = new LangtonUserAction();
         GridCoordinate coordinate = manager.currentGridModel()
-                                           .groundModel()
+                                           .terrainModel()
                                            .filteredCoordinates(TerrainConstant::isUnvisited)
                                            .stream()
                                            .findFirst()

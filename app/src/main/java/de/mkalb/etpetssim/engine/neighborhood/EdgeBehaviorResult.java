@@ -2,13 +2,15 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 
+import java.util.*;
+
 /**
  * Represents the result of applying an edge behavior to a grid coordinate.
- * <p>
- * Contains the original coordinate, the mapped coordinate after applying the edge behavior,
+ *
+ * <p>Contains the original coordinate, the mapped coordinate after applying the edge behavior,
  * and the resulting {@link EdgeBehaviorAction}.
- * <p>
- * For actions {@code VALID}, {@code BLOCKED}, and {@code ABSORBED}, the {@code mapped} coordinate
+ *
+ * <p>For actions {@code VALID}, {@code BLOCKED}, and {@code ABSORBED}, the {@code mapped} coordinate
  * is identical to {@code original}. For {@code WRAPPED}, {@code mapped} may differ from
  * {@code original}.
  *
@@ -23,15 +25,15 @@ public record EdgeBehaviorResult(
 
     /**
      * Returns a short, human-readable string representation of this edge behavior result.
-     * <p>
-     * Format: {@code [ACTION] mapped: (x, y)}
-     * <br>
-     * Example: {@code [WRAPPED] mapped: (15, 0)}
+     *
+     * <p>Format: {@code [action] mapped: (x, y)}, e.g., {@code [wrapped] mapped: (15, 0)}
      *
      * @return a concise display string for this edge behavior result
      */
     public String toDisplayString() {
-        return String.format("[%s] mapped: %s", action().name(), mapped().toDisplayString());
+        return String.format(Locale.ROOT, "[%s] mapped: %s",
+                action.name().toLowerCase(Locale.ROOT),
+                mapped.toDisplayString());
     }
 
 }

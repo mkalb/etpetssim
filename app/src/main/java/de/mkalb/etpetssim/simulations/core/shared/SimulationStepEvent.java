@@ -9,6 +9,11 @@ package de.mkalb.etpetssim.simulations.core.shared;
  */
 public record SimulationStepEvent(boolean batchModeRunning, int stepCount, boolean finalStep) {
 
+    /**
+     * Creates a step event.
+     *
+     * @throws IllegalArgumentException if {@code stepCount} is negative
+     */
     public SimulationStepEvent {
         if (stepCount < 0) {
             throw new IllegalArgumentException("stepCount must be >= 0");
