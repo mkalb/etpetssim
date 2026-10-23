@@ -68,10 +68,11 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   class and its public API (a manual utility's `main()`). Package-local `*TestSupport` classes and all private
   helpers have no Javadoc.
 - Prefer one behavior per test; group related checks with `assertAll(...)`.
-- Do not write tests that only check what the compiler guarantees (e.g., `assertInstanceOf` on a statically typed
-  value).
-- Use `assertThrows(...)` for exception contracts and `assertDoesNotThrow(...)` only for meaningful valid-operation
-  checks.
+- Do not write tests that only check what the compiler or `@NullMarked` guarantees (e.g., `assertInstanceOf` on a
+  statically typed value, or the implicit `NullPointerException` for `null` passed to a non-null parameter).
+- Use plain `assertThrows(...)` for exception contracts, without an `assertNotNull(...)` wrapper and without checks
+  of the exception message unless the message is part of the contract (e.g., `FXTestSupport`); use
+  `assertDoesNotThrow(...)` only for meaningful valid-operation checks.
 - Prefer specific assertions; add assertion messages only when the failure would otherwise be ambiguous.
 - Use a delta for floating-point comparisons.
 - Use `@Disabled("reason")` with a concrete reason.
@@ -104,17 +105,21 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   `assertDescriptorKeysInAllBundles(...)` for the keys of entity descriptor providers.
 - Record tests depend on what the record adds to the generated code:
     - A record with a constructor body (compact or explicit canonical) or an override of `toString()`, `equals(Object)`,
-      or `hashCode()` has a `testRecord`: the positive constructor case with the stored values, including normalization
-      and defensive copies. Rejected arguments are tested in `testConstructorRejects...`, an overridden
-      `equals(Object)` or `hashCode()` in its own tests; its own methods are tested as usual.
+      or `hashCode()` has a `testRecord`: the positive constructor case with the stored values, including normalization,
+      defensive copies, and accepted boundary values. Rejected arguments are tested in `testConstructorRejects...`, an
+      overridden `equals(Object)` or `hashCode()` in its own tests; its own methods are tested as usual.
     - A record with own methods (including static factories and additional constructors) but without a constructor body
       or such an override tests these methods and has no `testRecord`.
     - A pure data carrier without a constructor body, own methods, or overrides has no test of its own; its accessors
       and `toString()` are generated.
     - A private nested record is tested through its enclosing type.
+- Test `toDisplayString()` against the exact expected string with `assertEquals`, not with `contains` checks.
 - Configuration and factory tests should cover valid defaults, each rejected unsupported option, and boundary values
-  just
-  inside/outside configured ranges.
+  just inside/outside configured ranges.
+- When a test class needs many variants of a record with many components (e.g., the `*Config` records), build them
+  through a private mutable fixture class `ConfigValues` at the bottom of the class (one field per component,
+  initialized with the defaults, and `toConfig()`) and a helper that takes a `Consumer` of it (e.g.,
+  `isValidWith(v -> v.fishPercent = FISH_PERCENT_MAX)`), not through helpers with one parameter per component.
 - Collection/model tests should cover mutation rejection, defensive copies, empty/sparse cases, and representative
   domain
   entities via small test fixtures.

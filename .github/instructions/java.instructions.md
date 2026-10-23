@@ -34,7 +34,9 @@ Use these method naming patterns when they match the method's primary behavior; 
 - `to...`: convert a value to a target type or representation, typically as a new independent value or copy
 - `toDisplayString()`: short human-readable representation of the receiver (a value or entity); keep it separate from
   `toString()`, which stays a technical diagnostic representation. It is locale-independent: format numbers with
-  `Locale.ROOT`; localized UI text uses `AppLocalization` or `NumberFormat` instead
+  `Locale.ROOT`; localized UI text uses `AppLocalization` or `NumberFormat` instead. Show enum values in lowercase
+  (`name().toLowerCase(Locale.ROOT)`) unless the enum provides its own display text (e.g., `CompassDirection.arrow()`
+  or an entity's `toDisplayString()`)
 - `parse...`: convert text with a format or grammar to a value, as in `Integer.parseInt`; throw on invalid input or
   return a supplied default
 - `format...`: produce display or log text from values, usually localized
@@ -103,10 +105,13 @@ Use these method naming patterns when they match the method's primary behavior; 
 
 - Use records for small immutable value carriers and holders; move derived/convenience behavior to small methods.
 - Use canonical/compact constructors to enforce invariants and to defensively copy mutable inputs (collections, maps,
-  arrays) before storing.
+  arrays) before storing. A short-lived parameter object that only bundles data for one call (e.g., `MoveContext`)
+  may keep them without copies.
 - Records are shallowly immutable: they may group references to mutable objects (JavaFX properties or nodes, grid
   models, entities, `Random`) as a wrapper, holder, snapshot, or parameter object (e.g., `MoveContext`). Use a class
-  instead when the type itself owns changing state or controls a lifecycle.
+  instead when the type itself owns changing state or controls a lifecycle. Such a record says so in the last paragraph
+  of its type Javadoc: "The record wraps/groups/holds ... without copying ...", optionally followed by the
+  consequence after a semicolon; a private record does so only when it explains something.
 - Prefer plain adjectives or noun phrases for boolean record components (`visible`, `finalStep`); boolean query names
   (`isFinished`, `hasTarget`) are allowed. Their generated accessors are exempt from the boolean query prefixes in
   "Naming Conventions". Use one style within a record, and use the name of an implemented interface method where one
@@ -170,7 +175,9 @@ Rules for main sources; `core.instructions.md` adds stricter rules for `core`, a
 - When a constructor or method has Javadoc, document every parameter and type parameter with `@param` and every
   non-void result with `@return` or `{@return ...}`.
 - Document every record component with `@param` in the record Javadoc, and every type parameter of a generic type.
-  The Javadoc of a compact constructor documents its invariants with `@throws` and has no `@param` tags.
+  A compact constructor that rejects arguments has Javadoc that documents its invariants with `@throws` and has no
+  `@param` tags; state the invariants there, not in the record Javadoc. A compact constructor that only copies
+  needs no Javadoc.
 - Document contract-relevant unchecked exceptions with `@throws`; do not add routine `NullPointerException` notes
   for non-null-by-default contracts.
 

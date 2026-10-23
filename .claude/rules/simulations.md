@@ -98,6 +98,9 @@ include:
 - Prefer role-focused names instead of repeating the simulation prefix.
 - Prefer established names where applicable, including `NoAgent`, `NoResource`, `TerrainConstant`, and
   `EntityDescriptors`.
+- Use one term per concept within a simulation for a grid layer and for the components, accessors, and variables
+  that refer to it, following the established type names (e.g., `terrainModel` and `terrainEntity` for
+  `TerrainConstant` layers); descriptor IDs and resource keys that refer to a layer use the same term.
 - Use suffix `Base` for abstract entity base classes (e.g., `CreatureBase`, `ResourceBase`).
 - Use concise domain names for value records (e.g., `PetGenome`, `PetTraits`).
 - Prefer domain-specific factories (e.g., `CreatureFactory`) over generic `EntityFactory`.
@@ -195,6 +198,13 @@ Use `CellDrawer` from `simulations.core.view`:
 - Provide sensible defaults and validate before passing config to the Model layer.
 - `*Config` records are created from unvalidated input and have no validating constructor; check them with `isValid()`
   (which calls `isBaseValid()` first) before passing them to the Model layer.
+- Order `*Config` components in four groups, each introduced by a line comment: `// Structure` (cell shape, edge
+  behavior, width, height), `// Layout` (cell edge length, display mode, other rendering options),
+  `// Initialization` (`seed` first, then the initial values), and `// Rules` (`neighborhoodMode` first, then the
+  rule parameters).
+- In `isValid()`, check in this order: `isBaseValid()`, `hasAllowedCoreSelections(..)`, fixed values
+  (`hasExpectedSelection(..)`), selection lists (`isAllowedSelection(..)`), the private `hasValidRanges()` and
+  `hasValidCombinedRanges()`, then rule objects (e.g., `hasValidTransitionRules()`).
 
 ## Lifecycle
 
