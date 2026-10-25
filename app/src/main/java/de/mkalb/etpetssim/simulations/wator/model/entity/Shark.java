@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.model.entity;
 
+import java.util.*;
+
 public final class Shark extends CreatureBase {
 
     private int currentEnergy;
@@ -29,14 +31,16 @@ public final class Shark extends CreatureBase {
 
     @Override
     public String toDisplayString() {
-        return String.format("[SHARK #%d *%d E=%d]", sequenceId(), stepIndexOfBirth(), currentEnergy);
+        return String.format(Locale.ROOT, "[SHARK #%d *%d E=%d]",
+                sequenceId(),
+                stepIndexOfBirth(),
+                currentEnergy);
     }
 
     @Override
     public String toString() {
         return "Shark{" +
-                "descriptorId=" + descriptorId() +
-                ", sequenceId=" + sequenceId() +
+                "sequenceId=" + sequenceId() +
                 ", stepIndexOfBirth=" + stepIndexOfBirth() +
                 ", reproductionCount=" + reproductionCount() +
                 ", stepIndexOfLastReproduction=" + stepIndexOfLastReproduction() +

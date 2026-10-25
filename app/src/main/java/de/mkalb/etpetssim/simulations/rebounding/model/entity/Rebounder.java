@@ -2,6 +2,8 @@ package de.mkalb.etpetssim.simulations.rebounding.model.entity;
 
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 
+import java.util.*;
+
 public final class Rebounder implements ReboundingEntity {
 
     private CompassDirection direction;
@@ -40,7 +42,8 @@ public final class Rebounder implements ReboundingEntity {
 
     @Override
     public String toDisplayString() {
-        return "[REBOUNDER %s]".formatted(direction.arrow());
+        return String.format(Locale.ROOT, "[REBOUNDER %s]",
+                direction.arrow());
     }
 
     @Override

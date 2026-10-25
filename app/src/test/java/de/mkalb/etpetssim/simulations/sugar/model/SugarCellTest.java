@@ -54,7 +54,7 @@ final class SugarCellTest {
     void testToDisplayString() {
         SugarCell cell = new SugarCell(COORDINATE, new Sugar(4, 3), new Agent(10, 2));
 
-        assertEquals("(1, 2) [SUGAR 3/4] [AGENT *2 E=10]", cell.toDisplayString());
+        assertEquals("(1, 2) [SUGAR A=3/4] [AGENT *2 E=10]", cell.toDisplayString());
     }
 
 }

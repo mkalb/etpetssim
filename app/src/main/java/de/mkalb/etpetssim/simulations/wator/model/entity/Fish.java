@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.wator.model.entity;
 
+import java.util.*;
+
 public final class Fish extends CreatureBase {
 
     public Fish(long sequenceId, int stepIndexOfBirth) {
@@ -18,14 +20,15 @@ public final class Fish extends CreatureBase {
 
     @Override
     public String toDisplayString() {
-        return String.format("[FISH #%d *%d]", sequenceId(), stepIndexOfBirth());
+        return String.format(Locale.ROOT, "[FISH #%d *%d]",
+                sequenceId(),
+                stepIndexOfBirth());
     }
 
     @Override
     public String toString() {
         return "Fish{" +
-                "descriptorId=" + descriptorId() +
-                ", sequenceId=" + sequenceId() +
+                "sequenceId=" + sequenceId() +
                 ", stepIndexOfBirth=" + stepIndexOfBirth() +
                 ", reproductionCount=" + reproductionCount() +
                 ", stepIndexOfLastReproduction=" + stepIndexOfLastReproduction() +

@@ -56,7 +56,7 @@ public record SugarCell(GridCoordinate coordinate,
      * Returns a display string containing the coordinate and both layer entities (resource, agent).
      *
      * <p>Format: {@code <coordinate-display> <resource-display> <agent-display>}, for example
-     * {@code (1, 2) [SUGAR 3/4] [NO_AGENT]}.
+     * {@code (1, 2) [SUGAR A=3/4] [NO_AGENT]}.
      *
      * @return a layer-complete display string for this Sugar cell
      */

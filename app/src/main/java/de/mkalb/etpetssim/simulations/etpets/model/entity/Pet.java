@@ -159,15 +159,15 @@ public final class Pet implements AgentEntity {
     @Override
     public String toDisplayString() {
         String lastActionDisplay = (lastAction != null)
-                ? (lastAction.type() + "@" + lastAction.score())
+                ? (lastAction.type().name().toLowerCase(Locale.ROOT) + "@" + lastAction.score())
                 : "-";
-        return String.format(Locale.ROOT, "[PET #%d *%d E=%d C=%d A=%s S=%s]",
+        return String.format(Locale.ROOT, "[PET #%d *%d E=%d C=%d A=%s%s]",
                 id,
                 stepIndexOfBirth,
                 currentEnergy,
                 reproductionCooldownRemaining,
                 lastActionDisplay,
-                dead ? "DEAD" : "ALIVE");
+                dead ? " †" : "");
     }
 
     @Override

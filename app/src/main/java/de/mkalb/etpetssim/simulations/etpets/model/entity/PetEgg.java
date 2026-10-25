@@ -71,8 +71,7 @@ public final class PetEgg implements AgentEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format(Locale.ROOT,
-                "[PET_EGG #%d *%d I=%d]",
+        return String.format(Locale.ROOT, "[PET_EGG #%d *%d I=%d]",
                 id,
                 stepIndexOfLaying,
                 incubationRemaining);

@@ -148,7 +148,7 @@ public final class SnakeHead implements SnakeEntity {
 
     @Override
     public String toDisplayString() {
-        return "[SNAKE #%d %s %s L=%s P=%d %s]".formatted(
+        return String.format(Locale.ROOT, "[SNAKE #%d %s %s L=%s P=%d %s]",
                 id,
                 (direction == null) ? "+" : direction.arrow(),
                 dead ? ("†" + deaths) : ("*" + stepIndexOfSpawn),
@@ -173,7 +173,7 @@ public final class SnakeHead implements SnakeEntity {
 
         return "SnakeHead{" +
                 "id=" + id +
-                ", strategy=" + strategy +
+                ", strategy=" + strategy.displayName() +
                 ", stepIndexOfSpawn=" + stepIndexOfSpawn +
                 ", direction=" + direction +
                 ", dead=" + dead +

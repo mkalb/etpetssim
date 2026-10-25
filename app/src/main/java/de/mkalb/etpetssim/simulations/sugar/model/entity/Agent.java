@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.sugar.model.entity;
 
+import java.util.*;
+
 public final class Agent implements AgentEntity {
 
     private final int stepIndexOfSpawn;
@@ -47,7 +49,9 @@ public final class Agent implements AgentEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[AGENT *%d E=%d]", stepIndexOfSpawn, currentEnergy);
+        return String.format(Locale.ROOT, "[AGENT *%d E=%d]",
+                stepIndexOfSpawn,
+                currentEnergy);
     }
 
     @Override
@@ -55,7 +59,7 @@ public final class Agent implements AgentEntity {
         return "Agent{" +
                 "stepIndexOfSpawn=" + stepIndexOfSpawn +
                 ", currentEnergy=" + currentEnergy +
-                "}";
+                '}';
     }
 
 }

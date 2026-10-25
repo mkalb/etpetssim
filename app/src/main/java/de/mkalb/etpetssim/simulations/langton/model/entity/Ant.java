@@ -2,6 +2,8 @@ package de.mkalb.etpetssim.simulations.langton.model.entity;
 
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
 
+import java.util.*;
+
 public final class Ant implements AntEntity {
 
     private CompassDirection direction;
@@ -30,7 +32,8 @@ public final class Ant implements AntEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[ANT %s]", direction.arrow());
+        return String.format(Locale.ROOT, "[ANT %s]",
+                direction.arrow());
     }
 
     @Override

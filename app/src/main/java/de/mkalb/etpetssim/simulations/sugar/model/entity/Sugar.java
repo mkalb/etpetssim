@@ -1,5 +1,7 @@
 package de.mkalb.etpetssim.simulations.sugar.model.entity;
 
+import java.util.*;
+
 public final class Sugar implements ResourceEntity {
 
     private final int maxAmount;
@@ -39,7 +41,9 @@ public final class Sugar implements ResourceEntity {
 
     @Override
     public String toDisplayString() {
-        return String.format("[SUGAR %d/%d]", currentAmount, maxAmount);
+        return String.format(Locale.ROOT, "[SUGAR A=%d/%d]",
+                currentAmount,
+                maxAmount);
     }
 
     @Override
@@ -47,7 +51,7 @@ public final class Sugar implements ResourceEntity {
         return "Sugar{" +
                 "maxAmount=" + maxAmount +
                 ", currentAmount=" + currentAmount +
-                "}";
+                '}';
     }
 
 }

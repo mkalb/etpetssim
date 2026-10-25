@@ -32,8 +32,7 @@ public final class Plant extends ResourceBase {
 
     @Override
     public String toDisplayString() {
-        return String.format(Locale.ROOT,
-                "[PLANT A=%.1f/%.1f R=%.2f]",
+        return String.format(Locale.ROOT, "[PLANT A=%.1f/%.1f R=%.2f]",
                 currentAmount(),
                 maxAmount(),
                 regenerationPerStep());
