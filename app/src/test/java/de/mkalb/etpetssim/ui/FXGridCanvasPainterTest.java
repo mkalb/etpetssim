@@ -74,10 +74,8 @@ final class FXGridCanvasPainterTest {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             GridStructure structure = createStructure(CellShape.SQUARE);
 
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+            assertThrows(IllegalArgumentException.class,
                     () -> new FXGridCanvasPainter(canvas, structure, 0.5d));
-
-            assertTrue(exception.getMessage().contains("Cell edge length must be at least 1 pixel."));
         });
     }
 

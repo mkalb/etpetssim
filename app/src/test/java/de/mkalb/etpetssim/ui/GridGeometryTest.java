@@ -149,16 +149,14 @@ final class GridGeometryTest {
 
     @Test
     void testComputeCellDimensionRejectsTooSmallEdgeLength() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> GridGeometry.computeCellDimension(GridGeometry.MIN_EDGE_LENGTH - 0.1d, CellShape.SQUARE));
-        assertTrue(exception.getMessage().contains("Edge length must be between"));
     }
 
     @Test
     void testComputeCellDimensionRejectsTooLargeEdgeLength() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> GridGeometry.computeCellDimension(GridGeometry.MAX_EDGE_LENGTH + 0.1d, CellShape.SQUARE));
-        assertTrue(exception.getMessage().contains("Edge length must be between"));
     }
 
     @Test

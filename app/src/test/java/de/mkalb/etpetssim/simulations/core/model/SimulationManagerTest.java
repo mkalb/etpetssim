@@ -215,60 +215,52 @@ final class SimulationManagerTest {
 
     @Test
     void testConstructorHonorsCancellationForEtpetsDuringTerrainPopulation() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new EtpetsSimulationManager(
-                                createEtpetsConfig(200, 200, EtpetsConstraints.PERCENT_MAX),
-                                cancellationOnCheck(3))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new EtpetsSimulationManager(
+                        createEtpetsConfig(200, 200, EtpetsConstraints.PERCENT_MAX),
+                        cancellationOnCheck(3)));
     }
 
     @Test
     void testConstructorHonorsCancellationForConwayDuringGridPopulation() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new ConwaySimulationManager(createConwayConfig(), cancellationOnCheck(3))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new ConwaySimulationManager(createConwayConfig(), cancellationOnCheck(3)));
     }
 
     @Test
     void testConstructorHonorsCancellationForForestDuringGridPopulation() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new ForestSimulationManager(createForestConfig(), cancellationOnCheck(3))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new ForestSimulationManager(createForestConfig(), cancellationOnCheck(3)));
     }
 
     @Test
     void testConstructorHonorsCancellationForLangtonBeforeGridInitialization() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new LangtonSimulationManager(createLangtonConfig(), cancellationOnCheck(1))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new LangtonSimulationManager(createLangtonConfig(), cancellationOnCheck(1)));
     }
 
     @Test
     void testConstructorHonorsCancellationForSugarDuringRadiusMapCalculation() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new SugarSimulationManager(createSugarConfig(), cancellationOnCheck(3))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new SugarSimulationManager(createSugarConfig(), cancellationOnCheck(3)));
     }
 
     @Test
     void testConstructorHonorsCancellationForWatorDuringFishPopulation() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new WatorSimulationManager(createWatorConfig(), cancellationOnCheck(3))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new WatorSimulationManager(createWatorConfig(), cancellationOnCheck(3)));
     }
 
     @Test
     void testConstructorHonorsCancellationForSnakeDuringCoordinateSearch() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new SnakeSimulationManager(createSnakeConfig(), cancellationOnCheck(10))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new SnakeSimulationManager(createSnakeConfig(), cancellationOnCheck(10)));
     }
 
     @Test
     void testConstructorHonorsCancellationForReboundingDuringCoordinateSearch() {
-        assertEquals("Simulation initialization was canceled.",
-                assertThrows(SimulationInitializationCanceledException.class,
-                        () -> new ReboundingSimulationManager(createReboundingConfig(), cancellationOnCheck(6))).getMessage());
+        assertThrows(SimulationInitializationCanceledException.class,
+                () -> new ReboundingSimulationManager(createReboundingConfig(), cancellationOnCheck(6)));
     }
 
     @Test

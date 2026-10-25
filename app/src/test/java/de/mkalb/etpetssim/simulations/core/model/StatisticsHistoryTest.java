@@ -30,8 +30,8 @@ final class StatisticsHistoryTest {
     @Test
     void testConstructorWithCapacityRejectsNonPositiveCapacity() {
         assertAll(
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(0))),
-                () -> assertNotNull(assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(-1)))
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(0)),
+                () -> assertThrows(IllegalArgumentException.class, () -> new StatisticsHistory(-1))
         );
     }
 
@@ -70,7 +70,7 @@ final class StatisticsHistoryTest {
 
         var snapshot = history.toList();
 
-        assertNotNull(assertThrows(UnsupportedOperationException.class, () -> snapshot.add(sample(1))));
+        assertThrows(UnsupportedOperationException.class, () -> snapshot.add(sample(1)));
     }
 
     @Test

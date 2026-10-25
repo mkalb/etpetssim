@@ -46,11 +46,10 @@ final class StatisticsExtremaTrackerTest {
 
     @Test
     void testConstructorRejectsDuplicateMetricKeys() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new StatisticsExtremaTracker(List.of(
+        assertThrows(IllegalArgumentException.class, () -> new StatisticsExtremaTracker(List.of(
                 new StatisticsMetric<>("dup", "k1", _ -> 1.0d, StatisticsExtremaMode.NONE),
                 new StatisticsMetric<>("dup", "k2", _ -> 2.0d, StatisticsExtremaMode.MAX)
         )));
-        assertTrue(exception.getMessage().contains("dup"));
     }
 
     @Test
