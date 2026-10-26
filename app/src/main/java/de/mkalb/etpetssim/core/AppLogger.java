@@ -14,15 +14,23 @@ import java.util.logging.Formatter;
 
 /**
  * Application-wide logging facade built on {@link java.util.logging}.
- * <p>
- * Configure once via {@link #initialize(LogLevel, boolean, Path)} and then use the
- * static logging methods throughout the application.
+ *
+ * <p>Configure once via {@link #initialize(LogLevel, boolean, Path)} and then use the static logging methods
+ * throughout the application.
  */
 public final class AppLogger {
 
+    /**
+     * File name of the application log file in the log directory.
+     */
     public static final String LOG_FILE_NAME = "ExtraterrestrialPetsSimulation.log";
+    /**
+     * Log level used before initialization and when no log level is specified.
+     */
     public static final LogLevel DEFAULT_LOG_LEVEL = LogLevel.INFO;
+
     private static final AppLogger APP_LOGGER = new AppLogger();
+
     private final Logger logger;
     private boolean initialized;
 
@@ -30,7 +38,6 @@ public final class AppLogger {
         initialized = false;
         // Root logger for the application.
         logger = Logger.getLogger("");
-        // Set the default log level.
         logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
     }
 
@@ -45,9 +52,8 @@ public final class AppLogger {
      */
     public static synchronized void initialize(LogLevel logLevel, boolean useConsole, @Nullable Path logPath) {
         APP_LOGGER.initializeLogger(logLevel, useConsole, logPath);
-        info("AppLogger: Logger initialized with level: " + logLevel +
-                ", console output: " + useConsole +
-                ", log file: " + (logPath != null ? logPath.toString() : "none"));
+        infof("AppLogger: Logger initialized with level: %s, console output: %b, log file: %s",
+                logLevel, useConsole, (logPath != null) ? logPath : "none");
     }
 
     /**
@@ -61,6 +67,9 @@ public final class AppLogger {
 
     /**
      * Initializes logging for tests if not already initialized.
+     *
+     * <p>Tests that run production code which logs call this method once before their tests; it logs at
+     * {@link LogLevel#DEBUG} to the console.
      */
     public static synchronized void initializeForTesting() {
         if (!isInitialized()) {
@@ -70,40 +79,12 @@ public final class AppLogger {
     }
 
     /**
-     * Resets logger state for tests.
-     */
-    static synchronized void resetForTesting() {
-        if (isInitialized()) {
-            debug("AppLogger: Reset logger for testing.");
-            APP_LOGGER.initialized = false;
-            APP_LOGGER.logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
-            APP_LOGGER.logger.setUseParentHandlers(true);
-            for (Handler handler : APP_LOGGER.logger.getHandlers()) {
-                handler.close();
-                APP_LOGGER.logger.removeHandler(handler);
-            }
-        }
-    }
-
-    /**
-     * Shuts down logging and releases all handlers.
+     * Shuts down logging and closes and removes all handlers.
      */
     public static synchronized void shutdown() {
         debug("AppLogger: Shutting down logger.");
         APP_LOGGER.initialized = false;
-        for (Handler handler : APP_LOGGER.logger.getHandlers()) {
-            handler.close();
-            APP_LOGGER.logger.removeHandler(handler);
-        }
-    }
-
-    /**
-     * Returns the number of attached handlers (test utility).
-     *
-     * @return number of active handlers
-     */
-    static synchronized int handlerCountForTesting() {
-        return APP_LOGGER.logger.getHandlers().length;
+        APP_LOGGER.removeHandlers(true);
     }
 
     /**
@@ -223,6 +204,18 @@ public final class AppLogger {
     }
 
     /**
+     * Logs an error message with an exception.
+     *
+     * @param throwable exception to attach
+     * @param message   message text, may be {@code null}
+     * @throws NullPointerException if {@code throwable} is {@code null}
+     */
+    public static void error(Throwable throwable, @Nullable String message) {
+        Objects.requireNonNull(throwable, "Throwable must not be null");
+        APP_LOGGER.logger.log(Level.SEVERE, message, throwable);
+    }
+
+    /**
      * Logs a formatted error message.
      *
      * @param format format string compatible with {@link String#format(String, Object...)}
@@ -249,15 +242,25 @@ public final class AppLogger {
     }
 
     /**
-     * Logs an error message with an exception.
-     *
-     * @param throwable exception to attach
-     * @param message   message text, may be {@code null}
-     * @throws NullPointerException if {@code throwable} is {@code null}
+     * Resets the logger state for tests, so that a test can initialize logging again with other settings.
      */
-    public static void error(Throwable throwable, @Nullable String message) {
-        Objects.requireNonNull(throwable, "Throwable must not be null");
-        APP_LOGGER.logger.log(Level.SEVERE, message, throwable);
+    static synchronized void resetForTesting() {
+        if (isInitialized()) {
+            debug("AppLogger: Reset logger for testing.");
+            APP_LOGGER.initialized = false;
+            APP_LOGGER.logger.setLevel(DEFAULT_LOG_LEVEL.toJavaLogLevel());
+            APP_LOGGER.logger.setUseParentHandlers(true);
+            APP_LOGGER.removeHandlers(true);
+        }
+    }
+
+    /**
+     * Returns the number of attached handlers, so that tests can check the effect of initialization.
+     *
+     * @return number of active handlers
+     */
+    static synchronized int handlerCountForTesting() {
+        return APP_LOGGER.logger.getHandlers().length;
     }
 
     /**
@@ -276,15 +279,10 @@ public final class AppLogger {
         Objects.requireNonNull(logLevel, "Log level must not be null");
 
         logger.setUseParentHandlers(false);
-
         Level level = logLevel.toJavaLogLevel();
-
-        // Set the log level for the logger.
         logger.setLevel(level);
 
         List<Handler> logHandlers = new ArrayList<>();
-
-        // ConsoleHandler for console output.
         if (useConsole) {
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setFormatter(new AppLogFormatter());
@@ -296,8 +294,6 @@ public final class AppLogger {
             consoleHandler.setLevel(level);
             logHandlers.add(consoleHandler);
         }
-
-        // FileHandler for file output.
         if (logPath != null) {
             try {
                 Path parent = logPath.getParent();
@@ -316,29 +312,27 @@ public final class AppLogger {
         }
 
         if (logHandlers.isEmpty()) {
+            // Warn through the existing handlers before they are removed.
             logger.warning("AppLogger: No logging handlers were created.");
-
-            // Remove all existing handlers.
-            for (Handler handler : logger.getHandlers()) {
-                logger.removeHandler(handler);
-            }
-
-            // Disable all logging.
+            removeHandlers(false);
             logger.setLevel(Level.OFF);
         } else {
-            // Remove all existing handlers from the logger before adding new ones.
-            for (Handler handler : logger.getHandlers()) {
-                logger.removeHandler(handler);
-            }
-
-            // Add all new handlers to the logger.
+            removeHandlers(false);
             logHandlers.forEach(logger::addHandler);
             if (logLevel == LogLevel.DEBUG) {
                 logHandlers.forEach(handler -> debug("AppLogger: Added handler: " + handler.getClass().getSimpleName()));
             }
-
         }
         initialized = true;
+    }
+
+    private void removeHandlers(boolean closeHandlers) {
+        for (Handler handler : logger.getHandlers()) {
+            if (closeHandlers) {
+                handler.close();
+            }
+            logger.removeHandler(handler);
+        }
     }
 
     /**

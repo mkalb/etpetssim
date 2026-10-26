@@ -6,7 +6,7 @@ import de.mkalb.etpetssim.simulations.langton.shared.*;
 import de.mkalb.etpetssim.ui.InputChoiceProperty;
 import javafx.beans.property.*;
 
-import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.RULE_DEFAULT;
+import static de.mkalb.etpetssim.simulations.langton.model.LangtonConstraints.MOVEMENT_RULES_DEFAULT;
 
 public final class LangtonRuleProperty {
 
@@ -21,7 +21,7 @@ public final class LangtonRuleProperty {
     private final InputChoiceProperty<LangtonRulePresetHexagon> presetHexagonProperty;
 
     public LangtonRuleProperty() {
-        stringProperty = new SimpleStringProperty(RULE_DEFAULT);
+        stringProperty = new SimpleStringProperty(MOVEMENT_RULES_DEFAULT);
         labelProperty = new SimpleStringProperty("");
 
         presetTriangleProperty = InputChoiceProperty.ofEnum(PRESET_TRIANGLE_INITIAL, LangtonRulePresetTriangle.class,
@@ -73,8 +73,8 @@ public final class LangtonRuleProperty {
                 throw new IllegalArgumentException("Rule not valid for cell shape! cellShape=" + cellShape + ", input=" + stringProperty.get());
             }
         } catch (IllegalArgumentException e) {
-            AppLogger.errorf(e, "Invalid Langton rule string '%s', falling back to '%s'", stringProperty.get(), RULE_DEFAULT);
-            rules = LangtonMovementRules.parse(RULE_DEFAULT);
+            AppLogger.errorf(e, "Invalid Langton rule string '%s', falling back to '%s'", stringProperty.get(), MOVEMENT_RULES_DEFAULT);
+            rules = LangtonMovementRules.parse(MOVEMENT_RULES_DEFAULT);
         }
         String rulesDisplayString = rules.toDisplayString();
         stringProperty.set(rulesDisplayString);

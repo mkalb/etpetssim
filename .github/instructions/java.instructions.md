@@ -1,6 +1,6 @@
 ---
 applyTo: "**/*.java"
-description: "Java rules for etpetssim: code style, naming, records, enums, JSpecify nullability, and AppLogger usage."
+description: "Java rules for etpetssim: code style, naming, records, enums, utility classes, JSpecify nullability, and AppLogger usage."
 ---
 
 # Java Coding Instructions
@@ -129,6 +129,19 @@ Use these method naming patterns when they match the method's primary behavior; 
 - Enums offered as a config selection follow the existing `labelResourceKey()`/`resourceKey()` pair for their
   localization keys; edit toolbar choices and records expose the key of their own display text as `labelKey()`.
 - Document declaration-order semantics in type Javadoc when order matters.
+
+## Utility Classes
+
+Rules for classes with only static members (constants, static methods, or both).
+
+- Declare a utility class `final` with exactly one empty `private` constructor without Javadoc; do not throw an
+  exception from it.
+- Sort the constants of a constant holder without domain grouping (e.g., localization keys or style class names)
+  alphabetically by name, and check the order in its test with `ConstantTestSupport.assertConstantNamesSorted(..)`.
+- Name a utility class with static factories for an interface after the plural of the interface (`GridPatterns` for
+  `GridPattern`, `GridInitializers` for `GridInitializer`), as in `Collections`; name classes that create JavaFX
+  objects `FX*Factory` (see `ui.instructions.md`); name other utility classes after their role (e.g., `GridGeometry`,
+  `CellNeighborhoods`, `<Simulation>Constraints`).
 
 ## Nullability (JSpecify)
 

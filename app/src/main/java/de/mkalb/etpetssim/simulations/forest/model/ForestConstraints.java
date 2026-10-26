@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the forest-fire model configuration.
  */
 public final class ForestConstraints {
 
@@ -40,23 +40,19 @@ public final class ForestConstraints {
             CellDisplayMode.CIRCLE_BORDERED,
             CellDisplayMode.EMOJI);
 
-    // Initialization - Seed
-    public static final String SEED_INITIAL = "";
-
     // Initialization
+    public static final String SEED_INITIAL = "";
     public static final double TREE_DENSITY_DEFAULT = 0.2d;
     public static final double TREE_DENSITY_MIN = 0.0d;
     public static final double TREE_DENSITY_MAX = 1.0d;
 
-    // Rules - NeighborhoodMode
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
-
     // Rules
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
     public static final double TREE_GROWTH_PROBABILITY_DEFAULT = 0.002d;
-    public static final double TREE_GROWTH_PROBABILITY_MIN = 0.00d;
-    public static final double TREE_GROWTH_PROBABILITY_MAX = 0.20d;
+    public static final double TREE_GROWTH_PROBABILITY_MIN = 0.0d;
+    public static final double TREE_GROWTH_PROBABILITY_MAX = 0.2d;
     public static final double LIGHTNING_IGNITION_PROBABILITY_DEFAULT = 0.001d;
-    public static final double LIGHTNING_IGNITION_PROBABILITY_MIN = 0.00d;
+    public static final double LIGHTNING_IGNITION_PROBABILITY_MIN = 0.0d;
     public static final double LIGHTNING_IGNITION_PROBABILITY_MAX = 0.02d;
 
     private ForestConstraints() {

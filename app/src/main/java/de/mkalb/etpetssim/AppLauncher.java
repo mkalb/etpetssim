@@ -9,10 +9,9 @@ import java.util.*;
 
 /**
  * Application launcher and bootstrap entry point.
- * <p>
- * Parses command-line arguments, initializes logging and localization,
- * and launches {@link ExtraterrestrialPetsSimulation}. It is intentionally separate
- * from the JavaFX {@link Application} subclass.
+ *
+ * <p>Parses command-line arguments, initializes logging and localization, and launches
+ * {@link ExtraterrestrialPetsSimulation}. It is intentionally separate from the JavaFX {@link Application} subclass.
  */
 public final class AppLauncher {
 
@@ -20,10 +19,27 @@ public final class AppLauncher {
     }
 
     /**
+     * Application entry point.
+     *
+     * <p>Arguments are parsed first, then logging and localization are initialized, and finally the JavaFX
+     * application is launched.
+     *
+     * @param args command-line arguments passed to the application
+     */
+    static void main(String[] args) {
+        var arguments = parseArgumentsAndHandleHelp(args);
+        initializeAppLogger(arguments);
+        initializeAppLocalization(arguments);
+
+        AppLogger.infof("AppLauncher: Launching application with arguments: %s", arguments.toArgumentString());
+        Application.launch(ExtraterrestrialPetsSimulation.class, args);
+    }
+
+    /**
      * Parses command-line arguments and handles the help flag.
-     * <p>
-     * If {@link AppArgs.Key#HELP} is active, usage information is written to
-     * {@link System#out} and the process exits with status code {@code 0}.
+     *
+     * <p>If {@link AppArgs.Key#HELP} is active, usage information is written to {@link System#out} and the process
+     * exits with status code {@code 0}.
      *
      * @param args command-line arguments; may be empty
      * @return parsed {@link AppArgs} instance
@@ -34,7 +50,6 @@ public final class AppLauncher {
         AppArgs arguments = new AppArgs(args);
         if (arguments.isFlagActive(AppArgs.Key.HELP)) {
             AppArgs.Key.printHelp(System.out);
-            // Exit the JavaFX application after printing help
             System.exit(0);
         }
         return arguments;
@@ -52,12 +67,12 @@ public final class AppLauncher {
         boolean useConsole = arguments.getBoolean(AppArgs.Key.LOG_CONSOLE, false);
         try {
             boolean useFile = arguments.getBoolean(AppArgs.Key.LOG_FILE, false);
-            Path logPath = useFile ? AppStorage.getLogFile(AppLogger.LOG_FILE_NAME, AppStorage.OperatingSystem.detect()) : null;
-
-            // Initialize the AppLogger with the specified log level, console usage, and log file path
+            Path logPath = useFile
+                    ? AppStorage.getLogFile(AppLogger.LOG_FILE_NAME, AppStorage.OperatingSystem.detect())
+                    : null;
             AppLogger.initialize(logLevel, useConsole, logPath);
         } catch (IOException e) {
-            // Initialize the AppLogger with the specified log level, console usage and null log file path
+            // Log without a file if the log directory cannot be created
             AppLogger.initialize(logLevel, useConsole, null);
             AppLogger.error(e, "AppLauncher: Failed to initialize log file.");
         }
@@ -71,23 +86,6 @@ public final class AppLauncher {
     private static void initializeAppLocalization(AppArgs arguments) {
         AppLocalization.initialize(arguments.getValue(AppArgs.Key.LOCALE).orElse(null));
         Locale.setDefault(AppLocalization.locale());
-    }
-
-    /**
-     * Application entry point.
-     * <p>
-     * Arguments are parsed first, then logging and localization are initialized,
-     * and finally the JavaFX application is launched.
-     *
-     * @param args command-line arguments passed to the application
-     */
-    static void main(String[] args) {
-        var arguments = parseArgumentsAndHandleHelp(args);
-        initializeAppLogger(arguments);
-        initializeAppLocalization(arguments);
-
-        AppLogger.infof("AppLauncher: Launching application with arguments: %s", arguments.toArgumentString());
-        Application.launch(ExtraterrestrialPetsSimulation.class, args);
     }
 
 }

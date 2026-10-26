@@ -7,13 +7,16 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 
 import java.util.*;
 
+/**
+ * Agent phase of a Sugarscape step: the movement, harvest, metabolism, death, and replacement of the agents.
+ */
 public final class SugarAgentLogic {
 
     private static final Comparator<AgentMoveCandidate> AGENT_MOVE_CANDIDATE_COMPARATOR =
             Comparator.comparingInt(AgentMoveCandidate::targetSugarAmount).reversed()
                       .thenComparingInt(AgentMoveCandidate::distanceToTarget)
                       // deterministic tie-breaker using direction of moveTo
-                      .thenComparingInt(c -> c.moveTo().direction().ordinal());
+                      .thenComparing(candidate -> candidate.moveTo().direction());
 
     private static final int DISTANCE_ORIGINAL = 0;
     private static final int DISTANCE_DIRECT_NEIGHBOR = 1;
@@ -23,46 +26,52 @@ public final class SugarAgentLogic {
     private SugarAgentLogic() {
     }
 
-    public static void apply(SugarConfig config,
+    /**
+     * Applies the agent phase of one step to the grid model.
+     *
+     * <p>The agents act in random order. Each agent looks in its neighbor directions up to its vision range, chooses
+     * the free cell with the most sugar (preferring closer cells and its own cell in case of ties), moves one cell
+     * toward it if that cell is free, harvests all sugar of its cell, and consumes energy by its metabolism. An agent
+     * that reaches its maximum age or runs out of energy dies. After all agents have acted, a new agent spawns on a
+     * random free cell for each dead agent.
+     *
+     * @param gridModel  the grid model whose agents and sugar are updated
+     * @param config     the configuration with the agent parameters
+     * @param random     the random source for the agent order and the spawn cells
+     * @param stepIndex  the index of the current step
+     * @param statistics the statistics to update with the changed agent count
+     */
+    public static void apply(SugarGridModel gridModel,
+                             SugarConfig config,
                              Random random,
-                             SugarGridModel gridModel,
                              int stepIndex,
                              SugarStatistics statistics) {
         WritableGridModel<AgentEntity> agentModel = gridModel.agentModel();
         WritableGridModel<ResourceEntity> resourceModel = gridModel.resourceModel();
         GridStructure structure = gridModel.structure();
 
-        // 1. Agent actions
         List<GridCell<AgentEntity>> agentCells = agentModel.nonDefaultCells();
         // Random order is important
         Collections.shuffle(agentCells, random);
         int diedAgents = 0;
         for (GridCell<AgentEntity> agentCell : agentCells) {
-            // Cast to Agent. All non-default cells must be agents.
             if (agentCell.entity() instanceof Agent agent) {
                 GridCoordinate originalCoordinate = agentCell.coordinate();
 
-                // 1.1 Agent sight (scan visible cells within vision range)
-                List<AgentMoveCandidate> moveCandidates = collectMoveCandidates(originalCoordinate, config, structure, agentModel, resourceModel);
-
-                // 1.2 Agent choose target cell (highest sugar, free cell)
-                // prefer closer cells or original cell in case of ties
+                List<AgentMoveCandidate> moveCandidates = collectMoveCandidates(originalCoordinate, config, structure,
+                        agentModel, resourceModel);
                 GridCoordinate newCoordinate = Collections.min(moveCandidates, AGENT_MOVE_CANDIDATE_COMPARATOR)
                                                           .moveTo()
                                                           .mappedNeighborCoordinate();
-
-                // 1.3 Agent movement (move one step toward chosen cell or stay if blocked)
                 GridCoordinate finalCoordinate = attemptMove(originalCoordinate, newCoordinate, agent, agentModel);
 
-                // 1.4 Agent harvest (collect all sugar from current cell)
-                ResourceEntity sugarResourceEntity = resourceModel.getEntity(finalCoordinate);
-                if (sugarResourceEntity instanceof Sugar sugar) {
+                // Harvest all sugar of the current cell
+                if (resourceModel.getEntity(finalCoordinate) instanceof Sugar sugar) {
                     int harvestedSugar = sugar.currentAmount();
                     agent.adjustEnergy(harvestedSugar);
                     sugar.adjustAmount(-harvestedSugar);
                 }
 
-                // 1.5 Agent metabolism and death (consume sugar, die if energy <= 0 or age > maxAge)
                 agent.adjustEnergy(-config.agentMetabolismRate());
                 if ((agent.ageAtStepIndex(stepIndex) >= config.agentMaxAge()) || (agent.currentEnergy() <= 0)) {
                     agentModel.setEntityToDefault(finalCoordinate);
@@ -72,20 +81,104 @@ public final class SugarAgentLogic {
             }
         }
         for (int i = 0; i < diedAgents; i++) {
-            // Find free random coordinate to spawn new agent
             Optional<GridCoordinate> spawnCoordinate = findRandomFreeCell(structure, random, agentModel);
             if (spawnCoordinate.isPresent()) {
-                // Spawn new agent
-                Agent newAgent = new Agent(config.agentInitialEnergy(), stepIndex);
-                agentModel.setEntity(spawnCoordinate.get(), newAgent);
+                agentModel.setEntity(spawnCoordinate.get(), new Agent(config.agentInitialEnergy(), stepIndex));
                 statistics.adjustAgentCells(1);
             }
         }
     }
 
+    private static List<AgentMoveCandidate> collectMoveCandidates(GridCoordinate originalCoordinate,
+                                                                  SugarConfig config,
+                                                                  GridStructure structure,
+                                                                  ReadableGridModel<AgentEntity> agentModel,
+                                                                  ReadableGridModel<ResourceEntity> resourceModel) {
+        List<AgentMoveCandidate> moveCandidates = new ArrayList<>();
+
+        // Always include original cell as candidate and use NNW direction as dummy
+        CellNeighborWithEdgeBehavior originalCellNeighbor = new CellNeighborWithEdgeBehavior(
+                originalCoordinate, CompassDirection.NNW, CellConnectionType.EDGE,
+                originalCoordinate, originalCoordinate, EdgeBehaviorAction.VALID);
+        moveCandidates.add(new AgentMoveCandidate(originalCellNeighbor, originalCellNeighbor,
+                sugarAmountAtCoordinate(originalCoordinate, resourceModel), DISTANCE_ORIGINAL));
+
+        Set<CompassDirection> directions = CellNeighborhoods.cellNeighborDirections(originalCoordinate,
+                config.neighborhoodMode(), structure.cellShape());
+        for (CompassDirection direction : directions) {
+            Optional<CellNeighborWithEdgeBehavior> directNeighbor = findReachableNeighbor(originalCoordinate, direction,
+                    config, structure);
+            // The agent looks further in the same direction only through a free direct neighbor
+            if (directNeighbor.isEmpty() || !agentModel.isDefaultEntity(directNeighbor.get().mappedNeighborCoordinate())) {
+                continue;
+            }
+            CellNeighborWithEdgeBehavior neighbor = directNeighbor.get();
+            addMoveCandidateIfFreeWithSugar(moveCandidates, neighbor, neighbor, DISTANCE_DIRECT_NEIGHBOR,
+                    agentModel, resourceModel);
+
+            CellNeighborWithEdgeBehavior furtherNeighbor = neighbor;
+            for (int distance = DISTANCE_DIRECT_NEIGHBOR + 1; distance <= config.agentVisionRange(); distance++) {
+                Optional<CellNeighborWithEdgeBehavior> nextNeighbor = findReachableNeighbor(
+                        furtherNeighbor.mappedNeighborCoordinate(), direction, config, structure);
+                if (nextNeighbor.isEmpty()) {
+                    break;
+                }
+                furtherNeighbor = nextNeighbor.get();
+                addMoveCandidateIfFreeWithSugar(moveCandidates, furtherNeighbor, neighbor, distance,
+                        agentModel, resourceModel);
+            }
+        }
+        return moveCandidates;
+    }
+
+    private static Optional<CellNeighborWithEdgeBehavior> findReachableNeighbor(GridCoordinate coordinate,
+                                                                                CompassDirection direction,
+                                                                                SugarConfig config,
+                                                                                GridStructure structure) {
+        return CellNeighborhoods.cellNeighborWithEdgeBehavior(coordinate, config.neighborhoodMode(), direction, structure)
+                                .filter(neighbor -> (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.VALID)
+                                        || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED));
+    }
+
+    private static void addMoveCandidateIfFreeWithSugar(List<AgentMoveCandidate> moveCandidates,
+                                                        CellNeighborWithEdgeBehavior target,
+                                                        CellNeighborWithEdgeBehavior moveTo,
+                                                        int distanceToTarget,
+                                                        ReadableGridModel<AgentEntity> agentModel,
+                                                        ReadableGridModel<ResourceEntity> resourceModel) {
+        GridCoordinate targetCoordinate = target.mappedNeighborCoordinate();
+        if (agentModel.isDefaultEntity(targetCoordinate)) {
+            int sugarAmount = sugarAmountAtCoordinate(targetCoordinate, resourceModel);
+            if (sugarAmount > 0) {
+                moveCandidates.add(new AgentMoveCandidate(target, moveTo, sugarAmount, distanceToTarget));
+            }
+        }
+    }
+
+    private static int sugarAmountAtCoordinate(GridCoordinate coordinate,
+                                               ReadableGridModel<ResourceEntity> resourceModel) {
+        if (resourceModel.getEntity(coordinate) instanceof Sugar sugar) {
+            return sugar.currentAmount();
+        }
+        return 0;
+    }
+
+    private static GridCoordinate attemptMove(GridCoordinate originalCoordinate,
+                                              GridCoordinate newCoordinate,
+                                              Agent agent,
+                                              WritableGridModel<AgentEntity> agentModel) {
+        GridCoordinate finalCoordinate = originalCoordinate;
+        if (!newCoordinate.equals(originalCoordinate) && agentModel.isDefaultEntity(newCoordinate)) {
+            agentModel.setEntityToDefault(originalCoordinate);
+            agentModel.setEntity(newCoordinate, agent);
+            finalCoordinate = newCoordinate;
+        }
+        return finalCoordinate;
+    }
+
     private static Optional<GridCoordinate> findRandomFreeCell(GridStructure structure,
                                                                Random random,
-                                                               WritableGridModel<AgentEntity> agentModel) {
+                                                               ReadableGridModel<AgentEntity> agentModel) {
         int width = structure.size().width();
         int height = structure.size().height();
 
@@ -111,89 +204,6 @@ public final class SugarAgentLogic {
         }
 
         return Optional.empty(); // Grid is completely full.
-    }
-
-    private static List<AgentMoveCandidate> collectMoveCandidates(GridCoordinate originalCoordinate,
-                                                                  SugarConfig config,
-                                                                  GridStructure structure,
-                                                                  WritableGridModel<AgentEntity> agentModel,
-                                                                  WritableGridModel<ResourceEntity> resourceModel) {
-        List<AgentMoveCandidate> moveCandidates = new ArrayList<>();
-
-        // Always include original cell as candidate and use NNW direction as dummy
-        CellNeighborWithEdgeBehavior originalCellNeighbor = new CellNeighborWithEdgeBehavior(
-                originalCoordinate, CompassDirection.NNW, CellConnectionType.EDGE,
-                originalCoordinate, originalCoordinate, EdgeBehaviorAction.VALID);
-        moveCandidates.add(new AgentMoveCandidate(originalCellNeighbor, originalCellNeighbor,
-                sugarAmountAtCoordinate(originalCoordinate, resourceModel), DISTANCE_ORIGINAL));
-
-        // Find sight directions and iterate over them
-        Set<CompassDirection> directions = CellNeighborhoods.cellNeighborDirections(originalCoordinate, config.neighborhoodMode(), structure.cellShape());
-        for (CompassDirection direction : directions) {
-            Optional<CellNeighborWithEdgeBehavior> neighborOpt = CellNeighborhoods.cellNeighborWithEdgeBehavior(originalCoordinate, config.neighborhoodMode(), direction, structure);
-
-            if (neighborOpt.isPresent()
-                    && ((neighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.VALID)
-                    || (neighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED))) {
-                CellNeighborWithEdgeBehavior neighbor = neighborOpt.get();
-                GridCoordinate neighborCoordinate = neighbor.mappedNeighborCoordinate();
-                // Check if the cell is free (not occupied by another agent)
-                if (agentModel.isDefaultEntity(neighborCoordinate)) {
-                    int sugarAmount = sugarAmountAtCoordinate(neighborCoordinate, resourceModel);
-                    if (sugarAmount > 0) {
-                        moveCandidates.add(new AgentMoveCandidate(neighbor, neighbor, sugarAmount, DISTANCE_DIRECT_NEIGHBOR));
-                    }
-
-                    // If direct neighbor is free and vision range > 1, look further in the same direction
-                    if (config.agentVisionRange() > DISTANCE_DIRECT_NEIGHBOR) {
-                        CellNeighborWithEdgeBehavior furtherNeighbor = neighbor;
-                        for (int d = DISTANCE_DIRECT_NEIGHBOR + 1; d <= config.agentVisionRange(); d++) {
-                            Optional<CellNeighborWithEdgeBehavior> furtherNeighborOpt = CellNeighborhoods.cellNeighborWithEdgeBehavior(
-                                    furtherNeighbor.mappedNeighborCoordinate(),
-                                    config.neighborhoodMode(),
-                                    direction,
-                                    structure);
-                            if (furtherNeighborOpt.isPresent()
-                                    && ((furtherNeighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.VALID)
-                                    || (furtherNeighborOpt.get().edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED))) {
-                                furtherNeighbor = furtherNeighborOpt.get();
-                                GridCoordinate furtherNeighborCoordinate = furtherNeighbor.mappedNeighborCoordinate();
-                                // Check if the cell is free (not occupied by another agent)
-                                if (agentModel.isDefaultEntity(furtherNeighborCoordinate)) {
-                                    int furtherSugarAmount = sugarAmountAtCoordinate(furtherNeighborCoordinate, resourceModel);
-                                    if (furtherSugarAmount > 0) {
-                                        moveCandidates.add(new AgentMoveCandidate(furtherNeighbor, neighbor, furtherSugarAmount, d));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return moveCandidates;
-    }
-
-    private static GridCoordinate attemptMove(GridCoordinate originalCoordinate,
-                                              GridCoordinate newCoordinate,
-                                              Agent agent,
-                                              WritableGridModel<AgentEntity> agentModel) {
-        GridCoordinate finalCoordinate = originalCoordinate;
-        if (!newCoordinate.equals(originalCoordinate) && agentModel.isDefaultEntity(newCoordinate)) {
-            agentModel.setEntityToDefault(originalCoordinate);
-            agentModel.setEntity(newCoordinate, agent);
-            finalCoordinate = newCoordinate;
-        }
-        return finalCoordinate;
-    }
-
-    private static int sugarAmountAtCoordinate(GridCoordinate coordinate,
-                                               WritableGridModel<ResourceEntity> resourceModel) {
-        ResourceEntity entity = resourceModel.getEntity(coordinate);
-        if (entity instanceof Sugar sugar) {
-            return sugar.currentAmount();
-        }
-        return 0;
     }
 
     private record AgentMoveCandidate(CellNeighborWithEdgeBehavior target,

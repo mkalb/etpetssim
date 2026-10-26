@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the Langton's Ant configuration.
  */
 public final class LangtonConstraints {
 
@@ -37,14 +37,12 @@ public final class LangtonConstraints {
             CellDisplayMode.SHAPE,
             CellDisplayMode.SHAPE_BORDERED);
 
-    // Initialization - Seed
+    // Initialization
     public static final String SEED_INITIAL = "";
 
-    // Rules - Movement rules string
-    public static final String RULE_DEFAULT = "RL";
-
-    // Rules - NeighborhoodMode
+    // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+    public static final String MOVEMENT_RULES_DEFAULT = "RL";
 
     private LangtonConstraints() {
     }

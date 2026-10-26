@@ -8,11 +8,10 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Provides static utility methods for determining the arrangement and neighbor relationships of cells
- * in a two-dimensional grid, based on cell shape, neighborhood mode, and cell position.
- * <p>
- * Centralizes the calculation of neighbor directions for different grid types
- * (triangular, square, hexagonal) and supports both edge-only and edge-and-vertex neighborhood modes.
+ * Computes the neighbors of grid cells by cell shape, neighborhood mode, and cell position, and applies the edge
+ * behavior of a grid structure to neighbor coordinates.
+ *
+ * <p>Supports triangle, square, and hexagon cells and both edge-only and edge-and-vertex neighborhood modes.
  *
  * @see CellShape
  * @see NeighborhoodMode
@@ -25,8 +24,8 @@ public final class CellNeighborhoods {
 
     /**
      * The maximum allowed neighborhood radius for neighbor calculations in the grid.
-     * <p>
-     * This value is used as an upper bound to prevent excessive computation and memory usage
+     *
+     * <p>This value is used as an upper bound to prevent excessive computation and memory usage
      * when determining neighbors within a given radius. {@link #cellsByRadiusRings} and
      * {@link #neighborCoordinatesWithinRadius} throw an {@link IllegalArgumentException}
      * if the provided radius exceeds this limit.
@@ -35,8 +34,8 @@ public final class CellNeighborhoods {
 
     /**
      * Direction ring for square cells when only edges are considered.
-     * <p>
-     * Clockwise order starting at North: N, E, S, W.
+     *
+     * <p>Clockwise order starting at North: N, E, S, W.
      * Matches the ordering used by {@code computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_ONLY)}.
      * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, List)}.
      */
@@ -45,8 +44,8 @@ public final class CellNeighborhoods {
 
     /**
      * Direction ring for square cells when edges and vertices are considered.
-     * <p>
-     * Clockwise order starting at North: N, NE, E, SE, S, SW, W, NW.
+     *
+     * <p>Clockwise order starting at North: N, NE, E, SE, S, SW, W, NW.
      * Matches the ordering used by {@code computeSquareCellNeighborConnections(NeighborhoodMode.EDGES_AND_VERTICES)}.
      * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, List)}.
      */
@@ -58,8 +57,8 @@ public final class CellNeighborhoods {
 
     /**
      * Direction ring for hexagon cells (six neighbors).
-     * <p>
-     * Clockwise order starting at North: N, NE, SE, S, SW, NW.
+     *
+     * <p>Clockwise order starting at North: N, NE, SE, S, SW, NW.
      * Matches the ordering used by {@code computeHexagonCellNeighborConnections(...)}.
      * Intended for use with {@link CompassDirection#distanceOnRing(CompassDirection, CompassDirection, List)}.
      */
@@ -79,8 +78,8 @@ public final class CellNeighborhoods {
     /**
      * Returns the maximum possible number of direct neighbors for a cell
      * with the given shape and neighborhood mode, ignoring grid boundaries.
-     * <p>
-     * This value represents the theoretical upper bound for a cell in an infinite grid.
+     *
+     * <p>This value represents the theoretical upper bound for a cell in an infinite grid.
      * For example, a square cell with {@link NeighborhoodMode#EDGES_ONLY} has 4 possible neighbors,
      * while with {@link NeighborhoodMode#EDGES_AND_VERTICES} it has 8.
      *
@@ -99,15 +98,15 @@ public final class CellNeighborhoods {
     /**
      * Returns the maximum possible number of neighbors for a cell with the given shape,
      * neighborhood mode, and radius, ignoring grid boundaries.
-     * <p>
-     * The result is used as an upper bound for sizing internal collections and does not
+     *
+     * <p>The result is used as an upper bound for sizing internal collections and does not
      * represent an exact neighbor count for all configurations.
      * For {@code radius == 1}, the returned value equals the direct neighbor count from
      * {@link #maxNeighborCount(CellShape, NeighborhoodMode)}.
      * For larger radii, this method returns a conservative value derived from shape-specific formulas
      * that also covers the start cell.
-     * <p>
-     * If {@code radius <= 0}, this method returns {@code 0}.
+     *
+     * <p>If {@code radius <= 0}, this method returns {@code 0}.
      *
      * @param cellShape        the geometric shape of the cell (TRIANGLE, SQUARE, HEXAGON)
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
@@ -146,8 +145,8 @@ public final class CellNeighborhoods {
     /**
      * Checks if two coordinates are valid neighbors in the grid for the given cell shape and neighborhood mode,
      * ignoring grid boundaries.
-     * <p>
-     * This method does not check whether the provided {@code from} and {@code to} coordinates are within the valid grid area.
+     *
+     * <p>This method does not check whether the provided {@code from} and {@code to} coordinates are within the valid grid area.
      * It only determines if {@code to} is a direct neighbor of {@code from} according to the specified configuration.
      *
      * @param from             the coordinate of the source cell (not checked for grid validity)
@@ -168,58 +167,9 @@ public final class CellNeighborhoods {
     }
 
     /**
-     * Determines the {@link EdgeBehaviorAction} for a given coordinate in a grid structure.
-     * <p>
-     * Returns {@code VALID} if the coordinate is within bounds. If out of bounds,
-     * applies the configured edge behavior for each axis (X and Y) and prioritizes actions:
-     * <ol>
-     *   <li>{@code BLOCKED} if either axis uses {@link EdgeBehavior#BLOCK}</li>
-     *   <li>{@code ABSORBED} if either axis uses {@link EdgeBehavior#ABSORB}</li>
-     *   <li>{@code WRAPPED} if either axis uses {@link EdgeBehavior#WRAP}</li>
-     * </ol>
-     *
-     * @param coordinate the grid coordinate to check
-     * @param structure  the grid structure defining bounds and edge behaviors
-     * @return the resulting {@link EdgeBehaviorAction} for the coordinate
-     * @throws IllegalArgumentException if an unknown edge behavior is encountered
-     */
-    public static EdgeBehaviorAction edgeBehaviorActionForCoordinate(GridCoordinate coordinate, GridStructure structure) {
-        if (structure.isCoordinateValid(coordinate)) {
-            return EdgeBehaviorAction.VALID;
-        }
-        GridCoordinate min = structure.minCoordinateInclusive();
-        GridCoordinate max = structure.maxCoordinateExclusive();
-
-        boolean outX = (coordinate.x() < min.x()) || (coordinate.x() >= max.x());
-        boolean outY = (coordinate.y() < min.y()) || (coordinate.y() >= max.y());
-
-        if (!outX && !outY) {
-            // This should not happen; fall back to VALID.
-            return EdgeBehaviorAction.VALID;
-        }
-
-        EdgeBehavior edgeBehaviorX = structure.edgeBehaviorX();
-        EdgeBehavior edgeBehaviorY = structure.edgeBehaviorY();
-
-        // Prioritize in order: BLOCK, ABSORB, WRAP.
-        if ((outX && (edgeBehaviorX == EdgeBehavior.BLOCK)) || (outY && (edgeBehaviorY == EdgeBehavior.BLOCK))) {
-            return EdgeBehaviorAction.BLOCKED;
-        }
-        if ((outX && (edgeBehaviorX == EdgeBehavior.ABSORB)) || (outY && (edgeBehaviorY == EdgeBehavior.ABSORB))) {
-            return EdgeBehaviorAction.ABSORBED;
-        }
-        if ((outX && (edgeBehaviorX == EdgeBehavior.WRAP)) || (outY && (edgeBehaviorY == EdgeBehavior.WRAP))) {
-            return EdgeBehaviorAction.WRAPPED;
-        }
-
-        throw new IllegalArgumentException("Unknown EdgeBehavior for out-of-bounds coordinate: " +
-                "edgeBehaviorX=" + edgeBehaviorX + ", edgeBehaviorY=" + edgeBehaviorY);
-    }
-
-    /**
      * Determines whether the given coordinate is valid within the grid after applying edge behavior.
-     * <p>
-     * A coordinate is considered valid if the edge behavior action is {@link EdgeBehaviorAction#VALID}
+     *
+     * <p>A coordinate is considered valid if the edge behavior action is {@link EdgeBehaviorAction#VALID}
      * or {@link EdgeBehaviorAction#WRAPPED}.
      * Coordinates resulting in {@link EdgeBehaviorAction#BLOCKED} or {@link EdgeBehaviorAction#ABSORBED}
      * are not considered valid for further simulation steps.
@@ -236,8 +186,8 @@ public final class CellNeighborhoods {
 
     /**
      * Applies the configured edge behavior to a given grid coordinate within the specified grid structure.
-     * <p>
-     * Depending on the edge behavior and whether the coordinate is out of bounds, this method
+     *
+     * <p>Depending on the edge behavior and whether the coordinate is out of bounds, this method
      * returns a mapped coordinate and the resulting {@link EdgeBehaviorAction}:
      * <ul>
      *   <li>{@code VALID}, {@code BLOCKED}, {@code ABSORBED}: returns the original coordinate unchanged.</li>
@@ -272,13 +222,13 @@ public final class CellNeighborhoods {
      * Returns a collection of {@link EdgeBehaviorResult} for all theoretical neighbors of a given cell,
      * applying the grid's edge behavior to each neighbor coordinate and ensuring only one result per mapped coordinate,
      * always preferring results with {@link EdgeBehaviorAction#VALID} if present.
-     * <p>
-     * This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
+     *
+     * <p>This method first checks if the provided {@code startCoordinate} is within the valid bounds of the given
      * {@link GridStructure}. If not, an empty collection is returned. Otherwise, it computes all theoretical neighbors
      * (ignoring boundaries), applies edge behavior to each, and collects the results such that for each mapped coordinate,
      * only the best result (preferably with action {@code VALID}) is included.
-     * <p>
-     * The resulting collection contains {@link EdgeBehaviorResult} objects describing the mapping and action for each unique
+     *
+     * <p>The resulting collection contains {@link EdgeBehaviorResult} objects describing the mapping and action for each unique
      * mapped neighbor coordinate.
      *
      * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
@@ -309,13 +259,13 @@ public final class CellNeighborhoods {
     /**
      * Returns a stream of all theoretical neighbors for a given cell, based on the specified
      * neighborhood mode and cell shape, <b>ignoring grid boundaries and edge behavior</b>.
-     * <p>
-     * The returned stream contains {@link CellNeighbor} objects, each describing the direction,
+     *
+     * <p>The returned stream contains {@link CellNeighbor} objects, each describing the direction,
      * connection type (edge or vertex), and coordinate of a neighboring cell relative to the
      * given start coordinate. The calculation assumes an infinite grid and does not check
      * whether the start or neighbor coordinates are valid within any grid structure.
-     * <p>
-     * <b>Note:</b> This method does <b>not</b> apply any edge behavior or boundary checks.
+     *
+     * <p><b>Note:</b> This method does <b>not</b> apply any edge behavior or boundary checks.
      * It is intended for use cases where only the geometric neighbor relationships are needed.
      * The caller can collect the stream into a list if needed.
      *
@@ -342,8 +292,8 @@ public final class CellNeighborhoods {
     /**
      * Returns an {@link Optional} containing a {@link CellNeighborWithEdgeBehavior} for the neighbor of a cell
      * in the specified compass direction, applying the grid's edge behavior to the neighbor coordinate.
-     * <p>
-     * Determines the theoretical neighbor in the given direction (based on cell shape and neighborhood mode),
+     *
+     * <p>Determines the theoretical neighbor in the given direction (based on cell shape and neighborhood mode),
      * applies the grid's edge behavior to the neighbor coordinate, and returns a record describing the relationship
      * and edge behavior outcome. If no neighbor exists in the specified direction, an empty {@link Optional} is returned.
      *
@@ -382,13 +332,13 @@ public final class CellNeighborhoods {
     /**
      * Returns a map of all direct neighbors for a given cell, applying the grid's edge behavior
      * to each neighbor coordinate and grouping the results by the mapped (post-edge-behavior) coordinate.
-     * <p>
-     * For each theoretical neighbor (as determined by cell shape and neighborhood mode, ignoring boundaries),
+     *
+     * <p>For each theoretical neighbor (as determined by cell shape and neighborhood mode, ignoring boundaries),
      * the grid's edge behavior is applied. The resulting {@link CellNeighborWithEdgeBehavior} records
      * contain both the original (theoretical) and mapped neighbor coordinates, as well as the edge behavior action
      * (e.g., VALID, WRAPPED, BLOCKED, ABSORBED).
-     * <p>
-     * The returned map groups all neighbor relationships by the mapped coordinate, allowing the simulation
+     *
+     * <p>The returned map groups all neighbor relationships by the mapped coordinate, allowing the simulation
      * to distinguish between different edge behavior outcomes (including absorbed or blocked neighbors).
      * <b>Note:</b> This method does <b>not</b> filter out any edge behavior actions; all are included.
      *
@@ -416,18 +366,18 @@ public final class CellNeighborhoods {
     /**
      * Returns all cells grouped by radius rings around a start coordinate, applying the grid's edge behavior
      * during each ring expansion and storing the result in unmodifiable sorted maps.
-     * <p>
-     * Ring {@code 0} always contains the start coordinate itself. Each following ring contains only coordinates
+     *
+     * <p>Ring {@code 0} always contains the start coordinate itself. Each following ring contains only coordinates
      * that are first reached in that exact radius, so no coordinate appears in more than one ring.
      * For each cell in ring {@code r > 0}, the returned {@link RadiusRingCell} stores the sorted set of
      * coordinates from ring {@code r - 1} through which it was reached.
-     * <p>
-     * Only neighbors with edge behavior action {@link EdgeBehaviorAction#VALID} or
+     *
+     * <p>Only neighbors with edge behavior action {@link EdgeBehaviorAction#VALID} or
      * {@link EdgeBehaviorAction#WRAPPED} are included. Neighbors resulting in
      * {@link EdgeBehaviorAction#BLOCKED} or {@link EdgeBehaviorAction#ABSORBED} are ignored and are not
      * used for subsequent ring expansion.
-     * <p>
-     * The returned outer map always contains all radius keys from {@code 0} up to and including {@code radius},
+     *
+     * <p>The returned outer map always contains all radius keys from {@code 0} up to and including {@code radius},
      * even if some higher rings are empty.
      *
      * @param <C>              the generic cell value type created for each coordinate
@@ -512,8 +462,8 @@ public final class CellNeighborhoods {
      * Returns a set of all neighbor coordinates within the given radius for a cell,
      * based on the specified neighborhood mode and cell shape, ignoring grid boundaries.
      * The start coordinate itself is not included.
-     * <p>
-     * If {@code radius <= 0}, this method returns an empty set. If {@code radius > MAX_RADIUS}, an
+     *
+     * <p>If {@code radius <= 0}, this method returns an empty set. If {@code radius > MAX_RADIUS}, an
      * {@link IllegalArgumentException} is thrown.
      *
      * @param startCoordinate  the coordinate of the cell whose neighbors are to be determined
@@ -588,9 +538,58 @@ public final class CellNeighborhoods {
     }
 
     /**
+     * Determines the {@link EdgeBehaviorAction} for a given coordinate in a grid structure.
+     *
+     * <p>Returns {@code VALID} if the coordinate is within bounds. If out of bounds,
+     * applies the configured edge behavior for each axis (X and Y) and prioritizes actions:
+     * <ol>
+     *   <li>{@code BLOCKED} if either axis uses {@link EdgeBehavior#BLOCK}</li>
+     *   <li>{@code ABSORBED} if either axis uses {@link EdgeBehavior#ABSORB}</li>
+     *   <li>{@code WRAPPED} if either axis uses {@link EdgeBehavior#WRAP}</li>
+     * </ol>
+     *
+     * @param coordinate the grid coordinate to check
+     * @param structure  the grid structure defining bounds and edge behaviors
+     * @return the resulting {@link EdgeBehaviorAction} for the coordinate
+     * @throws IllegalArgumentException if an unknown edge behavior is encountered
+     */
+    static EdgeBehaviorAction edgeBehaviorActionForCoordinate(GridCoordinate coordinate, GridStructure structure) {
+        if (structure.isCoordinateValid(coordinate)) {
+            return EdgeBehaviorAction.VALID;
+        }
+        GridCoordinate min = structure.minCoordinateInclusive();
+        GridCoordinate max = structure.maxCoordinateExclusive();
+
+        boolean outX = (coordinate.x() < min.x()) || (coordinate.x() >= max.x());
+        boolean outY = (coordinate.y() < min.y()) || (coordinate.y() >= max.y());
+
+        if (!outX && !outY) {
+            // This should not happen; fall back to VALID.
+            return EdgeBehaviorAction.VALID;
+        }
+
+        EdgeBehavior edgeBehaviorX = structure.edgeBehaviorX();
+        EdgeBehavior edgeBehaviorY = structure.edgeBehaviorY();
+
+        // Prioritize in order: BLOCK, ABSORB, WRAP.
+        if ((outX && (edgeBehaviorX == EdgeBehavior.BLOCK)) || (outY && (edgeBehaviorY == EdgeBehavior.BLOCK))) {
+            return EdgeBehaviorAction.BLOCKED;
+        }
+        if ((outX && (edgeBehaviorX == EdgeBehavior.ABSORB)) || (outY && (edgeBehaviorY == EdgeBehavior.ABSORB))) {
+            return EdgeBehaviorAction.ABSORBED;
+        }
+        if ((outX && (edgeBehaviorX == EdgeBehavior.WRAP)) || (outY && (edgeBehaviorY == EdgeBehavior.WRAP))) {
+            return EdgeBehaviorAction.WRAPPED;
+        }
+
+        throw new IllegalArgumentException("Unknown EdgeBehavior for out-of-bounds coordinate: " +
+                "edgeBehaviorX=" + edgeBehaviorX + ", edgeBehaviorY=" + edgeBehaviorY);
+    }
+
+    /**
      * Returns cached neighbor connection definitions for the specified configuration.
-     * <p>
-     * The cache key is generated by {@link #computeCacheKey(GridCoordinate, NeighborhoodMode, CellShape)}
+     *
+     * <p>The cache key is generated by {@link #computeCacheKey(GridCoordinate, NeighborhoodMode, CellShape)}
      * and includes only parity/offset information that affects the geometry.
      *
      * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)
@@ -608,8 +607,8 @@ public final class CellNeighborhoods {
 
     /**
      * Generates the cache key for a neighbor-connection configuration.
-     * <p>
-     * The key contains only shape-specific properties that influence adjacency:
+     *
+     * <p>The key contains only shape-specific properties that influence adjacency:
      * triangle orientation for triangles, no coordinate component for squares,
      * and column-based vertical offset for hexagons.
      *
@@ -630,8 +629,8 @@ public final class CellNeighborhoods {
 
     /**
      * Computes the relative neighbor connections for the given configuration.
-     * <p>
-     * Performs shape-specific dispatch and returns only geometric neighbor
+     *
+     * <p>Performs shape-specific dispatch and returns only geometric neighbor
      * relations (without boundary checks or edge behavior mapping).
      *
      * @param startCoordinate  the source coordinate (used for parity/offset-dependent shapes)
@@ -653,8 +652,8 @@ public final class CellNeighborhoods {
 
     /**
      * Computes relative neighbor connections for a triangle cell.
-     * <p>
-     * The result depends on both the neighborhood mode and the triangle orientation
+     *
+     * <p>The result depends on both the neighborhood mode and the triangle orientation
      * (pointing down vs. pointing up).
      *
      * @param neighborhoodMode           the neighborhood mode
@@ -747,8 +746,8 @@ public final class CellNeighborhoods {
 
     /**
      * Computes relative neighbor connections for a hexagon cell.
-     * <p>
-     * In the staggered layout, the returned offsets depend on whether the source
+     *
+     * <p>In the staggered layout, the returned offsets depend on whether the source
      * column uses a vertical Y-offset.
      *
      * @param hasHexagonCellYOffset {@code true} if the source hexagon is in an offset column

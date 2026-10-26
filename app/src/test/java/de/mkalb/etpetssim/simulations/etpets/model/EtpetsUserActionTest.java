@@ -32,7 +32,7 @@ final class EtpetsUserActionTest {
 
     private static Pet createPet() {
         PetTraits traits = new PetTraits(
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX,
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX,
                 EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_DEFAULT,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_DEFAULT,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_DEFAULT);
@@ -41,8 +41,8 @@ final class EtpetsUserActionTest {
                 null,
                 null,
                 0,
-                EtpetsBalance.PET_CURRENT_ENERGY_RANGE_MAX,
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN,
+                EtpetsBalance.PET_CURRENT_ENERGY_MAX,
+                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN,
                 traits);
     }
 
@@ -67,8 +67,8 @@ final class EtpetsUserActionTest {
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
         manager.currentGridModel().resourceModel().setEntity(coordinate, new Plant(
-                EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX,
-                EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX,
+                EtpetsBalance.PLANT_MAX_AMOUNT_MAX,
+                EtpetsBalance.PLANT_MAX_AMOUNT_MAX,
                 EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE));
 
         userAction.apply(
@@ -108,8 +108,8 @@ final class EtpetsUserActionTest {
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
                 () -> assertInstanceOf(Plant.class, resourceEntity),
-                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX, ((Plant) resourceEntity).currentAmount()),
-                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX, ((Plant) resourceEntity).maxAmount()),
+                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_MAX, ((Plant) resourceEntity).currentAmount()),
+                () -> assertEquals(EtpetsBalance.PLANT_MAX_AMOUNT_MAX, ((Plant) resourceEntity).maxAmount()),
                 () -> assertEquals(EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE, ((Plant) resourceEntity).regenerationPerStep())
         );
     }
@@ -128,8 +128,8 @@ final class EtpetsUserActionTest {
         ResourceEntity resourceEntity = manager.currentGridModel().resourceModel().getEntity(coordinate);
         assertAll(
                 () -> assertInstanceOf(Insect.class, resourceEntity),
-                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX, ((Insect) resourceEntity).currentAmount()),
-                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX, ((Insect) resourceEntity).maxAmount()),
+                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_MAX, ((Insect) resourceEntity).currentAmount()),
+                () -> assertEquals(EtpetsBalance.INSECT_MAX_AMOUNT_MAX, ((Insect) resourceEntity).maxAmount()),
                 () -> assertEquals(EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE, ((Insect) resourceEntity).regenerationPerStep())
         );
     }
@@ -140,8 +140,8 @@ final class EtpetsUserActionTest {
         EtpetsUserAction userAction = new EtpetsUserAction();
         GridCoordinate coordinate = new GridCoordinate(0, 0);
         manager.currentGridModel().resourceModel().setEntity(coordinate, new Insect(
-                EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX,
-                EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX,
+                EtpetsBalance.INSECT_MAX_AMOUNT_MAX,
+                EtpetsBalance.INSECT_MAX_AMOUNT_MAX,
                 EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE));
 
         userAction.apply(

@@ -1,89 +1,99 @@
 package de.mkalb.etpetssim.simulations.etpets.model;
 
+/**
+ * Fixed balance values of the ET Pets simulation that are not part of its configuration.
+ *
+ * <p>The configurable values and their limits are in {@link EtpetsConstraints}.
+ */
 public final class EtpetsBalance {
 
     // Trail
-    public static final int TRAIL_INTENSITY_RANGE_MIN = 1;
-    public static final int TRAIL_INTENSITY_RANGE_MAX = 1_000;
     public static final int TRAIL_INTENSITY_DEFAULT = 50;
+    public static final int TRAIL_INTENSITY_MIN = 1;
+    public static final int TRAIL_INTENSITY_MAX = 1_000;
     public static final int TRAIL_INTENSITY_INCREASE_PER_ENTRY = 20;
     public static final int TRAIL_INTENSITY_DECAY_PER_STEP = 1;
 
     // Plant
-    public static final int PLANT_MAX_AMOUNT_RANGE_MIN = 12;
-    public static final int PLANT_MAX_AMOUNT_RANGE_MAX = 30;
-    public static final int PLANT_CURRENT_AMOUNT_RANGE_MIN = 0;
-    public static final int PLANT_CURRENT_AMOUNT_RANGE_MAX = PLANT_MAX_AMOUNT_RANGE_MAX;
-    public static final double PLANT_REGENERATION_PER_STEP_BASE = 0.30d;
-    public static final double PLANT_REGENERATION_PER_STEP_DELTA = 0.08d; // Must not be 0.0d
+    public static final int PLANT_MAX_AMOUNT_MIN = 12;
+    public static final int PLANT_MAX_AMOUNT_MAX = 30;
+    public static final int PLANT_CURRENT_AMOUNT_MIN = 0;
+    public static final int PLANT_CURRENT_AMOUNT_MAX = PLANT_MAX_AMOUNT_MAX;
+    public static final double PLANT_REGENERATION_PER_STEP_BASE = 0.3d;
+    /**
+     * Maximum random deviation from {@link #PLANT_REGENERATION_PER_STEP_BASE}; must be positive.
+     */
+    public static final double PLANT_REGENERATION_PER_STEP_DELTA = 0.08d;
     public static final int PLANT_CONSUMPTION_PER_ACT = 1;
     public static final int PLANT_ENERGY_GAIN_PER_ACT = 4;
 
     // Insect
-    public static final int INSECT_MAX_AMOUNT_RANGE_MIN = 4;
-    public static final int INSECT_MAX_AMOUNT_RANGE_MAX = 10;
-    public static final int INSECT_CURRENT_AMOUNT_RANGE_MIN = 0;
-    public static final int INSECT_CURRENT_AMOUNT_RANGE_MAX = INSECT_MAX_AMOUNT_RANGE_MAX;
+    public static final int INSECT_MAX_AMOUNT_MIN = 4;
+    public static final int INSECT_MAX_AMOUNT_MAX = 10;
+    public static final int INSECT_CURRENT_AMOUNT_MIN = 0;
+    public static final int INSECT_CURRENT_AMOUNT_MAX = INSECT_MAX_AMOUNT_MAX;
     public static final double INSECT_REGENERATION_PER_STEP_BASE = 0.04d;
-    public static final double INSECT_REGENERATION_PER_STEP_DELTA = 0.02d; // Must not be 0.0d
+    /**
+     * Maximum random deviation from {@link #INSECT_REGENERATION_PER_STEP_BASE}; must be positive.
+     */
+    public static final double INSECT_REGENERATION_PER_STEP_DELTA = 0.02d;
     public static final int INSECT_CONSUMPTION_PER_ACT = 3;
     public static final int INSECT_ENERGY_GAIN_PER_ACT = 20;
 
     // PetEgg
-    public static final int PET_EGG_INCUBATION_REMAINING_RANGE_MIN = 1;
-    public static final int PET_EGG_INCUBATION_REMAINING_RANGE_MAX = 20;
-    public static final int PET_EGG_INCUBATION_REMAINING_DEFAULT = PET_EGG_INCUBATION_REMAINING_RANGE_MAX;
+    public static final int PET_EGG_INCUBATION_REMAINING_MIN = 1;
+    public static final int PET_EGG_INCUBATION_REMAINING_MAX = 20;
+    public static final int PET_EGG_INCUBATION_REMAINING_DEFAULT = PET_EGG_INCUBATION_REMAINING_MAX;
 
     // PetTraits
-    public static final int PET_TRAITS_MAX_ENERGY_RANGE_MIN = 75;
-    public static final int PET_TRAITS_MAX_ENERGY_RANGE_MAX = 150;
+    public static final int PET_TRAITS_MAX_ENERGY_MIN = 75;
+    public static final int PET_TRAITS_MAX_ENERGY_MAX = 150;
     public static final double PET_TRAITS_MOVEMENT_COST_MODIFIER_DEFAULT = 1.0d;
-    public static final double PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN = 0.5d;
-    public static final double PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX = 1.5d;
+    public static final double PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN = 0.5d;
+    public static final double PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX = 1.5d;
     public static final int PET_TRAITS_REPRODUCTION_MIN_ENERGY_DEFAULT = 60;
-    public static final int PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN = 30;
-    public static final int PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX = 80;
+    public static final int PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN = 30;
+    public static final int PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX = 80;
     public static final int PET_TRAITS_REPRODUCTION_COOLDOWN_DEFAULT = 200;
-    public static final int PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN = 100;
-    public static final int PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX = 300;
+    public static final int PET_TRAITS_REPRODUCTION_COOLDOWN_MIN = 100;
+    public static final int PET_TRAITS_REPRODUCTION_COOLDOWN_MAX = 300;
 
     // PetGenome
     public static final double PET_GENOME_MUTATION_CHANCE_PER_TRAIT = 0.08d;
     public static final double PET_GENOME_MUTATION_DELTA = 0.05d;
 
     // Pet
-    public static final int PET_CURRENT_ENERGY_RANGE_MIN = 1;
-    public static final int PET_CURRENT_ENERGY_RANGE_MAX = PET_TRAITS_MAX_ENERGY_RANGE_MAX;
+    public static final int PET_CURRENT_ENERGY_MIN = 1;
+    public static final int PET_CURRENT_ENERGY_MAX = PET_TRAITS_MAX_ENERGY_MAX;
     public static final double PET_CURRENT_ENERGY_BIRTH_FACTOR = 0.3d;
-    public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN = 0;
-    public static final int PET_INITIAL_AGE_RANGE_MIN = 0;
-    public static final int PET_INITIAL_AGE_RANGE_MAX = 100;
+    public static final int PET_REPRODUCTION_COOLDOWN_REMAINING_MIN = 0;
+    public static final int PET_INITIAL_AGE_MIN = 0;
+    public static final int PET_INITIAL_AGE_MAX = 100;
     public static final int PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA = 10;
 
     // Pet lifecycle (EtpetsAgentLogic)
     public static final int PET_STEP_ENERGY_LOSS = 1;
-    public static final int PET_FERTILITY_AGE_RANGE_MIN = 400;
-
+    public static final int PET_FERTILITY_AGE_MIN = 400;
     public static final int PET_AGING_EFFECTS_AGE_MIN = 4_000;
     public static final double PET_AGING_MORTALITY_CHANCE_BASE = 0.0d;
-    public static final double PET_AGING_MORTALITY_CHANCE_INCREASE_PER_STEP = 0.000001d;
+    public static final double PET_AGING_MORTALITY_CHANCE_INCREASE_PER_STEP = 0.000_001d;
     public static final double PET_AGING_MORTALITY_CHANCE_MAX = 0.005d;
     public static final double PET_AGING_WAIT_CHANCE_BASE = 0.015d;
-    public static final double PET_AGING_WAIT_CHANCE_INCREASE_PER_STEP = 0.00005d;
-    public static final double PET_AGING_WAIT_CHANCE_MAX = 0.40d;
+    public static final double PET_AGING_WAIT_CHANCE_INCREASE_PER_STEP = 0.000_05d;
+    public static final double PET_AGING_WAIT_CHANCE_MAX = 0.4d;
     public static final int PET_AGING_WAIT_SCORE_INCREASE_STEP_SPAN = 50;
     public static final int PET_AGING_WAIT_SCORE_MAX = 60;
 
     // Pet move score model
-    public static final int PET_MOVE_SCORE_RANGE_MIN = 1;
-    public static final int PET_MOVE_SCORE_RANGE_MAX = 40;
+    public static final int PET_MOVE_SCORE_MIN = 1;
+    public static final int PET_MOVE_SCORE_MAX = 40;
     public static final double PET_MOVE_SCORE_BASE = 4.0d;
     public static final double PET_MOVE_SURVIVAL_PRESSURE_EXPONENT = 2.0d;
     public static final double PET_MOVE_RESOURCE_BASE_WEIGHT = 4.0d;
     public static final double PET_MOVE_RESOURCE_SURVIVAL_PRESSURE_WEIGHT = 20.0d;
     public static final double PET_MOVE_PARTNER_WEIGHT = 7.5d;
     public static final int PET_MOVE_TRAIL_BONUS_INTENSITY_THRESHOLD = 50;
-    public static final double PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE = 750;
+    public static final double PET_MOVE_TRAIL_BONUS_INTENSITY_SCALE = 750.0d;
     public static final double PET_MOVE_TRAIL_BONUS_MAX = 12.0d;
     public static final double PET_MOVE_TRAIL_BONUS_CURVE_SHARPNESS = 3.5d;
     public static final double PET_MOVE_EXPLORATION_WEIGHT = 12.0d;
@@ -100,14 +110,14 @@ public final class EtpetsBalance {
     public static final double PET_MOVE_CROWDING_PENALTY = 3.0d;
 
     // Pet reproduction score model
-    public static final int PET_REPRODUCTION_SCORE_RANGE_MIN = 30;
-    public static final int PET_REPRODUCTION_SCORE_RANGE_MAX = 100;
+    public static final int PET_REPRODUCTION_SCORE_MIN = 30;
+    public static final int PET_REPRODUCTION_SCORE_MAX = 100;
     public static final double PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT = 0.65d;
     public static final double PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT = 0.35d;
 
     // Pet eat score model
-    public static final int PET_EAT_SCORE_RANGE_MIN = 1;
-    public static final int PET_EAT_SCORE_RANGE_MAX = 100;
+    public static final int PET_EAT_SCORE_MIN = 1;
+    public static final int PET_EAT_SCORE_MAX = 100;
     public static final double PET_EAT_SCORE_HUNGER_WEIGHT = 35.0d;
     public static final double PET_EAT_SCORE_HUNGER_EXPONENT = 1.6d;
     public static final double PET_EAT_SCORE_PANIC_WEIGHT = 40.0d;

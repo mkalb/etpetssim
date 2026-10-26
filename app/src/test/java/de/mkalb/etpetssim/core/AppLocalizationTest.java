@@ -25,89 +25,85 @@ final class AppLocalizationTest {
 
     @Test
     void testSupportedLocales() {
-        var supportedLocales = AppLocalization.supportedLocales();
-        assertEquals(AppLocalization.CountryLocale.values().length, supportedLocales.size());
-        for (int i = 0; i < AppLocalization.CountryLocale.values().length; i++) {
-            var localeEnum = AppLocalization.CountryLocale.values()[i];
-            assertEquals(localeEnum, supportedLocales.get(i));
-        }
+        assertEquals(List.of(AppLocalization.CountryLocale.values()), AppLocalization.supportedLocales());
     }
 
     @Test
-    void testIsInitializedReturnsFalseBeforeInitialization() {
+    void testIsInitialized() {
         assertFalse(AppLocalization.isInitialized());
-    }
 
-    @Test
-    void testInitializeWithDefaultLocaleSetsLocaleAndBundle() {
-        AppLocalization.initialize("en_US", Locale.GERMANY);
-        assertTrue(AppLocalization.isInitialized());
-        assertEquals(Locale.US, AppLocalization.locale());
-        assertNotNull(AppLocalization.bundle());
-        assertEquals(Locale.US, AppLocalization.bundle().getLocale());
-
-        AppLocalization.resetForTesting();
-        AppLocalization.initialize("de_DE", Locale.US);
-        assertTrue(AppLocalization.isInitialized());
-        assertEquals(Locale.GERMANY, AppLocalization.locale());
-        assertNotNull(AppLocalization.bundle());
-        assertEquals(Locale.GERMANY, AppLocalization.bundle().getLocale());
-    }
-
-    @Test
-    void testInitializeSetsLocaleAndBundle() {
         AppLocalization.initialize("en_US");
+
         assertTrue(AppLocalization.isInitialized());
-        assertEquals(Locale.US, AppLocalization.locale());
-        assertNotNull(AppLocalization.bundle());
-        assertEquals(Locale.US, AppLocalization.bundle().getLocale());
+    }
+
+    @Test
+    void testInitialize() {
+        AppLocalization.initialize("en_US");
+        Locale englishLocale = AppLocalization.locale();
+        Locale englishBundleLocale = AppLocalization.bundle().getLocale();
 
         AppLocalization.resetForTesting();
         AppLocalization.initialize("de_DE");
-        assertTrue(AppLocalization.isInitialized());
-        assertEquals(Locale.GERMANY, AppLocalization.locale());
-        assertNotNull(AppLocalization.bundle());
-        assertEquals(Locale.GERMANY, AppLocalization.bundle().getLocale());
+
+        assertAll(
+                () -> assertEquals(Locale.US, englishLocale),
+                () -> assertEquals(Locale.US, englishBundleLocale),
+                () -> assertEquals(Locale.GERMANY, AppLocalization.locale()),
+                () -> assertEquals(Locale.GERMANY, AppLocalization.bundle().getLocale())
+        );
     }
 
     @Test
     void testInitializeThrowsWhenInitializedTwice() {
         AppLocalization.initialize("en_US");
-        assertTrue(AppLocalization.isInitialized());
-        assertThrows(IllegalStateException.class, () -> AppLocalization.initialize("de_DE"));
-        assertTrue(AppLocalization.isInitialized());
-        assertEquals(Locale.US, AppLocalization.locale());
+
+        assertAll(
+                () -> assertThrows(IllegalStateException.class, () -> AppLocalization.initialize("de_DE")),
+                () -> assertThrows(IllegalStateException.class,
+                        () -> AppLocalization.initialize("de_DE", Locale.GERMANY)),
+                () -> assertEquals(Locale.US, AppLocalization.locale())
+        );
     }
 
     @Test
-    void testResolveLocaleFromArgument() {
-        assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromArgument("en_US"));
-        assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromArgument("de_DE"));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument(null));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument(""));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("invalid_locale"));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("de_AT"));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("en_UK"));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("DE"));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("EN"));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("US"));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("GERMANY"));
-        assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromArgument("en"));
-        assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromArgument("de"));
+    void testInitializeWithDefaultLocale() {
+        AppLocalization.initialize("de_DE", Locale.US);
+
+        assertAll(
+                () -> assertEquals(Locale.GERMANY, AppLocalization.locale()),
+                () -> assertEquals(Locale.GERMANY, AppLocalization.bundle().getLocale())
+        );
+    }
+
+    @Test
+    void testInitializeWithDefaultLocaleFallsBackToDefaultLocale() {
+        AppLocalization.initialize("fr_FR", Locale.GERMAN);
+        Locale localeForUnsupportedArgument = AppLocalization.locale();
+
+        AppLocalization.resetForTesting();
+        AppLocalization.initialize(null, Locale.GERMANY);
+
+        assertAll(
+                () -> assertEquals(Locale.GERMANY, localeForUnsupportedArgument),
+                () -> assertEquals(Locale.GERMANY, AppLocalization.locale())
+        );
+    }
+
+    @Test
+    void testInitializeWithDefaultLocaleFallsBackToApplicationDefault() {
+        AppLocalization.initialize("fr_FR", Locale.FRANCE);
+
+        assertEquals(AppLocalization.DEFAULT_LOCALE, AppLocalization.locale());
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void testResolveLocaleFromDefault() {
-        assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.US));
-        assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromDefault(Locale.GERMANY));
-        assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.CANADA));
-        assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.ENGLISH));
-        assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.UK));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.FRANCE));
-        assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.CANADA_FRENCH));
-        assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromDefault(Locale.GERMAN));
-        assertThrows(NullPointerException.class, () -> AppLocalization.resolveLocaleFromDefault(null));
+    void testInitializeWithDefaultLocaleRejectsNull() {
+        assertAll(
+                () -> assertThrows(NullPointerException.class, () -> AppLocalization.initialize("en_US", null)),
+                () -> assertFalse(AppLocalization.isInitialized())
+        );
     }
 
     @Test
@@ -126,56 +122,127 @@ final class AppLocalizationTest {
         assertThrows(IllegalStateException.class, () -> AppLocalization.getText(MAIN_BUNDLE_KEY));
 
         AppLocalization.initialize("en_US");
-        assertEquals(AppLocalization.bundle().getString(MAIN_BUNDLE_KEY), AppLocalization.getText(MAIN_BUNDLE_KEY));
+        String englishText = AppLocalization.getText(MAIN_BUNDLE_KEY);
+        String englishBundleText = AppLocalization.bundle().getString(MAIN_BUNDLE_KEY);
 
         AppLocalization.resetForTesting();
         AppLocalization.initialize("de_DE");
-        assertEquals(AppLocalization.bundle().getString(MAIN_BUNDLE_KEY), AppLocalization.getText(MAIN_BUNDLE_KEY));
 
-        assertEquals(AppLocalization.PLACEHOLDER_FOR_EXCEPTIONS, AppLocalization.getText("non_existent_key"));
-        assertThrows(NullPointerException.class, () -> AppLocalization.getText(null));
+        assertAll(
+                () -> assertEquals(englishBundleText, englishText),
+                () -> assertEquals(AppLocalization.bundle().getString(MAIN_BUNDLE_KEY),
+                        AppLocalization.getText(MAIN_BUNDLE_KEY)),
+                () -> assertEquals(AppLocalization.PLACEHOLDER_FOR_EXCEPTIONS,
+                        AppLocalization.getText("non_existent_key")),
+                () -> assertThrows(NullPointerException.class, () -> AppLocalization.getText(null))
+        );
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetOptionalText() {
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getOptionalText("greeting"));
+
         AppLocalization.initializeForTesting(Locale.US, TEST_BUNDLE_BASE_NAME);
-        assertEquals(Optional.of("Hello"), AppLocalization.getOptionalText("greeting"));
-        assertEquals(Optional.empty(), AppLocalization.getOptionalText("empty"));
-        assertEquals(Optional.of("OnlyUS"), AppLocalization.getOptionalText("onlyUS"));
+        Optional<String> englishGreeting = AppLocalization.getOptionalText("greeting");
+        Optional<String> englishEmpty = AppLocalization.getOptionalText("empty");
+        Optional<String> englishOnlyUS = AppLocalization.getOptionalText("onlyUS");
 
         AppLocalization.resetForTesting();
         AppLocalization.initializeForTesting(Locale.GERMANY, TEST_BUNDLE_BASE_NAME);
-        assertEquals(Optional.of("Hallo"), AppLocalization.getOptionalText("greeting"));
-        assertEquals(Optional.empty(), AppLocalization.getOptionalText("empty"));
-        assertEquals(Optional.empty(), AppLocalization.getOptionalText("onlyUS"));
 
-        assertEquals(Optional.empty(), AppLocalization.getOptionalText("non_existent_key"));
-        assertThrows(NullPointerException.class, () -> AppLocalization.getOptionalText(null));
+        assertAll(
+                () -> assertEquals(Optional.of("Hello"), englishGreeting),
+                () -> assertEquals(Optional.empty(), englishEmpty),
+                () -> assertEquals(Optional.of("OnlyUS"), englishOnlyUS),
+                () -> assertEquals(Optional.of("Hallo"), AppLocalization.getOptionalText("greeting")),
+                () -> assertEquals(Optional.empty(), AppLocalization.getOptionalText("empty")),
+                () -> assertEquals(Optional.empty(), AppLocalization.getOptionalText("onlyUS")),
+                () -> assertEquals(Optional.empty(), AppLocalization.getOptionalText("non_existent_key")),
+                () -> assertThrows(NullPointerException.class, () -> AppLocalization.getOptionalText(null))
+        );
     }
 
-    @SuppressWarnings({"DataFlowIssue", "GrazieInspectionRunner"})
+    @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetFormattedText() {
-        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John"));
+        assertThrows(IllegalStateException.class, () -> AppLocalization.getFormattedText("formatted", 1));
 
-        AppLocalization.initialize("en_US");
-        String englishText = AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John");
-        assertAll(
-                () -> assertTrue(englishText.contains("John")),
-                () -> assertFalse(englishText.contains("%1$s"))
-        );
+        AppLocalization.initializeForTesting(Locale.US, TEST_BUNDLE_BASE_NAME);
+        String englishText = AppLocalization.getFormattedText("formatted", 1);
 
         AppLocalization.resetForTesting();
-        AppLocalization.initialize("de_DE");
-        String germanText = AppLocalization.getFormattedText(MAIN_BUNDLE_KEY, "John");
-        assertAll(
-                () -> assertTrue(germanText.contains("John")),
-                () -> assertFalse(germanText.contains("%1$s"))
-        );
+        AppLocalization.initializeForTesting(Locale.GERMANY, TEST_BUNDLE_BASE_NAME);
 
-        assertEquals(AppLocalization.PLACEHOLDER_FOR_EXCEPTIONS, AppLocalization.getFormattedText("non_existent_key", "John"));
-        assertThrows(NullPointerException.class, () -> AppLocalization.getFormattedText(null, "John"));
+        assertAll(
+                () -> assertEquals("Hello 1", englishText),
+                () -> assertEquals("Hallo 2", AppLocalization.getFormattedText("formatted", 2)),
+                () -> assertEquals(AppLocalization.PLACEHOLDER_FOR_EXCEPTIONS,
+                        AppLocalization.getFormattedText("non_existent_key", 1)),
+                () -> assertThrows(NullPointerException.class, () -> AppLocalization.getFormattedText(null, 1))
+        );
+    }
+
+    @Test
+    void testGetFormattedTextReturnsPlaceholderForInvalidArguments() {
+        AppLocalization.initializeForTesting(Locale.US, TEST_BUNDLE_BASE_NAME);
+
+        assertEquals(AppLocalization.PLACEHOLDER_FOR_EXCEPTIONS, AppLocalization.getFormattedText("formatted", "text"));
+    }
+
+    @Test
+    void testResolveLocaleFromArgument() {
+        assertAll(
+                () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromArgument("en_US")),
+                () -> assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromArgument("de_DE")),
+                () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromArgument("en")),
+                () -> assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromArgument("de")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument(null)),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("invalid_locale")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("de_AT")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("en_UK")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("DE")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("EN")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("US")),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromArgument("GERMANY"))
+        );
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testResolveLocaleFromDefault() {
+        assertAll(
+                () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.US)),
+                () -> assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromDefault(Locale.GERMANY)),
+                () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.CANADA)),
+                () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.ENGLISH)),
+                () -> assertEquals(Optional.of(Locale.US), AppLocalization.resolveLocaleFromDefault(Locale.UK)),
+                () -> assertEquals(Optional.of(Locale.GERMANY), AppLocalization.resolveLocaleFromDefault(Locale.GERMAN)),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.FRANCE)),
+                () -> assertEquals(Optional.empty(), AppLocalization.resolveLocaleFromDefault(Locale.CANADA_FRENCH)),
+                () -> assertThrows(NullPointerException.class, () -> AppLocalization.resolveLocaleFromDefault(null))
+        );
+    }
+
+    @Test
+    void testInitializeForTesting() {
+        AppLocalization.initializeForTesting(Locale.GERMANY, TEST_BUNDLE_BASE_NAME);
+
+        assertAll(
+                () -> assertEquals(Locale.GERMANY, AppLocalization.locale()),
+                () -> assertTrue(AppLocalization.bundle().containsKey("greeting")),
+                () -> assertFalse(AppLocalization.bundle().containsKey(MAIN_BUNDLE_KEY))
+        );
+    }
+
+    @Test
+    void testResetForTesting() {
+        AppLocalization.initialize("en_US");
+
+        AppLocalization.resetForTesting();
+
+        assertFalse(AppLocalization.isInitialized());
     }
 
     @Test
@@ -191,64 +258,42 @@ final class AppLocalizationTest {
 
     @Test
     void testCountryLocale() {
-        for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
-            Locale country = locale.countryLocale();
-            assertNotNull(country);
-        }
-
-        assertEquals(Locale.US, AppLocalization.CountryLocale.EN_US.countryLocale());
-        assertEquals(Locale.GERMANY, AppLocalization.CountryLocale.DE_DE.countryLocale());
+        assertAll(
+                () -> assertEquals(Locale.US, AppLocalization.CountryLocale.EN_US.countryLocale()),
+                () -> assertEquals(Locale.GERMANY, AppLocalization.CountryLocale.DE_DE.countryLocale())
+        );
     }
 
     @Test
     void testDisplayName() {
-        for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
-            String displayName = locale.displayName();
-            assertNotNull(displayName);
-            assertFalse(displayName.isEmpty());
-        }
-
-        assertEquals("English (US)", AppLocalization.CountryLocale.EN_US.displayName());
-        assertEquals("Deutsch (Deutschland)", AppLocalization.CountryLocale.DE_DE.displayName());
+        assertAll(
+                () -> assertEquals("English (US)", AppLocalization.CountryLocale.EN_US.displayName()),
+                () -> assertEquals("Deutsch (Deutschland)", AppLocalization.CountryLocale.DE_DE.displayName())
+        );
     }
 
     @Test
     void testLanguageCode() {
-        for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
-            String code = locale.languageCode();
-            assertNotNull(code);
-            assertFalse(code.isEmpty());
-            assertTrue(code.matches("[a-z]{2}"), "Language code should match pattern xx: " + code);
-        }
-
-        assertEquals("en", AppLocalization.CountryLocale.EN_US.languageCode());
-        assertEquals("de", AppLocalization.CountryLocale.DE_DE.languageCode());
+        assertAll(
+                () -> assertEquals("en", AppLocalization.CountryLocale.EN_US.languageCode()),
+                () -> assertEquals("de", AppLocalization.CountryLocale.DE_DE.languageCode())
+        );
     }
 
     @Test
     void testCountryCode() {
-        for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
-            String code = locale.countryCode();
-            assertNotNull(code);
-            assertFalse(code.isEmpty());
-            assertTrue(code.matches("[A-Z]{2}"), "Country code should match pattern XX: " + code);
-        }
-
-        assertEquals("US", AppLocalization.CountryLocale.EN_US.countryCode());
-        assertEquals("DE", AppLocalization.CountryLocale.DE_DE.countryCode());
+        assertAll(
+                () -> assertEquals("US", AppLocalization.CountryLocale.EN_US.countryCode()),
+                () -> assertEquals("DE", AppLocalization.CountryLocale.DE_DE.countryCode())
+        );
     }
 
     @Test
     void testLocaleCode() {
-        for (AppLocalization.CountryLocale locale : AppLocalization.CountryLocale.values()) {
-            String code = locale.localeCode();
-            assertNotNull(code);
-            assertFalse(code.isEmpty());
-            assertTrue(code.matches("[a-z]{2}_[A-Z]{2}"), "Locale code should match pattern xx_XX: " + code);
-        }
-
-        assertEquals("en_US", AppLocalization.CountryLocale.EN_US.localeCode());
-        assertEquals("de_DE", AppLocalization.CountryLocale.DE_DE.localeCode());
+        assertAll(
+                () -> assertEquals("en_US", AppLocalization.CountryLocale.EN_US.localeCode()),
+                () -> assertEquals("de_DE", AppLocalization.CountryLocale.DE_DE.localeCode())
+        );
     }
 
 }

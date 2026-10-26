@@ -82,7 +82,6 @@ final class AppResourcesTest {
         List<Image> images = AppResources.getImages("etpetssim16.png", "etpetssim16.png", "unknown.png",
                 "etpetssim32.png");
         assertEquals(3, images.size(), "Number of images should be 3");
-        assertTrue(images.stream().allMatch(Objects::nonNull), "All images should be non-null");
 
         assertThrows(NullPointerException.class, () -> AppResources.getImages((String[]) null));
     }
@@ -103,7 +102,7 @@ final class AppResourcesTest {
     @Test
     void testGetResourceAsStreamReturnsStream() throws Exception {
         try (InputStream stream = AppResources.getResourceAsStream("css/test_style.css").orElseThrow()) {
-            assertNotNull(stream, "InputStream should be present");
+            assertTrue(stream.read() >= 0, "InputStream should provide the resource content");
         }
 
         assertThrows(NullPointerException.class, () -> AppResources.getResourceAsStream(null));

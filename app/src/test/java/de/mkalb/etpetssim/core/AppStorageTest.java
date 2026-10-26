@@ -52,7 +52,6 @@ final class AppStorageTest {
         String uniqueAppFileName = createUniqueAppFileName();
 
         Path path = AppStorage.getAppDataFile(uniqueAppFileName, OS);
-        assertNotNull(path);
         assertTrue(path.toString().endsWith(uniqueAppFileName));
     }
 
@@ -74,6 +73,14 @@ final class AppStorageTest {
         assertTrue(Files.exists(createdFile), "File should exist after creation");
         assertTrue(Files.isRegularFile(createdFile), "File should be a regular file");
         assertTrue(Files.isWritable(createdFile), "File should be writable");
+    }
+
+    @Test
+    void testCreateAppDataFileThrowsForExistingFile() throws IOException {
+        String uniqueAppFileName = createUniqueAppFileName();
+        createdFile = AppStorage.createAppDataFile(uniqueAppFileName, OS);
+
+        assertThrows(FileAlreadyExistsException.class, () -> AppStorage.createAppDataFile(uniqueAppFileName, OS));
     }
 
     @SuppressWarnings("DataFlowIssue")
@@ -120,17 +127,18 @@ final class AppStorageTest {
     @Test
     void testGetLogFileReturnsPath() throws IOException {
         Path path = AppStorage.getLogFile(LOG_FILE_NAME, OS);
-        assertNotNull(path);
         assertTrue(path.toString().endsWith(LOG_FILE_NAME));
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testGetLogFileRejectsInvalidFileName() {
+        String pathTraversalName = Path.of("..", "outside.log").toString();
         assertAll(
                 () -> assertThrows(NullPointerException.class, () -> AppStorage.getLogFile(null, OS)),
                 () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("", OS)),
-                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("   ", OS))
+                () -> assertThrows(IllegalArgumentException.class, () -> AppStorage.getLogFile("   ", OS)),
+                () -> assertThrows(IOException.class, () -> AppStorage.getLogFile(pathTraversalName, OS))
         );
     }
 
@@ -145,13 +153,19 @@ final class AppStorageTest {
         String uniqueFilePrefix = FILE_PREFIX + UUID.randomUUID();
 
         tempFile = AppStorage.createTempCacheFile(uniqueFilePrefix, TEMP_SUFFIX, OS);
-        assertNotNull(tempFile);
         assertTrue(Files.exists(tempFile));
         assertTrue(Files.isRegularFile(tempFile));
         assertTrue(Files.isWritable(tempFile));
         assertTrue(tempFile.getFileName().toString().startsWith(uniqueFilePrefix));
         assertTrue(tempFile.getFileName().toString().endsWith(TEMP_SUFFIX));
         assertTrue(Files.deleteIfExists(tempFile));
+    }
+
+    @Test
+    void testCreateTempCacheFileUsesDefaultSuffixForNullSuffix() throws IOException {
+        tempFile = AppStorage.createTempCacheFile(FILE_PREFIX + UUID.randomUUID(), null, OS);
+
+        assertTrue(tempFile.getFileName().toString().endsWith(TEMP_SUFFIX));
     }
 
     @SuppressWarnings("DataFlowIssue")

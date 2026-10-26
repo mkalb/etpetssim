@@ -42,7 +42,7 @@ public final class EtpetsScoreTuningRunner {
         System.out.println(COLUMNS_MOVE);
 
         for (double energyRatio : List.of(0.15d, 0.50d, 0.85d)) {
-            for (int trailIntensity : List.of(0, 1, 30, 50, 100, 200, 600, 800, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX - 10, EtpetsBalance.TRAIL_INTENSITY_RANGE_MAX)) {
+            for (int trailIntensity : List.of(0, 1, 30, 50, 100, 200, 600, 800, EtpetsBalance.TRAIL_INTENSITY_MAX - 10, EtpetsBalance.TRAIL_INTENSITY_MAX)) {
                 for (boolean hasResourceLookAhead : List.of(false, true)) {
                     for (boolean hasOscillationHistoryMatch : List.of(false, true)) {
                         double result = EtpetsScoreMath.computeRawMoveScore(
@@ -61,7 +61,7 @@ public final class EtpetsScoreTuningRunner {
                                 trailIntensity,
                                 hasResourceLookAhead,
                                 hasOscillationHistoryMatch,
-                                clampToIntScore(result, EtpetsBalance.PET_MOVE_SCORE_RANGE_MIN),
+                                clampToIntScore(result, EtpetsBalance.PET_MOVE_SCORE_MIN),
                                 result);
                     }
                 }
@@ -82,7 +82,7 @@ public final class EtpetsScoreTuningRunner {
                         "%10.2f, %14.2f, %6d, %10.3f%n",
                         petQuality,
                         partnerQuality,
-                        clampToIntScore(result, EtpetsBalance.PET_REPRODUCTION_SCORE_RANGE_MIN),
+                        clampToIntScore(result, EtpetsBalance.PET_REPRODUCTION_SCORE_MIN),
                         result);
             }
         }
@@ -108,7 +108,7 @@ public final class EtpetsScoreTuningRunner {
                                 maxEnergy,
                                 resourceEnergyGain,
                                 age,
-                                clampToIntScore(result, EtpetsBalance.PET_EAT_SCORE_RANGE_MIN),
+                                clampToIntScore(result, EtpetsBalance.PET_EAT_SCORE_MIN),
                                 result);
                     }
                 }

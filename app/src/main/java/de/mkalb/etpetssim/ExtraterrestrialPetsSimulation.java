@@ -382,8 +382,8 @@ public final class ExtraterrestrialPetsSimulation extends Application {
             AppLogger.error(throwable, "Uncaught exception in thread " + thread.getName());
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle(AppLocalization.getText(AppLocalizationKeys.ALERT_TITLE_UNEXPECTED_ERROR));
-                alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_HEADER_UNEXPECTED_ERROR));
+                alert.setTitle(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_TITLE));
+                alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_HEADER));
                 alert.setContentText(throwable.getMessage());
                 alert.showAndWait();
             });

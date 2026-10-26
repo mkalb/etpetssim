@@ -63,8 +63,8 @@ public final class SnakeConfigViewModel
 
     // Rules
     private final InputChoiceProperty<SnakeDeathMode> deathMode = InputChoiceProperty.ofList(
-            SNAKE_DEATH_MODE_DEFAULT,
-            SNAKE_DEATH_MODE_VALUES,
+            DEATH_MODE_DEFAULT,
+            DEATH_MODE_VALUES,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputIntegerProperty growthPerFood = InputIntegerProperty.of(
             GROWTH_PER_FOOD_DEFAULT,

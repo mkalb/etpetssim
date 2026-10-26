@@ -11,12 +11,14 @@ import de.mkalb.etpetssim.simulations.rebounding.view.*;
 import de.mkalb.etpetssim.simulations.rebounding.viewmodel.*;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the Rebounding Entities main view.
+ */
 public final class ReboundingFactory {
 
     private ReboundingFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -37,10 +39,7 @@ public final class ReboundingFactory {
         var configView = new ReboundingConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ReboundingObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new ReboundingMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
-
-        // Return the main view
-        return view;
+        return new ReboundingMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

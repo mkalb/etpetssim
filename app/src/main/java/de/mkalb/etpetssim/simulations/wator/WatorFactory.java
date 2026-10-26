@@ -11,12 +11,14 @@ import de.mkalb.etpetssim.simulations.wator.view.*;
 import de.mkalb.etpetssim.simulations.wator.viewmodel.WatorConfigViewModel;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the Wa-Tor main view.
+ */
 public final class WatorFactory {
 
     private WatorFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -36,10 +38,7 @@ public final class WatorFactory {
         var configView = new WatorConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new WatorObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new WatorMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
-
-        // Return the main view
-        return view;
+        return new WatorMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

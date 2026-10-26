@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.lab.shared.LabColorMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the Simulation Lab configuration.
  */
 public final class LabConstraints {
 
@@ -42,10 +42,10 @@ public final class LabConstraints {
     public static final List<LabColorMode> COLOR_MODE_VALUES = List.of(
             LabColorMode.values());
 
-    // Initialization - Seed
+    // Initialization
     public static final String SEED_INITIAL = "";
 
-    // Rules - NeighborhoodMode
+    // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
 
     private LabConstraints() {

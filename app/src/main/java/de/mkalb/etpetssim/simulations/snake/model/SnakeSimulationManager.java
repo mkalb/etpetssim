@@ -128,7 +128,7 @@ public final class SnakeSimulationManager
                                                           Random random,
                                                           SimulationInitializationCancellation cancellation) {
         if (config.snakes() > 0) {
-            var strategies = SnakeMoveStrategies.strategiesForConfig();
+            var strategies = SnakeMoveStrategies.strategies();
             List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
             for (int i = 0; i < config.snakes(); i++) {
                 if ((i & CANCELLATION_CHECK_MASK) == 0) {

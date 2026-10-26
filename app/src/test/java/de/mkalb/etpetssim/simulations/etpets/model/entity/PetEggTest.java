@@ -9,10 +9,10 @@ final class PetEggTest {
 
     private static PetGenome createGenome() {
         return new PetGenome(new PetTraits(
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN));
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN));
     }
 
     @Test

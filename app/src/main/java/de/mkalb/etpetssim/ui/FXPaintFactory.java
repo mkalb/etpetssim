@@ -5,12 +5,10 @@ import javafx.scene.paint.*;
 import java.util.*;
 
 /**
- * Utility class for creating various JavaFX {@link Paint} objects such as gradients and solid colors.
- * <p>
- * Provides static factory methods to simplify the creation of common paint patterns
- * for JavaFX components.
+ * Creates and adjusts JavaFX {@link Paint} objects: colors with adjusted brightness or opacity, brightness variant
+ * maps, and gradients; also defines the shared background and border colors.
  */
-@SuppressWarnings({"MagicNumber"})
+@SuppressWarnings("MagicNumber")
 public final class FXPaintFactory {
 
     public static final Color BACKGROUND_COLOR = Color.web("#1a2233");
@@ -21,8 +19,8 @@ public final class FXPaintFactory {
 
     /**
      * Computes a map of brightness variants for a base color.
-     * <p>
-     * For each integer value in the range {@code [minInclusive, maxInclusive]}, assigns a color variant based on brightness adjustment.
+     *
+     * <p>For each integer value in the range {@code [minInclusive, maxInclusive]}, assigns a color variant based on brightness adjustment.
      * All values within a group share the same color.
      * The brightness adjustment is distributed linearly from the base color (factor 1.0) up to {@code 1.0 + maxFactorDelta}.
      * If {@code maxFactorDelta} is positive, colors are brightened; if negative, colors are darkened.
@@ -80,8 +78,8 @@ public final class FXPaintFactory {
 
     /**
      * Returns a new {@link Color} with adjusted brightness.
-     * <p>
-     * A factor greater than 1.0 brightens the color, less than 1.0 darkens it.
+     *
+     * <p>A factor greater than 1.0 brightens the color, less than 1.0 darkens it.
      *
      * @param baseColor the base color to adjust
      * @param factor    the brightness factor
@@ -154,8 +152,8 @@ public final class FXPaintFactory {
     /**
      * Returns a new {@link Color} with the same RGB values as the given base color,
      * but with the specified alpha (opacity).
-     * <p>
-     * The red, green, and blue components are preserved, while the opacity is set to {@code alpha}.
+     *
+     * <p>The red, green, and blue components are preserved, while the opacity is set to {@code alpha}.
      *
      * @param baseColor the base color whose RGB values are used
      * @param alpha     the alpha value (opacity) in the range [0.0, 1.0]

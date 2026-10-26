@@ -6,37 +6,13 @@ import javafx.geometry.*;
 import java.util.*;
 
 /**
- * Utility class for grid geometry computations and conversions.
+ * Computes cell and grid dimensions, canvas positions, polygons, and frame segments of grid cells, and converts
+ * canvas positions to grid coordinates.
+ *
+ * <p>All coordinates are canvas pixels; polygons and polylines are returned as a 2D array with the x points at
+ * index {@code 0} and the y points at index {@code 1}.
  */
 public final class GridGeometry {
-
-    /**
-     * Square root of 2, used for various geometric calculations.
-     */
-    public static final double SQRT_TWO = Math.sqrt(2);
-    /**
-     * Square root of 3, used for various geometric calculations.
-     */
-    public static final double SQRT_THREE = Math.sqrt(3);
-
-    public static final double ZERO = 0.0d;
-    public static final double TWO = 2.0d;
-    /**
-     * One third, used for fractional calculations.
-     */
-    public static final double ONE_THIRD = 1.0d / 3.0d;
-    /**
-     * Two thirds, used for fractional calculations.
-     */
-    public static final double TWO_THIRDS = 2.0d / 3.0d;
-    /**
-     * One half, used for fractional calculations.
-     */
-    public static final double ONE_HALF = 1.0d / 2.0d;
-    /**
-     * Three halves, used for fractional calculations.
-     */
-    public static final double THREE_HALVES = 3.0d / 2.0d;
 
     /**
      * Minimum edge length of a cell in pixels.
@@ -46,6 +22,15 @@ public final class GridGeometry {
      * Maximum edge length of a cell in pixels.
      */
     public static final double MAX_EDGE_LENGTH = 1_024.0d;
+
+    private static final double SQRT_TWO = Math.sqrt(2);
+    private static final double SQRT_THREE = Math.sqrt(3);
+    private static final double ZERO = 0.0d;
+    private static final double TWO = 2.0d;
+    private static final double ONE_THIRD = 1.0d / 3.0d;
+    private static final double TWO_THIRDS = 2.0d / 3.0d;
+    private static final double ONE_HALF = 1.0d / 2.0d;
+    private static final double THREE_HALVES = 3.0d / 2.0d;
 
     /**
      * Offset candidates for TRIANGLE cells, starting with the most likely center (0,0).
@@ -155,32 +140,22 @@ public final class GridGeometry {
      * @param cellDimension the dimensions of a single cell in the grid
      * @param cellShape     the shape of the cells in the grid
      * @return a Dimension2D object representing the total width and height of the grid area
-     * @throws IllegalArgumentException if {@code cellShape} is unsupported
      */
     public static Dimension2D computeGridDimension(GridSize gridSize, CellDimension cellDimension, CellShape cellShape) {
-        double width;
-        double height;
-
-        switch (cellShape) {
-            case TRIANGLE -> {
-                double columnWidthOffset = cellDimension.halfEdgeLength();
-                width = (gridSize.width() * cellDimension.columnWidth()) + columnWidthOffset;
-                height = gridSize.height() * cellDimension.rowHeight();
-            }
-            case SQUARE -> {
-                width = gridSize.width() * cellDimension.columnWidth();
-                height = gridSize.height() * cellDimension.rowHeight();
-            }
+        return switch (cellShape) {
+            case TRIANGLE -> new Dimension2D(
+                    (gridSize.width() * cellDimension.columnWidth()) + cellDimension.halfEdgeLength(),
+                    gridSize.height() * cellDimension.rowHeight());
+            case SQUARE -> new Dimension2D(
+                    gridSize.width() * cellDimension.columnWidth(),
+                    gridSize.height() * cellDimension.rowHeight());
             case HEXAGON -> {
-                double columnWidthOffset = cellDimension.halfEdgeLength();
-                width = (gridSize.width() * cellDimension.columnWidth()) + columnWidthOffset;
                 double rowHeightOffset = ((gridSize.width() > 1) ? cellDimension.halfHeight() : ZERO);
-                height = (gridSize.height() * cellDimension.rowHeight()) + rowHeightOffset;
+                yield new Dimension2D(
+                        (gridSize.width() * cellDimension.columnWidth()) + cellDimension.halfEdgeLength(),
+                        (gridSize.height() * cellDimension.rowHeight()) + rowHeightOffset);
             }
-            default -> throw new IllegalArgumentException("Unsupported CellShape: " + cellShape);
-        }
-
-        return new Dimension2D(width, height);
+        };
     }
 
     /**
@@ -188,7 +163,7 @@ public final class GridGeometry {
      * cell edge length, and cell shape.
      *
      * <p>This method is a convenience wrapper that combines the computation of
-     * cell dimensions and grid dimensions into a single call.</p>
+     * cell dimensions and grid dimensions into a single call.
      *
      * @param gridSize   the size of the grid in terms of columns and rows
      * @param edgeLength the length of each edge of the cell in pixels, must be between {@link #MIN_EDGE_LENGTH}
@@ -200,40 +175,6 @@ public final class GridGeometry {
      */
     public static Dimension2D computeGridDimension(GridSize gridSize, double edgeLength, CellShape cellShape) {
         return computeGridDimension(gridSize, computeCellDimension(edgeLength, cellShape), cellShape);
-    }
-
-    /**
-     * Determines whether a given point lies inside the triangle defined by three vertices.
-     *
-     * <p>This method uses barycentric coordinates to check if the point {@code p} is inside
-     * the triangle formed by the points {@code a}, {@code b}, and {@code c}. The calculation
-     * is robust for all triangle orientations and works for points on the edge as well.</p>
-     *
-     * @param p the point to test
-     * @param a the first vertex of the triangle
-     * @param b the second vertex of the triangle
-     * @param c the third vertex of the triangle
-     * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle; {@code false} otherwise
-     */
-    public static boolean isPointInTriangle(Point2D p, Point2D a, Point2D b, Point2D c) {
-        double area = ONE_HALF * ((-b.getY() * c.getX()) + (a.getY() * (-b.getX() + c.getX())) + (a.getX() * (b.getY() - c.getY())) + (b.getX() * c.getY()));
-        double s = (1 / (2 * area)) * (((a.getY() * c.getX()) - (a.getX() * c.getY())) + ((c.getY() - a.getY()) * p.getX()) + ((a.getX() - c.getX()) * p.getY()));
-        double t = (1 / (2 * area)) * (((a.getX() * b.getY()) - (a.getY() * b.getX())) + ((a.getY() - b.getY()) * p.getX()) + ((b.getX() - a.getX()) * p.getY()));
-        double u = 1 - s - t;
-        return (s >= 0) && (t >= 0) && (u >= 0);
-    }
-
-    /**
-     * Determines whether a given point lies inside the triangle defined by the cell at the specified grid coordinate.
-     *
-     * @param point         the point to test
-     * @param coordinate    the grid coordinate of the triangle cell
-     * @param cellDimension the dimensions of the triangle cell
-     * @return {@code true} if the point lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
-     */
-    public static boolean isPointInTriangleCell(Point2D point, GridCoordinate coordinate, CellDimension cellDimension) {
-        double[][] polygon = computeCellPolygon(coordinate, cellDimension, CellShape.TRIANGLE);
-        return isPointInTriangle(point, new Point2D(polygon[0][0], polygon[1][0]), new Point2D(polygon[0][1], polygon[1][1]), new Point2D(polygon[0][2], polygon[1][2]));
     }
 
     /**
@@ -258,7 +199,7 @@ public final class GridGeometry {
      * canvas position, based on the cell dimensions and grid structure. For {@code SQUARE} cells, the conversion
      * is exact. For {@code TRIANGLE} and {@code HEXAGON} cells, the result is an initial estimate that may not
      * always match the actual cell containing the point, due to staggered or interlocking layouts. For precise
-     * mapping, use {@link #fromCanvasPosition(Point2D, CellDimension, Dimension2D, GridStructure)}.</p>
+     * mapping, use {@link #fromCanvasPosition(Point2D, CellDimension, Dimension2D, GridStructure)}.
      *
      * @param point         the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell
@@ -306,7 +247,7 @@ public final class GridGeometry {
      * due to the staggered or interlocking layout. Instead, the method estimates a base coordinate
      * and evaluates a set of nearby candidate cells to determine which one contains the given point.
      * For triangles, barycentric coordinate checks are used; for hexagons, the closest in-bounds cell
-     * center within a bounding box is selected.</p>
+     * center within a bounding box is selected.
      *
      * @param point         the canvas position in pixel coordinates
      * @param cellDimension the dimensions of the cell
@@ -330,7 +271,6 @@ public final class GridGeometry {
                                                       .orElse(GridCoordinate.ILLEGAL);
             case SQUARE -> estimatedCoordinate;
             case HEXAGON -> {
-                // Evaluate candidate coordinates for the hexagon cell.
                 GridCoordinate closestHexCell = GridCoordinate.ILLEGAL;
                 double minDistance = Double.MAX_VALUE;
                 double earlyAcceptThreshold = cellDimension.halfEdgeLength();
@@ -339,7 +279,6 @@ public final class GridGeometry {
 
                     Point2D topLeft = toCanvasPosition(candidate, cellDimension, structure.cellShape());
 
-                    // Check if the point is within the bounding box of the cell.
                     if (!cellDimension.boundingBoxAt(topLeft).contains(point)) {
                         continue;
                     }
@@ -417,18 +356,15 @@ public final class GridGeometry {
      * Computes the x and y coordinates of the points forming a polyline segment of a cell's frame,
      * based on the specified grid coordinate, cell dimensions, cell shape, and frame segment side.
      *
-     * <p>
-     * The returned 2D array contains the ordered points (as x and y arrays) that define the requested
+     * <p>The returned 2D array contains the ordered points (as x and y arrays) that define the requested
      * segment of the cell's outline (frame) as a polyline. The order and number of points depend on
      * the cell shape and the specified {@link CellShapeSide}.
-     * </p>
      *
      * @param coordinate    the grid coordinate of the cell
      * @param cellDimension the dimensions of the cell
      * @param cellShape     the shape of the cell
      * @param side          the side or segment of the cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code side} is unsupported
      */
     public static double[][] computeCellFrameSegmentPolyline(GridCoordinate coordinate, CellDimension cellDimension,
                                                              CellShape cellShape, CellShapeSide side) {
@@ -443,6 +379,40 @@ public final class GridGeometry {
     }
 
     /**
+     * Determines whether a given point lies inside the triangle defined by three vertices.
+     *
+     * <p>This method uses barycentric coordinates to check if the point {@code p} is inside
+     * the triangle formed by the points {@code a}, {@code b}, and {@code c}. The calculation
+     * is robust for all triangle orientations and works for points on the edge as well.
+     *
+     * @param p the point to test
+     * @param a the first vertex of the triangle
+     * @param b the second vertex of the triangle
+     * @param c the third vertex of the triangle
+     * @return {@code true} if the point {@code p} lies inside or on the edge of the triangle; {@code false} otherwise
+     */
+    static boolean isPointInTriangle(Point2D p, Point2D a, Point2D b, Point2D c) {
+        double area = ONE_HALF * ((-b.getY() * c.getX()) + (a.getY() * (-b.getX() + c.getX())) + (a.getX() * (b.getY() - c.getY())) + (b.getX() * c.getY()));
+        double s = (1 / (2 * area)) * (((a.getY() * c.getX()) - (a.getX() * c.getY())) + ((c.getY() - a.getY()) * p.getX()) + ((a.getX() - c.getX()) * p.getY()));
+        double t = (1 / (2 * area)) * (((a.getX() * b.getY()) - (a.getY() * b.getX())) + ((a.getY() - b.getY()) * p.getX()) + ((b.getX() - a.getX()) * p.getY()));
+        double u = 1 - s - t;
+        return (s >= 0) && (t >= 0) && (u >= 0);
+    }
+
+    /**
+     * Determines whether a given point lies inside the triangle defined by the cell at the specified grid coordinate.
+     *
+     * @param point         the point to test
+     * @param coordinate    the grid coordinate of the triangle cell
+     * @param cellDimension the dimensions of the triangle cell
+     * @return {@code true} if the point lies inside or on the edge of the triangle at the given coordinate; {@code false} otherwise
+     */
+    static boolean isPointInTriangleCell(Point2D point, GridCoordinate coordinate, CellDimension cellDimension) {
+        double[][] polygon = computeCellPolygon(coordinate, cellDimension, CellShape.TRIANGLE);
+        return isPointInTriangle(point, new Point2D(polygon[0][0], polygon[1][0]), new Point2D(polygon[0][1], polygon[1][1]), new Point2D(polygon[0][2], polygon[1][2]));
+    }
+
+    /**
      * Computes the x and y coordinates of the triangle cell's polygon vertices in canvas space.
      *
      * @param topLeft        the top-left position of the cell in canvas coordinates
@@ -450,134 +420,54 @@ public final class GridGeometry {
      * @param isPointingDown whether the triangle is pointing downwards
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
-    public static double[][] computeTrianglePolygon(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown) {
-        double[] xPoints = new double[CellShape.TRIANGLE.vertexCount()];
-        double[] yPoints = new double[CellShape.TRIANGLE.vertexCount()];
+    static double[][] computeTrianglePolygon(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown) {
         double x = topLeft.getX();
         double y = topLeft.getY();
+        double xCenter = x + cellDimension.halfEdgeLength();
+        double xRight = x + cellDimension.edgeLength();
+        double yBottom = y + cellDimension.height();
 
         if (isPointingDown) {
-            xPoints[0] = x;
-            yPoints[0] = y;
-            xPoints[1] = x + cellDimension.halfEdgeLength();
-            yPoints[1] = y + cellDimension.height();
-            xPoints[2] = x + cellDimension.edgeLength();
-            yPoints[2] = y;
-        } else {
-            xPoints[0] = x;
-            yPoints[0] = y + cellDimension.height();
-            xPoints[1] = x + cellDimension.halfEdgeLength();
-            yPoints[1] = y;
-            xPoints[2] = x + cellDimension.edgeLength();
-            yPoints[2] = y + cellDimension.height();
+            return new double[][]{{x, xCenter, xRight}, {y, yBottom, y}};
         }
-
-        return new double[][]{xPoints, yPoints};
+        return new double[][]{{x, xCenter, xRight}, {yBottom, y, yBottom}};
     }
 
     /**
      * Computes the x and y coordinates of the points forming a polyline segment of a triangle cell's frame,
      * based on the specified top-left position, cell dimensions, triangle orientation, and frame segment side.
      *
-     * <p>
-     * This method is specifically designed for cells of shape {@link CellShape#TRIANGLE} and only computes
-     * polyline segments for triangle cells. The returned 2D array contains the ordered points (as x and y arrays)
-     * that define the requested segment of the triangle cell's outline (frame) as a polyline.
-     * The number and order of points depend on the triangle's orientation and the specified {@link CellShapeSide}.
-     * </p>
+     * <p>The number and order of points depend on the triangle's orientation and the specified
+     * {@link CellShapeSide}.
      *
      * @param topLeft        the top-left position of the triangle cell in canvas coordinates
      * @param cellDimension  the dimensions of the triangle cell
      * @param isPointingDown whether the triangle is pointing downwards
      * @param side           the side or segment of the triangle cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code side} is unsupported
      */
-    public static double[][] computeTriangleFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension, boolean isPointingDown, CellShapeSide side) {
-        double[] xPoints;
-        double[] yPoints;
+    static double[][] computeTriangleFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
+                                                          boolean isPointingDown, CellShapeSide side) {
         double x = topLeft.getX();
         double y = topLeft.getY();
+        double xCenter = x + cellDimension.halfEdgeLength();
+        double xRight = x + cellDimension.edgeLength();
+        double yBottom = y + cellDimension.height();
 
         if (isPointingDown) {
-            switch (side) {
-                case TOP -> {
-                    xPoints = new double[2];
-                    yPoints = new double[2];
-                    xPoints[0] = x;
-                    yPoints[0] = y;
-                    xPoints[1] = x + cellDimension.edgeLength();
-                    yPoints[1] = y;
-                }
-                case BOTTOM -> {
-                    xPoints = new double[3];
-                    yPoints = new double[3];
-                    xPoints[0] = x;
-                    yPoints[0] = y;
-                    xPoints[1] = x + cellDimension.halfEdgeLength();
-                    yPoints[1] = y + cellDimension.height();
-                    xPoints[2] = x + cellDimension.edgeLength();
-                    yPoints[2] = y;
-                }
-                case LEFT -> {
-                    xPoints = new double[2];
-                    yPoints = new double[2];
-                    xPoints[0] = x;
-                    yPoints[0] = y;
-                    xPoints[1] = x + cellDimension.halfEdgeLength();
-                    yPoints[1] = y + cellDimension.height();
-                }
-                case RIGHT -> {
-                    xPoints = new double[2];
-                    yPoints = new double[2];
-                    xPoints[0] = x + cellDimension.edgeLength();
-                    yPoints[0] = y;
-                    xPoints[1] = x + cellDimension.halfEdgeLength();
-                    yPoints[1] = y + cellDimension.height();
-                }
-                default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
-            }
-        } else { // Triangle pointing up.
-            switch (side) {
-                case TOP -> {
-                    xPoints = new double[3];
-                    yPoints = new double[3];
-                    xPoints[0] = x;
-                    yPoints[0] = y + cellDimension.height();
-                    xPoints[1] = x + cellDimension.halfEdgeLength();
-                    yPoints[1] = y;
-                    xPoints[2] = x + cellDimension.edgeLength();
-                    yPoints[2] = y + cellDimension.height();
-                }
-                case BOTTOM -> {
-                    xPoints = new double[2];
-                    yPoints = new double[2];
-                    xPoints[0] = x;
-                    yPoints[0] = y + cellDimension.height();
-                    xPoints[1] = x + cellDimension.edgeLength();
-                    yPoints[1] = y + cellDimension.height();
-                }
-                case LEFT -> {
-                    xPoints = new double[2];
-                    yPoints = new double[2];
-                    xPoints[0] = x;
-                    yPoints[0] = y + cellDimension.height();
-                    xPoints[1] = x + cellDimension.halfEdgeLength();
-                    yPoints[1] = y;
-                }
-                case RIGHT -> {
-                    xPoints = new double[2];
-                    yPoints = new double[2];
-                    xPoints[0] = x + cellDimension.halfEdgeLength();
-                    yPoints[0] = y;
-                    xPoints[1] = x + cellDimension.edgeLength();
-                    yPoints[1] = y + cellDimension.height();
-                }
-                default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
-            }
+            return switch (side) {
+                case TOP -> new double[][]{{x, xRight}, {y, y}};
+                case BOTTOM -> new double[][]{{x, xCenter, xRight}, {y, yBottom, y}};
+                case LEFT -> new double[][]{{x, xCenter}, {y, yBottom}};
+                case RIGHT -> new double[][]{{xRight, xCenter}, {y, yBottom}};
+            };
         }
-
-        return new double[][]{xPoints, yPoints};
+        return switch (side) {
+            case TOP -> new double[][]{{x, xCenter, xRight}, {yBottom, y, yBottom}};
+            case BOTTOM -> new double[][]{{x, xRight}, {yBottom, yBottom}};
+            case LEFT -> new double[][]{{x, xCenter}, {yBottom, y}};
+            case RIGHT -> new double[][]{{xCenter, xRight}, {y, yBottom}};
+        };
     }
 
     /**
@@ -587,84 +477,37 @@ public final class GridGeometry {
      * @param cellDimension the dimensions of the square cell
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
-    public static double[][] computeSquarePolygon(Point2D topLeft, CellDimension cellDimension) {
-        double[] xPoints = new double[CellShape.SQUARE.vertexCount()];
-        double[] yPoints = new double[CellShape.SQUARE.vertexCount()];
+    static double[][] computeSquarePolygon(Point2D topLeft, CellDimension cellDimension) {
         double x = topLeft.getX();
         double y = topLeft.getY();
+        double xRight = x + cellDimension.edgeLength();
+        double yBottom = y + cellDimension.edgeLength();
 
-        xPoints[0] = x;
-        yPoints[0] = y;
-        xPoints[1] = x + cellDimension.edgeLength();
-        yPoints[1] = y;
-        xPoints[2] = x + cellDimension.edgeLength();
-        yPoints[2] = y + cellDimension.edgeLength();
-        xPoints[3] = x;
-        yPoints[3] = y + cellDimension.edgeLength();
-
-        return new double[][]{xPoints, yPoints};
+        return new double[][]{{x, xRight, xRight, x}, {y, y, yBottom, yBottom}};
     }
 
     /**
      * Computes the x and y coordinates of the points forming a polyline segment of a square cell's frame,
      * based on the specified top-left position, cell dimensions, and frame segment side.
      *
-     * <p>
-     * This method is specifically designed for cells of shape {@link CellShape#SQUARE} and only computes
-     * polyline segments for square cells. The returned 2D array contains the ordered points (as x and y arrays)
-     * that define the requested segment of the square cell's outline (frame) as a polyline.
-     * </p>
-     *
      * @param topLeft       the top-left position of the square cell in canvas coordinates
      * @param cellDimension the dimensions of the square cell
      * @param side          the side or segment of the square cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code side} is unsupported
      */
-    public static double[][] computeSquareFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
-                                                               CellShapeSide side) {
-        double[] xPoints;
-        double[] yPoints;
+    static double[][] computeSquareFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
+                                                        CellShapeSide side) {
         double x = topLeft.getX();
         double y = topLeft.getY();
+        double xRight = x + cellDimension.edgeLength();
+        double yBottom = y + cellDimension.edgeLength();
 
-        switch (side) {
-            case TOP -> {
-                xPoints = new double[2];
-                yPoints = new double[2];
-                xPoints[0] = x;
-                yPoints[0] = y;
-                xPoints[1] = x + cellDimension.edgeLength();
-                yPoints[1] = y;
-            }
-            case BOTTOM -> {
-                xPoints = new double[2];
-                yPoints = new double[2];
-                xPoints[0] = x;
-                yPoints[0] = y + cellDimension.edgeLength();
-                xPoints[1] = x + cellDimension.edgeLength();
-                yPoints[1] = y + cellDimension.edgeLength();
-            }
-            case LEFT -> {
-                xPoints = new double[2];
-                yPoints = new double[2];
-                xPoints[0] = x;
-                yPoints[0] = y;
-                xPoints[1] = x;
-                yPoints[1] = y + cellDimension.edgeLength();
-            }
-            case RIGHT -> {
-                xPoints = new double[2];
-                yPoints = new double[2];
-                xPoints[0] = x + cellDimension.edgeLength();
-                yPoints[0] = y;
-                xPoints[1] = x + cellDimension.edgeLength();
-                yPoints[1] = y + cellDimension.edgeLength();
-            }
-            default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
-        }
-
-        return new double[][]{xPoints, yPoints};
+        return switch (side) {
+            case TOP -> new double[][]{{x, xRight}, {y, y}};
+            case BOTTOM -> new double[][]{{x, xRight}, {yBottom, yBottom}};
+            case LEFT -> new double[][]{{x, x}, {y, yBottom}};
+            case RIGHT -> new double[][]{{xRight, xRight}, {y, yBottom}};
+        };
     }
 
     /**
@@ -674,102 +517,48 @@ public final class GridGeometry {
      * @param cellDimension the dimensions of the hexagon cell
      * @return a 2D array: [0] = xPoints, [1] = yPoints
      */
-    public static double[][] computeHexagonPolygon(Point2D topLeft, CellDimension cellDimension) {
-        double[] xPoints = new double[CellShape.HEXAGON.vertexCount()];
-        double[] yPoints = new double[CellShape.HEXAGON.vertexCount()];
+    static double[][] computeHexagonPolygon(Point2D topLeft, CellDimension cellDimension) {
         double x = topLeft.getX();
         double y = topLeft.getY();
+        double xTopLeft = x + cellDimension.halfEdgeLength();
+        double xTopRight = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
+        double xRight = x + cellDimension.width();
+        double yCenter = y + cellDimension.halfHeight();
+        double yBottom = y + cellDimension.height();
 
-        xPoints[0] = x + cellDimension.halfEdgeLength();
-        yPoints[0] = y;
-        xPoints[1] = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
-        yPoints[1] = y;
-        xPoints[2] = x + cellDimension.width();
-        yPoints[2] = y + cellDimension.halfHeight();
-        xPoints[3] = xPoints[1];
-        yPoints[3] = y + cellDimension.height();
-        xPoints[4] = x + cellDimension.halfEdgeLength();
-        yPoints[4] = y + cellDimension.height();
-        xPoints[5] = x;
-        yPoints[5] = y + cellDimension.halfHeight();
-
-        return new double[][]{xPoints, yPoints};
+        return new double[][]{
+                {xTopLeft, xTopRight, xRight, xTopRight, xTopLeft, x},
+                {y, y, yCenter, yBottom, yBottom, yCenter}};
     }
 
     /**
      * Computes the x and y coordinates of the points forming a polyline segment of a hexagon cell's frame,
      * based on the specified top-left position, cell dimensions, and frame segment side.
      *
-     * <p>
-     * This method is specifically designed for cells of shape {@link CellShape#HEXAGON} (flat-topped) and only computes
-     * polyline segments for hexagon cells. The returned 2D array contains the ordered points (as x and y arrays)
-     * that define the requested segment of the hexagon cell's outline (frame) as a polyline.
-     * The number and order of points depend on the specified {@link CellShapeSide}.
-     * </p>
+     * <p>The hexagon is flat-topped. The number and order of points depend on the specified
+     * {@link CellShapeSide}.
      *
      * @param topLeft       the top-left position of the hexagon cell in canvas coordinates
      * @param cellDimension the dimensions of the hexagon cell
      * @param side          the side or segment of the hexagon cell frame to compute
      * @return a 2D array: [0] = xPoints, [1] = yPoints, representing the polyline segment
-     * @throws IllegalArgumentException if {@code side} is unsupported
      */
-    @SuppressWarnings("DuplicateExpressions")
-    public static double[][] computeHexagonFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
-                                                                CellShapeSide side) {
+    static double[][] computeHexagonFrameSegmentPolyline(Point2D topLeft, CellDimension cellDimension,
+                                                         CellShapeSide side) {
         double x = topLeft.getX();
         double y = topLeft.getY();
-        double[] xPoints;
-        double[] yPoints;
+        double xTopLeft = x + cellDimension.halfEdgeLength();
+        double xTopRight = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
+        double xRight = x + cellDimension.width();
+        double yCenter = y + cellDimension.halfHeight();
+        double yBottom = y + cellDimension.height();
 
-        switch (side) {
-            case TOP -> {
-                xPoints = new double[4];
-                yPoints = new double[4];
-                xPoints[0] = x;
-                yPoints[0] = y + cellDimension.halfHeight();
-                xPoints[1] = x + cellDimension.halfEdgeLength();
-                yPoints[1] = y;
-                xPoints[2] = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
-                yPoints[2] = y;
-                xPoints[3] = x + cellDimension.width();
-                yPoints[3] = y + cellDimension.halfHeight();
-            }
-            case BOTTOM -> {
-                xPoints = new double[4];
-                yPoints = new double[4];
-                xPoints[0] = x + cellDimension.width();
-                yPoints[0] = y + cellDimension.halfHeight();
-                xPoints[1] = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
-                yPoints[1] = y + cellDimension.height();
-                xPoints[2] = x + cellDimension.halfEdgeLength();
-                yPoints[2] = y + cellDimension.height();
-                xPoints[3] = x;
-                yPoints[3] = y + cellDimension.halfHeight();
-            }
-            case LEFT -> {
-                xPoints = new double[3];
-                yPoints = new double[3];
-                xPoints[0] = x + cellDimension.halfEdgeLength();
-                yPoints[0] = y;
-                xPoints[1] = x;
-                yPoints[1] = y + cellDimension.halfHeight();
-                xPoints[2] = x + cellDimension.halfEdgeLength();
-                yPoints[2] = y + cellDimension.height();
-            }
-            case RIGHT -> {
-                xPoints = new double[3];
-                yPoints = new double[3];
-                xPoints[0] = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
-                yPoints[0] = y;
-                xPoints[1] = x + cellDimension.width();
-                yPoints[1] = y + cellDimension.halfHeight();
-                xPoints[2] = x + cellDimension.edgeLength() + cellDimension.halfEdgeLength();
-                yPoints[2] = y + cellDimension.height();
-            }
-            default -> throw new IllegalArgumentException("Unsupported CellShapeSide: " + side);
-        }
-
-        return new double[][]{xPoints, yPoints};
+        return switch (side) {
+            case TOP -> new double[][]{{x, xTopLeft, xTopRight, xRight}, {yCenter, y, y, yCenter}};
+            case BOTTOM -> new double[][]{{xRight, xTopRight, xTopLeft, x}, {yCenter, yBottom, yBottom, yCenter}};
+            case LEFT -> new double[][]{{xTopLeft, x, xTopLeft}, {y, yCenter, yBottom}};
+            case RIGHT -> new double[][]{{xTopRight, xRight, xTopRight}, {y, yCenter, yBottom}};
+        };
     }
 
 }

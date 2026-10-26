@@ -1,10 +1,10 @@
 package de.mkalb.etpetssim.core;
 
 /**
- * Localization key constants used with {@link AppLocalization}.
- * <p>
- * Keeping keys in one place avoids duplicated string literals and reduces typo risk.
- * Keys map to entries in {@code i18n/messages_*.properties}.
+ * Localization key constants for the application-wide texts used with {@link AppLocalization}.
+ *
+ * <p>Each key maps to an entry in every {@code i18n/messages_*.properties} bundle. The constants are sorted
+ * alphabetically by name; simulation-specific keys are constants in the class that uses them.
  */
 @SuppressWarnings("SpellCheckingInspection")
 public final class AppLocalizationKeys {
@@ -23,8 +23,8 @@ public final class AppLocalizationKeys {
     public static final String ABOUT_TAB_THIRD_PARTY_LICENSES = "about.tab.thirdpartylicenses";
     public static final String ABOUT_TAB_VERSION = "about.tab.version";
     public static final String ABOUT_TITLE = "about.title";
-    public static final String ALERT_HEADER_UNEXPECTED_ERROR = "alert.unexpected.error.header";
-    public static final String ALERT_TITLE_UNEXPECTED_ERROR = "alert.unexpected.error.title";
+    public static final String ALERT_UNEXPECTED_ERROR_HEADER = "alert.unexpected.error.header";
+    public static final String ALERT_UNEXPECTED_ERROR_TITLE = "alert.unexpected.error.title";
     public static final String CONFIG_CELL_DISPLAY_MODE_TOOLTIP = "config.celldisplaymode.tooltip";
     public static final String CONFIG_CELL_EDGE_LENGTH = "config.celledgelength";
     public static final String CONFIG_CELL_EDGE_LENGTH_TOOLTIP = "config.celledgelength.tooltip";

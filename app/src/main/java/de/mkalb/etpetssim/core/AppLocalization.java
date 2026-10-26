@@ -6,9 +6,9 @@ import java.util.*;
 
 /**
  * Provides application-wide localization services.
- * <p>
- * Manages the active {@link Locale} and its corresponding
- * {@link ResourceBundle}. It must be initialized exactly once during startup.
+ *
+ * <p>Manages the active {@link Locale} and its corresponding {@link ResourceBundle}. It must be initialized exactly
+ * once during startup.
  */
 public final class AppLocalization {
 
@@ -31,30 +31,6 @@ public final class AppLocalization {
     }
 
     /**
-     * Resets the localization state for tests.
-     */
-    static void resetForTesting() {
-        locale = null;
-        bundle = null;
-    }
-
-    /**
-     * Initializes localization with a test resource bundle.
-     * <p>
-     * Tests use this method to check text lookup against dedicated test keys
-     * instead of the application bundle.
-     *
-     * @param testLocale     locale of the test bundle
-     * @param bundleBaseName base name of the test bundle
-     * @throws IllegalStateException if the test bundle cannot be loaded
-     */
-    static synchronized void initializeForTesting(Locale testLocale, String bundleBaseName) {
-        locale = testLocale;
-        bundle = AppResources.getBundle(bundleBaseName, testLocale).orElseThrow(() ->
-                new IllegalStateException("Test ResourceBundle " + bundleBaseName + " could not be loaded."));
-    }
-
-    /**
      * Returns all supported locales.
      *
      * @return an immutable list containing all supported locale descriptors
@@ -73,10 +49,21 @@ public final class AppLocalization {
     }
 
     /**
+     * Initializes localization using a user argument and {@link Locale#getDefault()}.
+     *
+     * @param localeArgument optional user-provided locale code
+     * @throws IllegalStateException if already initialized
+     * @see #initialize(String, Locale)
+     */
+    public static synchronized void initialize(@Nullable String localeArgument) {
+        initialize(localeArgument, Locale.getDefault());
+    }
+
+    /**
      * Initializes localization using a user argument and fallback locale.
-     * <p>
-     * Resolution order is: locale argument, {@code defaultLocale}, then
-     * {@link #DEFAULT_LOCALE}. The first matching supported locale is selected.
+     *
+     * <p>Resolution order is: locale argument, {@code defaultLocale}, then {@link #DEFAULT_LOCALE}. The first matching
+     * supported locale is selected.
      *
      * @param localeArgument optional user-provided locale code (for example {@code en_US} or {@code en})
      * @param defaultLocale  fallback locale used when {@code localeArgument} does not resolve
@@ -95,85 +82,6 @@ public final class AppLocalization {
         bundle = AppResources.getBundle(locale).orElseThrow(() ->
                 new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded.")); // This should never happen.
         AppLogger.info("AppLocalization: Initialized with locale: " + locale + " and loaded ResourceBundle");
-    }
-
-    /**
-     * Initializes localization using a user argument and {@link Locale#getDefault()}.
-     *
-     * @param localeArgument optional user-provided locale code
-     * @throws IllegalStateException if already initialized
-     * @see #initialize(String, Locale)
-     */
-    public static synchronized void initialize(@Nullable String localeArgument) {
-        if (isInitialized()) {
-            throw new IllegalStateException("AppLocalization is already initialized.");
-        }
-        initialize(localeArgument, Locale.getDefault());
-    }
-
-    /**
-     * Resolves a supported locale from a locale argument.
-     * <p>
-     * Matching is attempted first by full locale code ({@code language_COUNTRY}),
-     * then by language code only.
-     *
-     * @param localeArgument optional locale argument
-     * @return an {@link Optional} containing the resolved locale, or empty if unmatched
-     */
-    static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
-        Locale resolvedLocale = null;
-        if ((localeArgument != null) && !localeArgument.isBlank()) {
-            for (CountryLocale supportedLocale : CountryLocale.values()) {
-                // It must match exactly the locale code (e.g., "en_US" or "de_DE").
-                if (supportedLocale.localeCode().equals(localeArgument)) {
-                    resolvedLocale = supportedLocale.countryLocale();
-                    break;
-                }
-            }
-            if (resolvedLocale == null) {
-                for (CountryLocale supportedLocale : CountryLocale.values()) {
-                    // It must match exactly the language code (e.g., "en" or "de").
-                    // Locale argument must not contain country code.
-                    if (supportedLocale.languageCode().equals(localeArgument)) {
-                        resolvedLocale = supportedLocale.countryLocale();
-                        break;
-                    }
-                }
-            }
-        }
-        return Optional.ofNullable(resolvedLocale);
-    }
-
-    /**
-     * Resolves a supported locale from a default locale.
-     * <p>
-     * Matching is attempted first by exact locale, then by language code.
-     *
-     * @param defaultLocale the default locale to evaluate
-     * @return an {@link Optional} containing the resolved locale, or empty if unmatched
-     * @throws NullPointerException if {@code defaultLocale} is {@code null}
-     */
-    static Optional<Locale> resolveLocaleFromDefault(Locale defaultLocale) {
-        Objects.requireNonNull(defaultLocale, "Default locale must not be null");
-        Locale resolvedLocale = null;
-        for (CountryLocale supportedLocale : CountryLocale.values()) {
-            // It must match exactly the country locale (e.g., Locale.US or Locale.GERMANY).
-            if (supportedLocale.countryLocale().equals(defaultLocale)) {
-                resolvedLocale = supportedLocale.countryLocale();
-                break;
-            }
-        }
-        if (resolvedLocale == null) {
-            for (CountryLocale supportedLocale : CountryLocale.values()) {
-                // It must match the language code (e.g., "en" or "de").
-                // Default locale can contain country code, but we only check the language code.
-                if (supportedLocale.languageCode().equals(defaultLocale.getLanguage())) {
-                    resolvedLocale = supportedLocale.countryLocale();
-                    break;
-                }
-            }
-        }
-        return Optional.ofNullable(resolvedLocale);
     }
 
     /**
@@ -212,11 +120,9 @@ public final class AppLocalization {
      */
     public static String getText(String key) {
         Objects.requireNonNull(key, "Key must not be null");
-        if (bundle == null) {
-            throw new IllegalStateException("AppLocalization is not initialized.");
-        }
+        ResourceBundle activeBundle = bundle();
         try {
-            return bundle.getString(key);
+            return activeBundle.getString(key);
         } catch (MissingResourceException e) {
             AppLogger.error(e, "AppLocalization: Key not found in ResourceBundle: " + key);
             return PLACEHOLDER_FOR_EXCEPTIONS;
@@ -233,11 +139,9 @@ public final class AppLocalization {
      */
     public static Optional<String> getOptionalText(String key) {
         Objects.requireNonNull(key, "Key must not be null");
-        if (bundle == null) {
-            throw new IllegalStateException("AppLocalization is not initialized.");
-        }
+        ResourceBundle activeBundle = bundle();
         try {
-            String text = bundle.getString(key);
+            String text = activeBundle.getString(key);
             if (text.isBlank()) {
                 // AppLogger.info("AppLocalization: Key found in ResourceBundle but text is empty or blank: " + key);
                 return Optional.empty();
@@ -260,14 +164,10 @@ public final class AppLocalization {
      */
     public static String getFormattedText(String key, Object... args) {
         Objects.requireNonNull(key, "Key must not be null");
-        if (locale == null) {
-            throw new IllegalStateException("AppLocalization is not initialized.");
-        }
-        if (bundle == null) {
-            throw new IllegalStateException("AppLocalization is not initialized.");
-        }
+        Locale activeLocale = locale();
+        ResourceBundle activeBundle = bundle();
         try {
-            return String.format(locale, bundle.getString(key), args);
+            return String.format(activeLocale, activeBundle.getString(key), args);
         } catch (MissingResourceException e) {
             AppLogger.error(e, "AppLocalization: Key not found in ResourceBundle: " + key);
             return PLACEHOLDER_FOR_EXCEPTIONS;
@@ -275,6 +175,93 @@ public final class AppLocalization {
             AppLogger.error(e, "AppLocalization: Formatting failed for key: " + key + " with arguments: " + Arrays.toString(args));
             return PLACEHOLDER_FOR_EXCEPTIONS;
         }
+    }
+
+    /**
+     * Resolves a supported locale from a locale argument.
+     *
+     * <p>Matching is attempted first by full locale code ({@code language_COUNTRY}), then by language code only.
+     *
+     * @param localeArgument optional locale argument
+     * @return an {@link Optional} containing the resolved locale, or empty if unmatched
+     */
+    static Optional<Locale> resolveLocaleFromArgument(@Nullable String localeArgument) {
+        Locale resolvedLocale = null;
+        if ((localeArgument != null) && !localeArgument.isBlank()) {
+            for (CountryLocale supportedLocale : CountryLocale.values()) {
+                // It must match exactly the locale code (e.g., "en_US" or "de_DE").
+                if (supportedLocale.localeCode().equals(localeArgument)) {
+                    resolvedLocale = supportedLocale.countryLocale();
+                    break;
+                }
+            }
+            if (resolvedLocale == null) {
+                for (CountryLocale supportedLocale : CountryLocale.values()) {
+                    // It must match exactly the language code (e.g., "en" or "de").
+                    // Locale argument must not contain country code.
+                    if (supportedLocale.languageCode().equals(localeArgument)) {
+                        resolvedLocale = supportedLocale.countryLocale();
+                        break;
+                    }
+                }
+            }
+        }
+        return Optional.ofNullable(resolvedLocale);
+    }
+
+    /**
+     * Resolves a supported locale from a default locale.
+     *
+     * <p>Matching is attempted first by exact locale, then by language code.
+     *
+     * @param defaultLocale the default locale to evaluate
+     * @return an {@link Optional} containing the resolved locale, or empty if unmatched
+     * @throws NullPointerException if {@code defaultLocale} is {@code null}
+     */
+    static Optional<Locale> resolveLocaleFromDefault(Locale defaultLocale) {
+        Objects.requireNonNull(defaultLocale, "Default locale must not be null");
+        Locale resolvedLocale = null;
+        for (CountryLocale supportedLocale : CountryLocale.values()) {
+            // It must match exactly the country locale (e.g., Locale.US or Locale.GERMANY).
+            if (supportedLocale.countryLocale().equals(defaultLocale)) {
+                resolvedLocale = supportedLocale.countryLocale();
+                break;
+            }
+        }
+        if (resolvedLocale == null) {
+            for (CountryLocale supportedLocale : CountryLocale.values()) {
+                // It must match the language code (e.g., "en" or "de").
+                // Default locale can contain country code, but we only check the language code.
+                if (supportedLocale.languageCode().equals(defaultLocale.getLanguage())) {
+                    resolvedLocale = supportedLocale.countryLocale();
+                    break;
+                }
+            }
+        }
+        return Optional.ofNullable(resolvedLocale);
+    }
+
+    /**
+     * Initializes localization with a test resource bundle.
+     *
+     * <p>Tests use this method to check text lookup against dedicated test keys instead of the application bundle.
+     *
+     * @param testLocale     locale of the test bundle
+     * @param bundleBaseName base name of the test bundle
+     * @throws IllegalStateException if the test bundle cannot be loaded
+     */
+    static synchronized void initializeForTesting(Locale testLocale, String bundleBaseName) {
+        locale = testLocale;
+        bundle = AppResources.getBundle(bundleBaseName, testLocale).orElseThrow(() ->
+                new IllegalStateException("Test ResourceBundle " + bundleBaseName + " could not be loaded."));
+    }
+
+    /**
+     * Resets the localization state for tests, so that each test can initialize localization again.
+     */
+    static synchronized void resetForTesting() {
+        locale = null;
+        bundle = null;
     }
 
     /**

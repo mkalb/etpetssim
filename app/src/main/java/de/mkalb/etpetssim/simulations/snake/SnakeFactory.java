@@ -11,12 +11,14 @@ import de.mkalb.etpetssim.simulations.snake.view.*;
 import de.mkalb.etpetssim.simulations.snake.viewmodel.*;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the Snake main view.
+ */
 public final class SnakeFactory {
 
     private SnakeFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -37,10 +39,7 @@ public final class SnakeFactory {
         var configView = new SnakeConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new SnakeObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new SnakeMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
-
-        // Return the main view
-        return view;
+        return new SnakeMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

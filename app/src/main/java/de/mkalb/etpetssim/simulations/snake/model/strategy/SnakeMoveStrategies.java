@@ -6,121 +6,88 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Catalog of the predefined snake move strategies.
+ *
+ * <p>Each strategy scores the ground and food neighbors of the snake head with fixed weights and picks one of the
+ * top-scored moves at random. Its display name combines these abbreviations:
+ * <ul>
+ *   <li>{@code G}: prefers ground</li>
+ *   <li>{@code F}: prefers food</li>
+ *   <li>{@code M}: momentum; prefers moving straight on or making a small turn</li>
+ *   <li>{@code V}, {@code H}: prefers vertical or horizontal moves</li>
+ *   <li>{@code C+}, {@code C-}: prefers or avoids cells next to its own segments (clustered or spread)</li>
+ * </ul>
+ */
 public final class SnakeMoveStrategies {
 
-    public static final SnakeMoveStrategy MOMENTUM = new NamedMoveStrategy(
-            "M",
-            (context) -> scoreAndPick(context, 0, 1, 0, 3, 1, 0));
-    public static final SnakeMoveStrategy VERTICAL_MOMENTUM = new NamedMoveStrategy(
-            "V M",
-            (context) -> scoreAndPick(context, 0, 1, 2, 3, 1, 0));
-    public static final SnakeMoveStrategy HORIZONTAL_MOMENTUM = new NamedMoveStrategy(
-            "H M",
-            (context) -> scoreAndPick(context, 0, 1, -2, 3, 1, 0));
-    public static final SnakeMoveStrategy GROUND = new NamedMoveStrategy(
-            "G",
-            (context) -> scoreAndPick(context, 3, 0, 0, 1, 1, 0));
-    public static final SnakeMoveStrategy GROUND_MOMENTUM = new NamedMoveStrategy(
-            "G M",
-            (context) -> scoreAndPick(context, 3, 0, 0, 2, 1, 0));
-    public static final SnakeMoveStrategy FOOD = new NamedMoveStrategy(
-            "F",
-            (context) -> scoreAndPick(context, 0, 3, 0, 1, 1, 0));
-    public static final SnakeMoveStrategy FOOD_MOMENTUM = new NamedMoveStrategy(
-            "F M",
-            (context) -> scoreAndPick(context, 0, 3, 0, 2, 1, 0));
-    public static final SnakeMoveStrategy FOOD_VERTICAL_CLUSTERED = new NamedMoveStrategy(
-            "F V C+",
-            (context) -> scoreAndPick(context, 0, 3, 1, 1, 0, 2));
-    public static final SnakeMoveStrategy FOOD_HORIZONTAL_CLUSTERED = new NamedMoveStrategy(
-            "F H C+",
-            (context) -> scoreAndPick(context, 0, 3, -1, 1, 0, 2));
-    public static final SnakeMoveStrategy FOOD_VERTICAL_SPREAD = new NamedMoveStrategy(
-            "F V C-",
-            (context) -> scoreAndPick(context, 0, 3, 1, 1, 0, -2));
-    public static final SnakeMoveStrategy FOOD_HORIZONTAL_SPREAD = new NamedMoveStrategy(
-            "F H C-",
-            (context) -> scoreAndPick(context, 0, 3, -1, 1, 0, -2));
-    public static final SnakeMoveStrategy FOOD_VERTICAL_MOMENTUM = new NamedMoveStrategy(
-            "F V M",
-            (context) -> scoreAndPick(context, 0, 3, 1, 2, 1, 0));
-    public static final SnakeMoveStrategy FOOD_HORIZONTAL_MOMENTUM = new NamedMoveStrategy(
-            "F H M",
-            (context) -> scoreAndPick(context, 0, 3, -1, 2, 1, 0));
-    public static final SnakeMoveStrategy FOOD_MOMENTUM_CLUSTERED = new NamedMoveStrategy(
-            "F M C+",
-            (context) -> scoreAndPick(context, 0, 3, 0, 2, 1, 2));
-    public static final SnakeMoveStrategy FOOD_MOMENTUM_SPREAD = new NamedMoveStrategy(
-            "F M C-",
-            (context) -> scoreAndPick(context, 0, 3, 0, 2, 1, -2));
+    private static final SnakeMoveStrategy MOMENTUM = createStrategy(
+            "M", new MoveWeights(0, 1, 0, 3, 1, 0));
+    private static final SnakeMoveStrategy VERTICAL_MOMENTUM = createStrategy(
+            "V M", new MoveWeights(0, 1, 2, 3, 1, 0));
+    private static final SnakeMoveStrategy HORIZONTAL_MOMENTUM = createStrategy(
+            "H M", new MoveWeights(0, 1, -2, 3, 1, 0));
+    private static final SnakeMoveStrategy GROUND = createStrategy(
+            "G", new MoveWeights(3, 0, 0, 1, 1, 0));
+    private static final SnakeMoveStrategy GROUND_MOMENTUM = createStrategy(
+            "G M", new MoveWeights(3, 0, 0, 2, 1, 0));
+    private static final SnakeMoveStrategy FOOD = createStrategy(
+            "F", new MoveWeights(0, 3, 0, 1, 1, 0));
+    private static final SnakeMoveStrategy FOOD_MOMENTUM = createStrategy(
+            "F M", new MoveWeights(0, 3, 0, 2, 1, 0));
+    private static final SnakeMoveStrategy FOOD_VERTICAL_CLUSTERED = createStrategy(
+            "F V C+", new MoveWeights(0, 3, 1, 1, 0, 2));
+    private static final SnakeMoveStrategy FOOD_HORIZONTAL_CLUSTERED = createStrategy(
+            "F H C+", new MoveWeights(0, 3, -1, 1, 0, 2));
+    private static final SnakeMoveStrategy FOOD_VERTICAL_SPREAD = createStrategy(
+            "F V C-", new MoveWeights(0, 3, 1, 1, 0, -2));
+    private static final SnakeMoveStrategy FOOD_HORIZONTAL_SPREAD = createStrategy(
+            "F H C-", new MoveWeights(0, 3, -1, 1, 0, -2));
+    private static final SnakeMoveStrategy FOOD_VERTICAL_MOMENTUM = createStrategy(
+            "F V M", new MoveWeights(0, 3, 1, 2, 1, 0));
+    private static final SnakeMoveStrategy FOOD_HORIZONTAL_MOMENTUM = createStrategy(
+            "F H M", new MoveWeights(0, 3, -1, 2, 1, 0));
+    private static final SnakeMoveStrategy FOOD_MOMENTUM_CLUSTERED = createStrategy(
+            "F M C+", new MoveWeights(0, 3, 0, 2, 1, 2));
+    private static final SnakeMoveStrategy FOOD_MOMENTUM_SPREAD = createStrategy(
+            "F M C-", new MoveWeights(0, 3, 0, 2, 1, -2));
+
+    private static final List<SnakeMoveStrategy> STRATEGIES = List.of(
+            MOMENTUM,
+            VERTICAL_MOMENTUM,
+            HORIZONTAL_MOMENTUM,
+            GROUND,
+            GROUND_MOMENTUM,
+            FOOD,
+            FOOD_MOMENTUM,
+            FOOD_VERTICAL_CLUSTERED,
+            FOOD_HORIZONTAL_CLUSTERED,
+            FOOD_VERTICAL_SPREAD,
+            FOOD_HORIZONTAL_SPREAD,
+            FOOD_VERTICAL_MOMENTUM,
+            FOOD_HORIZONTAL_MOMENTUM,
+            FOOD_MOMENTUM_CLUSTERED,
+            FOOD_MOMENTUM_SPREAD);
 
     private SnakeMoveStrategies() {
     }
 
-    public static List<SnakeMoveStrategy> strategiesForConfig() {
-        return List.of(
-                MOMENTUM,
-                VERTICAL_MOMENTUM,
-                HORIZONTAL_MOMENTUM,
-                GROUND,
-                GROUND_MOMENTUM,
-                FOOD,
-                FOOD_MOMENTUM,
-                FOOD_VERTICAL_CLUSTERED,
-                FOOD_HORIZONTAL_CLUSTERED,
-                FOOD_VERTICAL_SPREAD,
-                FOOD_HORIZONTAL_SPREAD,
-                FOOD_VERTICAL_MOMENTUM,
-                FOOD_HORIZONTAL_MOMENTUM,
-                FOOD_MOMENTUM_CLUSTERED,
-                FOOD_MOMENTUM_SPREAD);
+    /**
+     * Returns all predefined move strategies in a stable order.
+     *
+     * <p>The simulation assigns them to the initial snakes in this order, starting again with the first one.
+     *
+     * @return an unmodifiable list of all predefined move strategies
+     */
+    public static List<SnakeMoveStrategy> strategies() {
+        return STRATEGIES;
     }
 
-    private static Optional<MoveDecision> pickRandomTopScoredMove(List<ScoredMove> moves, Random random) {
-        // No scored moves available
-        if (moves.isEmpty()) {
-            return Optional.empty();
-        }
-        // Only one scored move available
-        if (moves.size() == 1) {
-            return Optional.of(moves.getFirst());
-        }
-
-        // Find all moves with the top score
-        int topScore = moves.stream().mapToInt(ScoredMove::score).max().getAsInt();
-        List<ScoredMove> topScoredMoves = new ArrayList<>(moves.size());
-        for (var entry : moves) {
-            if (entry.score() == topScore) {
-                topScoredMoves.add(entry);
-            }
-        }
-
-        // Only one top scored move available
-        if (topScoredMoves.size() == 1) {
-            return Optional.of(topScoredMoves.getFirst());
-        }
-
-        // Randomly select one of the top scored moves
-        return Optional.of(topScoredMoves.get(random.nextInt(topScoredMoves.size())));
+    private static SnakeMoveStrategy createStrategy(String displayName, MoveWeights weights) {
+        return new NamedMoveStrategy(displayName, context -> scoreAndPick(context, weights));
     }
 
-    private static ScoredMove createScoredMove(int score,
-                                               CellNeighborWithEdgeBehavior neighbor,
-                                               boolean isFoodTarget) {
-        return new ScoredMove(score,
-                neighbor.mappedNeighborCoordinate(),
-                neighbor.direction(),
-                isFoodTarget);
-    }
-
-    private static Optional<MoveDecision> scoreAndPick(MoveContext context,
-                                                       int groundWeight,
-                                                       int foodWeight,
-                                                       int verticalWeight,
-                                                       int straightWeight,
-                                                       int smallTurnWeight,
-                                                       int adjacentSegmentWeight) {
-        // Quick checks for zero or one available move
+    private static Optional<MoveDecision> scoreAndPick(MoveContext context, MoveWeights weights) {
         int movesCapacity = context.groundNeighbors().size() + context.foodNeighbors().size();
         if (movesCapacity == 0) {
             return Optional.empty();
@@ -135,26 +102,16 @@ public final class SnakeMoveStrategies {
                     isFoodTarget));
         }
 
-        // Determine snake direction and segments for momentum and adjacent segment scoring
-        boolean needsDirectionInfo = (straightWeight != 0) || (smallTurnWeight != 0) || (verticalWeight != 0);
-        CompassDirection snakeDirection = needsDirectionInfo ? context.snakeHead().direction().orElse(null) : null;
-        List<GridCoordinate> segments;
-        if ((adjacentSegmentWeight != 0) && (context.snakeHead().segmentCount() > 0)) {
-            segments = context.snakeHead().currentSegments();
-        } else {
-            segments = Collections.emptyList();
-        }
+        CompassDirection snakeDirection = context.snakeHead().direction().orElse(null);
+        List<GridCoordinate> segments = ((weights.adjacentSegment() != 0) && (context.snakeHead().segmentCount() > 0))
+                ? context.snakeHead().currentSegments()
+                : List.of();
 
-        // Score all neighbor moves
         List<ScoredMove> moves = new ArrayList<>(movesCapacity);
-        scoreNeighbors(context, context.groundNeighbors(), false, groundWeight,
-                verticalWeight, straightWeight, smallTurnWeight, adjacentSegmentWeight,
-                snakeDirection, context.neighborDirectionRing(), segments, moves);
-        scoreNeighbors(context, context.foodNeighbors(), true, foodWeight,
-                verticalWeight, straightWeight, smallTurnWeight, adjacentSegmentWeight,
-                snakeDirection, context.neighborDirectionRing(), segments, moves);
-
-        // Pick one of the top scored moves at random
+        scoreNeighbors(context, context.groundNeighbors(), false, weights.ground(), weights, snakeDirection, segments,
+                moves);
+        scoreNeighbors(context, context.foodNeighbors(), true, weights.food(), weights, snakeDirection, segments,
+                moves);
         return pickRandomTopScoredMove(moves, context.random());
     }
 
@@ -162,40 +119,35 @@ public final class SnakeMoveStrategies {
                                        List<CellNeighborWithEdgeBehavior> neighbors,
                                        boolean isFoodTarget,
                                        int baseWeight,
-                                       int verticalWeight,
-                                       int straightWeight,
-                                       int smallTurnWeight,
-                                       int adjacentSegmentWeight,
+                                       MoveWeights weights,
                                        @Nullable CompassDirection snakeDirection,
-                                       List<CompassDirection> neighborDirectionRing,
                                        List<GridCoordinate> segments,
                                        List<ScoredMove> moves) {
         for (var neighbor : neighbors) {
             int score = baseWeight;
 
-            if ((verticalWeight != 0) && isVertical(neighbor.direction())) {
-                score += verticalWeight;
+            if ((weights.vertical() != 0) && isVertical(neighbor.direction())) {
+                score += weights.vertical();
             }
 
-            // Bias for continuing straight or making only a small turn
+            // Bias for moving straight on or making only a small turn
             if (snakeDirection != null) {
-                int distance = CompassDirection.distanceOnRing(snakeDirection, neighbor.direction(), neighborDirectionRing);
+                int distance = CompassDirection.distanceOnRing(snakeDirection, neighbor.direction(),
+                        context.neighborDirectionRing());
                 if (distance == 0) {
-                    score += straightWeight;
+                    score += weights.straight();
                 } else if (distance == 1) {
-                    score += smallTurnWeight;
+                    score += weights.smallTurn();
                 }
                 // distance >= 2 -> no momentum bonus
             }
 
-            // Bonus for having an adjacent segment
-            if ((adjacentSegmentWeight != 0) && !segments.isEmpty()
+            if ((weights.adjacentSegment() != 0) && !segments.isEmpty()
                     && hasNeighborIn(neighbor.mappedNeighborCoordinate(), segments,
                     context.config().neighborhoodMode(), context.structure())) {
-                score += adjacentSegmentWeight;
+                score += weights.adjacentSegment();
             }
 
-            // Create and add the scored move
             moves.add(createScoredMove(score, neighbor, isFoodTarget));
         }
     }
@@ -212,6 +164,57 @@ public final class SnakeMoveStrategies {
                                 .map(CellNeighbor::neighborCoordinate)
                                 .map(nc -> CellNeighborhoods.applyEdgeBehaviorToCoordinate(nc, structure).mapped())
                                 .anyMatch(coordinates::contains);
+    }
+
+    private static ScoredMove createScoredMove(int score,
+                                               CellNeighborWithEdgeBehavior neighbor,
+                                               boolean isFoodTarget) {
+        return new ScoredMove(score,
+                neighbor.mappedNeighborCoordinate(),
+                neighbor.direction(),
+                isFoodTarget);
+    }
+
+    private static Optional<MoveDecision> pickRandomTopScoredMove(List<ScoredMove> moves, Random random) {
+        // The early returns without a tie consume no random value and keep the random sequence of a seed stable.
+        if (moves.isEmpty()) {
+            return Optional.empty();
+        }
+        if (moves.size() == 1) {
+            return Optional.of(moves.getFirst());
+        }
+
+        int topScore = moves.stream().mapToInt(ScoredMove::score).max().getAsInt();
+        List<ScoredMove> topScoredMoves = new ArrayList<>(moves.size());
+        for (var entry : moves) {
+            if (entry.score() == topScore) {
+                topScoredMoves.add(entry);
+            }
+        }
+
+        if (topScoredMoves.size() == 1) {
+            return Optional.of(topScoredMoves.getFirst());
+        }
+        return Optional.of(topScoredMoves.get(random.nextInt(topScoredMoves.size())));
+    }
+
+    /**
+     * Weights that a strategy adds to the score of a move.
+     *
+     * @param ground          the base score of a move to a ground cell
+     * @param food            the base score of a move to a food cell
+     * @param vertical        the bonus of a vertical move ({@code N} or {@code S}); negative to prefer other moves
+     * @param straight        the bonus of a move in the current direction of the snake
+     * @param smallTurn       the bonus of a move next to the current direction on the direction ring
+     * @param adjacentSegment the bonus of a move to a cell next to an own segment; negative to avoid such cells
+     */
+    private record MoveWeights(
+            int ground,
+            int food,
+            int vertical,
+            int straight,
+            int smallTurn,
+            int adjacentSegment) {
     }
 
     private record ScoredMove(

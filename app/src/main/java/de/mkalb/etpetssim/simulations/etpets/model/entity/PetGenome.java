@@ -34,26 +34,26 @@ public record PetGenome(PetTraits traits) {
         double avgMaxEnergy = (ta.maxEnergy() + tb.maxEnergy()) / 2.0d;
         int maxEnergy = Math.clamp(
                 (int) Math.round(mutate(avgMaxEnergy, random, mutationChancePerTrait, mutationDelta)),
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX);
 
         double avgMovCost = (ta.movementCostModifier() + tb.movementCostModifier()) / 2.0d;
         double movCost = Math.clamp(
                 mutate(avgMovCost, random, mutationChancePerTrait, mutationDelta),
-                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN,
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX);
 
         double avgReproEnergy = (ta.reproductionMinEnergy() + tb.reproductionMinEnergy()) / 2.0d;
         int reproEnergy = Math.clamp(
                 (int) Math.round(mutate(avgReproEnergy, random, mutationChancePerTrait, mutationDelta)),
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX);
 
         double avgReproCooldown = (ta.reproductionCooldown() + tb.reproductionCooldown()) / 2.0d;
         int reproCooldown = Math.clamp(
                 (int) Math.round(mutate(avgReproCooldown, random, mutationChancePerTrait, mutationDelta)),
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX);
 
         return new PetGenome(new PetTraits(maxEnergy, movCost, reproEnergy, reproCooldown));
     }

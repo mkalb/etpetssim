@@ -11,12 +11,14 @@ import de.mkalb.etpetssim.simulations.lab.view.*;
 import de.mkalb.etpetssim.simulations.lab.viewmodel.*;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the Simulation Lab main view.
+ */
 public final class LabFactory {
 
     private LabFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -35,10 +37,7 @@ public final class LabFactory {
         var configView = new LabConfigView(configViewModel);
         var controlView = new LabControlView(controlViewModel);
         var observationView = new LabObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new LabMainView(viewModel, configView, controlView, observationView, entityDescriptorRegistry);
-
-        // Return the main view
-        return view;
+        return new LabMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

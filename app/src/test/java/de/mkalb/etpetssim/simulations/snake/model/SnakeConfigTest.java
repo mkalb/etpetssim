@@ -141,7 +141,7 @@ final class SnakeConfigTest {
         int snakes = SNAKES_DEFAULT;
         int initialPendingGrowth = INITIAL_PENDING_GROWTH_DEFAULT;
         NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
-        SnakeDeathMode deathMode = SNAKE_DEATH_MODE_DEFAULT;
+        SnakeDeathMode deathMode = DEATH_MODE_DEFAULT;
         int growthPerFood = GROWTH_PER_FOOD_DEFAULT;
         int basePointsPerFood = BASE_POINTS_PER_FOOD_DEFAULT;
         double segmentLengthMultiplier = SEGMENT_LENGTH_MULTIPLIER_DEFAULT;

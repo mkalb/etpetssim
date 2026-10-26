@@ -25,8 +25,8 @@ public final class SugarStepRunner
 
     @Override
     public void performStep(int stepIndex, SugarStatistics statistics) {
-        SugarAgentLogic.apply(config, random, model, stepIndex, statistics);
-        SugarResourceLogic.apply(config, model);
+        SugarAgentLogic.apply(model, config, random, stepIndex, statistics);
+        SugarResourceLogic.apply(model, config);
     }
 
 }

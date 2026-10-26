@@ -10,12 +10,14 @@ import de.mkalb.etpetssim.simulations.langton.view.*;
 import de.mkalb.etpetssim.simulations.langton.viewmodel.*;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the Langton's Ant main view.
+ */
 public final class LangtonFactory {
 
     private LangtonFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -36,10 +38,7 @@ public final class LangtonFactory {
         var configView = new LangtonConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new LangtonObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new LangtonMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
-
-        // Return the main view
-        return view;
+        return new LangtonMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

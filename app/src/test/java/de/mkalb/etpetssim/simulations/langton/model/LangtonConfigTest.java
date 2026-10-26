@@ -70,7 +70,7 @@ final class LangtonConfigTest {
         GridEdgeBehavior gridEdgeBehavior = GRID_EDGE_BEHAVIOR_DEFAULT;
         CellDisplayMode cellDisplayMode = CELL_DISPLAY_MODE_DEFAULT;
         NeighborhoodMode neighborhoodMode = NEIGHBORHOOD_MODE_DEFAULT;
-        LangtonMovementRules movementRules = LangtonMovementRules.parse(RULE_DEFAULT);
+        LangtonMovementRules movementRules = LangtonMovementRules.parse(MOVEMENT_RULES_DEFAULT);
 
         LangtonConfig toConfig() {
             return new LangtonConfig(cellShape, gridEdgeBehavior, GRID_WIDTH_DEFAULT, GRID_HEIGHT_DEFAULT,

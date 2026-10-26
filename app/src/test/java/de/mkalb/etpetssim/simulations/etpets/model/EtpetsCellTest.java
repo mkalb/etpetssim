@@ -28,7 +28,7 @@ final class EtpetsCellTest {
 
     private static PetEgg createPetEgg() {
         PetTraits traits = new PetTraits(
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX,
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX,
                 EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_DEFAULT,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_DEFAULT,
                 EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_DEFAULT);

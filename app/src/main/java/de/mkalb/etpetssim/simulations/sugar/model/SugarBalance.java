@@ -1,15 +1,13 @@
 package de.mkalb.etpetssim.simulations.sugar.model;
 
 /**
- * Non-configurable balance constants for the Sugarscape simulation.
- * <p>
- * Contains algorithm parameters that are fixed by the simulation design and are not exposed
- * as user-configurable settings. Complements {@link SugarConstraints} which holds
- * UI-facing constraint min/max/default values.
+ * Fixed balance values of the Sugarscape simulation that are not part of its configuration.
+ *
+ * <p>The configurable values and their limits are in {@link SugarConstraints}.
  */
 public final class SugarBalance {
 
-    // Sugar initialization – noise added to the linear gradient at each radius level
+    // Sugar initialization: noise added to the linear gradient at each radius level
     /**
      * Minimum random noise offset added to the computed sugar amount during initialization.
      */

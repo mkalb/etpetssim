@@ -74,7 +74,7 @@ public record SnakeConfig(
         return isBaseValid()
                 && hasAllowedCoreSelections(CELL_SHAPE_VALUES, GRID_EDGE_BEHAVIOR_VALUES, CELL_DISPLAY_MODE_VALUES)
                 && hasExpectedSelection(neighborhoodMode, NEIGHBORHOOD_MODE_DEFAULT)
-                && isAllowedSelection(deathMode, SNAKE_DEATH_MODE_VALUES)
+                && isAllowedSelection(deathMode, DEATH_MODE_VALUES)
                 && hasValidRanges();
     }
 

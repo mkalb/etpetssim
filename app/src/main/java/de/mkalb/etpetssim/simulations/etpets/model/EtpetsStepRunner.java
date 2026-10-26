@@ -25,7 +25,7 @@ public final class EtpetsStepRunner
 
     @Override
     public void performStep(int stepIndex, EtpetsStatistics statistics) {
-        EtpetsAgentLogic.apply(random, model, idSequence, stepIndex, statistics);
+        EtpetsAgentLogic.apply(model, random, idSequence, stepIndex, statistics);
         EtpetsResourceLogic.apply(model);
         EtpetsTerrainLogic.apply(model);
     }

@@ -56,15 +56,15 @@ final class PetGenomeTest {
     @Test
     void testFromParentsClampsToTraitRanges() {
         PetGenome maxParent = createGenome(
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX,
-                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX,
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX);
         PetGenome minParent = createGenome(
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN);
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN);
 
         PetGenome aboveMax = PetGenome.fromParents(maxParent, maxParent, new StubRandom(0.0d, true), 1.0d, 0.5d);
         PetGenome belowMin = PetGenome.fromParents(minParent, minParent, new StubRandom(0.0d, false), 1.0d, 0.5d);

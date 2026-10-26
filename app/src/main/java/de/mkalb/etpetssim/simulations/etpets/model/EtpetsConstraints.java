@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the ET Pets configuration.
  */
 public final class EtpetsConstraints {
 
@@ -35,23 +35,21 @@ public final class EtpetsConstraints {
     public static final List<CellDisplayMode> CELL_DISPLAY_MODE_VALUES = List.of(
             CELL_DISPLAY_MODE_DEFAULT);
 
-    // Initialization - Seed
-    public static final String SEED_INITIAL = "";
-
     // Initialization
+    public static final String SEED_INITIAL = "";
     public static final double ROCK_PERCENT_DEFAULT = 0.01d;
     public static final double WATER_PERCENT_DEFAULT = 0.02d;
     public static final double PLANT_PERCENT_DEFAULT = 0.05d;
     public static final double INSECT_PERCENT_DEFAULT = 0.01d;
     public static final double PERCENT_MIN = 0.0d;
     public static final double PERCENT_MAX = 0.5d;
-    public static final double TOTAL_PERCENT_MAX = 0.5d;
+    public static final double COMBINED_PERCENT_MAX = 0.5d;
     public static final int PET_COUNT_DEFAULT = 10;
     public static final int PET_COUNT_MIN = 0;
     public static final int PET_COUNT_MAX = 100;
     public static final int PET_COUNT_STEP = 1;
 
-    // Rules - NeighborhoodMode
+    // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
 
     private EtpetsConstraints() {

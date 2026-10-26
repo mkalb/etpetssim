@@ -5,7 +5,7 @@ import de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance;
 /**
  * Immutable trait bundle describing a pet genome.
  *
- * <p>Each trait lies within its {@code PET_TRAITS_*_RANGE_MIN} and {@code PET_TRAITS_*_RANGE_MAX} bounds in
+ * <p>Each trait lies within its {@code PET_TRAITS_*_MIN} and {@code PET_TRAITS_*_MAX} bounds in
  * {@link EtpetsBalance}.
  *
  * @param maxEnergy             the maximum energy capacity
@@ -25,20 +25,20 @@ public record PetTraits(
      * @throws IllegalArgumentException if a trait lies outside its range in {@link EtpetsBalance}
      */
     public PetTraits {
-        if ((maxEnergy < EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN)
-                || (maxEnergy > EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX)) {
+        if ((maxEnergy < EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN)
+                || (maxEnergy > EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX)) {
             throw new IllegalArgumentException("maxEnergy out of range: " + maxEnergy);
         }
-        if (!(movementCostModifier >= EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN)
-                || !(movementCostModifier <= EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX)) {
+        if (!(movementCostModifier >= EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN)
+                || !(movementCostModifier <= EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX)) {
             throw new IllegalArgumentException("movementCostModifier out of range: " + movementCostModifier);
         }
-        if ((reproductionMinEnergy < EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN)
-                || (reproductionMinEnergy > EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX)) {
+        if ((reproductionMinEnergy < EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN)
+                || (reproductionMinEnergy > EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX)) {
             throw new IllegalArgumentException("reproductionMinEnergy out of range: " + reproductionMinEnergy);
         }
-        if ((reproductionCooldown < EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN)
-                || (reproductionCooldown > EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX)) {
+        if ((reproductionCooldown < EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN)
+                || (reproductionCooldown > EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX)) {
             throw new IllegalArgumentException("reproductionCooldown out of range: " + reproductionCooldown);
         }
     }
@@ -56,17 +56,17 @@ public record PetTraits(
     @SuppressWarnings("MagicNumber")
     public double genomeQualityScore() {
         double normMax = normalize(maxEnergy,
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_MAX_ENERGY_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX);
         double normCost = normalize(movementCostModifier,
-                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN,
+                EtpetsBalance.PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX);
         double normRepE = normalize(reproductionMinEnergy,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_MIN_ENERGY_MAX);
         double normRepC = normalize(reproductionCooldown,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MIN,
-                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_RANGE_MAX);
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MIN,
+                EtpetsBalance.PET_TRAITS_REPRODUCTION_COOLDOWN_MAX);
         return (normMax + normCost + normRepE + normRepC) / 4.0d;
     }
 

@@ -6,12 +6,12 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import java.util.*;
 
 /**
- * Utility class providing various static factory methods for creating {@link GridPattern} instances.
- * <p>
- * A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link GridEntity} instances,
+ * Static factories for {@link GridPattern} instances.
+ *
+ * <p>A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link GridEntity} instances,
  * describing how entities are arranged relative to an origin (0, 0).
- * <p>
- * <b>Normalization:</b> It is recommended that all patterns are created in normalized form,
+ *
+ * <p><b>Normalization:</b> It is recommended that all patterns are created in normalized form,
  * meaning the top-left corner of the pattern's bounding box is always at offset (0, 0).
  * If a pattern is not normalized, this must be clearly documented in its implementation.
  */
@@ -32,11 +32,11 @@ public final class GridPatterns {
 
     /**
      * Creates a {@code GridPattern} from the given map of offsets to entities.
-     * <p>
-     * The returned pattern contains all entries from the provided map. The pattern is
+     *
+     * <p>The returned pattern contains all entries from the provided map. The pattern is
      * <b>not guaranteed to be normalized</b>; offsets may have arbitrary values.
-     * <p>
-     * Modifications to the original map after calling this method do not affect the pattern.
+     *
+     * <p>Modifications to the original map after calling this method do not affect the pattern.
      *
      * @param map   the map of offsets to entities
      * @param <ENT> the type of {@link GridEntity}
@@ -49,11 +49,11 @@ public final class GridPatterns {
 
     /**
      * Creates a {@code GridPattern} where the specified entity is placed at multiple offsets.
-     * <p>
-     * The returned pattern contains the given entity at each offset in the provided collection.
+     *
+     * <p>The returned pattern contains the given entity at each offset in the provided collection.
      * The pattern is <b>not guaranteed to be normalized</b>; offsets may have arbitrary values.
-     * <p>
-     * Modifications to the original collection of offsets after calling this method do not affect the pattern.
+     *
+     * <p>Modifications to the original collection of offsets after calling this method do not affect the pattern.
      *
      * @param entity  the entity to place at each offset
      * @param offsets the collection of offsets where the entity will be placed
@@ -65,14 +65,13 @@ public final class GridPatterns {
         for (GridOffset offset : offsets) {
             map.put(offset, entity);
         }
-        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
-        return () -> mapCopy;
+        return of(map);
     }
 
     /**
      * Creates a {@code GridPattern} containing a single entity at the specified offset.
-     * <p>
-     * The returned pattern contains exactly one entry at the given offset. The pattern is
+     *
+     * <p>The returned pattern contains exactly one entry at the given offset. The pattern is
      * <b>not guaranteed to be normalized</b>; the offset may be any value.
      *
      * @param <ENT>  the type of {@link GridEntity}
@@ -86,11 +85,11 @@ public final class GridPatterns {
 
     /**
      * Combines multiple {@code GridPattern} instances into a single pattern.
-     * <p>
-     * All entries from the provided patterns are merged into one pattern. If multiple patterns
+     *
+     * <p>All entries from the provided patterns are merged into one pattern. If multiple patterns
      * contain the same offset, the entity from the last pattern in the argument list is used.
-     * <p>
-     * The resulting pattern is <b>not guaranteed to be normalized</b>.
+     *
+     * <p>The resulting pattern is <b>not guaranteed to be normalized</b>.
      *
      * @param patterns the patterns to combine
      * @param <ENT>    the type of {@link GridEntity}
@@ -102,15 +101,14 @@ public final class GridPatterns {
         for (GridPattern<ENT> pattern : patterns) {
             combined.putAll(pattern.offsetMap());
         }
-        Map<GridOffset, ENT> mapCopy = Map.copyOf(combined);
-        return () -> mapCopy;
+        return of(combined);
     }
 
     /**
      * Creates a {@code GridPattern} representing a horizontal line of the given length,
      * starting at offset (0, 0) and extending to the right.
-     * <p>
-     * The returned pattern contains the specified entity at each offset (x, 0) for x in [0, length).
+     *
+     * <p>The returned pattern contains the specified entity at each offset (x, 0) for x in [0, length).
      * The pattern is <b>normalized</b> with its top-left at (0, 0).
      *
      * @param entity the entity to place at each position in the line
@@ -123,15 +121,14 @@ public final class GridPatterns {
         for (int x = 0; x < length; x++) {
             map.put(new GridOffset(x, 0), entity);
         }
-        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
-        return () -> mapCopy;
+        return of(map);
     }
 
     /**
      * Creates a {@code GridPattern} representing a vertical line of the given length,
      * starting at offset (0, 0) and extending downward.
-     * <p>
-     * The returned pattern contains the specified entity at each offset (0, y) for y in [0, length).
+     *
+     * <p>The returned pattern contains the specified entity at each offset (0, y) for y in [0, length).
      * The pattern is <b>normalized</b> with its top-left at (0, 0).
      *
      * @param entity the entity to place at each position in the line
@@ -144,15 +141,14 @@ public final class GridPatterns {
         for (int y = 0; y < length; y++) {
             map.put(new GridOffset(0, y), entity);
         }
-        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
-        return () -> mapCopy;
+        return of(map);
     }
 
     /**
      * Creates a {@code GridPattern} representing the border (stroke) of a rectangle
      * with the given width and height, starting at offset (0, 0).
-     * <p>
-     * The returned pattern contains the specified entity at all positions on the border
+     *
+     * <p>The returned pattern contains the specified entity at all positions on the border
      * (top, bottom, left, and right edges) of the rectangle. The pattern is <b>normalized</b>
      * with its top-left at (0, 0).
      *
@@ -171,15 +167,14 @@ public final class GridPatterns {
                 }
             }
         }
-        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
-        return () -> mapCopy;
+        return of(map);
     }
 
     /**
      * Creates a {@code GridPattern} representing the border (stroke) of a circle
      * with the given integer radius, using the midpoint circle algorithm.
-     * <p>
-     * The returned pattern contains the specified entity at all positions on the border
+     *
+     * <p>The returned pattern contains the specified entity at all positions on the border
      * of a circle centered at (radius, radius). The pattern is <b>normalized</b>
      * so that the top-left of its bounding box is at offset (0, 0).
      *
@@ -220,8 +215,7 @@ public final class GridPatterns {
         for (GridOffset o : offsets) {
             map.put(new GridOffset(o.dx() - minDx, o.dy() - minDy), borderEntity);
         }
-        Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
-        return () -> mapCopy;
+        return of(map);
     }
 
 }

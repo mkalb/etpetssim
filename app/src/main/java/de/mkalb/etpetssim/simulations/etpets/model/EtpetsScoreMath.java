@@ -2,6 +2,9 @@ package de.mkalb.etpetssim.simulations.etpets.model;
 
 import static de.mkalb.etpetssim.simulations.etpets.model.EtpetsBalance.*;
 
+/**
+ * Raw score formulas of the pet actions; {@link EtpetsAgentLogic} rounds and clamps the results.
+ */
 final class EtpetsScoreMath {
 
     private EtpetsScoreMath() {
@@ -37,6 +40,38 @@ final class EtpetsScoreMath {
         return (PET_MOVE_SCORE_BASE + positiveScoreTerms) - negativeScoreTerms;
     }
 
+    @SuppressWarnings("MagicNumber")
+    static double computeRawReproduceScore(double petQualityScore,
+                                           double partnerQualityScore) {
+        double normalizedPetQuality = clampToUnitRange(petQualityScore);
+        double normalizedPartnerQuality = clampToUnitRange(partnerQualityScore);
+        double averageQuality = (normalizedPetQuality + normalizedPartnerQuality) / 2.0d;
+        double minimumQuality = Math.min(normalizedPetQuality, normalizedPartnerQuality);
+        double weightedQualityScore = (PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT * averageQuality)
+                + (PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT * minimumQuality);
+        double normalizedWeightedQuality = clampToUnitRange(weightedQualityScore);
+
+        return PET_REPRODUCTION_SCORE_MIN
+                + (normalizedWeightedQuality * (PET_REPRODUCTION_SCORE_MAX - PET_REPRODUCTION_SCORE_MIN));
+    }
+
+    static double computeRawEatScore(int currentEnergy,
+                                     int maxEnergy,
+                                     int resourceEnergyGain,
+                                     int age) {
+        double positiveScoreTerms =
+                computeHungerScore(currentEnergy, maxEnergy)
+                        + computePanicScore(currentEnergy)
+                        + computeResourceGainScore(resourceEnergyGain)
+                        + computeAgeBonus(age);
+        double negativeScoreTerms = computeWastePenalty(currentEnergy, maxEnergy, resourceEnergyGain);
+        return positiveScoreTerms - negativeScoreTerms;
+    }
+
+    static double clampToUnitRange(double value) {
+        return Math.clamp(value, 0.0d, 1.0d);
+    }
+
     private static double computeSurvivalPressure(double energyRatio) {
         double hunger = clampToUnitRange(1.0d - energyRatio);
         return Math.pow(hunger, PET_MOVE_SURVIVAL_PRESSURE_EXPONENT);
@@ -57,9 +92,9 @@ final class EtpetsScoreMath {
         if (!isGroundWithoutTrail) {
             return 0.0d;
         }
-        double movementCostModifierSpan = PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MAX
-                - PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN;
-        double movementCostModifierNormalized = clampToUnitRange((movementCostModifier - PET_TRAITS_MOVEMENT_COST_MODIFIER_RANGE_MIN) / movementCostModifierSpan);
+        double movementCostModifierSpan = PET_TRAITS_MOVEMENT_COST_MODIFIER_MAX
+                - PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN;
+        double movementCostModifierNormalized = clampToUnitRange((movementCostModifier - PET_TRAITS_MOVEMENT_COST_MODIFIER_MIN) / movementCostModifierSpan);
         double movementEfficiency = clampToUnitRange(1.0d - movementCostModifierNormalized);
         double explorationDrive = Math.pow(energyRatio, PET_MOVE_EXPLORATION_ENERGY_EXPONENT)
                 * Math.pow(movementEfficiency, PET_MOVE_EXPLORATION_COST_EXPONENT);
@@ -83,34 +118,6 @@ final class EtpetsScoreMath {
     private static double computeCrowdingPenalty(boolean hasCrowdingPenalty, boolean hasPartnerLookAhead) {
         // No penalty if reproduction bonus available.
         return (hasCrowdingPenalty && !hasPartnerLookAhead) ? PET_MOVE_CROWDING_PENALTY : 0.0d;
-    }
-
-    @SuppressWarnings("MagicNumber")
-    static double computeRawReproduceScore(double petQualityScore,
-                                           double partnerQualityScore) {
-        double normalizedPetQuality = clampToUnitRange(petQualityScore);
-        double normalizedPartnerQuality = clampToUnitRange(partnerQualityScore);
-        double averageQuality = (normalizedPetQuality + normalizedPartnerQuality) / 2.0d;
-        double minimumQuality = Math.min(normalizedPetQuality, normalizedPartnerQuality);
-        double weightedQualityScore = (PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT * averageQuality)
-                + (PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT * minimumQuality);
-        double normalizedWeightedQuality = clampToUnitRange(weightedQualityScore);
-
-        return PET_REPRODUCTION_SCORE_RANGE_MIN
-                + (normalizedWeightedQuality * (PET_REPRODUCTION_SCORE_RANGE_MAX - PET_REPRODUCTION_SCORE_RANGE_MIN));
-    }
-
-    static double computeRawEatScore(int currentEnergy,
-                                     int maxEnergy,
-                                     int resourceEnergyGain,
-                                     int age) {
-        double positiveScoreTerms =
-                computeHungerScore(currentEnergy, maxEnergy)
-                        + computePanicScore(currentEnergy)
-                        + computeResourceGainScore(resourceEnergyGain)
-                        + computeAgeBonus(age);
-        double negativeScoreTerms = computeWastePenalty(currentEnergy, maxEnergy, resourceEnergyGain);
-        return positiveScoreTerms - negativeScoreTerms;
     }
 
     private static double computeHungerScore(int currentEnergy, int maxEnergy) {
@@ -153,10 +160,6 @@ final class EtpetsScoreMath {
         // Small age bonus that decays quickly.
         return PET_EAT_SCORE_AGE_WEIGHT
                 * Math.exp(-(double) age / PET_EAT_SCORE_AGE_DECAY_STEPS);
-    }
-
-    static double clampToUnitRange(double value) {
-        return Math.clamp(value, 0.0d, 1.0d);
     }
 
 }

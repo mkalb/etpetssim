@@ -132,7 +132,7 @@ public final class Pet implements AgentEntity {
 
     public void decrementReproductionCooldownRemaining() {
         reproductionCooldownRemaining = Math.max(
-                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN,
+                EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN,
                 reproductionCooldownRemaining - 1
         );
     }
@@ -140,8 +140,8 @@ public final class Pet implements AgentEntity {
     public boolean isReproductionEligibleByState(int stepIndex) {
         return !dead
                 && (currentEnergy >= traits.reproductionMinEnergy())
-                && (reproductionCooldownRemaining <= EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_RANGE_MIN)
-                && (ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_FERTILITY_AGE_RANGE_MIN);
+                && (reproductionCooldownRemaining <= EtpetsBalance.PET_REPRODUCTION_COOLDOWN_REMAINING_MIN)
+                && (ageAtStepIndex(stepIndex) >= EtpetsBalance.PET_FERTILITY_AGE_MIN);
     }
 
     public void resetReproductionCooldown() {

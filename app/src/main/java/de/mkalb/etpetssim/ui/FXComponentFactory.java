@@ -2,7 +2,9 @@ package de.mkalb.etpetssim.ui;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.value.*;
+import javafx.event.*;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import org.jspecify.annotations.Nullable;
@@ -12,9 +14,10 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * A utility class for creating JavaFX UI components with specific styles.
- * <p>
- * Provides methods to create commonly used UI components with predefined styles.
+ * Creates styled JavaFX controls and containers, and labeled controls bound to input properties.
+ *
+ * <p>A labeled control consists of a label that is bound to the value of the property, the control itself, and a
+ * tooltip that the label and the control share.
  */
 @SuppressWarnings("MagicNumber")
 public final class FXComponentFactory {
@@ -64,14 +67,14 @@ public final class FXComponentFactory {
 
     /**
      * Creates a labeled group of radio buttons for selecting enum values, with display names, formatted label, tooltip, and custom style class.
-     * <p>
-     * Each radio button represents a valid enum value from the provided InputEnumProperty. All radio buttons are added to the given container pane,
+     *
+     * <p>Each radio button represents a valid enum value from the provided InputEnumProperty. All radio buttons are added to the given container pane,
      * which can be any Pane (e.g., VBox, HBox) for flexible layout. The radio buttons are grouped using a ToggleGroup,
      * ensuring only one can be selected at a time. Selection changes are synchronized with the property, and vice versa.
      * The label displays the current value using the provided format string.
      * Both the label and the radio buttons share the same tooltip for improved accessibility.
-     * <p>
-     * This method is suitable for enum-based selections with custom display names and flexible layout requirements.
+     *
+     * <p>This method is suitable for enum-based selections with custom display names and flexible layout requirements.
      *
      * @param inputEnumProperty        the InputEnumProperty defining valid values and value binding
      * @param displayNameProvider      a function mapping enum values to their display names
@@ -128,25 +131,19 @@ public final class FXComponentFactory {
 
         radioButtonContainerPane.getChildren().addAll(radioButtons);
 
-        Label label = new Label();
-        label.textProperty().bind(inputEnumProperty.asStringBinding(labelFormatString));
-        label.setLabelFor(radioButtonContainerPane);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        radioButtons.forEach(rb -> rb.setTooltip(tooltipValue));
-
+        Label label = createBoundLabel(inputEnumProperty.asStringBinding(labelFormatString), radioButtonContainerPane,
+                tooltip, radioButtons.toArray(Control[]::new));
         return new LabeledControl<>(label, radioButtonContainerPane);
     }
 
     /**
      * Creates a labeled checkbox for a binary enum property, mapping checked and unchecked states to specific enum values.
-     * <p>
-     * The checkbox reflects the current value of the InputEnumProperty and updates the property when toggled.
+     *
+     * <p>The checkbox reflects the current value of the InputEnumProperty and updates the property when toggled.
      * The label displays the current value using the provided format string.
      * Both the label and the checkbox share the same tooltip for improved accessibility.
-     * <p>
-     * This method is suitable for enum properties with exactly two valid states.
+     *
+     * <p>This method is suitable for enum properties with exactly two valid states.
      * It validates the mapping values fail-fast and does not modify the property during initialization.
      *
      * @param inputEnumProperty  the InputEnumProperty defining valid values and value binding
@@ -194,22 +191,15 @@ public final class FXComponentFactory {
         });
         inputEnumProperty.property().addListener((_, _, newVal) -> checkBox.setSelected(newVal == checkedEnumValue));
 
-        Label label = new Label();
-        label.textProperty().bind(inputEnumProperty.asStringBinding(labelFormatString));
-        label.setLabelFor(checkBox);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        checkBox.setTooltip(tooltipValue);
-
+        Label label = createBoundLabel(inputEnumProperty.asStringBinding(labelFormatString), checkBox, tooltip, checkBox);
         return new LabeledControl<>(label, checkBox);
     }
 
     /**
      * Creates a labeled combo box for selecting values from a fixed choice set, with display names,
      * formatted label, tooltip, and custom style class.
-     * <p>
-     * The combo box displays only valid values as provided by the InputChoiceProperty.
+     *
+     * <p>The combo box displays only valid values as provided by the InputChoiceProperty.
      * Display names for each value are supplied by the property's display name provider.
      * Selection changes are synchronized with the property, and vice versa.
      * Null selections from the combo box are ignored.
@@ -282,14 +272,8 @@ public final class FXComponentFactory {
         };
         inputChoiceProperty.property().addListener(inputChoicePropertyListener);
 
-        Label label = new Label();
         var labelTextBinding = inputChoiceProperty.asStringBinding(labelFormatString);
-        label.textProperty().bind(labelTextBinding);
-        label.setLabelFor(comboBox);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        comboBox.setTooltip(tooltipValue);
+        Label label = createBoundLabel(labelTextBinding, comboBox, tooltip, comboBox);
 
         cleanupRegistrar.accept(() -> {
             comboBox.getSelectionModel().selectedItemProperty().removeListener(comboBoxSelectionListener);
@@ -303,8 +287,8 @@ public final class FXComponentFactory {
 
     /**
      * Creates a ListCell for displaying values using their display names.
-     * <p>
-     * The cell uses the provided map to look up display names for each value.
+     *
+     * <p>The cell uses the provided map to look up display names for each value.
      * If a display name is not found, the value's toString() value is used as a fallback.
      *
      * @param displayNames a map from values to their display names
@@ -330,13 +314,13 @@ public final class FXComponentFactory {
 
     /**
      * Creates a labeled integer slider with a bound double value, formatted label, tooltip, and custom style class.
-     * <p>
-     * The slider is configured for integer values in the range defined by the given InputDoubleIntRangeProperty.
+     *
+     * <p>The slider is configured for integer values in the range defined by the given InputDoubleIntRangeProperty.
      * The slider's value is bidirectionally bound to the underlying DoubleProperty of the record.
      * The label displays the current value using the provided format string. Both the label and the slider share
      * the same tooltip for improved accessibility.
-     * <p>
-     * This method is suitable for sliders with a moderate integer value range.
+     *
+     * <p>This method is suitable for sliders with a moderate integer value range.
      *
      * @param inputDoubleIntRangeProperty the InputDoubleIntRangeProperty defining the integer range and value binding
      * @param labelFormatString           the format string for the label (e.g., "%d px")
@@ -361,28 +345,22 @@ public final class FXComponentFactory {
         slider.getStyleClass().add(styleClass);
         slider.valueProperty().bindBidirectional(inputDoubleIntRangeProperty.property());
 
-        Label label = new Label();
-        label.textProperty().bind(inputDoubleIntRangeProperty.asStringBinding(labelFormatString));
-        label.setLabelFor(slider);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        slider.setTooltip(tooltipValue);
-
+        Label label = createBoundLabel(inputDoubleIntRangeProperty.asStringBinding(labelFormatString), slider, tooltip,
+                slider);
         return new LabeledControl<>(label, slider);
     }
 
     /**
      * Creates a labeled integer spinner with a bound value, formatted label, tooltip, and custom style class.
-     * <p>
-     * The spinner is configured for integer values in the range and step defined by the given InputIntegerProperty.
+     *
+     * <p>The spinner is configured for integer values in the range and step defined by the given InputIntegerProperty.
      * The spinner and the property are kept in sync via listeners and normalization logic. The label displays the current value using
      * the provided format string. Both the label and the spinner share the same tooltip for improved accessibility.
-     * <p>
-     * The spinner is editable, allowing direct user input, and uses the specified CSS style class.
+     *
+     * <p>The spinner is editable, allowing direct user input, and uses the specified CSS style class.
      * Input is validated and normalized to ensure only valid values are accepted.
-     * <p>
-     * This method is suitable for spinners with integer values and step-based constraints.
+     *
+     * <p>This method is suitable for spinners with integer values and step-based constraints.
      *
      * @param inputIntegerProperty the InputIntegerProperty defining range, step, and value binding
      * @param labelFormatString    the format string for the label (e.g., "Width: %d")
@@ -396,7 +374,6 @@ public final class FXComponentFactory {
             String tooltip,
             String styleClass) {
 
-        // Create the spinner with min, max, initial value, and step.
         Spinner<Integer> spinner = new Spinner<>(
                 inputIntegerProperty.min(),
                 inputIntegerProperty.max(),
@@ -435,23 +412,14 @@ public final class FXComponentFactory {
         // Normalize and sync on Enter key in the editor.
         spinner.getEditor().setOnAction(_ -> normalizeAndSyncSpinnerValue(spinner, inputIntegerProperty));
 
-        // Set up the label.
-        Label label = new Label();
-        label.textProperty().bind(inputIntegerProperty.asStringBinding(labelFormatString));
-        label.setLabelFor(spinner);
-
-        // Tooltip for both the label and the spinner.
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        spinner.setTooltip(tooltipValue);
-
+        Label label = createBoundLabel(inputIntegerProperty.asStringBinding(labelFormatString), spinner, tooltip, spinner);
         return new LabeledControl<>(label, spinner);
     }
 
     /**
      * Normalizes and synchronizes the value of a Spinner's editor with its value factory and the associated InputIntegerProperty.
-     * <p>
-     * Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
+     *
+     * <p>Attempts to parse the editor text as an integer, clamps and snaps it to the valid range and step
      * defined by the given InputIntegerProperty, and updates both the spinner and the property with the normalized value.
      * If parsing fails, resets the editor text and spinner value to the current property value.
      *
@@ -493,12 +461,12 @@ public final class FXComponentFactory {
 
     /**
      * Creates a labeled percent slider with a bound value, formatted label, tooltip, and custom style class.
-     * <p>
-     * The slider is configured for percent values in the range defined by the given InputDoubleProperty.
+     *
+     * <p>The slider is configured for percent values in the range defined by the given InputDoubleProperty.
      * The slider's value is bidirectionally bound to the property. The label displays the current value using
      * the provided format string. Both the label and the slider share the same tooltip for improved accessibility.
-     * <p>
-     * This method is suitable for percent values between 0.0 and 1.0 (inclusive).
+     *
+     * <p>This method is suitable for percent values between 0.0 and 1.0 (inclusive).
      * The range is limited to 0.0..1.0 and rounded to two decimal places. As a side effect, the current
      * value of the property is rounded and clamped to this range.
      *
@@ -541,56 +509,46 @@ public final class FXComponentFactory {
             slider.setValue(rounded);
         });
 
-        Label label = new Label();
-        label.textProperty().bind(inputDoubleProperty.property().multiply(100).asString(labelFormatString));
-        label.setLabelFor(slider);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        slider.setTooltip(tooltipValue);
-
+        Label label = createBoundLabel(inputDoubleProperty.property().multiply(100).asString(labelFormatString), slider,
+                tooltip, slider);
         return new LabeledControl<>(label, slider);
     }
 
     /**
      * Computes the number of minor tick marks for a percent slider based on the given range.
-     * <p>
-     * Determines the number of minor ticks by checking if the range is divisible
+     *
+     * <p>Determines the number of minor ticks by checking if the range is divisible
      * by specific divisors. If a divisor matches, the method returns the divisor minus one.
      * If no divisor matches, it returns 0.
-     * <p>
-     * The range is expected to be between 2 and 100 (inclusive). If the range is outside this
+     *
+     * <p>The range is expected to be between 2 and 100 (inclusive). If the range is outside this
      * interval, the method will return 0 without performing any calculations.
      *
      * @param range the range of the slider (difference between max and min values multiplied by 100)
      * @return the number of minor ticks (divisor - 1) if a matching divisor is found, or 0 otherwise
      */
     private static int computeMinorTickCountForPercentSlider(int range) {
-        // Ensure the range is within the valid interval [2, 100].
         if ((range >= 2) && (range <= 100)) {
-            // Array of divisors to check for divisibility.
             int[] divisors = {10, 8, 6, 4, 9, 7, 5, 11, 13, 17, 19, 3, 2};
             for (int divisor : divisors) {
-                // If the range is divisible by the current divisor, return divisor - 1.
                 if ((range % divisor) == 0) {
                     return divisor - 1;
                 }
             }
         }
-        // Return 0 if no divisor matches or the range is out of bounds.
         return 0;
     }
 
     /**
      * Creates a labeled double slider with configurable decimal precision, formatted label, tooltip, and custom style class.
-     * <p>
-     * The slider is configured for double values in the range defined by the given InputDoubleProperty.
+     *
+     * <p>The slider is configured for double values in the range defined by the given InputDoubleProperty.
      * The decimal places parameter is clamped to the range [0, 9] to avoid excessively large precision and
      * non-finite scaling factors. The slider's value is rounded to the specified number of decimal places and is
      * bidirectionally bound to the property. The label displays the current value using the provided format string.
      * Both the label and the slider share the same tooltip for improved accessibility.
-     * <p>
-     * This method is suitable for sliders requiring decimal precision and a continuous value range.
+     *
+     * <p>This method is suitable for sliders requiring decimal precision and a continuous value range.
      * As a side effect, the current value of the property is rounded and clamped to the property range.
      *
      * @param inputDoubleProperty the InputDoubleProperty defining range and value binding
@@ -634,26 +592,19 @@ public final class FXComponentFactory {
             slider.setValue(rounded);
         });
 
-        Label label = new Label();
-        label.textProperty().bind(inputDoubleProperty.asStringBinding(labelFormatString));
-        label.setLabelFor(slider);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        slider.setTooltip(tooltipValue);
-
+        Label label = createBoundLabel(inputDoubleProperty.asStringBinding(labelFormatString), slider, tooltip, slider);
         return new LabeledControl<>(label, slider);
     }
 
     /**
      * Creates a labeled text box with a clear button, formatted label, prompt text, tooltips, and custom style class.
-     * <p>
-     * The text field is bidirectionally bound to the given StringProperty. The label displays the current value
+     *
+     * <p>The text field is bidirectionally bound to the given StringProperty. The label displays the current value
      * using the provided format string and is bound to the given label property. A clear button allows users to quickly
      * clear the text field and includes its own tooltip. Both the label and the text field share the same tooltip for
      * improved accessibility. The entire control is wrapped in an HBox for layout.
-     * <p>
-     * This method is suitable for string input fields with a clear button and formatted label.
+     *
+     * <p>This method is suitable for string input fields with a clear button and formatted label.
      *
      * @param inputProperty      the StringProperty to bind to the text field
      * @param labelProperty      the StringProperty to bind to the label
@@ -672,42 +623,27 @@ public final class FXComponentFactory {
             String tooltip,
             String tooltipClearButton,
             String styleClass) {
-        TextField textField = new TextField();
-        textField.textProperty().bindBidirectional(inputProperty);
-        textField.getStyleClass().add(styleClass);
-        textField.setPromptText(promptText);
-
-        // Add a clear button for the text field.
-        Button clearButton = new Button(BUTTON_TEXT_CLEAR);
-        clearButton.setFocusTraversable(false);
-        clearButton.setOnAction(_ -> textField.clear());
-        clearButton.setTooltip(new Tooltip(tooltipClearButton));
+        TextField textField = createBoundTextField(inputProperty, promptText, styleClass);
+        Button clearButton = createTextFieldButton(BUTTON_TEXT_CLEAR, tooltipClearButton, _ -> textField.clear());
 
         HBox hBox = new HBox(textField, clearButton);
         hBox.getStyleClass().add(styleClass);
 
-        Label label = new Label();
-        label.textProperty().bind(Bindings.format(labelFormatString, labelProperty));
-        label.setLabelFor(textField);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        textField.setTooltip(tooltipValue);
-
+        Label label = createBoundLabel(Bindings.format(labelFormatString, labelProperty), textField, tooltip, textField);
         return new LabeledControl<>(label, hBox);
     }
 
     /**
      * Creates a labeled text box with an adopt button and a clear button, formatted label, prompt text, tooltips, and custom style class.
-     * <p>
-     * The text field is bidirectionally bound to the given StringProperty. The label displays the current value
+     *
+     * <p>The text field is bidirectionally bound to the given StringProperty. The label displays the current value
      * using the provided format string and is bound to the given label property. An adopt button allows users to
      * transfer the value from the read-only adopt value property into the text field; it is disabled when
      * the adopt value property is empty. A clear button allows users to quickly clear the text field.
      * Both the label and the text field share the same tooltip for improved accessibility.
      * The entire control is wrapped in an HBox for layout.
-     * <p>
-     * This method is suitable for string input fields with adopt and clear buttons and formatted label.
+     *
+     * <p>This method is suitable for string input fields with adopt and clear buttons and formatted label.
      *
      * @param inputProperty      the StringProperty to bind to the text field
      * @param labelProperty      the StringProperty to bind to the label
@@ -730,36 +666,47 @@ public final class FXComponentFactory {
             String tooltipAdoptButton,
             String tooltipClearButton,
             String styleClass) {
-        TextField textField = new TextField();
-        textField.textProperty().bindBidirectional(inputProperty);
-        textField.getStyleClass().add(styleClass);
-        textField.setPromptText(promptText);
-
-        // Add an adopt button that copies the adoptValueProperty into the text field.
-        Button adoptButton = new Button(BUTTON_TEXT_ADOPT);
-        adoptButton.setFocusTraversable(false);
-        adoptButton.setOnAction(_ -> textField.setText(adoptValueProperty.get()));
-        adoptButton.setTooltip(new Tooltip(tooltipAdoptButton));
+        TextField textField = createBoundTextField(inputProperty, promptText, styleClass);
+        Button adoptButton = createTextFieldButton(BUTTON_TEXT_ADOPT, tooltipAdoptButton,
+                _ -> textField.setText(adoptValueProperty.get()));
         adoptButton.disableProperty().bind(adoptValueProperty.isEmpty());
-
-        // Add a clear button for the text field.
-        Button clearButton = new Button(BUTTON_TEXT_CLEAR);
-        clearButton.setFocusTraversable(false);
-        clearButton.setOnAction(_ -> textField.clear());
-        clearButton.setTooltip(new Tooltip(tooltipClearButton));
+        Button clearButton = createTextFieldButton(BUTTON_TEXT_CLEAR, tooltipClearButton, _ -> textField.clear());
 
         HBox hBox = new HBox(textField, adoptButton, clearButton);
         hBox.getStyleClass().add(styleClass);
 
-        Label label = new Label();
-        label.textProperty().bind(Bindings.format(labelFormatString, labelProperty));
-        label.setLabelFor(textField);
-
-        Tooltip tooltipValue = new Tooltip(tooltip);
-        label.setTooltip(tooltipValue);
-        textField.setTooltip(tooltipValue);
-
+        Label label = createBoundLabel(Bindings.format(labelFormatString, labelProperty), textField, tooltip, textField);
         return new LabeledControl<>(label, hBox);
+    }
+
+    private static Label createBoundLabel(ObservableValue<String> text, Node labelFor, String tooltip,
+                                          Control... tooltipControls) {
+        Label label = new Label();
+        label.textProperty().bind(text);
+        label.setLabelFor(labelFor);
+
+        Tooltip sharedTooltip = new Tooltip(tooltip);
+        label.setTooltip(sharedTooltip);
+        for (Control control : tooltipControls) {
+            control.setTooltip(sharedTooltip);
+        }
+        return label;
+    }
+
+    private static TextField createBoundTextField(StringProperty inputProperty, String promptText, String styleClass) {
+        TextField textField = new TextField();
+        textField.textProperty().bindBidirectional(inputProperty);
+        textField.getStyleClass().add(styleClass);
+        textField.setPromptText(promptText);
+        return textField;
+    }
+
+    private static Button createTextFieldButton(String text, String tooltip, EventHandler<ActionEvent> action) {
+        Button button = new Button(text);
+        button.setFocusTraversable(false);
+        button.setOnAction(action);
+        button.setTooltip(new Tooltip(tooltip));
+        return button;
     }
 
     /**

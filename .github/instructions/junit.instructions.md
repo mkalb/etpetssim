@@ -48,7 +48,7 @@ Rules for test sources only; repository-wide and Java instructions still apply.
       `<Interface>Test` names order checks across the constants of its implementing enums freely (e.g.,
       `testConstantsAreSortedByDisplayName`).
     - Tests of a nested type put its simple name before a fixed name (e.g., `testFixedActionDeclarationOrder`).
-    - A constant has one test named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a check
+    - A test of a single constant is named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a check
       across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
     - When the tested behavior is triggered indirectly (e.g., through a listener), `<Subject>` is the private or
       package-private method that implements the reaction (e.g., `testHandleStartActionRetainsCapturedTimedSettings`).
@@ -114,6 +114,10 @@ Rules for test sources only; repository-wide and Java instructions still apply.
       and `toString()` are generated.
     - A private nested record is tested through its enclosing type.
 - Test `toDisplayString()` against the exact expected string with `assertEquals`, not with `contains` checks.
+- Test constants only for relations between them that the code relies on (e.g., `min < max`, a default within its
+  range, a positive random bound), in a test that checks the relation across the constants of the type (e.g.,
+  `testRangesAreOrdered`); no test per constant. Relations that other tests already cover (e.g., the defaults of
+  a `*Constraints` class through `testIsValidAcceptsDefaultConstraints` of its config) need no test of their own.
 - Configuration and factory tests should cover valid defaults, each rejected unsupported option, and boundary values
   just inside/outside configured ranges.
 - When a test class needs many variants of a record with many components (e.g., the `*Config` records), build them

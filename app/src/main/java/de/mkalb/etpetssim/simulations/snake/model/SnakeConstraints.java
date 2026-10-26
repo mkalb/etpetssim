@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.snake.shared.SnakeDeathMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the Snake configuration.
  */
 public final class SnakeConstraints {
 
@@ -40,43 +40,38 @@ public final class SnakeConstraints {
     public static final List<CellDisplayMode> CELL_DISPLAY_MODE_VALUES = List.of(
             CellDisplayMode.SHAPE_BORDERED);
 
-    // Initialization - Seed
-    public static final String SEED_INITIAL = "";
-
     // Initialization
-    public static final int RULE_STEP = 1;
+    public static final String SEED_INITIAL = "";
     public static final int VERTICAL_WALLS_DEFAULT = 6;
     public static final int VERTICAL_WALLS_MIN = 0;
     public static final int VERTICAL_WALLS_MAX = 100;
-    public static final int VERTICAL_WALLS_STEP = RULE_STEP;
+    public static final int VERTICAL_WALLS_STEP = 1;
     public static final int FOOD_CELLS_DEFAULT = 50;
     public static final int FOOD_CELLS_MIN = 0;
     public static final int FOOD_CELLS_MAX = 10_000;
-    public static final int FOOD_CELLS_STEP = RULE_STEP;
+    public static final int FOOD_CELLS_STEP = 1;
     public static final int SNAKES_DEFAULT = 15;
     public static final int SNAKES_MIN = 0;
     public static final int SNAKES_MAX = 1_000;
-    public static final int SNAKES_STEP = RULE_STEP;
+    public static final int SNAKES_STEP = 1;
     public static final int INITIAL_PENDING_GROWTH_DEFAULT = 2;
     public static final int INITIAL_PENDING_GROWTH_MIN = 0;
     public static final int INITIAL_PENDING_GROWTH_MAX = 1_000;
-    public static final int INITIAL_PENDING_GROWTH_STEP = RULE_STEP;
-
-    // Rules - NeighborhoodMode
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+    public static final int INITIAL_PENDING_GROWTH_STEP = 1;
 
     // Rules
-    public static final SnakeDeathMode SNAKE_DEATH_MODE_DEFAULT = SnakeDeathMode.RESPAWN;
-    public static final List<SnakeDeathMode> SNAKE_DEATH_MODE_VALUES = List.of(
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+    public static final SnakeDeathMode DEATH_MODE_DEFAULT = SnakeDeathMode.RESPAWN;
+    public static final List<SnakeDeathMode> DEATH_MODE_VALUES = List.of(
             SnakeDeathMode.values());
     public static final int GROWTH_PER_FOOD_DEFAULT = 1;
     public static final int GROWTH_PER_FOOD_MIN = 0;
     public static final int GROWTH_PER_FOOD_MAX = 100;
-    public static final int GROWTH_PER_FOOD_STEP = RULE_STEP;
+    public static final int GROWTH_PER_FOOD_STEP = 1;
     public static final int BASE_POINTS_PER_FOOD_DEFAULT = 10;
     public static final int BASE_POINTS_PER_FOOD_MIN = 0;
     public static final int BASE_POINTS_PER_FOOD_MAX = 100;
-    public static final int BASE_POINTS_PER_FOOD_STEP = RULE_STEP;
+    public static final int BASE_POINTS_PER_FOOD_STEP = 1;
     public static final double SEGMENT_LENGTH_MULTIPLIER_DEFAULT = 0.5d;
     public static final double SEGMENT_LENGTH_MULTIPLIER_MIN = 0.0d;
     public static final double SEGMENT_LENGTH_MULTIPLIER_MAX = 5.0d;

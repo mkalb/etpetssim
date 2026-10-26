@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the Wa-Tor configuration.
  */
 public final class WatorConstraints {
 
@@ -40,53 +40,58 @@ public final class WatorConstraints {
             CellDisplayMode.CIRCLE_BORDERED,
             CellDisplayMode.EMOJI);
 
-    // Initialization - Seed
-    public static final String SEED_INITIAL = "";
-
     // Initialization
-    public static final int RULE_STEP = 1;
-    public static final double FISH_PERCENT_DEFAULT = 0.20d;
+    public static final String SEED_INITIAL = "";
+    public static final double FISH_PERCENT_DEFAULT = 0.2d;
     public static final double FISH_PERCENT_MIN = 0.0d;
     public static final double FISH_PERCENT_MAX = 1.0d;
     public static final double SHARK_PERCENT_DEFAULT = 0.05d;
     public static final double SHARK_PERCENT_MIN = 0.0d;
     public static final double SHARK_PERCENT_MAX = 1.0d;
-    public static final double POPULATION_SHARE_SUM_MAX_INCLUSIVE = 1.0d;
-
-    // Rules - NeighborhoodMode
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+    public static final double COMBINED_PERCENT_MAX = 1.0d;
 
     // Rules
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
     public static final int FISH_MAX_AGE_DEFAULT = 20;
     public static final int FISH_MAX_AGE_MIN = 1;
     public static final int FISH_MAX_AGE_MAX = 1_000;
+    public static final int FISH_MAX_AGE_STEP = 1;
     public static final int FISH_MIN_REPRODUCTION_AGE_DEFAULT = 5;
     public static final int FISH_MIN_REPRODUCTION_AGE_MIN = 1;
     public static final int FISH_MIN_REPRODUCTION_AGE_MAX = 1_000;
+    public static final int FISH_MIN_REPRODUCTION_AGE_STEP = 1;
     public static final int FISH_MIN_REPRODUCTION_INTERVAL_DEFAULT = 3;
     public static final int FISH_MIN_REPRODUCTION_INTERVAL_MIN = 1;
     public static final int FISH_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
+    public static final int FISH_MIN_REPRODUCTION_INTERVAL_STEP = 1;
     public static final int SHARK_MAX_AGE_DEFAULT = 40;
     public static final int SHARK_MAX_AGE_MIN = 1;
     public static final int SHARK_MAX_AGE_MAX = 1_000;
+    public static final int SHARK_MAX_AGE_STEP = 1;
     public static final int SHARK_BIRTH_ENERGY_DEFAULT = 8;
     public static final int SHARK_BIRTH_ENERGY_MIN = 1;
     public static final int SHARK_BIRTH_ENERGY_MAX = 1_000;
+    public static final int SHARK_BIRTH_ENERGY_STEP = 1;
     public static final int SHARK_ENERGY_LOSS_PER_STEP_DEFAULT = 1;
     public static final int SHARK_ENERGY_LOSS_PER_STEP_MIN = 1;
     public static final int SHARK_ENERGY_LOSS_PER_STEP_MAX = 1_000;
+    public static final int SHARK_ENERGY_LOSS_PER_STEP_STEP = 1;
     public static final int SHARK_ENERGY_GAIN_PER_FISH_DEFAULT = 2;
     public static final int SHARK_ENERGY_GAIN_PER_FISH_MIN = 1;
     public static final int SHARK_ENERGY_GAIN_PER_FISH_MAX = 1_000;
+    public static final int SHARK_ENERGY_GAIN_PER_FISH_STEP = 1;
     public static final int SHARK_MIN_REPRODUCTION_AGE_DEFAULT = 15;
     public static final int SHARK_MIN_REPRODUCTION_AGE_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_AGE_MAX = 1_000;
+    public static final int SHARK_MIN_REPRODUCTION_AGE_STEP = 1;
     public static final int SHARK_MIN_REPRODUCTION_ENERGY_DEFAULT = 5;
     public static final int SHARK_MIN_REPRODUCTION_ENERGY_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_ENERGY_MAX = 1_000;
+    public static final int SHARK_MIN_REPRODUCTION_ENERGY_STEP = 1;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_DEFAULT = 3;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MIN = 1;
     public static final int SHARK_MIN_REPRODUCTION_INTERVAL_MAX = 1_000;
+    public static final int SHARK_MIN_REPRODUCTION_INTERVAL_STEP = 1;
 
     private WatorConstraints() {
     }

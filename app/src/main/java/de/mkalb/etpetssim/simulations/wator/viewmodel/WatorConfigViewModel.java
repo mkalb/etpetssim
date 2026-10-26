@@ -57,57 +57,57 @@ public final class WatorConfigViewModel
             FISH_MAX_AGE_DEFAULT,
             FISH_MAX_AGE_MIN,
             FISH_MAX_AGE_MAX,
-            RULE_STEP);
+            FISH_MAX_AGE_STEP);
     private final InputIntegerProperty fishMinReproductionAge = InputIntegerProperty.of(
             FISH_MIN_REPRODUCTION_AGE_DEFAULT,
             FISH_MIN_REPRODUCTION_AGE_MIN,
             FISH_MIN_REPRODUCTION_AGE_MAX,
-            RULE_STEP);
+            FISH_MIN_REPRODUCTION_AGE_STEP);
     private final InputIntegerProperty fishMinReproductionInterval = InputIntegerProperty.of(
             FISH_MIN_REPRODUCTION_INTERVAL_DEFAULT,
             FISH_MIN_REPRODUCTION_INTERVAL_MIN,
             FISH_MIN_REPRODUCTION_INTERVAL_MAX,
-            RULE_STEP);
+            FISH_MIN_REPRODUCTION_INTERVAL_STEP);
     private final InputIntegerProperty sharkMaxAge = InputIntegerProperty.of(
             SHARK_MAX_AGE_DEFAULT,
             SHARK_MAX_AGE_MIN,
             SHARK_MAX_AGE_MAX,
-            RULE_STEP);
+            SHARK_MAX_AGE_STEP);
     private final InputIntegerProperty sharkBirthEnergy = InputIntegerProperty.of(
             SHARK_BIRTH_ENERGY_DEFAULT,
             SHARK_BIRTH_ENERGY_MIN,
             SHARK_BIRTH_ENERGY_MAX,
-            RULE_STEP);
+            SHARK_BIRTH_ENERGY_STEP);
     private final InputIntegerProperty sharkEnergyLossPerStep = InputIntegerProperty.of(
             SHARK_ENERGY_LOSS_PER_STEP_DEFAULT,
             SHARK_ENERGY_LOSS_PER_STEP_MIN,
             SHARK_ENERGY_LOSS_PER_STEP_MAX,
-            RULE_STEP);
+            SHARK_ENERGY_LOSS_PER_STEP_STEP);
     private final InputIntegerProperty sharkEnergyGainPerFish = InputIntegerProperty.of(
             SHARK_ENERGY_GAIN_PER_FISH_DEFAULT,
             SHARK_ENERGY_GAIN_PER_FISH_MIN,
             SHARK_ENERGY_GAIN_PER_FISH_MAX,
-            RULE_STEP);
+            SHARK_ENERGY_GAIN_PER_FISH_STEP);
     private final InputIntegerProperty sharkMinReproductionAge = InputIntegerProperty.of(
             SHARK_MIN_REPRODUCTION_AGE_DEFAULT,
             SHARK_MIN_REPRODUCTION_AGE_MIN,
             SHARK_MIN_REPRODUCTION_AGE_MAX,
-            RULE_STEP);
+            SHARK_MIN_REPRODUCTION_AGE_STEP);
     private final InputIntegerProperty sharkMinReproductionEnergy = InputIntegerProperty.of(
             SHARK_MIN_REPRODUCTION_ENERGY_DEFAULT,
             SHARK_MIN_REPRODUCTION_ENERGY_MIN,
             SHARK_MIN_REPRODUCTION_ENERGY_MAX,
-            RULE_STEP);
+            SHARK_MIN_REPRODUCTION_ENERGY_STEP);
     private final InputIntegerProperty sharkMinReproductionInterval = InputIntegerProperty.of(
             SHARK_MIN_REPRODUCTION_INTERVAL_DEFAULT,
             SHARK_MIN_REPRODUCTION_INTERVAL_MIN,
             SHARK_MIN_REPRODUCTION_INTERVAL_MAX,
-            RULE_STEP);
+            SHARK_MIN_REPRODUCTION_INTERVAL_STEP);
 
     public WatorConfigViewModel(ReadOnlyObjectProperty<SimulationState> simulationState) {
         super(simulationState, COMMON_SETTINGS);
         registerConfigValidationRule(
-                fishPercent.property().add(sharkPercent.property()).greaterThan(POPULATION_SHARE_SUM_MAX_INCLUSIVE),
+                fishPercent.property().add(sharkPercent.property()).greaterThan(COMBINED_PERCENT_MAX),
                 () -> AppLocalization.getText(WATOR_CONFIG_VALIDATION_POPULATION_SHARE)
         );
     }

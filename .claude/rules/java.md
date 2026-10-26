@@ -130,6 +130,19 @@ Use these method naming patterns when they match the method's primary behavior; 
   localization keys; edit toolbar choices and records expose the key of their own display text as `labelKey()`.
 - Document declaration-order semantics in type Javadoc when order matters.
 
+## Utility Classes
+
+Rules for classes with only static members (constants, static methods, or both).
+
+- Declare a utility class `final` with exactly one empty `private` constructor without Javadoc; do not throw an
+  exception from it.
+- Sort the constants of a constant holder without domain grouping (e.g., localization keys or style class names)
+  alphabetically by name, and check the order in its test with `ConstantTestSupport.assertConstantNamesSorted(..)`.
+- Name a utility class with static factories for an interface after the plural of the interface (`GridPatterns` for
+  `GridPattern`, `GridInitializers` for `GridInitializer`), as in `Collections`; name classes that create JavaFX
+  objects `FX*Factory` (see `ui.md`); name other utility classes after their role (e.g., `GridGeometry`,
+  `CellNeighborhoods`, `<Simulation>Constraints`).
+
 ## Nullability (JSpecify)
 
 The module declaration `module-info.java` uses `@NullMarked` to establish non-null-by-default for all packages. Do not

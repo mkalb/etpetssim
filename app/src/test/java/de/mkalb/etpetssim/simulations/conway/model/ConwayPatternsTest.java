@@ -4,86 +4,35 @@ import de.mkalb.etpetssim.engine.*;
 import de.mkalb.etpetssim.engine.support.GridPattern;
 import de.mkalb.etpetssim.simulations.conway.model.entity.ConwayEntity;
 import de.mkalb.etpetssim.simulations.conway.shared.*;
+import de.mkalb.etpetssim.testsupport.LocalizationTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.*;
+import java.util.stream.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("MagicNumber")
 final class ConwayPatternsTest {
 
-    private static final int PATTERN_COUNT = 15;
-    private static final List<CellShape> UNSUPPORTED_PATTERN_CELL_SHAPES = List.of(
-            CellShape.TRIANGLE,
-            CellShape.HEXAGON
-    );
-    private static final List<String> EXPECTED_CLASSIC_CHOICE_IDS = List.of(
-            "conway.beehive",
-            "conway.block",
-            "conway.boat",
-            "conway.loaf",
-            "conway.tub",
-            "conway.beacon",
-            "conway.blinker",
-            "conway.pentadecathlon",
-            "conway.pulsar",
-            "conway.toad",
-            "conway.acorn",
-            "conway.rpentomino",
-            "conway.glider",
-            "conway.lwss"
-    );
-    private static final List<String> EXPECTED_CHOICE_IDS = List.of(
-            "conway.beehive",
-            "conway.block",
-            "conway.boat",
-            "conway.loaf",
-            "conway.tub",
-            "conway.beacon",
-            "conway.blinker",
-            "conway.pentadecathlon",
-            "conway.pulsar",
-            "conway.toad",
-            "conway.acorn",
-            "conway.rpentomino",
-            "conway.highlife.replicator",
-            "conway.glider",
-            "conway.lwss"
-    );
-    private static final List<String> EXPECTED_LABEL_KEYS = List.of(
-            "conway.pattern.beehive",
-            "conway.pattern.block",
-            "conway.pattern.boat",
-            "conway.pattern.loaf",
-            "conway.pattern.tub",
-            "conway.pattern.beacon",
-            "conway.pattern.blinker",
-            "conway.pattern.pentadecathlon",
-            "conway.pattern.pulsar",
-            "conway.pattern.toad",
-            "conway.pattern.acorn",
-            "conway.pattern.rpentomino",
-            "conway.pattern.highlife.replicator",
-            "conway.pattern.glider",
-            "conway.pattern.lwss"
-    );
-    private static final Map<String, PatternExpectation> EXPECTED_PATTERNS = Map.ofEntries(
-            Map.entry("conway.beehive", new PatternExpectation(6, 5, 6)),
-            Map.entry("conway.block", new PatternExpectation(4, 4, 4)),
-            Map.entry("conway.boat", new PatternExpectation(5, 5, 5)),
-            Map.entry("conway.loaf", new PatternExpectation(6, 6, 7)),
-            Map.entry("conway.tub", new PatternExpectation(5, 5, 4)),
-            Map.entry("conway.beacon", new PatternExpectation(6, 6, 6)),
-            Map.entry("conway.blinker", new PatternExpectation(5, 5, 3)),
-            Map.entry("conway.pentadecathlon", new PatternExpectation(12, 5, 12)),
-            Map.entry("conway.pulsar", new PatternExpectation(15, 15, 48)),
-            Map.entry("conway.toad", new PatternExpectation(6, 4, 6)),
-            Map.entry("conway.acorn", new PatternExpectation(9, 5, 7)),
-            Map.entry("conway.rpentomino", new PatternExpectation(5, 5, 5)),
-            Map.entry("conway.highlife.replicator", new PatternExpectation(7, 7, 12)),
-            Map.entry("conway.glider", new PatternExpectation(5, 5, 5)),
-            Map.entry("conway.lwss", new PatternExpectation(7, 6, 9))
+    private static final String HIGHLIFE_REPLICATOR_ID = "conway.highlife.replicator";
+    private static final List<PatternExpectation> EXPECTED_PATTERNS = List.of(
+            new PatternExpectation("conway.beehive", 6, 5, 6),
+            new PatternExpectation("conway.block", 4, 4, 4),
+            new PatternExpectation("conway.boat", 5, 5, 5),
+            new PatternExpectation("conway.loaf", 6, 6, 7),
+            new PatternExpectation("conway.tub", 5, 5, 4),
+            new PatternExpectation("conway.beacon", 6, 6, 6),
+            new PatternExpectation("conway.blinker", 5, 5, 3),
+            new PatternExpectation("conway.pentadecathlon", 12, 5, 12),
+            new PatternExpectation("conway.pulsar", 15, 15, 48),
+            new PatternExpectation("conway.toad", 6, 4, 6),
+            new PatternExpectation("conway.acorn", 9, 5, 7),
+            new PatternExpectation("conway.rpentomino", 5, 5, 5),
+            new PatternExpectation(HIGHLIFE_REPLICATOR_ID, 7, 7, 12),
+            new PatternExpectation("conway.glider", 5, 5, 5),
+            new PatternExpectation("conway.lwss", 7, 6, 9)
     );
 
     private static ConwayConfig createConfig(CellShape cellShape) {
@@ -105,21 +54,27 @@ final class ConwayPatternsTest {
         );
     }
 
-    private static void assertPattern(GridPattern<ConwayEntity> pattern, int width, int height, long aliveCount) {
+    private static List<String> choiceIds(List<ConwayPatternChoice> choices) {
+        return choices.stream().map(ConwayPatternChoice::choiceId).toList();
+    }
+
+    private static void assertPattern(GridPattern<ConwayEntity> pattern, PatternExpectation expectation) {
         Map<GridOffset, ConwayEntity> offsetMap = pattern.offsetMap();
-        long expectedCellCount = (long) width * height;
+        long expectedCellCount = (long) expectation.width() * expectation.height();
+        long aliveCount = offsetMap.values().stream().filter(ConwayEntity.ALIVE::equals).count();
         long deadCount = offsetMap.values().stream().filter(ConwayEntity.DEAD::equals).count();
 
-        assertAll(
-                () -> assertFalse(pattern.isEmpty()),
+        assertAll(expectation.choiceId(),
                 () -> assertTrue(pattern.isTopLeftAtOrigin(), "Pattern should be normalized to the origin"),
-                () -> assertEquals(width, pattern.width(), "Unexpected pattern width"),
-                () -> assertEquals(height, pattern.height(), "Unexpected pattern height"),
+                () -> assertEquals(expectation.width(), pattern.width(), "Unexpected pattern width"),
+                () -> assertEquals(expectation.height(), pattern.height(), "Unexpected pattern height"),
                 () -> assertEquals(expectedCellCount, pattern.size(), "Pattern should fill the entire rectangle"),
-                () -> assertEquals(aliveCount, offsetMap.values().stream().filter(ConwayEntity.ALIVE::equals).count(),
-                        "Unexpected number of alive cells"),
-                () -> assertEquals(expectedCellCount - aliveCount, deadCount, "Unexpected number of dead cells"),
-                () -> assertTrue(hasDeadBorder(offsetMap, width, height), "All edge cells should be dead")
+                () -> assertEquals(expectation.aliveCount(), aliveCount, "Unexpected number of alive cells"),
+                () -> assertEquals(expectedCellCount - expectation.aliveCount(), deadCount,
+                        "Unexpected number of dead cells"),
+                () -> assertTrue(hasDeadBorder(offsetMap, expectation.width(), expectation.height()),
+                        "All edge cells should be dead"),
+                () -> assertThrows(UnsupportedOperationException.class, offsetMap::clear)
         );
     }
 
@@ -138,159 +93,65 @@ final class ConwayPatternsTest {
     }
 
     @Test
-    void testChoicesContainsAllClassicPatternsInOrder() {
+    void testChoices() {
         List<ConwayPatternChoice> choices = ConwayPatterns.choices();
+        List<String> labelKeys = choices.stream().map(ConwayPatternChoice::labelKey).toList();
 
         assertAll(
-                () -> assertEquals(PATTERN_COUNT, choices.size(), "All patterns should be registered"),
-                () -> assertEquals(EXPECTED_CHOICE_IDS, choices.stream().map(ConwayPatternChoice::choiceId).toList()),
-                () -> assertEquals(EXPECTED_LABEL_KEYS, choices.stream().map(ConwayPatternChoice::labelKey).toList()),
+                () -> assertEquals(EXPECTED_PATTERNS.stream().map(PatternExpectation::choiceId).toList(),
+                        choiceIds(choices)),
+                () -> LocalizationTestSupport.assertKeysInAllBundles(labelKeys),
                 () -> assertTrue(choices.stream().noneMatch(choice -> choice.choiceId().equals(choice.labelKey())),
                         "Pattern choice ids must stay separate from localization keys")
         );
     }
 
     @Test
-    void testAvailableChoicesMatchChoicesForClassicSquareConfig() {
-        ConwayConfig config = createConfig(CellShape.SQUARE);
-        List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
+    void testChoicesPatternsMatchExpectedShapes() {
+        List<ConwayPatternChoice> choices = ConwayPatterns.choices();
 
-        assertEquals(EXPECTED_CLASSIC_CHOICE_IDS,
-                availableChoices.stream().map(ConwayPatternChoice::choiceId).toList(),
-                "Choice order should stay stable for the classic square config");
+        assertEquals(EXPECTED_PATTERNS.size(), choices.size());
+        assertAll(IntStream.range(0, choices.size())
+                           .mapToObj(index -> () -> assertPattern(
+                                   choices.get(index).pattern(),
+                                   EXPECTED_PATTERNS.get(index))));
     }
 
     @Test
-    void testAvailableChoicesRejectUnsupportedCellShapes() {
-        assertAll(UNSUPPORTED_PATTERN_CELL_SHAPES.stream()
-                                                 .<org.junit.jupiter.api.function.Executable>map(cellShape -> () -> {
-                                                     ConwayConfig config = createConfig(cellShape);
-                                                     List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
+    void testAvailableChoices() {
+        List<String> expectedChoiceIds = EXPECTED_PATTERNS.stream()
+                                                          .map(PatternExpectation::choiceId)
+                                                          .filter(choiceId -> !choiceId.equals(HIGHLIFE_REPLICATOR_ID))
+                                                          .toList();
 
-                                                     assertTrue(availableChoices.isEmpty(),
-                                                             "Classic patterns should not be available for " + cellShape);
-                                                 })
-                                                 .toArray(org.junit.jupiter.api.function.Executable[]::new));
+        assertEquals(expectedChoiceIds, choiceIds(ConwayPatterns.availableChoices(createConfig(CellShape.SQUARE))));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = CellShape.class, names = {"TRIANGLE", "HEXAGON"})
+    void testAvailableChoicesReturnsEmptyForUnsupportedCellShape(CellShape cellShape) {
+        assertTrue(ConwayPatterns.availableChoices(createConfig(cellShape)).isEmpty());
     }
 
     @Test
-    void testAvailableChoicesRejectNonClassicTransitionRules() {
+    void testAvailableChoicesReturnsEmptyForOtherTransitionRules() {
         ConwayConfig config = createConfig(
                 CellShape.SQUARE,
                 ConwayTransitionRules.of(Set.of(2, 3), Set.of(3, 4)));
 
-        assertTrue(ConwayPatterns.availableChoices(config).isEmpty(),
-                "Classic patterns should not be available for non-classic transition rules");
+        assertTrue(ConwayPatterns.availableChoices(config).isEmpty());
     }
 
     @Test
-    void testAvailableChoicesIncludeHighLifeReplicatorForHighLifeRules() {
+    void testAvailableChoicesReturnsReplicatorForHighLifeRules() {
         ConwayConfig config = createConfig(
                 CellShape.SQUARE,
                 ConwayTransitionRules.parse(ConwayRulePresetSquare.HIGHLIFE.ruleString()));
 
-        List<ConwayPatternChoice> availableChoices = ConwayPatterns.availableChoices(config);
-
-        assertEquals(List.of("conway.highlife.replicator"),
-                availableChoices.stream().map(ConwayPatternChoice::choiceId).toList());
+        assertEquals(List.of(HIGHLIFE_REPLICATOR_ID), choiceIds(ConwayPatterns.availableChoices(config)));
     }
 
-    @Test
-    void testChoicesPatternsMatchExpectedShapes() {
-        List<ConwayPatternChoice> choices = ConwayPatterns.choices();
-
-        assertAll(choices.stream()
-                         .<org.junit.jupiter.api.function.Executable>map(choice -> () -> {
-                             PatternExpectation expectation = EXPECTED_PATTERNS.get(choice.choiceId());
-
-                             assertAll(
-                                     () -> assertNotNull(expectation, "Missing expectation for choiceId " + choice.choiceId()),
-                                     () -> assertPattern(
-                                             choice.pattern(),
-                                             Objects.requireNonNull(expectation).width(),
-                                             expectation.height(),
-                                             expectation.aliveCount())
-                             );
-                         })
-                         .toArray(org.junit.jupiter.api.function.Executable[]::new));
-    }
-
-    @Test
-    void testBeehive() {
-        assertPattern(ConwayPatterns.beehive(), 6, 5, 6);
-    }
-
-    @Test
-    void testBlock() {
-        assertPattern(ConwayPatterns.block(), 4, 4, 4);
-    }
-
-    @Test
-    void testBoat() {
-        assertPattern(ConwayPatterns.boat(), 5, 5, 5);
-    }
-
-    @Test
-    void testLoaf() {
-        assertPattern(ConwayPatterns.loaf(), 6, 6, 7);
-    }
-
-    @Test
-    void testTub() {
-        assertPattern(ConwayPatterns.tub(), 5, 5, 4);
-    }
-
-    @Test
-    void testBeacon() {
-        assertPattern(ConwayPatterns.beacon(), 6, 6, 6);
-    }
-
-    @Test
-    void testBlinker() {
-        assertPattern(ConwayPatterns.blinker(), 5, 5, 3);
-    }
-
-    @Test
-    void testPentadecathlon() {
-        assertPattern(ConwayPatterns.pentadecathlon(), 12, 5, 12);
-    }
-
-    @Test
-    void testPulsar() {
-        assertPattern(ConwayPatterns.pulsar(), 15, 15, 48);
-    }
-
-    @Test
-    void testToad() {
-        assertPattern(ConwayPatterns.toad(), 6, 4, 6);
-    }
-
-    @Test
-    void testAcorn() {
-        assertPattern(ConwayPatterns.acorn(), 9, 5, 7);
-    }
-
-    @Test
-    void testRPentomino() {
-        assertPattern(ConwayPatterns.rPentomino(), 5, 5, 5);
-    }
-
-    @Test
-    void testHighlifeReplicator() {
-        assertPattern(ConwayPatterns.highlifeReplicator(), 7, 7, 12);
-    }
-
-    @Test
-    void testGlider() {
-        assertPattern(ConwayPatterns.glider(), 5, 5, 5);
-    }
-
-    @Test
-    void testLightweightSpaceship() {
-        assertPattern(ConwayPatterns.lightweightSpaceship(), 7, 6, 9);
-    }
-
-    private record PatternExpectation(int width, int height, long aliveCount) {
+    private record PatternExpectation(String choiceId, int width, int height, long aliveCount) {
     }
 
 }

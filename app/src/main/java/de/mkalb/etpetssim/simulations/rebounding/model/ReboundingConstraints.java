@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the Rebounding Entities configuration.
  */
 public final class ReboundingConstraints {
 
@@ -37,10 +37,8 @@ public final class ReboundingConstraints {
             CellDisplayMode.SHAPE,
             CellDisplayMode.SHAPE_BORDERED);
 
-    // Initialization - Seed
-    public static final String SEED_INITIAL = "";
-
     // Initialization
+    public static final String SEED_INITIAL = "";
     public static final int VERTICAL_WALLS_DEFAULT = 2;
     public static final int VERTICAL_WALLS_MIN = 0;
     public static final int VERTICAL_WALLS_MAX = 100;
@@ -49,7 +47,7 @@ public final class ReboundingConstraints {
     public static final double MOVING_ENTITY_PERCENT_MIN = 0.0d;
     public static final double MOVING_ENTITY_PERCENT_MAX = 0.1d;
 
-    // Rules - NeighborhoodMode
+    // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
 
     private ReboundingConstraints() {

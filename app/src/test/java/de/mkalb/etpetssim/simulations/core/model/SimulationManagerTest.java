@@ -180,7 +180,7 @@ final class SimulationManagerTest {
                 LangtonConstraints.CELL_DISPLAY_MODE_DEFAULT,
                 1L,
                 LangtonConstraints.NEIGHBORHOOD_MODE_DEFAULT,
-                LangtonMovementRules.parse(LangtonConstraints.RULE_DEFAULT)
+                LangtonMovementRules.parse(LangtonConstraints.MOVEMENT_RULES_DEFAULT)
         );
     }
 

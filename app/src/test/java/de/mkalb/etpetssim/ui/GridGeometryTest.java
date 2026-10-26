@@ -20,56 +20,6 @@ final class GridGeometryTest {
     private static final GridCoordinate TEST_COORDINATE = new GridCoordinate(3, 4);
 
     @Test
-    void testSqrtTwo() {
-        assertEquals(Math.sqrt(2), GridGeometry.SQRT_TWO, DELTA);
-    }
-
-    @Test
-    void testSqrtThree() {
-        assertEquals(Math.sqrt(3), GridGeometry.SQRT_THREE, DELTA);
-    }
-
-    @Test
-    void testZero() {
-        assertEquals(0.0d, GridGeometry.ZERO, DELTA);
-    }
-
-    @Test
-    void testTwo() {
-        assertEquals(2.0d, GridGeometry.TWO, DELTA);
-    }
-
-    @Test
-    void testOneThird() {
-        assertEquals(1.0d / 3.0d, GridGeometry.ONE_THIRD, DELTA);
-    }
-
-    @Test
-    void testTwoThirds() {
-        assertEquals(2.0d / 3.0d, GridGeometry.TWO_THIRDS, DELTA);
-    }
-
-    @Test
-    void testOneHalf() {
-        assertEquals(0.5d, GridGeometry.ONE_HALF, DELTA);
-    }
-
-    @Test
-    void testThreeHalves() {
-        assertEquals(1.5d, GridGeometry.THREE_HALVES, DELTA);
-    }
-
-    @Test
-    void testMinEdgeLength() {
-        assertEquals(1.0d, GridGeometry.MIN_EDGE_LENGTH, DELTA);
-    }
-
-    @Test
-    void testMaxEdgeLength() {
-        assertEquals(1_024.0d, GridGeometry.MAX_EDGE_LENGTH, DELTA);
-    }
-
-    @Test
     void testComputeEdgeLengthToMatchWidthForSameShape() {
         assertAll(
                 () -> assertEquals(EDGE_LENGTH, GridGeometry.computeEdgeLengthToMatchWidth(EDGE_LENGTH, CellShape.TRIANGLE, CellShape.TRIANGLE), DELTA),
@@ -109,7 +59,7 @@ final class GridGeometryTest {
         assertAll(
                 () -> assertEquals(EDGE_LENGTH, dimension.edgeLength(), DELTA),
                 () -> assertEquals(EDGE_LENGTH, dimension.width(), DELTA),
-                () -> assertEquals(GridGeometry.SQRT_THREE * HALF_EDGE_LENGTH, dimension.height(), DELTA),
+                () -> assertEquals(Math.sqrt(3.0d) * HALF_EDGE_LENGTH, dimension.height(), DELTA),
                 () -> assertEquals(HALF_EDGE_LENGTH, dimension.halfEdgeLength(), DELTA),
                 () -> assertEquals(HALF_EDGE_LENGTH, dimension.halfWidth(), DELTA),
                 () -> assertEquals(HALF_EDGE_LENGTH, dimension.columnWidth(), DELTA)
@@ -139,7 +89,7 @@ final class GridGeometryTest {
         assertAll(
                 () -> assertEquals(EDGE_LENGTH, dimension.edgeLength(), DELTA),
                 () -> assertEquals(EDGE_LENGTH * 2, dimension.width(), DELTA),
-                () -> assertEquals(GridGeometry.SQRT_THREE * EDGE_LENGTH, dimension.height(), DELTA),
+                () -> assertEquals(Math.sqrt(3.0d) * EDGE_LENGTH, dimension.height(), DELTA),
                 () -> assertEquals(HALF_EDGE_LENGTH, dimension.halfEdgeLength(), DELTA),
                 () -> assertEquals(EDGE_LENGTH, dimension.halfWidth(), DELTA),
                 () -> assertEquals(EDGE_LENGTH * 1.5d, dimension.columnWidth(), DELTA),
@@ -408,7 +358,7 @@ final class GridGeometryTest {
 
         Point2D topLeft = GridGeometry.toCanvasPosition(upTriangle, cellDimension, CellShape.TRIANGLE);
         double expectedX = topLeft.getX() + cellDimension.halfWidth();
-        double expectedY = topLeft.getY() + (cellDimension.height() * GridGeometry.TWO_THIRDS);
+        double expectedY = topLeft.getY() + (cellDimension.height() * (2.0d / 3.0d));
 
         assertAll(
                 () -> assertFalse(upTriangle.isTriangleCellPointingDown()),
@@ -425,7 +375,7 @@ final class GridGeometryTest {
 
         Point2D topLeft = GridGeometry.toCanvasPosition(downTriangle, cellDimension, CellShape.TRIANGLE);
         double expectedX = topLeft.getX() + cellDimension.halfWidth();
-        double expectedY = topLeft.getY() + (cellDimension.height() * GridGeometry.ONE_THIRD);
+        double expectedY = topLeft.getY() + (cellDimension.height() * (1.0d / 3.0d));
 
         assertAll(
                 () -> assertTrue(downTriangle.isTriangleCellPointingDown()),

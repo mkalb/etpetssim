@@ -10,12 +10,14 @@ import de.mkalb.etpetssim.simulations.etpets.view.*;
 import de.mkalb.etpetssim.simulations.etpets.viewmodel.*;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the ET Pets main view.
+ */
 public final class EtpetsFactory {
 
     private EtpetsFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -24,10 +26,10 @@ public final class EtpetsFactory {
 
         // ViewModel
         var configViewModel = new EtpetsConfigViewModel(readOnlySimulationState);
+        var editToolBarViewModel = new EtpetsEditToolBarViewModel();
         var controlViewModel = new DefaultControlViewModel(readOnlySimulationState);
         var observationViewModel =
                 new DefaultObservationViewModel<EtpetsEntity, EtpetsCell, EtpetsStatistics>(readOnlySimulationState);
-        var editToolBarViewModel = new EtpetsEditToolBarViewModel();
         var viewModel =
                 new DefaultMainViewModel<>(simulationState, configViewModel, controlViewModel, observationViewModel,
                         EtpetsSimulationManager::new, EtpetsCell::from, new EtpetsUserAction());
@@ -36,10 +38,7 @@ public final class EtpetsFactory {
         var configView = new EtpetsConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new EtpetsObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new EtpetsMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
-
-        // Return the main view
-        return view;
+        return new EtpetsMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

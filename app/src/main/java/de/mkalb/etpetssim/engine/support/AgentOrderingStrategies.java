@@ -6,14 +6,11 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import java.util.*;
 
 /**
- * Provides common strategies for ordering agent grid cells in a simulation.
- * <p>
- * Offers reusable {@link Comparator} implementations for
- * sorting {@link GridCell} instances by position, entity class, or descriptor ID.
- * These strategies can be used to control the order in which agents are processed
- * during simulation steps.
- * <p>
- * The comparators are intended to be passed to {@link de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner}
+ * Comparators that define the order in which agent grid cells are processed in a simulation step.
+ *
+ * <p>The comparators sort {@link GridCell} instances by position, entity class, or descriptor ID.
+ *
+ * <p>The comparators are intended to be passed to {@link de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner}
  * to determine the order in which agents are processed in the grid model.
  *
  * @see GridCell
@@ -27,8 +24,8 @@ public final class AgentOrderingStrategies {
 
     /**
      * Returns a comparator that orders grid cells by their position in the grid.
-     * <p>
-     * Cells are first compared by their y-coordinate, then by their x-coordinate.
+     *
+     * <p>Cells are first compared by their y-coordinate, then by their x-coordinate.
      *
      * @param <ENT> the type of entity stored in the grid cell
      * @return a comparator for ordering grid cells by position
@@ -40,8 +37,8 @@ public final class AgentOrderingStrategies {
 
     /**
      * Returns a comparator that orders grid cells by the simple class name of their entity.
-     * <p>
-     * Groups cells by the type of entity they contain.
+     *
+     * <p>Groups cells by the type of entity they contain.
      *
      * @param <ENT> the type of entity stored in the grid cell
      * @return a comparator for ordering grid cells by entity class name
@@ -52,8 +49,8 @@ public final class AgentOrderingStrategies {
 
     /**
      * Returns a comparator that orders grid cells by the descriptor ID of their entity.
-     * <p>
-     * Sorts cells based on the unique descriptor ID of the contained entity.
+     *
+     * <p>Sorts cells based on the unique descriptor ID of the contained entity.
      *
      * @param <ENT> the type of entity stored in the grid cell
      * @return a comparator for ordering grid cells by entity descriptor ID

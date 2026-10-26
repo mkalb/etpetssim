@@ -119,7 +119,7 @@ final class SnakeUserActionTest {
 
         userAction.apply(
                 manager,
-                new SnakeUserActionContext.AddSnake(SnakeMoveStrategies.MOMENTUM),
+                new SnakeUserActionContext.AddSnake(SnakeMoveStrategies.strategies().getFirst()),
                 selectedCell(manager, coordinate));
 
         SnakeEntity entity = manager.currentGridModel().getEntity(coordinate);
@@ -139,7 +139,7 @@ final class SnakeUserActionTest {
 
         SnakeHead head = new SnakeHead(
                 42,
-                SnakeMoveStrategies.strategiesForConfig().getFirst(),
+                SnakeMoveStrategies.strategies().getFirst(),
                 1,
                 0);
         head.move(segmentCoordinate, CompassDirection.E, 0, 0);

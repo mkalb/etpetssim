@@ -77,7 +77,7 @@ public record WatorConfig(
     }
 
     private boolean hasValidCombinedRanges() {
-        return (fishPercent + sharkPercent) <= POPULATION_SHARE_SUM_MAX_INCLUSIVE;
+        return (fishPercent + sharkPercent) <= COMBINED_PERCENT_MAX;
     }
 
     /**

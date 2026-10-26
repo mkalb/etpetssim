@@ -2,20 +2,22 @@ package de.mkalb.etpetssim.simulations.snake.model.entity;
 
 import de.mkalb.etpetssim.engine.GridCoordinate;
 import de.mkalb.etpetssim.engine.neighborhood.CompassDirection;
-import de.mkalb.etpetssim.simulations.snake.model.strategy.SnakeMoveStrategies;
+import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 final class SnakeHeadTest {
 
+    private static final SnakeMoveStrategy STRATEGY = SnakeMoveStrategies.strategies().getFirst();
+
     private static SnakeHead createSnakeHead() {
-        return new SnakeHead(1, SnakeMoveStrategies.MOMENTUM, 2, 5);
+        return new SnakeHead(1, STRATEGY, 2, 5);
     }
 
     @Test
     void testToDisplayString() {
-        String strategyName = SnakeMoveStrategies.MOMENTUM.displayName();
+        String strategyName = STRATEGY.displayName();
         String arrow = CompassDirection.N.arrow();
         SnakeHead newSnake = createSnakeHead();
         SnakeHead growingSnake = createSnakeHead();

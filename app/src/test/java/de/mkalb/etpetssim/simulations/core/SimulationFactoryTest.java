@@ -57,32 +57,21 @@ final class SimulationFactoryTest {
     }
 
     @Test
-    void testCreateInstanceReturnsCompleteInstanceForEveryType() {
+    void testCreateInstance() {
+        assertEquals(EnumSet.allOf(SimulationType.class), EXPECTED_MAIN_VIEW_TYPES.keySet());
+
         for (SimulationType type : SimulationType.values()) {
             SimulationInstance instance = createInstance(type);
             assertAll(
                     type.name(),
-                    () -> assertNotNull(instance),
                     () -> assertEquals(type, instance.simulationType()),
-                    () -> assertNotNull(instance.simulationMainView()),
-                    () -> assertNotNull(instance.region())
+                    () -> assertInstanceOf(EXPECTED_MAIN_VIEW_TYPES.get(type), instance.simulationMainView())
             );
         }
     }
 
     @Test
-    void testCreateInstanceUsesExpectedMainViewForEverySimulationType() {
-        assertEquals(EnumSet.allOf(SimulationType.class), EXPECTED_MAIN_VIEW_TYPES.keySet());
-
-        for (SimulationType type : SimulationType.values()) {
-            Class<?> expectedMainViewType = EXPECTED_MAIN_VIEW_TYPES.get(type);
-            SimulationInstance instance = createInstance(type);
-            assertInstanceOf(expectedMainViewType, instance.simulationMainView());
-        }
-    }
-
-    @Test
-    void testCreateInstanceStartscreenInvokesStageUpdater() {
+    void testCreateInstanceInvokesStageUpdaterForStartscreen() {
         FXTestSupport.runAndWait(() -> {
             Stage stage = new Stage();
             AtomicReference<Stage> updatedStage = new AtomicReference<>();

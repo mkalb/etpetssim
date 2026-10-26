@@ -7,7 +7,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the Sugarscape configuration.
  */
 public final class SugarConstraints {
 
@@ -39,52 +39,47 @@ public final class SugarConstraints {
     public static final List<CellDisplayMode> CELL_DISPLAY_MODE_VALUES = List.of(
             CellDisplayMode.SHAPE);
 
-    // Initialization - Seed
-    public static final String SEED_INITIAL = "";
-
     // Initialization
-    public static final int RULE_STEP = 1;
+    public static final String SEED_INITIAL = "";
     public static final double AGENT_PERCENT_DEFAULT = 0.2d;
     public static final double AGENT_PERCENT_MIN = 0.0d;
     public static final double AGENT_PERCENT_MAX = 1.0d;
     public static final int SUGAR_PEAKS_DEFAULT = 4;
     public static final int SUGAR_PEAKS_MIN = 1;
     public static final int SUGAR_PEAKS_MAX = 5;
-    public static final int SUGAR_PEAKS_STEP = RULE_STEP;
+    public static final int SUGAR_PEAKS_STEP = 1;
     public static final int SUGAR_RADIUS_LIMIT_DEFAULT = 14;
     public static final int SUGAR_RADIUS_LIMIT_MIN = 0;
     public static final int SUGAR_RADIUS_LIMIT_MAX = 100;
-    public static final int SUGAR_RADIUS_LIMIT_STEP = RULE_STEP;
+    public static final int SUGAR_RADIUS_LIMIT_STEP = 1;
     public static final int MIN_SUGAR_AMOUNT_DEFAULT = 1;
     public static final int MAX_SUGAR_AMOUNT_DEFAULT = 8;
     public static final int MAX_SUGAR_AMOUNT_MIN = 1;
     public static final int MAX_SUGAR_AMOUNT_MAX = 20;
-    public static final int MAX_SUGAR_AMOUNT_STEP = RULE_STEP;
+    public static final int MAX_SUGAR_AMOUNT_STEP = 1;
     public static final int AGENT_INITIAL_ENERGY_DEFAULT = 12;
     public static final int AGENT_INITIAL_ENERGY_MIN = 1;
     public static final int AGENT_INITIAL_ENERGY_MAX = 20;
-    public static final int AGENT_INITIAL_ENERGY_STEP = RULE_STEP;
-
-    // Rules - NeighborhoodMode
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
+    public static final int AGENT_INITIAL_ENERGY_STEP = 1;
 
     // Rules
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_ONLY;
     public static final int SUGAR_REGENERATION_RATE_DEFAULT = 1;
     public static final int SUGAR_REGENERATION_RATE_MIN = 1;
     public static final int SUGAR_REGENERATION_RATE_MAX = 10;
-    public static final int SUGAR_REGENERATION_RATE_STEP = RULE_STEP;
+    public static final int SUGAR_REGENERATION_RATE_STEP = 1;
     public static final int AGENT_METABOLISM_RATE_DEFAULT = 2;
     public static final int AGENT_METABOLISM_RATE_MIN = 1;
     public static final int AGENT_METABOLISM_RATE_MAX = 10;
-    public static final int AGENT_METABOLISM_RATE_STEP = RULE_STEP;
+    public static final int AGENT_METABOLISM_RATE_STEP = 1;
     public static final int AGENT_VISION_RANGE_DEFAULT = 8;
     public static final int AGENT_VISION_RANGE_MIN = 1;
     public static final int AGENT_VISION_RANGE_MAX = 10;
-    public static final int AGENT_VISION_RANGE_STEP = RULE_STEP;
+    public static final int AGENT_VISION_RANGE_STEP = 1;
     public static final int AGENT_MAX_AGE_DEFAULT = 100;
     public static final int AGENT_MAX_AGE_MIN = 1;
     public static final int AGENT_MAX_AGE_MAX = 1_000;
-    public static final int AGENT_MAX_AGE_STEP = RULE_STEP;
+    public static final int AGENT_MAX_AGE_STEP = 1;
 
     private SugarConstraints() {
     }

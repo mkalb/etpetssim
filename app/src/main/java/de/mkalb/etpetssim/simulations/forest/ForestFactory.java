@@ -11,12 +11,14 @@ import de.mkalb.etpetssim.simulations.forest.view.*;
 import de.mkalb.etpetssim.simulations.forest.viewmodel.ForestConfigViewModel;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the forest-fire model main view.
+ */
 public final class ForestFactory {
 
     private ForestFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -36,10 +38,7 @@ public final class ForestFactory {
         var configView = new ForestConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ForestObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new ForestMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
-
-        // Return the main view
-        return view;
+        return new ForestMainView(viewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

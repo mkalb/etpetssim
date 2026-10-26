@@ -196,6 +196,13 @@ Use `CellDrawer` from `simulations.core.view`:
 - Expose config as JavaFX properties or repository input wrappers (`InputDoubleProperty`, `InputIntegerProperty`,
   `InputEnumProperty`).
 - Provide sensible defaults and validate before passing config to the Model layer.
+- Keep the defaults, limits, and allowed values of a config in `<Simulation>Constraints` in the `model` package:
+  per component `<COMPONENT>_DEFAULT` and either `_MIN`, `_MAX`, and, for integer spinners, `_STEP`, or `_VALUES`
+  for selections; a fixed value has only `_DEFAULT`. Name the constants after the config component, group them
+  with the line comments and in the order of the `*Config` components, and name the inclusive upper limit of
+  combined percentages `COMBINED_PERCENT_MAX`.
+- Keep fixed tuning values of the simulation logic that are not part of the config in `<Simulation>Balance` in the
+  `model` package; use the suffixes `_DEFAULT`, `_MIN`, and `_MAX` for value ranges as in `*Constraints`.
 - `*Config` records are created from unvalidated input and have no validating constructor; check them with `isValid()`
   (which calls `isBaseValid()` first) before passing them to the Model layer.
 - Order `*Config` components in four groups, each introduced by a line comment: `// Structure` (cell shape, edge

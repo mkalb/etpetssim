@@ -67,12 +67,12 @@ public final class EtpetsUserAction
         return switch (resourceChoice) {
             case NONE -> NoResource.NO_RESOURCE;
             case PLANT -> new Plant(
-                    EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX,
-                    EtpetsBalance.PLANT_MAX_AMOUNT_RANGE_MAX,
+                    EtpetsBalance.PLANT_MAX_AMOUNT_MAX,
+                    EtpetsBalance.PLANT_MAX_AMOUNT_MAX,
                     EtpetsBalance.PLANT_REGENERATION_PER_STEP_BASE);
             case INSECT -> new Insect(
-                    EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX,
-                    EtpetsBalance.INSECT_MAX_AMOUNT_RANGE_MAX,
+                    EtpetsBalance.INSECT_MAX_AMOUNT_MAX,
+                    EtpetsBalance.INSECT_MAX_AMOUNT_MAX,
                     EtpetsBalance.INSECT_REGENERATION_PER_STEP_BASE);
         };
     }

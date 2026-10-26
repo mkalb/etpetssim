@@ -79,10 +79,10 @@ public final class LabMainView
     private static final int TEST_PIXEL_RECT_Y = 120;
 
     public LabMainView(LabMainViewModel viewModel,
+                       GridEntityDescriptorRegistry entityDescriptorRegistry,
                        LabConfigView configView,
                        LabControlView controlView,
-                       LabObservationView observationView,
-                       GridEntityDescriptorRegistry entityDescriptorRegistry) {
+                       LabObservationView observationView) {
         super(viewModel,
                 configView,
                 controlView,

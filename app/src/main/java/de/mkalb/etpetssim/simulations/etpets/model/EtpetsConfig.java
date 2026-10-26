@@ -56,7 +56,7 @@ public record EtpetsConfig(
     }
 
     private boolean hasValidCombinedRanges() {
-        return (rockPercent + waterPercent + plantPercent + insectPercent) <= TOTAL_PERCENT_MAX;
+        return (rockPercent + waterPercent + plantPercent + insectPercent) <= COMBINED_PERCENT_MAX;
     }
 
     /**

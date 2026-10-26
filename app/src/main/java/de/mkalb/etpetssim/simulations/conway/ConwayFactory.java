@@ -11,12 +11,14 @@ import de.mkalb.etpetssim.simulations.core.view.*;
 import de.mkalb.etpetssim.simulations.core.viewmodel.*;
 import javafx.beans.property.*;
 
+/**
+ * Factory for the Conway's Game of Life main view.
+ */
 public final class ConwayFactory {
 
     private ConwayFactory() {
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     public static SimulationMainView createMainView() {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
@@ -37,10 +39,7 @@ public final class ConwayFactory {
         var configView = new ConwayConfigView(configViewModel);
         var controlView = new DefaultControlView(controlViewModel);
         var observationView = new ConwayObservationView(observationViewModel, entityDescriptorRegistry);
-        var view = new ConwayMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
-
-        // Return the main view
-        return view;
+        return new ConwayMainView(viewModel, editToolBarViewModel, entityDescriptorRegistry, configView, controlView, observationView);
     }
 
 }

@@ -1,10 +1,9 @@
 package de.mkalb.etpetssim.simulations.wator.model;
 
 /**
- * Simulation balance constants for the Wa-Tor predator-prey simulation.
- * <p>
- * Contains tunable parameters that govern simulation dynamics but are not
- * exposed as user-configurable settings.
+ * Fixed balance values of the Wa-Tor simulation that are not part of its configuration.
+ *
+ * <p>The configurable values and their limits are in {@link WatorConstraints}.
  */
 public final class WatorBalance {
 

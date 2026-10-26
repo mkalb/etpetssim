@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.core.shared.CellDisplayMode;
 import java.util.*;
 
 /**
- * Configuration constraints and defaults used across the simulation layers.
+ * Defaults, limits, and allowed values of the Conway's Game of Life configuration.
  */
 public final class ConwayConstraints {
 
@@ -40,18 +40,14 @@ public final class ConwayConstraints {
             CellDisplayMode.CIRCLE,
             CellDisplayMode.CIRCLE_BORDERED);
 
-    // Initialization - Seed
-    public static final String SEED_INITIAL = "";
-
     // Initialization
+    public static final String SEED_INITIAL = "";
     public static final double ALIVE_PERCENT_DEFAULT = 0.3d;
     public static final double ALIVE_PERCENT_MIN = 0.0d;
     public static final double ALIVE_PERCENT_MAX = 1.0d;
 
-    // Rules - NeighborhoodMode
-    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
-
     // Rules
+    public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;
     public static final ConwayTransitionRules TRANSITION_RULES_DEFAULT = ConwayTransitionRules.parse(
             ConwayRulePresetSquare.CONWAYS_LIFE.ruleString());
     public static final int BIRTH_NEIGHBOR_COUNT_MIN = 1;

@@ -1,11 +1,11 @@
 package de.mkalb.etpetssim.ui;
 
 /**
- * A utility class that defines constants for CSS style class names used in the application.
+ * CSS style class names shared by the application and all simulations.
  *
- * <p>This class provides a centralized location for managing style class names, ensuring
- * consistency and reducing the risk of typos. The constants are grouped by their usage
- * context, such as configuration, control, observation, and simulation.</p>
+ * <p>Each value is a lower-kebab-case style class name; the constant name is the value in upper snake case. The
+ * constants are sorted alphabetically by name, so the name prefix shows the usage context (e.g., {@code CONFIG_},
+ * {@code CONTROL_}, {@code OBSERVATION_}, {@code SIMULATION_}).
  */
 @SuppressWarnings("SpellCheckingInspection")
 public final class FXStyleClasses {
