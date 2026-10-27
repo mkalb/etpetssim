@@ -83,7 +83,7 @@ Other locations:
 - Prefer the simplest complete solution; keep methods small and single-purpose (KISS).
 - Do not introduce abstractions without clear ongoing value.
 - Use meaningful domain names and keep classes cohesive.
-- Remove dead code and outdated comments; commented-out `AppLogger` calls may be kept as diagnostic traces.
+- Remove dead code and outdated comments.
 
 ## Localization and Text
 

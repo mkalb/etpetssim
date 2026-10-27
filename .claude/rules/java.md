@@ -221,6 +221,8 @@ Use `de.mkalb.etpetssim.core.AppLogger` for all application logging.
 - Prefix log messages with a short, stable component tag when helpful (e.g., `"SimulationTimer: ..."`).
 - Do not log inside tight rendering or simulation step loops at `info` or higher.
 - Log exceptions via `AppLogger.error(message, throwable)`; do not concatenate stack traces into the message manually.
+- Commented-out `AppLogger` calls may be kept as diagnostic traces (e.g., in step logic); do not remove them as dead
+  code.
 
 ## Suppressions Policy
 
