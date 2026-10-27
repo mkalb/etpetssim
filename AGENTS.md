@@ -89,7 +89,8 @@ Other locations:
 
 - Write all repository files (code comments, Javadoc, log and exception messages, Markdown, skills, prompts, and
   scripts, including their output) and all Git and GitHub text (e.g., commit messages, issues, and pull requests) in
-  English (en_US), regardless of the language of the request. Chat replies may follow the request language.
+  English (en_US), regardless of the language of the request. Values in the resource bundles of other locales (e.g.,
+  `messages_de_DE`) use the language of their locale. Chat replies may follow the request language.
 - Do not translate English repository or GitHub text into the chat language. When reporting such text in chat, either
   quote it verbatim or give a short summary or explanation in the chat language; the user can read the file, diff,
   or issue directly.
@@ -139,6 +140,6 @@ maintainer (GitHub login `mkalb`), including bots, are external contributions.
 
 - For code reviews, lead with bugs, regressions, risks, and missing tests before summaries.
 - Do not run Gradle during a review unless explicitly asked; a review without code changes needs no build or test run.
-- When the user asks the editing agent to review its own changes directly, report the result in the chat and do not
-  write it to the file.
+- When the user asks the editing agent to review its own changes directly, report the result in the chat, not in
+  `.review/review.md`.
 - Use the `review-exchange` skill when asked to write a review to `.review/review.md` or to process that file.
