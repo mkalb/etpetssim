@@ -30,7 +30,6 @@ for aligning them. The maintainer deletes it after all categories are done and p
 - Findings that need larger changes or mainly affect other Java types (interfaces, records, enums, or instantiable
   classes) may be moved to "Deferred findings" at the end of this plan instead of being implemented; they are handled
   one by one after the final commit.
-- When changing a rule in `.claude/rules`, update its copy in `.github/instructions` in the same step.
 - Do not update the generated CSV files; this plan and the CSV files may be outdated, so verify every fact against the
   sources.
 - Do not commit, review, or delete this plan; the maintainer requests the review and the commit explicitly after all

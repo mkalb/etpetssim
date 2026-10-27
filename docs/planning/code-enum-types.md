@@ -286,7 +286,7 @@ Findings from the category reviews that are not implemented in the review itself
       (plus `ENUM_LABEL_CELLSHAPE` as a sample key in `LocalizationTestSupportTest`), and those of `engine` and
       `simulations` enums are not app-wide keys either.
     - Required first: decide where enum-owned label keys live (e.g., a private constant in the enum), then adjust
-      `.claude/rules/simulations.md` (and `.github/instructions`), possibly `AGENTS.md` and the category 2
+      `.claude/rules/simulations.md`, possibly `AGENTS.md` and the category 2
       description above, move `ENUM_LABEL_SNAKEDEATHMODE` (and possibly the other `ENUM_LABEL_*` constants) out of
       `AppLocalizationKeys`, and only then localize `LabColorMode`.
 - Tracked in #65 (decided to implement it later, together with the `LabColorMode` finding): category 2 enums share no

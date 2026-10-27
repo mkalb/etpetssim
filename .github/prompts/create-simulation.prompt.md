@@ -9,7 +9,7 @@ argument-hint: "Display name, Wikipedia URL, reference simulation (any existing 
 Create a new simulation in this project by collecting input in four phases and then completing all seven registration
 steps in order.
 
-- Use [simulations.instructions.md](../instructions/simulations.instructions.md) for coding conventions, MVVM
+- Use [simulations.md](../../.claude/rules/simulations.md) for coding conventions, MVVM
   architecture, entity design, and factory patterns.
 - Before changing files, inspect the chosen reference simulation and the current registration targets.
 - The user may choose any existing simulation as the structural reference. Prefer `forest`, `wator`, or `sugar` when the
@@ -144,7 +144,7 @@ method that references individual `SimulationType` constants, following the exis
 
 Create the package structure under `de.mkalb.etpetssim.simulations.<package name>`. Do not create `package-info.java`
 files; `@NullMarked` is declared on the module as specified in
-[java.instructions.md](../instructions/java.instructions.md):
+[java.md](../../.claude/rules/java.md):
 
 - `de.mkalb.etpetssim.simulations.<package name>` — simulation root
 - `de.mkalb.etpetssim.simulations.<package name>.model` — domain state and business rules

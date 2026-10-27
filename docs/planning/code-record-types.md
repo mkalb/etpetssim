@@ -29,7 +29,6 @@ the workflow for aligning them. The maintainer deletes it after all categories a
 - Findings that need larger changes or mainly affect other Java types (classes, interfaces, enums) may be moved to
   "Deferred findings" at the end of this plan instead of being implemented; they are handled one by one after the
   final commit.
-- When changing a rule in `.claude/rules`, update its copy in `.github/instructions` in the same step.
 - Do not update the generated CSV files; this plan and the CSV files may be outdated, so verify every fact against the
   sources.
 - Do not commit, review, or delete this plan; the maintainer requests the review and the commit explicitly after all
@@ -805,7 +804,7 @@ no facts need to move to `docs/development`, and the plan can be deleted.
   The caller list above is outdated: `InputEnumProperty` is only used in `FXComponentFactory`,
   `DefaultControlViewModel`, `LabConfigViewModel`, and `ConwayRuleProperty`; Forest, Rebounding, Wa-Tor, Langton, and
   Snake already use `InputChoiceProperty`. Also affected: `InputEnumPropertyTest` (removed), `FXComponentFactoryTest`,
-  `simulations.md` ("Configuration and Input" names `InputEnumProperty`) with its copy in `.github/instructions`, and
+  `simulations.md` ("Configuration and Input" names `InputEnumProperty`), and
   `ui.md` if needed.
 - Recommendation: track it as a GitHub issue (`refactoring`, no `needs-refinement`), because it is concrete, bounded
   work that another agent can implement alone; show the issue text to the maintainer before creating it.

@@ -25,7 +25,8 @@ Other locations:
   update them with code changes. They are regenerated on demand with the `java-code-inventory` skill.
 - `assets`: screenshots and SVG icons.
 - `.claude/rules`: path-scoped coding rules; `.claude/skills`: agent skills.
-- `.github/instructions`: GitHub Copilot copies of `.claude/rules`; keep both in sync when changing a rule.
+- `.github/instructions`: GitHub Copilot reference files for IntelliJ that point to `.claude/rules`; when adding or
+  renaming a rule, add or update its reference file with a matching `applyTo`.
 
 ## Package Boundaries
 

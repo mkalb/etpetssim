@@ -28,7 +28,6 @@ the workflow for aligning them. The maintainer deletes it after all categories a
 - Findings that need larger changes or mainly affect other Java types (classes, records, enums) may be moved to
   "Deferred findings" at the end of this plan instead of being implemented; they are handled one by one after the
   final commit.
-- When changing a rule in `.claude/rules`, update its copy in `.github/instructions` in the same step.
 - Do not update the generated CSV files; this plan and the CSV files may be outdated, so verify every fact against the
   sources.
 - Do not commit, review, or delete this plan; the maintainer requests the review and the commit explicitly after all
@@ -380,7 +379,7 @@ Notes:
 - Javadoc of the context types reads "Identifies which <Simulation> edit action should be applied." (also for
   `WatorUserActionContext`); every nested `FixedAction` says "Fixed actions that do not require additional
   parameters."
-- Rule change: `simulations.md` (and its copy in `.github/instructions`) requires a nested `FixedAction` enum only if
+- Rule change: `simulations.md` requires a nested `FixedAction` enum only if
   actions without parameters exist.
 - `EtpetsUserActionContextTest.testPermittedSubclasses` is removed (it only restated the `permits` clause); the
   record tests keep their `test<Record>Record` names. Superseded by `code-record-types.md`, category 6: the records
