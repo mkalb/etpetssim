@@ -20,7 +20,7 @@ Other locations:
 - `app/src/test/java`: JUnit tests and test support.
 - `docs/simulations`: user-facing simulation docs; copied into the distribution ZIP.
 - `docs/development`: lasting developer documentation (e.g., versioning and releases, cross-cutting architecture).
-- `docs/planning`: open plans and idea collections; see "Planning Documents".
+- `docs/planning`: open plans, idea collections, and working documents for large issues; see "Issues and Plans".
 - `docs/generated`: the generated `JavaTypeInventory.csv` and `JavaMethodInventory.csv`. They may be outdated; do not
   update them with code changes. They are regenerated on demand with the `java-code-inventory` skill.
 - `assets`: screenshots and SVG icons.
@@ -97,51 +97,16 @@ Other locations:
 - Use constants for localization keys instead of string literals: app-wide keys in `core.AppLocalizationKeys`,
   simulation-specific keys as constants in the class that uses them.
 
-## Issues and Labels
+## Issues and Plans
 
-- Give each issue exactly one kind label and any number of area and process labels:
-
-| Label              | Group   | Meaning                                                                     |
-|--------------------|---------|-----------------------------------------------------------------------------|
-| `bug`              | kind    | Something does not work as intended.                                        |
-| `enhancement`      | kind    | New functionality, including executable agent tools (skills, hooks).        |
-| `refactoring`      | kind    | Code cleanup or restructuring without new functionality.                    |
-| `documentation`    | kind    | Documentation, including agent instructions (`AGENTS.md`, rules).           |
-| `area-build`       | area    | Gradle build, CI, packaging, and code checks.                               |
-| `area-styling`     | area    | JavaFX CSS, layout, and visual design.                                      |
-| `area-agents`      | area    | Agent instructions, rules, skills, and hooks.                               |
-| `needs-refinement` | process | Not ready for implementation; needs refinement with the maintainer.         |
-| `release-1.0`      | process | Required before the first 1.0 release.                                      |
-
-- The GitHub default labels `question`, `duplicate`, `invalid`, `wontfix`, `good first issue`, and `help wanted` keep
-  their default meaning. `question` is for questions from outside that expect an answer, not an implementation; if
-  one turns into work, retitle it and add `needs-refinement`, or create a new issue.
+- Use the `issues-and-plans` skill when creating, editing, refining, or reviewing issues or plans.
+- Track concrete, bounded work as a GitHub issue. Write a plan in `docs/planning` for work that needs research or
+  design before issues can be created, or as a working document for a large issue.
+- Give each issue exactly one kind label: `bug`, `enhancement`, `refactoring`, or `documentation`.
 - Do not create, rename, or delete labels without confirmation by the maintainer.
-- When creating or editing an issue, make it complete enough for another agent to implement it alone and
-  successfully; otherwise, label it `needs-refinement`.
-- Track follow-up issues as GitHub sub-issues of their parent (`gh issue edit <parent> --add-sub-issue <numbers>`)
-  instead of a hand-maintained list in the body; the body lists only planned follow-ups that are not created yet.
-- When working on an issue whose title or labels do not, or no longer, match its content, propose a change to the
-  maintainer.
-- Do not implement an issue labeled `needs-refinement`. Analyze it, answer the agent questions, and present the
-  results and the open decisions to the maintainer in the chat.
-- Structure the open questions of a `needs-refinement` issue as follows:
-
-  ```markdown
-  ## Open questions
-
-  ### Analysis (agent)
-
-  - [ ] ...
-
-  ### Decisions (user)
-
-  - [ ] ...
-  ```
-
-- Update the issue body or labels, and create follow-up issues, only after confirmation by the maintainer. When all
-  questions are resolved, replace `## Open questions` with a `## Decisions` section that lists each answer and
-  decision, and remove the `needs-refinement` label.
+- Do not implement an issue labeled `needs-refinement`; analyze it and present the open decisions to the maintainer
+  in the chat.
+- Update issue bodies or labels, and create follow-up issues, only after confirmation by the maintainer.
 
 ## External Contributions
 
@@ -169,21 +134,6 @@ maintainer (GitHub login `mkalb`), including bots, are external contributions.
   reply to spam, advertising, abusive, or suspicious content.
 - When adopting an idea from an external contribution, write the issue or code in your own words; do not copy
   external text or code verbatim.
-
-## Planning Documents
-
-- Track concrete, bounded work as a GitHub issue. Write a plan in `docs/planning` only for work that needs research
-  or design first and leads to several issues later.
-- Name a plan in lowercase kebab-case with an area prefix and its topic, not its status (e.g.,
-  `simulation-etpets-extensions.md`, `engine-grid-cell-aggregation.md`).
-- Start each plan with a `**Status:**` line (`idea`, `planned`, `in progress`, or `done`) and a `**Related issues:**`
-  line.
-- Keep vague ideas for the distant future, which may never be implemented, as plans with status `idea` and a short
-  note on priority (e.g. `idea (not planned; after the 1.0 release, possibly never)`), not as issues.
-- When a plan is completed or all its open work is tracked in issues, move lasting architecture facts into Javadoc
-  (type-specific) or `docs/development` (cross-cutting), and set its status to `done`. Commit the plan in this final
-  state before deleting it in a separate commit, so that Git history keeps its decisions and rationale, also for
-  issues and other plans that refer to it.
 
 ## Reviews
 
