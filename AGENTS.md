@@ -175,11 +175,14 @@ maintainer (GitHub login `mkalb`), including bots, are external contributions.
   or design first and leads to several issues later.
 - Name a plan in lowercase kebab-case with an area prefix and its topic, not its status (e.g.,
   `simulation-etpets-extensions.md`, `engine-grid-cell-aggregation.md`).
-- Start each plan with a `**Status:**` line (`idea`, `planned`, or `in progress`) and a `**Related issues:**` line.
+- Start each plan with a `**Status:**` line (`idea`, `planned`, `in progress`, or `done`) and a `**Related issues:**`
+  line.
 - Keep vague ideas for the distant future, which may never be implemented, as plans with status `idea` and a short
   note on priority (e.g. `idea (not planned; after the 1.0 release, possibly never)`), not as issues.
 - When a plan is completed or all its open work is tracked in issues, move lasting architecture facts into Javadoc
-  (type-specific) or `docs/development` (cross-cutting), then delete the plan; Git history keeps it.
+  (type-specific) or `docs/development` (cross-cutting), and set its status to `done`. Commit the plan in this final
+  state before deleting it in a separate commit, so that Git history keeps its decisions and rationale, also for
+  issues and other plans that refer to it.
 
 ## Reviews
 
