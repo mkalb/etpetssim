@@ -6,10 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class WorkCheckpointsTest {
 
-    private static boolean isCancellationCheckpoint(int zeroBasedLoopIndex, int mask) {
-        return (zeroBasedLoopIndex & mask) == 0;
-    }
-
     @SuppressWarnings("ConstantValue")
     @Test
     void testCancellationCheckInterval() {
@@ -22,17 +18,16 @@ final class WorkCheckpointsTest {
     }
 
     @Test
-    void testCancellationCheckMask() {
+    void testIsCancellationCheckpoint() {
         int interval = WorkCheckpoints.CANCELLATION_CHECK_INTERVAL;
-        int mask = WorkCheckpoints.CANCELLATION_CHECK_MASK;
 
         assertAll(
-                () -> assertEquals(interval - 1, mask),
-                () -> assertTrue(isCancellationCheckpoint(0, mask)),
-                () -> assertFalse(isCancellationCheckpoint(1, mask)),
-                () -> assertFalse(isCancellationCheckpoint(interval - 1, mask)),
-                () -> assertTrue(isCancellationCheckpoint(interval, mask)),
-                () -> assertTrue(isCancellationCheckpoint(2 * interval, mask))
+                () -> assertTrue(WorkCheckpoints.isCancellationCheckpoint(0)),
+                () -> assertFalse(WorkCheckpoints.isCancellationCheckpoint(1)),
+                () -> assertFalse(WorkCheckpoints.isCancellationCheckpoint(interval - 1)),
+                () -> assertTrue(WorkCheckpoints.isCancellationCheckpoint(interval)),
+                () -> assertFalse(WorkCheckpoints.isCancellationCheckpoint(interval + 1)),
+                () -> assertTrue(WorkCheckpoints.isCancellationCheckpoint(2 * interval))
         );
     }
 

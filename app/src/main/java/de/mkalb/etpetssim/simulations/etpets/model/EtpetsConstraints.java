@@ -36,7 +36,7 @@ public final class EtpetsConstraints {
             CELL_DISPLAY_MODE_DEFAULT);
 
     // Initialization
-    public static final String SEED_INITIAL = "";
+    public static final String SEED_DEFAULT = "";
     public static final double ROCK_PERCENT_DEFAULT = 0.01d;
     public static final double WATER_PERCENT_DEFAULT = 0.02d;
     public static final double PLANT_PERCENT_DEFAULT = 0.05d;

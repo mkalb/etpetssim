@@ -41,7 +41,7 @@ public final class ConwayConstraints {
             CellDisplayMode.CIRCLE_BORDERED);
 
     // Initialization
-    public static final String SEED_INITIAL = "";
+    public static final String SEED_DEFAULT = "";
     public static final double ALIVE_PERCENT_DEFAULT = 0.3d;
     public static final double ALIVE_PERCENT_MIN = 0.0d;
     public static final double ALIVE_PERCENT_MAX = 1.0d;

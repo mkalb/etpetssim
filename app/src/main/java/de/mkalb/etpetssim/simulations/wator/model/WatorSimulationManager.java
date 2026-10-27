@@ -9,7 +9,7 @@ import de.mkalb.etpetssim.simulations.wator.model.entity.*;
 
 import java.util.*;
 
-import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
 public final class WatorSimulationManager
         extends AbstractTimedSimulationManager<WatorEntity, WritableGridModel<WatorEntity>, WatorConfig,
@@ -53,7 +53,7 @@ public final class WatorSimulationManager
                 0, structure.cellCount());
         var fish = new ArrayList<WatorEntity>(fishCount);
         for (int i = 0; i < fishCount; i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             fish.add(createInitialFish(random));
@@ -64,7 +64,7 @@ public final class WatorSimulationManager
                 0, structure.cellCount() - fishCount);
         var sharks = new ArrayList<WatorEntity>(sharkCount);
         for (int i = 0; i < sharkCount; i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             sharks.add(createInitialShark(random));

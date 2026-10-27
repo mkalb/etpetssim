@@ -13,6 +13,9 @@ import java.util.stream.*;
  *
  * <p>Supports triangle, square, and hexagon cells and both edge-only and edge-and-vertex neighborhood modes.
  *
+ * <p>The parameters follow the order start coordinate (or coordinates), neighborhood mode, cell shape or grid
+ * structure, further parameters (e.g., a direction or a radius).
+ *
  * @see CellShape
  * @see NeighborhoodMode
  * @see CellNeighbor
@@ -83,11 +86,11 @@ public final class CellNeighborhoods {
      * For example, a square cell with {@link NeighborhoodMode#EDGES_ONLY} has 4 possible neighbors,
      * while with {@link NeighborhoodMode#EDGES_AND_VERTICES} it has 8.
      *
-     * @param cellShape        the shape of the cell (triangle, square, hexagon)
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape        the shape of the cell (triangle, square, hexagon)
      * @return the maximum possible number of direct neighbors for the specified configuration
      */
-    public static int maxNeighborCount(CellShape cellShape, NeighborhoodMode neighborhoodMode) {
+    public static int maxNeighborCount(NeighborhoodMode neighborhoodMode, CellShape cellShape) {
         return switch (cellShape) {
             case SQUARE -> (neighborhoodMode == NeighborhoodMode.EDGES_ONLY) ? 4 : 8;
             case HEXAGON -> 6; // Only edge neighbors exist for hexagons
@@ -102,24 +105,24 @@ public final class CellNeighborhoods {
      * <p>The result is used as an upper bound for sizing internal collections and does not
      * represent an exact neighbor count for all configurations.
      * For {@code radius == 1}, the returned value equals the direct neighbor count from
-     * {@link #maxNeighborCount(CellShape, NeighborhoodMode)}.
+     * {@link #maxNeighborCount(NeighborhoodMode, CellShape)}.
      * For larger radii, this method returns a conservative value derived from shape-specific formulas
      * that also covers the start cell.
      *
      * <p>If {@code radius <= 0}, this method returns {@code 0}.
      *
-     * @param cellShape        the geometric shape of the cell (TRIANGLE, SQUARE, HEXAGON)
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
+     * @param cellShape        the geometric shape of the cell (TRIANGLE, SQUARE, HEXAGON)
      * @param radius           the neighborhood radius (non-negative)
      * @return the maximum possible number of neighbors within the given radius (or {@code 0} if {@code radius <= 0})
      */
-    public static int maxNeighborCount(CellShape cellShape, NeighborhoodMode neighborhoodMode, int radius) {
+    public static int maxNeighborCount(NeighborhoodMode neighborhoodMode, CellShape cellShape, int radius) {
         if (radius <= 0) {
             return 0;
         }
 
         if (radius == 1) {
-            return maxNeighborCount(cellShape, neighborhoodMode);
+            return maxNeighborCount(neighborhoodMode, cellShape);
         }
 
         return switch (cellShape) {
@@ -299,15 +302,15 @@ public final class CellNeighborhoods {
      *
      * @param startCoordinate  the coordinate of the cell whose neighbor is to be determined
      * @param neighborhoodMode the neighborhood mode (edges only or edges and vertices)
-     * @param direction        the compass direction of the desired neighbor
      * @param structure        the grid structure defining size, boundaries, and edge behavior
+     * @param direction        the compass direction of the desired neighbor
      * @return an {@link Optional} containing the {@link CellNeighborWithEdgeBehavior} for the neighbor in the given direction,
      * or an empty {@link Optional} if no such neighbor exists
      */
     public static Optional<CellNeighborWithEdgeBehavior> cellNeighborWithEdgeBehavior(GridCoordinate startCoordinate,
                                                                                       NeighborhoodMode neighborhoodMode,
-                                                                                      CompassDirection direction,
-                                                                                      GridStructure structure) {
+                                                                                      GridStructure structure,
+                                                                                      CompassDirection direction) {
         List<CellNeighborConnection> cellNeighborConnections =
                 getOrComputeCellNeighborConnections(startCoordinate, neighborhoodMode, structure.cellShape());
 
@@ -408,7 +411,7 @@ public final class CellNeighborhoods {
         }
 
         SortedMap<Integer, SortedMap<GridCoordinate, RadiusRingCell<C>>> radiusRings = new TreeMap<>();
-        Set<GridCoordinate> visitedCoordinates = HashSet.newHashSet(1 + maxNeighborCount(structure.cellShape(), neighborhoodMode, radius));
+        Set<GridCoordinate> visitedCoordinates = HashSet.newHashSet(1 + maxNeighborCount(neighborhoodMode, structure.cellShape(), radius));
         Set<GridCoordinate> currentRingCoordinates = HashSet.newHashSet(1);
 
         visitedCoordinates.add(startCoordinate);
@@ -484,7 +487,7 @@ public final class CellNeighborhoods {
             throw new IllegalArgumentException("Radius must be less than or equal to " + MAX_RADIUS + ", but was: " + radius);
         }
 
-        int maxNeighbors = maxNeighborCount(cellShape, neighborhoodMode, radius);
+        int maxNeighbors = maxNeighborCount(neighborhoodMode, cellShape, radius);
         Set<GridCoordinate> visited = HashSet.newHashSet(1 + maxNeighbors); // startCoordinate plus maxNeighbors
         Set<GridCoordinate> result = HashSet.newHashSet(maxNeighbors);
         Queue<GridCoordinate> queue = new ArrayDeque<>();

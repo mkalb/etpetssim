@@ -39,8 +39,8 @@ public final class LangtonStepRunner
             var neighborOpt = CellNeighborhoods.cellNeighborWithEdgeBehavior(
                     agentCell.coordinate(),
                     config.neighborhoodMode(),
-                    ant.direction(),
-                    structure);
+                    structure,
+                    ant.direction());
 
             if (neighborOpt.isEmpty() || isEdgeAbsorbedOrBlocked(neighborOpt.get())) {
                 removeAnt(agentCell, antModel, statistics);

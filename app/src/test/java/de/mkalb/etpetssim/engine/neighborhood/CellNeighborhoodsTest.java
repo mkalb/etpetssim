@@ -57,34 +57,34 @@ final class CellNeighborhoodsTest {
 
     @Test
     void testMaxNeighborCount() {
-        assertEquals(3, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY));
-        assertEquals(12, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_AND_VERTICES));
-        assertEquals(4, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY));
-        assertEquals(8, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_AND_VERTICES));
-        assertEquals(6, CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_ONLY));
-        assertEquals(6, CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_AND_VERTICES));
+        assertEquals(3, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE));
+        assertEquals(12, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE));
+        assertEquals(4, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE));
+        assertEquals(8, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.SQUARE));
+        assertEquals(6, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON));
+        assertEquals(6, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON));
     }
 
     @Test
     void testMaxNeighborCountWithRadius() {
-        assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY, 0));
-        assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY, -1));
-        assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY, 0));
-        assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY, -1));
-        assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_ONLY, 0));
-        assertEquals(0, CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_ONLY, -1));
-        assertEquals(CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY),
-                CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY, 1));
-        assertEquals(CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY),
-                CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY, 1));
-        assertEquals(CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_ONLY),
-                CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_ONLY, 1));
-        assertEquals(10, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_ONLY, 2));
-        assertEquals(37, CellNeighborhoods.maxNeighborCount(CellShape.TRIANGLE, NeighborhoodMode.EDGES_AND_VERTICES, 2));
-        assertEquals(13, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_ONLY, 2));
-        assertEquals(25, CellNeighborhoods.maxNeighborCount(CellShape.SQUARE, NeighborhoodMode.EDGES_AND_VERTICES, 2));
-        assertEquals(19, CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_ONLY, 2));
-        assertEquals(19, CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NeighborhoodMode.EDGES_AND_VERTICES, 2));
+        assertEquals(0, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE, 0));
+        assertEquals(0, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE, -1));
+        assertEquals(0, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE, 0));
+        assertEquals(0, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE, -1));
+        assertEquals(0, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON, 0));
+        assertEquals(0, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON, -1));
+        assertEquals(CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE),
+                CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE, 1));
+        assertEquals(CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE),
+                CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE, 1));
+        assertEquals(CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON),
+                CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON, 1));
+        assertEquals(10, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.TRIANGLE, 2));
+        assertEquals(37, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.TRIANGLE, 2));
+        assertEquals(13, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.SQUARE, 2));
+        assertEquals(25, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.SQUARE, 2));
+        assertEquals(19, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_ONLY, CellShape.HEXAGON, 2));
+        assertEquals(19, CellNeighborhoods.maxNeighborCount(NeighborhoodMode.EDGES_AND_VERTICES, CellShape.HEXAGON, 2));
     }
 
     @Test
@@ -337,14 +337,14 @@ final class CellNeighborhoodsTest {
         GridCoordinate origin = new GridCoordinate(0, 0);
 
         Optional<CellNeighborWithEdgeBehavior> west = CellNeighborhoods.cellNeighborWithEdgeBehavior(
-                origin, NeighborhoodMode.EDGES_ONLY, CompassDirection.W, structure);
+                origin, NeighborhoodMode.EDGES_ONLY, structure, CompassDirection.W);
 
         assertAll(
                 () -> assertEquals(Optional.of(new CellNeighborWithEdgeBehavior(origin, CompassDirection.W,
                         CellConnectionType.EDGE, new GridCoordinate(-1, 0), new GridCoordinate(7, 0),
                         EdgeBehaviorAction.WRAPPED)), west),
                 () -> assertTrue(CellNeighborhoods.cellNeighborWithEdgeBehavior(
-                        origin, NeighborhoodMode.EDGES_ONLY, CompassDirection.NE, structure).isEmpty())
+                        origin, NeighborhoodMode.EDGES_ONLY, structure, CompassDirection.NE).isEmpty())
         );
     }
 

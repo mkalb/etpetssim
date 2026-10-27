@@ -43,7 +43,7 @@ public final class LabConstraints {
             LabColorMode.values());
 
     // Initialization
-    public static final String SEED_INITIAL = "";
+    public static final String SEED_DEFAULT = "";
 
     // Rules
     public static final NeighborhoodMode NEIGHBORHOOD_MODE_DEFAULT = NeighborhoodMode.EDGES_AND_VERTICES;

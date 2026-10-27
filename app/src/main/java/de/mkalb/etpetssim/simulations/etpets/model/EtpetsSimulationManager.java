@@ -8,7 +8,7 @@ import de.mkalb.etpetssim.simulations.etpets.model.entity.*;
 
 import java.util.*;
 
-import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
 public final class EtpetsSimulationManager
         extends AbstractTimedSimulationManager<EtpetsEntity, EtpetsGridModel, EtpetsConfig, EtpetsStatistics> {
@@ -56,7 +56,7 @@ public final class EtpetsSimulationManager
     private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random,
                                            SimulationInitializationCancellation cancellation) {
         for (int index = 0; index < (coordinates.size() - 1); index++) {
-            if ((index & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(index)) {
                 cancellation.checkCanceled();
             }
             int coordinateIndex = coordinates.size() - index - 1;
@@ -87,14 +87,14 @@ public final class EtpetsSimulationManager
 
         int offset = 0;
         for (int i = 0; (i < rockCount) && ((offset + i) < coordinates.size()); i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             model.terrainModel().setEntity(coordinates.get(offset + i), TerrainConstant.ROCK);
         }
         offset += rockCount;
         for (int i = 0; (i < waterCount) && ((offset + i) < coordinates.size()); i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             model.terrainModel().setEntity(coordinates.get(offset + i), TerrainConstant.WATER);
@@ -127,7 +127,7 @@ public final class EtpetsSimulationManager
 
         int offset = 0;
         for (int i = 0; (i < plantCount) && ((offset + i) < available.size()); i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             double maxAmount = EtpetsBalance.PLANT_MAX_AMOUNT_MIN + random.nextInt(plantRange);
@@ -138,7 +138,7 @@ public final class EtpetsSimulationManager
         }
         offset += plantCount;
         for (int i = 0; (i < insectCount) && ((offset + i) < available.size()); i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             double maxAmount = EtpetsBalance.INSECT_MAX_AMOUNT_MIN + random.nextInt(insectRange);
@@ -178,19 +178,16 @@ public final class EtpetsSimulationManager
 
         int maxEnergyRange = (EtpetsBalance.PET_TRAITS_MAX_ENERGY_MAX - EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN) + 1;
         int initialAgeRange = (EtpetsBalance.PET_INITIAL_AGE_MAX - EtpetsBalance.PET_INITIAL_AGE_MIN) + 1;
-        int initialEnergyReductionDelta = Math.max(0, EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA);
 
         for (int i = 0; i < config().petCount(); i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             int maxEnergy = EtpetsBalance.PET_TRAITS_MAX_ENERGY_MIN + random.nextInt(maxEnergyRange);
             int initialAge = EtpetsBalance.PET_INITIAL_AGE_MIN + random.nextInt(initialAgeRange);
             int stepIndexOfBirth = -1 - initialAge;
 
-            int maxReductionByEnergy = Math.max(0, maxEnergy - EtpetsBalance.PET_CURRENT_ENERGY_MIN);
-            int appliedEnergyReduction = random.nextInt(Math.min(initialEnergyReductionDelta, maxReductionByEnergy) + 1);
-            int currentEnergy = maxEnergy - appliedEnergyReduction;
+            int currentEnergy = maxEnergy - random.nextInt(EtpetsBalance.PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA + 1);
 
             PetTraits trait = new PetTraits(
                     maxEnergy,
@@ -219,7 +216,7 @@ public final class EtpetsSimulationManager
         int index = 0;
         for (int y = 0; y < size.height(); y++) {
             for (int x = 0; x < size.width(); x++) {
-                if ((index & CANCELLATION_CHECK_MASK) == 0) {
+                if (isCancellationCheckpoint(index)) {
                     cancellation.checkCanceled();
                 }
                 index++;
@@ -241,7 +238,7 @@ public final class EtpetsSimulationManager
         int index = 0;
         for (int y = 0; y < size.height(); y++) {
             for (int x = 0; x < size.width(); x++) {
-                if ((index & CANCELLATION_CHECK_MASK) == 0) {
+                if (isCancellationCheckpoint(index)) {
                     cancellation.checkCanceled();
                 }
                 index++;

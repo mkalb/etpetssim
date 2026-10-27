@@ -11,8 +11,11 @@ import java.util.function.*;
  * Static factories for {@link GridInitializer} instances that fill a {@link WritableGridModel} or place entities
  * on it, by fixed patterns or at random.
  *
- * <p>The overloads with a {@code Runnable cancellationCheck} run the check regularly (see {@link WorkCheckpoints})
- * so that a long initialization can be canceled.
+ * <p>The {@code fill...} factories set every cell of the grid; the {@code place...} factories set only selected
+ * cells and keep the others. Factories with a {@code Runnable cancellationCheck} run the check regularly (see
+ * {@link WorkCheckpoints}); the check stops a long initialization by throwing an exception. The parameters follow
+ * the order amount ({@code count}, {@code percent}, or {@code probability}), entities, replacement rule or
+ * fallback, {@code random}, {@code cancellationCheck}.
  */
 public final class GridInitializers {
 
@@ -30,35 +33,142 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that fills the entire grid with the specified entity.
+     * Returns an initializer that sets the cells of the given list, in list order.
      *
-     * @param entity the entity to fill the grid with
-     * @param <ENT>  the type of grid entity
-     * @return a grid initializer that fills the grid with the given entity
+     * @param cells             the cells to set
+     * @param cancellationCheck the check that may stop the initialization
+     * @param <ENT>             the type of grid entity
+     * @return a grid initializer that sets the given cells
+     * @throws IndexOutOfBoundsException if a coordinate of the cells is not valid for the grid
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> constant(ENT entity) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> fromList(List<GridCell<ENT>> cells,
+                                                                         Runnable cancellationCheck) {
+        return model -> {
+            for (int index = 0; index < cells.size(); index++) {
+                if (WorkCheckpoints.isCancellationCheckpoint(index)) {
+                    cancellationCheck.run();
+                }
+                model.setEntity(cells.get(index));
+            }
+        };
+    }
+
+    /**
+     * Returns an initializer that fills every cell of the grid with the given entity.
+     *
+     * @param entity the entity for every cell
+     * @param <ENT>  the type of grid entity
+     * @return a grid initializer that fills the grid with the entity
+     */
+    public static <ENT extends GridEntity> GridInitializer<ENT> fillConstant(ENT entity) {
         return model -> model.fill(entity);
     }
 
     /**
-     * Returns an initializer that fills the entire grid using entities from the provided supplier.
+     * Returns an initializer that fills every cell of the grid with a new entity from the supplier.
      *
-     * @param entitySupplier the supplier for entities to fill the grid
+     * @param entitySupplier the supplier, called once per cell in row-major order
      * @param <ENT>          the type of grid entity
-     * @return a grid initializer that fills the grid using the supplier
+     * @return a grid initializer that fills the grid from the supplier
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> supplier(Supplier<ENT> entitySupplier) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> fillFromSupplier(Supplier<ENT> entitySupplier) {
         return model -> model.fill(entitySupplier);
     }
 
     /**
-     * Returns an initializer that sets the border cells of the grid to the specified entity.
+     * Returns an initializer that fills every cell of the grid with an entity that the generator creates from the
+     * random number generator.
      *
-     * @param entity the entity to set at the border
-     * @param <ENT>  the type of grid entity
-     * @return a grid initializer that sets the border cells
+     * @param entityGenerator the generator, called once per cell in row-major order with {@code random}
+     * @param random          the random number generator passed to the generator
+     * @param <ENT>           the type of grid entity
+     * @return a grid initializer that fills the grid with generated entities
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> border(ENT entity) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomly(Function<Random, ENT> entityGenerator,
+                                                                             Random random) {
+        return model -> model.fill(() -> entityGenerator.apply(random));
+    }
+
+    /**
+     * Returns an initializer that fills every cell of the grid independently with the entity at the given
+     * probability, otherwise with the fallback.
+     *
+     * <p>The number of entities is random with the expected value {@code probability} times the grid area; use
+     * {@link #fillRandomPercent(double, Supplier, GridEntity, Random, Runnable)} for an exact number. A probability
+     * of {@code 0.0} or less sets only the fallback, {@code 1.0} or more only the entity.
+     *
+     * @param probability the probability of the entity per cell (0.0 to 1.0)
+     * @param entity      the entity to set at the given probability
+     * @param fallback    the entity for the other cells
+     * @param random      the random number generator, called once per cell in row-major order
+     * @param <ENT>       the type of grid entity
+     * @return a grid initializer that fills the grid at the given probability
+     */
+    public static <ENT extends GridEntity> GridInitializer<ENT> fillWithProbability(double probability, ENT entity,
+                                                                                    ENT fallback, Random random) {
+        return model -> model.fill(() -> (random.nextDouble() < probability) ? entity : fallback);
+    }
+
+    /**
+     * Returns an initializer that fills the grid so that the given fraction of its cells holds entities from the
+     * supplier and the other cells hold the fallback.
+     *
+     * <p>The number of supplied entities is {@code percent} times the grid area, rounded. For a fraction up to
+     * {@code 0.8}, the initializer fills the grid with the fallback and then places the supplied entities at random
+     * cells; for a larger fraction, it fills the grid from the supplier and then places the fallback at random cells.
+     * In the second case, the supplier is called once per cell, so its side effects occur up to the grid area times.
+     * A fraction of {@code 0.0} or less sets only the fallback, {@code 1.0} or more only supplied entities.
+     *
+     * @param percent           the fraction of cells with supplied entities (0.0 to 1.0)
+     * @param entitySupplier    the supplier of the entities to place
+     * @param fallback          the entity for the other cells
+     * @param random            the random number generator for the cell selection
+     * @param cancellationCheck the check that may stop the initialization; it also runs before any cell is set
+     * @param <ENT>             the type of grid entity
+     * @return a grid initializer that fills the grid with the given fraction of supplied entities
+     */
+    @SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
+    public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomPercent(double percent,
+                                                                                  Supplier<ENT> entitySupplier,
+                                                                                  ENT fallback,
+                                                                                  Random random,
+                                                                                  Runnable cancellationCheck) {
+        if (percent <= 0.0d) {
+            return model -> {
+                cancellationCheck.run();
+                fillCells(model, () -> fallback, cancellationCheck);
+            };
+        }
+        if (percent >= 1.0d) {
+            return model -> {
+                cancellationCheck.run();
+                fillCells(model, entitySupplier, cancellationCheck);
+            };
+        }
+        return model -> {
+            cancellationCheck.run();
+            int gridArea = model.structure().size().area();
+            if (percent <= 0.8d) {
+                int entityCount = (int) Math.round(percent * gridArea);
+                fillCells(model, () -> fallback, cancellationCheck);
+                placeRandomCount(model, entityCount, entitySupplier, fallback::equals, random, cancellationCheck);
+            } else {
+                int fallbackCount = (int) Math.round((1.0d - percent) * gridArea);
+                fillCells(model, entitySupplier, cancellationCheck);
+                placeRandomCount(model, fallbackCount,
+                        () -> fallback, Predicate.not(fallback::equals), random, cancellationCheck);
+            }
+        };
+    }
+
+    /**
+     * Returns an initializer that sets the outermost rows and columns of the grid to the given entity.
+     *
+     * @param entity the entity for the border cells
+     * @param <ENT>  the type of grid entity
+     * @return a grid initializer that places the entity at the border
+     */
+    public static <ENT extends GridEntity> GridInitializer<ENT> placeBorder(ENT entity) {
         return model -> {
             GridSize size = model.structure().size();
             for (GridCoordinate coordinate : model.structure().coordinatesList()) {
@@ -67,61 +177,6 @@ public final class GridInitializers {
                 if ((x == 0) || (y == 0) || (x == (size.width() - 1)) || (y == (size.height() - 1))) {
                     model.setEntity(coordinate, entity);
                 }
-            }
-        };
-    }
-
-    /**
-     * Returns an initializer that fills the grid in a checkerboard pattern using two entities.
-     *
-     * @param entity1 the entity for even cells
-     * @param entity2 the entity for odd cells
-     * @param <ENT>   the type of grid entity
-     * @return a grid initializer with a checkerboard pattern
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> checkerboard(ENT entity1, ENT entity2) {
-        return model -> {
-            for (GridCoordinate coordinate : model.structure().coordinatesList()) {
-                int x = coordinate.x();
-                int y = coordinate.y();
-                ENT entity = (((x + y) % 2) == 0) ? entity1 : entity2;
-                model.setEntity(coordinate, entity);
-            }
-        };
-    }
-
-    /**
-     * Returns an initializer that sets the grid cells according to the provided list of cells.
-     *
-     * @param cells the list of grid cells to set
-     * @param <ENT> the type of grid entity
-     * @return a grid initializer that sets the specified cells
-     * @throws IndexOutOfBoundsException if the coordinate is not valid
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> fromList(List<GridCell<ENT>> cells) {
-        return model -> {
-            for (GridCell<ENT> cell : cells) {
-                model.setEntity(cell);
-            }
-        };
-    }
-
-    /**
-     * Returns a cancellation-aware initializer that sets the grid cells from the specified list.
-     *
-     * @param cells             cells to set
-     * @param cancellationCheck operation that may stop initialization
-     * @param <ENT>             the type of grid entity
-     * @return cancellation-aware initializer
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> fromList(List<GridCell<ENT>> cells,
-                                                                         Runnable cancellationCheck) {
-        return model -> {
-            for (int index = 0; index < cells.size(); index++) {
-                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
-                    cancellationCheck.run();
-                }
-                model.setEntity(cells.get(index));
             }
         };
     }
@@ -148,114 +203,44 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that fills the grid with entities generated randomly.
+     * Returns an initializer that places a new entity from the supplier at every cell independently at the given
+     * probability and keeps the other cells.
      *
-     * @param generator the function to generate entities using the random object
-     * @param random    the random number generator
-     * @param <ENT>     the type of grid entity
-     * @return a grid initializer that fills the grid randomly
+     * <p>Existing entities are overwritten. A probability of {@code 0.0} or less leaves the grid unchanged,
+     * {@code 1.0} or more sets every cell.
+     *
+     * @param probability    the probability of an entity per cell (0.0 to 1.0)
+     * @param entitySupplier the supplier, called once per placed entity
+     * @param random         the random number generator, called once per cell in row-major order
+     * @param <ENT>          the type of grid entity
+     * @return a grid initializer that places entities at the given probability
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomly(Function<Random, ENT> generator, Random random) {
-        return model -> model.fill(() -> generator.apply(random));
-    }
-
-    /**
-     * Returns an initializer that places all given entities onto random eligible grid positions.
-     *
-     * <p>The initializer first determines all grid cells whose current entity satisfies
-     * {@code canReplaceExisting}. From these eligible cells, a random ordering is created using
-     * {@code random}. The entities from {@code entities} are then placed sequentially (in list order)
-     * onto the first {@code entities.size()} positions of that shuffled cell list.
-     *
-     * <p>The initializer performs a fail-fast capacity check before mutating the model: if fewer
-     * eligible cells exist than entities to place, an {@link IllegalStateException} is thrown and
-     * no entities are placed.
-     *
-     * @param entities           the entities to place; each list element is placed exactly once
-     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
-     * @param random             the random number generator
-     * @param <ENT>              the grid entity type
-     * @return a {@link GridInitializer} that places the given entities at random eligible positions
-     * @throws IllegalStateException if the grid contains fewer eligible cells than {@code entities.size()}
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeAllAtRandomPositions(List<ENT> entities,
-                                                                                          Predicate<ENT> canReplaceExisting,
-                                                                                          Random random) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> placeWithProbability(double probability,
+                                                                                     Supplier<ENT> entitySupplier,
+                                                                                     Random random) {
         return model -> {
-            var freeCoordinates = new ArrayList<>(model.filteredCoordinates(canReplaceExisting));
-            if (freeCoordinates.size() < entities.size()) {
-                throw new IllegalStateException("Unable to place all entities. Needed " + entities.size() + " replaceable cells, but found " + freeCoordinates.size() + ".");
-            }
-
-            Collections.shuffle(freeCoordinates, random);
-
-            for (int i = 0; i < entities.size(); i++) {
-                GridCoordinate coordinate = freeCoordinates.get(i);
-                model.setEntity(coordinate, entities.get(i));
+            for (GridCoordinate coordinate : model.structure().coordinatesList()) {
+                if (random.nextDouble() < probability) {
+                    model.setEntity(coordinate, entitySupplier.get());
+                }
             }
         };
     }
 
     /**
-     * Returns a cancellation-aware initializer that places all entities onto random eligible grid positions.
+     * Returns an initializer that places a fixed number of entities at random cells whose current entity may be
+     * replaced.
      *
-     * @param entities           entities to place
-     * @param canReplaceExisting predicate to determine whether an existing entity may be replaced
-     * @param random             random number generator
-     * @param cancellationCheck  operation that may stop initialization
-     * @param <ENT>              the type of grid entity
-     * @return cancellation-aware initializer
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeAllAtRandomPositions(List<ENT> entities,
-                                                                                          Predicate<ENT> canReplaceExisting,
-                                                                                          Random random,
-                                                                                          Runnable cancellationCheck) {
-        return model -> {
-            var freeCoordinates = new ArrayList<GridCoordinate>();
-            GridSize size = model.structure().size();
-            int index = 0;
-            for (int y = 0; y < size.height(); y++) {
-                for (int x = 0; x < size.width(); x++) {
-                    if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
-                        cancellationCheck.run();
-                    }
-                    index++;
-                    GridCoordinate coordinate = new GridCoordinate(x, y);
-                    if (canReplaceExisting.test(model.getEntity(coordinate))) {
-                        freeCoordinates.add(coordinate);
-                    }
-                }
-            }
-            if (freeCoordinates.size() < entities.size()) {
-                throw new IllegalStateException("Unable to place all entities. Needed " + entities.size()
-                        + " replaceable cells, but found " + freeCoordinates.size() + ".");
-            }
-
-            shuffleCoordinates(freeCoordinates, random, cancellationCheck);
-
-            for (index = 0; index < entities.size(); index++) {
-                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
-                    cancellationCheck.run();
-                }
-                model.setEntity(freeCoordinates.get(index), entities.get(index));
-            }
-        };
-    }
-
-    /**
-     * Returns an initializer that places a fixed number of entities at random positions.
-     *
-     * <p>Placement is only performed if the {@code canReplaceExisting} predicate returns {@code true}
-     * for the entity currently at the chosen position. For each entity, random positions are tried
-     * up to a maximum number of attempts (at least 100, or half of the grid area if larger).
+     * <p>For each entity, random cells are tried up to a maximum number of attempts (at least 100, or half of the
+     * grid area if larger).
      *
      * @param count              the number of entities to place
-     * @param entitySupplier     the supplier for entities to place
-     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
+     * @param entitySupplier     the supplier of the entities to place
+     * @param canReplaceExisting the predicate that tells whether the current entity of a cell may be replaced
      * @param random             the random number generator
      * @param <ENT>              the type of grid entity
-     * @return a grid initializer that places entities at random positions, using the replacement predicate
-     * @throws IllegalStateException if not all entities could be placed within the maximum number of attempts
+     * @return a grid initializer that places the entities at random cells
+     * @throws IllegalStateException if an entity cannot be placed within the maximum number of attempts
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeRandomCount(int count,
                                                                                  Supplier<ENT> entitySupplier,
@@ -265,183 +250,47 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that places entities at a random percentage of grid positions.
+     * Returns an initializer that places entities at the given fraction of the grid cells, chosen at random among
+     * the cells whose current entity may be replaced.
      *
-     * <p>Placement is only performed if the {@code canReplaceExisting} predicate returns {@code true}
-     * for the entity currently at the chosen position.
+     * <p>The number of entities is {@code percent} times the grid area, rounded; they are placed as by
+     * {@link #placeRandomCount(int, Supplier, Predicate, Random)}.
      *
-     * @param entitySupplier     the supplier for entities to place
-     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
-     * @param percent            the percentage of positions to fill (0.0 to 1.0)
+     * @param percent            the fraction of cells to place entities at (0.0 to 1.0)
+     * @param entitySupplier     the supplier of the entities to place
+     * @param canReplaceExisting the predicate that tells whether the current entity of a cell may be replaced
      * @param random             the random number generator
      * @param <ENT>              the type of grid entity
-     * @return a grid initializer that places entities at a random percentage of positions, using the replacement predicate
+     * @return a grid initializer that places the entities at random cells
      * @throws IllegalArgumentException if {@code percent} is outside the range [0.0, 1.0]
-     * @throws IllegalStateException    if not all entities could be placed within the maximum number of attempts
+     * @throws IllegalStateException    if an entity cannot be placed within the maximum number of attempts
      */
-    @SuppressWarnings({"NumericCastThatLosesPrecision"})
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeRandomPercent(Supplier<ENT> entitySupplier,
-                                                                                   Predicate<ENT> canReplaceExisting,
-                                                                                   double percent,
-                                                                                   Random random) {
-        checkPercent(percent);
-        return model -> placeRandomCount((int) Math.round(percent * model.structure().size().area()),
-                entitySupplier, canReplaceExisting, random).initialize(model);
-    }
-
-    /**
-     * Returns an initializer that fills the entire grid either with entities produced by
-     * {@code entitySupplier} or with the provided {@code fallback} so that approximately
-     * {@code percent} of cells contain values from the supplier.
-     *
-     * <p><b>Note:</b> For larger values of {@code percent} this initializer may first
-     * fill the grid using {@code entitySupplier}, which results in the supplier being
-     * invoked once per cell (i.e. up to the grid area times). If your supplier has
-     * side effects or is expensive, those effects will occur during this full-grid fill.
-     *
-     * <p>Values outside the range [0.0, 1.0] are handled gracefully: values {@code <= 0.0}
-     * produce a fallback-only fill, and values {@code >= 1.0} produce a supplier-only fill.
-     *
-     * @param entitySupplier supplier producing entities to place
-     * @param percent        the desired fraction of cells populated from {@code entitySupplier} (0.0 to 1.0)
-     * @param fallback       the entity used as fallback where the supplier is not applied
-     * @param random         the random number generator used for random placement
-     * @param <ENT>          the type of grid entity
-     * @return a {@link GridInitializer} that fills the grid according to the described policy
-     * @throws IllegalStateException if an underlying placement (via {@code placeRandomPercent}) cannot place the requested entities
-     */
-    @SuppressWarnings("MagicNumber")
-    public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomPercent(
-            Supplier<ENT> entitySupplier,
-            double percent,
-            ENT fallback,
-            Random random) {
-        if (percent <= 0.0d) {
-            return GridInitializers.constant(fallback);
-        }
-        if (percent >= 1.0d) {
-            return GridInitializers.supplier(entitySupplier);
-        }
-        if (percent <= 0.8d) {
-            return GridInitializers.constant(fallback)
-                                   .andThen(GridInitializers.placeRandomPercent(
-                                           entitySupplier,
-                                           fallback::equals,
-                                           percent,
-                                           random));
-        }
-        return GridInitializers.supplier(entitySupplier)
-                               .andThen(GridInitializers.placeRandomPercent(
-                                       () -> fallback,
-                                       Predicate.not(fallback::equals),
-                                       1.0d - percent,
-                                       random));
-    }
-
-    /**
-     * Returns a cancellation-aware initializer that fills a percentage of cells with supplied entities.
-     *
-     * <p>The resulting population count and randomized placement are equivalent to
-     * {@link #fillRandomPercent(Supplier, double, GridEntity, Random)}. The cancellation check runs before work and
-     * at most every 1,024 visited cells.
-     *
-     * @param entitySupplier    supplier producing entities to place
-     * @param percent           the desired fraction of cells populated from the supplier
-     * @param fallback          entity used for remaining cells
-     * @param random            random number generator used for placement
-     * @param cancellationCheck operation that may stop initialization
-     * @param <ENT>             grid entity type
-     * @return cancellation-aware initializer
-     */
-    @SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
-    public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomPercent(
-            Supplier<ENT> entitySupplier,
-            double percent,
-            ENT fallback,
-            Random random,
-            Runnable cancellationCheck) {
-        if (percent <= 0.0d) {
-            return model -> {
-                cancellationCheck.run();
-                fillWithSupplier(model, () -> fallback, cancellationCheck);
-            };
-        }
-        if (percent >= 1.0d) {
-            return model -> {
-                cancellationCheck.run();
-                fillWithSupplier(model, entitySupplier, cancellationCheck);
-            };
-        }
-        return model -> {
-            cancellationCheck.run();
-            int gridArea = model.structure().size().area();
-            if (percent <= 0.8d) {
-                int entityCount = (int) Math.round(percent * gridArea);
-                fillWithSupplier(model, () -> fallback, cancellationCheck);
-                placeRandomCount(model, entityCount, entitySupplier, fallback::equals, random, cancellationCheck);
-            } else {
-                int fallbackCount = (int) Math.round((1.0d - percent) * gridArea);
-                fillWithSupplier(model, entitySupplier, cancellationCheck);
-                placeRandomCount(model, fallbackCount,
-                        () -> fallback, Predicate.not(fallback::equals), random, cancellationCheck);
-            }
-        };
-    }
-
-    /**
-     * Returns an initializer that places a fixed number of entities at shuffled positions.
-     *
-     * <p>The grid coordinates are shuffled once, and the method iterates over them a single time.
-     * For each coordinate, it attempts to place the current entity if {@code canReplaceExisting} returns {@code true}
-     * for the existing entity at that position. Only after a successful placement is a new entity generated.
-     * If not enough suitable positions are found, placement stops and an exception is thrown.
-     *
-     * @param count              the number of entities to place
-     * @param entitySupplier     the supplier for entities to place
-     * @param canReplaceExisting predicate to determine if an existing entity can be replaced
-     * @param random             the random number generator
-     * @param <ENT>              the type of grid entity
-     * @return a grid initializer that places entities at shuffled positions, skipping blocked cells
-     * @throws IllegalStateException if not all entities could be placed
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeShuffledCount(int count,
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    public static <ENT extends GridEntity> GridInitializer<ENT> placeRandomPercent(double percent,
                                                                                    Supplier<ENT> entitySupplier,
                                                                                    Predicate<ENT> canReplaceExisting,
                                                                                    Random random) {
-        return model -> {
-            int placed = 0;
-            if (count > 0) {
-                List<GridCoordinate> coordinates = model.structure().coordinatesList();
-                Collections.shuffle(coordinates, random);
-                ENT nextEntity = entitySupplier.get();
-                for (GridCoordinate coordinate : coordinates) {
-                    ENT existingEntity = model.getEntity(coordinate);
-                    if (canReplaceExisting.test(existingEntity)) {
-                        model.setEntity(coordinate, nextEntity);
-                        placed++;
-                        if (placed >= count) {
-                            break;
-                        }
-                        nextEntity = entitySupplier.get();
-                    }
-                }
-            }
-            if (placed < count) {
-                throw new IllegalStateException("Unable to place all entities. Only " + placed + " entities were placed.");
-            }
-        };
+        checkPercent(percent);
+        return model -> placeRandomCount(model, (int) Math.round(percent * model.structure().size().area()),
+                entitySupplier, canReplaceExisting, random, () -> {});
     }
 
     /**
-     * Returns a cancellation-aware initializer that places a fixed number of entities at shuffled positions.
+     * Returns an initializer that places a fixed number of entities at shuffled cells whose current entity may be
+     * replaced.
      *
-     * @param count              number of entities to place
-     * @param entitySupplier     supplier for entities to place
-     * @param canReplaceExisting predicate to determine whether an existing entity may be replaced
-     * @param random             random number generator
-     * @param cancellationCheck  operation that may stop initialization
+     * <p>The grid coordinates are shuffled once and visited a single time. A new entity is taken from the supplier
+     * only after the previous one has been placed.
+     *
+     * @param count              the number of entities to place
+     * @param entitySupplier     the supplier of the entities to place
+     * @param canReplaceExisting the predicate that tells whether the current entity of a cell may be replaced
+     * @param random             the random number generator for the shuffle
+     * @param cancellationCheck  the check that may stop the initialization
      * @param <ENT>              the type of grid entity
-     * @return cancellation-aware initializer
+     * @return a grid initializer that places the entities at shuffled cells
+     * @throws IllegalStateException if fewer cells than {@code count} may be replaced; the entities placed so far
+     *                               stay
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeShuffledCount(int count,
                                                                                    Supplier<ENT> entitySupplier,
@@ -455,7 +304,7 @@ public final class GridInitializers {
                 shuffleCoordinates(coordinates, random, cancellationCheck);
                 ENT nextEntity = entitySupplier.get();
                 for (int index = 0; index < coordinates.size(); index++) {
-                    if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                    if (WorkCheckpoints.isCancellationCheckpoint(index)) {
                         cancellationCheck.run();
                     }
                     GridCoordinate coordinate = coordinates.get(index);
@@ -477,36 +326,53 @@ public final class GridInitializers {
     }
 
     /**
-     * Returns an initializer that fills every position with the given entity with a certain probability,
-     * otherwise with a fallback entity.
+     * Returns an initializer that places each of the given entities at a random cell whose current entity may be
+     * replaced.
      *
-     * @param entity      the entity to place with the given probability
-     * @param probability the probability to place the entity (0.0 to 1.0)
-     * @param fallback    the fallback entity to place otherwise
-     * @param random      the random number generator
-     * @param <ENT>       the type of grid entity
-     * @return a grid initializer that fills the grid probabilistically
-     */
-    public static <ENT extends GridEntity> GridInitializer<ENT> fillWithProbability(ENT entity, double probability, ENT fallback, Random random) {
-        return model ->
-                model.fill(() -> (random.nextDouble() < probability) ? entity : fallback);
-    }
-
-    /**
-     * Returns an initializer that places entities generated by the supplier at each position with a certain probability.
+     * <p>The replaceable cells are shuffled with {@code random}, and the entities are placed in list order at the
+     * first {@code entities.size()} of them. The capacity is checked before any entity is placed.
      *
-     * @param entitySupplier the supplier for entities to place
-     * @param probability    the probability to place an entity (0.0 to 1.0)
-     * @param random         the random number generator
-     * @param <ENT>          the type of grid entity
-     * @return a grid initializer that places entities probabilistically
+     * @param entities           the entities to place, each exactly once
+     * @param canReplaceExisting the predicate that tells whether the current entity of a cell may be replaced
+     * @param random             the random number generator for the shuffle
+     * @param cancellationCheck  the check that may stop the initialization
+     * @param <ENT>              the type of grid entity
+     * @return a grid initializer that places all entities at random cells
+     * @throws IllegalStateException if fewer cells than {@code entities.size()} may be replaced; no entity is placed
+     *                               then
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeWithProbability(Supplier<ENT> entitySupplier, double probability, Random random) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> placeAllAtRandomPositions(List<ENT> entities,
+                                                                                          Predicate<ENT> canReplaceExisting,
+                                                                                          Random random,
+                                                                                          Runnable cancellationCheck) {
         return model -> {
-            for (GridCoordinate coordinate : model.structure().coordinatesList()) {
-                if (random.nextDouble() < probability) {
-                    model.setEntity(coordinate, entitySupplier.get());
+            var freeCoordinates = new ArrayList<GridCoordinate>();
+            GridSize size = model.structure().size();
+            int index = 0;
+            for (int y = 0; y < size.height(); y++) {
+                for (int x = 0; x < size.width(); x++) {
+                    if (WorkCheckpoints.isCancellationCheckpoint(index)) {
+                        cancellationCheck.run();
+                    }
+                    index++;
+                    GridCoordinate coordinate = new GridCoordinate(x, y);
+                    if (canReplaceExisting.test(model.getEntity(coordinate))) {
+                        freeCoordinates.add(coordinate);
+                    }
                 }
+            }
+            if (freeCoordinates.size() < entities.size()) {
+                throw new IllegalStateException("Unable to place all entities. Needed " + entities.size()
+                        + " replaceable cells, but found " + freeCoordinates.size() + ".");
+            }
+
+            shuffleCoordinates(freeCoordinates, random, cancellationCheck);
+
+            for (index = 0; index < entities.size(); index++) {
+                if (WorkCheckpoints.isCancellationCheckpoint(index)) {
+                    cancellationCheck.run();
+                }
+                model.setEntity(freeCoordinates.get(index), entities.get(index));
             }
         };
     }
@@ -536,7 +402,7 @@ public final class GridInitializers {
             int attempts = 0;
             boolean nextEntityPlaced = false;
             while (!nextEntityPlaced && (attempts < maxAttempts)) {
-                if ((checkpointIndex & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                if (WorkCheckpoints.isCancellationCheckpoint(checkpointIndex)) {
                     cancellationCheck.run();
                 }
                 checkpointIndex++;
@@ -555,13 +421,13 @@ public final class GridInitializers {
         }
     }
 
-    private static <ENT extends GridEntity> void fillWithSupplier(WritableGridModel<ENT> model, Supplier<ENT> entitySupplier,
-                                                                  Runnable cancellationCheck) {
+    private static <ENT extends GridEntity> void fillCells(WritableGridModel<ENT> model, Supplier<ENT> entitySupplier,
+                                                           Runnable cancellationCheck) {
         GridSize size = model.structure().size();
         int index = 0;
         for (int y = 0; y < size.height(); y++) {
             for (int x = 0; x < size.width(); x++) {
-                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                if (WorkCheckpoints.isCancellationCheckpoint(index)) {
                     cancellationCheck.run();
                 }
                 index++;
@@ -575,7 +441,7 @@ public final class GridInitializers {
         int index = 0;
         for (int y = 0; y < size.height(); y++) {
             for (int x = 0; x < size.width(); x++) {
-                if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+                if (WorkCheckpoints.isCancellationCheckpoint(index)) {
                     cancellationCheck.run();
                 }
                 index++;
@@ -587,7 +453,7 @@ public final class GridInitializers {
 
     private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random, Runnable cancellationCheck) {
         for (int index = 0; index < (coordinates.size() - 1); index++) {
-            if ((index & WorkCheckpoints.CANCELLATION_CHECK_MASK) == 0) {
+            if (WorkCheckpoints.isCancellationCheckpoint(index)) {
                 cancellationCheck.run();
             }
             int coordinateIndex = coordinates.size() - index - 1;

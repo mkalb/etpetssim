@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Comparators that define the order in which agent grid cells are processed in a simulation step.
  *
- * <p>The comparators sort {@link GridCell} instances by position, entity class, or descriptor ID.
+ * <p>The comparators sort {@link GridCell} instances by position or by descriptor ID.
  *
  * <p>The comparators are intended to be passed to {@link de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner}
  * to determine the order in which agents are processed in the grid model.
@@ -36,21 +36,11 @@ public final class AgentOrderingStrategies {
     }
 
     /**
-     * Returns a comparator that orders grid cells by the simple class name of their entity.
+     * Returns a comparator that orders grid cells by the descriptor ID of their entity, which groups the cells by
+     * the kind of entity.
      *
-     * <p>Groups cells by the type of entity they contain.
-     *
-     * @param <ENT> the type of entity stored in the grid cell
-     * @return a comparator for ordering grid cells by entity class name
-     */
-    public static <ENT extends GridEntity> Comparator<GridCell<ENT>> byEntityClass() {
-        return Comparator.comparing((GridCell<ENT> cell) -> cell.entity().getClass().getSimpleName());
-    }
-
-    /**
-     * Returns a comparator that orders grid cells by the descriptor ID of their entity.
-     *
-     * <p>Sorts cells based on the unique descriptor ID of the contained entity.
+     * <p>Cells with the same descriptor ID are equal for this comparator; append
+     * {@code .thenComparing(byPosition())} for a deterministic order within a group.
      *
      * @param <ENT> the type of entity stored in the grid cell
      * @return a comparator for ordering grid cells by entity descriptor ID

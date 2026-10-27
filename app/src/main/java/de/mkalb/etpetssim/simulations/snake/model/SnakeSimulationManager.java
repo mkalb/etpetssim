@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.simulations.snake.model.strategy.*;
 
 import java.util.*;
 
-import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
 public final class SnakeSimulationManager
         extends AbstractTimedSimulationManager<SnakeEntity, WritableGridModel<SnakeEntity>, SnakeConfig,
@@ -113,7 +113,7 @@ public final class SnakeSimulationManager
                 int yEnd = yStart + length;
 
                 for (int y = yStart; y <= yEnd; y++) {
-                    if ((y & CANCELLATION_CHECK_MASK) == 0) {
+                    if (isCancellationCheckpoint(y)) {
                         cancellation.checkCanceled();
                     }
                     cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
@@ -131,7 +131,7 @@ public final class SnakeSimulationManager
             var strategies = SnakeMoveStrategies.strategies();
             List<SnakeEntity> snakeHeads = new ArrayList<>(config.snakes());
             for (int i = 0; i < config.snakes(); i++) {
-                if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                if (isCancellationCheckpoint(i)) {
                     cancellation.checkCanceled();
                 }
                 SnakeMoveStrategy strategy = strategies.get(i % strategies.size());

@@ -46,4 +46,5 @@ Core overrides the general Java rule that constructors and methods have Javadoc 
 - Public classes require class-level Javadoc describing purpose and responsibilities.
 - Public methods require Javadoc covering intent, parameters, return values, and contract-relevant exceptions.
 - Core classes require comprehensive JUnit 5 coverage.
-- `*ForTesting()` methods are allowed for test infrastructure and must document their testing purpose.
+- `*ForTesting()` methods are allowed for test infrastructure and must document their testing purpose. Make them
+  package-private unless tests in other packages need them (e.g., `AppLogger.initializeForTesting()`).

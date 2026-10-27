@@ -71,6 +71,15 @@ final class EtpetsBalanceTest {
     }
 
     @Test
+    void testInitialCurrentEnergyReductionKeepsMinimumEnergy() {
+        assertAll(
+                () -> assertTrue(PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA >= 0),
+                () -> assertTrue((PET_TRAITS_MAX_ENERGY_MIN - PET_INITIAL_CURRENT_ENERGY_REDUCTION_DELTA)
+                        >= PET_CURRENT_ENERGY_MIN)
+        );
+    }
+
+    @Test
     void testReproductionQualityWeightsSumToOne() {
         assertEquals(1.0d,
                 PET_REPRODUCTION_SCORE_AVERAGE_QUALITY_WEIGHT + PET_REPRODUCTION_SCORE_MINIMUM_QUALITY_WEIGHT,

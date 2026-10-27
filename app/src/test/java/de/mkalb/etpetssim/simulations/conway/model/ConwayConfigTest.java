@@ -82,7 +82,7 @@ final class ConwayConfigTest {
 
     @Test
     void testIsValidRejectsTransitionRulesAboveShapeNeighborLimit() {
-        int invalidBirthCount = CellNeighborhoods.maxNeighborCount(CellShape.HEXAGON, NEIGHBORHOOD_MODE_DEFAULT) + 1;
+        int invalidBirthCount = CellNeighborhoods.maxNeighborCount(NEIGHBORHOOD_MODE_DEFAULT, CellShape.HEXAGON) + 1;
 
         assertFalse(isValidWith(v -> {
             v.cellShape = CellShape.HEXAGON;

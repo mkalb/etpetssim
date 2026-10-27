@@ -38,7 +38,7 @@ public final class ReboundingConstraints {
             CellDisplayMode.SHAPE_BORDERED);
 
     // Initialization
-    public static final String SEED_INITIAL = "";
+    public static final String SEED_DEFAULT = "";
     public static final int VERTICAL_WALLS_DEFAULT = 2;
     public static final int VERTICAL_WALLS_MIN = 0;
     public static final int VERTICAL_WALLS_MAX = 100;

@@ -142,6 +142,10 @@ Rules for classes with only static members (constants, static methods, or both).
   `GridPattern`, `GridInitializers` for `GridInitializer`), as in `Collections`; name classes that create JavaFX
   objects `FX*Factory` (see `ui.md`); name other utility classes after their role (e.g., `GridGeometry`,
   `CellNeighborhoods`, `<Simulation>Constraints`).
+- Start the type Javadoc with what the class provides (e.g., "Defaults, limits, and allowed values of ..."), not with
+  "Utility class ...".
+- Make helper methods `private`, or package-private when tests call them directly; order the methods as public,
+  package-private, then private, followed by nested types.
 
 ## Nullability (JSpecify)
 

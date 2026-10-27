@@ -23,9 +23,7 @@ public final class AppLocalization {
     public static final String PLACEHOLDER_FOR_EXCEPTIONS = "########";
 
     @SuppressWarnings("FieldNamingConvention")
-    private static @Nullable Locale locale;
-    @SuppressWarnings("FieldNamingConvention")
-    private static @Nullable ResourceBundle bundle;
+    private static volatile @Nullable LocalizationState state;
 
     private AppLocalization() {
     }
@@ -42,10 +40,10 @@ public final class AppLocalization {
     /**
      * Returns whether localization has been initialized.
      *
-     * @return {@code true} when both locale and bundle are available
+     * @return {@code true} when the locale and its bundle are available
      */
-    public static synchronized boolean isInitialized() {
-        return (locale != null) && (bundle != null);
+    public static boolean isInitialized() {
+        return state != null;
     }
 
     /**
@@ -76,12 +74,13 @@ public final class AppLocalization {
         }
         Objects.requireNonNull(defaultLocale, "Default locale must not be null");
 
-        locale = resolveLocaleFromArgument(localeArgument)
+        Locale resolvedLocale = resolveLocaleFromArgument(localeArgument)
                 .or(() -> resolveLocaleFromDefault(defaultLocale))
                 .orElse(DEFAULT_LOCALE);
-        bundle = AppResources.getBundle(locale).orElseThrow(() ->
-                new IllegalStateException("ResourceBundle for locale " + locale + " could not be loaded.")); // This should never happen.
-        AppLogger.info("AppLocalization: Initialized with locale: " + locale + " and loaded ResourceBundle");
+        ResourceBundle resolvedBundle = AppResources.getBundle(resolvedLocale).orElseThrow(() ->
+                new IllegalStateException("ResourceBundle for locale " + resolvedLocale + " could not be loaded.")); // This should never happen.
+        state = new LocalizationState(resolvedLocale, resolvedBundle);
+        AppLogger.info("AppLocalization: Initialized with locale: " + resolvedLocale + " and loaded ResourceBundle");
     }
 
     /**
@@ -91,10 +90,7 @@ public final class AppLocalization {
      * @throws IllegalStateException if localization has not been initialized
      */
     public static Locale locale() {
-        if (locale == null) {
-            throw new IllegalStateException("AppLocalization is not initialized.");
-        }
-        return locale;
+        return requireState().locale();
     }
 
     /**
@@ -104,10 +100,7 @@ public final class AppLocalization {
      * @throws IllegalStateException if localization has not been initialized
      */
     public static ResourceBundle bundle() {
-        if (bundle == null) {
-            throw new IllegalStateException("AppLocalization is not initialized.");
-        }
-        return bundle;
+        return requireState().bundle();
     }
 
     /**
@@ -164,10 +157,9 @@ public final class AppLocalization {
      */
     public static String getFormattedText(String key, Object... args) {
         Objects.requireNonNull(key, "Key must not be null");
-        Locale activeLocale = locale();
-        ResourceBundle activeBundle = bundle();
+        LocalizationState activeState = requireState();
         try {
-            return String.format(activeLocale, activeBundle.getString(key), args);
+            return String.format(activeState.locale(), activeState.bundle().getString(key), args);
         } catch (MissingResourceException e) {
             AppLogger.error(e, "AppLocalization: Key not found in ResourceBundle: " + key);
             return PLACEHOLDER_FOR_EXCEPTIONS;
@@ -251,17 +243,24 @@ public final class AppLocalization {
      * @throws IllegalStateException if the test bundle cannot be loaded
      */
     static synchronized void initializeForTesting(Locale testLocale, String bundleBaseName) {
-        locale = testLocale;
-        bundle = AppResources.getBundle(bundleBaseName, testLocale).orElseThrow(() ->
+        ResourceBundle testBundle = AppResources.getBundle(bundleBaseName, testLocale).orElseThrow(() ->
                 new IllegalStateException("Test ResourceBundle " + bundleBaseName + " could not be loaded."));
+        state = new LocalizationState(testLocale, testBundle);
     }
 
     /**
      * Resets the localization state for tests, so that each test can initialize localization again.
      */
     static synchronized void resetForTesting() {
-        locale = null;
-        bundle = null;
+        state = null;
+    }
+
+    private static LocalizationState requireState() {
+        LocalizationState activeState = state;
+        if (activeState == null) {
+            throw new IllegalStateException("AppLocalization is not initialized.");
+        }
+        return activeState;
     }
 
     /**
@@ -345,6 +344,12 @@ public final class AppLocalization {
             return countryLocale.getLanguage() + "_" + countryLocale.getCountry();
         }
 
+    }
+
+    /**
+     * The active locale and its bundle, replaced as a whole so that readers always see a matching pair.
+     */
+    private record LocalizationState(Locale locale, ResourceBundle bundle) {
     }
 
 }

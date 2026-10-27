@@ -33,7 +33,7 @@ public final class WatorConfigViewModel
             CELL_EDGE_LENGTH_MAX,
             CELL_DISPLAY_MODE_DEFAULT,
             CELL_DISPLAY_MODE_VALUES,
-            SEED_INITIAL
+            SEED_DEFAULT
     );
 
     // Initialization

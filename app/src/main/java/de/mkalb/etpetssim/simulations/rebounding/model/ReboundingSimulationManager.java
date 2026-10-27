@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.simulations.rebounding.model.entity.*;
 
 import java.util.*;
 
-import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
 public final class ReboundingSimulationManager
         extends AbstractTimedSimulationManager<ReboundingEntity, WritableGridModel<ReboundingEntity>, ReboundingConfig,
@@ -71,7 +71,7 @@ public final class ReboundingSimulationManager
             List<GridCell<ReboundingEntity>> cells = new ArrayList<>();
             for (int x : wallXPositions) {
                 for (int y = 0; y < height; y++) {
-                    if ((y & CANCELLATION_CHECK_MASK) == 0) {
+                    if (isCancellationCheckpoint(y)) {
                         cancellation.checkCanceled();
                     }
                     cells.add(new GridCell<>(new GridCoordinate(x, y), TerrainConstant.WALL));
@@ -104,7 +104,7 @@ public final class ReboundingSimulationManager
         List<CompassDirection> directionRing = resolveDirectionRing(config);
         List<ReboundingEntity> movingEntities = new ArrayList<>(movingEntityCount);
         for (int i = 0; i < movingEntityCount; i++) {
-            if ((i & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(i)) {
                 cancellation.checkCanceled();
             }
             movingEntities.add(new Rebounder(directionRing.get(random.nextInt(directionRing.size()))));

@@ -41,7 +41,7 @@ public final class ForestConstraints {
             CellDisplayMode.EMOJI);
 
     // Initialization
-    public static final String SEED_INITIAL = "";
+    public static final String SEED_DEFAULT = "";
     public static final double TREE_DENSITY_DEFAULT = 0.2d;
     public static final double TREE_DENSITY_MIN = 0.0d;
     public static final double TREE_DENSITY_MAX = 1.0d;

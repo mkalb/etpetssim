@@ -59,6 +59,11 @@ include:
 - Must not import JavaFX scene graph, controls, properties, bindings, stages, or animation types.
 - May use neutral JavaFX value types (`Color`, `Image`, `Duration`) as plain value carriers.
 - May depend on same-simulation `shared`; must not depend on `view` or `viewmodel`.
+- Expose a catalog of predefined values (e.g., `ConwayPatterns`, `SnakeMoveStrategies`) through a noun-style accessor
+  that returns a constant unmodifiable list (`choices()`, `strategies()`); keep the constants and factories that only
+  build the catalog private, also when tests used them, and test them through the accessor.
+- Keep an early return that avoids a random draw (e.g., when there is no tie among the candidates) and explain it in
+  a comment; removing it changes the random sequence of a seed.
 
 ### View
 
@@ -200,9 +205,11 @@ Use `CellDrawer` from `simulations.core.view`:
   per component `<COMPONENT>_DEFAULT` and either `_MIN`, `_MAX`, and, for integer spinners, `_STEP`, or `_VALUES`
   for selections; a fixed value has only `_DEFAULT`. Name the constants after the config component, group them
   with the line comments and in the order of the `*Config` components, and name the inclusive upper limit of
-  combined percentages `COMBINED_PERCENT_MAX`.
+  combined percentages `COMBINED_PERCENT_MAX`. Order the constants of a component `_DEFAULT`, `_MIN`, `_MAX`, `_STEP`
+  or `_DEFAULT`, `_VALUES`, unless the default refers to a bound.
 - Keep fixed tuning values of the simulation logic that are not part of the config in `<Simulation>Balance` in the
-  `model` package; use the suffixes `_DEFAULT`, `_MIN`, and `_MAX` for value ranges as in `*Constraints`.
+  `model` package; use the suffixes `_DEFAULT`, `_MIN`, and `_MAX` and their order for value ranges as in
+  `*Constraints`.
 - `*Config` records are created from unvalidated input and have no validating constructor; check them with `isValid()`
   (which calls `isBaseValid()` first) before passing them to the Model layer.
 - Order `*Config` components in four groups, each introduced by a line comment: `// Structure` (cell shape, edge
@@ -268,7 +275,8 @@ Shutdown checklist:
 - Name implementations of `SynchronousStepLogic` and `AgentStepLogic` with the suffix `StepLogic` (for example,
   `ConwayStepLogic`, `WatorStepLogic`); name implementations of `SimulationStepRunner` with the suffix `StepRunner`
   (for example, `SugarStepRunner`).
-- Static `<SimulationName><Layer>Logic` helper classes called from a step runner expose `apply(...)`;
+- Static `<SimulationName><Layer>Logic` helper classes called from a step runner expose `apply(...)` with the
+  parameters grid model, config, further inputs (e.g., `Random`), step index, and statistics, in this order;
   `perform...` is reserved for implementations of the step contracts.
 - Model, entity, and strategy types may use domain verbs of their simulation (e.g., `move`, `die`, `reproduce`,
   `consume`, `decideMove`) for state changes and decisions.

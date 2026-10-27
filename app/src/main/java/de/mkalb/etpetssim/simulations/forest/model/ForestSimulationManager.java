@@ -45,8 +45,8 @@ public final class ForestSimulationManager
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
-                () -> ForestEntity.TREE,
                 config.treeDensity(),
+                () -> ForestEntity.TREE,
                 ForestEntity.EMPTY,
                 random,
                 cancellation::checkCanceled);

@@ -40,7 +40,7 @@ public final class SugarConstraints {
             CellDisplayMode.SHAPE);
 
     // Initialization
-    public static final String SEED_INITIAL = "";
+    public static final String SEED_DEFAULT = "";
     public static final double AGENT_PERCENT_DEFAULT = 0.2d;
     public static final double AGENT_PERCENT_MIN = 0.0d;
     public static final double AGENT_PERCENT_MAX = 1.0d;

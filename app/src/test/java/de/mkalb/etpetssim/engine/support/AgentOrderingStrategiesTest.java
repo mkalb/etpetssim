@@ -13,7 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 final class AgentOrderingStrategiesTest {
 
     private static GridCell<TestEntity> cell(int x, int y) {
-        return new GridCell<>(new GridCoordinate(x, y), TestEntity.AGENT);
+        return cell(x, y, TestEntity.AGENT);
+    }
+
+    private static GridCell<TestEntity> cell(int x, int y, TestEntity entity) {
+        return new GridCell<>(new GridCoordinate(x, y), entity);
     }
 
     @Test
@@ -25,8 +29,21 @@ final class AgentOrderingStrategiesTest {
         assertEquals(List.of(cell(3, 0), cell(1, 1), cell(2, 1), cell(0, 2)), cells);
     }
 
+    @Test
+    void testByDescriptorId() {
+        List<GridCell<TestEntity>> cells = new ArrayList<>(List.of(
+                cell(0, 0, TestEntity.OTHER), cell(2, 1), cell(1, 0, TestEntity.OTHER), cell(1, 1)));
+
+        cells.sort(AgentOrderingStrategies.<TestEntity>byDescriptorId()
+                                          .thenComparing(AgentOrderingStrategies.byPosition()));
+
+        assertEquals(List.of(cell(1, 1), cell(2, 1), cell(0, 0, TestEntity.OTHER), cell(1, 0, TestEntity.OTHER)),
+                cells);
+    }
+
     private enum TestEntity implements GridEntity {
-        AGENT;
+        AGENT,
+        OTHER;
 
         @NonNull
         @Override

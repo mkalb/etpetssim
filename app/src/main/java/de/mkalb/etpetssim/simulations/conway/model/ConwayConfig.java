@@ -47,7 +47,7 @@ public record ConwayConfig(
     }
 
     private boolean hasValidTransitionRules() {
-        int maxNeighborCount = CellNeighborhoods.maxNeighborCount(cellShape, neighborhoodMode);
+        int maxNeighborCount = CellNeighborhoods.maxNeighborCount(neighborhoodMode, cellShape);
         return transitionRules.birthCounts().stream().noneMatch(count -> count < BIRTH_NEIGHBOR_COUNT_MIN)
                 && transitionRules.surviveCounts().stream().allMatch(count -> count <= maxNeighborCount)
                 && transitionRules.birthCounts().stream().allMatch(count -> count <= maxNeighborCount);

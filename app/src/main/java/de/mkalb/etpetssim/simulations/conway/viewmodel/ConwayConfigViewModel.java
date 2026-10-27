@@ -34,7 +34,7 @@ public final class ConwayConfigViewModel
             CELL_EDGE_LENGTH_MAX,
             CELL_DISPLAY_MODE_DEFAULT,
             CELL_DISPLAY_MODE_VALUES,
-            SEED_INITIAL
+            SEED_DEFAULT
     );
 
     // Rules
@@ -76,8 +76,8 @@ public final class ConwayConfigViewModel
     private void updateMaxNeighborCount() {
         int maxNeighbors = Math.min(ConwayTransitionRules.MAX_NEIGHBOR_COUNT,
                 CellNeighborhoods.maxNeighborCount(
-                        cellShapeProperty().property().getValue(),
-                        NEIGHBORHOOD_MODE_DEFAULT
+                        NEIGHBORHOOD_MODE_DEFAULT,
+                        cellShapeProperty().property().getValue()
                 ));
         maxNeighborCount.set(maxNeighbors);
     }

@@ -35,8 +35,8 @@ public final class ReboundingStepLogic implements AgentStepLogic<ReboundingEntit
         var neighbor = CellNeighborhoods.cellNeighborWithEdgeBehavior(
                 currentCoordinate,
                 config.neighborhoodMode(),
-                movingEntity.direction(),
-                structure
+                structure,
+                movingEntity.direction()
         ).orElseThrow(() -> new IllegalStateException("Unexpected empty neighbor. This should not happen. Cell: " + agentCell));
 
         // Check edge behavior and neighbor cell entity to determine the action for the moving entity

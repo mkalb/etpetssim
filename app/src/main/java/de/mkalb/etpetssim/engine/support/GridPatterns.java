@@ -6,14 +6,12 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 import java.util.*;
 
 /**
- * Static factories for {@link GridPattern} instances.
+ * Static factories for {@link GridPattern} instances: basic patterns from given offsets, the combination of
+ * patterns, and simple shapes.
  *
- * <p>A {@code GridPattern} provides a mapping from {@link GridOffset} to {@link GridEntity} instances,
- * describing how entities are arranged relative to an origin (0, 0).
- *
- * <p><b>Normalization:</b> It is recommended that all patterns are created in normalized form,
- * meaning the top-left corner of the pattern's bounding box is always at offset (0, 0).
- * If a pattern is not normalized, this must be clearly documented in its implementation.
+ * <p>All returned patterns are unmodifiable and independent of the arguments. The shape factories return
+ * normalized patterns (top-left corner of the bounding box at offset (0, 0)); {@code of}, {@code singleton}, and
+ * {@code combine} keep the given offsets.
  */
 public final class GridPatterns {
 
@@ -21,26 +19,21 @@ public final class GridPatterns {
     }
 
     /**
-     * Returns an empty {@code GridPattern} containing no entities.
+     * Returns an empty pattern.
      *
-     * @param <ENT> the type of {@link GridEntity}
-     * @return an empty pattern
+     * @param <ENT> the type of grid entity
+     * @return a pattern without entities
      */
     public static <ENT extends GridEntity> GridPattern<ENT> empty() {
         return Collections::emptyMap;
     }
 
     /**
-     * Creates a {@code GridPattern} from the given map of offsets to entities.
+     * Returns a pattern with the entities of the given map at their offsets.
      *
-     * <p>The returned pattern contains all entries from the provided map. The pattern is
-     * <b>not guaranteed to be normalized</b>; offsets may have arbitrary values.
-     *
-     * <p>Modifications to the original map after calling this method do not affect the pattern.
-     *
-     * @param map   the map of offsets to entities
-     * @param <ENT> the type of {@link GridEntity}
-     * @return a pattern containing the specified mapping
+     * @param map   the entities by offset
+     * @param <ENT> the type of grid entity
+     * @return a pattern with a copy of the map
      */
     public static <ENT extends GridEntity> GridPattern<ENT> of(Map<GridOffset, ENT> map) {
         Map<GridOffset, ENT> mapCopy = Map.copyOf(map);
@@ -48,17 +41,12 @@ public final class GridPatterns {
     }
 
     /**
-     * Creates a {@code GridPattern} where the specified entity is placed at multiple offsets.
+     * Returns a pattern with the given entity at each of the given offsets; duplicate offsets count once.
      *
-     * <p>The returned pattern contains the given entity at each offset in the provided collection.
-     * The pattern is <b>not guaranteed to be normalized</b>; offsets may have arbitrary values.
-     *
-     * <p>Modifications to the original collection of offsets after calling this method do not affect the pattern.
-     *
-     * @param entity  the entity to place at each offset
-     * @param offsets the collection of offsets where the entity will be placed
-     * @param <ENT>   the type of {@link GridEntity}
-     * @return a pattern containing the entity at the specified offsets
+     * @param entity  the entity at each offset
+     * @param offsets the offsets of the entity
+     * @param <ENT>   the type of grid entity
+     * @return a pattern with the entity at the offsets
      */
     public static <ENT extends GridEntity> GridPattern<ENT> of(ENT entity, Collection<GridOffset> offsets) {
         Map<GridOffset, ENT> map = new HashMap<>();
@@ -69,31 +57,24 @@ public final class GridPatterns {
     }
 
     /**
-     * Creates a {@code GridPattern} containing a single entity at the specified offset.
+     * Returns a pattern with the given entity at a single offset.
      *
-     * <p>The returned pattern contains exactly one entry at the given offset. The pattern is
-     * <b>not guaranteed to be normalized</b>; the offset may be any value.
-     *
-     * @param <ENT>  the type of {@link GridEntity}
-     * @param entity the entity to place
+     * @param entity the entity
      * @param offset the offset of the entity
-     * @return a singleton pattern containing the entity at the specified offset
+     * @param <ENT>  the type of grid entity
+     * @return a pattern with one entity
      */
     public static <ENT extends GridEntity> GridPattern<ENT> singleton(ENT entity, GridOffset offset) {
         return () -> Map.of(offset, entity);
     }
 
     /**
-     * Combines multiple {@code GridPattern} instances into a single pattern.
+     * Returns a pattern with the entries of all given patterns; for an offset in several patterns, the entity of the
+     * last of them wins.
      *
-     * <p>All entries from the provided patterns are merged into one pattern. If multiple patterns
-     * contain the same offset, the entity from the last pattern in the argument list is used.
-     *
-     * <p>The resulting pattern is <b>not guaranteed to be normalized</b>.
-     *
-     * @param patterns the patterns to combine
-     * @param <ENT>    the type of {@link GridEntity}
-     * @return a combined pattern containing all entries from the input patterns
+     * @param patterns the patterns to combine, in increasing priority
+     * @param <ENT>    the type of grid entity
+     * @return a pattern with the combined entries
      */
     @SafeVarargs
     public static <ENT extends GridEntity> GridPattern<ENT> combine(GridPattern<ENT>... patterns) {
@@ -105,90 +86,87 @@ public final class GridPatterns {
     }
 
     /**
-     * Creates a {@code GridPattern} representing a horizontal line of the given length,
-     * starting at offset (0, 0) and extending to the right.
+     * Returns a horizontal line of the given entity at the offsets (x, 0) for x in [0, length).
      *
-     * <p>The returned pattern contains the specified entity at each offset (x, 0) for x in [0, length).
-     * The pattern is <b>normalized</b> with its top-left at (0, 0).
-     *
-     * @param entity the entity to place at each position in the line
-     * @param length the length of the line (number of entities)
-     * @param <ENT>  the type of {@link GridEntity}
-     * @return a pattern representing a horizontal line
+     * @param entity the entity of the line
+     * @param length the number of entities, at least 1
+     * @param <ENT>  the type of grid entity
+     * @return a normalized pattern of the line
+     * @throws IllegalArgumentException if {@code length} is less than 1
      */
     public static <ENT extends GridEntity> GridPattern<ENT> horizontalLine(ENT entity, int length) {
-        Map<GridOffset, ENT> map = new HashMap<>();
+        checkPositive(length, "length");
+        List<GridOffset> offsets = new ArrayList<>(length);
         for (int x = 0; x < length; x++) {
-            map.put(new GridOffset(x, 0), entity);
+            offsets.add(new GridOffset(x, 0));
         }
-        return of(map);
+        return of(entity, offsets);
     }
 
     /**
-     * Creates a {@code GridPattern} representing a vertical line of the given length,
-     * starting at offset (0, 0) and extending downward.
+     * Returns a vertical line of the given entity at the offsets (0, y) for y in [0, length).
      *
-     * <p>The returned pattern contains the specified entity at each offset (0, y) for y in [0, length).
-     * The pattern is <b>normalized</b> with its top-left at (0, 0).
-     *
-     * @param entity the entity to place at each position in the line
-     * @param length the length of the line (number of entities)
-     * @param <ENT>  the type of {@link GridEntity}
-     * @return a pattern representing a vertical line
+     * @param entity the entity of the line
+     * @param length the number of entities, at least 1
+     * @param <ENT>  the type of grid entity
+     * @return a normalized pattern of the line
+     * @throws IllegalArgumentException if {@code length} is less than 1
      */
     public static <ENT extends GridEntity> GridPattern<ENT> verticalLine(ENT entity, int length) {
-        Map<GridOffset, ENT> map = new HashMap<>();
+        checkPositive(length, "length");
+        List<GridOffset> offsets = new ArrayList<>(length);
         for (int y = 0; y < length; y++) {
-            map.put(new GridOffset(0, y), entity);
+            offsets.add(new GridOffset(0, y));
         }
-        return of(map);
+        return of(entity, offsets);
     }
 
     /**
-     * Creates a {@code GridPattern} representing the border (stroke) of a rectangle
-     * with the given width and height, starting at offset (0, 0).
+     * Returns the outline of a rectangle of the given entity: the first and last row and column of a bounding box
+     * with the given size.
      *
-     * <p>The returned pattern contains the specified entity at all positions on the border
-     * (top, bottom, left, and right edges) of the rectangle. The pattern is <b>normalized</b>
-     * with its top-left at (0, 0).
-     *
-     * @param borderEntity the entity to place at each border position
-     * @param width        the width of the rectangle (number of columns)
-     * @param height       the height of the rectangle (number of rows)
-     * @param <ENT>        the type of {@link GridEntity}
-     * @return a pattern representing the rectangle border
+     * @param entity the entity of the outline
+     * @param width  the number of columns, at least 1
+     * @param height the number of rows, at least 1
+     * @param <ENT>  the type of grid entity
+     * @return a normalized pattern of the outline
+     * @throws IllegalArgumentException if {@code width} or {@code height} is less than 1
      */
-    public static <ENT extends GridEntity> GridPattern<ENT> rectangle(ENT borderEntity, int width, int height) {
-        Map<GridOffset, ENT> map = new HashMap<>();
+    public static <ENT extends GridEntity> GridPattern<ENT> rectangleOutline(ENT entity, int width, int height) {
+        checkPositive(width, "width");
+        checkPositive(height, "height");
+        List<GridOffset> offsets = new ArrayList<>();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if ((y == 0) || (y == (height - 1)) || (x == 0) || (x == (width - 1))) {
-                    map.put(new GridOffset(x, y), borderEntity);
+                    offsets.add(new GridOffset(x, y));
                 }
             }
         }
-        return of(map);
+        return of(entity, offsets);
     }
 
     /**
-     * Creates a {@code GridPattern} representing the border (stroke) of a circle
-     * with the given integer radius, using the midpoint circle algorithm.
+     * Returns the outline of a circle of the given entity around the offset (radius, radius), computed with the
+     * midpoint circle algorithm.
      *
-     * <p>The returned pattern contains the specified entity at all positions on the border
-     * of a circle centered at (radius, radius). The pattern is <b>normalized</b>
-     * so that the top-left of its bounding box is at offset (0, 0).
+     * <p>The algorithm assumes square cells; on other cell shapes, the outline is a distorted ring. A radius of
+     * {@code 0} returns a single entity at (0, 0).
      *
-     * @param borderEntity the entity to place at each border position
-     * @param radius       the radius of the circle (in grid units)
-     * @param <ENT>        the type of {@link GridEntity}
-     * @return a pattern representing the circle border
+     * @param entity the entity of the outline
+     * @param radius the radius in cells, at least 0
+     * @param <ENT>  the type of grid entity
+     * @return a normalized pattern of the outline
+     * @throws IllegalArgumentException if {@code radius} is negative
      */
-    public static <ENT extends GridEntity> GridPattern<ENT> circle(ENT borderEntity, int radius) {
+    public static <ENT extends GridEntity> GridPattern<ENT> circleOutline(ENT entity, int radius) {
+        if (radius < 0) {
+            throw new IllegalArgumentException("radius must not be negative, but was " + radius + '.');
+        }
         Set<GridOffset> offsets = new HashSet<>();
         int x = radius;
         int y = 0;
         int err = 0;
-
         while (x >= y) {
             offsets.add(new GridOffset(radius + x, radius + y));
             offsets.add(new GridOffset(radius + y, radius + x));
@@ -207,15 +185,13 @@ public final class GridPatterns {
                 err -= (2 * x) + 1;
             }
         }
+        return of(entity, offsets);
+    }
 
-        // Normalize offsets so top-left is at (0, 0).
-        int minDx = offsets.stream().mapToInt(GridOffset::dx).min().orElse(0);
-        int minDy = offsets.stream().mapToInt(GridOffset::dy).min().orElse(0);
-        Map<GridOffset, ENT> map = new HashMap<>();
-        for (GridOffset o : offsets) {
-            map.put(new GridOffset(o.dx() - minDx, o.dy() - minDy), borderEntity);
+    private static void checkPositive(int value, String name) {
+        if (value < 1) {
+            throw new IllegalArgumentException(name + " must be at least 1, but was " + value + '.');
         }
-        return of(map);
     }
 
 }

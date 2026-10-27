@@ -135,7 +135,7 @@ public final class SugarAgentLogic {
                                                                                 CompassDirection direction,
                                                                                 SugarConfig config,
                                                                                 GridStructure structure) {
-        return CellNeighborhoods.cellNeighborWithEdgeBehavior(coordinate, config.neighborhoodMode(), direction, structure)
+        return CellNeighborhoods.cellNeighborWithEdgeBehavior(coordinate, config.neighborhoodMode(), structure, direction)
                                 .filter(neighbor -> (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.VALID)
                                         || (neighbor.edgeBehaviorAction() == EdgeBehaviorAction.WRAPPED));
     }

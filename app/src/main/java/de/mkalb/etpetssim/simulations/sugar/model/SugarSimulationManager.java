@@ -10,7 +10,7 @@ import de.mkalb.etpetssim.simulations.sugar.model.entity.*;
 
 import java.util.*;
 
-import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.CANCELLATION_CHECK_MASK;
+import static de.mkalb.etpetssim.engine.support.WorkCheckpoints.isCancellationCheckpoint;
 
 public final class SugarSimulationManager
         extends AbstractTimedSimulationManager<SugarEntity, SugarGridModel, SugarConfig,
@@ -108,7 +108,7 @@ public final class SugarSimulationManager
         Map<GridCoordinate, Integer> sugarMap = computeSugarRadiusMap(config, peakCoordinates, random, cancellation);
         int index = 0;
         for (var entry : sugarMap.entrySet()) {
-            if ((index & CANCELLATION_CHECK_MASK) == 0) {
+            if (isCancellationCheckpoint(index)) {
                 cancellation.checkCanceled();
             }
             index++;
@@ -143,7 +143,7 @@ public final class SugarSimulationManager
             cancellation.checkCanceled();
             int levelSize = queue.size();
             for (int i = 0; i < levelSize; i++) {
-                if ((i & CANCELLATION_CHECK_MASK) == 0) {
+                if (isCancellationCheckpoint(i)) {
                     cancellation.checkCanceled();
                 }
                 GridCoordinate current = queue.remove();
@@ -185,8 +185,8 @@ public final class SugarSimulationManager
         int stepIndexOfSpawn = -1;
         GridInitializer<AgentEntity> agentGridInitializer =
                 GridInitializers.fillRandomPercent(
-                        () -> new Agent(config.agentInitialEnergy(), stepIndexOfSpawn),
                         config.agentPercent(),
+                        () -> new Agent(config.agentInitialEnergy(), stepIndexOfSpawn),
                         NoAgent.NO_AGENT,
                         random,
                         cancellation::checkCanceled);

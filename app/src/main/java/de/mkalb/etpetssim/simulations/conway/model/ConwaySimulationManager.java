@@ -45,8 +45,8 @@ public final class ConwaySimulationManager
                                 Random random,
                                 SimulationInitializationCancellation cancellation) {
         var gridInitializer = GridInitializers.fillRandomPercent(
-                () -> ConwayEntity.ALIVE,
                 config.alivePercent(),
+                () -> ConwayEntity.ALIVE,
                 ConwayEntity.DEAD,
                 random,
                 cancellation::checkCanceled);
