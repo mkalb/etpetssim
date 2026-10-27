@@ -12,8 +12,8 @@ maintainer deletes it after all findings are done and pushed.
 ## Order
 
 - The sibling plans `code-interface-types.md`, `code-record-types.md`, `code-private-constructor-classes.md`, and
-  `code-enum-types.md` are done; their decisions apply here. After their deletion, read them in Git history (e.g.,
-  `git log --all -- docs/planning/code-record-types.md`).
+  `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until this
+  plan is done and are then deleted together with it.
 
 ## Deferred findings
 
@@ -50,3 +50,17 @@ maintainer deletes it after all findings are done and pushed.
   observation views, and several tests in `simulations.core`.
 - Proposal: Store the list in a private static final constant and return it from `metrics()`; decide whether the
   catalog rule applies to static accessors of instantiable classes and, if so, clarify it in `simulations.md`.
+
+### Component names of CommonConfigSettings
+
+- Origin: `code-private-constructor-classes.md`, deferred finding "Shared config constants" (`SEED_INITIAL` ->
+  `SEED_DEFAULT`)
+- Types: `AbstractConfigViewModel` (nested record `CommonConfigSettings` and the constructor that reads it), the nine
+  config ViewModels, `AbstractConfigViewModelTest`
+- Problem: The record names its seven default components `cellShapeInitial`, `gridEdgeBehaviorInitial`,
+  `gridWidthInitial`, `gridHeightInitial`, `cellEdgeLengthInitial`, `cellDisplayModeInitial`, and `seedInitial`, and
+  its Javadoc says "initial ...", while the config ViewModels fill them from the `*_DEFAULT` constants of the
+  `*Constraints` classes. The other components already follow the constraint suffixes (`*Values`, `*Min`, `*Max`,
+  `*Step`).
+- Proposal: Rename the `*Initial` components to `*Default` (e.g., `seedDefault`) and adapt the Javadoc and
+  `AbstractConfigViewModelTest`; the callers pass the arguments by position and need no change. An API change.
