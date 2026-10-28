@@ -10,6 +10,14 @@ package de.mkalb.etpetssim.ui;
 @SuppressWarnings("SpellCheckingInspection")
 public final class FXStyleClasses {
 
+    public static final String ABOUT_CONTENT_VBOX = "about-content-vbox";
+    public static final String ABOUT_HEADER_HBOX = "about-header-hbox";
+    public static final String ABOUT_HEADER_VBOX = "about-header-vbox";
+    public static final String ABOUT_LINK_HBOX = "about-link-hbox";
+    public static final String ABOUT_LINK_HYPERLINK = "about-link-hyperlink";
+    public static final String ABOUT_TITLE_LABEL = "about-title-label";
+    public static final String ABOUT_VERSION_LABEL = "about-version-label";
+    public static final String APP_DIALOG_PANE = "app-dialog-pane";
     public static final String APP_VBOX = "app-vbox";
     public static final String CENTER_SPLITPANE = "center-splitpane";
     public static final String CONFIG_CHECKBOX = "config-checkbox";
