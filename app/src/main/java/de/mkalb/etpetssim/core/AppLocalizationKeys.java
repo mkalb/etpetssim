@@ -9,6 +9,9 @@ package de.mkalb.etpetssim.core;
 @SuppressWarnings("SpellCheckingInspection")
 public final class AppLocalizationKeys {
 
+    public static final String ABOUT_HEADER_TITLE = "about.header.title";
+    public static final String ABOUT_LINK_ISSUES = "about.link.issues";
+    public static final String ABOUT_LINK_REPOSITORY = "about.link.repository";
     public static final String ABOUT_MANIFEST_BUILD_JDK = "about.manifest.buildjdk";
     public static final String ABOUT_MANIFEST_COMMIT_DATE = "about.manifest.commitdate";
     public static final String ABOUT_MANIFEST_REVISION = "about.manifest.revision";

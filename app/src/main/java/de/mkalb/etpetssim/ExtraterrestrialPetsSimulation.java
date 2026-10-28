@@ -45,6 +45,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private static final double DEFAULT_WINDOW_MARGIN = 8.0d;
     private static final long TERMINATION_TIMEOUT_SECONDS = 5L;
     private final List<SimulationTerminationHandle> pendingTerminationHandles = new ArrayList<>();
+    private List<Image> appIcons = List.of();
     private @Nullable SimulationInstance currentSimulationInstance;
     private boolean terminationAwaited;
 
@@ -62,17 +63,33 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     }
 
     /**
-     * Loads and applies application icons to a stage.
+     * Loads the application icons, keeps them for the dialogs, and applies them to a stage.
      *
      * @param stage stage to update
      */
     private void updateStageIcons(Stage stage) {
-        List<Image> icons = AppResources.getImages(APP_ICON_PATHS);
-        if (icons.isEmpty()) {
+        appIcons = AppResources.getImages(APP_ICON_PATHS);
+        if (appIcons.isEmpty()) {
             AppLogger.error("Application: Failed to load application icons. Icons will not be set.");
         } else {
-            stage.getIcons().addAll(icons);
+            stage.getIcons().addAll(appIcons);
         }
+    }
+
+    /**
+     * Shows an alert for an uncaught exception and waits until it is closed.
+     *
+     * @param throwable uncaught exception whose message is shown
+     */
+    private void showUnexpectedErrorAlert(Throwable throwable) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        FXDialogStyler.applyAppStyle(alert, appIcons);
+        alert.setTitle(AppLocalization.getFormattedText(AppLocalizationKeys.WINDOW_TITLE,
+                AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_TITLE)));
+        alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_HEADER));
+        alert.setGraphic(null);
+        alert.setContentText(throwable.getMessage());
+        alert.showAndWait();
     }
 
     /**
@@ -348,7 +365,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
 
         Hyperlink aboutLink = new Hyperlink(AppLocalization.getText(AppLocalizationKeys.HEADER_ABOUT_LINK));
         aboutLink.getStyleClass().add(FXStyleClasses.HEADER_URL_HYPERLINK);
-        aboutLink.setOnAction(_ -> new AboutDialog(AppResources.getImages(APP_ICON_PATHS)).show());
+        aboutLink.setOnAction(_ -> new AboutDialog(appIcons, getHostServices()).show());
         linkBox.getChildren().add(aboutLink);
 
         simulationType.uri().ifPresent(uri -> {
@@ -380,13 +397,7 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         // Initialize exception handling for uncaught exceptions
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
             AppLogger.error(throwable, "Uncaught exception in thread " + thread.getName());
-            Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_TITLE));
-                alert.setHeaderText(AppLocalization.getText(AppLocalizationKeys.ALERT_UNEXPECTED_ERROR_HEADER));
-                alert.setContentText(throwable.getMessage());
-                alert.showAndWait();
-            });
+            Platform.runLater(() -> showUnexpectedErrorAlert(throwable));
         });
 
         // Determine the simulation type from command-line arguments
