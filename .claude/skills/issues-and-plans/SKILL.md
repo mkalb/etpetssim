@@ -78,7 +78,8 @@ decision, and remove the `needs-refinement` label.
   hand-maintained list in the parent body; the parent body lists only planned follow-ups that are not created yet.
 - **Dependency:** a prerequisite is recorded as "blocked by" on GitHub and described in a `## Dependencies` section.
 - **Related:** loose links go to `## Related`.
-- Keep `## Dependencies` and `## Related` on both issues of a link.
+- Keep `## Dependencies` and `## Related` on both issues of a link while both are open. Do not add a back-reference
+  to a closed issue when a new or open issue refers to it.
 
 ## Commands
 
@@ -114,7 +115,7 @@ chat before changing anything:
 - body structure: sections as in "Issue body"; acceptance criteria unless `needs-refinement`; no status lines; no
   decisions left only in comments,
 - readiness: an issue without `needs-refinement` is complete enough to implement,
-- sub-issues and dependencies: used as in "Links between issues" and linked in both directions,
+- sub-issues and dependencies: used as in "Links between issues" and linked in both directions between open issues,
 - overlaps: issues with overlapping scope are merged, split, or linked.
 
 ## Planning documents
