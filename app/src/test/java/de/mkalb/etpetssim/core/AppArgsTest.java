@@ -164,6 +164,48 @@ final class AppArgsTest {
     }
 
     @Test
+    void testConstructorParsesNonFlagValueWithSpaces() {
+        String[] args = {"--simulation=C:\\My Simulations\\conway.properties"};
+        AppArgs cli = new AppArgs(args);
+
+        assertEquals(1, cli.keys().size());
+        assertEquals(Optional.of("C:\\My Simulations\\conway.properties"), cli.getValue(AppArgs.Key.SIMULATION));
+    }
+
+    @Test
+    void testConstructorStripsValue() {
+        String[] args = {"--simulation= \tvalue with spaces \t", "--log-console= false "};
+        AppArgs cli = new AppArgs(args);
+
+        assertEquals(Optional.of("value with spaces"), cli.getValue(AppArgs.Key.SIMULATION));
+        assertFalse(cli.isFlagActive(AppArgs.Key.LOG_CONSOLE));
+    }
+
+    @Test
+    void testConstructorIgnoresBlankValue() {
+        String[] args = {"--simulation=   ", "--simulation=\t", "--help= "};
+        AppArgs cli = new AppArgs(args);
+
+        assertTrue(cli.keys().isEmpty());
+    }
+
+    @Test
+    void testConstructorIgnoresWhitespaceInKey() {
+        String[] args = {"--simu lation=testSim", "-- simulation=testSim", "--simulation =testSim"};
+        AppArgs cli = new AppArgs(args);
+
+        assertTrue(cli.keys().isEmpty());
+    }
+
+    @Test
+    void testConstructorParsesFlagValueWithSpaces() {
+        String[] args = {"--help=no thanks"};
+        AppArgs cli = new AppArgs(args);
+
+        assertEquals(Optional.of("true"), cli.getValue(AppArgs.Key.HELP));
+    }
+
+    @Test
     void testConstructorKeepsLastValueForDuplicateKey() {
         String[] args = {"--simulation=first", "--simulation=second"};
         AppArgs cli = new AppArgs(args);
@@ -336,6 +378,10 @@ final class AppArgsTest {
         assertEquals("", new AppArgs(new String[]{"--simulation="}).toArgumentString());
         assertEquals("--simulation=1", new AppArgs(new String[]{"--simulation=1"}).toArgumentString());
         assertEquals("--simulation=false", new AppArgs(new String[]{"--simulation=false"}).toArgumentString());
+
+        assertEquals("--help --simulation=\"value with spaces\"",
+                new AppArgs(new String[]{"--help", "--simulation=value with spaces"}).toArgumentString());
+        assertEquals("--simulation=\"tab\tvalue\"", new AppArgs(new String[]{"--simulation=tab\tvalue"}).toArgumentString());
     }
 
     @Test

@@ -177,9 +177,16 @@ Supported application arguments:
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
 | `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`, `lab` |
 
-Flags can also take a boolean value, e.g. `--log-console=false`. Arguments must not contain spaces. Several arguments
-are
-passed to Gradle as one quoted string, separated by spaces.
+Flags can also take a boolean value, e.g. `--log-console=false`. Several arguments are passed to Gradle as one quoted
+string, separated by spaces.
+
+Argument values may contain spaces (e.g., file paths). Quote such an argument so that it reaches the application as one
+argument; inside the Gradle `--args` string, use single quotes:
+
+```powershell
+.\bin\ExtraterrestrialPetsSimulation.bat "--key=value with spaces"
+.\gradlew.bat :app:run --args="--locale=en '--key=value with spaces'"
+```
 
 ### Run the Distribution
 

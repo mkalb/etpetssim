@@ -6,15 +6,17 @@ import java.util.regex.*;
 /**
  * Parses and stores command-line arguments.
  * <p>
- * Supported formats are {@code --key=value} and {@code --flag}. Unknown keys and
- * syntactically invalid argument strings are ignored and reported through {@link AppLogger}.
+ * Supported formats are {@code --key=value} and {@code --flag}. A value may contain whitespace;
+ * leading and trailing whitespace is removed.
+ * Unknown keys and syntactically invalid argument strings, including arguments with an empty or
+ * blank value, are ignored and reported through {@link AppLogger}.
  */
 public final class AppArgs {
 
     /**
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
      */
-    private static final Pattern ARGUMENT_PATTERN = Pattern.compile("--([a-zA-Z0-9\\-]+)(=(\\S+))?");
+    private static final Pattern ARGUMENT_PATTERN = Pattern.compile("--([a-zA-Z0-9\\-]+)(=(.*))?");
     private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used to build the arguments string
 
     private final EnumMap<Key, String> arguments = new EnumMap<>(Key.class);
@@ -29,13 +31,13 @@ public final class AppArgs {
         Objects.requireNonNull(args, "Arguments must not be null");
         for (String arg : args) {
             Matcher matcher = ARGUMENT_PATTERN.matcher(arg);
-            if (matcher.matches()) {
+            if (matcher.matches() && ((matcher.group(3) == null) || !matcher.group(3).isBlank())) {
                 Optional<Key> key = Key.fromString(matcher.group(1));
                 if (key.isPresent()) {
                     if (arguments.containsKey(key.get())) {
                         AppLogger.warn("AppArgs: Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
                     }
-                    Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3)) : Optional.empty();
+                    Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3).strip()) : Optional.empty();
                     if (key.get().isFlag()) {
                         // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
                         arguments.put(key.get(),
@@ -165,7 +167,10 @@ public final class AppArgs {
     }
 
     /**
-     * Serializes parsed arguments back into command-line form.
+     * Serializes parsed arguments back into command-line form as a readable representation for logging.
+     *
+     * <p>Values that contain whitespace are enclosed in double quotes without escaping, e.g.
+     * {@code --key="value with spaces"}; the result is therefore not guaranteed to be a valid shell command line.
      *
      * @return arguments formatted as {@code --key=value} or {@code --flag}
      */
@@ -178,7 +183,13 @@ public final class AppArgs {
             sb.append("--").append(entry.getKey().key());
             if (!entry.getKey().isFlag() // is not a flag
                     || !parseBooleanValue(entry.getValue(), true)) { // or flag is false
-                sb.append("=").append(entry.getValue());
+                String value = entry.getValue();
+                sb.append("=");
+                if (value.chars().anyMatch(Character::isWhitespace)) {
+                    sb.append('"').append(value).append('"');
+                } else {
+                    sb.append(value);
+                }
             }
         }
         return sb.toString();
