@@ -81,6 +81,37 @@ Inner circle with dark purple border (`#4B3A66`, stroke 1.0) on terrain layer.
 [^wfish]: Darker with increasing age — 10 steps, factor [0.0, −0.5].
 [^wshark]: Brighter with increasing energy — 6 steps, factor [0.0, +0.7].
 
+## SUGARSCAPE - Sugarscape
+
+**Package:** `de.mkalb.etpetssim.simulations.sugar.model.entity`
+**Cell shapes:** Square (default), Hexagon
+
+| Java File                | Kind      | Extends       | Implements                               | Entity Role          |
+|--------------------------|-----------|---------------|------------------------------------------|----------------------|
+| `SugarEntity.java`       | interface | `GridEntity`  | -                                        | base entity contract |
+| `AgentEntity.java`       | interface | `SugarEntity` | -                                        | agent contract       |
+| `ResourceEntity.java`    | interface | `SugarEntity` | -                                        | resource contract    |
+| `NoAgent.java`           | enum      | -             | `AgentEntity`, `ConstantGridEntity`      | agent placeholder    |
+| `NoResource.java`        | enum      | -             | `ResourceEntity`, `ConstantGridEntity`   | resource placeholder |
+| `EntityDescriptors.java` | enum      | -             | `SpecBackedGridEntityDescriptorProvider` | descriptor           |
+| `Agent.java`             | class     | -             | `AgentEntity`                            | agent                |
+| `Sugar.java`             | class     | -             | `ResourceEntity`                         | resource             |
+
+Note: SUGARSCAPE has no terrain entity contract or terrain entities. The `TERRAIN` descriptor in EntityDescriptors is a
+logical descriptor only, not a Java type.
+
+### Display Catalog
+
+| Descriptor ID | Long Name (en_US) | Long Name Key               | Emoji | Fill Color              | Border Color | Default In Layer(s) |
+|---------------|-------------------|-----------------------------|-------|-------------------------|--------------|---------------------|
+| `terrain`     | Terrain Cell      | `sugar.entity.terrain.long` | -     | `#453525` [^sugterrain] | -            | -                   |
+| `sugar`       | Sugar Resource    | `sugar.entity.sugar.long`   | -     | `#D7BE13` [^sugsugar]   | -            | -                   |
+| `agent`       | Agent Cell        | `sugar.entity.agent.long`   | -     | `#1B5ABA` [^sugagent]   | -            | -                   |
+
+[^sugterrain]: Logical descriptor only; no Java entity. Color used as canvas background fill.
+[^sugsugar]: Brighter with increasing sugar amount — config-dependent steps, factor [0.0, +0.3].
+[^sugagent]: Brighter with increasing energy — 7 steps, factor [0.0, +0.6]. Newly spawned: white border for 1 step.
+
 ## CONWAYS_LIFE - Conway's Game of Life
 
 **Package:** `de.mkalb.etpetssim.simulations.conway.model.entity`
@@ -154,37 +185,6 @@ Inner circle with dark purple border (`#4B3A66`, stroke 1.0) on terrain layer.
 | `empty`       | Empty Cell        | `forest.entity.empty.long`   | -     | `#1E140A`                     | -                          | `grid`              |
 | `tree`        | Tree Cell         | `forest.entity.tree.long`    | `🌲`  | `#2E8B57` / `Color.SEAGREEN`  | -                          | -                   |
 | `burning`     | Burning Tree      | `forest.entity.burning.long` | `🔥`  | `#FF4500` / `Color.ORANGERED` | `#FFA500` / `Color.ORANGE` | -                   |
-
-## SUGARSCAPE - Sugarscape
-
-**Package:** `de.mkalb.etpetssim.simulations.sugar.model.entity`
-**Cell shapes:** Square (default), Hexagon
-
-| Java File                | Kind      | Extends       | Implements                               | Entity Role          |
-|--------------------------|-----------|---------------|------------------------------------------|----------------------|
-| `SugarEntity.java`       | interface | `GridEntity`  | -                                        | base entity contract |
-| `AgentEntity.java`       | interface | `SugarEntity` | -                                        | agent contract       |
-| `ResourceEntity.java`    | interface | `SugarEntity` | -                                        | resource contract    |
-| `NoAgent.java`           | enum      | -             | `AgentEntity`, `ConstantGridEntity`      | agent placeholder    |
-| `NoResource.java`        | enum      | -             | `ResourceEntity`, `ConstantGridEntity`   | resource placeholder |
-| `EntityDescriptors.java` | enum      | -             | `SpecBackedGridEntityDescriptorProvider` | descriptor           |
-| `Agent.java`             | class     | -             | `AgentEntity`                            | agent                |
-| `Sugar.java`             | class     | -             | `ResourceEntity`                         | resource             |
-
-Note: SUGARSCAPE has no terrain entity contract or terrain entities. The `TERRAIN` descriptor in EntityDescriptors is a
-logical descriptor only, not a Java type.
-
-### Display Catalog
-
-| Descriptor ID | Long Name (en_US) | Long Name Key               | Emoji | Fill Color              | Border Color | Default In Layer(s) |
-|---------------|-------------------|-----------------------------|-------|-------------------------|--------------|---------------------|
-| `terrain`     | Terrain Cell      | `sugar.entity.terrain.long` | -     | `#453525` [^sugterrain] | -            | -                   |
-| `sugar`       | Sugar Resource    | `sugar.entity.sugar.long`   | -     | `#D7BE13` [^sugsugar]   | -            | -                   |
-| `agent`       | Agent Cell        | `sugar.entity.agent.long`   | -     | `#1B5ABA` [^sugagent]   | -            | -                   |
-
-[^sugterrain]: Logical descriptor only; no Java entity. Color used as canvas background fill.
-[^sugsugar]: Brighter with increasing sugar amount — config-dependent steps, factor [0.0, +0.3].
-[^sugagent]: Brighter with increasing energy — 7 steps, factor [0.0, +0.6]. Newly spawned: white border for 1 step.
 
 ## SNAKE - Snake
 

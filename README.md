@@ -44,12 +44,12 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 |--------------------------------------------------------------------------------|--------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------|
 | ET Pets                                                                        | Agent-Based Model  | Agents search for plants and insects, avoid obstacles, create trails, and reproduce with inheritance | [etpets.md](docs/simulations/etpets.md)         |
 | [Wa-Tor](https://en.wikipedia.org/wiki/Wa-Tor)                                 | Agent-Based Model  | Agents (fish and sharks) interact in a predator–prey system                                          | [wator.md](docs/simulations/wator.md)           |
+| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent-Based Model  | Agents collect and consume sugar resources                                                           | [sugar.md](docs/simulations/sugar.md)           |
 | [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) | Cellular Automaton | Cells evolve based on simple local birth and survival rules                                          | [conway.md](docs/simulations/conway.md)         |
 | [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant)                 | Cellular Automaton | A moving ant updates cell states using simple rules                                                  | [langton.md](docs/simulations/langton.md)       |
 | [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automaton | Cells model tree growth and fire spread through local rules                                          | [forest.md](docs/simulations/forest.md)         |
-| [Sugarscape](https://en.wikipedia.org/wiki/Sugarscape)                         | Agent-Based Model  | Agents collect and consume sugar resources                                                           | [sugar.md](docs/simulations/sugar.md)           |
-| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Agent-Based Model  | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
-| Rebounding Entities                                                            | Agent-Based Model  | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
+| [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Toy Model          | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
+| Rebounding Entities                                                            | Toy Model          | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
 | Simulation Lab                                                                 | Development Tool   | Testing environment for grid rendering and cell shapes                                               | —                                               |
 
 For a detailed inventory of simulation entity types, see
@@ -65,6 +65,10 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 
 ![Wa-Tor](assets/screenshots/screenshot_wator_01.png)
 
+#### Sugarscape
+
+![Sugarscape](assets/screenshots/screenshot_sugar_01.png)
+
 #### Conway's Game of Life
 
 ![Conway's Game of Life](assets/screenshots/screenshot_conway_01.png)
@@ -76,10 +80,6 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 #### Forest-fire model
 
 ![Forest-fire model](assets/screenshots/screenshot_forest_01.png)
-
-#### Sugarscape
-
-![Sugarscape](assets/screenshots/screenshot_sugar_01.png)
 
 #### Snake
 
@@ -175,7 +175,7 @@ Supported application arguments:
 | `--log-console`       | Enables logging to the console                                                                                             |
 | `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
-| `--simulation=<name>` | Starts a simulation directly, e.g. `wator`, `conway`, `langton`, `forest`, `sugar`, `snake`, `rebounding`, `etpets`, `lab` |
+| `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`, `lab` |
 
 Flags can also take a boolean value, e.g. `--log-console=false`. Arguments must not contain spaces. Several arguments
 are

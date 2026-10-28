@@ -132,12 +132,14 @@ many files in one shell command.
       interactive-edit option to its actual source. Do not treat it as the
       authority for option meaning or run-time behavior.
 - **Category:** classify from the simulation's actual model semantics. Common
-  categories include **Agent-based** (e.g. `wator`, `etpets`, `snake`) and
-  **Cellular automaton** (e.g. `conway`, `forest`, `langton`). These examples
-  are illustrative, not exhaustive; use another accurate category when the
-  model does not fit either one. Cross-check an existing classification in the
-  `README.md` simulation table and report a clear conflict instead of silently
-  changing categories.
+  categories include **Agent-based model** (e.g. `wator`, `etpets`, `sugar`),
+  **Cellular automaton** (e.g. `conway`, `forest`, `langton`), and
+  **Toy model** (simple custom models without a scientific reference model,
+  e.g. `snake`, `rebounding`). These examples are illustrative, not
+  exhaustive; use another accurate category when the model does not fit any
+  of them. Cross-check an existing classification in the `README.md`
+  simulation table and report a clear conflict instead of silently changing
+  categories.
 - **Screenshot:** look for the file `assets/screenshots/screenshot_<package>_01.png`
   (always the `_01` variant, e.g. `screenshot_wator_01.png`). If it does not
   exist, omit the Screenshot section rather than linking a missing file. Do not

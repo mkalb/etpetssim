@@ -56,6 +56,19 @@ public enum SimulationType {
     ),
 
     /**
+     * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>.
+     */
+    SUGARSCAPE(
+            true,
+            true,
+            "simulation.sugar.title",
+            "simulation.sugar.subtitle",
+            "simulation.sugar.url",
+            "",
+            List.of("sugarscape", "sugar")
+    ),
+
+    /**
      * <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Conway's Game of Life</a>.
      */
     CONWAYS_LIFE(
@@ -92,19 +105,6 @@ public enum SimulationType {
             "simulation.forest.url",
             "",
             List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel")
-    ),
-
-    /**
-     * <a href="https://en.wikipedia.org/wiki/Sugarscape">Sugarscape</a>.
-     */
-    SUGARSCAPE(
-            true,
-            true,
-            "simulation.sugar.title",
-            "simulation.sugar.subtitle",
-            "simulation.sugar.url",
-            "",
-            List.of("sugarscape", "sugar")
     ),
 
     /**

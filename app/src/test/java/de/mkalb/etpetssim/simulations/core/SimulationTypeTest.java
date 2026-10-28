@@ -28,10 +28,10 @@ final class SimulationTypeTest {
                         SimulationType.STARTSCREEN,
                         SimulationType.ET_PETS,
                         SimulationType.WATOR,
+                        SimulationType.SUGARSCAPE,
                         SimulationType.CONWAYS_LIFE,
                         SimulationType.LANGTONS_ANT,
                         SimulationType.FOREST_FIRE,
-                        SimulationType.SUGARSCAPE,
                         SimulationType.SNAKE,
                         SimulationType.REBOUNDING_ENTITIES,
                         SimulationType.SIMULATION_LAB
@@ -55,10 +55,10 @@ final class SimulationTypeTest {
         assertTrue(SimulationType.STARTSCREEN.isImplemented());
         assertTrue(SimulationType.ET_PETS.isImplemented());
         assertTrue(SimulationType.WATOR.isImplemented());
+        assertTrue(SimulationType.SUGARSCAPE.isImplemented());
         assertTrue(SimulationType.CONWAYS_LIFE.isImplemented());
         assertTrue(SimulationType.LANGTONS_ANT.isImplemented());
         assertTrue(SimulationType.FOREST_FIRE.isImplemented());
-        assertTrue(SimulationType.SUGARSCAPE.isImplemented());
         assertTrue(SimulationType.SNAKE.isImplemented());
         assertTrue(SimulationType.REBOUNDING_ENTITIES.isImplemented());
         assertTrue(SimulationType.SIMULATION_LAB.isImplemented());
@@ -69,10 +69,10 @@ final class SimulationTypeTest {
         assertFalse(SimulationType.STARTSCREEN.isShownOnStartScreen());
         assertTrue(SimulationType.ET_PETS.isShownOnStartScreen());
         assertTrue(SimulationType.WATOR.isShownOnStartScreen());
+        assertTrue(SimulationType.SUGARSCAPE.isShownOnStartScreen());
         assertTrue(SimulationType.CONWAYS_LIFE.isShownOnStartScreen());
         assertTrue(SimulationType.LANGTONS_ANT.isShownOnStartScreen());
         assertTrue(SimulationType.FOREST_FIRE.isShownOnStartScreen());
-        assertTrue(SimulationType.SUGARSCAPE.isShownOnStartScreen());
         assertTrue(SimulationType.SNAKE.isShownOnStartScreen());
         assertTrue(SimulationType.REBOUNDING_ENTITIES.isShownOnStartScreen());
         assertTrue(SimulationType.SIMULATION_LAB.isShownOnStartScreen());
@@ -83,10 +83,10 @@ final class SimulationTypeTest {
         assertEquals(List.of("startscreen", "start"), SimulationType.STARTSCREEN.cliArguments());
         assertEquals(List.of("etpets"), SimulationType.ET_PETS.cliArguments());
         assertEquals(List.of("wator", "wa-tor"), SimulationType.WATOR.cliArguments());
+        assertEquals(List.of("sugarscape", "sugar"), SimulationType.SUGARSCAPE.cliArguments());
         assertEquals(List.of("conwayslife", "conways-life", "conway", "conways", "life", "cgol"), SimulationType.CONWAYS_LIFE.cliArguments());
         assertEquals(List.of("langton", "langtonsant", "langtons-ant", "ant"), SimulationType.LANGTONS_ANT.cliArguments());
         assertEquals(List.of("forestfire", "forest-fire", "forest", "fire", "forestfiremodel"), SimulationType.FOREST_FIRE.cliArguments());
-        assertEquals(List.of("sugarscape", "sugar"), SimulationType.SUGARSCAPE.cliArguments());
         assertEquals(List.of("snake", "snakes"), SimulationType.SNAKE.cliArguments());
         assertEquals(List.of("reboundingentities", "rebounding-entities", "rebounding-entity", "rebounding", "rebound", "rebounders"), SimulationType.REBOUNDING_ENTITIES.cliArguments());
         assertEquals(List.of("simulationlab", "lab"), SimulationType.SIMULATION_LAB.cliArguments());
