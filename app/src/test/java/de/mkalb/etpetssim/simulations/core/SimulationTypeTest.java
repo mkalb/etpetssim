@@ -75,7 +75,7 @@ final class SimulationTypeTest {
         assertTrue(SimulationType.FOREST_FIRE.isShownOnStartScreen());
         assertTrue(SimulationType.SNAKE.isShownOnStartScreen());
         assertTrue(SimulationType.REBOUNDING_ENTITIES.isShownOnStartScreen());
-        assertTrue(SimulationType.SIMULATION_LAB.isShownOnStartScreen());
+        assertFalse(SimulationType.SIMULATION_LAB.isShownOnStartScreen());
     }
 
     @Test

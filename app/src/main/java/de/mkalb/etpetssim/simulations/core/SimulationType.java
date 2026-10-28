@@ -135,10 +135,12 @@ public enum SimulationType {
 
     /**
      * Development-oriented simulation laboratory.
+     *
+     * <p>Hidden from the start screen; it is started only with a command-line alias.
      */
     SIMULATION_LAB(
             true,
-            true,
+            false,
             "simulation.lab.title",
             "simulation.lab.subtitle",
             "simulation.lab.url",

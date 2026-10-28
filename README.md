@@ -50,7 +50,6 @@ calculating neighbors, either by shared edges or by both edges and vertices.
 | [Forest-fire model](https://en.wikipedia.org/wiki/Forest-fire_model)           | Cellular Automaton | Cells model tree growth and fire spread through local rules                                          | [forest.md](docs/simulations/forest.md)         |
 | [Snake](https://en.wikipedia.org/wiki/Snake_(video_game_genre))                | Toy Model          | Snakes move, grow, and avoid collisions while consuming food                                         | [snake.md](docs/simulations/snake.md)           |
 | Rebounding Entities                                                            | Toy Model          | Entities move directionally, bounce off boundaries, and destroy obstacles and other agents           | [rebounding.md](docs/simulations/rebounding.md) |
-| Simulation Lab                                                                 | Development Tool   | Testing environment for grid rendering and cell shapes                                               | —                                               |
 
 For a detailed inventory of simulation entity types, see
 the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
@@ -88,12 +87,6 @@ the [Simulation Entity Catalog](docs/simulations/Simulation_Entity_Catalog.md).
 #### Rebounding Entities
 
 ![Rebounding Entities](assets/screenshots/screenshot_rebounding_01.png)
-
-#### Simulation Lab
-
-![Simulation Lab — Hexagon](assets/screenshots/screenshot_lab_01.png)
-![Simulation Lab — Triangle](assets/screenshots/screenshot_lab_02.png)
-![Simulation Lab — Square](assets/screenshots/screenshot_lab_03.png)
 
 ## Goals
 
@@ -175,7 +168,7 @@ Supported application arguments:
 | `--log-console`       | Enables logging to the console                                                                                             |
 | `--log-file`          | Enables logging to the file `ExtraterrestrialPetsSimulation.log` in the application's log directory                        |
 | `--log-level=<level>` | Sets the log level: `debug`, `info`, `warn`, or `error` (case-insensitive); default: `info`                                |
-| `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`, `lab` |
+| `--simulation=<name>` | Starts a simulation directly, e.g. `etpets`, `wator`, `sugar`, `conway`, `langton`, `forest`, `snake`, `rebounding`        |
 
 Flags can also take a boolean value, e.g. `--log-console=false`. Several arguments are passed to Gradle as one quoted
 string, separated by spaces.
