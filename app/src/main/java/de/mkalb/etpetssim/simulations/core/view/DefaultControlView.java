@@ -58,8 +58,7 @@ public final class DefaultControlView
 
     @Override
     protected Optional<Pane> createControlConfigPane() {
-        var simulationModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.simulationModeProperty(),
-                viewModel.simulationModeProperty().displayNameProvider(),
+        var simulationModeControl = FXComponentFactory.createLabeledChoiceRadioButtons(viewModel.simulationModeProperty(),
                 FXComponentFactory.createVBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
                 AppLocalization.getText(SimulationMode.labelResourceKey()),
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_SIMULATION_MODE_TOOLTIP),
@@ -88,7 +87,7 @@ public final class DefaultControlView
 
         bindControlConfigDisabled(stepCountControl.controlRegion());
 
-        var startModeControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.startModeProperty(),
+        var startModeControl = FXComponentFactory.createLabeledChoiceCheckBox(viewModel.startModeProperty(),
                 SimulationStartMode.START_PAUSED,
                 SimulationStartMode.START_IMMEDIATELY,
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_START_PAUSED),
@@ -98,7 +97,7 @@ public final class DefaultControlView
 
         bindNotStartableDisabled(startModeControl.controlRegion());
 
-        var terminationCheckControl = FXComponentFactory.createLabeledEnumCheckBox(viewModel.terminationCheckProperty(),
+        var terminationCheckControl = FXComponentFactory.createLabeledChoiceCheckBox(viewModel.terminationCheckProperty(),
                 SimulationTerminationCheckMode.CHECKED,
                 SimulationTerminationCheckMode.UNCHECKED,
                 AppLocalization.getText(AppLocalizationKeys.CONTROL_TERMINATION_CHECK),

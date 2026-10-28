@@ -20,15 +20,15 @@ public final class DefaultControlViewModel
     private static final int STEP_COUNT_STEP = 1;
 
     private final ReadOnlyObjectProperty<SimulationState> simulationState;
-    private final InputEnumProperty<SimulationMode> simulationMode = InputEnumProperty.of(SimulationMode.TIMED,
+    private final InputChoiceProperty<SimulationMode> simulationMode = InputChoiceProperty.ofEnum(SimulationMode.TIMED,
             SimulationMode.class,
             e -> AppLocalization.getOptionalText(e.resourceKey()).orElse(e.toString()));
     private final InputDoubleIntRangeProperty stepDuration = InputDoubleIntRangeProperty.of(STEP_DURATION_INITIAL,
             STEP_DURATION_MIN, STEP_DURATION_MAX);
     private final InputIntegerProperty stepCount = InputIntegerProperty.of(STEP_COUNT_INITIAL,
             STEP_COUNT_MIN, STEP_COUNT_MAX, STEP_COUNT_STEP);
-    private final InputEnumProperty<SimulationStartMode> startMode = InputEnumProperty.of(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
-    private final InputEnumProperty<SimulationTerminationCheckMode> terminationCheckMode = InputEnumProperty.of(SimulationTerminationCheckMode.CHECKED, SimulationTerminationCheckMode.class, Enum::toString);
+    private final InputChoiceProperty<SimulationStartMode> startMode = InputChoiceProperty.ofEnum(SimulationStartMode.START_IMMEDIATELY, SimulationStartMode.class, Enum::toString);
+    private final InputChoiceProperty<SimulationTerminationCheckMode> terminationCheckMode = InputChoiceProperty.ofEnum(SimulationTerminationCheckMode.CHECKED, SimulationTerminationCheckMode.class, Enum::toString);
 
     private final BooleanProperty actionButtonRequested = new SimpleBooleanProperty(false);
     private final BooleanProperty cancelButtonRequested = new SimpleBooleanProperty(false);
@@ -91,7 +91,7 @@ public final class DefaultControlViewModel
         cancelButtonRequested.set(true);
     }
 
-    public InputEnumProperty<SimulationMode> simulationModeProperty() {
+    public InputChoiceProperty<SimulationMode> simulationModeProperty() {
         return simulationMode;
     }
 
@@ -113,11 +113,11 @@ public final class DefaultControlViewModel
         return stepCount;
     }
 
-    public InputEnumProperty<SimulationStartMode> startModeProperty() {
+    public InputChoiceProperty<SimulationStartMode> startModeProperty() {
         return startMode;
     }
 
-    public InputEnumProperty<SimulationTerminationCheckMode> terminationCheckProperty() {
+    public InputChoiceProperty<SimulationTerminationCheckMode> terminationCheckProperty() {
         return terminationCheckMode;
     }
 

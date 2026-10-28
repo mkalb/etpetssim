@@ -57,17 +57,16 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledEnumRadioButtonsSynchronizesSelectionAndProperty() {
+    void testCreateLabeledChoiceRadioButtonsSynchronizesSelectionAndProperty() {
         FXTestSupport.runAndWait(() -> {
-            InputEnumProperty<TestMode> property = InputEnumProperty.of(
+            InputChoiceProperty<TestMode> property = InputChoiceProperty.ofEnum(
                     TestMode.ALPHA,
                     TestMode.class,
                     TestMode::name);
             VBox container = new VBox();
 
-            FXComponentFactory.LabeledControl<VBox> control = FXComponentFactory.createLabeledEnumRadioButtons(
+            FXComponentFactory.LabeledControl<VBox> control = FXComponentFactory.createLabeledChoiceRadioButtons(
                     property,
-                    mode -> "display-" + mode.name(),
                     container,
                     "Mode: %s",
                     TOOLTIP,
@@ -84,6 +83,7 @@ final class FXComponentFactoryTest {
                     () -> assertEquals("Mode: GAMMA", control.label().getText()),
                     () -> assertSame(container, control.label().getLabelFor()),
                     () -> assertEquals(3, container.getChildren().size()),
+                    () -> assertEquals("ALPHA", alphaButton.getText()),
                     () -> assertTrue(alphaButton.getStyleClass().contains(STYLE_CLASS)),
                     () -> assertSame(control.label().getTooltip(), alphaButton.getTooltip()),
                     () -> assertEquals(TestMode.BETA, betaButton.getUserData()),
@@ -94,14 +94,14 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledEnumCheckBoxSynchronizesSelectionAndProperty() {
+    void testCreateLabeledChoiceCheckBoxSynchronizesSelectionAndProperty() {
         FXTestSupport.runAndWait(() -> {
-            InputEnumProperty<TestToggle> property = InputEnumProperty.of(
+            InputChoiceProperty<TestToggle> property = InputChoiceProperty.ofEnum(
                     TestToggle.OFF,
                     TestToggle.class,
                     TestToggle::name);
 
-            FXComponentFactory.LabeledControl<CheckBox> control = FXComponentFactory.createLabeledEnumCheckBox(
+            FXComponentFactory.LabeledControl<CheckBox> control = FXComponentFactory.createLabeledChoiceCheckBox(
                     property,
                     TestToggle.ON,
                     TestToggle.OFF,
@@ -127,23 +127,23 @@ final class FXComponentFactoryTest {
     }
 
     @Test
-    void testCreateLabeledEnumCheckBoxRejectsInvalidMappings() {
+    void testCreateLabeledChoiceCheckBoxRejectsInvalidMappings() {
         FXTestSupport.runAndWait(() -> {
-            InputEnumProperty<TestMode> threeValueProperty = InputEnumProperty.of(
+            InputChoiceProperty<TestMode> threeValueProperty = InputChoiceProperty.ofEnum(
                     TestMode.ALPHA,
                     TestMode.class,
                     TestMode::name);
-            InputEnumProperty<TestToggle> twoValueProperty = InputEnumProperty.of(
+            InputChoiceProperty<TestToggle> twoValueProperty = InputChoiceProperty.ofEnum(
                     TestToggle.OFF,
                     TestToggle.class,
                     TestToggle::name);
 
             assertAll(
                     () -> assertThrows(IllegalArgumentException.class,
-                            () -> FXComponentFactory.createLabeledEnumCheckBox(
+                            () -> FXComponentFactory.createLabeledChoiceCheckBox(
                                     threeValueProperty, TestMode.ALPHA, TestMode.BETA, "%s", TOOLTIP, STYLE_CLASS)),
                     () -> assertThrows(IllegalArgumentException.class,
-                            () -> FXComponentFactory.createLabeledEnumCheckBox(
+                            () -> FXComponentFactory.createLabeledChoiceCheckBox(
                                     twoValueProperty, TestToggle.ON, TestToggle.ON, "%s", TOOLTIP, STYLE_CLASS))
             );
         });

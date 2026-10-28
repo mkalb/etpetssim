@@ -66,50 +66,48 @@ public final class FXComponentFactory {
     }
 
     /**
-     * Creates a labeled group of radio buttons for selecting enum values, with display names, formatted label, tooltip, and custom style class.
+     * Creates a labeled group of radio buttons for selecting values from a fixed choice set, with display names,
+     * formatted label, tooltip, and custom style class.
      *
-     * <p>Each radio button represents a valid enum value from the provided InputEnumProperty. All radio buttons are added to the given container pane,
+     * <p>Each radio button represents a valid value from the provided InputChoiceProperty and shows the display name
+     * supplied by the property's display name provider. All radio buttons are added to the given container pane,
      * which can be any Pane (e.g., VBox, HBox) for flexible layout. The radio buttons are grouped using a ToggleGroup,
      * ensuring only one can be selected at a time. Selection changes are synchronized with the property, and vice versa.
      * The label displays the current value using the provided format string.
      * Both the label and the radio buttons share the same tooltip for improved accessibility.
      *
-     * <p>This method is suitable for enum-based selections with custom display names and flexible layout requirements.
-     *
-     * @param inputEnumProperty        the InputEnumProperty defining valid values and value binding
-     * @param displayNameProvider      a function mapping enum values to their display names
+     * @param inputChoiceProperty      the InputChoiceProperty defining valid values, display names, and value binding
      * @param radioButtonContainerPane the Pane to contain the radio buttons (e.g., VBox, HBox)
      * @param labelFormatString        the format string for the label (e.g., "%s")
      * @param tooltip                  the tooltip text for both the label and the radio buttons
      * @param styleClass               the CSS style class to apply to the radio buttons
-     * @param <E>                      the enum type
+     * @param <T>                      the choice value type
      * @param <P>                      the pane type
      * @return a LabeledControl containing the label and the container pane with radio buttons
      */
     @SuppressWarnings("unchecked")
-    public static <E extends Enum<E>, P extends Pane> LabeledControl<P> createLabeledEnumRadioButtons(
-            InputEnumProperty<E> inputEnumProperty,
-            Function<E, String> displayNameProvider,
+    public static <T, P extends Pane> LabeledControl<P> createLabeledChoiceRadioButtons(
+            InputChoiceProperty<T> inputChoiceProperty,
             P radioButtonContainerPane,
             String labelFormatString,
             String tooltip,
             String styleClass) {
         ToggleGroup toggleGroup = new ToggleGroup();
 
-        List<RadioButton> radioButtons = inputEnumProperty.validValues()
-                                                          .stream()
-                                                          .map(enumValue -> {
-                                                              RadioButton radioButton = new RadioButton(displayNameProvider.apply(enumValue));
-                                                              radioButton.setToggleGroup(toggleGroup);
-                                                              radioButton.getStyleClass().add(styleClass);
-                                                              radioButton.setUserData(enumValue);
-                                                              return radioButton;
-                                                          })
-                                                          .toList();
+        List<RadioButton> radioButtons = inputChoiceProperty.validValues()
+                                                            .stream()
+                                                            .map(value -> {
+                                                                RadioButton radioButton = new RadioButton(inputChoiceProperty.displayNameProvider().apply(value));
+                                                                radioButton.setToggleGroup(toggleGroup);
+                                                                radioButton.getStyleClass().add(styleClass);
+                                                                radioButton.setUserData(value);
+                                                                return radioButton;
+                                                            })
+                                                            .toList();
 
         // Set the initial selection.
         for (RadioButton rb : radioButtons) {
-            if (inputEnumProperty.isValue((E) rb.getUserData())) {
+            if (inputChoiceProperty.isValue((T) rb.getUserData())) {
                 rb.setSelected(true);
             }
         }
@@ -117,81 +115,82 @@ public final class FXComponentFactory {
         // Update the property when the selection changes.
         toggleGroup.selectedToggleProperty().addListener((_, _, newToggle) -> {
             if (newToggle != null) {
-                E selectedValue = (E) newToggle.getUserData();
-                inputEnumProperty.setValue(selectedValue);
+                T selectedValue = (T) newToggle.getUserData();
+                inputChoiceProperty.setValue(selectedValue);
             }
         });
 
         // Update the selection when the property changes.
-        inputEnumProperty.property().addListener((_, _, newVal) -> {
+        inputChoiceProperty.property().addListener((_, _, newVal) -> {
             for (RadioButton rb : radioButtons) {
-                rb.setSelected(rb.getUserData() == newVal);
+                rb.setSelected(Objects.equals(rb.getUserData(), newVal));
             }
         });
 
         radioButtonContainerPane.getChildren().addAll(radioButtons);
 
-        Label label = createBoundLabel(inputEnumProperty.asStringBinding(labelFormatString), radioButtonContainerPane,
+        Label label = createBoundLabel(inputChoiceProperty.asStringBinding(labelFormatString), radioButtonContainerPane,
                 tooltip, radioButtons.toArray(Control[]::new));
         return new LabeledControl<>(label, radioButtonContainerPane);
     }
 
     /**
-     * Creates a labeled checkbox for a binary enum property, mapping checked and unchecked states to specific enum values.
+     * Creates a labeled checkbox for a choice property with two valid values, mapping checked and unchecked states to
+     * specific values.
      *
-     * <p>The checkbox reflects the current value of the InputEnumProperty and updates the property when toggled.
+     * <p>The checkbox reflects the current value of the InputChoiceProperty and updates the property when toggled.
      * The label displays the current value using the provided format string.
      * Both the label and the checkbox share the same tooltip for improved accessibility.
      *
-     * <p>This method is suitable for enum properties with exactly two valid states.
+     * <p>This method is suitable for choice properties with exactly two valid values.
      * It validates the mapping values fail-fast and does not modify the property during initialization.
      *
-     * @param inputEnumProperty  the InputEnumProperty defining valid values and value binding
-     * @param checkedEnumValue   the enum value to set when the checkbox is checked; must be part of valid values
-     * @param uncheckedEnumValue the enum value to set when the checkbox is unchecked; must be part of valid values
-     * @param labelFormatString  the format string for the label (e.g., "%s")
-     * @param tooltip            the tooltip text for both the label and the checkbox
-     * @param styleClass         the CSS style class to apply to the checkbox
-     * @param <E>                the enum type
+     * @param inputChoiceProperty the InputChoiceProperty defining valid values and value binding
+     * @param checkedValue        the value to set when the checkbox is checked; must be part of valid values
+     * @param uncheckedValue      the value to set when the checkbox is unchecked; must be part of valid values
+     * @param labelFormatString   the format string for the label (e.g., "%s")
+     * @param tooltip             the tooltip text for both the label and the checkbox
+     * @param styleClass          the CSS style class to apply to the checkbox
+     * @param <T>                 the choice value type
      * @return a LabeledControl containing the label and the checkbox
      * @throws IllegalArgumentException if the property does not define exactly two valid values,
      *                                  if either mapping value is not valid, or if both mapping values are equal
      */
-    public static <E extends Enum<E>> LabeledControl<CheckBox> createLabeledEnumCheckBox(
-            InputEnumProperty<E> inputEnumProperty,
-            E checkedEnumValue,
-            E uncheckedEnumValue,
+    public static <T> LabeledControl<CheckBox> createLabeledChoiceCheckBox(
+            InputChoiceProperty<T> inputChoiceProperty,
+            T checkedValue,
+            T uncheckedValue,
             String labelFormatString,
             String tooltip,
             String styleClass) {
-        List<E> validValues = inputEnumProperty.validValues();
+        List<T> validValues = inputChoiceProperty.validValues();
         if (validValues.size() != 2) {
-            throw new IllegalArgumentException("InputEnumProperty must define exactly 2 valid values for checkbox usage.");
+            throw new IllegalArgumentException("InputChoiceProperty must define exactly 2 valid values for checkbox usage.");
         }
-        if (!validValues.contains(checkedEnumValue)) {
-            throw new IllegalArgumentException("checkedEnumValue must be part of valid values: " + checkedEnumValue);
+        if (!validValues.contains(checkedValue)) {
+            throw new IllegalArgumentException("checkedValue must be part of valid values: " + checkedValue);
         }
-        if (!validValues.contains(uncheckedEnumValue)) {
-            throw new IllegalArgumentException("uncheckedEnumValue must be part of valid values: " + uncheckedEnumValue);
+        if (!validValues.contains(uncheckedValue)) {
+            throw new IllegalArgumentException("uncheckedValue must be part of valid values: " + uncheckedValue);
         }
-        if (checkedEnumValue == uncheckedEnumValue) {
-            throw new IllegalArgumentException("checkedEnumValue and uncheckedEnumValue must be different.");
+        if (Objects.equals(checkedValue, uncheckedValue)) {
+            throw new IllegalArgumentException("checkedValue and uncheckedValue must be different.");
         }
 
         CheckBox checkBox = new CheckBox();
-        checkBox.setSelected(inputEnumProperty.isValue(checkedEnumValue));
+        checkBox.setSelected(inputChoiceProperty.isValue(checkedValue));
         checkBox.getStyleClass().add(styleClass);
 
         checkBox.selectedProperty().addListener((_, _, isSelected) -> {
             if (isSelected) {
-                inputEnumProperty.setValue(checkedEnumValue);
+                inputChoiceProperty.setValue(checkedValue);
             } else {
-                inputEnumProperty.setValue(uncheckedEnumValue);
+                inputChoiceProperty.setValue(uncheckedValue);
             }
         });
-        inputEnumProperty.property().addListener((_, _, newVal) -> checkBox.setSelected(newVal == checkedEnumValue));
+        inputChoiceProperty.property().addListener((_, _, newVal) -> checkBox.setSelected(Objects.equals(newVal, checkedValue)));
 
-        Label label = createBoundLabel(inputEnumProperty.asStringBinding(labelFormatString), checkBox, tooltip, checkBox);
+        Label label = createBoundLabel(inputChoiceProperty.asStringBinding(labelFormatString), checkBox, tooltip, checkBox);
         return new LabeledControl<>(label, checkBox);
     }
 

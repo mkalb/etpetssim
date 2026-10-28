@@ -24,8 +24,7 @@ public final class LabConfigView
         var structurePane = createStructurePane(false);
 
         // Layout
-        var colorModeControl = FXComponentFactory.createLabeledEnumRadioButtons(viewModel.colorModeProperty(),
-                viewModel.colorModeProperty().displayNameProvider(),
+        var colorModeControl = FXComponentFactory.createLabeledChoiceRadioButtons(viewModel.colorModeProperty(),
                 FXComponentFactory.createHBox(FXStyleClasses.CONFIG_RADIOBUTTON_BOX),
                 AppLocalization.getText(LAB_CONFIG_COLOR),
                 AppLocalization.getText(LAB_CONFIG_COLOR_TOOLTIP),

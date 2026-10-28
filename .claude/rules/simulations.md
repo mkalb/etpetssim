@@ -199,7 +199,7 @@ Use `CellDrawer` from `simulations.core.view`:
 
 - Use `AbstractConfigViewModel` or a simulation-specific config ViewModel.
 - Expose config as JavaFX properties or repository input wrappers (`InputDoubleProperty`, `InputIntegerProperty`,
-  `InputEnumProperty`).
+  `InputChoiceProperty`).
 - Provide sensible defaults and validate before passing config to the Model layer.
 - Keep the defaults, limits, and allowed values of a config in `<Simulation>Constraints` in the `model` package:
   per component `<COMPONENT>_DEFAULT` and either `_MIN`, `_MAX`, and, for integer spinners, `_STEP`, or `_VALUES`

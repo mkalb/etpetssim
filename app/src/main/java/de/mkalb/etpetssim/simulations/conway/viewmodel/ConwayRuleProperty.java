@@ -10,7 +10,7 @@ import java.util.function.*;
 /**
  * Encapsulates the preset selection and free-text S/B input for Conway transition rules.
  * <p>
- * Three {@link InputEnumProperty} instances hold shape-specific preset selections
+ * Three {@link InputChoiceProperty} instances hold shape-specific preset selections
  * (one per {@link de.mkalb.etpetssim.engine.CellShape}). Selecting a preset sets the
  * {@link #stringProperty()} to the corresponding S/B rule string, which in turn
  * triggers the registered {@link #setRulesChangedListener(Consumer) rulesChangedListener} callback

@@ -40,7 +40,7 @@ public final class LabConfigViewModel
     );
 
     // Layout
-    private final InputEnumProperty<LabColorMode> colorMode = InputEnumProperty.of(COLOR_MODE_DEFAULT, COLOR_MODE_VALUES, Enum::toString);
+    private final InputChoiceProperty<LabColorMode> colorMode = InputChoiceProperty.ofList(COLOR_MODE_DEFAULT, COLOR_MODE_VALUES, Enum::toString);
 
     // Rules - NeighborhoodMode
     private final InputChoiceProperty<NeighborhoodMode> neighborhoodMode = InputChoiceProperty.ofEnum(
@@ -96,7 +96,7 @@ public final class LabConfigViewModel
         );
     }
 
-    public InputEnumProperty<LabColorMode> colorModeProperty() {
+    public InputChoiceProperty<LabColorMode> colorModeProperty() {
         return colorMode;
     }
 
