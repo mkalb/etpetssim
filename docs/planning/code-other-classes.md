@@ -44,7 +44,7 @@ settled before `code-simulation-classes.md` starts, which took over the classes 
 - The sibling plans `code-interface-types.md`, `code-record-types.md`, `code-private-constructor-classes.md`, and
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until
   `code-simulation-classes.md` is done.
-- Category 1 is done and committed (`fc3cff53`); category 2 is done and committed.
+- Category 1 is done and committed (`fc3cff53`); category 2 is done and committed; category 3 is done.
 - Categories 2 and 3 settle the rules before category 4 applies them; category 2 comes first, because it also
   changes code. Category 4 reviews the packages one group at a time.
 - `code-simulation-classes.md` starts only after all categories of this plan are done.
@@ -97,7 +97,7 @@ Table format:
 |---|-------------------------------------------|-------------:|-------------|
 | 1 | Engine, core, UI, and application classes |   12 classes | done        |
 | 2 | Member order: rules and IntelliJ          |            - | done        |
-| 3 | Javadoc rules of all rule files           | 5 rule files | open        |
+| 3 | Javadoc rules of all rule files           | 5 rule files | done        |
 | 4 | Package reviews outside `simulations`     |   9 packages | open        |
 
 ## 1. Engine, core, UI, and application classes
@@ -470,6 +470,157 @@ practical. The result is a set of rule changes; the code outside `simulations` f
    is added or renamed; run `app:javadoc` only if code is changed.
 4. Record the decisions here and add cross-category decisions where they apply to `code-simulation-classes.md`.
 
+### Findings
+
+Analysis with scripts in the scratchpad over `app/src/main/java` (2026-10-29): all Javadoc comments with `@param`,
+`@return`, or `@throws` are complete, including the type parameters and the checked exceptions (12 `@throws` tags;
+the only other `throws` clause is on an override without Javadoc); `@throws NullPointerException` occurs only in
+`core` (41 times), exactly for the parameters checked with `requireNonNull(..)` (except `AppLogger.initialize(..)`).
+Public members with Javadoc, without overrides: over 90 % in `core`, `engine`, and `ui`, about 24 % in
+`simulations`.
+
+#### Removal of restating Javadoc
+
+- Origin: "Checks" of this category
+- Types: `java.md` ("Coverage")
+- Problem: "Remove existing Javadoc only when it clearly adds no value; keep it when in doubt" seemed to contradict the
+  cross-category decision to remove constructor Javadoc that only restates; it left open what "clearly" means.
+- Proposal: State that Javadoc whose summary and tags only restate the name and signature clearly adds no value.
+- Status: done (2026-10-29)
+
+#### Javadoc coverage in `core`
+
+- Origin: "Checks" of this category
+- Types: `core.md` ("Documentation and Tests"), `AppArgs.toString()`
+- Problem: "Public methods require Javadoc" left constructors and pure overrides open (`AppArgs.toString()` has
+  Javadoc that only restates); the class-level rule repeated `java.md`.
+- Proposal: Public constructors and methods require Javadoc, pure overrides follow `java.md`; the type Javadoc rule
+  only adds "purpose and responsibilities".
+- Status: done (2026-10-29)
+
+#### Null checks and `NullPointerException` in `core`
+
+- Origin: "Checks" of this category
+- Types: `core.md` ("Null Validation"), `java.md` ("Nullability", "Tags"), the five `App*` classes of `core`
+- Problem: `core` allowed `requireNonNull(..)` for parameters and documented the `NullPointerException` "only when it
+  is part of a public core contract", against the general rules; the package-specific exception makes the rules
+  harder to apply for agents.
+- Proposal: Make the documented practice the rule (`@throws NullPointerException` exactly for checked parameters).
+- Status: rejected (2026-10-29); instead the exception for `core` is removed: no package checks non-null parameters
+  with `requireNonNull(..)` or documents a `NullPointerException` for them. Category 4 (group 1) removes the checks,
+  the tags, and the tests of these exceptions in `core`.
+
+#### Checked exceptions
+
+- Origin: analysis of this category
+- Types: `java.md` ("Tags")
+- Problem: The rule named only unchecked exceptions; all checked exceptions of methods with Javadoc are documented
+  anyway.
+- Proposal: Every checked exception of the `throws` clause is documented with `@throws`.
+- Status: done (2026-10-29)
+
+#### Use of `@see`
+
+- Origin: analysis of this category
+- Types: `java.md` ("Tags"), e.g., `GridStructure`, `GridCoordinate`
+- Problem: No rule; 107 `@see` tags in 41 files, many for the types of parameters or components (five in the type
+  Javadoc of `GridStructure`) or repeated (`@see #ORIGIN` five times in `GridCoordinate`).
+- Proposal: `@see` only for a closely related element that the text does not already name; not for the types of
+  parameters, components, fields, or results.
+- Status: done (2026-10-29); the maintainer asked to restrict `@see` clearly ("rarely").
+
+#### Fully qualified references and package boundaries
+
+- Origin: analysis of this category
+- Types: `java.md` ("Style"), `SimulationUserActionContext`, `EdgeBehaviorAction`, `NeighborhoodMode`, `GridEntity`,
+  `AgentOrderingStrategies`, `ConwayRuleProperty`, `ExtraterrestrialPetsSimulation`
+- Problem: Eleven references use fully qualified names of types that the code does not import; the rule did not say
+  whether to import a type only for Javadoc. `simulations.core.shared.SimulationUserActionContext` links
+  `simulations.core.model.SimulationUserAction`, although `shared` must not depend on `model`.
+- Proposal: No imports only for Javadoc; fully qualified names for types that the code does not import; no links to
+  types of a package that the documented package must not depend on, `{@code SimpleName}` instead.
+- Status: done (2026-10-29)
+
+#### Summary sentence of types, fields, and constants
+
+- Origin: analysis of this category
+- Types: `java.md` ("Style")
+- Problem: "Third person" fits only methods; types, fields, and constants start with noun phrases ("Factory for ...",
+  "Contract for ...", "Maximum ..."). Constructors in `simulations.core` start with "Constructs", "Initializes", or
+  "Convenience constructor".
+- Proposal: Method summaries start with a verb in the third person; types, fields, constants, and enum constants may
+  start with a noun phrase, but not with "This class ...". The constructors in `simulations.core` follow in
+  `code-simulation-classes.md`.
+- Status: done (2026-10-29)
+
+#### Protected members of base classes
+
+- Origin: "Sources" of this category (`ui.md`, `simulations.md`)
+- Types: `java.md` ("Coverage"), the base views and ViewModels in `simulations.core`
+- Problem: 37 protected members of `simulations` have Javadoc and 36 have none; neither `ui.md` nor `simulations.md`
+  rules it.
+- Proposal: No rule in `ui.md` or `simulations.md`; the coverage examples of `java.md` name when abstract or protected
+  methods meant for subclasses are called and what implementations must do.
+- Status: done (2026-10-29)
+
+#### Block tag `@return`
+
+- Origin: analysis of this category
+- Types: `java.md` ("Tags", "Style")
+- Problem: `{@return ...}` was "welcome", but the code uses only `@return` (545 times).
+- Proposal: Use `@return`, not `{@return ...}`; `{@snippet}` stays welcome.
+- Status: done (2026-10-29)
+
+#### Missing tags and doclint
+
+- Origin: "Sources" of this category (build)
+- Types: `AGENTS.md`, `java.md` ("Tags"), `app/build.gradle.kts`
+- Problem: `-Xdoclint:all,-missing` suppresses missing comments and also missing `@param`, `@return`, and `@throws`
+  tags; enabling `missing` would report every member without Javadoc.
+- Proposal: No build change; `AGENTS.md` says "missing comments and tags", and `java.md` says that reviews check the
+  tags.
+- Status: done (2026-10-29)
+
+#### Tags of record components
+
+- Origin: "Checks" of this category
+- Types: `java.md` ("Tags")
+- Problem: The record rule stood apart from the general tag rule and left records without Javadoc open.
+- Proposal: One rule: when a type, constructor, or method has Javadoc, every parameter, record component, and type
+  parameter has `@param`.
+- Status: done (2026-10-29)
+
+#### Javadoc in test sources
+
+- Origin: "Checks" of this category (structure)
+- Types: `junit.md` ("Test Method Style", "Manual Test Utilities")
+- Problem: The Javadoc rule for test sources stood under "Test Method Style" and repeated "Manual Test Utilities".
+- Proposal: A section "Javadoc" in `junit.md` that refers to "Manual Test Utilities".
+- Status: done (2026-10-29)
+
+### Decisions
+
+- Rule change: `java.md` ("Coverage"): Javadoc whose summary and tags only restate the name and signature clearly
+  adds no value; the coverage examples name when abstract or protected methods meant for subclasses are called and
+  what implementations must do. `ui.md` and `simulations.md` get no Javadoc rules.
+- Rule change: `core.md` ("Documentation and Tests"): public constructors and methods require Javadoc, pure overrides
+  follow `java.md`; the type Javadoc of a public class describes its purpose and responsibilities.
+- Rule change: `core.md`: the section "Null Validation" is removed. `java.md` ("Nullability"): no package, including
+  `core`, checks non-null-by-default parameters with `requireNonNull(..)`; it only asserts that a `@Nullable` value is
+  set. `java.md` ("Tags"): never document a `NullPointerException` for non-null-by-default parameters.
+- Rule change: `java.md` ("Tags"): one rule for `@param` (parameters, record components, type parameters), `@return`
+  (not `{@return ...}`), and `@throws` for every checked exception of the `throws` clause; reviews check the tags,
+  because `app:javadoc` does not report missing ones. `@see` is used rarely, only for a closely related element that
+  the text does not already name.
+- Rule change: `java.md` ("Style"): method summaries start with a verb in the third person, types, fields, and
+  constants may start with a noun phrase; imported types are referenced by simple name, other types by fully
+  qualified name, without imports only for Javadoc and without links across forbidden package dependencies;
+  `{@snippet}` stays welcome.
+- Rule change: `junit.md`: the Javadoc rules of test sources form the section "Javadoc", which refers to "Manual Test
+  Utilities" and to the tag and style rules of `java.md`.
+- Rule change: `AGENTS.md` ("Platform Baseline"): `app:javadoc` fails on any warning except missing comments and tags.
+- No build change; `app:javadoc` was not run, because no code changed.
+
 ## 4. Package reviews outside `simulations`
 
 A review of each package outside `simulations` as a whole: all its types together (classes, interfaces, records,
@@ -525,6 +676,24 @@ Notes:
   `EtpetsSimulationManager` is removed in `code-simulation-classes.md` (category 5) if `GridInitializers` offers a
   shared method.
 
+#### Null checks of `core`
+
+- Origin: category 3, "Null checks and `NullPointerException` in `core`"
+- Types: `AppArgs`, `AppLocalization`, `AppLogger`, `AppResources`, `AppStorage`
+- Problem: The five classes check non-null parameters with `requireNonNull(..)` (49 calls) and document a
+  `NullPointerException` for them (41 tags); the rules no longer allow either.
+- Proposal: Remove the checks of non-null parameters and their `@throws NullPointerException` tags in group 1, and
+  the tests of these exceptions; keep `requireNonNull(..)` only where it asserts a `@Nullable` value.
+
+#### Javadoc rules of category 3
+
+- Origin: category 3
+- Types: all types outside `simulations`
+- Problem: Existing Javadoc does not yet follow the rules of category 3, e.g., `@see` for parameter or component types
+  (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
+  Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
+- Proposal: Check and adapt the Javadoc of each package in its group.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -548,6 +717,12 @@ Notes:
   static methods, instance methods, then nested types; within the static and within the instance methods public,
   protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public
   and `toString()` directly before the private instance methods. Tests follow the declaration order (`junit.md`).
+- (3, all) No package, including `core`, checks non-null-by-default parameters with `requireNonNull(..)` or
+  documents a `NullPointerException` for them; `requireNonNull(..)` only asserts that a `@Nullable` value is set
+  (rule change: `core.md` and `java.md`, "Nullability" and "Tags").
+- (3, all) Javadoc follows the rules of category 3 (`java.md`, "Javadoc"): `@see` rarely, `@return` instead of
+  `{@return ...}`, no imports only for Javadoc and no links across forbidden package dependencies, noun phrases
+  allowed for types, fields, and constants, and no Javadoc that only restates the name and signature.
 - (1, all) Class-level `@SuppressWarnings` are narrowed to the members that need them, with the maintainer's
   approval per case (`java.md`, "Suppressions Policy").
 

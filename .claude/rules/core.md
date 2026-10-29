@@ -32,21 +32,13 @@ Allowed dependencies:
 - JSpecify annotations
 - JavaFX only for infrastructure-level resource integration (e.g., `Image` in `AppResources`)
 
-## Null Validation
-
-Core overrides the general Java rule for `Objects.requireNonNull(...)`.
-
-- Core constructors and methods may validate required parameters with `Objects.requireNonNull(...)`.
-- Prefer fail-fast validation for critical infrastructure entry points.
-- Other packages rely on JSpecify non-null-by-default contracts unless a specific instruction says otherwise.
-- Document `NullPointerException` in Javadoc only when it is part of a public core contract.
-
 ## Documentation and Tests
 
 Core overrides the general Java rule that constructors and methods have Javadoc only when it adds value.
 
-- Public classes require class-level Javadoc describing purpose and responsibilities.
-- Public methods require Javadoc covering intent, parameters, return values, and contract-relevant exceptions.
+- The type Javadoc of a public class describes its purpose and responsibilities.
+- Public constructors and methods require Javadoc covering intent, parameters, return values, and contract-relevant
+  exceptions; pure `@Override` methods follow `java.md`.
 - Core classes require comprehensive JUnit 5 coverage.
 - `*ForTesting()` methods are allowed for test infrastructure and must document their testing purpose. Make them
   package-private unless tests in other packages need them (e.g., `AppLogger.initializeForTesting()`).

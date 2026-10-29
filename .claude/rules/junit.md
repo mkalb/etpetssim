@@ -63,10 +63,6 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Test sources contain no block comments and no line comments. Exception: inside a test method body, a line comment may
   precede one or more assertions when it explains something important that is not immediately evident; `//noinspection`
   directives are allowed. Do not comment helpers, fixtures, constants, or fields; a better name carries the intent.
-- Add Javadoc to test sources very sparingly and only where it adds clear value; test classes and test methods
-  normally have none. Shared support classes such as `FXTestSupport` and manual test utilities keep Javadoc for the
-  class and its public API (a manual utility's `main()`). Package-local `*TestSupport` classes and all private
-  helpers have no Javadoc.
 - Prefer one behavior per test; group related checks with `assertAll(...)`.
 - Do not write tests that only check what the compiler or `@NullMarked` guarantees (e.g., `assertInstanceOf` on a
   statically typed value, or the implicit `NullPointerException` for `null` passed to a non-null parameter).
@@ -76,6 +72,15 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Prefer specific assertions; add assertion messages only when the failure would otherwise be ambiguous.
 - Use a delta for floating-point comparisons.
 - Use `@Disabled("reason")` with a concrete reason.
+
+## Javadoc
+
+- Add Javadoc to test sources very sparingly and only where it adds clear value; test classes and test methods
+  normally have none.
+- Shared support classes such as `FXTestSupport` keep Javadoc for the class and its public API; manual test
+  utilities follow "Manual Test Utilities".
+- Package-local `*TestSupport` classes and all private helpers have no Javadoc.
+- Where test sources have Javadoc, it follows the tag and style rules of `java.md`.
 
 ## Test Data and Helpers
 

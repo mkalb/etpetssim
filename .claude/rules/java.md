@@ -174,10 +174,10 @@ non-null reference return type (from main code or the JDK, e.g. `toString()`), a
 - Treat unannotated types as non-null under `@NullMarked`.
 - Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts.
 - Do not add `@Nullable` defensively or "just in case".
-- Outside package-specific exceptions, do not add routine `Objects.requireNonNull(...)` guards solely for
-  non-null-by-default parameters.
-- Use `Objects.requireNonNull(...)` only for established boundary checks, state assertions after nullable checks, or
-  where a more specific instruction allows it.
+- Do not check non-null-by-default parameters with `Objects.requireNonNull(...)`; this applies to all packages,
+  including `core`.
+- Use `Objects.requireNonNull(...)` only to assert that a `@Nullable` value (e.g., a field or a result) is set at this
+  point.
 - Valid `@Nullable` locations include fields, parameters, return types, and type arguments
   (`ObjectProperty<@Nullable GC>`).
 - Place `@Nullable` directly before the annotated type on the same line (`@Nullable String emojiKey()`), because it is
@@ -194,38 +194,45 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
 - Constructors, methods, fields, constants, and enum constants of any visibility may have Javadoc only when it
   explains something that the name, signature, and types do not show, such as valid ranges and units, the meaning of
   empty, `Optional`, or `@Nullable` results, contract-relevant exceptions, side effects, threading requirements,
-  order or priority, lifecycle, or domain rules.
+  order or priority, lifecycle, domain rules, or when abstract or protected methods meant for subclasses are called
+  and what implementations must do.
 - Do not add Javadoc that only restates the name (e.g., "Private constructor to prevent instantiation." or
   "Returns the value." on `getValue()`).
 - Do not add Javadoc to pure `@Override` methods unless the override adds constraints, side effects, or surprising
   semantics.
-- Remove existing Javadoc only when it clearly adds no value; keep it when in doubt.
+- Remove existing Javadoc only when it clearly adds no value; keep it when in doubt. Javadoc whose summary and tags
+  only restate the name and signature clearly adds no value.
 
 ### Tags
 
-- When a constructor or method has Javadoc, document every parameter and type parameter with `@param` and every
-  non-void result with `@return` or `{@return ...}`.
-- Document every record component with `@param` in the record Javadoc, and every type parameter of a generic type.
-  A compact constructor that rejects arguments has Javadoc that documents its invariants with `@throws` and has no
+- When a type, constructor, or method has Javadoc, document every parameter, record component, and type parameter
+  with `@param`, every non-void result with `@return` (not `{@return ...}`), and every checked exception of the
+  `throws` clause with `@throws`. `app:javadoc` does not report missing tags; check them in reviews.
+- A compact constructor that rejects arguments has Javadoc that documents its invariants with `@throws` and has no
   `@param` tags; state the invariants there, not in the record Javadoc. A compact constructor that only copies
   needs no Javadoc.
-- Document contract-relevant unchecked exceptions with `@throws`; do not add routine `NullPointerException` notes
-  for non-null-by-default contracts.
+- Document contract-relevant unchecked exceptions with `@throws`; never document a `NullPointerException` for
+  non-null-by-default parameters.
+- Use `@see` rarely: only for a closely related element that the text does not already name, such as a counterpart
+  or an alternative to the documented member; not for the types of parameters, components, fields, or results.
 
 ### Style
 
-- Start with a summary sentence in the third person (e.g., "Returns ...", "Creates ..."); a constructor's summary
-  starts with "Creates a ..." (e.g., "Creates a runner that ...").
+- Start a method summary with a verb in the third person (e.g., "Returns ...", "Creates ..."); a constructor's
+  summary starts with "Creates a ..." (e.g., "Creates a runner that ..."). Types, fields, constants, and enum
+  constants may start with a noun phrase (e.g., "Factory for ...", "Maximum number of ..."), but not with
+  "This class ...".
 - Write the literals `true`, `false`, and `null` as `{@code true}`, `{@code false}`, and `{@code null}`.
 - Describe behavior; avoid implementation detail unless it is contract-relevant.
-- Use `{@link}` only when the target helps the reader, without fully qualified names where a simple name resolves;
-  otherwise write code elements with `{@code}`.
+- Use `{@link}` only when the target helps the reader; otherwise write code elements with `{@code}`. Use the simple
+  name of an imported type and the fully qualified name of a type that the code does not import; do not add imports
+  only for Javadoc. Do not link to a type of a package that the documented package must not depend on (e.g., from
+  `shared` to `model`); write its simple name with `{@code}` instead.
 - Separate paragraphs with an empty `*` line and start each paragraph after the first with `<p>` directly before its
   first word (`<p>Text`); do not write `</p>`, and do not put `<p>` before block elements such as `<ul>`, `<pre>`, or
   `{@snippet}`.
 - Write lists with `<ul>` and `<li>`, not with `- `.
-- Modern Javadoc features such as `{@return ...}` and `{@snippet}` are welcome but not required; do not use
-  Markdown documentation comments (`///`).
+- `{@snippet}` is welcome for code examples; do not use Markdown documentation comments (`///`).
 
 ## Logging with AppLogger
 
