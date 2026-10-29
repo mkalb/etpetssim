@@ -23,7 +23,7 @@ public final class ConwayFactory {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ConwayEntity.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.of(ConwayEntity.values());
 
         // ViewModel
         var configViewModel = new ConwayConfigViewModel(readOnlySimulationState);

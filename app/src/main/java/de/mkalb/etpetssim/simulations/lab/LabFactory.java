@@ -23,7 +23,7 @@ public final class LabFactory {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(LabEntity.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.of(LabEntity.values());
 
         // ViewModel
         var configViewModel = new LabConfigViewModel(readOnlySimulationState);

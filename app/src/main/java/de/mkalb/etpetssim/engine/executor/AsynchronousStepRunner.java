@@ -9,11 +9,12 @@ import java.util.function.*;
 /**
  * Executes asynchronous simulation steps on a {@link WritableGridModel}.
  * <p>
- * Applies agent-specific logic to all entities in the grid model
- * that satisfy the given {@code agentPredicate}. The agent logic is applied to each
- * agent cell, using the provided context object for state sharing or accumulation.
- * The order in which agents are processed is determined by the provided
- * {@code agentOrderingStrategy}.
+ * Applies the agent step logic to each cell whose entity satisfies the {@code agentPredicate}, in the order of the
+ * {@code agentOrderingStrategy}. The context object is passed to each invocation.
+ * <p>
+ * The agent cells are selected and sorted once at the start of each step. Because the step logic may change the
+ * grid model, a cell can be outdated when its turn comes (e.g., its agent was removed by an earlier agent); the step
+ * logic checks the current entity at the cell's coordinate when it depends on it.
  *
  * @param <ENT> the type of {@link GridEntity} contained in the grid model
  * @param <C>   the type of the context object provided to each simulation step
@@ -22,42 +23,17 @@ public final class AsynchronousStepRunner<ENT extends GridEntity, C> implements 
 
     private final WritableGridModel<ENT> model;
     private final Predicate<ENT> agentPredicate;
-    private final Function<C, Comparator<GridCell<ENT>>> agentOrderingStrategyProvider;
+    private final Comparator<GridCell<ENT>> agentOrderingStrategy;
     private final AgentStepLogic<ENT, C> agentStepLogic;
 
-    /**
-     * Constructs a new {@code AsynchronousStepRunner} with the given grid model, agent predicate,
-     * agent ordering strategy, and agent step logic.
-     *
-     * @param model                         the grid model to operate on
-     * @param agentPredicate                predicate to identify agent entities in the grid
-     * @param agentOrderingStrategyProvider function providing comparator defining the order in which agent cells are processed based on the context
-     * @param agentStepLogic                logic to apply to each agent cell
-     */
-    public AsynchronousStepRunner(WritableGridModel<ENT> model,
-                                  Predicate<ENT> agentPredicate,
-                                  Function<C, Comparator<GridCell<ENT>>> agentOrderingStrategyProvider,
-                                  AgentStepLogic<ENT, C> agentStepLogic) {
-        this.model = model;
-        this.agentPredicate = agentPredicate;
-        this.agentOrderingStrategyProvider = agentOrderingStrategyProvider;
-        this.agentStepLogic = agentStepLogic;
-    }
-
-    /**
-     * Constructs a new {@code AsynchronousStepRunner} with the given grid model, agent predicate,
-     * agent ordering strategy, and agent step logic.
-     *
-     * @param model                 the grid model to operate on
-     * @param agentPredicate        predicate to identify agent entities in the grid
-     * @param agentOrderingStrategy comparator defining the order in which agent cells are processed
-     * @param agentStepLogic        logic to apply to each agent cell
-     */
     public AsynchronousStepRunner(WritableGridModel<ENT> model,
                                   Predicate<ENT> agentPredicate,
                                   Comparator<GridCell<ENT>> agentOrderingStrategy,
                                   AgentStepLogic<ENT, C> agentStepLogic) {
-        this(model, agentPredicate, _ -> agentOrderingStrategy, agentStepLogic);
+        this.model = model;
+        this.agentPredicate = agentPredicate;
+        this.agentOrderingStrategy = agentOrderingStrategy;
+        this.agentStepLogic = agentStepLogic;
     }
 
     /**
@@ -71,7 +47,6 @@ public final class AsynchronousStepRunner<ENT extends GridEntity, C> implements 
      */
     @Override
     public void performStep(int stepIndex, C context) {
-        Comparator<GridCell<ENT>> agentOrderingStrategy = agentOrderingStrategyProvider.apply(context);
         List<GridCell<ENT>> orderedAgentCells = model.filteredCellsSortedBy(agentPredicate, agentOrderingStrategy);
         for (GridCell<ENT> agentCell : orderedAgentCells) {
             agentStepLogic.performAgentStep(agentCell, model, stepIndex, context);

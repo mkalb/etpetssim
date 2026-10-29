@@ -116,6 +116,18 @@ final class WritableGridModelTest {
 
     @ParameterizedTest
     @EnumSource
+    void testFilteredCoordinatesIsMutableWithoutMatches(GridModelImplementation implementation) {
+        List<GridCoordinate> coordinates = implementation.createModel()
+                                                         .filteredCoordinates(entity -> entity == TestEntity.WALL);
+
+        assertAll(
+                () -> assertTrue(coordinates.isEmpty()),
+                () -> assertDoesNotThrow(() -> coordinates.add(coordinate(0, 0)))
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource
     void testFindRandomDefaultCoordinateReturnsEmpty(GridModelImplementation implementation) {
         WritableGridModel<TestEntity> model = implementation.createModel();
         model.fill(TestEntity.WALL);
@@ -213,6 +225,17 @@ final class WritableGridModelTest {
 
     @ParameterizedTest
     @EnumSource
+    void testFilteredCellsIsMutableWithoutMatches(GridModelImplementation implementation) {
+        List<GridCell<TestEntity>> cells = implementation.createModel().filteredCells(entity -> entity == TestEntity.WALL);
+
+        assertAll(
+                () -> assertTrue(cells.isEmpty()),
+                () -> assertDoesNotThrow(() -> cells.add(new GridCell<>(coordinate(0, 0), TestEntity.WALL)))
+        );
+    }
+
+    @ParameterizedTest
+    @EnumSource
     void testFilteredCellsSortedBy(GridModelImplementation implementation) {
         WritableGridModel<TestEntity> model = implementation.createModel();
         model.setEntity(coordinate(3, 3), TestEntity.WALL);
@@ -229,6 +252,16 @@ final class WritableGridModelTest {
                 ),
                 sorted
         );
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    void testFilteredCellsSortedByReturnsEmptyListWithoutMatches(GridModelImplementation implementation) {
+        List<GridCell<TestEntity>> sorted = implementation.createModel().filteredCellsSortedBy(
+                entity -> entity == TestEntity.WALL,
+                Comparator.comparing(GridCell::coordinate));
+
+        assertTrue(sorted.isEmpty());
     }
 
     @ParameterizedTest
@@ -267,12 +300,14 @@ final class WritableGridModelTest {
         model.setEntity(coordinate, TestEntity.WALL);
 
         WritableGridModel<TestEntity> clone = model.copy();
-
-        assertEquals(TestEntity.WALL, clone.getEntity(coordinate));
-
+        TestEntity copiedEntity = clone.getEntity(coordinate);
         clone.setEntity(coordinate, TestEntity.FOOD);
-        assertEquals(TestEntity.WALL, model.getEntity(coordinate));
-        assertEquals(TestEntity.FOOD, clone.getEntity(coordinate));
+
+        assertAll(
+                () -> assertEquals(TestEntity.WALL, copiedEntity),
+                () -> assertEquals(TestEntity.WALL, model.getEntity(coordinate)),
+                () -> assertEquals(TestEntity.FOOD, clone.getEntity(coordinate))
+        );
     }
 
     @ParameterizedTest
@@ -284,7 +319,12 @@ final class WritableGridModelTest {
 
         WritableGridModel<TestEntity> blankClone = model.copyWithDefaultEntity();
 
-        assertEquals(TestEntity.EMPTY, blankClone.getEntity(coordinate));
+        assertAll(
+                () -> assertEquals(model.structure(), blankClone.structure()),
+                () -> assertEquals(model.defaultEntity(), blankClone.defaultEntity()),
+                () -> assertTrue(blankClone.nonDefaultCoordinates().isEmpty()),
+                () -> assertEquals(TestEntity.WALL, model.getEntity(coordinate))
+        );
     }
 
     @ParameterizedTest
@@ -292,15 +332,16 @@ final class WritableGridModelTest {
     void testSetEntityStoresNonDefaultEntity(GridModelImplementation implementation) {
         WritableGridModel<TestEntity> model = implementation.createModel();
         GridCoordinate coordinate = coordinate(1, 1);
-
-        assertEquals(TestEntity.EMPTY, model.getEntity(coordinate));
-        assertTrue(model.isDefaultEntity(coordinate));
+        boolean defaultBefore = model.isDefaultEntity(coordinate);
 
         model.setEntity(coordinate, TestEntity.WALL);
 
-        assertEquals(TestEntity.WALL, model.getEntity(coordinate));
-        assertFalse(model.isDefaultEntity(coordinate));
-        assertEquals(Set.of(coordinate), model.nonDefaultCoordinates());
+        assertAll(
+                () -> assertTrue(defaultBefore),
+                () -> assertEquals(TestEntity.WALL, model.getEntity(coordinate)),
+                () -> assertFalse(model.isDefaultEntity(coordinate)),
+                () -> assertEquals(Set.of(coordinate), model.nonDefaultCoordinates())
+        );
     }
 
     @ParameterizedTest
@@ -312,8 +353,10 @@ final class WritableGridModelTest {
 
         model.setEntity(coordinate, TestEntity.EMPTY);
 
-        assertEquals(TestEntity.EMPTY, model.getEntity(coordinate));
-        assertTrue(model.nonDefaultCoordinates().isEmpty());
+        assertAll(
+                () -> assertEquals(TestEntity.EMPTY, model.getEntity(coordinate)),
+                () -> assertTrue(model.nonDefaultCoordinates().isEmpty())
+        );
     }
 
     @ParameterizedTest
@@ -358,8 +401,10 @@ final class WritableGridModelTest {
 
         model.setEntityToDefault(coordinate);
 
-        assertEquals(TestEntity.EMPTY, model.getEntity(coordinate));
-        assertTrue(model.nonDefaultCoordinates().isEmpty());
+        assertAll(
+                () -> assertEquals(TestEntity.EMPTY, model.getEntity(coordinate)),
+                () -> assertTrue(model.nonDefaultCoordinates().isEmpty())
+        );
     }
 
     @ParameterizedTest
@@ -373,6 +418,17 @@ final class WritableGridModelTest {
                 () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), model.countEntities(entity -> entity == TestEntity.WALL)),
                 () -> assertEquals(SQUARE_STRUCTURE_8X8.cellCount(), model.nonDefaultCoordinates().size())
         );
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    void testFillResetsAllCellsForDefaultEntity(GridModelImplementation implementation) {
+        WritableGridModel<TestEntity> model = implementation.createModel();
+        model.setEntity(coordinate(1, 1), TestEntity.WALL);
+
+        model.fill(TestEntity.EMPTY);
+
+        assertTrue(model.nonDefaultCoordinates().isEmpty());
     }
 
     @ParameterizedTest
@@ -435,8 +491,10 @@ final class WritableGridModelTest {
                 new GridCell<>(coordinateA, TestEntity.WALL),
                 new GridCell<>(coordinateB, TestEntity.FOOD));
 
-        assertEquals(TestEntity.FOOD, model.getEntity(coordinateA));
-        assertEquals(TestEntity.WALL, model.getEntity(coordinateB));
+        assertAll(
+                () -> assertEquals(TestEntity.FOOD, model.getEntity(coordinateA)),
+                () -> assertEquals(TestEntity.WALL, model.getEntity(coordinateB))
+        );
     }
 
     @ParameterizedTest
@@ -453,8 +511,10 @@ final class WritableGridModelTest {
                 new GridCell<>(coordinateA, TestEntity.EMPTY),
                 new GridCell<>(coordinateB, TestEntity.EMPTY));
 
-        assertEquals(TestEntity.EMPTY, model.getEntity(coordinateA));
-        assertEquals(TestEntity.EMPTY, model.getEntity(coordinateB));
+        assertAll(
+                () -> assertEquals(TestEntity.EMPTY, model.getEntity(coordinateA)),
+                () -> assertEquals(TestEntity.EMPTY, model.getEntity(coordinateB))
+        );
     }
 
     @ParameterizedTest

@@ -33,7 +33,10 @@ public final class DefaultSimulationExecutor<
     private int stepCount;
 
     /**
-     * Creates a new {@code DefaultSimulationExecutor}.
+     * Creates an executor that starts at step {@code 0}.
+     * <p>
+     * The model supplier is queried on every access, so it may return another model after each step (e.g.,
+     * {@code SynchronousStepRunner::currentGridModel}).
      *
      * @param stepRunner           the logic to perform a single simulation step, using the provided context
      * @param modelSupplier        supplies the current simulation model
@@ -49,7 +52,6 @@ public final class DefaultSimulationExecutor<
         this.modelSupplier = modelSupplier;
         this.terminationCondition = terminationCondition;
         this.context = context;
-        stepCount = 0;
     }
 
     @Override
@@ -69,7 +71,6 @@ public final class DefaultSimulationExecutor<
 
     @Override
     public void executeStep() {
-        // stepCount equals the number of completed steps, which matches the expected stepIndex for the next step.
         stepRunner.performStep(stepCount, context);
         stepCount++;
     }

@@ -27,8 +27,7 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     private final Map<GridCoordinate, ENT> data;
 
     /**
-     * Constructs a new {@code SparseGridModel} with the given structure and default entity.
-     * Initially, all cells are set to the default entity (i.e., the map is empty).
+     * Creates a model whose cells all hold the default entity.
      *
      * @param structure     the grid structure
      * @param defaultEntity the default entity for all cells
@@ -51,17 +50,13 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
     @Override
     public ENT getEntity(GridCoordinate coordinate) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         return data.getOrDefault(coordinate, defaultEntity);
     }
 
     @Override
     public boolean isDefaultEntity(GridCoordinate coordinate) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         return !data.containsKey(coordinate);
     }
 
@@ -89,10 +84,7 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
     @Override
     public Set<GridCoordinate> nonDefaultCoordinates() {
-        // Returns a HashSet snapshot instead of the live key set view: prevents ConcurrentModificationException
-        // if the caller iterates the returned set and mutates the model in the same loop (e.g. via setEntity
-        // or setEntityToDefault). Java's fail-fast iterators throw ConcurrentModificationException on any
-        // structural change to the backing map during iteration, even in single-threaded code.
+        // A HashSet snapshot instead of the live key set view keeps the contract of a mutable, independent set.
         // HashSet is preferred over Set.copyOf(): the latter uses ImmutableCollections.SetN with open
         // addressing that has poor hash distribution for GridCoordinate, making contains() slow.
         return new HashSet<>(data.keySet());
@@ -104,9 +96,6 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
         // Fast path: default does NOT match -> only stored non-default entries can match.
         if (!includeDefault) {
-            if (data.isEmpty()) {
-                return List.of();
-            }
             List<GridCoordinate> result = new ArrayList<>(data.size());
             for (Map.Entry<GridCoordinate, ENT> entry : data.entrySet()) {
                 ENT entity = entry.getValue();
@@ -126,9 +115,7 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
             for (int x = 0; x < width; x++) {
                 GridCoordinate coordinate = new GridCoordinate(x, y);
                 ENT entity = data.get(coordinate);
-                if (entity == null) {
-                    result.add(coordinate);
-                } else if (entityPredicate.test(entity)) {
+                if ((entity == null) || entityPredicate.test(entity)) {
                     result.add(coordinate);
                 }
             }
@@ -191,11 +178,6 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
     @Override
     public List<GridCell<ENT>> nonDefaultCells() {
-        // Snapshot the entries into a new list: prevents ConcurrentModificationException
-        // if the caller mutates the model (e.g. via setEntity or setEntityToDefault) while
-        // iterating the returned list. Java's fail-fast iterators throw
-        // ConcurrentModificationException on any structural change during iteration, even in
-        // single-threaded code. For a sparse model the non-default set is small, so the copy is cheap.
         List<GridCell<ENT>> snapshot = new ArrayList<>(data.size());
         for (Map.Entry<GridCoordinate, ENT> entry : data.entrySet()) {
             snapshot.add(new GridCell<>(entry.getKey(), entry.getValue()));
@@ -209,10 +191,6 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
         // Fast path: default does NOT match -> only stored non-default entries can match.
         if (!includeDefault) {
-            if (data.isEmpty()) {
-                // Return a mutable empty list: filteredCellsSortedBy sorts the result in-place.
-                return new ArrayList<>(0);
-            }
             List<GridCell<ENT>> result = new ArrayList<>(data.size());
             for (Map.Entry<GridCoordinate, ENT> entry : data.entrySet()) {
                 ENT entity = entry.getValue();
@@ -264,9 +242,7 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
     @Override
     public void setEntity(GridCoordinate coordinate, ENT entity) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         if (entity.equals(defaultEntity)) {
             data.remove(coordinate);
         } else {
@@ -276,9 +252,7 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
 
     @Override
     public void setEntityToDefault(GridCoordinate coordinate) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         data.remove(coordinate);
     }
 
@@ -332,12 +306,8 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
     public void setSwappedEntities(GridCell<ENT> cellA, GridCell<ENT> cellB) {
         GridCoordinate coordinateA = cellA.coordinate();
         GridCoordinate coordinateB = cellB.coordinate();
-        if (!structure.isCoordinateValid(coordinateA)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateA + " for structure: " + structure);
-        }
-        if (!structure.isCoordinateValid(coordinateB)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure);
-        }
+        checkCoordinate(coordinateA);
+        checkCoordinate(coordinateB);
         ENT entityA = cellA.entity();
         ENT entityB = cellB.entity();
 
@@ -361,6 +331,12 @@ public final class SparseGridModel<ENT extends GridEntity> implements WritableGr
                 ", defaultEntity=" + defaultEntity +
                 ", data.size()=" + data.size() +
                 '}';
+    }
+
+    private void checkCoordinate(GridCoordinate coordinate) {
+        if (!structure.isCoordinateValid(coordinate)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+        }
     }
 
 }

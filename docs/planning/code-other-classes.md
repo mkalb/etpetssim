@@ -127,7 +127,7 @@ Table format:
 
 | #  | Category                                                 | Count | Status |
 |----|----------------------------------------------------------|------:|--------|
-| 1  | Engine, core, UI, and application classes                |    12 | open   |
+| 1  | Engine, core, UI, and application classes                |    12 | done   |
 | 2  | Shared simulation model                                  |     6 | open   |
 | 3  | Shared ViewModels                                        |     7 | open   |
 | 4  | Shared views                                             |     9 | open   |
@@ -179,24 +179,25 @@ These packages are the foundation of the application; this category needs the hi
 | Class | Modifiers | Supertypes | Constructors | Methods (pub/prot/pkg/priv) | Tests |
 |-------|-----------|------------|--------------|-----------------------------|-------|
 | `ExtraterrestrialPetsSimulation` | final | Application | implicit | 2/0/0/9 | `ExtraterrestrialPetsSimulationTest` |
-| `core.AppArgs` | final | - | `(String[])` | 8/0/1/0 (1 static); nested public enum `Key` | `AppArgsTest` |
-| `engine.executor.AsynchronousStepRunner` | final | SimulationStepRunner | `(WritableGridModel, Predicate, Function, AgentStepLogic)`; `(WritableGridModel, Predicate, Comparator, AgentStepLogic)` | 2/0/0/0 | - |
-| `engine.executor.SynchronousStepRunner` | final | SimulationStepRunner | `(WritableGridModel, SynchronousStepLogic)` | 3/0/0/0 | - |
-| `engine.executor.DefaultSimulationExecutor` | final | SimulationExecutor | `(SimulationStepRunner, Supplier, SimulationTerminationCondition, C)` | 4/0/0/0 | - |
-| `engine.executor.TimedSimulationExecutor` | final | SimulationExecutor | `(SimulationExecutor)` | 7/0/0/0 | - |
-| `engine.model.ArrayGridModel` | final | WritableGridModel | `(GridStructure, ENT)` | 23/0/0/0 | `ArrayGridModelTest` |
-| `engine.model.SparseGridModel` | final | WritableGridModel | `(GridStructure, ENT)` | 23/0/0/0 | `SparseGridModelTest` |
-| `engine.model.entity.GridEntityDescriptorRegistry` | final | - | `(int)` | 7/0/0/2 (3 static) | `GridEntityDescriptorRegistryTest` |
+| `core.AppArgs` | final | - | `(String[])` | 8/0/1/1 (1 static); nested public enum `Key` | `AppArgsTest` |
+| `engine.executor.AsynchronousStepRunner` | final | SimulationStepRunner | `(WritableGridModel, Predicate, Comparator, AgentStepLogic)` | 2/0/0/0 | `AsynchronousStepRunnerTest` |
+| `engine.executor.SynchronousStepRunner` | final | SimulationStepRunner | `(WritableGridModel, SynchronousStepLogic)` | 2/0/0/0 | `SynchronousStepRunnerTest` |
+| `engine.executor.DefaultSimulationExecutor` | final | SimulationExecutor | `(SimulationStepRunner, Supplier, SimulationTerminationCondition, C)` | 4/0/0/0 | `DefaultSimulationExecutorTest` |
+| `engine.executor.TimedSimulationExecutor` | final | SimulationExecutor | `(SimulationExecutor)` | 6/0/0/0 | `TimedSimulationExecutorTest` |
+| `engine.model.ArrayGridModel` | final | WritableGridModel | `(GridStructure, ENT)` | 23/0/0/1 | `ArrayGridModelTest` |
+| `engine.model.SparseGridModel` | final | WritableGridModel | `(GridStructure, ENT)` | 23/0/0/1 | `SparseGridModelTest` |
+| `engine.model.entity.GridEntityDescriptorRegistry` | final | - | private `(int)` | 5/0/0/1 (2 static) | `GridEntityDescriptorRegistryTest` |
 | `ui.AboutDialog` | final | - | `(List, HostServices)` | 1/0/1/8 (1 static); nested private record `ManifestLine` | `AboutDialogTest` |
 | `ui.FXGridCanvasPainter` | final | - | `(Canvas, GridStructure, double)` | 31/0/2/1 (1 static) | `FXGridCanvasPainterTest` |
 | `ui.SimulationTimer` | final | - | `(Runnable)` | 3/0/0/0 | `SimulationTimerTest` |
 
 Notes:
 
-- The four `engine.executor` classes have no tests; `SimulationExecutorTest` tests only the default methods of the
-  interface, and `SimulationManagerTest` uses the executors only indirectly.
+- The four `engine.executor` classes had no tests before this plan; `SimulationExecutorTest` tests only the default
+  methods of the interface.
 - `ExtraterrestrialPetsSimulation` is the JavaFX `Application` with an implicit constructor.
-- `FXGridCanvasPainter` has the most public methods (31) and a class-level `@SuppressWarnings("MagicNumber")`.
+- `FXGridCanvasPainter` has the most public methods (31); its `@SuppressWarnings("MagicNumber")` is on three
+  methods instead of the class since this plan.
 
 ### Findings
 
@@ -210,6 +211,150 @@ Notes:
 - Proposal: Add `DefaultSimulationExecutorTest`, `TimedSimulationExecutorTest`, `AsynchronousStepRunnerTest`, and
   `SynchronousStepRunnerTest` with small grids and stub step logic. The tests of `AbstractTimedSimulationManager`
   follow in category 2.
+- Status: done (2026-10-29)
+
+#### Average of the timed executor
+
+- Origin: analysis of category 1
+- Types: `TimedSimulationExecutor`
+- Problem: `stepTimingStatistics()` divides the timed durations by the step count of the delegate. If the delegate
+  executed steps before it was wrapped, the average falls below the minimum (or the current duration is still
+  `Long.MIN_VALUE`), and the constructor of `StepTimingStatistics` throws; the Javadoc only called the average
+  inexact. All managers wrap a new executor, so the case does not occur today.
+- Proposal: Count the timed steps in the decorator, or document the precondition.
+- Status: done (2026-10-29); the precondition is documented on the constructor and as `@throws` on
+  `stepTimingStatistics()`, the behavior is unchanged.
+
+#### Unused accessors and constructor of the executor classes
+
+- Origin: analysis of category 1
+- Types: `TimedSimulationExecutor`, `SynchronousStepRunner`, `AsynchronousStepRunner`
+- Problem: `TimedSimulationExecutor.currentStepNanos()` has no caller and returns `Long.MIN_VALUE` before the first
+  step, while `stepTimingStatistics().currentNanos()` returns `0`. `SynchronousStepRunner.nextGridModel()` has no
+  caller and exposes the buffer that is cleared after each step. The `AsynchronousStepRunner` constructor with a
+  context-dependent `Function<C, Comparator>` is only used by the constructor with a fixed `Comparator`.
+- Proposal: Remove the two accessors and the `Function` constructor. An API change.
+- Status: done (2026-10-29)
+
+#### Duplicated coordinate checks of the grid models
+
+- Origin: analysis of category 1
+- Types: `ArrayGridModel`, `SparseGridModel`
+- Problem: The bounds check with the same `IndexOutOfBoundsException` message is repeated five times in each class.
+- Proposal: A private `checkCoordinate(GridCoordinate)` per class (or a shared `GridStructure.checkCoordinate(..)`).
+- Status: done (2026-10-29); private method per class, no API change.
+
+#### Mutability of the filtered coordinates
+
+- Origin: analysis of category 1
+- Types: `SparseGridModel`, `ReadableGridModel`
+- Problem: `SparseGridModel.filteredCoordinates(..)` returned the immutable `List.of()` for an empty map and a mutable
+  list otherwise; `ArrayGridModel` always returns a mutable list, and the Javadoc did not say "mutable" as for the
+  other list methods.
+- Proposal: Always return a mutable list and document it in `ReadableGridModel`.
+- Status: done (2026-10-29)
+
+#### Factories and mutators of the descriptor registry
+
+- Origin: analysis of category 1
+- Types: `GridEntityDescriptorRegistry`, the nine `*Factory` classes of the simulations
+- Problem: `of(GridEntityDescriptorProvider...)` and `ofArray(GridEntityDescriptorProvider[])` did the same; the
+  public constructor and the public `register(..)` with eight parameters were only used by the registry itself and
+  its test.
+- Proposal: Keep `of(..)` and `ofCollection(..)`, make the constructor and `register(..)` private. An API change.
+- Status: done (2026-10-29)
+
+#### Unused API of the argument parser and the canvas painter
+
+- Origin: analysis of category 1
+- Types: `AppArgs`, `FXGridCanvasPainter`
+- Problem: `AppArgs.getInt(..)`, `containsKey(..)`, and `keys()` have no caller in main sources. Seven public
+  methods of `FXGridCanvasPainter` (`canvas()`, `graphicsContext2D()`, `isOutsideGrid(..)`, `clearGridBackground()`,
+  `drawScaledCell(..)`, `drawTriangleMatchingCellWidth(..)`, `drawHexagonMatchingCellWidth(..)`) have no caller, and
+  four (`drawRectangle(..)`, `drawPolygon(..)`, `drawPolyline(..)`, `drawCenteredTextAt(..)`) are only used by the
+  painter itself.
+- Proposal: Remove `getInt(..)`; remove the unused painter methods and make the internal ones private.
+- Status: rejected (2026-10-29); both classes keep their complete API as reusable infrastructure.
+
+#### Lookup name of the command-line keys
+
+- Origin: analysis of category 1
+- Types: `AppArgs.Key`
+- Problem: `fromString(String)` does not follow the `from<Code>(String)` pattern of `java.md`.
+- Proposal: Rename it to `fromKeyName(String)`. An API change.
+- Status: done (2026-10-29)
+
+### Decisions
+
+Group `engine.executor` (2026-10-29):
+
+- API change: `TimedSimulationExecutor.currentStepNanos()` and `SynchronousStepRunner.nextGridModel()` are removed.
+- API change: `AsynchronousStepRunner` has only the constructor with a fixed `Comparator`, stored directly.
+- `TimedSimulationExecutor` documents that the delegate must not have executed a step before it is wrapped; its
+  type Javadoc names all tracked values.
+- Redundant field initializations (`stepCount = 0`, `sumStepNanos = 0`) and the comment in
+  `DefaultSimulationExecutor.executeStep()` that restated the field Javadoc are removed; `SynchronousStepRunner`
+  imports `engine.model.*` instead of linking `ReadableGridModel` fully qualified.
+- New tests: `DefaultSimulationExecutorTest`, `TimedSimulationExecutorTest`, `AsynchronousStepRunnerTest`, and
+  `SynchronousStepRunnerTest`, each with its own private `TestEntity` fixture like `SimulationExecutorTest`.
+
+Group `engine.model` and `engine.model.entity` (2026-10-29):
+
+- `ArrayGridModel` and `SparseGridModel` check coordinates through a private `checkCoordinate(..)`;
+  `ArrayGridModel.clear()` delegates to `fill(defaultEntity)`; the wrong comment in `ArrayGridModel.copy()` (entities
+  as immutable value types) and comments that only restated the snapshot contract of `ReadableGridModel` are removed;
+  the two branches with the same result in `SparseGridModel.filteredCoordinates(..)` are merged.
+- `SparseGridModel.filteredCoordinates(..)` and `filteredCells(..)` no longer special-case an empty map; both always
+  return a mutable list, and `ReadableGridModel.filteredCoordinates(..)` documents it.
+- API change: `GridEntityDescriptorRegistry.ofArray(..)` is removed (the factories call `of(X.values())`); the
+  constructor and `register(..)` are private, so the registry cannot be changed after its creation, and
+  `@SuppressWarnings("UnusedReturnValue")` is gone with the public method. The type Javadoc states the
+  `AppLocalization` precondition and that the last provider of a descriptor ID wins.
+- Tests: `WritableGridModelTest` groups its checks with `assertAll(..)` and adds the mutable empty results of
+  `filteredCoordinates(..)` and `filteredCells(..)`, the empty sorted result, `fill(..)` with the default entity, and
+  the structure, default entity, and unchanged original of `copyWithDefaultEntity()`; `SparseGridModelTest` renames
+  `testFilteredCoordinatesNonDefaultFastPath`; `GridEntityDescriptorRegistryTest` goes through the factories, tests
+  the replacement through `of(..)`, adds the positive `findByDescriptorId(..)` case, and follows the declaration
+  order.
+
+Group `core`, `ui`, and the root package (2026-10-29):
+
+- `AppArgs`, `FXGridCanvasPainter`, `AboutDialog`, and `SimulationTimer` keep their public API, also the methods
+  without a caller in main sources.
+- API change: `AppArgs.Key.fromString(..)` is renamed to `fromKeyName(..)`.
+- `AppArgs`: the constructor delegates each argument to a private `parseArgument(..)` with early returns; a non-flag
+  key without a value is now reported through `AppLogger` like the other ignored arguments; `printHelp(..)` formats
+  with `Locale.ROOT` and catches `IOException` instead of `Exception`; the type Javadoc states that a flag with an
+  unrecognized value is active; `parseBooleanValue(..)` follows the public methods.
+- `FXGridCanvasPainter`: the type Javadoc describes the stateful painter instead of a "utility class"; the
+  class-level `@SuppressWarnings("MagicNumber")` is narrowed to `drawRectangle(..)`, `drawCircle(..)`, and
+  `computeCenteredTextOffset(..)`, as confirmed by the IntelliJ inspection; `toString()` and the private helper follow the other methods; comments that restated the constructor
+  are removed.
+- `SimulationTimer`: Javadoc without `</p>` and `<p>` before `<pre>`, no constructor Javadoc, `{@code true}`.
+- `AboutDialog`: `formatReadmeText(..)` follows the public methods; `Map.of()` instead of `Collections.emptyMap()`;
+  `value` instead of `v`.
+- `ExtraterrestrialPetsSimulation`: `start(..)` and `stop()` precede the private methods; the routine
+  `Objects.requireNonNull(..)` checks of private methods and the fully qualified `Priority` are removed;
+  `resolveSimulationType(..)` drops the always-`true` parameter together with `@SuppressWarnings("SameParameterValue")`.
+- Tests: `AppArgsTest` follows the declaration order, groups its checks with `assertAll(..)`, and adds tests for
+  `getValue(..)`, `getBoolean(..)`, `getInt(..)` (including invalid and overflowing values), `containsKey(..)`,
+  `keys()`, the exception of `isFlagActive(..)`, key case, unknown key names, and `isFlag()`; the main tests of
+  `FXGridCanvasPainterTest` and `AboutDialogTest` are renamed to `testConstructor` and `testFormatReadmeText`.
+
+Review of category 1 (2026-10-29):
+
+- The Javadoc of `AsynchronousStepRunner` states that the agent cells are a snapshot of the step start and can be
+  outdated when their turn comes, as `WatorStepLogic` and `ReboundingStepLogic` already handle.
+- Rule change: `java.md` ("Code Style"): fields are not initialized explicitly to their default value.
+- Rule change: `java.md` ("Javadoc", "Style"): a constructor summary starts with "Creates a ..."; the literals
+  `true`, `false`, and `null` are written with `{@code ...}`.
+- Rule change: `core.md` ("Class Structure"): core classes keep their complete public API, also without a current
+  caller.
+- Rule change: `ui.md` ("Grid Geometry and Rendering"): `FXGridCanvasPainter` keeps its public accessors and drawing
+  methods, also without a current caller.
+- Open: the member order of classes. The IntelliJ formatting moved helpers next to their callers in `AppArgs` and
+  `FXGridCanvasPainter`, which contradicts the member order decision below and the declaration order of their
+  tests; the maintainer checks the IntelliJ arrangement settings first.
 
 ## 2. Shared simulation model
 
@@ -522,7 +667,21 @@ Notes:
 
 ## Cross-category decisions
 
-None yet.
+- (1, all) Constructors: no redundant initializations of fields to their default values (rule change: `java.md`,
+  "Code Style"); no null checks of non-null parameters (`java.md`, "Nullability"); a constructor has Javadoc only
+  when it explains something that the name, signature, and type Javadoc do not show (e.g., a precondition or how a
+  parameter is used), and then its summary sentence starts with "Creates a ..." (rule change: `java.md`, "Javadoc");
+  Javadoc that only restates the class name and parameters is removed.
+- (1, all) Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (rule change: `java.md`,
+  "Javadoc").
+- (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
+  unless the maintainer keeps them for a planned use; core classes and `FXGridCanvasPainter` keep their complete API
+  (rule change: `core.md` and `ui.md`).
+- (1, all) Open, see the review of category 1: members are ordered as constants, fields, constructors, public methods
+  (including overridden lifecycle methods such as `start(..)`), package-private methods, `toString()`, then private
+  helpers, followed by nested types.
+- (1, all) Class-level `@SuppressWarnings` are narrowed to the members that need them, with the maintainer's
+  approval per case (`java.md`, "Suppressions Policy").
 
 ## Deferred findings
 

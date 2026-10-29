@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 final class AboutDialogTest {
 
     @Test
-    void testFormatReadmeTextStartsAtFirstSecondLevelHeading() {
+    void testFormatReadmeText() {
         String readme = """
                 <p align="center">
                   <img src="assets/icon/etpetssim.svg" alt="icon">

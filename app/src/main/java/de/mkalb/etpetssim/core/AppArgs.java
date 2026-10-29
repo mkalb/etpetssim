@@ -1,5 +1,6 @@
 package de.mkalb.etpetssim.core;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.*;
 
@@ -7,9 +8,10 @@ import java.util.regex.*;
  * Parses and stores command-line arguments.
  * <p>
  * Supported formats are {@code --key=value} and {@code --flag}. A value may contain whitespace;
- * leading and trailing whitespace is removed.
+ * leading and trailing whitespace is removed. A flag without a value or with a value that is not a recognized
+ * boolean (see {@link #getBoolean(Key, boolean)}) is active.
  * Unknown keys and syntactically invalid argument strings, including arguments with an empty or
- * blank value, are ignored and reported through {@link AppLogger}.
+ * blank value and non-flag keys without a value, are ignored and reported through {@link AppLogger}.
  */
 public final class AppArgs {
 
@@ -17,7 +19,7 @@ public final class AppArgs {
      * Regular expression pattern to match command-line arguments in the format --key=value or --flag.
      */
     private static final Pattern ARGUMENT_PATTERN = Pattern.compile("--([a-zA-Z0-9\\-]+)(=(.*))?");
-    private static final int INITIAL_BUILDER_CAPACITY = 128; // Initial capacity for the StringBuilder used to build the arguments string
+    private static final int INITIAL_BUILDER_CAPACITY = 128;
 
     private final EnumMap<Key, String> arguments = new EnumMap<>(Key.class);
 
@@ -30,31 +32,20 @@ public final class AppArgs {
     public AppArgs(String[] args) {
         Objects.requireNonNull(args, "Arguments must not be null");
         for (String arg : args) {
-            Matcher matcher = ARGUMENT_PATTERN.matcher(arg);
-            if (matcher.matches() && ((matcher.group(3) == null) || !matcher.group(3).isBlank())) {
-                Optional<Key> key = Key.fromString(matcher.group(1));
-                if (key.isPresent()) {
-                    if (arguments.containsKey(key.get())) {
-                        AppLogger.warn("AppArgs: Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
-                    }
-                    Optional<String> value = (matcher.group(3) != null) ? Optional.of(matcher.group(3).strip()) : Optional.empty();
-                    if (key.get().isFlag()) {
-                        // For flag keys, we parse the value as a boolean or set it to true if no value is provided.
-                        arguments.put(key.get(),
-                                value.map(v -> parseBooleanValue(v, Boolean.TRUE))
-                                     .orElse(Boolean.TRUE)
-                                     .toString());
-                    } else {
-                        // For non-flag keys, we put the value only if it is present.
-                        value.ifPresent(v -> arguments.put(key.get(), v));
-                    }
-                } else {
-                    AppLogger.warn("AppArgs: Unknown argument: '" + matcher.group(1) + "'. Please check the command-line arguments.");
-                }
-            } else {
-                AppLogger.warn("AppArgs: Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
-            }
+            parseArgument(arg);
         }
+    }
+
+    /**
+     * Returns the raw string value for a key.
+     *
+     * @param key the key to resolve
+     * @return an {@link Optional} with the stored value, or empty if the key is absent
+     * @throws NullPointerException if {@code key} is {@code null}
+     */
+    public Optional<String> getValue(Key key) {
+        Objects.requireNonNull(key, "Key must not be null");
+        return Optional.ofNullable(arguments.get(key));
     }
 
     /**
@@ -79,19 +70,10 @@ public final class AppArgs {
     }
 
     /**
-     * Returns the raw string value for a key.
-     *
-     * @param key the key to resolve
-     * @return an {@link Optional} with the stored value, or empty if the key is absent
-     * @throws NullPointerException if {@code key} is {@code null}
-     */
-    public Optional<String> getValue(Key key) {
-        Objects.requireNonNull(key, "Key must not be null");
-        return Optional.ofNullable(arguments.get(key));
-    }
-
-    /**
      * Returns the value for a key as a boolean.
+     * <p>
+     * Accepted true values are {@code true}, {@code 1}, {@code yes}, and {@code on}; accepted false values are
+     * {@code false}, {@code 0}, {@code no}, and {@code off}, each ignoring case.
      *
      * @param key          the key to resolve
      * @param defaultValue the fallback value when the key is missing or cannot be parsed
@@ -105,28 +87,6 @@ public final class AppArgs {
             return defaultValue;
         }
         return parseBooleanValue(value, defaultValue);
-    }
-
-    /**
-     * Returns the value for a key as an integer.
-     *
-     * @param key          the key to resolve
-     * @param defaultValue the fallback value when the key is missing, blank, or invalid
-     * @return the parsed value, or {@code defaultValue}
-     * @throws NullPointerException if {@code key} is {@code null}
-     */
-    public int getInt(Key key, int defaultValue) {
-        Objects.requireNonNull(key, "Key must not be null");
-        String value = arguments.get(key);
-        if ((value == null) || value.isBlank()) {
-            return defaultValue;
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            AppLogger.warn("AppArgs: Invalid integer value for key '" + key.key() + "': '" + value + "'. Using default value " + defaultValue);
-            return defaultValue;
-        }
     }
 
     /**
@@ -167,32 +127,25 @@ public final class AppArgs {
     }
 
     /**
-     * Serializes parsed arguments back into command-line form as a readable representation for logging.
+     * Returns the value for a key as an integer.
      *
-     * <p>Values that contain whitespace are enclosed in double quotes without escaping, e.g.
-     * {@code --key="value with spaces"}; the result is therefore not guaranteed to be a valid shell command line.
-     *
-     * @return arguments formatted as {@code --key=value} or {@code --flag}
+     * @param key          the key to resolve
+     * @param defaultValue the fallback value when the key is missing or its value is not an integer
+     * @return the parsed value, or {@code defaultValue}
+     * @throws NullPointerException if {@code key} is {@code null}
      */
-    public String toArgumentString() {
-        StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
-        for (Map.Entry<Key, String> entry : arguments.entrySet()) {
-            if (!sb.isEmpty()) {
-                sb.append(" ");
-            }
-            sb.append("--").append(entry.getKey().key());
-            if (!entry.getKey().isFlag() // is not a flag
-                    || !parseBooleanValue(entry.getValue(), true)) { // or flag is false
-                String value = entry.getValue();
-                sb.append("=");
-                if (value.chars().anyMatch(Character::isWhitespace)) {
-                    sb.append('"').append(value).append('"');
-                } else {
-                    sb.append(value);
-                }
-            }
+    public int getInt(Key key, int defaultValue) {
+        Objects.requireNonNull(key, "Key must not be null");
+        String value = arguments.get(key);
+        if (value == null) {
+            return defaultValue;
         }
-        return sb.toString();
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            AppLogger.warn("AppArgs: Invalid integer value for key '" + key.key() + "': '" + value + "'. Using default value " + defaultValue);
+            return defaultValue;
+        }
     }
 
     /**
@@ -205,6 +158,61 @@ public final class AppArgs {
         return "AppArgs{" +
                 "arguments=" + arguments +
                 '}';
+    }
+
+    /**
+     * Serializes parsed arguments back into command-line form as a readable representation for logging.
+     *
+     * <p>Active flags are written without a value. Values that contain whitespace are enclosed in double quotes
+     * without escaping, e.g. {@code --key="value with spaces"}; the result is therefore not guaranteed to be a valid
+     * shell command line.
+     *
+     * @return arguments formatted as {@code --key=value} or {@code --flag}
+     */
+    public String toArgumentString() {
+        StringBuilder sb = new StringBuilder(INITIAL_BUILDER_CAPACITY);
+        for (Map.Entry<Key, String> entry : arguments.entrySet()) {
+            if (!sb.isEmpty()) {
+                sb.append(" ");
+            }
+            sb.append("--").append(entry.getKey().key());
+            String value = entry.getValue();
+            boolean activeFlag = entry.getKey().isFlag() && parseBooleanValue(value, true);
+            if (!activeFlag) {
+                sb.append("=");
+                if (value.chars().anyMatch(Character::isWhitespace)) {
+                    sb.append('"').append(value).append('"');
+                } else {
+                    sb.append(value);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private void parseArgument(String arg) {
+        Matcher matcher = ARGUMENT_PATTERN.matcher(arg);
+        if (!matcher.matches() || ((matcher.group(3) != null) && matcher.group(3).isBlank())) {
+            AppLogger.warn("AppArgs: Invalid argument format: '" + arg + "'. Expected format is --key=value or --flag.");
+            return;
+        }
+        Optional<Key> key = Key.fromKeyName(matcher.group(1));
+        if (key.isEmpty()) {
+            AppLogger.warn("AppArgs: Unknown argument: '" + matcher.group(1) + "'. Please check the command-line arguments.");
+            return;
+        }
+        Optional<String> value = Optional.ofNullable(matcher.group(3)).map(String::strip);
+        if (!key.get().isFlag() && value.isEmpty()) {
+            AppLogger.warn("AppArgs: Missing value for argument: '" + key.get().key() + "'. Expected format is --key=value.");
+            return;
+        }
+        if (arguments.containsKey(key.get())) {
+            AppLogger.warn("AppArgs: Duplicate argument: '" + key.get().key() + "'. Previous value will be overwritten.");
+        }
+        String storedValue = key.get().isFlag()
+                ? Boolean.toString(value.map(v -> parseBooleanValue(v, true)).orElse(true))
+                : value.orElseThrow();
+        arguments.put(key.get(), storedValue);
     }
 
     /**
@@ -231,13 +239,13 @@ public final class AppArgs {
         }
 
         /**
-         * Resolves a key identifier to an enum constant.
+         * Resolves a key name to an enum constant.
          *
-         * @param keyName the key name to resolve (case-insensitive)
+         * @param keyName the key name to resolve (case-insensitive), without the leading {@code --}
          * @return an {@link Optional} containing the matching key, or empty if unknown
          * @throws NullPointerException if {@code keyName} is {@code null}
          */
-        public static Optional<Key> fromString(String keyName) {
+        public static Optional<Key> fromKeyName(String keyName) {
             Objects.requireNonNull(keyName, "Key name must not be null");
             return Arrays.stream(values())
                          .filter(argument -> argument.key.equalsIgnoreCase(keyName))
@@ -246,6 +254,8 @@ public final class AppArgs {
 
         /**
          * Writes a help text containing all available command-line keys.
+         * <p>
+         * Write errors of the target are reported through {@link AppLogger} and not rethrown.
          *
          * @param appendable the output target for the generated help text
          * @throws NullPointerException if {@code appendable} is {@code null}
@@ -256,12 +266,12 @@ public final class AppArgs {
                 appendable.append("List of available command-line arguments:")
                           .append(System.lineSeparator());
                 for (Key key : values()) {
-                    appendable.append(String.format("--%s: %s%s%n",
+                    appendable.append(String.format(Locale.ROOT, "--%s: %s%s%n",
                             key.key(),
                             key.description(),
                             key.isFlag() ? " (flag)" : ""));
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 AppLogger.warn("AppArgs: Failed to print help message: " + e.getMessage());
             }
         }

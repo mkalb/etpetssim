@@ -14,6 +14,8 @@ Rules for all `.java` files; repository-wide instructions still apply.
 - Keep existing wildcard imports unless a concrete change requires otherwise.
 - Prefer modern Java 27 APIs and language features when they improve clarity; avoid novelty.
 - Use locale-stable normalization for technical text (e.g., `toLowerCase(Locale.ROOT)`).
+- Do not initialize fields explicitly to their default value (`0`, `false`, `null`); an explicit initializer is for a
+  different value, such as the sentinel `Long.MAX_VALUE` of a minimum.
 - Order interface members as constants, static methods (including private static helpers), abstract methods, then
   default methods.
 
@@ -199,7 +201,9 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
 
 ### Style
 
-- Start with a summary sentence in the third person (e.g., "Returns ...", "Creates ...").
+- Start with a summary sentence in the third person (e.g., "Returns ...", "Creates ..."); a constructor's summary
+  starts with "Creates a ..." (e.g., "Creates a runner that ...").
+- Write the literals `true`, `false`, and `null` as `{@code true}`, `{@code false}`, and `{@code null}`.
 - Describe behavior; avoid implementation detail unless it is contract-relevant.
 - Use `{@link}` only when the target helps the reader, without fully qualified names where a simple name resolves;
   otherwise write code elements with `{@code}`.

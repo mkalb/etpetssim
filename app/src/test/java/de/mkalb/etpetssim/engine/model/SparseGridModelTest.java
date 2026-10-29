@@ -23,7 +23,7 @@ final class SparseGridModelTest {
     }
 
     @Test
-    void testFilteredCoordinatesNonDefaultFastPath() {
+    void testFilteredCoordinatesReturnsOnlyMatchingNonDefaultCoordinates() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(SQUARE_STRUCTURE_8X8, TestEntity.EMPTY);
         model.setEntity(coordinate(1, 1), TestEntity.WALL);
         model.setEntity(coordinate(3, 3), TestEntity.WALL);

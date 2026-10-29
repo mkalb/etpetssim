@@ -1,13 +1,13 @@
 package de.mkalb.etpetssim.engine.executor;
 
-import de.mkalb.etpetssim.engine.model.WritableGridModel;
+import de.mkalb.etpetssim.engine.model.*;
 import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 
 /**
  * Executes synchronous simulation steps on a {@link WritableGridModel}.
  * <p>
  * Applies synchronous step logic to the simulation model:
- * it reads from the current model (as a {@link de.mkalb.etpetssim.engine.model.ReadableGridModel}) and writes results
+ * it reads from the current model (as a {@link ReadableGridModel}) and writes results
  * to the next model. After each step, the models are swapped, and the next model is cleared
  * for the following step.
  *
@@ -22,7 +22,8 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
     private WritableGridModel<ENT> nextGridModel;
 
     /**
-     * Constructs a new {@code SynchronousStepRunner} with the given initial model and step logic.
+     * Creates a runner that starts with the given model as current model and an empty copy of it as next model.
+     * <p>
      * The step logic must not modify the {@code ReadableGridModel} parameter.
      *
      * @param initialModel the initial grid model
@@ -30,9 +31,9 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      */
     public SynchronousStepRunner(WritableGridModel<ENT> initialModel,
                                  SynchronousStepLogic<ENT, C> stepLogic) {
+        this.stepLogic = stepLogic;
         currentGridModel = initialModel;
         nextGridModel = currentGridModel.copyWithDefaultEntity();
-        this.stepLogic = stepLogic;
     }
 
     /**
@@ -60,15 +61,6 @@ public final class SynchronousStepRunner<ENT extends GridEntity, C> implements S
      */
     public WritableGridModel<ENT> currentGridModel() {
         return currentGridModel;
-    }
-
-    /**
-     * Returns the next grid model used for the upcoming simulation step.
-     *
-     * @return the next {@link WritableGridModel}
-     */
-    public WritableGridModel<ENT> nextGridModel() {
-        return nextGridModel;
     }
 
 }

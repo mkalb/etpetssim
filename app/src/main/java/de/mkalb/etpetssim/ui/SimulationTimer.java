@@ -5,11 +5,10 @@ import javafx.util.Duration;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A timer for running periodic simulation steps using JavaFX Timeline.
+ * A timer for running periodic simulation steps using a JavaFX {@link Timeline}.
  * <p>
  * Allows starting, stopping, and checking the status of a simulation loop,
- * where a given {@link Runnable} is executed at a fixed interval.
- * </p>
+ * where a given {@link Runnable} is executed at a fixed interval on the JavaFX Application Thread.
  * <p>
  * Example usage:
  * <pre>
@@ -23,11 +22,6 @@ public final class SimulationTimer {
 
     private @Nullable Timeline timeline;
 
-    /**
-     * Constructs a new SimulationTimer.
-     *
-     * @param simulationStep the action to execute periodically
-     */
     public SimulationTimer(Runnable simulationStep) {
         this.simulationStep = simulationStep;
     }
@@ -37,7 +31,6 @@ public final class SimulationTimer {
      * <p>
      * Can be called repeatedly with a new interval to update the timer
      * without creating a new instance.
-     * </p>
      *
      * @param interval the interval between executions; must be finite and greater than 0 ms
      * @throws IllegalArgumentException if {@code interval} is unknown, indefinite, or not greater than 0 ms
@@ -63,9 +56,9 @@ public final class SimulationTimer {
     }
 
     /**
-     * Returns true if the timer is currently running.
+     * Returns whether the timer is currently running.
      *
-     * @return true if running, false otherwise
+     * @return {@code true} if running, {@code false} otherwise
      */
     public boolean isRunning() {
         return (timeline != null) && (timeline.getStatus() == Animation.Status.RUNNING);

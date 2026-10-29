@@ -43,6 +43,8 @@ here, not simulation logic.
   and point-to-cell conversion.
 - Do not duplicate triangle, square, or hexagon geometry in painters or component code.
 - `FXGridCanvasPainter` is stateful canvas rendering around one `Canvas`, `GridStructure`, and computed dimensions.
+  It is the shared drawing toolkit of all simulations: keep its public accessors and drawing methods, also those
+  without a current caller.
 - Drawing methods may accept `@Nullable Paint` or `@Nullable Color` only when null explicitly means "do not draw this
   layer".
 - Preserve bounds checks for direct pixel drawing and positive-size checks for shapes.

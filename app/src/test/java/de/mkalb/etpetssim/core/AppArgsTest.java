@@ -16,6 +16,10 @@ final class AppArgsTest {
         AppLogger.initializeForTesting();
     }
 
+    private static AppArgs parse(String... args) {
+        return new AppArgs(args);
+    }
+
     @SuppressWarnings("DataFlowIssue")
     @Test
     void testConstructorRejectsNullArguments() {
@@ -24,251 +28,271 @@ final class AppArgsTest {
 
     @Test
     void testConstructorAcceptsEmptyArguments() {
-        String[] args = {};
-        AppArgs cli = new AppArgs(args);
+        AppArgs cli = parse();
 
-        assertEquals(0, cli.keys().size());
-        assertFalse(cli.containsKey(AppArgs.Key.HELP));
-        assertFalse(cli.containsKey(AppArgs.Key.SIMULATION));
-        assertTrue(cli.getValue(AppArgs.Key.HELP).isEmpty());
-        assertTrue(cli.getValue(AppArgs.Key.SIMULATION).isEmpty());
-        assertFalse(cli.getBoolean(AppArgs.Key.HELP, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
+        assertAll(
+                () -> assertTrue(cli.keys().isEmpty()),
+                () -> assertTrue(cli.getValue(AppArgs.Key.HELP).isEmpty()),
+                () -> assertTrue(cli.getValue(AppArgs.Key.SIMULATION).isEmpty())
+        );
     }
 
     @Test
     void testConstructorIgnoresUnknownFlag() {
-        String[] args = {"--unknownFlag"};
-        AppArgs cli = new AppArgs(args);
-
-        assertTrue(cli.keys().isEmpty());
+        assertTrue(parse("--unknownFlag").keys().isEmpty());
     }
 
     @Test
     void testConstructorIgnoresUnknownKeyValue() {
-        String[] args = {"--unknownKey=unknownValue"};
-        AppArgs cli = new AppArgs(args);
-
-        assertTrue(cli.keys().isEmpty());
+        assertTrue(parse("--unknownKey=unknownValue").keys().isEmpty());
     }
 
     @Test
     void testConstructorTreatsFlagWithoutValueAsTrue() {
-        String[] args = {"--help"};
-        AppArgs cli = new AppArgs(args);
+        AppArgs cli = parse("--help");
 
-        assertEquals(1, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.HELP));
-        assertEquals("true", cli.getValue(AppArgs.Key.HELP).orElseThrow());
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
+        assertAll(
+                () -> assertEquals(Set.of(AppArgs.Key.HELP), cli.keys()),
+                () -> assertEquals(Optional.of("true"), cli.getValue(AppArgs.Key.HELP))
+        );
     }
 
     @Test
     void testConstructorIgnoresFlagWithEmptyValue() {
-        String[] args = {"--help="};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(0, cli.keys().size());
-        assertFalse(cli.containsKey(AppArgs.Key.HELP));
-        assertFalse(cli.getBoolean(AppArgs.Key.HELP, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
+        assertTrue(parse("--help=").keys().isEmpty());
     }
 
     @Test
     void testConstructorParsesFlagTrueValue() {
-        String[] args = {"--help=true"};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(1, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.HELP));
-        assertEquals("true", cli.getValue(AppArgs.Key.HELP).orElseThrow());
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
+        assertEquals(Optional.of("true"), parse("--help=true").getValue(AppArgs.Key.HELP));
     }
 
     @Test
     void testConstructorParsesFlagFalseValue() {
-        String[] args = {"--help=false"};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(1, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.HELP));
-        assertEquals("false", cli.getValue(AppArgs.Key.HELP).orElseThrow());
-        assertFalse(cli.getBoolean(AppArgs.Key.HELP, false));
-        assertFalse(cli.getBoolean(AppArgs.Key.HELP, true));
+        assertEquals(Optional.of("false"), parse("--help=false").getValue(AppArgs.Key.HELP));
     }
 
     @Test
     void testConstructorTreatsInvalidFlagValueAsTrue() {
-        String[] args = {"--help=maybe"};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(1, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.HELP));
-        assertEquals("true", cli.getValue(AppArgs.Key.HELP).orElseThrow());
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, true));
-    }
-
-    @Test
-    void testConstructorIgnoresNonFlagWithoutValue() {
-        String[] args = {"--simulation"};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(0, cli.keys().size());
-        assertFalse(cli.containsKey(AppArgs.Key.SIMULATION));
-        assertTrue(cli.getValue(AppArgs.Key.SIMULATION).isEmpty());
-        assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
-        assertEquals(1, cli.getInt(AppArgs.Key.SIMULATION, 1));
-    }
-
-    @Test
-    void testConstructorIgnoresNonFlagWithEmptyValue() {
-        String[] args = {"--simulation="};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(0, cli.keys().size());
-        assertFalse(cli.containsKey(AppArgs.Key.SIMULATION));
-        assertTrue(cli.getValue(AppArgs.Key.SIMULATION).isEmpty());
-        assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
-        assertEquals(1, cli.getInt(AppArgs.Key.SIMULATION, 1));
-    }
-
-    @Test
-    void testConstructorParsesNonFlagStringValue() {
-        String[] args = {"--simulation=testSim"};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(1, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
-        assertEquals(Optional.of("testSim"), cli.getValue(AppArgs.Key.SIMULATION));
-        assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
-        assertEquals(1, cli.getInt(AppArgs.Key.SIMULATION, 1));
-    }
-
-    @Test
-    void testConstructorParsesNonFlagIntValue() {
-        String[] args = {"--simulation=42"};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(1, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
-        assertEquals(Optional.of("42"), cli.getValue(AppArgs.Key.SIMULATION));
-        assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false));
-        assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true));
-        assertEquals(42, cli.getInt(AppArgs.Key.SIMULATION, 1));
-    }
-
-    @Test
-    void testConstructorParsesNonFlagValueWithSpaces() {
-        String[] args = {"--simulation=C:\\My Simulations\\conway.properties"};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(1, cli.keys().size());
-        assertEquals(Optional.of("C:\\My Simulations\\conway.properties"), cli.getValue(AppArgs.Key.SIMULATION));
-    }
-
-    @Test
-    void testConstructorStripsValue() {
-        String[] args = {"--simulation= \tvalue with spaces \t", "--log-console= false "};
-        AppArgs cli = new AppArgs(args);
-
-        assertEquals(Optional.of("value with spaces"), cli.getValue(AppArgs.Key.SIMULATION));
-        assertFalse(cli.isFlagActive(AppArgs.Key.LOG_CONSOLE));
-    }
-
-    @Test
-    void testConstructorIgnoresBlankValue() {
-        String[] args = {"--simulation=   ", "--simulation=\t", "--help= "};
-        AppArgs cli = new AppArgs(args);
-
-        assertTrue(cli.keys().isEmpty());
-    }
-
-    @Test
-    void testConstructorIgnoresWhitespaceInKey() {
-        String[] args = {"--simu lation=testSim", "-- simulation=testSim", "--simulation =testSim"};
-        AppArgs cli = new AppArgs(args);
-
-        assertTrue(cli.keys().isEmpty());
+        assertEquals(Optional.of("true"), parse("--help=maybe").getValue(AppArgs.Key.HELP));
     }
 
     @Test
     void testConstructorParsesFlagValueWithSpaces() {
-        String[] args = {"--help=no thanks"};
-        AppArgs cli = new AppArgs(args);
+        assertEquals(Optional.of("true"), parse("--help=no thanks").getValue(AppArgs.Key.HELP));
+    }
 
-        assertEquals(Optional.of("true"), cli.getValue(AppArgs.Key.HELP));
+    @Test
+    void testConstructorIgnoresNonFlagWithoutValue() {
+        assertTrue(parse("--simulation").keys().isEmpty());
+    }
+
+    @Test
+    void testConstructorIgnoresNonFlagWithEmptyValue() {
+        assertTrue(parse("--simulation=").keys().isEmpty());
+    }
+
+    @Test
+    void testConstructorParsesNonFlagStringValue() {
+        AppArgs cli = parse("--simulation=testSim");
+
+        assertAll(
+                () -> assertEquals(Set.of(AppArgs.Key.SIMULATION), cli.keys()),
+                () -> assertEquals(Optional.of("testSim"), cli.getValue(AppArgs.Key.SIMULATION))
+        );
+    }
+
+    @Test
+    void testConstructorParsesNonFlagValueWithSpaces() {
+        assertEquals(Optional.of("C:\\My Simulations\\conway.properties"),
+                parse("--simulation=C:\\My Simulations\\conway.properties").getValue(AppArgs.Key.SIMULATION));
+    }
+
+    @Test
+    void testConstructorStripsValue() {
+        AppArgs cli = parse("--simulation= \tvalue with spaces \t", "--log-console= false ");
+
+        assertAll(
+                () -> assertEquals(Optional.of("value with spaces"), cli.getValue(AppArgs.Key.SIMULATION)),
+                () -> assertFalse(cli.isFlagActive(AppArgs.Key.LOG_CONSOLE))
+        );
+    }
+
+    @Test
+    void testConstructorIgnoresBlankValue() {
+        assertTrue(parse("--simulation=   ", "--simulation=\t", "--help= ").keys().isEmpty());
+    }
+
+    @Test
+    void testConstructorIgnoresWhitespaceInKey() {
+        assertTrue(parse("--simu lation=testSim", "-- simulation=testSim", "--simulation =testSim").keys().isEmpty());
+    }
+
+    @Test
+    void testConstructorIgnoresKeyCase() {
+        assertEquals(Optional.of("testSim"), parse("--SIMULATION=testSim").getValue(AppArgs.Key.SIMULATION));
     }
 
     @Test
     void testConstructorKeepsLastValueForDuplicateKey() {
-        String[] args = {"--simulation=first", "--simulation=second"};
-        AppArgs cli = new AppArgs(args);
+        AppArgs cli = parse("--simulation=first", "--simulation=second");
 
-        assertEquals(1, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
-        assertFalse(cli.containsKey(AppArgs.Key.HELP));
-        assertEquals(Optional.of("second"), cli.getValue(AppArgs.Key.SIMULATION));
+        assertAll(
+                () -> assertEquals(Set.of(AppArgs.Key.SIMULATION), cli.keys()),
+                () -> assertEquals(Optional.of("second"), cli.getValue(AppArgs.Key.SIMULATION))
+        );
     }
 
     @Test
     void testConstructorParsesDifferentKeys() {
-        String[] args = {"--simulation=first", "--help"};
-        AppArgs cli = new AppArgs(args);
+        AppArgs cli = parse("--simulation=first", "--help");
 
-        assertEquals(2, cli.keys().size());
-        assertTrue(cli.containsKey(AppArgs.Key.SIMULATION));
-        assertTrue(cli.containsKey(AppArgs.Key.HELP));
-        assertEquals(Optional.of("first"), cli.getValue(AppArgs.Key.SIMULATION));
-        assertTrue(cli.getBoolean(AppArgs.Key.HELP, false));
+        assertAll(
+                () -> assertEquals(Set.of(AppArgs.Key.SIMULATION, AppArgs.Key.HELP), cli.keys()),
+                () -> assertEquals(Optional.of("first"), cli.getValue(AppArgs.Key.SIMULATION)),
+                () -> assertTrue(cli.isFlagActive(AppArgs.Key.HELP))
+        );
     }
 
     @Test
-    void testIsFlagActiveReturnsTrue() {
-        String[] args = {"--help"};
-        AppArgs cli = new AppArgs(args);
+    void testGetValue() {
+        AppArgs cli = parse("--simulation=testSim");
 
-        assertTrue(cli.isFlagActive(AppArgs.Key.HELP));
+        assertAll(
+                () -> assertEquals(Optional.of("testSim"), cli.getValue(AppArgs.Key.SIMULATION)),
+                () -> assertTrue(cli.getValue(AppArgs.Key.LOCALE).isEmpty())
+        );
+    }
+
+    @Test
+    void testGetBoolean() {
+        AppArgs cli = parse("--help=false", "--log-console");
+
+        assertAll(
+                () -> assertFalse(cli.getBoolean(AppArgs.Key.HELP, true)),
+                () -> assertTrue(cli.getBoolean(AppArgs.Key.LOG_CONSOLE, false)),
+                () -> assertTrue(cli.getBoolean(AppArgs.Key.LOG_FILE, true)),
+                () -> assertFalse(cli.getBoolean(AppArgs.Key.LOG_FILE, false))
+        );
+    }
+
+    @Test
+    void testGetBooleanReturnsDefaultForUnparseableValue() {
+        AppArgs cli = parse("--simulation=testSim");
+
+        assertAll(
+                () -> assertTrue(cli.getBoolean(AppArgs.Key.SIMULATION, true)),
+                () -> assertFalse(cli.getBoolean(AppArgs.Key.SIMULATION, false))
+        );
+    }
+
+    @Test
+    void testGetInt() {
+        AppArgs cli = parse("--simulation=42");
+
+        assertAll(
+                () -> assertEquals(42, cli.getInt(AppArgs.Key.SIMULATION, 1)),
+                () -> assertEquals(1, cli.getInt(AppArgs.Key.LOCALE, 1))
+        );
+    }
+
+    @Test
+    void testGetIntReturnsDefaultForInvalidValue() {
+        AppArgs cli = parse("--simulation=testSim", "--log-level=2147483648");
+
+        assertAll(
+                () -> assertEquals(1, cli.getInt(AppArgs.Key.SIMULATION, 1)),
+                () -> assertEquals(1, cli.getInt(AppArgs.Key.LOG_LEVEL, 1))
+        );
+    }
+
+    @Test
+    void testIsFlagActive() {
+        AppArgs cli = parse("--help", "--log-console=false");
+
+        assertAll(
+                () -> assertTrue(cli.isFlagActive(AppArgs.Key.HELP)),
+                () -> assertFalse(cli.isFlagActive(AppArgs.Key.LOG_CONSOLE)),
+                () -> assertFalse(cli.isFlagActive(AppArgs.Key.LOG_FILE))
+        );
+    }
+
+    @Test
+    void testIsFlagActiveThrowsForNonFlagKey() {
+        AppArgs cli = parse("--simulation=testSim");
+
         assertThrows(IllegalArgumentException.class, () -> cli.isFlagActive(AppArgs.Key.SIMULATION));
     }
 
     @Test
-    void testIsFlagActiveReturnsFalse() {
-        String[] args = {"--help=false"};
-        AppArgs cli = new AppArgs(args);
+    void testContainsKey() {
+        AppArgs cli = parse("--help=false");
 
-        assertFalse(cli.isFlagActive(AppArgs.Key.HELP));
-        assertThrows(IllegalArgumentException.class, () -> cli.isFlagActive(AppArgs.Key.SIMULATION));
-    }
-
-    @Test
-    void testPrintHelp() {
-        Appendable appendable = new StringBuilder(512);
-        AppArgs.Key.printHelp(appendable);
-        String result = appendable.toString();
-
-        assertTrue(result.startsWith("List of available command-line arguments:"));
-        assertTrue(result.contains("--help"));
-        assertTrue(result.contains("--locale"));
-        assertTrue(result.contains("--log-console"));
-        assertTrue(result.contains("--log-file"));
-        assertTrue(result.contains("--log-level"));
-        assertTrue(result.contains("--simulation"));
+        assertAll(
+                () -> assertTrue(cli.containsKey(AppArgs.Key.HELP)),
+                () -> assertFalse(cli.containsKey(AppArgs.Key.SIMULATION))
+        );
     }
 
     @SuppressWarnings("DataFlowIssue")
     @Test
-    void testKeysReturnsUnmodifiableSet() {
-        String[] args = {"--help"};
-        AppArgs cli = new AppArgs(args);
+    void testKeys() {
+        Set<AppArgs.Key> keys = parse("--help").keys();
 
-        Set<AppArgs.Key> keys = cli.keys();
-        assertThrows(UnsupportedOperationException.class, () -> keys.add(AppArgs.Key.SIMULATION));
+        assertAll(
+                () -> assertEquals(Set.of(AppArgs.Key.HELP), keys),
+                () -> assertThrows(UnsupportedOperationException.class, () -> keys.add(AppArgs.Key.SIMULATION))
+        );
+    }
+
+    @Test
+    void testToArgumentString() {
+        assertAll(
+                () -> assertEquals("--help --simulation=testSim", parse("--help", "--simulation=testSim").toArgumentString()),
+                () -> assertEquals("--simulation=testSim", parse("--help=", "--simulation=testSim").toArgumentString()),
+                () -> assertEquals("--help --simulation=testSim", parse("--help=true", "--simulation=testSim").toArgumentString()),
+                () -> assertEquals("--help=false --simulation=testSim", parse("--help=false", "--simulation=testSim").toArgumentString()),
+                () -> assertEquals("", parse("--simulation").toArgumentString()),
+                () -> assertEquals("", parse("--simulation=").toArgumentString()),
+                () -> assertEquals("--simulation=1", parse("--simulation=1").toArgumentString()),
+                () -> assertEquals("--simulation=false", parse("--simulation=false").toArgumentString()),
+                () -> assertEquals("--help --simulation=\"value with spaces\"",
+                        parse("--help", "--simulation=value with spaces").toArgumentString()),
+                () -> assertEquals("--simulation=\"tab\tvalue\"", parse("--simulation=tab\tvalue").toArgumentString())
+        );
+    }
+
+    @Test
+    void testToString() {
+        assertAll(
+                () -> assertEquals("AppArgs{arguments={HELP=true, SIMULATION=testSim}}",
+                        parse("--help", "--simulation=testSim").toString()),
+                () -> assertEquals("AppArgs{arguments={HELP=false, SIMULATION=testSim}}",
+                        parse("--help=false", "--simulation=testSim").toString()),
+                () -> assertEquals("AppArgs{arguments={}}", parse("--simulation").toString())
+        );
+    }
+
+    @SuppressWarnings("DataFlowIssue")
+    @Test
+    void testParseBooleanValue() {
+        assertAll(
+                () -> assertTrue(AppArgs.parseBooleanValue("true", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("TRUE", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("1", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("yes", false)),
+                () -> assertTrue(AppArgs.parseBooleanValue("on", false)),
+                () -> assertFalse(AppArgs.parseBooleanValue("false", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("FALSE", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("0", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("no", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("off", true)),
+                () -> assertTrue(AppArgs.parseBooleanValue("maybe", true)),
+                () -> assertTrue(AppArgs.parseBooleanValue("", true)),
+                () -> assertFalse(AppArgs.parseBooleanValue("maybe", false)),
+                () -> assertFalse(AppArgs.parseBooleanValue("", false)),
+                () -> assertThrows(NullPointerException.class, () -> AppArgs.parseBooleanValue(null, false))
+        );
     }
 
     @Test
@@ -287,114 +311,77 @@ final class AppArgsTest {
     }
 
     @Test
-    void testKey() {
-        for (AppArgs.Key key : AppArgs.Key.values()) {
-            assertNotNull(key.key(), "Key name should not be null: " + key);
-            assertFalse(key.key().isBlank(), "Key name should not be blank: " + key);
-        }
+    void testFromKeyName() {
+        assertAll(
+                () -> assertEquals(Optional.of(AppArgs.Key.HELP), AppArgs.Key.fromKeyName("help")),
+                () -> assertEquals(Optional.of(AppArgs.Key.HELP), AppArgs.Key.fromKeyName("HELP")),
+                () -> assertEquals(Optional.of(AppArgs.Key.LOCALE), AppArgs.Key.fromKeyName("Locale")),
+                () -> assertEquals(Optional.of(AppArgs.Key.LOG_CONSOLE), AppArgs.Key.fromKeyName("Log-Console")),
+                () -> assertEquals(Optional.of(AppArgs.Key.LOG_FILE), AppArgs.Key.fromKeyName("log-file")),
+                () -> assertEquals(Optional.of(AppArgs.Key.LOG_LEVEL), AppArgs.Key.fromKeyName("LOG-LEVEL")),
+                () -> assertEquals(Optional.of(AppArgs.Key.SIMULATION), AppArgs.Key.fromKeyName("simulation"))
+        );
+    }
 
-        assertEquals("help", AppArgs.Key.HELP.key());
-        assertEquals("locale", AppArgs.Key.LOCALE.key());
-        assertEquals("log-console", AppArgs.Key.LOG_CONSOLE.key());
-        assertEquals("log-file", AppArgs.Key.LOG_FILE.key());
-        assertEquals("log-level", AppArgs.Key.LOG_LEVEL.key());
-        assertEquals("simulation", AppArgs.Key.SIMULATION.key());
+    @Test
+    void testFromKeyNameReturnsEmptyForUnknownName() {
+        assertAll(
+                () -> assertTrue(AppArgs.Key.fromKeyName("unknown").isEmpty()),
+                () -> assertTrue(AppArgs.Key.fromKeyName("help ").isEmpty()),
+                () -> assertTrue(AppArgs.Key.fromKeyName(" help").isEmpty()),
+                () -> assertTrue(AppArgs.Key.fromKeyName("--help").isEmpty()),
+                () -> assertTrue(AppArgs.Key.fromKeyName(" ").isEmpty()),
+                () -> assertTrue(AppArgs.Key.fromKeyName("").isEmpty())
+        );
+    }
+
+    @Test
+    void testPrintHelp() {
+        StringBuilder appendable = new StringBuilder(512);
+
+        AppArgs.Key.printHelp(appendable);
+        String result = appendable.toString();
+
+        assertAll(
+                () -> assertTrue(result.startsWith("List of available command-line arguments:")),
+                () -> assertTrue(result.contains("--help: Shows this help message (flag)")),
+                () -> assertTrue(result.contains("--locale: ")),
+                () -> assertTrue(result.contains("--log-console: ")),
+                () -> assertTrue(result.contains("--log-file: ")),
+                () -> assertTrue(result.contains("--log-level: ")),
+                () -> assertTrue(result.contains("--simulation: "))
+        );
+    }
+
+    @Test
+    void testKey() {
+        assertAll(
+                () -> assertEquals("help", AppArgs.Key.HELP.key()),
+                () -> assertEquals("locale", AppArgs.Key.LOCALE.key()),
+                () -> assertEquals("log-console", AppArgs.Key.LOG_CONSOLE.key()),
+                () -> assertEquals("log-file", AppArgs.Key.LOG_FILE.key()),
+                () -> assertEquals("log-level", AppArgs.Key.LOG_LEVEL.key()),
+                () -> assertEquals("simulation", AppArgs.Key.SIMULATION.key())
+        );
     }
 
     @Test
     void testDescription() {
         for (AppArgs.Key key : AppArgs.Key.values()) {
-            assertNotNull(key.description(), "Key description should not be null: " + key);
             assertFalse(key.description().isBlank(), "Key description should not be blank: " + key);
         }
     }
 
     @Test
-    void testFromString() {
-        assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("help").orElseThrow());
-        assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("HELP").orElseThrow());
-        assertEquals(AppArgs.Key.HELP, AppArgs.Key.fromString("Help").orElseThrow());
-
-        assertEquals(AppArgs.Key.LOCALE, AppArgs.Key.fromString("locale").orElseThrow());
-        assertEquals(AppArgs.Key.LOCALE, AppArgs.Key.fromString("LOCALE").orElseThrow());
-        assertEquals(AppArgs.Key.LOCALE, AppArgs.Key.fromString("Locale").orElseThrow());
-
-        assertEquals(AppArgs.Key.LOG_CONSOLE, AppArgs.Key.fromString("log-console").orElseThrow());
-        assertEquals(AppArgs.Key.LOG_CONSOLE, AppArgs.Key.fromString("LOG-CONSOLE").orElseThrow());
-        assertEquals(AppArgs.Key.LOG_CONSOLE, AppArgs.Key.fromString("Log-Console").orElseThrow());
-
-        assertEquals(AppArgs.Key.LOG_FILE, AppArgs.Key.fromString("log-file").orElseThrow());
-        assertEquals(AppArgs.Key.LOG_FILE, AppArgs.Key.fromString("LOG-FILE").orElseThrow());
-        assertEquals(AppArgs.Key.LOG_FILE, AppArgs.Key.fromString("Log-File").orElseThrow());
-
-        assertEquals(AppArgs.Key.LOG_LEVEL, AppArgs.Key.fromString("log-level").orElseThrow());
-        assertEquals(AppArgs.Key.LOG_LEVEL, AppArgs.Key.fromString("LOG-LEVEL").orElseThrow());
-        assertEquals(AppArgs.Key.LOG_LEVEL, AppArgs.Key.fromString("Log-Level").orElseThrow());
-
-        assertEquals(AppArgs.Key.SIMULATION, AppArgs.Key.fromString("simulation").orElseThrow());
-        assertEquals(AppArgs.Key.SIMULATION, AppArgs.Key.fromString("SIMULATION").orElseThrow());
-        assertEquals(AppArgs.Key.SIMULATION, AppArgs.Key.fromString("Simulation").orElseThrow());
-
-        assertFalse(AppArgs.Key.fromString("unknown").isPresent());
-        assertFalse(AppArgs.Key.fromString("help ").isPresent());
-        assertFalse(AppArgs.Key.fromString(" help").isPresent());
-        assertFalse(AppArgs.Key.fromString(" ").isPresent());
-        assertFalse(AppArgs.Key.fromString("").isPresent());
-    }
-
-    @SuppressWarnings("DataFlowIssue")
-    @Test
-    void testParseBooleanValue() {
-        assertTrue(AppArgs.parseBooleanValue("true", false));
-        assertTrue(AppArgs.parseBooleanValue("TRUE", false));
-        assertTrue(AppArgs.parseBooleanValue("1", false));
-        assertTrue(AppArgs.parseBooleanValue("yes", false));
-        assertTrue(AppArgs.parseBooleanValue("on", false));
-
-        assertFalse(AppArgs.parseBooleanValue("false", true));
-        assertFalse(AppArgs.parseBooleanValue("FALSE", true));
-        assertFalse(AppArgs.parseBooleanValue("0", true));
-        assertFalse(AppArgs.parseBooleanValue("no", true));
-        assertFalse(AppArgs.parseBooleanValue("off", true));
-
-        assertTrue(AppArgs.parseBooleanValue("maybe", true));
-        assertTrue(AppArgs.parseBooleanValue("unknown", true));
-        assertTrue(AppArgs.parseBooleanValue("", true));
-        assertFalse(AppArgs.parseBooleanValue("maybe", false));
-        assertFalse(AppArgs.parseBooleanValue("unknown", false));
-        assertFalse(AppArgs.parseBooleanValue("", false));
-
-        assertThrows(NullPointerException.class, () -> AppArgs.parseBooleanValue(null, false));
-    }
-
-    @Test
-    void testToArgumentString() {
-        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help", "--simulation=testSim"}).toArgumentString());
-        assertEquals("--simulation=testSim", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).toArgumentString());
-        assertEquals("--help --simulation=testSim", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).toArgumentString());
-        assertEquals("--help=false --simulation=testSim", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).toArgumentString());
-
-        assertEquals("", new AppArgs(new String[]{"--simulation"}).toArgumentString());
-        assertEquals("", new AppArgs(new String[]{"--simulation="}).toArgumentString());
-        assertEquals("--simulation=1", new AppArgs(new String[]{"--simulation=1"}).toArgumentString());
-        assertEquals("--simulation=false", new AppArgs(new String[]{"--simulation=false"}).toArgumentString());
-
-        assertEquals("--help --simulation=\"value with spaces\"",
-                new AppArgs(new String[]{"--help", "--simulation=value with spaces"}).toArgumentString());
-        assertEquals("--simulation=\"tab\tvalue\"", new AppArgs(new String[]{"--simulation=tab\tvalue"}).toArgumentString());
-    }
-
-    @Test
-    void testToString() {
-        assertEquals("AppArgs{arguments={HELP=true, SIMULATION=testSim}}", new AppArgs(new String[]{"--help", "--simulation=testSim"}).toString());
-        assertEquals("AppArgs{arguments={SIMULATION=testSim}}", new AppArgs(new String[]{"--help=", "--simulation=testSim"}).toString());
-        assertEquals("AppArgs{arguments={HELP=true, SIMULATION=testSim}}", new AppArgs(new String[]{"--help=true", "--simulation=testSim"}).toString());
-        assertEquals("AppArgs{arguments={HELP=false, SIMULATION=testSim}}", new AppArgs(new String[]{"--help=false", "--simulation=testSim"}).toString());
-
-        assertEquals("AppArgs{arguments={}}", new AppArgs(new String[]{"--simulation"}).toString());
-        assertEquals("AppArgs{arguments={}}", new AppArgs(new String[]{"--simulation="}).toString());
-        assertEquals("AppArgs{arguments={SIMULATION=1}}", new AppArgs(new String[]{"--simulation=1"}).toString());
-        assertEquals("AppArgs{arguments={SIMULATION=false}}", new AppArgs(new String[]{"--simulation=false"}).toString());
+    void testIsFlag() {
+        assertAll(
+                () -> assertTrue(AppArgs.Key.HELP.isFlag()),
+                () -> assertFalse(AppArgs.Key.LOCALE.isFlag()),
+                () -> assertTrue(AppArgs.Key.LOG_CONSOLE.isFlag()),
+                () -> assertTrue(AppArgs.Key.LOG_FILE.isFlag()),
+                () -> assertFalse(AppArgs.Key.LOG_LEVEL.isFlag()),
+                () -> assertFalse(AppArgs.Key.SIMULATION.isFlag())
+        );
     }
 
 }

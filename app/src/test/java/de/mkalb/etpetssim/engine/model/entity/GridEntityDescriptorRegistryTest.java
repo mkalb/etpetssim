@@ -32,6 +32,16 @@ final class GridEntityDescriptorRegistryTest {
             Color.DARKGRAY,
             Color.GRAY
     );
+    private static final GridEntityDescriptorProvider PROVIDER_B_REPLACEMENT = new TestDescriptorProvider(
+            "entity.b",
+            true,
+            "conway.entity.alive.short",
+            "conway.entity.alive.long",
+            "conway.entity.alive.description",
+            null,
+            Color.BLACK,
+            Color.WHITE
+    );
 
     @BeforeAll
     static void setUpBeforeAll() {
@@ -43,9 +53,9 @@ final class GridEntityDescriptorRegistryTest {
 
     private static void assertRegisteredDescriptor(GridEntityDescriptorRegistry registry, GridEntityDescriptorProvider provider) {
         GridEntityDescriptor descriptor = registry.requireByDescriptorId(provider.descriptorId());
-        String expectedEmoji = java.util.Optional.ofNullable(provider.emojiKey())
-                                                 .map(AppLocalization::getText)
-                                                 .orElse(null);
+        String expectedEmoji = Optional.ofNullable(provider.emojiKey())
+                                       .map(AppLocalization::getText)
+                                       .orElse(null);
 
         assertAll(
                 () -> assertEquals(provider.descriptorId(), descriptor.descriptorId()),
@@ -68,12 +78,10 @@ final class GridEntityDescriptorRegistryTest {
     }
 
     @Test
-    void testOfArray() {
-        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.ofArray(
-                new GridEntityDescriptorProvider[]{PROVIDER_A, PROVIDER_B});
+    void testOfKeepsLastProviderForSameDescriptorId() {
+        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.of(PROVIDER_B, PROVIDER_B_REPLACEMENT);
 
-        assertRegisteredDescriptor(registry, PROVIDER_A);
-        assertRegisteredDescriptor(registry, PROVIDER_B);
+        assertRegisteredDescriptor(registry, PROVIDER_B_REPLACEMENT);
     }
 
     @Test
@@ -85,49 +93,25 @@ final class GridEntityDescriptorRegistryTest {
     }
 
     @Test
-    void testRegisterReplacesDescriptorForSameId() {
-        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(1);
+    void testFindByDescriptorId() {
+        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.of(PROVIDER_A);
 
-        registry.register(
-                "entity-id",
-                true,
-                "conway.entity.alive.short",
-                "conway.entity.alive.long",
-                "conway.entity.alive.description",
-                null,
-                Color.GREEN,
-                null
-        );
-        GridEntityDescriptor replaced = registry.register(
-                "entity-id",
-                false,
-                "conway.entity.dead.short",
-                "conway.entity.dead.long",
-                "conway.entity.dead.description",
-                null,
-                Color.BLACK,
-                Color.WHITE
-        );
-
-        GridEntityDescriptor actual = registry.requireByDescriptorId("entity-id");
-        assertEquals(replaced, actual);
-        assertEquals(AppLocalization.getText("conway.entity.dead.short"), actual.shortName());
-        assertFalse(actual.visible());
-        assertEquals(Color.WHITE, actual.borderColor());
-    }
-
-    @Test
-    void testRequireByDescriptorIdThrowsForUnknownId() {
-        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(1);
-
-        assertThrows(NoSuchElementException.class, () -> registry.requireByDescriptorId("missing"));
+        assertEquals(Optional.of(registry.requireByDescriptorId(PROVIDER_A.descriptorId())),
+                registry.findByDescriptorId(PROVIDER_A.descriptorId()));
     }
 
     @Test
     void testFindByDescriptorIdReturnsEmptyForUnknownId() {
-        GridEntityDescriptorRegistry registry = new GridEntityDescriptorRegistry(1);
+        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.of(PROVIDER_A);
 
         assertTrue(registry.findByDescriptorId("missing").isEmpty());
+    }
+
+    @Test
+    void testRequireByDescriptorIdThrowsForUnknownId() {
+        GridEntityDescriptorRegistry registry = GridEntityDescriptorRegistry.of();
+
+        assertThrows(NoSuchElementException.class, () -> registry.requireByDescriptorId("missing"));
     }
 
     private record TestDescriptorProvider(

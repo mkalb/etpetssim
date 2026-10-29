@@ -12,6 +12,8 @@ Rules for production code in `de.mkalb.etpetssim.core`.
 - Concrete utility classes must be `public final class` with an `App` prefix (e.g., `AppLogger`, `AppStorage`).
 - Core classes provide cross-cutting infrastructure usable by all other packages.
 - Internal `public enum` and `public record` types are allowed.
+- Keep the complete public API of a core class, also methods without a current caller (e.g., `AppArgs.getInt(..)`);
+  it is infrastructure for all packages.
 
 ## Dependency Boundaries
 

@@ -23,7 +23,7 @@ public final class ForestFactory {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(ForestEntity.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.of(ForestEntity.values());
 
         // ViewModel
         var configViewModel = new ForestConfigViewModel(readOnlySimulationState);

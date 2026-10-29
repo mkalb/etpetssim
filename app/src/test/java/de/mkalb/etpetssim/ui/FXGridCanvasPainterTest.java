@@ -52,7 +52,7 @@ final class FXGridCanvasPainterTest {
     }
 
     @Test
-    void testConstructorInitializesAccessors() {
+    void testConstructor() {
         FXTestSupport.runAndWait(() -> {
             Canvas canvas = new Canvas(CANVAS_SIZE, CANVAS_SIZE);
             GridStructure structure = createStructure(CellShape.SQUARE);

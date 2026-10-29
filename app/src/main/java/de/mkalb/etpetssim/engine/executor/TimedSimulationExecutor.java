@@ -6,9 +6,8 @@ import de.mkalb.etpetssim.engine.model.entity.GridEntity;
 /**
  * Decorator for {@link SimulationExecutor} that measures the execution time of each simulation step.
  * <p>
- * Tracks the minimum, maximum, and most recent step durations in nanoseconds.
- * <p>
- * Timing statistics are accessible via {@link #stepTimingStatistics()} and {@link #currentStepNanos()}.
+ * Tracks the most recent, minimum, maximum, sum, and average step durations in nanoseconds; they are accessible via
+ * {@link #stepTimingStatistics()}.
  *
  * @param <ENT> the type of {@link GridEntity} in the simulation
  * @param <GM>  the type of {@link GridModel} in the simulation
@@ -23,10 +22,13 @@ public final class TimedSimulationExecutor<
     private long currentStepNanos = Long.MIN_VALUE;
     private long minStepNanos = Long.MAX_VALUE;
     private long maxStepNanos = Long.MIN_VALUE;
-    private long sumStepNanos = 0;
+    private long sumStepNanos;
 
     /**
-     * Creates a new {@code TimedSimulationExecutor}.
+     * Creates a timed executor for the given delegate.
+     * <p>
+     * The delegate must not have executed any step yet, because the average divides the timed durations by the step
+     * count of the delegate (see {@link #stepTimingStatistics()}).
      *
      * @param delegate the underlying {@link SimulationExecutor} to decorate
      */
@@ -80,12 +82,12 @@ public final class TimedSimulationExecutor<
      * as well as the sum and average of all step durations in nanoseconds.
      * <p>
      * The average is the sum divided by {@link #stepCount()}, which counts all steps of the delegate.
-     * Steps executed by the delegate before it was wrapped are counted but not timed,
-     * so the average is only exact if this executor is created before the first step.
      * <p>
      * If no steps have been executed yet, all values in the returned record are {@code 0}.
      *
      * @return a {@link StepTimingStatistics} record with the current timing statistics
+     * @throws IllegalArgumentException if the delegate executed steps before it was wrapped and these counted but
+     *                                  untimed steps make the values inconsistent
      */
     public StepTimingStatistics stepTimingStatistics() {
         int steps = stepCount();
@@ -99,15 +101,6 @@ public final class TimedSimulationExecutor<
             );
         }
         return StepTimingStatistics.empty();
-    }
-
-    /**
-     * Returns the duration of the most recently executed simulation step in nanoseconds.
-     *
-     * @return the last step duration in nanoseconds, or {@link Long#MIN_VALUE} if no steps have been executed
-     */
-    public long currentStepNanos() {
-        return currentStepNanos;
     }
 
 }

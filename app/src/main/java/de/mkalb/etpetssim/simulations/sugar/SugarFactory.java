@@ -22,7 +22,7 @@ public final class SugarFactory {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.of(EntityDescriptors.values());
 
         // ViewModel
         var configViewModel = new SugarConfigViewModel(readOnlySimulationState);

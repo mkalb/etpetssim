@@ -50,16 +50,54 @@ public final class ExtraterrestrialPetsSimulation extends Application {
     private boolean terminationAwaited;
 
     /**
-     * Resolves the initial simulation type from parsed arguments.
+     * Starts the JavaFX application.
+     * <p>
+     * Installs uncaught-exception handling, resolves the requested
+     * simulation type, and shows the primary stage.
      *
-     * @param arguments       parsed application arguments
-     * @param onlyImplemented whether to restrict matching to implemented simulations
+     * @param primaryStage primary stage created by JavaFX
+     */
+    @Override
+    public void start(Stage primaryStage) {
+        // Initialize exception handling for uncaught exceptions
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            AppLogger.error(throwable, "Uncaught exception in thread " + thread.getName());
+            Platform.runLater(() -> showUnexpectedErrorAlert(throwable));
+        });
+
+        // Determine the simulation type from command-line arguments
+        AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
+        SimulationType type = resolveSimulationType(arguments)
+                .orElse(SimulationType.STARTSCREEN); // Default to STARTSCREEN if no valid simulation type is found
+        AppLogger.info("Application: Starting with simulation type: " + type.name());
+
+        // Initialize and show the primary stage with the appropriate scene
+        updateStageIcons(primaryStage);
+        switchToSimulation(primaryStage, type);
+        primaryStage.show();
+        AppLogger.info("Application: Application started successfully. Primary stage is now visible.");
+    }
+
+    /**
+     * Stops the application and shuts down logging.
+     */
+    @Override
+    public void stop() {
+        AppLogger.info("Application: Shutting down.");
+        shutdownCurrentSimulation();
+        awaitPendingTerminations();
+        AppLogger.shutdown();
+    }
+
+    /**
+     * Resolves the initial simulation type from parsed arguments, restricted to implemented simulations.
+     *
+     * @param arguments parsed application arguments
      * @return an {@link Optional} containing the matching simulation type, or empty if none matches
      */
-    @SuppressWarnings("SameParameterValue")
-    private Optional<SimulationType> resolveSimulationType(AppArgs arguments, boolean onlyImplemented) {
+    private Optional<SimulationType> resolveSimulationType(AppArgs arguments) {
         return arguments.getValue(AppArgs.Key.SIMULATION)
-                        .flatMap(arg -> SimulationType.fromCliArgument(arg, onlyImplemented));
+                        .flatMap(arg -> SimulationType.fromCliArgument(arg, true));
     }
 
     /**
@@ -104,9 +142,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @see de.mkalb.etpetssim.simulations.start.StartMainView
      */
     private void switchToSimulation(Stage stage, SimulationType simulationType) {
-        Objects.requireNonNull(stage, "Stage must not be null");
-        Objects.requireNonNull(simulationType, "SimulationType must not be null");
-
         AppLogger.info("Application: Updating stage scene to simulation: " + simulationType);
         shutdownCurrentSimulation();
 
@@ -231,9 +266,6 @@ public final class ExtraterrestrialPetsSimulation extends Application {
      * @param root  scene root associated with the stage
      */
     private void adjustStageLayoutToScreen(Stage stage, Region root) {
-        Objects.requireNonNull(stage, "Stage must not be null");
-        Objects.requireNonNull(root, "Root region must not be null");
-
         // Skip if minimized
         if (stage.isIconified()) {
             root.setDisable(false); // Enable now. No adjustments needed.
@@ -376,52 +408,12 @@ public final class ExtraterrestrialPetsSimulation extends Application {
         });
 
         Region spacer = new Region();
-        HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
         HBox simulationHeaderBox = new HBox(titleBox, spacer, linkBox);
         simulationHeaderBox.getStyleClass().add(FXStyleClasses.HEADER_HBOX);
 
         return simulationHeaderBox;
-    }
-
-    /**
-     * Starts the JavaFX application.
-     * <p>
-     * Installs uncaught-exception handling, resolves the requested
-     * simulation type, and shows the primary stage.
-     *
-     * @param stage primary stage created by JavaFX
-     */
-    @Override
-    public void start(Stage stage) {
-        // Initialize exception handling for uncaught exceptions
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            AppLogger.error(throwable, "Uncaught exception in thread " + thread.getName());
-            Platform.runLater(() -> showUnexpectedErrorAlert(throwable));
-        });
-
-        // Determine the simulation type from command-line arguments
-        AppArgs arguments = new AppArgs(getParameters().getRaw().toArray(new String[0]));
-        SimulationType type = resolveSimulationType(arguments, true)
-                .orElse(SimulationType.STARTSCREEN); // Default to STARTSCREEN if no valid simulation type is found
-        AppLogger.info("Application: Starting with simulation type: " + type.name());
-
-        // Initialize and show the primary stage with the appropriate scene
-        updateStageIcons(stage);
-        switchToSimulation(stage, type);
-        stage.show();
-        AppLogger.info("Application: Application started successfully. Primary stage is now visible.");
-    }
-
-    /**
-     * Stops the application and shuts down logging.
-     */
-    @Override
-    public void stop() {
-        AppLogger.info("Application: Shutting down.");
-        shutdownCurrentSimulation();
-        awaitPendingTerminations();
-        AppLogger.shutdown();
     }
 
 }

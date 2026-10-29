@@ -53,21 +53,6 @@ public final class AboutDialog {
     }
 
     /**
-     * Formats the README for plain-text display.
-     * <p>
-     * The README starts with an HTML header (logo, title, links, and badges) that is only
-     * useful when rendered. The text is therefore shown from the first line starting with
-     * {@code "## "}; text without such a line is returned unchanged.
-     *
-     * @param readme the README text
-     * @return the README text from its first second-level heading
-     */
-    static String formatReadmeText(String readme) {
-        Matcher matcher = README_FIRST_SECTION_PATTERN.matcher(readme);
-        return matcher.find() ? readme.substring(matcher.start()) : readme;
-    }
-
-    /**
      * Shows the About dialog and waits until it is closed.
      */
     public void show() {
@@ -101,6 +86,21 @@ public final class AboutDialog {
         dialogPane.getButtonTypes().add(ButtonType.CLOSE);
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialog.showAndWait();
+    }
+
+    /**
+     * Formats the README for plain-text display.
+     * <p>
+     * The README starts with an HTML header (logo, title, links, and badges) that is only
+     * useful when rendered. The text is therefore shown from the first line starting with
+     * {@code "## "}; text without such a line is returned unchanged.
+     *
+     * @param readme the README text
+     * @return the README text from its first second-level heading
+     */
+    static String formatReadmeText(String readme) {
+        Matcher matcher = README_FIRST_SECTION_PATTERN.matcher(readme);
+        return matcher.find() ? readme.substring(matcher.start()) : readme;
     }
 
     /**
@@ -210,22 +210,22 @@ public final class AboutDialog {
     private Map<String, String> readManifestInfo() {
         Optional<InputStream> resource = AppResources.getResourceAsStream("META-INF/MANIFEST.MF");
         if (resource.isEmpty()) {
-            return Collections.emptyMap();
+            return Map.of();
         }
         try (InputStream is = resource.get()) {
             Manifest manifest = new Manifest(is);
             Attributes attributes = manifest.getMainAttributes();
             Map<String, String> manifestInfo = HashMap.newHashMap(MANIFEST_LINES.size());
             for (ManifestLine line : MANIFEST_LINES) {
-                String v = attributes.getValue(line.attributeName());
-                if ((v != null) && !v.isBlank()) {
-                    manifestInfo.put(line.attributeName(), v);
+                String value = attributes.getValue(line.attributeName());
+                if ((value != null) && !value.isBlank()) {
+                    manifestInfo.put(line.attributeName(), value);
                 }
             }
             return manifestInfo;
         } catch (IOException e) {
             AppLogger.error(e, "AboutDialog: Failed to read MANIFEST.MF");
-            return Collections.emptyMap();
+            return Map.of();
         }
     }
 

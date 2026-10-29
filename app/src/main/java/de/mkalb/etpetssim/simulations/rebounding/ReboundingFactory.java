@@ -23,7 +23,7 @@ public final class ReboundingFactory {
         // Common
         ReadOnlyObjectWrapper<SimulationState> simulationState = new ReadOnlyObjectWrapper<>(SimulationState.READY);
         ReadOnlyObjectProperty<SimulationState> readOnlySimulationState = simulationState.getReadOnlyProperty();
-        var entityDescriptorRegistry = GridEntityDescriptorRegistry.ofArray(EntityDescriptors.values());
+        var entityDescriptorRegistry = GridEntityDescriptorRegistry.of(EntityDescriptors.values());
 
         // ViewModel
         var configViewModel = new ReboundingConfigViewModel(readOnlySimulationState);

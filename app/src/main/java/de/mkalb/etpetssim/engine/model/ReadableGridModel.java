@@ -70,7 +70,7 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
     Set<GridCoordinate> nonDefaultCoordinates();
 
     /**
-     * Returns a list of grid coordinates whose entities match the given predicate.
+     * Returns a mutable list of grid coordinates whose entities match the given predicate.
      * Avoids creating intermediate {@link GridCell} instances compared to {@link #filteredCells}.
      *
      * <p>The list is a snapshot of the model state taken at the time of this call
@@ -78,7 +78,7 @@ public sealed interface ReadableGridModel<ENT extends GridEntity> extends GridMo
      * Iteration order is implementation-defined.
      *
      * @param entityPredicate the predicate to filter entities
-     * @return a list of matching coordinates
+     * @return a mutable list of matching coordinates
      */
     List<GridCoordinate> filteredCoordinates(Predicate<ENT> entityPredicate);
 

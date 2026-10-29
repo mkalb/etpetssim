@@ -21,8 +21,7 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     private final Object[][] data;
 
     /**
-     * Constructs a new {@code ArrayGridModel} with the given structure and default entity.
-     * All cells are initialized to the default entity.
+     * Creates a model whose cells all hold the default entity.
      *
      * @param structure     the grid structure
      * @param defaultEntity the default entity for all cells
@@ -47,17 +46,13 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     @Override
     @SuppressWarnings("unchecked")
     public ENT getEntity(GridCoordinate coordinate) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         return (ENT) data[coordinate.y()][coordinate.x()];
     }
 
     @Override
     public boolean isDefaultEntity(GridCoordinate coordinate) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         return Objects.equals(data[coordinate.y()][coordinate.x()], defaultEntity);
     }
 
@@ -85,9 +80,6 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
 
     @Override
     public Set<GridCoordinate> nonDefaultCoordinates() {
-        // No snapshot copy is needed for ConcurrentModificationException safety:
-        // the array backing has no fail-fast iterators, unlike the HashMap in SparseGridModel.
-        // The returned HashSet is mutable (no unmodifiable wrapper) consistent with filteredCells().
         int width = structure.size().width();
         int height = structure.size().height();
         Set<GridCoordinate> result = new HashSet<>();
@@ -168,8 +160,6 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
     public List<GridCell<ENT>> nonDefaultCells() {
         // Check entity before creating GridCell to avoid allocating objects for default cells.
         // Explicit nested loop also avoids the Integer boxing overhead of IntStream.boxed().flatMap(...).
-        // No snapshot copy is needed: arrays have no fail-fast iterators, so there is no ConcurrentModificationException
-        // risk if the caller mutates the model (via setEntity / setEntityToDefault) while iterating the returned list.
         int width = structure.size().width();
         int height = structure.size().height();
         List<GridCell<ENT>> result = new ArrayList<>();
@@ -213,8 +203,6 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
 
     @Override
     public ArrayGridModel<ENT> copy() {
-        // Entity instances in the copy share the same references as this model (shallow copy).
-        // This is safe because GridEntity implementations are treated as immutable value types.
         ArrayGridModel<ENT> clone = new ArrayGridModel<>(structure, defaultEntity);
         int width = structure.size().width();
         int height = structure.size().height();
@@ -231,17 +219,13 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
 
     @Override
     public void setEntity(GridCoordinate coordinate, ENT entity) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         data[coordinate.y()][coordinate.x()] = entity;
     }
 
     @Override
     public void setEntityToDefault(GridCoordinate coordinate) {
-        if (!structure.isCoordinateValid(coordinate)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
-        }
+        checkCoordinate(coordinate);
         data[coordinate.y()][coordinate.x()] = defaultEntity;
     }
 
@@ -276,22 +260,15 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
 
     @Override
     public void clear() {
-        int height = structure.size().height();
-        for (int y = 0; y < height; y++) {
-            Arrays.fill(data[y], defaultEntity);
-        }
+        fill(defaultEntity);
     }
 
     @Override
     public void setSwappedEntities(GridCell<ENT> cellA, GridCell<ENT> cellB) {
         GridCoordinate coordinateA = cellA.coordinate();
         GridCoordinate coordinateB = cellB.coordinate();
-        if (!structure.isCoordinateValid(coordinateA)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateA + " for structure: " + structure);
-        }
-        if (!structure.isCoordinateValid(coordinateB)) {
-            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinateB + " for structure: " + structure);
-        }
+        checkCoordinate(coordinateA);
+        checkCoordinate(coordinateB);
         data[coordinateA.y()][coordinateA.x()] = cellB.entity();
         data[coordinateB.y()][coordinateB.x()] = cellA.entity();
     }
@@ -303,6 +280,12 @@ public final class ArrayGridModel<ENT extends GridEntity> implements WritableGri
                 ", defaultEntity=" + defaultEntity +
                 ", data.length=" + data.length +
                 '}';
+    }
+
+    private void checkCoordinate(GridCoordinate coordinate) {
+        if (!structure.isCoordinateValid(coordinate)) {
+            throw new IndexOutOfBoundsException("Coordinate out of bounds: " + coordinate + " for structure: " + structure);
+        }
     }
 
 }

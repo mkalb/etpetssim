@@ -10,15 +10,15 @@ import javafx.scene.text.*;
 import org.jspecify.annotations.Nullable;
 
 /**
- * A utility class for drawing grids, cells, polygons and text on a JavaFX Canvas.
+ * Draws grids, cells, shapes, pixels, and text on one JavaFX {@link Canvas}.
+ * <p>
  * The cell edge length given at construction defines the length of each edge of the cell
- * (TRIANGLE, SQUARE, HEXAGON) in pixels.
+ * (TRIANGLE, SQUARE, HEXAGON) in pixels; the cell and grid dimensions are computed once from it.
  *
  * @see CellShape
  * @see GridSize
  * @see GridCoordinate
  */
-@SuppressWarnings("MagicNumber")
 public final class FXGridCanvasPainter {
 
     private final Canvas canvas;
@@ -30,7 +30,7 @@ public final class FXGridCanvasPainter {
     private final Text textHelper;
 
     /**
-     * Creates a new FXGridCanvasPainter instance.
+     * Creates a painter for the given canvas and grid structure.
      *
      * @param canvas         the canvas to draw on
      * @param structure      the structure of the grid, defining its cell shape and size
@@ -44,50 +44,11 @@ public final class FXGridCanvasPainter {
 
         this.canvas = canvas;
         this.structure = structure;
-
-        // Store the graphics context of the canvas.
         graphicsContext2D = canvas.getGraphicsContext2D();
-
-        // Compute cell and grid dimensions based on the cell shape.
         cellDimension = GridGeometry.computeCellDimension(cellEdgeLength, structure.cellShape());
         gridDimension2D = GridGeometry.computeGridDimension(structure.size(), cellDimension, structure.cellShape());
-
         // Reusable Text instance for measuring text.
         textHelper = new Text();
-    }
-
-    /**
-     * Scales the vertices of a polygon outward or inward from a given center point by the specified scale factor.
-     *
-     * @param xPoints the x-coordinates of the polygon's vertices
-     * @param yPoints the y-coordinates of the polygon's vertices
-     * @param centerX the x-coordinate of the center point
-     * @param centerY the y-coordinate of the center point
-     * @param scale   the scale factor (greater than 1 enlarges, less than 1 shrinks)
-     * @return a two-dimensional array containing the scaled x and y coordinates
-     */
-    private static double[][] scalePolygonFromCenter(double[] xPoints, double[] yPoints,
-                                                     double centerX, double centerY,
-                                                     double scale) {
-        double[] newX = new double[xPoints.length];
-        double[] newY = new double[yPoints.length];
-        for (int i = 0; i < xPoints.length; i++) {
-            double dx = xPoints[i] - centerX;
-            double dy = yPoints[i] - centerY;
-            newX[i] = centerX + (dx * scale);
-            newY[i] = centerY + (dy * scale);
-        }
-        return new double[][]{newX, newY};
-    }
-
-    @Override
-    public String toString() {
-        return "FXGridCanvasPainter{" +
-                "structure=" + structure.toDisplayString() +
-                ", gridDimension2D=[" + gridDimension2D.getWidth() + ", " + gridDimension2D.getHeight() + "]" +
-                ", canvas=[" + canvas.getWidth() + ", " + canvas.getHeight() + "]" +
-                ", cellDimension=" + cellDimension.toDisplayString() +
-                '}';
     }
 
     public Canvas canvas() {
@@ -119,7 +80,7 @@ public final class FXGridCanvasPainter {
      * Checks whether the given grid coordinate lies inside the drawable grid area.
      *
      * @param coordinate the grid coordinate to check
-     * @return true if the coordinate is inside the grid area, false otherwise
+     * @return {@code true} if the coordinate is inside the grid area, {@code false} otherwise
      * @see GridStructure#isCoordinateValid(GridCoordinate)
      * @see #isOutsideGrid(GridCoordinate)
      */
@@ -133,7 +94,7 @@ public final class FXGridCanvasPainter {
      * clipped, or cause unexpected rendering behavior depending on the canvas size and context.
      *
      * @param coordinate the grid coordinate to check
-     * @return true if the coordinate is outside the grid area, false otherwise
+     * @return {@code true} if the coordinate is outside the grid area, {@code false} otherwise
      * @see GridStructure#isCoordinateValid(GridCoordinate)
      * @see #isInsideGrid(GridCoordinate)
      */
@@ -365,6 +326,30 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Scales the vertices of a polygon outward or inward from a given center point by the specified scale factor.
+     *
+     * @param xPoints the x-coordinates of the polygon's vertices
+     * @param yPoints the y-coordinates of the polygon's vertices
+     * @param centerX the x-coordinate of the center point
+     * @param centerY the y-coordinate of the center point
+     * @param scale   the scale factor (greater than 1 enlarges, less than 1 shrinks)
+     * @return a two-dimensional array containing the scaled x and y coordinates
+     */
+    private static double[][] scalePolygonFromCenter(double[] xPoints, double[] yPoints,
+                                                     double centerX, double centerY,
+                                                     double scale) {
+        double[] newX = new double[xPoints.length];
+        double[] newY = new double[yPoints.length];
+        for (int i = 0; i < xPoints.length; i++) {
+            double dx = xPoints[i] - centerX;
+            double dy = yPoints[i] - centerY;
+            newX[i] = centerX + (dx * scale);
+            newY[i] = centerY + (dy * scale);
+        }
+        return new double[][]{newX, newY};
+    }
+
+    /**
      * Draws a rectangle on the canvas with optional fill and stroke properties.
      * The stroke can be adjusted to be inside, outside, or centered relative to the rectangle's outline.
      *
@@ -374,6 +359,7 @@ public final class FXGridCanvasPainter {
      * @param strokeLineWidth the width of the stroke line in pixels
      * @param strokeType      specifies how the stroke is rendered relative to the rectangle's outline
      */
+    @SuppressWarnings("MagicNumber")
     public void drawRectangle(Rectangle2D rectangle,
                               @Nullable Paint fillColor, @Nullable Paint strokeColor,
                               double strokeLineWidth, StrokeType strokeType) {
@@ -397,66 +383,6 @@ public final class FXGridCanvasPainter {
                         rectangle.getWidth() - (adjustment * 2),
                         rectangle.getHeight() - (adjustment * 2)
                 );
-            }
-        }
-    }
-
-    /**
-     * Draws a circle on the canvas with optional fill and stroke properties.
-     * The stroke can be adjusted to be inside, outside, or centered relative to the circle's outline.
-     *
-     * @param center          the center point of the circle
-     * @param radius          the radius of the circle in pixels
-     * @param fillColor       the color used to fill the circle, or null if no fill is desired
-     * @param strokeColor     the color used to draw the circle's border, or null if no border is desired
-     * @param strokeLineWidth the width of the stroke line in pixels
-     * @param strokeType      specifies how the stroke is rendered relative to the circle's outline
-     */
-    public void drawCircle(Point2D center, double radius,
-                           @Nullable Paint fillColor, @Nullable Paint strokeColor,
-                           double strokeLineWidth, StrokeType strokeType) {
-        if (radius > 0.0d) {
-            boolean hasStroke = (strokeColor != null) && (strokeLineWidth > 0.0d);
-
-            if (fillColor != null) {
-                double diameter = radius * 2;
-                double x = center.getX() - radius;
-                double y = center.getY() - radius;
-                double fillDiameter = diameter;
-                double fillX = x;
-                double fillY = y;
-                if (hasStroke && (strokeLineWidth >= 1.0d) && (strokeType != StrokeType.CENTERED)) {
-                    double epsilon = Math.min(2.0d, strokeLineWidth * 0.4d);
-                    switch (strokeType) {
-                        case INSIDE -> {
-                            fillDiameter -= epsilon;
-                            fillX += epsilon / 2.0d;
-                            fillY += epsilon / 2.0d;
-                        }
-                        case OUTSIDE -> {
-                            fillDiameter += epsilon;
-                            fillX -= epsilon / 2.0d;
-                            fillY -= epsilon / 2.0d;
-                        }
-                    }
-                }
-                graphicsContext2D.setFill(fillColor);
-                graphicsContext2D.fillOval(fillX, fillY, fillDiameter, fillDiameter);
-            }
-
-            if (hasStroke) {
-                double adjustedRadius = switch (strokeType) {
-                    case INSIDE -> radius - (strokeLineWidth / 2.0d);
-                    case OUTSIDE -> radius + (strokeLineWidth / 2.0d);
-                    case CENTERED -> radius;
-                };
-
-                double strokeDiameter = adjustedRadius * 2;
-                double strokeX = center.getX() - adjustedRadius;
-                double strokeY = center.getY() - adjustedRadius;
-                graphicsContext2D.setStroke(strokeColor);
-                graphicsContext2D.setLineWidth(strokeLineWidth);
-                graphicsContext2D.strokeOval(strokeX, strokeY, strokeDiameter, strokeDiameter);
             }
         }
     }
@@ -581,6 +507,83 @@ public final class FXGridCanvasPainter {
     }
 
     /**
+     * Draws a circle on the canvas with optional fill and stroke properties.
+     * The stroke can be adjusted to be inside, outside, or centered relative to the circle's outline.
+     *
+     * @param center          the center point of the circle
+     * @param radius          the radius of the circle in pixels
+     * @param fillColor       the color used to fill the circle, or null if no fill is desired
+     * @param strokeColor     the color used to draw the circle's border, or null if no border is desired
+     * @param strokeLineWidth the width of the stroke line in pixels
+     * @param strokeType      specifies how the stroke is rendered relative to the circle's outline
+     */
+    @SuppressWarnings("MagicNumber")
+    public void drawCircle(Point2D center, double radius,
+                           @Nullable Paint fillColor, @Nullable Paint strokeColor,
+                           double strokeLineWidth, StrokeType strokeType) {
+        if (radius > 0.0d) {
+            boolean hasStroke = (strokeColor != null) && (strokeLineWidth > 0.0d);
+
+            if (fillColor != null) {
+                double diameter = radius * 2;
+                double x = center.getX() - radius;
+                double y = center.getY() - radius;
+                double fillDiameter = diameter;
+                double fillX = x;
+                double fillY = y;
+                if (hasStroke && (strokeLineWidth >= 1.0d) && (strokeType != StrokeType.CENTERED)) {
+                    double epsilon = Math.min(2.0d, strokeLineWidth * 0.4d);
+                    switch (strokeType) {
+                        case INSIDE -> {
+                            fillDiameter -= epsilon;
+                            fillX += epsilon / 2.0d;
+                            fillY += epsilon / 2.0d;
+                        }
+                        case OUTSIDE -> {
+                            fillDiameter += epsilon;
+                            fillX -= epsilon / 2.0d;
+                            fillY -= epsilon / 2.0d;
+                        }
+                    }
+                }
+                graphicsContext2D.setFill(fillColor);
+                graphicsContext2D.fillOval(fillX, fillY, fillDiameter, fillDiameter);
+            }
+
+            if (hasStroke) {
+                double adjustedRadius = switch (strokeType) {
+                    case INSIDE -> radius - (strokeLineWidth / 2.0d);
+                    case OUTSIDE -> radius + (strokeLineWidth / 2.0d);
+                    case CENTERED -> radius;
+                };
+
+                double strokeDiameter = adjustedRadius * 2;
+                double strokeX = center.getX() - adjustedRadius;
+                double strokeY = center.getY() - adjustedRadius;
+                graphicsContext2D.setStroke(strokeColor);
+                graphicsContext2D.setLineWidth(strokeLineWidth);
+                graphicsContext2D.strokeOval(strokeX, strokeY, strokeDiameter, strokeDiameter);
+            }
+        }
+    }
+
+    /**
+     * Computes the width and height of the given text when rendered with the specified font.
+     * It is not thread-safe and should not be called from multiple threads simultaneously.
+     *
+     * @param text the text to measure
+     * @param font the font used for rendering the text
+     * @return the width and height of the text as a Dimension2D object
+     */
+    Dimension2D computeTextDimension(String text, Font font) {
+        textHelper.setText(text);
+        textHelper.setFont(font);
+        double textWidth = textHelper.getLayoutBounds().getWidth();
+        double textHeight = textHelper.getLayoutBounds().getHeight();
+        return new Dimension2D(textWidth, textHeight);
+    }
+
+    /**
      * Draws text centered at the specified canvas position with a background rectangle.
      * The background rectangle is sized to fit the text plus the given padding and is centered at the provided point.
      *
@@ -608,22 +611,6 @@ public final class FXGridCanvasPainter {
     }
 
     /**
-     * Computes the width and height of the given text when rendered with the specified font.
-     * It is not thread-safe and should not be called from multiple threads simultaneously.
-     *
-     * @param text the text to measure
-     * @param font the font used for rendering the text
-     * @return the width and height of the text as a Dimension2D object
-     */
-    Dimension2D computeTextDimension(String text, Font font) {
-        textHelper.setText(text);
-        textHelper.setFont(font);
-        double textWidth = textHelper.getLayoutBounds().getWidth();
-        double textHeight = textHelper.getLayoutBounds().getHeight();
-        return new Dimension2D(textWidth, textHeight);
-    }
-
-    /**
      * Computes the offset needed to center the given text.
      * It is not thread-safe and should not be called from multiple threads simultaneously.
      *
@@ -631,6 +618,7 @@ public final class FXGridCanvasPainter {
      * @param font the font used for rendering the text
      * @return the offset as a Point2D object, where x is the horizontal offset and y is the vertical offset
      */
+    @SuppressWarnings("MagicNumber")
     Point2D computeCenteredTextOffset(String text, Font font) {
         Dimension2D textDimension = computeTextDimension(text, font);
 
@@ -638,6 +626,16 @@ public final class FXGridCanvasPainter {
         double xOffset = -(textDimension.getWidth() / 2.0d);
         double yOffset = -(textDimension.getHeight() / 2.0d) + baselineOffset;
         return new Point2D(xOffset, yOffset);
+    }
+
+    @Override
+    public String toString() {
+        return "FXGridCanvasPainter{" +
+                "structure=" + structure.toDisplayString() +
+                ", gridDimension2D=[" + gridDimension2D.getWidth() + ", " + gridDimension2D.getHeight() + "]" +
+                ", canvas=[" + canvas.getWidth() + ", " + canvas.getHeight() + "]" +
+                ", cellDimension=" + cellDimension.toDisplayString() +
+                '}';
     }
 
 }
