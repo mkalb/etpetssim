@@ -2,7 +2,6 @@ package de.mkalb.etpetssim.engine.neighborhood;
 
 import de.mkalb.etpetssim.core.AppLocalizationKeys;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -12,17 +11,14 @@ import java.util.stream.Stream;
  * <p>This enum is used throughout the grid framework to describe directions between cells,
  * supporting both edge and vertex neighbor relationships (see {@link CellNeighbor} and {@link CellConnectionType}).
  * The values are intentionally ordered clockwise, starting from North (N), to allow for efficient navigation
- * and sorting based on compass direction. This order enables methods like {@link #nextClockwise()} and {@link #listClockwise()}
- * to traverse the compass directions in their natural sequence.
+ * and sorting based on compass direction. This order enables methods like {@link #nextClockwise()} and
+ * {@link #listClockwise()} to traverse the compass directions in their natural sequence.
  *
  * <p>Each direction has an associated abbreviation resource key, name resource key,
  * a "level", and a Unicode arrow symbol. The {@code level} indicates the granularity
  * of the direction: 0 for main directions (N, E, S, W), 1 for intercardinal (NE, SE, SW, NW),
  * and 2 for secondary intercardinal directions (e.g., NNE, ENE). In everyday terms,
  * a lower level means a more general direction, while a higher level is more specific.
- *
- * @see CellNeighbor
- * @see CellConnectionType
  */
 @SuppressWarnings("FieldNamingConvention")
 public enum CompassDirection {
@@ -159,7 +155,7 @@ public enum CompassDirection {
      *
      * @param from the starting direction (must be part of the ring)
      * @param to   the target direction (must be part of the ring)
-     * @param ring the list of directions defining the valid ring (must not be null or empty)
+     * @param ring the list of directions defining the valid ring
      * @return the shortest distance (in steps) between the two directions on the ring
      * @throws IllegalArgumentException if either direction is not part of the ring
      */
@@ -260,32 +256,20 @@ public enum CompassDirection {
      * Returns a list of all compass directions starting from this one,
      * traversing clockwise and wrapping around to the start.
      *
-     * @return list of directions in clockwise order, starting from this
+     * @return an unmodifiable list of directions in clockwise order, starting from this
      */
     public List<CompassDirection> listClockwise() {
-        List<CompassDirection> result = new ArrayList<>();
-        CompassDirection current = this;
-        do {
-            result.add(current);
-            current = current.nextClockwise();
-        } while (current != this);
-        return result;
+        return streamClockwise().toList();
     }
 
     /**
      * Returns a list of all compass directions starting from this one,
      * traversing counterclockwise and wrapping around to the start.
      *
-     * @return list of directions in counterclockwise order, starting from this
+     * @return an unmodifiable list of directions in counterclockwise order, starting from this
      */
     public List<CompassDirection> listCounterClockwise() {
-        List<CompassDirection> result = new ArrayList<>();
-        CompassDirection current = this;
-        do {
-            result.add(current);
-            current = current.nextCounterClockwise();
-        } while (current != this);
-        return result;
+        return streamCounterClockwise().toList();
     }
 
     /**

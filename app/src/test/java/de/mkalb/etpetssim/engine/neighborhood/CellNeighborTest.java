@@ -17,8 +17,10 @@ final class CellNeighborTest {
         CellNeighbor edgeNeighbor = new CellNeighbor(start, CompassDirection.S, CellConnectionType.EDGE, neighbor);
         CellNeighbor vertexNeighbor = new CellNeighbor(start, CompassDirection.SE, CellConnectionType.VERTEX, neighbor);
 
-        assertTrue(edgeNeighbor.isEdgeConnection());
-        assertFalse(vertexNeighbor.isEdgeConnection());
+        assertAll(
+                () -> assertTrue(edgeNeighbor.isEdgeConnection()),
+                () -> assertFalse(vertexNeighbor.isEdgeConnection())
+        );
     }
 
     @Test
@@ -28,8 +30,10 @@ final class CellNeighborTest {
         CellNeighbor edgeNeighbor = new CellNeighbor(start, CompassDirection.S, CellConnectionType.EDGE, neighbor);
         CellNeighbor vertexNeighbor = new CellNeighbor(start, CompassDirection.SE, CellConnectionType.VERTEX, neighbor);
 
-        assertFalse(edgeNeighbor.isVertexConnection());
-        assertTrue(vertexNeighbor.isVertexConnection());
+        assertAll(
+                () -> assertFalse(edgeNeighbor.isVertexConnection()),
+                () -> assertTrue(vertexNeighbor.isVertexConnection())
+        );
     }
 
     @Test

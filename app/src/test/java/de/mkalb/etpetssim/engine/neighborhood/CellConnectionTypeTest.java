@@ -16,7 +16,9 @@ final class CellConnectionTypeTest {
 
     @Test
     void testResourceKey() {
-        assertKeysInAllBundles(Arrays.stream(CellConnectionType.values()).map(CellConnectionType::resourceKey).toList());
+        assertKeysInAllBundles(Arrays.stream(CellConnectionType.values())
+                .map(CellConnectionType::resourceKey)
+                .toList());
     }
 
 }

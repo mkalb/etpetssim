@@ -15,9 +15,6 @@ import java.util.Locale;
  * @param direction          the compass direction from the start cell to the neighbor
  * @param connection         the type of connection (edge or vertex) between the cells
  * @param neighborCoordinate the coordinate of the neighboring cell
- * @see GridCoordinate
- * @see CompassDirection
- * @see CellConnectionType
  */
 public record CellNeighbor(
         GridCoordinate startCoordinate,

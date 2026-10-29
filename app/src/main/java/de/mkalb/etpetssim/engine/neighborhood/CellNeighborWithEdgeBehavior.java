@@ -21,9 +21,6 @@ import java.util.Locale;
  * @param originalNeighborCoordinate the theoretical neighbor coordinate before edge behavior is applied
  * @param mappedNeighborCoordinate   the resulting neighbor coordinate after applying edge behavior
  * @param edgeBehaviorAction         the action taken as a result of the edge behavior
- * @see CellNeighbor
- * @see EdgeBehaviorResult
- * @see EdgeBehaviorAction
  */
 public record CellNeighborWithEdgeBehavior(
         GridCoordinate startCoordinate,
@@ -35,14 +32,17 @@ public record CellNeighborWithEdgeBehavior(
 ) {
 
     /**
-     * Creates a {@link CellNeighborWithEdgeBehavior} from a given {@link CellNeighbor} and the result of applying edge behavior.
+     * Creates a {@link CellNeighborWithEdgeBehavior} from a given {@link CellNeighbor} and the result of applying
+     * edge behavior.
      *
      * <p>Combines the geometric neighbor relationship with the outcome of edge behavior processing,
-     * producing a record that contains both the original and mapped neighbor coordinates, as well as the edge behavior action.
+     * producing a record that contains both the original and mapped neighbor coordinates, as well as the edge
+     * behavior action.
      *
      * @param neighbor           the theoretical neighbor relationship (ignoring edge behavior)
      * @param edgeBehaviorResult the result of applying edge behavior to the neighbor coordinate
-     * @return a new {@link CellNeighborWithEdgeBehavior} representing the neighbor relationship with edge behavior applied
+     * @return a new {@link CellNeighborWithEdgeBehavior} representing the neighbor relationship with edge behavior
+     * applied
      */
     public static CellNeighborWithEdgeBehavior of(CellNeighbor neighbor, EdgeBehaviorResult edgeBehaviorResult) {
         return new CellNeighborWithEdgeBehavior(

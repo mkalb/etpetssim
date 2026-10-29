@@ -635,20 +635,20 @@ of categories 2 and 3.
 | 2     | `engine`                |          8 |          8 | `engine.md`      |
 | 3     | `engine.model`          |          8 |          5 | `engine.md`      |
 | 3     | `engine.model.entity`   |          8 |          5 | `engine.md`      |
-| 4     | `engine.neighborhood`   |          9 |          8 | -                |
+| 4     | `engine.neighborhood`   |          9 |          9 | `engine.md`      |
 | 5     | `engine.support`        |          6 |          6 | -                |
 | 6     | `engine.executor`       |         11 |          8 | -                |
 | 7     | `ui`                    |         14 |         13 | `ui.md`          |
 | 8     | root package            |          2 |          1 | -                |
-|       | **Total**               |     **72** |     **60** |                  |
+|       | **Total**               |     **72** |     **61** |                  |
 
 Notes:
 
 - Test files are the `.java` files in the same test package, including `*TestSupport` classes.
 - The groups follow the package dependencies: `core` first, then `engine` from its base types to the executors, then
   `ui` and the root package (`AppLauncher`, `ExtraterrestrialPetsSimulation`).
-- `engine.md` applies to `engine`, `engine.model`, and `engine.model.entity` (groups 2 and 3); groups 4 to 6 check
-  whether their sub-packages need it too.
+- `engine.md` applies to `engine`, `engine.model`, `engine.model.entity`, and `engine.neighborhood` (groups 2 to 4);
+  groups 5 and 6 check whether their sub-packages need it too.
 
 ### Checks per package
 
@@ -676,6 +676,9 @@ Notes:
 - Proposal: Verify the notes against the current sources in groups 4 and 5 and decide them there; the duplicate in
   `EtpetsSimulationManager` is removed in `code-simulation-classes.md` (category 5) if `GridInitializers` offers a
   shared method.
+- Status: `CellNeighborhoods` done (2026-10-29): `isCellNeighbor(..)` and `isValidWithEdgeBehavior(..)` were kept in
+  `code-private-constructor-classes.md` (2026-10-26) and stay under `engine.md`; all five methods have direct tests
+  in `CellNeighborhoodsTest`. `GridInitializers` is open for group 5.
 
 #### Null checks of `core`
 
@@ -695,7 +698,7 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
-- Status: groups 1 to 3 done (2026-10-29)
+- Status: groups 1 to 4 done (2026-10-29)
 
 #### Lookup name of the log levels
 
@@ -747,6 +750,40 @@ Notes:
   identical in both grid models, which compare with the default entity in two different ways.
 - Proposal: Extend `engine.md` to both packages and allow `Color` for rendering hints; move
   `filteredCellsSortedBy(..)` into `ReadableGridModel`; compare with `equals(..)` in both models.
+- Status: done (2026-10-29)
+
+#### API scope of `engine.neighborhood`
+
+- Origin: analysis of group 4
+- Types: `CompassDirection`, `CellNeighborhoods`, `CellNeighbor`, `CellNeighborWithEdgeBehavior`, `NeighborhoodMode`
+- Problem: Many public members have no caller in main sources (e.g., `CompassDirection.listClockwise()` and
+  `streamCounterClockwise()`, `isEdgeConnection()`, `NeighborhoodMode.includesVertexNeighbors()`); `engine.md` did
+  not cover the package, although it depends only on the JDK, `core`, and `engine`.
+- Proposal: Extend `engine.md` to `engine.neighborhood` and keep the complete API.
+- Status: done (2026-10-29)
+
+#### Duplicated edge behavior and direction ring checks
+
+- Origin: analysis of group 4
+- Types: `EdgeBehaviorAction`, `CellNeighborhoods`, and their callers in the simulations
+- Problem: `action == VALID || action == WRAPPED` is repeated twice in `CellNeighborhoods` and six times in the
+  simulations (Conway, Forest, Snake, Wa-Tor, and twice in Sugar); the selection of a direction ring by cell shape and
+  neighborhood mode is repeated in `ReboundingEditToolBarViewModel`, `ReboundingSimulationManager`, and
+  `SnakeStepLogic`.
+- Proposal: `EdgeBehaviorAction.isWithinGrid()` and `CellNeighborhoods.directionRing(NeighborhoodMode, CellShape)`.
+  An API extension.
+- Status: done (2026-10-29) for `engine.neighborhood`; the simulations follow in `code-simulation-classes.md`.
+
+#### Radius checks and dead branches of `CellNeighborhoods`
+
+- Origin: analysis of group 4
+- Types: `CellNeighborhoods`
+- Problem: `cellsByRadiusRings(..)` rejects a negative radius, while `neighborCoordinatesWithinRadius(..)` returned an
+  empty set for it, although its Javadoc called the radius non-negative; `maxNeighborCount(.., radius)` repeated one
+  formula three times; `edgeBehaviorActionForCoordinate(..)` had an unreachable fallback and an unreachable `throw`;
+  `cellNeighborsWithEdgeBehavior(..)` required a valid start coordinate in its Javadoc but returned an empty map.
+- Proposal: Reject a negative radius in both methods through one private check; one formula; remove the dead
+  branches; correct the Javadoc. A behavior change of `neighborCoordinatesWithinRadius(..)`.
 - Status: done (2026-10-29)
 
 ### Decisions
@@ -822,6 +859,50 @@ Group 3, `engine.model` and `engine.model.entity` (2026-10-29):
   their end.
 - `app:test` and `app:javadoc` pass.
 
+Group 4, `engine.neighborhood` (2026-10-29):
+
+- Rule change: `engine.md` (and its Copilot reference file) also applies to `engine.neighborhood`: its types keep
+  their complete public API (e.g., `CompassDirection.listClockwise()`); the description names compass directions and
+  neighborhoods with edge behavior.
+- API extension: `EdgeBehaviorAction.isWithinGrid()` (`VALID` or `WRAPPED`), used by `isValidWithEdgeBehavior(..)`
+  and `cellsByRadiusRings(..)`; `CellNeighborhoods.directionRing(NeighborhoodMode, CellShape)` returns one of the three
+  ring constants and rejects `TRIANGLE` with an `IllegalArgumentException`. The simulations adopt both in
+  `code-simulation-classes.md`.
+- API change: `neighborCoordinatesWithinRadius(..)` rejects a negative radius like `cellsByRadiusRings(..)`, through
+  the private `checkRadius(..)` with one message; radius `0` returns an empty modifiable set.
+- `CellNeighborhoods`: `maxNeighborCount(.., radius)` computes `1 + ((degree * radius * (radius + 1)) / 2)` with the
+  direct neighbor count as degree for all shapes; `edgeBehaviorActionForCoordinate(..)` returns `WRAPPED` as the last
+  case without the unreachable fallback and `throw` (and without `@throws`); the merge in
+  `neighborEdgeBehaviorResults(..)` prefers a `VALID` candidate in one expression; `cellNeighborsWithEdgeBehavior(..)`
+  returns an unmodifiable map and documents the empty map for an invalid start coordinate.
+- `CellNeighborhoods.CellNeighborConnection` has the package-private factories `ofEdge(..)` and `ofVertex(..)`, used by
+  the neighbor tables and `CellNeighborhoodsTest`; the triangle comments name only the example neighbor, and the
+  `case` labels are unqualified. Restating comments and the Javadoc of `CACHE` are removed; the ring constants
+  describe only their directions, and `directionRing(..)` states that they follow the neighbor order.
+- `CompassDirection.listClockwise()` and `listCounterClockwise()` delegate to the stream methods and return
+  unmodifiable lists.
+- Javadoc: the `@see` tags of `CellNeighborhoods` (five), `CellNeighbor` (three), `CellNeighborWithEdgeBehavior`
+  (three), `CompassDirection` (two), `NeighborhoodMode`, and `@see EdgeBehavior` of `EdgeBehaviorAction` are removed;
+  `EdgeBehaviorAction` describes the outcome for a coordinate instead of an entity movement; `distanceOnRing(..)` no
+  longer mentions `null`.
+- Lines in main and test sources fit 120 characters; `RadiusRingCell` and `RadiusRingCellTest` lose a blank line at
+  their end.
+- Tests: new `EdgeBehaviorActionTest` (`testIsWithinGrid`); `CellNeighborhoodsTest` adds `testDirectionRing`,
+  `testDirectionRingRejectsTriangle`, the unmodifiable map of `cellNeighborsWithEdgeBehavior(..)`, and
+  `testNeighborCoordinatesWithinRadiusRejectsInvalidRadius` (instead of `...RejectsTooLargeRadius`), uses the helpers
+  `coordinate(..)`, `createStructure(..)`, `assertValidWithEdgeBehavior(..)`, `assertEdgeBehaviorResult(..)`, and
+  `assertEdgeBehaviorAction(..)`, groups its checks with `assertAll(..)`, and compares the square and hexagon tables
+  as ordered lists; `CompassDirectionTest` shares the expected orders as constants and checks the unmodifiable lists;
+  `CellNeighborTest` and `CellNeighborWithEdgeBehaviorTest` use `assertAll(..)`.
+- Suppressions after the IntelliJ inspection (maintainer): `CellNeighborhoodsTest` drops `DuplicateExpressions`;
+  `CompassDirectionTest` gets the class-level `MagicNumber`. Instead of `DataFlowIssue` on the `add(..)` to the
+  unmodifiable lists, `CompassDirectionTest` uses the helper `tryAddDirection(..)`, like the `tryPut*` helpers of
+  `CellNeighborhoodsTest`; it checks `distance(..)` and `distanceOnRing(..)` in both directions through
+  `assertDistance(..)` and `assertDistanceOnRing(..)` and keeps the rings as constants.
+- The simulations adopt `isWithinGrid()` and `directionRing(..)` in `code-simulation-classes.md` (category 5, finding
+  "Edge behavior checks and direction rings").
+- `app:test` and `app:javadoc` pass; the maintainer formatted and inspected the changes in IntelliJ.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -839,9 +920,9 @@ Group 3, `engine.model` and `engine.model.entity` (2026-10-29):
 - (1, all) Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (rule change: `java.md`,
   "Javadoc").
 - (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
-  unless the maintainer keeps them for a planned use; core classes, the base types of `engine`, `engine.model`, and
-  `engine.model.entity`, and `FXGridCanvasPainter` keep their complete API (rule change: `core.md`, `engine.md`, and
-  `ui.md`).
+  unless the maintainer keeps them for a planned use; core classes, the base types of `engine`, `engine.model`,
+  `engine.model.entity`, and `engine.neighborhood`, and `FXGridCanvasPainter` keep their complete API (rule change:
+  `core.md`, `engine.md`, and `ui.md`).
 - (1, 2, all) Member order (rule change: `java.md`, "Code Style"): static fields, instance fields, constructors,
   static methods, instance methods, then nested types; within the static and within the instance methods public,
   protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public
@@ -854,6 +935,9 @@ Group 3, `engine.model` and `engine.model.entity` (2026-10-29):
   allowed for types, fields, and constants, and no Javadoc that only restates the name and signature.
 - (4, all) `toDisplayString()` shows enum values with `name()` unless the enum provides its own display text (e.g.,
   `arrow()`); no `toLowerCase(..)` and no helper methods for it (rule change: `java.md`, "Naming Conventions").
+- (4, all) Code outside `engine.neighborhood` checks edge behavior actions with `EdgeBehaviorAction.isWithinGrid()`
+  instead of comparing with `VALID` and `WRAPPED`, and selects a direction ring with
+  `CellNeighborhoods.directionRing(..)`.
 - (1, all) Class-level `@SuppressWarnings` are narrowed to the members that need them, with the maintainer's
   approval per case (`java.md`, "Suppressions Policy").
 

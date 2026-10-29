@@ -1,35 +1,44 @@
 package de.mkalb.etpetssim.engine.neighborhood;
 
 /**
- * Outcome of an entity's interaction with a grid boundary.
+ * Outcome of applying the edge behavior of a grid structure to a coordinate, for example a neighbor coordinate.
  *
- * <p>Each constant represents a deterministic action taken when an entity
- * reaches the grid edge according to the configured {@link de.mkalb.etpetssim.engine.EdgeBehavior}.
- * Use these values to drive movement resolution logic in the grid engine.
+ * <p>A coordinate within the grid is {@link #VALID}; for a coordinate outside the grid, the
+ * {@link de.mkalb.etpetssim.engine.EdgeBehavior} of each axis that the coordinate exceeds decides the outcome.
  *
- * @see de.mkalb.etpetssim.engine.EdgeBehavior
  * @see de.mkalb.etpetssim.engine.GridEdgeBehavior
  */
 public enum EdgeBehaviorAction {
 
     /**
-     * Movement is valid and allowed; no special edge handling applies.
+     * The coordinate lies within the grid; no edge handling applies.
      */
     VALID,
 
     /**
-     * Movement is blocked by the grid boundary; the entity cannot cross.
+     * The coordinate lies outside the grid, and the boundary blocks it.
      */
     BLOCKED,
 
     /**
-     * The entity is wrapped to the opposite side of the grid.
+     * The coordinate lies outside the grid and is wrapped to the opposite side of the grid.
      */
     WRAPPED,
 
     /**
-     * The entity is absorbed by the boundary and removed from the simulation.
+     * The coordinate lies outside the grid and is absorbed by the boundary; an entity moving there leaves the
+     * simulation.
      */
-    ABSORBED
+    ABSORBED;
+
+    /**
+     * Returns whether the mapped coordinate of this outcome lies within the grid, so that its cell can be accessed.
+     *
+     * @return {@code true} for {@link #VALID} and {@link #WRAPPED}, {@code false} for {@link #BLOCKED} and
+     * {@link #ABSORBED}
+     */
+    public boolean isWithinGrid() {
+        return (this == VALID) || (this == WRAPPED);
+    }
 
 }

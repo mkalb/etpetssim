@@ -48,7 +48,8 @@ final class RadiusRingCellTest {
         GridCoordinate sharedCoordinate = new GridCoordinate(3, 3);
 
         RadiusRingCell<String> left = new RadiusRingCell<>(0, sharedCoordinate, "A", new TreeSet<>());
-        RadiusRingCell<String> right = new RadiusRingCell<>(9, sharedCoordinate, "B", new TreeSet<>(Set.of(new GridCoordinate(3, 2))));
+        RadiusRingCell<String> right =
+                new RadiusRingCell<>(9, sharedCoordinate, "B", new TreeSet<>(Set.of(new GridCoordinate(3, 2))));
         RadiusRingCell<String> other = new RadiusRingCell<>(9, new GridCoordinate(4, 3), "B", new TreeSet<>());
 
         assertAll(
@@ -62,7 +63,8 @@ final class RadiusRingCellTest {
         GridCoordinate sharedCoordinate = new GridCoordinate(3, 3);
 
         RadiusRingCell<String> left = new RadiusRingCell<>(0, sharedCoordinate, "A", new TreeSet<>());
-        RadiusRingCell<String> right = new RadiusRingCell<>(9, sharedCoordinate, "B", new TreeSet<>(Set.of(new GridCoordinate(3, 2))));
+        RadiusRingCell<String> right =
+                new RadiusRingCell<>(9, sharedCoordinate, "B", new TreeSet<>(Set.of(new GridCoordinate(3, 2))));
 
         assertAll(
                 () -> assertEquals(left.hashCode(), right.hashCode()),
@@ -71,4 +73,3 @@ final class RadiusRingCellTest {
     }
 
 }
-

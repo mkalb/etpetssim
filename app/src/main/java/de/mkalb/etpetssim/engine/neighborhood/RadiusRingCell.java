@@ -69,4 +69,3 @@ public record RadiusRingCell<C>(int ring,
     }
 
 }
-

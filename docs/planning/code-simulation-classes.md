@@ -334,6 +334,26 @@ Notes:
   whether `simulations.md` states this order for step runners and for the step logic constructors (structure,
   config, further inputs) too. An API change with one caller each.
 
+#### Edge behavior checks and direction rings
+
+- Origin: `code-other-classes.md`, category 4, group 4 (`engine.neighborhood`)
+- Types: `ConwayStepLogic`, `ForestStepLogic`, `SnakeStepLogic`, `WatorStepLogic`, `SugarSimulationManager`,
+  `ReboundingSimulationManager`; also `ReboundingEditToolBarViewModel` (category 8) and `SugarAgentLogic` (a class
+  with a private constructor, not in this plan), which are changed together with this finding
+- Problem: Six checks compare an edge behavior action with `EdgeBehaviorAction.VALID` and `WRAPPED`
+  (`ConwayStepLogic`, `ForestStepLogic`, `SnakeStepLogic`, `WatorStepLogic`, `SugarSimulationManager`, and
+  `SugarAgentLogic`), although `EdgeBehaviorAction.isWithinGrid()` exists. `ReboundingEditToolBarViewModel.updateAvailableDirections(..)`,
+  `ReboundingSimulationManager.resolveDirectionRing(..)`, and the constructor of `SnakeStepLogic` select the direction
+  ring by cell shape and neighborhood mode themselves instead of calling
+  `CellNeighborhoods.directionRing(neighborhoodMode, cellShape)`.
+- Proposal: Use `action.isWithinGrid()` and `directionRing(..)`; `ReboundingSimulationManager` drops
+  `resolveDirectionRing(..)`. `directionRing(..)` rejects `TRIANGLE` with an `IllegalArgumentException`, which
+  replaces the `IllegalStateException` of the Rebounding classes. `directionRing(..)` returns a ring for square cells
+  with `EDGES_AND_VERTICES`, which `SnakeStepLogic` rejects today; decide whether it keeps this check or relies on
+  `SnakeConfig.isValid()`, which allows only `NEIGHBORHOOD_MODE_DEFAULT`. `EtpetsAgentLogic` checks only `VALID`
+  and stays unchanged. No API change in `simulations`; existing tests (e.g., `SnakeMoveStrategiesTest`,
+  `LabNeighborhoodHighlightsTest`) keep the ring constants and actions as test data.
+
 ## 6. Termination conditions, user actions, and ID sequence
 
 Small per-simulation model classes.
@@ -425,6 +445,8 @@ Notes:
   Langton, and Rebounding have an implicit constructor, those of Etpets, Snake, and Sugar an explicit one that
   selects the first choice.
 - Only `LangtonEditToolBarViewModel` has a test; JavaFX classes get no new tests in this plan.
+- `ReboundingEditToolBarViewModel.updateAvailableDirections(..)` calls `CellNeighborhoods.directionRing(..)` since
+  category 5 (finding "Edge behavior checks and direction rings").
 
 ## 9. Simulation views
 
@@ -483,8 +505,12 @@ the details and the rule changes, and update this copy in the refinement after `
   and parameters is removed.
 - Javadoc writes the literals `true`, `false`, and `null` as `{@code ...}` (`java.md`, "Javadoc").
 - Public methods and constructors without a caller in main sources are removed (API change with approval) unless the
-  maintainer keeps them for a planned use; core classes and `FXGridCanvasPainter` keep their complete API (`core.md`
-  and `ui.md`).
+  maintainer keeps them for a planned use; core classes, the base types of `engine`, `engine.model`,
+  `engine.model.entity`, and `engine.neighborhood`, and `FXGridCanvasPainter` keep their complete API (`core.md`,
+  `engine.md`, and `ui.md`).
+- Code in `simulations` checks edge behavior actions with `EdgeBehaviorAction.isWithinGrid()` instead of comparing
+  with `VALID` and `WRAPPED`, and selects a direction ring with `CellNeighborhoods.directionRing(..)` (category 5,
+  finding "Edge behavior checks and direction rings").
 - Open (decided in category 2 of `code-other-classes.md`): members are ordered as constants, fields,
   constructors, public methods (including overridden lifecycle methods such as `start(..)`), package-private methods,
   `toString()`, then private helpers, followed by nested types.
