@@ -647,8 +647,8 @@ Notes:
 - Test files are the `.java` files in the same test package, including `*TestSupport` classes.
 - The groups follow the package dependencies: `core` first, then `engine` from its base types to the executors, then
   `ui` and the root package (`AppLauncher`, `ExtraterrestrialPetsSimulation`).
-- `engine.md` applies to `engine`, `engine.model`, `engine.model.entity`, and `engine.neighborhood` (groups 2 to 4);
-  groups 5 and 6 check whether their sub-packages need it too.
+- `engine.md` applies to `engine`, `engine.model`, `engine.model.entity`, and `engine.neighborhood` (groups 2 to 4)
+  and, since group 5, to `engine.support`; group 6 checks whether `engine.executor` needs it too.
 
 ### Checks per package
 
@@ -678,7 +678,8 @@ Notes:
   shared method.
 - Status: `CellNeighborhoods` done (2026-10-29): `isCellNeighbor(..)` and `isValidWithEdgeBehavior(..)` were kept in
   `code-private-constructor-classes.md` (2026-10-26) and stay under `engine.md`; all five methods have direct tests
-  in `CellNeighborhoodsTest`. `GridInitializers` is open for group 5.
+  in `CellNeighborhoodsTest`. `GridInitializers` deferred (2026-10-29): see the deferred finding "Shuffle with
+  cancellation checks".
 
 #### Null checks of `core`
 
@@ -698,7 +699,7 @@ Notes:
   (`GridStructure`, `GridCoordinate`), the link from `SimulationUserActionContext` to `simulations.core.model`, the
   Javadoc of `AppArgs.toString()`, and Javadoc that only restates accessors.
 - Proposal: Check and adapt the Javadoc of each package in its group.
-- Status: groups 1 to 4 done (2026-10-29)
+- Status: groups 1 to 5 done (2026-10-29)
 
 #### Lookup name of the log levels
 
@@ -784,6 +785,36 @@ Notes:
   `cellNeighborsWithEdgeBehavior(..)` required a valid start coordinate in its Javadoc but returned an empty map.
 - Proposal: Reject a negative radius in both methods through one private check; one formula; remove the dead
   branches; correct the Javadoc. A behavior change of `neighborCoordinatesWithinRadius(..)`.
+- Status: done (2026-10-29)
+
+#### API scope and dependencies of `engine.support`
+
+- Origin: analysis of group 5
+- Types: all types of `engine.support`
+- Problem: The maintainer kept the unused methods of `GridInitializers`, `GridPatterns`, `GridPattern`, and
+  `AgentOrderingStrategies` as a toolkit (2026-10-26), but no rule covered the package; `AgentOrderingStrategies`
+  linked to `engine.executor.AsynchronousStepRunner` by its fully qualified name and had three `@see` tags.
+- Proposal: Extend `engine.md` to `engine.support`; write `{@code AsynchronousStepRunner}` and remove the `@see` tags.
+- Status: done (2026-10-29)
+
+#### Transformations of `GridPattern`
+
+- Origin: analysis of group 5
+- Types: `GridPattern`, `GridPatterns`
+- Problem: `shifted(..)`, `flipX()`, `flipY()`, and `mapValues(..)` returned lazy patterns that built a new modifiable
+  map on every `offsetMap()` call; the rotations returned their modifiable map; `GridPatterns` promises unmodifiable
+  patterns that are independent of the arguments.
+- Proposal: Compute all transformations immediately and return `GridPatterns.of(map)`. A behavior change.
+- Status: done (2026-10-29)
+
+#### Range checks and row-major loops of `GridInitializers`
+
+- Origin: analysis of group 5
+- Types: `GridInitializers`
+- Problem: Only `placeRandomPercent(..)` rejected a fraction outside [0.0, 1.0]; `fillRandomPercent(..)`,
+  `fillWithProbability(..)`, and `placeWithProbability(..)` treated such values as 0.0 or 1.0. The row-major loop with
+  cancellation checkpoints was repeated three times, and `fillRandomPercent(..)` ran the first check in three lambdas.
+- Proposal: All four factories reject a value outside [0.0, 1.0] (an API change); one private loop helper; one lambda.
 - Status: done (2026-10-29)
 
 ### Decisions
@@ -903,6 +934,32 @@ Group 4, `engine.neighborhood` (2026-10-29):
   "Edge behavior checks and direction rings").
 - `app:test` and `app:javadoc` pass; the maintainer formatted and inspected the changes in IntelliJ.
 
+Group 5, `engine.support` (2026-10-29):
+
+- Rule change: `engine.md` (and its Copilot reference file) also applies to `engine.support`, the toolkit on top of
+  the base types: its types keep their complete public API (e.g., `GridPatterns.circleOutline(..)`), as decided in
+  `code-private-constructor-classes.md` and `code-interface-types.md`, and depend only on the base types of `engine`.
+- `AgentOrderingStrategies`: the type Javadoc names `{@code AsynchronousStepRunner}` and `filteredCellsSortedBy(..)`
+  instead of linking to `engine.executor`; its three `@see` tags are removed.
+- Behavior change: `GridPattern.shifted(..)` (now through `GridOffset.add(..)`), `flipX()`, `flipY()`,
+  `rotate90()`, `rotate180()`, `rotate270()`, and `mapValues(..)` compute their result immediately and return
+  `GridPatterns.of(map)`, an unmodifiable pattern independent of the source; the type Javadoc says so, and
+  `offsetMap()` no longer repeats the normalization recommendation. `°` stays in the Javadoc of the rotations.
+- API change: `GridInitializers.fillRandomPercent(..)`, `fillWithProbability(..)`, and `placeWithProbability(..)`
+  reject a value outside [0.0, 1.0] with an `IllegalArgumentException` like `placeRandomPercent(..)`, through the
+  private `checkFraction(value, name)`; the callers in Conway, Forest, and Sugar pass only values in this range.
+  `fillRandomPercent(..)` has one lambda without the special cases for 0.0 and 1.0, which the general path covers
+  with the same result and random sequence.
+- `GridInitializers`: `fillCells(..)`, `createCoordinates(..)`, and `placeAllAtRandomPositions(..)` use the private
+  `forEachCoordinate(size, cancellationCheck, action)`; lines fit 120 characters.
+- Deferred: the duplicate `shuffleCoordinates(..)` in `EtpetsSimulationManager` (see "Deferred findings").
+- Tests: `GridInitializerTest.testAndThen` (renamed); `GridInitializersTest` renames `testPlacePattern`, uses
+  `count(..)` instead of stream filters, drops `assertDoesNotThrow(..)`, and adds
+  `testFromListRejectsCoordinateOutsideGrid` and the `Rejects...OutOfRange` tests of the three factories;
+  `GridPatternTest` checks the transformations through `assertUnmodifiableOffsetMap(..)`; `GridPatternsTest` checks
+  that both `of(..)` results are unmodifiable.
+- `app:test` and `app:javadoc` pass.
+
 ### Procedure
 
 - One group at a time, in the order of the inventory; each group is presented and decided on its own in the chat
@@ -921,8 +978,8 @@ Group 4, `engine.neighborhood` (2026-10-29):
   "Javadoc").
 - (1, all) Public methods and constructors without a caller in main sources are removed (API change with approval)
   unless the maintainer keeps them for a planned use; core classes, the base types of `engine`, `engine.model`,
-  `engine.model.entity`, and `engine.neighborhood`, and `FXGridCanvasPainter` keep their complete API (rule change:
-  `core.md`, `engine.md`, and `ui.md`).
+  `engine.model.entity`, and `engine.neighborhood`, the toolkit in `engine.support`, and `FXGridCanvasPainter` keep
+  their complete API (rule change: `core.md`, `engine.md`, and `ui.md`).
 - (1, 2, all) Member order (rule change: `java.md`, "Code Style"): static fields, instance fields, constructors,
   static methods, instance methods, then nested types; within the static and within the instance methods public,
   protected, package-private, then private, with overrides (e.g., lifecycle methods such as `start(..)`) as public
@@ -943,4 +1000,12 @@ Group 4, `engine.neighborhood` (2026-10-29):
 
 ## Deferred findings
 
-None yet.
+### Shuffle with cancellation checks
+
+- Origin: #23 (notes for the area follow-ups), group 5 of category 4
+- Types: `GridInitializers`, `simulations.etpets.model.EtpetsSimulationManager`
+- Problem: The Fisher-Yates shuffle with cancellation checkpoints `shuffleCoordinates(..)` is duplicated in
+  `GridInitializers` (private, with a `Runnable`) and `EtpetsSimulationManager` (with a
+  `SimulationInitializationCancellation`); `EtpetsSimulationManager` also duplicates `createCoordinates(..)`.
+- Proposal: Open; options are a generic `shuffle(List, Random, Runnable)` in `WorkCheckpoints`, a public method in
+  `GridInitializers`, or keeping the duplicate. Decide later; `code-simulation-classes.md` adopts the result.

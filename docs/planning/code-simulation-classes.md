@@ -317,8 +317,8 @@ Notes:
   samples, extrema, and golden values for Conway, Forest, and Wa-Tor) and through the user action tests. Test gaps
   for the later separate optimization: the five `*StepLogic` classes and `LangtonStepRunner`, which contains the
   Langton rules itself (six package-private methods).
-- `EtpetsSimulationManager` duplicates `shuffleCoordinates(..)` of `GridInitializers`; see the finding "Notes on
-  `engine` from #23" in `code-other-classes.md`, category 4.
+- `EtpetsSimulationManager` duplicates `shuffleCoordinates(..)` of `GridInitializers`; see the deferred finding
+  "Shuffle with cancellation checks" in `code-other-classes.md`.
 
 ### Findings
 

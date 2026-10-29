@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -101,8 +102,7 @@ public final class GridInitializers {
      * probability, otherwise with the fallback.
      *
      * <p>The number of entities is random with the expected value {@code probability} times the grid area; use
-     * {@link #fillRandomPercent(double, Supplier, GridEntity, Random, Runnable)} for an exact number. A probability
-     * of {@code 0.0} or less sets only the fallback, {@code 1.0} or more only the entity.
+     * {@link #fillRandomPercent(double, Supplier, GridEntity, Random, Runnable)} for an exact number.
      *
      * @param probability the probability of the entity per cell (0.0 to 1.0)
      * @param entity      the entity to set at the given probability
@@ -110,9 +110,11 @@ public final class GridInitializers {
      * @param random      the random number generator, called once per cell in row-major order
      * @param <ENT>       the type of grid entity
      * @return a grid initializer that fills the grid at the given probability
+     * @throws IllegalArgumentException if {@code probability} is outside the range [0.0, 1.0]
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> fillWithProbability(double probability, ENT entity,
                                                                                     ENT fallback, Random random) {
+        checkFraction(probability, "probability");
         return model -> model.fill(() -> (random.nextDouble() < probability) ? entity : fallback);
     }
 
@@ -124,7 +126,6 @@ public final class GridInitializers {
      * {@code 0.8}, the initializer fills the grid with the fallback and then places the supplied entities at random
      * cells; for a larger fraction, it fills the grid from the supplier and then places the fallback at random cells.
      * In the second case, the supplier is called once per cell, so its side effects occur up to the grid area times.
-     * A fraction of {@code 0.0} or less sets only the fallback, {@code 1.0} or more only supplied entities.
      *
      * @param percent           the fraction of cells with supplied entities (0.0 to 1.0)
      * @param entitySupplier    the supplier of the entities to place
@@ -133,6 +134,7 @@ public final class GridInitializers {
      * @param cancellationCheck the check that may stop the initialization; it also runs before any cell is set
      * @param <ENT>             the type of grid entity
      * @return a grid initializer that fills the grid with the given fraction of supplied entities
+     * @throws IllegalArgumentException if {@code percent} is outside the range [0.0, 1.0]
      */
     @SuppressWarnings({"NumericCastThatLosesPrecision", "MagicNumber"})
     public static <ENT extends GridEntity> GridInitializer<ENT> fillRandomPercent(double percent,
@@ -140,18 +142,7 @@ public final class GridInitializers {
                                                                                   ENT fallback,
                                                                                   Random random,
                                                                                   Runnable cancellationCheck) {
-        if (percent <= 0.0d) {
-            return model -> {
-                cancellationCheck.run();
-                fillCells(model, () -> fallback, cancellationCheck);
-            };
-        }
-        if (percent >= 1.0d) {
-            return model -> {
-                cancellationCheck.run();
-                fillCells(model, entitySupplier, cancellationCheck);
-            };
-        }
+        checkFraction(percent, "percent");
         return model -> {
             cancellationCheck.run();
             int gridArea = model.structure().size().area();
@@ -213,18 +204,19 @@ public final class GridInitializers {
      * Returns an initializer that places a new entity from the supplier at every cell independently at the given
      * probability and keeps the other cells.
      *
-     * <p>Existing entities are overwritten. A probability of {@code 0.0} or less leaves the grid unchanged,
-     * {@code 1.0} or more sets every cell.
+     * <p>Existing entities are overwritten.
      *
      * @param probability    the probability of an entity per cell (0.0 to 1.0)
      * @param entitySupplier the supplier, called once per placed entity
      * @param random         the random number generator, called once per cell in row-major order
      * @param <ENT>          the type of grid entity
      * @return a grid initializer that places entities at the given probability
+     * @throws IllegalArgumentException if {@code probability} is outside the range [0.0, 1.0]
      */
     public static <ENT extends GridEntity> GridInitializer<ENT> placeWithProbability(double probability,
                                                                                      Supplier<ENT> entitySupplier,
                                                                                      Random random) {
+        checkFraction(probability, "probability");
         return model -> {
             for (GridCoordinate coordinate : model.structure().coordinatesList()) {
                 if (random.nextDouble() < probability) {
@@ -277,7 +269,7 @@ public final class GridInitializers {
                                                                                    Supplier<ENT> entitySupplier,
                                                                                    Predicate<ENT> canReplaceExisting,
                                                                                    Random random) {
-        checkPercent(percent);
+        checkFraction(percent, "percent");
         return model -> placeRandomCount(model, (int) Math.round(percent * model.structure().size().area()),
                 entitySupplier, canReplaceExisting, random, () -> {});
     }
@@ -327,7 +319,8 @@ public final class GridInitializers {
                 }
             }
             if (placed < count) {
-                throw new IllegalStateException("Unable to place all entities. Only " + placed + " entities were placed.");
+                throw new IllegalStateException(
+                        "Unable to place all entities. Only " + placed + " entities were placed.");
             }
         };
     }
@@ -348,26 +341,15 @@ public final class GridInitializers {
      * @throws IllegalStateException if fewer cells than {@code entities.size()} may be replaced; no entity is placed
      *                               then
      */
-    public static <ENT extends GridEntity> GridInitializer<ENT> placeAllAtRandomPositions(List<ENT> entities,
-                                                                                          Predicate<ENT> canReplaceExisting,
-                                                                                          Random random,
-                                                                                          Runnable cancellationCheck) {
+    public static <ENT extends GridEntity> GridInitializer<ENT> placeAllAtRandomPositions(
+            List<ENT> entities, Predicate<ENT> canReplaceExisting, Random random, Runnable cancellationCheck) {
         return model -> {
             var freeCoordinates = new ArrayList<GridCoordinate>();
-            GridSize size = model.structure().size();
-            int index = 0;
-            for (int y = 0; y < size.height(); y++) {
-                for (int x = 0; x < size.width(); x++) {
-                    if (WorkCheckpoints.isCancellationCheckpoint(index)) {
-                        cancellationCheck.run();
-                    }
-                    index++;
-                    GridCoordinate coordinate = new GridCoordinate(x, y);
-                    if (canReplaceExisting.test(model.getEntity(coordinate))) {
-                        freeCoordinates.add(coordinate);
-                    }
+            forEachCoordinate(model.structure().size(), cancellationCheck, coordinate -> {
+                if (canReplaceExisting.test(model.getEntity(coordinate))) {
+                    freeCoordinates.add(coordinate);
                 }
-            }
+            });
             if (freeCoordinates.size() < entities.size()) {
                 throw new IllegalStateException("Unable to place all entities. Needed " + entities.size()
                         + " replaceable cells, but found " + freeCoordinates.size() + ".");
@@ -375,7 +357,7 @@ public final class GridInitializers {
 
             shuffleCoordinates(freeCoordinates, random, cancellationCheck);
 
-            for (index = 0; index < entities.size(); index++) {
+            for (int index = 0; index < entities.size(); index++) {
                 if (WorkCheckpoints.isCancellationCheckpoint(index)) {
                     cancellationCheck.run();
                 }
@@ -384,9 +366,9 @@ public final class GridInitializers {
         };
     }
 
-    private static void checkPercent(double value) {
+    private static void checkFraction(double value, String name) {
         if ((value < 0.0d) || (value > 1.0d)) {
-            throw new IllegalArgumentException("percent must be in range [0.0, 1.0], but was " + value + '.');
+            throw new IllegalArgumentException(name + " must be in range [0.0, 1.0], but was " + value + '.');
         }
     }
 
@@ -430,21 +412,18 @@ public final class GridInitializers {
 
     private static <ENT extends GridEntity> void fillCells(WritableGridModel<ENT> model, Supplier<ENT> entitySupplier,
                                                            Runnable cancellationCheck) {
-        GridSize size = model.structure().size();
-        int index = 0;
-        for (int y = 0; y < size.height(); y++) {
-            for (int x = 0; x < size.width(); x++) {
-                if (WorkCheckpoints.isCancellationCheckpoint(index)) {
-                    cancellationCheck.run();
-                }
-                index++;
-                model.setEntity(new GridCoordinate(x, y), entitySupplier.get());
-            }
-        }
+        forEachCoordinate(model.structure().size(), cancellationCheck,
+                coordinate -> model.setEntity(coordinate, entitySupplier.get()));
     }
 
     private static List<GridCoordinate> createCoordinates(GridSize size, Runnable cancellationCheck) {
         List<GridCoordinate> coordinates = new ArrayList<>(size.area());
+        forEachCoordinate(size, cancellationCheck, coordinates::add);
+        return coordinates;
+    }
+
+    private static void forEachCoordinate(GridSize size, Runnable cancellationCheck,
+                                          Consumer<GridCoordinate> action) {
         int index = 0;
         for (int y = 0; y < size.height(); y++) {
             for (int x = 0; x < size.width(); x++) {
@@ -452,13 +431,13 @@ public final class GridInitializers {
                     cancellationCheck.run();
                 }
                 index++;
-                coordinates.add(new GridCoordinate(x, y));
+                action.accept(new GridCoordinate(x, y));
             }
         }
-        return coordinates;
     }
 
-    private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random, Runnable cancellationCheck) {
+    private static void shuffleCoordinates(List<GridCoordinate> coordinates, Random random,
+                                           Runnable cancellationCheck) {
         for (int index = 0; index < (coordinates.size() - 1); index++) {
             if (WorkCheckpoints.isCancellationCheckpoint(index)) {
                 cancellationCheck.run();

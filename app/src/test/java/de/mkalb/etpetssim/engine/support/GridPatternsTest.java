@@ -41,7 +41,10 @@ final class GridPatternsTest {
         GridPattern<TestEntity> pattern = GridPatterns.of(map);
         map.clear();
 
-        assertEquals(Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.SECOND), pattern.offsetMap());
+        assertAll(
+                () -> assertEquals(Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.SECOND), pattern.offsetMap()),
+                () -> assertThrows(UnsupportedOperationException.class, () -> pattern.offsetMap().clear())
+        );
     }
 
     @Test
@@ -51,7 +54,10 @@ final class GridPatternsTest {
         GridPattern<TestEntity> pattern = GridPatterns.of(TestEntity.FIRST, offsets);
         offsets.clear();
 
-        assertEquals(Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.FIRST), pattern.offsetMap());
+        assertAll(
+                () -> assertEquals(Map.of(ORIGIN, TestEntity.FIRST, OFFSET, TestEntity.FIRST), pattern.offsetMap()),
+                () -> assertThrows(UnsupportedOperationException.class, () -> pattern.offsetMap().clear())
+        );
     }
 
     @Test

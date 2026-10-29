@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class GridPatternTest {
@@ -37,6 +38,14 @@ final class GridPatternTest {
             map.put(new GridOffset(filledXY[i], filledXY[i + 1]), TestEntity.FILLED);
         }
         return map;
+    }
+
+    private static void assertUnmodifiableOffsetMap(Map<GridOffset, TestEntity> expected,
+                                                    GridPattern<TestEntity> pattern) {
+        assertAll(
+                () -> assertEquals(expected, pattern.offsetMap()),
+                () -> assertThrows(UnsupportedOperationException.class, () -> pattern.offsetMap().clear())
+        );
     }
 
     @Test
@@ -75,7 +84,8 @@ final class GridPatternTest {
 
     @Test
     void testShifted() {
-        assertEquals(createOffsetMap(3, -1, 3, 0, 3, 1, 4, 1), createPattern().shifted(new GridOffset(3, -1)).offsetMap());
+        assertUnmodifiableOffsetMap(createOffsetMap(3, -1, 3, 0, 3, 1, 4, 1),
+                createPattern().shifted(new GridOffset(3, -1)));
     }
 
     @Test
@@ -106,17 +116,17 @@ final class GridPatternTest {
 
     @Test
     void testFlipX() {
-        assertEquals(createOffsetMap(1, 0, 1, 1, 1, 2, 0, 2), createPattern().flipX().offsetMap());
+        assertUnmodifiableOffsetMap(createOffsetMap(1, 0, 1, 1, 1, 2, 0, 2), createPattern().flipX());
     }
 
     @Test
     void testFlipY() {
-        assertEquals(createOffsetMap(0, 2, 0, 1, 0, 0, 1, 0), createPattern().flipY().offsetMap());
+        assertUnmodifiableOffsetMap(createOffsetMap(0, 2, 0, 1, 0, 0, 1, 0), createPattern().flipY());
     }
 
     @Test
     void testRotate90() {
-        assertEquals(createOffsetMap(2, 0, 1, 0, 0, 0, 0, 1), createPattern().rotate90().offsetMap());
+        assertUnmodifiableOffsetMap(createOffsetMap(2, 0, 1, 0, 0, 0, 0, 1), createPattern().rotate90());
     }
 
     @Test
@@ -133,7 +143,7 @@ final class GridPatternTest {
 
     @Test
     void testRotate180() {
-        assertEquals(createOffsetMap(1, 2, 1, 1, 1, 0, 0, 0), createPattern().rotate180().offsetMap());
+        assertUnmodifiableOffsetMap(createOffsetMap(1, 2, 1, 1, 1, 0, 0, 0), createPattern().rotate180());
     }
 
     @Test
@@ -144,7 +154,7 @@ final class GridPatternTest {
 
     @Test
     void testRotate270() {
-        assertEquals(createOffsetMap(0, 1, 1, 1, 2, 1, 2, 0), createPattern().rotate270().offsetMap());
+        assertUnmodifiableOffsetMap(createOffsetMap(0, 1, 1, 1, 2, 1, 2, 0), createPattern().rotate270());
     }
 
     @Test
@@ -158,12 +168,11 @@ final class GridPatternTest {
         GridPattern<TestEntity> mapped = createPattern().mapValues(
                 entity -> (entity == TestEntity.FILLED) ? TestEntity.EMPTY : entity);
 
-        assertAll(
-                () -> assertEquals(createPattern().offsetMap().keySet(), mapped.offsetMap().keySet()),
-                () -> assertEquals(TestEntity.OTHER, mapped.offsetMap().get(new GridOffset(0, 0))),
-                () -> assertEquals(TestEntity.EMPTY, mapped.offsetMap().get(new GridOffset(0, 1))),
-                () -> assertEquals(TestEntity.EMPTY, mapped.offsetMap().get(new GridOffset(1, 2)))
-        );
+        assertUnmodifiableOffsetMap(Map.of(
+                new GridOffset(0, 0), TestEntity.OTHER,
+                new GridOffset(0, 1), TestEntity.EMPTY,
+                new GridOffset(0, 2), TestEntity.EMPTY,
+                new GridOffset(1, 2), TestEntity.EMPTY), mapped);
     }
 
     private enum TestEntity implements GridEntity {

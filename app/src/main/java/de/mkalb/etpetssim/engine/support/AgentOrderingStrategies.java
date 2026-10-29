@@ -10,12 +10,8 @@ import java.util.Comparator;
  *
  * <p>The comparators sort {@link GridCell} instances by position or by descriptor ID.
  *
- * <p>The comparators are intended to be passed to {@link de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner}
- * to determine the order in which agents are processed in the grid model.
- *
- * @see GridCell
- * @see GridEntity
- * @see de.mkalb.etpetssim.engine.executor.AsynchronousStepRunner
+ * <p>The comparators are intended to be passed to {@code AsynchronousStepRunner} or to
+ * {@code filteredCellsSortedBy(..)} of a grid model to determine the order in which agents are processed.
  */
 public final class AgentOrderingStrategies {
 

@@ -22,7 +22,7 @@ final class GridInitializerTest {
             new GridTopology(CellShape.SQUARE, GridEdgeBehavior.BLOCK_XY), GridSize.square(GridSize.MIN_SIZE));
 
     @Test
-    void testAndThenAppliesInitializersInOrder() {
+    void testAndThen() {
         SparseGridModel<TestEntity> model = new SparseGridModel<>(STRUCTURE, TestEntity.EMPTY);
         GridCoordinate shared = new GridCoordinate(1, 1);
         GridCoordinate onlyFirst = new GridCoordinate(0, 0);
