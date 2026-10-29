@@ -10,7 +10,6 @@ Rules for all `.java` files; repository-wide instructions still apply.
 ## Code Style
 
 - Do not add comments that only restate obvious code.
-- Avoid formatting-only changes unless required by the task.
 - Format code as `.editorconfig` in the repository root and the IntelliJ defaults specify (e.g., 4 spaces, a
   continuation indent of 8, at most 120 characters per line, and chained method calls without alignment).
 - Use single-type imports, also for static members; do not use on-demand imports (`.*`). Import a nested type with
@@ -28,8 +27,8 @@ Rules for all `.java` files; repository-wide instructions still apply.
   each group from public to private), instance initializers, constructors, static methods, instance methods, then
   nested types. Within the static and within the instance methods, order public, protected, package-private, then
   private methods; overrides (e.g., lifecycle methods) count as public, `toString()` directly precedes the private
-  instance methods, and overloads as well as a getter and its setter stay together. "Rearrange code" keeps this order
-  but does not sort the methods by visibility. Test classes order their methods as `junit.md` describes.
+  instance methods, and overloads as well as a getter and its setter stay together. Test classes order their methods
+  as `junit.md` describes.
 - Order interface members as constants, static methods (including private static helpers), abstract methods, then
   default methods.
 
@@ -158,8 +157,6 @@ Rules for classes with only static members (constants, static methods, or both).
   `GridPattern`, `GridInitializers` for `GridInitializer`), as in `Collections`; name classes that create JavaFX
   objects `FX*Factory` (see `ui.md`); name other utility classes after their role (e.g., `GridGeometry`,
   `CellNeighborhoods`, `<Simulation>Constraints`).
-- Start the type Javadoc with what the class provides (e.g., "Defaults, limits, and allowed values of ..."), not with
-  "Utility class ...".
 - Make helper methods `private`, or package-private when tests call them directly.
 
 ## Nullability (JSpecify)
@@ -172,12 +169,9 @@ non-null reference return type (from main code or the JDK, e.g. `toString()`), a
 `@org.jspecify.annotations.NonNull` on its own line before `@Override`.
 
 - Treat unannotated types as non-null under `@NullMarked`.
-- Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts.
-- Do not add `@Nullable` defensively or "just in case".
-- Do not check non-null-by-default parameters with `Objects.requireNonNull(...)`; this applies to all packages,
-  including `core`.
-- Use `Objects.requireNonNull(...)` only to assert that a `@Nullable` value (e.g., a field or a result) is set at this
-  point.
+- Use `@org.jspecify.annotations.Nullable` only for intentional nullable contracts, not defensively.
+- Do not check non-null-by-default parameters with `Objects.requireNonNull(...)`; use it only to assert that a
+  `@Nullable` value (e.g., a field or a result) is set at this point.
 - Valid `@Nullable` locations include fields, parameters, return types, and type arguments
   (`ObjectProperty<@Nullable GC>`).
 - Place `@Nullable` directly before the annotated type on the same line (`@Nullable String emojiKey()`), because it is
@@ -189,19 +183,17 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
 
 ### Coverage
 
-- Any type may have Javadoc; public and protected types (classes, interfaces, enums, records, and annotations,
-  including nested types) must have it.
+- Any type may have Javadoc; public and protected types, including nested ones, must have it.
 - Constructors, methods, fields, constants, and enum constants of any visibility may have Javadoc only when it
   explains something that the name, signature, and types do not show, such as valid ranges and units, the meaning of
   empty, `Optional`, or `@Nullable` results, contract-relevant exceptions, side effects, threading requirements,
   order or priority, lifecycle, domain rules, or when abstract or protected methods meant for subclasses are called
   and what implementations must do.
-- Do not add Javadoc that only restates the name (e.g., "Private constructor to prevent instantiation." or
-  "Returns the value." on `getValue()`).
+- Do not add Javadoc whose summary and tags only restate the name and signature (e.g., "Private constructor to
+  prevent instantiation." or "Returns the value." on `getValue()`); remove such Javadoc, but keep existing Javadoc
+  when in doubt.
 - Do not add Javadoc to pure `@Override` methods unless the override adds constraints, side effects, or surprising
   semantics.
-- Remove existing Javadoc only when it clearly adds no value; keep it when in doubt. Javadoc whose summary and tags
-  only restate the name and signature clearly adds no value.
 
 ### Tags
 
@@ -220,14 +212,14 @@ Rules for main sources; `core.md` adds stricter rules for `core`, and test sourc
 
 - Start a method summary with a verb in the third person (e.g., "Returns ...", "Creates ..."); a constructor's
   summary starts with "Creates a ..." (e.g., "Creates a runner that ..."). Types, fields, constants, and enum
-  constants may start with a noun phrase (e.g., "Factory for ...", "Maximum number of ..."), but not with
-  "This class ...".
+  constants may start with a noun phrase that says what they are or provide (e.g., "Factory for ...", "Defaults,
+  limits, and allowed values of ..."), but not with "This class ..." or "Utility class ...".
 - Write the literals `true`, `false`, and `null` as `{@code true}`, `{@code false}`, and `{@code null}`.
 - Describe behavior; avoid implementation detail unless it is contract-relevant.
-- Use `{@link}` only when the target helps the reader; otherwise write code elements with `{@code}`. Use the simple
-  name of an imported type and the fully qualified name of a type that the code does not import; do not add imports
-  only for Javadoc. Do not link to a type of a package that the documented package must not depend on (e.g., from
-  `shared` to `model`); write its simple name with `{@code}` instead.
+- Use `{@link}` only when the target helps the reader; otherwise write code elements with `{@code}`. Reference
+  imported types by simple name and other types by fully qualified name; do not add imports only for Javadoc. Do
+  not link to a package that the documented package must not depend on (e.g., from `shared` to `model`); use
+  `{@code SimpleName}` instead.
 - Separate paragraphs with an empty `*` line and start each paragraph after the first with `<p>` directly before its
   first word (`<p>Text`); do not write `</p>`, and do not put `<p>` before block elements such as `<ul>`, `<pre>`, or
   `{@snippet}`.

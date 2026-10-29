@@ -9,7 +9,7 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 
 ## Test Types
 
-- Use JUnit 5 (Jupiter) on the JUnit Platform for automated tests.
+- Use JUnit 6 (Jupiter) on the JUnit Platform for automated tests.
 - Do not add TestNG, Spock, AssertJ, Mockito, or other test frameworks without prior agreement.
 - Name a JUnit test class `<ProductionType>Test`: it tests one top-level production type and lies in the package of
   that type. Do not split a type into several test classes and do not use `@Nested`.
@@ -18,8 +18,7 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   type belong in `<Type>Test`. Skill tests follow "Repository Skill Tests" instead.
 - Keep reusable package-local support classes as `*TestSupport`.
 - Non-JUnit test-source utilities are allowed only for manual analysis/tuning/debugging; use suffix `Analyzer`,
-  `Runner`,
-  `Tuner`, or `Debugger`.
+  `Runner`, `Tuner`, or `Debugger`.
 
 ## JUnit Class Shape
 
@@ -28,9 +27,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 - Use standard lifecycle method names: `setUpBeforeAll()`, `setUpBeforeEach()`, `tearDownAfterEach()`.
 - Initialize `AppLogger` in `@BeforeAll` with `AppLogger.initializeForTesting()` when production code under test logs.
 - Reset `AppLogger` in `@BeforeEach` with `AppLogger.resetForTesting()` only when a test mutates logger state.
-- Add `@Execution(ExecutionMode.SAME_THREAD)` for `AppLogger.initializeForTesting()`, JavaFX state, mutable static
-  state, or
-  other required sequential execution.
+- Add `@Execution(ExecutionMode.SAME_THREAD)` for `AppLogger.initializeForTesting()`, shared JavaFX state or platform
+  ordering, mutable static state, or other required sequential execution.
 
 ## Test Method Style
 
@@ -130,8 +128,7 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   initialized with the defaults, and `toConfig()`) and a helper that takes a `Consumer` of it (e.g.,
   `isValidWith(v -> v.fishPercent = FISH_PERCENT_MAX)`), not through helpers with one parameter per component.
 - Collection/model tests should cover mutation rejection, defensive copies, empty/sparse cases, and representative
-  domain
-  entities via small test fixtures.
+  domain entities via small test fixtures.
 - Test an interface contract shared by several implementations in `<Interface>Test` with `@ParameterizedTest` and
   `@EnumSource` over a package-private fixture enum that creates the implementations; keep implementation-specific
   behavior in `<Implementation>Test`.
@@ -151,7 +148,6 @@ Rules for test sources only; repository-wide and Java instructions still apply.
   calling thread.
 - Throwables (including `AssertionError`) thrown inside `runAndWait`/`supplyAndWait` propagate to the calling thread, so
   assertions may be placed inside the runnable or made on returned values.
-- Use `@Execution(ExecutionMode.SAME_THREAD)` when JavaFX state is shared or platform ordering matters.
 
 ## Repository Skill Tests
 
@@ -170,8 +166,7 @@ Rules for test sources only; repository-wide and Java instructions still apply.
 ## Manual Test Utilities
 
 - Make non-JUnit utility classes `public final` only when they are intended for IDE/manual launch; otherwise
-  package-private
-  is enough.
+  package-private is enough.
 - Use a private constructor and `static void main()` without `String[] args`.
 - Do not add JUnit annotations.
 - Set `Locale.setDefault(Locale.ROOT)` at the start of `main()`.

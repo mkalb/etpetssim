@@ -10,8 +10,7 @@ here, not simulation logic.
 
 ## Scope
 
-- Allowed dependencies: JavaFX, `de.mkalb.etpetssim.core`, and `de.mkalb.etpetssim.engine`.
-- Do not depend on `de.mkalb.etpetssim.simulations`.
+- Depend only on JavaFX, `core`, and `engine`.
 - Add code here only when it is reusable by multiple UI or simulation components.
 
 ## UI Factories and Styles
@@ -45,8 +44,7 @@ here, not simulation logic.
 - `FXGridCanvasPainter` is stateful canvas rendering around one `Canvas`, `GridStructure`, and computed dimensions.
   It is the shared drawing toolkit of all simulations: keep its public accessors and drawing methods, also those
   without a current caller.
-- Drawing methods may accept `@Nullable Paint` or `@Nullable Color` only when null explicitly means "do not draw this
-  layer".
+- Drawing methods may accept a `@Nullable Paint` or `Color` only when `null` means "do not draw this layer".
 - Preserve bounds checks for direct pixel drawing and positive-size checks for shapes.
 - `CellShapeSide` represents UI frame sides only; extend it only when all shape-specific frame methods are updated.
 

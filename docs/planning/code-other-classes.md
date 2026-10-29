@@ -44,7 +44,7 @@ settled before `code-simulation-classes.md` starts, which took over the classes 
 - The sibling plans `code-interface-types.md`, `code-record-types.md`, `code-private-constructor-classes.md`, and
   `code-enum-types.md` are done; their decisions apply here. They stay in `docs/planning` as reference until
   `code-simulation-classes.md` is done.
-- Category 1 is done and committed (`fc3cff53`); category 2 is done and committed; category 3 is done.
+- Category 1 is done and committed (`fc3cff53`); category 2 is done and committed; category 3 is done and committed (`af48c441`).
 - Categories 2 and 3 settle the rules before category 4 applies them; category 2 comes first, because it also
   changes code. Category 4 reviews the packages one group at a time.
 - `code-simulation-classes.md` starts only after all categories of this plan are done.

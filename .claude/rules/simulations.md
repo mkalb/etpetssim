@@ -35,14 +35,12 @@ Special cases:
 
 ## Consistency and Registration
 
-Before creating or changing a simulation, review relevant existing implementations. The following are representative
-examples, not an exhaustive list:
+Before creating or changing a simulation, review relevant existing implementations, for example:
 
 - Agent-based examples: `wator`, `etpets`, `snake`, `rebounding`
 - Cellular automata examples: `conway`, `forest`, `langton`
 
-Reuse `simulations.core` infrastructure and keep relevant cross-cutting files in sync. Common synchronization points
-include:
+Keep the cross-cutting files in sync, for example:
 
 | Change                                | Update                                                                  |
 |---------------------------------------|-------------------------------------------------------------------------|
@@ -80,7 +78,6 @@ Lists of simulations (e.g., the README table and gallery, and the entity catalog
 
 - Contains UI state, formatting, and interaction logic only; delegate domain computation to `model`.
 - Expose state as JavaFX `Property`/`ObservableValue` or repository input wrappers.
-- Marshal model/background updates to the JavaFX Application Thread via `Platform.runLater(...)`.
 - Expose plain values through `getX()` accessors; model and engine types use noun-style accessors.
 - May depend on same-simulation `shared`.
 
@@ -149,13 +146,12 @@ are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 - Prefer JavaFX Property/Binding APIs over manual listeners for derived UI state.
 - Expose ViewModel state with `xProperty()` accessors; also provide `getX()`/`setX(...)` for plain JavaFX properties.
 - Keep property field types compatible with public accessor return types.
-- Unbind explicit bindings and remove explicit listeners in shutdown methods; scene-graph-lifetime listeners are exempt.
 - Do not mutate a bound property directly; update its source.
 
 ### Threading
 
-- Mutate scene graph and `Property` values only on the JavaFX Application Thread.
-- Use `Platform.runLater(...)` for background-to-FX updates and re-check relevant state inside the runnable.
+- Mutate scene graph and `Property` values only on the JavaFX Application Thread; pass model and background updates
+  through `Platform.runLater(...)` and re-check relevant state inside the runnable.
 - Do not block the JavaFX Application Thread with long computation or I/O.
 - Use `Timeline`/`AnimationTimer` for periodic UI ticks and frame rendering.
 - Encapsulate periodic simulation drivers (e.g., `SimulationTimer`) instead of using `Timeline` directly in Views.
@@ -174,7 +170,6 @@ are meant to be extended (e.g., `BaseTimedSimulationStatistics`).
 
 - Load images, CSS, and UI resources through `AppResources`.
 - Access bundles through `AppLocalization`.
-- Put cross-cutting keys in `AppLocalizationKeys`; simulation-local keys may be private constants in the consuming View.
 
 ## Factory Pattern
 
@@ -194,8 +189,7 @@ Use `CellDrawer` from `simulations.core.view`:
   `painter.drawCenteredTextInCell(...)` for text or emoji overlays.
 - Keep custom rendering in simulation-specific View classes.
 - Cache drawing parameters when possible.
-- Use `DrawCallThrottler` to avoid excessive redraws.
-- Avoid `info` or higher logging in tight rendering loops; prefer batch updates for many cell changes.
+- Use `DrawCallThrottler` to avoid excessive redraws; prefer batch updates for many cell changes.
 - Use `Canvas.setCache(true)` for static overlays when appropriate.
 
 ## Configuration and Input
@@ -226,15 +220,10 @@ Use `CellDrawer` from `simulations.core.view`:
 ## Lifecycle
 
 - Implement `initializeSimulation(...)` for view-specific setup in `AbstractDefaultMainView` subclasses.
-- Use `shutdownSimulation()` to clean up, unbind listeners, and release view or ViewModel resources.
+- In `shutdownSimulation()`, unbind explicit bindings, remove explicit listeners (scene-graph-lifetime listeners are
+  exempt), stop timers and animations, and clear references to large data structures; do not shut down global
+  resources such as `AppLogger`.
 - Keep reset behavior in the existing main ViewModel and control workflow; there is no shared `reset()` contract.
-
-Shutdown checklist:
-
-- Unbind explicit bindings and remove explicit listeners.
-- Stop timers and animations.
-- Clear references to large data structures.
-- Do not shut down global/singleton resources such as `AppLogger`.
 
 ## Common Patterns
 
@@ -283,17 +272,3 @@ Shutdown checklist:
   `perform...` is reserved for implementations of the step contracts.
 - Model, entity, and strategy types may use domain verbs of their simulation (e.g., `move`, `die`, `reproduce`,
   `consume`, `decideMove`) for state changes and decisions.
-
-## Anti-Patterns
-
-Do not:
-
-- Mix domain logic into Views or UI state into Models.
-- Import JavaFX UI types from Model packages.
-- Mutate JavaFX properties from background threads.
-- Block the JavaFX Application Thread.
-- Use FXML or `FXMLLoader`.
-- Hardcode style values that belong in CSS.
-- Create simulations without a factory.
-- Duplicate infrastructure already in `simulations.core`.
-- Log at `info` or higher in tight rendering loops.
