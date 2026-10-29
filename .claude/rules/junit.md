@@ -48,8 +48,8 @@ Rules for test sources only; repository-wide and Java instructions still apply.
       `<Interface>Test` names order checks across the constants of its implementing enums freely (e.g.,
       `testConstantsAreSortedByDisplayName`).
     - Tests of a nested type put its simple name before a fixed name (e.g., `testFixedActionDeclarationOrder`).
-    - A test of a single constant is named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a check
-      across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
+    - A test of a single constant is named `test<ConstantName>` in UpperCamelCase (e.g., `ORIGIN` -> `testOrigin`); a
+      check across all constants of a type describes the contract freely (e.g., `testConstantsUseCssTokenFormat`).
     - When the tested behavior is triggered indirectly (e.g., through a listener), `<Subject>` is the private or
       package-private method that implements the reaction (e.g., `testHandleStartActionRetainsCapturedTimedSettings`).
 - Name overload tests `test<Subject>[With<Parameter>][<Behavior>[<Condition>]]`. `With<Parameter>` follows `<Subject>`

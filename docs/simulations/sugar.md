@@ -43,9 +43,9 @@ the grid, harvest resources, spend energy, and eventually die and are replaced.
 ## Interactive editing
 
 - **Remove Sugar:** Removes the sugar resource from the selected cell.
-- **Add Sugar:** Adds or replaces sugar on the selected cell. The **Sugar
-  Level** option offers Low (default, 25% of the configured maximum), Medium
-  (50%), and High (100%).
+- **Add Sugar:** Adds or replaces sugar on the selected cell. The
+  **Sugar Level** option offers Low (default, 25% of the configured maximum),
+  Medium (50%), and High (100%).
 
 ## Configuration
 

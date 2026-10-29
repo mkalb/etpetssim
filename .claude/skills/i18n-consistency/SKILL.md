@@ -39,8 +39,9 @@ errors, and `4` for I/O or unexpected execution errors. These codes describe
 the helper contract, but the printed `Overall:` line remains authoritative for
 the agent workflow because terminal wrappers can surface a different code.
 
-A `WARN` or `FAIL` verdict is an **expected finding, not a skill execution
-error**. Read it off the printed output and report it.
+A `WARN` or `FAIL` verdict is an
+**expected finding, not a skill execution error**. Read it off the printed
+output and report it.
 
 The helper checks encoding first: each bundle must be valid UTF-8 without a
 byte order mark (BOM), and it scans every character in the file for invisible
@@ -78,18 +79,17 @@ URL-encoding and may exist in only one bundle.
 - If the verdict is `PASS`, stop here. Do not ask about or run `fix`.
 - If the output contains only non-fixable findings — `FAIL` findings for
   `UTF-8 encoding`, `properties syntax`, `duplicate keys`, `empty bundle`,
-  `key parity`, or `placeholder count`, and/or `WARN` findings for `trailing
-  whitespace` — stop here. Do **not** ask about or run `fix`; explain that these
-  findings must be resolved manually.
+  `key parity`, or `placeholder count`, and/or `WARN` findings for
+  `trailing whitespace` — stop here. Do **not** ask about or run `fix`; explain
+  that these findings must be resolved manually.
 - If the output contains fixable `WARN` findings (`alphabetical ordering`,
-  `= alignment`, or safe `Unicode escapes` in values or keys) or fixable
-  `FAIL` findings (`UTF-8 BOM`, `invisible characters`, `line ending
-  consistency`, or `trailing newline`), **ask the user one explicit question**
-  before doing anything else: whether the auto-`fix` should be run for those
-  fixable findings. Offer the two choices "Run fix" and "Do not run fix". Wait
-  for the answer. The `trailing whitespace` warning is non-fixable. Unicode
-  escapes that must remain escaped for safe properties syntax can remain after
-  `fix`.
+  `= alignment`, or safe `Unicode escapes` in values or keys) or fixable `FAIL`
+  findings (`UTF-8 BOM`, `invisible characters`, `line ending consistency`, or
+  `trailing newline`), **ask the user one explicit question** before doing
+  anything else: whether the auto-`fix` should be run for those fixable
+  findings. Offer the two choices "Run fix" and "Do not run fix". Wait for the
+  answer. The `trailing whitespace` warning is non-fixable. Unicode escapes that
+  must remain escaped for safe properties syntax can remain after `fix`.
     - Only run `fix` if the user clearly confirms (for example by choosing
       "Run fix"). A bare "fix" reply counts as confirmation **only** in answer to
       this question.

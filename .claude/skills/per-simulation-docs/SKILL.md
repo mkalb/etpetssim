@@ -158,10 +158,11 @@ headings and their order, subject to the template's conditional-section rules.
 Configuration subsections follow the semantic grouping rules above. Fill every
 placeholder from the gathered facts.
 
-Determine whether the output file exists from the **current filesystem state
-only**. Do not use Git history, the Git index, diffs, deleted-file status, or any
-other repository metadata to find or restore an earlier version. A file that is
-currently absent is a new document, even if Git records a previous version.
+Determine whether the output file exists from the
+**current filesystem state only**. Do not use Git history, the Git index, diffs,
+deleted-file status, or any other repository metadata to find or restore an
+earlier version. A file that is currently absent is a new document, even if Git
+records a previous version.
 
 ### If the file does not exist
 
@@ -199,8 +200,8 @@ Update it **in place** and **preserve hand-written prose**:
 - In "Category and grid", keep **Edge behavior** and **Neighborhood** on
   separate lines. For any field backed by a configuration choice (cell shapes,
   edge behavior, neighborhood), list the default value first and mark it
-  `(default)`, then the other options, e.g. `Square (default), Triangle,
-  Hexagon`.
+  `(default)`, then the other options, e.g.
+  `Square (default), Triangle, Hexagon`.
 - Do not reproduce the color/emoji rendering tables from
   `docs/simulations/Simulation_Entity_Catalog.md`; the entity section here is
   conceptual and the catalog is a separate, independent document.

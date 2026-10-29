@@ -76,6 +76,13 @@ Other locations:
 - Prefer ASCII unless existing content or domain needs justify non-ASCII.
 - Keep entries in `.properties` files sorted alphabetically by key.
 - Write repository Markdown in standard GitHub Markdown.
+- Format Markdown by hand: wrap prose at 120 characters, or at the narrower width an existing file uses; break lines
+  only between words, not inside code spans, links, or emphasis that fits on one line, and rewrap only the paragraphs
+  you change.
+- Indent continuation lines of a list item to the start of its text and nested lists by 4 spaces; surround headings,
+  lists, tables, and code blocks with one blank line.
+- Align table columns: pad every cell to the column width and make the separator row match it, unless a cell is
+  longer than the line width.
 
 ## Core Engineering Rules
 

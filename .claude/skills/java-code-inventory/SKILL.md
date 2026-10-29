@@ -21,8 +21,8 @@ Run the command exactly once, without prior exploration or searches. The generat
 exit code and output are the complete result:
 
 - Exit code `0` prints two lines (path separators depend on the operating system):
-  - `Generated docs/generated/JavaMethodInventory.csv with <n> declarations.`
-  - `Generated docs/generated/JavaTypeInventory.csv with <n> declarations.`
+    - `Generated docs/generated/JavaMethodInventory.csv with <n> declarations.`
+    - `Generated docs/generated/JavaTypeInventory.csv with <n> declarations.`
 
   Report both lines and stop. Do not open, inspect, count, or re-validate the CSVs.
 - Any other exit code prints `FAIL ...` diagnostics; follow [Failure Handling](#failure-handling).

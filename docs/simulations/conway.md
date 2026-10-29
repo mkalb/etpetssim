@@ -80,10 +80,10 @@ density.
 ### Rules
 
 The default transition rule is Conway's Life, `23/3`: living cells survive with
-two or three living neighbors, and dead cells become alive with three. Rules
-use S/B notation, with survival counts before the slash and birth counts after;
-you can enter the notation directly or select the **Stays Alive** and **Becomes
-Alive** neighbor counts.
+two or three living neighbors, and dead cells become alive with three. Rules use
+S/B notation, with survival counts before the slash and birth counts after; you
+can enter the notation directly or select the **Stays Alive** and
+**Becomes Alive** neighbor counts.
 
 Each cell shape also has named presets. Square presets are Conway's Life
 (default), 2x2, 34 Life, Amoeba, Anneal, Coagulations, Coral, Day & Night,
